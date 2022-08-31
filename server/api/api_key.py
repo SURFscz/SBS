@@ -3,8 +3,8 @@
 from flask import Blueprint, request as current_request
 
 from server.api.base import json_endpoint
-from server.auth.security import hash_secret_key, generate_token, \
-    confirm_organisation_admin
+from server.auth.security import confirm_organisation_admin
+from server.auth.secrets import generate_token, hash_secret_key
 from server.db.domain import ApiKey
 from server.db.models import save, delete
 

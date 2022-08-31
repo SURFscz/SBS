@@ -2,7 +2,7 @@
 
 from sqlalchemy import text
 
-from server.auth.security import secure_hash
+from server.auth.secrets import secure_hash
 from server.db.db import db
 from server.db.domain import UserToken
 from server.test.abstract_test import AbstractTest

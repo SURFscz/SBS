@@ -7,7 +7,7 @@ import uuid
 from sqlalchemy import text
 
 from server.api.collaboration_request import STATUS_OPEN
-from server.auth.security import secure_hash, generate_token
+from server.auth.secrets import secure_hash, generate_token
 from server.db.audit_mixin import metadata
 from server.db.defaults import default_expiry_date
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \

@@ -16,7 +16,7 @@ from flask_testing import TestCase
 from onelogin.saml2.utils import OneLogin_Saml2_Utils
 
 from server.auth.mfa import ACR_VALUES
-from server.auth.security import secure_hash
+from server.auth.secrets import secure_hash
 from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED
 from server.db.domain import Collaboration, User, Organisation, Service, ServiceAup, UserToken, Invitation, \

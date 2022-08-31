@@ -16,7 +16,8 @@ from werkzeug.exceptions import Forbidden, BadRequest
 from server.api.base import query_param, json_endpoint
 from server.auth.mfa import ACR_VALUES, decode_jwt_token, store_user_in_session, eligible_users_to_reset_token
 from server.auth.rate_limit import clear_rate_limit, check_rate_limit
-from server.auth.security import current_user_id, generate_token, is_admin_user
+from server.auth.security import current_user_id, is_admin_user
+from server.auth.secrets import generate_token
 from server.auth.ssid import redirect_to_surf_secure_id
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db

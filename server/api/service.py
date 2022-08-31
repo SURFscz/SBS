@@ -1,10 +1,7 @@
 # -*- coding: future_fstrings -*-
-import random
-import string
 import urllib.parse
 
 from flask import Blueprint, request as current_request, g as request_context, jsonify, current_app
-from passlib.hash import sha512_crypt
 from sqlalchemy import text, func
 from sqlalchemy.orm import load_only, selectinload
 from werkzeug.exceptions import Forbidden
@@ -12,8 +9,8 @@ from werkzeug.exceptions import Forbidden
 from server.api.base import json_endpoint, query_param
 from server.api.ipaddress import validate_ip_networks
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
-    is_organisation_admin_or_manager, is_application_admin, is_service_admin, confirm_service_admin, secure_hash, \
-    generate_token
+    is_organisation_admin_or_manager, is_application_admin, is_service_admin, confirm_service_admin
+from server.auth.secrets import secure_hash, generate_token, generate_ldap_password_with_hash
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, cleanse_short_name, default_expiry_date, valid_uri_attributes
 from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, \
@@ -136,12 +133,6 @@ def _do_get_services(restrict_for_current_user=False, include_counts=False):
         service_json["organisations_count"] = row[1]
         service_json["collaborations_count"] = row[2]
     return services_json, 200
-
-
-def _generate_ldap_password_with_hash():
-    password = "".join(random.sample(string.ascii_lowercase + string.digits + "_,./~=+@*-", k=32))
-    hashed = sha512_crypt.using(rounds=100_000).hash(password)
-    return hashed, password
 
 
 @service_api.route("/name_exists", strict_slashes=False)
@@ -288,7 +279,7 @@ def save_service():
 
     data["status"] = STATUS_ACTIVE
     cleanse_short_name(data, "abbreviation")
-    hashed, _ = _generate_ldap_password_with_hash()
+    hashed, _ = generate_ldap_password_with_hash()
     data["ldap_password"] = hashed
 
     # Before the JSON is cleaned in the save method
@@ -467,7 +458,7 @@ def delete_service(service_id):
 def reset_ldap_password(service_id):
     confirm_service_admin(service_id)
     service = Service.query.get(service_id)
-    hashed, password = _generate_ldap_password_with_hash()
+    hashed, password = generate_ldap_password_with_hash()
     service.ldap_password = hashed
     db.session.merge(service)
     return {"ldap_password": password}, 200

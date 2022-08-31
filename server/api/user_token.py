@@ -6,7 +6,8 @@ from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint
 from server.api.service import user_service
-from server.auth.security import hash_secret_key, current_user_id, generate_token
+from server.auth.security import current_user_id
+from server.auth.secrets import generate_token, hash_secret_key
 from server.db.db import db
 from server.db.domain import UserToken, User, Service
 from server.db.models import save, delete

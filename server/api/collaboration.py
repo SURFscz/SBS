@@ -13,8 +13,9 @@ from server.api.base import json_endpoint, query_param, replace_full_text_search
 from server.api.service_group import create_service_groups
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_collaboration_member, \
     confirm_authorized_api_call, \
-    confirm_allow_impersonation, confirm_organisation_admin_or_manager, generate_token, confirm_external_api_call, \
+    confirm_allow_impersonation, confirm_organisation_admin_or_manager, confirm_external_api_call, \
     is_organisation_admin_or_manager, is_application_admin
+from server.auth.secrets import generate_token
 from server.db.db import db
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name, \
     STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED, valid_uri_attributes

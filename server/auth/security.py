@@ -1,15 +1,11 @@
 # -*- coding: future_fstrings -*-
-import hashlib
-from secrets import token_urlsafe
 
 from flask import session, g as request_context, request as current_request, current_app
 from sqlalchemy.orm import load_only
-from werkzeug.exceptions import Forbidden, SecurityError
+from werkzeug.exceptions import Forbidden
 
 from server.db.domain import CollaborationMembership, OrganisationMembership, Collaboration, User, \
     ServiceMembership
-
-MIN_SECRET_LENGTH = 43
 
 
 def is_admin_user(user):
@@ -203,19 +199,3 @@ def confirm_service_admin(service_id=None):
         return is_service_admin(service_id)
 
     confirm_write_access(override_func=override_func)
-
-
-def secure_hash(secret):
-    return f"sha3_512_{hashlib.sha3_512(bytes(secret, 'utf-8')).hexdigest()}"
-
-
-def generate_token():
-    return f"A{token_urlsafe()}"
-
-
-def hash_secret_key(data, attr_name="hashed_secret"):
-    secret = data[attr_name]
-    if len(secret) < MIN_SECRET_LENGTH:
-        raise SecurityError(f"minimal length of secret for API key is {MIN_SECRET_LENGTH}")
-    data[attr_name] = secure_hash(secret)
-    return data
