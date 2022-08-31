@@ -399,7 +399,7 @@ class TestUser(AbstractTest):
         res = self.get("/api/collaborations/find_by_identifier",
                        query_data={"identifier": collaboration_ai_computing_uuid},
                        with_basic_auth=False, response_status_code=401)
-        self.assertEqual("AUP not accepted", res["message"])
+        self.assertTrue("AUP not accepted" in res["message"])
 
     def test_update_ssh_control_char(self):
         self.login("urn:james")

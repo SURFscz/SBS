@@ -141,11 +141,11 @@ def json_endpoint(f):
             db.session.commit()
             return response, status
         except Exception as e:
-            if isinstance(e, Forbidden):
+            if isinstance(e, Forbidden) and "You don't have the permission" in e.description:
                 e.description = f"Forbidden 403: {current_request.url}. IP: {current_request.remote_addr}"
-            if hasattr(e, "description"):
+            elif hasattr(e, "description"):
                 e.description = f"{e.__class__.__name__}: {current_request.url}." \
-                                f" IP: {current_request.remote_addr}" + e.description
+                                f" IP: {current_request.remote_addr}. " + e.description
             response = jsonify(message=e.description if isinstance(e, HTTPException) else str(e),
                                error=True)
             response.status_code = 500

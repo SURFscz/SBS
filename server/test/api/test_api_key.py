@@ -34,7 +34,7 @@ class TestApiKey(AbstractTest):
         organisation = self.find_entity_by_name(Organisation, uuc_name)
         res = self.post("/api/api_keys", body={"organisation_id": organisation.id, "hashed_secret": "secret"},
                         response_status_code=400)
-        self.assertEqual("minimal length of secret for API key is 43", res["message"])
+        self.assertTrue("minimal length of secret for API key is 43" in res["message"])
 
     def test_api_call_invalid_auth(self):
         response = self.client.post("/api/collaborations/v1",

@@ -527,8 +527,8 @@ class TestCollaboration(AbstractTest):
                                     content_type="application/json")
         self.assertEqual(400, response.status_code)
         data = response.json
-        self.assertEqual(data["message"],
-                         "Collaboration with name 'AI computing' already exists within organisation 'UUC'.")
+        self.assertTrue(
+            "Collaboration with name 'AI computing' already exists within organisation 'UUC'." in data["message"])
 
     def test_api_call_existing_short_name(self):
         response = self.client.post("/api/collaborations/v1",
@@ -547,8 +547,8 @@ class TestCollaboration(AbstractTest):
                                     content_type="application/json")
         self.assertEqual(400, response.status_code)
         data = response.json
-        self.assertEqual(data["message"],
-                         "Collaboration with short_name 'ai_computing' already exists within organisation 'UUC'.")
+        self.assertTrue(
+            "Collaboration with short_name 'ai_computing' already exists within organisation 'UUC'." in data["message"])
 
     def test_api_call_no_api(self):
         self.login("urn:john")
@@ -561,7 +561,7 @@ class TestCollaboration(AbstractTest):
                                     content_type="application/json")
         self.assertEqual(403, response.status_code)
         data = response.json
-        self.assertEqual("Not a valid external API call", data["message"])
+        self.assertTrue("Not a valid external API call" in data["message"])
 
     def test_api_call_missing_required_attributes(self):
         response = self.client.post("/api/collaborations/v1",
@@ -571,9 +571,9 @@ class TestCollaboration(AbstractTest):
                                     content_type="application/json")
         self.assertEqual(400, response.status_code)
         data = response.json
-        self.assertEqual(data["message"], "Missing required attributes: ['name', 'description', 'short_name', "
-                                          "'disable_join_requests', 'disclose_member_information', "
-                                          "'disclose_email_information', 'administrators']")
+        self.assertTrue("Missing required attributes: ['name', 'description', 'short_name', "
+                        "'disable_join_requests', 'disclose_member_information', "
+                        "'disclose_email_information', 'administrators']" in data["message"])
 
     def test_collaborations_may_request_collaboration_true(self):
         self.login("urn:mary")
