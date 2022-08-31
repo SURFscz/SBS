@@ -10,7 +10,7 @@ from urllib.parse import urlparse
 from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
 from jsonschema import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
-from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest
+from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest, Forbidden
 
 from server.auth.security import current_user_id
 from server.auth.tokens import get_authorization_header
@@ -141,6 +141,11 @@ def json_endpoint(f):
             db.session.commit()
             return response, status
         except Exception as e:
+            if isinstance(e, Forbidden):
+                e.description = f"Forbidden 403: {current_request.url}. IP: {current_request.remote_addr}"
+            if hasattr(e, "description"):
+                e.description = e.description + f"{e.__class__.__name__}: {current_request.url}." \
+                                                f" IP: {current_request.remote_addr}"
             response = jsonify(message=e.description if isinstance(e, HTTPException) else str(e),
                                error=True)
             response.status_code = 500
