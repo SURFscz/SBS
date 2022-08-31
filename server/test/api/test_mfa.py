@@ -246,6 +246,10 @@ class TestMfa(AbstractTest):
                        with_basic_auth=False)
         self.assertIsNotNone(res["qr_code_base64"])
 
+    def test_get2fa_proxy_authz_missing_second_fa_uuid(self):
+        self.get("/api/mfa/get2fa_proxy_authz", query_data={"second_fa_uuid": ""},
+                 with_basic_auth=False, response_status_code=400)
+
     def test_get2fa_proxy_authz(self):
         sarah = self.add_totp_to_user("urn:sarah")
         res = self.get("/api/mfa/get2fa_proxy_authz", query_data={"second_fa_uuid": sarah.second_fa_uuid},
