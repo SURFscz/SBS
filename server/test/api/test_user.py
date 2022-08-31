@@ -6,6 +6,7 @@ from urllib import parse
 import requests
 import responses
 from flask import current_app
+from werkzeug.exceptions import BadRequest
 
 from server.db.db import db
 from server.db.domain import Organisation, Collaboration, User, Aup
@@ -320,6 +321,12 @@ class TestUser(AbstractTest):
             self.assertFalse(user["second_factor_confirmed"])
             self.assertFalse("organisation_memberships" in user)
             self.assertTrue(user["admin"])
+
+    def test_read_file_not_exists(self):
+        def expect_bad_request():
+            read_file("nope")
+
+        self.assertRaises(BadRequest, expect_bad_request)
 
     @responses.activate
     def test_resume_session_with_allowed_idp(self, redirect_expected="http://localhost:3000"):
