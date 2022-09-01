@@ -171,8 +171,7 @@ def mail_collaboration_invitation(context, collaboration, recipients, preview=Fa
     invitation = context["invitation"]
     message = invitation.message.replace("\n", "<br/>") if invitation.message else None
     context = {**context, "expiry_period": calculate_expiry_period(invitation),
-               "collaboration": collaboration, "organisation_img": collaboration.organisation.raw_logo(),
-               "organisation_img_link": collaboration.organisation.logo,
+               "collaboration": collaboration, "organisation_img_link": collaboration.organisation.logo,
                "message": message}
 
     return _do_send_mail(
