@@ -7,7 +7,7 @@ properties:
     example: 999
   name:
     type: string
-    example: "uva.nl"
+    example: "uniharderwijk.nl"
   organisation_id:
     type: number
     example: 999

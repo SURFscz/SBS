@@ -16,7 +16,7 @@ properties:
     example: "ai_researchers"
   global_urn:
     type: string
-    example: "uva:ai:researchers"
+    example: "uniharderwijk:cumulusgrp:ai_researchers"
   identifier:
     type: string
     format: uuid
@@ -38,11 +38,11 @@ properties:
   created_by:
     type: string
     description: "UID of the user who created this"
-    example: "urn:admin"
+    example: "urn:jdoe"
   updated_by:
     type: string
     description: "UID of the user who updated this"
-    example: "urn:admin"
+    example: "urn:jdoe"
   collaboration_memberships:
     type: array
     items:
