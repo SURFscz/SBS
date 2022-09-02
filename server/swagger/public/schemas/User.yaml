@@ -7,43 +7,43 @@ properties:
     example: 999
   name:
     type: string
-    example: "John Doe"
+    example: "Researcher Doe"
   uid:
     type: string
-    example: "urn:john"
+    example: "urn:rdoe"
   username:
     type: string
-    example: "jdoe2"
+    example: "rdoe2"
   address:
     type: string
     example: "Postal 1234AA"
   affiliation:
     type: string
-    example: "student"
+    example: "employee"
   eduperson_principal_name:
     type: string
-    example: "jdoe@uva.nl"
+    example: "rdoe@uniharderwijk.nl"
   email:
     type: string
-    example: "jdoe@uva.nl"
+    example: "rdoe@uniharderwijk.nl"
   entitlement:
     type: string
-    example: "student"
+    example: "employee"
   given_name:
     type: string
-    example: "John"
+    example: "Researcher"
   family_name:
     type: string
     example: "Doe"
   nick_name:
     type: string
-    example: "John Doe"
+    example: "Researcher Doe"
   schac_home_organisation:
     type: string
-    example: "uva.nl"
+    example: "uniharderwijk.nl"
   scoped_affiliation:
     type: string
-    example: "student@uva.nl"
+    example: "researcher@uniharderwijk.nl"
   last_accessed_date:
     type: number
     description: "The last accessed date at in epoch seconds"
