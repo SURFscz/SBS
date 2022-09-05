@@ -32,7 +32,7 @@ properties:
         example: "rdoe2"
       platform_id:
         type: string
-        example: "9bf251bf6cfa9eb8c75f15a90075fa7074eb3d48@acc.sram.eduteams.org"
+        example: "9bf251bf6cfa9eb8c75f15a90075fa7074eb3d48@sram.eduteams.org"
       status:
         type: string
         example: "active"
