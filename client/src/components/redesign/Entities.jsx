@@ -117,7 +117,7 @@ class Entities extends React.Component {
     }
 
     renderEntities = (entities, sorted, reverse, modelName, tableClassName, columns, children,
-                      rowLinkMapper, customNoEntities, onHover, actions, actionHeader, page, pagination) => {
+                      rowLinkMapper, customNoEntities, onHover, actions, showActionsAlways, actionHeader, page, pagination) => {
         const hasEntities = !isEmpty(entities);
         const total = entities.length;
         if (pagination) {
@@ -126,7 +126,7 @@ class Entities extends React.Component {
         }
         return (
             <section className="entities-list">
-                {(hasEntities && actions) && <div className={`actions-header ${actionHeader}`}>
+                {(actions && (showActionsAlways || hasEntities)) && <div className={`actions-header ${actionHeader}`}>
                     {actions}
                 </div>}
                 {hasEntities &&
@@ -171,7 +171,7 @@ class Entities extends React.Component {
         const {
             modelName, entities, showNew, newLabel, searchAttributes, columns, children, loading, customSearch,
             actions, title, filters, explain, rowLinkMapper, tableClassName, explainTitle, className = "",
-            customNoEntities, hideTitle, onHover, actionHeader = "", pagination = true
+            customNoEntities, hideTitle, onHover, actionHeader = "", pagination = true, showActionsAlways
         } = this.props;
         if (loading) {
             return <SpinnerField/>;
@@ -190,7 +190,7 @@ class Entities extends React.Component {
                 {this.renderSearch(modelName, title, entities, query, searchAttributes, showNew, newLabel, filters, explain, customSearch, hideTitle)}
 
                 {this.renderEntities(sortedEntities, sorted, reverse, modelName, tableClassName, columns, children,
-                    rowLinkMapper, customNoEntities, onHover, actions, actionHeader, page, pagination)}
+                    rowLinkMapper, customNoEntities, onHover, actions, showActionsAlways, actionHeader, page, pagination)}
                 <div>{this.props.children}</div>
             </div>);
     }
@@ -215,6 +215,7 @@ Entities.propTypes = {
     customSearch: PropTypes.func,
     showNew: PropTypes.bool,
     actions: PropTypes.any,
+    showActionsAlways: PropTypes.bool,
     filters: PropTypes.any,
     explain: PropTypes.any,
     inputFocus: PropTypes.bool,
