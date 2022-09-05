@@ -17,7 +17,13 @@ import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {isEmpty, stopEvent} from "../utils/Utils";
-import {sanitizeShortName, validEmailRegExp, validUrlRegExp} from "../validations/regExps";
+import {
+    CO_SHORT_NAME,
+    sanitizeShortName,
+    SRAM_USERNAME,
+    validEmailRegExp,
+    validUrlRegExp
+} from "../validations/regExps";
 import CheckBox from "../components/CheckBox";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
@@ -84,7 +90,11 @@ class ServiceOverview extends React.Component {
             invalidInputs[name] = !isEmpty(service[name]) && !validEmailRegExp.test(service[name]);
         });
         ["accepted_user_policy", "privacy_policy", "uri"].forEach(name => {
-            invalidInputs[name] = !isEmpty(service[name]) && !validUrlRegExp.test(service[name]);
+            let serviceElement = service[name];
+            if (name === "uri") {
+                serviceElement = serviceElement.toLowerCase().replaceAll(CO_SHORT_NAME, "").replaceAll(SRAM_USERNAME, "");
+            }
+            invalidInputs[name] = !isEmpty(serviceElement) && !validUrlRegExp.test(serviceElement);
         })
         this.setState({invalidInputs: invalidInputs}, callback);
     }
@@ -209,10 +219,12 @@ class ServiceOverview extends React.Component {
         this.setState({invalidInputs: {...invalidInputs, [name]: inValid}});
     };
 
-    validateURI = name => e => {
+    validateURI = (name, acceptPlaceholders = false) => e => {
         const uri = e.target.value;
         const {invalidInputs} = this.state;
-        const inValid = !isEmpty(uri) && !validUrlRegExp.test(uri);
+        const removedPlaceholders = acceptPlaceholders ?
+            uri.toLowerCase().replaceAll(CO_SHORT_NAME, "").replaceAll(SRAM_USERNAME, "") : uri;
+        const inValid = !isEmpty(uri) && !validUrlRegExp.test(removedPlaceholders);
         this.setState({invalidInputs: {...invalidInputs, [name]: inValid}});
     };
 
@@ -377,7 +389,7 @@ class ServiceOverview extends React.Component {
 
 
     renderButtons = (isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView) => {
-        const {accepted_user_policy} = this.state.service;
+        const {accepted_user_policy, pam_web_sso_enabled, token_enabled} = this.state.service;
         const validAcceptedUserPolicy = validUrlRegExp.test(accepted_user_policy);
         return <>
             {(isAdmin || isServiceAdmin) &&
@@ -389,8 +401,9 @@ class ServiceOverview extends React.Component {
                 <Button txt={I18n.t("service.aup.title")}
                         disabled={!validAcceptedUserPolicy}
                         onClick={() => this.resetAups(true)}/>}
-                {currentTab === "tokens" &&
+                {(currentTab === "tokens" || currentTab === "pamWebLogin") &&
                 <Button txt={I18n.t("userTokens.actionTitle")}
+                        disabled={!pam_web_sso_enabled & !token_enabled}
                         onClick={() => this.tokenResetAction(true)}/>}
                 {currentTab === "ldap" &&
                 <Button txt={I18n.t("service.ldap.title")}
@@ -741,7 +754,7 @@ class ServiceOverview extends React.Component {
                         toolTip={I18n.t("service.uriTooltip")}
                         externalLink={true}
                         error={invalidInputs.uri}
-                        onBlur={this.validateURI("uri")}
+                        onBlur={this.validateURI("uri", true)}
                         disabled={!isAdmin && !isServiceAdmin}/>
             {invalidInputs.uri &&
             <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
