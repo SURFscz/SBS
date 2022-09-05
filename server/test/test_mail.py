@@ -2,6 +2,7 @@
 import json
 import os
 
+from server.auth.security import CSRF_TOKEN
 from server.db.audit_mixin import AuditLog
 from server.db.domain import Collaboration, User
 from server.mail import mail_collaboration_join_request
@@ -40,14 +41,18 @@ class TestMail(AbstractTest):
             mail = self.app.mail
             with mail.record_messages() as outbox:
                 self.login("urn:john")
+                me = self.get("/api/users/me")
                 group_name = "new_auth_group"
-                self.post("/api/groups/", body={
-                    "name": group_name,
-                    "short_name": group_name,
-                    "description": "des",
-                    "auto_provision_members": False,
-                    "collaboration_id": "nope",
-                }, response_status_code=400,
+                self.post("/api/groups/",
+                          body={
+                              "name": group_name,
+                              "short_name": group_name,
+                              "description": "des",
+                              "auto_provision_members": False,
+                              "collaboration_id": "nope",
+                          },
+                          headers={CSRF_TOKEN: me[CSRF_TOKEN]},
+                          response_status_code=400,
                           with_basic_auth=False)
                 self.assertEqual(1, len(outbox))
                 html = outbox[0].html
@@ -80,9 +85,11 @@ class TestMail(AbstractTest):
             mail = self.app.mail
             with mail.record_messages() as outbox:
                 self.login("urn:john")
+                me = self.get("/api/users/me")
                 self.post("/api/organisations",
                           body={"name": "new_organisation",
                                 "short_name": "https://ti1"},
+                          headers={CSRF_TOKEN: me[CSRF_TOKEN]},
                           with_basic_auth=False)
                 self.assertEqual(1, len(outbox))
                 mail_msg = outbox[0]
