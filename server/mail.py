@@ -169,6 +169,7 @@ def mail_collaboration_invitation(context, collaboration, recipients, preview=Fa
     if not preview:
         _store_mail(None, COLLABORATION_INVITATION_MAIL, recipients)
     invitation = context["invitation"]
+    # TODO https://stackoverflow.com/questions/55271348/sending-email-with-inline-images-flask-mail
     message = invitation.message.replace("\n", "<br/>") if invitation.message else None
     context = {**context, "expiry_period": calculate_expiry_period(invitation),
                "collaboration": collaboration, "organisation_img_link": collaboration.organisation.logo,
