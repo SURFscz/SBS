@@ -1750,19 +1750,21 @@ I18n.translations.nl = {
         subTitle: "Welkom op SURF Research Access Management (SRAM). SURF Research Access Management wordt gebruikt om toegang te beheren voor je onderzoekssamenwerking.",
         unknown: "een onbekende instelling",
         mysterious: "onbekende gast",
-        institution: "Je bent ingelogd met <strong>{{name}}</strong>.",
+        institution: "Informatie in je profiel is aangeleverd door <strong>{{name}}</strong>.",
         institutionNotConnected: "De instelling waarmee je bent ingelogd kan geen samenwerkingen creëren en beheren.",
-        noMember: "Je bent nog geen lid van een samenwerking. Om lid te worden, moet je eerst worden uitgenodigd.",
-        whatYouCanDo: "Hier is wat je kan doen:",
+        noMember: "Je bent geen lid van een samenwerking, noch ben je beheerder. Als je bent uitgenodigd, volg dan de link uit de e-mail.",
+        whatYouCanDo: "",
         instructions: "Instructies van <strong>{{name}}</strong>",
         createColl: "Creëer je eigen samenwerking",
-        startCreateColl: "Als je je eigen samenwerking wil starten, kan je deze direct aanmaken.",
+        startCreateColl: "Je ben geen lid van een samenwerking, {{name}} stelt je in staat om een eigen samenwerking aan te maken. " +
+            "Als je bent uitgenodigd, volg dan de link uit de e-mail.",
         createCollRequest: "Vraag je eigen samenwerking aan",
-        startCreateCollRequest: "Als je je eigen samenwerking wil starten, kan je deze rechtstreeks aanvragen en zullen de beheerders deze controleren.",
-        createCollTxt: "Creëer een samenwerking",
-        createCollRequestTxt: "Start een samenwerking",
-        contact: "Contact met de SURF Research Access Management helpdesk",
-        contactInfo: "Neem contact op met <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> als je vragen hebt."
+        startCreateCollRequest: "Je ben geen lid van een samenwerking, {{name}} stelt je in staat om een eigen samenwerking aan te vragen. Een beheerder van {{name}} zal je aanvraag moeten goedkeuren." +
+           "Als je bent uitgenodigd, volg dan de link uit de e-mail.",
+        createCollTxt: "Maak samenwerking aan",
+        createCollRequestTxt: "Vraag samenwerking aan",
+        contact: "",
+        contactInfo: "Als je had verwacht meer te kunnen, neem dan contact op met <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> voor hulp."
     },
     feedback: {
         title: "Feedback geven",

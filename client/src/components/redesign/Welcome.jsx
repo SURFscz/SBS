@@ -47,15 +47,21 @@ class Welcome extends React.Component {
 
     knownOrganisation = organisation => {
         const hasOnBoardingMsg = !isEmpty(organisation.on_boarding_msg);
-        const stepTwo = hasOnBoardingMsg ? 2 : 1;
         const canCreate = organisation.collaboration_creation_allowed_entitlement || organisation.collaboration_creation_allowed;
         const hasOrgMembers = organisation.has_members;
         return (
             <div>
+                {hasOrgMembers && <div>
+                    <h3 className={`step ${hasOnBoardingMsg ? "" : "orphan"}`}>
+                        {I18n.t(`welcome.${canCreate ? "createColl" : "createCollRequest"}`, {name: organisation.name})}
+                    </h3>
+                    <p>
+                        {I18n.t(`welcome.${canCreate ? "startCreateColl" : "startCreateCollRequest"}`, {name: organisation.name})}
+                    </p>
+                </div>}
                 {hasOnBoardingMsg && <div>
                     <h1>{I18n.t("welcome.whatYouCanDo")}</h1>
                     <h3 className="step">
-                        <span>1.</span>
                         <span dangerouslySetInnerHTML={{
                             __html: DOMPurify.sanitize(I18n.t("welcome.instructions", {name: organisation.name}))
                         }}/>
@@ -69,15 +75,8 @@ class Welcome extends React.Component {
                     </div>
                 </div>}
                 {hasOrgMembers && <div>
-                    <h3 className={`step ${hasOnBoardingMsg ? "" : "orphan"}`}><span>{stepTwo}.</span>
-                        {I18n.t(`welcome.${canCreate ? "createColl" : "createCollRequest"}`)}
-                    </h3>
-                    <p>
-                        {I18n.t(`welcome.${canCreate ? "startCreateColl" : "startCreateCollRequest"}`)}
-                    </p>
                     <Button onClick={() => this.props.history.push("/new-collaboration")}
                             txt={I18n.t(`welcome.${canCreate ? "createCollTxt" : "createCollRequestTxt"}`)}/>
-
                 </div>}
             </div>
         );
@@ -88,7 +87,6 @@ class Welcome extends React.Component {
             <div>
                 <h1>{I18n.t("welcome.whatYouCanDo")}</h1>
                 <h3 className="step">
-                    <span>1.</span>
                     <span>{I18n.t("welcome.contact")}</span>
                 </h3>
                 <div className="welcome-unknown">
