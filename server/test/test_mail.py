@@ -47,7 +47,8 @@ class TestMail(AbstractTest):
                     "description": "des",
                     "auto_provision_members": False,
                     "collaboration_id": "nope",
-                }, response_status_code=400)
+                }, response_status_code=400,
+                          with_basic_auth=False)
                 self.assertEqual(1, len(outbox))
                 html = outbox[0].html
                 self.assertTrue("An error occurred in local" in html)

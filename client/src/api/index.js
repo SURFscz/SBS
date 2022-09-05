@@ -1,6 +1,7 @@
 import {isEmpty} from "../utils/Utils";
 import {emitter} from "../utils/Events";
 import I18n from "i18n-js";
+import {getCsrfToken} from "../stores/AppStore";
 
 let impersonator = null;
 emitter.addListener("impersonation", res => {
@@ -51,6 +52,7 @@ function validFetch(path, options, headers = {}, showErrorDialog = true) {
     const contentHeaders = {
         "Accept": "application/json",
         "Content-Type": "application/json",
+        "CSRFToken": getCsrfToken(),
         ...headers
     };
     if (impersonator) {

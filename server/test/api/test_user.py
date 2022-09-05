@@ -8,6 +8,7 @@ import responses
 from flask import current_app
 from werkzeug.exceptions import BadRequest
 
+from server.auth.security import CSRF_TOKEN
 from server.db.db import db
 from server.db.domain import Organisation, Collaboration, User, Aup
 from server.test.abstract_test import AbstractTest
@@ -267,6 +268,19 @@ class TestUser(AbstractTest):
     def test_error(self):
         self.post("/api/users/error", body={"error": "403"}, response_status_code=201)
 
+    def test_csrf(self):
+        try:
+            del os.environ["TESTING"]
+            self.login("urn:john")
+            self.post("/api/organisations",
+                      body={"name": "new_organisation",
+                            "schac_home_organisations": [],
+                            "short_name": "https://ti1"},
+                      response_status_code=401,
+                      with_basic_auth=False)
+        finally:
+            os.environ["TESTING"] = "1"
+
     def test_error_mail(self):
         try:
             del os.environ["TESTING"]
@@ -274,7 +288,11 @@ class TestUser(AbstractTest):
             with mail.record_messages() as outbox:
                 self.app.app_config.mail.send_js_exceptions = True
                 self.login("urn:sarah")
-                self.post("/api/users/error", body={"weird": "msg"}, response_status_code=201)
+                me = self.get("/api/users/me", with_basic_auth=False)
+                self.post("/api/users/error",
+                          body={"weird": "msg"},
+                          headers={CSRF_TOKEN: me[CSRF_TOKEN]},
+                          response_status_code=201)
                 self.assertEqual(1, len(outbox))
                 mail_msg = outbox[0]
                 self.assertTrue("weird" in mail_msg.html)
