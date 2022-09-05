@@ -581,7 +581,7 @@ class TestCollaboration(AbstractTest):
         self.assertTrue(res)
 
     def test_collaborations_may_request_collaboration_false(self):
-        self.login("urn:mike")
+        self.login("urn:admin")
         res = self.get("/api/collaborations/may_request_collaboration", with_basic_auth=False)
         self.assertFalse(res)
 
