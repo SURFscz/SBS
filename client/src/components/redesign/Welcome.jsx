@@ -46,7 +46,6 @@ class Welcome extends React.Component {
 
     knownOrganisation = organisation => {
         const hasOnBoardingMsg = !isEmpty(organisation.on_boarding_msg);
-        const stepTwo = hasOnBoardingMsg ? 2 : 1;
         const canCreate = organisation.collaboration_creation_allowed_entitlement || organisation.collaboration_creation_allowed;
         const hasOrgMembers = organisation.has_members;
         return (
