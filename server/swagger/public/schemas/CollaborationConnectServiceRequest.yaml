@@ -9,7 +9,7 @@ properties:
     type: string
     format: uri
     description: "The entity ID of the Service you want to connect to"
-    example: "https://service.cloud.nl"
+    example: "https://service.cloud.example.com"
 required:
   - short_name
   - service_entity_id

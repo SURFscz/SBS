@@ -4,11 +4,11 @@ properties:
   short_name:
     type: string
     description: "The short name of the collaboration"
-    example: "research"
+    example: "cumulusgrp"
   message:
     type: string
     description: "The message included in the invitations"
-    example: "Please join..."
+    example: "Please join the Cumulus research group collaboration page."
   intended_role:
     type: string
     description: "The intended role of the inviter in the collaboration"
@@ -26,4 +26,4 @@ properties:
     descriptiom: "All the email addresses of the invitees"
     items:
       type: string
-      example: "jdoe@example.com"
+      example: "rdoe@uniharderwijk.nl"

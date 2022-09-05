@@ -12,4 +12,4 @@ class TestSwagger(AbstractTest):
         self.assertEqual("max-age=3600", res.headers.get("Cache-Control"))
 
         parsed = yaml.load(res.data, Loader=yaml.FullLoader)
-        self.assertEqual("Researcher", parsed["properties"]["name"]["example"])
+        self.assertEqual("Cumulus research group", parsed["properties"]["name"]["example"])
