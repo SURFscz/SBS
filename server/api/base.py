@@ -12,7 +12,7 @@ from jsonschema import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest, Forbidden
 
-from server.auth.security import current_user_id
+from server.auth.security import current_user_id, CSRF_TOKEN
 from server.auth.tokens import get_authorization_header
 from server.auth.urls import white_listing, mfa_listing, external_api_listing
 from server.db.db import db
@@ -47,15 +47,17 @@ def auth_filter(app_config):
             hashed_secret = get_authorization_header(True, ignore_missing_auth_header=True)
             api_key = ApiKey.query.filter(ApiKey.hashed_secret == hashed_secret).first()
             request_context.external_api_organisation = api_key.organisation if api_key else None
-        return
+            return
 
     if "user" in session and not session["user"].get("guest"):
         if not session["user"].get("user_accepted_aup") and "api/aup/agree" not in url and not is_whitelisted_url:
             raise Unauthorized(description="AUP not accepted")
         if current_request.method in _audit_trail_methods:
-            csrf_token_client = current_request.headers.get("CSRFToken")
-            csrf_token_server = session.get("CSRFToken")
-            if not csrf_token_client or not csrf_token_server or csrf_token_client != csrf_token_server:
+            csrf_token_client = current_request.headers.get(CSRF_TOKEN)
+            csrf_token_server = session.get(CSRF_TOKEN)
+            prod_mode = not os.environ.get("TESTING")
+            csrf_valid = csrf_token_client and csrf_token_server and csrf_token_client == csrf_token_server
+            if prod_mode and not csrf_valid and url_path != "/api/mock":
                 raise Unauthorized(description="Invalid CSRFToken")
         if "api/aup/agree" in url or "api/users/refresh" in url:
             return

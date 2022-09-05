@@ -25,7 +25,7 @@ from server.auth.mfa import ACR_VALUES, store_user_in_session, mfa_idp_allowed, 
     surf_secure_id_required, has_valid_mfa, decode_jwt_token
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
     confirm_collaboration_admin, confirm_organisation_admin, current_user, confirm_write_access, \
-    confirm_organisation_admin_or_manager, is_application_admin
+    confirm_organisation_admin_or_manager, is_application_admin, CSRF_TOKEN
 from server.auth.ssid import AUTHN_REQUEST_ID, saml_auth, redirect_to_surf_secure_id, USER_UID
 from server.auth.user_claims import add_user_claims
 from server.cron.user_suspending import create_suspend_notification
@@ -425,8 +425,8 @@ def me():
         # Do not send all information if second_factor is required
         if not user_from_session["second_factor_confirmed"]:
             return user_from_session, 200
-
-        user = {**jsonify(user_from_db).json, **user_from_session}
+        csrf_token = {CSRF_TOKEN: session.get(CSRF_TOKEN)}
+        user = {**jsonify(user_from_db).json, **user_from_session, **csrf_token}
 
         if len(user_from_db.suspend_notifications) > 0:
             user["successfully_activated"] = True

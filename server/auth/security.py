@@ -7,6 +7,8 @@ from werkzeug.exceptions import Forbidden
 from server.db.domain import CollaborationMembership, OrganisationMembership, Collaboration, User, \
     ServiceMembership
 
+CSRF_TOKEN = "CSRFToken"
+
 
 def is_admin_user(user):
     admin_users = current_app.app_config.admin_users

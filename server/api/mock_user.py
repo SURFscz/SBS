@@ -8,7 +8,7 @@ from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint
 from server.auth.secrets import generate_token
-from server.auth.security import is_admin_user
+from server.auth.security import is_admin_user, CSRF_TOKEN
 from server.auth.user_claims import add_user_claims
 from server.db.db import db
 from server.db.domain import User
@@ -39,5 +39,5 @@ def login_user():
         "second_factor_confirmed": True
     }
     session["user"] = {**session_data, **res}
-    session["CSRFToken"] = generate_token()
+    session[CSRF_TOKEN] = generate_token()
     return None, 201
