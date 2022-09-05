@@ -81,7 +81,7 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(0, len(organisations))
 
     def test_organisations_by_schac_home_organisation_not_present(self):
-        self.login("urn:mike")
+        self.login("urn:admin")
         organisations = self.get("/api/organisations/find_by_schac_home_organisation",
                                  with_basic_auth=False)
         self.assertEqual(0, len(organisations))
