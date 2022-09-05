@@ -26,6 +26,8 @@ STATUS_OPEN = "open"
 STATUS_DENIED = "denied"
 STATUS_APPROVED = "approved"
 
+_audit_trail_methods = ["PUT", "POST", "DELETE"]
+
 
 def auth_filter(app_config):
     url = current_request.base_url
@@ -50,6 +52,11 @@ def auth_filter(app_config):
     if "user" in session and not session["user"].get("guest"):
         if not session["user"].get("user_accepted_aup") and "api/aup/agree" not in url and not is_whitelisted_url:
             raise Unauthorized(description="AUP not accepted")
+        if current_request.method in _audit_trail_methods:
+            csrf_token_client = current_request.headers.get("CSRFToken")
+            csrf_token_server = session.get("CSRFToken")
+            if not csrf_token_client or not csrf_token_server or csrf_token_client != csrf_token_server:
+                raise Unauthorized(description="Invalid CSRFToken")
         if "api/aup/agree" in url or "api/users/refresh" in url:
             return
         if not oidc_config.second_factor_authentication_required or session["user"].get("second_factor_confirmed"):
@@ -97,9 +104,6 @@ def get_user(app_config, auth):
 def _add_custom_header(response):
     response.headers.set("x-session-alive", "true")
     response.headers["server"] = ""
-
-
-_audit_trail_methods = ["PUT", "POST", "DELETE"]
 
 
 def _audit_trail():
