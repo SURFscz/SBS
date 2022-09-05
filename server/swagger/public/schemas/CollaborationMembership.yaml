@@ -25,10 +25,10 @@ properties:
   created_by:
     type: string
     description: "UID of the user who created this"
-    example: "urn:admin"
+    example: "urn:jdoe"
   updated_by:
     type: string
     description: "UID of the user who updated this"
-    example: "urn:admin"
+    example: "urn:jdoe"
   user:
     $ref: '/swagger/schemas/User.yaml'

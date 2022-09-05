@@ -8,7 +8,7 @@ properties:
   network_value:
     type: string
     description: "IP network range"
-    example: "255.0.0.1/28"
+    example: "1.2.3.0/28"
   user_id:
     type: number
     example: 999
@@ -19,8 +19,8 @@ properties:
   created_by:
     type: string
     description: "UID of the user who created this"
-    example: "urn:admin"
+    example: "urn:rdoe2"
   updated_by:
     type: string
     description: "UID of the user who updated this"
-    example: "urn:admin"
+    example: "urn:rdoe2"
