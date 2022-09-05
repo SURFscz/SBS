@@ -8,6 +8,7 @@ import {removeDuplicates, stopEvent} from "../../utils/Utils";
 import Logo from "./Logo";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import Tooltip from "./Tooltip";
+import {CO_SHORT_NAME, SRAM_USERNAME} from "../../validations/regExps";
 
 const memberCutOff = 10;
 
@@ -31,8 +32,18 @@ class AboutCollaboration extends React.Component {
         this.props.history.push(`/services/${service.id}`);
     }
 
-    openServiceUri = service => () => {
-        service.uri && window.open(service.uri, "_blank");
+    formatServiceUri = (serviceUri, collaboration, user) => {
+        const addAdd = serviceUri.indexOf("@") === -1;
+        if (serviceUri.indexOf(CO_SHORT_NAME) > -1) {
+            return serviceUri.replace(CO_SHORT_NAME, collaboration.short_name + (addAdd? "@" : ""));
+        } else if (serviceUri.indexOf(SRAM_USERNAME) > -1) {
+            return serviceUri.replace(SRAM_USERNAME, user.username + (addAdd? "@" : ""));
+        }
+        return serviceUri;
+    }
+
+    openServiceUri = (service, collaboration, user) => () => {
+        service.uri && window.open(this.formatServiceUri(service.uri, collaboration, user), "_blank");
     }
 
     toggleShowMore = e => {
@@ -66,7 +77,7 @@ class AboutCollaboration extends React.Component {
                         <ul className="services">
                             {services.sort((a, b) => a.name.localeCompare(b.name)).map(service =>
                                 <div className="service-button" key={service.name}>
-                                    <li onClick={this.openServiceUri(service)}
+                                    <li onClick={this.openServiceUri(service, collaboration, user)}
                                         className={`${service.uri ? "uri" : ""}`}>
                                         {service.logo && <Logo src={service.logo} alt={service.name}/>}
                                         <span className="border-left">{service.name}</span>
@@ -75,7 +86,8 @@ class AboutCollaboration extends React.Component {
                                         <Tooltip id={`${service.id}`}
                                                  children={service.uri.startsWith("http") ? <ServicesIcon/> :
                                                      <TerminalIcon/>}
-                                                 msg={I18n.t("models.collaboration.servicesHoover", {uri: service.uri})}/>
+                                                 msg={I18n.t("models.collaboration.servicesHoover",
+                                                     {uri: this.formatServiceUri(service.uri, collaboration, user)})}/>
                                         </span>}
                                     </li>
                                     <div className="service-links">
@@ -95,10 +107,12 @@ class AboutCollaboration extends React.Component {
                             )}
                         </ul>
                     </div>}
+                    {services.length === 0 &&
                     <div className="services">
-                        {(services.length === 0 && !isJoinRequest) && <h1>{I18n.t("models.collaboration.noServices")}</h1>}
+                        {(services.length === 0 && !isJoinRequest) &&
+                        <h1>{I18n.t("models.collaboration.noServices")}</h1>}
                         {isJoinRequest && <h1>{I18n.t("models.collaboration.noServicesJoinRequest")}</h1>}
-                    </div>
+                    </div>}
                     {showMembers &&
                     <div className="members">
                         <div className="members-header">

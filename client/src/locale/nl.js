@@ -853,7 +853,8 @@ I18n.translations.nl = {
         identity_typeTooltip: "De primaire manier om bij deze deze dienst te identificeren.",
         uri: "URL van de dienst",
         uriPlaceholder: "De URI van de dienst",
-        uriTooltip: "URI waarop deze dienst te bereiken is",
+        uriTooltip: "URL waarop de dienst bereikbaar is. Wordt duidelijk getoond aan leden van samenwerkingen.<br/><br/>" +
+            "Deze variabelen worden vervangen door de corresponderende waarden: <em>{CO_short_name}</em> en <em>{username}</em>.",
         privacy_policy: "Privacybeleid URL",
         privacy_policyPlaceholder: "De URL van het privacybeleid van deze dienst",
         privacy_policyTooltip: "De wet vereist een privacybeleid voor alle websites en apps die persoonlijke informatie van gebruikers verzamelen of gebruiken.",

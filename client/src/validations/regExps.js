@@ -21,3 +21,6 @@ const shirtNameRegexp = /^[0-9]*|[^a-zA-Z_0-9]+/g;
 export const sanitizeShortName = shortName => {
     return shortName ? shortName.replace(shirtNameRegexp, "").substring(0, 16).toLowerCase() : shortName;
 }
+
+export const CO_SHORT_NAME = "{co_short_name}";
+export const SRAM_USERNAME = "{username}";
