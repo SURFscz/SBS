@@ -468,6 +468,12 @@ class ServiceDetail extends React.Component {
                             </span>
 
                         </div>
+                        <div className="org-attributes">
+                            <span>{I18n.t("service.infoUri")}</span>
+                            <span>{service.uri_info ?
+                                <a href={service.uri_info} target="_blank" rel="noopener noreferrer">{service.uri_info}</a> :
+                                I18n.t("service.none")}</span>
+                        </div>
                         {service.support_email &&
                         <div className="org-attributes">
                             <span>{I18n.t("service.support_email")}</span>

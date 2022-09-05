@@ -8,15 +8,17 @@ from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint, query_param
 from server.api.ipaddress import validate_ip_networks
+from server.auth.secrets import secure_hash, generate_token, generate_ldap_password_with_hash
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
     is_organisation_admin_or_manager, is_application_admin, is_service_admin, confirm_service_admin
-from server.auth.secrets import secure_hash, generate_token, generate_ldap_password_with_hash
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, cleanse_short_name, default_expiry_date, valid_uri_attributes
 from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, \
     User, ServiceInvitation, ServiceMembership
 from server.db.models import update, save, delete
 from server.mail import mail_platform_admins, mail_service_invitation
+
+URI_ATTRIBUTES = ["uri", "uri_info", "privacy_policy", "accepted_user_policy"]
 
 service_api = Blueprint("service_api", __name__, url_prefix="/api/services")
 
@@ -274,7 +276,7 @@ def save_service():
     data = current_request.get_json()
 
     validate_ip_networks(data)
-    valid_uri_attributes(data, ["uri", "privacy_policy", "accepted_user_policy"])
+    valid_uri_attributes(data, URI_ATTRIBUTES)
     _token_validity_days(data)
 
     data["status"] = STATUS_ACTIVE
@@ -368,7 +370,7 @@ def update_service():
     confirm_service_admin(service_id)
 
     validate_ip_networks(data)
-    valid_uri_attributes(data, ["uri", "privacy_policy", "accepted_user_policy"])
+    valid_uri_attributes(data, URI_ATTRIBUTES)
     _token_validity_days(data)
     cleanse_short_name(data, "abbreviation")
     service = Service.query.filter(Service.id == service_id).one()
