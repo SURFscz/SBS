@@ -345,6 +345,7 @@ class Service(Base, db.Model, LogoMixin):
     identity_type = db.Column("identity_type", db.String(length=255), nullable=True)
     abbreviation = db.Column("abbreviation", db.String(length=255), nullable=False)
     uri = db.Column("uri", db.String(length=255), nullable=True)
+    uri_info = db.Column("uri_info", db.String(length=255), nullable=True)
     privacy_policy = db.Column("privacy_policy", db.String(length=255), nullable=False)
     accepted_user_policy = db.Column("accepted_user_policy", db.Text(), nullable=True)
     ldap_password = db.Column("ldap_password", db.String(length=255), nullable=True)

@@ -855,6 +855,9 @@ I18n.translations.en = {
         uriPlaceholder: "The URI of the service",
         uriTooltip: "URL where to reach this service, displayed prominently to collaboration members.<br/><br/>" +
             "These variables will be replaced with the appropriate values: <em>{CO_short_name}</em> and <em>{username}</em>.",
+        infoUri: "Service website",
+        infoUriPlaceholder: "The URL of information about this service",
+        infoUriTooltip: "URL of a website with information about the service",
         privacy_policy: "Privacy policy URL",
         privacy_policyPlaceholder: "The Private policy URL  of the service",
         privacy_policyTooltip: "A Privacy Policy is a legal requirement for all websites and apps that collect or use personal information from users.",

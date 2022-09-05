@@ -89,9 +89,9 @@ class ServiceOverview extends React.Component {
         ["security_email", "support_email", "email"].forEach(name => {
             invalidInputs[name] = !isEmpty(service[name]) && !validEmailRegExp.test(service[name]);
         });
-        ["accepted_user_policy", "privacy_policy", "uri"].forEach(name => {
+        ["accepted_user_policy", "uri_info", "privacy_policy", "uri"].forEach(name => {
             let serviceElement = service[name];
-            if (name === "uri") {
+            if (name === "uri" && !isEmpty(serviceElement)) {
                 serviceElement = serviceElement.toLowerCase().replaceAll(CO_SHORT_NAME, "").replaceAll(SRAM_USERNAME, "");
             }
             invalidInputs[name] = !isEmpty(serviceElement) && !validUrlRegExp.test(serviceElement);
@@ -745,6 +745,19 @@ class ServiceOverview extends React.Component {
                         onChange={this.changeServiceProperty("description")}
                         multiline={true}
                         disabled={!isAdmin && !isServiceAdmin}/>
+
+            <InputField value={service.uri_info}
+                        name={I18n.t("service.infoUri")}
+                        placeholder={I18n.t("service.infoUriPlaceholder")}
+                        onChange={e => this.changeServiceProperty("uri_info", false, alreadyExists,
+                            {...invalidInputs, uri: false})(e)}
+                        toolTip={I18n.t("service.infoUriTooltip")}
+                        error={invalidInputs.uri_info}
+                        externalLink={true}
+                        onBlur={this.validateURI("uri_info")}
+                        disabled={!isAdmin && !isServiceAdmin}/>
+            {invalidInputs.uri_info &&
+            <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
 
             <InputField value={service.uri}
                         name={I18n.t("service.uri")}
