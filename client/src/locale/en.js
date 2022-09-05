@@ -1750,19 +1750,21 @@ I18n.translations.en = {
         subTitle: "Welcome to SURF Research Access Management (SRAM). SURF Research Access Management manages access for your research collaboration.",
         unknown: "an unknown institution",
         mysterious: "mysterious guest",
-        institution: "You have logged on via <strong>{{name}}</strong>.",
+        institution: "Information in your profile was provided by <strong>{{name}}</strong>.",
         institutionNotConnected: "The organization you have logged in with, cannot create or manage collaborations.",
-        noMember: "You are not a member of a collaboration. To become a member you'll have to be invited.",
-        whatYouCanDo: "Here's what you can do:",
+        noMember: "You are not a member of a collaboration, nor an admin. If you have been invited, then please use the link from the invite email.",
+        whatYouCanDo: "",
         instructions: "Instruction from <strong>{{name}}</strong>",
         createColl: "Create your own collaboration",
-        startCreateColl: "If you want to start your own collaboration, you can create it directly.",
+        startCreateColl: "You are not a member of a collaboration, but {{name}} allows you to create your own collaboration. " +
+            "If you have been invited, then please use the link from the invite email.",
         createCollRequest: "Request your own collaboration",
-        startCreateCollRequest: "If you want to start your own collaboration, you can request it directly and the admins will check it.",
+        startCreateCollRequest: "You are not a member of a collaboration, but {{name}} allows you to request your own collaboration. An admin of {{name}} will have to approve your request. " +
+            "If you have been invited, then please use the link from the invite email.",
         createCollTxt: "Create a collaboration",
-        createCollRequestTxt: "Start a new collaboration",
-        contact: "Contact SURF Research Access Management helpdesk",
-        contactInfo: "Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> if you need help."
+        createCollRequestTxt: "Request a collaboration",
+        contact: "",
+        contactInfo: "If you were expecting more, please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for help."
     },
     feedback: {
         title: "Provide Feedback",
