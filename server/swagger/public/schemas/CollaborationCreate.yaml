@@ -13,7 +13,7 @@ properties:
   website_url:
     type: string
     format: uri
-    example: "https://service.uniharderwijk.nl/cumulusgrp"
+    example: "https://research.uniharderwijk.nl/cumulusgrp"
   disable_join_requests:
     type: boolean
     description: "If true users cannot request to become a member of this collaboration"
