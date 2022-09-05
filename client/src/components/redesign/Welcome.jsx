@@ -52,10 +52,10 @@ class Welcome extends React.Component {
             <div>
                 {hasOrgMembers && <div>
                     <h3 className={`step ${hasOnBoardingMsg ? "" : "orphan"}`}>
-                        {I18n.t(`welcome.${canCreate ? "createColl" : "createCollRequest", {name: organisation.name}}`)}
+                        {I18n.t(`welcome.${canCreate ? "createColl" : "createCollRequest"}`, {name: organisation.name})}
                     </h3>
                     <p>
-                        {I18n.t(`welcome.${canCreate ? "startCreateColl" : "startCreateCollRequest", {name: organisation.name}}`)}
+                        {I18n.t(`welcome.${canCreate ? "startCreateColl" : "startCreateCollRequest"}`, {name: organisation.name})}
                     </p>
                 </div>}
                 {hasOnBoardingMsg && <div>
