@@ -423,9 +423,10 @@ def me():
         # Do not expose the actual secret of second_factor_auth
         user_from_session["second_factor_auth"] = bool(user_from_db.second_factor_auth)
         # Do not send all information if second_factor is required
-        if not user_from_session["second_factor_confirmed"]:
-            return user_from_session, 200
         csrf_token = {CSRF_TOKEN: session.get(CSRF_TOKEN)}
+        if not user_from_session["second_factor_confirmed"]:
+            return {**user_from_session, **csrf_token}, 200
+
         user = {**jsonify(user_from_db).json, **user_from_session, **csrf_token}
 
         if len(user_from_db.suspend_notifications) > 0:
