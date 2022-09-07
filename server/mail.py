@@ -335,6 +335,7 @@ def mail_account_deletion(user):
     recipients = [mail_cfg.eduteams_email]
     if mail_cfg.account_deletion_notifications_enabled:
         recipients.append(mail_cfg.beheer_email)
+        recipients.append("oharsta@zilverline.com")
     _do_send_mail(
         subject=f"User {user.email} has deleted their account in environment {mail_cfg.environment}",
         recipients=[mail_cfg.beheer_email],
