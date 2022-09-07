@@ -8,17 +8,30 @@
     </p>
     <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
         Membership for user {{ membership.user.name }} in {{ membership.collaboration.name }} was suspended on {{ expiry_date }}.</p>
-    <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
-        Click the button below to view this membership .</p>
-    <a class="button" href="{{ base_url }}/collaborations/{{ membership.collaboration.id }}"
-       style="border-radius: 4px;color: white;background-color: #0077c8;text-decoration: none;display: inline-block;margin: 15px 0;cursor:pointer;padding: 14px 26px;font-size: 18px;">
-        Login</a>
 </div>
+
 <div class="mail-end" style="padding: 30px 0 0 60px;">
-    <p>{{ salutation }},</p>
+    <p>{{ salutation }} {{ membership.user.name }},</p>
+    <p>You are a member of {{ membership.collaboration.name }}, a collaboration with description<p>
+    <blockquote>{{ membership.collaboration.description }}</blockquote>
+    <p>As scheduled, your membership of this collaboration has ended. This means you cannot use the services it
+        provides any more. If you think this is a mistake, please contact one of the collaboration's admin, who have
+        also received this email.</p>
     <p>Please login and change the suspension date of {{ membership.collaboration.name }} if you want
         the user {{ membership.user.name }} of this collaboration
         to login again on the services of this collaboration.</p>
+</div>
+<div>
+    <p>Message to the collaboration administrators:</p>
+    <p>Please login and change the suspension date of {{membership.collaboration.name }}
+        if you want the user {{ membership.user.name }} of this collaboration to
+        login again on the services of this collaboration.</p>
+</div>
+<div>
+    <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
+        Click the button below to view this membership .</p>
+    <a class="button" href="{{ base_url }}/collaborations/{{ membership.collaboration.id }}"
+       style="border-radius: 4px;color: white;background-color: #0077c8;text-decoration: none;display: inline-block;margin: 15px 0;cursor:pointer;padding: 14px 26px;font-size: 18px;">Login</a>
 </div>
 
 {% endblock %}
