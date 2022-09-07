@@ -33,11 +33,11 @@ class AboutCollaboration extends React.Component {
     }
 
     formatServiceUri = (serviceUri, collaboration, user) => {
-        const addAdd = serviceUri.indexOf("@") === -1;
         if (serviceUri.indexOf(CO_SHORT_NAME) > -1) {
-            return serviceUri.replace(CO_SHORT_NAME, collaboration.short_name + (addAdd? "@" : ""));
-        } else if (serviceUri.indexOf(SRAM_USERNAME) > -1) {
-            return serviceUri.replace(SRAM_USERNAME, user.username + (addAdd? "@" : ""));
+            serviceUri = serviceUri.replace(CO_SHORT_NAME, collaboration.short_name);
+        }
+        if (serviceUri.indexOf(SRAM_USERNAME) > -1) {
+            serviceUri = serviceUri.replace(SRAM_USERNAME, user.username);
         }
         return serviceUri;
     }
