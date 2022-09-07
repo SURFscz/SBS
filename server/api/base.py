@@ -149,6 +149,8 @@ def json_endpoint(f):
         except Exception as e:
             if isinstance(e, Forbidden) and "You don't have the permission" in e.description:
                 e.description = f"Forbidden 403: {current_request.url}. IP: {current_request.remote_addr}"
+            elif isinstance(e, Unauthorized) and "The server could not verify" in e.description:
+                e.description = f"Unauthorized 401: {current_request.url}. IP: {current_request.remote_addr}"
             elif hasattr(e, "description"):
                 e.description = f"{e.__class__.__name__}: {current_request.url}." \
                                 f" IP: {current_request.remote_addr}. " + e.description
