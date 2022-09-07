@@ -9,9 +9,8 @@ Membership for user {{ membership.user.name }} in {{ membership.collaboration.na
 
 {{ salutation }} {{ membership.user.name }},
 
-You are a member of {{ membership.collaboration.name }}, a
-collaboration with description
-{{ membership.collaboration.description }}
+You are a member of {{ membership.collaboration.name }}, a collaboration with description
+  {{ membership.collaboration.description }}
 
 As scheduled, your membership of this collaboration has ended. This
 means you cannot use the services it provides any more. If you think
