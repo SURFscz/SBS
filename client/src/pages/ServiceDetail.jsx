@@ -441,7 +441,7 @@ class ServiceDetail extends React.Component {
 
                 <UnitHeader obj={service}
                             mayEdit={user.admin || isUserServiceAdmin(user, service)}
-                            history={user.admin && this.props.history && !showServiceAdminView}
+                            history={user.admin && !showServiceAdminView && this.props.history}
                             auditLogPath={`services/${service.id}`}
                             breadcrumbName={I18n.t("breadcrumb.service", {name: service.name})}
                             name={service.name}

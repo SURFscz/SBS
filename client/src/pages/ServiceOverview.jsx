@@ -75,14 +75,13 @@ class ServiceOverview extends React.Component {
                 } else {
                     Promise.all(ip_networks.map(n => ipNetworks(n.network_value, n.id)))
                         .then(res => {
-                            this.setState({"service": {...this.state.service, "ip_networks": res}});
+                            const currentService = this.state.service;
+                            this.setState({"service": {...currentService, "ip_networks": res}});
                         });
                 }
             });
         })
     };
-
-    mockEvent = value => ({target: {value: value}})
 
     validateService = (service, callback) => {
         const invalidInputs = {};
@@ -295,7 +294,8 @@ class ServiceOverview extends React.Component {
             Object.keys(invalidInputs).some(key => invalidInputs[key]);
         const contactEmailRequired = !hasAdministrators && isEmpty(contact_email);
         const invalidIpNetworks = ip_networks.some(ipNetwork => ipNetwork.error || (ipNetwork.version === 6 && !ipNetwork.global));
-        return !inValid && !contactEmailRequired && !invalidIpNetworks;
+        const valid = !inValid && !contactEmailRequired && !invalidIpNetworks;
+        return valid;
     };
 
     isValidTab = tab => {
@@ -698,7 +698,7 @@ class ServiceOverview extends React.Component {
     renderGeneral = (service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs) => {
         return <>
             <InputField value={service.name}
-                        onChange={this.changeServiceProperty("name", false, {alreadyExists, name: false})}
+                        onChange={this.changeServiceProperty("name", false, {...alreadyExists, name: false})}
                         placeholder={I18n.t("service.namePlaceHolder")}
                         onBlur={this.validateServiceName}
                         error={alreadyExists.name}
@@ -722,7 +722,7 @@ class ServiceOverview extends React.Component {
 
             <InputField value={service.abbreviation}
                         onChange={this.changeServiceProperty("abbreviation", false, {
-                            alreadyExists, abbreviation: false
+                            ...alreadyExists, abbreviation: false
                         })}
                         placeholder={I18n.t("service.abbreviationPlaceHolder")}
                         onBlur={this.validateServiceAbbreviation}
