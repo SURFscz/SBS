@@ -335,10 +335,9 @@ def mail_account_deletion(user):
     recipients = [mail_cfg.eduteams_email]
     if mail_cfg.account_deletion_notifications_enabled:
         recipients.append(mail_cfg.beheer_email)
-        recipients.append("oharsta@zilverline.com")
     _do_send_mail(
         subject=f"User {user.email} has deleted their account in environment {mail_cfg.environment}",
-        recipients=[mail_cfg.beheer_email],
+        recipients=recipients,
         template="user_account_deleted",
         context={"environment": mail_cfg.environment,
                  "date": datetime.datetime.now(),
@@ -355,7 +354,7 @@ def mail_suspended_account_deletion(user):
         recipients.append(mail_cfg.beheer_email)
     _do_send_mail(
         subject=f"User {user.email} suspended account is deleted in environment {mail_cfg.environment}",
-        recipients=[mail_cfg.beheer_email],
+        recipients=recipients,
         template="suspended_user_account_deleted",
         context={"environment": mail_cfg.environment,
                  "date": datetime.datetime.now(),
