@@ -6,13 +6,24 @@ Membership suspended notification
 
 Membership for user {{ membership.user.name }} in {{ membership.collaboration.name }} was suspended on {{ expiry_date }}.
 
-Click the link below to view this membership.</p>
+
+{{ salutation }} {{ membership.user.name }},
+
+You are a member of {{ membership.collaboration.name }}, a
+collaboration with description
+{{ membership.collaboration.description }}
+
+As scheduled, your membership of this collaboration has ended. This
+means you cannot use the services it provides any more. If you think
+this is a mistake, please contact one of the collaboration's admin, who
+have also received this email.
+
+
+Message to the collaboration administrators:
+    Please login and change the suspension date of {{membership.collaboration.name }}
+    if you want the user {{ membership.user.name }} of this collaboration to
+    login again on the services of this collaboration.
 
 {{ base_url }}/collaborations/{{ membership.collaboration.id }}
-
-{{ salutation }},
-Please login and change the suspension date of {{ membership.collaboration.name }} if you want
-the user {{ membership.user.name }} of this collaboration
-to login again on the services of this collaboration.
 
 {% endblock %}
