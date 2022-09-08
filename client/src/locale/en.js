@@ -851,9 +851,9 @@ I18n.translations.en = {
         identity_type: "Identity type",
         identity_typePlaceholder: "The identity type of the service",
         identity_typeTooltip: "The primary way of identification for this service",
-        uri: "Service URL",
-        uriPlaceholder: "The URI of the service",
-        uriTooltip: "URL where to reach this service, displayed prominently to collaboration members.<br/><br/>" +
+        uri: "Service login URL",
+        uriPlaceholder: "The URL where user login to the service",
+        uriTooltip: "URL where users can login to your service, displayed prominently to collaboration members.<br/><br/>" +
             "These variables will be replaced with the appropriate values: <em>{CO_short_name}</em> and <em>{username}</em>.",
         infoUri: "Service website",
         infoUriPlaceholder: "The URL of information about this service",
