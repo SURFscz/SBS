@@ -837,7 +837,7 @@ I18n.translations.en = {
         namePlaceHolder: "The unique name of the service",
         entity_id: "Entity ID",
         entity_idPlaceHolder: "The unique entity ID of the service",
-        entity_idTooltip: "The unique entity ID of the service links it to the identity proxy",
+        entity_idTooltip: "The SAML EntityID or OIDC client_id which uniquely identifies your service and links it to the identity proxy",
         abbreviation: "Short name",
         abbreviationPlaceHolder: "The short name of this service",
         abbreviationTooltip: "The short name of the service is used as a prefix for groups provisioned by this service's service groups",
