@@ -837,7 +837,7 @@ I18n.translations.nl = {
         namePlaceHolder: "De unieke naam van de dienst",
         entity_id: "Entity ID",
         entity_idPlaceHolder: "De unieke entity ID van de dienst",
-        entity_idTooltip: "De unieke entity ID van de dienst koppelt deze aan de identity proxy",
+        entity_idTooltip: "De SAML EntityID of OIDC client_id die het unieke kenmerk van je dienst is en deze koppelt aan de identity proxy",
         abbreviation: "Korte naam",
         abbreviationPlaceHolder: "De korte naam van de dienst",
         abbreviationTooltip: "De korte naam van een dienst wordt gebruikt als prefix voor groepen aangemaakt door de dienstgroepen van deze dienst",
