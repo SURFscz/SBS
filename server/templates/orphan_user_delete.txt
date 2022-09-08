@@ -1,11 +1,12 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SRAM account deleted{% endblock %}
+{% block title %}Your profile in SURF Research Access Management was deleted{% endblock %}
 {% block content %}
 
 {{ salutation }},
-We noticed an account was created in the SURF Research Access Management service. But we haven't noticed any
-follow up activity that signals us the account is necessary. In order to protect your privacy and make sure
-we don't store personal information we don't need, we have deleted the account. If you think we shouldn't
-have done this, please let us know by sending an email to sram-support@surf.nl .
+We noticed you created a profile in the SURF Research Access Management service. But it seems like you
+are not using it. To protect your privacy we do not want to store personal information we don't need,
+and we have deleted the profile. If you still need to use SURF Research Access Management, simply login
+again.
+If you think we shouldn't have done this, please let us know on sram-support@surf.nl.
 
 {% endblock %}
