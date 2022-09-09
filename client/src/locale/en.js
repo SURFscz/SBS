@@ -279,7 +279,7 @@ I18n.translations.en = {
             awaitingApproval: "Connection awaiting approval",
             automaticConnectionAllowed: "Collaborations can connect without approval",
             requiredByOrganisation: "Enabled by organisation",
-            memberServiceRequest: "Member service connection request",
+            memberServiceRequest: "Service connection request by a member",
             removeFromCO: "Disconnect from collaboration",
             deleteConnectionRequest: "Delete connection request",
             resendConnectionRequest: "Resend connection request",
