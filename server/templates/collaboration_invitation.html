@@ -16,7 +16,7 @@
                 {{ message | safe }}
             </p>
         {% endif %}
-        <div style="display: block">
+        <div style="display: flex">
             <img style="max-height: 200px;max-width: 200px;border-radius: 8px;margin-right: 25px"
                  src="{{ organisation_img_link }}" alt="{{ collaboration.name }}">
 
@@ -29,8 +29,8 @@
                 <div style="margin-bottom: auto">
                     <a class="button" href="{{ base_url }}/invitations/accept/{{ invitation.hash }}"
                        style="border-radius: 4px;color: white;background-color: #0077c8;text-decoration: none;display: inline-block;margin: 0;cursor:pointer;padding: 18px 22px;font-size: 20px;max-width: 200px;">
-                        Join this collaboration</a>
-                    <p style="font-size: 13px;margin: 5px 0 0 0">You can also click the following link:
+                        Join this collaboration<sup>*</sup></a>
+                    <p style="font-size: 13px;margin: 8px 0 0 0"><sup>*</sup>You can also click the following link:
                         <a href="{{ base_url }}/invitations/accept/{{ invitation.hash }}">{{ base_url }}/invitations/accept</a>
                     </p>
                 </div>
