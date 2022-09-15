@@ -1978,12 +1978,11 @@ I18n.translations.nl = {
     },
     pamWebSSO: {
         title: "Log in op {{service}}",
-        info: "Log in voor de op de op de command line interface gevraagde pin.",
+        info: "Log in voor de verificatiecode die gevraagd wordt op de command line interface.",
         proceed: "Login",
-        enterPin: "Pin invoeren",
-        loggedIn: "Je bent succesvol ingelogd.",
-        enterPinInfo: "Voer de pin in op de command line interface van {{service}}.",
-        afterPin: "Na het invoeren van de pin kan dit scherm worden gesloten.",
+        enterPin: "Je verificatiecode",
+        enterPinInfo: "Voer de code in op de command line interface van {{service}}.",
+        afterPin: "Na het invoeren van de code kan dit scherm worden gesloten.",
         denied: "Toegang geweigerd",
         deniedInfo: "Helaas heb je geen toegang tot de deze dienst.",
         contact: "Neem contact op met <a href='mailto:{{support}}'>{{support}}</a> voor toegang tot deze dienst."
