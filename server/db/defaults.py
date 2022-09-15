@@ -11,6 +11,12 @@ STATUS_ACTIVE = "active"
 STATUS_EXPIRED = "expired"
 STATUS_SUSPENDED = "suspended"
 
+SBS_LOGIN = "sbs_login"
+PROXY_AUTHZ = "proxy_authz"
+PROXY_AUTHZ_SBS = "proxy_authz_sbs"
+PAM_WEB_LOGIN = "pam_web_login"
+USER_TOKEN_INTROSPECT = "user_token_introspect"
+
 
 def default_expiry_date(json_dict=None):
     if json_dict is not None and "expiry_date" in json_dict:
