@@ -1752,7 +1752,7 @@ I18n.translations.en = {
         mysterious: "mysterious guest",
         institution: "Information in your profile was provided by <strong>{{name}}</strong>.",
         institutionNotConnected: "The organization you have logged in with, cannot create or manage collaborations.",
-        noMember: "You are not a member of a collaboration, nor an admin. If you have been invited, then please use the link from the invite email.",
+        noMember: "You are neither a member of a collaboration, nor an admin. If you have been invited, then please use the link from the invite email.",
         whatYouCanDo: "",
         instructions: "Instruction from <strong>{{name}}</strong>",
         createColl: "Create your own collaboration",
