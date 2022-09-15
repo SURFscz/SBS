@@ -92,7 +92,7 @@ I18n.translations.en = {
             serviceOrganisations: "Organisations ({{count}})",
             serviceCollaborations: "Collaborations ({{count}})",
             userTokens: "Tokens ({{count}})",
-            collaborationRequests: "Collaboration requests",
+            collaborationRequests: "Requests",
             joinRequests: "Join requests ({{count}})",
             serviceConnectionRequests: "Connection requests",
             me: "Profile",
