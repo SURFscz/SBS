@@ -686,10 +686,14 @@ class PamSSOSession(Base, db.Model):
 class UserLogin(Base, db.Model):
     __tablename__ = "user_logins"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
-    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    login_type = db.Column("login_type", db.String(length=255), nullable=False)
+    succeeded = db.Column("succeeded", db.Boolean(), nullable=False, default=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     user = db.relationship("User")
-    service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
+    user_uid = db.Column("user_uid", db.String(length=512), nullable=True)
+    service_id = db.Column(db.Integer(), db.ForeignKey("services.id", ondelete="SET NULL"), nullable=True)
     service = db.relationship("Service")
+    service_entity_id = db.Column("service_entity_id", db.String(length=512), nullable=True)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 

@@ -30,9 +30,10 @@ from server.auth.ssid import AUTHN_REQUEST_ID, saml_auth, redirect_to_surf_secur
 from server.auth.user_claims import add_user_claims
 from server.cron.user_suspending import create_suspend_notification
 from server.db.db import db
-from server.db.defaults import full_text_search_autocomplete_limit
+from server.db.defaults import full_text_search_autocomplete_limit, SBS_LOGIN
 from server.db.domain import User, OrganisationMembership, CollaborationMembership, JoinRequest, CollaborationRequest, \
     UserNameHistory, SshKey, Organisation, Collaboration, Service, ServiceMembership, ServiceAup, UserIpNetwork
+from server.db.models import log_user_login
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error, mail_account_deletion
 
@@ -369,6 +370,9 @@ def _redirect_to_client(cfg, second_factor_confirmed, user):
         location = cfg.base_url
 
     logger.debug(f"Redirecting user {user.uid} to {location}")
+
+    log_user_login(SBS_LOGIN, True, user, user.uid, None, None)
+
     return redirect(location)
 
 

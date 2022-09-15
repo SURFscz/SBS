@@ -12,7 +12,9 @@ from server.api.service import user_service
 from server.auth.security import current_user_id
 from server.auth.tokens import validate_service_token
 from server.db.db import db
+from server.db.defaults import PAM_WEB_LOGIN
 from server.db.domain import User, PamSSOSession
+from server.db.models import log_user_login
 from server.logger.context_logger import ctx_logger
 
 pam_websso_api = Blueprint("pam_weblogin_api", __name__, url_prefix="/pam-weblogin")
@@ -78,12 +80,16 @@ def start():
 
     user = User.query.filter_by(**filters).first()
     if not user:
+        log_user_login(PAM_WEB_LOGIN, False, None, user_id, service, service.entity_id)
+
         logger.debug(f"PamWebSSO access to service {service.name} denied (user not found): {data}")
         raise NotFound(f"User {filters} not found")
 
     # The user validations expect a logged in user
     session["user"] = {"id": user.id, "admin": False}
     if not user_service(service.id, False):
+        log_user_login(PAM_WEB_LOGIN, False, user, user.uid, service, service.entity_id)
+
         logger.debug(f"PamWebSSO access to service {service.name} denied (no CO access): {data}")
         raise NotFound(f"User {filters} access denied")
 
@@ -94,6 +100,8 @@ def start():
     pam_last_login_date = user.pam_last_login_date
     seconds_ago = datetime.now() - timedelta(hours=0, minutes=0, seconds=cache_duration)
     if pam_last_login_date and pam_last_login_date > seconds_ago:
+        log_user_login(PAM_WEB_LOGIN, True, user, user.uid, service, service.entity_id)
+
         logger.debug(f"PamWebSSO user {user.uid} SSO results")
         return {"result": "OK", "cached": True,
                 "info": f"User {user.uid} login was cached"}, 201
@@ -103,7 +111,6 @@ def start():
     db.session.add(pam_sso_session)
 
     logger.debug(f"PamWebSSO user {user.uid} new session")
-
     return {"result": "OK",
             "session_id": pam_sso_session.session_id,
             "challenge": f"Please sign in to: {current_app.app_config.base_url}/"
@@ -133,6 +140,7 @@ def check_pin():
         user.pam_last_login_date = datetime.now()
         db.session.merge(user)
 
-    logger.debug(f"PamWebSSO check-pin for service {service.name} for user {user.uid} with result {validation}")
+    log_user_login(PAM_WEB_LOGIN, True, user, user.uid, service, service.entity_id)
 
+    logger.debug(f"PamWebSSO check-pin for service {service.name} for user {user.uid} with result {validation}")
     return validation, 201
