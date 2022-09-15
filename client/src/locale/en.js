@@ -1978,12 +1978,11 @@ I18n.translations.en = {
     },
     pamWebSSO: {
         title: "Login to {{service}}",
-        info: "Login to get the PIN required for the command line interface",
+        info: "Login to get the verfication code required for the command line interface",
         proceed: "Login",
-        enterPin: "Enter PIN",
-        loggedIn: "You have successfully logged in.",
-        enterPinInfo: "Please enter the PIN to the command line interface of {{service}}.",
-        afterPin: "After entering the PIN, it is safe to close this screen.",
+        enterPin: "Your verification code",
+        enterPinInfo: "Please enter this code in the command line interface of {{service}}.",
+        afterPin: "After entering the code you can close this screen.",
         denied: "Permission denied",
         deniedInfo: "Unfortunately, you don't have access to this service.",
         contact: "Please contact <a href='mailto:{{support}}'>{{support}}</a> to arrange access to this service."

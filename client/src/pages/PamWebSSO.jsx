@@ -91,14 +91,13 @@ class PamWebSSO extends React.Component {
         return (
             <div className="success">
                 <h1>{I18n.t("pamWebSSO.enterPin")}</h1>
-                <p className={"info"}>{I18n.t("pamWebSSO.loggedIn")}</p>
-                <p>{I18n.t("pamWebSSO.enterPinInfo", {service: service.name})}</p>
                 <div className="pin-value">
                     <div className="pin-value-inner">
                         <span className="value">{pin}</span>
                         <ClipBoardCopy transparentBackground={true} txt={pin}/>
                     </div>
                 </div>
+                <p>{I18n.t("pamWebSSO.enterPinInfo", {service: service.name})}</p>
                 <p className={"info"}>{I18n.t("pamWebSSO.afterPin")}</p>
             </div>
         );
