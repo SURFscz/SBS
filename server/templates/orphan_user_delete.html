@@ -1,23 +1,17 @@
 {% extends "mail_layout.html" %}
-{% block title %}Your profile in SURF Research Access Management was deleted{% endblock %}
+{% block title %}Orphaned users in SURF Research Access Management are deleted{% endblock %}
 {% block content %}
 
-    <div class="mail-head" style="background-color: #f5f5f5;padding: 30px 0 20px 60px;">
-        <p class="title" style="font-weight: 600;font-size: 38px;line-height: 38px; margin: 0;">
-            Your profile in SURF Research Access Management was deleted
-        </p>
-        <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
-            Because it seems like you don't need it</p>
-    </div>
-    <div class="mail-end" style="padding: 30px 0 0 60px;">
-        <p>{{ salutation }},</p>
-        <p>We noticed you created a profile in the SURF Research Access Management service. But it seems like you
-            are not using it. To protect your privacy we do not want to store personal information we don't need,
-            and we have deleted the profile. If you still need to use SURF Research Access Management, simply login
-            again.
-            If you think we shouldn't have done this, please let us know on sram-support@surf.nl.
-        </p>
-    </div>
+    <p>Hi,</p>
+    <p>The following orphaned users have been removed from SRAM in environment {{ environment }}.
+        Please delete them from the MMS.</p>
+    <ul>
+        {% for user in users %}
+            <li>{{ user.uid }}</li>
+        {% endfor %}
+    </ul>
+    <p>This email is automatically sent and can be suppressed by changing the <i>orphan_users.enabled</i> section
+        of the configuration for environment {{ environment }}</p>
 
 {% endblock %}
 

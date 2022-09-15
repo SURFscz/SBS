@@ -21,7 +21,7 @@ from server.mail_types.mail_types import COLLABORATION_REQUEST_MAIL, \
     RESET_MFA_TOKEN_MAIL, COLLABORATION_EXPIRES_WARNING_MAIL, \
     COLLABORATION_EXPIRED_NOTIFICATION_MAIL, COLLABORATION_SUSPENDED_NOTIFICATION_MAIL, \
     COLLABORATION_SUSPENSION_WARNING_MAIL, MEMBERSHIP_EXPIRED_NOTIFICATION_MAIL, MEMBERSHIP_EXPIRES_WARNING_MAIL, \
-    SERVICE_INVITATION_MAIL, ORPHAN_USER_DELETED_MAIL
+    SERVICE_INVITATION_MAIL
 
 
 def _send_async_email(ctx, msg, mail):
@@ -58,7 +58,7 @@ def _user_attributes(user: User):
     }
 
 
-def _do_send_mail(subject, recipients, template, context, preview, working_outside_of_request_context=False):
+def _do_send_mail(subject, recipients, template, context, preview, working_outside_of_request_context=False, cc=None):
     recipients = recipients if isinstance(recipients, list) else list(
         map(lambda x: x.strip(), recipients.split(",")))
 
@@ -66,6 +66,7 @@ def _do_send_mail(subject, recipients, template, context, preview, working_outsi
     msg = Message(subject=subject,
                   sender=(mail_ctx.get("sender_name", "SURF"), mail_ctx.get("sender_email", "no-reply@surf.nl")),
                   recipients=recipients,
+                  cc=cc,
                   extra_headers={
                       "Auto-submitted": "auto-generated",
                       "X-Auto-Response-Suppress": "yes",
@@ -441,13 +442,15 @@ def mail_membership_expires_notification(membership, is_warning):
     )
 
 
-def mail_membership_orphan_user_deleted(user):
-    _store_mail(user, ORPHAN_USER_DELETED_MAIL, user.email)
+def mail_membership_orphan_users_deleted(users):
+    mail_cfg = current_app.app_config.mail
     _do_send_mail(
         subject="Account SRAM deleted",
-        recipients=[user.email],
+        recipients=[mail_cfg.eduteams_email],
+        cc=[mail_cfg.beheer_email],
         template="orphan_user_delete",
-        context={"salutation": f"Dear {user.name}",
+        context={"environment": mail_cfg.environment,
+                 "users": users,
                  "base_url": current_app.app_config.base_url},
         preview=False,
         working_outside_of_request_context=True
