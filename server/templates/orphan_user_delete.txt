@@ -1,12 +1,18 @@
 {% extends "mail_layout.txt" %}
-{% block title %}Your profile in SURF Research Access Management was deleted{% endblock %}
+{% block title %}Orphaned users in SURF Research Access Management are deleted{% endblock %}
 {% block content %}
 
-{{ salutation }},
-We noticed you created a profile in the SURF Research Access Management service. But it seems like you
-are not using it. To protect your privacy we do not want to store personal information we don't need,
-and we have deleted the profile. If you still need to use SURF Research Access Management, simply login
-again.
-If you think we shouldn't have done this, please let us know on sram-support@surf.nl.
+Hi,
+The following users have been removed from SRAM in environment {{ environment }}.
+Please delete them from the MMS.
+
+    {% for user in users %}
+        {{ user.uid }}
+    {% endfor %}
+
+This email is automatically sent and can be suppressed by changing the orphan_users.enabled section
+of the configuration for environment {{ environment }}
 
 {% endblock %}
+
+
