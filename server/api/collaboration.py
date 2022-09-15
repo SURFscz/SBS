@@ -1,4 +1,6 @@
 # -*- coding: future_fstrings -*-
+import base64
+import urllib
 import uuid
 from datetime import datetime, timedelta
 
@@ -11,11 +13,11 @@ from werkzeug.exceptions import BadRequest, Forbidden
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.api.service_group import create_service_groups
+from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_collaboration_member, \
     confirm_authorized_api_call, \
     confirm_allow_impersonation, confirm_organisation_admin_or_manager, confirm_external_api_call, \
     is_organisation_admin_or_manager, is_application_admin
-from server.auth.secrets import generate_token
 from server.db.db import db
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name, \
     STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED, valid_uri_attributes
@@ -68,7 +70,7 @@ def collaboration_by_identifier():
 
     collaboration = Collaboration.query \
         .options(selectinload(Collaboration.groups)) \
-        .options(selectinload(Collaboration.collaboration_memberships))\
+        .options(selectinload(Collaboration.collaboration_memberships)) \
         .filter(Collaboration.identifier == identifier) \
         .one()
 
@@ -400,8 +402,12 @@ def save_collaboration_api():
     user = admins[0].user if len(admins) > 0 else User.query.filter(
         User.uid == current_app.app_config.admin_users[0].uid).one()
     data["organisation_id"] = organisation.id
-
-    if "logo" not in data:
+    logo = data.get("logo")
+    if logo and logo.startswith("http"):
+        res = urllib.request.urlopen(logo)
+        if res.status == 200:
+            data["logo"] = base64.encodebytes(res.read()).decode("utf-8")
+    elif not logo:
         data["logo"] = next(db.engine.execute(text(f"SELECT logo FROM organisations where id = {organisation.id}")))[0]
 
     missing = [req for req in required if req not in data]

@@ -2,6 +2,7 @@
 import datetime
 import json
 import time
+import urllib
 
 from sqlalchemy import text
 
@@ -492,6 +493,27 @@ class TestCollaboration(AbstractTest):
 
         count = Invitation.query.filter(Invitation.collaboration_id == collaboration.id).count()
         self.assertEqual(2, count)
+
+    def test_api_call_with_logo_url(self):
+        response = self.client.post("/api/collaborations/v1",
+                                    headers={"Authorization": f"Bearer {uuc_secret}"},
+                                    data=json.dumps({
+                                        "name": "new_collaboration",
+                                        "description": "new_collaboration",
+                                        "administrators": ["the@ex.org", "that@ex.org"],
+                                        "short_name": "new_short_name",
+                                        "disable_join_requests": True,
+                                        "disclose_member_information": True,
+                                        "disclose_email_information": True,
+                                        "logo": "https://static.surfconext.nl/media/idp/eduid.png"
+                                    }),
+                                    content_type="application/json")
+        self.assertEqual(201, response.status_code)
+
+        collaboration = self.find_entity_by_name(Collaboration, "new_collaboration")
+        raw_logo = collaboration.raw_logo()
+        urllib.request.urlopen("https://static.surfconext.nl/media/idp/eduid.png")
+        self.assertFalse(raw_logo.startswith("http"))
 
     def test_api_call_without_logo(self):
         response = self.client.post("/api/collaborations/v1",
