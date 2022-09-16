@@ -56,11 +56,15 @@ def _do_service_connection_request(hash_value, approved):
 
 def _do_mail_request(collaboration, service, service_connection_request, is_admin, user):
     recipients = []
+    cc = None
     if is_admin:
-        if service.contact_email:
+        recipients += [service_membership.user.email for service_membership in service.service_memberships]
+        if recipients:
+            cc = [service.contact_email] if service.contact_email else None
+        elif service.contact_email:
             recipients.append(service.contact_email)
         else:
-            recipients += [service_membership.user.email for service_membership in service.service_memberships]
+            recipients.append(User.query.filter(User.uid == current_app.app_config.admin_users[0].uid).one().email)
     else:
         for membership in collaboration.collaboration_memberships:
             if membership.role == "admin":
@@ -73,7 +77,7 @@ def _do_mail_request(collaboration, service, service_connection_request, is_admi
                    "service": service,
                    "collaboration": collaboration,
                    "user": user}
-        mail_service_connection_request(context, service.name, collaboration.name, recipients, is_admin)
+        mail_service_connection_request(context, service.name, collaboration.name, recipients, is_admin, cc)
 
 
 @service_connection_request_api.route("/by_service/<service_id>", methods=["GET"], strict_slashes=False)

@@ -29,7 +29,7 @@ def _send_async_email(ctx, msg, mail):
         mail.send(msg)
 
 
-def _open_mail_in_browser(html):
+def _open_mail_in_browser(msg):
     import tempfile
     import webbrowser
 
@@ -37,7 +37,7 @@ def _open_mail_in_browser(html):
     path = tmp.name + ".html"
 
     f = open(path, "w")
-    f.write(html)
+    f.write(msg.html)
     f.close()
     webbrowser.open("file://" + path)
 
@@ -92,7 +92,7 @@ def _do_send_mail(subject, recipients, template, context, preview, working_outsi
         logger.info(f"Sending mail {msg.html}")
 
     if open_mail_in_browser and not preview:
-        _open_mail_in_browser(msg.html)
+        _open_mail_in_browser(msg)
     return msg.html
 
 
@@ -233,13 +233,15 @@ def mail_accepted_declined_collaboration_request(context, collaboration_name, or
     )
 
 
-def mail_service_connection_request(context, service_name, collaboration_name, recipients, is_admin, preview=False):
+def mail_service_connection_request(context, service_name, collaboration_name, recipients, is_admin, cc=None,
+                                    preview=False):
     if not preview:
         _store_mail(context["user"], SERVICE_CONNECTION_REQUEST_MAIL, recipients)
     template = "service_connection_request" if is_admin else "service_connection_request_collaboration_admin"
     return _do_send_mail(
         subject=f"Request for new service {service_name} connection to collaboration {collaboration_name}",
         recipients=recipients,
+        cc=cc,
         template=template,
         context=context,
         preview=preview

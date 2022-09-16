@@ -253,7 +253,7 @@ class TestService(AbstractTest):
     def test_services_mine(self):
         self.login("urn:service_admin")
         services = self.get("/api/services/mine", with_basic_auth=False)
-        self.assertEqual(2, len(services))
+        self.assertEqual(3, len(services))
 
         service_storage = self.find_by_name(services, service_storage_name)
         self.assertEqual(0, service_storage["organisations_count"])

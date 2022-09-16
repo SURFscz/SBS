@@ -348,7 +348,9 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     service_membership_james = ServiceMembership(role="admin", user=james, service=cloud)
     service_membership_service_admin_1 = ServiceMembership(role="admin", user=service_admin, service=storage)
     service_membership_service_admin_2 = ServiceMembership(role="admin", user=service_admin, service=network)
-    _persist(db, service_membership_james, service_membership_service_admin_1, service_membership_service_admin_2)
+    service_membership_wiki = ServiceMembership(role="admin", user=service_admin, service=wiki)
+    _persist(db, service_membership_james, service_membership_service_admin_1, service_membership_service_admin_2,
+             service_membership_wiki)
 
     service_group_mail = ServiceGroup(name=service_group_mail_name,
                                       short_name="mail",
