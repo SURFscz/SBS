@@ -27,14 +27,14 @@ def _service_connection_request_query():
         .options(contains_eager(ServiceConnectionRequest.requester))
 
 
-def _service_connection_request_by_hash(hash):
+def _service_connection_request_by_hash(hash_value):
     return _service_connection_request_query() \
-        .filter(ServiceConnectionRequest.hash == hash) \
+        .filter(ServiceConnectionRequest.hash == hash_value) \
         .one()
 
 
-def _do_service_connection_request(hash, approved):
-    service_connection_request = _service_connection_request_by_hash(hash)
+def _do_service_connection_request(hash_value, approved):
+    service_connection_request = _service_connection_request_by_hash(hash_value)
     service = service_connection_request.service
     collaboration = service_connection_request.collaboration
 
@@ -133,22 +133,22 @@ def request_new_service_connection(collaboration, message, is_admin, service, us
     _do_mail_request(collaboration, service, service_connection_request, is_admin, user)
 
 
-@service_connection_request_api.route("/find_by_hash/<hash>", strict_slashes=False)
+@service_connection_request_api.route("/find_by_hash/<hash_value>", strict_slashes=False)
 @json_endpoint
-def service_connection_request_by_hash(hash):
-    return _service_connection_request_by_hash(hash), 200
+def service_connection_request_by_hash(hash_value):
+    return _service_connection_request_by_hash(hash_value), 200
 
 
-@service_connection_request_api.route("/approve/<hash>", methods=["PUT"], strict_slashes=False)
+@service_connection_request_api.route("/approve/<hash_value>", methods=["PUT"], strict_slashes=False)
 @json_endpoint
-def approve_service_connection_request(hash):
-    return _do_service_connection_request(hash, True)
+def approve_service_connection_request(hash_value):
+    return _do_service_connection_request(hash_value, True)
 
 
-@service_connection_request_api.route("/deny/<hash>", methods=["PUT"], strict_slashes=False)
+@service_connection_request_api.route("/deny/<hash_value>", methods=["PUT"], strict_slashes=False)
 @json_endpoint
-def deny_service_connection_request(hash):
-    return _do_service_connection_request(hash, False)
+def deny_service_connection_request(hash_value):
+    return _do_service_connection_request(hash_value, False)
 
 
 @service_connection_request_api.route("/resend/<service_connection_request_id>", strict_slashes=False)
@@ -159,6 +159,7 @@ def resend_service_connection_request(service_connection_request_id):
     collaboration = service_connection_request.collaboration
 
     confirm_collaboration_admin(collaboration.id)
+
     user = User.query.get(current_user_id())
     _do_mail_request(collaboration, service, service_connection_request, True, user)
     return {}, 200
