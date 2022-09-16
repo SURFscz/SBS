@@ -35,7 +35,7 @@ class OrganisationServices extends React.Component {
         const {organisation} = this.props;
         allServices().then(services => {
             services.forEach(service => {
-                service.enabled = organisation.services.some(s => s.id === service.id);
+                service.disabled = !organisation.services.some(s => s.id === service.id);
             });
             this.setState({services: services, loading: false});
         });
@@ -158,7 +158,7 @@ class OrganisationServices extends React.Component {
                           modelName="servicesUsed"
                           tableClassName="organisationServicesUsed"
                           searchAttributes={["name"]}
-                          defaultSort="enabled"
+                          defaultSort="disabled"
                           columns={columns}
                           loading={loading}
                           title={titleUsed}
