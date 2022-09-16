@@ -34,8 +34,8 @@ def add_collaborations_services():
 
     organisation = Organisation.query.get(organisation_id)
 
-    if organisation.services_restricted:
-        confirm_write_access()
+    if organisation.services_restricted and not service.white_listed:
+        raise BadRequest("SURG org can only connect SURF services")
 
     organisation.services.append(service)
     db.session.merge(organisation)

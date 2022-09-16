@@ -48,7 +48,8 @@ def store_user_in_session(user, second_factor_confirmed, user_accepted_aup):
         "email": user.email
     }
     session["user"] = {**session_data, **res}
-    session[CSRF_TOKEN] = generate_token()
+    if CSRF_TOKEN not in session:
+        session[CSRF_TOKEN] = generate_token()
 
 
 def decode_jwt_token(token):

@@ -1304,7 +1304,6 @@ I18n.translations.nl = {
         notAllowedOrganisation: "Deze dienst kan niet worden verplicht voor alle samenwerkingen omdat deze dienst automatische verbindingen niet toestaat. Aansluitingen kunnen nog steeds worden aangevraagd door individuele samenwerkingen in je organisatie.",
         notEnabledOrganisation: "Deze dienst kan niet worden verplicht voor alle samenwerkingen omdat deze dienst toegang voor deze organisatie niet toestaat.",
         serviceRestrictedOrganisation: "Deze dienst kan niet worden verplicht voor alle samenwerkingen omdat deze organisatie alleen SURF-diensten mag koppelen.",
-        serviceRestrictedOrganisationAdded: "Deze dienst is verplicht voor alle samenwerkingen en omdat deze organisatie alleen SURF-diensten mag koppelen kan dit niet worden uitgeschakeld.",
         flash: {
             added: "{{service}} is toegevoegd aan organisatie {{name}}.",
             deleted: "{{service}} is onbeschikbaar gemaakt voor organisatie {{name}}.",
