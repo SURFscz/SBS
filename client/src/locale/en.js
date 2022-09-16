@@ -1303,8 +1303,7 @@ I18n.translations.en = {
         deleteServiceTooltip: "Make this service unavailable in the organisation {{name}}. <strong>Note</strong>: the service itself is NOT deleted. It is only not available anymore for the members of the collaborations on this organisation",
         notAllowedOrganisation: "This service cannot be enabled for all collaborations, because it does not allow automatic connections. Connections can still be requested by individual collaborations in your organisation.",
         notEnabledOrganisation: "This service cannot be enabled for all collaborations, because the service does not allow access for this organisation.",
-        serviceRestrictedOrganisation: "This service cannot be made mandatory for all collaborations, because this organisation can only link SURF services.",
-        serviceRestrictedOrganisationAdded: "This service is mandatory for all collaborations, and cannot be disabled because this is a SURF organisation.",
+        serviceRestrictedOrganisation: "This service cannot be en mandatory for all collaborations, because this organisation can only link SURF services.",
         flash: {
             added: "Added service {{service}} to organisation {{name}}",
             deleted: "Deleted service {{service}} from organisation {{name}}"

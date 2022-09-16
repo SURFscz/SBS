@@ -25,7 +25,7 @@ class TestOrganisationsServices(AbstractTest):
 
     def test_add_organisations_services_restricted(self):
         self.mark_organisation_service_restricted(self.find_entity_by_name(Organisation, uuc_name).id)
-        self._do_add_organisations_services(uuc_name, service_wireless_name, response_status_code=403, user="urn:mary")
+        self._do_add_organisations_services(uuc_name, service_wireless_name, response_status_code=400, user="urn:mary")
 
     def test_add_organisations_services_not_allowed_organisation(self):
         res = self._do_add_organisations_services(uuc_name, service_ssh_uva_name, response_status_code=400)

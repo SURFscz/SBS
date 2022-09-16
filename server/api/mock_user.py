@@ -39,5 +39,6 @@ def login_user():
         "second_factor_confirmed": True
     }
     session["user"] = {**session_data, **res}
-    session[CSRF_TOKEN] = generate_token()
+    if CSRF_TOKEN not in session:
+        session[CSRF_TOKEN] = generate_token()
     return None, 201
