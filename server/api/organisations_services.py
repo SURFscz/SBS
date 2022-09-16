@@ -53,9 +53,6 @@ def delete_organisations_services(organisation_id, service_id):
 
     organisation = Organisation.query.get(organisation_id)
 
-    if organisation.services_restricted:
-        confirm_write_access()
-
     organisation.services.remove(Service.query.get(service_id))
     db.session.merge(organisation)
 

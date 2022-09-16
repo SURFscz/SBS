@@ -55,15 +55,3 @@ class TestOrganisationsServices(AbstractTest):
         self.assertEqual(204, response.status_code)
         uuc = self.find_entity_by_name(Organisation, uuc_name)
         self.assertEqual(1, len(uuc.services))
-
-    def test_delete_organisations_services_restricted(self):
-        uuc = self.find_entity_by_name(Organisation, uuc_name)
-        uuc_id = uuc.id
-        services_id = uuc.services[0].id
-
-        self.mark_organisation_service_restricted(uuc_id)
-
-        self.login("urn:mary")
-        self.delete(f"api/organisations_services/{uuc_id}/{services_id}",
-                    with_basic_auth=False,
-                    response_status_code=403)
