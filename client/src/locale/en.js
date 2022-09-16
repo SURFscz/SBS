@@ -1676,7 +1676,7 @@ I18n.translations.en = {
         memberships_expired: "Memberships expired",
         memberships_warned: "Membership users warned",
         runDbStatsInfo: "Database table counts",
-        userLoginInfo: "User login summary (only proxy-authz)",
+        userLoginInfo: "Login counts per type",
         runDbStats: "Fetch",
         name: "Table name",
         count: "Nbr of records",
@@ -1700,11 +1700,10 @@ I18n.translations.en = {
             activate: "Activate"
         },
         userlogins: {
+            loginType: "Type",
             total: "Logins",
-            users: "Unique users",
-            services: "Unique services",
-            metric: "Metric",
-            nbr: "#"
+            succeeded: "Succeeded",
+            failed: "Failed",
         }
     },
     access: {

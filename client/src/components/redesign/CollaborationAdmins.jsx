@@ -4,7 +4,9 @@ import Entities from "./Entities";
 import {ReactComponent as UserIcon} from "../../icons/users.svg";
 import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
 import {ReactComponent as InviteIcon} from "../../icons/single-neutral-question.svg";
-import {ReactComponent as HandIcon} from "../../icons/toys-hand-ghost.svg";
+import {ReactComponent as HandIcon} from "../../icons/puppet_new.svg";
+import {ReactComponent as EmailIcon} from "../../icons/email_new.svg";
+import {ReactComponent as ThrashIcon} from "../../icons/trash_new.svg";
 import CheckBox from "../CheckBox";
 import {
     deleteCollaborationMembership,
@@ -382,7 +384,7 @@ class CollaborationAdmins extends React.Component {
             <div className="admin-icons">
                 <div data-tip data-for={`delete-member-${entity.id}`}
                      onClick={() => this.removeFromActionIcon(entity.id, entity.invite, true)}>
-                    <FontAwesomeIcon icon="trash"/>
+                    <ThrashIcon/>
                     <ReactTooltip id={`delete-member-${entity.id}`} type="light" effect="solid" data-html={true}
                                   place="bottom">
                         <span
@@ -397,7 +399,7 @@ class CollaborationAdmins extends React.Component {
                     <div data-tip data-for={`mail-member-${entity.id}`}>
                         <a href={`mailto:${bcc}${hrefValue}`}
                            rel="noopener noreferrer">
-                            <FontAwesomeIcon icon="envelope"/>
+                            <EmailIcon/>
                         </a>
                         <ReactTooltip id={`mail-member-${entity.id}`} type="light" effect="solid" data-html={true}
                                       place="bottom">
@@ -438,7 +440,7 @@ class CollaborationAdmins extends React.Component {
                 {(any && isAdminOfCollaboration && !disabled) &&
                 <div data-tip data-for="delete-members">
                     <Button onClick={this.remove(true)} txt={I18n.t("models.orgMembers.remove")}
-                            icon={<FontAwesomeIcon icon="trash"/>}/>
+                            icon={<ThrashIcon/>}/>
                     <ReactTooltip id="delete-members" type="light" effect="solid" data-html={true}
                                   place="bottom">
                         <span

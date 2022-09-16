@@ -3,7 +3,7 @@ import I18n from "i18n-js";
 import Entities from "./Entities";
 import {ReactComponent as UserIcon} from "../../icons/users.svg";
 import {ReactComponent as InviteIcon} from "../../icons/single-neutral-question.svg";
-import {ReactComponent as HandIcon} from "../../icons/toys-hand-ghost.svg";
+import {ReactComponent as HandIcon} from "../../icons/puppet_new.svg";
 import CheckBox from "../CheckBox";
 import {deleteServiceMembership, serviceInvitationBulkResend, serviceInvitationDelete} from "../../api";
 import {setFlash} from "../../utils/Flash";
@@ -78,7 +78,7 @@ class ServiceAdmins extends React.Component {
         const nbrAdminsRemoved = Object.values(selectedMembers)
             .filter(sr => sr.selected && !sr.ref.invite && sr.ref.role === "admin").length;
         const currentUserDeleted = Object.values(selectedMembers)
-                .some(sr => sr.selected && !sr.ref.invite && sr.ref.user.id === currentUser.id);
+            .some(sr => sr.selected && !sr.ref.invite && sr.ref.user.id === currentUser.id);
 
         const lastAdminWarning = nbrAdmins === nbrAdminsRemoved;
         const lastAdminWarningUser = lastAdminWarning && currentUserDeleted;

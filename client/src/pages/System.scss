@@ -98,6 +98,39 @@
 
                 }
             }
+
+            table.table-logins {
+
+                th {
+                    &.type {
+                        width: 50%;
+                    }
+
+                    &.total {
+                        width: 15%;
+                        text-align: center;
+                    }
+
+                    &.succeeded {
+                        width: 15%;
+                        text-align: center;
+                    }
+
+                    &.failed {
+                        width: 15%;
+                        text-align: center;
+                    }
+
+                }
+
+                tbody tr td {
+                    &.count, &.succeeded, &.failed {
+                        text-align: center;
+                    }
+
+                }
+
+            }
         }
 
         .search-activity {

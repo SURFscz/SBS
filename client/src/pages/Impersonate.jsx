@@ -14,7 +14,7 @@ import ImpersonateExplanation from "../components/explanations/Impersonate";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
-import {ReactComponent as HandIcon} from "../icons/toys-hand-ghost-orange.svg";
+import {ReactComponent as HandIcon} from "../icons/puppet_new.svg";
 import SpinnerField from "../components/redesign/SpinnerField";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import {emitImpersonation} from "../utils/Impersonation";
