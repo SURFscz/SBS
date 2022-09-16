@@ -3,7 +3,8 @@ import I18n from "i18n-js";
 import Entities from "./Entities";
 import {ReactComponent as UserIcon} from "../../icons/users.svg";
 import {ReactComponent as InviteIcon} from "../../icons/single-neutral-question.svg";
-import {ReactComponent as HandIcon} from "../../icons/toys-hand-ghost.svg";
+import {ReactComponent as HandIcon} from "../../icons/puppet_new.svg";
+import {ReactComponent as ThrashIcon} from "../../icons/trash_new.svg";
 import CheckBox from "../CheckBox";
 import {
     deleteOrganisationMembership,
@@ -305,13 +306,13 @@ class OrganisationAdmins extends React.Component {
         const noMoreAdminsToCheck = (selectedAdmins + 1) === nbrOfAdmins;
 
         const showDelete = entity.invite || entity.role === "manager" || (!oneAdminLeft &&
-                        (!noMoreAdminsToCheck || selectedMembers[this.getIdentifier(entity)].selected));
+            (!noMoreAdminsToCheck || selectedMembers[this.getIdentifier(entity)].selected));
         return (
             <div className="admin-icons">
                 {showDelete &&
                 <div data-tip data-for={`delete-org-member-${entity.id}`}
                      onClick={() => this.removeFromActionIcon(entity.id, entity.invite, true)}>
-                    <FontAwesomeIcon icon="trash"/>
+                    <ThrashIcon/>
                     <ReactTooltip id={`delete-org-member-${entity.id}`} type="light" effect="solid" data-html={true}
                                   place="bottom">
                         <span dangerouslySetInnerHTML={{

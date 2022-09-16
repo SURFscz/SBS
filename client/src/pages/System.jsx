@@ -63,7 +63,7 @@ class System extends React.Component {
             outstandingRequests: {},
             cleanedRequests: {},
             databaseStats: [],
-            userLoginStats: {c: "", cs: "", cu: ""},
+            userLoginStats: [],
             cronJobs: [],
             seedResult: null,
             confirmationDialogOpen: false,
@@ -861,26 +861,20 @@ class System extends React.Component {
 
     renderUserLoginResults = userLoginStats => {
         return (<div className="results">
-            <table className="table-counts">
+            <table className="table-counts table-logins">
                 <thead>
                 <tr>
-                    <th>{I18n.t("system.userlogins.metric")}</th>
-                    <th>{I18n.t("system.userlogins.nbr")}</th>
+                    <th className={"type"}>{I18n.t("system.userlogins.loginType")}</th>
+                    <th className={"total"}>{I18n.t("system.userlogins.total")}</th>
+                    <th className={"succeeded"}>{I18n.t("system.userlogins.succeeded")}</th>
+                    <th className={"failed"}>{I18n.t("system.userlogins.failed")}</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>{I18n.t("system.userlogins.total")}</td>
-                    <td>{userLoginStats.c}</td>
-                </tr>
-                <tr>
-                    <td>{I18n.t("system.userlogins.users")}</td>
-                    <td>{userLoginStats.cu}</td>
-                </tr>
-                <tr>
-                    <td>{I18n.t("system.userlogins.services")}</td>
-                    <td>{userLoginStats.cs}</td>
-                </tr>
+                {userLoginStats.map((stat, i) => <tr key={i}>
+                    {["login_type","count", "succeeded","failed"].map(col => <td className={col}>{stat[col]}</td>)}
+                </tr>)}
+
                 </tbody>
             </table>
         </div>)

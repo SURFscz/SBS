@@ -135,12 +135,13 @@ def check_pin():
 
     user = pam_sso_session.user
     validation = _validate_pam_sso_session(pam_sso_session, pin, True, False)
-    if validation["result"] == "SUCCESS":
+    success = validation["result"] == "SUCCESS"
+    if success:
         db.session.delete(pam_sso_session)
         user.pam_last_login_date = datetime.now()
         db.session.merge(user)
 
-    log_user_login(PAM_WEB_LOGIN, True, user, user.uid, service, service.entity_id)
+    log_user_login(PAM_WEB_LOGIN, success, user, user.uid, service, service.entity_id)
 
     logger.debug(f"PamWebSSO check-pin for service {service.name} for user {user.uid} with result {validation}")
     return validation, 201

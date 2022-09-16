@@ -1700,11 +1700,10 @@ I18n.translations.nl = {
             activate: "Activeer"
         },
         userlogins: {
+            loginType: "Type",
             total: "Logins",
-            users: "Unieke gebruikers",
-            services: "Unieke diensten",
-            metric: "Metriek",
-            nbr: "#"
+            succeeded: "Succeeded",
+            failed: "Failed",
         }
     },
     access: {
