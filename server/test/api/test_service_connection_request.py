@@ -1,4 +1,5 @@
 # -*- coding: future_fstrings -*-
+from server.db.db import db
 from server.db.domain import Collaboration, Service, ServiceConnectionRequest
 from server.test.abstract_test import AbstractTest
 from server.test.seed import ssh_service_connection_request_hash, sarah_name, uva_research_name, service_wiki_name, \
@@ -39,7 +40,28 @@ class TestServiceConnectionRequest(AbstractTest):
 
             mail_msg = outbox[0]
             self.assertEqual("Request for new service Wiki connection to collaboration AI computing", mail_msg.subject)
-            self.assertEqual(["help@wiki.com"], mail_msg.recipients)
+            self.assertEqual(["service_admin@ucc.org"], mail_msg.recipients)
+            self.assertEqual(["help@wiki.com"], mail_msg.cc)
+
+    def test_service_connection_request_with_no_admins(self):
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        service = self.find_entity_by_name(Service, service_wiki_name)
+        service.contact_email = None
+        service.service_memberships = []
+        db.session.merge(service)
+        db.session.commit()
+
+        self.login("urn:admin")
+        data = {
+            "collaboration_id": collaboration.id,
+            "service_id": service.id,
+            "message": "Pretty please"
+        }
+        with self.app.mail.record_messages() as outbox:
+            self.post("/api/service_connection_requests", body=data, with_basic_auth=False)
+            mail_msg = outbox[0]
+            self.assertEqual(["john@example.org"], mail_msg.recipients)
+            self.assertEqual(0, len(mail_msg.cc))
 
     def test_service_connection_request_by_admin_email_admin(self):
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
