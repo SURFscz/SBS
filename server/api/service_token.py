@@ -1,6 +1,7 @@
 # -*- coding: future_fstrings -*-
 
-from flask import Blueprint, request as current_request
+from flask import Blueprint, request as current_request, session
+from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint
 from server.auth.secrets import generate_token, hash_secret_key
@@ -14,7 +15,9 @@ service_token_api = Blueprint("service_token_api", __name__, url_prefix="/api/se
 @service_token_api.route("/", strict_slashes=False)
 @json_endpoint
 def generate_service_token():
-    return {"value": generate_token()}, 200
+    hashed_token = generate_token()
+    session["hashed_token"] = hashed_token
+    return {"value": hashed_token}, 200
 
 
 @service_token_api.route("/", methods=["POST"], strict_slashes=False)
@@ -22,6 +25,9 @@ def generate_service_token():
 def save_service_token():
     data = current_request.get_json()
     confirm_service_admin(data["service_id"])
+    hashed_token = session.get("hashed_token")
+    if not hashed_token or hashed_token != data["hashed_token"]:
+        raise Forbidden("Tampering with generated hashed_token is not allowed")
     data = hash_secret_key(data, "hashed_token")
     return save(ServiceToken, custom_json=data)
 
