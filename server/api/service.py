@@ -8,13 +8,13 @@ from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint, query_param
 from server.api.ipaddress import validate_ip_networks
-from server.auth.secrets import secure_hash, generate_token, generate_ldap_password_with_hash
+from server.auth.secrets import generate_token, generate_ldap_password_with_hash
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
     is_organisation_admin_or_manager, is_application_admin, is_service_admin, confirm_service_admin
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, cleanse_short_name, default_expiry_date, valid_uri_attributes
 from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, \
-    User, ServiceInvitation, ServiceMembership
+    User, ServiceInvitation, ServiceMembership, ServiceToken
 from server.db.models import update, save, delete
 from server.mail import mail_platform_admins, mail_service_invitation
 
@@ -232,6 +232,7 @@ def service_by_id(service_id):
             .options(selectinload(Service.service_invitations)) \
             .options(selectinload(Service.allowed_organisations)) \
             .options(selectinload(Service.ip_networks)) \
+            .options(selectinload(Service.service_tokens)) \
             .options(selectinload(Service.service_groups))
         service = query.filter(Service.id == service_id).one()
         res = jsonify(service).json
@@ -385,14 +386,13 @@ def update_service():
         del data["ldap_password"]
 
     if is_application_admin():
-        token_enabled = data["token_enabled"] and service.token_enabled
-        pam_web_sso_enabled = data["pam_web_sso_enabled"] and service.pam_web_sso_enabled
-        if token_enabled or pam_web_sso_enabled:
-            del data["hashed_token"]
-        if not data["token_enabled"] and not data["pam_web_sso_enabled"]:
-            data["hashed_token"] = None
+        token_enabled = data["token_enabled"]
+        pam_web_sso_enabled = data["pam_web_sso_enabled"]
+        if not token_enabled and not pam_web_sso_enabled:
+            ServiceToken.query.filter(ServiceToken.service_id == service_id).delete()
     else:
-        del data["hashed_token"]
+        data["token_enabled"] = service.token_enabled
+        data["pam_web_sso_enabled"] = service.pam_web_sso_enabled
 
     res = update(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]
@@ -464,14 +464,3 @@ def reset_ldap_password(service_id):
     service.ldap_password = hashed
     db.session.merge(service)
     return {"ldap_password": password}, 200
-
-
-@service_api.route("/reset_token_value/<service_id>", strict_slashes=False)
-@json_endpoint
-def reset_token_value(service_id):
-    confirm_service_admin(service_id)
-    service = Service.query.get(service_id)
-    token = generate_token()
-    service.hashed_token = secure_hash(token)
-    db.session.merge(service)
-    return {"token_value": token}, 200

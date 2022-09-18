@@ -29,15 +29,15 @@ from server.mail import mail_collaboration_invitation
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
 
 
-def _del_non_disclosure_info(collaboration, json_collaboration, allow_admins=False, force=False):
+def _del_non_disclosure_info(collaboration, json_collaboration):
     for cm in json_collaboration["collaboration_memberships"]:
-        if force or (not collaboration.disclose_email_information and not cm["role"] == "admin" and allow_admins):
+        if not collaboration.disclose_email_information and not cm["role"] == "admin":
             del cm["user"]["email"]
-        if force or (not collaboration.disclose_member_information and not cm["role"] == "admin" and allow_admins):
+        if not collaboration.disclose_member_information and not cm["role"] == "admin":
             del cm["user"]
-    if "groups" in json_collaboration["groups"]:
+    if "groups" in json_collaboration:
         for gr in json_collaboration["groups"]:
-            _del_non_disclosure_info(collaboration, gr, allow_admins=False, force=force)
+            _del_non_disclosure_info(collaboration, gr)
 
 
 def _reconcile_tags(collaboration: Collaboration, tags):
@@ -239,7 +239,7 @@ def collaboration_lite_by_id(collaboration_id):
 
     if not collaboration.disclose_member_information or not collaboration.disclose_email_information:
         json_collaboration = jsonify(collaboration).json
-        _del_non_disclosure_info(collaboration, json_collaboration, allow_admins=True)
+        _del_non_disclosure_info(collaboration, json_collaboration)
         return json_collaboration, 200
 
     return collaboration, 200

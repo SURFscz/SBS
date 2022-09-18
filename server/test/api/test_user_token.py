@@ -76,7 +76,7 @@ class TestUserToken(AbstractTest):
     def test_create_user_token_for_other(self):
         sarah = self.find_entity_by_name(User, sarah_name)
         self.login("urn:james")
-        user_token = {"user_id": sarah.id}
+        user_token = {"user_id": sarah.id, "hashed_token": self._get_token()}
         self.post("/api/user_tokens", body=user_token, response_status_code=403)
 
     def test_create_user_token_service_not_token_enabled(self):

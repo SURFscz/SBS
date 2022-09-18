@@ -6,7 +6,8 @@ from server.db.audit_mixin import ACTION_DELETE, ACTION_CREATE, ACTION_UPDATE
 from server.db.domain import User, Collaboration, Service, Organisation, Group
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_cloud_name, ai_computing_name, \
-    service_mail_name, invitation_hash_curious, organisation_invitation_hash, uuc_name, group_science_name, sarah_name
+    service_mail_name, invitation_hash_curious, organisation_invitation_hash, uuc_name, group_science_name, sarah_name, \
+    james_name
 
 
 class TestAuditLog(AbstractTest):
@@ -21,6 +22,12 @@ class TestAuditLog(AbstractTest):
         res = self.get("/api/audit_logs/me", with_basic_auth=False)
 
         self.assertEqual(ACTION_UPDATE, res["audit_logs"][0]["action"])
+
+    def test_me_impersonation(self):
+        self.login("urn:john")
+        user_id = self.find_entity_by_name(User, james_name).id
+        res = self.get("/api/audit_logs/me", with_basic_auth=False, headers={"X-IMPERSONATE-ID": str(user_id)})
+        self.assertEqual(2, len(res))
 
     def test_other_(self):
         sarah = self.find_entity_by_name(User, sarah_name)
