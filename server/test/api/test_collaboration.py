@@ -427,6 +427,17 @@ class TestCollaboration(AbstractTest):
         collaboration = self.get(f"/api/collaborations/lite/{collaboration_id}")
         self.assertEqual(ai_computing_name, collaboration["name"])
 
+    def test_collaboration_lite_by_id_disclose_no_group_memberships(self):
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        collaboration.disclose_email_information = False
+        collaboration.disclose_member_information = False
+        db.session.merge(collaboration)
+        db.session.commit()
+
+        self.login("urn:jane")
+        collaboration = self.get(f"/api/collaborations/lite/{collaboration.id}")
+        self.assertIsNone(collaboration["groups"][0]["collaboration_memberships"][0].get("user"))
+
     def test_collaboration_lite_no_member(self):
         collaboration_id = self._find_by_identifier()["id"]
         self.login("urn:roger")

@@ -10,6 +10,7 @@ from server.db.audit_mixin import Base, metadata
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE
 from server.db.logo_mixin import LogoMixin
+from server.db.secret_mixin import SecretMixin
 
 
 def gen_uuid4():
@@ -333,6 +334,19 @@ class ServiceMembership(Base, db.Model):
                            nullable=False)
 
 
+class ServiceToken(Base, db.Model, SecretMixin):
+    __tablename__ = "service_tokens"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    hashed_token = db.Column("hashed_token", db.String(length=512), nullable=False)
+    description = db.Column("description", db.Text(), nullable=True)
+    service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
+    service = db.relationship("Service", back_populates="service_tokens")
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
+
+
 class Service(Base, db.Model, LogoMixin):
     __tablename__ = "services"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
@@ -364,7 +378,6 @@ class Service(Base, db.Model, LogoMixin):
     code_of_conduct_compliant = db.Column("code_of_conduct_compliant", db.Boolean(), nullable=True, default=False)
     sirtfi_compliant = db.Column("sirtfi_compliant", db.Boolean(), nullable=True, default=False)
     token_enabled = db.Column("token_enabled", db.Boolean(), nullable=True, default=False)
-    hashed_token = db.Column("hashed_token", db.String(length=255), nullable=True, default=None)
     token_validity_days = db.Column("token_validity_days", db.Integer(), nullable=True, default=0)
     pam_web_sso_enabled = db.Column("pam_web_sso_enabled", db.Boolean(), nullable=True, default=False)
     collaborations = db.relationship("Collaboration", secondary=services_collaborations_association, lazy="select",
@@ -385,6 +398,9 @@ class Service(Base, db.Model, LogoMixin):
                                    passive_deletes=True)
     user_tokens = db.relationship("UserToken", back_populates="service", cascade="all, delete-orphan",
                                   passive_deletes=True)
+    service_tokens = db.relationship("ServiceToken", back_populates="service",
+                                     cascade="delete, delete-orphan",
+                                     passive_deletes=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
@@ -475,7 +491,7 @@ class OrganisationInvitation(Base, db.Model):
             raise ValueError(f"{role} is not valid. Valid roles are admin and manager")
 
 
-class ApiKey(Base, db.Model):
+class ApiKey(Base, db.Model, SecretMixin):
     __tablename__ = "api_keys"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     hashed_secret = db.Column("hashed_secret", db.String(length=512), nullable=False)
@@ -640,7 +656,7 @@ class ServiceAup(Base, db.Model):
                           nullable=False)
 
 
-class UserToken(Base, db.Model):
+class UserToken(Base, db.Model, SecretMixin):
     __tablename__ = "user_tokens"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     name = db.Column("name", db.String(length=255), nullable=False)

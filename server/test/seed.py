@@ -13,7 +13,7 @@ from server.db.defaults import default_expiry_date
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
     CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey, CollaborationRequest, \
     ServiceConnectionRequest, SuspendNotification, Aup, SchacHomeOrganisation, SshKey, ServiceGroup, ServiceInvitation, \
-    ServiceMembership, ServiceAup, UserToken, UserIpNetwork, Tag, PamSSOSession, IpNetwork
+    ServiceMembership, ServiceAup, UserToken, UserIpNetwork, Tag, PamSSOSession, IpNetwork, ServiceToken
 
 collaboration_request_name = "New Collaboration"
 
@@ -44,6 +44,7 @@ service_cloud_token = generate_token()
 network_cloud_token = generate_token()
 service_storage_token = generate_token()
 wiki_cloud_token = generate_token()
+
 sarah_user_token = generate_token()
 
 collaboration_ai_computing_uuid = str(uuid.uuid4())
@@ -280,12 +281,12 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     cloud = Service(entity_id=service_cloud_entity_id, name=service_cloud_name, description="SARA Cloud Service",
                     public_visible=True, automatic_connection_allowed=True, logo=read_image("cloud.jpg"),
                     allowed_organisations=[uuc, uva], abbreviation="cloud", privacy_policy="https://privacy.org",
-                    token_enabled=True, hashed_token=secure_hash(service_cloud_token), token_validity_days=1)
+                    token_enabled=True, token_validity_days=1)
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, uva],
                       description="SURF Storage Service", logo=read_image("storage.jpeg"), abbreviation="storage",
                       public_visible=True, automatic_connection_allowed=True, white_listed=True,
                       uri="https://storage.net", support_email="support@storage.net",
-                      pam_web_sso_enabled=True, hashed_token=secure_hash(service_storage_token),
+                      pam_web_sso_enabled=True,
                       accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org")
     wiki = Service(entity_id=service_wiki_entity_id, name=service_wiki_name, description="No more wiki's please",
                    uri="https://wiki.surfnet.nl/display/SCZ/Collaboration+Management+System+%28Dutch%3A+"
@@ -296,17 +297,17 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                    accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org",
                    ldap_password="$6$rounds=100000$bFyBZD0Fim7BCAqt$BSq4u2IqhyT2khkCMILpaEceMnvYIKvxyxttA8."
                                  "IddqWdPB.AEH2MBb1sggk8pDlrW/Xb00f8xa67cC0nfkuX.",
-                   token_enabled=True, hashed_token=secure_hash(wiki_cloud_token), token_validity_days=365)
+                   token_enabled=True, token_validity_days=365)
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
                       description="Network enabling service SSH access", address="Some address",
-                      uri="https://uri", identity_type="SSH KEY", accepted_user_policy="https://aup",
+                      uri="https://uri.net", identity_type="SSH KEY", accepted_user_policy="https://aup.org",
                       contact_email="help@network.com", logo=read_image("network.jpeg"),
                       public_visible=False, automatic_connection_allowed=True, abbreviation="network",
                       allowed_organisations=[uuc], privacy_policy="https://privacy.org",
-                      token_enabled=True, hashed_token=secure_hash(network_cloud_token), token_validity_days=365)
+                      token_enabled=True, token_validity_days=365)
     service_ssh_uva = Service(entity_id="service_ssh_uva", name=service_ssh_uva_name,
                               description="Uva SSH access",
-                              uri="https://uri/ssh", identity_type="SSH KEY", accepted_user_policy="https://ssh",
+                              uri="https://uri.com/ssh", identity_type="SSH KEY", accepted_user_policy="https://ssh",
                               contact_email="help@ssh.com", logo=read_image("ssh_uva.png"),
                               public_visible=False, automatic_connection_allowed=False, abbreviation="service_ssh",
                               allowed_organisations=[uva], research_scholarship_compliant=True,
@@ -331,6 +332,16 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                       )
 
     _persist(db, mail, wireless, cloud, storage, wiki, network, service_ssh_uva, uuc_scheduler, demo_sp)
+
+    service_token_cloud = ServiceToken(hashed_token=secure_hash(service_cloud_token), description="Cloud token",
+                                       service=cloud)
+    service_token_storage = ServiceToken(hashed_token=secure_hash(service_storage_token), description="Storage token",
+                                         service=storage)
+    service_token_wiki = ServiceToken(hashed_token=secure_hash(wiki_cloud_token), description="Wiki token",
+                                      service=wiki)
+    service_token_network = ServiceToken(hashed_token=secure_hash(network_cloud_token), description="Network token",
+                                         service=network)
+    _persist(db, service_token_cloud, service_token_storage, service_token_wiki, service_token_network)
 
     service_invitation_cloud = ServiceInvitation(message="Please join", hash=service_invitation_hash,
                                                  expiry_date=datetime.date.today() + datetime.timedelta(days=14),
