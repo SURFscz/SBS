@@ -28,3 +28,9 @@ class TestServiceToken(AbstractTest):
         self.delete("/api/service_tokens", primary_key=service_token["id"])
         post_count = ServiceToken.query.count()
         self.assertEqual(pre_count, post_count)
+
+    def test_service_token_tampering(self):
+        service = self.find_entity_by_name(Service, service_network_name)
+        self.login("urn:john")
+        self.post("/api/service_tokens", body={"service_id": service.id, "hashed_token": "secret"},
+                  with_basic_auth=False, response_status_code=403)

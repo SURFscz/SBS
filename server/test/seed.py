@@ -272,21 +272,21 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     mail = Service(entity_id=service_mail_entity_id, name=service_mail_name, contact_email=john.email,
                    public_visible=True, automatic_connection_allowed=True, logo=read_image("email.jpeg"),
                    accepted_user_policy="https://google.nl", allowed_organisations=[uuc, uva], abbreviation="mail",
-                   privacy_policy="https://privacy.org")
+                   privacy_policy="https://privacy.org", security_email="sec@org.nl")
     wireless = Service(entity_id="https://wireless", name=service_wireless_name, description="Network Wireless Service",
                        public_visible=True, automatic_connection_allowed=True, contact_email=john.email,
                        logo=read_image("wireless.png"), accepted_user_policy="https://google.nl", abbreviation="wire",
                        allowed_organisations=[uuc, uva], uri="https://wireless", non_member_users_access_allowed=True,
-                       privacy_policy="https://privacy.org")
+                       privacy_policy="https://privacy.org", security_email="sec@org.nl")
     cloud = Service(entity_id=service_cloud_entity_id, name=service_cloud_name, description="SARA Cloud Service",
                     public_visible=True, automatic_connection_allowed=True, logo=read_image("cloud.jpg"),
                     allowed_organisations=[uuc, uva], abbreviation="cloud", privacy_policy="https://privacy.org",
-                    token_enabled=True, token_validity_days=1)
+                    token_enabled=True, token_validity_days=1, security_email="sec@org.nl")
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, uva],
                       description="SURF Storage Service", logo=read_image("storage.jpeg"), abbreviation="storage",
                       public_visible=True, automatic_connection_allowed=True, white_listed=True,
                       uri="https://storage.net", support_email="support@storage.net",
-                      pam_web_sso_enabled=True,
+                      pam_web_sso_enabled=True, security_email="sec@org.nl",
                       accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org")
     wiki = Service(entity_id=service_wiki_entity_id, name=service_wiki_name, description="No more wiki's please",
                    uri="https://wiki.surfnet.nl/display/SCZ/Collaboration+Management+System+%28Dutch%3A+"
@@ -297,14 +297,14 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                    accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org",
                    ldap_password="$6$rounds=100000$bFyBZD0Fim7BCAqt$BSq4u2IqhyT2khkCMILpaEceMnvYIKvxyxttA8."
                                  "IddqWdPB.AEH2MBb1sggk8pDlrW/Xb00f8xa67cC0nfkuX.",
-                   token_enabled=True, token_validity_days=365)
+                   token_enabled=True, token_validity_days=365, security_email="sec@org.nl")
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
                       description="Network enabling service SSH access", address="Some address",
                       uri="https://uri.net", identity_type="SSH KEY", accepted_user_policy="https://aup.org",
                       contact_email="help@network.com", logo=read_image("network.jpeg"),
                       public_visible=False, automatic_connection_allowed=True, abbreviation="network",
                       allowed_organisations=[uuc], privacy_policy="https://privacy.org",
-                      token_enabled=True, token_validity_days=365)
+                      token_enabled=True, token_validity_days=365, security_email="sec@org.nl")
     service_ssh_uva = Service(entity_id="service_ssh_uva", name=service_ssh_uva_name,
                               description="Uva SSH access",
                               uri="https://uri.com/ssh", identity_type="SSH KEY", accepted_user_policy="https://ssh",
@@ -312,13 +312,13 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                               public_visible=False, automatic_connection_allowed=False, abbreviation="service_ssh",
                               allowed_organisations=[uva], research_scholarship_compliant=True,
                               code_of_conduct_compliant=True, sirtfi_compliant=True,
-                              privacy_policy="https://privacy.org")
+                              privacy_policy="https://privacy.org", security_email="sec@org.nl")
 
     uuc_scheduler = Service(entity_id=uuc_scheduler_entity_id, name=uuc_scheduler_name,
                             accepted_user_policy="https://google.nl", abbreviation="uuc_scheduler",
                             description="UUC Scheduler Service", logo=read_image("scheduler_uuc.jpeg"),
                             public_visible=True, automatic_connection_allowed=False, allowed_organisations=[uuc],
-                            privacy_policy="https://privacy.org")
+                            privacy_policy="https://privacy.org", security_email="sec@org.nl")
 
     demo_sp = Service(entity_id="https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/test",
                       name="SRAM Demo SP", abbreviation="sram_demosp", description="Generic SRAM demo sp",

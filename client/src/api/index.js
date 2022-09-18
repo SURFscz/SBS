@@ -250,11 +250,6 @@ export function resetLdapPassword(service) {
     return fetchJson(`/api/services/reset_ldap_password/${service.id}`);
 }
 
-export function resetTokenValue(service) {
-    return fetchJson(`/api/services/reset_token_value/${service.id}`);
-}
-
-
 //Collaborations
 export function collaborationByIdentifier(identifier) {
     return fetchJson(`/api/collaborations/find_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
@@ -861,4 +856,18 @@ export function tagsByOrganisation(organisationId) {
 export function pamWebSSOSession(serviceAbbreviation, sessionId) {
     return fetchJson(`/pam-weblogin/${serviceAbbreviation}/${sessionId}`, {}, {}, false)
 }
+
+//ServiceTokens
+export function serviceTokenValue() {
+    return fetchJson(`/api/service_tokens`);
+}
+
+export function createServiceToken(serviceToken) {
+    return postPutJson("/api/service_tokens", serviceToken, "post");
+}
+
+export function deleteServiceToken(id) {
+    return fetchDelete(`/api/service_tokens/${id}`)
+}
+
 

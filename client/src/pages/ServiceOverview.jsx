@@ -32,6 +32,9 @@ import CroppedImageField from "../components/redesign/CroppedImageField";
 import SpinnerField from "../components/redesign/SpinnerField";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import DOMPurify from "dompurify";
+import Entities from "../components/redesign/Entities";
+import {isUserAllowed, ROLES} from "../utils/UserRole";
+import ApiKeysExplanation from "../components/explanations/ApiKeys";
 
 class ServiceOverview extends React.Component {
 
@@ -387,6 +390,13 @@ class ServiceOverview extends React.Component {
         this.setState({alreadyExists, invalidInputs, "service": {...service, [name]: value}});
     }
 
+    removeServiceToken = serviceToken => {
+        xxx
+        const action = () => this.refreshAndFlash(deleteApiKey(apiKey.id),
+            I18n.t("organisationDetail.flash.apiKeyDeleted"),
+            this.closeConfirmationDialog);
+        this.confirm(action, I18n.t("organisationDetail.deleteApiKeyConfirmation"));
+    };
 
     renderButtons = (isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView) => {
         const {accepted_user_policy, pam_web_sso_enabled, token_enabled} = this.state.service;
@@ -427,6 +437,26 @@ class ServiceOverview extends React.Component {
     }
 
     renderTokens = (config, service, isAdmin) => {
+        const columns = [
+            {
+                key: "hashed_token",
+                header: I18n.t("serviceOverview.hashedToken"),
+                mapper: () => I18n.t("serviceOverview.tokenValue"),
+            },
+            {
+                key: "description",
+                header: I18n.t("apiKeys.description"),
+            },
+            {
+                nonSortable: true,
+                key: "trash",
+                header: "",
+                mapper: serviceToken =>  <span onClick={() => this.removeServiceToken(serviceToken)}>
+                    <FontAwesomeIcon icon="trash"/>
+                </span>
+            },
+        ]
+
         return (
             <div className={"tokens"}>
                 <RadioButton label={I18n.t("userTokens.tokenEnabled")}
@@ -453,6 +483,15 @@ class ServiceOverview extends React.Component {
                                 }
                             })}
                             disabled={!service.token_enabled || !isAdmin}/>
+
+                {service.token_enabled && <Entities entities={service.service_tokens}
+                          modelName="serviceTokens"
+                          defaultSort="description"
+                          columns={columns}
+                          loading={false}
+                          showNew={false}
+                          hideTitle={true}
+                          {...this.props}/>}
 
                 <InputField value={config.introspect_endpoint}
                             name={I18n.t("userTokens.introspectionEndpoint")}
