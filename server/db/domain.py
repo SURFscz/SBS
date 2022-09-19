@@ -73,6 +73,29 @@ class User(Base, db.Model):
     def has_agreed_with_aup(self):
         return len([aup for aup in self.aups if aup.au_version == str(current_app.app_config.aup.version)]) > 0
 
+    def allowed_attr_view(self, organisation_identifiers, include_details):
+        result = {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email,
+            "username": self.username,
+            "uid": self.uid,
+            "created_at": self.created_at,
+            "schac_home_organisation": self.schac_home_organisation,
+            "affiliation": self.affiliation,
+            "scoped_affiliation": self.scoped_affiliation,
+            "eduperson_principal_name": self.eduperson_principal_name,
+
+        }
+        if include_details:
+            result["collaboration_memberships"] = [cm.allowed_attr_view() for cm in
+                                                   self.collaboration_memberships if
+                                                   cm.collaboration.organisation_id in organisation_identifiers]
+            result["organisation_memberships"] = [om.allowed_attr_view() for om in
+                                                  self.organisation_memberships if
+                                                  om.organisation_id in organisation_identifiers]
+        return result
+
 
 services_organisations_association = db.Table(
     "services_organisations",
@@ -134,6 +157,15 @@ class CollaborationMembership(Base, db.Model):
 
     def is_expired(self):
         return self.expiry_date and datetime.datetime.utcnow() > self.expiry_date
+
+    def allowed_attr_view(self):
+        return {
+            "role": self.role,
+            "collaboration": {
+                "id": self.collaboration.id,
+                "name": self.collaboration.name
+            }
+        }
 
 
 organisations_services_association = db.Table(
@@ -270,6 +302,15 @@ class OrganisationMembership(Base, db.Model):
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
+
+    def allowed_attr_view(self):
+        return {
+            "role": self.role,
+            "organisation": {
+                "id": self.organisation.id,
+                "name": self.organisation.name
+            }
+        }
 
 
 class Organisation(Base, db.Model, LogoMixin):

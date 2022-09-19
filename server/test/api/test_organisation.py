@@ -348,6 +348,15 @@ class TestOrganisation(AbstractTest):
         res = self.get(f"/api/organisations/{organisation.id}/users", query_data={"q": "jan"}, with_basic_auth=False)
         self.assertEqual(1, len(res))
         self.assertEqual(res[0]["name"], jane_name)
+        for attr in "last_accessed_date", "second_fa_uuid", "user_ip_networks", "second_factor_auth":
+            self.assertFalse(attr in res[0])
+
+    def test_search_users_admin(self):
+        self.login("urn:john")
+        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        res = self.get(f"/api/organisations/{organisation.id}/users", query_data={"q": "jane"}, with_basic_auth=False)
+        for attr in "last_accessed_date", "second_fa_uuid", "user_ip_networks", "second_factor_auth":
+            self.assertTrue(attr in res[0])
 
     def test_search_invitations(self):
         self.login("urn:harry")
