@@ -140,6 +140,13 @@ def check_pin():
         db.session.delete(pam_sso_session)
         user.pam_last_login_date = datetime.now()
         db.session.merge(user)
+        # We also update the activity date of linked collaboration
+        collaborations = [cm.collaboration for cm in user.collaboration_memberships if
+                          service in cm.collaboration.services]
+        for collaboration in collaborations:
+            collaboration.last_activity_date = datetime.now()
+            db.session.merge(collaboration)
+        db.session.commit()
 
     log_user_login(PAM_WEB_LOGIN, success, user, user.uid, service, service.entity_id)
 
