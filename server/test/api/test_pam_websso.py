@@ -2,7 +2,7 @@
 from datetime import datetime, timedelta
 
 from server.db.db import db
-from server.db.domain import PamSSOSession, User
+from server.db.domain import PamSSOSession, User, Service
 from server.test.abstract_test import AbstractTest
 from server.test.seed import pam_session_id, service_storage_name, service_storage_token, \
     invalid_service_pam_session_id, roger_name
@@ -104,6 +104,12 @@ class TestPamWebSSO(AbstractTest):
         self.get(f"/pam-weblogin/{pam_session_id}", with_basic_auth=False, response_status_code=404)
         peter = self.find_entity_by_name(User, "urn:peter")
         self.assertIsNotNone(peter.pam_last_login_date)
+
+        service = self.find_entity_by_name(Service, service_storage_name)
+        collaborations = [cm.collaboration for cm in peter.collaboration_memberships if
+                          service in cm.collaboration.services]
+        self.assertEqual(1, len(collaborations))
+        self.assertIsNotNone(collaborations[0].last_activity_date)
 
     def test_check_pin_wrong_pin(self):
         self.login("urn:peter")
