@@ -77,7 +77,7 @@ def _do_send_mail(subject, recipients, template, context, preview, working_outsi
     msg.msgId = f"<{str(uuid.uuid4())}@{os.uname()[1]}.internal.sram.surf.nl>".replace("-", ".")
 
     logger = logging.getLogger("mail") if working_outside_of_request_context else ctx_logger("user")
-    logger.debug(f"Sending mail message with Message-id {msg.msgId}")
+    logger.debug(f"Sending mail message to {','.join(recipients)} with Message-id {msg.msgId}")
 
     suppress_mail = "suppress_sending_mails" in mail_ctx and mail_ctx.suppress_sending_mails
     open_mail_in_browser = current_app.config["OPEN_MAIL_IN_BROWSER"]
