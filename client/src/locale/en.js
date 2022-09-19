@@ -748,6 +748,7 @@ I18n.translations.en = {
             expired: "Expired",
             activeTooltip: "This collaboration is active and ready for business.",
             suspendedTooltip: "This collaboration was suspended due to inactivity. It was last used on {{lastActivityDate}}.",
+            revertSuspension: " You can revert the suspension from the right drop-down menu",
             expiredTooltip: "This collaboration has reached its expiration date of {{expiryDate}}. It can be activated by setting a new expiration date or clearing it. ",
             activeWithExpiryDateTooltip: "This collaboration will expire at {{expiryDate}}. "
         },
@@ -2007,6 +2008,7 @@ I18n.translations.en = {
         descriptionPlaceHolder: "Description for this token",
         descriptionTooltip: "An optional description explaining the use of this token",
         backToApiKeys: "Back to tokens",
+        addToken: "New token",
         toc: {
             general: "General",
             connection: "Connection",

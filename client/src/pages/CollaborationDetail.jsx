@@ -211,6 +211,14 @@ class CollaborationDetail extends React.Component {
                 msg += I18n.t("collaboration.status.activeWithExpiryDateTooltip", {expiryDate: formattedCollaborationExpiryDate});
             }
         }
+        if (collaboration && collaboration.status === "suspended") {
+            msg += I18n.t("collaboration.status.suspendedTooltip", {
+                lastActivityDate: moment(collaboration.last_activity_date * 1000).format("LL")
+            });
+            if (isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id)) {
+                msg += I18n.t("collaboration.status.revertSuspension")
+            }
+        }
         if (!isEmpty(msg)) {
             setFlash(msg, "warning");
         }
