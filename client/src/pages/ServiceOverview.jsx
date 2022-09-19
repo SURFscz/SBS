@@ -1,20 +1,22 @@
 import React from "react";
 import {
+    createServiceToken,
     deleteService,
+    deleteServiceToken,
     ipNetworks,
     resetLdapPassword,
-    resetTokenValue,
     serviceAbbreviationExists,
     serviceAupDelete,
     serviceEntityIdExists,
     serviceNameExists,
+    serviceTokenValue,
     updateService
 } from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
 import "./ServiceOverview.scss";
+import "../components/redesign/ApiKeys.scss";
 import Button from "../components/Button";
-import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import {
@@ -24,17 +26,17 @@ import {
     validEmailRegExp,
     validUrlRegExp
 } from "../validations/regExps";
-import CheckBox from "../components/CheckBox";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
 import RadioButton from "../components/redesign/RadioButton";
+import DOMPurify from "dompurify";
+import {ReactComponent as ChevronLeft} from "../icons/chevron-left.svg";
+import Entities from "../components/redesign/Entities";
+import ConfirmationDialog from "../components/ConfirmationDialog";
+import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import CroppedImageField from "../components/redesign/CroppedImageField";
 import SpinnerField from "../components/redesign/SpinnerField";
-import ErrorIndicator from "../components/redesign/ErrorIndicator";
-import DOMPurify from "dompurify";
-import Entities from "../components/redesign/Entities";
-import {isUserAllowed, ROLES} from "../utils/UserRole";
-import ApiKeysExplanation from "../components/explanations/ApiKeys";
+import CheckBox from "../components/CheckBox";
 
 class ServiceOverview extends React.Component {
 
@@ -56,6 +58,11 @@ class ServiceOverview extends React.Component {
             isServiceAdmin: false,
             hasAdministrators: false,
             currentTab: "general",
+            createNewServiceToken: false,
+            description: "",
+            hashedToken: null,
+            serviceTokensEnabled: false,
+            hasServiceTokens: false
         }
     }
 
@@ -70,6 +77,8 @@ class ServiceOverview extends React.Component {
                 hasAdministrators: service.service_memberships.length > 0,
                 isServiceAdmin: serviceAdmin,
                 currentTab: tab,
+                serviceTokensEnabled: service.token_enabled || service.pam_web_sso_enabled,
+                hasServiceTokens: !isEmpty(service.service_tokens),
                 loading: false
             }, () => {
                 const {ip_networks} = this.state.service;
@@ -129,35 +138,28 @@ class ServiceOverview extends React.Component {
         }
     }
 
-    tokenResetAction = showConfirmation => {
-        const {service} = this.state;
-        if (showConfirmation) {
-            this.setState({
-                confirmationDialogOpen: true,
-                cancelDialogAction: this.cancelDialogAction,
-                warningf: false,
-                confirmationDialogAction: () => this.tokenResetAction(false),
-                confirmationHeader: I18n.t("confirmationDialog.title"),
-                lastAdminWarning: false,
-                confirmationDialogQuestion: I18n.t("userTokens.reset.confirmation", {name: service.name}),
-                confirmationTxt: I18n.t("confirmationDialog.confirm"),
-            });
+    newServiceToken = () => {
+        serviceTokenValue().then(res => {
+            this.setState({createNewServiceToken: true, description: "", hashedToken: res.value});
+        })
+    }
 
-        } else {
-            resetTokenValue(service).then(res => {
-                this.setState({
-                    confirmationDialogOpen: true,
-                    ldapPassword: null,
-                    confirmationTxt: I18n.t("userTokens.reset.close"),
-                    confirmationHeader: I18n.t("userTokens.reset.copy"),
-                    cancelDialogAction: null,
-                    confirmationDialogQuestion: I18n.t("userTokens.reset.info"),
-                    tokenValue: res.token_value,
-                    confirmationDialogAction: this.cancelDialogAction
-                });
-            })
+    cancelSideScreen = e => {
+        stopEvent(e);
+        this.setState({createNewServiceToken: false});
+    }
 
-        }
+    saveServiceToken = () => {
+        const {hashedToken, description, service} = this.state;
+        createServiceToken({
+            hashed_token: hashedToken,
+            description: description,
+            service_id: service.id,
+            pam_web_sso_enabled: service.pam_web_sso_enabled,
+            token_enabled: service.token_enabled
+        }).then(() => {
+            this.afterUpdate(service.name, "tokenAdded")
+        });
     }
 
     ldapResetAction = showConfirmation => {
@@ -288,6 +290,14 @@ class ServiceOverview extends React.Component {
         });
     };
 
+    doDeleteToken = serviceToken => {
+        this.setState({loading: true});
+        const {service} = this.state;
+        deleteServiceToken(serviceToken.id).then(() => {
+            this.afterUpdate(service.name, "tokenDeleted");
+        });
+    };
+
     isValid = () => {
         const {required, alreadyExists, invalidInputs, hasAdministrators, service}
             = this.state;
@@ -329,25 +339,45 @@ class ServiceOverview extends React.Component {
         }
     };
 
-    submit = () => {
+    submit = override => {
         if (this.isValid()) {
-            this.setState({loading: true});
-            const {service} = this.state;
-            const {name, ip_networks} = service;
-            const strippedIpNetworks = ip_networks
-                .filter(network => network.network_value && network.network_value.trim())
-                .map(network => ({network_value: network.network_value, id: network.id}));
-            // Prevent deletion / re-creation of existing IP Network
-            strippedIpNetworks.forEach(network => {
-                if (isEmpty(network.id)) {
-                    delete network.id;
-                } else {
-                    network.id = parseInt(network.id, 10)
-                }
-            });
-            this.setState({service: {...service, ip_networks: strippedIpNetworks}}, () => {
-                updateService(this.state.service).then(() => this.afterUpdate(name, "updated"));
-            });
+            const {service, hasServiceTokens, serviceTokensEnabled} = this.state;
+            if (serviceTokensEnabled && hasServiceTokens && !service.token_enabled && !service.pam_web_sso_enabled && !override) {
+                const count = service.service_tokens.length;
+                this.setState({
+                    confirmationDialogOpen: true,
+                    leavePage: false,
+                    confirmationDialogQuestion: I18n.t("serviceDetails.disableTokenConfirmation",
+                        {
+                            count: count,
+                            tokens: I18n.t(`serviceDetails.${count > 1 ? "multiple" : "single"}Tokens`)
+                        }),
+                    warning: true,
+                    confirmationTxt: I18n.t("confirmationDialog.confirm"),
+                    cancelDialogAction: this.closeConfirmationDialog,
+                    confirmationHeader: I18n.t("confirmationDialog.title"),
+                    confirmationDialogAction: () => this.submit(true)
+                });
+            } else {
+                this.setState({loading: true});
+
+                const {name, ip_networks} = service;
+                const strippedIpNetworks = ip_networks
+                    .filter(network => network.network_value && network.network_value.trim())
+                    .map(network => ({network_value: network.network_value, id: network.id}));
+                // Prevent deletion / re-creation of existing IP Network
+                strippedIpNetworks.forEach(network => {
+                    if (isEmpty(network.id)) {
+                        delete network.id;
+                    } else {
+                        network.id = parseInt(network.id, 10)
+                    }
+                });
+                this.setState({service: {...service, ip_networks: strippedIpNetworks}}, () => {
+                    updateService(this.state.service).then(() => this.afterUpdate(name, "updated"));
+                });
+
+            }
         } else {
             window.scrollTo(0, 0);
         }
@@ -361,7 +391,7 @@ class ServiceOverview extends React.Component {
 
     changeTab = tab => e => {
         stopEvent(e);
-        this.setState({currentTab: tab}, () =>
+        this.setState({currentTab: tab, createNewServiceToken: false}, () =>
             this.props.history.replace(`/services/${this.state.service.id}/details/${tab}`));
     }
 
@@ -391,18 +421,23 @@ class ServiceOverview extends React.Component {
     }
 
     removeServiceToken = serviceToken => {
-        xxx
-        const action = () => this.refreshAndFlash(deleteApiKey(apiKey.id),
-            I18n.t("organisationDetail.flash.apiKeyDeleted"),
-            this.closeConfirmationDialog);
-        this.confirm(action, I18n.t("organisationDetail.deleteApiKeyConfirmation"));
+        this.setState({
+            confirmationDialogOpen: true,
+            leavePage: false,
+            confirmationDialogQuestion: I18n.t("serviceDetails.tokenDeleteConfirmation"),
+            warning: true,
+            confirmationTxt: I18n.t("confirmationDialog.confirm"),
+            cancelDialogAction: this.closeConfirmationDialog,
+            confirmationHeader: I18n.t("confirmationDialog.title"),
+            confirmationDialogAction: () => this.doDeleteToken(serviceToken)
+        });
     };
 
-    renderButtons = (isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView) => {
+    renderButtons = (isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView, createNewServiceToken) => {
         const {accepted_user_policy, pam_web_sso_enabled, token_enabled} = this.state.service;
         const validAcceptedUserPolicy = validUrlRegExp.test(accepted_user_policy);
         return <>
-            {(isAdmin || isServiceAdmin) &&
+            {((isAdmin || isServiceAdmin) && !createNewServiceToken) &&
             <section className="actions">
                 {(isAdmin && currentTab === "general" && !showServiceAdminView) &&
                 <Button warningButton={true} txt={I18n.t("service.delete")}
@@ -411,10 +446,10 @@ class ServiceOverview extends React.Component {
                 <Button txt={I18n.t("service.aup.title")}
                         disabled={!validAcceptedUserPolicy}
                         onClick={() => this.resetAups(true)}/>}
-                {(currentTab === "tokens" || currentTab === "pamWebLogin") &&
+                {(currentTab === "tokens") &&
                 <Button txt={I18n.t("userTokens.actionTitle")}
-                        disabled={!pam_web_sso_enabled & !token_enabled}
-                        onClick={() => this.tokenResetAction(true)}/>}
+                        disabled={!pam_web_sso_enabled && !token_enabled}
+                        onClick={() => this.newServiceToken(true)}/>}
                 {currentTab === "ldap" &&
                 <Button txt={I18n.t("service.ldap.title")}
                         onClick={() => this.ldapResetAction(true)}/>}
@@ -436,22 +471,59 @@ class ServiceOverview extends React.Component {
             </div>)
     }
 
-    renderTokens = (config, service, isAdmin) => {
+    renderNewServiceTokenForm = () => {
+        const {description, hashedToken} = this.state;
+        return (
+            <div className="api-key-container">
+                <div>
+                    <a href={"/cancel"} className={"back-to-api-keys"} onClick={this.cancelSideScreen}>
+                        <ChevronLeft/>{I18n.t("serviceDetails.backToApiKeys")}
+                    </a>
+                </div>
+                <div className="new-api-key">
+                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("serviceDetails.secretDisclaimer"))}}/>
+                    <InputField value={hashedToken}
+                                name={I18n.t("serviceDetails.secret")}
+                                toolTip={I18n.t("serviceDetails.secretTooltip")}
+                                disabled={true}
+                                copyClipBoard={true}/>
+
+                    <InputField value={description}
+                                onChange={e => this.setState({description: e.target.value})}
+                                placeholder={I18n.t("serviceDetails.descriptionPlaceHolder")}
+                                name={I18n.t("serviceDetails.description")}
+                                toolTip={I18n.t("serviceDetails.descriptionTooltip")}
+                    />
+                    <section className="actions">
+                        <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancelSideScreen}/>
+                        <Button txt={I18n.t("forms.submit")}
+                                onClick={this.saveServiceToken}/>
+                    </section>
+                </div>
+
+            </div>
+        );
+    }
+
+    renderTokens = (config, service, isAdmin, createNewServiceToken) => {
+        if (createNewServiceToken) {
+            return this.renderNewServiceTokenForm();
+        }
         const columns = [
             {
                 key: "hashed_token",
-                header: I18n.t("serviceOverview.hashedToken"),
-                mapper: () => I18n.t("serviceOverview.tokenValue"),
+                header: I18n.t("serviceDetails.hashedToken"),
+                mapper: () => I18n.t("serviceDetails.tokenValue"),
             },
             {
                 key: "description",
-                header: I18n.t("apiKeys.description"),
+                header: I18n.t("serviceDetails.description"),
             },
             {
                 nonSortable: true,
                 key: "trash",
                 header: "",
-                mapper: serviceToken =>  <span onClick={() => this.removeServiceToken(serviceToken)}>
+                mapper: serviceToken => <span onClick={() => this.removeServiceToken(serviceToken)}>
                     <FontAwesomeIcon icon="trash"/>
                 </span>
             },
@@ -484,14 +556,30 @@ class ServiceOverview extends React.Component {
                             })}
                             disabled={!service.token_enabled || !isAdmin}/>
 
-                {service.token_enabled && <Entities entities={service.service_tokens}
-                          modelName="serviceTokens"
-                          defaultSort="description"
-                          columns={columns}
-                          loading={false}
-                          showNew={false}
-                          hideTitle={true}
-                          {...this.props}/>}
+                {(service.token_enabled || service.pam_web_sso_enabled) &&
+                <div className="input-field">
+                    <label>{I18n.t("serviceDetails.tokens")}
+                        <span className="tool-tip-section">
+                            <span data-tip data-for="tokens">
+                                <FontAwesomeIcon icon="info-circle"/>
+                            </span>
+                            <ReactTooltip id="tokens" type="light" effect="solid" data-html={true}>
+                                <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("serviceDetails.tokensTooltip"))}}/>
+                            </ReactTooltip>
+                        </span>
+                    </label>
+                    <Entities entities={service.service_tokens}
+                              modelName="serviceTokens"
+                              defaultSort="description"
+                              columns={columns}
+                              loading={false}
+                              customNoEntities={I18n.t("serviceDetails.noTokens")}
+                              showNew={false}
+                              hideTitle={true}
+                              displaySearch={false}
+                              {...this.props}/>
+                </div>}
+
 
                 <InputField value={config.introspect_endpoint}
                             name={I18n.t("userTokens.introspectionEndpoint")}
@@ -524,45 +612,45 @@ class ServiceOverview extends React.Component {
                 <div className="ip-networks">
                     <label className="title" htmlFor={I18n.t("service.network")}>{I18n.t("service.network")}
                         <span className="tool-tip-section">
-                                <span data-tip data-for={I18n.t("service.network")}>
-                                    <FontAwesomeIcon icon="info-circle"/>
-                                </span>
-                                <ReactTooltip id={I18n.t("service.network")} type="light" effect="solid"
-                                              data-html={true}>
-                                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("service.networkTooltip"))}}/>
-                                </ReactTooltip>
-                            </span>
+                <span data-tip data-for={I18n.t("service.network")}>
+                <FontAwesomeIcon icon="info-circle"/>
+                </span>
+                <ReactTooltip id={I18n.t("service.network")} type="light" effect="solid"
+                              data-html={true}>
+                <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("service.networkTooltip"))}}/>
+                </ReactTooltip>
+                </span>
                         {(isAdmin || isServiceAdmin) &&
                         <span className="add-network" onClick={() => this.addIpAddress()}><FontAwesomeIcon
                             icon="plus"/></span>}
                     </label>
                     {service.ip_networks.map((network, i) =>
-                        <div className="network-container" key={i}>
-                            <div className="network">
-                                <InputField value={network.network_value}
-                                            onChange={this.saveIpAddress(i)}
-                                            onBlur={this.validateIpAddress(i)}
-                                            placeholder={I18n.t("service.networkPlaceholder")}
-                                            error={network.error || network.syntax || (network.higher && !network.global && network.version === 6)}
-                                            disabled={!isAdmin && !isServiceAdmin}
-                                            onEnter={e => {
-                                                this.validateIpAddress(i);
-                                                e.target.blur()
-                                            }}
-                                />
-                                {(isAdmin || isServiceAdmin) && <span className="trash">
-                            <FontAwesomeIcon onClick={() => this.deleteIpAddress(i)} icon="trash"/>
-                        </span>}
-                            </div>
-                            {(network.error && !network.syntax) &&
-                            <ErrorIndicator msg={I18n.t("service.networkError", network)}/>}
-                            {network.syntax && <ErrorIndicator msg={I18n.t("service.networkSyntaxError")}/>}
-                            {network.higher &&
-                            <span className="network-info">{I18n.t("service.networkInfo", network)}</span>}
-                            {(network.higher && network.version === 6 && !network.global) &&
-                            <ErrorIndicator msg={I18n.t("service.networkNotGlobal")}/>}
+                            <div className="network-container" key={i}>
+                                <div className="network">
+                                    <InputField value={network.network_value}
+                                                onChange={this.saveIpAddress(i)}
+                                                onBlur={this.validateIpAddress(i)}
+                                                placeholder={I18n.t("service.networkPlaceholder")}
+                                                error={network.error || network.syntax || (network.higher && !network.global && network.version === 6)}
+                                                disabled={!isAdmin && !isServiceAdmin}
+                                                onEnter={e => {
+                                                    this.validateIpAddress(i);
+                                                    e.target.blur()
+                                                }}
+                                    />
+                                    {(isAdmin || isServiceAdmin) && <span className="trash">
+                <FontAwesomeIcon onClick={() => this.deleteIpAddress(i)} icon="trash"/>
+                </span>}
+                                </div>
+                                {(network.error && !network.syntax) &&
+                                <ErrorIndicator msg={I18n.t("service.networkError", network)}/>}
+                                {network.syntax && <ErrorIndicator msg={I18n.t("service.networkSyntaxError")}/>}
+                                {network.higher &&
+                                <span className="network-info">{I18n.t("service.networkInfo", network)}</span>}
+                                {(network.higher && network.version === 6 && !network.global) &&
+                                <ErrorIndicator msg={I18n.t("service.networkNotGlobal")}/>}
 
-                        </div>
+                            </div>
                     )}
                 </div>
             </div>)
@@ -632,7 +720,6 @@ class ServiceOverview extends React.Component {
 
     renderContacts = (service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs, hasAdministrators) => {
         const contactEmailRequired = !hasAdministrators && isEmpty(service.contact_email);
-
         return (
             <div className={"contacts"}>
                 <InputField value={service.contact_email}
@@ -778,7 +865,7 @@ class ServiceOverview extends React.Component {
                 attribute: I18n.t("service.abbreviation").toLowerCase()
             })}/>}
 
-            <InputField value={service.description}
+            <InputField value={service.description || ""}
                         name={I18n.t("service.description")}
                         placeholder={I18n.t("service.descriptionPlaceholder")}
                         onChange={this.changeServiceProperty("description")}
@@ -814,7 +901,7 @@ class ServiceOverview extends React.Component {
     }
 
     renderCurrentTab = (config, currentTab, service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit,
-                        invalidInputs, hasAdministrators, showServiceAdminView) => {
+                        invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken) => {
         switch (currentTab) {
             case "general":
                 return this.renderGeneral(service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs);
@@ -827,7 +914,7 @@ class ServiceOverview extends React.Component {
             case "ldap":
                 return this.renderLdap(config, service, isAdmin, isServiceAdmin);
             case "tokens":
-                return this.renderTokens(config, service, isAdmin);
+                return this.renderTokens(config, service, isAdmin, createNewServiceToken);
             case "pamWebLogin":
                 return this.renderPamWebLogin(service, isAdmin, showServiceAdminView);
             default:
@@ -853,6 +940,7 @@ class ServiceOverview extends React.Component {
             confirmationDialogQuestion,
             ldapPassword,
             tokenValue,
+            createNewServiceToken
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -871,15 +959,14 @@ class ServiceOverview extends React.Component {
                                     confirm={confirmationDialogAction}
                                     question={confirmationDialogQuestion}>
                     {ldapPassword && this.renderLdapPassword(ldapPassword)}
-                    {tokenValue && this.renderLdapPassword(tokenValue)}
                 </ConfirmationDialog>
 
                 {this.sidebar(currentTab)}
-                <div className={"service"}>
+                <div className={`service ${createNewServiceToken ? "no-grid" : ""}`}>
                     <h1 className="section-separator">{I18n.t(`serviceDetails.toc.${currentTab}`)}</h1>
                     {this.renderCurrentTab(config, currentTab, service, alreadyExists, isAdmin, isServiceAdmin,
-                        disabledSubmit, invalidInputs, hasAdministrators, showServiceAdminView)}
-                    {this.renderButtons(isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView)}
+                        disabledSubmit, invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken)}
+                    {this.renderButtons(isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView, createNewServiceToken)}
                 </div>
             </div>
         );

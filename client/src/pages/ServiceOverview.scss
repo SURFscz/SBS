@@ -50,8 +50,12 @@ section.dialog-content {
     .service {
         width: 100%;
         display: grid;
-        grid-template-columns: [first] 1fr [second] 1fr;
+        grid-template-columns: [first] 12fr [second] 8fr;
         column-gap: 50px;
+
+        &.no-grid {
+            display: block;
+        }
 
         @media (max-width: $tablet-max) {
             padding: 0 15px;
@@ -167,6 +171,10 @@ section.dialog-content {
 
         div.checkbox {
             margin: 20px 0 10px 0;
+        }
+
+        .mod-entities {
+            margin-bottom: 0;
         }
 
     }

@@ -1,7 +1,7 @@
 # -*- coding: future_fstrings -*-
 from server.db.domain import ServiceToken, Service
 from server.test.abstract_test import AbstractTest
-from server.test.seed import service_network_name
+from server.test.seed import service_network_name, service_mail_name
 
 
 class TestServiceToken(AbstractTest):
@@ -34,3 +34,19 @@ class TestServiceToken(AbstractTest):
         self.login("urn:john")
         self.post("/api/service_tokens", body={"service_id": service.id, "hashed_token": "secret"},
                   with_basic_auth=False, response_status_code=403)
+
+    def test_service_token_enable_tokens(self):
+        secret = self.get("/api/service_tokens")["value"]
+
+        service = self.find_entity_by_name(Service, service_mail_name)
+        self.assertFalse(service.pam_web_sso_enabled)
+        self.assertFalse(service.token_enabled)
+
+        self.login("urn:john")
+        self.post("/api/service_tokens",
+                  body={"service_id": service.id, "hashed_token": secret, "token_enabled": True,
+                        "pam_web_sso_enabled": True},
+                  with_basic_auth=False)
+        service = self.find_entity_by_name(Service, service_mail_name)
+        self.assertTrue(service.pam_web_sso_enabled)
+        self.assertTrue(service.token_enabled)

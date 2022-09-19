@@ -922,7 +922,10 @@ I18n.translations.nl = {
         flash: {
             created: "Dienst {{name}} is aangemaakt.",
             updated: "Dienst {{name}} is bijgewerkt.",
-            deleted: "Dienst {{name}} is verwijderd."
+            deleted: "Dienst {{name}} is verwijderd.",
+            tokenAdded: "Nieuw token voor {{name}} is aangemaakt",
+            tokenUpdated: "Token van dienst {{name}} is bijgewerkt",
+            tokenDeleted: "Token van dienst {{name}} is verwijderd",
         },
         ldap: {
             title: "Reset LDAP-wachtwoord",
@@ -1946,7 +1949,7 @@ I18n.translations.nl = {
         intendedRoleTooltip: "De enige rol binnen een dienst is beheerder"
     },
     userTokens: {
-        actionTitle: "API-token resetten",
+        actionTitle: "Nieuwe API-token",
         tokens: "Tokens",
         tokenEnabled: "Token-gebaseerde introspectie ingeschakeld?",
         tokenEnabledTooltip: "Mag deze dienst het introspection endpoint aanroepen om gebruikersinformatie te ontvangen?",
@@ -1987,6 +1990,23 @@ I18n.translations.nl = {
     },
     serviceDetails: {
         details: "Dienstgegevens",
+        tokens: "Dienst tokens",
+        tokensTooltip: "Dienst tokens enable the service to introspect users and / or use the PAM SSO module",
+        hashedToken: "Hashed token",
+        tokenValue: "**** ***** ***** ****",
+        tokenDeleteConfirmation: "Weet je zeker dat je dit token wilt verwijderen?",
+        disableTokenConfirmation: "Weet je zeker dat je de token functionaliteit voor deze dienst wilt uitzetten? {{count}} bestaande {{tokens}} zal worden verwijderd.",
+        multipleTokens: "tokens",
+        singleTokens: "token",
+        noTokens: "Er zijn geen tokens...",
+        secretDisclaimer: "Het token wordt slechts eenmaal getoond. Sla de sleutel op en bewaar deze veilig.<br><br>Bij verlies zal je de sleutel moeten verwijderen en een nieuwe moeten aanmaken.",
+        secret: "Token",
+        secretValue: "One-way hashed token",
+        secretTooltip: "Het token voor in de authorization header",
+        description: "Omschrijving",
+        descriptionPlaceHolder: "Omschrijving voor dit token",
+        descriptionTooltip: "Een optionele omschrijving van het doel van dit token",
+        backToApiKeys: "Terug naar tokens",
         toc: {
             general: "Algemeen",
             connection: "Aansluiting",

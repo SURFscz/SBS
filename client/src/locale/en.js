@@ -923,6 +923,9 @@ I18n.translations.en = {
             created: "Service {{name}} was created",
             updated: "Service {{name}} was updated",
             deleted: "Service {{name}} was deleted",
+            tokenAdded: "New token for {{name}} was created",
+            tokenUpdated: "Token of {{name}} was updated",
+            tokenDeleted: "Token of {{name}} was deleted",
         },
         ldap: {
             title: "Reset LDAP password",
@@ -1946,7 +1949,7 @@ I18n.translations.en = {
         intendedRoleTooltip: "The only role within a service is admin"
     },
     userTokens: {
-        actionTitle: "Reset API token",
+        actionTitle: "New API token",
         tokens: "Tokens",
         tokenEnabled: "Token-based introspection enabled?",
         tokenEnabledTooltip: "Allow this service to call the introspection endpoint to receive user information?",
@@ -1987,6 +1990,23 @@ I18n.translations.en = {
     },
     serviceDetails: {
         details: "Service details",
+        tokens: "Service tokens",
+        tokensTooltip: "Service tokens enable the service to introspect users and / or use the PAM SSO module",
+        hashedToken: "Hashed token",
+        tokenValue: "**** ***** ***** ****",
+        tokenDeleteConfirmation: "Are you sure you want to remove this service token?",
+        disableTokenConfirmation: "Are you sure you want to disable token functionality for this service? The {{count}} existing {{tokens}} will be deleted.",
+        multipleTokens: "tokens",
+        singleTokens: "token",
+        noTokens: "There are no service tokens...",
+        secretDisclaimer: "You can view this token only once. Copy it and store it somewhere safe.<br><br>If the token is lost, delete it and create a new token.",
+        secret: "Token",
+        secretValue: "One-way hashed token",
+        secretTooltip: "The token to use in the authorization header",
+        description: "Description",
+        descriptionPlaceHolder: "Description for this token",
+        descriptionTooltip: "An optional description explaining the use of this token",
+        backToApiKeys: "Back to tokens",
         toc: {
             general: "General",
             connection: "Connection",
