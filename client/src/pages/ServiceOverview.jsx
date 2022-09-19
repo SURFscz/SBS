@@ -447,7 +447,7 @@ class ServiceOverview extends React.Component {
                         disabled={!validAcceptedUserPolicy}
                         onClick={() => this.resetAups(true)}/>}
                 {(currentTab === "tokens") &&
-                <Button txt={I18n.t("userTokens.actionTitle")}
+                <Button txt={I18n.t("serviceDetails.addToken")}
                         disabled={!pam_web_sso_enabled && !token_enabled}
                         onClick={() => this.newServiceToken(true)}/>}
                 {currentTab === "ldap" &&

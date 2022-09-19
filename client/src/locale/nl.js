@@ -748,6 +748,7 @@ I18n.translations.nl = {
             expired: "Verlopen",
             activeTooltip: "Deze samenwerking is actief.",
             suspendedTooltip: "Deze samenwerking is geschorst wegens inactiviteit. De laatste activiteit was op {{lastActivityDate}}. ",
+            revertSuspension: " Je kan de schorsing ongedaan maken vanuit het rechter drop-down menu.",
             expiredTooltip: "Deze samenwerking is verlopen op {{expiryDate}}. Heractiveren kan de einddatum aan te passen of te wissen. ",
             activeWithExpiryDateTooltip: "Deze samenwerking verloopt op {{expiryDate}}. "
         },
@@ -2007,6 +2008,7 @@ I18n.translations.nl = {
         descriptionPlaceHolder: "Omschrijving voor dit token",
         descriptionTooltip: "Een optionele omschrijving van het doel van dit token",
         backToApiKeys: "Terug naar tokens",
+        addToken: "Nieuw token",
         toc: {
             general: "Algemeen",
             connection: "Aansluiting",
