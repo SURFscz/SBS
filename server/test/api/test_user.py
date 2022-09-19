@@ -144,12 +144,25 @@ class TestUser(AbstractTest):
         user_id = User.query.filter(User.uid == "urn:mary").one().id
         res = self.get("/api/users/find_by_id", query_data={"id": user_id})
         self.assertEqual("urn:mary", res["uid"])
+        for attr in ["last_accessed_date", "last_login_date", "second_fa_uuid", "service_memberships", "join_requests"]:
+            self.assertTrue(attr in res)
 
     def test_find_by_id_by_org_manager(self):
         self.login("urn:harry")
         user_id = User.query.filter(User.uid == "urn:sarah").one().id
         res = self.get("/api/users/find_by_id", query_data={"id": user_id})
         self.assertEqual("urn:sarah", res["uid"])
+        for attr in ["last_accessed_date", "last_login_date", "second_fa_uuid", "service_memberships", "join_requests"]:
+            self.assertFalse(attr in res)
+
+    def test_find_by_id_by_org_manager_including_org_memberships(self):
+        self.login("urn:paul")
+        user_id = User.query.filter(User.uid == "urn:jane").one().id
+        res = self.get("/api/users/find_by_id", query_data={"id": user_id})
+        self.assertEqual(1, len(res["organisation_memberships"]))
+        membership = res["organisation_memberships"][0]
+        self.assertEqual(["role"], list(membership.keys()))
+        self.assertEqual(["id", "name"], list(membership["organisation"].keys()))
 
     def test_find_by_id_by_org_manager_not_allowed(self):
         self.login("urn:harry")

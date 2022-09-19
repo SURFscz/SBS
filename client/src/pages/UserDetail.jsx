@@ -50,7 +50,10 @@ class UserDetail extends React.Component {
                 let middlePath;
                 if (org_id) {
                     const org_membership = currentUser.organisation_memberships.find(om => om.organisation_id === parseInt(org_id, 10)) || {organisation: {name: org_id}};
-                    middlePath = {path: `/organisations/${org_id}/users`, value: I18n.t("breadcrumb.organisation", {name: org_membership.organisation.name})}
+                    middlePath = {
+                        path: `/organisations/${org_id}/users`,
+                        value: I18n.t("breadcrumb.organisation", {name: org_membership.organisation.name})
+                    }
                 } else {
                     middlePath = {path: "/home/users", value: I18n.t("breadcrumb.users")};
                 }
@@ -69,7 +72,7 @@ class UserDetail extends React.Component {
                     filteredAuditLogs: auditLogs,
                     tab: tab
                 });
-                if (!isEmpty(res[0].user_ip_networks)) {
+                if (currentUser.admin && !isEmpty(res[0].user_ip_networks)) {
                     Promise.all(res[0].user_ip_networks.map(n => ipNetworks(n.network_value, n.id)))
                         .then(res => {
                             this.setState({"user_ip_networks": res});
@@ -77,15 +80,6 @@ class UserDetail extends React.Component {
                 }
             })
     };
-
-    displayCollaboration = (collMembership, currentUser) => {
-        if (currentUser.admin) {
-            return true;
-        }
-        const organisationId = collMembership.collaboration.organisation_id;
-        const organisationIdentifiers = currentUser.organisation_memberships.map(orgMembership => orgMembership.organisation_id);
-        return organisationIdentifiers.includes(organisationId);
-    }
 
     getDetailsTab = (user, currentUser) => {
         const attributes = ["name", "email", "username", "uid", "affiliation", "entitlement", "schac_home_organisation", "eduperson_principal_name"];
@@ -97,14 +91,16 @@ class UserDetail extends React.Component {
                         <InputField noInput={true} disabled={true} value={user[attr] || "-"}
                                     name={I18n.t(`models.allUsers.${attr}`)}/>
                     </div>)}
-                <InputField noInput={true} disabled={true} value={moment(user.last_login_date * 1000).format("LLL")}
+                <InputField noInput={true}
+                            disabled={true}
+                            value={user.last_login_date ? moment(user.last_login_date * 1000).format("LLL") : "-"}
                             name={I18n.t("models.allUsers.last_login_date")}/>
-                <div className="ssh-keys">
+                {currentUser.admin && <div className="ssh-keys">
                     <InputField noInput={true} disabled={true} value={user.ssh_keys.length}
                                 name={I18n.t("user.ssh_key")}/>
                     {user.ssh_keys.length > 0 &&
                     <a href="/ssh" onClick={this.toggleSsh}>{I18n.t("models.allUsers.showSsh")}</a>}
-                </div>
+                </div>}
                 <div className="input-field">
                     <label>{I18n.t(`models.organisations.title`)}</label>
                     {isEmpty(user.organisation_memberships) && "-"}
@@ -121,7 +117,6 @@ class UserDetail extends React.Component {
                     {isEmpty(user.collaboration_memberships) && "-"}
                     {!isEmpty(user.collaboration_memberships) && <ul>
                         {user.collaboration_memberships
-                            .filter(collMembership => this.displayCollaboration(collMembership, currentUser))
                             .map((ms, index) =>
                                 <li key={`${ms.role}_${index}`}>
                                     <Link
@@ -129,7 +124,7 @@ class UserDetail extends React.Component {
                                 </li>)}
                     </ul>}
                 </div>
-                <div className="input-field">
+                {currentUser.admin && <div className="input-field">
                     <label>{I18n.t("collaborations.requests")}</label>
                     {isEmpty(user.join_requests) && "-"}
                     {!isEmpty(user.join_requests) && <ul>
@@ -140,8 +135,8 @@ class UserDetail extends React.Component {
                                 </Link>
                             </li>)}
                     </ul>}
-                </div>
-                <div className="input-field">
+                </div>}
+                {currentUser.admin && <div className="input-field">
                     <label>{I18n.t("organisations.collaborationRequests")}</label>
                     {isEmpty(user.collaboration_requests) && "-"}
                     {!isEmpty(user.collaboration_requests) && <ul>
@@ -151,8 +146,8 @@ class UserDetail extends React.Component {
                                     to={`/organisations/${cr.organisation.id}/collaboration_requests`}>{`${cr.name} (${cr.status})`}</Link>
                             </li>)}
                     </ul>}
-                </div>
-                <div className="input-field">
+                </div>}
+                {currentUser.admin && <div className="input-field">
                     <label>{I18n.t("models.services.title")}</label>
                     {isEmpty(user.service_memberships) && "-"}
                     {!isEmpty(user.service_memberships) && <ul>
@@ -162,16 +157,16 @@ class UserDetail extends React.Component {
                                     to={`/services/${sm.service.id}`}>{`${sm.service.name} (${I18n.t('profile.' + sm.role)})`}</Link>
                             </li>)}
                     </ul>}
-                </div>
-                <div className="input-field">
+                </div>}
+                {currentUser.admin && <div className="input-field">
                     <label>{I18n.t("profile.network")}</label>
                     {isEmpty(user.user_ip_networks) && "-"}
                     {!isEmpty(user.user_ip_networks) && <ul>
                         {user.user_ip_networks.map(n =>
                             <li key={`user_ip_networks_${n.id}`}>{n.network_value}</li>)}
                     </ul>}
-                </div>
-                <div className="input-field">
+                </div>}
+                {currentUser.admin && <div className="input-field">
                     <label>{I18n.t("aup.multiple")}</label>
                     {isEmpty(user.service_aups) && "-"}
                     {!isEmpty(user.service_aups) && <ul>
@@ -180,7 +175,7 @@ class UserDetail extends React.Component {
                                 <Link to={`/services/${sm.service.id}`}>{sm.service.name}</Link>
                             </li>)}
                     </ul>}
-                </div>
+                </div>}
             </div>
         </div>)
     }

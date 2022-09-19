@@ -566,8 +566,11 @@ def other():
 @json_endpoint
 def find_by_id():
     confirm_organisation_admin_or_manager(organisation_id=None)
-    user = _user_query().options(joinedload(User.service_aups).subqueryload(ServiceAup.service)).filter(
-        User.id == query_param("id")).one()
+    user = _user_query() \
+        .options(joinedload(User.service_aups).subqueryload(ServiceAup.service)) \
+        .filter(User.id == query_param("id")) \
+        .one()
+
     if not is_application_admin():
         # Ensure the user has a collaboration membership in an organisation the current_user is admin or manager of
         curr_user = User.query.get(current_user_id())
@@ -575,6 +578,9 @@ def find_by_id():
         user_organisation_identifiers = [cm.collaboration.organisation_id for cm in user.collaboration_memberships]
         if not any([i in current_user_organisation_identifiers for i in user_organisation_identifiers]):
             raise Forbidden()
+
+        return user.allowed_attr_view(current_user_organisation_identifiers, True), 200
+
     return user, 200
 
 
