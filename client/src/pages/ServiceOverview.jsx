@@ -156,7 +156,8 @@ class ServiceOverview extends React.Component {
             description: description,
             service_id: service.id,
             pam_web_sso_enabled: service.pam_web_sso_enabled,
-            token_enabled: service.token_enabled
+            token_enabled: service.token_enabled,
+            token_validity_days: service.token_validity_days
         }).then(() => {
             this.afterUpdate(service.name, "tokenAdded")
         });
