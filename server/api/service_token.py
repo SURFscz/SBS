@@ -34,6 +34,7 @@ def save_service_token():
     if not service.pam_web_sso_enabled and not service.token_enabled:
         service.pam_web_sso_enabled = data["pam_web_sso_enabled"]
         service.token_enabled = data["token_enabled"]
+        service.token_validity_days = data.get("token_validity_days", 1)
         db.session.merge(service)
 
     return save(ServiceToken, custom_json=data)

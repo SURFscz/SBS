@@ -50,3 +50,4 @@ class TestServiceToken(AbstractTest):
         service = self.find_entity_by_name(Service, service_mail_name)
         self.assertTrue(service.pam_web_sso_enabled)
         self.assertTrue(service.token_enabled)
+        self.assertEqual(1, service.token_validity_days)
