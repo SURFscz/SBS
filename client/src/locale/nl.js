@@ -1564,7 +1564,8 @@ I18n.translations.nl = {
             "user_tokens": "Gebruikerstokens",
             "service_invitations": "Dienstuitnodiging",
             "service_memberships": "Dienstlidmaatschap",
-            "tags": "Label"
+            "tags": "Label",
+            "service_tokens": "Service tokens"
         }
     },
     serviceRequest: {
