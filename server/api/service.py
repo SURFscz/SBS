@@ -389,7 +389,8 @@ def update_service():
         token_enabled = data["token_enabled"]
         pam_web_sso_enabled = data["pam_web_sso_enabled"]
         if not token_enabled and not pam_web_sso_enabled:
-            ServiceToken.query.filter(ServiceToken.service_id == service_id).delete()
+            for service_token in ServiceToken.query.filter(ServiceToken.service_id == service_id).all():
+                db.session.delete(service_token)
     else:
         data["token_enabled"] = service.token_enabled
         data["pam_web_sso_enabled"] = service.pam_web_sso_enabled

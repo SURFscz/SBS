@@ -57,5 +57,6 @@ def delete_all():
 
     confirm_service_admin(service_id)
 
-    ServiceAup.query.filter(ServiceAup.service_id == service_id).delete()
+    for service_aup in ServiceAup.query.filter(ServiceAup.service_id == service_id).all():
+        db.session.delete(service_aup)
     return {}, 201
