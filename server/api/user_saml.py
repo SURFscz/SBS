@@ -10,7 +10,7 @@ from server.api.base import json_endpoint, send_error_mail
 from server.api.service_aups import has_agreed_with
 from server.auth.mfa import mfa_idp_allowed, surf_secure_id_required, has_valid_mfa
 from server.auth.security import confirm_read_access
-from server.auth.user_claims import user_memberships
+from server.auth.user_claims import user_memberships, collaboration_memberships_for_service
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, PROXY_AUTHZ, PROXY_AUTHZ_SBS
 from server.db.domain import User, Service
@@ -128,15 +128,8 @@ def _do_attributes(user, uid, service, service_entity_id, not_authorized_func, a
                      f" as the user is suspended")
         return not_authorized_func(service.name, USER_IS_SUSPENDED)
 
-    connected_collaborations = []
-    memberships = []
-    now = datetime.utcnow()
-    for cm in user.collaboration_memberships:
-        if not cm.collaboration.expiry_date or cm.collaboration.expiry_date > now:
-            connected = list(filter(lambda s: s.id == service.id, cm.collaboration.services))
-            if connected or list(filter(lambda s: s.id == service.id, cm.collaboration.organisation.services)):
-                connected_collaborations.append(cm.collaboration)
-                memberships.append(cm)
+    memberships = collaboration_memberships_for_service(user, service)
+    connected_collaborations = [cm.collaboration for cm in memberships]
 
     if not connected_collaborations and no_free_ride:
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
