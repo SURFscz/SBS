@@ -38,6 +38,8 @@ import CroppedImageField from "../components/redesign/CroppedImageField";
 import SpinnerField from "../components/redesign/SpinnerField";
 import CheckBox from "../components/CheckBox";
 
+const toc = ["general", "connection", "contacts", "policy", "ldap", "tokens", "pamWebLogin"];
+
 class ServiceOverview extends React.Component {
 
     constructor(props, context) {
@@ -396,8 +398,16 @@ class ServiceOverview extends React.Component {
             this.props.history.replace(`/services/${this.state.service.id}/details/${tab}`));
     }
 
+    getInvalidTabs = () => {
+        const invalidTabs = toc.filter(item => !this.isValidTab(item)).map(item => I18n.t(`serviceDetails.toc.${item}`)).join(", ");
+        if (invalidTabs.length > 0) {
+            return I18n.t(`serviceDetails.updateDisabled`, {invalid: invalidTabs});
+        }
+        return null;
+    }
+
     sidebar = currentTab => {
-        const toc = ["general", "connection", "contacts", "policy", "ldap", "tokens", "pamWebLogin"];
+
         return (
             <div className={"side-bar"}>
                 <h3>{I18n.t("serviceDetails.details")}</h3>
@@ -437,26 +447,30 @@ class ServiceOverview extends React.Component {
     renderButtons = (isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView, createNewServiceToken) => {
         const {accepted_user_policy, pam_web_sso_enabled, token_enabled} = this.state.service;
         const validAcceptedUserPolicy = validUrlRegExp.test(accepted_user_policy);
+        const invalidTabsMsg = this.getInvalidTabs();
         return <>
             {((isAdmin || isServiceAdmin) && !createNewServiceToken) &&
-            <section className="actions">
-                {(isAdmin && currentTab === "general" && !showServiceAdminView) &&
-                <Button warningButton={true} txt={I18n.t("service.delete")}
-                        onClick={this.delete}/>}
-                {currentTab === "policy" &&
-                <Button txt={I18n.t("service.aup.title")}
-                        disabled={!validAcceptedUserPolicy}
-                        onClick={() => this.resetAups(true)}/>}
-                {(currentTab === "tokens") &&
-                <Button txt={I18n.t("serviceDetails.addToken")}
-                        disabled={!pam_web_sso_enabled && !token_enabled}
-                        onClick={() => this.newServiceToken(true)}/>}
-                {currentTab === "ldap" &&
-                <Button txt={I18n.t("service.ldap.title")}
-                        onClick={() => this.ldapResetAction(true)}/>}
-                <Button disabled={disabledSubmit} txt={I18n.t("service.update")}
-                        onClick={this.submit}/>
-            </section>}
+            <div className={"actions-container"}>
+                {invalidTabsMsg && <span className={"error"}>{invalidTabsMsg}</span>}
+                <section className="actions">
+                    {(isAdmin && currentTab === "general" && !showServiceAdminView) &&
+                    <Button warningButton={true} txt={I18n.t("service.delete")}
+                            onClick={this.delete}/>}
+                    {currentTab === "policy" &&
+                    <Button txt={I18n.t("service.aup.title")}
+                            disabled={!validAcceptedUserPolicy}
+                            onClick={() => this.resetAups(true)}/>}
+                    {(currentTab === "tokens") &&
+                    <Button txt={I18n.t("serviceDetails.addToken")}
+                            disabled={!pam_web_sso_enabled && !token_enabled}
+                            onClick={() => this.newServiceToken(true)}/>}
+                    {currentTab === "ldap" &&
+                    <Button txt={I18n.t("service.ldap.title")}
+                            onClick={() => this.ldapResetAction(true)}/>}
+                    <Button disabled={disabledSubmit} txt={I18n.t("service.update")}
+                            onClick={this.submit}/>
+                </section>
+            </div>}
         </>
     }
 
