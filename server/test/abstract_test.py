@@ -148,8 +148,11 @@ class AbstractTest(TestCase):
 
     def expire_all_collaboration_memberships(self, user_name):
         user = self.find_entity_by_name(User, user_name)
+        self.expire_collaboration_memberships(user.collaboration_memberships)
+
+    def expire_collaboration_memberships(self, collaboration_memberships):
         past = datetime.datetime.now() - datetime.timedelta(days=5)
-        for cm in user.collaboration_memberships:
+        for cm in collaboration_memberships:
             cm.expiry_date = past
             cm.status = STATUS_EXPIRED
             db.session.merge(cm)
