@@ -6,7 +6,7 @@ from flask import Blueprint, request as current_request, current_app
 from server.api.base import json_endpoint
 from server.auth.secrets import secure_hash
 from server.auth.tokens import validate_service_token
-from server.auth.user_claims import user_memberships
+from server.auth.user_claims import user_memberships, collaboration_memberships_for_service
 from server.db.db import db
 from server.db.defaults import USER_TOKEN_INTROSPECT
 from server.db.domain import UserToken
@@ -35,16 +35,8 @@ def introspect():
     if res["active"] and user.suspended:
         res = {"status": "user-suspended", "active": False}
 
-    connected_collaborations = []
-    memberships = []
-    now = datetime.datetime.utcnow()
-    if user:
-        for cm in user.collaboration_memberships:
-            if not cm.collaboration.expiry_date or cm.collaboration.expiry_date > now:
-                connected = list(filter(lambda s: s.id == service.id, cm.collaboration.services))
-                if connected or list(filter(lambda s: s.id == service.id, cm.collaboration.organisation.services)):
-                    connected_collaborations.append(cm.collaboration)
-                    memberships.append(cm)
+    memberships = collaboration_memberships_for_service(user, service)
+    connected_collaborations = [cm.collaboration for cm in memberships]
 
     if res["active"] and (not connected_collaborations or all(m.is_expired() for m in memberships)):
         res = {"status": "token-not-connected", "active": False}
