@@ -24,7 +24,6 @@ USER_IS_SUSPENDED = 2
 SERVICE_UNKNOWN = 3
 SERVICE_NOT_CONNECTED = 4
 COLLABORATION_NOT_ACTIVE = 5
-MEMBERSHIP_NOT_ACTIVE = 6
 AUP_NOT_AGREED = 99
 SECOND_FA_REQUIRED = 100
 
@@ -140,11 +139,6 @@ def _do_attributes(user, uid, service, service_entity_id, not_authorized_func, a
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
                      f" as the service is not connected to any active collaborations")
         return not_authorized_func(service.name, COLLABORATION_NOT_ACTIVE)
-
-    if all(m.is_expired() for m in memberships) and no_free_ride:
-        logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
-                     f" as none of the collaboration memberships are active")
-        return not_authorized_func(service.name, MEMBERSHIP_NOT_ACTIVE)
 
     # logic should be: first check what type of 2FA the user should use (IdP, SSID, MFA)
     # if idp:  then always continue (everything is assumed to be handled by IdP)
