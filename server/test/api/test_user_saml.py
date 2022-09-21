@@ -75,16 +75,6 @@ class TestUserSaml(AbstractTest):
                          "http://localhost:3000/service-denied?service_name=Mail+Services&error_status=5"
                          "&entity_id=https%3A%2F%2Fmail&issuer_id=issuer.com&user_id=urn%3Asarah")
 
-    def test_proxy_authz_not_active_membership(self):
-        self.expire_all_collaboration_memberships(sarah_name)
-        res = self.post("/api/users/proxy_authz", response_status_code=200,
-                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
-                              "uid": "sarah", "homeorganization": "example.com"})
-        self.assertEqual(res["status"]["result"], "unauthorized")
-        self.assertEqual(res["status"]["redirect_url"],
-                         "http://localhost:3000/service-denied?service_name=Mail+Services&error_status=6"
-                         "&entity_id=https%3A%2F%2Fmail&issuer_id=issuer.com&user_id=urn%3Asarah")
-
     def test_proxy_authz_no_aup(self):
         self.login_user_2fa("urn:jane")
 
@@ -114,8 +104,8 @@ class TestUserSaml(AbstractTest):
         self.assertEqual(SERVICE_UNKNOWN, res["status"]["error_status"])
 
     def test_proxy_authz_service_not_connected(self):
-        res = self.post("/api/users/proxy_authz", body={"user_id": "urn:betty", "service_id": service_network_entity_id,
-                                                        "issuer_id": "https://idp.test", "uid": "sarah",
+        res = self.post("/api/users/proxy_authz", body={"user_id": "urn:james", "service_id": service_network_entity_id,
+                                                        "issuer_id": "https://idp.test", "uid": "james",
                                                         "homeorganization": "example.com"},
                         response_status_code=200)
         self.assertEqual("unauthorized", res["status"]["result"])

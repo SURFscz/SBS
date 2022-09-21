@@ -453,7 +453,7 @@ class TestCollaboration(AbstractTest):
         collaboration = self.get(f"/api/collaborations/lite/{collaboration_id}")
 
         memberships = collaboration["collaboration_memberships"]
-        self.assertEqual(4, len(memberships))
+        self.assertEqual(5, len(memberships))
         user = memberships[0]["user"]
         self.assertTrue("email" in user)
 
