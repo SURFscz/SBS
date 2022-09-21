@@ -2019,6 +2019,7 @@ I18n.translations.en = {
             tokens: "Tokens",
             pamWebLogin: "PAM web login"
         },
+        updateDisabled: "You can't update the Service. First correct the errors in the following sections: {{invalid}}"
     }
 };
 

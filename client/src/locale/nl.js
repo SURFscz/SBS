@@ -2019,6 +2019,7 @@ I18n.translations.nl = {
             tokens: "Tokens",
             pamWebLogin: "PAM web login"
         },
+        updateDisabled: "Je kan de dienst niet opslaan. Corrigeer eerst de fouten in de volgende secties: {{invalid}}"
     }
 };
 

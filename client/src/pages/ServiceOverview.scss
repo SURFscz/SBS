@@ -67,8 +67,14 @@ section.dialog-content {
         }
 
         .input-field, .radio-button-container, .actions, div.checkbox, .select-field, .ip-networks, span.error,
-        div.email-invitations, div.compliance, div.ldap, div.contacts, div.tokens {
+        div.email-invitations, div.compliance, div.ldap, div.contacts, div.tokens, div.actions-container {
             grid-column-start: first;
+        }
+
+        span.error {
+            display: block;
+            color: $error-red;
+            margin-top: 20px;
         }
 
         .section-separator {
