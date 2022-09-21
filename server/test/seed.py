@@ -46,6 +46,7 @@ service_storage_token = generate_token()
 wiki_cloud_token = generate_token()
 
 sarah_user_token = generate_token()
+betty_user_token_wiki = generate_token()
 
 collaboration_ai_computing_uuid = str(uuid.uuid4())
 ai_computing_name = "AI computing"
@@ -446,6 +447,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     sarah_ai_computing = CollaborationMembership(role="member", user=sarah, collaboration=ai_computing)
 
     betty_uuc_teachers = CollaborationMembership(role="member", user=betty, collaboration=uuc_teachers)
+    betty_uuc_ai_computing = CollaborationMembership(role="member", user=betty, collaboration=ai_computing)
 
     roger_uva_research = CollaborationMembership(role="member", user=roger, collaboration=uva_research)
     peter_uva_research = CollaborationMembership(role="member", user=peter, collaboration=uva_research)
@@ -453,7 +455,8 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     user_two_suspend_uva_research = CollaborationMembership(role="member", user=user_two_suspend,
                                                             collaboration=uva_research)
     _persist(db, john_ai_computing, admin_ai_computing, roger_uva_research, peter_uva_research, sarah_uva_research,
-             jane_ai_computing, sarah_ai_computing, user_two_suspend_uva_research, betty_uuc_teachers)
+             jane_ai_computing, sarah_ai_computing, user_two_suspend_uva_research, betty_uuc_teachers,
+             betty_uuc_ai_computing)
 
     admin_service_aups = [ServiceAup(user=admin, service=service, aup_url=service.accepted_user_policy) for service in
                           ai_computing.services]
@@ -540,7 +543,10 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
 
     user_token_sarah = UserToken(name="token", description="some", hashed_token=secure_hash(sarah_user_token),
                                  user=sarah, service=network)
-    _persist(db, user_token_sarah)
+    user_token_sarah_for_wiki = UserToken(name="token", description="some",
+                                          hashed_token=secure_hash(betty_user_token_wiki),
+                                          user=betty, service=wiki)
+    _persist(db, user_token_sarah, user_token_sarah_for_wiki)
 
     pam_sso_session_peter = PamSSOSession(session_id=pam_session_id, attribute="email", user=peter, service=storage,
                                           pin="1234")

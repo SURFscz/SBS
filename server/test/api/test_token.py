@@ -4,9 +4,10 @@ from sqlalchemy import text
 
 from server.auth.secrets import secure_hash
 from server.db.db import db
-from server.db.domain import UserToken
+from server.db.domain import UserToken, User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import sarah_user_token, network_cloud_token, sarah_name
+from server.test.seed import sarah_user_token, network_cloud_token, sarah_name, wiki_cloud_token, betty_user_token_wiki, \
+    uuc_teachers_name
 
 
 class TestToken(AbstractTest):
@@ -15,11 +16,26 @@ class TestToken(AbstractTest):
         res = self.client.post("/api/tokens/introspect", headers={"Authorization": f"bearer {network_cloud_token}"},
                                data={"token": sarah_user_token}, content_type="application/x-www-form-urlencoded")
         self.assertEqual(200, res.status_code)
-        self.assertEqual(res.json["active"], True)
-        self.assertEqual(res.json["user"]["uid"], "urn:sarah")
+        json = res.json
+        self.assertEqual(json["active"], True)
+        self.assertEqual(json["user"]["uid"], "urn:sarah")
+        self.assertListEqual(sorted(['urn:example:sbs:group:uuc:ai_computing', 'urn:example:sbs:group:uuc']),
+                             sorted(json["user"]["eduperson_entitlement"]))
 
         user_token = UserToken.query.filter(UserToken.hashed_token == secure_hash(sarah_user_token)).first()
         self.assertIsNotNone(user_token.last_used_date)
+
+    def test_introspect_one_expired_membership(self):
+        user = self.find_entity_by_name(User, "betty")
+        cm = [cm for cm in user.collaboration_memberships if cm.collaboration.name == uuc_teachers_name]
+        self.expire_collaboration_memberships(cm)
+
+        res = self.client.post("/api/tokens/introspect", headers={"Authorization": f"bearer {wiki_cloud_token}"},
+                               data={"token": betty_user_token_wiki}, content_type="application/x-www-form-urlencoded")
+        self.assertEqual(200, res.status_code)
+        user = res.json["user"]
+        self.assertListEqual(sorted(['urn:example:sbs:group:uuc:ai_computing', 'urn:example:sbs:group:uuc']),
+                             sorted(user["eduperson_entitlement"]))
 
     def test_introspect_not_connected(self):
         db.session.execute(text("DELETE from services_collaborations"))
