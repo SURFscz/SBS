@@ -336,31 +336,32 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     db.session.commit()
 
 
-logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
-logger = logging.getLogger()
+if (__name__) == "__main__":
+    logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
+    logger = logging.getLogger()
 
-config_file_location = os.environ.get("CONFIG", "config/config.yml")
-config = munchify(yaml.load(read_file(config_file_location), Loader=yaml.FullLoader))
+    config_file_location = os.environ.get("CONFIG", "config/config.yml")
+    config = munchify(yaml.load(read_file(config_file_location), Loader=yaml.FullLoader))
 
-app = Flask(__name__)
-app.app_context().push()
-app.config["SQLALCHEMY_DATABASE_URI"] = config.database.uri
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app = Flask(__name__)
+    app.app_context().push()
+    app.config["SQLALCHEMY_DATABASE_URI"] = config.database.uri
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-db.init_app(app)
-app.db = db
+    db.init_app(app)
+    app.db = db
 
-Migrate(app, db)
-result = None
+    Migrate(app, db)
+    result = None
 
-while result is None:
-    logger.info("Waiting...")
-    try:
-        result = db.engine.execute(text("SELECT 1"))
-    except Exception:
-        logger.info("Waiting for the database...")
-        time.sleep(1)
+    while result is None:
+        logger.info("Waiting...")
+        try:
+            result = db.engine.execute(text("SELECT 1"))
+        except Exception:
+            logger.info("Waiting for the database...")
+            time.sleep(1)
 
-db_migrations(config.database.uri)
+    db_migrations(config.database.uri)
 
-seed(db, app.config)
+    seed(db, app.config)
