@@ -1,10 +1,10 @@
 #!/opt/sbs/sbs-env/bin/python
 # -*- coding: future_fstrings -*-
 import base64
-import datetime
 import os
 import uuid
 import sys
+import time
 import logging
 
 from sqlalchemy import text
@@ -12,15 +12,10 @@ from sqlalchemy import text
 if "/opt/sbs/sbs" not in sys.path:
     sys.path.insert(0, "/opt/sbs/sbs")
 
-from server.api.collaboration_request import STATUS_OPEN
-from server.auth.secrets import secure_hash, generate_token
 from server.db.audit_mixin import metadata
-from server.db.defaults import default_expiry_date
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
-    CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey, CollaborationRequest, \
-    ServiceConnectionRequest, SuspendNotification, Aup, SchacHomeOrganisation, SshKey, ServiceGroup, \
-    ServiceInvitation, ServiceMembership, ServiceAup, UserToken, UserIpNetwork, Tag, PamSSOSession, IpNetwork, \
-    ServiceToken
+    CollaborationMembership, Group, Aup, SchacHomeOrganisation, SshKey, ServiceGroup, \
+    ServiceMembership, Tag
 
 import yaml
 from flask import Flask
@@ -362,7 +357,7 @@ while result is None:
     logger.info("Waiting...")
     try:
         result = db.engine.execute(text("SELECT 1"))
-    except OperationalError:
+    except Exception:
         logger.info("Waiting for the database...")
         time.sleep(1)
 
