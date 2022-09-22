@@ -61,204 +61,282 @@ def clean_db(db):
 def seed(db, app_config, skip_seed=False, perf_test=False):
     clean_db(db)
 
-    shac_home_organisation_01 = "onlineresearch.com"
-    shac_home_organisation_02 = "school4us.org"
+    # Create organisations
+    shac_home_organisation_00 = "onlineresearch.com"
+    shac_home_organisation_01 = "school4us.org"
+
+    organisations = [
+        {
+            "name": "Online Resarch bv",
+            "short_name": "onlresbv",
+            "description": "Organisation for online research",
+            "logo": "org_01.jpg",
+            "category": "Research",
+            "shac_home_organisation": shac_home_organisation_00
+        },
+        {
+            "name": "School 4 US",
+            "short_name": "school4us",
+            "description": "A school for everybody",
+            "logo": "org_02.jpg",
+            "category": "University",
+            "shac_home_organisation": shac_home_organisation_01
+        }
+    ]
+
+    org_list = []
+    for org in organisations:
+        new_org = Organisation(
+            name=org['name'],
+            description=org['description'],
+            identifier=str(uuid.uuid4()),
+            created_by="urn:admin",
+            updated_by="urn:admin",
+            short_name=org['short_name'],
+            logo=read_image(org['logo']),
+            category=org['category']
+        )
+        _persist(db, new_org)
+        org_list.append(new_org)
+
+        new_sho = SchacHomeOrganisation(
+            name=org['shac_home_organisation'],
+            organisation=new_org,
+            created_by="urn:admin",
+            updated_by="urn:admin"
+        )
+        _persist(db, new_sho)
 
     # Create Users
-    user_01_mail = "john@example.org"
-    user_02_mail = "peter@example.org"
+    users = [
+        {
+            "username": "john",
+            "name": "John Doe",
+            "email": "john@example.org",
+            "schac_home_organisation": shac_home_organisation_00,
+            "org": org_list[0]
+        },
+        {
+            "username": "peter",
+            "name": "Peter Doe",
+            "email": "john@example.org",
+            "schac_home_organisation": shac_home_organisation_01,
+            "org": org_list[1]
+        }
+    ]
 
-    user_01 = User(uid="urn:john",
-                   name="John Doe",
-                   username="john",
-                   email=user_01_mail,
-                   address="Postal 1234AA",
-                   schac_home_organisation=shac_home_organisation_01)
-    user_02 = User(uid="urn:peter",
-                   name="Peter Doe",
-                   username="peter",
-                   email=user_02_mail,
-                   address="Postal 1234AA",
-                   schac_home_organisation=shac_home_organisation_02)
-    _persist(db, user_01, user_02)
+    user_list = []
+    for user in users:
+        new_user = User(
+            username=user['username'],
+            uid=f"urn:{user['username']}",
+            name=user['name'],
+            email=f"{user['username']}@{user['schac_home_organisation']}",
+            address="Postbus 1234AA",
+            schac_home_organisation=user['schac_home_organisation']
+        )
+        _persist(db, new_user)
+        user_list.append(new_user)
 
-    # Create SSH keys
-    ssh_key_user_01 = SshKey(user=user_01, ssh_value="some-ssh-key-01")
-    ssh_key_user_02 = SshKey(user=user_02, ssh_value="some-ssh-key-02")
-    _persist(db, ssh_key_user_01, ssh_key_user_02)
+        # Add SSH keys
+        ssh_key = SshKey(user=new_user, ssh_value="some-ssh-key")
+        _persist(db, ssh_key)
 
-    # Create organisations
-    org_01 = Organisation(name="Online Resarch bv",
-                          description="Organisation for online research",
-                          identifier=str(uuid.uuid4()),
-                          created_by="urn:admin",
-                          updated_by="urn:admin",
-                          short_name="onlresbv",
-                          logo=read_image("org_01.jpg"),
-                          category="Research")
-    org_02 = Organisation(name="School 4 US",
-                          description="A school for everybody",
-                          identifier=str(uuid.uuid4()),
-                          created_by="urn:admin",
-                          updated_by="urn:admin",
-                          short_name="school4us",
-                          logo=read_image("org_02.jpg"),
-                          category="University")
-    _persist(db, org_01, org_02)
-
-    # Create ShacHomeOrganisations
-    sho_01 = SchacHomeOrganisation(name=shac_home_organisation_01,
-                                   organisation=org_01,
-                                   created_by="urn:admin",
-                                   updated_by="urn:admin")
-    sho_02 = SchacHomeOrganisation(name=shac_home_organisation_02,
-                                   organisation=org_02,
-                                   created_by="urn:admin",
-                                   updated_by="urn:admin")
-    _persist(db, sho_01, sho_02)
-
-    # Creeate orgasnisation memberships
-    org_membership_user_01 = OrganisationMembership(role="admin",
-                                                    user=user_01,
-                                                    organisation=org_01)
-    org_membership_user_02 = OrganisationMembership(role="admin",
-                                                    user=user_02,
-                                                    organisation=org_02)
-    _persist(db, org_membership_user_01, org_membership_user_02)
+        # Create organisation memberships
+        org_membership_user = OrganisationMembership(
+            role="admin",
+            user=new_user,
+            organisation=user['org']
+        )
+        _persist(db, org_membership_user)
 
     # Create Services
-    service_01 = Service(entity_id="service_01_entity_id",
-                         name="Mail",
-                         logo=read_image("service_01.jpg"),
-                         contact_email=user_01_mail,
-                         public_visible=True,
-                         automatic_connection_allowed=True,
-                         allowed_organisations=[org_01, org_02],
-                         abbreviation="svc01",
-                         accepted_user_policy="https://google.nl",
-                         privacy_policy="https://privacy.org",
-                         security_email="sec@service_01.nl")
-    service_02 = Service(entity_id="service_02_entity_id",
-                         name="Wireless",
-                         logo=read_image("service_02.png"),
-                         contact_email=user_02_mail,
-                         public_visible=True,
-                         automatic_connection_allowed=True,
-                         allowed_organisations=[org_01, org_02],
-                         abbreviation="svc02",
-                         accepted_user_policy="https://google.nl",
-                         privacy_policy="https://privacy.org",
-                         security_email="sec@service_02.nl")
-    _persist(db, service_01, service_02)
+    services = [
+        {
+            "name": "Demo OIDC RP",
+            "entity_id": "APP-04994294-94DD-4980-A161-A02E611065DA",
+            "logo": "service_01.jpg",
+            "mail": users[0]['email'],
+            "allowed_organisations": [org_list[0], org_list[1]],
+            "abbreviation": "svc01",
+            "security_email": "sec@service_01.nl",
+            "service_memberships": [user_list[0], user_list[1]]
+        },
+        {
+            "name": "Demo OIDC RP",
+            "entity_id": "https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/prd",
+            "logo": "service_02.jpg",
+            "mail": users[1]['email'],
+            "allowed_organisations": [org_list[0], org_list[1]],
+            "abbreviation": "svc02",
+            "security_email": "sec@service_02.nl",
+            "service_memberships": user_list
+        },
+        {
+            "name": "Mail",
+            "entity_id": "service_entity_id_mail",
+            "logo": "service_03.jpg",
+            "mail": users[0]['email'],
+            "allowed_organisations": org_list,
+            "abbreviation": "svc03",
+            "security_email": "sec@service_03.nl",
+            "service_memberships": user_list
+        },
+        {
+            "name": "Wireless",
+            "entity_id": "service_entity_id_wireless",
+            "logo": "service_04.jpg",
+            "mail": users[0]['email'],
+            "allowed_organisations": org_list,
+            "abbreviation": "svc04",
+            "security_email": "sec@service_04.nl",
+            "service_memberships": user_list
+        },
+    ]
 
-    # Add Service memberships
-    service_membership_user_01 = ServiceMembership(role="admin",
-                                                   user=user_01,
-                                                   service=service_01)
-    service_membership_user_02 = ServiceMembership(role="admin",
-                                                   user=user_02,
-                                                   service=service_02)
-    _persist(db, service_membership_user_01, service_membership_user_02)
+    service_list = []
+    for service in services:
+        new_service = Service(
+            entity_id=service['entity_id'],
+            name=service['name'],
+            logo=read_image(service['logo']),
+            contact_email=service['mail'],
+            public_visible=True,
+            automatic_connection_allowed=True,
+            allowed_organisations=service['allowed_organisations'],
+            abbreviation=service['abbreviation'],
+            accepted_user_policy="https://google.nl",
+            privacy_policy="https://privacy.org",
+            security_email=service['security_email']
+        )
+        _persist(db, new_service)
+        service_list.append(new_service)
 
-    # Add service groups
-    service_group_01 = ServiceGroup(name="Mail users",
-                                    short_name="mail",
-                                    auto_provision_members=True,
-                                    description="Mail users group",
-                                    service=service_01)
-    service_group_02 = ServiceGroup(name="Wireless users",
-                                    short_name="wireless",
-                                    auto_provision_members=True,
-                                    description="Wireless users group",
-                                    service=service_02)
-    _persist(db, service_group_01, service_group_02)
+        # Add Service memberships
+        for user in service['service_memberships']:
+            service_membership_user = ServiceMembership(
+                role="member",
+                user=user,
+                service=new_service
+            )
 
-    # Add services to orgs
-    org_01.services.append(service_01)
-    org_02.services.append(service_02)
+            _persist(db, service_membership_user)
+
+        # Add service groups
+        groups = [
+            {
+                "name": "Regular",
+                "short_name": "regular",
+                "auto_provision": True
+            },
+            {
+                "name": "Admin",
+                "short_name": "admin",
+                "auto_provision": False
+            },
+        ]
+
+        for group in groups:
+            new_service_group = ServiceGroup(
+                name=group['name'],
+                short_name=group['short_name'],
+                auto_provision_members=group['auto_provision'],
+                description=f"{group['name']} users group",
+                service=new_service
+            )
+            _persist(db, new_service_group)
 
     # Create Collaborations
-    tag_org_01 = Tag(tag_value="tag_org_01")
-    tag_org_02 = Tag(tag_value="tag_org_02")
-    _persist(db, tag_org_01, tag_org_02)
+    tags = [
+        Tag(tag_value="label_01"),
+        Tag(tag_value="label_02"),
+    ]
 
-    collab_01_shortname = "collab01"
-    collab_02_shortname = "collab02"
+    tag_list = []
+    for tag in tags:
+        _persist(db, tag)
+        tag_list.append(tag)
 
-    collab_01 = Collaboration(name="AI Computing Group",
-                              identifier=str(uuid.uuid4()),
-                              global_urn=f"ucc:{collab_01_shortname}",
-                              description="Artifical Intelligence computing",
-                              logo=read_image("collab_01.jpg"),
-                              organisation=org_01, services=[service_01, service_02],
-                              join_requests=[], invitations=[],
-                              tags=[tag_org_01],
-                              short_name=collab_01_shortname,
-                              website_url="https://www.google.nl",
-                              accepted_user_policy="https://www.google.nl",
-                              disclose_email_information=True,
-                              disclose_member_information=True)
-    collab_02 = Collaboration(name="Genomics Group",
-                              identifier=str(uuid.uuid4()),
-                              global_urn=f"ucc:{collab_02_shortname}",
-                              description="Genomics computing",
-                              logo=read_image("collab_02.jpg"),
-                              organisation=org_02, services=[service_01, service_02],
-                              join_requests=[], invitations=[],
-                              tags=[tag_org_02],
-                              short_name=collab_02_shortname,
-                              website_url="https://www.google.nl",
-                              accepted_user_policy="https://www.google.nl",
-                              disclose_email_information=True,
-                              disclose_member_information=True)
-    _persist(db, collab_01, collab_02)
+    collaborations = [
+        {
+            "name": "AI Computing Group",
+            "short_name": "collab01",
+            "description": "Artifical Intelligence computing",
+            "logo": "collab_01.jpg",
+            "organisation": org_list[0],
+            "services": [service_list[0], service_list[1]],
+            "tags": [tag_list[0]],
+            "users": [user_list[0], user_list[1]]
+        },
+        {
+            "name": "Genomics Group",
+            "short_name": "collab02",
+            "description": "Genomics computing",
+            "logo": "collab_02.jpg",
+            "organisation": org_list[1],
+            "services": [service_list[0], service_list[1]],
+            "tags": [tag_list[1]],
+            "users": user_list
+        },
+    ]
 
-    # Make users member of collabiration
-    user_01_collab_01 = CollaborationMembership(role="member", user=user_01, collaboration=collab_01)
-    user_02_collab_01 = CollaborationMembership(role="admin", user=user_02, collaboration=collab_01)
-    user_01_collab_02 = CollaborationMembership(role="member", user=user_01, collaboration=collab_02)
-    user_02_collab_02 = CollaborationMembership(role="admin", user=user_02, collaboration=collab_02)
-    _persist(db, user_01_collab_01, user_02_collab_01, user_01_collab_02, user_02_collab_02)
+    for collab in collaborations:
+        new_collab = Collaboration(
+            name=collab['name'],
+            identifier=str(uuid.uuid4()),
+            global_urn=f"ucc:{collab['short_name']}",
+            description=collab['description'],
+            logo=read_image(collab['logo']),
+            organisation=collab['organisation'],
+            services=collab['services'],
+            join_requests=[],
+            invitations=[],
+            tags=collab['tags'],
+            short_name=collab['short_name'],
+            website_url="https://www.google.nl",
+            accepted_user_policy="https://www.google.nl",
+            disclose_email_information=True,
+            disclose_member_information=True
+        )
+        _persist(db, new_collab)
 
-    # Add collaboration groups
-    group_users_shortname = "users"
-    group_admins_shortname = "admins"
+        # Make users member of collaboration
+        membership_list = []
+        for user in collab['users']:
+            new_collab_membership = CollaborationMembership(
+                role="member",
+                user=user,
+                collaboration=new_collab
+            )
+            _persist(db, new_collab_membership)
+            membership_list.append(new_collab_membership)
 
-    group_01 = Group(name="Users",
-                     short_name=group_users_shortname,
-                     global_urn=f"uuc:{collab_01_shortname}:{group_users_shortname}",
-                     identifier=str(uuid.uuid4()),
-                     auto_provision_members=False,
-                     description=f"Artifical Intelligence {group_users_shortname}",
-                     collaboration=collab_01,
-                     collaboration_memberships=[user_01_collab_01,
-                                                user_02_collab_01])
-    group_02 = Group(name="Admins",
-                     short_name=group_admins_shortname,
-                     global_urn=f"uuc:{collab_01_shortname}:{group_admins_shortname}",
-                     identifier=str(uuid.uuid4()),
-                     auto_provision_members=False,
-                     description=f"Artifical Intelligence {group_admins_shortname}",
-                     collaboration=collab_01,
-                     collaboration_memberships=[user_02_collab_01])
-    group_03 = Group(name="Users",
-                     short_name=group_users_shortname,
-                     global_urn=f"uuc:{collab_02_shortname}:{group_users_shortname}",
-                     identifier=str(uuid.uuid4()),
-                     auto_provision_members=False,
-                     description=f"Genomics computing {group_users_shortname}",
-                     collaboration=collab_02,
-                     collaboration_memberships=[user_01_collab_02,
-                                                user_02_collab_02])
-    group_04 = Group(name="Admins",
-                     short_name=group_admins_shortname,
-                     global_urn=f"uuc:{collab_02_shortname}:{group_admins_shortname}",
-                     identifier=str(uuid.uuid4()),
-                     auto_provision_members=False,
-                     description=f"Genomics computing {group_admins_shortname}",
-                     collaboration=collab_02,
-                     collaboration_memberships=[user_02_collab_02])
-    _persist(db, group_01, group_02, group_03, group_04)
+        # Add collaboration groups
+        groups = [
+            {
+                "name": "Student",
+                "short_name": "students",
+                "auto_provision": True,
+            },
+            {
+                "name": "Teacher",
+                "short_name": "teacher",
+                "auto_provision": False,
+            },
+        ]
+
+        for group in groups:
+            new_group = Group(
+                name=group['name'],
+                short_name=group['short_name'],
+                global_urn=f"uuc:{collab['short_name']}:{group['short_name']}",
+                identifier=str(uuid.uuid4()),
+                auto_provision_members=group['auto_provision'],
+                description=f"{group['name']} users group",
+                collaboration=new_collab,
+                collaboration_memberships=membership_list
+            )
+            _persist(db, new_group)
 
     db.session.commit()
 
