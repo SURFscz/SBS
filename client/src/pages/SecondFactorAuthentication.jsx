@@ -48,8 +48,6 @@ class SecondFactorAuthentication extends React.Component {
     }
 
     componentDidMount() {
-        console.log("2fa start");
-
         const {config, user, update, match} = this.props;
 
         const urlSearchParams = new URLSearchParams(window.location.search);
