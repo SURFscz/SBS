@@ -186,6 +186,8 @@ def config():
     cfg = current_app.app_config
     base_url = cfg.base_url
     base_url = base_url[:-1] if base_url.endswith("/") else base_url
+    cfq = cfg.collaboration_suspension
+    threshold_for_warning = cfq.collaboration_inactivity_days_threshold - cfq.inactivity_warning_mail_days_threshold
     return {"local": current_app.config["LOCAL"],
             "base_url": base_url,
             "api_keys_enabled": cfg.feature.api_keys_enabled,
@@ -198,7 +200,8 @@ def config():
             "ldap_bind_account": cfg.ldap.bind_account,
             "continue_eduteams_redirect_uri": cfg.oidc.continue_eduteams_redirect_uri,
             "introspect_endpoint": f"{cfg.base_server_url}/api/tokens/introspect",
-            "past_dates_allowed": cfg.feature.past_dates_allowed
+            "past_dates_allowed": cfg.feature.past_dates_allowed,
+            "threshold_for_collaboration_inactivity_warning": threshold_for_warning
             }, 200
 
 
