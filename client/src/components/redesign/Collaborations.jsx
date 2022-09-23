@@ -44,11 +44,15 @@ export default class Collaborations extends React.PureComponent {
     }
 
     componentDidMount = () => {
-        const {collaborations, showTagFilter = false, platformAdmin = false} = this.props;
+        const {collaborations, user, showTagFilter = false, platformAdmin = false} = this.props;
         const promises = [mayRequestCollaboration()];
         if (collaborations === undefined) {
             Promise.all(promises.concat([platformAdmin ? allCollaborations() : myCollaborations()])).then(res => {
                 const allFilterOptions = this.allLabelFilterOptions(res[1], showTagFilter);
+                res[1].forEach(co => {
+                    const membership = (user.collaboration_memberships || []).find(m => m.collaboration_id === co.id);
+                    co.role = membership ? membership.role : null;
+                });
                 this.setState({
                     standalone: true,
                     collaborations: res[1],
@@ -295,14 +299,14 @@ export default class Collaborations extends React.PureComponent {
                 mapper: collaboration => organisation ? organisation.name : collaboration.organisation.name
             },
             {
-                nonSortable: true,
                 key: "role",
                 class: serviceKey,
-                header: "",// I18n.t("profile.yourRole"),
+                header: I18n.t("profile.yourRole"),
                 mapper: collaboration => {
-                    const cm = user.collaboration_memberships.find(m => m.collaboration_id === collaboration.id);
-                    return cm ?
-                        <span className={`person-role ${cm.role}`}>{I18n.t(`profile.${cm.role}`)}</span> : null;
+                    if (collaboration.role) {
+                        return <span className={`person-role ${collaboration.role}`}>{I18n.t(`profile.${collaboration.role}`)}</span>
+                    }
+                    return null;
                 }
             }
         );
