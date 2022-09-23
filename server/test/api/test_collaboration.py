@@ -274,6 +274,10 @@ class TestCollaboration(AbstractTest):
         self.assertTrue(len(collaboration["collaboration_memberships"]) >= 4)
         self.assertEqual(1, len(collaboration["invitations"]))
 
+    def test_collaboration_by_id_v1(self):
+        self.login()
+        self.get("/api/collaborations/v1", with_basic_auth=False, response_status_code=405)
+
     def test_collaboration_by_id_service_connection_requests(self):
         collaboration_id = self.find_entity_by_name(Collaboration, uva_research_name).id
         self.login()
