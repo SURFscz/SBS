@@ -68,6 +68,7 @@ I18n.translations.en = {
         edit: "Edit",
         history: "History",
         unsuspend: "Revert suspension",
+        resetLastActivity: "Reset activity",
         details: "Details",
         backToHome: "Back to home",
         firstTime: "Onboarding",
@@ -748,7 +749,9 @@ I18n.translations.en = {
             expired: "Expired",
             activeTooltip: "This collaboration is active and ready for business.",
             suspendedTooltip: "This collaboration was suspended due to inactivity. It was last used on {{lastActivityDate}}.",
-            revertSuspension: " You can revert the suspension from the right drop-down menu",
+            revertSuspension: " You can revert the suspension from the right drop-down menu.",
+            almostSuspended: "This collaboration will be suspended due to inactivity in {{days}} days.",
+            revertAlmostSuspended: " You can prevent the suspension from the right drop-down menu.",
             expiredTooltip: "This collaboration has reached its expiration date of {{expiryDate}}. It can be activated by setting a new expiration date or clearing it. ",
             activeWithExpiryDateTooltip: "This collaboration will expire at {{expiryDate}}. "
         },
@@ -1915,6 +1918,10 @@ I18n.translations.en = {
     unsuspend: {
         confirmation: "Are you sure you want to revert suspension this collaboration?",
         flash: "Collaboration {{name}} is active again"
+    },
+    resetActivity: {
+        confirmation: "Are you sure you want to reset the last activity date for this collaboration?",
+        flash: "Collaboration {{name}} last activity date has been reset"
     },
     organisationMembership: {
         membership: "Membership of {{name}} has no expiration date.",

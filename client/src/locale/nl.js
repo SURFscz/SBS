@@ -68,6 +68,7 @@ I18n.translations.nl = {
         edit: "Wijzig",
         history: "Geschiedenis",
         unsuspend: "Schorsing ongedaan maken",
+        resetLastActivity: "Reset activiteit",
         details: "Details",
         backToHome: "Terug naar home",
         firstTime: "Onboarding",
@@ -749,6 +750,8 @@ I18n.translations.nl = {
             activeTooltip: "Deze samenwerking is actief.",
             suspendedTooltip: "Deze samenwerking is geschorst wegens inactiviteit. De laatste activiteit was op {{lastActivityDate}}. ",
             revertSuspension: " Je kan de schorsing ongedaan maken vanuit het rechter drop-down menu.",
+            almostSuspended: "Deze samenwerking zal over {{days}} dagen worden geschorst vanwege inactiviteit.",
+            revertAlmostSuspended: " Je kan de schorsing voorkomen vanuit het rechter drop-down menu.",
             expiredTooltip: "Deze samenwerking is verlopen op {{expiryDate}}. Heractiveren kan de einddatum aan te passen of te wissen. ",
             activeWithExpiryDateTooltip: "Deze samenwerking verloopt op {{expiryDate}}. "
         },
@@ -1915,6 +1918,10 @@ I18n.translations.nl = {
     unsuspend: {
         confirmation: "Weet je zeker dat je de schorsing van deze samenwerking ongedaan wil maken?",
         flash: "Samenwerking {{name}} is weer actief"
+    },
+    resetActivity: {
+        confirmation: "Weet je zeker dat je de datum van de laatste activiteit van deze samenwerking wilt resetten?",
+        flash: "Collaboration {{name}} laatste activiteit datum is gereset."
     },
     organisationMembership: {
         membership: "Lidmaatschap van {{name}} heeft geen einddatum.",
