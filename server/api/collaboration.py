@@ -9,7 +9,7 @@ from flask import Blueprint, jsonify, request as current_request, current_app, g
 from munch import munchify
 from sqlalchemy import text, or_, func, bindparam, String
 from sqlalchemy.orm import aliased, load_only, selectinload
-from werkzeug.exceptions import BadRequest, Forbidden
+from werkzeug.exceptions import BadRequest, Forbidden, MethodNotAllowed
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.api.service_group import create_service_groups
@@ -259,6 +259,9 @@ def collaboration_access_allowed(collaboration_id):
 @collaboration_api.route("/<collaboration_id>", strict_slashes=False)
 @json_endpoint
 def collaboration_by_id(collaboration_id):
+    if collaboration_id == "v1":
+        raise MethodNotAllowed()
+
     confirm_collaboration_admin(collaboration_id, read_only=True)
 
     collaboration = Collaboration.query \
