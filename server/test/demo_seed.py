@@ -26,7 +26,7 @@ from munch import munchify
 
 
 def read_image(file_name):
-    file = f"{os.path.dirname(os.path.realpath(__file__))}/test_images/{file_name}"
+    file = f"{os.path.dirname(os.path.realpath(__file__))}/demo_images/{file_name}"
     with open(file, "rb") as f:
         c = f.read()
         return base64.encodebytes(c).decode("utf-8")
