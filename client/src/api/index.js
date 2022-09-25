@@ -664,12 +664,12 @@ export function auditLogsInfo(objectId, collectionNames) {
     return fetchJson(`/api/audit_logs/info/${objectId}/${collectionNames}`);
 }
 
-export function auditLogsActivity(limit, tableNames) {
+export function auditLogsActivity(limit, tableNames, query) {
     const tables = isEmpty(tableNames) ? null : tableNames.map(s => s.value).join(",");
-    const params = {limit, tables};
+    const params = {limit, tables, query};
     const queryString = Object.keys(params)
         .filter(key => params[key])
-        .map(key => `${key}=${params[key]}`).join("&");
+        .map(key => `${key}=${encodeURIComponent(params[key])}`).join("&");
     return fetchJson(`/api/audit_logs/activity?${queryString}`);
 }
 
