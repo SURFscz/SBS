@@ -5,8 +5,7 @@ from werkzeug.exceptions import BadRequest, Forbidden
 
 from server.api.base import json_endpoint, emit_socket
 from server.api.service_group import create_service_groups
-from server.auth.security import confirm_collaboration_admin, confirm_external_api_call, confirm_write_access, \
-    confirm_service_admin
+from server.auth.security import confirm_collaboration_admin, confirm_external_api_call, confirm_service_admin
 from server.db.db import db
 from server.db.domain import Service, Collaboration
 from server.schemas import json_schema_validator
@@ -27,8 +26,8 @@ def connect_service_collaboration(service_id, collaboration_id, force=False):
         raise BadRequest("automatic_connection_not_allowed")
 
     collaboration = Collaboration.query.get(collaboration_id)
-    if collaboration.organisation.services_restricted:
-        confirm_write_access()
+    if collaboration.organisation.services_restricted and not service.white_listed:
+        raise BadRequest(f"Organisation {collaboration.organisation.name} can only be linked to SURF services")
 
     collaboration.services.append(service)
     db.session.merge(collaboration)
@@ -59,7 +58,7 @@ def add_collaborations_services():
 
 
 @collaborations_services_api.route("/v1/connect_collaboration_service", methods=["PUT"], strict_slashes=False)
-@swag_from("../swagger/paths/connect_collaboration_service.yml")
+@swag_from("../swagger/public/paths/connect_collaboration_service.yml")
 @json_endpoint
 def connect_collaboration_service_api():
     confirm_external_api_call()
@@ -107,8 +106,6 @@ def delete_all_services(collaboration_id):
     confirm_collaboration_admin(collaboration_id)
 
     collaboration = Collaboration.query.get(collaboration_id)
-    if collaboration.organisation.services_restricted:
-        confirm_write_access()
 
     collaboration.services = []
     db.session.merge(collaboration)
@@ -127,8 +124,6 @@ def delete_collaborations_services(collaboration_id, service_id):
         confirm_service_admin(service_id)
 
     collaboration = Collaboration.query.get(collaboration_id)
-    if collaboration.organisation.services_restricted:
-        confirm_write_access()
 
     collaboration.services.remove(Service.query.get(service_id))
     db.session.merge(collaboration)

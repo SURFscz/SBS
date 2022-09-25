@@ -5,6 +5,7 @@ from flask import Blueprint
 from server.api.base import json_endpoint
 from server.auth.security import confirm_write_access
 from server.db.db import db
+from server.db.defaults import USER_TOKEN_INTROSPECT, PAM_WEB_LOGIN, PROXY_AUTHZ_SBS, PROXY_AUTHZ, SBS_LOGIN
 
 user_login_api = Blueprint("user_login_api", __name__, url_prefix="/api/user_logins")
 
@@ -14,8 +15,14 @@ user_login_api = Blueprint("user_login_api", __name__, url_prefix="/api/user_log
 def summary():
     confirm_write_access()
 
-    rs = db.engine.execute("SELECT COUNT(*) AS c, COUNT(DISTINCT(user_id)) AS cu, "
-                           "COUNT(DISTINCT(service_id)) AS cs FROM user_logins")
-    results = next(rs)
+    rs = db.engine.execute("SELECT login_type, COUNT(*), SUM(succeeded=1), SUM(succeeded=0) "
+                           "FROM user_logins GROUP BY login_type")
+    res = [{"login_type": row[0], "count": row[1], "succeeded": int(row[2]), "failed": int(row[3])} for row in rs]
 
-    return dict(results), 200
+    def add_missing_login_type(login_type):
+        if not [r for r in res if r["login_type"] == login_type]:
+            res.append({"login_type": login_type, "count": 0, "succeeded": 0, "failed": 0})
+
+    for login_type in [SBS_LOGIN, PROXY_AUTHZ, PROXY_AUTHZ_SBS, PAM_WEB_LOGIN, USER_TOKEN_INTROSPECT]:
+        add_missing_login_type(login_type)
+    return res, 200

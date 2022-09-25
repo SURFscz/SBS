@@ -1,4 +1,3 @@
-
 # -*- coding: future_fstrings -*-
 import re
 
@@ -26,6 +25,10 @@ class TestImage(AbstractTest):
     def test_find_image_sql_injection(self):
         res = self.client.get("/api/images/evil/5")
         self.assertEqual(400, res.status_code)
+
+    def test_find_image_404(self):
+        res = self.client.get("/api/images/collaborations/5")
+        self.assertEqual(404, res.status_code)
 
     def test_collaboration_request(self):
         collaboration_request = self.find_entity_by_name(CollaborationRequest, collaboration_request_name)

@@ -98,6 +98,39 @@
 
                 }
             }
+
+            table.table-logins {
+
+                th {
+                    &.type {
+                        width: 50%;
+                    }
+
+                    &.total {
+                        width: 15%;
+                        text-align: center;
+                    }
+
+                    &.succeeded {
+                        width: 15%;
+                        text-align: center;
+                    }
+
+                    &.failed {
+                        width: 15%;
+                        text-align: center;
+                    }
+
+                }
+
+                tbody tr td {
+                    &.count, &.succeeded, &.failed {
+                        text-align: center;
+                    }
+
+                }
+
+            }
         }
 
         .search-activity {
@@ -125,48 +158,6 @@
                 @media (max-width: $compact-medium) {
                     margin: 0 0 15px 0;
                 }
-            }
-
-            .search {
-                position: relative;
-                display: flex;
-
-                &.no-clear-logs {
-                    margin-left: auto;
-                }
-
-                @media (max-width: $compact-medium) {
-                    margin-left: 0;
-                }
-
-                svg.fa-search, svg.fa-magnifying-glass {
-                    position: absolute;
-                    font-size: 16px;
-                    color: $blue;
-                    top: 7px;
-                    right: 9px;
-                }
-
-                input[type=text] {
-                    flex-grow: 2;
-                    border: 1px solid $lighter-grey;
-                    padding: 0 15px 0 10px;
-                    min-height: 38px;
-                    font-size: 16px;
-                    border-radius: $br;
-                    min-width: 360px;
-
-                    @media (max-width: $compact-medium) {
-                        min-width: 0;
-                    }
-
-
-                    &:focus {
-                        outline: none;
-                        box-shadow: 1px 1px 1px $blue-hover, -1px -1px 1px $blue-hover;
-                    }
-                }
-
             }
 
             div.input-select-inner {
@@ -238,4 +229,57 @@
             }
         }
     }
+
+    .search {
+        position: relative;
+        display: flex;
+
+        &.no-clear-logs {
+            margin-left: auto;
+        }
+
+        @media (max-width: $compact-medium) {
+            margin-left: 0;
+        }
+
+        svg.fa-search, svg.fa-magnifying-glass {
+            position: absolute;
+            font-size: 16px;
+            color: $blue;
+            top: 7px;
+            right: 9px;
+        }
+
+        &.server-side {
+            height: 48px;
+            margin-top: auto;
+            margin-left: 15px;
+
+            svg.fa-search, svg.fa-magnifying-glass {
+                top: 14px;
+            }
+        }
+
+        input[type=text] {
+            flex-grow: 2;
+            border: 1px solid $lighter-grey;
+            padding: 0 15px 0 10px;
+            min-height: 38px;
+            font-size: 16px;
+            border-radius: $br;
+            min-width: 560px;
+
+            @media (max-width: $compact-medium) {
+                min-width: 0;
+            }
+
+
+            &:focus {
+                outline: none;
+                box-shadow: 1px 1px 1px $blue-hover, -1px -1px 1px $blue-hover;
+            }
+        }
+
+    }
+
 }

@@ -10,9 +10,9 @@ from urllib.parse import urlparse
 from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
 from jsonschema import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
-from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest
+from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest, Forbidden
 
-from server.auth.security import current_user_id
+from server.auth.security import current_user_id, CSRF_TOKEN
 from server.auth.tokens import get_authorization_header
 from server.auth.urls import white_listing, mfa_listing, external_api_listing
 from server.db.db import db
@@ -25,6 +25,8 @@ base_api = Blueprint("base_api", __name__, url_prefix="/")
 STATUS_OPEN = "open"
 STATUS_DENIED = "denied"
 STATUS_APPROVED = "approved"
+
+_audit_trail_methods = ["PUT", "POST", "DELETE"]
 
 
 def emit_socket(topic, include_current_user_id=False):
@@ -52,11 +54,18 @@ def auth_filter(app_config):
             hashed_secret = get_authorization_header(True, ignore_missing_auth_header=True)
             api_key = ApiKey.query.filter(ApiKey.hashed_secret == hashed_secret).first()
             request_context.external_api_organisation = api_key.organisation if api_key else None
-        return
+            return
 
     if "user" in session and not session["user"].get("guest"):
         if not session["user"].get("user_accepted_aup") and "api/aup/agree" not in url and not is_whitelisted_url:
             raise Unauthorized(description="AUP not accepted")
+        if current_request.method in _audit_trail_methods:
+            csrf_token_client = current_request.headers.get(CSRF_TOKEN)
+            csrf_token_server = session.get(CSRF_TOKEN)
+            prod_mode = not os.environ.get("TESTING")
+            csrf_valid = csrf_token_client and csrf_token_server and csrf_token_client == csrf_token_server
+            if prod_mode and not csrf_valid and url_path != "/api/mock":
+                raise Unauthorized(description="Invalid CSRFToken")
         if "api/aup/agree" in url or "api/users/refresh" in url:
             return
         if not oidc_config.second_factor_authentication_required or session["user"].get("second_factor_confirmed"):
@@ -106,9 +115,6 @@ def _add_custom_header(response):
     response.headers["server"] = ""
 
 
-_audit_trail_methods = ["PUT", "POST", "DELETE"]
-
-
 def _audit_trail():
     method = current_request.method
     if method in _audit_trail_methods:
@@ -148,6 +154,13 @@ def json_endpoint(f):
             db.session.commit()
             return response, status
         except Exception as e:
+            if isinstance(e, Forbidden) and "You don't have the permission" in e.description:
+                e.description = f"Forbidden 403: {current_request.url}. IP: {current_request.remote_addr}"
+            elif isinstance(e, Unauthorized) and "The server could not verify" in e.description:
+                e.description = f"Unauthorized 401: {current_request.url}. IP: {current_request.remote_addr}"
+            elif hasattr(e, "description"):
+                e.description = f"{e.__class__.__name__}: {current_request.url}." \
+                                f" IP: {current_request.remote_addr}. " + e.description
             response = jsonify(message=e.description if isinstance(e, HTTPException) else str(e),
                                error=True)
             response.status_code = 500
@@ -180,6 +193,8 @@ def config():
     cfg = current_app.app_config
     base_url = cfg.base_url
     base_url = base_url[:-1] if base_url.endswith("/") else base_url
+    cfq = cfg.collaboration_suspension
+    threshold_for_warning = cfq.collaboration_inactivity_days_threshold - cfq.inactivity_warning_mail_days_threshold
     return {"local": current_app.config["LOCAL"],
             "base_url": base_url,
             "socket_url": cfg.socket_url,
@@ -193,7 +208,8 @@ def config():
             "ldap_bind_account": cfg.ldap.bind_account,
             "continue_eduteams_redirect_uri": cfg.oidc.continue_eduteams_redirect_uri,
             "introspect_endpoint": f"{cfg.base_server_url}/api/tokens/introspect",
-            "past_dates_allowed": cfg.feature.past_dates_allowed
+            "past_dates_allowed": cfg.feature.past_dates_allowed,
+            "threshold_for_collaboration_inactivity_warning": threshold_for_warning
             }, 200
 
 

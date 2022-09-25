@@ -93,7 +93,7 @@ class NewServiceInvitation extends React.Component {
                 message,
                 expiry_date: expiry_date.getTime() / 1000,
                 service_id: service.id
-            }).then(res => {
+            }).then(() => {
                 this.props.history.push(`/services/${service.id}/admins`);
                 setFlash(I18n.t("organisationInvitation.flash.created", {name: service.name}))
             });
@@ -171,10 +171,10 @@ class NewServiceInvitation extends React.Component {
                        name={I18n.t("organisationInvitation.expiryDate")}
                        toolTip={I18n.t("organisationInvitation.expiryDateTooltip")}/>
 
-            {this.renderActions(disabledSubmit, true)}
+            {this.renderActions(disabledSubmit)}
         </div>;
 
-    renderActions = (disabledSubmit, showPreview) => (
+    renderActions = disabledSubmit => (
         <section className="actions">
             <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
             <Button disabled={disabledSubmit} txt={I18n.t("organisationInvitation.invite")}
@@ -208,7 +208,7 @@ class NewServiceInvitation extends React.Component {
                     </div>
                 </div>
             </>);
-    };
+    }
 
 }
 

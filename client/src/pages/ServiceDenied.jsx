@@ -41,7 +41,7 @@ export default function ServiceDenied() {
                        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t(`sfo.info${status || ""}`, {name: serviceName}))}}/>}
             </div>
             <div className={"ticket"}>
-                <p dangerouslySetInnerHTML={{__html: I18n.t("sfo.ticket")}}/>
+                <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("sfo.ticket"))}}/>
                 <span>{I18n.t("sfo.entityId")}</span>
                 <span className={"value"}>{entityId}</span>
                 <span>{I18n.t("sfo.issuerId")}</span>

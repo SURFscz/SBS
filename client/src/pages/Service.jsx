@@ -29,6 +29,7 @@ import SpinnerField from "../components/redesign/SpinnerField";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import EmailField from "../components/EmailField";
 import {isUserServiceAdmin} from "../utils/UserRole";
+import DOMPurify from "dompurify";
 
 class Service extends React.Component {
 
@@ -47,6 +48,7 @@ class Service extends React.Component {
         address: "",
         identity_type: "",
         uri: "",
+        uri_info: "",
         accepted_user_policy: "",
         privacy_policy: "",
         automatic_connection_allowed: false,
@@ -298,7 +300,7 @@ class Service extends React.Component {
                                 </span>
                                 <ReactTooltip id={I18n.t("service.network")} type="light" effect="solid"
                                               data-html={true}>
-                                    <p dangerouslySetInnerHTML={{__html: I18n.t("service.networkTooltip")}}/>
+                                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("service.networkTooltip"))}}/>
                                 </ReactTooltip>
                             </span>
                 {(isAdmin || isServiceAdmin) &&
@@ -361,7 +363,7 @@ class Service extends React.Component {
 
     serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
                         access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired,
-                        accepted_user_policy, privacy_policy, isNew, service, disabledSubmit, white_listed, sirtfi_compliant, token_enabled, pam_web_sso_enabled,
+                        accepted_user_policy, uri_info, privacy_policy, isNew, service, disabledSubmit, white_listed, sirtfi_compliant, token_enabled, pam_web_sso_enabled,
                         token_validity_days, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, administrators, message, email, logo, isServiceAdmin) => {
         const serviceRequestUrlValid = !isEmpty(uri) && automatic_connection_allowed;
@@ -466,6 +468,20 @@ class Service extends React.Component {
                             onChange={e => this.setState({description: e.target.value})}
                             multiline={true}
                             disabled={!isAdmin && !isServiceAdmin}/>
+
+                <InputField value={uri_info}
+                            name={I18n.t("service.infoUri")}
+                            placeholder={I18n.t("service.infoUriPlaceholder")}
+                            onChange={e => this.setState({
+                                uri_info: e.target.value,
+                                invalidInputs: {...invalidInputs, uri_info: false}
+                            })}
+                            toolTip={I18n.t("service.infoUriTooltip")}
+                            externalLink={true}
+                            onBlur={this.validateURI("uri_info")}
+                            disabled={!isAdmin && !isServiceAdmin}/>
+                {invalidInputs["uri_info"] &&
+                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
 
                 <InputField value={uri}
                             name={I18n.t("service.uri")}
@@ -703,6 +719,7 @@ class Service extends React.Component {
             abbreviation,
             description,
             uri,
+            uri_info,
             accepted_user_policy,
             privacy_policy,
             contact_email, support_email, security_email,
@@ -752,12 +769,12 @@ class Service extends React.Component {
                                         question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
 
                     {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
-                        access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, privacy_policy,
+                        access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, uri_info, privacy_policy,
                         isNew, service, disabledSubmit, white_listed, sirtfi_compliant, token_enabled, pam_web_sso_enabled, token_validity_days, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, administrators, message, email, logo, isServiceAdmin)}
                 </div>
             </>);
-    };
+    }
 
 }
 

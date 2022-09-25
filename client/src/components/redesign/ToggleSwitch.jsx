@@ -2,6 +2,7 @@ import React from "react";
 import "./ToggleSwitch.scss";
 import ReactTooltip from "react-tooltip";
 import {pseudoGuid} from "../../utils/Utils";
+import DOMPurify from "dompurify";
 
 export default function ToggleSwitch({value, onChange, disabled = false, animate = true, tooltip = undefined}) {
     const id = pseudoGuid();
@@ -11,7 +12,7 @@ export default function ToggleSwitch({value, onChange, disabled = false, animate
             <span className={`slider round ${value ? "checked" : ""} ${disabled ? "disabled" : ""} ${animate ? "" : "no-animation"}`}
                   onClick={() => !disabled && onChange(!value)}/>
             {tooltip && <ReactTooltip id={id} type="light" effect="solid" data-html={true}>
-                <span className="tooltip-wrapper-inner" dangerouslySetInnerHTML={{__html: tooltip}}/>
+                <span className="tooltip-wrapper-inner" dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(tooltip)}}/>
             </ReactTooltip>}
         </label>
     )

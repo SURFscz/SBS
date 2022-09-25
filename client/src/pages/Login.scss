@@ -52,6 +52,13 @@
             .header-left {
                 margin-right: 50px;
                 width: 50%;
+
+                a.button.blue {
+                    width: 280px;
+                    padding: 15px 60px;
+                    font-size: 22px;
+                }
+
                 @media (max-width: $compact-medium) {
                     width: auto;
                     margin: 25px auto;
@@ -152,7 +159,8 @@
 
         p.sup {
             margin-top: 20px;
-            font-size: 14px;
+            font-size: 18px;
+            line-height: 22px;
         }
 
         .landing-footer {

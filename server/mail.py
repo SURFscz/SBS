@@ -21,7 +21,7 @@ from server.mail_types.mail_types import COLLABORATION_REQUEST_MAIL, \
     RESET_MFA_TOKEN_MAIL, COLLABORATION_EXPIRES_WARNING_MAIL, \
     COLLABORATION_EXPIRED_NOTIFICATION_MAIL, COLLABORATION_SUSPENDED_NOTIFICATION_MAIL, \
     COLLABORATION_SUSPENSION_WARNING_MAIL, MEMBERSHIP_EXPIRED_NOTIFICATION_MAIL, MEMBERSHIP_EXPIRES_WARNING_MAIL, \
-    SERVICE_INVITATION_MAIL, ORPHAN_USER_DELETED_MAIL
+    SERVICE_INVITATION_MAIL
 
 
 def _send_async_email(ctx, msg, mail):
@@ -29,7 +29,7 @@ def _send_async_email(ctx, msg, mail):
         mail.send(msg)
 
 
-def _open_mail_in_browser(html):
+def _open_mail_in_browser(msg):
     import tempfile
     import webbrowser
 
@@ -37,7 +37,7 @@ def _open_mail_in_browser(html):
     path = tmp.name + ".html"
 
     f = open(path, "w")
-    f.write(html)
+    f.write(msg.html)
     f.close()
     webbrowser.open("file://" + path)
 
@@ -58,7 +58,7 @@ def _user_attributes(user: User):
     }
 
 
-def _do_send_mail(subject, recipients, template, context, preview, working_outside_of_request_context=False):
+def _do_send_mail(subject, recipients, template, context, preview, working_outside_of_request_context=False, cc=None):
     recipients = recipients if isinstance(recipients, list) else list(
         map(lambda x: x.strip(), recipients.split(",")))
 
@@ -66,6 +66,7 @@ def _do_send_mail(subject, recipients, template, context, preview, working_outsi
     msg = Message(subject=subject,
                   sender=(mail_ctx.get("sender_name", "SURF"), mail_ctx.get("sender_email", "no-reply@surf.nl")),
                   recipients=recipients,
+                  cc=cc,
                   extra_headers={
                       "Auto-submitted": "auto-generated",
                       "X-Auto-Response-Suppress": "yes",
@@ -76,7 +77,7 @@ def _do_send_mail(subject, recipients, template, context, preview, working_outsi
     msg.msgId = f"<{str(uuid.uuid4())}@{os.uname()[1]}.internal.sram.surf.nl>".replace("-", ".")
 
     logger = logging.getLogger("mail") if working_outside_of_request_context else ctx_logger("user")
-    logger.debug(f"Sending mail message with Message-id {msg.msgId}")
+    logger.debug(f"Sending mail message to {','.join(recipients)} with Message-id {msg.msgId}")
 
     suppress_mail = "suppress_sending_mails" in mail_ctx and mail_ctx.suppress_sending_mails
     open_mail_in_browser = current_app.config["OPEN_MAIL_IN_BROWSER"]
@@ -91,7 +92,7 @@ def _do_send_mail(subject, recipients, template, context, preview, working_outsi
         logger.info(f"Sending mail {msg.html}")
 
     if open_mail_in_browser and not preview:
-        _open_mail_in_browser(msg.html)
+        _open_mail_in_browser(msg)
     return msg.html
 
 
@@ -168,8 +169,12 @@ def mail_organisation_invitation(context, organisation, recipients, preview=Fals
 def mail_collaboration_invitation(context, collaboration, recipients, preview=False):
     if not preview:
         _store_mail(None, COLLABORATION_INVITATION_MAIL, recipients)
-    context = {**context, **{"expiry_period": calculate_expiry_period(context["invitation"])},
-               "collaboration": collaboration, "organisation_img": collaboration.organisation.raw_logo()}
+    invitation = context["invitation"]
+    # TODO https://stackoverflow.com/questions/55271348/sending-email-with-inline-images-flask-mail
+    message = invitation.message.replace("\n", "<br/>") if invitation.message else None
+    context = {**context, "expiry_period": calculate_expiry_period(invitation),
+               "collaboration": collaboration, "organisation_img_link": collaboration.organisation.logo,
+               "message": message}
 
     return _do_send_mail(
         subject=f"Invitation to join collaboration {collaboration.name}",
@@ -228,13 +233,15 @@ def mail_accepted_declined_collaboration_request(context, collaboration_name, or
     )
 
 
-def mail_service_connection_request(context, service_name, collaboration_name, recipients, is_admin, preview=False):
+def mail_service_connection_request(context, service_name, collaboration_name, recipients, is_admin, cc=None,
+                                    preview=False):
     if not preview:
         _store_mail(context["user"], SERVICE_CONNECTION_REQUEST_MAIL, recipients)
     template = "service_connection_request" if is_admin else "service_connection_request_collaboration_admin"
     return _do_send_mail(
         subject=f"Request for new service {service_name} connection to collaboration {collaboration_name}",
         recipients=recipients,
+        cc=cc,
         template=template,
         context=context,
         preview=preview
@@ -333,7 +340,7 @@ def mail_account_deletion(user):
         recipients.append(mail_cfg.beheer_email)
     _do_send_mail(
         subject=f"User {user.email} has deleted their account in environment {mail_cfg.environment}",
-        recipients=[mail_cfg.beheer_email],
+        recipients=recipients,
         template="user_account_deleted",
         context={"environment": mail_cfg.environment,
                  "date": datetime.datetime.now(),
@@ -350,7 +357,7 @@ def mail_suspended_account_deletion(user):
         recipients.append(mail_cfg.beheer_email)
     _do_send_mail(
         subject=f"User {user.email} suspended account is deleted in environment {mail_cfg.environment}",
-        recipients=[mail_cfg.beheer_email],
+        recipients=recipients,
         template="suspended_user_account_deleted",
         context={"environment": mail_cfg.environment,
                  "date": datetime.datetime.now(),
@@ -437,13 +444,15 @@ def mail_membership_expires_notification(membership, is_warning):
     )
 
 
-def mail_membership_orphan_user_deleted(user):
-    _store_mail(user, ORPHAN_USER_DELETED_MAIL, user.email)
+def mail_membership_orphan_users_deleted(users):
+    mail_cfg = current_app.app_config.mail
     _do_send_mail(
         subject="Account SRAM deleted",
-        recipients=[user.email],
+        recipients=[mail_cfg.eduteams_email],
+        cc=[mail_cfg.beheer_email],
         template="orphan_user_delete",
-        context={"salutation": f"Dear {user.name}",
+        context={"environment": mail_cfg.environment,
+                 "users": users,
                  "base_url": current_app.app_config.base_url},
         preview=False,
         working_outside_of_request_context=True

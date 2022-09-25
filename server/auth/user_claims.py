@@ -1,9 +1,10 @@
 # -*- coding: future_fstrings -*-
+import datetime
 import random
 import re
 import string
 import unicodedata
-import datetime
+
 from flask import current_app
 
 from server.db.domain import User, UserNameHistory
@@ -95,4 +96,18 @@ def user_memberships(user, connected_collaborations):
             for g in collaboration.groups:
                 if g.is_member(user.id):
                     memberships.add(f"{namespace}:group:{org_short_name}:{coll_short_name}:{g.short_name}")
+    return memberships
+
+
+def collaboration_memberships_for_service(user, service):
+    memberships = []
+    now = datetime.datetime.utcnow()
+    if user and service:
+        for cm in user.collaboration_memberships:
+            co_expired = cm.collaboration.expiry_date and cm.collaboration.expiry_date < now
+            cm_expired = cm.expiry_date and cm.expiry_date < now
+            if not co_expired and not cm_expired:
+                connected = list(filter(lambda s: s.id == service.id, cm.collaboration.services))
+                if connected or list(filter(lambda s: s.id == service.id, cm.collaboration.organisation.services)):
+                    memberships.append(cm)
     return memberships

@@ -14,6 +14,7 @@ import ApiKeysExplanation from "../explanations/ApiKeys";
 import {stopEvent} from "../../utils/Utils";
 import SpinnerField from "./SpinnerField";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
+import DOMPurify from "dompurify";
 
 class ApiKeys extends React.Component {
 
@@ -91,7 +92,7 @@ class ApiKeys extends React.Component {
                     </a>
                 </div>
                 <div className="new-api-key">
-                    <p dangerouslySetInnerHTML={{__html: I18n.t("apiKeys.secretDisclaimer")}}/>
+                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("apiKeys.secretDisclaimer"))}}/>
                     <InputField value={hashedSecret}
                                 placeholder={I18n.t("organisation.messagePlaceholder")}
                                 name={I18n.t("apiKeys.secret")}

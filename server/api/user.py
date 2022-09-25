@@ -25,14 +25,15 @@ from server.auth.mfa import ACR_VALUES, store_user_in_session, mfa_idp_allowed, 
     surf_secure_id_required, has_valid_mfa, decode_jwt_token
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
     confirm_collaboration_admin, confirm_organisation_admin, current_user, confirm_write_access, \
-    confirm_organisation_admin_or_manager, is_application_admin
+    confirm_organisation_admin_or_manager, is_application_admin, CSRF_TOKEN
 from server.auth.ssid import AUTHN_REQUEST_ID, saml_auth, redirect_to_surf_secure_id, USER_UID
 from server.auth.user_claims import add_user_claims
 from server.cron.user_suspending import create_suspend_notification
 from server.db.db import db
-from server.db.defaults import full_text_search_autocomplete_limit
+from server.db.defaults import full_text_search_autocomplete_limit, SBS_LOGIN
 from server.db.domain import User, OrganisationMembership, CollaborationMembership, JoinRequest, CollaborationRequest, \
     UserNameHistory, SshKey, Organisation, Collaboration, Service, ServiceMembership, ServiceAup, UserIpNetwork
+from server.db.models import log_user_login
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error, mail_account_deletion
 
@@ -369,6 +370,9 @@ def _redirect_to_client(cfg, second_factor_confirmed, user):
         location = cfg.base_url
 
     logger.debug(f"Redirecting user {user.uid} to {location}")
+
+    log_user_login(SBS_LOGIN, True, user, user.uid, None, None)
+
     return redirect(location)
 
 
@@ -423,10 +427,11 @@ def me():
         # Do not expose the actual secret of second_factor_auth
         user_from_session["second_factor_auth"] = bool(user_from_db.second_factor_auth)
         # Do not send all information if second_factor is required
+        csrf_token = {CSRF_TOKEN: session.get(CSRF_TOKEN)}
         if not user_from_session["second_factor_confirmed"]:
-            return user_from_session, 200
+            return {**user_from_session, **csrf_token}, 200
 
-        user = {**jsonify(user_from_db).json, **user_from_session}
+        user = {**jsonify(user_from_db).json, **user_from_session, **csrf_token}
 
         if len(user_from_db.suspend_notifications) > 0:
             user["successfully_activated"] = True
@@ -561,8 +566,11 @@ def other():
 @json_endpoint
 def find_by_id():
     confirm_organisation_admin_or_manager(organisation_id=None)
-    user = _user_query().options(joinedload(User.service_aups).subqueryload(ServiceAup.service)).filter(
-        User.id == query_param("id")).one()
+    user = _user_query() \
+        .options(joinedload(User.service_aups).subqueryload(ServiceAup.service)) \
+        .filter(User.id == query_param("id")) \
+        .one()
+
     if not is_application_admin():
         # Ensure the user has a collaboration membership in an organisation the current_user is admin or manager of
         curr_user = User.query.get(current_user_id())
@@ -570,6 +578,9 @@ def find_by_id():
         user_organisation_identifiers = [cm.collaboration.organisation_id for cm in user.collaboration_memberships]
         if not any([i in current_user_organisation_identifiers for i in user_organisation_identifiers]):
             raise Forbidden()
+
+        return user.allowed_attr_view(current_user_organisation_identifiers, True), 200
+
     return user, 200
 
 

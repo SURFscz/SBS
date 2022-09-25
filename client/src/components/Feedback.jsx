@@ -7,6 +7,7 @@ import Button from "./Button";
 import {isEmpty} from "../utils/Utils";
 import {feedback} from "../api";
 import {setFlash} from "../utils/Flash";
+import DOMPurify from "dompurify";
 
 export default function FeedbackDialog({isOpen = false, close}) {
 
@@ -39,10 +40,10 @@ export default function FeedbackDialog({isOpen = false, close}) {
             closeTimeoutMS={250}
             ariaHideApp={false}>
             <h1>{I18n.t("feedback.title")}</h1>
-            <h2 dangerouslySetInnerHTML={{__html: I18n.t("feedback.subTitle")}}/>
+            <h2 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("feedback.subTitle"))}}/>
             <section className="info">
                 <InformationIcon/>
-                <span dangerouslySetInnerHTML={{__html: I18n.t("feedback.info")}}/>
+                <span dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("feedback.info"))}}/>
             </section>
             <section className="feedback">
                 <textarea name="feedback"
@@ -53,11 +54,11 @@ export default function FeedbackDialog({isOpen = false, close}) {
                           onChange={e => setMessage(e.target.value)}/>
             </section>
             <section className="help">
-                <h2 className="title" dangerouslySetInnerHTML={{__html: I18n.t("feedback.help")}}/>
-                <span dangerouslySetInnerHTML={{__html: I18n.t("feedback.helpInfo")}}/>
+                <h2 className="title" dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("feedback.help"))}}/>
+                <span dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("feedback.helpInfo"))}}/>
             </section>
             <section className="disclaimer">
-                <span dangerouslySetInnerHTML={{__html: I18n.t("feedback.disclaimer")}}/>
+                <span dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("feedback.disclaimer"))}}/>
             </section>
             <section className="actions">
                 <Button txt={I18n.t("forms.cancel")} cancelButton={true} onClick={doClose}/>

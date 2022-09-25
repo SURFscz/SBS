@@ -9,6 +9,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./DateField.scss"
 import moment from "moment";
 import {stopEvent} from "../utils/Utils";
+import DOMPurify from "dompurify";
 
 export default class DateField extends React.Component {
 
@@ -61,7 +62,7 @@ export default class DateField extends React.Component {
                     <span className="tool-tip-section">
                         <span data-tip data-for={name}><FontAwesomeIcon icon="info-circle"/></span>
                         <ReactTooltip id={name} type="light" effect="solid" data-html={true}>
-                            <p dangerouslySetInnerHTML={{__html: toolTip}}/>
+                            <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(toolTip)}}/>
                         </ReactTooltip>
                     </span>}
                 </label>}

@@ -14,6 +14,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
 import InstituteColumn from "../components/redesign/InstitueColumn";
 import moment from "moment";
+import DOMPurify from "dompurify";
 
 class Me extends React.Component {
 
@@ -225,7 +226,7 @@ class Me extends React.Component {
                                 </span>
                                 <ReactTooltip id={I18n.t("profile.network")} type="light" effect="solid"
                                               data-html={true}>
-                                    <p dangerouslySetInnerHTML={{__html: I18n.t("profile.networkTooltip")}}/>
+                                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("profile.networkTooltip"))}}/>
                                 </ReactTooltip>
                             </span>
                 <span className="add-network" onClick={() => this.addIpAddress()}><FontAwesomeIcon icon="plus"/></span>
@@ -305,7 +306,7 @@ class Me extends React.Component {
                                     </span>
                                     <ReactTooltip id={I18n.t("user.ssh_key")} type="light" effect="solid"
                                                   data-html={true}>
-                                        <p dangerouslySetInnerHTML={{__html: I18n.t("user.ssh_keyTooltip")}}/>
+                                        <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.ssh_keyTooltip"))}}/>
                                     </ReactTooltip>
                                 </span>
 
@@ -331,7 +332,7 @@ class Me extends React.Component {
                             {ssh_key.fileTypeError && <ErrorIndicator msg={I18n.t("user.sshKeyError")}/>}
                             {this.showConvertSSHKey(ssh_key.ssh_value) &&
                             <span className="ssh-convert"
-                                  dangerouslySetInnerHTML={{__html: I18n.t("user.sshConvertInfo")}}/>}
+                                  dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.sshConvertInfo"))}}/>}
                         </div>)}
                     </div>
                     <section className="actions">
@@ -375,7 +376,7 @@ class Me extends React.Component {
                 {this.renderForm(user, ssh_keys, user_ip_networks, disabledSubmit, config)}
             </div>
         );
-    };
+    }
 
 }
 

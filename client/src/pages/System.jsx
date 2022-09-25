@@ -44,7 +44,7 @@ import OrganisationsWithoutAdmin from "../components/redesign/OrganisationsWitho
 import ServicesWithoutAdmin from "../components/redesign/ServicesWithoutAdmin";
 import {dateFromEpoch} from "../utils/Date";
 
-const options = [25, 50, 100, 150, 200, 250, "All"].map(nbr => ({value: nbr, label: nbr}));
+const options = [25, 50, 100, 150, 200, 250, 500].map(nbr => ({value: nbr, label: nbr}));
 
 class System extends React.Component {
 
@@ -63,7 +63,7 @@ class System extends React.Component {
             outstandingRequests: {},
             cleanedRequests: {},
             databaseStats: [],
-            userLoginStats: {c: "", cs: "", cu: ""},
+            userLoginStats: [],
             cronJobs: [],
             seedResult: null,
             confirmationDialogOpen: false,
@@ -76,6 +76,7 @@ class System extends React.Component {
             validationData: {"organisations": [], "organisation_invitations": [], "services": []},
             limit: options[1],
             query: "",
+            serverQuery: "",
             selectedTables: [],
             showOrganisationsWithoutAdmin: true,
             showServicesWithoutAdmin: true,
@@ -153,8 +154,8 @@ class System extends React.Component {
 
     changeLimit = val => {
         this.setState({limit: val, busy: true}, () => {
-            const {selectedTables} = this.state;
-            auditLogsActivity(val.value === "All" ? null : val.value, selectedTables).then(res => {
+            const {selectedTables, serverQuery} = this.state;
+            auditLogsActivity(val.value, selectedTables, serverQuery).then(res => {
                 this.setState({
                     auditLogs: res,
                     filteredAuditLogs: filterAuditLogs(res, this.state.query),
@@ -165,9 +166,9 @@ class System extends React.Component {
     }
 
     fetchActivities = () => {
-        const {selectedTables, limit} = this.state;
+        const {selectedTables, limit, serverQuery} = this.state;
         this.setState({busy: true}, () => {
-            auditLogsActivity(limit.value === "All" ? null : limit.value, selectedTables).then(res => {
+            auditLogsActivity(limit.value, selectedTables, serverQuery).then(res => {
                 this.setState({
                     auditLogs: res,
                     filteredAuditLogs: filterAuditLogs(res, this.state.query),
@@ -187,7 +188,7 @@ class System extends React.Component {
     }
 
 
-    getActivityTab = (filteredAuditLogs, limit, query, config, selectedTables) => {
+    getActivityTab = (filteredAuditLogs, limit, query, config, selectedTables, serverQuery) => {
         return (
             <div key="activity" name="activity" label={I18n.t("home.tabs.activity")}
                  icon={<FontAwesomeIcon icon="code-branch"/>}>
@@ -225,6 +226,14 @@ class System extends React.Component {
                                          searchable={true}
                                          placeholder={I18n.t("history.activities.tablesPlaceHolder")}
                                          onChange={this.selectedTablesChanged}/>
+                            <div className="search server-side">
+                                <input type="text"
+                                       onChange={e => this.setState({serverQuery: e.target.value})}
+                                       value={serverQuery}
+                                       placeholder={I18n.t("system.searchPlaceholderServer")}/>
+                                <FontAwesomeIcon icon="search"/>
+                            </div>
+
                             <div className="action-container">
                                 <Button txt={I18n.t("history.activities.submit")} onClick={this.fetchActivities}/>
                             </div>
@@ -861,26 +870,20 @@ class System extends React.Component {
 
     renderUserLoginResults = userLoginStats => {
         return (<div className="results">
-            <table className="table-counts">
+            <table className="table-counts table-logins">
                 <thead>
                 <tr>
-                    <th>{I18n.t("system.userlogins.metric")}</th>
-                    <th>{I18n.t("system.userlogins.nbr")}</th>
+                    <th className={"type"}>{I18n.t("system.userlogins.loginType")}</th>
+                    <th className={"total"}>{I18n.t("system.userlogins.total")}</th>
+                    <th className={"succeeded"}>{I18n.t("system.userlogins.succeeded")}</th>
+                    <th className={"failed"}>{I18n.t("system.userlogins.failed")}</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>{I18n.t("system.userlogins.total")}</td>
-                    <td>{userLoginStats.c}</td>
-                </tr>
-                <tr>
-                    <td>{I18n.t("system.userlogins.users")}</td>
-                    <td>{userLoginStats.cu}</td>
-                </tr>
-                <tr>
-                    <td>{I18n.t("system.userlogins.services")}</td>
-                    <td>{userLoginStats.cs}</td>
-                </tr>
+                {userLoginStats.map((stat, i) => <tr key={i}>
+                    {["login_type","count", "succeeded","failed"].map(col => <td className={col}>{stat[col]}</td>)}
+                </tr>)}
+
                 </tbody>
             </table>
         </div>)
@@ -897,8 +900,8 @@ class System extends React.Component {
                 this.setState({databaseStats: res, busy: false});
             });
         } else if (name === "activity") {
-            const {limit, selectedTables} = this.state;
-            auditLogsActivity(limit.value === "All" ? null : limit.value, selectedTables).then(res => {
+            const {limit, selectedTables, serverQuery} = this.state;
+            auditLogsActivity(limit.value, selectedTables, serverQuery).then(res => {
                 this.setState({
                     auditLogs: res,
                     filteredAuditLogs: filterAuditLogs(res, this.state.query),
@@ -938,7 +941,7 @@ class System extends React.Component {
             confirmationDialogQuestion, busy, tab, filteredAuditLogs, databaseStats, suspendedUsers, cleanedRequests,
             limit, query, selectedTables, expiredCollaborations, suspendedCollaborations, expiredMemberships, cronJobs,
             validationData, showOrganisationsWithoutAdmin, showServicesWithoutAdmin, plscData, compositionData,
-            currentlySuspendedUsers, userLoginStats, deletedUsers
+            currentlySuspendedUsers, userLoginStats, deletedUsers, serverQuery
         } = this.state;
         const {config} = this.props;
 
@@ -951,7 +954,7 @@ class System extends React.Component {
                 suspendedCollaborations, expiredMemberships, deletedUsers, cronJobs),
             config.seed_allowed ? this.getSeedTab(seedResult) : null,
             this.getDatabaseTab(databaseStats, config),
-            this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables),
+            this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables, serverQuery),
             this.getPlscTab(plscData),
             config.seed_allowed ? this.getCompositionTab(compositionData) : null,
             this.getSuspendedUsersTab(currentlySuspendedUsers),

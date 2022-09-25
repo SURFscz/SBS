@@ -50,6 +50,12 @@ table.organisations {
             &.collaborations_count {
                 text-align: center;
             }
+
+            div.schac_home_organisations {
+                span {
+                    display: block;
+                }
+            }
         }
     }
 }

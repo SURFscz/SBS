@@ -1,4 +1,6 @@
 # -*- coding: future_fstrings -*-
+import base64
+import urllib
 import uuid
 from datetime import datetime, timedelta
 
@@ -7,13 +9,14 @@ from flask import Blueprint, jsonify, request as current_request, current_app, g
 from munch import munchify
 from sqlalchemy import text, or_, func, bindparam, String
 from sqlalchemy.orm import aliased, load_only, selectinload
-from werkzeug.exceptions import BadRequest, Forbidden
+from werkzeug.exceptions import BadRequest, Forbidden, MethodNotAllowed
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars, emit_socket
 from server.api.service_group import create_service_groups
+from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_collaboration_member, \
     confirm_authorized_api_call, \
-    confirm_allow_impersonation, confirm_organisation_admin_or_manager, generate_token, confirm_external_api_call, \
+    confirm_allow_impersonation, confirm_organisation_admin_or_manager, confirm_external_api_call, \
     is_organisation_admin_or_manager, is_application_admin
 from server.db.db import db
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name, \
@@ -26,12 +29,15 @@ from server.mail import mail_collaboration_invitation
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
 
 
-def _del_non_disclosure_info(collaboration, json_collaboration, allow_admins=False):
+def _del_non_disclosure_info(collaboration, json_collaboration):
     for cm in json_collaboration["collaboration_memberships"]:
-        if not collaboration.disclose_email_information and not cm["role"] == "admin" and allow_admins:
+        if not collaboration.disclose_email_information and not cm["role"] == "admin":
             del cm["user"]["email"]
-        if not collaboration.disclose_member_information and not cm["role"] == "admin" and allow_admins:
+        if not collaboration.disclose_member_information and not cm["role"] == "admin":
             del cm["user"]
+    if "groups" in json_collaboration:
+        for gr in json_collaboration["groups"]:
+            _del_non_disclosure_info(collaboration, gr)
 
 
 def _reconcile_tags(collaboration: Collaboration, tags):
@@ -63,22 +69,16 @@ def collaboration_by_identifier():
     identifier = query_param("identifier")
 
     collaboration = Collaboration.query \
-        .outerjoin(Collaboration.collaboration_memberships) \
-        .outerjoin(CollaborationMembership.user) \
-        .options(selectinload(Collaboration.organisation).selectinload(Organisation.services)) \
-        .options(selectinload(Collaboration.services)) \
         .options(selectinload(Collaboration.groups)) \
-        .options(selectinload(Collaboration.collaboration_memberships)
-                 .selectinload(CollaborationMembership.user)) \
-        .filter(Collaboration.identifier == identifier).one()
+        .options(selectinload(Collaboration.collaboration_memberships)) \
+        .filter(Collaboration.identifier == identifier) \
+        .one()
 
-    collaboration_json = jsonify(collaboration).json
-    service_emails = collaboration.service_emails()
-    return {"collaboration": collaboration_json, "service_emails": service_emails}, 200
+    return collaboration, 200
 
 
 @collaboration_api.route("/v1/<identifier>", strict_slashes=False)
-@swag_from("../swagger/paths/get_collaboration_by_identifier.yml")
+@swag_from("../swagger/public/paths/get_collaboration_by_identifier.yml")
 @json_endpoint
 def api_collaboration_by_identifier(identifier):
     confirm_external_api_call()
@@ -239,9 +239,7 @@ def collaboration_lite_by_id(collaboration_id):
 
     if not collaboration.disclose_member_information or not collaboration.disclose_email_information:
         json_collaboration = jsonify(collaboration).json
-        _del_non_disclosure_info(collaboration, json_collaboration, allow_admins=True)
-        for gr in json_collaboration["groups"]:
-            _del_non_disclosure_info(collaboration, gr, allow_admins=False)
+        _del_non_disclosure_info(collaboration, json_collaboration)
         return json_collaboration, 200
 
     return collaboration, 200
@@ -261,6 +259,9 @@ def collaboration_access_allowed(collaboration_id):
 @collaboration_api.route("/<collaboration_id>", strict_slashes=False)
 @json_endpoint
 def collaboration_by_id(collaboration_id):
+    if collaboration_id == "v1":
+        raise MethodNotAllowed()
+
     confirm_collaboration_admin(collaboration_id, read_only=True)
 
     collaboration = Collaboration.query \
@@ -392,7 +393,7 @@ def save_collaboration():
 
 
 @collaboration_api.route("/v1", methods=["POST"], strict_slashes=False)
-@swag_from("../swagger/paths/post_new_collaboration.yml")
+@swag_from("../swagger/public/paths/post_new_collaboration.yml")
 @json_endpoint
 def save_collaboration_api():
     data = current_request.get_json()
@@ -407,8 +408,12 @@ def save_collaboration_api():
     user = admins[0].user if len(admins) > 0 else User.query.filter(
         User.uid == current_app.app_config.admin_users[0].uid).one()
     data["organisation_id"] = organisation.id
-
-    if "logo" not in data:
+    logo = data.get("logo")
+    if logo and logo.startswith("http"):
+        res = urllib.request.urlopen(logo)
+        if res.status == 200:
+            data["logo"] = base64.encodebytes(res.read()).decode("utf-8")
+    elif not logo:
         data["logo"] = next(db.engine.execute(text(f"SELECT logo FROM organisations where id = {organisation.id}")))[0]
 
     missing = [req for req in required if req not in data]

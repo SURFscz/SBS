@@ -7,7 +7,8 @@ from server.api.base import STATUS_APPROVED, STATUS_DENIED
 from server.db.db import db
 from server.db.domain import JoinRequest, User, Collaboration
 from server.test.abstract_test import AbstractTest
-from server.test.seed import collaboration_ai_computing_uuid, uu_disabled_join_request_name, uva_research_name
+from server.test.seed import collaboration_ai_computing_uuid, uu_disabled_join_request_name, uva_research_name, \
+    ai_computing_name
 
 
 class TestJoinRequest(AbstractTest):
@@ -19,7 +20,7 @@ class TestJoinRequest(AbstractTest):
     def test_new_join_request(self):
         collaboration_id = Collaboration.query \
             .filter(Collaboration.identifier == collaboration_ai_computing_uuid).one().id
-        self.login("urn:betty")
+        self.login("urn:james")
         mail = self.app.mail
         with mail.record_messages() as outbox:
             pre_count = JoinRequest.query.count()
@@ -44,15 +45,14 @@ class TestJoinRequest(AbstractTest):
                   with_basic_auth=False)
 
     def test_new_join_request_with_existing(self):
-        collaboration = Collaboration.query \
-            .filter(Collaboration.identifier == collaboration_ai_computing_uuid).one()
-        user = User.query.filter(User.uid == "urn:betty").one()
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        user = self.find_entity_by_name(User, "Peter Doe")
         join_request = JoinRequest(user_id=user.id, collaboration_id=collaboration.id, hash=str(uuid.uuid4()),
                                    status="open")
         db.session.merge(join_request)
         db.session.commit()
 
-        self.login("urn:betty")
+        self.login("urn:peter")
         self.post("/api/join_requests",
                   body={"collaborationId": collaboration.id, "motivation": "please"},
                   with_basic_auth=False)

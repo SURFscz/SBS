@@ -3,10 +3,47 @@ import json
 import os
 from pathlib import Path
 
+from flask import g as request_context
+from munch import munchify
+
+from server.api.base import send_error_mail
 from server.test.abstract_test import AbstractTest
 
 
 class TestBase(AbstractTest):
+
+    def test_send_error_mail_with_external_api_user(self):
+        try:
+            del os.environ["TESTING"]
+            self.app.app_config.mail.send_exceptions = True
+            with self.app.app_context():
+                mail = self.app.mail
+                with mail.record_messages() as outbox:
+                    request_context.is_authorized_api_call = True
+                    request_context.api_user = munchify({"name": "api_user"})
+                    send_error_mail("tb")
+                    html = outbox[0].html
+                    self.assertTrue("api_user" in html)
+
+        finally:
+            os.environ["TESTING"] = "1"
+            self.app.app_config.mail.send_exceptions = False
+
+    def test_send_error_mail_with_no_user(self):
+        try:
+            del os.environ["TESTING"]
+            self.app.app_config.mail.send_exceptions = True
+            with self.app.app_context():
+                mail = self.app.mail
+                with mail.record_messages() as outbox:
+                    request_context.is_authorized_api_call = False
+                    send_error_mail("tb")
+                    html = outbox[0].html
+                    self.assertTrue("unknown" in html)
+
+        finally:
+            os.environ["TESTING"] = "1"
+            self.app.app_config.mail.send_exceptions = False
 
     def test_health(self):
         res = self.client.get("/health")

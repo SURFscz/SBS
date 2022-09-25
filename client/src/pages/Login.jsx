@@ -12,6 +12,7 @@ import Button from "../components/Button";
 import {login} from "../utils/Login";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
+import DOMPurify from "dompurify";
 
 class Login extends React.Component {
 
@@ -48,7 +49,7 @@ class Login extends React.Component {
                         <span className={"admin-function"}>{I18n.t("landing.adminFunction")}</span>
                     </div>}
                 </div>
-                <p dangerouslySetInnerHTML={{__html: I18n.t(`landing.${name}Info`)}}/>
+                <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t(`landing.${name}Info`))}}/>
             </div>
             <div className="header-right info">
                 <img src={Logo} alt="logo" className={`${reversed ? "reversed" : ""}`}/>
@@ -66,12 +67,12 @@ class Login extends React.Component {
                 <div className="mod-login-container">
                     <div className="mod-login">
                         <div className="header-left">
-                            <h1 dangerouslySetInnerHTML={{__html: I18n.t("landing.header.title")}}/>
+                            <h1 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("landing.header.title"))}}/>
                             <Button txt={"Login"}
                                     html={I18n.t("landing.header.login")}
                                     onClick={login}/>
                             <p className={"sup"}
-                               dangerouslySetInnerHTML={{__html: I18n.t("landing.header.sup")}}/>
+                               dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("landing.header.sup"))}}/>
                         </div>
                         <div className="header-right">
                             <img src={HappyLogo} alt="logo"/>
@@ -86,12 +87,12 @@ class Login extends React.Component {
                         {this.infoBlock("join", false, JoinLogo, true)}
                         {this.infoBlock("collaborate", false, CollaborateLogo, false)}
                         <div className={"landing-footer"}>
-                            <p dangerouslySetInnerHTML={{__html: I18n.t(`landing.footer`)}}/>
+                            <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t(`landing.footer`))}}/>
                         </div>
                     </div>
                 </div>
-            </div>);
-    };
+            </div>)
+    }
 }
 
 export default Login;

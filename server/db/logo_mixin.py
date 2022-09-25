@@ -1,5 +1,6 @@
 from flask import current_app
 from sqlalchemy import text, bindparam, String
+from werkzeug.exceptions import NotFound
 
 
 def _redis_key(object_type, sid):
@@ -16,7 +17,10 @@ def logo_from_cache(object_type, sid):
         from server.db.db import db
 
         result_set = db.engine.execute(sql, sid=(sid))
-        value = next(result_set)[0]
+        try:
+            value = next(result_set)[0]
+        except StopIteration:
+            raise NotFound()
         current_app.redis_client.set(_redis_key(object_type, sid), value)
         return value.encode()
     return value

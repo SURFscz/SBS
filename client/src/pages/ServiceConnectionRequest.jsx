@@ -80,7 +80,7 @@ class ServiceConnectionRequest extends React.Component {
                 this.gotoHome();
                 setFlash(I18n.t("serviceConnectionRequest.flash.accepted", {name: serviceConnectionRequest.service.name}));
             })
-            .catch(e => {
+            .catch(() => {
                 this.props.history.push("/404");
             });
     };
@@ -152,7 +152,7 @@ class ServiceConnectionRequest extends React.Component {
                 </div>
             </div>)
             ;
-    };
+    }
 }
 
 export default ServiceConnectionRequest;

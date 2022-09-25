@@ -359,7 +359,7 @@ class OrganisationDetail extends React.Component {
                     {tabs}
                 </Tabs>
             </div>);
-    };
+    }
 }
 
 export default OrganisationDetail;

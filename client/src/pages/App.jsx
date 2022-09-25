@@ -12,6 +12,8 @@ import ErrorDialog from "../components/ErrorDialog";
 import Welcome from "../components/redesign/Welcome";
 import Footer from "../components/Footer";
 import Flash from "../components/Flash";
+// eslint-disable-next-line no-unused-vars
+import {csrfToken, setCsrfToken} from "../stores/AppStore";
 import {getParameterByName} from "../utils/QueryParameters";
 import CollaborationDetail from "./CollaborationDetail";
 import OrganisationDetail from "./OrganisationDetail";
@@ -115,6 +117,8 @@ class App extends React.Component {
                     const currentUser = results;
                     if (currentUser && currentUser.uid) {
                         this.setState({currentUser: currentUser, loading: false});
+                        // eslint-disable-next-line no-import-assign
+                        setCsrfToken(results.CSRFToken);
                         if (currentUser.successfully_activated) {
                             setFlash(I18n.t("login.successfullyActivated"))
                         }
@@ -401,9 +405,10 @@ class App extends React.Component {
                                    {...props}/>}/>
 
                         {isUserAllowed(ROLES.ORG_MANAGER, currentUser) && <Route exact path="/users/:id/:tab?/:org_id?"
-                                                     render={props => <ProtectedRoute config={config}
-                                                                                      currentUser={currentUser}
-                                                                                      Component={UserDetail} {...props}/>}/>}
+                                                                                 render={props => <ProtectedRoute
+                                                                                     config={config}
+                                                                                     currentUser={currentUser}
+                                                                                     Component={UserDetail} {...props}/>}/>}
 
                         <Route path="/system/:tab?"
                                render={props => <ProtectedRoute
@@ -430,7 +435,7 @@ class App extends React.Component {
                                    reloadMe={this.refreshUserMemberships}
                                    {...props}/>}/>
 
-                        <Route path="/weblogin/:session_id"
+                        <Route path="/weblogin/:service/:session_id"
                                render={props => <PamWebSSO user={currentUser} {...props}/>}/>
 
                         <Route path="/service-denied" render={props => <ServiceDenied {...props}/>}/>

@@ -13,7 +13,7 @@ import {isEmpty, stopEvent} from "../../utils/Utils";
 import debounce from "lodash.debounce";
 import SpinnerField from "./SpinnerField";
 import InstituteColumn from "./InstitueColumn";
-import {ReactComponent as HandIcon} from "../../icons/toys-hand-ghost.svg";
+import {ReactComponent as HandIcon} from "../../icons/puppet_new.svg";
 import {emitImpersonation} from "../../utils/Impersonation";
 
 

@@ -10,6 +10,7 @@ from server.db.audit_mixin import Base, metadata
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE
 from server.db.logo_mixin import LogoMixin
+from server.db.secret_mixin import SecretMixin
 
 
 def gen_uuid4():
@@ -60,6 +61,7 @@ class User(Base, db.Model):
     application_uid = db.Column("application_uid", db.String(length=255), nullable=True)
     last_accessed_date = db.Column("last_accessed_date", db.DateTime(timezone=True), nullable=False)
     last_login_date = db.Column("last_login_date", db.DateTime(timezone=True), nullable=False)
+    pam_last_login_date = db.Column("pam_last_login_date", db.DateTime(timezone=True), nullable=False)
     suspended = db.Column("suspended", db.Boolean(), nullable=True, default=False)
     suspend_notifications = db.relationship("SuspendNotification", back_populates="user", cascade="all, delete-orphan",
                                             passive_deletes=True)
@@ -70,6 +72,29 @@ class User(Base, db.Model):
 
     def has_agreed_with_aup(self):
         return len([aup for aup in self.aups if aup.au_version == str(current_app.app_config.aup.version)]) > 0
+
+    def allowed_attr_view(self, organisation_identifiers, include_details):
+        result = {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email,
+            "username": self.username,
+            "uid": self.uid,
+            "created_at": self.created_at,
+            "schac_home_organisation": self.schac_home_organisation,
+            "affiliation": self.affiliation,
+            "scoped_affiliation": self.scoped_affiliation,
+            "eduperson_principal_name": self.eduperson_principal_name,
+
+        }
+        if include_details:
+            result["collaboration_memberships"] = [cm.allowed_attr_view() for cm in
+                                                   self.collaboration_memberships if
+                                                   cm.collaboration.organisation_id in organisation_identifiers]
+            result["organisation_memberships"] = [om.allowed_attr_view() for om in
+                                                  self.organisation_memberships if
+                                                  om.organisation_id in organisation_identifiers]
+        return result
 
 
 services_organisations_association = db.Table(
@@ -132,6 +157,15 @@ class CollaborationMembership(Base, db.Model):
 
     def is_expired(self):
         return self.expiry_date and datetime.datetime.utcnow() > self.expiry_date
+
+    def allowed_attr_view(self):
+        return {
+            "role": self.role,
+            "collaboration": {
+                "id": self.collaboration.id,
+                "name": self.collaboration.name
+            }
+        }
 
 
 organisations_services_association = db.Table(
@@ -269,6 +303,15 @@ class OrganisationMembership(Base, db.Model):
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
+    def allowed_attr_view(self):
+        return {
+            "role": self.role,
+            "organisation": {
+                "id": self.organisation.id,
+                "name": self.organisation.name
+            }
+        }
+
 
 class Organisation(Base, db.Model, LogoMixin):
     __tablename__ = "organisations"
@@ -332,6 +375,19 @@ class ServiceMembership(Base, db.Model):
                            nullable=False)
 
 
+class ServiceToken(Base, db.Model, SecretMixin):
+    __tablename__ = "service_tokens"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    hashed_token = db.Column("hashed_token", db.String(length=512), nullable=False)
+    description = db.Column("description", db.Text(), nullable=True)
+    service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
+    service = db.relationship("Service", back_populates="service_tokens")
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
+
+
 class Service(Base, db.Model, LogoMixin):
     __tablename__ = "services"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
@@ -344,6 +400,7 @@ class Service(Base, db.Model, LogoMixin):
     identity_type = db.Column("identity_type", db.String(length=255), nullable=True)
     abbreviation = db.Column("abbreviation", db.String(length=255), nullable=False)
     uri = db.Column("uri", db.String(length=255), nullable=True)
+    uri_info = db.Column("uri_info", db.String(length=255), nullable=True)
     privacy_policy = db.Column("privacy_policy", db.String(length=255), nullable=False)
     accepted_user_policy = db.Column("accepted_user_policy", db.Text(), nullable=True)
     ldap_password = db.Column("ldap_password", db.String(length=255), nullable=True)
@@ -362,7 +419,6 @@ class Service(Base, db.Model, LogoMixin):
     code_of_conduct_compliant = db.Column("code_of_conduct_compliant", db.Boolean(), nullable=True, default=False)
     sirtfi_compliant = db.Column("sirtfi_compliant", db.Boolean(), nullable=True, default=False)
     token_enabled = db.Column("token_enabled", db.Boolean(), nullable=True, default=False)
-    hashed_token = db.Column("hashed_token", db.String(length=255), nullable=True, default=None)
     token_validity_days = db.Column("token_validity_days", db.Integer(), nullable=True, default=0)
     pam_web_sso_enabled = db.Column("pam_web_sso_enabled", db.Boolean(), nullable=True, default=False)
     collaborations = db.relationship("Collaboration", secondary=services_collaborations_association, lazy="select",
@@ -383,6 +439,9 @@ class Service(Base, db.Model, LogoMixin):
                                    passive_deletes=True)
     user_tokens = db.relationship("UserToken", back_populates="service", cascade="all, delete-orphan",
                                   passive_deletes=True)
+    service_tokens = db.relationship("ServiceToken", back_populates="service",
+                                     cascade="delete, delete-orphan",
+                                     passive_deletes=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
@@ -473,7 +532,7 @@ class OrganisationInvitation(Base, db.Model):
             raise ValueError(f"{role} is not valid. Valid roles are admin and manager")
 
 
-class ApiKey(Base, db.Model):
+class ApiKey(Base, db.Model, SecretMixin):
     __tablename__ = "api_keys"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     hashed_secret = db.Column("hashed_secret", db.String(length=512), nullable=False)
@@ -638,7 +697,7 @@ class ServiceAup(Base, db.Model):
                           nullable=False)
 
 
-class UserToken(Base, db.Model):
+class UserToken(Base, db.Model, SecretMixin):
     __tablename__ = "user_tokens"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     name = db.Column("name", db.String(length=255), nullable=False)
@@ -684,10 +743,14 @@ class PamSSOSession(Base, db.Model):
 class UserLogin(Base, db.Model):
     __tablename__ = "user_logins"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
-    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    login_type = db.Column("login_type", db.String(length=255), nullable=False)
+    succeeded = db.Column("succeeded", db.Boolean(), nullable=False, default=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     user = db.relationship("User")
-    service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
+    user_uid = db.Column("user_uid", db.String(length=512), nullable=True)
+    service_id = db.Column(db.Integer(), db.ForeignKey("services.id", ondelete="SET NULL"), nullable=True)
     service = db.relationship("Service")
+    service_entity_id = db.Column("service_entity_id", db.String(length=512), nullable=True)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 

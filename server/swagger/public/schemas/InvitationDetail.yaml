@@ -13,7 +13,7 @@ properties:
         example: "301ee8e6-b5d1-40b5-a27e-47611f803371"
       email:
         type: string
-        example: "jdoe@example.com"
+        example: "rdoe@example.com"
       expiry_date:
         type: number
         description: "The expiry date of the collaboration in epoch seconds"
@@ -23,16 +23,16 @@ properties:
     properties:
       name:
         type: string
-        example: "John Doe"
+        example: "Researcher Doe"
       mail:
         type: string
-        example: "jdoe@example.org"
+        example: "rdoe@uniharderwijk.nl"
       username:
         type: string
-        example: "jdoe2"
+        example: "rdoe2"
       platform_id:
         type: string
-        example: "9bf251bf6cfa9eb8c75f15a90075fa7074eb3d48@acc.sram.eduteams.org"
+        example: "9bf251bf6cfa9eb8c75f15a90075fa7074eb3d48@sram.eduteams.org"
       status:
         type: string
         example: "active"

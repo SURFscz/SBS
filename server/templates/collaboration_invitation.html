@@ -11,25 +11,26 @@
 
     <div class="mail-middle"
          style="padding: 40px 0 40px 60px;max-width: 800px;border: 1px solid #e0e0e0;border-radius: 6px">
-        {% if invitation.message is defined and invitation.message != None and invitation.message|length %}
+        {% if message is defined and message != None and message|length %}
             <p style="white-space: pre-line;margin: 0 0 25px 0;font-style: italic">
-                {{ invitation.message }}
+                {{ message | safe }}
             </p>
         {% endif %}
         <div style="display: flex">
             <img style="max-height: 200px;max-width: 200px;border-radius: 8px;margin-right: 25px"
-                 src="data:image/jpeg;base64,{{ organisation_img }}" alt="{{ collaboration.name }}">
-            <div style="display: flex;flex-direction: column">
-                <p style="font-weight: bold;margin: 0 0 10px 0;font-size: 24px; line-height: 28px">
+                 src="{{ organisation_img_link }}" alt="{{ collaboration.name }}">
+
+            <div style="display: inline-block">
+                <p style="font-weight: bold;margin: 0 0 10px 0;font-size: 24px; line-height: 28px; display: block">
                     {{ collaboration.name }}
                 </p>
-                <p style="margin: 0 0 10px 0;font-size: 18px; line-height: 22px">
+                <p style="margin: 0 0 10px 0;font-size: 18px; line-height: 22px; display: block">
                     {{ collaboration.description }}</p>
                 <div style="margin-bottom: auto">
                     <a class="button" href="{{ base_url }}/invitations/accept/{{ invitation.hash }}"
                        style="border-radius: 4px;color: white;background-color: #0077c8;text-decoration: none;display: inline-block;margin: 0;cursor:pointer;padding: 18px 22px;font-size: 20px;max-width: 200px;">
-                        Join this collaboration</a>
-                    <p style="font-size: 13px;margin: 5px 0 0 0">You can also click the following link:
+                        Join this collaboration<sup>*</sup></a>
+                    <p style="font-size: 13px;margin: 8px 0 0 0"><sup>*</sup>You can also click the following link:
                         <a href="{{ base_url }}/invitations/accept/{{ invitation.hash }}">{{ base_url }}/invitations/accept</a>
                     </p>
                 </div>

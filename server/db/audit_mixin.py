@@ -105,6 +105,7 @@ parent_configuration = {
     "ip_networks": ("service_id", "services"),
     "user_ip_networks": ("user_id", "users"),
     "service_groups": ("service_id", "services"),
+    "service_tokens": ("service_id", "services"),
     "service_aups": ("service_id", "services")
 }
 

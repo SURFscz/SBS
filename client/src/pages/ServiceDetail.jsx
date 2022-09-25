@@ -219,7 +219,7 @@ class ServiceDetail extends React.Component {
                     serviceConnectionRequests: serviceConnectionRequests,
                     loading: false
                 }, callback);
-            }).catch(e => {
+            }).catch(() => {
             this.props.history.push("/404")
         });
     };
@@ -261,7 +261,7 @@ class ServiceDetail extends React.Component {
         </div>)
     }
 
-    getTokenTab = (service, user) => {
+    getTokenTab = service => {
         const openInvitations = (service.service_invitations || []).length;
         return (<div key="admins" name="admins"
                      label={I18n.t("home.tabs.serviceAdmins", {count: service.service_memberships.length})}
@@ -466,7 +466,7 @@ class ServiceDetail extends React.Component {
 
                 <UnitHeader obj={service}
                             mayEdit={user.admin || isUserServiceAdmin(user, service)}
-                            history={user.admin && this.props.history && !showServiceAdminView}
+                            history={user.admin && !showServiceAdminView && this.props.history}
                             auditLogPath={`services/${service.id}`}
                             breadcrumbName={I18n.t("breadcrumb.service", {name: service.name})}
                             name={service.name}
@@ -492,6 +492,12 @@ class ServiceDetail extends React.Component {
                                         <a key={sm.user.id} href={`mailto:${sm.user.email}`}>{sm.user.email}</a>)}
                             </span>
 
+                        </div>
+                        <div className="org-attributes">
+                            <span>{I18n.t("service.infoUri")}</span>
+                            <span>{service.uri_info ?
+                                <a href={service.uri_info} target="_blank" rel="noopener noreferrer">{service.uri_info}</a> :
+                                I18n.t("service.none")}</span>
                         </div>
                         {service.support_email &&
                         <div className="org-attributes">
@@ -526,7 +532,6 @@ class ServiceDetail extends React.Component {
                 </div>
             </div>);
     }
-    ;
 }
 
 export default ServiceDetail;

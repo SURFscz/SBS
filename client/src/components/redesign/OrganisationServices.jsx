@@ -32,15 +32,10 @@ class OrganisationServices extends React.Component {
     }
 
     componentDidMount = () => {
-        const {organisation, user} = this.props;
+        const {organisation} = this.props;
         allServices().then(services => {
             services.forEach(service => {
-                const allowed = service.allowed_organisations.some(org => org.id === organisation.id);
-                service.allowedByService = allowed;
-                service.allowed = (allowed && service.automatic_connection_allowed) || service.access_allowed_for_all;
-                service.notAllowed = !service.allowed;
-                service.notAllowedServicesRestricted = !user.admin && organisation.services_restricted;
-                service.enabledByOrganisation = organisation.services.some(s => s.id === service.id);
+                service.disabled = !organisation.services.some(s => s.id === service.id);
             });
             this.setState({services: services, loading: false});
         });
@@ -100,27 +95,25 @@ class OrganisationServices extends React.Component {
     getServiceAction = service => {
         const {organisation, user} = this.props;
         const allowed = isUserAllowed(ROLES.ORG_MANAGER, user, organisation.id, null);
-        let tooltip;
-        if ((!service.allowed || service.notAllowedServicesRestricted) && !service.enabledByOrganisation) {
-            if (service.notAllowedServicesRestricted) {
-                if (service.allowed) {
-                    tooltip = I18n.t("organisationServices.serviceRestrictedOrganisationAdded");
-                } else {
-                    tooltip = I18n.t("organisationServices.serviceRestrictedOrganisation");
-                }
-            } else if (service.allowedByService) {
-                tooltip = I18n.t("organisationServices.notAllowedOrganisation")
-            } else {
-                tooltip = I18n.t("organisationServices.notEnabledOrganisation")
-            }
+        let tooltip = null;
+        if (!service.white_listed && organisation.services_restricted) {
+            tooltip = I18n.t("organisationServices.serviceRestrictedOrganisation");
+        } else if (!service.access_allowed_for_all && !service.allowed_organisations.some(org => org.id === organisation.id)) {
+            tooltip = I18n.t("organisationServices.notEnabledOrganisation");
+        } else if (!service.automatic_connection_allowed) {
+            tooltip = I18n.t("organisationServices.notAllowedOrganisation");
         }
-        const disabled = (!allowed || !service.allowed || service.notAllowedServicesRestricted) && !service.enabledByOrganisation;
         return (
             <div>
-                <ToggleSwitch onChange={this.onToggle(service, organisation)} disabled={disabled}
-                              value={service.enabledByOrganisation} animate={false} tooltip={tooltip}/>
-                {(disabled && service.notAllowedServicesRestricted) && <Tooltip children={<FontAwesomeIcon icon="info-circle"/>} id={`not-allowed-${service.id}`}
-                                      msg={tooltip}/>}
+                <ToggleSwitch onChange={this.onToggle(service, organisation)}
+                              disabled={!allowed || tooltip}
+                              value={organisation.services.some(s => s.id === service.id)}
+                              animate={false}
+                              tooltip={tooltip}/>
+                {tooltip &&
+                <Tooltip children={<FontAwesomeIcon icon="info-circle"/>}
+                         id={`not-allowed-${service.id}`}
+                         msg={tooltip}/>}
             </div>
         )
     }
@@ -151,7 +144,7 @@ class OrganisationServices extends React.Component {
                 header: I18n.t("models.services.mandatory"),
                 mapper: this.getServiceAction
             }]
-        const count = organisation.services.filter(service => service.allowed && service.notAllowedServicesRestricted).length
+        const count = organisation.services.length
         const titleUsed = I18n.t(`models.services.titleUsedOrg`, {count: count});
         return (
             <div className="organisation-services">
@@ -165,7 +158,7 @@ class OrganisationServices extends React.Component {
                           modelName="servicesUsed"
                           tableClassName="organisationServicesUsed"
                           searchAttributes={["name"]}
-                          defaultSort="notAllowed"
+                          defaultSort="disabled"
                           columns={columns}
                           loading={loading}
                           title={titleUsed}

@@ -33,7 +33,7 @@ export default class Activity extends React.PureComponent {
         });
     }
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate() {
         const {selected} = this.state;
         const {auditLogs} = this.props;
         const filteredOut = !isEmpty(selected) && !auditLogs.audit_logs.some(log => log.id === selected.id);
