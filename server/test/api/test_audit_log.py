@@ -130,3 +130,8 @@ class TestAuditLog(AbstractTest):
         self.assertEqual(3, len(res["audit_logs"]))
         actual = sorted(list(set([audit_log["target_type"] for audit_log in res["audit_logs"]])))
         self.assertEqual(tables, actual)
+
+        res = self.get("/api/audit_logs/activity", query_data={"query": "DMI"})
+        self.assertEqual(2, len(res["audit_logs"]))
+        self.assertEqual(1, len(res["organisations"]))
+        self.assertEqual(2, len(res["users"]))
