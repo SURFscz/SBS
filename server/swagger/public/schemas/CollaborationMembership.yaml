@@ -5,13 +5,19 @@ properties:
     type: number
     readOnly: true
     example: 999
-  network_value:
-    type: string
-    description: "IP network range"
-    example: "255.0.0.1/28"
-  user_id:
+  collaboration_id:
     type: number
+    readOnly: true
     example: 999
+  role:
+    type: string
+    example: "admin"
+  status:
+    type: string
+    example: "active"
+  expiry_date:
+    type: number
+    example: 1642781077
   created_at:
     type: number
     description: "The date of the created at in epoch seconds"
@@ -19,8 +25,10 @@ properties:
   created_by:
     type: string
     description: "UID of the user who created this"
-    example: "urn:admin"
+    example: "urn:jdoe"
   updated_by:
     type: string
     description: "UID of the user who updated this"
-    example: "urn:admin"
+    example: "urn:jdoe"
+  user:
+    $ref: '/swagger/schemas/User.yaml'

@@ -25,15 +25,15 @@ class TestOrganisationsServices(AbstractTest):
 
     def test_add_organisations_services_restricted(self):
         self.mark_organisation_service_restricted(self.find_entity_by_name(Organisation, uuc_name).id)
-        self._do_add_organisations_services(uuc_name, service_wireless_name, response_status_code=403, user="urn:mary")
+        self._do_add_organisations_services(uuc_name, service_wireless_name, response_status_code=400, user="urn:mary")
 
     def test_add_organisations_services_not_allowed_organisation(self):
         res = self._do_add_organisations_services(uuc_name, service_ssh_uva_name, response_status_code=400)
-        self.assertEqual("not_allowed_organisation", res["message"])
+        self.assertTrue("not_allowed_organisation" in res["message"])
 
     def test_add_organisations_services_no_automatic_connection_allowed(self):
         res = self._do_add_organisations_services(uuc_name, service_wiki_name, response_status_code=400)
-        self.assertEqual("automatic_connection_not_allowed", res["message"])
+        self.assertTrue("automatic_connection_not_allowed" in res["message"])
 
     def test_add_organisations_services_with_service_groups(self):
         self._do_add_organisations_services(uuc_name, service_mail_name)
@@ -55,15 +55,3 @@ class TestOrganisationsServices(AbstractTest):
         self.assertEqual(204, response.status_code)
         uuc = self.find_entity_by_name(Organisation, uuc_name)
         self.assertEqual(1, len(uuc.services))
-
-    def test_delete_organisations_services_restricted(self):
-        uuc = self.find_entity_by_name(Organisation, uuc_name)
-        uuc_id = uuc.id
-        services_id = uuc.services[0].id
-
-        self.mark_organisation_service_restricted(uuc_id)
-
-        self.login("urn:mary")
-        self.delete(f"api/organisations_services/{uuc_id}/{services_id}",
-                    with_basic_auth=False,
-                    response_status_code=403)

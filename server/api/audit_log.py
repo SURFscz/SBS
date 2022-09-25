@@ -54,13 +54,22 @@ def other(user_id):
 def activity():
     confirm_write_access()
 
-    limit = int(query_param("limit", False, 0))
     tables = list(filter(lambda s: s.strip(), query_param("tables", False, "").split(",")))
     query = AuditLog.query.order_by(desc(AuditLog.created_at))
     if tables:
         query = query.filter(AuditLog.target_type.in_(tables))
-    if limit:
-        query = query.limit(limit)
+    q = query_param("query", False, None)
+    if q and len(q.strip()) > 0:
+        wildcard = f"%{q}%"
+        conditions = [AuditLog.target_type.ilike(wildcard),
+                      AuditLog.target_name.ilike(wildcard),
+                      AuditLog.state_after.ilike(wildcard),
+                      AuditLog.state_before.ilike(wildcard)]
+        query = query.filter(or_(*conditions))
+
+    limit = int(query_param("limit", False, 50))
+    query = query.limit(limit)
+
     audit_logs = query.all()
     return _add_references(audit_logs), 200
 

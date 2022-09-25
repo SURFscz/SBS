@@ -1,4 +1,5 @@
 # -*- coding: future_fstrings -*-
+import re
 import uuid
 
 from flask import Blueprint, request as current_request, current_app
@@ -13,6 +14,7 @@ from server.auth.security import current_user_id, current_user_name, \
 from server.db.defaults import cleanse_short_name, STATUS_ACTIVE
 from server.db.domain import User, Organisation, CollaborationRequest, Collaboration, CollaborationMembership, db, \
     SchacHomeOrganisation
+from server.db.logo_mixin import logo_from_cache
 from server.db.models import save, delete
 from server.mail import mail_collaboration_request, mail_accepted_declined_collaboration_request, \
     mail_automatic_collaboration_request
@@ -112,6 +114,12 @@ def approve_request(collaboration_request_id):
     data = {"identifier": str(uuid.uuid4())}
     for attr in attributes:
         data[attr] = client_data.get(attr, None)
+    # bugfix for logo url instead of raw data in the POST from the client - only happens when the logo is unchanged
+    logo = data.get("logo")
+    if logo and logo.startswith("http"):
+        groups = re.search(r".*api/images/(.*)/(.*)", logo).groups()
+        data["logo"] = logo_from_cache(groups[0], groups[1])
+
     assign_global_urn_to_collaboration(collaboration_request.organisation, data)
 
     data["status"] = STATUS_ACTIVE

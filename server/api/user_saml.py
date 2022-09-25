@@ -10,10 +10,11 @@ from server.api.base import json_endpoint, send_error_mail
 from server.api.service_aups import has_agreed_with
 from server.auth.mfa import mfa_idp_allowed, surf_secure_id_required, has_valid_mfa
 from server.auth.security import confirm_read_access
-from server.auth.user_claims import user_memberships
+from server.auth.user_claims import user_memberships, collaboration_memberships_for_service
 from server.db.db import db
-from server.db.defaults import STATUS_ACTIVE
-from server.db.domain import User, Service, UserLogin
+from server.db.defaults import STATUS_ACTIVE, PROXY_AUTHZ, PROXY_AUTHZ_SBS
+from server.db.domain import User, Service
+from server.db.models import log_user_login
 from server.logger.context_logger import ctx_logger
 
 user_saml_api = Blueprint("user_saml_api", __name__, url_prefix="/api/users")
@@ -23,7 +24,6 @@ USER_IS_SUSPENDED = 2
 SERVICE_UNKNOWN = 3
 SERVICE_NOT_CONNECTED = 4
 COLLABORATION_NOT_ACTIVE = 5
-MEMBERSHIP_NOT_ACTIVE = 6
 AUP_NOT_AGREED = 99
 SECOND_FA_REQUIRED = 100
 
@@ -41,7 +41,8 @@ custom_saml_mapping = {
 
 
 # See https://github.com/SURFscz/SBS/issues/152
-def _perform_sram_login(uid, home_organisation_uid, schac_home_organisation, issuer_id, require_2fa=True):
+def _perform_sram_login(uid, service, service_entity_id, home_organisation_uid, schac_home_organisation, issuer_id,
+                        require_2fa=True):
     logger = ctx_logger("user_api")
 
     logger.debug("SBS login flow")
@@ -88,6 +89,8 @@ def _perform_sram_login(uid, home_organisation_uid, schac_home_organisation, iss
             logger.debug(f"Returning interrupt for user {uid} from issuer {issuer_id} to perform 2fa "
                          f"(ssid={ssid_required})")
 
+            log_user_login(PROXY_AUTHZ_SBS, False, user, uid, service, service_entity_id)
+
             return {
                        "status": {
                            "result": "interrupt",
@@ -96,17 +99,18 @@ def _perform_sram_login(uid, home_organisation_uid, schac_home_organisation, iss
                        }
                    }, 200
 
+    log_user_login(PROXY_AUTHZ_SBS, True, user, uid, service, service_entity_id)
+
     db.session.merge(user)
     db.session.commit()
     return {"status": {"result": "authorized"}}, 200
 
 
-def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
+def _do_attributes(user, uid, service, service_entity_id, not_authorized_func, authorized_func,
                    home_organisation_uid=None, schac_home_organisation=None, require_2fa=False, issuer_id=None):
     confirm_read_access()
     logger = ctx_logger("user_api")
 
-    service = Service.query.filter(Service.entity_id == service_entity_id).first()
     if not service:
         msg = f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id} " \
               f"as the service is unknown"
@@ -114,7 +118,6 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
         send_error_mail(tb=msg)
         return not_authorized_func(service_entity_id, SERVICE_UNKNOWN)
     no_free_ride = not service.non_member_users_access_allowed
-    user = User.query.filter(User.uid == uid).first()
     if not user:
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
                      f" as the user is unknown")
@@ -124,15 +127,8 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
                      f" as the user is suspended")
         return not_authorized_func(service.name, USER_IS_SUSPENDED)
 
-    connected_collaborations = []
-    memberships = []
-    now = datetime.utcnow()
-    for cm in user.collaboration_memberships:
-        if not cm.collaboration.expiry_date or cm.collaboration.expiry_date > now:
-            connected = list(filter(lambda s: s.id == service.id, cm.collaboration.services))
-            if connected or list(filter(lambda s: s.id == service.id, cm.collaboration.organisation.services)):
-                connected_collaborations.append(cm.collaboration)
-                memberships.append(cm)
+    memberships = collaboration_memberships_for_service(user, service)
+    connected_collaborations = [cm.collaboration for cm in memberships]
 
     if not connected_collaborations and no_free_ride:
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
@@ -143,11 +139,6 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
                      f" as the service is not connected to any active collaborations")
         return not_authorized_func(service.name, COLLABORATION_NOT_ACTIVE)
-
-    if all(m.is_expired() for m in memberships) and no_free_ride:
-        logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
-                     f" as none of the collaboration memberships are active")
-        return not_authorized_func(service.name, MEMBERSHIP_NOT_ACTIVE)
 
     # logic should be: first check what type of 2FA the user should use (IdP, SSID, MFA)
     # if idp:  then always continue (everything is assumed to be handled by IdP)
@@ -199,11 +190,6 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
     all_memberships = user_memberships(user, connected_collaborations)
     all_attributes, http_status = authorized_func(user, all_memberships)
 
-    # Keep track of user logins for audit / statistics reasons
-    user_login = UserLogin(service_id=service.id, user_id=user.id)
-    db.session.merge(user_login)
-    db.session.commit()
-
     logger.info(f"Returning attributes {all_attributes} for user {uid} and service_entity_id {service_entity_id}")
 
     return all_attributes, http_status
@@ -225,22 +211,26 @@ def proxy_authz():
     logger = ctx_logger("user_api")
     logger.debug(f"proxy_authz called with {json_dict}")
 
+    service = Service.query.filter(Service.entity_id == service_entity_id).first()
+    user = User.query.filter(User.uid == uid).first()
+
     if service_entity_id.lower() == current_app.app_config.oidc.sram_service_entity_id.lower():
-        return _perform_sram_login(uid, home_organisation_uid, schac_home_organisation, issuer_id)
+        return _perform_sram_login(uid, service, service_entity_id, home_organisation_uid, schac_home_organisation,
+                                   issuer_id)
 
     def not_authorized_func(service_name, status):
         base_url = current_app.app_config.base_url
         if status == SECOND_FA_REQUIRED:
             # Internal contract, in case of SECOND_FA_REQUIRED we get the User instance returned
-            user = service_name
-            user.second_factor_confirmed = False
-            user.second_fa_uuid = str(uuid.uuid4())
-            db.session.merge(user)
+            user_not_authorized = service_name
+            user_not_authorized.second_factor_confirmed = False
+            user_not_authorized.second_fa_uuid = str(uuid.uuid4())
+            db.session.merge(user_not_authorized)
             db.session.commit()
-            if user.ssid_required:
-                redirect_url = f"{base_url}/api/mfa/ssid_start/{user.second_fa_uuid}"
+            if user_not_authorized.ssid_required:
+                redirect_url = f"{base_url}/api/mfa/ssid_start/{user_not_authorized.second_fa_uuid}"
             else:
-                redirect_url = f"{base_url}/2fa/{user.second_fa_uuid}"
+                redirect_url = f"{base_url}/2fa/{user_not_authorized.second_fa_uuid}"
             result = "interrupt"
         elif status == AUP_NOT_AGREED:
             # Internal contract, in case of AUP_NOT_AGREED we get the Service instance returned
@@ -253,6 +243,9 @@ def proxy_authz():
                                     "user_id": uid})
             redirect_url = f"{base_url}/service-denied?{parameters}"
             result = "unauthorized"
+
+        log_user_login(PROXY_AUTHZ, False, user, uid, service, service_entity_id)
+
         return {
                    "status": {
                        "result": result,
@@ -261,25 +254,29 @@ def proxy_authz():
                    }
                }, 200
 
-    def authorized_func(user, memberships):
+    def authorized_func(authorized_user, memberships):
         eppn_scope = current_app.app_config.eppn_scope.strip()
         if home_organisation_uid:
-            user.home_organisation_uid = home_organisation_uid
+            authorized_user.home_organisation_uid = home_organisation_uid
         if schac_home_organisation:
-            user.schac_home_organisation = schac_home_organisation
-        db.session.merge(user)
+            authorized_user.schac_home_organisation = schac_home_organisation
+        db.session.merge(authorized_user)
+        db.session.commit()
+
+        log_user_login(PROXY_AUTHZ, True, user, uid, service, service_entity_id)
+
         return {
                    "status": {
                        "result": "authorized",
                    },
                    "attributes": {
                        "eduPersonEntitlement": list(memberships),
-                       "eduPersonPrincipalName": [f"{user.username}@{eppn_scope}"],
-                       "uid": [user.username],
-                       "sshkey": [ssh_key.ssh_value for ssh_key in user.ssh_keys]
+                       "eduPersonPrincipalName": [f"{authorized_user.username}@{eppn_scope}"],
+                       "uid": [authorized_user.username],
+                       "sshkey": [ssh_key.ssh_value for ssh_key in authorized_user.ssh_keys]
                    }
                }, 200
 
-    return _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
+    return _do_attributes(user, uid, service, service_entity_id, not_authorized_func, authorized_func,
                           schac_home_organisation=schac_home_organisation, home_organisation_uid=home_organisation_uid,
                           require_2fa=True, issuer_id=issuer_id)

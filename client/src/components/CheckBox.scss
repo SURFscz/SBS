@@ -31,7 +31,7 @@ div.checkbox {
         background-color: white;
         border: 1px solid $blue;
         border-radius: 3px;
-        padding: 1px 2px;
+        padding: 1px 4px;
         margin: 2px 0;
         cursor: pointer;
 
@@ -47,11 +47,9 @@ div.checkbox {
     }
 
     input[type="checkbox"]:checked + label span {
-        border: 3px solid $blue;
         background-color: $blue;
         border-radius: 2px;
         box-shadow: none;
-        padding: 0;
         outline: none !important;
 
         svg {

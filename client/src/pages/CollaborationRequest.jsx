@@ -72,7 +72,7 @@ class CollaborationRequest extends React.Component {
                         {path: "/", value: I18n.t("breadcrumb.collaborationRequest", {name: collaborationRequest.name})}
                     ];
                 });
-            }).catch(e => this.props.history.push("/"));
+            }).catch(() => this.props.history.push("/"));
 
     validateCollaborationName = e =>
         collaborationNameExists(e.target.value, this.state.collaborationRequest.organisation.id).then(json => {
@@ -148,7 +148,7 @@ class CollaborationRequest extends React.Component {
         } else if (this.isValid()) {
             const {collaborationRequest} = this.state;
             this.setState({loading: true});
-            approveRequestCollaboration(collaborationRequest).then(res => {
+            approveRequestCollaboration(collaborationRequest).then(() => {
                 this.props.history.push(`/organisations/${collaborationRequest.organisation_id}/collaboration_requests`);
                 setFlash(I18n.t("collaborationRequest.flash.approved", {name: collaborationRequest.name}));
             });
@@ -333,7 +333,7 @@ class CollaborationRequest extends React.Component {
                     </div>
                 </div>
             </div>);
-    };
+    }
 }
 
 export default CollaborationRequest;

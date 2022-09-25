@@ -11,12 +11,13 @@ import pyotp
 import qrcode
 from authlib.jose import jwk
 from flask import Blueprint, current_app, redirect, session, request as current_request
-from werkzeug.exceptions import Forbidden
+from werkzeug.exceptions import Forbidden, BadRequest
 
 from server.api.base import query_param, json_endpoint
 from server.auth.mfa import ACR_VALUES, decode_jwt_token, store_user_in_session, eligible_users_to_reset_token
 from server.auth.rate_limit import clear_rate_limit, check_rate_limit
-from server.auth.security import current_user_id, generate_token, is_admin_user
+from server.auth.security import current_user_id, is_admin_user
+from server.auth.secrets import generate_token
 from server.auth.ssid import redirect_to_surf_secure_id
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
@@ -140,10 +141,16 @@ def get2fa():
 @json_endpoint
 def get2fa_proxy_authz():
     second_fa_uuid = query_param("second_fa_uuid")
-    user = User.query.filter(User.second_fa_uuid == second_fa_uuid).one()
+    user = _get_user_by_second_fa_uuid(second_fa_uuid)
     if user.second_factor_auth:
         return {}, 200
     return _do_get2fa(user.schac_home_organisation, user.uid)
+
+
+def _get_user_by_second_fa_uuid(second_fa_uuid):
+    if not second_fa_uuid:
+        raise BadRequest("second_fa_uuid is empty")
+    return User.query.filter(User.second_fa_uuid == second_fa_uuid).one()
 
 
 @mfa_api.route("/verify2fa", methods=["POST"], strict_slashes=False)
@@ -173,7 +180,7 @@ def verify2fa():
 def verify2fa_proxy_authz():
     data = current_request.get_json()
     second_fa_uuid = data["second_fa_uuid"]
-    user = User.query.filter(User.second_fa_uuid == second_fa_uuid).one()
+    user = _get_user_by_second_fa_uuid(second_fa_uuid)
     check_rate_limit(user)
 
     secret = user.second_factor_auth if user.second_factor_auth else session["second_factor_auth"]
@@ -264,7 +271,7 @@ def do_ssid_redirect(second_fa_uuid):
 
     continue_url = query_param("continue_url", required=True)
     session["ssid_original_destination"] = continue_url
-    user = User.query.filter(User.second_fa_uuid == second_fa_uuid).one()
+    user = _get_user_by_second_fa_uuid(second_fa_uuid)
 
     logger.debug(f"do_ssid_redirect: continu={continue_url}, user={user}")
 

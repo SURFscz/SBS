@@ -3,28 +3,28 @@ type: object
 properties:
   name:
     type: string
-    example: "Researcher"
+    example: "Cumulus research group"
   short_name:
     type: string
-    example: "researcher"
+    example: "cumulusgrp"
   description:
     type: string
-    example: "Researcher collaboration UVA"
+    example: "Cumulus research group of the University of Harderwijk. Members can collaborate in the connected cloud service and contact eachother by email."
   website_url:
     type: string
     format: uri
-    example: "https://service.universiteitvanharderwijk.nl/login"
+    example: "https://research.uniharderwijk.nl/cumulusgrp"
   disable_join_requests:
     type: boolean
-    description: "If true users can not request to become a member of this collaboration"
+    description: "If true users cannot request to become a member of this collaboration"
     example: true
   disclose_member_information:
     type: boolean
-    description: "If false the names of the members are not disclosed to other members"
+    description: "If true the names of members are disclosed to other members"
     example: true
   disclose_email_information:
     type: boolean
-    description: "If false the emails of the members are not disclosed to other members"
+    description: "If true the email addresses of members are disclosed to other members"
     example: true
   expiry_date:
     type: number
@@ -37,13 +37,13 @@ properties:
   message:
     type: string
     description: "Message included in the invitation email"
-    example: "Please join..."
+    example: "Please join the Cumulus research group collaboration page."
   administrators:
     type: array
     description: "Email addresses of the administrators who receive an invitation email"
     items:
       type: string
-      example: "jdoe@example.com"
+      example: "jdoe@uniharderwijk.nl"
 required:
   - name
   - short_name

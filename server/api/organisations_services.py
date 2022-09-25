@@ -4,7 +4,7 @@ from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint, emit_socket
 from server.api.service_group import create_service_groups
-from server.auth.security import confirm_organisation_admin_or_manager, confirm_write_access
+from server.auth.security import confirm_organisation_admin_or_manager
 from server.db.db import db
 from server.db.domain import Service, Organisation
 from server.schemas import json_schema_validator
@@ -34,8 +34,8 @@ def add_collaborations_services():
 
     organisation = Organisation.query.get(organisation_id)
 
-    if organisation.services_restricted:
-        confirm_write_access()
+    if organisation.services_restricted and not service.white_listed:
+        raise BadRequest("SURG org can only connect SURF services")
 
     organisation.services.append(service)
     db.session.merge(organisation)
@@ -54,9 +54,6 @@ def delete_organisations_services(organisation_id, service_id):
     confirm_organisation_admin_or_manager(organisation_id)
 
     organisation = Organisation.query.get(organisation_id)
-
-    if organisation.services_restricted:
-        confirm_write_access()
 
     organisation.services.remove(Service.query.get(service_id))
     db.session.merge(organisation)

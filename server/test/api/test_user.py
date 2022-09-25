@@ -6,7 +6,9 @@ from urllib import parse
 import requests
 import responses
 from flask import current_app
+from werkzeug.exceptions import BadRequest
 
+from server.auth.security import CSRF_TOKEN
 from server.db.db import db
 from server.db.domain import Organisation, Collaboration, User, Aup
 from server.test.abstract_test import AbstractTest
@@ -142,12 +144,25 @@ class TestUser(AbstractTest):
         user_id = User.query.filter(User.uid == "urn:mary").one().id
         res = self.get("/api/users/find_by_id", query_data={"id": user_id})
         self.assertEqual("urn:mary", res["uid"])
+        for attr in ["last_accessed_date", "last_login_date", "second_fa_uuid", "service_memberships", "join_requests"]:
+            self.assertTrue(attr in res)
 
     def test_find_by_id_by_org_manager(self):
         self.login("urn:harry")
         user_id = User.query.filter(User.uid == "urn:sarah").one().id
         res = self.get("/api/users/find_by_id", query_data={"id": user_id})
         self.assertEqual("urn:sarah", res["uid"])
+        for attr in ["last_accessed_date", "last_login_date", "second_fa_uuid", "service_memberships", "join_requests"]:
+            self.assertFalse(attr in res)
+
+    def test_find_by_id_by_org_manager_including_org_memberships(self):
+        self.login("urn:paul")
+        user_id = User.query.filter(User.uid == "urn:jane").one().id
+        res = self.get("/api/users/find_by_id", query_data={"id": user_id})
+        self.assertEqual(1, len(res["organisation_memberships"]))
+        membership = res["organisation_memberships"][0]
+        self.assertListEqual(sorted(["role", "organisation"]), sorted(list(membership.keys())))
+        self.assertListEqual(sorted(["id", "name"]), sorted(list(membership["organisation"].keys())))
 
     def test_find_by_id_by_org_manager_not_allowed(self):
         self.login("urn:harry")
@@ -266,6 +281,19 @@ class TestUser(AbstractTest):
     def test_error(self):
         self.post("/api/users/error", body={"error": "403"}, response_status_code=201)
 
+    def test_csrf(self):
+        try:
+            del os.environ["TESTING"]
+            self.login("urn:john")
+            self.post("/api/organisations",
+                      body={"name": "new_organisation",
+                            "schac_home_organisations": [],
+                            "short_name": "https://ti1"},
+                      response_status_code=401,
+                      with_basic_auth=False)
+        finally:
+            os.environ["TESTING"] = "1"
+
     def test_error_mail(self):
         try:
             del os.environ["TESTING"]
@@ -273,7 +301,11 @@ class TestUser(AbstractTest):
             with mail.record_messages() as outbox:
                 self.app.app_config.mail.send_js_exceptions = True
                 self.login("urn:sarah")
-                self.post("/api/users/error", body={"weird": "msg"}, response_status_code=201)
+                me = self.get("/api/users/me", with_basic_auth=False)
+                self.post("/api/users/error",
+                          body={"weird": "msg"},
+                          headers={CSRF_TOKEN: me[CSRF_TOKEN]},
+                          response_status_code=201)
                 self.assertEqual(1, len(outbox))
                 mail_msg = outbox[0]
                 self.assertTrue("weird" in mail_msg.html)
@@ -320,6 +352,12 @@ class TestUser(AbstractTest):
             self.assertFalse(user["second_factor_confirmed"])
             self.assertFalse("organisation_memberships" in user)
             self.assertTrue(user["admin"])
+
+    def test_read_file_not_exists(self):
+        def expect_bad_request():
+            read_file("nope")
+
+        self.assertRaises(BadRequest, expect_bad_request)
 
     @responses.activate
     def test_resume_session_with_allowed_idp(self, redirect_expected="http://localhost:3000"):
@@ -399,7 +437,7 @@ class TestUser(AbstractTest):
         res = self.get("/api/collaborations/find_by_identifier",
                        query_data={"identifier": collaboration_ai_computing_uuid},
                        with_basic_auth=False, response_status_code=401)
-        self.assertEqual("AUP not accepted", res["message"])
+        self.assertTrue("AUP not accepted" in res["message"])
 
     def test_update_ssh_control_char(self):
         self.login("urn:james")

@@ -97,6 +97,23 @@ class TestCollaborationRequest(AbstractTest):
             self.assertEqual("Collaboration request for collaboration New Collaboration has been accepted",
                              mail_msg.subject)
 
+    def test_request_collaboration_approve_logo_url(self):
+        collaboration_request = self.find_entity_by_name(CollaborationRequest, collaboration_request_name)
+        res = self.get(f"/api/collaboration_requests/{collaboration_request.id}")
+
+        self.login("urn:john")
+        res = self.put(f"/api/collaboration_requests/approve/{collaboration_request.id}",
+                       body={
+                           "name": collaboration_request.name,
+                           "logo": res["logo"],
+                           "description": "new_collaboration",
+                           "short_name": collaboration_request.short_name,
+                           "organisation_id": collaboration_request.organisation_id
+                       }, with_basic_auth=False)
+        collaboration_request = self.find_entity_by_name(CollaborationRequest, collaboration_request_name)
+        raw_logo = collaboration_request.raw_logo()
+        self.assertFalse(raw_logo.startswith("http"))
+
     def test_request_collaboration_deny(self):
         collaboration_request = self.find_entity_by_name(CollaborationRequest, collaboration_request_name)
 

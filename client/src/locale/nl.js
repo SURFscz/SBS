@@ -68,6 +68,7 @@ I18n.translations.nl = {
         edit: "Wijzig",
         history: "Geschiedenis",
         unsuspend: "Schorsing ongedaan maken",
+        resetLastActivity: "Reset activiteit",
         details: "Details",
         backToHome: "Terug naar home",
         firstTime: "Onboarding",
@@ -81,7 +82,7 @@ I18n.translations.nl = {
             organisations: "Organisaties ({{count}})",
             services: "Diensten ({{count}})",
             platformAdmins: "Platformbeheerders ({{count}})",
-            orgAdmins: "Organisatiebeheerders ({{count}})",
+            orgAdmins: "Org.beheerders ({{count}})",
             orgServices: "Diensten ({{count}})",
             serviceAdmins: "Beheerders ({{count}})",
             orgCollaborations: "Samenwerkingen ({{count}})",
@@ -92,7 +93,7 @@ I18n.translations.nl = {
             serviceOrganisations: "Organisatietoegang ({{count}})",
             serviceCollaborations: "Samenwerkingen ({{count}})",
             userTokens: "Tokens ({{count}})",
-            collaborationRequests: "Samenwerkingsverzoeken",
+            collaborationRequests: "Verzoeken",
             joinRequests: "Lidmaatschapsverzoeken ({{count}})",
             serviceConnectionRequests: "Koppelverzoeken",
             me: "Profiel",
@@ -334,7 +335,7 @@ I18n.translations.nl = {
             title: "Samenwerkingen die deze dienst gebruiken",
             organisationName: "Organisatie",
             noEntities: "Er zijn geen samenwerkingen die deze dienst gebruiken",
-            organisationWarningTooltip: "Deze samenwerking heeft toegang, omdat de organisatie van deze samenwerking toegang heeft verleend tot alle samenwerkingen in deze organisatie.</br></br>Als je deze samenwerking wil verbreken, verbied je de toegang tot de organisatie op het tabblad Organisatie.",
+            organisationWarningTooltip: "Deze samenwerking heeft toegang omdat de organisatie van deze samenwerking alle samenwerkingen in deze organisatie toegang tot de dienst heeft verleend.</br></br>Als je de toegang van deze samenwerking wil beëindigen, moet je de toegang van de organisatie op het tabblad Organisatie beëindigen.",
             origin: "Gekoppeld door",
             fromOrganisation: "Organisatie",
             fromCollaboration: "Samenwerking",
@@ -405,6 +406,7 @@ I18n.translations.nl = {
             about: "Over onze samenwerking",
             services: "Waar we samenwerken ({{nbr}} diensten)",
             noServices: "Er zijn nog geen diensten gekoppeld aan deze samenwerking",
+            noServicesJoinRequest: "Diensten zijn alleen zichtbaar voor leden",
             servicesStart: "Gebruik de knop om de dienst te starten, of lees eerst de instructies.",
             instructions: "Instructies",
             servicesHoover: "Bezoek deze dienst op {{uri}}",
@@ -747,6 +749,9 @@ I18n.translations.nl = {
             expired: "Verlopen",
             activeTooltip: "Deze samenwerking is actief.",
             suspendedTooltip: "Deze samenwerking is geschorst wegens inactiviteit. De laatste activiteit was op {{lastActivityDate}}. ",
+            revertSuspension: " Je kan de schorsing ongedaan maken vanuit het rechter drop-down menu.",
+            almostSuspended: "Deze samenwerking zal over {{days}} dagen worden geschorst vanwege inactiviteit.",
+            revertAlmostSuspended: " Je kan de schorsing voorkomen vanuit het rechter drop-down menu.",
             expiredTooltip: "Deze samenwerking is verlopen op {{expiryDate}}. Heractiveren kan de einddatum aan te passen of te wissen. ",
             activeWithExpiryDateTooltip: "Deze samenwerking verloopt op {{expiryDate}}. "
         },
@@ -836,7 +841,7 @@ I18n.translations.nl = {
         namePlaceHolder: "De unieke naam van de dienst",
         entity_id: "Entity ID",
         entity_idPlaceHolder: "De unieke entity ID van de dienst",
-        entity_idTooltip: "De unieke entity ID van de dienst koppelt deze aan de identity proxy",
+        entity_idTooltip: "De SAML EntityID of OIDC client_id die het unieke kenmerk van je dienst is en deze koppelt aan de identity proxy",
         abbreviation: "Korte naam",
         abbreviationPlaceHolder: "De korte naam van de dienst",
         abbreviationTooltip: "De korte naam van een dienst wordt gebruikt als prefix voor groepen aangemaakt door de dienstgroepen van deze dienst",
@@ -850,9 +855,13 @@ I18n.translations.nl = {
         identity_type: "Identiteitsoort",
         identity_typePlaceholder: "De identiteitsoort van een dienst",
         identity_typeTooltip: "De primaire manier om bij deze deze dienst te identificeren.",
-        uri: "URL van de dienst",
-        uriPlaceholder: "De URI van de dienst",
-        uriTooltip: "URI waarop deze dienst te bereiken is",
+        uri: "Aanmeld-URL van de dienst",
+        uriPlaceholder: "De URL waar gebruiker zich aanmelden",
+        uriTooltip: "URL waarop gebruikers zich dienen aan te melden bij de dienst. Wordt duidelijk getoond aan leden van samenwerkingen.<br/><br/>" +
+            "Deze variabelen worden vervangen door de corresponderende waarden: <em>{CO_short_name}</em> en <em>{username}</em>.",
+        infoUri: "Website dienst",
+        infoUriPlaceholder: "De URL met informatie over deze dienst",
+        infoUriTooltip: "URL van een website met informatie over deze dienst",
         privacy_policy: "Privacybeleid URL",
         privacy_policyPlaceholder: "De URL van het privacybeleid van deze dienst",
         privacy_policyTooltip: "De wet vereist een privacybeleid voor alle websites en apps die persoonlijke informatie van gebruikers verzamelen of gebruiken.",
@@ -917,7 +926,10 @@ I18n.translations.nl = {
         flash: {
             created: "Dienst {{name}} is aangemaakt.",
             updated: "Dienst {{name}} is bijgewerkt.",
-            deleted: "Dienst {{name}} is verwijderd."
+            deleted: "Dienst {{name}} is verwijderd.",
+            tokenAdded: "Nieuw token voor {{name}} is aangemaakt",
+            tokenUpdated: "Token van dienst {{name}} is bijgewerkt",
+            tokenDeleted: "Token van dienst {{name}} is verwijderd",
         },
         ldap: {
             title: "Reset LDAP-wachtwoord",
@@ -1299,7 +1311,6 @@ I18n.translations.nl = {
         notAllowedOrganisation: "Deze dienst kan niet worden verplicht voor alle samenwerkingen omdat deze dienst automatische verbindingen niet toestaat. Aansluitingen kunnen nog steeds worden aangevraagd door individuele samenwerkingen in je organisatie.",
         notEnabledOrganisation: "Deze dienst kan niet worden verplicht voor alle samenwerkingen omdat deze dienst toegang voor deze organisatie niet toestaat.",
         serviceRestrictedOrganisation: "Deze dienst kan niet worden verplicht voor alle samenwerkingen omdat deze organisatie alleen SURF-diensten mag koppelen.",
-        serviceRestrictedOrganisationAdded: "Deze dienst is verplicht voor alle samenwerkingen en omdat deze organisatie alleen SURF-diensten mag koppelen kan dit niet worden uitgeschakeld.",
         flash: {
             added: "{{service}} is toegevoegd aan organisatie {{name}}.",
             deleted: "{{service}} is onbeschikbaar gemaakt voor organisatie {{name}}.",
@@ -1556,7 +1567,8 @@ I18n.translations.nl = {
             "user_tokens": "Gebruikerstokens",
             "service_invitations": "Dienstuitnodiging",
             "service_memberships": "Dienstlidmaatschap",
-            "tags": "Label"
+            "tags": "Label",
+            "service_tokens": "Service tokens"
         }
     },
     serviceRequest: {
@@ -1677,7 +1689,8 @@ I18n.translations.nl = {
         name: "Tabelnaam",
         count: "Aantal records",
         activity: "Alle recente activiteit uit de audit-logs ({{count}})",
-        searchPlaceholder: "Zoek audit-logs...",
+        searchPlaceholder: "Zoek in de weergegeven audit-logs (e.g. client side)...",
+        searchPlaceholderServer: "Zoek in tabel audit_logs (e.g. server side)...",
         runDbSeedConfirmation: "Weet je het zeker? Hiermee worden alle huidige gegevens verwijderd",
         runDbSeedInfo: "Verwijder alle gegevens en voeg de testgegevens toe",
         runDbSeed: "Voer uit",
@@ -1696,11 +1709,10 @@ I18n.translations.nl = {
             activate: "Activeer"
         },
         userlogins: {
+            loginType: "Type",
             total: "Logins",
-            users: "Unieke gebruikers",
-            services: "Unieke diensten",
-            metric: "Metriek",
-            nbr: "#"
+            succeeded: "Succeeded",
+            failed: "Failed",
         }
     },
     access: {
@@ -1745,19 +1757,21 @@ I18n.translations.nl = {
         subTitle: "Welkom op SURF Research Access Management (SRAM). SURF Research Access Management wordt gebruikt om toegang te beheren voor je onderzoekssamenwerking.",
         unknown: "een onbekende instelling",
         mysterious: "onbekende gast",
-        institution: "Je bent ingelogd met <strong>{{name}}</strong>.",
+        institution: "Informatie in je profiel is aangeleverd door <strong>{{name}}</strong>.",
         institutionNotConnected: "De instelling waarmee je bent ingelogd kan geen samenwerkingen creëren en beheren.",
-        noMember: "Je bent nog geen lid van een samenwerking. Om lid te worden, moet je eerst worden uitgenodigd.",
-        whatYouCanDo: "Hier is wat je kan doen:",
+        noMember: "Je bent geen lid van een samenwerking, noch ben je beheerder. Als je bent uitgenodigd, volg dan de link uit de e-mail.",
+        whatYouCanDo: "",
         instructions: "Instructies van <strong>{{name}}</strong>",
         createColl: "Creëer je eigen samenwerking",
-        startCreateColl: "Als je je eigen samenwerking wil starten, kan je deze direct aanmaken.",
+        startCreateColl: "Je ben geen lid van een samenwerking, {{name}} stelt je in staat om een eigen samenwerking aan te maken. " +
+            "Als je bent uitgenodigd, volg dan de link uit de e-mail.",
         createCollRequest: "Vraag je eigen samenwerking aan",
-        startCreateCollRequest: "Als je je eigen samenwerking wil starten, kan je deze rechtstreeks aanvragen en zullen de beheerders deze controleren.",
-        createCollTxt: "Creëer een samenwerking",
-        createCollRequestTxt: "Start een samenwerking",
-        contact: "Contact met de SURF Research Access Management helpdesk",
-        contactInfo: "Neem contact op met <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> als je vragen hebt."
+        startCreateCollRequest: "Je ben geen lid van een samenwerking, {{name}} stelt je in staat om een eigen samenwerking aan te vragen. Een beheerder van {{name}} zal je aanvraag moeten goedkeuren." +
+           "Als je bent uitgenodigd, volg dan de link uit de e-mail.",
+        createCollTxt: "Maak samenwerking aan",
+        createCollRequestTxt: "Vraag samenwerking aan",
+        contact: "",
+        contactInfo: "Als je had verwacht meer te kunnen, neem dan contact op met <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> voor hulp."
     },
     feedback: {
         title: "Feedback geven",
@@ -1775,24 +1789,23 @@ I18n.translations.nl = {
     landing: {
         header: {
             title: "Eenvoudige en veilige toegang tot onderzoeksdiensten voor onderzoekssamenwerkingen",
-            login: "Inloggen voor beheerders & leden <sup>*</sup>",
-            sup: "<sup>*</sup><strong>Geen lid?</strong> Je ontvangt een uitnodiging via e-mail.",
+            login: "Inloggen",
+            sup: "Eerste keer bij SURF Reseach Access Management? Log in en bekijk je mogelijkheden.",
         },
         works: "Hoe werkt het?",
-        adminFunction: "beheeders functie",
-        create: "Maken",
-        createInfo: "<p>Beheerders maken een samenwerkingspagina voor hun samenwerking.</p>" +
-            "<p>Ze kunnen de benodigde services koppelen door naar de catalogus met aangesloten services van SURF te gaan.</p>",
+        adminFunction: "beheerdersfunctie",
+        create: "Aanmaken",
+        createInfo: "<p>Beheerders maken een pagina aan voor de onderzoekers van hun samenwerking.</p>" +
+            "<p>Vervolgens selecteren zij diensten uit de catalogus om ze beschikbaar te maken voor de samenwerking.</p>",
         invite: "Uitnodigen",
-        inviteInfo: "<p>Beheerders zullen collega-onderzoekers via e-mail uitnodigen op hun samenwerkingspagina.</p>" +
-            "<p>Ze kunnen ook andere beheerders vragen om mee te doen als groepen erg groot worden.</p>",
-        join: "Doe mee",
-        joinInfo: "<p>Onderzoekers doen mee door in te loggen met hun instellingsaccount (of eduID).</p><br/>" +
-            "<p>Ze zullen de vereiste services verbinden door de catalogus met verbonden services van SURF te bezoeken.</p>",
+        inviteInfo: "<p>Beheerders nodige medeonderzoekers uit voor de samenwerkingspagina.</p>" +
+            "<p>Ze kunnen ook leden uitnodigen mee te helpen als beheerder.</p>",
+        join: "Meedoen",
+        joinInfo: "<p>Uitgenodigde onderzoekers loggen in via hun instelling of eduID.nl.</p>",
         collaborate: "Samenwerken",
-        collaborateInfo: "<p>De beveiligde samenwerkingspagina toont alle leden en geeft toegang tot de onderzoeksdiensten.</p>",
+        collaborateInfo: "<p>De beveiligde samenwerkingspagina toont de leden en geeft toegang tot de onderzoeksdiensten.</p>",
         footer: "<p>SURF Research Access Management is een dienst voor toegangsbeheer van Nederlandse onderzoekssamenwerkingen.</p>" +
-            "<p>Wil je meer weten, ga dan naar <a href='https://surf.nl/sram'>https://surf.nl/sram</a>.</p>"
+            "<p>Wil je meer weten? Bezoek <a href='https://surf.nl/sram'>https://surf.nl/sram</a>.</p>"
     },
     tooltips: {
         members: "Samenstelling van deze samenwerking",
@@ -1907,6 +1920,10 @@ I18n.translations.nl = {
         confirmation: "Weet je zeker dat je de schorsing van deze samenwerking ongedaan wil maken?",
         flash: "Samenwerking {{name}} is weer actief"
     },
+    resetActivity: {
+        confirmation: "Weet je zeker dat je de datum van de laatste activiteit van deze samenwerking wilt resetten?",
+        flash: "Collaboration {{name}} laatste activiteit datum is gereset."
+    },
     organisationMembership: {
         membership: "Lidmaatschap van {{name}} heeft geen einddatum.",
         membershipWithExpiry: "Lidmaatschap van {{name}} verloopt op {{date}}.",
@@ -1942,7 +1959,7 @@ I18n.translations.nl = {
         intendedRoleTooltip: "De enige rol binnen een dienst is beheerder"
     },
     userTokens: {
-        actionTitle: "API-token resetten",
+        actionTitle: "Nieuwe API-token",
         tokens: "Tokens",
         tokenEnabled: "Token-gebaseerde introspectie ingeschakeld?",
         tokenEnabledTooltip: "Mag deze dienst het introspection endpoint aanroepen om gebruikersinformatie te ontvangen?",
@@ -1972,18 +1989,35 @@ I18n.translations.nl = {
     },
     pamWebSSO: {
         title: "Log in op {{service}}",
-        info: "Log in voor de op de op de command line interface gevraagde pin.",
+        info: "Log in voor de verificatiecode die gevraagd wordt op de command line interface.",
         proceed: "Login",
-        enterPin: "Pin invoeren",
-        loggedIn: "Je bent succesvol ingelogd.",
-        enterPinInfo: "Voer de pin in op de command line interface van {{service}}.",
-        afterPin: "Na het invoeren van de pin kan dit scherm worden gesloten.",
+        enterPin: "Je verificatiecode",
+        enterPinInfo: "Voer de code in op de command line interface van {{service}}.",
+        afterPin: "Na het invoeren van de code kan dit scherm worden gesloten.",
         denied: "Toegang geweigerd",
         deniedInfo: "Helaas heb je geen toegang tot de deze dienst.",
         contact: "Neem contact op met <a href='mailto:{{support}}'>{{support}}</a> voor toegang tot deze dienst."
     },
     serviceDetails: {
         details: "Dienstgegevens",
+        tokens: "Dienst tokens",
+        tokensTooltip: "Dienst tokens enable the service to introspect users and / or use the PAM SSO module",
+        hashedToken: "Hashed token",
+        tokenValue: "**** ***** ***** ****",
+        tokenDeleteConfirmation: "Weet je zeker dat je dit token wilt verwijderen?",
+        disableTokenConfirmation: "Weet je zeker dat je de token functionaliteit voor deze dienst wilt uitzetten? {{count}} bestaande {{tokens}} zal worden verwijderd.",
+        multipleTokens: "tokens",
+        singleTokens: "token",
+        noTokens: "Er zijn geen tokens...",
+        secretDisclaimer: "Het token wordt slechts eenmaal getoond. Sla de sleutel op en bewaar deze veilig.<br><br>Bij verlies zal je de sleutel moeten verwijderen en een nieuwe moeten aanmaken.",
+        secret: "Token",
+        secretValue: "One-way hashed token",
+        secretTooltip: "Het token voor in de authorization header",
+        description: "Omschrijving",
+        descriptionPlaceHolder: "Omschrijving voor dit token",
+        descriptionTooltip: "Een optionele omschrijving van het doel van dit token",
+        backToApiKeys: "Terug naar tokens",
+        addToken: "Nieuw token",
         toc: {
             general: "Algemeen",
             connection: "Aansluiting",
@@ -1993,6 +2027,7 @@ I18n.translations.nl = {
             tokens: "Tokens",
             pamWebLogin: "PAM web login"
         },
+        updateDisabled: "Je kan de dienst niet opslaan. Corrigeer eerst de fouten in de volgende secties: {{invalid}}"
     }
 };
 

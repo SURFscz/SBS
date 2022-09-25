@@ -8,7 +8,7 @@ import Button from "./Button";
 export default function ConfirmationDialog({
                                                isOpen = false, cancel, confirm, question = "",
                                                leavePage = false, isError = false, isWarning = false,
-                                               disabledConfirm = false, children = null, closeTimeoutMS = 125,
+                                               disabledConfirm = false, children = null,
                                                confirmationTxt = I18n.t("confirmationDialog.confirm"),
                                                largeWidth =false,
                                                confirmationHeader = I18n.t("confirmationDialog.title")

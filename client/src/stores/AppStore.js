@@ -7,3 +7,8 @@ export const AppStore = new Store({
     },
     sideComponent: null
 });
+
+let csrfToken = null;
+
+export const getCsrfToken = () => csrfToken;
+export const setCsrfToken = newCsrfToken => csrfToken = newCsrfToken;

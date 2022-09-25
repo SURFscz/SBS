@@ -36,8 +36,8 @@ def internal_sync():
                            "support_email, security_email, privacy_policy FROM services")
     services = [{"id": row[0], "name": row[1], "entity_id": row[2], "contact_email": row[3],
                  "logo": logo_url("services", row[4]), "ldap_password": row[5],
-                 "accepted_user_policy": row[6], "support_email": row[7], "security_email": row[6],
-                 "privacy_policy": row[7]} for row in rs]
+                 "accepted_user_policy": row[6], "support_email": row[7], "security_email": row[8],
+                 "privacy_policy": row[9]} for row in rs]
     for service in services:
         if not service["contact_email"]:
             rs = db.engine.execute(f"select u.email from users u where id in "

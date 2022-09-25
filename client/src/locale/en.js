@@ -68,6 +68,7 @@ I18n.translations.en = {
         edit: "Edit",
         history: "History",
         unsuspend: "Revert suspension",
+        resetLastActivity: "Reset activity",
         details: "Details",
         backToHome: "Back to home",
         firstTime: "Onboarding",
@@ -92,7 +93,7 @@ I18n.translations.en = {
             serviceOrganisations: "Organisations ({{count}})",
             serviceCollaborations: "Collaborations ({{count}})",
             userTokens: "Tokens ({{count}})",
-            collaborationRequests: "Collaboration requests",
+            collaborationRequests: "Requests",
             joinRequests: "Join requests ({{count}})",
             serviceConnectionRequests: "Connection requests",
             me: "Profile",
@@ -279,7 +280,7 @@ I18n.translations.en = {
             awaitingApproval: "Connection awaiting approval",
             automaticConnectionAllowed: "Collaborations can connect without approval",
             requiredByOrganisation: "Enabled by organisation",
-            memberServiceRequest: "Member service connection request",
+            memberServiceRequest: "Service connection request by a member",
             removeFromCO: "Disconnect from collaboration",
             deleteConnectionRequest: "Delete connection request",
             resendConnectionRequest: "Resend connection request",
@@ -334,7 +335,7 @@ I18n.translations.en = {
             title: "Collaborations using this service",
             organisationName: "Organisation",
             noEntities: "There are no collaborations using this service",
-            organisationWarningTooltip: "This collaboration has access, because the organisation of this collaboration has granted access to all collaborations in this organization.</br></br>To disconnect this collaboration disallow access to the organisation in the organisation tab.",
+            organisationWarningTooltip: "This collaboration has access, because the organisation of this collaboration has granted access to all collaborations in this organization.</br></br>To disconnect this collaboration, disallow access to the organisation in the Organisation tab.",
             origin: "Enabled by",
             fromOrganisation: "Organisation",
             fromCollaboration: "Collaboration",
@@ -405,6 +406,7 @@ I18n.translations.en = {
             about: "What our collaboration is about",
             services: "Where we collaborate ({{nbr}} services)",
             noServices: "There are no services available in this collaboration",
+            noServicesJoinRequest: "Services are only visible for members",
             servicesStart: "Click the button to start the service, or read the instructions first.",
             instructions: "Instructions",
             servicesHoover: "Visit this service at {{uri}}",
@@ -747,6 +749,9 @@ I18n.translations.en = {
             expired: "Expired",
             activeTooltip: "This collaboration is active and ready for business.",
             suspendedTooltip: "This collaboration was suspended due to inactivity. It was last used on {{lastActivityDate}}.",
+            revertSuspension: " You can revert the suspension from the right drop-down menu.",
+            almostSuspended: "This collaboration will be suspended due to inactivity in {{days}} days.",
+            revertAlmostSuspended: " You can prevent the suspension from the right drop-down menu.",
             expiredTooltip: "This collaboration has reached its expiration date of {{expiryDate}}. It can be activated by setting a new expiration date or clearing it. ",
             activeWithExpiryDateTooltip: "This collaboration will expire at {{expiryDate}}. "
         },
@@ -836,7 +841,7 @@ I18n.translations.en = {
         namePlaceHolder: "The unique name of the service",
         entity_id: "Entity ID",
         entity_idPlaceHolder: "The unique entity ID of the service",
-        entity_idTooltip: "The unique entity ID of the service links it to the identity proxy",
+        entity_idTooltip: "The SAML EntityID or OIDC client_id which uniquely identifies your service and links it to the identity proxy",
         abbreviation: "Short name",
         abbreviationPlaceHolder: "The short name of this service",
         abbreviationTooltip: "The short name of the service is used as a prefix for groups provisioned by this service's service groups",
@@ -850,9 +855,13 @@ I18n.translations.en = {
         identity_type: "Identity type",
         identity_typePlaceholder: "The identity type of the service",
         identity_typeTooltip: "The primary way of identification for this service",
-        uri: "Service URL",
-        uriPlaceholder: "The URI of the service",
-        uriTooltip: "URI where to reach this service",
+        uri: "Service login URL",
+        uriPlaceholder: "The URL where user login to the service",
+        uriTooltip: "URL where users can login to your service, displayed prominently to collaboration members.<br/><br/>" +
+            "These variables will be replaced with the appropriate values: <em>{CO_short_name}</em> and <em>{username}</em>.",
+        infoUri: "Service website",
+        infoUriPlaceholder: "The URL of information about this service",
+        infoUriTooltip: "URL of a website with information about the service",
         privacy_policy: "Privacy policy URL",
         privacy_policyPlaceholder: "The Private policy URL  of the service",
         privacy_policyTooltip: "A Privacy Policy is a legal requirement for all websites and apps that collect or use personal information from users.",
@@ -918,6 +927,9 @@ I18n.translations.en = {
             created: "Service {{name}} was created",
             updated: "Service {{name}} was updated",
             deleted: "Service {{name}} was deleted",
+            tokenAdded: "New token for {{name}} was created",
+            tokenUpdated: "Token of {{name}} was updated",
+            tokenDeleted: "Token of {{name}} was deleted",
         },
         ldap: {
             title: "Reset LDAP password",
@@ -1299,7 +1311,6 @@ I18n.translations.en = {
         notAllowedOrganisation: "This service cannot be enabled for all collaborations, because it does not allow automatic connections. Connections can still be requested by individual collaborations in your organisation.",
         notEnabledOrganisation: "This service cannot be enabled for all collaborations, because the service does not allow access for this organisation.",
         serviceRestrictedOrganisation: "This service cannot be made mandatory for all collaborations, because this organisation can only link SURF services.",
-        serviceRestrictedOrganisationAdded: "This service is mandatory for all collaborations, and cannot be disabled because this is a SURF organisation.",
         flash: {
             added: "Added service {{service}} to organisation {{name}}",
             deleted: "Deleted service {{service}} from organisation {{name}}"
@@ -1556,7 +1567,8 @@ I18n.translations.en = {
             "user_tokens": "User tokens",
             "service_invitations": "Service invitation",
             "service_memberships": "Service membership",
-            "tags": "Label"
+            "tags": "Label",
+            "service_tokens": "Service tokens"
         }
     },
     serviceRequest: {
@@ -1672,12 +1684,13 @@ I18n.translations.en = {
         memberships_expired: "Memberships expired",
         memberships_warned: "Membership users warned",
         runDbStatsInfo: "Database table counts",
-        userLoginInfo: "User login summary (only proxy-authz)",
+        userLoginInfo: "Login counts per type",
         runDbStats: "Fetch",
         name: "Table name",
         count: "Nbr of records",
         activity: "All recent activity from the audit logs ({{count}})",
-        searchPlaceholder: "Search audit logs...",
+        searchPlaceholder: "Search in displayed audit logs (e.g. client side)...",
+        searchPlaceholderServer: "Search in table audit logs (e.g. server side)...",
         runDbSeedConfirmation: "Are you absolutely sure? This will delete all current data",
         runDbSeedInfo: "Delete all data and insert the test seed",
         runDbSeed: "Run",
@@ -1696,11 +1709,10 @@ I18n.translations.en = {
             activate: "Activate"
         },
         userlogins: {
+            loginType: "Type",
             total: "Logins",
-            users: "Unique users",
-            services: "Unique services",
-            metric: "Metric",
-            nbr: "#"
+            succeeded: "Succeeded",
+            failed: "Failed",
         }
     },
     access: {
@@ -1745,19 +1757,21 @@ I18n.translations.en = {
         subTitle: "Welcome to SURF Research Access Management (SRAM). SURF Research Access Management manages access for your research collaboration.",
         unknown: "an unknown institution",
         mysterious: "mysterious guest",
-        institution: "You have logged on via <strong>{{name}}</strong>.",
+        institution: "Information in your profile was provided by <strong>{{name}}</strong>.",
         institutionNotConnected: "The organization you have logged in with, cannot create or manage collaborations.",
-        noMember: "You are not a member of a collaboration. To become a member you'll have to be invited.",
-        whatYouCanDo: "Here's what you can do:",
+        noMember: "You are neither a member of a collaboration, nor an admin. If you have been invited, then please use the link from the invite email.",
+        whatYouCanDo: "",
         instructions: "Instruction from <strong>{{name}}</strong>",
         createColl: "Create your own collaboration",
-        startCreateColl: "If you want to start your own collaboration, you can create it directly.",
+        startCreateColl: "You are not a member of a collaboration, but {{name}} allows you to create your own collaboration. " +
+            "If you have been invited, then please use the link from the invite email.",
         createCollRequest: "Request your own collaboration",
-        startCreateCollRequest: "If you want to start your own collaboration, you can request it directly and the admins will check it.",
+        startCreateCollRequest: "You are not a member of a collaboration, but {{name}} allows you to request your own collaboration. An admin of {{name}} will have to approve your request. " +
+            "If you have been invited, then please use the link from the invite email.",
         createCollTxt: "Create a collaboration",
-        createCollRequestTxt: "Start a new collaboration",
-        contact: "Contact SURF Research Access Management helpdesk",
-        contactInfo: "Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> if you need help."
+        createCollRequestTxt: "Request a collaboration",
+        contact: "",
+        contactInfo: "If you were expecting more, please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for help."
     },
     feedback: {
         title: "Provide Feedback",
@@ -1775,24 +1789,23 @@ I18n.translations.en = {
     landing: {
         header: {
             title: "Easy and secure access to research services for research collaborations",
-            login: "Login for admins & members <sup>*</sup>",
-            sup: "<sup>*</sup><strong>Not a member?</strong> You will receive an invite via mail.",
+            login: "Login",
+            sup: "New to SURF Reseach Access Management? Login and see what you can do.",
         },
         works: "How does it work?",
         adminFunction: "admin function",
         create: "Create",
         createInfo: "<p>Administrators create a collaboration page for their community.</p>" +
-            "<p>They will be able to connect required services by visiting the catalog of connected services of SURF.</p>",
+            "<p>They then select services from the catalog to make them available to collaboration members.</p>",
         invite: "Invite",
-        inviteInfo: "<p>Administrators will invite fellow researchers to their collaboration-page via email.</p>" +
-            "<p>They can also ask other administrators to join when groups get really big.</p>",
+        inviteInfo: "<p>Administrators invite fellow researchers to their collaboration page.</p>" +
+            "<p>They can also ask other administrators to help manage the collaboration.</p>",
         join: "Join",
-        joinInfo: "<p>Researchers join by logging in with their institution account (or eduID).</p><br/>" +
-            "<p>They will be able to connect required services by visiting the catalog of connected services of SURF.</p>",
+        joinInfo: "<p>Invited researchers join by logging in with their institutional account or eduID.nl.</p><br/>",
         collaborate: "Collaborate",
-        collaborateInfo: "<p>The secured collaboration-page shows all members and gives access to the research services.</p>",
+        collaborateInfo: "<p>The secured collaboration page shows its members and gives access to the research services.</p>",
         footer: "<p>SURF Research Access Management is a service for access management of Dutch led research collaborations.</p>" +
-            "<p>Do you want to know more, please visit <a href='https://surf.nl/sram'>https://surf.nl/sram</a>.</p>"
+            "<p>Do you want to know more? Please visit <a href='https://surf.nl/en/sram'>https://surf.nl/en/sram</a>.</p>"
     },
     tooltips: {
         members: "Composition of this collaboration",
@@ -1907,6 +1920,10 @@ I18n.translations.en = {
         confirmation: "Are you sure you want to revert suspension this collaboration?",
         flash: "Collaboration {{name}} is active again"
     },
+    resetActivity: {
+        confirmation: "Are you sure you want to reset the last activity date for this collaboration?",
+        flash: "Collaboration {{name}} last activity date has been reset"
+    },
     organisationMembership: {
         membership: "Membership of {{name}} has no expiration date.",
         membershipWithExpiry: "Membership of {{name}} will expire at {{date}}.",
@@ -1942,7 +1959,7 @@ I18n.translations.en = {
         intendedRoleTooltip: "The only role within a service is admin"
     },
     userTokens: {
-        actionTitle: "Reset API token",
+        actionTitle: "New API token",
         tokens: "Tokens",
         tokenEnabled: "Token-based introspection enabled?",
         tokenEnabledTooltip: "Allow this service to call the introspection endpoint to receive user information?",
@@ -1972,18 +1989,35 @@ I18n.translations.en = {
     },
     pamWebSSO: {
         title: "Login to {{service}}",
-        info: "Login to get the PIN required for the command line interface",
+        info: "Login to get the verfication code required for the command line interface",
         proceed: "Login",
-        enterPin: "Enter PIN",
-        loggedIn: "You have successfully logged in.",
-        enterPinInfo: "Please enter the PIN to the command line interface of {{service}}.",
-        afterPin: "After entering the PIN, it is safe to close this screen.",
+        enterPin: "Your verification code",
+        enterPinInfo: "Please enter this code in the command line interface of {{service}}.",
+        afterPin: "After entering the code you can close this screen.",
         denied: "Permission denied",
         deniedInfo: "Unfortunately, you don't have access to this service.",
         contact: "Please contact <a href='mailto:{{support}}'>{{support}}</a> to arrange access to this service."
     },
     serviceDetails: {
         details: "Service details",
+        tokens: "Service tokens",
+        tokensTooltip: "Service tokens enable the service to introspect users and / or use the PAM SSO module",
+        hashedToken: "Hashed token",
+        tokenValue: "**** ***** ***** ****",
+        tokenDeleteConfirmation: "Are you sure you want to remove this service token?",
+        disableTokenConfirmation: "Are you sure you want to disable token functionality for this service? The {{count}} existing {{tokens}} will be deleted.",
+        multipleTokens: "tokens",
+        singleTokens: "token",
+        noTokens: "There are no service tokens...",
+        secretDisclaimer: "You can view this token only once. Copy it and store it somewhere safe.<br><br>If the token is lost, delete it and create a new token.",
+        secret: "Token",
+        secretValue: "One-way hashed token",
+        secretTooltip: "The token to use in the authorization header",
+        description: "Description",
+        descriptionPlaceHolder: "Description for this token",
+        descriptionTooltip: "An optional description explaining the use of this token",
+        backToApiKeys: "Back to tokens",
+        addToken: "New token",
         toc: {
             general: "General",
             connection: "Connection",
@@ -1993,6 +2027,7 @@ I18n.translations.en = {
             tokens: "Tokens",
             pamWebLogin: "PAM web login"
         },
+        updateDisabled: "You can't update the Service. First correct the errors in the following sections: {{invalid}}"
     }
 };
 

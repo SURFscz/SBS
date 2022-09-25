@@ -6,7 +6,8 @@ import requests
 from flask import current_app, session
 from jwt import algorithms
 
-from server.auth.security import is_admin_user
+from server.auth.secrets import generate_token
+from server.auth.security import is_admin_user, CSRF_TOKEN
 from server.db.domain import Organisation, SchacHomeOrganisation
 from server.logger.context_logger import ctx_logger
 
@@ -47,6 +48,8 @@ def store_user_in_session(user, second_factor_confirmed, user_accepted_aup):
         "email": user.email
     }
     session["user"] = {**session_data, **res}
+    if CSRF_TOKEN not in session:
+        session[CSRF_TOKEN] = generate_token()
 
 
 def decode_jwt_token(token):

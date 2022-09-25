@@ -1,4 +1,7 @@
 # -*- coding: future_fstrings -*-
+from werkzeug.exceptions import SecurityError
+
+from server.auth.secrets import hash_secret_key
 from server.db.domain import Organisation, ApiKey
 from server.test.abstract_test import AbstractTest
 from server.test.seed import uuc_name
@@ -31,10 +34,16 @@ class TestApiKey(AbstractTest):
         self.assertEqual(pre_count, post_count)
 
     def test_api_key_invalid(self):
+        def security_error():
+            hash_secret_key({"hashed_secret": "secret"})
+
+        self.assertRaises(SecurityError, security_error)
+
+    def test_api_key_tampering(self):
+        secret = self.get("/api/api_keys")["value"]
         organisation = self.find_entity_by_name(Organisation, uuc_name)
-        res = self.post("/api/api_keys", body={"organisation_id": organisation.id, "hashed_secret": "secret"},
-                        response_status_code=400)
-        self.assertEqual("minimal length of secret for API key is 43", res["message"])
+        self.post("/api/api_keys", body={"organisation_id": organisation.id, "hashed_secret": secret + "nope"},
+                  response_status_code=403)
 
     def test_api_call_invalid_auth(self):
         response = self.client.post("/api/collaborations/v1",

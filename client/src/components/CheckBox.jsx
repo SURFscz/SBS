@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import "./CheckBox.scss";
 import ReactTooltip from "react-tooltip";
+import DOMPurify from "dompurify";
 
 export default class CheckBox extends React.PureComponent {
 
@@ -31,10 +32,10 @@ export default class CheckBox extends React.PureComponent {
                 </label>
                 {info && <span>
                     <label htmlFor={name} className={`info ${readOnly ? "disabled" : ""}`}
-                           dangerouslySetInnerHTML={{__html: info}}/>
+                           dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(info)}}/>
                     {tooltip && <span data-tip data-for={name}><FontAwesomeIcon icon="info-circle"/></span>}
                     {tooltip && <ReactTooltip id={name} type="info" effect="solid">
-                        <p dangerouslySetInnerHTML={{__html: tooltip}}/>
+                        <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(tooltip)}}/>
                     </ReactTooltip>}
                 </span>}
             </div>

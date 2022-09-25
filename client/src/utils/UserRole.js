@@ -23,7 +23,7 @@ export function isUserAllowed(minimalRole, user, organisation_id = null, collabo
     if (user.admin) {
         return true;
     }
-    if (user.guest) {
+    if (user.guest || !user.organisation_memberships || !user.collaboration_memberships) {
         return false;
     }
     const adminOrganisationMembership = organisation_id ?

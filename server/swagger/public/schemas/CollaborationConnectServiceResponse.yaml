@@ -9,7 +9,7 @@ properties:
     properties:
       organisation_short_name:
         type: string
-        example: "uva"
+        example: "uniharderwijk"
       short_name:
         type: string
         example: "cloud"
@@ -19,4 +19,4 @@ properties:
       entity_id:
         type: string
         format: uri
-        example: "https://service.cloud.nl"
+        example: "https://service.cloud.example.com"
