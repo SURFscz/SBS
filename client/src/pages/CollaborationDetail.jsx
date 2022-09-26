@@ -276,12 +276,6 @@ class CollaborationDetail extends React.Component {
         return false;
     }
 
-    componentWillUnmount() {
-        AppStore.update(s => {
-            s.sideComponent = null;
-        });
-    }
-
     updateAppStore = (collaboration, adminOfCollaboration, orgManager) => {
         AppStore.update(s => {
             s.breadcrumb.paths = orgManager ? [
