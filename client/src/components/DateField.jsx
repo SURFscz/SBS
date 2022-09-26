@@ -55,6 +55,7 @@ export default class DateField extends React.Component {
             showYearDropdown = false, pastDatesAllowed = false
         } = this.props;
         const minimalDate = minDate || moment().add(1, "day").endOf("day").toDate();
+        const selectedDate = value || (allowNull ? null : moment().add(16, "days").toDate());
         return (
             <div className="date-field">
                 {name && <label className="date-field-label" htmlFor={name}>{name}
@@ -71,7 +72,7 @@ export default class DateField extends React.Component {
                         ref={ref => this.component = ref}
                         name={name}
                         id={name}
-                        selected={value || (allowNull ? null : moment().add(16, "days").toDate())}
+                        selected={selectedDate}
                         preventOpenOnFocus
                         dateFormat={"dd/MM/yyyy"}
                         onChange={onChange}
