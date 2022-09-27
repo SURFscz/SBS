@@ -708,7 +708,7 @@ I18n.translations.en = {
         discloseMemberInformationTooltip: "When checked the names of members are disclosed to other members",
         discloseEmailInformation: "Disclose email information",
         discloseEmailInformationTooltip: "When checked the emails of members are disclosed to other members",
-        description: "Description",
+        description: "Collaboration purpose",
         descriptionPlaceholder: "Provide a clear description of the purpose of the collaboration, such that the processing of personal data can be justified",
         websiteUrl: "Website URL",
         websiteUrlPlaceholder: "The URL of the website is visible for members",
@@ -720,7 +720,7 @@ I18n.translations.en = {
         motivation: "Motivation",
         motivationPlaceholder: "Motivation for the new collaboration",
         motivationTooltip: "Your motivation for the new collaboration.",
-        organisation_name: "Organisation",
+        organisation_name: "Responsible organisation",
         organisationPlaceholder: "Select the organisation for this collaboration...",
         organisationTooltip: "Every collaboration belongs to precisely one and only one organisation",
         tags: "Labels",
@@ -1423,25 +1423,24 @@ I18n.translations.en = {
     },
     aup: {
         hi: "Hi {{name}},",
-        info: "We are ready to create your profile.",
         name: "Display name.",
         email: "Email address",
         title: "Acceptable use policy",
         multiple: "Service acceptable use policies",
-        disclaimer: "By logging on to SURF Research Access Management, you create a profile and agree to the <a href=\"{{url}}\" target=\"_blank\">term and conditions of our AUP.</a>",
-        agreeWithTerms: "I hereby certify that I have read the AUP and that I accept them",
-        onward: "Looks good, onwards",
+        disclaimer: "This is the first time you log in. To create your profile, you need to agree with the <a href=\"{{url}}\" target=\"_blank\">acceptable use policy</a>.",
+        agreeWithTerms: "I hereby certify that I have read the acceptable use policy and that I accept it",
+        onward: "Onwards",
         agreedFlash: "Your agreement with {{name}} has been saved.",
         collaboration: {
             title: "Additional terms to the Acceptable use policy",
-            info: "For this collaboration, there are some additions to the general SURF Research Access Management AUP. You need to accept these additions to be able to join this collaboration.",
-            agreeWithTerms: "I hereby certify that I have read these terms and that I accept them",
+            info: "For this collaboration, there are some additions to the general SURF Research Access Management acceptable use policy. You need to accept these additions to be able to join this collaboration.",
+            agreeWithTerms: "I have read these terms and accept them",
         },
         service: {
             title: "Review the information in order to continue",
             info: "You are about to login to <strong>{{name}}</strong>. Before you can continue you must review the acceptable use policy (AUP) and privacy policy of the service. Confirm below whether you accept them.",
             noPrivacyPolicy: "No additional privacy policy provided",
-            noAup: "No additional AUP provided",
+            noAup: "No additional acceptable use policy provided",
             agreeWithTerms: "I hereby certify that I have read these terms and that I accept them",
             firstLogin: "Proceed to login and afterwards you'll return here to view the policies of {{name}}",
             login: "Login",
@@ -1741,13 +1740,13 @@ I18n.translations.en = {
     welcomeDialog: {
         title: "Welcome to {{name}}",
         label: "",
-        role: "Your current role is <strong>{{role}}</strong>",
+        role: "You are invited as a <strong>{{role}}</strong>",
         ok: "All good, show me the {{type}}",
         organisation: "organisation",
         collaboration: "collaboration",
         service: "service",
         toggleRole: "Toggle role",
-        info: "Almost there! Before you can join this collaboration, you must review the acceptable use policy (AUP) and privacy policy of the service. Indicate below whether you accept them.",
+        info: "Before joining this collaboration, you must review the acceptable use policy (AUP) and privacy policy of the service and accept them.",
         infoJoinRequest: " Before you can request to join this collaboration, you must review the acceptable use policy (AUP) and privacy policy of the service. Indicate below whether you accept them.",
         purpose: "Purpose of the collaboration",
         proceed: "Proceed to {{name}}"
@@ -1775,15 +1774,14 @@ I18n.translations.en = {
     },
     feedback: {
         title: "Provide Feedback",
-        subTitle: "Share your thoughts",
         info: "Like what you see? Have a suggestion? Let us know what you think here!",
-        disclaimer: "We will use this information, in conjunction with other information we may have regarding your account, to fix problems, improve our products and help you. " +
-            "We may follow up with you regarding your feedback using the email address associated with your account. " +
-            "You are responsible for ensuring that your feedback does not contain any confidential, sensitive, or personal information. " +
+        disclaimer: "We will use this information to fix problems, improve our products and help you. " +
+            "We may follow up with you regarding your feedback. " +
+            "Please make sure the feedback does not contain any confidential, sensitive, or personal information. " +
             "For more information, please review our <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://edu.nl/93cdm\">Privacy Notice</a>.",
         help: "Need help?",
         helpInfo: "For questions or issues, please reach out to us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>",
-        send: "Send feedback",
+        send: "Provide feedback",
         flash: "Your feedback has been sent. Thanks!"
     },
     landing: {

@@ -7,10 +7,10 @@ import {ROLES} from "../../utils/UserRole";
 export default function OrganisationEn({role}) {
 
     const responsibilities = [
-        "Beheer organisatie details",
-        "Beheer samenwerkingen in deze organisatie",
-        "Beheer groepen in samenwerkingen",
-        "Beheer gebruikers in samenwerkingen van deze organisatie"
+        "Organisatiedetails beheren",
+        "Samenwerkingen in deze organisatie beheren",
+        "Groepen in samenwerkingen beheren",
+        "Leden van samenwerkingen van deze organisatie beheren"
     ]
     if (role === ROLES.ORG_ADMIN) {
         responsibilities.push("Beheer gebruikers in deze organisatie");
