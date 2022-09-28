@@ -1790,7 +1790,7 @@ I18n.translations.nl = {
         header: {
             title: "Eenvoudige en veilige toegang tot onderzoeksdiensten voor onderzoekssamenwerkingen",
             login: "Inloggen",
-            sup: "Eerste keer bij SURF Reseach Access Management? Log in en bekijk je mogelijkheden.",
+            sup: "Eerste keer bij SURF Research Access Management? Log in en bekijk je mogelijkheden.",
         },
         works: "Hoe werkt het?",
         adminFunction: "beheerdersfunctie",
