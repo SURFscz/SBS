@@ -1790,7 +1790,7 @@ I18n.translations.en = {
         header: {
             title: "Easy and secure access to research services for research collaborations",
             login: "Login",
-            sup: "New to SURF Reseach Access Management? Login and see what you can do.",
+            sup: "New to SURF Research Access Management? Login and see what you can do.",
         },
         works: "How does it work?",
         adminFunction: "admin function",
