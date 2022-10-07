@@ -32,6 +32,19 @@ class TestSystem(AbstractTest):
     def test_db_seed(self):
         self.get("/api/system/seed", response_status_code=201)
 
+    def test_db_seed_forbidden(self):
+        self.app.app_config.feature.seed_allowed = 0
+        self.get("/api/system/seed", response_status_code=400)
+        self.app.app_config.feature.seed_allowed = 1
+
+    def test_db_demo_seed(self):
+        self.get("/api/system/demo_seed", response_status_code=201)
+
+    def test_db_demo_seed_forbidden(self):
+        self.app.app_config.feature.seed_allowed = 0
+        self.get("/api/system/demo_seed", response_status_code=400)
+        self.app.app_config.feature.seed_allowed = 1
+
     def test_outstanding_requests(self):
         past_date = "2018-03-20 14:51:40"
         db.engine.execute(f"update join_requests set created_at = '{past_date}'")
@@ -49,11 +62,6 @@ class TestSystem(AbstractTest):
 
         self.assertTrue(len(res["collaboration_requests"]) > 0)
         self.assertTrue(len(res["collaboration_join_requests"]) > 0)
-
-    def test_db_seed_forbidden(self):
-        self.app.app_config.feature.seed_allowed = 0
-        self.get("/api/system/seed", response_status_code=400)
-        self.app.app_config.feature.seed_allowed = 1
 
     def test_scheduled_jobs(self):
         jobs = self.get("/api/system/scheduled_jobs")

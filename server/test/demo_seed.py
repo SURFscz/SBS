@@ -1,59 +1,14 @@
 #!/opt/sbs/sbs-env/bin/python
 # -*- coding: future_fstrings -*-
-import base64
-import os
 import uuid
-import sys
-import time
-import logging
 
-from sqlalchemy import text
-
-if "/opt/sbs/sbs" not in sys.path:
-    sys.path.insert(0, "/opt/sbs/sbs")
-
-from server.db.audit_mixin import metadata
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
-    CollaborationMembership, Group, Aup, SchacHomeOrganisation, SshKey, ServiceGroup, \
+    CollaborationMembership, Group, SchacHomeOrganisation, SshKey, ServiceGroup, \
     ServiceMembership, Tag
-
-import yaml
-from flask import Flask
-from flask_migrate import Migrate
-from server.db.db import db, db_migrations
-from server.tools import read_file
-from munch import munchify
+from server.test.seed import read_image, persist_instance, clean_db
 
 
-def read_image(file_name):
-    file = f"{os.path.dirname(os.path.realpath(__file__))}/demo_images/{file_name}"
-    with open(file, "rb") as f:
-        c = f.read()
-        return base64.encodebytes(c).decode("utf-8")
-
-
-def _persist(db, *objs):
-    required_attrs = ["created_by", "updated_by"]
-    for obj in objs:
-        for attr in required_attrs:
-            if hasattr(obj, attr):
-                setattr(obj, attr, "urn:admin")
-        if isinstance(obj, User):
-            aup = Aup(au_version="1", user=obj)
-            db.session.add(aup)
-        db.session.add(obj)
-        logger.info(f"Add {obj}")
-
-
-def clean_db(db):
-    tables = reversed(metadata.sorted_tables)
-    for table in tables:
-        db.session.execute(table.delete())
-    db.session.execute(text("DELETE FROM audit_logs"))
-    db.session.commit()
-
-
-def seed(db, app_config, skip_seed=False, perf_test=False):
+def demo_seed(db):
     clean_db(db)
 
     # Create organisations
@@ -88,10 +43,10 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
             created_by="urn:admin",
             updated_by="urn:admin",
             short_name=org['short_name'],
-            logo=read_image(org['logo']),
+            logo=read_image(org['logo'], directory="demo_images"),
             category=org['category']
         )
-        _persist(db, new_org)
+        persist_instance(db, new_org)
         org_list.append(new_org)
 
         new_sho = SchacHomeOrganisation(
@@ -100,7 +55,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
             created_by="urn:admin",
             updated_by="urn:admin"
         )
-        _persist(db, new_sho)
+        persist_instance(db, new_sho)
 
     # Create Users
     users = [
@@ -130,12 +85,12 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
             address="Postbus 1234AA",
             schac_home_organisation=user['schac_home_organisation']
         )
-        _persist(db, new_user)
+        persist_instance(db, new_user)
         user_list.append(new_user)
 
         # Add SSH keys
         ssh_key = SshKey(user=new_user, ssh_value="some-ssh-key")
-        _persist(db, ssh_key)
+        persist_instance(db, ssh_key)
 
         # Create organisation memberships
         org_membership_user = OrganisationMembership(
@@ -143,7 +98,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
             user=new_user,
             organisation=user['org']
         )
-        _persist(db, org_membership_user)
+        persist_instance(db, org_membership_user)
 
     # Create Services
     services = [
@@ -194,7 +149,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
         new_service = Service(
             entity_id=service['entity_id'],
             name=service['name'],
-            logo=read_image(service['logo']),
+            logo=read_image(service['logo'], directory="demo_images"),
             contact_email=service['mail'],
             public_visible=True,
             automatic_connection_allowed=True,
@@ -204,7 +159,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
             privacy_policy="https://privacy.org",
             security_email=service['security_email']
         )
-        _persist(db, new_service)
+        persist_instance(db, new_service)
         service_list.append(new_service)
 
         # Add Service memberships
@@ -215,7 +170,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                 service=new_service
             )
 
-            _persist(db, service_membership_user)
+            persist_instance(db, service_membership_user)
 
         # Add service groups
         groups = [
@@ -239,7 +194,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                 description=f"{group['name']} users group",
                 service=new_service
             )
-            _persist(db, new_service_group)
+            persist_instance(db, new_service_group)
 
     # Create Collaborations
     tags = [
@@ -249,7 +204,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
 
     tag_list = []
     for tag in tags:
-        _persist(db, tag)
+        persist_instance(db, tag)
         tag_list.append(tag)
 
     collaborations = [
@@ -281,7 +236,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
             identifier=str(uuid.uuid4()),
             global_urn=f"ucc:{collab['short_name']}",
             description=collab['description'],
-            logo=read_image(collab['logo']),
+            logo=read_image(collab['logo'], directory="demo_images"),
             organisation=collab['organisation'],
             services=collab['services'],
             join_requests=[],
@@ -293,7 +248,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
             disclose_email_information=True,
             disclose_member_information=True
         )
-        _persist(db, new_collab)
+        persist_instance(db, new_collab)
 
         # Make users member of collaboration
         membership_list = []
@@ -303,7 +258,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                 user=user,
                 collaboration=new_collab
             )
-            _persist(db, new_collab_membership)
+            persist_instance(db, new_collab_membership)
             membership_list.append(new_collab_membership)
 
         # Add collaboration groups
@@ -331,37 +286,6 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                 collaboration=new_collab,
                 collaboration_memberships=membership_list
             )
-            _persist(db, new_group)
+            persist_instance(db, new_group)
 
     db.session.commit()
-
-
-if (__name__) == "__main__":
-    logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
-    logger = logging.getLogger()
-
-    config_file_location = os.environ.get("CONFIG", "config/config.yml")
-    config = munchify(yaml.load(read_file(config_file_location), Loader=yaml.FullLoader))
-
-    app = Flask(__name__)
-    app.app_context().push()
-    app.config["SQLALCHEMY_DATABASE_URI"] = config.database.uri
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-    db.init_app(app)
-    app.db = db
-
-    Migrate(app, db)
-    result = None
-
-    while result is None:
-        logger.info("Waiting...")
-        try:
-            result = db.engine.execute(text("SELECT 1"))
-        except Exception:
-            logger.info("Waiting for the database...")
-            time.sleep(1)
-
-    db_migrations(config.database.uri)
-
-    seed(db, app.config)
