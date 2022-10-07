@@ -12,20 +12,10 @@ export function dateFromEpoch(epoch) {
     const dateTimeFormat = new Intl.DateTimeFormat(`${I18n.locale}-${I18n.locale.toUpperCase()}`, options)
     return dateTimeFormat.format(new Date(epoch * 1000));
 }
-
-export function currentUTC() {
-    const formatter = new Intl.DateTimeFormat(`${I18n.locale}-${I18n.locale.toUpperCase()}`, {
-        timeZone: "UTC",
-        timeZoneName: "short",
-        year: "numeric",
-        month: "long",
-        day: "2-digit",
-        hour12: false,
-        hour: "2-digit",
-        minute: "2-digit",
-        seconds: "2-digit"
-    })
-    return formatter.format(new Date());
+export function formatDate(date) {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    return `${day}/${month}/${date.getFullYear()}`;
 }
 
 export const isInvitationExpired = invitation => {
