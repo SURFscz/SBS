@@ -20,6 +20,7 @@ import {ReactComponent as InformationCircle} from "../../icons/information-circl
 import {setFlash} from "../../utils/Flash";
 import Select from "react-select";
 import DOMPurify from "dompurify";
+import {formatDate} from "../../utils/Date";
 
 const allValue = "all";
 
@@ -352,7 +353,7 @@ export default class Collaborations extends React.PureComponent {
                     const days = Math.round((today - lastActivityDate) / (1000 * 60 * 60 * 24));
                     const warning = days > 60;
                     return <div>
-                        <span className={warning ? "warning" : ""}>{moment(lastActivityDate).format("L")}</span>
+                        <span className={warning ? "warning" : ""}>{formatDate(new Date(lastActivityDate))}</span>
                         {collaboration.status === "suspended" && <span className="warning">
                             {I18n.t("collaboration.lastActivitySuspended")}
                         </span>}
