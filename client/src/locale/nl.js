@@ -2029,7 +2029,45 @@ I18n.translations.nl = {
             pamWebLogin: "PAM web login"
         },
         updateDisabled: "Je kan de dienst niet opslaan. Corrigeer eerst de fouten in de volgende secties: {{invalid}}"
+    },
+    expirations: {
+        expires: "Verloopt over {{relativeTime}}",
+        expired: "Verlopen {{relativeTime}} geleden",
+        never: "Verloopt nooit",
+        ago: {
+            now: "net nu",
+            seconds: "%s seconden geleden",
+            minute: "1 minuut geleden",
+            minutes: "%s minuten geleden",
+            hour: "1 uur geleden",
+            hours: "%s uren geleden",
+            day: "1 dag geleden",
+            days: "%s dagen geleden",
+            week: "1 week geleden",
+            weeks: "%s weken geleden",
+            month: "1 maand geleden",
+            months: "%s maanden geleden",
+            year: "1 jaar geleden",
+            years: "%s jaren geleden"
+        },
+        in: {
+            now: "net nu",
+            seconds: "over %s seconden",
+            minute: "over 1 minuut",
+            minutes: "over %s minuten",
+            hour: "over 1 uur",
+            hours: "over %s uren",
+            day: "over 1 dag",
+            days: "over %s dagen",
+            week: "over 1 week",
+            weeks: "over %s weken",
+            month: "over 1 maand",
+            months: "over %s maanden",
+            year: "over 1 jaar",
+            years: "over %s jaren"
+        }
     }
+
 };
 
 export default I18n.translations.nl;

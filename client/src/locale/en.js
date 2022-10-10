@@ -2029,6 +2029,43 @@ I18n.translations.en = {
             pamWebLogin: "PAM web login"
         },
         updateDisabled: "You can't update the Service. First correct the errors in the following sections: {{invalid}}"
+    },
+    expirations: {
+        expires: "Expires {{relativeTime}}",
+        expired: "Expired {{relativeTime}}",
+        never: "Never expires",
+        ago: {
+            now: "just now",
+            seconds: "%s seconds ago",
+            minute: "1 minute ago",
+            minutes: "%s minutes ago",
+            hour: "1 hour ago",
+            hours: "%s hours ago",
+            day: "1 day ago",
+            days: "%s days ago",
+            week: "1 week ago",
+            weeks: "%s weeks ago",
+            month: "1 month ago",
+            months: "%s months ago",
+            year: "1 year ago",
+            years: "%s years ago"
+        },
+        in: {
+            now: "right now",
+            seconds: "in %s seconds",
+            minute: "in 1 minute",
+            minutes: "in %s minutes",
+            hour: "in 1 hour",
+            hours: "in %s hours",
+            day: "in 1 day",
+            days: "in %s days",
+            week: "in 1 week",
+            weeks: "in %s weeks",
+            month: "in 1 month",
+            months: "in %s months",
+            year: "in 1 year",
+            years: "in %s years"
+        }
     }
 };
 

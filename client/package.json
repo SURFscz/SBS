@@ -36,7 +36,8 @@
         "react-tooltip": "^4.2.10",
         "scroll-into-view": "^1.15.0",
         "showdown": "^2.1.0",
-        "source-map-explorer": "^2.5.0"
+        "source-map-explorer": "^2.5.0",
+        "timeago.js": "^4.0.2"
     },
     "devDependencies": {
         "dot-prop": "^7.2.0",
