@@ -5,6 +5,7 @@ import {replaceQueryParameter} from "../utils/QueryParameters";
 import {stopEvent} from "../utils/Utils";
 import moment from "moment-timezone";
 import "./LanguageSelector.scss"
+import {languageSwitched} from "../utils/Date";
 
 export default class LanguageSelector extends React.PureComponent {
 
@@ -13,6 +14,7 @@ export default class LanguageSelector extends React.PureComponent {
         Cookies.set("lang", locale, {expires: 356, secure: document.location.protocol.endsWith("https")});
         I18n.locale = locale;
         moment.locale(locale);
+        languageSwitched();
         window.location.search = replaceQueryParameter(window.location.search, "lang", locale);
     };
 
