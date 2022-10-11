@@ -1,9 +1,12 @@
 # -*- coding: future_fstrings -*-
+import uuid
+
 import pyotp
 import responses
 from flask import current_app
 
 from server.auth.ssid import saml_auth
+from server.db.db import db
 from server.db.domain import User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_entity_id, sarah_name
@@ -57,6 +60,15 @@ class TestMfa(AbstractTest):
 
         self.assertEqual(302, res.status_code)
         self.assertEqual("https://foo.bar", res.location)
+
+    def test_ssid_scenario_invalid_home_organisation_uid(self):
+        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah.second_fa_uuid = str(uuid.uuid4())
+        db.session.merge(sarah)
+
+        res = self.get(f"/api/mfa/ssid_start/{sarah.second_fa_uuid}", query_data={"continue_url": "https://foo.bar"},
+                       response_status_code=302)
+        self.assertEqual("http://localhost:3000/2fa", res.headers["Location"])
 
     def test_2fa_invalid_totp(self):
         AbstractTest.set_second_factor_auth("urn:mary")
