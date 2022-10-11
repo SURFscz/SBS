@@ -47,9 +47,9 @@
         "sass": "^1.54.4"
     },
     "scripts": {
-        "start": "DANGEROUSLY_DISABLE_HOST_CHECK=true HOST=localhost react-scripts start",
-        "build": "DANGEROUSLY_DISABLE_HOST_CHECK=true react-scripts build",
-        "test": "DANGEROUSLY_DISABLE_HOST_CHECK=true react-scripts test",
+        "start": "DANGEROUSLY_DISABLE_HOST_CHECK=true GENERATE_SOURCEMAP=false HOST=localhost react-scripts start",
+        "build": "DANGEROUSLY_DISABLE_HOST_CHECK=true GENERATE_SOURCEMAP=false react-scripts build",
+        "test": "DANGEROUSLY_DISABLE_HOST_CHECK=true GENERATE_SOURCEMAP=false react-scripts test",
         "analyze": "source-map-explorer build/static/js/main.*"
     },
     "proxy": "http://127.0.0.1:8080/",
