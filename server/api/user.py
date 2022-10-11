@@ -325,7 +325,8 @@ def resume_session():
             if ssid_required:
                 user.ssid_required = True
                 if home_organisation_uid:
-                    user.home_organisation_uid = home_organisation_uid
+                    user.home_organisation_uid = home_organisation_uid[0] if isinstance(home_organisation_uid,
+                                                                                        list) else home_organisation_uid
                 if schac_home_organisation:
                     user.schac_home_organisation = schac_home_organisation
 
