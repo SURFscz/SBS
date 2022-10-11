@@ -1692,7 +1692,8 @@ I18n.translations.en = {
         searchPlaceholder: "Search in displayed audit logs (e.g. client side)...",
         searchPlaceholderServer: "Search in table audit logs (e.g. server side)...",
         runDbSeedConfirmation: "Are you absolutely sure? This will delete all current data",
-        runDbSeedInfo: "Delete all data and insert the test seed",
+        runDbSeedInfo: "Delete all data and insert the <strong>TEST</strong> seed",
+        runDbDemoSeedInfo: "Delete all data and insert the <strong>DEMO</strong> seed",
         runDbSeed: "Run",
         runClearAuditLogsConfirmation: "Are you absolutely sure you want to delete all entries from the audit logs?",
         cleanSlate: "Delete everything",
@@ -2028,6 +2029,43 @@ I18n.translations.en = {
             pamWebLogin: "PAM web login"
         },
         updateDisabled: "You can't update the Service. First correct the errors in the following sections: {{invalid}}"
+    },
+    expirations: {
+        expires: "Expires {{relativeTime}}",
+        expired: "Expired {{relativeTime}}",
+        never: "Never expires",
+        ago: {
+            now: "just now",
+            seconds: "%s seconds ago",
+            minute: "1 minute ago",
+            minutes: "%s minutes ago",
+            hour: "1 hour ago",
+            hours: "%s hours ago",
+            day: "1 day ago",
+            days: "%s days ago",
+            week: "1 week ago",
+            weeks: "%s weeks ago",
+            month: "1 month ago",
+            months: "%s months ago",
+            year: "1 year ago",
+            years: "%s years ago"
+        },
+        in: {
+            now: "right now",
+            seconds: "in %s seconds",
+            minute: "in 1 minute",
+            minutes: "in %s minutes",
+            hour: "in 1 hour",
+            hours: "in %s hours",
+            day: "in 1 day",
+            days: "in %s days",
+            week: "in 1 week",
+            weeks: "in %s weeks",
+            month: "in 1 month",
+            months: "in %s months",
+            year: "in 1 year",
+            years: "in %s years"
+        }
     }
 };
 
