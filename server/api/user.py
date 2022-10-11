@@ -340,24 +340,24 @@ def resume_session():
 
     # If we don't have a UID or SHO then we must not send the user to surf_secure_id
     if user.ssid_required:
-        if not user.uid or not user.schac_home_organisation:
-            logger.warn(f"user {user.id} marked as ssid_required has no uid {user.uid} "
-                        f"or no sho {user.schac_home_organisation}")
-        else:
+        if user.home_organisation_uid and user.schac_home_organisation:
             logger.debug(f"Redirecting user {uid} to ssid")
             user = db.session.merge(user)
             db.session.commit()
             return redirect_to_surf_secure_id(user)
+        else:
+            logger.warn(f"user {user.id} marked as ssid_required has no home_organisation_uid {user.home_organisation_uid} "
+                        f"or no schac_home_organisation {user.schac_home_organisation}")
 
     no_mfa_required = not oidc_config.second_factor_authentication_required
     second_factor_confirmed = (no_mfa_required or not fallback_required) and not user.ssid_required
     if second_factor_confirmed:
         user.last_login_date = datetime.datetime.now()
 
-    return _redirect_to_client(cfg, second_factor_confirmed, user)
+    return redirect_to_client(cfg, second_factor_confirmed, user)
 
 
-def _redirect_to_client(cfg, second_factor_confirmed, user):
+def redirect_to_client(cfg, second_factor_confirmed, user):
     logger = ctx_logger("redirect")
 
     user = db.session.merge(user)
@@ -382,6 +382,7 @@ def _redirect_to_client(cfg, second_factor_confirmed, user):
     return redirect(location)
 
 
+# This is the SAML redirect-url after step-up in surf secure ID
 @user_api.route("/acs", methods=["POST"], strict_slashes=False)
 def acs():
     logger = ctx_logger("acl")
@@ -407,7 +408,7 @@ def acs():
 
     if second_factor_confirmed:
         user.last_login_date = datetime.datetime.now()
-    return _redirect_to_client(cfg, second_factor_confirmed, user)
+    return redirect_to_client(cfg, second_factor_confirmed, user)
 
 
 def _redirect_with_error(logger, error_msg):
