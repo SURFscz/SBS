@@ -723,6 +723,10 @@ export function dbSeed() {
     return fetchJson("/api/system/seed");
 }
 
+export function dbDemoSeed() {
+    return fetchJson("/api/system/demo_seed");
+}
+
 export function clearAuditLogs() {
     return fetchDelete("/api/system/clear-audit-logs");
 }
