@@ -10,7 +10,6 @@ import {allCollaborations, deleteCollaborationServices, mayRequestCollaboration,
 import SpinnerField from "./SpinnerField";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
-import moment from "moment";
 import CheckBox from "../CheckBox";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
@@ -20,7 +19,8 @@ import {ReactComponent as InformationCircle} from "../../icons/information-circl
 import {setFlash} from "../../utils/Flash";
 import Select from "react-select";
 import DOMPurify from "dompurify";
-import {formatDate} from "../../utils/Date";
+import {displayExpiryDate, displayLastActivityDate} from "../../utils/Date";
+import moment from "moment";
 
 const allValue = "all";
 
@@ -305,7 +305,8 @@ export default class Collaborations extends React.PureComponent {
                 header: I18n.t("profile.yourRole"),
                 mapper: collaboration => {
                     if (collaboration.role) {
-                        return <span className={`person-role ${collaboration.role}`}>{I18n.t(`profile.${collaboration.role}`)}</span>
+                        return <span
+                            className={`person-role ${collaboration.role}`}>{I18n.t(`profile.${collaboration.role}`)}</span>
                     }
                     return null;
                 }
@@ -329,17 +330,17 @@ export default class Collaborations extends React.PureComponent {
                         const expiryDate = collaboration.expiry_date * 1000;
                         const days = Math.max(1, Math.round((expiryDate - today) / (1000 * 60 * 60 * 24)));
                         const warning = days < 60;
+                        const className = collaboration.status === "expired" ? "expired" : warning ? "warning" : "";
                         return <div>
-                            <span className={warning ? "warning" : ""}>{moment(expiryDate).format("LL")}</span>
-                            {(warning && collaboration.status === "active") &&
-                            <span className="warning">
-                            {I18n.p(days, "collaboration.expiryDateWarning", {nbr: days})}
-                            </span>}
-                            {(collaboration.status === "expired") &&
-                            <span className="warning">{I18n.t("collaboration.expiryDateExpired", {nbr: days})}</span>}
+                            <Tooltip children={<span className={`expiry-date ${className}`}>
+                                    {displayExpiryDate(collaboration.expiry_date)}
+                                </span>}
+                                     id={`${collaboration.id}-expiry_date`}
+                                     msg={moment(expiryDate).format("LLLL")}>
+                            </Tooltip>
                         </div>;
                     }
-                    return I18n.t("service.none");
+                    return I18n.t("expirations.never");
                 }
             });
         }
@@ -352,9 +353,15 @@ export default class Collaborations extends React.PureComponent {
                     const lastActivityDate = collaboration.last_activity_date * 1000;
                     const days = Math.round((today - lastActivityDate) / (1000 * 60 * 60 * 24));
                     const warning = days > 60;
+                    const className = collaboration.status === "suspended" ? "suspended" : warning ? "warning" : "";
                     return <div>
-                        <span className={warning ? "warning" : ""}>{formatDate(new Date(lastActivityDate))}</span>
-                        {collaboration.status === "suspended" && <span className="warning">
+                        <Tooltip children={<span className={`last-activity-date ${className}`}>
+                                    {displayLastActivityDate(collaboration.last_activity_date)}
+                                </span>}
+                                 id={`${collaboration.id}-last_activity_date`}
+                                 msg={moment(lastActivityDate).format("LLLL")}>
+                        </Tooltip>
+                        {collaboration.status === "suspended" && <span className="suspended">
                             {I18n.t("collaboration.lastActivitySuspended")}
                         </span>}
                     </div>;

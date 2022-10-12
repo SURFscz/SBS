@@ -209,7 +209,7 @@ I18n.translations.nl = {
             status: "Status",
             inviteSend: "Uitnodiging {{date}}",
             expiredAt: "Verlopen {{date}}",
-            membershipNoExpiry: "Geen einddatum",
+            membershipNoExpiry: "Verloopt nooit",
             membershipExpiresAt: "Verloopt {{date}}",
             membershipExpiredAt: "Verlopen {{date}}",
             accepted: "Actief",
@@ -831,7 +831,7 @@ I18n.translations.nl = {
         compliancyShort: "Compliancy",
         compliancyLong: "Overeenkomstig {{compliant}}",
         compliancySeparator: "en",
-        none: "Onbekend",
+        none: "Nooit",
         contact: "Dienstcontactpersoon",
         titleNew: "Dienst toevoegen",
         titleUpdate: "Dienst {{name}} bijwerken",
@@ -2031,9 +2031,25 @@ I18n.translations.nl = {
         updateDisabled: "Je kan de dienst niet opslaan. Corrigeer eerst de fouten in de volgende secties: {{invalid}}"
     },
     expirations: {
-        expires: "Verloopt over {{relativeTime}}",
-        expired: "Verlopen {{relativeTime}} geleden",
+        expires: "Verloopt {{relativeTime}}",
+        expired: "Verlopen {{relativeTime}}",
         never: "Verloopt nooit",
+        activity: {
+            now: "Net nu",
+            seconds: "Vandaag",
+            minute: "Vandaag",
+            minutes: "Vandaag",
+            hour: "Vandaag",
+            hours: "Vandaag",
+            day: "Gisteren",
+            days: "Deze week",
+            week: "Deze week",
+            weeks: "Deze maand",
+            month: "Afgelopen maand",
+            months: "%s maanden geleden",
+            year: "1 jaar geleden",
+            years: "%s jaar geleden"
+        },
         ago: {
             now: "net nu",
             seconds: "%s seconden geleden",
@@ -2048,7 +2064,7 @@ I18n.translations.nl = {
             month: "1 maand geleden",
             months: "%s maanden geleden",
             year: "1 jaar geleden",
-            years: "%s jaren geleden"
+            years: "%s jaar geleden"
         },
         in: {
             now: "net nu",
@@ -2064,7 +2080,7 @@ I18n.translations.nl = {
             month: "over 1 maand",
             months: "over %s maanden",
             year: "over 1 jaar",
-            years: "over %s jaren"
+            years: "over %s jaar"
         }
     }
 
