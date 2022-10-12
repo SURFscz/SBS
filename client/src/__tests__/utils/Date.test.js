@@ -56,9 +56,6 @@ test("displayMembershipExpiryDate", () => {
 
     let res = displayMembershipExpiryDate(todayEpoch - (relativeHour * 24 * 3))
     expect(res).toEqual("3 days ago");
-
-    res = displayMembershipExpiryDate(todayEpoch + (relativeHour * 24 * 4))
-    expect(res).toEqual("in 3 days");
 });
 
 test("displayLastActivityDate", () => {
