@@ -214,6 +214,7 @@ I18n.translations.en = {
             membershipExpiredAt: "Expired on {{date}}",
             accepted: "Active",
             expired: "Expired",
+            expires: "Expires",
             suspended: "Suspended",
             new: "Invite members",
             remove: "Delete",
@@ -744,7 +745,7 @@ I18n.translations.en = {
         status: {
             name: "Status",
             active: "Active",
-            activeWithExpiryDate: "Expiration date: {{expiryDate}}",
+            activeWithExpiryDate: "Expires on {{expiryDate}}",
             suspended: "Suspended",
             expired: "Expired",
             activeTooltip: "This collaboration is active and ready for business.",
@@ -1937,7 +1938,7 @@ I18n.translations.en = {
             name: "Membership",
             active: "Active",
             expired: "Expired",
-            activeWithExpiryDate: "Expiration date: {{date}}",
+            activeWithExpiryDate: "Expires on {{date}}",
             activeTooltip: "Your membership has no expiration date.",
             expiredTooltip: "Your membership has expired on {{date}}. Please contact the admins of this collaboration for help. ",
             activeWithExpiryDateTooltip: "Your membership is active, however, it will expire at {{date}}. "

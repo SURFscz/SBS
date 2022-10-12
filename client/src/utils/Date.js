@@ -104,6 +104,14 @@ export const displayExpiryDate = expiryEpoch => {
     return I18n.t(`expirations.${expired ? "expired" : "expires"}`, {relativeTime: relativeTime})
 }
 
+export const displayMembershipExpiryDate = expiryEpoch => {
+    if (!expiryEpoch) {
+        return I18n.t("expirations.never");
+    }
+    const {relativeTime} = relativeTimeNotation(expiryEpoch, TIME_AGO_LOCALE);
+    return relativeTime;
+}
+
 export const displayLastActivityDate = expiryEpoch => {
     const {relativeTime} = relativeTimeNotation(expiryEpoch, LAST_ACTIVITY_LOCALE);
     return relativeTime;
