@@ -1,7 +1,7 @@
 import {
     dateFromEpoch,
     displayExpiryDate,
-    displayLastActivityDate,
+    displayLastActivityDate, displayMembershipExpiryDate,
     formatDate,
     shortDateFromEpoch
 } from "../../utils/Date";
@@ -48,6 +48,17 @@ test("displayExpiryDate", () => {
 
     res = displayExpiryDate(todayEpoch + (relativeHour * 24 * 33));
     expect(res).toEqual("Expires in 1 month");
+});
+
+test("displayMembershipExpiryDate", () => {
+    I18n.locale = "en";
+    const todayEpoch = new Date().getTime() / 1000;
+
+    let res = displayMembershipExpiryDate(todayEpoch - (relativeHour * 24 * 3))
+    expect(res).toEqual("3 days ago");
+
+    res = displayMembershipExpiryDate(todayEpoch + (relativeHour * 24 * 4))
+    expect(res).toEqual("in 3 days");
 });
 
 test("displayLastActivityDate", () => {
