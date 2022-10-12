@@ -46,7 +46,9 @@ export const languageSwitched = () => {
     timeAgoInitialized = false;
 }
 
-const relativeTimeNotation = expiryEpoch => {
+const TIME_AGO_LOCALE = "time-ago-locale";
+const LAST_ACTIVITY_LOCALE = "last-activity-locale";
+const relativeTimeNotation = (expiryEpoch, translations) => {
     if (!timeAgoInitialized) {
         const timeAgoLocale = (number, index) => {
             return [
@@ -66,12 +68,31 @@ const relativeTimeNotation = expiryEpoch => {
                 [I18n.t("expirations.ago.years"), I18n.t("expirations.in.years")]
             ][index];
         };
-        register("time-ago-locale", timeAgoLocale);
+        const lastActivityLocale = (number, index) => {
+            return [
+                [I18n.t("expirations.activity.now"), I18n.t("expirations.activity.now")],
+                [I18n.t("expirations.activity.seconds"), I18n.t("expirations.activity.seconds")],
+                [I18n.t("expirations.activity.minute"), I18n.t("expirations.activity.minute")],
+                [I18n.t("expirations.activity.minutes"), I18n.t("expirations.activity.minutes")],
+                [I18n.t("expirations.activity.hour"), I18n.t("expirations.activity.hour")],
+                [I18n.t("expirations.activity.hours"), I18n.t("expirations.activity.hours")],
+                [I18n.t("expirations.activity.day"), I18n.t("expirations.activity.day")],
+                [I18n.t("expirations.activity.days"), I18n.t("expirations.activity.days")],
+                [I18n.t("expirations.activity.week"), I18n.t("expirations.activity.week")],
+                [I18n.t("expirations.activity.weeks"), I18n.t("expirations.activity.weeks")],
+                [I18n.t("expirations.activity.month"), I18n.t("expirations.activity.month")],
+                [I18n.t("expirations.activity.months"), I18n.t("expirations.activity.months")],
+                [I18n.t("expirations.activity.year"), I18n.t("expirations.activity.year")],
+                [I18n.t("expirations.activity.years"), I18n.t("expirations.activity.years")]
+            ][index];
+        };
+        register(TIME_AGO_LOCALE, timeAgoLocale);
+        register(LAST_ACTIVITY_LOCALE, lastActivityLocale);
         timeAgoInitialized = true;
     }
     const expiryDate = new Date(expiryEpoch * 1000);
     const expired = expiryDate < new Date();
-    const relativeTime = format(expiryDate, "time-ago-locale");
+    const relativeTime = format(expiryDate, translations);
     return {expired, relativeTime};
 }
 
@@ -79,11 +100,11 @@ export const displayExpiryDate = expiryEpoch => {
     if (!expiryEpoch) {
         return I18n.t("expirations.never");
     }
-    const {expired, relativeTime} = relativeTimeNotation(expiryEpoch);
+    const {expired, relativeTime} = relativeTimeNotation(expiryEpoch, TIME_AGO_LOCALE);
     return I18n.t(`expirations.${expired ? "expired" : "expires"}`, {relativeTime: relativeTime})
 }
 
 export const displayLastActivityDate = expiryEpoch => {
-    const {relativeTime} = relativeTimeNotation(expiryEpoch);
+    const {relativeTime} = relativeTimeNotation(expiryEpoch, LAST_ACTIVITY_LOCALE);
     return relativeTime;
 }

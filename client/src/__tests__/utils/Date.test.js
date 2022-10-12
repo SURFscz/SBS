@@ -57,6 +57,15 @@ test("displayLastActivityDate", () => {
     I18n.locale = "nl";
     const todayEpoch = new Date().getTime() / 1000;
     let res = displayLastActivityDate(todayEpoch - (relativeHour * 8));
-    expect(res).toEqual("8 uren geleden");
+    expect(res).toEqual("Vandaag");
+
+    res = displayLastActivityDate(todayEpoch - (relativeHour * 25));
+    expect(res).toEqual("Gisteren");
+
+    res = displayLastActivityDate(todayEpoch - (relativeHour * 24 * 24));
+    expect(res).toEqual("Deze maand");
+
+    res = displayLastActivityDate(todayEpoch - (relativeHour * 24 * 50));
+    expect(res).toEqual("Afgelopen maand");
 });
 
