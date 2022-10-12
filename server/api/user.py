@@ -346,7 +346,8 @@ def resume_session():
             db.session.commit()
             return redirect_to_surf_secure_id(user)
         else:
-            logger.warn(f"user {user.id} marked as ssid_required has no home_organisation_uid {user.home_organisation_uid} "
+            logger.warn(f"user {user.id} marked as ssid_required has no "
+                        f"home_organisation_uid {user.home_organisation_uid} "
                         f"or no schac_home_organisation {user.schac_home_organisation}")
 
     no_mfa_required = not oidc_config.second_factor_authentication_required

@@ -284,5 +284,4 @@ def do_ssid_redirect(second_fa_uuid):
 
     from server.api.user import redirect_to_client
 
-    cfg = current_app.app_config
-    return redirect_to_client(cfg, False, user)
+    return redirect_to_client(current_app.app_config, False, user)
