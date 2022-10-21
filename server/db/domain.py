@@ -748,6 +748,7 @@ class UserLogin(Base, db.Model):
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     user = db.relationship("User")
     user_uid = db.Column("user_uid", db.String(length=512), nullable=True)
+    status = db.Column("status", db.String(length=255), nullable=True)
     service_id = db.Column(db.Integer(), db.ForeignKey("services.id", ondelete="SET NULL"), nullable=True)
     service = db.relationship("Service")
     service_entity_id = db.Column("service_entity_id", db.String(length=512), nullable=True)

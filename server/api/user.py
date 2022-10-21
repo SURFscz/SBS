@@ -367,18 +367,23 @@ def redirect_to_client(cfg, second_factor_confirmed, user):
     store_user_in_session(user, second_factor_confirmed, user_accepted_aup)
     if not user_accepted_aup:
         location = f"{cfg.base_url}/aup"
+        status = "AUP_NOT_AGREED"
     elif not second_factor_confirmed:
         location = f"{cfg.base_url}/2fa"
+        status = "MFA_REQUIRED"
     elif "ssid_original_destination" in session:
         location = session.pop("ssid_original_destination")
+        status = "SSID_ORIGINAL_DESTINATION"
     elif "original_destination" in session:
         location = session.pop("original_destination")
+        status = "ORIGINAL_DESTINATION"
     else:
         location = cfg.base_url
+        status = "BASE_URL"
 
     logger.debug(f"Redirecting user {user.uid} to {location}")
 
-    log_user_login(SBS_LOGIN, True, user, user.uid, None, None)
+    log_user_login(SBS_LOGIN, True, user, user.uid, None, None, status=status)
 
     return redirect(location)
 

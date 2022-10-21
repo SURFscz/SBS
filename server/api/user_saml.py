@@ -89,7 +89,7 @@ def _perform_sram_login(uid, service, service_entity_id, home_organisation_uid, 
             logger.debug(f"Returning interrupt for user {uid} from issuer {issuer_id} to perform 2fa "
                          f"(ssid={ssid_required})")
 
-            log_user_login(PROXY_AUTHZ_SBS, False, user, uid, service, service_entity_id)
+            log_user_login(PROXY_AUTHZ_SBS, False, user, uid, service, service_entity_id, status="SECOND_FA_REQUIRED")
 
             return {
                        "status": {
@@ -99,7 +99,7 @@ def _perform_sram_login(uid, service, service_entity_id, home_organisation_uid, 
                        }
                    }, 200
 
-    log_user_login(PROXY_AUTHZ_SBS, True, user, uid, service, service_entity_id)
+    log_user_login(PROXY_AUTHZ_SBS, True, user, uid, service, service_entity_id, status="AUTHORIZED")
 
     db.session.merge(user)
     db.session.commit()
@@ -244,7 +244,7 @@ def proxy_authz():
             redirect_url = f"{base_url}/service-denied?{parameters}"
             result = "unauthorized"
 
-        log_user_login(PROXY_AUTHZ, False, user, uid, service, service_entity_id)
+        log_user_login(PROXY_AUTHZ, False, user, uid, service, service_entity_id, status=status)
 
         return {
                    "status": {
@@ -263,7 +263,7 @@ def proxy_authz():
         db.session.merge(authorized_user)
         db.session.commit()
 
-        log_user_login(PROXY_AUTHZ, True, user, uid, service, service_entity_id)
+        log_user_login(PROXY_AUTHZ, True, user, uid, service, service_entity_id, "AUTHORIZED")
 
         return {
                    "status": {

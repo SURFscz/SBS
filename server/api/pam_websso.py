@@ -80,7 +80,7 @@ def start():
 
     user = User.query.filter_by(**filters).first()
     if not user:
-        log_user_login(PAM_WEB_LOGIN, False, None, user_id, service, service.entity_id)
+        log_user_login(PAM_WEB_LOGIN, False, None, user_id, service, service.entity_id, status="User not found")
 
         logger.debug(f"PamWebSSO access to service {service.name} denied (user not found): {data}")
         raise NotFound(f"User {filters} not found")
@@ -88,7 +88,7 @@ def start():
     # The user validations expect a logged in user
     session["user"] = {"id": user.id, "admin": False}
     if not user_service(service.id, False):
-        log_user_login(PAM_WEB_LOGIN, False, user, user.uid, service, service.entity_id)
+        log_user_login(PAM_WEB_LOGIN, False, user, user.uid, service, service.entity_id, status="No access to service")
 
         logger.debug(f"PamWebSSO access to service {service.name} denied (no CO access): {data}")
         raise NotFound(f"User {filters} access denied")
@@ -100,7 +100,7 @@ def start():
     pam_last_login_date = user.pam_last_login_date
     seconds_ago = datetime.now() - timedelta(hours=0, minutes=0, seconds=cache_duration)
     if pam_last_login_date and pam_last_login_date > seconds_ago:
-        log_user_login(PAM_WEB_LOGIN, True, user, user.uid, service, service.entity_id)
+        log_user_login(PAM_WEB_LOGIN, True, user, user.uid, service, service.entity_id, status="Cached login")
 
         logger.debug(f"PamWebSSO user {user.uid} SSO results")
         return {"result": "OK", "cached": True,
@@ -148,7 +148,7 @@ def check_pin():
             db.session.merge(collaboration)
         db.session.commit()
 
-    log_user_login(PAM_WEB_LOGIN, success, user, user.uid, service, service.entity_id)
+    log_user_login(PAM_WEB_LOGIN, success, user, user.uid, service, service.entity_id, status=validation["result"])
 
     logger.debug(f"PamWebSSO check-pin for service {service.name} for user {user.uid} with result {validation}")
     return validation, 201
