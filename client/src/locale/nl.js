@@ -207,13 +207,14 @@ I18n.translations.nl = {
             noEntities: "Er zijn nog geen beheerders of managers in deze organisatie...",
             searchPlaceHolder: "Zoek leden...",
             status: "Status",
-            inviteSend: "Uitnodiging {{date}}",
-            expiredAt: "Verlopen {{date}}",
-            membershipNoExpiry: "Geen einddatum",
+            inviteSend: "Uitgenodigd op {{date}}",
+            expiredAt: "Uitnodiging verlopen",
+            membershipNoExpiry: "Verloopt nooit",
             membershipExpiresAt: "Verloopt {{date}}",
             membershipExpiredAt: "Verlopen {{date}}",
             accepted: "Actief",
             expired: "Verlopen",
+            expires: "Verloopt",
             suspended: "Geschorst",
             new: "Nodig leden uit",
             remove: "Verwijder",
@@ -744,7 +745,7 @@ I18n.translations.nl = {
         status: {
             name: "Status",
             active: "Actief",
-            activeWithExpiryDate: "Einddatum: {{expiryDate}}",
+            activeWithExpiryDate: "Verloopt op {{expiryDate}}",
             suspended: "Geschorst",
             expired: "Verlopen",
             activeTooltip: "Deze samenwerking is actief.",
@@ -831,7 +832,7 @@ I18n.translations.nl = {
         compliancyShort: "Compliancy",
         compliancyLong: "Overeenkomstig {{compliant}}",
         compliancySeparator: "en",
-        none: "Onbekend",
+        none: "Nooit",
         contact: "Dienstcontactpersoon",
         titleNew: "Dienst toevoegen",
         titleUpdate: "Dienst {{name}} bijwerken",
@@ -1692,7 +1693,8 @@ I18n.translations.nl = {
         searchPlaceholder: "Zoek in de weergegeven audit-logs (e.g. client side)...",
         searchPlaceholderServer: "Zoek in tabel audit_logs (e.g. server side)...",
         runDbSeedConfirmation: "Weet je het zeker? Hiermee worden alle huidige gegevens verwijderd",
-        runDbSeedInfo: "Verwijder alle gegevens en voeg de testgegevens toe",
+        runDbSeedInfo: "Verwijder alle gegevens en voeg de <strong>TEST</strong> gegevens toe",
+        runDbDemoSeedInfo: "Verwijder alle gegevens en voeg de <strong>DEMO</strong> gegevens toe",
         runDbSeed: "Voer uit",
         runClearAuditLogsConfirmation: "Weet je zeker dat je alle gegevens uit de audit-logs wil verwijderen?",
         cleanSlate: "Verwijder alles",
@@ -1790,7 +1792,7 @@ I18n.translations.nl = {
         header: {
             title: "Eenvoudige en veilige toegang tot onderzoeksdiensten voor onderzoekssamenwerkingen",
             login: "Inloggen",
-            sup: "Eerste keer bij SURF Reseach Access Management? Log in en bekijk je mogelijkheden.",
+            sup: "Eerste keer bij SURF Research Access Management? Log in en bekijk je mogelijkheden.",
         },
         works: "Hoe werkt het?",
         adminFunction: "beheerdersfunctie",
@@ -1936,7 +1938,7 @@ I18n.translations.nl = {
             name: "Lidmaatschap",
             active: "Actief",
             expired: "Verlopen",
-            activeWithExpiryDate: "Einddatum: {{date}}",
+            activeWithExpiryDate: "Verloopt op {{date}}",
             activeTooltip: "Je lidmaatschap heeft geen einddatum.",
             expiredTooltip: "Je lidmaatschap is verlopen op {{date}}. Neem contact op met de beheerders van deze samenwerking om dit te verhelpen. ",
             activeWithExpiryDateTooltip: "je lidmaatschap is actief, maar verloopt op {{date}}. "
@@ -2028,7 +2030,61 @@ I18n.translations.nl = {
             pamWebLogin: "PAM web login"
         },
         updateDisabled: "Je kan de dienst niet opslaan. Corrigeer eerst de fouten in de volgende secties: {{invalid}}"
+    },
+    expirations: {
+        expires: "Verloopt {{relativeTime}}",
+        expired: "Verlopen {{relativeTime}}",
+        never: "Verloopt nooit",
+        activity: {
+            now: "Net nu",
+            seconds: "Vandaag",
+            minute: "Vandaag",
+            minutes: "Vandaag",
+            hour: "Vandaag",
+            hours: "Vandaag",
+            day: "Gisteren",
+            days: "Deze week",
+            week: "Deze week",
+            weeks: "Deze maand",
+            month: "Afgelopen maand",
+            months: "%s maanden geleden",
+            year: "1 jaar geleden",
+            years: "%s jaar geleden"
+        },
+        ago: {
+            now: "net nu",
+            seconds: "%s seconden geleden",
+            minute: "1 minuut geleden",
+            minutes: "%s minuten geleden",
+            hour: "1 uur geleden",
+            hours: "%s uren geleden",
+            day: "1 dag geleden",
+            days: "%s dagen geleden",
+            week: "1 week geleden",
+            weeks: "%s weken geleden",
+            month: "1 maand geleden",
+            months: "%s maanden geleden",
+            year: "1 jaar geleden",
+            years: "%s jaar geleden"
+        },
+        in: {
+            now: "net nu",
+            seconds: "over %s seconden",
+            minute: "over 1 minuut",
+            minutes: "over %s minuten",
+            hour: "over 1 uur",
+            hours: "over %s uren",
+            day: "over 1 dag",
+            days: "over %s dagen",
+            week: "over 1 week",
+            weeks: "over %s weken",
+            month: "over 1 maand",
+            months: "over %s maanden",
+            year: "over 1 jaar",
+            years: "over %s jaar"
+        }
     }
+
 };
 
 export default I18n.translations.nl;

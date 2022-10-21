@@ -505,6 +505,8 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(0, len(collaboration.collaboration_memberships))
         self.assertIsNone(collaboration.accepted_user_policy)
         self.assertIsNotNone(collaboration.logo)
+        one_day_ago = datetime.datetime.now() - datetime.timedelta(days=1)
+        self.assertTrue(collaboration.last_activity_date > one_day_ago)
 
         count = Invitation.query.filter(Invitation.collaboration_id == collaboration.id).count()
         self.assertEqual(2, count)
@@ -698,3 +700,26 @@ class TestCollaboration(AbstractTest):
         self.get(f"/api/collaborations/v1/{collaboration_uva_researcher_uuid}",
                  headers={"Authorization": f"Bearer {uuc_secret}"},
                  with_basic_auth=False, response_status_code=403)
+
+    def test_collaboration_new_with_expiry_date_past(self):
+        try:
+            self.app.app_config.feature.past_dates_allowed = False
+            response = self.client.post("/api/collaborations/v1",
+                                        headers={"Authorization": f"Bearer {uuc_secret}"},
+                                        data=json.dumps({
+                                            "name": "new_collaboration",
+                                            "description": "new_collaboration",
+                                            "accepted_user_policy": "https://aup.org",
+                                            "administrators": ["the@ex.org", "that@ex.org"],
+                                            "short_name": "new_short_name",
+                                            "disable_join_requests": True,
+                                            "disclose_member_information": True,
+                                            "disclose_email_information": True,
+                                            "expiry_date": 999999999,
+                                            "logo": read_image("uuc.jpeg")
+                                        }),
+                                        content_type="application/json")
+            self.assertEqual(400, response.status_code)
+            self.assertTrue("in the past" in response.json["message"])
+        finally:
+            self.app.app_config.feature.past_dates_allowed = True

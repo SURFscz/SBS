@@ -156,8 +156,10 @@ def transform_json(cls, json_dict, allow_child_cascades=True, allowed_child_coll
     return json_dict
 
 
-def log_user_login(login_type, succeeded, user, uid, service, service_entity_id):
-    user_login = UserLogin(login_type=login_type, succeeded=succeeded, user_id=user.id if user else None, user_uid=uid,
-                           service_id=service.id if service else None, service_entity_id=service_entity_id)
+def log_user_login(login_type, succeeded, user, uid, service, service_entity_id, status=None):
+    user_login = UserLogin(login_type=login_type, status=status, succeeded=succeeded,
+                           user_id=user.id if user else None,
+                           user_uid=uid, service_id=service.id if service else None,
+                           service_entity_id=service_entity_id)
     db.session.merge(user_login)
     db.session.commit()

@@ -71,7 +71,7 @@ table.collaborations, table.serviceCollaborations, table.memberCollaborations {
             }
 
             &.name {
-                width: 30%;
+                width: 26%;
                 padding-left: 15px;
 
                 &.services {
@@ -92,7 +92,7 @@ table.collaborations, table.serviceCollaborations, table.memberCollaborations {
             }
 
             &.last_activity_date {
-                width: 8%;
+                width: 12%;
             }
 
             &.fromCollaboration {
@@ -151,13 +151,18 @@ table.collaborations, table.serviceCollaborations, table.memberCollaborations {
 
             &.expiry_date, &.last_activity_date {
                 span.warning {
-                    color: $red;
-                    display: block;
+                    color: $light-orange;
                     font-weight: bold;
 
                     &:last-child {
                         margin-top: 6px;
                     }
+                }
+
+                span.expired, span.suspended {
+                    color: $red;
+                    display: block;
+                    font-weight: bold;
                 }
             }
 

@@ -32,7 +32,7 @@ def _do_orphan_users(app):
 
         audit_log_subquery = ~AuditLog.query \
             .filter(AuditLog.user_id == User.id) \
-            .filter(AuditLog.target_type != "aups") \
+            .filter(AuditLog.target_type.not_in(["aups", "users"])) \
             .exists()
         query_filter = User.query.filter(audit_log_subquery).filter(User.created_at < delete_date_threshold)
         users = query_filter.all()
