@@ -42,7 +42,8 @@ def introspect():
         res = {"status": "token-not-connected", "active": False}
 
     if not res["active"]:
-        log_user_login(USER_TOKEN_INTROSPECT, False, user, user.uid if user else None, service, service.entity_id)
+        log_user_login(USER_TOKEN_INTROSPECT, False, user, user.uid if user else None, service, service.entity_id,
+                       status=res["status"])
         return res, 200
 
     user_token.last_used_date = current_time
@@ -73,5 +74,5 @@ def introspect():
             "eduperson_entitlement": list(entitlements)
         }
     }
-    log_user_login(USER_TOKEN_INTROSPECT, True, user, user.uid, service, service.entity_id)
+    log_user_login(USER_TOKEN_INTROSPECT, True, user, user.uid, service, service.entity_id, status="token-valid")
     return result, 200
