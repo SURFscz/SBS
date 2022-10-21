@@ -27,6 +27,26 @@ COLLABORATION_NOT_ACTIVE = 5
 AUP_NOT_AGREED = 99
 SECOND_FA_REQUIRED = 100
 
+
+def status_to_string(status):
+    if status == USER_UNKNOWN:
+        return "USER_UNKNOWN"
+    elif status == USER_IS_SUSPENDED:
+        return "USER_IS_SUSPENDED"
+    elif status == SERVICE_UNKNOWN:
+        return "SERVICE_UNKNOWN"
+    elif status == SERVICE_NOT_CONNECTED:
+        return "SERVICE_NOT_CONNECTED"
+    elif status == COLLABORATION_NOT_ACTIVE:
+        return "COLLABORATION_NOT_ACTIVE"
+    elif status == AUP_NOT_AGREED:
+        return "AUP_NOT_AGREED"
+    elif status == SECOND_FA_REQUIRED:
+        return "SECOND_FA_REQUIRED"
+    else:
+        return "UNKNOWN_STATUS"
+
+
 # Independent mapping, so different attribute names can be send back
 custom_saml_mapping = {
     "multi_value_attributes": ["edu_members", "affiliation", "scoped_affiliation", "entitlement"],
@@ -244,7 +264,7 @@ def proxy_authz():
             redirect_url = f"{base_url}/service-denied?{parameters}"
             result = "unauthorized"
 
-        log_user_login(PROXY_AUTHZ, False, user, uid, service, service_entity_id, status=status)
+        log_user_login(PROXY_AUTHZ, False, user, uid, service, service_entity_id, status=status_to_string(status))
 
         return {
                    "status": {
