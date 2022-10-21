@@ -442,6 +442,11 @@ class Service(Base, db.Model, LogoMixin):
     service_tokens = db.relationship("ServiceToken", back_populates="service",
                                      cascade="delete, delete-orphan",
                                      passive_deletes=True)
+    scim_enabled = db.Column("scim_enabled", db.Boolean(), nullable=True, default=False)
+    scim_url = db.Column("scim_url", db.String(length=255), nullable=True)
+    scim_bearer_token = db.Column("scim_bearer_token", db.String(length=512), nullable=True)
+    scim_provision_users = db.Column("scim_provision_users", db.Boolean(), nullable=True, default=False)
+    scim_provision_groups = db.Column("scim_provision_groups", db.Boolean(), nullable=True, default=False)
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),

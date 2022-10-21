@@ -38,7 +38,7 @@ import CroppedImageField from "../components/redesign/CroppedImageField";
 import SpinnerField from "../components/redesign/SpinnerField";
 import CheckBox from "../components/CheckBox";
 
-const toc = ["general", "connection", "contacts", "policy", "ldap", "tokens", "pamWebLogin"];
+const toc = ["general", "connection", "contacts", "policy", "ldap", "tokens", "pamWebLogin", "SCIM"];
 
 class ServiceOverview extends React.Component {
 
@@ -102,7 +102,7 @@ class ServiceOverview extends React.Component {
         ["security_email", "support_email", "email"].forEach(name => {
             invalidInputs[name] = !isEmpty(service[name]) && !validEmailRegExp.test(service[name]);
         });
-        ["accepted_user_policy", "uri_info", "privacy_policy", "uri"].forEach(name => {
+        ["accepted_user_policy", "uri_info", "privacy_policy", "uri", "scim_url"].forEach(name => {
             let serviceElement = service[name];
             if (name === "uri" && !isEmpty(serviceElement)) {
                 serviceElement = serviceElement.toLowerCase().replaceAll(CO_SHORT_NAME, "").replaceAll(SRAM_USERNAME, "");
@@ -337,6 +337,8 @@ class ServiceOverview extends React.Component {
             case "tokens":
             case "pamWebLogin":
                 return true;
+            case "SCIM":
+                return !invalidInputs.scim_url;
             default:
                 throw new Error("unknown-tab")
         }
@@ -399,7 +401,8 @@ class ServiceOverview extends React.Component {
     }
 
     getInvalidTabs = () => {
-        const invalidTabs = toc.filter(item => !this.isValidTab(item)).map(item => I18n.t(`serviceDetails.toc.${item}`)).join(", ");
+        const invalidTabs = toc.filter(item => !this.isValidTab(item))
+            .map(item => I18n.t(`serviceDetails.toc.${item}`)).join(", ");
         if (invalidTabs.length > 0) {
             return I18n.t(`serviceDetails.updateDisabled`, {invalid: invalidTabs});
         }
@@ -407,7 +410,6 @@ class ServiceOverview extends React.Component {
     }
 
     sidebar = currentTab => {
-
         return (
             <div className={"side-bar"}>
                 <h3>{I18n.t("serviceDetails.details")}</h3>
@@ -483,6 +485,51 @@ class ServiceOverview extends React.Component {
                              disabled={!isAdmin || showServiceAdminView}
                              tooltip={I18n.t("userTokens.pamWebSSOEnabledTooltip")}
                              onChange={val => this.setState({"service": {...service, pam_web_sso_enabled: val}})}/>
+            </div>)
+    }
+
+    renderSCIM = (service, isAdmin, showServiceAdminView, alreadyExists, invalidInputs) => {
+        return (
+            <div className={"scim"}>
+                <RadioButton label={I18n.t("scim.scimEnabled")}
+                             name={"scim_enabled"}
+                             value={service.scim_enabled}
+                             disabled={!isAdmin || showServiceAdminView}
+                             tooltip={I18n.t("scim.scimEnabledTooltip")}
+                             onChange={val => this.setState({"service": {...service, scim_enabled: val}})}/>
+
+                <InputField value={service.scim_url}
+                            name={I18n.t("scim.scimURL")}
+                            placeholder={I18n.t("scim.scimURLPlaceHolder")}
+                            onChange={e => this.changeServiceProperty("scim_url", false, alreadyExists,
+                                {...invalidInputs, scim_url: false})(e)}
+                            toolTip={I18n.t("scim.scimURLTooltip")}
+                            error={invalidInputs.scim_url}
+                            onBlur={this.validateURI("scim_url")}
+                            disabled={!isAdmin || showServiceAdminView || !service.scim_enabled}/>
+                {invalidInputs.scim_url &&
+                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
+
+                <InputField value={service.scim_bearer_token}
+                            name={I18n.t("scim.scimBearerToken")}
+                            onChange={e => this.changeServiceProperty("scim_bearer_token")(e)}
+                            toolTip={I18n.t("scim.scimBearerTokenTooltip")}
+                            disabled={!isAdmin || showServiceAdminView || !service.scim_enabled}/>
+
+                <CheckBox name="scim_provision_users"
+                          value={service.scim_provision_users}
+                          info={I18n.t("scim.scimProvisionUsers")}
+                          tooltip={I18n.t("scim.scimProvisionUsersToolTip")}
+                          onChange={this.changeServiceProperty("scim_provision_users", true)}
+                          readOnly={!isAdmin || !service.scim_enabled}/>
+
+                <CheckBox name="scim_provision_groups"
+                          value={service.scim_provision_groups}
+                          info={I18n.t("scim.scimProvisionGroups")}
+                          tooltip={I18n.t("scim.scimProvisionGroupsToolTip")}
+                          onChange={this.changeServiceProperty("scim_provision_groups", true)}
+                          readOnly={!isAdmin || !service.scim_enabled}/>
+
             </div>)
     }
 
@@ -932,6 +979,9 @@ class ServiceOverview extends React.Component {
                 return this.renderTokens(config, service, isAdmin, createNewServiceToken);
             case "pamWebLogin":
                 return this.renderPamWebLogin(service, isAdmin, showServiceAdminView);
+            case "SCIM":
+                return this.renderSCIM(service, isAdmin, showServiceAdminView, alreadyExists, invalidInputs);
+
             default:
                 throw new Error("unknown-tab")
         }

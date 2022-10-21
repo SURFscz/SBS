@@ -1960,6 +1960,19 @@ I18n.translations.nl = {
         intendedRole: "Rol binnen de dienst",
         intendedRoleTooltip: "De enige rol binnen een dienst is beheerder"
     },
+    scim: {
+        scimEnabled: "SCIM provisioning ingeschakeld?",
+        scimEnabledTooltip: "Sta deze service toe om de SCIM-eindpunten aan te roepen en SCIM-berichten te ontvangen?",
+        scimURL: "SCIM-endpoints base URL",
+        scimURLPlaceHolder: "https://service.com.scim",
+        scimURLTooltip: "De base URL van het SCIM endpoint is de URL waarnaar alle SCIM event worden verzonden.",
+        scimBearerToken: "Bearer token",
+        scimBearerTokenTooltip: "Het bearer token is het externe token dat nodig is om de SRAM-aanroepen naar de SCIM-eindpunten te autoriseren",
+        scimProvisionUsers: "User provisioning inschakelen?",
+        scimProvisionUsersTooltip: "Does this service wants to receive SCIM User messages?",
+        scimProvisionGroups: "Group provisioning inschakelen?",
+        scimProvisionGroupsTooltip: "Does this service wants to receive SCIM Group messages?",
+    },
     userTokens: {
         actionTitle: "Nieuwe API-token",
         tokens: "Tokens",
@@ -2027,7 +2040,8 @@ I18n.translations.nl = {
             policy: "Policy & compliance",
             ldap: "LDAP",
             tokens: "Tokens",
-            pamWebLogin: "PAM web login"
+            pamWebLogin: "PAM web login",
+            SCIM: "SCIM"
         },
         updateDisabled: "Je kan de dienst niet opslaan. Corrigeer eerst de fouten in de volgende secties: {{invalid}}"
     },
