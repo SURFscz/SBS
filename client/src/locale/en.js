@@ -1960,6 +1960,19 @@ I18n.translations.en = {
         intendedRole: "Role in the service",
         intendedRoleTooltip: "The only role within a service is admin"
     },
+    scim: {
+        scimEnabled: "Enable SCIM provisioning?",
+        scimEnabledTooltip: "Allow this service to call the SCIM endpoints and to receive SCIM messages?",
+        scimURL: "SCIM endpoint base URL",
+        scimURLPlaceHolder: "https://service.com.scim",
+        scimURLTooltip: "The SCIM endpoint base URL is the URL where all SCIM events are send to.",
+        scimBearerToken: "Bearer token",
+        scimBearerTokenTooltip: "The bearer token is the external token needed to authorize the SRAM calls to the SCIM endpoints",
+        scimProvisionUsers: "Enable User provisioning?",
+        scimProvisionUsersTooltip: "Does this service wants to receive SCIM User messages?",
+        scimProvisionGroups: "Enable Group provisioning?",
+        scimProvisionGroupsTooltip: "Does this service wants to receive SCIM Group messages?",
+    },
     userTokens: {
         actionTitle: "New API token",
         tokens: "Tokens",
@@ -2027,7 +2040,8 @@ I18n.translations.en = {
             policy: "Policy & compliance",
             ldap: "LDAP",
             tokens: "Tokens",
-            pamWebLogin: "PAM web login"
+            pamWebLogin: "PAM web login",
+            SCIM: "SCIM"
         },
         updateDisabled: "You can't update the Service. First correct the errors in the following sections: {{invalid}}"
     },
