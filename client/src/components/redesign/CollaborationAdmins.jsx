@@ -11,14 +11,15 @@ import CheckBox from "../CheckBox";
 import {
     deleteCollaborationMembership,
     invitationBulkResend,
-    invitationDelete, invitationResend,
+    invitationDelete,
+    invitationResend,
     updateCollaborationMembershipExpiryDate,
     updateCollaborationMembershipRole
 } from "../../api";
 import {setFlash} from "../../utils/Flash";
 import "./CollaborationAdmins.scss";
 import Select from "react-select";
-import {dateFromEpoch, isInvitationExpired, shortDateFromEpoch} from "../../utils/Date";
+import {displayMembershipExpiryDate, isInvitationExpired, shortDateFromEpoch} from "../../utils/Date";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import Button from "../Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -509,7 +510,7 @@ class CollaborationAdmins extends React.Component {
                 {this.actionIcons(entity, collaboration)}
                 {showImpersonation && <div className="impersonation">
                     <HandIcon className="impersonate"
-                                                    onClick={() => emitImpersonation(entity.user, this.props.history)}/>
+                              onClick={() => emitImpersonation(entity.user, this.props.history)}/>
                 </div>}
             </div>
         );
@@ -601,10 +602,14 @@ class CollaborationAdmins extends React.Component {
         if (expired) {
             status = I18n.t("models.orgMembers.expired");
             className = "expired"
-            msg = I18n.t("models.orgMembers.membershipExpiredAt", {date: dateFromEpoch(entity.expiry_date)})
+            msg = displayMembershipExpiryDate(entity.expiry_date);
         } else if (entity.expiry_date) {
-            className = "expires"
-            msg = I18n.t("models.orgMembers.membershipExpiresAt", {date: dateFromEpoch(entity.expiry_date)})
+            const today = new Date().getTime();
+            const expiryDate = entity.expiry_date * 1000;
+            const days = Math.round((expiryDate - today) / (1000 * 60 * 60 * 24));
+            className = days < 60 ? "expires" : "";
+            status = I18n.t("models.orgMembers.expires");
+            msg = displayMembershipExpiryDate(entity.expiry_date);
         }
         const expiryDate = entity.expiry_date ? moment(entity.expiry_date * 1000).toDate() : null;
         const isOpen = openExpirationFields[this.getIdentifier(entity)]
@@ -612,7 +617,7 @@ class CollaborationAdmins extends React.Component {
             {!isOpen &&
             <div className="expiration-toggle" onClick={() => this.toggleExpirationDateField(entity)}>
                 <div className="text-container">
-                    <span className={`status ${className}`}>{status}</span>
+                    {entity.expiry_date && <span className={`status ${className}`}>{status}</span>}
                     <span className="msg">{msg}</span>
                 </div>
                 <div className="chevron-container" onClick={() => this.toggleExpirationDateField(entity)}>

@@ -8,6 +8,7 @@ import {
     cleanupNonOpenRequests,
     clearAuditLogs,
     dbSeed,
+    dbDemoSeed,
     dbStats,
     composition,
     userLoginsSummary,
@@ -43,6 +44,7 @@ import OrganisationInvitations from "../components/redesign/OrganisationInvitati
 import OrganisationsWithoutAdmin from "../components/redesign/OrganisationsWithoutAdmin";
 import ServicesWithoutAdmin from "../components/redesign/ServicesWithoutAdmin";
 import {dateFromEpoch} from "../utils/Date";
+import DOMPurify from "dompurify";
 
 const options = [25, 50, 100, 150, 200, 250, 500].map(nbr => ({value: nbr, label: nbr}));
 
@@ -113,6 +115,7 @@ class System extends React.Component {
             databaseStats: [],
             cronJobs: [],
             seedResult: null,
+            demoSeedResult: null,
             query: "",
             auditLogs: {audit_logs: []},
             filteredAuditLogs: {audit_logs: []},
@@ -380,13 +383,17 @@ class System extends React.Component {
         </div>)
     }
 
-    getSeedTab = seedResult => {
+    getSeedTab = (seedResult, demoSeedResult) => {
         return (<div key="seed" name="seed" label={I18n.t("home.tabs.seed")}
                      icon={<FontAwesomeIcon icon="seedling"/>}>
             <div className="mod-system">
                 <section className={"info-block-container"}>
                     {this.renderDbSeed()}
                     <p className="result">{seedResult}</p>
+                </section>
+                <section className={"info-block-container"}>
+                    {this.renderDbDemoSeed()}
+                    <p className="result">{demoSeedResult}</p>
                 </section>
             </div>
         </div>)
@@ -489,6 +496,21 @@ class System extends React.Component {
                 this.setState({
                     busy: false,
                     seedResult: I18n.t("system.seedResult", {ms: new Date().getMilliseconds() - d.getMilliseconds()})
+                });
+            });
+        }
+    }
+
+    doDbDemoSeed = showConfirmation => {
+        if (showConfirmation) {
+            this.confirm(() => this.doDbDemoSeed(false), I18n.t("system.runDbSeedConfirmation"));
+        } else {
+            this.setState({confirmationDialogOpen: false, busy: true,});
+            const d = new Date();
+            dbDemoSeed().then(() => {
+                this.setState({
+                    busy: false,
+                    demoSeedResult: I18n.t("system.seedResult", {ms: new Date().getMilliseconds() - d.getMilliseconds()})
                 });
             });
         }
@@ -633,11 +655,26 @@ class System extends React.Component {
         const {seedResult} = this.state;
         return (
             <div className="info-block">
-                <p>{I18n.t("system.runDbSeedInfo")}</p>
+                <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("system.runDbSeedInfo"))}}/>
                 <div className="actions">
                     {isEmpty(seedResult) && <Button txt={I18n.t("system.runDbSeed")}
                                                     onClick={() => this.doDbSeed(true)}/>}
                     {!isEmpty(seedResult) && <Button txt={I18n.t("system.reload")}
+                                                     onClick={this.reload} cancelButton={true}/>}
+                </div>
+            </div>
+        );
+    }
+
+    renderDbDemoSeed = () => {
+        const {demoSeedResult} = this.state;
+        return (
+            <div className="info-block">
+                <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("system.runDbDemoSeedInfo"))}}/>
+                <div className="actions">
+                    {isEmpty(demoSeedResult) && <Button txt={I18n.t("system.runDbSeed")}
+                                                    onClick={() => this.doDbDemoSeed(true)}/>}
+                    {!isEmpty(demoSeedResult) && <Button txt={I18n.t("system.reload")}
                                                      onClick={this.reload} cancelButton={true}/>}
                 </div>
             </div>
@@ -941,7 +978,7 @@ class System extends React.Component {
             confirmationDialogQuestion, busy, tab, filteredAuditLogs, databaseStats, suspendedUsers, cleanedRequests,
             limit, query, selectedTables, expiredCollaborations, suspendedCollaborations, expiredMemberships, cronJobs,
             validationData, showOrganisationsWithoutAdmin, showServicesWithoutAdmin, plscData, compositionData,
-            currentlySuspendedUsers, userLoginStats, deletedUsers, serverQuery
+            currentlySuspendedUsers, userLoginStats, deletedUsers, serverQuery, demoSeedResult
         } = this.state;
         const {config} = this.props;
 
@@ -952,7 +989,7 @@ class System extends React.Component {
             this.getValidationTab(validationData, showOrganisationsWithoutAdmin, showServicesWithoutAdmin),
             this.getCronTab(suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations,
                 suspendedCollaborations, expiredMemberships, deletedUsers, cronJobs),
-            config.seed_allowed ? this.getSeedTab(seedResult) : null,
+            config.seed_allowed ? this.getSeedTab(seedResult, demoSeedResult) : null,
             this.getDatabaseTab(databaseStats, config),
             this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables, serverQuery),
             this.getPlscTab(plscData),

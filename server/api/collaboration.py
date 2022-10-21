@@ -471,7 +471,10 @@ def _validate_collaboration(data, organisation, new_collaboration=True):
     cleanse_short_name(data)
     expiry_date = data.get("expiry_date")
     if expiry_date:
+        past_dates_allowed = current_app.app_config.feature.past_dates_allowed
         dt = datetime.utcfromtimestamp(int(expiry_date)) + timedelta(hours=4)
+        if not past_dates_allowed and dt < datetime.now():
+            raise BadRequest(f"It is not allowed to set the expiry date ({dt}) in the past")
         data["expiry_date"] = datetime(year=dt.year, month=dt.month, day=dt.day, hour=0, minute=0, second=0)
     else:
         data["expiry_date"] = None
@@ -494,6 +497,7 @@ def _validate_collaboration(data, organisation, new_collaboration=True):
         raise BadRequest(f"Collaboration with short_name '{data['short_name']}' already exists within "
                          f"organisation '{organisation.name}'.")
     _assign_global_urn(data["organisation_id"], data)
+    data["last_activity_date"] = datetime.now()
 
 
 def _assign_global_urn(organisation_id, data):

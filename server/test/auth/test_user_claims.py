@@ -95,3 +95,10 @@ class TestUserClaims(AbstractTest):
         connected_collaborations = self.expire_collaborations(jane_name)
         memberships = user_memberships(user, connected_collaborations)
         self.assertEqual(0, len(memberships))
+
+    def test_user_memberships_suspended_co(self):
+        self.suspend_collaborations(jane_name)
+        user = self.find_entity_by_name(User, jane_name)
+        connected_collaborations = [cm.collaboration for cm in user.collaboration_memberships]
+        memberships = user_memberships(user, connected_collaborations)
+        self.assertEqual(0, len(memberships))

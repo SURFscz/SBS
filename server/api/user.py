@@ -325,7 +325,8 @@ def resume_session():
             if ssid_required:
                 user.ssid_required = True
                 if home_organisation_uid:
-                    user.home_organisation_uid = home_organisation_uid
+                    user.home_organisation_uid = home_organisation_uid[0] if isinstance(home_organisation_uid,
+                                                                                        list) else home_organisation_uid
                 if schac_home_organisation:
                     user.schac_home_organisation = schac_home_organisation
 
@@ -337,21 +338,27 @@ def resume_session():
     else:
         fallback_required = False
 
+    # If we don't have a UID or SHO then we must not send the user to surf_secure_id
     if user.ssid_required:
-        logger.debug(f"Redirecting user {uid} to ssid")
-        user = db.session.merge(user)
-        db.session.commit()
-        return redirect_to_surf_secure_id(user)
+        if user.home_organisation_uid and user.schac_home_organisation:
+            logger.debug(f"Redirecting user {uid} to ssid")
+            user = db.session.merge(user)
+            db.session.commit()
+            return redirect_to_surf_secure_id(user)
+        else:
+            logger.warn(f"user {user.id} marked as ssid_required has no "
+                        f"home_organisation_uid {user.home_organisation_uid} "
+                        f"or no schac_home_organisation {user.schac_home_organisation}")
 
     no_mfa_required = not oidc_config.second_factor_authentication_required
-    second_factor_confirmed = no_mfa_required or not fallback_required
+    second_factor_confirmed = (no_mfa_required or not fallback_required) and not user.ssid_required
     if second_factor_confirmed:
         user.last_login_date = datetime.datetime.now()
 
-    return _redirect_to_client(cfg, second_factor_confirmed, user)
+    return redirect_to_client(cfg, second_factor_confirmed, user)
 
 
-def _redirect_to_client(cfg, second_factor_confirmed, user):
+def redirect_to_client(cfg, second_factor_confirmed, user):
     logger = ctx_logger("redirect")
 
     user = db.session.merge(user)
@@ -360,22 +367,28 @@ def _redirect_to_client(cfg, second_factor_confirmed, user):
     store_user_in_session(user, second_factor_confirmed, user_accepted_aup)
     if not user_accepted_aup:
         location = f"{cfg.base_url}/aup"
+        status = "AUP_NOT_AGREED"
     elif not second_factor_confirmed:
         location = f"{cfg.base_url}/2fa"
+        status = "MFA_REQUIRED"
     elif "ssid_original_destination" in session:
         location = session.pop("ssid_original_destination")
+        status = "SSID_ORIGINAL_DESTINATION"
     elif "original_destination" in session:
         location = session.pop("original_destination")
+        status = "ORIGINAL_DESTINATION"
     else:
         location = cfg.base_url
+        status = "BASE_URL"
 
     logger.debug(f"Redirecting user {user.uid} to {location}")
 
-    log_user_login(SBS_LOGIN, True, user, user.uid, None, None)
+    log_user_login(SBS_LOGIN, True, user, user.uid, None, None, status=status)
 
     return redirect(location)
 
 
+# This is the SAML redirect-url after step-up in surf secure ID
 @user_api.route("/acs", methods=["POST"], strict_slashes=False)
 def acs():
     logger = ctx_logger("acl")
@@ -401,7 +414,7 @@ def acs():
 
     if second_factor_confirmed:
         user.last_login_date = datetime.datetime.now()
-    return _redirect_to_client(cfg, second_factor_confirmed, user)
+    return redirect_to_client(cfg, second_factor_confirmed, user)
 
 
 def _redirect_with_error(logger, error_msg):

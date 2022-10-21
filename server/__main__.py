@@ -56,6 +56,7 @@ from server.api.user_token import user_token_api
 from server.cron.schedule import start_scheduling
 from server.db.db import db, db_migrations
 from server.db.redis import init_redis
+from server.logger.traceback_info_filter import TracebackInfoFilter
 from server.mqtt.mqtt import MqttClient
 from server.swagger.conf import init_swagger, swagger_specs
 from server.templates import invitation_role
@@ -74,11 +75,13 @@ def _init_logging(is_test):
                                            when="midnight", backupCount=30)
         handler.setFormatter(formatter)
         handler.setLevel(logging.INFO)
+        handler.addFilter(TracebackInfoFilter())
 
         debug_handler = TimedRotatingFileHandler(f"{os.path.dirname(os.path.realpath(__file__))}/../log/sbs_debug.log",
                                                  when="midnight", backupCount=30)
         debug_handler.setFormatter(formatter)
         debug_handler.setLevel(logging.DEBUG)
+        debug_handler.addFilter(TracebackInfoFilter(clear=False))
 
         logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
 

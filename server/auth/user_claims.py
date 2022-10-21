@@ -7,6 +7,7 @@ import unicodedata
 
 from flask import current_app
 
+from server.db.defaults import STATUS_SUSPENDED
 from server.db.domain import User, UserNameHistory
 
 claim_attribute_mapping_value = [
@@ -86,7 +87,8 @@ def user_memberships(user, connected_collaborations):
     memberships = set()
     now = datetime.datetime.utcnow()
     for collaboration in connected_collaborations:
-        if not collaboration.expiry_date or collaboration.expiry_date > now:
+        not_expired = not collaboration.expiry_date or collaboration.expiry_date > now
+        if not_expired and collaboration.status != STATUS_SUSPENDED:
             # add the CO itself, the Organisation this CO belongs to, and the groups within the CO
             org_short_name = collaboration.organisation.short_name
             coll_short_name = collaboration.short_name
