@@ -18,7 +18,7 @@ from onelogin.saml2.utils import OneLogin_Saml2_Utils
 from server.auth.mfa import ACR_VALUES
 from server.auth.secrets import secure_hash
 from server.db.db import db
-from server.db.defaults import STATUS_EXPIRED
+from server.db.defaults import STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, User, Organisation, Service, ServiceAup, UserToken, Invitation, \
     PamSSOSession
 from server.test.seed import seed, sarah_name
@@ -71,14 +71,28 @@ class AbstractTest(TestCase):
         return cls.query.filter(cls.name == name).first()
 
     @staticmethod
-    def expire_collaborations(user_name):
+    def change_collaboration(user_name, do_change):
         user = AbstractTest.find_entity_by_name(User, user_name)
         connected_collaborations = [cm.collaboration for cm in user.collaboration_memberships]
         for collaboration in connected_collaborations:
-            collaboration.expiry_date = datetime.datetime.utcnow() - datetime.timedelta(days=50)
+            do_change(collaboration)
             db.session.merge(collaboration)
             db.session.commit()
         return connected_collaborations
+
+    @staticmethod
+    def expire_collaborations(user_name):
+        def do_change(collaboration):
+            collaboration.expiry_date = datetime.datetime.utcnow() - datetime.timedelta(days=50)
+
+        return AbstractTest.change_collaboration(user_name, do_change)
+
+    @staticmethod
+    def suspend_collaborations(user_name):
+        def do_change(collaboration):
+            collaboration.status = STATUS_SUSPENDED
+
+        return AbstractTest.change_collaboration(user_name, do_change)
 
     @responses.activate
     def login(self, uid="urn:john", schac_home_organisation=None, user_info={}):
