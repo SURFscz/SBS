@@ -519,14 +519,14 @@ class ServiceOverview extends React.Component {
                 <CheckBox name="scim_provision_users"
                           value={service.scim_provision_users}
                           info={I18n.t("scim.scimProvisionUsers")}
-                          tooltip={I18n.t("scim.scimProvisionUsersToolTip")}
+                          tooltip={I18n.t("scim.scimProvisionUsersTooltip")}
                           onChange={this.changeServiceProperty("scim_provision_users", true)}
                           readOnly={!isAdmin || !service.scim_enabled}/>
 
                 <CheckBox name="scim_provision_groups"
                           value={service.scim_provision_groups}
                           info={I18n.t("scim.scimProvisionGroups")}
-                          tooltip={I18n.t("scim.scimProvisionGroupsToolTip")}
+                          tooltip={I18n.t("scim.scimProvisionGroupsTooltip")}
                           onChange={this.changeServiceProperty("scim_provision_groups", true)}
                           readOnly={!isAdmin || !service.scim_enabled}/>
 
