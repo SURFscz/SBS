@@ -158,6 +158,12 @@ class CollaborationMembership(Base, db.Model):
     def is_expired(self):
         return self.expiry_date and datetime.datetime.utcnow() > self.expiry_date
 
+    def is_active(self):
+        now = datetime.datetime.utcnow()
+        not_expired = not self.expiry_date or self.expiry_date > now
+        co_not_expired = not self.collaboration.expiry_date or self.collaboration.expiry_date > now
+        return not_expired and co_not_expired and not self.user.suspended
+
     def allowed_attr_view(self):
         return {
             "role": self.role,

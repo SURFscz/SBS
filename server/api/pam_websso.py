@@ -14,7 +14,7 @@ from server.auth.tokens import validate_service_token
 from server.db.db import db
 from server.db.defaults import PAM_WEB_LOGIN
 from server.db.domain import User, PamSSOSession
-from server.db.models import log_user_login
+from server.db.models import log_user_login, flatten
 from server.logger.context_logger import ctx_logger
 
 pam_websso_api = Blueprint("pam_weblogin_api", __name__, url_prefix="/pam-weblogin")
@@ -152,3 +152,22 @@ def check_pin():
 
     logger.debug(f"PamWebSSO check-pin for service {service.name} for user {user.uid} with result {validation}")
     return validation, 201
+
+
+@pam_websso_api.route("/ssh_keys", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def ssh_keys():
+    service = validate_service_token("pam_web_sso_enabled")
+
+    logger = ctx_logger("pam_weblogin")
+
+    co_memberships = flatten([co.collaboration_memberships for co in service.collaborations])
+    org_collaborations = flatten([org.collaborations for org in service.organisations])
+    all_memberships = co_memberships + flatten([co.collaboration_memberships for co in org_collaborations])
+    all_valid_memberships = [member for member in all_memberships if member.is_active()]
+    all_ssh_keys = flatten([member.user.ssh_keys for member in all_valid_memberships])
+    all_ssh_values = list(set([ssh_key.ssh_value for ssh_key in all_ssh_keys]))
+
+    logger.debug(f"Returning {len(all_ssh_values)} ssh_keys to service {service.name}")
+
+    return all_ssh_values, 200

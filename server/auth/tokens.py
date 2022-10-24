@@ -14,7 +14,7 @@ def get_authorization_header(is_external_api_url, ignore_missing_auth_header=Fal
     return hashed_secret
 
 
-def validate_service_token(attr_enabled):
+def validate_service_token(attr_enabled) -> Service:
     hashed_bearer_token = get_authorization_header(True)
     service = Service.query \
         .join(Service.service_tokens) \
