@@ -133,3 +133,9 @@ class TestPamWebSSO(AbstractTest):
                         with_basic_auth=False,
                         headers={"Authorization": f"bearer {service_storage_token}"})
         self.assertEqual("TIMEOUT", res["result"])
+
+    def test_ssh_keys(self):
+        res = self.get("/pam-weblogin/ssh_keys", with_basic_auth=False,
+                       headers={"Authorization": f"bearer {service_storage_token}"})
+        self.assertEqual(1, len(res))
+        self.assertEqual("some-lame-key", res[0])
