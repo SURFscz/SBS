@@ -304,7 +304,7 @@ I18n.translations.nl = {
             titleForOrgAdmin: "Samenwerkingen gemanaged door je organisatie",
             searchPlaceHolder: "Zoek samenwerkingen...",
             new: "Nieuwe samenwerking",
-            noEntities: "Er zijn nog geen samenwerkingen...",
+            noEntities: "Deze organisatie heeft geen samenwerkingen",
             newCollaborationRequest: "Nieuw verzoek voor samenwerking",
             name: "Naam",
             memberCount: "Leden",
