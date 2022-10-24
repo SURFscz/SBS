@@ -304,7 +304,7 @@ I18n.translations.en = {
             titleForOrgAdmin: "In collaborations managed by your organisation",
             searchPlaceHolder: "Search collaborations...",
             new: "New collaboration",
-            noEntities: "There are no collaborations yet...",
+            noEntities: "This organisation has no collaborations",
             newCollaborationRequest: "New request for collaboration",
             name: "Name",
             memberCount: "Members",
