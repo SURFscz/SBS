@@ -862,7 +862,7 @@ I18n.translations.en = {
         infoUri: "Website",
         infoUriPlaceholder: "The URL with information about this service",
         infoUriTooltip: "URL of a website with information about the service",
-        privacy_policy: "Privacy policy URL",
+        privacy_policy: "Privacy policy",
         privacy_policyPlaceholder: "The Private policy URL  of the service",
         privacy_policyTooltip: "A Privacy Policy is a legal requirement for all websites and apps that collect or use personal information from users.",
         accepted_user_policy: "Acceptable use policy URL",
@@ -948,7 +948,7 @@ I18n.translations.en = {
         },
         aup: {
             title: "Reset AUP",
-            confirmation: "Are you sure you want all users to accept the new AUP of {{name}}?",
+            confirmation: "Resetting the AUP will require all user of this service '{{name}}' to accept its AUP again. Do you want that?",
             flash: "Acceptance of the AUP for service {{name}} has been reset for all users"
         },
         contacts: "Contacts",
