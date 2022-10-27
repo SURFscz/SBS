@@ -44,10 +44,6 @@ class Aup extends React.Component {
         return (
             <div className="mod-aup">
                 <h1>{I18n.t("aup.hi", {name: currentUser.given_name || currentUser.name || currentUser.email || ""})}</h1>
-                <div className="disclaimer">
-                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("aup.info"))}}/>
-                </div>
-                <h2 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("aup.title"))}}/>
                 <p className="" dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("aup.disclaimer", {url: url}))}}/>
                 <div className="terms">
                     <CheckBox name="aup" value={agreed} info={I18n.t("aup.agreeWithTerms")}
