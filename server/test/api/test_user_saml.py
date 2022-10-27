@@ -1,7 +1,8 @@
 # -*- coding: future_fstrings -*-
 from urllib.parse import urlencode
 
-from server.api.user_saml import SERVICE_UNKNOWN, USER_UNKNOWN, SERVICE_NOT_CONNECTED, SECOND_FA_REQUIRED
+from server.api.user_saml import SERVICE_UNKNOWN, USER_UNKNOWN, SERVICE_NOT_CONNECTED, SECOND_FA_REQUIRED, \
+    status_to_string
 from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED
 from server.db.domain import Collaboration, Service, User, UserLogin
@@ -310,3 +311,6 @@ class TestUserSaml(AbstractTest):
         status = res["status"]
         self.assertEqual(4, status["error_status"])
         self.assertEqual("unauthorized", status["result"])
+
+    def test_status_to_string(self):
+        self.assertEqual("UNKNOWN_STATUS", status_to_string("nope"))

@@ -158,6 +158,12 @@ class CollaborationMembership(Base, db.Model):
     def is_expired(self):
         return self.expiry_date and datetime.datetime.utcnow() > self.expiry_date
 
+    def is_active(self):
+        now = datetime.datetime.utcnow()
+        not_expired = not self.expiry_date or self.expiry_date > now
+        co_not_expired = not self.collaboration.expiry_date or self.collaboration.expiry_date > now
+        return not_expired and co_not_expired and not self.user.suspended
+
     def allowed_attr_view(self):
         return {
             "role": self.role,
@@ -442,6 +448,11 @@ class Service(Base, db.Model, LogoMixin):
     service_tokens = db.relationship("ServiceToken", back_populates="service",
                                      cascade="delete, delete-orphan",
                                      passive_deletes=True)
+    scim_enabled = db.Column("scim_enabled", db.Boolean(), nullable=True, default=False)
+    scim_url = db.Column("scim_url", db.String(length=255), nullable=True)
+    scim_bearer_token = db.Column("scim_bearer_token", db.String(length=512), nullable=True)
+    scim_provision_users = db.Column("scim_provision_users", db.Boolean(), nullable=True, default=False)
+    scim_provision_groups = db.Column("scim_provision_groups", db.Boolean(), nullable=True, default=False)
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
@@ -748,6 +759,7 @@ class UserLogin(Base, db.Model):
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     user = db.relationship("User")
     user_uid = db.Column("user_uid", db.String(length=512), nullable=True)
+    status = db.Column("status", db.String(length=255), nullable=True)
     service_id = db.Column(db.Integer(), db.ForeignKey("services.id", ondelete="SET NULL"), nullable=True)
     service = db.relationship("Service")
     service_entity_id = db.Column("service_entity_id", db.String(length=512), nullable=True)

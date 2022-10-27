@@ -14,7 +14,7 @@ from server.auth.tokens import validate_service_token
 from server.db.db import db
 from server.db.defaults import PAM_WEB_LOGIN
 from server.db.domain import User, PamSSOSession
-from server.db.models import log_user_login
+from server.db.models import log_user_login, flatten
 from server.logger.context_logger import ctx_logger
 
 pam_websso_api = Blueprint("pam_weblogin_api", __name__, url_prefix="/pam-weblogin")
@@ -80,7 +80,7 @@ def start():
 
     user = User.query.filter_by(**filters).first()
     if not user:
-        log_user_login(PAM_WEB_LOGIN, False, None, user_id, service, service.entity_id)
+        log_user_login(PAM_WEB_LOGIN, False, None, user_id, service, service.entity_id, status="User not found")
 
         logger.debug(f"PamWebSSO access to service {service.name} denied (user not found): {data}")
         raise NotFound(f"User {filters} not found")
@@ -88,7 +88,7 @@ def start():
     # The user validations expect a logged in user
     session["user"] = {"id": user.id, "admin": False}
     if not user_service(service.id, False):
-        log_user_login(PAM_WEB_LOGIN, False, user, user.uid, service, service.entity_id)
+        log_user_login(PAM_WEB_LOGIN, False, user, user.uid, service, service.entity_id, status="No access to service")
 
         logger.debug(f"PamWebSSO access to service {service.name} denied (no CO access): {data}")
         raise NotFound(f"User {filters} access denied")
@@ -100,7 +100,7 @@ def start():
     pam_last_login_date = user.pam_last_login_date
     seconds_ago = datetime.now() - timedelta(hours=0, minutes=0, seconds=cache_duration)
     if pam_last_login_date and pam_last_login_date > seconds_ago:
-        log_user_login(PAM_WEB_LOGIN, True, user, user.uid, service, service.entity_id)
+        log_user_login(PAM_WEB_LOGIN, True, user, user.uid, service, service.entity_id, status="Cached login")
 
         logger.debug(f"PamWebSSO user {user.uid} SSO results")
         return {"result": "OK", "cached": True,
@@ -148,7 +148,26 @@ def check_pin():
             db.session.merge(collaboration)
         db.session.commit()
 
-    log_user_login(PAM_WEB_LOGIN, success, user, user.uid, service, service.entity_id)
+    log_user_login(PAM_WEB_LOGIN, success, user, user.uid, service, service.entity_id, status=validation["result"])
 
     logger.debug(f"PamWebSSO check-pin for service {service.name} for user {user.uid} with result {validation}")
     return validation, 201
+
+
+@pam_websso_api.route("/ssh_keys", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def ssh_keys():
+    service = validate_service_token("pam_web_sso_enabled")
+
+    logger = ctx_logger("pam_weblogin")
+
+    co_memberships = flatten([co.collaboration_memberships for co in service.collaborations])
+    org_collaborations = flatten([org.collaborations for org in service.organisations])
+    all_memberships = co_memberships + flatten([co.collaboration_memberships for co in org_collaborations])
+    all_valid_memberships = [member for member in all_memberships if member.is_active()]
+    all_ssh_keys = flatten([member.user.ssh_keys for member in all_valid_memberships])
+    all_ssh_values = list(set([ssh_key.ssh_value for ssh_key in all_ssh_keys]))
+
+    logger.debug(f"Returning {len(all_ssh_values)} ssh_keys to service {service.name}")
+
+    return all_ssh_values, 200

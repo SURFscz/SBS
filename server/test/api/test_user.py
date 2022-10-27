@@ -464,16 +464,26 @@ class TestUser(AbstractTest):
         self.assertEqual(2, len(sarah.user_ip_networks))
 
     def test_login_with_ssid_required(self):
+        self.mark_user_ssid_required(name=sarah_name, home_organisation_uid="admin", schac_home_organisation="ssid.org")
+
+        self.login("urn:sarah", schac_home_organisation="ssid.org")
+
+        user = self.client.get("/api/users/me").json
+
+        self.assertEqual(user["guest"], True)
+        self.assertEqual(user["admin"], False)
+
+    def test_login_with_ssid_required_missing_attributes(self):
         self.mark_user_ssid_required()
 
         self.login("urn:sarah", schac_home_organisation="ssid.org")
 
         user = self.client.get("/api/users/me").json
-        self.assertEqual(user["guest"], True)
-        self.assertEqual(user["admin"], False)
+        self.assertFalse(user["second_factor_auth"])
+        self.assertFalse(user["second_factor_confirmed"])
 
     def test_acs(self):
-        self.mark_user_ssid_required()
+        self.mark_user_ssid_required(name=sarah_name, home_organisation_uid="admin", schac_home_organisation="ssid.org")
         self.login("urn:sarah", schac_home_organisation="ssid.org")
 
         xml_authn_b64 = self.get_authn_response("response.ok.xml")
@@ -501,7 +511,7 @@ class TestUser(AbstractTest):
         self.assertEqual("http://localhost:3000/error", res.location)
 
     def test_acs_error_saml_error(self):
-        self.mark_user_ssid_required()
+        self.mark_user_ssid_required(name=sarah_name, home_organisation_uid="admin", schac_home_organisation="ssid.org")
         self.login("urn:sarah", schac_home_organisation="ssid.org")
 
         xml_authn_b64 = self.get_authn_response("response.no_authn.xml")
