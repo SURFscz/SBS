@@ -855,12 +855,12 @@ I18n.translations.en = {
         identity_type: "Identity type",
         identity_typePlaceholder: "The identity type of the service",
         identity_typeTooltip: "The primary way of identification for this service",
-        uri: "Service login URL",
-        uriPlaceholder: "The URL where user login to the service",
+        uri: "Login URL",
+        uriPlaceholder: "The URL where users login to the service",
         uriTooltip: "URL where users can login to your service, displayed prominently to collaboration members.<br/><br/>" +
             "These variables will be replaced with the appropriate values: <em>{CO_short_name}</em> and <em>{username}</em>.",
-        infoUri: "Service website",
-        infoUriPlaceholder: "The URL of information about this service",
+        infoUri: "Website",
+        infoUriPlaceholder: "The URL with information about this service",
         infoUriTooltip: "URL of a website with information about the service",
         privacy_policy: "Privacy policy URL",
         privacy_policyPlaceholder: "The Private policy URL  of the service",
@@ -2025,7 +2025,7 @@ I18n.translations.en = {
             tokens: "Tokens",
             pamWebLogin: "PAM web login"
         },
-        updateDisabled: "You can't update the Service. First correct the errors in the following sections: {{invalid}}"
+        updateDisabled: "Some fields have invalid or are missing values in the sections {{invalid}}."
     }
 };
 

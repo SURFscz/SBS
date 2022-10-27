@@ -855,11 +855,11 @@ I18n.translations.nl = {
         identity_type: "Identiteitsoort",
         identity_typePlaceholder: "De identiteitsoort van een dienst",
         identity_typeTooltip: "De primaire manier om bij deze deze dienst te identificeren.",
-        uri: "Aanmeld-URL van de dienst",
-        uriPlaceholder: "De URL waar gebruiker zich aanmelden",
+        uri: "Inlog-URL",
+        uriPlaceholder: "De URL waar gebruikers inloggen",
         uriTooltip: "URL waarop gebruikers zich dienen aan te melden bij de dienst. Wordt duidelijk getoond aan leden van samenwerkingen.<br/><br/>" +
             "Deze variabelen worden vervangen door de corresponderende waarden: <em>{CO_short_name}</em> en <em>{username}</em>.",
-        infoUri: "Website dienst",
+        infoUri: "Website",
         infoUriPlaceholder: "De URL met informatie over deze dienst",
         infoUriTooltip: "URL van een website met informatie over deze dienst",
         privacy_policy: "Privacybeleid URL",
@@ -917,7 +917,7 @@ I18n.translations.nl = {
         },
         statusPlaceholder: "De status van de dienst",
         alreadyExists: "Een dienst met {{attribute}} {{value}} bestaat al.",
-        required: "De dienst heeft {{attribute}} nodig.",
+        required: "De dienst heeft een {{attribute}} nodig.",
         deleteConfirmation: "Weet je zeker dat je dienst {{name}} wil verwijderen? Dit kan niet teruggedraaid worden.",
         add: "Aanmaken",
         update: "Opslaan",
@@ -2025,7 +2025,7 @@ I18n.translations.nl = {
             tokens: "Tokens",
             pamWebLogin: "PAM web login"
         },
-        updateDisabled: "Je kan de dienst niet opslaan. Corrigeer eerst de fouten in de volgende secties: {{invalid}}"
+        updateDisabled: "Er zijn velden met ongeldige of ontbrekende waarden in de secties {{invalid}}."
     }
 };
 
