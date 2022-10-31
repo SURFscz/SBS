@@ -10,10 +10,7 @@ export default function ApiKeysExplanation() {
             <section key={2} className="details">
                 The value of the API key must be placed in the authorization header of the HTTP calls performed against the API:
             </section>,
-            < section key={3} className="example">
-                <code>curl -H "Authorization: bearer $api_key_value" "https://sram.surf.nl/api/collaborations/v1"</code>
-            </section>,
-            <section key={4} className="details">
+            <section key={3} className="details">
                 Refer to the <a target="_blank" rel="noreferrer" href="https://edu.nl/rxeb6">documentation</a> for details.
             </section>
         ];
@@ -25,10 +22,7 @@ export default function ApiKeysExplanation() {
             <section key={2} className="details">
                 De waarde van de API-sleutel moet als authorization header van de HTTP-aanroep van de API gebruikt worden:
             </section>,
-            < section key={3} className="example">
-                <code>curl -H "Authorization: bearer $api_key_value" "https://sram.surf.nl/api/collaborations/v1"</code>
-            </section>,
-            <section key={4} className="details">
+            <section key={3} className="details">
                 Zie de <a target="_blank" rel="noreferrer" href="https://edu.nl/rxeb6">documentation</a> voor details.
             </section>
         ]
