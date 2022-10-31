@@ -313,6 +313,7 @@ I18n.translations.en = {
             group: "Group {{name}} ({{count}})",
             hideInvites: "Hide invitations",
             noCollaborations: "There are no collaborations yet within your organisation. Why don't you create the first one?",
+            allLabels: "All labels",
         },
         serviceOrganisations: {
             searchPlaceHolder: "Search for organisations",
