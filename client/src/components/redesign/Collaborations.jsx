@@ -83,7 +83,7 @@ export default class Collaborations extends React.PureComponent {
             return [{}];
         }
         const filterOptions = [{
-            label: I18n.t("collaborationRequest.statuses.all", {nbr: collaborations.length}),
+            label: I18n.t("models.collaborations.allLabels", {nbr: collaborations.length}),
             value: allValue
         }];
         const tagOptions = collaborations.reduce((acc, coll) => {
