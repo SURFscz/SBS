@@ -2007,7 +2007,7 @@ I18n.translations.nl = {
         proceed: "Login",
         enterPin: "Je verificatiecode",
         enterPinInfo: "Voer de code in op de command line interface van {{service}}.",
-        afterPin: "Na het invoeren van de code kan dit scherm worden gesloten.",
+        afterPin: "Na het invoeren van de code kun je dit scherm sluiten.",
         denied: "Toegang geweigerd",
         deniedInfo: "Helaas heb je geen toegang tot de deze dienst.",
         contact: "Neem contact op met <a href='mailto:{{support}}'>{{support}}</a> voor toegang tot deze dienst."
