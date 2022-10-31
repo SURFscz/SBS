@@ -313,6 +313,7 @@ I18n.translations.nl = {
             group: "Groep {{name}} ({{count}})",
             hideInvites: "Verberg uitnodigingen",
             noCollaborations: "Er zijn nog geen samenwerkingen in deze organisatie. Zullen we er een aanmaken?",
+            allLabels: "Alle labels",
         },
         serviceOrganisations: {
             searchPlaceHolder: "Zoek organisaties",
