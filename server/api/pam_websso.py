@@ -121,7 +121,7 @@ def start():
     return {"result": "OK",
             "session_id": pam_sso_session.session_id,
             "challenge": f"Please sign in to: {current_app.app_config.base_url}/"
-                         f"pam-weblogin/{service.abbreviation}/{pam_sso_session.session_id}",
+                         f"weblogin/{service.abbreviation}/{pam_sso_session.session_id}",
             "cached": False}, 201
 
 
