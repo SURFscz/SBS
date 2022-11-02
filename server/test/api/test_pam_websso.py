@@ -53,7 +53,21 @@ class TestPamWebSSO(AbstractTest):
         self.assertEqual(res["result"], "OK")
         self.assertEqual(res["cached"], False)
         self.assertEqual(res["challenge"],
-                         f"Please sign in to: {self.app.app_config.base_url}/weblogin/storage/{res['session_id']}")
+                         f"Please sign in to: {self.app.app_config.base_url}/pam-weblogin/storage/{res['session_id']}")
+
+        res = self.get(f"/pam-weblogin/storage/{res['session_id']}", with_basic_auth=False)
+        self.assertEqual(res["service"]["name"], service_storage_name)
+
+    def test_start_without_user(self):
+        res = self.post("/pam-weblogin/start",
+                        body={"cache_duration": 5 * 60},
+                        with_basic_auth=False,
+                        headers={"Authorization": f"bearer {service_storage_token}"})
+
+        self.assertEqual(res["result"], "OK")
+        self.assertEqual(res["cached"], False)
+        self.assertEqual(res["challenge"],
+                         f"Please sign in to: {self.app.app_config.base_url}/pam-weblogin/storage/{res['session_id']}")
 
         res = self.get(f"/pam-weblogin/storage/{res['session_id']}", with_basic_auth=False)
         self.assertEqual(res["service"]["name"], service_storage_name)
@@ -100,6 +114,7 @@ class TestPamWebSSO(AbstractTest):
                         with_basic_auth=False,
                         headers={"Authorization": f"bearer {service_storage_token}"})
         self.assertEqual("SUCCESS", res["result"])
+        self.assertEqual("peter", res["username"])
         # The session must be removed
         self.get(f"/pam-weblogin/{pam_session_id}", with_basic_auth=False, response_status_code=404)
         peter = self.find_entity_by_name(User, "urn:peter")
@@ -139,3 +154,24 @@ class TestPamWebSSO(AbstractTest):
                        headers={"Authorization": f"bearer {service_storage_token}"})
         self.assertEqual(1, len(res))
         self.assertEqual("some-lame-key", res[0])
+
+    def test_anonymous_pam_websso_login_flow(self):
+        res = self.post("/pam-weblogin/start",
+                        body={},
+                        with_basic_auth=False,
+                        headers={"Authorization": f"bearer {service_storage_token}"})
+        pam_session_id = res["session_id"]
+        self.assertEqual(res["result"], "OK")
+
+        self.login("urn:peter")
+        res = self.get(f"/pam-weblogin/storage/{pam_session_id}", with_basic_auth=False)
+        pin = res["pin"]
+        self.assertEqual(res["service"]["name"], service_storage_name)
+
+        res = self.post("/pam-weblogin/check-pin",
+                        body={"session_id": pam_session_id,
+                              "pin": pin},
+                        with_basic_auth=False,
+                        headers={"Authorization": f"bearer {service_storage_token}"})
+        self.assertEqual("SUCCESS", res["result"])
+        self.assertEqual("peter", res["username"])
