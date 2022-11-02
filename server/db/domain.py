@@ -741,7 +741,7 @@ class PamSSOSession(Base, db.Model):
     session_id = db.Column("session_id", db.String(length=255), nullable=True)
     attribute = db.Column("attribute", db.String(length=255), nullable=True)
     pin = db.Column("pin", db.String(length=255), nullable=True)
-    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"), nullable=True)
     user = db.relationship("User")
     service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
     service = db.relationship("Service")
