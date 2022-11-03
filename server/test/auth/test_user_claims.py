@@ -17,6 +17,7 @@ class TestUserClaims(AbstractTest):
         user = User()
         add_user_claims({}, "urn:johny", user)
         self.assertEqual("urn:johny", user.name)
+        self.assertIsNotNone(user.external_id)
 
     def test_add_user_claims_affiliation(self):
         user = User()

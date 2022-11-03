@@ -21,6 +21,7 @@ class User(Base, db.Model):
     __tablename__ = "users"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     uid = db.Column("uid", db.String(length=512), nullable=False)
+    external_id = db.Column("external_id", db.String(length=255), nullable=False)
     name = db.Column("name", db.String(length=255), nullable=True)
     username = db.Column("username", db.String(length=255), nullable=True)
     nick_name = db.Column("nick_name", db.String(length=255), nullable=True)
@@ -460,6 +461,12 @@ class Service(Base, db.Model, LogoMixin):
 
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.service_memberships))) > 0
+
+    def provision_scim_users(self):
+        return self.scim_enabled and self.scim_url and self.scim_provision_users
+
+    def provision_scim_groups(self):
+        return self.scim_enabled and self.scim_url and self.scim_provision_groups
 
 
 class ServiceInvitation(Base, db.Model):

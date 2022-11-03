@@ -115,6 +115,8 @@ def persist_instance(db, *objs):
                 setattr(obj, attr, "urn:admin")
         if isinstance(obj, User):
             aup = Aup(au_version="1", user=obj)
+            if not getattr(obj, "external_id"):
+                setattr(obj, "external_id", str(uuid.uuid4()))
             db.session.add(aup)
         db.session.add(obj)
 

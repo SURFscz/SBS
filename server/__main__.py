@@ -53,6 +53,7 @@ from server.api.user_saml import user_saml_api
 from server.api.user_token import user_token_api
 from server.cron.schedule import start_scheduling
 from server.db.db import db, db_migrations
+from server.db.executor import init_executor
 from server.db.redis import init_redis
 from server.logger.traceback_info_filter import TracebackInfoFilter
 from server.mqtt.mqtt import MqttClient
@@ -151,6 +152,7 @@ db.init_app(app)
 app.db = db
 
 app.redis_client = init_redis(config)
+app.executor = init_executor(app)
 
 app.app_config = config
 app.app_config["profile"] = profile
