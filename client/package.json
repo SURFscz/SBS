@@ -46,6 +46,9 @@
         "react-scripts": "^5.0.1",
         "sass": "^1.54.4"
     },
+    "resolutions": {
+        "minimatch": "^5.1.0"
+    },
     "scripts": {
         "start": "DANGEROUSLY_DISABLE_HOST_CHECK=true GENERATE_SOURCEMAP=false HOST=localhost react-scripts start",
         "build": "DANGEROUSLY_DISABLE_HOST_CHECK=true GENERATE_SOURCEMAP=false react-scripts build",
