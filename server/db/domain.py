@@ -86,7 +86,6 @@ class User(Base, db.Model):
             "affiliation": self.affiliation,
             "scoped_affiliation": self.scoped_affiliation,
             "eduperson_principal_name": self.eduperson_principal_name,
-
         }
         if include_details:
             result["collaboration_memberships"] = [cm.allowed_attr_view() for cm in
