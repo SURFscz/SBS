@@ -286,7 +286,9 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     cloud = Service(entity_id=service_cloud_entity_id, name=service_cloud_name, description="SARA Cloud Service",
                     public_visible=True, automatic_connection_allowed=True, logo=read_image("cloud.jpg"),
                     allowed_organisations=[uuc, uva], abbreviation="cloud", privacy_policy="https://privacy.org",
-                    token_enabled=True, token_validity_days=1, security_email="sec@org.nl")
+                    token_enabled=True, token_validity_days=1, security_email="sec@org.nl",
+                    scim_enabled=True, scim_url="http://localhost:9002", scim_bearer_token="secret",
+                    scim_provision_users=True, scim_provision_groups=True)
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, uva],
                       description="SURF Storage Service", logo=read_image("storage.jpeg"), abbreviation="storage",
                       public_visible=True, automatic_connection_allowed=True, white_listed=True,

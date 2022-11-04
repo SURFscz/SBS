@@ -65,7 +65,7 @@ class TestUserClaims(AbstractTest):
         # we don't want this in the normal seed
         for username in ["jdoe", "jdoe2", "cdoemanchi", "cdoemanchi2", "cdoemanchi3", "u", "u2"]:
             db.session.merge(User(uid=str(uuid.uuid4()), username=username, created_by="test", updated_by="test",
-                                  name="name"))
+                                  name="name", external_id=str(uuid.uuid4())))
         db.session.merge(UserNameHistory(username="jdoe3"))
         db.session.commit()
         names = [("John2", "Doe,"), ("Cinderella!", "Doemanchinice"), (None, "髙橋 大"), ("påré", "ÄÄ")]

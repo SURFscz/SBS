@@ -70,7 +70,7 @@ def _perform_sram_login(uid, service, service_entity_id, home_organisation_uid, 
     user = User.query.filter(User.uid == uid).first()
     if not user:
         logger.debug("Creating new user in sram_login")
-        user = User(uid=uid, created_by="system", updated_by="system")
+        user = User(uid=uid, external_id=str(uuid.uuid4()), created_by="system", updated_by="system")
 
     if home_organisation_uid:
         user.home_organisation_uid = home_organisation_uid

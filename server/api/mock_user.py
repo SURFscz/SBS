@@ -1,6 +1,7 @@
 # -*- coding: future_fstrings -*-
 import datetime
 import os
+import uuid
 
 from flask import Blueprint
 from flask import request as current_request, session
@@ -24,7 +25,8 @@ def login_user():
 
     data = current_request.get_json()
     sub = data["sub"]  # oidc sub maps to sbs uid - see user_claims
-    user = User.query.filter(User.uid == sub).first() or User(created_by="system", updated_by="system")
+    user = User.query.filter(User.uid == sub).first() or User(created_by="system", updated_by="system",
+                                                              external_id=str(uuid.uuid4()))
     user.last_login_date = datetime.datetime.now()
     add_user_claims(data, sub, user, replace_none_values=False)
     db.session.merge(user)
