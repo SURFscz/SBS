@@ -35,8 +35,9 @@ def _has_user_service_access(user: User, service: Service, collaboration_to_excl
 def _provision_user(scim_object, service: Service, user: User):
     scim_dict = update_user_template(user, scim_object["id"]) if scim_object else create_user_template(user)
     request_method = requests.put if scim_object else requests.post
-    return request_method(f"{service.scim_url}/{scim_object['meta']['location']}",
-                          json=scim_dict,
+    postfix = scim_object['meta']['location'] if scim_object else "/Users"
+    url = f"{service.scim_url}{postfix}"
+    return request_method(url, json=scim_dict,
                           headers={"Bearer": service.scim_bearer_token,
                                    "Accept": "application/json, application/json;charset=UTF-8"})
 
@@ -87,9 +88,9 @@ def _lookup_scim_object(service: Service, scim_type: str, external_id: str):
     if not service.provision_scim_users() and not service.provision_scim_groups():
         return None
     query_filter = f"filter=externalId eq \"{external_id}\""
-    response = requests.get(f"{service.scim_url}/{scim_type}?{urllib.parse.quote(query_filter)}",
-                            headers={"Bearer": service.scim_bearer_token,
-                                     "Accept": "application/json, application/json;charset=UTF-8"})
+    url = f"{service.scim_url}/{scim_type}?{urllib.parse.quote(query_filter)}"
+    response = requests.get(url, headers={"Bearer": service.scim_bearer_token,
+                                          "Accept": "application/json, application/json;charset=UTF-8"})
     scim_json = response.json()
     if response.status_code > 204:
         _log_scim_error(response, service)
@@ -98,12 +99,13 @@ def _lookup_scim_object(service: Service, scim_type: str, external_id: str):
     return None if scim_json["totalResults"] == 0 else scim_json["Resources"][0]
 
 
-# User has been create, updated or deleted. Propagate the changes to the remote SCIM DB to all connected SCIM services
+# User has been created, updated or deleted. Propagate the changes to the remote SCIM DB to all connected SCIM services
 def apply_user_change(user: User, deletion=False):
     # We need all services that are accessible for this user
     collaborations = [member.collaboration for member in user.collaboration_memberships if member.is_active]
     organisations = [co.organisation for co in collaborations]
-    services = _unique_scim_services([co.services for co in collaborations] + [org.services for org in organisations])
+    all_services = flatten([co.services for co in collaborations]) + flatten([org.services for org in organisations])
+    services = _unique_scim_services(all_services)
     for service in services:
         scim_object = _lookup_scim_object(service, SCIM_USERS, user.external_id)
         # No use to delete the user if the user is unknown in the remote system
@@ -116,7 +118,7 @@ def apply_user_change(user: User, deletion=False):
             _log_scim_error(response, service)
 
 
-# Group or collaboration has been create, updated or deleted. Propagate the changes to the remote SCIM DB
+# Group or collaboration has been created, updated or deleted. Propagate the changes to the remote SCIM DB's
 def apply_group_change(group: Union[Group, Collaboration], deletion=False):
     if isinstance(group, Group):
         services = group.collaboration.services + group.collaboration.organisation.services
