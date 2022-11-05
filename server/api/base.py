@@ -36,7 +36,7 @@ def auth_filter(app_config):
     url_path = urlparse(url).path
     is_whitelisted_url = False
 
-    if url_path in white_listing or url_path.startswith("/pam-weblogin"):
+    if url_path in white_listing or url_path.startswith("/pam-weblogin") or url_path.startswith("/api/scim"):
         is_whitelisted_url = True
         session["destination_url"] = url
 

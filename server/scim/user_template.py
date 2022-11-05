@@ -2,13 +2,15 @@
 
 from server.db.domain import User
 
+external_id_post_fix = "@sram.surf.nl"
+
 
 def create_user_template(user: User):
     return {
         "schemas": [
             "urn:scim:schemas:core:1.0"
         ],
-        "externalId": f"{user.external_id}@@sram.surf.nl",
+        "externalId": f"{user.external_id}{external_id_post_fix}",
         "userName": user.username,
         "name": {
             "givenName": user.given_name,
