@@ -19,9 +19,9 @@ class TestScim(AbstractTest):
         user_created = json.loads(read_file("test/scim/user_created.json"))
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:9002/Users",
-                          json=no_user_found, status=200)
+                     json=no_user_found, status=200)
             rsps.add(responses.POST, "http://localhost:9002/Users",
-                          json=user_created, status=201)
+                     json=user_created, status=201)
             apply_user_change(sarah)
 
     @responses.activate
@@ -31,7 +31,7 @@ class TestScim(AbstractTest):
         user_updated = json.loads(read_file("test/scim/user_created.json"))
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:9002/Users",
-                          json=user_found, status=200)
+                     json=user_found, status=200)
             rsps.add(responses.PUT, "http://localhost:9002/Users/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
-                          json=user_updated, status=201)
+                     json=user_updated, status=201)
             apply_user_change(sarah)

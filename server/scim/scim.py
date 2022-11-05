@@ -64,7 +64,7 @@ def _membership_user_scim_identifiers(service: Service, group: Union[Group, Coll
         user = member.user
         scim_object = _lookup_scim_object(service, SCIM_USERS, user.external_id)
         if not scim_object:
-            # We need to provision this user first as it is unknow in the remote SCIM DB
+            # We need to provision this user first as it is unknown in the remote SCIM DB
             response = _provision_user(scim_object, service, user)
             if response.status_code > 204:
                 _log_scim_error(response, service)
@@ -78,7 +78,7 @@ def _membership_user_scim_identifiers(service: Service, group: Union[Group, Coll
 
 def _log_scim_error(response, service):
     logger = ctx_logger("scim")
-    is_json = "application/json" in response.headers.get("Content-Type", "").lower()
+    is_json = "json" in response.headers.get("Content-Type", "").lower()
     scim_json = response.json() if is_json else {}
     logger.error(f"Scim endpoint {service.scim_url} returned an error: {scim_json}")
 

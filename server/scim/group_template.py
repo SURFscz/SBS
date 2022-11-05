@@ -2,6 +2,7 @@
 from typing import Union
 
 from server.db.domain import Group, Collaboration
+from server.scim.user_template import external_id_post_fix
 
 
 def create_group_template(group: Union[Group, Collaboration], membership_user_scim_identifiers):
@@ -9,7 +10,7 @@ def create_group_template(group: Union[Group, Collaboration], membership_user_sc
         "schemas": [
             "urn:scim:schemas:core:1.0"
         ],
-        "externalId": f"{group.identifier}@@sram.surf.nl",
+        "externalId": f"{group.identifier}{external_id_post_fix}",
         "name": group.global_urn,
         "displayName": group.name,
         "members": [{"value": scim_id} for scim_id in membership_user_scim_identifiers]
