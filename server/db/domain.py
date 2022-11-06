@@ -44,6 +44,8 @@ class User(Base, db.Model):
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
+    updated_at = db.Column("updated_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
     organisation_memberships = db.relationship("OrganisationMembership", back_populates="user",
                                                cascade_backrefs=False, passive_deletes=True)
     collaboration_memberships = db.relationship("CollaborationMembership", back_populates="user",
@@ -248,6 +250,8 @@ class Collaboration(Base, db.Model, LogoMixin):
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
+    updated_at = db.Column("updated_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
     services = db.relationship("Service", secondary=services_collaborations_association, lazy="select",
                                back_populates="collaborations")
@@ -505,6 +509,8 @@ class Group(Base, db.Model):
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
+    updated_at = db.Column("updated_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
     def is_member(self, user_id):
