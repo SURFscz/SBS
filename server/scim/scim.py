@@ -15,19 +15,19 @@ SCIM_GROUPS = "Groups"
 
 
 # Remove duplicates from services
-def _unique_scim_services(services: List[Service]):
+def _unique_scim_services(services: List[Service], provision_enabled_method):
     seen = set()
     return [service for service in services if
-            service.id not in seen and not seen.add(service.id) and service.provision_scim_users()]
+            service.id not in seen and not seen.add(service.id) and getattr(service, provision_enabled_method)()]
 
 
 # Is the user connected - through memberships excluding collaboration_to_exclude - to the service
 def _has_user_service_access(user: User, service: Service, collaboration_to_exclude: Collaboration):
     collaborations = [member.collaboration for member in user.collaboration_memberships if
-                      member.collaboration.identifier != collaboration_to_exclude.identifier]
+                      member.collaboration.identifier != collaboration_to_exclude.identifier and member.is_active()]
     collaboration_services = flatten([coll.services for coll in collaborations])
     organisation_services = flatten([coll.organisation.services for coll in collaborations])
-    services = _unique_scim_services(collaboration_services + organisation_services)
+    services = _unique_scim_services(collaboration_services + organisation_services, "provision_scim_users")
     return service in services
 
 
@@ -44,20 +44,21 @@ def _provision_user(scim_object, service: Service, user: User):
 
 # If the group / collaboration is known in the remote SCIM then update the group else provision the group
 def _provision_group(scim_object, service: Service, group: Union[Group, Collaboration]):
-    membership_identifiers = _membership_user_scim_identifiers(service, group)
+    membership_identifiers = membership_user_scim_identifiers(service, group)
     if scim_object:
         scim_dict = update_group_template(group, membership_identifiers, scim_object["id"])
     else:
         scim_dict = create_group_template(group, membership_identifiers)
     request_method = requests.put if scim_object else requests.post
-    return request_method(f"{service.scim_url}/{scim_object['meta']['location']}",
-                          json=scim_dict,
+    postfix = scim_object['meta']['location'] if scim_object else "/Groups"
+    url = f"{service.scim_url}{postfix}"
+    return request_method(url, json=scim_dict,
                           headers={"Bearer": service.scim_bearer_token,
                                    "Accept": "application/json, application/json;charset=UTF-8"})
 
 
 # Get all external identifiers of the members of the group / collaboration and provision new ones
-def _membership_user_scim_identifiers(service: Service, group: Union[Group, Collaboration]):
+def membership_user_scim_identifiers(service: Service, group: Union[Group, Collaboration]):
     members = [member for member in group.collaboration_memberships if member.is_active]
     result = []
     for member in members:
@@ -105,12 +106,12 @@ def apply_user_change(user: User, deletion=False):
     collaborations = [member.collaboration for member in user.collaboration_memberships if member.is_active]
     organisations = [co.organisation for co in collaborations]
     all_services = flatten([co.services for co in collaborations]) + flatten([org.services for org in organisations])
-    services = _unique_scim_services(all_services)
+    services = _unique_scim_services(all_services, "provision_scim_users")
     for service in services:
         scim_object = _lookup_scim_object(service, SCIM_USERS, user.external_id)
         # No use to delete the user if the user is unknown in the remote system
         if deletion and scim_object:
-            response = requests.delete(f"{service.scim_url}/{scim_object['meta']['location']}",
+            response = requests.delete(f"{service.scim_url}{scim_object['meta']['location']}",
                                        headers={"Bearer": service.scim_bearer_token})
         else:
             response = _provision_user(scim_object, service, user)
@@ -124,11 +125,11 @@ def apply_group_change(group: Union[Group, Collaboration], deletion=False):
         services = group.collaboration.services + group.collaboration.organisation.services
     else:
         services = group.services + group.organisation.services
-    for service in _unique_scim_services(services):
+    for service in _unique_scim_services(services, "provision_scim_groups"):
         scim_object = _lookup_scim_object(service, SCIM_GROUPS, group.identifier)
         # No use to delete the group if the group is unknown in the remote system
         if deletion and scim_object:
-            response = requests.delete(f"{service.scim_url}/{scim_object['meta']['location']}",
+            response = requests.delete(f"{service.scim_url}{scim_object['meta']['location']}",
                                        headers={"Bearer": service.scim_bearer_token})
             if isinstance(group, Collaboration):
                 for user in [member.user for member in group.collaboration_memberships]:
