@@ -1,14 +1,9 @@
 # -*- coding: future_fstrings -*-
-import json
 
-import responses
-
-from server.db.domain import User, Collaboration, Service
+from server.db.domain import Service
 from server.scim.counter import atomic_increment_counter_value
-from server.scim.scim import apply_user_change, apply_group_change
 from server.test.abstract_test import AbstractTest
-from server.test.seed import sarah_name, uva_research_name, service_cloud_name
-from server.tools import read_file
+from server.test.seed import service_cloud_name
 
 
 class TestCounter(AbstractTest):
