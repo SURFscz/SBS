@@ -20,7 +20,7 @@ from server.auth.secrets import secure_hash
 from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, User, Organisation, Service, ServiceAup, UserToken, Invitation, \
-    PamSSOSession
+    PamSSOSession, Group
 from server.test.seed import seed, sarah_name
 from server.tools import read_file
 
@@ -260,3 +260,10 @@ class AbstractTest(TestCase):
         db.session.merge(user)
         db.session.commit()
         return user.second_factor_auth
+
+    @staticmethod
+    def clear_group_memberships(group: Group):
+        group.collaboration_memberships.clear()
+        db.session.merge(group)
+        db.session.commit()
+
