@@ -41,7 +41,7 @@ def find_users_template(users: List[User]):
     }
     resources = []
     for user in users:
-        user_template = create_user_template(user)
+        user_template = update_user_template(user, user.external_id)
         user_template["meta"] = {"resourceType": "User",
                                  "created": user.created_at.strftime("%Y-%m-%dT%H:%M:%S"),
                                  "lastModified": user.updated_at.strftime("%Y-%m-%dT%H:%M:%S"),

@@ -29,7 +29,7 @@ class TestScim(AbstractTest):
         user_updated = json.loads(read_file("test/scim/user_created.json"))
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:9002/Users", json=user_found, status=200)
-            rsps.add(responses.PUT, "http://localhost:9002/Users/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
+            rsps.add(responses.PUT, "http://localhost:9002/Users/8d85ea05-fc5c-4222-8efd-130ff7938ee1?counter=1",
                      json=user_updated, status=201)
             apply_user_change(sarah)
 
@@ -39,7 +39,7 @@ class TestScim(AbstractTest):
         user_found = json.loads(read_file("test/scim/user_found.json"))
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:9002/Users", json=user_found, status=200)
-            rsps.add(responses.DELETE, "http://localhost:9002/Users/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
+            rsps.add(responses.DELETE, "http://localhost:9002/Users/8d85ea05-fc5c-4222-8efd-130ff7938ee1?counter=1",
                      status=201)
             apply_user_change(sarah, deletion=True)
 
@@ -71,7 +71,6 @@ class TestScim(AbstractTest):
             rsps.add(responses.PUT, "http://localhost:9002/Groups/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      json=group_created, status=201)
             apply_group_change(collaboration)
-
 
     @responses.activate
     def test_apply_group_change_delete_existing_users(self):

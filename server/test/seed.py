@@ -126,6 +126,7 @@ def clean_db(db):
     for table in tables:
         db.session.execute(table.delete())
     db.session.execute(text("DELETE FROM audit_logs"))
+    db.session.execute(text("DELETE FROM scim_service_counters"))
     db.session.commit()
 
 

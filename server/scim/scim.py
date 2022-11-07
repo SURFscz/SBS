@@ -7,6 +7,7 @@ import requests
 from server.db.domain import Service, User, Group, Collaboration
 from server.db.models import flatten
 from server.logger.context_logger import ctx_logger
+from server.scim.counter import atomic_increment_counter_value
 from server.scim.group_template import update_group_template, create_group_template
 from server.scim.user_template import create_user_template, update_user_template
 
@@ -36,7 +37,8 @@ def _provision_user(scim_object, service: Service, user: User):
     scim_dict = update_user_template(user, scim_object["id"]) if scim_object else create_user_template(user)
     request_method = requests.put if scim_object else requests.post
     postfix = scim_object['meta']['location'] if scim_object else "/Users"
-    url = f"{service.scim_url}{postfix}"
+    counter = atomic_increment_counter_value(service)
+    url = f"{service.scim_url}{postfix}?counter={counter}"
     return request_method(url, json=scim_dict,
                           headers={"Bearer": service.scim_bearer_token,
                                    "Accept": "application/json, application/json;charset=UTF-8"})
@@ -51,7 +53,8 @@ def _provision_group(scim_object, service: Service, group: Union[Group, Collabor
         scim_dict = create_group_template(group, membership_identifiers)
     request_method = requests.put if scim_object else requests.post
     postfix = scim_object['meta']['location'] if scim_object else "/Groups"
-    url = f"{service.scim_url}{postfix}"
+    counter = atomic_increment_counter_value(service)
+    url = f"{service.scim_url}{postfix}?counter={counter}"
     return request_method(url, json=scim_dict,
                           headers={"Bearer": service.scim_bearer_token,
                                    "Accept": "application/json, application/json;charset=UTF-8"})
@@ -111,8 +114,9 @@ def apply_user_change(user: User, deletion=False):
         scim_object = _lookup_scim_object(service, SCIM_USERS, user.external_id)
         # No use to delete the user if the user is unknown in the remote system
         if deletion and scim_object:
-            response = requests.delete(f"{service.scim_url}{scim_object['meta']['location']}",
-                                       headers={"Bearer": service.scim_bearer_token})
+            counter = atomic_increment_counter_value(service)
+            url = f"{service.scim_url}{scim_object['meta']['location']}?counter={counter}"
+            response = requests.delete(url, headers={"Bearer": service.scim_bearer_token})
         else:
             response = _provision_user(scim_object, service, user)
         if response.status_code > 204:
@@ -129,8 +133,9 @@ def apply_group_change(group: Union[Group, Collaboration], deletion=False):
         scim_object = _lookup_scim_object(service, SCIM_GROUPS, group.identifier)
         # No use to delete the group if the group is unknown in the remote system
         if deletion and scim_object:
-            response = requests.delete(f"{service.scim_url}{scim_object['meta']['location']}",
-                                       headers={"Bearer": service.scim_bearer_token})
+            counter = atomic_increment_counter_value(service)
+            url = f"{service.scim_url}{scim_object['meta']['location']}?counter={counter}"
+            response = requests.delete(url, headers={"Bearer": service.scim_bearer_token})
             if isinstance(group, Collaboration):
                 for user in [member.user for member in group.collaboration_memberships]:
                     if not _has_user_service_access(user, service, group):
