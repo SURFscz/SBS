@@ -266,4 +266,3 @@ class AbstractTest(TestCase):
         group.collaboration_memberships.clear()
         db.session.merge(group)
         db.session.commit()
-
