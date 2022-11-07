@@ -64,6 +64,9 @@ def _provision_group(scim_object, service: Service, group: Union[Group, Collabor
 def membership_user_scim_identifiers(service: Service, group: Union[Group, Collaboration]):
     members = [member for member in group.collaboration_memberships if member.is_active]
     result = []
+    if not service.provision_scim_users():
+        return result
+
     for member in members:
         user = member.user
         scim_object = _lookup_scim_object(service, SCIM_USERS, user.external_id)
@@ -89,8 +92,6 @@ def _log_scim_error(response, service):
 
 # Do a lookup of the user or group in the external SCIM DB belonging to this service
 def _lookup_scim_object(service: Service, scim_type: str, external_id: str):
-    if not service.provision_scim_users() and not service.provision_scim_groups():
-        return None
     query_filter = f"filter=externalId eq \"{external_id}\""
     url = f"{service.scim_url}/{scim_type}?{urllib.parse.quote(query_filter)}"
     response = requests.get(url, headers={"Bearer": service.scim_bearer_token,
