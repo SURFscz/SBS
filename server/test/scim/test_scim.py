@@ -75,7 +75,6 @@ class TestScim(AbstractTest):
     @responses.activate
     def test_apply_group_change_delete_existing_users(self):
         group_found = json.loads(read_file("test/scim/group_found.json"))
-        group_created = json.loads(read_file("test/scim/group_created.json"))
         user_found = json.loads(read_file("test/scim/user_found.json"))
         collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
