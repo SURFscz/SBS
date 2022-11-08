@@ -6,7 +6,11 @@ import time
 from datetime import timedelta
 from logging.handlers import TimedRotatingFileHandler
 
+# monkey_patch before importing anything else!
+# see https://github.com/gevent/gevent/issues/1016#issuecomment-328529454
 import eventlet
+eventlet.monkey_patch()
+
 import yaml
 from flask import Flask, jsonify, request as current_request
 from flask_mail import Mail
@@ -61,8 +65,6 @@ from server.mqtt.mqtt import MqttClient
 from server.swagger.conf import init_swagger, swagger_specs
 from server.templates import invitation_role
 from server.tools import read_file
-
-eventlet.monkey_patch()
 
 
 def _init_logging(is_test):
