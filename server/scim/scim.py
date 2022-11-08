@@ -15,6 +15,15 @@ SCIM_USERS = "Users"
 SCIM_GROUPS = "Groups"
 
 
+# Get the headers with the bearer authentication
+def _headers(service: Service, is_delete=False):
+    headers = {"Authorization": f"Bearer {service.scim_bearer_token}",
+               "X-Service": str(service.id)}
+    if not is_delete:
+        headers["Accept"] = "application/json, application/json;charset=UTF-8"
+    return headers
+
+
 # Remove duplicates from services
 def _unique_scim_services(services: List[Service], provision_enabled_method):
     seen = set()
@@ -39,9 +48,7 @@ def _provision_user(scim_object, service: Service, user: User):
     postfix = scim_object['meta']['location'] if scim_object else "/Users"
     counter = atomic_increment_counter_value(service)
     url = f"{service.scim_url}{postfix}?counter={counter}"
-    return request_method(url, json=scim_dict,
-                          headers={"Bearer": service.scim_bearer_token,
-                                   "Accept": "application/json, application/json;charset=UTF-8"})
+    return request_method(url, json=scim_dict, headers=_headers(service))
 
 
 # If the group / collaboration is known in the remote SCIM then update the group else provision the group
@@ -55,9 +62,7 @@ def _provision_group(scim_object, service: Service, group: Union[Group, Collabor
     postfix = scim_object['meta']['location'] if scim_object else "/Groups"
     counter = atomic_increment_counter_value(service)
     url = f"{service.scim_url}{postfix}?counter={counter}"
-    return request_method(url, json=scim_dict,
-                          headers={"Bearer": service.scim_bearer_token,
-                                   "Accept": "application/json, application/json;charset=UTF-8"})
+    return request_method(url, json=scim_dict, headers=_headers(service))
 
 
 # Get all external identifiers of the members of the group / collaboration and provision new ones
@@ -94,8 +99,7 @@ def _log_scim_error(response, service):
 def _lookup_scim_object(service: Service, scim_type: str, external_id: str):
     query_filter = f"externalId eq \"{external_id}\""
     url = f"{service.scim_url}/{scim_type}?filter={urllib.parse.quote(query_filter)}"
-    response = requests.get(url, headers={"Bearer": service.scim_bearer_token,
-                                          "Accept": "application/json, application/json;charset=UTF-8"})
+    response = requests.get(url, headers=_headers(service))
     scim_json = response.json()
     if response.status_code > 204:
         _log_scim_error(response, service)
@@ -117,7 +121,7 @@ def apply_user_change(user: User, deletion=False):
         if deletion and scim_object:
             counter = atomic_increment_counter_value(service)
             url = f"{service.scim_url}{scim_object['meta']['location']}?counter={counter}"
-            response = requests.delete(url, headers={"Bearer": service.scim_bearer_token})
+            response = requests.delete(url, headers=_headers(service, is_delete=True))
         else:
             response = _provision_user(scim_object, service, user)
         if response.status_code > 204:
@@ -136,7 +140,7 @@ def apply_group_change(group: Union[Group, Collaboration], deletion=False):
         if deletion and scim_object:
             counter = atomic_increment_counter_value(service)
             url = f"{service.scim_url}{scim_object['meta']['location']}?counter={counter}"
-            response = requests.delete(url, headers={"Bearer": service.scim_bearer_token})
+            response = requests.delete(url, headers=_headers(service, is_delete=True))
             if isinstance(group, Collaboration):
                 for user in [member.user for member in group.collaboration_memberships]:
                     if not _has_user_service_access(user, service, group):
