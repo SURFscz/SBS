@@ -92,8 +92,8 @@ def _log_scim_error(response, service):
 
 # Do a lookup of the user or group in the external SCIM DB belonging to this service
 def _lookup_scim_object(service: Service, scim_type: str, external_id: str):
-    query_filter = f"filter=externalId eq \"{external_id}\""
-    url = f"{service.scim_url}/{scim_type}?{urllib.parse.quote(query_filter)}"
+    query_filter = f"externalId eq \"{external_id}\""
+    url = f"{service.scim_url}/{scim_type}?filter={urllib.parse.quote(query_filter)}"
     response = requests.get(url, headers={"Bearer": service.scim_bearer_token,
                                           "Accept": "application/json, application/json;charset=UTF-8"})
     scim_json = response.json()
