@@ -18,8 +18,8 @@ class TestScim(AbstractTest):
         no_user_found = json.loads(read_file("test/scim/no_user_found.json"))
         user_created = json.loads(read_file("test/scim/user_created.json"))
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
-            rsps.add(responses.GET, "http://localhost:9002/Users", json=no_user_found, status=200)
-            rsps.add(responses.POST, "http://localhost:9002/Users", json=user_created, status=201)
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=no_user_found, status=200)
+            rsps.add(responses.POST, "http://localhost:8080/api/scim_mock/Users", json=user_created, status=201)
             apply_user_change(sarah)
 
     @responses.activate
@@ -27,8 +27,8 @@ class TestScim(AbstractTest):
         sarah = self.find_entity_by_name(User, sarah_name)
         user_created = json.loads(read_file("test/scim/user_created.json"))
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
-            rsps.add(responses.GET, "http://localhost:9002/Users", json={}, status=400)
-            rsps.add(responses.POST, "http://localhost:9002/Users", json=user_created, status=201)
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json={}, status=400)
+            rsps.add(responses.POST, "http://localhost:8080/api/scim_mock/Users", json=user_created, status=201)
             apply_user_change(sarah)
 
     @responses.activate
@@ -37,8 +37,9 @@ class TestScim(AbstractTest):
         user_found = json.loads(read_file("test/scim/user_found.json"))
         user_updated = json.loads(read_file("test/scim/user_created.json"))
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
-            rsps.add(responses.GET, "http://localhost:9002/Users", json=user_found, status=200)
-            rsps.add(responses.PUT, "http://localhost:9002/Users/8d85ea05-fc5c-4222-8efd-130ff7938ee1?counter=1",
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=user_found, status=200)
+            rsps.add(responses.PUT,
+                     "http://localhost:8080/api/scim_mock/Users/8d85ea05-fc5c-4222-8efd-130ff7938ee1?counter=1",
                      json=user_updated, status=201)
             apply_user_change(sarah)
 
@@ -47,8 +48,9 @@ class TestScim(AbstractTest):
         sarah = self.find_entity_by_name(User, sarah_name)
         user_found = json.loads(read_file("test/scim/user_found.json"))
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
-            rsps.add(responses.GET, "http://localhost:9002/Users", json=user_found, status=200)
-            rsps.add(responses.DELETE, "http://localhost:9002/Users/8d85ea05-fc5c-4222-8efd-130ff7938ee1?counter=1",
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=user_found, status=200)
+            rsps.add(responses.DELETE,
+                     "http://localhost:8080/api/scim_mock/Users/8d85ea05-fc5c-4222-8efd-130ff7938ee1?counter=1",
                      status=201)
             apply_user_change(sarah, deletion=True)
 
@@ -60,11 +62,11 @@ class TestScim(AbstractTest):
         user_created = json.loads(read_file("test/scim/user_created.json"))
         collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
-            rsps.add(responses.GET, "http://localhost:9002/Groups", json=no_group_found, status=200)
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=no_group_found, status=200)
             # We mock that all members are not known in the remote SCIM DB
-            rsps.add(responses.GET, "http://localhost:9002/Users", json=no_user_found, status=200)
-            rsps.add(responses.POST, "http://localhost:9002/Users", json=user_created, status=201)
-            rsps.add(responses.POST, "http://localhost:9002/Groups", json=group_created, status=201)
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=no_user_found, status=200)
+            rsps.add(responses.POST, "http://localhost:8080/api/scim_mock/Users", json=user_created, status=201)
+            rsps.add(responses.POST, "http://localhost:8080/api/scim_mock/Groups", json=group_created, status=201)
             apply_group_change(collaboration)
 
     @responses.activate
@@ -74,10 +76,10 @@ class TestScim(AbstractTest):
         user_found = json.loads(read_file("test/scim/user_found.json"))
         collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
-            rsps.add(responses.GET, "http://localhost:9002/Groups", json=group_found, status=200)
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=group_found, status=200)
             # We mock that all members are already known in the remote SCIM DB
-            rsps.add(responses.GET, "http://localhost:9002/Users", json=user_found, status=200)
-            rsps.add(responses.PUT, "http://localhost:9002/Groups/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=user_found, status=200)
+            rsps.add(responses.PUT, "http://localhost:8080/api/scim_mock/Groups/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      json=group_created, status=201)
             apply_group_change(collaboration)
 
@@ -87,12 +89,13 @@ class TestScim(AbstractTest):
         user_found = json.loads(read_file("test/scim/user_found.json"))
         collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
-            rsps.add(responses.GET, "http://localhost:9002/Groups", json=group_found, status=200)
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=group_found, status=200)
             # We mock that all members are already known in the remote SCIM DB
-            rsps.add(responses.GET, "http://localhost:9002/Users", json=user_found, status=200)
-            rsps.add(responses.DELETE, "http://localhost:9002/Users/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=user_found, status=200)
+            rsps.add(responses.DELETE, "http://localhost:8080/api/scim_mock/Users/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      status=201)
-            rsps.add(responses.DELETE, "http://localhost:9002/Groups/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
+            rsps.add(responses.DELETE,
+                     "http://localhost:8080/api/scim_mock/Groups/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      status=201)
             apply_group_change(collaboration, deletion=True)
 
@@ -103,8 +106,8 @@ class TestScim(AbstractTest):
         group = self.find_entity_by_name(Group, ai_researchers_group)
         self.clear_group_memberships(group)
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
-            rsps.add(responses.GET, "http://localhost:9002/Groups", json=no_group_found, status=200)
-            rsps.add(responses.POST, "http://localhost:9002/Groups", json=group_created, status=201)
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=no_group_found, status=200)
+            rsps.add(responses.POST, "http://localhost:8080/api/scim_mock/Groups", json=group_created, status=201)
             apply_group_change(group)
 
     @responses.activate
@@ -114,6 +117,6 @@ class TestScim(AbstractTest):
         group = self.find_entity_by_name(Group, ai_researchers_group)
         self.clear_group_memberships(group)
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
-            rsps.add(responses.GET, "http://localhost:9002/Groups", json=no_group_found, status=200)
-            rsps.add(responses.POST, "http://localhost:9002/Groups", json=group_created, status=400)
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=no_group_found, status=200)
+            rsps.add(responses.POST, "http://localhost:8080/api/scim_mock/Groups", json=group_created, status=400)
             apply_group_change(group)

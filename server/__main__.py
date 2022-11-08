@@ -30,6 +30,7 @@ from server.api.invitation import invitations_api
 from server.api.ipaddress import ipaddress_api
 from server.api.join_request import join_request_api
 from server.api.mfa import mfa_api
+from server.api.mock_scim import scim_mock_api
 from server.api.mock_user import mock_user_api
 from server.api.organisation import organisation_api
 from server.api.organisation_invitation import organisation_invitations_api
@@ -124,6 +125,9 @@ blueprints = [
 
 for api_blueprint in blueprints:
     app.register_blueprint(api_blueprint)
+
+if config.feature.mock_scim_enabled:
+    app.register_blueprint(scim_mock_api)
 
 app.register_error_handler(404, page_not_found)
 

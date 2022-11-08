@@ -16,6 +16,7 @@ from server.db.defaults import default_expiry_date
 from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, Organisation
 from server.db.models import delete
 from server.mail import mail_collaboration_invitation
+from server.scim.events import new_collaboration_membership
 
 invitations_api = Blueprint("invitations_api", __name__, url_prefix="/api/invitations")
 
@@ -185,6 +186,8 @@ def invitations_accept():
         db.session.merge(group)
 
     add_user_aups(collaboration, user_id)
+
+    new_collaboration_membership(collaboration)
 
     res = {'collaboration_id': collaboration.id, 'user_id': user_id}
     return res, 201
