@@ -40,7 +40,6 @@ export default function FeedbackDialog({isOpen = false, close}) {
             closeTimeoutMS={250}
             ariaHideApp={false}>
             <h1>{I18n.t("feedback.title")}</h1>
-            <h2 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("feedback.subTitle"))}}/>
             <section className="info">
                 <InformationIcon/>
                 <span dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("feedback.info"))}}/>

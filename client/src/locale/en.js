@@ -304,7 +304,7 @@ I18n.translations.en = {
             titleForOrgAdmin: "In collaborations managed by your organisation",
             searchPlaceHolder: "Search collaborations...",
             new: "New collaboration",
-            noEntities: "There are no collaborations yet...",
+            noEntities: "This organisation has no collaborations",
             newCollaborationRequest: "New request for collaboration",
             name: "Name",
             memberCount: "Members",
@@ -313,6 +313,7 @@ I18n.translations.en = {
             group: "Group {{name}} ({{count}})",
             hideInvites: "Hide invitations",
             noCollaborations: "There are no collaborations yet within your organisation. Why don't you create the first one?",
+            allLabels: "All labels",
         },
         serviceOrganisations: {
             searchPlaceHolder: "Search for organisations",
@@ -569,7 +570,7 @@ I18n.translations.en = {
         ssh_key: "SSH public keys",
         ssh_keyPlaceholder: "Your public SSH keys to login on services",
         ssh_keyTooltip: "Your public SSH keys will be provisioned to the services you have access to. You can also upload your public SSH key.",
-        sshKeyError: "Invalid SSH key",
+        sshKeyError: "This SSH cipher isn't recognized. Please refer to the <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://edu.nl/87btm\">documentation</a> for supported formats.",
         sshConvertInfo: "Public key will be converted to the <code>OpenSSH</code> format when saving the profile",
         update: "Update",
         flash: {
@@ -709,7 +710,7 @@ I18n.translations.en = {
         discloseMemberInformationTooltip: "When checked the names of members are disclosed to other members",
         discloseEmailInformation: "Disclose email information",
         discloseEmailInformationTooltip: "When checked the emails of members are disclosed to other members",
-        description: "Description",
+        description: "Collaboration purpose",
         descriptionPlaceholder: "Provide a clear description of the purpose of the collaboration, such that the processing of personal data can be justified",
         websiteUrl: "Website URL",
         websiteUrlPlaceholder: "The URL of the website is visible for members",
@@ -721,7 +722,7 @@ I18n.translations.en = {
         motivation: "Motivation",
         motivationPlaceholder: "Motivation for the new collaboration",
         motivationTooltip: "Your motivation for the new collaboration.",
-        organisation_name: "Organisation",
+        organisation_name: "Responsible organisation",
         organisationPlaceholder: "Select the organisation for this collaboration...",
         organisationTooltip: "Every collaboration belongs to precisely one and only one organisation",
         tags: "Labels",
@@ -856,14 +857,14 @@ I18n.translations.en = {
         identity_type: "Identity type",
         identity_typePlaceholder: "The identity type of the service",
         identity_typeTooltip: "The primary way of identification for this service",
-        uri: "Service login URL",
-        uriPlaceholder: "The URL where user login to the service",
+        uri: "Login URL",
+        uriPlaceholder: "The URL where users login to the service",
         uriTooltip: "URL where users can login to your service, displayed prominently to collaboration members.<br/><br/>" +
             "These variables will be replaced with the appropriate values: <em>{CO_short_name}</em> and <em>{username}</em>.",
-        infoUri: "Service website",
-        infoUriPlaceholder: "The URL of information about this service",
+        infoUri: "Website",
+        infoUriPlaceholder: "The URL with information about this service",
         infoUriTooltip: "URL of a website with information about the service",
-        privacy_policy: "Privacy policy URL",
+        privacy_policy: "Privacy policy",
         privacy_policyPlaceholder: "The Private policy URL  of the service",
         privacy_policyTooltip: "A Privacy Policy is a legal requirement for all websites and apps that collect or use personal information from users.",
         accepted_user_policy: "Acceptable use policy URL",
@@ -881,7 +882,7 @@ I18n.translations.en = {
         networkSyntaxError: "This is not a valid IPv4 or IPv6 address.",
         networkNotGlobal: "Only global unicast addresses can be entered",
         networkInfo: "Lower bound IP: {{lower}}, higher bound IP: {{higher}}, # addresses: {{num_addresses}}, version: IPv{{version}}",
-        automaticConnectionAllowed: "Collaborations can connect without approval",
+        automaticConnectionAllowed: "Collaborations can connect without your approval",
         automaticConnectionAllowedTooltip: "If enabled, a collaboration admin can connect to your service straightaway. No connection request is offered for approval to the service admin (you).",
         accessAllowedForAll: "Available for all organisations?",
         accessAllowedForAllTooltip: "Is this service available for all current and future organisations?",
@@ -899,15 +900,15 @@ I18n.translations.en = {
         allowedOrganisations: "Allowed organisations",
         allowedOrganisationsPlaceholder: "Search and add organisations",
         allowedOrganisationsTooltip: "If any organisation is added then automatically all other organisations are not allowed to use this service. If this service can be used by all collaborations then just don't add organisations.",
-        contact_email: "Administrative contact",
+        contact_email: "Administrative email address",
         contact_emailPlaceholder: "The email address of the administrative contact person for this service",
         contact_emailTooltip: "This administrative email address will be used as primary contact. Ideally this is a functional email address, like service_A_support@sp.org.",
         contactEmailRequired: "Administrative email is required if there are no service administrators",
-        security_email: "Security contact",
+        security_email: "Security email address",
         security_emailPlaceholder: "The email address of the security contact person of this service",
         security_emailTooltip: "The security email address will be contacted if there are security questions. Ideally this is a functional email address, like service_A_security@sp.org.",
         securityEmailRequired: "Security email is required",
-        support_email: "Support contact",
+        support_email: "Support for end user",
         support_emailPlaceholder: "The email address of the support department this service",
         support_emailTooltip: "The support email address can be contacted if users have questions about the service. Ideally this is a functional email address, like service_A_support@sp.org.",
         invitations: "Invite service admins",
@@ -949,7 +950,7 @@ I18n.translations.en = {
         },
         aup: {
             title: "Reset AUP",
-            confirmation: "Are you sure you want all users to accept the new AUP of {{name}}?",
+            confirmation: "Resetting the AUP will require all user of this service '{{name}}' to accept its AUP again. Do you want that?",
             flash: "Acceptance of the AUP for service {{name}} has been reset for all users"
         },
         contacts: "Contacts",
@@ -1424,25 +1425,24 @@ I18n.translations.en = {
     },
     aup: {
         hi: "Hi {{name}},",
-        info: "We are ready to create your profile.",
         name: "Display name.",
         email: "Email address",
         title: "Acceptable use policy",
         multiple: "Service acceptable use policies",
-        disclaimer: "By logging on to SURF Research Access Management, you create a profile and agree to the <a href=\"{{url}}\" target=\"_blank\">term and conditions of our AUP.</a>",
-        agreeWithTerms: "I hereby certify that I have read the AUP and that I accept them",
-        onward: "Looks good, onwards",
+        disclaimer: "This is the first time you log in. To create your profile, you need to agree with the <a href=\"{{url}}\" target=\"_blank\">acceptable use policy</a>.",
+        agreeWithTerms: "I hereby certify that I have read the acceptable use policy and that I accept it",
+        onward: "Onwards",
         agreedFlash: "Your agreement with {{name}} has been saved.",
         collaboration: {
             title: "Additional terms to the Acceptable use policy",
-            info: "For this collaboration, there are some additions to the general SURF Research Access Management AUP. You need to accept these additions to be able to join this collaboration.",
-            agreeWithTerms: "I hereby certify that I have read these terms and that I accept them",
+            info: "For this collaboration, there are some additions to the general SURF Research Access Management acceptable use policy. You need to accept these additions to be able to join this collaboration.",
+            agreeWithTerms: "I have read these terms and accept them",
         },
         service: {
             title: "Review the information in order to continue",
             info: "You are about to login to <strong>{{name}}</strong>. Before you can continue you must review the acceptable use policy (AUP) and privacy policy of the service. Confirm below whether you accept them.",
             noPrivacyPolicy: "No additional privacy policy provided",
-            noAup: "No additional AUP provided",
+            noAup: "No additional acceptable use policy provided",
             agreeWithTerms: "I hereby certify that I have read these terms and that I accept them",
             firstLogin: "Proceed to login and afterwards you'll return here to view the policies of {{name}}",
             login: "Login",
@@ -1743,13 +1743,13 @@ I18n.translations.en = {
     welcomeDialog: {
         title: "Welcome to {{name}}",
         label: "",
-        role: "Your current role is <strong>{{role}}</strong>",
+        role: "You are invited as a <strong>{{role}}</strong>",
         ok: "All good, show me the {{type}}",
         organisation: "organisation",
         collaboration: "collaboration",
         service: "service",
         toggleRole: "Toggle role",
-        info: "Almost there! Before you can join this collaboration, you must review the acceptable use policy (AUP) and privacy policy of the service. Indicate below whether you accept them.",
+        info: "Before joining this collaboration, you must review the acceptable use policy (AUP) and privacy policy of the service and accept them.",
         infoJoinRequest: " Before you can request to join this collaboration, you must review the acceptable use policy (AUP) and privacy policy of the service. Indicate below whether you accept them.",
         purpose: "Purpose of the collaboration",
         proceed: "Proceed to {{name}}"
@@ -1777,15 +1777,14 @@ I18n.translations.en = {
     },
     feedback: {
         title: "Provide Feedback",
-        subTitle: "Share your thoughts",
         info: "Like what you see? Have a suggestion? Let us know what you think here!",
-        disclaimer: "We will use this information, in conjunction with other information we may have regarding your account, to fix problems, improve our products and help you. " +
-            "We may follow up with you regarding your feedback using the email address associated with your account. " +
-            "You are responsible for ensuring that your feedback does not contain any confidential, sensitive, or personal information. " +
+        disclaimer: "We will use this information to fix problems, improve our products and help you. " +
+            "We may follow up with you regarding your feedback. " +
+            "Please make sure the feedback does not contain any confidential, sensitive, or personal information. " +
             "For more information, please review our <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://edu.nl/93cdm\">Privacy Notice</a>.",
         help: "Need help?",
         helpInfo: "For questions or issues, please reach out to us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>",
-        send: "Send feedback",
+        send: "Provide feedback",
         flash: "Your feedback has been sent. Thanks!"
     },
     landing: {
@@ -1960,6 +1959,19 @@ I18n.translations.en = {
         intendedRole: "Role in the service",
         intendedRoleTooltip: "The only role within a service is admin"
     },
+    scim: {
+        scimEnabled: "Enable SCIM provisioning?",
+        scimEnabledTooltip: "Allow this service to call the SCIM endpoints and to receive SCIM messages?",
+        scimURL: "SCIM endpoint base URL",
+        scimURLPlaceHolder: "https://service.com.scim",
+        scimURLTooltip: "The SCIM endpoint base URL is the URL where all SCIM events are send to.",
+        scimBearerToken: "Bearer token",
+        scimBearerTokenTooltip: "The bearer token is the external token needed to authorize the SRAM calls to the SCIM endpoints",
+        scimProvisionUsers: "Enable User provisioning?",
+        scimProvisionUsersTooltip: "Does this service wants to receive SCIM User messages?",
+        scimProvisionGroups: "Enable Group provisioning?",
+        scimProvisionGroupsTooltip: "Does this service wants to receive SCIM Group messages?",
+    },
     userTokens: {
         actionTitle: "New API token",
         tokens: "Tokens",
@@ -2027,9 +2039,10 @@ I18n.translations.en = {
             policy: "Policy & compliance",
             ldap: "LDAP",
             tokens: "Tokens",
-            pamWebLogin: "PAM web login"
+            pamWebLogin: "PAM web login",
+            SCIM: "SCIM"
         },
-        updateDisabled: "You can't update the Service. First correct the errors in the following sections: {{invalid}}"
+        updateDisabled: "Some fields have invalid or are missing values in the sections {{invalid}}."
     },
     expirations: {
         expires: "Expires {{relativeTime}}",
