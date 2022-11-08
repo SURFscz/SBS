@@ -16,8 +16,8 @@ from server.db.domain import Service
 
 scim_mock_api = Blueprint("scim_mock_api", __name__, url_prefix="/api/scim_mock")
 
+# Global in-memory database and http call history
 database = {}
-
 http_calls = {}
 
 
@@ -166,4 +166,5 @@ def clear():
 
     global http_calls
     http_calls = {}
+
     return None, 204
