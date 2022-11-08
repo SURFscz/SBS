@@ -80,7 +80,6 @@ def membership_user_scim_identifiers(service: Service, group: Union[Group, Colla
             response = _provision_user(scim_object, service, user)
             if response.status_code > 204:
                 _log_scim_error(response, service)
-                scim_object = None
             else:
                 scim_object = response.json()
         if scim_object:
