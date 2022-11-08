@@ -1,4 +1,5 @@
 # -*- coding: future_fstrings -*-
+import hashlib
 from typing import Union, List
 
 from server.db.domain import Group, Collaboration, Service
@@ -37,9 +38,11 @@ def find_groups_template(service: Service, groups: List[Union[Group, Collaborati
         from server.scim.scim import membership_user_scim_identifiers
         memberships = membership_user_scim_identifiers(service, group)
         group_template = create_group_template(group, memberships)
+        version = hashlib.sha256(bytes(str(int(group.updated_at.timestamp())), "utf-8")).hexdigest()
         group_template["meta"] = {"resourceType": "Group",
                                   "created": group.created_at.strftime("%Y-%m-%dT%H:%M:%S"),
                                   "lastModified": group.updated_at.strftime("%Y-%m-%dT%H:%M:%S"),
+                                  "version": version,
                                   "location": f"/Groups/{group.identifier}{external_id_post_fix}"}
         resources.append(group_template)
     base["Resources"] = resources

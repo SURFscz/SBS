@@ -5,6 +5,7 @@ import os
 import uuid
 from base64 import b64encode
 from time import time
+from typing import Union
 from uuid import uuid4
 
 import jwt
@@ -47,6 +48,7 @@ class AbstractTest(TestCase):
     def setUpClass(cls):
         os.environ["CONFIG"] = "config/test_config.yml"
         os.environ["TESTING"] = "1"
+        os.environ["SCIM_DISABLED"] = "1"
 
         from server.__main__ import app
 
@@ -262,7 +264,7 @@ class AbstractTest(TestCase):
         return user.second_factor_auth
 
     @staticmethod
-    def clear_group_memberships(group: Group):
+    def clear_group_memberships(group: Union[Group, Collaboration]):
         group.collaboration_memberships.clear()
         db.session.merge(group)
         db.session.commit()

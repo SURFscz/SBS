@@ -1,75 +1,158 @@
 # -*- coding: future_fstrings -*-
-
+import json
 import re
+import uuid
+from functools import wraps
 
-from flask import Blueprint
+from flask import Blueprint, g as request_context
 from flask import request as current_request
 from sqlalchemy import text
+from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint, query_param
+from server.auth.security import confirm_write_access
 from server.db.db import db
 
 scim_mock_api = Blueprint("scim_mock_api", __name__, url_prefix="/api/scim_mock")
 
-database = {
-    "users": [],
-    "groups": []
-}
+database = {}
+
+http_calls = {}
+
+
+def _log_scim_request(service_id):
+    global http_calls
+    service = http_calls.get(service_id, None)
+    if service is None:
+        service = []
+        http_calls[service_id] = service
+    method = current_request.method
+    body = current_request.json if method in ["PUT", "POST"] and current_request.is_json else {}
+    service.append({"method": method,
+                    "path": current_request.path,
+                    "args": current_request.args,
+                    "body": json.dumps(body, default=str)})
+
+
+def scim_endpoint(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        service_id = current_request.headers.get("X-Service")
+        request_context.service_id = service_id
+        _log_scim_request(service_id)
+        return f(*args, **kwargs)
+
+    return wrapper
+
+
+def _get_external_id():
+    filter_param = query_param("filter")
+    return re.search(r"externalId eq \"(.*)\"", filter_param).groups()[0]
+
+
+def _get_database_service():
+    service = database.get(request_context.service_id, None)
+    if service is None:
+        service = {"users": {}, "groups": {}}
+        database[request_context.service_id] = service
+    return service
+
+
+def _find_scim_object(collection_name):
+    external_id = _get_external_id()
+    service = _get_database_service()
+    res = list(filter(lambda obj: obj["externalId"] == external_id, list(service[collection_name].values())))
+    return {"Resources": [res[0]]} if res else {"totalResults": 0}
+
+
+def _new_scim_object(collection_name, collection_type):
+    data = current_request.get_json()
+    service = _get_database_service()
+    new_id = str(uuid.uuid4())
+    data["id"] = new_id
+    data["meta"] = {
+        "resourceType": collection_type,
+        "location": f"/{collection_name.capitalize()}/{new_id}",
+    }
+    service[collection_name][new_id] = data
+    return data
+
+
+def _update_scim_object(scim_id, collection_name):
+    data = current_request.get_json()
+    service = _get_database_service()
+    res = service[collection_name].get(scim_id)
+    if not res:
+        raise BadRequest(f"No scim {collection_name} found with id {scim_id}")
+    new_entry = {**res, **data}
+    service[collection_name][scim_id] = new_entry
+    return new_entry
 
 
 @scim_mock_api.route("/Users", methods=["GET"], strict_slashes=False)
 @json_endpoint
+@scim_endpoint
 def find_user():
-    filter_param = query_param("filter")
-    external_id = re.search(r"externalId eq \"(.*)\"", filter_param)
-    res = list(filter(lambda user: user["external_id"] == external_id, database["users"]))
-    return res[0] if res else None, 201
+    return _find_scim_object("users"), 200
 
 
 @scim_mock_api.route("/Users", methods=["POST"], strict_slashes=False)
 @json_endpoint
+@scim_endpoint
 def new_user():
-    data = current_request.get_json()
-    global database
-    return None, 201
+    return _new_scim_object("users", "User"), 201
 
 
 @scim_mock_api.route("/Users/<scim_id>", methods=["PUT"], strict_slashes=False)
 @json_endpoint
+@scim_endpoint
 def update_user(scim_id):
-    data = current_request.get_json()
-    global database
-    return None, 201
+    return _update_scim_object(scim_id, "users"), 201
 
 
 @scim_mock_api.route("/Groups", methods=["GET"], strict_slashes=False)
 @json_endpoint
+@scim_endpoint
 def find_group():
-    filter_param = query_param("filter")
-    global database
-    return None, 201
+    return _find_scim_object("groups"), 200
 
 
 @scim_mock_api.route("/Groups", methods=["POST"], strict_slashes=False)
 @json_endpoint
+@scim_endpoint
 def new_group():
-    data = current_request.get_json()
-    global database
-    return None, 201
+    return _new_scim_object("groups", "Group"), 201
 
 
 @scim_mock_api.route("/Groups/<scim_id>", methods=["PUT"], strict_slashes=False)
 @json_endpoint
+@scim_endpoint
 def update_group(scim_id):
-    data = current_request.get_json()
-    global database
-    return None, 201
+    return _update_scim_object(scim_id, "groups"), 201
 
 
 @scim_mock_api.route("/services", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def services():
-    sql = "SELECT s.name, c.counter FROM scim_service_counters c INNER JOIN services s ON s.id = c.service_id"
+    confirm_write_access()
+
+    sql = "SELECT s.id, s.name, c.counter FROM scim_service_counters c INNER JOIN services s ON s.id = c.service_id"
     rows = db.session.execute(text(sql))
-    result = [{row[0], row[1]} for row in rows]
-    return sorted(result, key=lambda k: k["counter"], reverse=True), 200
+    return {
+               "counters": [{row[0], row[1]} for row in rows],
+               "http_calls": http_calls,
+               "database": database
+           }, 200
+
+
+@scim_mock_api.route("/clear", methods=["DELETE"], strict_slashes=False)
+@json_endpoint
+def clear():
+    confirm_write_access()
+
+    global database
+    database = {}
+
+    global http_calls
+    http_calls = {}
+    return None, 204
