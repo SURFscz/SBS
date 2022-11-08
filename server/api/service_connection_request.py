@@ -86,10 +86,9 @@ def _do_mail_request(collaboration, service, service_connection_request, is_admi
 @json_endpoint
 def service_request_connections_by_service(service_id):
     # Avoid security risk, only return id
-    return ServiceConnectionRequest.query \
-               .options(load_only("collaboration_id")) \
-               .filter(ServiceConnectionRequest.service_id == service_id) \
-               .all(), 200
+    return ServiceConnectionRequest.query.options(load_only("collaboration_id")) \
+                                         .filter(ServiceConnectionRequest.service_id == service_id) \
+                                         .all(), 200
 
 
 @service_connection_request_api.route("/<service_connection_request_id>", methods=["DELETE"], strict_slashes=False)

@@ -89,15 +89,15 @@ def connect_collaboration_service_api():
         status = "pending"
 
     return {
-               "status": status,
-               "collaboration": {
-                   "organisation_short_name": organisation.short_name,
-                   "short_name": coll_short_name
-               },
-               "service": {
-                   "entity_id": service.entity_id
-               }
-           }, 201
+        "status": status,
+        "collaboration": {
+            "organisation_short_name": organisation.short_name,
+            "short_name": coll_short_name
+        },
+        "service": {
+            "entity_id": service.entity_id
+        }
+    }, 201
 
 
 @collaborations_services_api.route("/delete_all_services/<collaboration_id>", methods=["DELETE"], strict_slashes=False)

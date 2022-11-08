@@ -4,8 +4,8 @@ from flask import session, g as request_context, request as current_request, cur
 from sqlalchemy.orm import load_only
 from werkzeug.exceptions import Forbidden
 
-from server.db.domain import CollaborationMembership, OrganisationMembership, Collaboration, User, \
-    ServiceMembership
+from server.db.domain import (CollaborationMembership, OrganisationMembership, Collaboration, User,
+                              ServiceMembership)
 
 CSRF_TOKEN = "CSRFToken"
 

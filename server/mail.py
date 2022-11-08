@@ -226,9 +226,7 @@ def mail_accepted_declined_collaboration_request(context, collaboration_name, or
         recipients=recipients,
         template=f"collaboration_request_{part}",
         context={**context,
-                 **{"admins":
-                        [m.user for m in organisation.organisation_memberships if m.role == "admin"]}},
-
+                 **{"admins": [m.user for m in organisation.organisation_memberships if m.role == "admin"]}},
         preview=preview
     )
 
