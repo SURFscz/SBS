@@ -7,17 +7,27 @@ from functools import wraps
 from flask import Blueprint, g as request_context
 from flask import request as current_request
 from sqlalchemy import text
-from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import BadRequest, Unauthorized
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_write_access
 from server.db.db import db
+from server.db.domain import Service
 
 scim_mock_api = Blueprint("scim_mock_api", __name__, url_prefix="/api/scim_mock")
 
 database = {}
 
 http_calls = {}
+
+
+def _check_authorization_header(service_id):
+    authorization_header = current_request.headers.get("Authorization")
+    if not authorization_header or not authorization_header.lower().startswith("bearer"):
+        raise Unauthorized(description="Invalid bearer token")
+    service = Service.query.get(service_id)
+    if service.scim_bearer_token != authorization_header[len('bearer '):]:
+        raise Unauthorized(description="Invalid bearer token")
 
 
 def _log_scim_request(service_id):
@@ -38,6 +48,7 @@ def scim_endpoint(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         service_id = current_request.headers.get("X-Service")
+        _check_authorization_header(service_id)
         request_context.service_id = service_id
         _log_scim_request(service_id)
         return f(*args, **kwargs)
