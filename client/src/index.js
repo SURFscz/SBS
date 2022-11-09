@@ -2,7 +2,6 @@ import "core-js/stable";
 import "regenerator-runtime/runtime";
 import {polyfill} from "es6-promise";
 import React from 'react';
-import ReactDOM from 'react-dom';
 import './stylesheets/index.scss';
 import App from './pages/App';
 import {getParameterByName} from "./utils/QueryParameters";
@@ -15,6 +14,7 @@ import Cookies from "js-cookie";
 import "./locale/en";
 import "./locale/nl";
 import {reportError} from "./api";
+import {createRoot} from 'react-dom/client';
 
 polyfill();
 
@@ -42,4 +42,7 @@ polyfill();
     moment.locale(I18n.locale);
 
 })();
-ReactDOM.render(<App/>, document.getElementById("app"));
+
+const container = document.getElementById("app");
+const root = createRoot(container);
+root.render(<App/>);

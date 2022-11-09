@@ -1,11 +1,13 @@
 # -*- coding: future_fstrings -*-
+import json
 import os
 
+from server.auth.security import CSRF_TOKEN
 from server.db.audit_mixin import AuditLog
 from server.db.domain import Collaboration, User
 from server.mail import mail_collaboration_join_request
 from server.test.abstract_test import AbstractTest
-from server.test.seed import collaboration_uva_researcher_uuid
+from server.test.seed import collaboration_uva_researcher_uuid, uuc_secret, uuc_name
 
 
 class TestMail(AbstractTest):
@@ -39,17 +41,39 @@ class TestMail(AbstractTest):
             mail = self.app.mail
             with mail.record_messages() as outbox:
                 self.login("urn:john")
+                me = self.get("/api/users/me")
                 group_name = "new_auth_group"
-                self.post("/api/groups/", body={
-                    "name": group_name,
-                    "short_name": group_name,
-                    "description": "des",
-                    "auto_provision_members": False,
-                    "collaboration_id": "nope",
-                }, response_status_code=400)
+                self.post("/api/groups/",
+                          body={
+                              "name": group_name,
+                              "short_name": group_name,
+                              "description": "des",
+                              "auto_provision_members": False,
+                              "collaboration_id": "nope",
+                          },
+                          headers={CSRF_TOKEN: me[CSRF_TOKEN]},
+                          response_status_code=400,
+                          with_basic_auth=False)
                 self.assertEqual(1, len(outbox))
                 html = outbox[0].html
                 self.assertTrue("An error occurred in local" in html)
+        finally:
+            os.environ["TESTING"] = "1"
+            self.app.app_config.mail.send_exceptions = False
+
+    def test_send_error_mail_in_api(self):
+        try:
+            del os.environ["TESTING"]
+            self.app.app_config.mail.send_exceptions = True
+            mail = self.app.mail
+            with mail.record_messages() as outbox:
+                self.client.post("/api/collaborations/v1",
+                                 headers={"Authorization": f"Bearer {uuc_secret}"},
+                                 data=json.dumps({}),
+                                 content_type="application/json")
+                self.assertEqual(1, len(outbox))
+                html = outbox[0].html
+                self.assertTrue(f"Organisation API call {uuc_name}" in html)
         finally:
             os.environ["TESTING"] = "1"
             self.app.app_config.mail.send_exceptions = False
@@ -61,9 +85,11 @@ class TestMail(AbstractTest):
             mail = self.app.mail
             with mail.record_messages() as outbox:
                 self.login("urn:john")
+                me = self.get("/api/users/me")
                 self.post("/api/organisations",
                           body={"name": "new_organisation",
                                 "short_name": "https://ti1"},
+                          headers={CSRF_TOKEN: me[CSRF_TOKEN]},
                           with_basic_auth=False)
                 self.assertEqual(1, len(outbox))
                 mail_msg = outbox[0]

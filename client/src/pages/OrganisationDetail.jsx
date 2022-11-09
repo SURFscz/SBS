@@ -30,6 +30,8 @@ import {getParameterByName} from "../utils/QueryParameters";
 import {setFlash} from "../utils/Flash";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
+import {ReactComponent as MembersIcon} from "../icons/single-neutral.svg";
+import Users from "../components/redesign/Users";
 
 class OrganisationDetail extends React.Component {
 
@@ -148,9 +150,20 @@ class OrganisationDetail extends React.Component {
             this.getCollaborationRequestsTab(organisation),
             this.getOrganisationAdminsTab(organisation),
             this.getServicesTab(organisation),
-            config.api_keys_enabled ? this.getAPIKeysTab(organisation, user) : null
+            config.api_keys_enabled ? this.getAPIKeysTab(organisation, user) : null,
+            this.getUsersTab(organisation)
         ];
         return tabs.filter(tab => tab !== null);
+    }
+
+    getUsersTab = organisation => {
+        return (<div key="users" name="users"
+                     label={I18n.t("home.tabs.orgUsers")}
+                     icon={<MembersIcon/>}>
+            <Users {...this.props}
+                   organisation={organisation}
+                   adminSearch={false}/>
+        </div>)
     }
 
     getOrganisationAdminsTab = organisation => {
@@ -346,7 +359,7 @@ class OrganisationDetail extends React.Component {
                     {tabs}
                 </Tabs>
             </div>);
-    };
+    }
 }
 
 export default OrganisationDetail;

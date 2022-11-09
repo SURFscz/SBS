@@ -50,8 +50,12 @@ section.dialog-content {
     .service {
         width: 100%;
         display: grid;
-        grid-template-columns: [first] 1fr [second] 1fr;
+        grid-template-columns: [first] 12fr [second] 8fr;
         column-gap: 50px;
+
+        &.no-grid {
+            display: block;
+        }
 
         @media (max-width: $tablet-max) {
             padding: 0 15px;
@@ -63,8 +67,14 @@ section.dialog-content {
         }
 
         .input-field, .radio-button-container, .actions, div.checkbox, .select-field, .ip-networks, span.error,
-        div.email-invitations, div.compliance, div.ldap, div.contacts, div.tokens {
+        div.email-invitations, div.compliance, div.ldap, div.contacts, div.tokens, div.actions-container {
             grid-column-start: first;
+        }
+
+        span.error {
+            display: block;
+            color: $error-red;
+            margin-top: 20px;
         }
 
         .section-separator {
@@ -167,6 +177,10 @@ section.dialog-content {
 
         div.checkbox {
             margin: 20px 0 10px 0;
+        }
+
+        .mod-entities {
+            margin-bottom: 0;
         }
 
     }

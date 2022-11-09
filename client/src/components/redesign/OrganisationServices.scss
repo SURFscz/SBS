@@ -32,7 +32,7 @@ table.organisationServicesUsed {
             &.allowed {
                 text-align: right;
 
-                svg.fa-info-circle {
+                svg.fa-info-circle, svg.fa-circle-info {
                     color: $lighter-grey;
                     cursor: pointer;
 

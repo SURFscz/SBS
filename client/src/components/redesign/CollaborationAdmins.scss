@@ -8,10 +8,10 @@
     }
 
     svg.impersonate {
-        width: 35px;
-        height: 32px;
+        width: 40px;
+        height: auto;
         cursor: pointer;
-        background-color: #fedb03;
+        fill: #fedb03;
         padding: 5px;
     }
 
@@ -85,11 +85,6 @@
             &.expired {
                 color: $red;
             }
-        }
-
-        span.msg {
-            font-size: 14px;
-
         }
 
     }

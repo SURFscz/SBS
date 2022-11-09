@@ -26,11 +26,24 @@ class TestSystem(AbstractTest):
 
     def test_db_stats(self):
         res = self.get("/api/system/db_stats")
-        self.assertDictEqual({"count": 18, "name": "users"}, res[0])
+        self.assertDictEqual({"count": 17, "name": "users"}, res[0])
         self.assertDictEqual({"count": 13, "name": "organisations_services"}, res[2])
 
     def test_db_seed(self):
         self.get("/api/system/seed", response_status_code=201)
+
+    def test_db_seed_forbidden(self):
+        self.app.app_config.feature.seed_allowed = 0
+        self.get("/api/system/seed", response_status_code=400)
+        self.app.app_config.feature.seed_allowed = 1
+
+    def test_db_demo_seed(self):
+        self.get("/api/system/demo_seed", response_status_code=201)
+
+    def test_db_demo_seed_forbidden(self):
+        self.app.app_config.feature.seed_allowed = 0
+        self.get("/api/system/demo_seed", response_status_code=400)
+        self.app.app_config.feature.seed_allowed = 1
 
     def test_outstanding_requests(self):
         past_date = "2018-03-20 14:51:40"
@@ -49,11 +62,6 @@ class TestSystem(AbstractTest):
 
         self.assertTrue(len(res["collaboration_requests"]) > 0)
         self.assertTrue(len(res["collaboration_join_requests"]) > 0)
-
-    def test_db_seed_forbidden(self):
-        self.app.app_config.feature.seed_allowed = 0
-        self.get("/api/system/seed", response_status_code=400)
-        self.app.app_config.feature.seed_allowed = 1
 
     def test_scheduled_jobs(self):
         jobs = self.get("/api/system/scheduled_jobs")
@@ -76,10 +84,10 @@ class TestSystem(AbstractTest):
         self.put("/api/organisation_invitations/accept", body={"hash": organisation_invitation_hash},
                  with_basic_auth=False)
 
-        res = self.get("/api/audit_logs/activity")
-        self.assertEqual(3, len(res["audit_logs"]))
-
         self.login("urn:john")
+        res = self.get("/api/audit_logs/activity")
+        self.assertEqual(4, len(res["audit_logs"]))
+
         self.delete("/api/system/clear-audit-logs", response_status_code=201)
         res = self.get("/api/audit_logs/activity")
         self.assertEqual(0, len(res["audit_logs"]))
@@ -114,7 +122,7 @@ class TestSystem(AbstractTest):
     def test_validations(self):
         res = self.get("/api/system/validations", response_status_code=200)
         self.assertEqual(2, len(res["organisation_invitations"]))
-        self.assertEqual(6, len(res['services']))
+        self.assertEqual(5, len(res['services']))
         self.assertEqual(1, len(res["organisations"]))
 
     def test_composition(self):

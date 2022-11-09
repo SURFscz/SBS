@@ -16,9 +16,9 @@ from flask_testing import TestCase
 from onelogin.saml2.utils import OneLogin_Saml2_Utils
 
 from server.auth.mfa import ACR_VALUES
-from server.auth.security import secure_hash
+from server.auth.secrets import secure_hash
 from server.db.db import db
-from server.db.defaults import STATUS_EXPIRED
+from server.db.defaults import STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, User, Organisation, Service, ServiceAup, UserToken, Invitation, \
     PamSSOSession
 from server.test.seed import seed, sarah_name
@@ -69,6 +69,30 @@ class AbstractTest(TestCase):
     @staticmethod
     def find_entity_by_name(cls, name):
         return cls.query.filter(cls.name == name).first()
+
+    @staticmethod
+    def change_collaboration(user_name, do_change):
+        user = AbstractTest.find_entity_by_name(User, user_name)
+        connected_collaborations = [cm.collaboration for cm in user.collaboration_memberships]
+        for collaboration in connected_collaborations:
+            do_change(collaboration)
+            db.session.merge(collaboration)
+            db.session.commit()
+        return connected_collaborations
+
+    @staticmethod
+    def expire_collaborations(user_name):
+        def do_change(collaboration):
+            collaboration.expiry_date = datetime.datetime.utcnow() - datetime.timedelta(days=50)
+
+        return AbstractTest.change_collaboration(user_name, do_change)
+
+    @staticmethod
+    def suspend_collaborations(user_name):
+        def do_change(collaboration):
+            collaboration.status = STATUS_SUSPENDED
+
+        return AbstractTest.change_collaboration(user_name, do_change)
 
     @responses.activate
     def login(self, uid="urn:john", schac_home_organisation=None, user_info={}):
@@ -138,8 +162,11 @@ class AbstractTest(TestCase):
 
     def expire_all_collaboration_memberships(self, user_name):
         user = self.find_entity_by_name(User, user_name)
+        self.expire_collaboration_memberships(user.collaboration_memberships)
+
+    def expire_collaboration_memberships(self, collaboration_memberships):
         past = datetime.datetime.now() - datetime.timedelta(days=5)
-        for cm in user.collaboration_memberships:
+        for cm in collaboration_memberships:
             cm.expiry_date = past
             cm.status = STATUS_EXPIRED
             db.session.merge(cm)
@@ -210,9 +237,13 @@ class AbstractTest(TestCase):
         xml_authn_signed = OneLogin_Saml2_Utils.add_sign(xml_response, key, cert)
         return b64encode(xml_authn_signed)
 
-    def mark_user_ssid_required(self, name=sarah_name):
+    def mark_user_ssid_required(self, name=sarah_name, home_organisation_uid=None, schac_home_organisation=None):
         user = self.find_entity_by_name(User, name)
         user.ssid_required = True
+        if home_organisation_uid:
+            user.home_organisation_uid = home_organisation_uid
+        if schac_home_organisation:
+            user.schac_home_organisation = schac_home_organisation
         return AbstractTest._merge_user(user)
 
     @staticmethod

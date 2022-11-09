@@ -1,4 +1,5 @@
 # -*- coding: future_fstrings -*-
+import datetime
 import random
 import re
 import string
@@ -6,6 +7,7 @@ import unicodedata
 
 from flask import current_app
 
+from server.db.defaults import STATUS_SUSPENDED
 from server.db.domain import User, UserNameHistory
 
 claim_attribute_mapping_value = [
@@ -83,14 +85,31 @@ def user_memberships(user, connected_collaborations):
     # Also, we omit the GROUP-AUTHORITY (and are therefore not completely compliant), as it complicates parsing the
     # entitlement, will confuse Services, and the spec fails to make clear what the usecase is, exactly.
     memberships = set()
+    now = datetime.datetime.utcnow()
     for collaboration in connected_collaborations:
-        # add the CO itself, the Organisation this CO belongs to, and the groups within the CO
-        org_short_name = collaboration.organisation.short_name
-        coll_short_name = collaboration.short_name
+        not_expired = not collaboration.expiry_date or collaboration.expiry_date > now
+        if not_expired and collaboration.status != STATUS_SUSPENDED:
+            # add the CO itself, the Organisation this CO belongs to, and the groups within the CO
+            org_short_name = collaboration.organisation.short_name
+            coll_short_name = collaboration.short_name
 
-        memberships.add(f"{namespace}:group:{org_short_name}")
-        memberships.add(f"{namespace}:group:{org_short_name}:{coll_short_name}")
-        for g in collaboration.groups:
-            if g.is_member(user.id):
-                memberships.add(f"{namespace}:group:{org_short_name}:{coll_short_name}:{g.short_name}")
+            memberships.add(f"{namespace}:group:{org_short_name}")
+            memberships.add(f"{namespace}:group:{org_short_name}:{coll_short_name}")
+            for g in collaboration.groups:
+                if g.is_member(user.id):
+                    memberships.add(f"{namespace}:group:{org_short_name}:{coll_short_name}:{g.short_name}")
+    return memberships
+
+
+def collaboration_memberships_for_service(user, service):
+    memberships = []
+    now = datetime.datetime.utcnow()
+    if user and service:
+        for cm in user.collaboration_memberships:
+            co_expired = cm.collaboration.expiry_date and cm.collaboration.expiry_date < now
+            cm_expired = cm.expiry_date and cm.expiry_date < now
+            if not co_expired and not cm_expired:
+                connected = list(filter(lambda s: s.id == service.id, cm.collaboration.services))
+                if connected or list(filter(lambda s: s.id == service.id, cm.collaboration.organisation.services)):
+                    memberships.append(cm)
     return memberships

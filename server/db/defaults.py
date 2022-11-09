@@ -11,6 +11,12 @@ STATUS_ACTIVE = "active"
 STATUS_EXPIRED = "expired"
 STATUS_SUSPENDED = "suspended"
 
+SBS_LOGIN = "sbs_login"
+PROXY_AUTHZ = "proxy_authz"
+PROXY_AUTHZ_SBS = "proxy_authz_sbs"
+PAM_WEB_LOGIN = "pam_web_login"
+USER_TOKEN_INTROSPECT = "user_token_introspect"
+
 
 def default_expiry_date(json_dict=None):
     if json_dict is not None and "expiry_date" in json_dict:
@@ -53,6 +59,7 @@ uri_re = re.compile("^https?://(?:www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}"
 def valid_uri_attributes(data, uri_attributes):
     for uri_attr in uri_attributes:
         uri = data.get(uri_attr)
+        uri = uri.lower().replace("{co_short_name}", "").replace("{username}", "") if uri and uri_attr == "uri" else uri
         if uri and not bool(uri_re.match(uri)):
             raise ValueError(f"{uri} is not a valid uri")
     return True

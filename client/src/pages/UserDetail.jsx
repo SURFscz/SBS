@@ -36,24 +36,43 @@ class UserDetail extends React.Component {
     }
 
     componentDidMount = () => {
+        const {user: currentUser} = this.props;
         const {id} = this.props.match.params;
-        Promise.all([findUserById(id), auditLogsUser(id)])
+        const promises = [findUserById(id)];
+        if (currentUser.admin) {
+            promises.push(auditLogsUser(id));
+        }
+        Promise.all(promises)
             .then(res => {
                 const user = res[0];
-                const auditLogs = res[1];
+                const auditLogs = currentUser.admin ? res[1] : [];
+                const {org_id} = this.props.match.params;
+                let middlePath;
+                if (org_id) {
+                    const org_membership = currentUser.organisation_memberships.find(om => om.organisation_id === parseInt(org_id, 10)) || {organisation: {name: org_id}};
+                    middlePath = {
+                        path: `/organisations/${org_id}/users`,
+                        value: I18n.t("breadcrumb.organisation", {name: org_membership.organisation.name})
+                    }
+                } else {
+                    middlePath = {path: "/home/users", value: I18n.t("breadcrumb.users")};
+                }
                 AppStore.update(s => {
                     s.breadcrumb.paths = [
                         {path: "/", value: I18n.t("breadcrumb.home")},
-                        {path: "/home/users", value: I18n.t("breadcrumb.users")},
+                        middlePath,
                         {path: "", value: user.name}
                     ];
                 });
                 const tab = this.props.match.params.tab || "details";
                 this.setState({
-                    loading: false, user: user, auditLogs: auditLogs, filteredAuditLogs: auditLogs,
+                    loading: false,
+                    user: user,
+                    auditLogs: auditLogs,
+                    filteredAuditLogs: auditLogs,
                     tab: tab
                 });
-                if (!isEmpty(res[0].user_ip_networks)) {
+                if (currentUser.admin && !isEmpty(res[0].user_ip_networks)) {
                     Promise.all(res[0].user_ip_networks.map(n => ipNetworks(n.network_value, n.id)))
                         .then(res => {
                             this.setState({"user_ip_networks": res});
@@ -62,7 +81,7 @@ class UserDetail extends React.Component {
             })
     };
 
-    getDetailsTab = user => {
+    getDetailsTab = (user, currentUser) => {
         const attributes = ["name", "email", "username", "uid", "affiliation", "entitlement", "schac_home_organisation", "eduperson_principal_name"];
         return (<div key="details" name="details" label={I18n.t("home.details")}
                      icon={<FontAwesomeIcon icon="id-badge"/>}>
@@ -72,35 +91,40 @@ class UserDetail extends React.Component {
                         <InputField noInput={true} disabled={true} value={user[attr] || "-"}
                                     name={I18n.t(`models.allUsers.${attr}`)}/>
                     </div>)}
-                <InputField noInput={true} disabled={true} value={moment(user.last_login_date * 1000).format("LLL")}
+                <InputField noInput={true}
+                            disabled={true}
+                            value={user.last_login_date ? moment(user.last_login_date * 1000).format("LLL") : "-"}
                             name={I18n.t("models.allUsers.last_login_date")}/>
-                <div className="ssh-keys">
+                {currentUser.admin && <div className="ssh-keys">
                     <InputField noInput={true} disabled={true} value={user.ssh_keys.length}
                                 name={I18n.t("user.ssh_key")}/>
                     {user.ssh_keys.length > 0 &&
                     <a href="/ssh" onClick={this.toggleSsh}>{I18n.t("models.allUsers.showSsh")}</a>}
-                </div>
+                </div>}
                 <div className="input-field">
-                    <label>{I18n.t("models.organisations.title")}</label>
+                    <label>{I18n.t(`models.organisations.title`)}</label>
                     {isEmpty(user.organisation_memberships) && "-"}
                     {!isEmpty(user.organisation_memberships) && <ul>
                         {user.organisation_memberships.map(ms =>
                             <li key={`organisation_membership_${ms.id}`}>
-                                <Link to={`/organisations/${ms.organisation.id}`}>{`${ms.organisation.name} (${I18n.t('profile.' + ms.role)})`}</Link>
+                                <Link
+                                    to={`/organisations/${ms.organisation.id}`}>{`${ms.organisation.name} (${I18n.t('profile.' + ms.role)})`}</Link>
                             </li>)}
                     </ul>}
                 </div>
                 <div className="input-field">
-                    <label>{I18n.t("models.collaborations.title")}</label>
+                    <label>{I18n.t(`models.collaborations.${currentUser.admin ? "title" : "titleForOrgAdmin"}`)}</label>
                     {isEmpty(user.collaboration_memberships) && "-"}
                     {!isEmpty(user.collaboration_memberships) && <ul>
-                        {user.collaboration_memberships.map((ms, index) =>
-                            <li key={`${ms.role}_${index}`}>
-                               <Link to={`/collaborations/${ms.collaboration.id}`}>{`${ms.collaboration.name} (${I18n.t('profile.' + ms.role)})`}</Link>
-                            </li>)}
+                        {user.collaboration_memberships
+                            .map((ms, index) =>
+                                <li key={`${ms.role}_${index}`}>
+                                    <Link
+                                        to={`/collaborations/${ms.collaboration.id}`}>{`${ms.collaboration.name} (${I18n.t('profile.' + ms.role)})`}</Link>
+                                </li>)}
                     </ul>}
                 </div>
-                <div className="input-field">
+                {currentUser.admin && <div className="input-field">
                     <label>{I18n.t("collaborations.requests")}</label>
                     {isEmpty(user.join_requests) && "-"}
                     {!isEmpty(user.join_requests) && <ul>
@@ -111,36 +135,38 @@ class UserDetail extends React.Component {
                                 </Link>
                             </li>)}
                     </ul>}
-                </div>
-                <div className="input-field">
+                </div>}
+                {currentUser.admin && <div className="input-field">
                     <label>{I18n.t("organisations.collaborationRequests")}</label>
                     {isEmpty(user.collaboration_requests) && "-"}
                     {!isEmpty(user.collaboration_requests) && <ul>
                         {user.collaboration_requests.map(cr =>
                             <li key={`collaboration_request_${cr.id}`}>
-                                <Link to={`/organisations/${cr.organisation.id}/collaboration_requests`}>{`${cr.name} (${cr.status})`}</Link>
+                                <Link
+                                    to={`/organisations/${cr.organisation.id}/collaboration_requests`}>{`${cr.name} (${cr.status})`}</Link>
                             </li>)}
                     </ul>}
-                </div>
-                <div className="input-field">
+                </div>}
+                {currentUser.admin && <div className="input-field">
                     <label>{I18n.t("models.services.title")}</label>
                     {isEmpty(user.service_memberships) && "-"}
                     {!isEmpty(user.service_memberships) && <ul>
                         {user.service_memberships.map(sm =>
                             <li key={`service_membership_${sm.id}`}>
-                               <Link to={`/services/${sm.service.id}`}>{`${sm.service.name} (${I18n.t('profile.' + sm.role)})`}</Link>
+                                <Link
+                                    to={`/services/${sm.service.id}`}>{`${sm.service.name} (${I18n.t('profile.' + sm.role)})`}</Link>
                             </li>)}
                     </ul>}
-                </div>
-                <div className="input-field">
+                </div>}
+                {currentUser.admin && <div className="input-field">
                     <label>{I18n.t("profile.network")}</label>
                     {isEmpty(user.user_ip_networks) && "-"}
                     {!isEmpty(user.user_ip_networks) && <ul>
                         {user.user_ip_networks.map(n =>
                             <li key={`user_ip_networks_${n.id}`}>{n.network_value}</li>)}
                     </ul>}
-                </div>
-                <div className="input-field">
+                </div>}
+                {currentUser.admin && <div className="input-field">
                     <label>{I18n.t("aup.multiple")}</label>
                     {isEmpty(user.service_aups) && "-"}
                     {!isEmpty(user.service_aups) && <ul>
@@ -149,7 +175,7 @@ class UserDetail extends React.Component {
                                 <Link to={`/services/${sm.service.id}`}>{sm.service.name}</Link>
                             </li>)}
                     </ul>}
-                </div>
+                </div>}
             </div>
         </div>)
     }
@@ -199,10 +225,11 @@ class UserDetail extends React.Component {
         if (loading) {
             return <SpinnerField/>
         }
-        const tabs = [
-            this.getDetailsTab(user),
-            this.getHistoryTab(filteredAuditLogs, query),
-        ]
+        const {user: currentUser} = this.props;
+        const tabs = [this.getDetailsTab(user, currentUser)];
+        if (currentUser.admin) {
+            tabs.push(this.getHistoryTab(filteredAuditLogs, query));
+        }
         return (
             <div className="mod-user-details">
                 <UnitHeader obj={({name: user.name, svg: PersonIcon})}
@@ -219,7 +246,7 @@ class UserDetail extends React.Component {
                 </Tabs>
                 {showSshKeys && <UserDetailSshDialog user={user} toggle={this.toggleSsh}/>}
             </div>);
-    };
+    }
 
 }
 

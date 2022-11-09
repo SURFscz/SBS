@@ -7,7 +7,8 @@ from werkzeug.exceptions import BadRequest
 from server.api.base import json_endpoint, emit_socket
 from server.api.collaborations_services import connect_service_collaboration
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_write_access, \
-    confirm_collaboration_member, generate_token, is_service_admin
+    confirm_collaboration_member, is_service_admin
+from server.auth.secrets import generate_token
 from server.db.domain import ServiceConnectionRequest, Service, Collaboration, db, User
 from server.db.models import delete
 from server.mail import mail_service_connection_request, mail_accepted_declined_service_connection_request
@@ -26,14 +27,14 @@ def _service_connection_request_query():
         .options(contains_eager(ServiceConnectionRequest.requester))
 
 
-def _service_connection_request_by_hash(hash):
+def _service_connection_request_by_hash(hash_value):
     return _service_connection_request_query() \
-        .filter(ServiceConnectionRequest.hash == hash) \
+        .filter(ServiceConnectionRequest.hash == hash_value) \
         .one()
 
 
-def _do_service_connection_request(hash, approved):
-    service_connection_request = _service_connection_request_by_hash(hash)
+def _do_service_connection_request(hash_value, approved):
+    service_connection_request = _service_connection_request_by_hash(hash_value)
     service = service_connection_request.service
     collaboration = service_connection_request.collaboration
 
@@ -57,11 +58,15 @@ def _do_service_connection_request(hash, approved):
 
 def _do_mail_request(collaboration, service, service_connection_request, is_admin, user):
     recipients = []
+    cc = None
     if is_admin:
-        if service.contact_email:
+        recipients += [service_membership.user.email for service_membership in service.service_memberships]
+        if recipients:
+            cc = [service.contact_email] if service.contact_email else None
+        elif service.contact_email:
             recipients.append(service.contact_email)
         else:
-            recipients += [service_membership.user.email for service_membership in service.service_memberships]
+            recipients.append(User.query.filter(User.uid == current_app.app_config.admin_users[0].uid).one().email)
     else:
         for membership in collaboration.collaboration_memberships:
             if membership.role == "admin":
@@ -74,17 +79,16 @@ def _do_mail_request(collaboration, service, service_connection_request, is_admi
                    "service": service,
                    "collaboration": collaboration,
                    "user": user}
-        mail_service_connection_request(context, service.name, collaboration.name, recipients, is_admin)
+        mail_service_connection_request(context, service.name, collaboration.name, recipients, is_admin, cc)
 
 
 @service_connection_request_api.route("/by_service/<service_id>", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def service_request_connections_by_service(service_id):
     # Avoid security risk, only return id
-    return ServiceConnectionRequest.query \
-               .options(load_only("collaboration_id")) \
-               .filter(ServiceConnectionRequest.service_id == service_id) \
-               .all(), 200
+    return ServiceConnectionRequest.query.options(load_only("collaboration_id")) \
+                                         .filter(ServiceConnectionRequest.service_id == service_id) \
+                                         .all(), 200
 
 
 @service_connection_request_api.route("/<service_connection_request_id>", methods=["DELETE"], strict_slashes=False)
@@ -141,22 +145,22 @@ def request_new_service_connection(collaboration, message, is_admin, service, us
     _do_mail_request(collaboration, service, service_connection_request, is_admin, user)
 
 
-@service_connection_request_api.route("/find_by_hash/<hash>", strict_slashes=False)
+@service_connection_request_api.route("/find_by_hash/<hash_value>", strict_slashes=False)
 @json_endpoint
-def service_connection_request_by_hash(hash):
-    return _service_connection_request_by_hash(hash), 200
+def service_connection_request_by_hash(hash_value):
+    return _service_connection_request_by_hash(hash_value), 200
 
 
-@service_connection_request_api.route("/approve/<hash>", methods=["PUT"], strict_slashes=False)
+@service_connection_request_api.route("/approve/<hash_value>", methods=["PUT"], strict_slashes=False)
 @json_endpoint
-def approve_service_connection_request(hash):
-    return _do_service_connection_request(hash, True)
+def approve_service_connection_request(hash_value):
+    return _do_service_connection_request(hash_value, True)
 
 
-@service_connection_request_api.route("/deny/<hash>", methods=["PUT"], strict_slashes=False)
+@service_connection_request_api.route("/deny/<hash_value>", methods=["PUT"], strict_slashes=False)
 @json_endpoint
-def deny_service_connection_request(hash):
-    return _do_service_connection_request(hash, False)
+def deny_service_connection_request(hash_value):
+    return _do_service_connection_request(hash_value, False)
 
 
 @service_connection_request_api.route("/resend/<service_connection_request_id>", strict_slashes=False)
@@ -167,6 +171,7 @@ def resend_service_connection_request(service_connection_request_id):
     collaboration = service_connection_request.collaboration
 
     confirm_collaboration_admin(collaboration.id)
+
     user = User.query.get(current_user_id())
     _do_mail_request(collaboration, service, service_connection_request, True, user)
     return {}, 200

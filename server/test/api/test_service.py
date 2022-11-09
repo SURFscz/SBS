@@ -91,8 +91,9 @@ class TestService(AbstractTest):
                 "ip_networks": [{"network_value": "2001:1c02:2b2f:be00:1cf0:fd5a:a548:1a16/128"},
                                 {"network_value": "192.0.2.0/24"}]
             })
+
             self.assertTrue(
-                "You have been invited by urn:john to become admin of service 'new_service'" in outbox[0].html)
+                "urn:john invited you as an admin for service new_service" in outbox[0].html)
 
             self.assertIsNotNone(service["id"])
             self.assertEqual("new_service", service["name"])
@@ -129,6 +130,20 @@ class TestService(AbstractTest):
         self.assertEqual("changed", service["name"])
         self.assertEqual(1, len(service["ip_networks"]))
 
+    def test_service_update_delete_service_tokens(self):
+        service = self.find_entity_by_name(Service, service_network_name)
+        self.login("urn:john")
+        service = self.get(f"api/services/{service.id}", with_basic_auth=False)
+        self.assertEqual(1, len(service["service_tokens"]))
+
+        service["token_enabled"] = False
+        service["pam_web_sso_enabled"] = False
+
+        self.put("/api/services", body=service, with_basic_auth=False)
+
+        service = self._find_by_name(service_network_name)
+        self.assertEqual(0, len(service["service_tokens"]))
+
     def test_toggle_access_allowed_for_all(self):
         service = self.find_entity_by_name(Service, service_cloud_name)
         self.assertFalse(service.access_allowed_for_all)
@@ -141,15 +156,14 @@ class TestService(AbstractTest):
         service = self.find_entity_by_name(Service, service_cloud_name)
         self.assertTrue(service.access_allowed_for_all)
 
-    def test_service_update_do_not_clear_hashed_token_and_ldap_password(self):
+    def test_service_update_do_not_clear_ldap_password(self):
         service = self._find_by_name(service_wiki_name)
 
         self.login("urn:john")
         service = self.put("/api/services", body=service, with_basic_auth=False)
-        rows = db.session.execute(text(f"SELECT hashed_token, ldap_password FROM services where id = {service['id']}"))
+        rows = db.session.execute(text(f"SELECT ldap_password FROM services where id = {service['id']}"))
         row = next(rows)
         self.assertIsNotNone(row[0])
-        self.assertIsNotNone(row[1])
 
     def test_service_update_service_admin(self):
         service = self._find_by_name(service_storage_name)
@@ -252,7 +266,7 @@ class TestService(AbstractTest):
     def test_services_mine(self):
         self.login("urn:service_admin")
         services = self.get("/api/services/mine", with_basic_auth=False)
-        self.assertEqual(2, len(services))
+        self.assertEqual(3, len(services))
 
         service_storage = self.find_by_name(services, service_storage_name)
         self.assertEqual(0, service_storage["organisations_count"])
@@ -301,16 +315,6 @@ class TestService(AbstractTest):
         self.assertTrue(ldap_password.startswith("$6$rounds=100000$"))
         service = self._find_by_name()
         self.assertIsNone(service.get("ldap_password"))
-
-    def test_reset_token_value(self):
-        service = self._find_by_name()
-        res = self.get(f"/api/services/reset_token_value/{service['id']}")
-        self.assertIsNotNone(res["token_value"])
-        rs = db.engine.execute(f"SELECT hashed_token FROM services WHERE id = {service['id']}")
-        token_value = next(rs, (0,))[0]
-        self.assertTrue(len(token_value) > len(res["token_value"]))
-        service = self._find_by_name()
-        self.assertIsNone(service.get("hashed_token"))
 
     def test_service_by_uuid4(self):
         cloud = self.find_entity_by_name(Service, service_cloud_name)

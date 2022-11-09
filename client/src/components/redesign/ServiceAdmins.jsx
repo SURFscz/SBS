@@ -3,7 +3,7 @@ import I18n from "i18n-js";
 import Entities from "./Entities";
 import {ReactComponent as UserIcon} from "../../icons/users.svg";
 import {ReactComponent as InviteIcon} from "../../icons/single-neutral-question.svg";
-import {ReactComponent as HandIcon} from "../../icons/toys-hand-ghost.svg";
+import {ReactComponent as HandIcon} from "../../icons/puppet_new.svg";
 import CheckBox from "../CheckBox";
 import {deleteServiceMembership, serviceInvitationBulkResend, serviceInvitationDelete} from "../../api";
 import {setFlash} from "../../utils/Flash";
@@ -21,6 +21,7 @@ import InstituteColumn from "./InstitueColumn";
 import {isEmpty} from "../../utils/Utils";
 import {emitImpersonation} from "../../utils/Impersonation";
 import LastAdminWarning from "./LastAdminWarning";
+import DOMPurify from "dompurify";
 
 const INVITE_IDENTIFIER = "INVITE_IDENTIFIER";
 const MEMBER_IDENTIFIER = "MEMBER_IDENTIFIER";
@@ -77,7 +78,7 @@ class ServiceAdmins extends React.Component {
         const nbrAdminsRemoved = Object.values(selectedMembers)
             .filter(sr => sr.selected && !sr.ref.invite && sr.ref.role === "admin").length;
         const currentUserDeleted = Object.values(selectedMembers)
-                .some(sr => sr.selected && !sr.ref.invite && sr.ref.user.id === currentUser.id);
+            .some(sr => sr.selected && !sr.ref.invite && sr.ref.user.id === currentUser.id);
 
         const lastAdminWarning = nbrAdmins === nbrAdminsRemoved;
         const lastAdminWarningUser = lastAdminWarning && currentUserDeleted;
@@ -232,9 +233,9 @@ class ServiceAdmins extends React.Component {
                                   place="bottom">
                     <span
                         dangerouslySetInnerHTML={{
-                            __html: !anySelected ?
+                            __html: DOMPurify.sanitize(!anySelected ?
                                 I18n.t("models.orgMembers.removeTooltipDisabled") :
-                                I18n.t("models.orgMembers.removeTooltip")
+                                I18n.t("models.orgMembers.removeTooltip"))
                         }}/>
                     </ReactTooltip>
                 </div>}
@@ -245,7 +246,7 @@ class ServiceAdmins extends React.Component {
                     <ReactTooltip id="resend-invites" type="light" effect="solid" data-html={true}
                                   place="bottom">
                         <span
-                            dangerouslySetInnerHTML={{__html: !showResendInvite ? I18n.t("models.orgMembers.resendTooltipDisabled") : I18n.t("models.orgMembers.resendTooltip")}}/>
+                            dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(!showResendInvite ? I18n.t("models.orgMembers.resendTooltipDisabled") : I18n.t("models.orgMembers.resendTooltip"))}}/>
                     </ReactTooltip>
                 </div>}
 
@@ -257,13 +258,13 @@ class ServiceAdmins extends React.Component {
         return (
             <div className="admin-icons">
                 <div data-tip data-for={`delete-org-member-${entity.id}`}
-                     onClick={e => this.removeFromActionIcon(entity.id, entity.invite, true)}>
+                     onClick={() => this.removeFromActionIcon(entity.id, entity.invite, true)}>
                     <FontAwesomeIcon icon="trash"/>
                     <ReactTooltip id={`delete-org-member-${entity.id}`} type="light" effect="solid" data-html={true}
                                   place="bottom">
                         <span dangerouslySetInnerHTML={{
-                            __html: entity.invite ? I18n.t("models.orgMembers.removeInvitationTooltip") :
-                                I18n.t("models.orgMembers.removeMemberTooltip")
+                            __html: DOMPurify.sanitize(entity.invite ? I18n.t("models.orgMembers.removeInvitationTooltip") :
+                                I18n.t("models.orgMembers.removeMemberTooltip"))
                         }}/>
                     </ReactTooltip>
                 </div>
@@ -273,7 +274,7 @@ class ServiceAdmins extends React.Component {
                     <ReactTooltip id={`resend-invite-${entity.id}`} type="light" effect="solid" data-html={true}
                                   place="bottom">
                         <span
-                            dangerouslySetInnerHTML={{__html: I18n.t("models.orgMembers.resendInvitationTooltip")}}/>
+                            dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("models.orgMembers.resendInvitationTooltip"))}}/>
                     </ReactTooltip>
                 </div>}
 

@@ -4,29 +4,29 @@ properties:
   id:
     type: number
     readOnly: true
-    example: 999
+    example: 888
   name:
     type: string
-    example: "Mail"
+    example: "Cloud research service"
   abbreviation:
     type: string
-    example: "mail"
+    example: "cloud"
   description:
     type: string
-    example: "Mail service"
+    example: "A cloud research service, configured to mainly research cumulus formations."
   entity_id:
     type: string
     format: url
-    example: "https://mail.com"
+    example: "https://service.cloud.example.com"
   contact_email:
     type: string
-    example: "jdoe@service.com"
+    example: "jdoe@cloud.example.com"
   security_email:
     type: string
-    example: "jdoe@service.com"
+    example: "jdoe@cloud.example.com"
   support_email:
     type: string
-    example: "jdoe@service.com"
+    example: "jdoe@cloud.example.com"
   uuid4:
     type: string
     format: uuid
@@ -59,33 +59,33 @@ properties:
     example: true
   sirtfi_compliant:
     type: boolean
-    description: "Compliant with the sirtfi"
+    description: "Compliant with sirtfi"
     example: true
   token_enabled:
     type: boolean
-    description: "Can tokens be created for users"
+    description: "If true then tokens can be created for users"
     example: true
   white_listed:
     type: boolean
-    description: "Is this service whitelisted"
+    description: "If true, this service is allowed to be connected to collaborations of restricted organisations"
     example: true
   token_validity_days:
     type: number
-    description: "Tokens validity days"
+    description: "Tokens validity in days"
     example: 30
   accepted_user_policy:
     type: string
     format: uri
-    example: "https://service.universiteitvanharderwijk.nl/aup"
+    example: "https://service.cloud.example.com/aup"
   privacy_policy:
     type: string
     format: uri
-    example: "https://service.universiteitvanharderwijk.nl/privacy"
+    example: "https://service.cloud.example.com/privacy"
   logo:
     type: string
     format: uri
     descriotion: "URL for the logo"
-    example: "http://localhost:8080/api/images/collaborations/b7f621e3-de98-4de4-aca0-1573f4eb8339"
+    example: "http://sram.surf.nl/api/images/collaborations/b7f621e3-de98-4de4-aca0-1573f4eb8339"
   created_at:
     type: number
     description: "The date of the created at in epoch seconds"

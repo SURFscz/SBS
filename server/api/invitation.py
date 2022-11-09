@@ -10,7 +10,8 @@ from werkzeug.exceptions import Conflict, Forbidden
 
 from server.api.base import json_endpoint, query_param, emit_socket
 from server.api.service_aups import add_user_aups
-from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call, generate_token
+from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call
+from server.auth.secrets import generate_token
 from server.db.defaults import default_expiry_date
 from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, Organisation
 from server.db.models import delete
@@ -78,7 +79,7 @@ def invitations_by_hash():
 
 
 @invitations_api.route("/v1/collaboration_invites", methods=["PUT"], strict_slashes=False)
-@swag_from("../swagger/paths/put_new_invitations.yml")
+@swag_from("../swagger/public/paths/put_new_invitations.yml")
 @json_endpoint
 def collaboration_invites_api():
     confirm_external_api_call()
@@ -238,7 +239,7 @@ def delete_invitation(invitation_id):
 
 
 @invitations_api.route("/v1/<external_identifier>", strict_slashes=False)
-@swag_from("../swagger/paths/get_invitation_by_identifier.yml")
+@swag_from("../swagger/public/paths/get_invitation_by_identifier.yml")
 @json_endpoint
 def external_invitation(external_identifier):
     confirm_external_api_call()

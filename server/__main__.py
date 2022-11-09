@@ -6,8 +6,11 @@ import time
 from datetime import timedelta
 from logging.handlers import TimedRotatingFileHandler
 
+# monkey_patch before importing anything else!
+# see https://github.com/gevent/gevent/issues/1016#issuecomment-328529454
 import eventlet
 eventlet.monkey_patch()
+
 import yaml
 from flask import Flask, jsonify, request as current_request
 from flask_mail import Mail
@@ -46,6 +49,7 @@ from server.api.service_connection_request import service_connection_request_api
 from server.api.service_group import service_group_api
 from server.api.service_invitation import service_invitations_api
 from server.api.service_membership import service_membership_api
+from server.api.service_token import service_token_api
 from server.api.system import system_api
 from server.api.tag import tag_api
 from server.api.token import token_api
@@ -56,6 +60,7 @@ from server.api.user_token import user_token_api
 from server.cron.schedule import start_scheduling
 from server.db.db import db, db_migrations
 from server.db.redis import init_redis
+from server.logger.traceback_info_filter import TracebackInfoFilter
 from server.mqtt.mqtt import MqttClient
 from server.swagger.conf import init_swagger, swagger_specs
 from server.templates import invitation_role
@@ -72,11 +77,13 @@ def _init_logging(is_test):
                                            when="midnight", backupCount=30)
         handler.setFormatter(formatter)
         handler.setLevel(logging.INFO)
+        handler.addFilter(TracebackInfoFilter())
 
         debug_handler = TimedRotatingFileHandler(f"{os.path.dirname(os.path.realpath(__file__))}/../log/sbs_debug.log",
                                                  when="midnight", backupCount=30)
         debug_handler.setFormatter(formatter)
         debug_handler.setLevel(logging.DEBUG)
+        debug_handler.addFilter(TracebackInfoFilter(clear=False))
 
         logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
 
@@ -116,7 +123,7 @@ blueprints = [
     collaborations_services_api, group_api, group_members_api, api_key_api, aup_api, collaboration_request_api,
     service_connection_request_api, audit_log_api, ipaddress_api, system_api, organisations_services_api, mock_user_api,
     plsc_api, image_api, service_group_api, service_invitations_api, service_membership_api, service_aups_api,
-    user_token_api, token_api, tag_api, swagger_specs, pam_websso_api, user_login_api
+    user_token_api, token_api, tag_api, swagger_specs, pam_websso_api, user_login_api, service_token_api
 ]
 
 for api_blueprint in blueprints:
@@ -208,4 +215,5 @@ def connected():
 # In the WSGI production file the socket_io
 if __name__ == '__main__':
     socket_io.run(app, debug=False, port=8080)
-    # app.run(port=8080, debug=False, host="localhost", threaded=True)
+# if is_local:
+#    app.run(port=8080, debug=False, host="localhost", threaded=False)

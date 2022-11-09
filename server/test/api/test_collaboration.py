@@ -2,6 +2,7 @@
 import datetime
 import json
 import time
+import urllib
 
 from sqlalchemy import text
 
@@ -19,21 +20,16 @@ from server.test.seed import uuc_secret, uuc_name
 class TestCollaboration(AbstractTest):
 
     def _find_by_identifier(self, with_basic_auth=True):
-        res = self.get("/api/collaborations/find_by_identifier",
-                       query_data={"identifier": collaboration_ai_computing_uuid},
-                       with_basic_auth=with_basic_auth)
-        return res["collaboration"]
+        return self.get("/api/collaborations/find_by_identifier",
+                        query_data={"identifier": collaboration_ai_computing_uuid},
+                        with_basic_auth=with_basic_auth)
 
     def test_find_by_identifier(self):
         self.login("urn:james")
-        res = self.get("/api/collaborations/find_by_identifier",
-                       query_data={"identifier": collaboration_ai_computing_uuid},
-                       with_basic_auth=False)
-        collaboration = res["collaboration"]
-        self.assertEqual(2, len(collaboration["services"]))
-
-        service_emails = res["service_emails"]
-        self.assertEqual(4, len(service_emails))
+        collaboration = self.get("/api/collaborations/find_by_identifier",
+                                 query_data={"identifier": collaboration_ai_computing_uuid},
+                                 with_basic_auth=False)
+        self.assertEqual(collaboration["identifier"], collaboration_ai_computing_uuid)
 
     def test_search(self):
         self.login("urn:john")
@@ -278,6 +274,10 @@ class TestCollaboration(AbstractTest):
         self.assertTrue(len(collaboration["collaboration_memberships"]) >= 4)
         self.assertEqual(1, len(collaboration["invitations"]))
 
+    def test_collaboration_by_id_v1(self):
+        self.login()
+        self.get("/api/collaborations/v1", with_basic_auth=False, response_status_code=405)
+
     def test_collaboration_by_id_service_connection_requests(self):
         collaboration_id = self.find_entity_by_name(Collaboration, uva_research_name).id
         self.login()
@@ -431,6 +431,17 @@ class TestCollaboration(AbstractTest):
         collaboration = self.get(f"/api/collaborations/lite/{collaboration_id}")
         self.assertEqual(ai_computing_name, collaboration["name"])
 
+    def test_collaboration_lite_by_id_disclose_no_group_memberships(self):
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        collaboration.disclose_email_information = False
+        collaboration.disclose_member_information = False
+        db.session.merge(collaboration)
+        db.session.commit()
+
+        self.login("urn:jane")
+        collaboration = self.get(f"/api/collaborations/lite/{collaboration.id}")
+        self.assertIsNone(collaboration["groups"][0]["collaboration_memberships"][0].get("user"))
+
     def test_collaboration_lite_no_member(self):
         collaboration_id = self._find_by_identifier()["id"]
         self.login("urn:roger")
@@ -446,7 +457,7 @@ class TestCollaboration(AbstractTest):
         collaboration = self.get(f"/api/collaborations/lite/{collaboration_id}")
 
         memberships = collaboration["collaboration_memberships"]
-        self.assertEqual(4, len(memberships))
+        self.assertEqual(5, len(memberships))
         user = memberships[0]["user"]
         self.assertTrue("email" in user)
 
@@ -494,9 +505,32 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(0, len(collaboration.collaboration_memberships))
         self.assertIsNone(collaboration.accepted_user_policy)
         self.assertIsNotNone(collaboration.logo)
+        one_day_ago = datetime.datetime.now() - datetime.timedelta(days=1)
+        self.assertTrue(collaboration.last_activity_date > one_day_ago)
 
         count = Invitation.query.filter(Invitation.collaboration_id == collaboration.id).count()
         self.assertEqual(2, count)
+
+    def test_api_call_with_logo_url(self):
+        response = self.client.post("/api/collaborations/v1",
+                                    headers={"Authorization": f"Bearer {uuc_secret}"},
+                                    data=json.dumps({
+                                        "name": "new_collaboration",
+                                        "description": "new_collaboration",
+                                        "administrators": ["the@ex.org", "that@ex.org"],
+                                        "short_name": "new_short_name",
+                                        "disable_join_requests": True,
+                                        "disclose_member_information": True,
+                                        "disclose_email_information": True,
+                                        "logo": "https://static.surfconext.nl/media/idp/eduid.png"
+                                    }),
+                                    content_type="application/json")
+        self.assertEqual(201, response.status_code)
+
+        collaboration = self.find_entity_by_name(Collaboration, "new_collaboration")
+        raw_logo = collaboration.raw_logo()
+        urllib.request.urlopen("https://static.surfconext.nl/media/idp/eduid.png")
+        self.assertFalse(raw_logo.startswith("http"))
 
     def test_api_call_without_logo(self):
         response = self.client.post("/api/collaborations/v1",
@@ -532,8 +566,8 @@ class TestCollaboration(AbstractTest):
                                     content_type="application/json")
         self.assertEqual(400, response.status_code)
         data = response.json
-        self.assertEqual(data["message"],
-                         "Collaboration with name 'AI computing' already exists within organisation 'UUC'.")
+        self.assertTrue(
+            "Collaboration with name 'AI computing' already exists within organisation 'UUC'." in data["message"])
 
     def test_api_call_existing_short_name(self):
         response = self.client.post("/api/collaborations/v1",
@@ -552,8 +586,8 @@ class TestCollaboration(AbstractTest):
                                     content_type="application/json")
         self.assertEqual(400, response.status_code)
         data = response.json
-        self.assertEqual(data["message"],
-                         "Collaboration with short_name 'ai_computing' already exists within organisation 'UUC'.")
+        self.assertTrue(
+            "Collaboration with short_name 'ai_computing' already exists within organisation 'UUC'." in data["message"])
 
     def test_api_call_no_api(self):
         self.login("urn:john")
@@ -566,7 +600,7 @@ class TestCollaboration(AbstractTest):
                                     content_type="application/json")
         self.assertEqual(403, response.status_code)
         data = response.json
-        self.assertEqual("Not a valid external API call", data["message"])
+        self.assertTrue("Not a valid external API call" in data["message"])
 
     def test_api_call_missing_required_attributes(self):
         response = self.client.post("/api/collaborations/v1",
@@ -576,9 +610,9 @@ class TestCollaboration(AbstractTest):
                                     content_type="application/json")
         self.assertEqual(400, response.status_code)
         data = response.json
-        self.assertEqual(data["message"], "Missing required attributes: ['name', 'description', 'short_name', "
-                                          "'disable_join_requests', 'disclose_member_information', "
-                                          "'disclose_email_information', 'administrators']")
+        self.assertTrue("Missing required attributes: ['name', 'description', 'short_name', "
+                        "'disable_join_requests', 'disclose_member_information', "
+                        "'disclose_email_information', 'administrators']" in data["message"])
 
     def test_collaborations_may_request_collaboration_true(self):
         self.login("urn:mary")
@@ -586,7 +620,7 @@ class TestCollaboration(AbstractTest):
         self.assertTrue(res)
 
     def test_collaborations_may_request_collaboration_false(self):
-        self.login("urn:mike")
+        self.login("urn:admin")
         res = self.get("/api/collaborations/may_request_collaboration", with_basic_auth=False)
         self.assertFalse(res)
 
@@ -666,3 +700,26 @@ class TestCollaboration(AbstractTest):
         self.get(f"/api/collaborations/v1/{collaboration_uva_researcher_uuid}",
                  headers={"Authorization": f"Bearer {uuc_secret}"},
                  with_basic_auth=False, response_status_code=403)
+
+    def test_collaboration_new_with_expiry_date_past(self):
+        try:
+            self.app.app_config.feature.past_dates_allowed = False
+            response = self.client.post("/api/collaborations/v1",
+                                        headers={"Authorization": f"Bearer {uuc_secret}"},
+                                        data=json.dumps({
+                                            "name": "new_collaboration",
+                                            "description": "new_collaboration",
+                                            "accepted_user_policy": "https://aup.org",
+                                            "administrators": ["the@ex.org", "that@ex.org"],
+                                            "short_name": "new_short_name",
+                                            "disable_join_requests": True,
+                                            "disclose_member_information": True,
+                                            "disclose_email_information": True,
+                                            "expiry_date": 999999999,
+                                            "logo": read_image("uuc.jpeg")
+                                        }),
+                                        content_type="application/json")
+            self.assertEqual(400, response.status_code)
+            self.assertTrue("in the past" in response.json["message"])
+        finally:
+            self.app.app_config.feature.past_dates_allowed = True

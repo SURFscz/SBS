@@ -53,6 +53,7 @@ import {ErrorOrigins, getSchacHomeOrg, isEmpty, removeDuplicates} from "../utils
 import UserTokens from "../components/redesign/UserTokens";
 import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
 import Cookies from "js-cookie";
+import DOMPurify from "dompurify";
 
 class CollaborationDetail extends React.Component {
 
@@ -88,6 +89,9 @@ class CollaborationDetail extends React.Component {
     }
 
     componentWillUnmount = () => {
+        AppStore.update(s => {
+            s.sideComponent = null;
+        });
         const params = this.props.match.params;
         if (params.id) {
             const collaboration_id = parseInt(params.id, 10);
@@ -139,14 +143,14 @@ class CollaborationDetail extends React.Component {
                     }
                     Promise.all(promises)
                         .then(res => {
-                            const {user} = this.props;
+                            const {user, config} = this.props;
                             const tab = params.tab || (adminOfCollaboration ? this.state.tab : "about");
                             const collaboration = res[0];
                             const userTokens = res[res.length - 1];
                             const schacHomeOrganisation = adminOfCollaboration ? null : getSchacHomeOrg(user, res[1]);
                             const orgManager = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id, null);
                             const firstTime = getParameterByName("first", window.location.search) === "true";
-                            this.showExpiryDateFlash(user, collaboration);
+                            this.showExpiryDateFlash(user, collaboration, config);
                             this.setState({
                                 collaboration: collaboration,
                                 userTokens: userTokens,
@@ -173,8 +177,7 @@ class CollaborationDetail extends React.Component {
             } else {
                 collaborationByIdentifier(collaborationIdentifier)
                     .then(res => {
-                        const collaboration = res["collaboration"];
-                        const serviceEmails = res["service_emails"];
+                        const collaboration = res;
                         if (collaboration.disable_join_requests) {
                             this.props.history.push("/404");
                         } else {
@@ -184,7 +187,6 @@ class CollaborationDetail extends React.Component {
                             }
                             this.setState({
                                 collaboration: collaboration,
-                                serviceEmails: serviceEmails,
                                 collaborationJoinRequest: true,
                                 alreadyMember: alreadyMember,
                                 adminOfCollaboration: false,
@@ -219,7 +221,7 @@ class CollaborationDetail extends React.Component {
         return days < 60;
     }
 
-    showExpiryDateFlash = (user, collaboration) => {
+    showExpiryDateFlash = (user, collaboration, config) => {
         let msg = "";
         const membership = collaboration.collaboration_memberships.find(m => m.user_id === user.id);
 
@@ -239,15 +241,39 @@ class CollaborationDetail extends React.Component {
                 msg += I18n.t("collaboration.status.activeWithExpiryDateTooltip", {expiryDate: formattedCollaborationExpiryDate});
             }
         }
+        if (collaboration && collaboration.status === "suspended") {
+            msg += I18n.t("collaboration.status.suspendedTooltip", {
+                lastActivityDate: moment(collaboration.last_activity_date * 1000).format("LL")
+            });
+            if (isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id)) {
+                msg += I18n.t("collaboration.status.revertSuspension")
+            }
+        }
+        if (collaboration && collaboration.last_activity_date) {
+            const almostSuspended = this.isCollaborationAlmostSuspended(user, collaboration, config)
+            if (almostSuspended) {
+                msg += I18n.t("collaboration.status.almostSuspended", {
+                    days: almostSuspended
+                });
+                if (isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id)) {
+                    msg += I18n.t("collaboration.status.revertAlmostSuspended")
+                }
+            }
+        }
         if (!isEmpty(msg)) {
             setFlash(msg, "warning");
         }
     }
 
-    componentWillUnmount() {
-        AppStore.update(s => {
-            s.sideComponent = null;
-        });
+    isCollaborationAlmostSuspended = (user, collaboration, config) => {
+        const threshold = config.threshold_for_collaboration_inactivity_warning;
+        const lastActivityDate = new Date(collaboration.last_activity_date * 1000);
+        const now = new Date();
+        now.setDate(now.getDate() - threshold);
+        if (lastActivityDate <= now && collaboration.status === "active") {
+            return Math.round((now.getTime() - lastActivityDate.getTime()) / (1000 * 3600 * 24))
+        }
+        return false;
     }
 
     updateAppStore = (collaboration, adminOfCollaboration, orgManager) => {
@@ -315,7 +341,7 @@ class CollaborationDetail extends React.Component {
                 this.getMembersTab(collaboration, showMemberView, isJoinRequest),
                 this.getGroupsTab(collaboration, showMemberView, isJoinRequest),
             ];
-        const services = removeDuplicates(collaboration.services.concat(collaboration.organisation.services).filter(s => s.token_enabled), "id");
+        const services = isJoinRequest ? [] : removeDuplicates(collaboration.services.concat(collaboration.organisation.services).filter(s => s.token_enabled), "id");
         if (userTokens) {
             userTokens = userTokens.filter(userToken => services.find(service => service.id === userToken.service_id));
             if (userTokens && !isJoinRequest && services.length > 0) {
@@ -382,7 +408,9 @@ class CollaborationDetail extends React.Component {
         if (collaboration.disable_join_requests) {
             return null;
         }
-        return (<div key="joinrequests" name="joinrequests" label={I18n.t("home.tabs.joinRequests")}
+        return (<div key="joinrequests"
+                     name="joinrequests"
+                     label={I18n.t("home.tabs.joinRequests", {count: (collaboration.join_requests || []).length})}
                      icon={<JoinRequestsIcon/>}
                      notifier={openJoinRequests > 0 ? openJoinRequests : null}>
             <JoinRequests collaboration={collaboration}
@@ -485,11 +513,6 @@ class CollaborationDetail extends React.Component {
         });
     }
 
-    createCollaborationRequest = () => {
-        const {collaboration} = this.state;
-        this.props.history.push(`/new-collaboration?organisationId=${collaboration.organisation_id}`);
-    }
-
     collaborationJoinRequestAction = (collaboration, alreadyMember) => {
         return (
             <div className="join-request-action">
@@ -500,11 +523,11 @@ class CollaborationDetail extends React.Component {
         );
     }
 
-    getUnitHeaderForMemberNew = (user, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember) => {
+    getUnitHeaderForMemberNew = (user, config, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember) => {
         const customAction = collaborationJoinRequest ? this.collaborationJoinRequestAction(collaboration, alreadyMember) : null;
         return <UnitHeader obj={collaboration}
                            dropDownTitle={actionMenuUserRole(user, collaboration.organisation, collaboration, null, true)}
-                           actions={collaborationJoinRequest ? [] : this.getActions(user, collaboration, allowedToEdit, showMemberView)}
+                           actions={collaborationJoinRequest ? [] : this.getActions(user, config, collaboration, allowedToEdit, showMemberView)}
                            name={collaboration.name}
                            customAction={customAction}>
             <div className="org-attributes-container-grid">
@@ -516,11 +539,11 @@ class CollaborationDetail extends React.Component {
                                 nbrMember: collaboration.collaboration_memberships.length,
                                 nbrGroups: collaboration.groups.length
                             })}</span></li>
-                        <li>
+                        {!collaborationJoinRequest && <li>
                             <Tooltip children={<AdminIcon/>} id={"admins-icon"} msg={I18n.t("tooltips.admins")}/>
                             <span
-                                dangerouslySetInnerHTML={{__html: this.getAdminHeader(collaboration)}}/>
-                        </li>
+                                dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(this.getAdminHeader(collaboration))}}/>
+                        </li>}
                         {collaboration.website_url &&
                         <li className="collaboration-url">
                             <Tooltip children={<GlobeIcon/>} id={"collaboration-icon"}
@@ -559,7 +582,26 @@ class CollaborationDetail extends React.Component {
         }
     }
 
-    getActions = (user, collaboration, allowedToEdit, showMemberView) => {
+    resetLastActivityDate = showConfirmation => () => {
+        if (showConfirmation) {
+            this.setState({
+                confirmationDialogOpen: true,
+                confirmationQuestion: I18n.t("resetActivity.confirmation"),
+                confirmationDialogAction: this.resetLastActivityDate(false),
+                isWarning: false
+            });
+        } else {
+            this.setState({loading: true});
+            unsuspendCollaboration(this.state.collaboration.id).then(() => {
+                this.componentDidMount(() => {
+                    this.setState({loading: false});
+                    setFlash(I18n.t("resetActivity.flash", {name: this.state.collaboration.name}));
+                })
+            });
+        }
+    }
+
+    getActions = (user, config, collaboration, allowedToEdit, showMemberView) => {
         const actions = [];
         if (allowedToEdit && showMemberView) {
             actions.push({
@@ -573,6 +615,14 @@ class CollaborationDetail extends React.Component {
                 icon: "unlock",
                 name: I18n.t("home.unsuspend"),
                 perform: this.unsuspend(true)
+            });
+        }
+        const almostSuspended = this.isCollaborationAlmostSuspended(user, collaboration, config);
+        if (almostSuspended && showMemberView) {
+            actions.push({
+                icon: "unlock",
+                name: I18n.t("home.resetLastActivity"),
+                perform: this.resetLastActivityDate(true)
             });
         }
         const isMember = collaboration.collaboration_memberships.some(m => m.user_id === user.id);
@@ -675,8 +725,8 @@ class CollaborationDetail extends React.Component {
                             <ReactTooltip id="membership-status" type="light" effect="solid" data-html={true}>
                                 <span className="tooltip-wrapper-inner"
                                       dangerouslySetInnerHTML={{
-                                          __html: I18n.t(`organisationMembership.status.${status}Tooltip`,
-                                              {date: expiryDate})
+                                          __html: DOMPurify.sanitize(I18n.t(`organisationMembership.status.${status}Tooltip`,
+                                              {date: expiryDate}))
                                       }}/>
                             </ReactTooltip>
                     </span>
@@ -686,7 +736,7 @@ class CollaborationDetail extends React.Component {
         );
     }
 
-    getUnitHeader = (user, collaboration, allowedToEdit, showMemberView) => {
+    getUnitHeader = (user, config, collaboration, allowedToEdit, showMemberView) => {
         const joinRequestUrl = `${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`
         return (<UnitHeader obj={collaboration}
                             firstTime={user.admin ? this.onBoarding : undefined}
@@ -695,7 +745,7 @@ class CollaborationDetail extends React.Component {
                             breadcrumbName={I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
                             name={collaboration.name}
                             dropDownTitle={actionMenuUserRole(user, collaboration.organisation, collaboration, null, true)}
-                            actions={this.getActions(user, collaboration, allowedToEdit, showMemberView)}>
+                            actions={this.getActions(user, config, collaboration, allowedToEdit, showMemberView)}>
             <p>{collaboration.description}</p>
             <div className="org-attributes-container-grid">
                 <div className="org-attributes">
@@ -729,7 +779,7 @@ class CollaborationDetail extends React.Component {
         if (loading) {
             return <SpinnerField/>;
         }
-        const {user, refreshUser} = this.props;
+        const {user, refreshUser, config} = this.props;
         const allowedToEdit = isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id);
         let role;
         if (isInvitation) {
@@ -740,22 +790,21 @@ class CollaborationDetail extends React.Component {
         return (
             <>
                 {(adminOfCollaboration && showMemberView) &&
-                this.getUnitHeader(user, collaboration, allowedToEdit, showMemberView)}
+                this.getUnitHeader(user, config, collaboration, allowedToEdit, showMemberView)}
                 {(!showMemberView || !adminOfCollaboration) &&
-                this.getUnitHeaderForMemberNew(user, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember)}
+                this.getUnitHeaderForMemberNew(user, config, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember)}
 
-                <CollaborationWelcomeDialog name={collaboration.name}
-                                            isOpen={firstTime}
-                                            role={role}
-                                            serviceEmails={serviceEmails}
-                                            collaboration={collaboration}
-                                            isAdmin={user.admin}
-                                            isInvitation={isInvitation}
-                                            close={this.doAcceptInvitation}/>
+                {!collaborationJoinRequest && <CollaborationWelcomeDialog name={collaboration.name}
+                                                                          isOpen={firstTime}
+                                                                          role={role}
+                                                                          serviceEmails={serviceEmails}
+                                                                          collaboration={collaboration}
+                                                                          isAdmin={user.admin}
+                                                                          isInvitation={isInvitation}
+                                                                          close={this.doAcceptInvitation}/>}
 
                 <JoinRequestDialog collaboration={collaboration}
                                    isOpen={joinRequestDialogOpen}
-                                   serviceEmails={serviceEmails}
                                    refresh={callback => refreshUser(callback)}
                                    history={this.props.history}
                                    close={() => this.setState({joinRequestDialogOpen: false})}/>

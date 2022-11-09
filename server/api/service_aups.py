@@ -1,6 +1,6 @@
 # -*- coding: future_fstrings -*-
 
-from flask import Blueprint, request as current_request, session, current_app
+from flask import Blueprint, request as current_request, session
 
 from server.api.base import json_endpoint
 from server.auth.security import confirm_service_admin, current_user_id
@@ -45,7 +45,7 @@ def create_bulk_service_aup():
     service_identifiers = data["service_identifiers"]
     for service_id in service_identifiers:
         do_create_service_aup(service_id)
-    location = session.get("original_destination", current_app.app_config.base_url)
+    location = session.get("original_destination", None)
     return {"location": location}, 201
 
 
@@ -57,5 +57,6 @@ def delete_all():
 
     confirm_service_admin(service_id)
 
-    ServiceAup.query.filter(ServiceAup.service_id == service_id).delete()
+    for service_aup in ServiceAup.query.filter(ServiceAup.service_id == service_id).all():
+        db.session.delete(service_aup)
     return {}, 201

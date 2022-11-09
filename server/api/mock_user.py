@@ -7,7 +7,8 @@ from flask import request as current_request, session
 from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint
-from server.auth.security import is_admin_user
+from server.auth.secrets import generate_token
+from server.auth.security import is_admin_user, CSRF_TOKEN
 from server.auth.user_claims import add_user_claims
 from server.db.db import db
 from server.db.domain import User
@@ -28,7 +29,7 @@ def login_user():
     add_user_claims(data, sub, user, replace_none_values=False)
     db.session.merge(user)
 
-    res = {"admin": is_admin_user(user), "guest": False, "confirmed_admin": user.confirmed_super_user}
+    res = {"admin": is_admin_user(user), "guest": False}
     session_data = {
         "id": user.id,
         "uid": user.uid,
@@ -38,4 +39,6 @@ def login_user():
         "second_factor_confirmed": True
     }
     session["user"] = {**session_data, **res}
+    if CSRF_TOKEN not in session:
+        session[CSRF_TOKEN] = generate_token()
     return None, 201

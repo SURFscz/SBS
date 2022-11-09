@@ -8,7 +8,7 @@ from werkzeug.exceptions import BadRequest
 from server.auth.security import current_user_uid
 from server.db.db import db
 from server.db.domain import User, CollaborationMembership, OrganisationMembership, JoinRequest, Collaboration, \
-    Invitation, Service, Aup, IpNetwork, Group, SchacHomeOrganisation, ServiceMembership, UserIpNetwork
+    Invitation, Service, Aup, IpNetwork, Group, SchacHomeOrganisation, ServiceMembership, UserIpNetwork, UserLogin
 from server.db.logo_mixin import evict_from_cache
 
 deserialization_mapping = {"users": User, "collaboration_memberships": CollaborationMembership,
@@ -154,3 +154,12 @@ def transform_json(cls, json_dict, allow_child_cascades=True, allowed_child_coll
         return _do_transform(json_dict.items())
 
     return json_dict
+
+
+def log_user_login(login_type, succeeded, user, uid, service, service_entity_id, status=None):
+    user_login = UserLogin(login_type=login_type, status=status, succeeded=succeeded,
+                           user_id=user.id if user else None,
+                           user_uid=uid, service_id=service.id if service else None,
+                           service_entity_id=service_entity_id)
+    db.session.merge(user_login)
+    db.session.commit()

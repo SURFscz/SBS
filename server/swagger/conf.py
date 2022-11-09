@@ -35,7 +35,7 @@ swagger_specs = Blueprint("swagger_specs", __name__, url_prefix="/swagger")
 
 @swagger_specs.get("/<path:filename>")
 def base_static(filename):
-    result = send_from_directory(current_app.root_path + "/swagger", filename)
+    result = send_from_directory(current_app.root_path + "/swagger/public", filename)
     result.status_code = 200
     result.cache_control.clear()
     result.cache_control.max_age = 60 * 60

@@ -10,7 +10,6 @@ import {allCollaborations, deleteCollaborationServices, mayRequestCollaboration,
 import SpinnerField from "./SpinnerField";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
-import moment from "moment";
 import CheckBox from "../CheckBox";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
@@ -19,6 +18,9 @@ import Tooltip from "./Tooltip";
 import {ReactComponent as InformationCircle} from "../../icons/information-circle.svg";
 import {setFlash} from "../../utils/Flash";
 import Select from "react-select";
+import DOMPurify from "dompurify";
+import {displayExpiryDate, displayLastActivityDate} from "../../utils/Date";
+import moment from "moment";
 
 const allValue = "all";
 
@@ -43,11 +45,15 @@ export default class Collaborations extends React.PureComponent {
     }
 
     componentDidMount = () => {
-        const {collaborations, showTagFilter = false, platformAdmin = false} = this.props;
+        const {collaborations, user, showTagFilter = false, platformAdmin = false} = this.props;
         const promises = [mayRequestCollaboration()];
         if (collaborations === undefined) {
             Promise.all(promises.concat([platformAdmin ? allCollaborations() : myCollaborations()])).then(res => {
                 const allFilterOptions = this.allLabelFilterOptions(res[1], showTagFilter);
+                res[1].forEach(co => {
+                    const membership = (user.collaboration_memberships || []).find(m => m.collaboration_id === co.id);
+                    co.role = membership ? membership.role : null;
+                });
                 this.setState({
                     standalone: true,
                     collaborations: res[1],
@@ -77,7 +83,7 @@ export default class Collaborations extends React.PureComponent {
             return [{}];
         }
         const filterOptions = [{
-            label: I18n.t("collaborationRequest.statuses.all", {nbr: collaborations.length}),
+            label: I18n.t("models.collaborations.allLabels", {nbr: collaborations.length}),
             value: allValue
         }];
         const tagOptions = collaborations.reduce((acc, coll) => {
@@ -158,7 +164,7 @@ export default class Collaborations extends React.PureComponent {
                     <ReactTooltip id="remove-collaborations" type="light" effect="solid" data-html={true}
                                   place="bottom">
                     <span
-                        dangerouslySetInnerHTML={{__html: I18n.t("models.serviceCollaborations.disconnectTooltip")}}/>
+                        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("models.serviceCollaborations.disconnectTooltip"))}}/>
                     </ReactTooltip>
                 </div>
             </div>);
@@ -177,7 +183,7 @@ export default class Collaborations extends React.PureComponent {
                         <ReactTooltip id={`delete-org-member-${entity.id}`} type="light" effect="solid" data-html={true}
                                       place="bottom">
                             <span
-                                dangerouslySetInnerHTML={{__html: I18n.t("models.serviceCollaborations.disconnectOneTooltip")}}/>
+                                dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("models.serviceCollaborations.disconnectOneTooltip"))}}/>
                         </ReactTooltip>
                     </div>
                 </div>
@@ -294,14 +300,15 @@ export default class Collaborations extends React.PureComponent {
                 mapper: collaboration => organisation ? organisation.name : collaboration.organisation.name
             },
             {
-                nonSortable: true,
                 key: "role",
                 class: serviceKey,
-                header: "",// I18n.t("profile.yourRole"),
+                header: I18n.t("profile.yourRole"),
                 mapper: collaboration => {
-                    const cm = user.collaboration_memberships.find(m => m.collaboration_id === collaboration.id);
-                    return cm ?
-                        <span className={`person-role ${cm.role}`}>{I18n.t(`profile.${cm.role}`)}</span> : null;
+                    if (collaboration.role) {
+                        return <span
+                            className={`person-role ${collaboration.role}`}>{I18n.t(`profile.${collaboration.role}`)}</span>
+                    }
+                    return null;
                 }
             }
         );
@@ -323,17 +330,17 @@ export default class Collaborations extends React.PureComponent {
                         const expiryDate = collaboration.expiry_date * 1000;
                         const days = Math.max(1, Math.round((expiryDate - today) / (1000 * 60 * 60 * 24)));
                         const warning = days < 60;
+                        const className = collaboration.status === "expired" ? "expired" : warning ? "warning" : "";
                         return <div>
-                            <span className={warning ? "warning" : ""}>{moment(expiryDate).format("LL")}</span>
-                            {(warning && collaboration.status === "active") &&
-                            <span className="warning">
-                            {I18n.p(days, "collaboration.expiryDateWarning", {nbr: days})}
-                            </span>}
-                            {(collaboration.status === "expired") &&
-                            <span className="warning">{I18n.t("collaboration.expiryDateExpired", {nbr: days})}</span>}
+                            <Tooltip children={<span className={`expiry-date ${className}`}>
+                                    {displayExpiryDate(collaboration.expiry_date)}
+                                </span>}
+                                     id={`${collaboration.id}-expiry_date`}
+                                     msg={moment(expiryDate).format("LLLL")}>
+                            </Tooltip>
                         </div>;
                     }
-                    return I18n.t("service.none");
+                    return I18n.t("expirations.never");
                 }
             });
         }
@@ -346,9 +353,15 @@ export default class Collaborations extends React.PureComponent {
                     const lastActivityDate = collaboration.last_activity_date * 1000;
                     const days = Math.round((today - lastActivityDate) / (1000 * 60 * 60 * 24));
                     const warning = days > 60;
+                    const className = collaboration.status === "suspended" ? "suspended" : warning ? "warning" : "";
                     return <div>
-                        <span className={warning ? "warning" : ""}>{moment(lastActivityDate).format("L")}</span>
-                        {collaboration.status === "suspended" && <span className="warning">
+                        <Tooltip children={<span className={`last-activity-date ${className}`}>
+                                    {displayLastActivityDate(collaboration.last_activity_date)}
+                                </span>}
+                                 id={`${collaboration.id}-last_activity_date`}
+                                 msg={moment(lastActivityDate).format("LLLL")}>
+                        </Tooltip>
+                        {collaboration.status === "suspended" && <span className="suspended">
                             {I18n.t("collaboration.lastActivitySuspended")}
                         </span>}
                     </div>;

@@ -9,6 +9,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./DateField.scss"
 import moment from "moment";
 import {stopEvent} from "../utils/Utils";
+import DOMPurify from "dompurify";
 
 export default class DateField extends React.Component {
 
@@ -22,7 +23,8 @@ export default class DateField extends React.Component {
     toggle = () => this.component.setOpen(true);
 
     validateOnBlur = e => {
-        const {onChange, maxDate = null, minDate = null, allowNull = false, performValidateOnBlur = true} = this.props;
+        const {onChange, maxDate = null, minDate = null, allowNull = false, performValidateOnBlur = true,
+        pastDatesAllowed = false} = this.props;
         if (!performValidateOnBlur) {
             stopEvent(e);
             return;
@@ -35,7 +37,7 @@ export default class DateField extends React.Component {
             if (value) {
                 const m = moment(value, "dd/MM/yyyy");
                 const d = m.toDate();
-                if (!m.isValid() || d > maximalDate || d < minimalDate) {
+                if (!pastDatesAllowed && (!m.isValid() || d > maximalDate || d < minimalDate)) {
                     setTimeout(() => onChange(moment().add(16, "days").toDate()), 250);
                 }
             } else {
@@ -50,9 +52,10 @@ export default class DateField extends React.Component {
     render() {
         const {
             onChange, name, value, disabled = false, maxDate = null, minDate = null, toolTip = null, allowNull = false,
-            showYearDropdown = false
+            showYearDropdown = false, pastDatesAllowed = false
         } = this.props;
         const minimalDate = minDate || moment().add(1, "day").endOf("day").toDate();
+        const selectedDate = value || (allowNull ? null : moment().add(16, "days").toDate());
         return (
             <div className="date-field">
                 {name && <label className="date-field-label" htmlFor={name}>{name}
@@ -60,7 +63,7 @@ export default class DateField extends React.Component {
                     <span className="tool-tip-section">
                         <span data-tip data-for={name}><FontAwesomeIcon icon="info-circle"/></span>
                         <ReactTooltip id={name} type="light" effect="solid" data-html={true}>
-                            <p dangerouslySetInnerHTML={{__html: toolTip}}/>
+                            <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(toolTip)}}/>
                         </ReactTooltip>
                     </span>}
                 </label>}
@@ -69,7 +72,7 @@ export default class DateField extends React.Component {
                         ref={ref => this.component = ref}
                         name={name}
                         id={name}
-                        selected={value || (allowNull ? null : moment().add(16, "days").toDate())}
+                        selected={selectedDate}
                         preventOpenOnFocus
                         dateFormat={"dd/MM/yyyy"}
                         onChange={onChange}
@@ -81,7 +84,7 @@ export default class DateField extends React.Component {
                         disabled={disabled}
                         todayButton={null}
                         maxDate={maxDate}
-                        minDate={minimalDate}
+                        minDate={pastDatesAllowed ? null : minimalDate}
                     />
                     <FontAwesomeIcon onClick={this.toggle} icon="calendar-alt"/>
                 </label>
@@ -99,6 +102,7 @@ DateField.propTypes = {
     isOpen: PropTypes.bool,
     maxDate: PropTypes.object,
     allowNull: PropTypes.bool,
+    pastDatesAllowed: PropTypes.bool,
     showYearDropdown: PropTypes.bool,
     tooltip: PropTypes.string,
     className: PropTypes.string,

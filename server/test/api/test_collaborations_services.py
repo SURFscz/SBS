@@ -35,15 +35,6 @@ class TestCollaborationsServices(AbstractTest):
                                       content_type="application/json")
         self.assertEqual(204, response.status_code)
 
-    def test_delete_collaborations_services_forbidden(self):
-        self.login("urn:admin")
-        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
-        self.mark_collaboration_service_restricted(collaboration_id)
-        service_id = self.find_entity_by_name(Service, service_mail_name).id
-
-        self.delete(f"api/collaborations_services/{collaboration_id}/{service_id}",
-                    with_basic_auth=False, response_status_code=403)
-
     def test_add_collaborations_services(self):
         self.login("urn:john")
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
@@ -91,10 +82,11 @@ class TestCollaborationsServices(AbstractTest):
         self.mark_collaboration_service_restricted(collaboration_id)
         service_cloud_id = self.find_entity_by_name(Service, service_cloud_name).id
 
-        self.put("/api/collaborations_services/", body={
+        res = self.put("/api/collaborations_services/", body={
             "collaboration_id": collaboration_id,
             "service_id": service_cloud_id
-        }, with_basic_auth=False, response_status_code=403)
+        }, with_basic_auth=False, response_status_code=400)
+        self.assertTrue("Organisation UUC can only be linked to SURF services" in res["message"])
 
     def test_add_collaborations_not_correct_organisation_services(self):
         self.login("urn:john")
@@ -107,7 +99,7 @@ class TestCollaborationsServices(AbstractTest):
         }, response_status_code=400)
 
         self.assertTrue(res["error"])
-        self.assertEqual("not_allowed_organisation", res["message"])
+        self.assertTrue("not_allowed_organisation" in res["message"])
 
     def test_add_collaborations_no_automatic_connection_allowed(self):
         self.login("urn:john")
@@ -120,7 +112,7 @@ class TestCollaborationsServices(AbstractTest):
         }, response_status_code=400)
 
         self.assertTrue(res["error"])
-        self.assertEqual("automatic_connection_not_allowed", res["message"])
+        self.assertTrue("automatic_connection_not_allowed" in res["message"])
 
     def test_delete_all_services(self):
         self.login("urn:john")
@@ -132,14 +124,6 @@ class TestCollaborationsServices(AbstractTest):
                     with_basic_auth=False)
         collaboration = self.get(f"/api/collaborations/{collaboration_id}")
         self.assertEqual(0, len(collaboration["services"]))
-
-    def test_delete_all_services_forbidden(self):
-        self.login("urn:admin")
-        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
-        self.mark_collaboration_service_restricted(collaboration_id)
-
-        self.delete("/api/collaborations_services/delete_all_services", primary_key=collaboration_id,
-                    with_basic_auth=False, response_status_code=403)
 
     def test_connect_collaboration_service(self):
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
@@ -190,7 +174,7 @@ class TestCollaborationsServices(AbstractTest):
 
     def test_connect_collaboration_service_collaboration_no_external_api_call(self):
         res = self.put("/api/collaborations_services/v1/connect_collaboration_service", response_status_code=403)
-        self.assertEqual("Not a valid external API call", res["message"])
+        self.assertTrue("Not a valid external API call" in res["message"])
 
     def test_connect_collaboration_service_no_automatic_connection(self):
         service_cloud = self.find_entity_by_name(Service, service_cloud_name)
@@ -230,4 +214,4 @@ class TestCollaborationsServices(AbstractTest):
                                   "short_name": short_name,
                                   "service_entity_id": service_entity_id
                               }), content_type="application/json")
-        self.assertEqual(f"Collaboration {short_name} has no administrator", res.json["message"])
+        self.assertTrue(f"Collaboration {short_name} has no administrator" in res.json["message"])

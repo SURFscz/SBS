@@ -19,6 +19,7 @@ import {setFlash} from "../utils/Flash";
 import CheckBox from "../components/CheckBox";
 import {ErrorOrigins, isEmpty, stopEvent} from "../utils/Utils";
 import {ReactComponent as InformationIcon} from "../icons/informational.svg";
+import DOMPurify from "dompurify";
 
 class SecondFactorAuthentication extends React.Component {
 
@@ -47,8 +48,6 @@ class SecondFactorAuthentication extends React.Component {
     }
 
     componentDidMount() {
-        console.log("2fa start");
-
         const {config, user, update, match} = this.props;
 
         const urlSearchParams = new URLSearchParams(window.location.search);
@@ -150,7 +149,7 @@ class SecondFactorAuthentication extends React.Component {
         }
     }
 
-    onSelectRespondent = email => e => {
+    onSelectRespondent = email => () => {
         const {respondents} = this.state;
         const newRespondents = respondents.map(respondent => {
             respondent.selected = respondent.email === email;
@@ -189,7 +188,7 @@ class SecondFactorAuthentication extends React.Component {
                     this.setState({resetCode: false, showEnterToken: false});
                     this.componentDidMount();
                 })
-            }).catch(e => {
+            }).catch(() => {
             this.setState({resetCodeError: true, loading: false});
         });
     }
@@ -263,7 +262,7 @@ class SecondFactorAuthentication extends React.Component {
             <p>{I18n.t("mfa.lost.info")}</p>
             <ul>
                 {I18n.translations[I18n.locale].mfa.lost.reasons.map((option, i) =>
-                    <li key={i} dangerouslySetInnerHTML={{__html: option}}/>)}
+                    <li key={i} dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(option)}}/>)}
             </ul>
             <p>{I18n.t("mfa.lost.request")}</p>
             {respondents.length > 1 && <div className="select-respondents">
@@ -307,8 +306,7 @@ class SecondFactorAuthentication extends React.Component {
                 <section className="register-header">
                     <h1>{I18n.t("mfa.verify.title")}</h1>
                     <p dangerouslySetInnerHTML={{
-                        __html:
-                            `${I18n.t("mfa.verify.info1")}`
+                        __html: DOMPurify.sanitize(`${I18n.t("mfa.verify.info1")}`)
                     }}/>
                 </section>
                 <div className="step-actions center">
@@ -335,8 +333,7 @@ class SecondFactorAuthentication extends React.Component {
                 <section className="register-header">
                     <h1>{I18n.t("mfa.reset.title")}</h1>
                     <p dangerouslySetInnerHTML={{
-                        __html:
-                            `${I18n.t("mfa.reset.info1")}`
+                        __html: DOMPurify.sanitize(`${I18n.t("mfa.reset.info1")}`)
                     }}/>
                 </section>
                 <div className="step-actions center">
@@ -397,9 +394,9 @@ class SecondFactorAuthentication extends React.Component {
                 {!update && <div className="step">
                     <h1>{I18n.t("mfa.register.getApp")}</h1>
                     <ul>
-                        <li dangerouslySetInnerHTML={{__html: I18n.t("mfa.register.getAppInfo", {new: update ? I18n.t("mfa.register.new") : ""})}}/>
-                        <li dangerouslySetInnerHTML={{__html: I18n.t("mfa.register.addSRAM")}}/>
-                        <li dangerouslySetInnerHTML={{__html: I18n.t("mfa.register.scan")}}/>
+                        <li dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("mfa.register.getAppInfo", {new: update ? I18n.t("mfa.register.new") : ""}))}}/>
+                        <li dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("mfa.register.addSRAM"))}}/>
+                        <li dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("mfa.register.scan"))}}/>
                     </ul>
                     <div className="qr-code-container">
                         <img alt="QR code" src={`data:image/png;base64,${qrCode}`}/>
@@ -417,9 +414,9 @@ class SecondFactorAuthentication extends React.Component {
                 {update && <div className="step">
                     {update ? <h1>{I18n.t("mfa.register.getAppUpdate")}</h1> : <h1>{I18n.t("mfa.register.getApp")}</h1>}
                     <ul>
-                        <li dangerouslySetInnerHTML={{__html: I18n.t("mfa.register.getAppInfo", {new: update ? I18n.t("mfa.register.new") : " "})}}/>
-                        <li dangerouslySetInnerHTML={{__html: I18n.t("mfa.register.addSRAM")}}/>
-                        <li dangerouslySetInnerHTML={{__html: I18n.t("mfa.register.scan")}}/>
+                        <li dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("mfa.register.getAppInfo", {new: update ? I18n.t("mfa.register.new") : " "}))}}/>
+                        <li dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("mfa.register.addSRAM"))}}/>
+                        <li dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("mfa.register.scan"))}}/>
                     </ul>
                     <div className="qr-code-container">
                         <img alt="QR code" src={`data:image/png;base64,${qrCode}`}/>

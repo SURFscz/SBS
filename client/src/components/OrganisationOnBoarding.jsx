@@ -8,6 +8,7 @@ import {convertToHtml} from "../utils/Markdown";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
 import {isEmpty} from "../utils/Utils";
+import DOMPurify from "dompurify";
 
 export default class OrganisationOnBoarding extends React.Component {
 
@@ -36,7 +37,7 @@ export default class OrganisationOnBoarding extends React.Component {
                 <span className="tool-tip-section">
                         <span data-tip data-for="on-boarding"><FontAwesomeIcon icon="info-circle"/></span>
                         <ReactTooltip id="on-boarding" type="light" effect="solid" data-html={true}>
-                            <p dangerouslySetInnerHTML={{__html: I18n.t(tooltip || "organisation.onBoarding.tooltip")}}/>
+                            <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t(tooltip || "organisation.onBoarding.tooltip"))}}/>
                         </ReactTooltip>
                     </span>
                 <div className="container">

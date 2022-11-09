@@ -20,9 +20,9 @@ def validate_ip_networks(data, networks_name="ip_networks"):
             _is4 = ip.version == 4
             prefix = ip.prefixlen
             if (_is4 and prefix < max_allowed_ipv4_sub_mask) or (not _is4 and prefix < max_allowed_ipv6_prefix):
-                raise ValueError(f"IP network {str(ip)} exceeds size")
+                raise ValueError(f"IP network {ip} exceeds size")
             if not _is4 and not ip.is_global:
-                raise ValueError(f"IP network {str(ip)} is not global")
+                raise ValueError(f"IP network {ip} is not global")
 
 
 @ipaddress_api.route("/info", strict_slashes=False)
@@ -35,30 +35,30 @@ def info():
         ip_network = ipaddress.ip_network(address, False)
     except ValueError:
         return {
-                   "error": True,
-                   "network_value": address,
-                   "syntax": True,
-                   "id": id
-               }, 200
+            "error": True,
+            "network_value": address,
+            "syntax": True,
+            "id": id
+        }, 200
 
     _is4 = ip_network.version == 4
     prefix = ip_network.prefixlen
     if (_is4 and prefix < max_allowed_ipv4_sub_mask) or (not _is4 and prefix < max_allowed_ipv6_prefix):
         return {
-                   "error": True,
-                   "version": ip_network.version,
-                   "max": max_allowed_ipv4_sub_mask if _is4 else max_allowed_ipv6_prefix,
-                   "network_value": address,
-                   "prefix": prefix,
-                   "id": id
-               }, 200
+            "error": True,
+            "version": ip_network.version,
+            "max": max_allowed_ipv4_sub_mask if _is4 else max_allowed_ipv6_prefix,
+            "network_value": address,
+            "prefix": prefix,
+            "id": id
+        }, 200
 
     return {
-               "version": ip_network.version,
-               "num_addresses": ip_network.num_addresses,
-               "network_value": str(ip_network),
-               "global": ip_network.is_global,
-               "lower": str(ip_network[0]),
-               "higher": str(ip_network[-1]),
-               "id": id
-           }, 200
+        "version": ip_network.version,
+        "num_addresses": ip_network.num_addresses,
+        "network_value": str(ip_network),
+        "global": ip_network.is_global,
+        "lower": str(ip_network[0]),
+        "higher": str(ip_network[-1]),
+        "id": id
+    }, 200

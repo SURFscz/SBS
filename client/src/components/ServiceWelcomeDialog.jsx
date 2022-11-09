@@ -7,6 +7,7 @@ import Button from "./Button";
 import "react-mde/lib/styles/css/react-mde-all.css";
 import ServiceEn from "./welcome/ServiceEn";
 import ServiceNl from "./welcome/ServiceNl";
+import DOMPurify from "dompurify";
 
 export default function ServiceWelcomeDialog({
                                                  name,
@@ -28,7 +29,7 @@ export default function ServiceWelcomeDialog({
             <section className="role">
                 <InformationIcon/>
                 <span
-                    dangerouslySetInnerHTML={{__html: I18n.t("welcomeDialog.role", {role: I18n.t("access.serviceAdmin").toLowerCase()})}}/>
+                    dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcomeDialog.role", {role: I18n.t("access.serviceAdmin").toLowerCase()}))}}/>
             </section>
             <section className="responsibilities">
                 {I18n.locale === "en" ? <ServiceEn/> : <ServiceNl/>}

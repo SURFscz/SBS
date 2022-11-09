@@ -10,6 +10,7 @@ import Button from "../Button";
 import {AppStore} from "../../stores/AppStore";
 import {convertToHtml} from "../../utils/Markdown";
 import {rawGlobalUserRole, ROLES} from "../../utils/UserRole";
+import DOMPurify from "dompurify";
 
 class Welcome extends React.Component {
 
@@ -46,37 +47,36 @@ class Welcome extends React.Component {
 
     knownOrganisation = organisation => {
         const hasOnBoardingMsg = !isEmpty(organisation.on_boarding_msg);
-        const stepTwo = hasOnBoardingMsg ? 2 : 1;
         const canCreate = organisation.collaboration_creation_allowed_entitlement || organisation.collaboration_creation_allowed;
         const hasOrgMembers = organisation.has_members;
         return (
             <div>
+                {hasOrgMembers && <div>
+                    <h3 className={`step ${hasOnBoardingMsg ? "" : "orphan"}`}>
+                        {I18n.t(`welcome.${canCreate ? "createColl" : "createCollRequest"}`, {name: organisation.name})}
+                    </h3>
+                    <p>
+                        {I18n.t(`welcome.${canCreate ? "startCreateColl" : "startCreateCollRequest"}`, {name: organisation.name})}
+                    </p>
+                </div>}
                 {hasOnBoardingMsg && <div>
                     <h1>{I18n.t("welcome.whatYouCanDo")}</h1>
                     <h3 className="step">
-                        <span>1.</span>
                         <span dangerouslySetInnerHTML={{
-                            __html: I18n.t("welcome.instructions", {name: organisation.name})
+                            __html: DOMPurify.sanitize(I18n.t("welcome.instructions", {name: organisation.name}))
                         }}/>
                     </h3>
                     <div className="instructions mde-preview">
                         <div className="mde-preview-content">
                             <p dangerouslySetInnerHTML={{
-                                __html: convertToHtml(organisation.on_boarding_msg)
+                                __html: DOMPurify.sanitize(convertToHtml(organisation.on_boarding_msg))
                             }}/>
                         </div>
                     </div>
                 </div>}
                 {hasOrgMembers && <div>
-                    <h3 className={`step ${hasOnBoardingMsg ? "" : "orphan"}`}><span>{stepTwo}.</span>
-                        {I18n.t(`welcome.${canCreate ? "createColl" : "createCollRequest"}`)}
-                    </h3>
-                    <p>
-                        {I18n.t(`welcome.${canCreate ? "startCreateColl" : "startCreateCollRequest"}`)}
-                    </p>
                     <Button onClick={() => this.props.history.push("/new-collaboration")}
                             txt={I18n.t(`welcome.${canCreate ? "createCollTxt" : "createCollRequestTxt"}`)}/>
-
                 </div>}
             </div>
         );
@@ -87,12 +87,11 @@ class Welcome extends React.Component {
             <div>
                 <h1>{I18n.t("welcome.whatYouCanDo")}</h1>
                 <h3 className="step">
-                    <span>1.</span>
                     <span>{I18n.t("welcome.contact")}</span>
                 </h3>
                 <div className="welcome-unknown">
                     <p>{I18n.t("welcome.noMember")}</p>
-                    <p dangerouslySetInnerHTML={{__html: I18n.t("welcome.contactInfo")}}/>
+                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcome.contactInfo"))}}/>
                 </div>
             </div>
         );
@@ -114,7 +113,7 @@ class Welcome extends React.Component {
                     <p>{I18n.t("welcome.subTitle")}</p>
                     <div className="institution">
                         <InformationIcon/>
-                        <p dangerouslySetInnerHTML={{__html: I18n.t("welcome.institution", {name: idpDisplayName})}}/>
+                        <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcome.institution", {name: idpDisplayName}))}}/>
                     </div>
                     {orphanUser && this.unknownOrganisation()}
                     {!orphanUser && this.knownOrganisation(organisation)}

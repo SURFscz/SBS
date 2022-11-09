@@ -5,10 +5,11 @@ properties:
     type: number
     readOnly: true
     example: 999
-  name:
+  network_value:
     type: string
-    example: "uva.nl"
-  organisation_id:
+    description: "IP network range"
+    example: "1.2.3.0/28"
+  user_id:
     type: number
     example: 999
   created_at:
@@ -18,8 +19,8 @@ properties:
   created_by:
     type: string
     description: "UID of the user who created this"
-    example: "urn:admin"
+    example: "urn:rdoe2"
   updated_by:
     type: string
     description: "UID of the user who updated this"
-    example: "urn:admin"
+    example: "urn:rdoe2"

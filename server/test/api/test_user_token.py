@@ -1,7 +1,7 @@
 # -*- coding: future_fstrings -*-
 import datetime
 
-from server.auth.security import generate_token
+from server.auth.secrets import generate_token
 from server.db.domain import Service, User, UserToken
 from server.test.abstract_test import AbstractTest
 from server.test.seed import sarah_name, service_wiki_name, service_mail_name, service_cloud_name, sarah_user_token, \
@@ -10,17 +10,21 @@ from server.test.seed import sarah_name, service_wiki_name, service_mail_name, s
 
 class TestUserToken(AbstractTest):
 
+    def _get_token(self):
+        return self.get("/api/user_tokens/generate_token")["value"]
+
     def test_user_tokens(self):
         self.login("urn:sarah")
         user_tokens = self.get("/api/user_tokens")
         self.assertEqual(1, len(user_tokens))
+        self.assertIsNone(user_tokens[0].get("hashed_token"))
 
         user_tokens[0]["name"] = "changed"
         self.put("/api/user_tokens", body=user_tokens[0])
 
         user_tokens_updated = self.get("/api/user_tokens")
         self.assertEqual("changed", user_tokens_updated[0]["name"])
-        self.assertEqual(user_tokens[0]["hashed_token"], user_tokens_updated[0]["hashed_token"])
+        self.assertIsNone(user_tokens[0].get("hashed_token"))
 
     def test_generate(self):
         self.login("urn:sarah")
@@ -32,18 +36,38 @@ class TestUserToken(AbstractTest):
         wiki = self.find_entity_by_name(Service, service_wiki_name)
 
         self.login("urn:sarah")
-        user_token = {"name": "token", "hashed_token": generate_token(), "user_id": sarah.id, "service_id": wiki.id}
+        user_tokens = self.get("/api/user_tokens")
+        self.assertEqual(1, len(user_tokens))
+
+        user_token = {"name": "token", "hashed_token": self._get_token(), "user_id": sarah.id, "service_id": wiki.id}
         self.post("/api/user_tokens", body=user_token)
 
         user_tokens = self.get("/api/user_tokens")
         self.assertEqual(2, len(user_tokens))
+
+    def test_create_user_token_without_server_token(self):
+        sarah = self.find_entity_by_name(User, sarah_name)
+        wiki = self.find_entity_by_name(Service, service_wiki_name)
+
+        self.login("urn:sarah")
+        user_token = {"name": "token", "hashed_token": generate_token(), "user_id": sarah.id, "service_id": wiki.id}
+        self.post("/api/user_tokens", body=user_token, response_status_code=403)
+
+    def test_create_user_token_with_tampering(self):
+        sarah = self.find_entity_by_name(User, sarah_name)
+        wiki = self.find_entity_by_name(Service, service_wiki_name)
+
+        self.login("urn:sarah")
+        self._get_token()
+        user_token = {"name": "token", "hashed_token": "nope", "user_id": sarah.id, "service_id": wiki.id}
+        self.post("/api/user_tokens", body=user_token, response_status_code=403)
 
     def test_create_user_token_platform_admin(self):
         john = self.find_entity_by_name(User, john_name)
         service = self.find_entity_by_name(Service, service_cloud_name)
 
         self.login("urn:john")
-        user_token = {"name": "token", "hashed_token": generate_token(), "user_id": john.id, "service_id": service.id}
+        user_token = {"name": "token", "hashed_token": self._get_token(), "user_id": john.id, "service_id": service.id}
         self.post("/api/user_tokens", body=user_token)
 
         user_tokens = self.get("/api/user_tokens")
@@ -52,7 +76,7 @@ class TestUserToken(AbstractTest):
     def test_create_user_token_for_other(self):
         sarah = self.find_entity_by_name(User, sarah_name)
         self.login("urn:james")
-        user_token = {"user_id": sarah.id}
+        user_token = {"user_id": sarah.id, "hashed_token": self._get_token()}
         self.post("/api/user_tokens", body=user_token, response_status_code=403)
 
     def test_create_user_token_service_not_token_enabled(self):
@@ -60,7 +84,7 @@ class TestUserToken(AbstractTest):
         mail = self.find_entity_by_name(Service, service_mail_name)
 
         self.login("urn:sarah")
-        user_token = {"name": "token", "hashed_token": generate_token(), "user_id": sarah.id, "service_id": mail.id}
+        user_token = {"name": "token", "hashed_token": self._get_token(), "user_id": sarah.id, "service_id": mail.id}
         self.post("/api/user_tokens", body=user_token, response_status_code=403)
 
     def test_create_user_token_service_not_allowed(self):
@@ -68,7 +92,7 @@ class TestUserToken(AbstractTest):
         cloud = self.find_entity_by_name(Service, service_cloud_name)
 
         self.login("urn:betty")
-        user_token = {"name": "token", "hashed_token": generate_token(), "user_id": betty.id, "service_id": cloud.id}
+        user_token = {"name": "token", "hashed_token": self._get_token(), "user_id": betty.id, "service_id": cloud.id}
         self.post("/api/user_tokens", body=user_token, response_status_code=403)
 
     def test_delete_user_token(self):
@@ -94,4 +118,4 @@ class TestUserToken(AbstractTest):
         created_at = int(user_tokens_updated[0]["created_at"])
         one_day_ago = int((datetime.datetime.utcnow() - datetime.timedelta(days=1)).timestamp())
         self.assertTrue(created_at > one_day_ago)
-        self.assertEqual(user_tokens[0]["hashed_token"], user_tokens_updated[0]["hashed_token"])
+        self.assertIsNone(user_tokens[0].get("hashed_token"))

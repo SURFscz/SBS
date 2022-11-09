@@ -47,7 +47,7 @@ class UsedServices extends React.Component {
     }
 
     componentDidMount = () => {
-        const {collaboration, user} = this.props;
+        const {collaboration} = this.props;
         allServices().then(json => {
             const services = json;
             const requestedServices = collaboration.service_connection_requests
@@ -66,7 +66,7 @@ class UsedServices extends React.Component {
                 .filter(service => {
                     return (service.allowed_organisations.some(org => org.id === collaboration.organisation_id)
                             || service.access_allowed_for_all) && servicesInUse.indexOf(service.id) === -1
-                        && (user.admin || !collaboration.organisation.services_restricted);
+                        && (service.white_listed || !collaboration.organisation.services_restricted);
                 });
             this.setState({services: filteredServices, loading: false});
         });

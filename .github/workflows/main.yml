@@ -25,7 +25,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.7', '3.9', '3.10']
+        # Socket-io is not compatible with 3.10, for now skip 3.10, until we resolve this
+        python-version: ['3.7', '3.9']
 
     services:
       # How to use MySQL
@@ -88,7 +89,7 @@ jobs:
 
       - name: Run flake8
         run: |
-          flake8 ./server/
+          flake8 --ignore=E127,E402,W503 ./server/
 
       - name: Run tests
         run: |
@@ -115,12 +116,12 @@ jobs:
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+        run: echo "DIR=$(yarn cache dir)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v3
         id: yarn-cache
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          path: ${{ steps.yarn-cache-dir-path.outputs.DIR }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
@@ -135,7 +136,7 @@ jobs:
         run: |
           source ~/.nvm/nvm.sh
           rm -rf ~/.yarn
-          curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.19.1
+          curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.22.19
           export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
           yarn -v
           nvm install v16.13.2

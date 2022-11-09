@@ -45,10 +45,6 @@ class Home extends React.Component {
         const nbrOrganisations = user.organisation_memberships.length;
         const nbrCollaborations = user.collaboration_memberships.length;
         const nbrServices = user.service_memberships.length;
-        if (user.needsSuperUserConfirmation) {
-            this.props.history.push("/confirmation");
-            return;
-        }
         const canStayInHome = !isEmpty(user.collaboration_requests) || !isEmpty(user.join_requests) || nbrServices > 0;
         switch (role) {
             case ROLES.PLATFORM_ADMIN:
@@ -142,7 +138,8 @@ class Home extends React.Component {
         return (<div key="users" name="users"
                      label={I18n.t("home.tabs.users", {count: count})}
                      icon={<MembersIcon/>}>
-            <Users {...this.props}/>
+            <Users {...this.props}
+                   adminSearch={true}/>
         </div>)
     }
 
@@ -168,7 +165,9 @@ class Home extends React.Component {
 
     getMemberJoinRequestsTab = join_requests => {
         const openJoinRequests = (join_requests || []).filter(jr => jr.status === "open").length;
-        return (<div key="joinrequests" name="joinrequests" label={I18n.t("home.tabs.joinRequests")}
+        return (<div key="joinrequests"
+                     name="joinrequests"
+                     label={I18n.t("home.tabs.joinRequests", {count: (join_requests || []).length})}
                      icon={<JoinRequestsIcon/>}
                      notifier={openJoinRequests > 0 ? openJoinRequests : null}>
             <MemberJoinRequests join_requests={join_requests} {...this.props} />
@@ -209,7 +208,7 @@ class Home extends React.Component {
                     {tabs}
                 </Tabs>
             </div>);
-    };
+    }
 }
 
 export default Home;

@@ -12,6 +12,8 @@ import ErrorDialog from "../components/ErrorDialog";
 import Welcome from "../components/redesign/Welcome";
 import Footer from "../components/Footer";
 import Flash from "../components/Flash";
+// eslint-disable-next-line no-unused-vars
+import {csrfToken, setCsrfToken} from "../stores/AppStore";
 import {getParameterByName} from "../utils/QueryParameters";
 import CollaborationDetail from "./CollaborationDetail";
 import OrganisationDetail from "./OrganisationDetail";
@@ -33,7 +35,6 @@ import Profile from "./Profile";
 import CollaborationRequest from "./CollaborationRequest";
 import ServiceConnectionRequest from "./ServiceConnectionRequest";
 import ServiceRequest from "./ServiceRequest";
-import Confirmation from "./Confirmation";
 import {setFlash} from "../utils/Flash";
 import System from "./System";
 import {BreadCrumb} from "../components/BreadCrumb";
@@ -54,6 +55,7 @@ import MissingServiceAup from "./MissingServiceAup";
 import PamWebSSO from "./PamWebSSO";
 import {subscriptionIdCookieName} from "../utils/SocketIO";
 
+import {isUserAllowed, ROLES} from "../utils/UserRole";
 
 addIcons();
 
@@ -107,15 +109,6 @@ class App extends React.Component {
         }
     };
 
-    markUserAdmin = user => {
-        const {config} = this.state;
-        if (config.admin_users_upgrade && user.admin && !user.confirmed_super_user) {
-            user.admin = false;
-            user.needsSuperUserConfirmation = true;
-        }
-        return user;
-    }
-
     componentDidMount() {
         emitter.addListener("impersonation", this.impersonate);
         Promise.all([config(), aupLinks()]).then(res => {
@@ -123,8 +116,9 @@ class App extends React.Component {
                 () => me(res[0]).then(results => {
                     const currentUser = results;
                     if (currentUser && currentUser.uid) {
-                        const user = this.markUserAdmin(currentUser);
-                        this.setState({currentUser: user, loading: false});
+                        this.setState({currentUser: currentUser, loading: false});
+                        // eslint-disable-next-line no-import-assign
+                        setCsrfToken(results.CSRFToken);
                         if (currentUser.successfully_activated) {
                             setFlash(I18n.t("login.successfullyActivated"))
                         }
@@ -157,7 +151,7 @@ class App extends React.Component {
         if (isEmpty(selectedUser)) {
             me(this.state.config).then(currentUser => {
                 this.setState({
-                    currentUser: this.markUserAdmin(currentUser),
+                    currentUser: currentUser,
                     impersonator: null,
                     loading: false
                 }, callback);
@@ -165,9 +159,8 @@ class App extends React.Component {
         } else {
             other(selectedUser.uid).then(user => {
                 const {currentUser, impersonator} = this.state;
-                const newUser = this.markUserAdmin(user);
                 this.setState({
-                    currentUser: newUser,
+                    currentUser: user,
                     impersonator: impersonator || currentUser,
                     loading: false
                 }, callback);
@@ -178,8 +171,7 @@ class App extends React.Component {
     refreshUserMemberships = callback => {
         refreshUser().then(json => {
             const {impersonator} = this.state;
-            const user = this.markUserAdmin(json);
-            this.setState({currentUser: user, impersonator: impersonator}, () => callback && callback(user));
+            this.setState({currentUser: json, impersonator: impersonator}, () => callback && callback(json));
         });
     };
 
@@ -314,16 +306,19 @@ class App extends React.Component {
 
                         <Route exact path="/new-organisation-invite/:organisation_id"
                                render={props => <ProtectedRoute currentUser={currentUser}
+                                                                config={config}
                                                                 Component={NewOrganisationInvitation}
                                                                 {...props}/>}/>
 
                         <Route exact path="/new-invite/:collaboration_id"
                                render={props => <ProtectedRoute currentUser={currentUser}
+                                                                config={config}
                                                                 Component={NewInvitation}
                                                                 {...props}/>}/>
 
                         <Route exact path="/new-service-invite/:service_id"
                                render={props => <ProtectedRoute currentUser={currentUser}
+                                                                config={config}
                                                                 Component={NewServiceInvitation}
                                                                 {...props}/>}/>
 
@@ -401,11 +396,6 @@ class App extends React.Component {
                                                                     currentUser={currentUser} Component={Impersonate}
                                                                     impersonator={impersonator} {...props}/>}/>}
 
-                        <Route path="/confirmation"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={Confirmation}
-                                   config={config} {...props}/>}/>
-
                         <Route path="/profile"
                                render={props => <ProtectedRoute
                                    currentUser={currentUser}
@@ -414,10 +404,11 @@ class App extends React.Component {
                                    refreshUser={this.refreshUserMemberships}
                                    {...props}/>}/>
 
-                        {currentUser.admin && <Route exact path="/users/:id/:tab?"
-                                                     render={props => <ProtectedRoute config={config}
-                                                                                      currentUser={currentUser}
-                                                                                      Component={UserDetail} {...props}/>}/>}
+                        {isUserAllowed(ROLES.ORG_MANAGER, currentUser) && <Route exact path="/users/:id/:tab?/:org_id?"
+                                                                                 render={props => <ProtectedRoute
+                                                                                     config={config}
+                                                                                     currentUser={currentUser}
+                                                                                     Component={UserDetail} {...props}/>}/>}
 
                         <Route path="/system/:tab?"
                                render={props => <ProtectedRoute
@@ -444,7 +435,7 @@ class App extends React.Component {
                                    reloadMe={this.refreshUserMemberships}
                                    {...props}/>}/>
 
-                        <Route path="/weblogin/:session_id"
+                        <Route path="/weblogin/:service/:session_id"
                                render={props => <PamWebSSO user={currentUser} {...props}/>}/>
 
                         <Route path="/service-denied" render={props => <ServiceDenied {...props}/>}/>

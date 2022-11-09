@@ -4,11 +4,13 @@ import datetime
 from flask import Blueprint, request as current_request, current_app
 
 from server.api.base import json_endpoint
-from server.auth.security import secure_hash
+from server.auth.secrets import secure_hash
 from server.auth.tokens import validate_service_token
-from server.auth.user_claims import user_memberships
+from server.auth.user_claims import user_memberships, collaboration_memberships_for_service
 from server.db.db import db
+from server.db.defaults import USER_TOKEN_INTROSPECT
 from server.db.domain import UserToken
+from server.db.models import log_user_login
 
 token_api = Blueprint("token_api", __name__, url_prefix="/api/tokens")
 
@@ -20,28 +22,29 @@ def introspect():
     token = current_request.form.get("token")
     hashed_token = secure_hash(token)
     user_token = UserToken.query.filter(UserToken.hashed_token == hashed_token).first()
+    res = {"active": True}
     if not user_token or user_token.service_id != service.id:
-        return {"status": "token-unknown", "active": False}, 200
+        res = {"status": "token-unknown", "active": False}
 
     current_time = datetime.datetime.utcnow()
     expiry_date = current_time - datetime.timedelta(days=service.token_validity_days)
-    if user_token.created_at < expiry_date:
-        return {"status": "token-expired", "active": False}, 200
+    if res["active"] and user_token.created_at < expiry_date:
+        res = {"status": "token-expired", "active": False}
 
-    user = user_token.user
-    if user.suspended:
-        return {"status": "user-suspended", "active": False}, 200
+    user = user_token.user if user_token else None
+    if res["active"] and user.suspended:
+        res = {"status": "user-suspended", "active": False}
 
-    connected_collaborations = []
-    memberships = []
-    for cm in user.collaboration_memberships:
-        connected = list(filter(lambda s: s.id == service.id, cm.collaboration.services))
-        if connected or list(filter(lambda s: s.id == service.id, cm.collaboration.organisation.services)):
-            connected_collaborations.append(cm.collaboration)
-            memberships.append(cm)
+    memberships = collaboration_memberships_for_service(user, service)
+    connected_collaborations = [cm.collaboration for cm in memberships]
 
-    if not connected_collaborations or all(m.is_expired() for m in memberships):
-        return {"status": "token-not-connected", "active": False}, 200
+    if res["active"] and (not connected_collaborations or all(m.is_expired() for m in memberships)):
+        res = {"status": "token-not-connected", "active": False}
+
+    if not res["active"]:
+        log_user_login(USER_TOKEN_INTROSPECT, False, user, user.uid if user else None, service, service.entity_id,
+                       status=res["status"])
+        return res, 200
 
     user_token.last_used_date = current_time
     db.session.merge(user_token)
@@ -71,4 +74,5 @@ def introspect():
             "eduperson_entitlement": list(entitlements)
         }
     }
+    log_user_login(USER_TOKEN_INTROSPECT, True, user, user.uid, service, service.entity_id, status="token-valid")
     return result, 200

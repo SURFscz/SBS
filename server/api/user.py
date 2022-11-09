@@ -16,7 +16,7 @@ from onelogin.saml2.constants import OneLogin_Saml2_Constants
 from onelogin.saml2.utils import OneLogin_Saml2_Utils
 from sqlalchemy import text, or_, bindparam, String
 from sqlalchemy.orm import joinedload, selectinload
-from werkzeug.exceptions import Forbidden, InternalServerError
+from werkzeug.exceptions import InternalServerError, Forbidden
 
 from server.api.base import json_endpoint, query_param
 from server.api.base import replace_full_text_search_boolean_mode_chars
@@ -24,14 +24,16 @@ from server.api.ipaddress import validate_ip_networks
 from server.auth.mfa import ACR_VALUES, store_user_in_session, mfa_idp_allowed, \
     surf_secure_id_required, has_valid_mfa, decode_jwt_token
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
-    confirm_collaboration_admin, confirm_organisation_admin, current_user, confirm_write_access
+    confirm_collaboration_admin, confirm_organisation_admin, current_user, confirm_write_access, \
+    confirm_organisation_admin_or_manager, is_application_admin, CSRF_TOKEN
 from server.auth.ssid import AUTHN_REQUEST_ID, saml_auth, redirect_to_surf_secure_id, USER_UID
 from server.auth.user_claims import add_user_claims
 from server.cron.user_suspending import create_suspend_notification
 from server.db.db import db
-from server.db.defaults import full_text_search_autocomplete_limit
+from server.db.defaults import full_text_search_autocomplete_limit, SBS_LOGIN
 from server.db.domain import User, OrganisationMembership, CollaborationMembership, JoinRequest, CollaborationRequest, \
     UserNameHistory, SshKey, Organisation, Collaboration, Service, ServiceMembership, ServiceAup, UserIpNetwork
+from server.db.models import log_user_login
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error, mail_account_deletion
 
@@ -63,8 +65,12 @@ def _add_service_aups(user: dict, user_from_db: User):
     for s in unique_missing_services:
         service_emails[s.id] = [s.contact_email] if s.contact_email else [m.user.email for m in s.service_memberships]
 
-    user["services_without_aup"] = jsonify(unique_missing_services).json
+    # Avoid ValueError: Circular reference detected
+    user["services_without_aup"] = [
+        {"id": s.id, "logo": s.logo, "name": s.name, "accepted_user_policy": s.accepted_user_policy,
+         "privacy_policy": s.privacy_policy} for s in unique_missing_services]
     user["service_emails"] = jsonify(service_emails).json
+
     if unique_missing_services:
         collaborations = []
         for cm in user_from_db.collaboration_memberships:
@@ -96,8 +102,7 @@ def _user_json_response(user, auto_set_second_factor_confirmed):
     is_admin = {"admin": is_admin_user(user),
                 "second_factor_confirmed": second_factor_confirmed,
                 "user_accepted_aup": user.has_agreed_with_aup(),
-                "guest": False,
-                "confirmed_admin": user.confirmed_super_user}
+                "guest": False}
     json_user = jsonify(user).json
     _add_counts(json_user)
     _add_service_aups(json_user, user)
@@ -213,10 +218,9 @@ def user_query():
 def get_platform_admins():
     confirm_write_access()
     config = current_app.app_config
-    admin_users_upgrade = config.feature.admin_users_upgrade
     admin_users = [u.uid for u in config.admin_users]
     platform_admins = User.query.filter(User.uid.in_(admin_users)).all()
-    return {"platform_admins": platform_admins, "admin_users_upgrade": admin_users_upgrade}, 200
+    return {"platform_admins": platform_admins}, 200
 
 
 @user_api.route("/authorization", strict_slashes=False)
@@ -321,7 +325,8 @@ def resume_session():
             if ssid_required:
                 user.ssid_required = True
                 if home_organisation_uid:
-                    user.home_organisation_uid = home_organisation_uid
+                    user.home_organisation_uid = home_organisation_uid[0] if isinstance(home_organisation_uid,
+                                                                                        list) else home_organisation_uid
                 if schac_home_organisation:
                     user.schac_home_organisation = schac_home_organisation
 
@@ -333,21 +338,27 @@ def resume_session():
     else:
         fallback_required = False
 
+    # If we don't have a UID or SHO then we must not send the user to surf_secure_id
     if user.ssid_required:
-        logger.debug(f"Redirecting user {uid} to ssid")
-        user = db.session.merge(user)
-        db.session.commit()
-        return redirect_to_surf_secure_id(user)
+        if user.home_organisation_uid and user.schac_home_organisation:
+            logger.debug(f"Redirecting user {uid} to ssid")
+            user = db.session.merge(user)
+            db.session.commit()
+            return redirect_to_surf_secure_id(user)
+        else:
+            logger.warn(f"user {user.id} marked as ssid_required has no "
+                        f"home_organisation_uid {user.home_organisation_uid} "
+                        f"or no schac_home_organisation {user.schac_home_organisation}")
 
     no_mfa_required = not oidc_config.second_factor_authentication_required
-    second_factor_confirmed = no_mfa_required or not fallback_required
+    second_factor_confirmed = (no_mfa_required or not fallback_required) and not user.ssid_required
     if second_factor_confirmed:
         user.last_login_date = datetime.datetime.now()
 
-    return _redirect_to_client(cfg, second_factor_confirmed, user)
+    return redirect_to_client(cfg, second_factor_confirmed, user)
 
 
-def _redirect_to_client(cfg, second_factor_confirmed, user):
+def redirect_to_client(cfg, second_factor_confirmed, user):
     logger = ctx_logger("redirect")
 
     user = db.session.merge(user)
@@ -356,19 +367,28 @@ def _redirect_to_client(cfg, second_factor_confirmed, user):
     store_user_in_session(user, second_factor_confirmed, user_accepted_aup)
     if not user_accepted_aup:
         location = f"{cfg.base_url}/aup"
+        status = "AUP_NOT_AGREED"
     elif not second_factor_confirmed:
         location = f"{cfg.base_url}/2fa"
+        status = "MFA_REQUIRED"
     elif "ssid_original_destination" in session:
         location = session.pop("ssid_original_destination")
+        status = "SSID_ORIGINAL_DESTINATION"
     elif "original_destination" in session:
         location = session.pop("original_destination")
+        status = "ORIGINAL_DESTINATION"
     else:
         location = cfg.base_url
+        status = "BASE_URL"
 
     logger.debug(f"Redirecting user {user.uid} to {location}")
+
+    log_user_login(SBS_LOGIN, True, user, user.uid, None, None, status=status)
+
     return redirect(location)
 
 
+# This is the SAML redirect-url after step-up in surf secure ID
 @user_api.route("/acs", methods=["POST"], strict_slashes=False)
 def acs():
     logger = ctx_logger("acl")
@@ -394,7 +414,7 @@ def acs():
 
     if second_factor_confirmed:
         user.last_login_date = datetime.datetime.now()
-    return _redirect_to_client(cfg, second_factor_confirmed, user)
+    return redirect_to_client(cfg, second_factor_confirmed, user)
 
 
 def _redirect_with_error(logger, error_msg):
@@ -420,10 +440,11 @@ def me():
         # Do not expose the actual secret of second_factor_auth
         user_from_session["second_factor_auth"] = bool(user_from_db.second_factor_auth)
         # Do not send all information if second_factor is required
+        csrf_token = {CSRF_TOKEN: session.get(CSRF_TOKEN)}
         if not user_from_session["second_factor_confirmed"]:
-            return user_from_session, 200
+            return {**user_from_session, **csrf_token}, 200
 
-        user = {**jsonify(user_from_db).json, **user_from_session}
+        user = {**jsonify(user_from_db).json, **user_from_session, **csrf_token}
 
         if len(user_from_db.suspend_notifications) > 0:
             user["successfully_activated"] = True
@@ -557,11 +578,23 @@ def other():
 @user_api.route("/find_by_id", strict_slashes=False)
 @json_endpoint
 def find_by_id():
-    confirm_write_access()
-    return _user_query() \
-               .options(joinedload(User.service_aups)
-                        .subqueryload(ServiceAup.service)) \
-               .filter(User.id == query_param("id")).one(), 200
+    confirm_organisation_admin_or_manager(organisation_id=None)
+    user = _user_query() \
+        .options(joinedload(User.service_aups).subqueryload(ServiceAup.service)) \
+        .filter(User.id == query_param("id")) \
+        .one()
+
+    if not is_application_admin():
+        # Ensure the user has a collaboration membership in an organisation the current_user is admin or manager of
+        curr_user = User.query.get(current_user_id())
+        current_user_organisation_identifiers = [om.organisation_id for om in curr_user.organisation_memberships]
+        user_organisation_identifiers = [cm.collaboration.organisation_id for cm in user.collaboration_memberships]
+        if not any([i in current_user_organisation_identifiers for i in user_organisation_identifiers]):
+            raise Forbidden()
+
+        return user.allowed_attr_view(current_user_organisation_identifiers, True), 200
+
+    return user, 200
 
 
 @user_api.route("/attribute_aggregation", strict_slashes=False)
@@ -590,28 +623,6 @@ def attribute_aggregation():
     user = users[0] if len(users) == 1 else users_eppn_match[0] if len(users_eppn_match) == 1 else users[0]
 
     return [cm.collaboration.name for cm in user.collaboration_memberships], 200
-
-
-@user_api.route("/upgrade_super_user", methods=["GET"], strict_slashes=False)
-def upgrade_super_user():
-    session.modified = True
-
-    user_id = current_user_id()
-    user = User.query.filter(User.id == user_id).one()
-
-    if not is_admin_user(user):
-        raise Forbidden("Must be admin user")
-
-    user.confirmed_super_user = True
-    user = db.session.merge(user)
-    db.session.commit()
-
-    store_user_in_session(user, True, user.has_agreed_with_aup())
-
-    response = redirect(current_app.app_config.feature.admin_users_upgrade_redirect_url)
-    response.headers.set("x-session-alive", "true")
-    response.headers["server"] = ""
-    return response
 
 
 @user_api.route("/logout", strict_slashes=False)

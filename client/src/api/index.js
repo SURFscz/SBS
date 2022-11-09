@@ -1,6 +1,7 @@
 import {isEmpty} from "../utils/Utils";
 import {emitter} from "../utils/Events";
 import I18n from "i18n-js";
+import {getCsrfToken} from "../stores/AppStore";
 
 let impersonator = null;
 emitter.addListener("impersonation", res => {
@@ -51,6 +52,7 @@ function validFetch(path, options, headers = {}, showErrorDialog = true) {
     const contentHeaders = {
         "Accept": "application/json",
         "Content-Type": "application/json",
+        "CSRFToken": getCsrfToken(),
         ...headers
     };
     if (impersonator) {
@@ -92,7 +94,7 @@ export function authorizationUrl(state) {
 }
 
 export function me(config) {
-    if (config.local && true) {
+    if (config.local && 1 == 1) {
         let sub = "urn:service_admin";
         sub = "urn:john";
         // sub = "urn:peter"
@@ -248,11 +250,6 @@ export function resetLdapPassword(service) {
     return fetchJson(`/api/services/reset_ldap_password/${service.id}`);
 }
 
-export function resetTokenValue(service) {
-    return fetchJson(`/api/services/reset_token_value/${service.id}`);
-}
-
-
 //Collaborations
 export function collaborationByIdentifier(identifier) {
     return fetchJson(`/api/collaborations/find_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
@@ -385,6 +382,14 @@ export function organisationInvitationsPreview(body) {
 
 export function deleteOrganisation(id) {
     return fetchDelete(`/api/organisations/${id}`)
+}
+
+export function queryForOrganisationUsers(organisationId, q) {
+    return fetchJson(`/api/organisations/${organisationId}/users?q=${encodeURIComponent(q)}`);
+}
+
+export function queryForOrganisationInvites(organisationId, q) {
+    return fetchJson(`/api/organisations/${organisationId}/invites?q=${encodeURIComponent(q)}`);
 }
 
 //JoinRequests
@@ -659,12 +664,12 @@ export function auditLogsInfo(objectId, collectionNames) {
     return fetchJson(`/api/audit_logs/info/${objectId}/${collectionNames}`);
 }
 
-export function auditLogsActivity(limit, tableNames) {
+export function auditLogsActivity(limit, tableNames, query) {
     const tables = isEmpty(tableNames) ? null : tableNames.map(s => s.value).join(",");
-    const params = {limit, tables};
+    const params = {limit, tables, query};
     const queryString = Object.keys(params)
         .filter(key => params[key])
-        .map(key => `${key}=${params[key]}`).join("&");
+        .map(key => `${key}=${encodeURIComponent(params[key])}`).join("&");
     return fetchJson(`/api/audit_logs/activity?${queryString}`);
 }
 
@@ -716,6 +721,10 @@ export function composition() {
 
 export function dbSeed() {
     return fetchJson("/api/system/seed");
+}
+
+export function dbDemoSeed() {
+    return fetchJson("/api/system/demo_seed");
 }
 
 export function clearAuditLogs() {
@@ -848,7 +857,21 @@ export function tagsByOrganisation(organisationId) {
 }
 
 //pam-weblogin
-export function pamWebSSOSession(sessionId) {
-    return fetchJson(`/pam-weblogin/${sessionId}`, {}, {}, false)
+export function pamWebSSOSession(serviceAbbreviation, sessionId) {
+    return fetchJson(`/pam-weblogin/${serviceAbbreviation}/${sessionId}`, {}, {}, false)
 }
+
+//ServiceTokens
+export function serviceTokenValue() {
+    return fetchJson(`/api/service_tokens`);
+}
+
+export function createServiceToken(serviceToken) {
+    return postPutJson("/api/service_tokens", serviceToken, "post");
+}
+
+export function deleteServiceToken(id) {
+    return fetchDelete(`/api/service_tokens/${id}`)
+}
+
 

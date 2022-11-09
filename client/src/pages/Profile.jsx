@@ -50,7 +50,7 @@ class Profile extends React.Component {
                 </UnitHeader>
                 <Me {...this.props}/>
             </div>);
-    };
+    }
 
 }
 

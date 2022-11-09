@@ -9,6 +9,7 @@ import {ErrorOrigins} from "../utils/Utils";
 import Logo from "../components/redesign/Logo";
 import {login} from "../utils/Login";
 import ClipBoardCopy from "../components/redesign/ClipBoardCopy";
+import DOMPurify from "dompurify";
 
 
 class PamWebSSO extends React.Component {
@@ -23,8 +24,8 @@ class PamWebSSO extends React.Component {
     }
 
     componentDidMount = () => {
-        const {session_id} = this.props.match.params;
-        pamWebSSOSession(session_id)
+        const {service, session_id} = this.props.match.params;
+        pamWebSSOSession(service, session_id)
             .then(res => {
                 this.setState({
                     validation: res.validation,
@@ -67,7 +68,7 @@ class PamWebSSO extends React.Component {
                 <h1>{I18n.t("pamWebSSO.denied", {service: service.name})}</h1>
                 <p className="info">{I18n.t("pamWebSSO.deniedInfo")}</p>
                 {this.renderService(service)}
-                <p dangerouslySetInnerHTML={{__html: I18n.t("pamWebSSO.contact", {support})}}/>
+                <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("pamWebSSO.contact", {support}))}}/>
             </div>
         );
     }
@@ -90,14 +91,13 @@ class PamWebSSO extends React.Component {
         return (
             <div className="success">
                 <h1>{I18n.t("pamWebSSO.enterPin")}</h1>
-                <p className={"info"}>{I18n.t("pamWebSSO.loggedIn")}</p>
-                <p>{I18n.t("pamWebSSO.enterPinInfo", {service: service.name})}</p>
                 <div className="pin-value">
                     <div className="pin-value-inner">
                         <span className="value">{pin}</span>
                         <ClipBoardCopy transparentBackground={true} txt={pin}/>
                     </div>
                 </div>
+                <p>{I18n.t("pamWebSSO.enterPinInfo", {service: service.name})}</p>
                 <p className={"info"}>{I18n.t("pamWebSSO.afterPin")}</p>
             </div>
         );

@@ -192,17 +192,16 @@ class Groups extends React.Component {
                     <FontAwesomeIcon icon="trash"/></span>
             });
         }
-        const options = collaboration.collaboration_memberships
-            .filter(m => selectedGroup.collaboration_memberships.every(c => c.id !== m.id))
-            .map(m => ({value: m.id, label: m.user.name}));
-        const actions = mayCreateGroups ? <div className="group-detail-actions">
+        const membersNotInGroup = isEmpty(selectedGroup.collaboration_memberships) ? collaboration.collaboration_memberships :
+            collaboration.collaboration_memberships.filter(m => selectedGroup.collaboration_memberships.every(c => c.id !== m.id));
+        const actions = (mayCreateGroups && membersNotInGroup.length > 0) ? <div className="group-detail-actions">
             <Select
                 classNamePrefix="actions"
                 placeholder={I18n.t("models.groupMembers.addMembersPlaceholder")}
                 value={null}
                 onChange={this.addMember}
                 isSearchable={true}
-                options={options}
+                options={membersNotInGroup.map(m => ({value: m.id, label: m.user.name}))}
             />
         </div> : null;
         const queryParam = `name=${encodeURIComponent(I18n.t("breadcrumb.group", {name: selectedGroup.name}))}&back=${encodeURIComponent(window.location.pathname)}`;
@@ -214,10 +213,10 @@ class Groups extends React.Component {
                     <div className="header-actions">
                         <Button onClick={() => this.setState(this.newGroupState(selectedGroup))}
                                 txt={I18n.t("models.groups.edit")}/>
-                        <span className="history"
-                              onClick={() => this.props.history.push(`/audit-logs/groups/${selectedGroup.id}?${queryParam}`)}>
-                        <FontAwesomeIcon icon="history"/>{I18n.t("home.history")}
-                    </span>
+                        {currentUser.admin && <span className="history"
+                                                    onClick={() => this.props.history.push(`/audit-logs/groups/${selectedGroup.id}?${queryParam}`)}>
+                            <FontAwesomeIcon icon="history"/>{I18n.t("home.history")}
+                        </span>}
                     </div>}
 
                 </section>
@@ -237,6 +236,7 @@ class Groups extends React.Component {
                           actions={actions}
                           actionHeader={"collaboration-groups"}
                           modelName="groupMembers"
+                          showActionsAlways={!isEmpty(actions)}
                           defaultSort="user__name"
                           searchAttributes={["user__name", "user__email"]}
                           loading={false}
@@ -417,7 +417,7 @@ class Groups extends React.Component {
                         collaboration_id: collaboration.id
                     }),
                     I18n.t("groups.flash.updated", {name: name}),
-                    res => this.gotoGroup({id: selectedGroupId, name: name})());
+                    () => this.gotoGroup({id: selectedGroupId, name: name})());
             }
         } else {
             window.scrollTo(0, 0);

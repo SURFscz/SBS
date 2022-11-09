@@ -6,7 +6,9 @@ from urllib import parse
 import requests
 import responses
 from flask import current_app
+from werkzeug.exceptions import BadRequest
 
+from server.auth.security import CSRF_TOKEN
 from server.db.db import db
 from server.db.domain import Organisation, Collaboration, User, Aup
 from server.test.abstract_test import AbstractTest
@@ -142,6 +144,30 @@ class TestUser(AbstractTest):
         user_id = User.query.filter(User.uid == "urn:mary").one().id
         res = self.get("/api/users/find_by_id", query_data={"id": user_id})
         self.assertEqual("urn:mary", res["uid"])
+        for attr in ["last_accessed_date", "last_login_date", "second_fa_uuid", "service_memberships", "join_requests"]:
+            self.assertTrue(attr in res)
+
+    def test_find_by_id_by_org_manager(self):
+        self.login("urn:harry")
+        user_id = User.query.filter(User.uid == "urn:sarah").one().id
+        res = self.get("/api/users/find_by_id", query_data={"id": user_id})
+        self.assertEqual("urn:sarah", res["uid"])
+        for attr in ["last_accessed_date", "last_login_date", "second_fa_uuid", "service_memberships", "join_requests"]:
+            self.assertFalse(attr in res)
+
+    def test_find_by_id_by_org_manager_including_org_memberships(self):
+        self.login("urn:paul")
+        user_id = User.query.filter(User.uid == "urn:jane").one().id
+        res = self.get("/api/users/find_by_id", query_data={"id": user_id})
+        self.assertEqual(1, len(res["organisation_memberships"]))
+        membership = res["organisation_memberships"][0]
+        self.assertListEqual(sorted(["role", "organisation"]), sorted(list(membership.keys())))
+        self.assertListEqual(sorted(["id", "name"]), sorted(list(membership["organisation"].keys())))
+
+    def test_find_by_id_by_org_manager_not_allowed(self):
+        self.login("urn:harry")
+        user_id = User.query.filter(User.uid == "urn:roger").one().id
+        self.get("/api/users/find_by_id", query_data={"id": user_id}, response_status_code=403)
 
     def test_attribute_aggregation_eppn(self):
         res = self.get("/api/users/attribute_aggregation",
@@ -203,25 +229,10 @@ class TestUser(AbstractTest):
         res = self.put("/api/users", body=body)
         self.assertTrue(res["ssh_keys"][0]["ssh_value"].startswith("ssh-rsa"))
 
-    def test_upgrade_super_account(self):
-        self.login("urn:mike")
-        res = self.client.get("/api/users/upgrade_super_user")
-        self.assertEqual(302, res.status_code)
-        self.assertEqual("http://localhost:3000", res.location)
-
-        mike = User.query.filter(User.uid == "urn:mike").one()
-        self.assertEqual(True, mike.confirmed_super_user)
-
-    def test_upgrade_super_account_forbidden(self):
-        self.login("urn:sarah")
-        self.get("/api/users/upgrade_super_user", with_basic_auth=False, response_status_code=403)
-
     def test_platform_admins(self):
         self.login("urn:john")
         res = self.client.get("/api/users/platform_admins").json
-
-        self.assertTrue(res["admin_users_upgrade"])
-        self.assertEqual(2, len(res["platform_admins"]))
+        self.assertEqual(1, len(res["platform_admins"]))
 
     def test_platform_admins_forbidden(self):
         self.login("urn:sarah")
@@ -270,6 +281,19 @@ class TestUser(AbstractTest):
     def test_error(self):
         self.post("/api/users/error", body={"error": "403"}, response_status_code=201)
 
+    def test_csrf(self):
+        try:
+            del os.environ["TESTING"]
+            self.login("urn:john")
+            self.post("/api/organisations",
+                      body={"name": "new_organisation",
+                            "schac_home_organisations": [],
+                            "short_name": "https://ti1"},
+                      response_status_code=401,
+                      with_basic_auth=False)
+        finally:
+            os.environ["TESTING"] = "1"
+
     def test_error_mail(self):
         try:
             del os.environ["TESTING"]
@@ -277,7 +301,11 @@ class TestUser(AbstractTest):
             with mail.record_messages() as outbox:
                 self.app.app_config.mail.send_js_exceptions = True
                 self.login("urn:sarah")
-                self.post("/api/users/error", body={"weird": "msg"}, response_status_code=201)
+                me = self.get("/api/users/me", with_basic_auth=False)
+                self.post("/api/users/error",
+                          body={"weird": "msg"},
+                          headers={CSRF_TOKEN: me[CSRF_TOKEN]},
+                          response_status_code=201)
                 self.assertEqual(1, len(outbox))
                 mail_msg = outbox[0]
                 self.assertTrue("weird" in mail_msg.html)
@@ -324,6 +352,12 @@ class TestUser(AbstractTest):
             self.assertFalse(user["second_factor_confirmed"])
             self.assertFalse("organisation_memberships" in user)
             self.assertTrue(user["admin"])
+
+    def test_read_file_not_exists(self):
+        def expect_bad_request():
+            read_file("nope")
+
+        self.assertRaises(BadRequest, expect_bad_request)
 
     @responses.activate
     def test_resume_session_with_allowed_idp(self, redirect_expected="http://localhost:3000"):
@@ -388,10 +422,10 @@ class TestUser(AbstractTest):
         self.assertEqual("james@example.org", res[0]["email"])
 
         res = self.get("/api/users/query", query_data={"q": "@EX"})
-        self.assertEqual(13, len(res))
+        self.assertEqual(12, len(res))
 
         res = self.get("/api/users/query", query_data={"q": "@"})
-        self.assertEqual(18, len(res))
+        self.assertEqual(17, len(res))
 
     def test_aup_agreed(self):
         sarah = self.find_entity_by_name(User, sarah_name)
@@ -403,7 +437,7 @@ class TestUser(AbstractTest):
         res = self.get("/api/collaborations/find_by_identifier",
                        query_data={"identifier": collaboration_ai_computing_uuid},
                        with_basic_auth=False, response_status_code=401)
-        self.assertEqual("AUP not accepted", res["message"])
+        self.assertTrue("AUP not accepted" in res["message"])
 
     def test_update_ssh_control_char(self):
         self.login("urn:james")
@@ -430,16 +464,26 @@ class TestUser(AbstractTest):
         self.assertEqual(2, len(sarah.user_ip_networks))
 
     def test_login_with_ssid_required(self):
+        self.mark_user_ssid_required(name=sarah_name, home_organisation_uid="admin", schac_home_organisation="ssid.org")
+
+        self.login("urn:sarah", schac_home_organisation="ssid.org")
+
+        user = self.client.get("/api/users/me").json
+
+        self.assertEqual(user["guest"], True)
+        self.assertEqual(user["admin"], False)
+
+    def test_login_with_ssid_required_missing_attributes(self):
         self.mark_user_ssid_required()
 
         self.login("urn:sarah", schac_home_organisation="ssid.org")
 
         user = self.client.get("/api/users/me").json
-        self.assertEqual(user["guest"], True)
-        self.assertEqual(user["admin"], False)
+        self.assertFalse(user["second_factor_auth"])
+        self.assertFalse(user["second_factor_confirmed"])
 
     def test_acs(self):
-        self.mark_user_ssid_required()
+        self.mark_user_ssid_required(name=sarah_name, home_organisation_uid="admin", schac_home_organisation="ssid.org")
         self.login("urn:sarah", schac_home_organisation="ssid.org")
 
         xml_authn_b64 = self.get_authn_response("response.ok.xml")
@@ -467,7 +511,7 @@ class TestUser(AbstractTest):
         self.assertEqual("http://localhost:3000/error", res.location)
 
     def test_acs_error_saml_error(self):
-        self.mark_user_ssid_required()
+        self.mark_user_ssid_required(name=sarah_name, home_organisation_uid="admin", schac_home_organisation="ssid.org")
         self.login("urn:sarah", schac_home_organisation="ssid.org")
 
         xml_authn_b64 = self.get_authn_response("response.no_authn.xml")

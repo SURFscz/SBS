@@ -4,7 +4,7 @@ from server.db.db import db
 from server.db.domain import Organisation, OrganisationInvitation, User
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import uuc_name, amsterdam_uva_name, schac_home_organisation_uuc, schac_home_organisation, \
-    read_image, uuc_secret
+    read_image, uuc_secret, jane_name
 
 
 class TestOrganisation(AbstractTest):
@@ -81,7 +81,7 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(0, len(organisations))
 
     def test_organisations_by_schac_home_organisation_not_present(self):
-        self.login("urn:mike")
+        self.login("urn:admin")
         organisations = self.get("/api/organisations/find_by_schac_home_organisation",
                                  with_basic_auth=False)
         self.assertEqual(0, len(organisations))
@@ -341,3 +341,26 @@ class TestOrganisation(AbstractTest):
                        headers={"Authorization": f"Bearer {uuc_secret}"},
                        with_basic_auth=False)
         self.assertEqual(2, len(res["collaborations"]))
+
+    def test_search_users(self):
+        self.login("urn:harry")
+        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        res = self.get(f"/api/organisations/{organisation.id}/users", query_data={"q": "jan"}, with_basic_auth=False)
+        self.assertEqual(1, len(res))
+        self.assertEqual(res[0]["name"], jane_name)
+        for attr in "last_accessed_date", "second_fa_uuid", "user_ip_networks", "second_factor_auth":
+            self.assertFalse(attr in res[0])
+
+    def test_search_users_admin(self):
+        self.login("urn:john")
+        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        res = self.get(f"/api/organisations/{organisation.id}/users", query_data={"q": "jane"}, with_basic_auth=False)
+        for attr in "last_accessed_date", "second_fa_uuid", "user_ip_networks", "second_factor_auth":
+            self.assertTrue(attr in res[0])
+
+    def test_search_invitations(self):
+        self.login("urn:harry")
+        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        res = self.get(f"/api/organisations/{organisation.id}/invites", query_data={"q": "iou"}, with_basic_auth=False)
+        self.assertEqual(1, len(res))
+        self.assertEqual(res[0]["invitee_email"], "curious@ex.org")

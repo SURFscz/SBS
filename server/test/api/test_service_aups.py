@@ -31,11 +31,11 @@ class TestServiceAup(AbstractTest):
 
     def test_join_request(self):
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
-        self.login("urn:betty")
+        self.login("urn:james")
         self.post("/api/join_requests",
                   body={"collaborationId": collaboration.id, "motivation": "please"},
                   with_basic_auth=False)
-        service_aups = self._service_aups_by_user("urn:betty")
+        service_aups = self._service_aups_by_user("urn:james")
         self.assertEqual(4, len(service_aups))
 
     def test_create_service_aup(self):
@@ -62,7 +62,7 @@ class TestServiceAup(AbstractTest):
         service_identifiers = [s["id"] for s in res["services_without_aup"]]
 
         res = self.post("/api/service_aups/bulk", body={"service_identifiers": service_identifiers})
-        self.assertEqual("http://localhost:3000", res["location"])
+        self.assertIsNone(res["location"])
 
         res = self.get("/api/users/me")
         self.assertEqual(0, len(res["services_without_aup"]))

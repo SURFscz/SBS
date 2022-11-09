@@ -1,15 +1,13 @@
 # -*- coding: future_fstrings -*-
-import hashlib
-from secrets import token_urlsafe
 
 from flask import session, g as request_context, request as current_request, current_app
 from sqlalchemy.orm import load_only
-from werkzeug.exceptions import Forbidden, SecurityError
+from werkzeug.exceptions import Forbidden
 
-from server.db.domain import CollaborationMembership, OrganisationMembership, Group, Collaboration, User, \
-    ServiceMembership
+from server.db.domain import (CollaborationMembership, OrganisationMembership, Collaboration, User,
+                              ServiceMembership)
 
-MIN_SECRET_LENGTH = 43
+CSRF_TOKEN = "CSRFToken"
 
 
 def is_admin_user(user):
@@ -38,8 +36,7 @@ def _get_impersonated_session():
                 "email": impersonate_mail,
                 "admin": is_admin_user({"uid": impersonate_uid}),
                 "second_factor_confirmed": True,
-                "guest": False,
-                "confirmed_admin": False
+                "guest": False
             }
         }
     return session
@@ -47,8 +44,6 @@ def _get_impersonated_session():
 
 def is_application_admin():
     impersonated_session = _get_impersonated_session()
-    if current_app.app_config.feature.admin_users_upgrade:
-        return impersonated_session["user"]["admin"] and impersonated_session["user"]["confirmed_admin"]
     return impersonated_session["user"]["admin"]
 
 
@@ -70,9 +65,6 @@ def current_user_name():
 
 def confirm_allow_impersonation(confirm_feature_impersonation_allowed=True):
     if "user" not in session or "admin" not in session["user"] or not session["user"]["admin"]:
-        raise Forbidden()
-    admin_users_upgrade = current_app.app_config.feature.admin_users_upgrade
-    if admin_users_upgrade and ("confirmed_admin" not in session["user"] or not session["user"]["confirmed_admin"]):
         raise Forbidden()
     if confirm_feature_impersonation_allowed and not current_app.app_config.feature.impersonation_allowed:
         raise Forbidden()
@@ -110,10 +102,6 @@ def confirm_ipaddress_access(*args, override_func=None):
     return confirm_scope_access(*args, override_func=override_func, scope="ipaddress")
 
 
-def is_current_user_collaboration_admin(collaboration_id):
-    return is_collaboration_admin(current_user_id(), collaboration_id)
-
-
 def is_current_user_organisation_admin_or_manager(collaboration_id):
     return is_organisation_admin_or_manager(Collaboration.query.get(collaboration_id).organisation_id)
 
@@ -149,7 +137,7 @@ def _has_organisation_role(organisation_id, roles):
     return query.count() > 0
 
 
-def confirm_organisation_admin(organisation_id):
+def confirm_organisation_admin(organisation_id=None):
     def override_func():
         return is_organisation_admin(organisation_id)
 
@@ -200,17 +188,6 @@ def confirm_collaboration_member(collaboration_id):
     confirm_write_access(override_func=override_func)
 
 
-def confirm_group_member(group_id):
-    user_id = current_user_id()
-    count = Group.query \
-        .options(load_only("id")) \
-        .join(Group.collaboration_memberships) \
-        .filter(Group.id == group_id) \
-        .filter(CollaborationMembership.user_id == user_id) \
-        .count()
-    return count > 0
-
-
 def is_service_admin(service_id=None):
     user_id = current_user_id()
     query = ServiceMembership.query \
@@ -221,24 +198,8 @@ def is_service_admin(service_id=None):
     return query.count() > 0
 
 
-def confirm_service_admin(service_id):
+def confirm_service_admin(service_id=None):
     def override_func():
         return is_service_admin(service_id)
 
     confirm_write_access(override_func=override_func)
-
-
-def secure_hash(secret):
-    return f"sha3_512_{hashlib.sha3_512(bytes(secret, 'utf-8')).hexdigest()}"
-
-
-def generate_token():
-    return f"A{token_urlsafe()}"
-
-
-def hash_secret_key(data, attr_name="hashed_secret"):
-    secret = data[attr_name]
-    if len(secret) < MIN_SECRET_LENGTH:
-        raise SecurityError(f"minimal length of secret for API key is {MIN_SECRET_LENGTH}")
-    data[attr_name] = secure_hash(secret)
-    return data

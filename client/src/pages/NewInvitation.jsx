@@ -132,7 +132,7 @@ class NewInvitation extends React.Component {
                 collaboration_id: collaboration.id,
                 groups: selectedGroup.map(ag => ag.value),
                 expiry_date: expiry_date.getTime() / 1000
-            }).then(res => {
+            }).then(() => {
                 this.props.history.push(`/collaborations/${collaboration.id}/${isAdminView ? "admins" : "members"}`);
                 setFlash(I18n.t("invitation.flash.created", {name: collaboration.name}))
             });
@@ -246,7 +246,7 @@ class NewInvitation extends React.Component {
     preview = disabledSubmit => (
         <div>
             <div className={"preview-mail"} dangerouslySetInnerHTML={{__html: this.state.htmlPreview}}/>
-            {this.renderActions(disabledSubmit, false)}
+            {this.renderActions(disabledSubmit)}
         </div>
     );
 
@@ -294,6 +294,7 @@ class NewInvitation extends React.Component {
                        onChange={e => this.setState({membership_expiry_date: e})}
                        allowNull={true}
                        showYearDropdown={true}
+                       pastDatesAllowed={this.props.config.past_dates_allowed}
                        minDate={this.getMembershipExpiryDate()}
                        name={I18n.t("invitation.membershipExpiryDate")}
                        toolTip={I18n.t("invitation.membershipExpiryDateTooltip")}/>
@@ -307,21 +308,18 @@ class NewInvitation extends React.Component {
 
             <DateField value={expiry_date}
                        onChange={this.setInvitationExpiryDate}
+                       pastDatesAllowed={this.props.config.past_dates_allowed}
                        maxDate={moment().add(31, "day").toDate()}
                        name={I18n.t("invitation.expiryDate")}
                        toolTip={I18n.t("invitation.expiryDateTooltip")}/>
 
 
-            {this.renderActions(disabledSubmit, true)}
+            {this.renderActions(disabledSubmit)}
         </div>;
 
-    renderActions = (disabledSubmit, showPreview) => (
+    renderActions = disabledSubmit => (
         <section className="actions">
             <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-            {/*{showPreview && <Button cancelButton={true} className="preview" txt={I18n.t("organisationDetail.preview")}*/}
-            {/*                        onClick={() => this.tabChanged("invitation_preview")}/>}*/}
-            {/*{!showPreview && <Button cancelButton={true} className="preview" txt={I18n.t("organisationDetail.details")}*/}
-            {/*                         onClick={() => this.tabChanged("invitation_form")}/>}*/}
             <Button disabled={disabledSubmit} txt={I18n.t("invitation.invite")}
                     onClick={this.submit}/>
         </section>
@@ -369,10 +367,8 @@ class NewInvitation extends React.Component {
                             selectedGroup, membership_expiry_date)}
                     </div>
                 </div>
-            </>)
-            ;
-    };
-
+            </>);
+    }
 
 }
 

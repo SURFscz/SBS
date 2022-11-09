@@ -23,8 +23,8 @@ class Organisations extends React.Component {
         promise
             .then(json => {
                 json.forEach(org => {
-                    const membership = (user.organisation_memberships || []).find(m => m.user_id === user.id);
-                    org.role = membership ? membership.role : "";
+                    const membership = (user.organisation_memberships || []).find(m => m.organisation_id === org.id);
+                    org.role = membership ? membership.role : null;
                     org.schacHomes = isEmpty(org.schac_home_organisations) ? "-" : org.schac_home_organisations.map(sho => sho.name).join(", ");
                 });
                 this.setState({organisations: json, loading: false})
@@ -63,15 +63,17 @@ class Organisations extends React.Component {
             {
                 key: "schacHomes",
                 header: I18n.t("models.organisations.schacHomeOrganisations"),
-                mapper: org => org.schacHomes,
+                mapper: org => isEmpty(org.schac_home_organisations) ? "-" :
+                    <div className={"schac_home_organisations"}>{org.schac_home_organisations.map(sho => <span>{sho.name}</span>)}</div>
             },
             {
                 key: "role",
-                header: "",// I18n.t("profile.yourRole"),
+                header: I18n.t("profile.yourRole"),
                 mapper: org => {
-                    const cm = currentUser.organisation_memberships.find(m => m.organisation_id === org.id);
-                    return cm ?
-                        <span className={`person-role ${cm.role}`}>{I18n.t(`profile.${cm.role}`)}</span> : null;
+                    if (org.role) {
+                        return <span className={`person-role ${org.role}`}>{I18n.t(`profile.${org.role}`)}</span>
+                    }
+                    return null;
                 }
             },
             {

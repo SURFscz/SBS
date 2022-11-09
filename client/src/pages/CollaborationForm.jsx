@@ -32,6 +32,7 @@ import {isUserAllowed, ROLES} from "../utils/UserRole";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import DateField from "../components/DateField";
 import moment from "moment";
+import DOMPurify from "dompurify";
 
 class CollaborationForm extends React.Component {
 
@@ -404,7 +405,7 @@ class CollaborationForm extends React.Component {
             <div className="mod-new-collaboration-container">
                 <div className="new-collaboration">
                     <h2 className="no-organisations"
-                        dangerouslySetInnerHTML={{__html: msg}}/>
+                        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(msg)}}/>
                 </div>
             </div>
         )
@@ -584,6 +585,7 @@ class CollaborationForm extends React.Component {
                     {!isCollaborationRequest && <DateField value={expiry_date}
                                                            onChange={e => this.setState({expiry_date: e})}
                                                            allowNull={true}
+                                                           pastDatesAllowed={this.props.config.past_dates_allowed}
                                                            showYearDropdown={true}
                                                            name={I18n.t("collaboration.expiryDate")}
                                                            toolTip={I18n.t("collaboration.expiryDateTooltip")}/>}
@@ -678,8 +680,8 @@ class CollaborationForm extends React.Component {
                                 onClick={this.submit}/>
                     </section>
                 </div>
-            </div>);
-    };
+            </div>)
+    }
 }
 
 export default CollaborationForm;

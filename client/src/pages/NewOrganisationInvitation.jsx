@@ -96,7 +96,7 @@ class NewOrganisationInvitation extends React.Component {
                 intended_role,
                 expiry_date: expiry_date.getTime() / 1000,
                 organisation_id: organisation.id
-            }).then(res => {
+            }).then(() => {
                 this.props.history.push(`/organisations/${organisation.id}/admins`);
                 setFlash(I18n.t("organisationInvitation.flash.created", {name: organisation.name}))
             });
@@ -160,7 +160,7 @@ class NewOrganisationInvitation extends React.Component {
     preview = disabledSubmit => (
         <div>
             <div className={"preview-mail"} dangerouslySetInnerHTML={{__html: this.state.htmlPreview}}/>
-            {this.renderActions(disabledSubmit, false)}
+            {this.renderActions(disabledSubmit)}
         </div>
     );
 
@@ -196,14 +196,15 @@ class NewOrganisationInvitation extends React.Component {
 
             <DateField value={expiry_date}
                        onChange={e => this.setState({expiry_date: e})}
+                       pastDatesAllowed={this.props.config.past_dates_allowed}
                        maxDate={moment().add(31, "day").toDate()}
                        name={I18n.t("organisationInvitation.expiryDate")}
                        toolTip={I18n.t("organisationInvitation.expiryDateTooltip")}/>
 
-            {this.renderActions(disabledSubmit, true)}
+            {this.renderActions(disabledSubmit)}
         </div>;
 
-    renderActions = (disabledSubmit, showPreview) => (
+    renderActions = disabledSubmit => (
         <section className="actions">
             <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
             <Button disabled={disabledSubmit} txt={I18n.t("organisationInvitation.invite")}
@@ -237,7 +238,7 @@ class NewOrganisationInvitation extends React.Component {
                     </div>
                 </div>
             </>);
-    };
+    }
 
 }
 

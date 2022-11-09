@@ -41,8 +41,14 @@ export function sortObjects(objects, attribute, reverse) {
             return (val1 - val2) * (reverse ? -1 : 1);
         }
         const aS = val1.toString();
-        const bs = val2.toString();
-        return aS.localeCompare(bs) * (reverse ? -1 : 1);
+        const bS = val2.toString();
+        if (aS.length === 0) {
+            return (reverse ? -1 : 1);
+        }
+        if (bS.length === 0) {
+            return (reverse ? 1 : -1);
+        }
+        return aS.localeCompare(bS) * (reverse ? -1 : 1);
     });
 }
 

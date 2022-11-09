@@ -4,19 +4,23 @@ import uuid
 from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app, g as request_context
 from munch import munchify
+from sqlalchemy import or_
 from sqlalchemy import text, func, bindparam, String
 from sqlalchemy.orm import load_only
 from sqlalchemy.orm import selectinload
 
-from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars, emit_socket
+from server.api.base import emit_socket
+from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
+from server.auth.secrets import generate_token
 from server.auth.security import confirm_write_access, current_user_id, is_application_admin, \
-    confirm_organisation_admin, generate_token, is_service_admin, confirm_external_api_call, confirm_read_access
+    confirm_organisation_admin, is_service_admin, confirm_external_api_call, confirm_read_access, \
+    confirm_organisation_admin_or_manager
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
 from server.db.defaults import default_expiry_date, cleanse_short_name
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import Organisation, OrganisationMembership, OrganisationInvitation, User, \
-    CollaborationRequest, SchacHomeOrganisation, Collaboration
+    CollaborationRequest, SchacHomeOrganisation, Collaboration, CollaborationMembership, Invitation
 from server.db.models import update, save, delete
 from server.mail import mail_organisation_invitation, mail_platform_admins
 
@@ -26,6 +30,8 @@ organisation_api = Blueprint("organisation_api", __name__, url_prefix="/api/orga
 @organisation_api.route("/name_exists", strict_slashes=False)
 @json_endpoint
 def name_exists():
+    confirm_organisation_admin()
+
     name = query_param("name")
     existing_organisation = query_param("existing_organisation", required=False, default="")
     org = Organisation.query.options(load_only("id")) \
@@ -38,6 +44,8 @@ def name_exists():
 @organisation_api.route("/short_name_exists", strict_slashes=False)
 @json_endpoint
 def short_name_exists():
+    confirm_organisation_admin()
+
     short_name = query_param("short_name")
     existing_organisation = query_param("existing_organisation", required=False, default="")
     org = Organisation.query.options(load_only("id")) \
@@ -50,6 +58,8 @@ def short_name_exists():
 @organisation_api.route("/schac_home_exists", strict_slashes=False)
 @json_endpoint
 def schac_home_exists():
+    confirm_organisation_admin()
+
     schac_home = query_param("schac_home")
     if not schac_home:
         return False, 200
@@ -110,7 +120,7 @@ def my_organisations_lite():
 
 
 @organisation_api.route("/v1", strict_slashes=False)
-@swag_from("../swagger/paths/get_collaborations_by_organisation.yml")
+@swag_from("../swagger/public/paths/get_collaborations_by_organisation.yml")
 @json_endpoint
 def api_organisation_details():
     confirm_external_api_call()
@@ -347,8 +357,40 @@ def update_organisation():
                   allowed_child_collections=["schac_home_organisations"])
 
 
-@organisation_api.route("/<id>", methods=["DELETE"], strict_slashes=False)
+@organisation_api.route("/<organisation_id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
-def delete_organisation(id):
+def delete_organisation(organisation_id):
     confirm_write_access()
-    return delete(Organisation, id)
+    return delete(Organisation, organisation_id)
+
+
+@organisation_api.route("/<organisation_id>/users", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def search_users(organisation_id):
+    confirm_organisation_admin_or_manager(organisation_id)
+    wildcard = f"%{query_param('q')}%"
+    conditions = [User.name.ilike(wildcard), User.username.ilike(wildcard), User.email.ilike(wildcard)]
+    users = User.query \
+        .join(User.collaboration_memberships) \
+        .join(CollaborationMembership.collaboration) \
+        .join(Collaboration.organisation) \
+        .filter(Organisation.id == organisation_id) \
+        .filter(or_(*conditions)) \
+        .all()
+    if is_application_admin():
+        return users, 200
+    else:
+        return [user.allowed_attr_view([organisation_id], False) for user in users], 200
+
+
+@organisation_api.route("/<organisation_id>/invites", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def search_invites(organisation_id):
+    confirm_organisation_admin_or_manager(organisation_id)
+    wildcard = f"%{query_param('q')}%"
+    return Invitation.query \
+               .join(Invitation.collaboration) \
+               .join(Collaboration.organisation) \
+               .filter(Organisation.id == organisation_id) \
+               .filter(Invitation.invitee_email.ilike(wildcard)) \
+               .all(), 200

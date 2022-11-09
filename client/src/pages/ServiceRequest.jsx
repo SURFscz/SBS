@@ -24,6 +24,7 @@ import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import UnitHeader from "../components/redesign/UnitHeader";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import SpinnerField from "../components/redesign/SpinnerField";
+import DOMPurify from "dompurify";
 
 class ServiceRequest extends React.Component {
 
@@ -164,7 +165,7 @@ class ServiceRequest extends React.Component {
                                     <FontAwesomeIcon icon="info-circle"/>
                                 </span>
                                 <ReactTooltip id={`coll_lna${coll.id}`} type="info" effect="solid" data-html={true}>
-                                    <p dangerouslySetInnerHTML={{__html: I18n.t("serviceRequest.collaboration.linkNotAllowed")}}/>
+                                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("serviceRequest.collaboration.linkNotAllowed"))}}/>
                                 </ReactTooltip>
                             </span>}
                         {coll.alreadyLinked &&
@@ -173,7 +174,7 @@ class ServiceRequest extends React.Component {
                                     <FontAwesomeIcon icon="info-circle"/>
                                 </span>
                                 <ReactTooltip id={`coll_al${coll.id}`} type="info" effect="solid" data-html={true}>
-                                    <p dangerouslySetInnerHTML={{__html: I18n.t("serviceRequest.collaboration.alreadyLinked")}}/>
+                                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("serviceRequest.collaboration.alreadyLinked"))}}/>
                                 </ReactTooltip>
                             </span>}
                         {(coll.outstandingServiceConnectionRequest && this.roleOfUserInCollaboration(coll, user) === "member") &&
@@ -182,7 +183,7 @@ class ServiceRequest extends React.Component {
                                     <FontAwesomeIcon icon="info-circle"/>
                                 </span>
                                 <ReactTooltip id={`coll_osr${coll.id}`} type="info" effect="solid" data-html={true}>
-                                    <p dangerouslySetInnerHTML={{__html: I18n.t("serviceRequest.collaboration.outstandingServiceConnectionRequest")}}/>
+                                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("serviceRequest.collaboration.outstandingServiceConnectionRequest"))}}/>
                                 </ReactTooltip>
                             </span>}
                     </td>
@@ -253,7 +254,7 @@ class ServiceRequest extends React.Component {
                 <UnitHeader obj={service}
                             name={service.name}>
                     <div className="title">
-                        <p className="title" dangerouslySetInnerHTML={{__html: title}}/>
+                        <p className="title" dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(title)}}/>
                         <FontAwesomeIcon className="help"
                                          icon="question-circle"
                                          id="service_request_close_explanation"
@@ -274,7 +275,7 @@ class ServiceRequest extends React.Component {
                         </div>}
                         {!errorSituation &&
                         <div>
-                            <p className="sub-title" dangerouslySetInnerHTML={{__html: subTitle}}/>
+                            <p className="sub-title" dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(subTitle)}}/>
                             {this.renderCollaborations(collaborations, user)}
                         </div>
                         }
@@ -288,7 +289,7 @@ class ServiceRequest extends React.Component {
                     </div>
                 </div>
             </div>);
-    };
+    }
 
 }
 

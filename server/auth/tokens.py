@@ -1,8 +1,8 @@
 from flask import request as current_request, g as request_context
 from werkzeug.exceptions import Unauthorized
 
-from server.auth.security import secure_hash
-from server.db.domain import Service
+from server.auth.secrets import secure_hash
+from server.db.domain import Service, ServiceToken
 
 
 def get_authorization_header(is_external_api_url, ignore_missing_auth_header=False):
@@ -14,9 +14,12 @@ def get_authorization_header(is_external_api_url, ignore_missing_auth_header=Fal
     return hashed_secret
 
 
-def validate_service_token(attr_enabled):
+def validate_service_token(attr_enabled) -> Service:
     hashed_bearer_token = get_authorization_header(True)
-    service = Service.query.filter(Service.hashed_token == hashed_bearer_token).first()
+    service = Service.query \
+        .join(Service.service_tokens) \
+        .filter(ServiceToken.hashed_token == hashed_bearer_token) \
+        .first()
     if not service or not getattr(service, attr_enabled):
         raise Unauthorized()
     request_context.service_token = f"Service token {service.name}"
