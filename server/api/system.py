@@ -133,6 +133,19 @@ def run_demo_seed():
     return {}, 201
 
 
+@system_api.route("/human_testing_seed", strict_slashes=False, methods=["GET"])
+@json_endpoint
+def run_human_testing_seed():
+    confirm_write_access()
+
+    check_seed_allowed("human-testing-seed")
+
+    from server.test.human_testing_seed import human_testing_seed
+    human_testing_seed(db)
+
+    return {}, 201
+
+
 @system_api.route("/scheduled_jobs", strict_slashes=False, methods=["GET"])
 @json_endpoint
 def scheduled_jobs():
