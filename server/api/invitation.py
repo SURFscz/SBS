@@ -10,13 +10,13 @@ from werkzeug.exceptions import Conflict, Forbidden
 
 from server.api.base import json_endpoint, query_param
 from server.api.service_aups import add_user_aups
-from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call
 from server.auth.secrets import generate_token
+from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call
 from server.db.defaults import default_expiry_date
 from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, Organisation
 from server.db.models import delete
 from server.mail import mail_collaboration_invitation
-from server.scim.events import new_collaboration_membership
+from server.scim.events import collaboration_changed
 
 invitations_api = Blueprint("invitations_api", __name__, url_prefix="/api/invitations")
 
@@ -53,7 +53,7 @@ def do_resend(invitation_id):
 
 def parse_date(val, default_date=None):
     return datetime.datetime.fromtimestamp(val / 1e3) if val and (
-            isinstance(val, float) or isinstance(val, int)) else default_date
+        isinstance(val, float) or isinstance(val, int)) else default_date
 
 
 @invitations_api.route("/find_by_hash", strict_slashes=False)
@@ -187,7 +187,7 @@ def invitations_accept():
 
     add_user_aups(collaboration, user_id)
 
-    new_collaboration_membership(collaboration)
+    collaboration_changed(collaboration)
 
     res = {'collaboration_id': collaboration.id, 'user_id': user_id}
     return res, 201
