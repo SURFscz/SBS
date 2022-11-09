@@ -28,9 +28,9 @@ jobs:
         # Socket-io is not compatible with 3.10, for now skip 3.10, until we resolve this
         python-version: ['3.7', '3.9']
         include:
-          - coverage: false
+          - coverage: 'false'
           - python-version: '3.9'
-            coverage: true
+            coverage: 'true'
 
     services:
       # How to use MySQL
@@ -223,6 +223,7 @@ jobs:
           ls -la ${{steps.fetch_artifact.outputs.download-path}}
           sha1sum ${{steps.fetch_artifact.outputs.download-path}}/* || true
           sha256sum ${{steps.fetch_artifact.outputs.download-path}}/* || true
+          echo coverage: .${{ matrix.coverage }}.
 
       - name: Create Release
         if: "github.ref_type=='tag'"
