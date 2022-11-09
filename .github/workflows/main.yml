@@ -98,16 +98,16 @@ jobs:
       - name: Run tests
         run: |
           pytest server/test
-        if: not ${{ coverage }}
+        if: not ${{ matrix.coverage }}
 
       - name: Run tests with coverage
         run: |
           pytest --cov=server server/test
-        if: ${{ coverage }}
+        if: ${{ matrix.coverage }}
 
       - name: Upload coverage
         run: codecov --token=${{ secrets.CODECOV_TOKEN }}
-        if: ${{ coverage }} and ${{ success() }}
+        if: ${{ matrix.coverage }} and ${{ success() }}
 
 
   Client_build:
