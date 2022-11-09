@@ -110,12 +110,16 @@ def _lookup_scim_object(service: Service, scim_type: str, external_id: str):
 
 
 # User has been created, updated or deleted. Propagate the changes to the remote SCIM DB to all connected SCIM services
-def apply_user_change(user: User, deletion=False):
-    # We need all services that are accessible for this user
-    collaborations = [member.collaboration for member in user.collaboration_memberships if member.is_active]
-    organisations = [co.organisation for co in collaborations]
-    all_services = flatten([co.services for co in collaborations]) + flatten([org.services for org in organisations])
-    scim_services = _unique_scim_services(all_services, "provision_scim_users")
+def apply_user_change(user: User, deletion=False, service=None):
+    if service:
+        scim_services = [service]
+    else:
+        # We need all services that are accessible for this user
+        collaborations = [member.collaboration for member in user.collaboration_memberships if member.is_active]
+        organisations = [co.organisation for co in collaborations]
+        all_services = flatten([co.services for co in collaborations]) + flatten(
+            [org.services for org in organisations])
+        scim_services = _unique_scim_services(all_services, "provision_scim_users")
     for service in scim_services:
         scim_object = _lookup_scim_object(service, SCIM_USERS, user.external_id)
         # No use to delete the user if the user is unknown in the remote system
@@ -145,7 +149,7 @@ def apply_group_change(group: Union[Group, Collaboration], deletion=False):
             if isinstance(group, Collaboration):
                 for user in [member.user for member in group.collaboration_memberships]:
                     if not _has_user_service_access(user, service, group):
-                        apply_user_change(user, True)
+                        apply_user_change(user, deletion=True, service=service)
         else:
             response = _provision_group(scim_object, service, group)
         if response.status_code > 204:
