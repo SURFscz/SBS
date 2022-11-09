@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import yaml
 
 from server.test.abstract_test import AbstractTest

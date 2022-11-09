@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """short_name required for collaboration_requests
 
 Revision ID: 947d95b12b98

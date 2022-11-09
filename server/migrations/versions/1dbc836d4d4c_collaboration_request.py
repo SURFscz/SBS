@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """collaboration request
 
 Revision ID: 1dbc836d4d4c

@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """rebuild-test-indexes
 
 Revision ID: a0302c432c15

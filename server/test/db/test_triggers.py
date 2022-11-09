@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 from sqlalchemy import text
 from sqlalchemy.exc import DatabaseError
 

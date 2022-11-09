@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import datetime
 import os
 import uuid

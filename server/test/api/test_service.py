@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import time
 
 from flask import session

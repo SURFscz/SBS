@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """drop not used design columns
 
 Revision ID: e5eb9fde77dd

@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 from base64 import b64encode
 
 from server.db.models import flatten

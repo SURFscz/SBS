@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """organisation indexes
 
 Revision ID: b0b2a82821dd

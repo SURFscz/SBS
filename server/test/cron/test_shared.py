@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 from sqlalchemy import text
 
 from server.cron.cleanup_non_open_requests import cleanup_non_open_requests_lock_name, cleanup_non_open_requests

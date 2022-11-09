@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 
 from flask import current_app, Blueprint, request as current_request
 from sqlalchemy import text

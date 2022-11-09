@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """collaboration_memberships optional link to invitation
 
 Revision ID: 9a0fbeffc75f

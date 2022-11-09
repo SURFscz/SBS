@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 from flask import current_app
 
 from server.api.base import STATUS_DENIED, STATUS_APPROVED
