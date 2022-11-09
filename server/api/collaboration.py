@@ -11,7 +11,7 @@ from sqlalchemy import text, or_, func, bindparam, String
 from sqlalchemy.orm import aliased, load_only, selectinload
 from werkzeug.exceptions import BadRequest, Forbidden, MethodNotAllowed
 
-from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
+from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars, emit_socket
 from server.api.service_group import create_service_groups
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_collaboration_member, \
@@ -327,6 +327,9 @@ def collaboration_invites():
             "wiki_link": current_app.app_config.wiki_link,
             "recipient": administrator
         }, collaboration, [administrator])
+
+    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
+
     return None, 201
 
 
@@ -523,6 +526,8 @@ def update_collaboration():
 
     if "tags" in data:
         _reconcile_tags(collaboration, data["tags"])
+
+    emit_socket(f"collaboration_{collaboration.id}")
 
     # For updating references like services, groups, memberships there are more fine-grained API methods
     return update(Collaboration, custom_json=data, allow_child_cascades=False)

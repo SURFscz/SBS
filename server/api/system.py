@@ -230,7 +230,7 @@ def validations():
         .all()
 
     return {
-               "organisations": organisations_without_admins,
-               "organisation_invitations": organisation_invitations,
-               "services": services_without_admins
-           }, 200
+        "organisations": organisations_without_admins,
+        "organisation_invitations": organisation_invitations,
+        "services": services_without_admins
+    }, 200

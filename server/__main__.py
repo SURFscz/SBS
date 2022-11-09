@@ -6,10 +6,16 @@ import time
 from datetime import timedelta
 from logging.handlers import TimedRotatingFileHandler
 
+# monkey_patch before importing anything else!
+# see https://github.com/gevent/gevent/issues/1016#issuecomment-328529454
+import eventlet
+eventlet.monkey_patch()
+
 import yaml
 from flask import Flask, jsonify, request as current_request
 from flask_mail import Mail
 from flask_migrate import Migrate
+from flask_socketio import SocketIO
 from munch import munchify
 from sqlalchemy import text
 from sqlalchemy.exc import OperationalError
@@ -200,9 +206,21 @@ if not test:
             db.session.commit()
 
 if not test:
-    # Start scheduling
     start_scheduling(app)
 
-# WSGI production mode dictates that no flask app is actually running
-if is_local:
-    app.run(port=8080, debug=False, host="localhost", threaded=False)
+# Arguments for debug information
+socket_io = SocketIO(app, message_queue=f"redis://{config.redis.host}:{config.redis.port}", cors_allowed_origins="*")
+app.socket_io = socket_io
+
+
+# This seems to be required, as an ack to the client. Without it the websocket emits are not received by the clients
+@socket_io.on("connect")
+def connected():
+    pass
+
+
+# In the WSGI production file the socket_io
+if __name__ == '__main__':
+    socket_io.run(app, debug=False, port=8080)
+# if is_local:
+#    app.run(port=8080, debug=False, host="localhost", threaded=False)

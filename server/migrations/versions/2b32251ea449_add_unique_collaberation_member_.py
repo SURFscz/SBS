@@ -8,7 +8,6 @@ Create Date: 2022-04-08 14:11:55.545750
 from alembic import op
 import sqlalchemy as sa
 
-
 # revision identifiers, used by Alembic.
 revision = '2b32251ea449'
 down_revision = 'a56b5af966d8'
@@ -27,8 +26,8 @@ def upgrade():
 def downgrade():
     conn = op.get_bind()
     conn.execute(
-                sa.text(
-                    "ALTER TABLE collaboration_memberships DROP INDEX unique_members,"
-                    "ADD INDEX (user_id), ADD INDEX (collaboration_id)"
-                )
-            )
+        sa.text(
+            "ALTER TABLE collaboration_memberships DROP INDEX unique_members,"
+            "ADD INDEX (user_id), ADD INDEX (collaboration_id)"
+        )
+    )
