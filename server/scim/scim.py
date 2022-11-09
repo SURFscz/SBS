@@ -4,7 +4,7 @@ from typing import Union, List
 
 import requests
 
-from server.db.domain import Service, User, Group, Collaboration
+from server.db.domain import Service, User, Group, Collaboration, Organisation
 from server.db.models import flatten
 from server.logger.context_logger import ctx_logger
 from server.scim.counter import atomic_increment_counter_value
@@ -127,7 +127,7 @@ def apply_user_change(user: User, deletion=False):
             response = _provision_user(scim_object, service, user)
         if response.status_code > 204:
             _log_scim_error(response, service)
-
+    return bool(services)
 
 # Group or collaboration has been created, updated or deleted. Propagate the changes to the remote SCIM DB's
 def apply_group_change(group: Union[Group, Collaboration], deletion=False):
@@ -149,3 +149,9 @@ def apply_group_change(group: Union[Group, Collaboration], deletion=False):
             response = _provision_group(scim_object, service, group)
         if response.status_code > 204:
             _log_scim_error(response, service)
+
+
+# Organisation has a new service or a service is deleted from an organisation
+def apply_organisation_change(organisation: Organisation, deletion=False):
+    for collaboration in organisation.collaborations:
+        apply_group_change(collaboration, deletion=deletion)

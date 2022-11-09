@@ -1,16 +1,28 @@
 # -*- coding: future_fstrings -*-
 import json
+import os
 
 import responses
 
 from server.db.domain import User, Collaboration, Group
+from server.scim.events import user_changed
 from server.scim.scim import apply_user_change, apply_group_change
 from server.test.abstract_test import AbstractTest
 from server.test.seed import sarah_name, uva_research_name, ai_researchers_group
 from server.tools import read_file
 
 
-class TestScim(AbstractTest):
+class TestEvents(AbstractTest):
+
+    @classmethod
+    def setUpClass(cls):
+        super(TestEvents, cls).setUpClass()
+        del os.environ["SCIM_DISABLED"]
+
+    @classmethod
+    def tearDownClass(cls):
+        super(TestEvents, cls).tearDownClass()
+        os.environ["SCIM_DISABLED"] = "1"
 
     @responses.activate
     def test_apply_user_change_create(self):
@@ -20,7 +32,9 @@ class TestScim(AbstractTest):
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=no_user_found, status=200)
             rsps.add(responses.POST, "http://localhost:8080/api/scim_mock/Users", json=user_created, status=201)
-            apply_user_change(sarah)
+            future = user_changed(sarah)
+            res= future.result()
+            self.assertTrue(res)
 
     @responses.activate
     def test_apply_user_change_create_with_invalid_response(self):
