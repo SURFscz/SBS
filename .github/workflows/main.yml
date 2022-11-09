@@ -27,10 +27,10 @@ jobs:
       matrix:
         # Socket-io is not compatible with 3.10, for now skip 3.10, until we resolve this
         python-version: ['3.7', '3.9']
-        coverage: false
+        coverage: 'false'
         include:
           - python-version: '3.9'
-          - coverage: true
+          - coverage: 'true'
 
     services:
       # How to use MySQL
