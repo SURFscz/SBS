@@ -134,7 +134,7 @@ class Entities extends React.Component {
                     <thead>
                     <tr>
                         {columns.map((column, i) =>
-                            <th key={`${column.key}-${i}`}
+                            <th key={`th_${column.key}_${i}`}
                                 className={`${column.key} ${column.class || ""} ${column.nonSortable ? "" : "sortable"}`}
                                 onClick={this.setSorted(column.key)}>
                                 {(!actions || i < 2) && column.header}
@@ -145,10 +145,10 @@ class Entities extends React.Component {
                     </thead>
                     <tbody>
                     {entities.map((entity, index) =>
-                        <tr key={`${entity.id}-${index}`}
+                        <tr key={`tr_${entity.id}_${index}`}
                             className={`${(typeof rowLinkMapper === "function" && rowLinkMapper(entity)) ? "clickable" : ""} ${onHover ? "hoverable" : ""}`}>
                             {columns.map((column, i) =>
-                                <td key={`${column.key}-${i}`}
+                                <td key={`td_${column.key}_${i}`}
                                     onClick={(column.key !== "check" && column.key !== "role" && !column.hasLink) ?
                                         this.onRowClick(rowLinkMapper, entity) : undefined}
                                     className={`${column.key} ${column.nonSortable ? "" : "sortable"} ${column.className ? column.className : ""}`}>

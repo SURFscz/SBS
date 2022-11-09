@@ -4,11 +4,14 @@ from typing import Union
 
 from flask import current_app
 
+from server.db.db import db
 from server.db.domain import User, Collaboration, Group, Organisation
 from server.scim.scim import apply_user_change, apply_group_change, apply_organisation_change
 
 
 def _scim_enabled():
+    # This method is called before any event is submitted to the executor and we need db changes propagated
+    db.session.commit()
     return not os.environ.get("SCIM_DISABLED", None)
 
 
@@ -22,12 +25,12 @@ def user_deleted(user: User):
         return current_app.executor.submit(apply_user_change, user, True)
 
 
-def organisation_service_added(organisation: Organisation):
+def organisation_changed(organisation: Organisation):
     if _scim_enabled():
         return current_app.executor.submit(apply_organisation_change, organisation)
 
 
-def organisation_service_removed(organisation: Organisation):
+def organisation_deleted(organisation: Organisation):
     if _scim_enabled():
         return current_app.executor.submit(apply_organisation_change, organisation, True)
 
