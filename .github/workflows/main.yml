@@ -79,7 +79,10 @@ jobs:
           cache-dependency-path: 'server/requirements/*.txt'
 
       - name: Display Python version
-        run: python -c "import sys; print(sys.version)"
+        run: |
+          python -c "import sys; print(sys.version)"
+          echo coverage: .${{ matrix.coverage }}.
+
 
       - name: Install dependencies
         run: |
@@ -223,7 +226,6 @@ jobs:
           ls -la ${{steps.fetch_artifact.outputs.download-path}}
           sha1sum ${{steps.fetch_artifact.outputs.download-path}}/* || true
           sha256sum ${{steps.fetch_artifact.outputs.download-path}}/* || true
-          echo coverage: .${{ matrix.coverage }}.
 
       - name: Create Release
         if: "github.ref_type=='tag'"
