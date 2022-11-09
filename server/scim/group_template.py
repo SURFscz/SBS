@@ -1,9 +1,16 @@
 # -*- coding: future_fstrings -*-
-import hashlib
 from typing import Union, List
 
 from server.db.domain import Group, Collaboration, Service
-from server.scim.user_template import external_id_post_fix
+from server.scim.user_template import external_id_post_fix, version_value
+
+
+def _meta_info(group: Union[Group, Collaboration]):
+    return {"resourceType": "Group",
+            "created": group.created_at.strftime("%Y-%m-%dT%H:%M:%S"),
+            "lastModified": group.updated_at.strftime("%Y-%m-%dT%H:%M:%S"),
+            "version": version_value(group),
+            "location": f"/Users/{group.identifier}{external_id_post_fix}"}
 
 
 def create_group_template(group: Union[Group, Collaboration], membership_user_scim_identifiers):
@@ -24,6 +31,14 @@ def update_group_template(group: Union[Group, Collaboration], membership_user_sc
     return result
 
 
+def find_group_by_id_template(service: Service, group: Union[Group, Collaboration]):
+    from server.scim.scim import membership_user_scim_identifiers
+    memberships = membership_user_scim_identifiers(service, group)
+    group_template = update_group_template(group, memberships, group.identifier)
+    group_template["meta"] = _meta_info(group)
+    return group_template
+
+
 def find_groups_template(service: Service, groups: List[Union[Group, Collaboration]]):
     base = {
         "schemas": [
@@ -35,15 +50,6 @@ def find_groups_template(service: Service, groups: List[Union[Group, Collaborati
     }
     resources = []
     for group in groups:
-        from server.scim.scim import membership_user_scim_identifiers
-        memberships = membership_user_scim_identifiers(service, group)
-        group_template = create_group_template(group, memberships)
-        version = hashlib.sha256(bytes(str(int(group.updated_at.timestamp())), "utf-8")).hexdigest()
-        group_template["meta"] = {"resourceType": "Group",
-                                  "created": group.created_at.strftime("%Y-%m-%dT%H:%M:%S"),
-                                  "lastModified": group.updated_at.strftime("%Y-%m-%dT%H:%M:%S"),
-                                  "version": version,
-                                  "location": f"/Groups/{group.identifier}{external_id_post_fix}"}
-        resources.append(group_template)
+        resources.append(find_group_by_id_template(service, group))
     base["Resources"] = resources
     return base
