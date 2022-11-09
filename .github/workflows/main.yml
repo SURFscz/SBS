@@ -97,7 +97,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest server/test
+          pytest --no-cov server/test
         if: not ${{ matrix.coverage }}
 
       - name: Run tests with coverage
