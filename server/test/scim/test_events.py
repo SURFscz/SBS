@@ -45,7 +45,7 @@ class TestEvents(AbstractTest):
             rsps.add(responses.POST, "http://localhost:8080/api/scim_mock/Users", status=400)
             future = user_changed(sarah)
             res = future.result()
-            self.assertFalse(res)
+            self.assertTrue(res)
 
     @responses.activate
     def test_apply_user_change_create_with_invalid_response(self):
