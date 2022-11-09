@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 from server.db.db import db
 from server.db.domain import Collaboration, Service, ServiceConnectionRequest
 from server.test.abstract_test import AbstractTest

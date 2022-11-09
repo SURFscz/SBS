@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import logging
 
 from flask import session, g as request_context

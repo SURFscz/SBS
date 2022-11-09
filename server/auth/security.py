@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 
 from flask import session, g as request_context, request as current_request, current_app
 from sqlalchemy.orm import load_only

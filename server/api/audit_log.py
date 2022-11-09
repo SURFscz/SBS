@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 from flask import Blueprint, request as current_request
 from sqlalchemy import desc, or_, and_
 from sqlalchemy.orm import load_only

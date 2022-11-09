@@ -1,5 +1,4 @@
 #!/opt/sbs/sbs-env/bin/python
-# -*- coding: future_fstrings -*-
 import uuid
 
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \

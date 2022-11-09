@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 
 from server.cron.orphan_users import delete_orphan_users
 from server.db.audit_mixin import AuditLog, ACTION_CREATE

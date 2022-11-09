@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """user address
 
 Revision ID: 25c5d39c90a8

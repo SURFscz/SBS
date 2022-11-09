@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import uuid
 
 from sqlalchemy.orm import joinedload

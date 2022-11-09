@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import re
 from collections.abc import Iterable
 from datetime import datetime, date, time, timedelta

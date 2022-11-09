@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """API keys
 
 Revision ID: 37702ff78605

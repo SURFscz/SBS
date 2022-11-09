@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 from flasgger import swag_from
 from flask import Blueprint, request as current_request, g as request_context
 from werkzeug.exceptions import BadRequest, Forbidden

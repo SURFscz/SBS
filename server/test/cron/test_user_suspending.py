@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 from sqlalchemy import text
 
 from server.cron.user_suspending import suspend_users, suspend_users_lock_name

@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import json
 import os
 from pathlib import Path

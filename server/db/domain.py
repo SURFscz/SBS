@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import datetime
 from uuid import uuid4
 

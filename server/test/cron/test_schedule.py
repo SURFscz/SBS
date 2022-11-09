@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 
 from server.cron.schedule import start_scheduling
 from server.test.abstract_test import AbstractTest

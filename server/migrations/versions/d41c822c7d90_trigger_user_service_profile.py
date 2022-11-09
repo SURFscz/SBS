@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """trigger_user_service_profile
 
 Revision ID: d41c822c7d90

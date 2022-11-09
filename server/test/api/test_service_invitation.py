@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 from server.db.domain import ServiceInvitation, ServiceMembership, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_invitation_hash, service_invitation_expired_hash

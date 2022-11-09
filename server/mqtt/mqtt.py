@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import paho.mqtt.publish as publish
 
 from server.logger.context_logger import ctx_logger
