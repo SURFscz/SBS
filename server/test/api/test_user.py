@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import datetime
 import os
 from urllib import parse

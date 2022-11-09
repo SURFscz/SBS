@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 
 from flask import Blueprint, jsonify, Response, current_app, stream_with_context
 

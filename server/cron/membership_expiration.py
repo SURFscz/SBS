@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import datetime
 import logging
 import time

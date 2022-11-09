@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import base64
 import datetime
 from io import BytesIO

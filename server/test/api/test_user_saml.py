@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 from urllib.parse import urlencode
 
 from server.api.user_saml import SERVICE_UNKNOWN, USER_UNKNOWN, SERVICE_NOT_CONNECTED, SECOND_FA_REQUIRED, \

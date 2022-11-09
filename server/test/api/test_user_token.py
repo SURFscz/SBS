@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import datetime
 
 from server.auth.secrets import generate_token

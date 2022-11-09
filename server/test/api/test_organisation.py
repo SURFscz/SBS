@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 
 from server.db.db import db
 from server.db.domain import Organisation, OrganisationInvitation, User

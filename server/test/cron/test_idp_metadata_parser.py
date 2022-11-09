@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 
 from server.cron.idp_metadata_parser import idp_display_name
 from server.test.abstract_test import AbstractTest

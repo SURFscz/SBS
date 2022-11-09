@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import os
 
 from flask import session

@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 from sqlalchemy.exc import IntegrityError
 
 from server.db.db import db

@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import atexit
 import logging
 import threading

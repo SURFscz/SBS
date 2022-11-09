@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """ip_networks
 
 Revision ID: ce01945b1a69

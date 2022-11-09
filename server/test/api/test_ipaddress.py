@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 from server.api.ipaddress import validate_ip_networks
 from server.test.abstract_test import AbstractTest
 

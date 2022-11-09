@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """schac_home_organisation for organisation
 
 Revision ID: 81e0f9f92476

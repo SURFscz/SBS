@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import datetime
 
 from flask import Blueprint, request as current_request, current_app

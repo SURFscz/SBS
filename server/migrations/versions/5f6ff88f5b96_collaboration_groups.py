@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """authorisation-groups-re-instated
 
 Revision ID: 5f6ff88f5b96

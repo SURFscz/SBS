@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 from datetime import datetime, timedelta
 
 from server.db.db import db

@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 from server.db.domain import Service, User, ServiceMembership
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_cloud_name, james_name

@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """triggers for data consistency
 
 Revision ID: 1e694ddc996d

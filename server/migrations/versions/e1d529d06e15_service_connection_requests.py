@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """Service connection requests
 
 Revision ID: e1d529d06e15

@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """short_name generation
 
 Revision ID: aa92c20313ea

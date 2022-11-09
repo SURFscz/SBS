@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 
 
 COLLABORATION_JOIN_REQUEST_MAIL = "collaboration_join_request"

@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """remove tenant-identifier
 
 Revision ID: 212b3edc673e

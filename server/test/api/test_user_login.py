@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 from server.db.defaults import PAM_WEB_LOGIN, PROXY_AUTHZ_SBS, PROXY_AUTHZ, SBS_LOGIN
 from server.db.models import log_user_login
 from server.test.abstract_test import AbstractTest

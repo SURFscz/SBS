@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import uuid
 from datetime import datetime
 from urllib.parse import urlencode

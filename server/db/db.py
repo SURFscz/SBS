@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import os
 
 from flask_migrate import command

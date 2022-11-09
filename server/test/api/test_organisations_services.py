@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 
 from server.db.domain import Service, Organisation
 from server.test.abstract_test import AbstractTest, BASIC_AUTH_HEADER

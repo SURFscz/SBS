@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """identifiers for groups and organisations
 
 Revision ID: f21abaeba7db

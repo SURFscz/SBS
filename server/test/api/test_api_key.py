@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 from werkzeug.exceptions import SecurityError
 
 from server.auth.secrets import hash_secret_key
