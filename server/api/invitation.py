@@ -8,7 +8,7 @@ from flask import Blueprint, request as current_request, current_app, g as reque
 from sqlalchemy.orm import joinedload, selectinload
 from werkzeug.exceptions import Conflict, Forbidden
 
-from server.api.base import json_endpoint, query_param
+from server.api.base import json_endpoint, query_param, emit_socket
 from server.api.service_aups import add_user_aups
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call
 from server.auth.secrets import generate_token
@@ -52,7 +52,7 @@ def do_resend(invitation_id):
 
 def parse_date(val, default_date=None):
     return datetime.datetime.fromtimestamp(val / 1e3) if val and (
-            isinstance(val, float) or isinstance(val, int)) else default_date
+        isinstance(val, float) or isinstance(val, int)) else default_date
 
 
 @invitations_api.route("/find_by_hash", strict_slashes=False)
@@ -131,6 +131,8 @@ def collaboration_invites_api():
             "recipient": email
         }, collaboration, [email])
 
+    emit_socket(f"collaboration_{collaboration.id}")
+
     return invites_results, 201
 
 
@@ -186,6 +188,8 @@ def invitations_accept():
 
     add_user_aups(collaboration, user_id)
 
+    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
+
     res = {'collaboration_id': collaboration.id, 'user_id': user_id}
     return res, 201
 
@@ -196,6 +200,11 @@ def invitations_decline():
     invitation = _invitation_query() \
         .filter(Invitation.hash == current_request.get_json()["hash"]) \
         .one()
+
+    collaboration = invitation.collaboration
+
+    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
+
     db.session.delete(invitation)
     return None, 201
 
@@ -221,7 +230,11 @@ def invitations_resend_bulk():
 @json_endpoint
 def delete_invitation(invitation_id):
     invitation = Invitation.query.filter(Invitation.id == invitation_id).one()
-    confirm_collaboration_admin(invitation.collaboration_id)
+    collaboration = invitation.collaboration
+    confirm_collaboration_admin(collaboration.id)
+
+    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
+
     return delete(Invitation, invitation_id)
 
 

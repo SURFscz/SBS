@@ -4,7 +4,7 @@ from flask import Blueprint, request as current_request, current_app
 from sqlalchemy.orm import contains_eager
 from werkzeug.exceptions import Conflict, BadRequest
 
-from server.api.base import json_endpoint, STATUS_DENIED, STATUS_APPROVED
+from server.api.base import json_endpoint, STATUS_DENIED, STATUS_APPROVED, emit_socket
 from server.api.collaboration_request import STATUS_OPEN
 from server.api.service_aups import add_user_aups
 from server.auth.security import confirm_collaboration_admin, current_user_id, current_user, \
@@ -90,6 +90,8 @@ def new_join_request():
         "join_request": join_request
     }, collaboration, admin_emails)
 
+    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
+
     return {}, 201
 
 
@@ -131,6 +133,8 @@ def approve_join_request():
         group.collaboration_memberships.append(collaboration_membership)
         db.session.merge(group)
 
+    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
+
     return {'collaboration_id': collaboration.id, 'user_id': user_id}, 201
 
 
@@ -141,7 +145,8 @@ def deny_join_request():
     rejection_reason = current_request.get_json()["rejection_reason"]
     join_request = _get_join_request(join_request_hash)
 
-    confirm_collaboration_admin(join_request.collaboration.id)
+    collaboration = join_request.collaboration
+    confirm_collaboration_admin(collaboration.id)
 
     mail_accepted_declined_join_request({"salutation": f"Dear {join_request.user.name}",
                                          "base_url": current_app.app_config.base_url,
@@ -156,6 +161,8 @@ def deny_join_request():
     join_request.rejection_reason = rejection_reason
     db.session.merge(join_request)
 
+    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
+
     return None, 201
 
 
@@ -166,4 +173,8 @@ def delete_join_request(join_request_id):
     confirm_collaboration_admin(join_request.collaboration_id)
     if join_request.status == STATUS_OPEN:
         raise BadRequest("Join request with status 'open' can not be deleted")
+
+    collaboration = join_request.collaboration
+    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
+
     return delete(JoinRequest, join_request_id)
