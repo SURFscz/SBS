@@ -108,7 +108,7 @@ jobs:
 
       - name: Upload coverage
         run: codecov --token=${{ secrets.CODECOV_TOKEN }}
-        if: matrix.coverage == 'true' and ${{ success() }}
+        if: matrix.coverage == 'true' && success()
 
 
   Client_build:
