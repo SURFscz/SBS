@@ -2,10 +2,10 @@
 
 from flask import Blueprint, request as current_request
 
-from server.api.base import json_endpoint
+from server.api.base import json_endpoint, emit_socket
 from server.auth.security import confirm_collaboration_admin
-from server.db.domain import Group, CollaborationMembership
 from server.db.db import db
+from server.db.domain import Group, CollaborationMembership
 from server.schemas import json_schema_validator
 
 group_members_api = Blueprint("group_members_api", __name__,
@@ -49,6 +49,8 @@ def delete_all_group_members(group_id, collaboration_id):
     group.collaboration_memberships = []
     db.session.merge(group)
 
+    emit_socket(f"collaboration_{collaboration_id}")
+
     group = Group.query.get(group_id)
     return group, 204
 
@@ -62,5 +64,7 @@ def delete_group_members(group_id, collaboration_membership_id, collaboration_id
     group = Group.query.get(group_id)
     group.collaboration_memberships.remove(CollaborationMembership.query.get(collaboration_membership_id))
     db.session.merge(group)
+
+    emit_socket(f"collaboration_{collaboration_id}", include_current_user_id=True)
 
     return group, 204

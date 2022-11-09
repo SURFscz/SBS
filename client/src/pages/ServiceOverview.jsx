@@ -68,8 +68,15 @@ class ServiceOverview extends React.Component {
         }
     }
 
-    componentDidMount = () => {
-        const {service, serviceAdmin} = this.props;
+    UNSAFE_componentWillReceiveProps = nextProps => {
+        const {service} = this.props;
+        if (service !== nextProps.service) {
+            this.componentDidMount(nextProps);
+        }
+    }
+
+    componentDidMount = nextProps => {
+        const {service, serviceAdmin} = nextProps ? nextProps : this.props;
         const {params} = this.props.match;
         const tab = params.subTab || this.state.currentTab;
         this.validateService(service, () => {

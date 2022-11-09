@@ -3,7 +3,7 @@ from flasgger import swag_from
 from flask import Blueprint, request as current_request, g as request_context
 from werkzeug.exceptions import BadRequest, Forbidden
 
-from server.api.base import json_endpoint
+from server.api.base import json_endpoint, emit_socket
 from server.api.service_group import create_service_groups
 from server.auth.security import confirm_collaboration_admin, confirm_external_api_call, confirm_service_admin
 from server.db.db import db
@@ -34,6 +34,8 @@ def connect_service_collaboration(service_id, collaboration_id, force=False):
 
     # Create groups from service_groups
     create_service_groups(service, collaboration)
+
+    emit_socket(f"collaboration_{collaboration.id}")
 
     return 1
 
@@ -87,15 +89,15 @@ def connect_collaboration_service_api():
         status = "pending"
 
     return {
-               "status": status,
-               "collaboration": {
-                   "organisation_short_name": organisation.short_name,
-                   "short_name": coll_short_name
-               },
-               "service": {
-                   "entity_id": service.entity_id
-               }
-           }, 201
+        "status": status,
+        "collaboration": {
+            "organisation_short_name": organisation.short_name,
+            "short_name": coll_short_name
+        },
+        "service": {
+            "entity_id": service.entity_id
+        }
+    }, 201
 
 
 @collaborations_services_api.route("/delete_all_services/<collaboration_id>", methods=["DELETE"], strict_slashes=False)
@@ -107,6 +109,9 @@ def delete_all_services(collaboration_id):
 
     collaboration.services = []
     db.session.merge(collaboration)
+
+    emit_socket(f"collaboration_{collaboration.id}")
+
     return None, 204
 
 
@@ -122,5 +127,7 @@ def delete_collaborations_services(collaboration_id, service_id):
 
     collaboration.services.remove(Service.query.get(service_id))
     db.session.merge(collaboration)
+
+    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
 
     return {'collaboration_id': collaboration_id, 'service_id': service_id}, 204

@@ -13,10 +13,10 @@ aup_api = Blueprint("aup_api", __name__, url_prefix="/api/aup")
 @json_endpoint
 def links():
     return {
-               "url_aup_en": current_app.app_config.aup.url_aup_en,
-               "url_aup_nl": current_app.app_config.aup.url_aup_nl,
-               "version": str(current_app.app_config.aup.version),
-           }, 200
+        "url_aup_en": current_app.app_config.aup.url_aup_en,
+        "url_aup_nl": current_app.app_config.aup.url_aup_nl,
+        "version": str(current_app.app_config.aup.version),
+    }, 200
 
 
 @aup_api.route("/agree", methods=["POST"], strict_slashes=False)

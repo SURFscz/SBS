@@ -112,12 +112,12 @@ def _perform_sram_login(uid, service, service_entity_id, home_organisation_uid, 
             log_user_login(PROXY_AUTHZ_SBS, False, user, uid, service, service_entity_id, status="SECOND_FA_REQUIRED")
 
             return {
-                       "status": {
-                           "result": "interrupt",
-                           "redirect_url": f"{redirect_base_url}/{user.second_fa_uuid}",
-                           "error_status": SECOND_FA_REQUIRED
-                       }
-                   }, 200
+                "status": {
+                    "result": "interrupt",
+                    "redirect_url": f"{redirect_base_url}/{user.second_fa_uuid}",
+                    "error_status": SECOND_FA_REQUIRED
+                }
+            }, 200
 
     log_user_login(PROXY_AUTHZ_SBS, True, user, uid, service, service_entity_id, status="AUTHORIZED")
 
@@ -267,12 +267,12 @@ def proxy_authz():
         log_user_login(PROXY_AUTHZ, False, user, uid, service, service_entity_id, status=status_to_string(status))
 
         return {
-                   "status": {
-                       "result": result,
-                       "redirect_url": redirect_url,
-                       "error_status": status
-                   }
-               }, 200
+            "status": {
+                "result": result,
+                "redirect_url": redirect_url,
+                "error_status": status
+            }
+        }, 200
 
     def authorized_func(authorized_user, memberships):
         eppn_scope = current_app.app_config.eppn_scope.strip()
@@ -286,16 +286,16 @@ def proxy_authz():
         log_user_login(PROXY_AUTHZ, True, user, uid, service, service_entity_id, "AUTHORIZED")
 
         return {
-                   "status": {
-                       "result": "authorized",
-                   },
-                   "attributes": {
-                       "eduPersonEntitlement": list(memberships),
-                       "eduPersonPrincipalName": [f"{authorized_user.username}@{eppn_scope}"],
-                       "uid": [authorized_user.username],
-                       "sshkey": [ssh_key.ssh_value for ssh_key in authorized_user.ssh_keys]
-                   }
-               }, 200
+            "status": {
+                "result": "authorized",
+            },
+            "attributes": {
+                "eduPersonEntitlement": list(memberships),
+                "eduPersonPrincipalName": [f"{authorized_user.username}@{eppn_scope}"],
+                "uid": [authorized_user.username],
+                "sshkey": [ssh_key.ssh_value for ssh_key in authorized_user.ssh_keys]
+            }
+        }, 200
 
     return _do_attributes(user, uid, service, service_entity_id, not_authorized_func, authorized_func,
                           schac_home_organisation=schac_home_organisation, home_organisation_uid=home_organisation_uid,

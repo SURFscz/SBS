@@ -51,6 +51,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
 import {ErrorOrigins, getSchacHomeOrg, isEmpty, removeDuplicates} from "../utils/Utils";
 import UserTokens from "../components/redesign/UserTokens";
+import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
+import Cookies from "js-cookie";
 import DOMPurify from "dompurify";
 
 class CollaborationDetail extends React.Component {
@@ -81,7 +83,19 @@ class CollaborationDetail extends React.Component {
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationQuestion: "",
             lastAdminWarning: "",
-            joinRequestDialogOpen: false
+            joinRequestDialogOpen: false,
+            socketSubscribed: false
+        }
+    }
+
+    componentWillUnmount = () => {
+        AppStore.update(s => {
+            s.sideComponent = null;
+        });
+        const params = this.props.match.params;
+        if (params.id) {
+            const collaboration_id = parseInt(params.id, 10);
+            socket.then(s => s.off(`collaboration_${collaboration_id}`));
         }
     }
 
@@ -112,6 +126,21 @@ class CollaborationDetail extends React.Component {
                     const adminOfCollaboration = json.access === "full";
                     const promises = adminOfCollaboration ? [collaborationById(collaboration_id), userTokensOfUser()] :
                         [collaborationLiteById(collaboration_id), organisationsByUserSchacHomeOrganisation(), userTokensOfUser()];
+                    const {socketSubscribed} = this.state;
+                    if (!socketSubscribed) {
+                        socket.then(s => s.on(`collaboration_${collaboration_id}`, data => {
+                            const subscriptionId = Cookies.get(subscriptionIdCookieName);
+                            if (subscriptionId !== data.subscription_id) {
+                                const {user} = this.props;
+                                if (data.current_user_id === user.id) {
+                                    this.props.refreshUser(() => this.componentDidMount());
+                                } else {
+                                    this.componentDidMount();
+                                }
+                            }
+                        }));
+                        this.setState({socketSubscribed: true})
+                    }
                     Promise.all(promises)
                         .then(res => {
                             const {user, config} = this.props;
@@ -182,7 +211,8 @@ class CollaborationDetail extends React.Component {
                 });
             }
         }
-    };
+    }
+    ;
 
     isExpiryDateWarning = expiry_date => {
         const today = new Date().getTime();
@@ -244,12 +274,6 @@ class CollaborationDetail extends React.Component {
             return Math.round((now.getTime() - lastActivityDate.getTime()) / (1000 * 3600 * 24))
         }
         return false;
-    }
-
-    componentWillUnmount() {
-        AppStore.update(s => {
-            s.sideComponent = null;
-        });
     }
 
     updateAppStore = (collaboration, adminOfCollaboration, orgManager) => {
@@ -350,9 +374,10 @@ class CollaborationDetail extends React.Component {
                      icon={<MemberIcon/>}
                      readOnly={isJoinRequest}
                      notifier={(openInvitations > 0 && !showMemberView) ? openInvitations : null}>
-            {!isJoinRequest && <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={false}
-                                                    showMemberView={showMemberView}
-                                                    refresh={callback => this.componentDidMount(callback)}/>}
+            {!isJoinRequest &&
+            <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={false}
+                                 showMemberView={showMemberView}
+                                 refresh={callback => this.componentDidMount(callback)}/>}
         </div>)
     }
 
@@ -592,7 +617,7 @@ class CollaborationDetail extends React.Component {
                 perform: this.unsuspend(true)
             });
         }
-        const almostSuspended = this.isCollaborationAlmostSuspended(user,collaboration,config);
+        const almostSuspended = this.isCollaborationAlmostSuspended(user, collaboration, config);
         if (almostSuspended && showMemberView) {
             actions.push({
                 icon: "unlock",

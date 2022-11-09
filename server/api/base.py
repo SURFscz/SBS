@@ -30,6 +30,13 @@ STATUS_APPROVED = "approved"
 _audit_trail_methods = ["PUT", "POST", "DELETE"]
 
 
+def emit_socket(topic, include_current_user_id=False):
+    data = {"subscription_id": current_request.cookies.get("subscription_id")}
+    if include_current_user_id:
+        data["current_user_id"] = current_user_id()
+    current_app.socket_io.emit(topic, data)
+
+
 def auth_filter(app_config):
     url = current_request.base_url
     oidc_config = current_app.app_config.oidc
@@ -194,6 +201,7 @@ def config():
     threshold_for_warning = cfq.collaboration_inactivity_days_threshold - cfq.inactivity_warning_mail_days_threshold
     return {"local": current_app.config["LOCAL"],
             "base_url": base_url,
+            "socket_url": cfg.socket_url,
             "api_keys_enabled": cfg.feature.api_keys_enabled,
             "feedback_enabled": cfg.feature.feedback_enabled,
             "seed_allowed": cfg.feature.seed_allowed,

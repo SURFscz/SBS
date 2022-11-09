@@ -4,8 +4,8 @@ from flask import session, g as request_context, request as current_request, cur
 from sqlalchemy.orm import load_only
 from werkzeug.exceptions import Forbidden
 
-from server.db.domain import CollaborationMembership, OrganisationMembership, Collaboration, User, \
-    ServiceMembership
+from server.db.domain import (CollaborationMembership, OrganisationMembership, Collaboration, User,
+                              ServiceMembership)
 
 CSRF_TOKEN = "CSRFToken"
 
@@ -17,6 +17,8 @@ def is_admin_user(user):
 
 
 def _get_impersonated_session():
+    if "user" not in session:
+        return {"user": {"id": None}}
     if not session["user"]["admin"]:
         return session
 

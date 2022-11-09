@@ -5,7 +5,7 @@ from flask import Blueprint, request as current_request, current_app
 from sqlalchemy.orm import joinedload, selectinload
 from werkzeug.exceptions import Conflict
 
-from server.api.base import json_endpoint, query_param
+from server.api.base import json_endpoint, query_param, emit_socket
 from server.auth.security import confirm_service_admin, current_user_id
 from server.db.defaults import default_expiry_date
 from server.db.domain import ServiceInvitation, Service, ServiceMembership, db
@@ -78,6 +78,9 @@ def service_invitations_accept():
 
     service.service_memberships.append(service_membership)
     service.service_invitations.remove(service_invitation)
+
+    emit_socket(f"service_{service.id}", include_current_user_id=True)
+
     return None, 201
 
 
@@ -87,6 +90,9 @@ def service_invitations_decline():
     service_invitation = _service_invitation_query() \
         .filter(ServiceInvitation.hash == current_request.get_json()["hash"]) \
         .one()
+
+    emit_socket(f"service_{service_invitation.service_id}")
+
     db.session.delete(service_invitation)
     return None, 201
 
@@ -116,5 +122,7 @@ def delete_service_invitation(id):
         .filter(ServiceInvitation.id == id) \
         .one()
     confirm_service_admin(service_invitation.service_id)
+
+    emit_socket(f"service_{service_invitation.service_id}")
 
     return delete(ServiceInvitation, id)
