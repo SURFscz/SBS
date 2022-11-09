@@ -116,8 +116,8 @@ def apply_user_change(user: User, deletion=False):
     collaborations = [member.collaboration for member in user.collaboration_memberships if member.is_active]
     organisations = [co.organisation for co in collaborations]
     all_services = flatten([co.services for co in collaborations]) + flatten([org.services for org in organisations])
-    services = _unique_scim_services(all_services, "provision_scim_users")
-    for service in services:
+    scim_services = _unique_scim_services(all_services, "provision_scim_users")
+    for service in scim_services:
         scim_object = _lookup_scim_object(service, SCIM_USERS, user.external_id)
         # No use to delete the user if the user is unknown in the remote system
         if deletion and scim_object:
@@ -127,7 +127,8 @@ def apply_user_change(user: User, deletion=False):
             response = _provision_user(scim_object, service, user)
         if response.status_code > 204:
             _log_scim_error(response, service)
-    return bool(services)
+    return bool(scim_services)
+
 
 # Group or collaboration has been created, updated or deleted. Propagate the changes to the remote SCIM DB's
 def apply_group_change(group: Union[Group, Collaboration], deletion=False):
@@ -135,7 +136,8 @@ def apply_group_change(group: Union[Group, Collaboration], deletion=False):
         services = group.collaboration.services + group.collaboration.organisation.services
     else:
         services = group.services + group.organisation.services
-    for service in _unique_scim_services(services, "provision_scim_groups"):
+    scim_services = _unique_scim_services(services, "provision_scim_groups")
+    for service in scim_services:
         scim_object = _lookup_scim_object(service, SCIM_GROUPS, group.identifier)
         # No use to delete the group if the group is unknown in the remote system
         if deletion and scim_object:
@@ -149,9 +151,10 @@ def apply_group_change(group: Union[Group, Collaboration], deletion=False):
             response = _provision_group(scim_object, service, group)
         if response.status_code > 204:
             _log_scim_error(response, service)
+    return bool(scim_services)
 
 
 # Organisation has a new service or a service is deleted from an organisation
 def apply_organisation_change(organisation: Organisation, deletion=False):
-    for collaboration in organisation.collaborations:
-        apply_group_change(collaboration, deletion=deletion)
+    results = [apply_group_change(collaboration, deletion=deletion) for collaboration in organisation.collaborations]
+    return any(results)
