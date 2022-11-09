@@ -27,8 +27,8 @@ jobs:
       matrix:
         # Socket-io is not compatible with 3.10, for now skip 3.10, until we resolve this
         include:
-          - { python-version: '3.7', coverage: false }
-          - { python-version: '3.9', coverage: true  }
+          - { python-version: '3.7', coverage: 'false' }
+          - { python-version: '3.9', coverage: 'true'  }
 
     services:
       # How to use MySQL
@@ -99,16 +99,16 @@ jobs:
       - name: Run tests
         run: |
           pytest --no-cov server/test
-        if: not ${{ matrix.coverage }}
+        if: ${{ matrix.coverage }} == 'false'
 
       - name: Run tests with coverage
         run: |
           pytest --cov=server server/test
-        if: ${{ matrix.coverage }}
+        if: ${{ matrix.coverage }} == 'true
 
       - name: Upload coverage
         run: codecov --token=${{ secrets.CODECOV_TOKEN }}
-        if: ${{ matrix.coverage }} and ${{ success() }}
+        if: ${{ matrix.coverage }} == true and ${{ success() }}
 
 
   Client_build:
