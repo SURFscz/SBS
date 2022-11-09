@@ -1,10 +1,22 @@
 # -*- coding: future_fstrings -*-
 import hashlib
-from typing import List
+from typing import List, Union
 
-from server.db.domain import User
+from server.db.domain import User, Group, Collaboration
 
 external_id_post_fix = "@sram.surf.nl"
+
+
+def version_value(scim_object: Union[User, Group, Collaboration]):
+    return hashlib.sha256(bytes(str(int(scim_object.updated_at.timestamp())), "utf-8")).hexdigest()
+
+
+def _meta_info(user: User):
+    return {"resourceType": "User",
+            "created": user.created_at.strftime("%Y-%m-%dT%H:%M:%S"),
+            "lastModified": user.updated_at.strftime("%Y-%m-%dT%H:%M:%S"),
+            "version": version_value(user),
+            "location": f"/Users/{user.external_id}{external_id_post_fix}"}
 
 
 def create_user_template(user: User):
@@ -31,6 +43,12 @@ def update_user_template(user: User, scim_identifier: str):
     return result
 
 
+def find_user_by_id_template(user: User):
+    user_template = update_user_template(user, user.external_id)
+    user_template["meta"] = _meta_info(user)
+    return user_template
+
+
 def find_users_template(users: List[User]):
     base = {
         "schemas": [
@@ -42,13 +60,6 @@ def find_users_template(users: List[User]):
     }
     resources = []
     for user in users:
-        user_template = update_user_template(user, user.external_id)
-        version = hashlib.sha256(bytes(str(int(user.updated_at.timestamp())), "utf-8")).hexdigest()
-        user_template["meta"] = {"resourceType": "User",
-                                 "created": user.created_at.strftime("%Y-%m-%dT%H:%M:%S"),
-                                 "lastModified": user.updated_at.strftime("%Y-%m-%dT%H:%M:%S"),
-                                 "version": version,
-                                 "location": f"/Users/{user.external_id}{external_id_post_fix}"}
-        resources.append(user_template)
+        resources.append(find_user_by_id_template(user))
     base["Resources"] = resources
     return base

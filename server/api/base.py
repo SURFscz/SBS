@@ -3,6 +3,7 @@ import json
 import os
 import re
 import traceback
+import inspect
 from functools import wraps
 from pathlib import Path
 from urllib.parse import urlparse
@@ -142,6 +143,9 @@ def json_endpoint(f):
             # This will mark the session modified again if something is stored like TOTP secret
             body, status = f(*args, **kwargs)
             response = jsonify(body)
+            # Sneaky way to implement callback to add headers to the status
+            if inspect.isfunction(status):
+                status = status(response)
             _audit_trail()
             _add_custom_header(response)
             db.session.commit()

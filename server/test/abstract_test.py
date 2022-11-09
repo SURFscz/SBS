@@ -111,11 +111,13 @@ class AbstractTest(TestCase):
         with requests.Session():
             self.client.get("/api/users/resume-session?code=123456")
 
-    def get(self, url, query_data={}, response_status_code=200, with_basic_auth=True, headers={}):
+    def get(self, url, query_data={}, response_status_code=200, with_basic_auth=True, headers={}, expected_headers={}):
         with requests.Session():
             response = self.client.get(url, headers={**BASIC_AUTH_HEADER, **headers} if with_basic_auth else headers,
                                        query_string=query_data)
             self.assertEqual(response_status_code, response.status_code, msg=str(response.json))
+            for key, value in expected_headers.items():
+                self.assertEqual(response.headers.get(key), value)
             return response if response_status_code == 302 else response.json if hasattr(response, "json") else None
 
     def post(self, url, body={}, headers={}, response_status_code=201, with_basic_auth=True):

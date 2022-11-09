@@ -24,6 +24,11 @@ def _headers(service: Service, is_delete=False):
     return headers
 
 
+# Construct counter query parma
+def _counter_query_param(service: Service):
+    return f"?counter={atomic_increment_counter_value(service)}"
+
+
 # Remove duplicates from services
 def _unique_scim_services(services: List[Service], provision_enabled_method):
     seen = set()
@@ -46,8 +51,7 @@ def _provision_user(scim_object, service: Service, user: User):
     scim_dict = update_user_template(user, scim_object["id"]) if scim_object else create_user_template(user)
     request_method = requests.put if scim_object else requests.post
     postfix = scim_object['meta']['location'] if scim_object else "/Users"
-    counter = atomic_increment_counter_value(service)
-    url = f"{service.scim_url}{postfix}?counter={counter}"
+    url = f"{service.scim_url}{postfix}{_counter_query_param(service)}"
     return request_method(url, json=scim_dict, headers=_headers(service))
 
 
@@ -60,8 +64,7 @@ def _provision_group(scim_object, service: Service, group: Union[Group, Collabor
         scim_dict = create_group_template(group, membership_identifiers)
     request_method = requests.put if scim_object else requests.post
     postfix = scim_object['meta']['location'] if scim_object else "/Groups"
-    counter = atomic_increment_counter_value(service)
-    url = f"{service.scim_url}{postfix}?counter={counter}"
+    url = f"{service.scim_url}{postfix}{_counter_query_param(service)}"
     return request_method(url, json=scim_dict, headers=_headers(service))
 
 
@@ -118,8 +121,7 @@ def apply_user_change(user: User, deletion=False):
         scim_object = _lookup_scim_object(service, SCIM_USERS, user.external_id)
         # No use to delete the user if the user is unknown in the remote system
         if deletion and scim_object:
-            counter = atomic_increment_counter_value(service)
-            url = f"{service.scim_url}{scim_object['meta']['location']}?counter={counter}"
+            url = f"{service.scim_url}{scim_object['meta']['location']}{_counter_query_param(service)}"
             response = requests.delete(url, headers=_headers(service, is_delete=True))
         else:
             response = _provision_user(scim_object, service, user)
@@ -137,8 +139,7 @@ def apply_group_change(group: Union[Group, Collaboration], deletion=False):
         scim_object = _lookup_scim_object(service, SCIM_GROUPS, group.identifier)
         # No use to delete the group if the group is unknown in the remote system
         if deletion and scim_object:
-            counter = atomic_increment_counter_value(service)
-            url = f"{service.scim_url}{scim_object['meta']['location']}?counter={counter}"
+            url = f"{service.scim_url}{scim_object['meta']['location']}{_counter_query_param(service)}"
             response = requests.delete(url, headers=_headers(service, is_delete=True))
             if isinstance(group, Collaboration):
                 for user in [member.user for member in group.collaboration_memberships]:

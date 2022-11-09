@@ -1,16 +1,24 @@
 # -*- coding: future_fstrings -*-
 from typing import List, Union
 
-from flask import Blueprint
+from flask import Blueprint, Response
 
 from server.api.base import json_endpoint
 from server.auth.tokens import validate_service_token
 from server.db.domain import User, CollaborationMembership, Service, Collaboration, Organisation, Group
 from server.db.models import flatten
-from server.scim.group_template import find_groups_template
-from server.scim.user_template import find_users_template, external_id_post_fix
+from server.scim.group_template import find_groups_template, find_group_by_id_template
+from server.scim.user_template import find_users_template, external_id_post_fix, find_user_by_id_template, version_value
 
 scim_api = Blueprint("scim_api", __name__, url_prefix="/api/scim")
+
+
+def _add_etag_header(scim_object: Union[User, Group, Collaboration]):
+    def response_header(response: Response):
+        response.headers.set("Etag", version_value(scim_object))
+        return 200
+
+    return response_header
 
 
 def _unique_scim_objects(objects: List[Union[User, Collaboration]]):
@@ -45,8 +53,8 @@ def service_users():
 def service_user_by_external_id(user_external_id: str):
     validate_service_token("scim_enabled")
     stripped_external_id = user_external_id.replace(external_id_post_fix, "")
-    users = User.query.filter(User.external_id == stripped_external_id).all()
-    return find_users_template(users), 200
+    user = User.query.filter(User.external_id == stripped_external_id).one()
+    return find_user_by_id_template(user), _add_etag_header(user)
 
 
 @scim_api.route("/Groups", methods=["GET"], strict_slashes=False)
@@ -72,7 +80,7 @@ def service_groups():
 def service_group_by_identifier(group_identifier: str):
     service = validate_service_token("scim_enabled")
     stripped_group_identifier = group_identifier.replace(external_id_post_fix, "")
-    groups = Collaboration.query.filter(Collaboration.identifier == stripped_group_identifier).all()
-    if not groups:
-        groups = Group.query.filter(Group.identifier == stripped_group_identifier).all()
-    return find_groups_template(service, groups), 200
+    group = Collaboration.query.filter(Collaboration.identifier == stripped_group_identifier).first()
+    if not group:
+        group = Group.query.filter(Group.identifier == stripped_group_identifier).one()
+    return find_group_by_id_template(service, group), _add_etag_header(group)
