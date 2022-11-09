@@ -5,7 +5,7 @@ from flask import Blueprint, request as current_request, current_app
 from sqlalchemy.orm import joinedload, selectinload
 from werkzeug.exceptions import Conflict
 
-from server.api.base import json_endpoint, query_param
+from server.api.base import json_endpoint, query_param, emit_socket
 from server.auth.security import confirm_organisation_admin, current_user_id
 from server.db.defaults import default_expiry_date
 from server.db.domain import OrganisationInvitation, Organisation, OrganisationMembership, db
@@ -79,6 +79,9 @@ def organisation_invitations_accept():
 
     organisation.organisation_memberships.append(organisation_membership)
     organisation.organisation_invitations.remove(organisation_invitation)
+
+    emit_socket(f"organisation_{organisation.id}", include_current_user_id=True)
+
     return None, 201
 
 
@@ -88,7 +91,10 @@ def organisation_invitations_decline():
     organisation_invitation = _organisation_invitation_query() \
         .filter(OrganisationInvitation.hash == current_request.get_json()["hash"]) \
         .one()
+    emit_socket(f"organisation_{organisation_invitation.organisation_id}", include_current_user_id=True)
+
     db.session.delete(organisation_invitation)
+
     return None, 201
 
 

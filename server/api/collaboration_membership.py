@@ -3,7 +3,7 @@ from datetime import datetime
 
 from flask import Blueprint, request as current_request, jsonify
 
-from server.api.base import json_endpoint
+from server.api.base import json_endpoint, emit_socket
 from server.auth.security import confirm_collaboration_admin, current_user_uid, \
     current_user_id, confirm_organisation_admin_or_manager
 from server.db.defaults import STATUS_ACTIVE
@@ -33,6 +33,8 @@ def delete_collaboration_membership(collaboration_id, user_id):
 
     res = {'collaboration_id': collaboration_id, 'user_id': user_id}
 
+    emit_socket(f"collaboration_{collaboration_id}", include_current_user_id=True)
+
     return (res, 204) if len(memberships) > 0 else (None, 404)
 
 
@@ -55,6 +57,8 @@ def update_collaboration_membership_expiry_date():
     collaboration_membership.expiry_date = membership_expiry_date
     collaboration_membership.status = STATUS_ACTIVE
 
+    emit_socket(f"collaboration_{collaboration_id}", include_current_user_id=True)
+
     db.session.merge(collaboration_membership)
     return collaboration_membership, 201
 
@@ -74,6 +78,8 @@ def update_collaboration_membership_role():
         .filter(CollaborationMembership.user_id == user_id) \
         .one()
     collaboration_membership.role = role
+
+    emit_socket(f"collaboration_{collaboration_id}", include_current_user_id=True)
 
     db.session.merge(collaboration_membership)
     return collaboration_membership, 201
@@ -100,5 +106,7 @@ def create_collaboration_membership_role():
     for group in [group for group in collaboration.groups if group.auto_provision_members]:
         group.collaboration_memberships.append(collaboration_membership)
         db.session.merge(group)
+
+    emit_socket(f"collaboration_{collaboration_id}", include_current_user_id=True)
 
     return collaboration_membership_json, 201

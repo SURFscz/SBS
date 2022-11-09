@@ -25,9 +25,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-#        python-version: ['3.7', '3.9', '3.10']
-#       Socket-io is not compatible with 3.10, for now skip 3.10, untill we resolve this
-        python-version: ['3.7', '3.9']
+        # Socket-io is not compatible with 3.10, for now skip 3.10, until we resolve this
+        include:
+          - { python-version: '3.7', coverage: 'false' }
+          - { python-version: '3.9', coverage: 'true'  }
 
     services:
       # How to use MySQL
@@ -76,7 +77,10 @@ jobs:
           cache-dependency-path: 'server/requirements/*.txt'
 
       - name: Display Python version
-        run: python -c "import sys; print(sys.version)"
+        run: |
+          python -c "import sys; print(sys.version)"
+          echo coverage: .${{ matrix.coverage }}.
+
 
       - name: Install dependencies
         run: |
@@ -90,15 +94,21 @@ jobs:
 
       - name: Run flake8
         run: |
-          flake8 ./server/
+          flake8 --ignore=E127,E402,W503 ./server/
 
       - name: Run tests
         run: |
-          pytest --cov=server server/test
+          pytest --no-cov server/test
+        if: matrix.coverage == 'false'
 
-      - name: The job has succeeded
+      - name: Run tests with coverage
+        run: |
+          pytest --cov=server server/test
+        if: matrix.coverage == 'true'
+
+      - name: Upload coverage
         run: codecov --token=${{ secrets.CODECOV_TOKEN }}
-        if: ${{ success() }}
+        if: matrix.coverage == 'true' && success()
 
 
   Client_build:
@@ -117,12 +127,12 @@ jobs:
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+        run: echo "DIR=$(yarn cache dir)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v3
         id: yarn-cache
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          path: ${{ steps.yarn-cache-dir-path.outputs.DIR }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
