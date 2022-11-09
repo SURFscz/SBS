@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 
 from server.db.domain import User, Collaboration, ServiceAup, Service
 from server.test.abstract_test import AbstractTest

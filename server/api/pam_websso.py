@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import random
 import string
 import uuid

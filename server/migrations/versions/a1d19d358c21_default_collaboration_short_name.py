@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """default collaboration short_name
 
 Revision ID: a1d19d358c21

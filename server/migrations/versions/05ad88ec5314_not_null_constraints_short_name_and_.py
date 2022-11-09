@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """not null constraints short_name and global_urn
 
 Revision ID: 05ad88ec5314

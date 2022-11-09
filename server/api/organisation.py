@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import uuid
 
 from flasgger import swag_from

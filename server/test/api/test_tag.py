@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 from server.db.domain import Organisation, Tag, Collaboration
 from server.test.abstract_test import AbstractTest
 from server.test.seed import uuc_name, ai_computing_name, amsterdam_uva_name

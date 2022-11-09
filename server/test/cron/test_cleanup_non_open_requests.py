@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 from server.api.base import STATUS_DENIED, STATUS_APPROVED
 from server.cron.cleanup_non_open_requests import cleanup_non_open_requests
 from server.db.db import db

@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import hashlib
 import string
 from secrets import token_urlsafe, SystemRandom

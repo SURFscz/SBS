@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import re
 
 from server.db.domain import Service, CollaborationRequest

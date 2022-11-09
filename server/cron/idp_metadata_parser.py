@@ -1,5 +1,4 @@
 
-# -*- coding: future_fstrings -*-
 import logging
 import time
 import xml.etree.ElementTree as ET

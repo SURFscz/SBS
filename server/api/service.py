@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import urllib.parse
 
 from flask import Blueprint, request as current_request, g as request_context, jsonify, current_app

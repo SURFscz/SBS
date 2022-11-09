@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """trigger-membership-groups
 
 Revision ID: c768aff9c23c

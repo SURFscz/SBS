@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """Global urns
 
 Revision ID: 0425c61985bc

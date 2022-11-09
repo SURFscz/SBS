@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import json
 
 from server.db.db import db

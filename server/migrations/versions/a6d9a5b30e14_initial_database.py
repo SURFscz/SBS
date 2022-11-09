@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """Initial database
 
 Revision ID: a6d9a5b30e14

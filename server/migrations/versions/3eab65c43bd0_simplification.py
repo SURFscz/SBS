@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """Simplification
 
 Revision ID: 3eab65c43bd0

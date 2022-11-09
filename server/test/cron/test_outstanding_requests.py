@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 
 from server.cron.outstanding_requests import outstanding_requests
 from server.db.db import db

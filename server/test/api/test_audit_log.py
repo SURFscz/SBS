@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 
 from flask import jsonify
 

@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """Delete current content
 
 Revision ID: ee107e29a73b

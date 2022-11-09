@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 """Unique service connection request hash
 
 Revision ID: 739ab3bc2236
