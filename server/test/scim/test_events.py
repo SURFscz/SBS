@@ -37,6 +37,17 @@ class TestEvents(AbstractTest):
             self.assertTrue(res)
 
     @responses.activate
+    def test_apply_user_change_create_provisioning_error(self):
+        sarah = self.find_entity_by_name(User, sarah_name)
+        no_user_found = json.loads(read_file("test/scim/no_user_found.json"))
+        with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=no_user_found, status=200)
+            rsps.add(responses.POST, "http://localhost:8080/api/scim_mock/Users", status=400)
+            future = user_changed(sarah)
+            res = future.result()
+            self.assertFalse(res)
+
+    @responses.activate
     def test_apply_user_change_create_with_invalid_response(self):
         sarah = self.find_entity_by_name(User, sarah_name)
         user_created = json.loads(read_file("test/scim/user_created.json"))

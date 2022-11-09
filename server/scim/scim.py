@@ -70,11 +70,11 @@ def _provision_group(scim_object, service: Service, group: Union[Group, Collabor
 
 # Get all external identifiers of the members of the group / collaboration and provision new ones
 def membership_user_scim_identifiers(service: Service, group: Union[Group, Collaboration]):
+    if not service.provision_scim_users():
+        return []
+
     members = [member for member in group.collaboration_memberships if member.is_active]
     result = []
-    if not service.provision_scim_users():
-        return result
-
     for member in members:
         user = member.user
         scim_object = _lookup_scim_object(service, SCIM_USERS, user.external_id)
@@ -102,11 +102,10 @@ def _lookup_scim_object(service: Service, scim_type: str, external_id: str):
     query_filter = f"externalId eq \"{external_id}\""
     url = f"{service.scim_url}/{scim_type}?filter={urllib.parse.quote(query_filter)}"
     response = requests.get(url, headers=_headers(service))
-    scim_json = response.json()
     if response.status_code > 204:
         _log_scim_error(response, service)
         return None
-
+    scim_json = response.json()
     return None if scim_json["totalResults"] == 0 else scim_json["Resources"][0]
 
 
