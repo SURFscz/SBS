@@ -10,7 +10,7 @@ from server.scim.scim import apply_user_change, apply_group_change, apply_organi
 
 
 def _scim_enabled():
-    return False or not os.environ.get("SCIM_DISABLED", None)
+    return not os.environ.get("SCIM_DISABLED", None)
 
 
 def broadcast_user_changed(user: User):
