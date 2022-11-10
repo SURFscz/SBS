@@ -18,8 +18,8 @@ from server.auth.security import confirm_collaboration_admin, current_user_id, c
     confirm_allow_impersonation, confirm_organisation_admin_or_manager, confirm_external_api_call, \
     is_organisation_admin_or_manager, is_application_admin
 from server.db.db import db
-from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name, \
-    STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED, valid_uri_attributes
+from server.db.defaults import (default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name,
+                                STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED, valid_uri_attributes, valid_tag_label)
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
     Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag
 from server.db.models import update, save, delete
@@ -41,9 +41,13 @@ def _del_non_disclosure_info(collaboration, json_collaboration):
 
 def _reconcile_tags(collaboration: Collaboration, tags):
     # [{'label': 'tag_uuc', 'value': 947}, {'label': 'new_tag_created', 'value': 'new_tag_created', '__isNew__': True}]
+
     if is_application_admin() or is_organisation_admin_or_manager(collaboration.organisation_id):
         # find delta, e.g. which tags to remove and which tags to add
         new_tags = [tag["value"] for tag in tags if "__isNew__" in tag and "value" in tag]
+
+        # cleanup new tags
+        new_tags = [tag_label for tag_label in new_tags if valid_tag_label(tag_label)]
 
         tag_identifiers = [tag["value"] for tag in tags if "__isNew__" not in tag and "value" in tag]
         tag_identifiers += [tag["id"] for tag in tags if "__isNew__" not in tag and "id" in tag]
