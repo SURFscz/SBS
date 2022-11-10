@@ -19,7 +19,7 @@ class TestDefaults(TestCase):
     def test_expiry_date(self):
         date = default_expiry_date({"expiry_date": time.time()})
         res = date - datetime.datetime.today()
-        self.assertEqual(-2, res.days)
+        self.assertEqual(-1, res.days)
 
     def test_calculate_expiry_period_days(self):
         period = calculate_expiry_period(
