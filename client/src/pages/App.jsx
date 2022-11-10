@@ -19,7 +19,6 @@ import CollaborationDetail from "./CollaborationDetail";
 import OrganisationDetail from "./OrganisationDetail";
 import Home from "./Home";
 import OrganisationForm from "./OrganisationForm";
-import Cookies from "js-cookie";
 import {addIcons} from "../utils/IconLibrary";
 import CollaborationForm from "./CollaborationForm";
 import NewOrganisationInvitation from "./NewOrganisationInvitation";
@@ -53,9 +52,9 @@ import ServiceAdminInvitation from "./ServiceAdminInvitation";
 import ServiceAup from "./ServiceAup";
 import MissingServiceAup from "./MissingServiceAup";
 import PamWebSSO from "./PamWebSSO";
-import {subscriptionIdCookieName} from "../utils/SocketIO";
 
 import {isUserAllowed, ROLES} from "../utils/UserRole";
+import {subscriptionIdCookieName} from "../utils/SocketIO";
 
 addIcons();
 
@@ -110,6 +109,8 @@ class App extends React.Component {
     };
 
     componentDidMount() {
+        const subscriptionId = (crypto.randomUUID && crypto.randomUUID()) || new Date().getTime();
+        sessionStorage.setItem(subscriptionIdCookieName, subscriptionId);
         emitter.addListener("impersonation", this.impersonate);
         Promise.all([config(), aupLinks()]).then(res => {
             this.setState({config: res[0], aupConfig: res[1]},
@@ -122,9 +123,6 @@ class App extends React.Component {
                         if (currentUser.successfully_activated) {
                             setFlash(I18n.t("login.successfullyActivated"))
                         }
-                        const subscriptionId = (crypto.randomUUID && crypto.randomUUID()) || new Date().getTime();
-                        Cookies.set(subscriptionIdCookieName, subscriptionId,
-                            {secure: document.location.protocol.endsWith("https")});
                     } else {
                         this.handleBackendDown();
                     }

@@ -37,7 +37,6 @@ import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import ServiceOverview from "./ServiceOverview";
 import {ReactComponent as EyeViewIcon} from "../icons/eye-svgrepo-com.svg";
 import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
-import Cookies from "js-cookie";
 
 class ServiceDetail extends React.Component {
 
@@ -121,8 +120,8 @@ class ServiceDetail extends React.Component {
         const {socketSubscribed} = this.state;
         if (!socketSubscribed) {
             socket.then(s => s.on(`service_${service.id}`, data => {
-                const subscriptionId = Cookies.get(subscriptionIdCookieName);
-                if (subscriptionId !== data.subscription_id) {
+                const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
+                if (subscriptionIdSessionStorage !== data.subscription_id) {
                     const {user} = this.props;
                     if (data.current_user_id === user.id) {
                         this.props.refreshUser(() => this.componentDidMount());
@@ -496,7 +495,8 @@ class ServiceDetail extends React.Component {
                         <div className="org-attributes">
                             <span>{I18n.t("service.infoUri")}</span>
                             <span>{service.uri_info ?
-                                <a href={service.uri_info} target="_blank" rel="noopener noreferrer">{service.uri_info}</a> :
+                                <a href={service.uri_info} target="_blank"
+                                   rel="noopener noreferrer">{service.uri_info}</a> :
                                 I18n.t("service.none")}</span>
                         </div>
                         {service.support_email &&
