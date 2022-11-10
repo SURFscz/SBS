@@ -5,7 +5,8 @@ import os
 import responses
 
 from server.db.domain import User, Collaboration, Group, Organisation
-from server.scim.events import broadcast_user_changed, broadcast_user_deleted, broadcast_collaboration_changed, broadcast_collaboration_deleted, \
+from server.scim.events import broadcast_user_changed, broadcast_user_deleted, broadcast_collaboration_changed, \
+    broadcast_collaboration_deleted, \
     broadcast_organisation_changed, broadcast_organisation_deleted
 from server.test.abstract_test import AbstractTest
 from server.test.seed import sarah_name, uva_research_name, ai_researchers_group, amsterdam_uva_name
