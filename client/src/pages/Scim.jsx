@@ -9,6 +9,7 @@ import {isEmpty, stopEvent} from "../utils/Utils";
 import Button from "../components/Button";
 import Logo from "../components/redesign/Logo";
 import Entities from "../components/redesign/Entities";
+import ReactJson from "react-json-view";
 
 class Scim extends React.Component {
 
@@ -53,6 +54,10 @@ class Scim extends React.Component {
         stopEvent(e);
         this.props.history.push(`/services/${service.id}`);
     };
+
+    renderStatistics = statistics => {
+        return <ReactJson src={statistics} collapsed={3}/>
+    }
 
     renderServices = services => {
         const columns = [
@@ -126,9 +131,6 @@ class Scim extends React.Component {
                                 copyClipBoard={true}/>
                 </div>
                 <div className="info-block">
-                    {this.renderServices(services)}
-                </div>
-                <div className="info-block">
                     <p>{I18n.t("system.scim.stats")}</p>
                     <div className="actions">
                         {isEmpty(statistics) && <Button txt={I18n.t("system.scim.retrieveStats")}
@@ -137,6 +139,12 @@ class Scim extends React.Component {
                                                          onClick={() => this.clearStatistics(true)}
                                                          cancelButton={true}/>}
                     </div>
+                </div>
+                {statistics && <div className="info-block">
+                    {this.renderStatistics(statistics)}
+                </div>}
+                <div className="info-block">
+                    {this.renderServices(services)}
                 </div>
 
 
