@@ -5,8 +5,8 @@ import os
 import responses
 
 from server.db.domain import User, Collaboration, Group, Organisation
-from server.scim.events import user_changed, user_deleted, collaboration_changed, collaboration_deleted, \
-    organisation_changed, organisation_deleted
+from server.scim.events import broadcast_user_changed, broadcast_user_deleted, broadcast_collaboration_changed, broadcast_collaboration_deleted, \
+    broadcast_organisation_changed, broadcast_organisation_deleted
 from server.test.abstract_test import AbstractTest
 from server.test.seed import sarah_name, uva_research_name, ai_researchers_group, amsterdam_uva_name
 from server.tools import read_file
@@ -32,7 +32,7 @@ class TestEvents(AbstractTest):
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=no_user_found, status=200)
             rsps.add(responses.POST, "http://localhost:8080/api/scim_mock/Users", json=user_created, status=201)
-            future = user_changed(sarah)
+            future = broadcast_user_changed(sarah)
             res = future.result()
             self.assertTrue(res)
 
@@ -43,7 +43,7 @@ class TestEvents(AbstractTest):
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=no_user_found, status=200)
             rsps.add(responses.POST, "http://localhost:8080/api/scim_mock/Users", status=400)
-            future = user_changed(sarah)
+            future = broadcast_user_changed(sarah)
             res = future.result()
             self.assertTrue(res)
 
@@ -54,7 +54,7 @@ class TestEvents(AbstractTest):
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json={}, status=400)
             rsps.add(responses.POST, "http://localhost:8080/api/scim_mock/Users", json=user_created, status=201)
-            future = user_changed(sarah)
+            future = broadcast_user_changed(sarah)
             res = future.result()
             self.assertTrue(res)
 
@@ -68,7 +68,7 @@ class TestEvents(AbstractTest):
             rsps.add(responses.PUT,
                      "http://localhost:8080/api/scim_mock/Users/8d85ea05-fc5c-4222-8efd-130ff7938ee1?counter=1",
                      json=user_updated, status=201)
-            future = user_changed(sarah)
+            future = broadcast_user_changed(sarah)
             res = future.result()
             self.assertTrue(res)
 
@@ -81,7 +81,7 @@ class TestEvents(AbstractTest):
             rsps.add(responses.DELETE,
                      "http://localhost:8080/api/scim_mock/Users/8d85ea05-fc5c-4222-8efd-130ff7938ee1?counter=1",
                      status=201)
-            future = user_deleted(sarah)
+            future = broadcast_user_deleted(sarah)
             res = future.result()
             self.assertTrue(res)
 
@@ -98,7 +98,7 @@ class TestEvents(AbstractTest):
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=no_user_found, status=200)
             rsps.add(responses.POST, "http://localhost:8080/api/scim_mock/Users", json=user_created, status=201)
             rsps.add(responses.POST, "http://localhost:8080/api/scim_mock/Groups", json=group_created, status=201)
-            future = collaboration_changed(collaboration)
+            future = broadcast_collaboration_changed(collaboration)
             res = future.result()
             self.assertTrue(res)
 
@@ -114,7 +114,7 @@ class TestEvents(AbstractTest):
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=user_found, status=200)
             rsps.add(responses.PUT, "http://localhost:8080/api/scim_mock/Groups/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      json=group_created, status=201)
-            future = collaboration_changed(collaboration)
+            future = broadcast_collaboration_changed(collaboration)
             res = future.result()
             self.assertTrue(res)
 
@@ -132,7 +132,7 @@ class TestEvents(AbstractTest):
             rsps.add(responses.DELETE,
                      "http://localhost:8080/api/scim_mock/Groups/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      status=201)
-            future = collaboration_deleted(collaboration)
+            future = broadcast_collaboration_deleted(collaboration)
             res = future.result()
             self.assertTrue(res)
 
@@ -145,7 +145,7 @@ class TestEvents(AbstractTest):
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=no_group_found, status=200)
             rsps.add(responses.POST, "http://localhost:8080/api/scim_mock/Groups", json=group_created, status=201)
-            future = collaboration_changed(group)
+            future = broadcast_collaboration_changed(group)
             res = future.result()
             self.assertTrue(res)
 
@@ -158,7 +158,7 @@ class TestEvents(AbstractTest):
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=no_group_found, status=200)
             rsps.add(responses.POST, "http://localhost:8080/api/scim_mock/Groups", json=group_created, status=400)
-            future = collaboration_changed(group)
+            future = broadcast_collaboration_changed(group)
             res = future.result()
             self.assertTrue(res)
 
@@ -174,7 +174,7 @@ class TestEvents(AbstractTest):
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=user_found, status=200)
             rsps.add(responses.PUT, "http://localhost:8080/api/scim_mock/Groups/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      json=group_created, status=201)
-            future = organisation_changed(organisation)
+            future = broadcast_organisation_changed(organisation)
             res = future.result()
             self.assertTrue(res)
 
@@ -192,6 +192,6 @@ class TestEvents(AbstractTest):
             rsps.add(responses.DELETE,
                      "http://localhost:8080/api/scim_mock/Groups/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      status=201)
-            future = organisation_deleted(organisation)
+            future = broadcast_organisation_deleted(organisation)
             res = future.result()
             self.assertTrue(res)

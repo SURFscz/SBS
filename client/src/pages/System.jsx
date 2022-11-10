@@ -46,6 +46,7 @@ import OrganisationsWithoutAdmin from "../components/redesign/OrganisationsWitho
 import ServicesWithoutAdmin from "../components/redesign/ServicesWithoutAdmin";
 import {dateFromEpoch} from "../utils/Date";
 import DOMPurify from "dompurify";
+import Scim from "./Scim";
 
 const options = [25, 50, 100, 150, 200, 250, 500].map(nbr => ({value: nbr, label: nbr}));
 
@@ -342,12 +343,12 @@ class System extends React.Component {
         </div>)
     }
 
-    getScimTab = scimData => {
+    getScimTab = () => {
         return (<div key="scim" name="scim" label={I18n.t("home.tabs.scim")}
                      icon={<FontAwesomeIcon icon="snowflake"/>}>
             <div className="mod-system">
                 <section className={"info-block-container"}>
-                    <p>TODO {scimData}</p>
+                    <Scim/>
                 </section>
             </div>
         </div>)
@@ -1024,8 +1025,7 @@ class System extends React.Component {
             confirmationDialogQuestion, busy, tab, filteredAuditLogs, databaseStats, suspendedUsers, cleanedRequests,
             limit, query, selectedTables, expiredCollaborations, suspendedCollaborations, expiredMemberships, cronJobs,
             validationData, showOrganisationsWithoutAdmin, showServicesWithoutAdmin, plscData, compositionData,
-            currentlySuspendedUsers, userLoginStats, deletedUsers, serverQuery, demoSeedResult, humanTestingSeedResult,
-            scimData
+            currentlySuspendedUsers, userLoginStats, deletedUsers, serverQuery, demoSeedResult, humanTestingSeedResult
         } = this.state;
         const {config} = this.props;
 
@@ -1043,7 +1043,7 @@ class System extends React.Component {
             config.seed_allowed ? this.getCompositionTab(compositionData) : null,
             this.getSuspendedUsersTab(currentlySuspendedUsers),
             this.getUserLoginTab(userLoginStats),
-            this.getScimTab(scimData)
+            this.getScimTab()
         ]
 
         return (

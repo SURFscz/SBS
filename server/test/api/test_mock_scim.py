@@ -74,7 +74,7 @@ class TestMockScim(AbstractTest):
 
         # Need to be super admin
         self.login("urn:john")
-        res = self.get("/api/scim_mock/services", with_basic_auth=False)
+        res = self.get("/api/scim_mock/statistics", with_basic_auth=False)
 
         self.assertEqual(1, len(res["database"][str(cloud_service.id)]["users"]))
         self.assertEqual(1, len(res["database"][str(cloud_service.id)]["groups"]))
@@ -82,8 +82,13 @@ class TestMockScim(AbstractTest):
 
         # Now reset everything
         self.delete("/api/scim_mock/clear", with_basic_auth=False)
-        res = self.get("/api/scim_mock/services", with_basic_auth=False)
+        res = self.get("/api/scim_mock/statistics", with_basic_auth=False)
         self.assertEqual(0, len(res["database"]))
+
+    def test_scim_services(self):
+        self.login("urn:john")
+        scim_services = self.get("/api/scim_mock/scim-services", with_basic_auth=False)
+        self.assertEqual(3, len(scim_services))
 
     def test_mock_scim_authorization(self):
         cloud_service = self.find_entity_by_name(Service, service_cloud_name)

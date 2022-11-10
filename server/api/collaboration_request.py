@@ -17,6 +17,7 @@ from server.db.logo_mixin import logo_from_cache
 from server.db.models import save, delete
 from server.mail import mail_collaboration_request, mail_accepted_declined_collaboration_request, \
     mail_automatic_collaboration_request
+from server.scim.events import broadcast_collaboration_changed
 
 collaboration_request_api = Blueprint("collaboration_request_api", __name__, url_prefix="/api/collaboration_requests")
 
@@ -130,6 +131,7 @@ def approve_request(collaboration_request_id):
                                                              collaboration_id=collaboration.id,
                                                              created_by=user.uid, updated_by=user.uid)
     db.session.merge(admin_collaboration_membership)
+    broadcast_collaboration_changed(collaboration)
 
     mail_accepted_declined_collaboration_request({"salutation": f"Dear {user.name}",
                                                   "base_url": current_app.app_config.base_url,

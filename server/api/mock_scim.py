@@ -4,7 +4,7 @@ import re
 import uuid
 from functools import wraps
 
-from flask import Blueprint, g as request_context
+from flask import Blueprint, g as request_context, current_app
 from flask import request as current_request
 from sqlalchemy import text
 from werkzeug.exceptions import BadRequest, Unauthorized
@@ -142,14 +142,23 @@ def update_group(scim_id):
     return _update_scim_object(scim_id, "groups"), 201
 
 
-@scim_mock_api.route("/services", methods=["GET"], strict_slashes=False)
+@scim_mock_api.route("/statistics", methods=["GET"], strict_slashes=False)
 @json_endpoint
-def services():
+def statistics():
     confirm_write_access()
 
     sql = "SELECT s.id, s.name, c.counter FROM scim_service_counters c INNER JOIN services s ON s.id = c.service_id"
     rows = db.session.execute(text(sql))
     return {"counters": [{row[0], row[1]} for row in rows], "http_calls": http_calls, "database": database}, 200
+
+
+@scim_mock_api.route("/scim-services", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def scim_service():
+    confirm_write_access()
+
+    scim_mock_url = f"{current_app.app_config.base_server_url}/api/scim_mock"
+    return Service.query.filter(Service.scim_url == scim_mock_url).all(), 200
 
 
 @scim_mock_api.route("/clear", methods=["DELETE"], strict_slashes=False)
@@ -163,4 +172,4 @@ def clear():
     global http_calls
     http_calls = {}
 
-    return None, 204
+    return {}, 204

@@ -1,4 +1,3 @@
-
 from flask import Blueprint, request as current_request, current_app
 from sqlalchemy.orm import contains_eager
 from werkzeug.exceptions import Conflict, BadRequest
@@ -6,12 +5,13 @@ from werkzeug.exceptions import Conflict, BadRequest
 from server.api.base import json_endpoint, STATUS_DENIED, STATUS_APPROVED, emit_socket
 from server.api.collaboration_request import STATUS_OPEN
 from server.api.service_aups import add_user_aups
+from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, current_user, \
     current_user_name, current_user_uid
-from server.auth.secrets import generate_token
 from server.db.domain import CollaborationMembership, Collaboration, JoinRequest, db
 from server.db.models import delete
 from server.mail import mail_collaboration_join_request, mail_accepted_declined_join_request
+from server.scim.events import broadcast_collaboration_changed
 
 join_request_api = Blueprint("join_request_api", __name__, url_prefix="/api/join_requests")
 
@@ -131,8 +131,10 @@ def approve_join_request():
     for group in [group for group in collaboration.groups if group.auto_provision_members]:
         group.collaboration_memberships.append(collaboration_membership)
         db.session.merge(group)
+        broadcast_collaboration_changed(group)
 
     emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
+    broadcast_collaboration_changed(collaboration)
 
     return {'collaboration_id': collaboration.id, 'user_id': user_id}, 201
 

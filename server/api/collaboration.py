@@ -24,6 +24,7 @@ from server.db.domain import Collaboration, CollaborationMembership, JoinRequest
     Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag
 from server.db.models import update, save, delete
 from server.mail import mail_collaboration_invitation
+from server.scim.events import broadcast_collaboration_changed, broadcast_collaboration_deleted
 
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
 
@@ -458,6 +459,7 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True):
                                                                  collaboration_id=collaboration.id,
                                                                  created_by=user.uid, updated_by=user.uid)
         db.session.merge(admin_collaboration_membership)
+        broadcast_collaboration_changed(collaboration)
 
     services = organisation.services
     for service in services:
@@ -532,8 +534,10 @@ def update_collaboration():
     return update(Collaboration, custom_json=data, allow_child_cascades=False)
 
 
-@collaboration_api.route("/<id>", methods=["DELETE"], strict_slashes=False)
+@collaboration_api.route("/<collaboration_id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
-def delete_collaboration(id):
-    confirm_collaboration_admin(id)
-    return delete(Collaboration, id)
+def delete_collaboration(collaboration_id):
+    confirm_collaboration_admin(collaboration_id)
+
+    broadcast_collaboration_deleted(Collaboration.query.get(collaboration_id))
+    return delete(Collaboration, collaboration_id)
