@@ -13,12 +13,13 @@ export default function Pagination({currentPage, onChange, total}) {
     }
 
     const ranges = (nbr, index) => {
+        const key = `${nbr}_${index}}}`;
         if (typeof nbr === "string" || nbr instanceof String) {
-            return <span key={index} className="link dots">{nbr}</span>
+            return <span key={key} className="link dots">{nbr}</span>
         } else if (nbr === currentPage) {
-            return <span key={index} className="link current">{nbr}</span>
+            return <span key={key} className="link current">{nbr}</span>
         } else {
-            return <span key={index} className="link" onClick={() => onChange(nbr)}>{nbr}</span>
+            return <span key={key} className="link" onClick={() => onChange(nbr)}>{nbr}</span>
         }
     }
 

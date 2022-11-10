@@ -12,6 +12,7 @@ class Tab extends Component {
         icon: PropTypes.object,
         className: PropTypes.string,
         onClick: PropTypes.func.isRequired,
+        busy: PropTypes.bool
     };
 
     onClick = () => {
@@ -23,7 +24,7 @@ class Tab extends Component {
     };
 
     render() {
-        let {activeTab, className = "", label, name, icon, notifier, readOnly} = this.props;
+        let {activeTab, className = "", label, name, icon, notifier, readOnly, busy} = this.props;
 
         className += ` tab ${name}`;
 
@@ -32,6 +33,9 @@ class Tab extends Component {
         }
         if (readOnly) {
             className += " read-only";
+        }
+        if (busy) {
+            className += " busy";
         }
 
         return (

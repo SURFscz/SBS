@@ -5,6 +5,7 @@ import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
 import Logo from "./Logo";
+import SpinnerField from "./SpinnerField";
 
 
 class Organisations extends React.Component {
@@ -42,6 +43,9 @@ class Organisations extends React.Component {
     render() {
         const {user: currentUser} = this.props;
         const {organisations, loading} = this.state;
+        if (loading) {
+            return <SpinnerField/>
+        }
 
         const columns = [
             {

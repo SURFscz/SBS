@@ -2,6 +2,7 @@ import {isEmpty} from "../utils/Utils";
 import {emitter} from "../utils/Events";
 import I18n from "i18n-js";
 import {getCsrfToken} from "../stores/AppStore";
+import Cookies from "js-cookie";
 
 let impersonator = null;
 emitter.addListener("impersonation", res => {
@@ -63,6 +64,8 @@ function validFetch(path, options, headers = {}, showErrorDialog = true) {
         credentials: "same-origin",
         redirect: "manual"
     });
+    const subscriptionId = sessionStorage.getItem("subscription_id");
+    Cookies.set("subscription_id", subscriptionId, {secure: document.location.protocol.startsWith("https")});
     return fetch(path, fetchOptions).then(validateResponse(showErrorDialog))
 }
 

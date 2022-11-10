@@ -10,7 +10,8 @@ class Tabs extends React.Component {
         children: PropTypes.instanceOf(Array).isRequired,
         className: PropTypes.string,
         activeTab: PropTypes.string,
-        tabChanged: PropTypes.func
+        tabChanged: PropTypes.func,
+        busy: PropTypes.bool
     };
 
     onClickTabItem = tab => {
@@ -19,7 +20,7 @@ class Tabs extends React.Component {
     }
 
     render() {
-        const {children, className = ""} = this.props;
+        const {children, busy, className = ""} = this.props;
         let activeTab = this.props.activeTab || children[0].props.name;
         const filteredChildren = children.filter(child => child);
         if (!filteredChildren.some((child => child.props && child.props.name === activeTab))) {
@@ -40,6 +41,7 @@ class Tabs extends React.Component {
                                     readOnly={readOnly}
                                     key={name}
                                     name={name}
+                                    busy={busy}
                                     notifier={notifier}
                                     label={label}
                                     onClick={this.onClickTabItem}

@@ -6,7 +6,6 @@ import {
     organisationInvitationByHash
 } from "../api";
 import "./OrganisationDetail.scss";
-import Cookies from "js-cookie";
 import I18n from "i18n-js";
 import {isEmpty} from "../utils/Utils";
 import Tabs from "../components/Tabs";
@@ -93,8 +92,8 @@ class OrganisationDetail extends React.Component {
                     const {socketSubscribed} = this.state;
                     if (!socketSubscribed) {
                         socket.then(s => s.on(`organisation_${organisation_id}`, data => {
-                            const subscriptionId = Cookies.get(subscriptionIdCookieName);
-                            if (subscriptionId !== data.subscription_id) {
+                            const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
+                            if (subscriptionIdSessionStorage !== data.subscription_id) {
                                 if (data.current_user_id === user.id) {
                                     this.props.refreshUser(() => this.componentDidMount());
                                 } else {
