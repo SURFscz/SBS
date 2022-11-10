@@ -9,7 +9,7 @@ from server.api.base import json_endpoint, send_error_mail
 from server.api.service_aups import has_agreed_with
 from server.auth.mfa import mfa_idp_allowed, surf_secure_id_required, has_valid_mfa
 from server.auth.security import confirm_read_access
-from server.auth.user_claims import user_memberships, collaboration_memberships_for_service
+from server.auth.user_claims import user_memberships, collaboration_memberships_for_service, co_tags
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, PROXY_AUTHZ, PROXY_AUTHZ_SBS
 from server.db.domain import User, Service
@@ -207,7 +207,8 @@ def _do_attributes(user, uid, service, service_entity_id, not_authorized_func, a
     user = db.session.merge(user)
 
     all_memberships = user_memberships(user, connected_collaborations)
-    all_attributes, http_status = authorized_func(user, all_memberships)
+    all_tags = co_tags(connected_collaborations)
+    all_attributes, http_status = authorized_func(user, all_memberships | all_tags)
 
     logger.info(f"Returning attributes {all_attributes} for user {uid} and service_entity_id {service_entity_id}")
 
