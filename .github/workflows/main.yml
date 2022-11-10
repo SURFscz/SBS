@@ -91,7 +91,7 @@ jobs:
 
       - name: Run flake8
         run: |
-          flake8 --ignore=E127,E402,W503 ./server/
+          flake8 ./server/
 
       - name: Run tests with coverage
         run: |
