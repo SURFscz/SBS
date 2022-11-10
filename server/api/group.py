@@ -147,7 +147,7 @@ def update_group():
 @group_api.route("/<group_id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_group(group_id):
-    group = Group.query.get(group_id)
+    group = Group.query.filter(Group.id == group_id).one()
 
     confirm_collaboration_admin(group.collaboration_id)
 
