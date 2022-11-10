@@ -69,6 +69,6 @@ tag_re = re.compile(r"^[a-z][a-z_0-9-]+$")
 
 
 def valid_tag_label(tag_value: Optional[str]) -> bool:
-    if tag_value is not None and len(tag_value) <= 32 and tag_re.match(tag_value):
+    if tag_value is not None and len(tag_value) <= 32 and tag_re.fullmatch(tag_value):
         return True
     return False
