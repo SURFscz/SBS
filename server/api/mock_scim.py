@@ -149,11 +149,7 @@ def services():
 
     sql = "SELECT s.id, s.name, c.counter FROM scim_service_counters c INNER JOIN services s ON s.id = c.service_id"
     rows = db.session.execute(text(sql))
-    return {
-               "counters": [{row[0], row[1]} for row in rows],
-               "http_calls": http_calls,
-               "database": database
-           }, 200
+    return {"counters": [{row[0], row[1]} for row in rows], "http_calls": http_calls, "database": database}, 200
 
 
 @scim_mock_api.route("/clear", methods=["DELETE"], strict_slashes=False)
