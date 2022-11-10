@@ -94,16 +94,18 @@ class Scim extends React.Component {
                 mapper: service => <span>{I18n.t(`forms.${service.scim_provision_groups ? "yes" : "no"}`)}</span>
             }];
         return (
-            <Entities entities={services}
-                      title={I18n.t("system.scim.services")}
-                      modelName="scimServices"
-                      searchAttributes={["name"]}
-                      defaultSort="name"
-                      columns={columns}
-                      showNew={false}
-                      loading={false}
-                      rowLinkMapper={() => this.openService}
-                      {...this.props}/>
+
+                <Entities entities={services}
+                          title={I18n.t("system.scim.services")}
+                          modelName="scimServices"
+                          searchAttributes={["name"]}
+                          defaultSort="name"
+                          columns={columns}
+                          showNew={false}
+                          loading={false}
+                          rowLinkMapper={() => this.openService}
+                          {...this.props}/>
+
         )
 
     }
@@ -123,7 +125,7 @@ class Scim extends React.Component {
                                     cancel={() => this.setState({confirmationDialogOpen: false})}
                                     confirm={confirmationDialogAction}
                                     question={confirmationDialogQuestion}/>
-                <div>
+                <div className="service-entities">
                     <p>{I18n.t("system.scim.info")}</p>
                     <InputField value={scimMockUrl}
                                 disabled={true}
@@ -134,6 +136,8 @@ class Scim extends React.Component {
                     <p>{I18n.t("system.scim.stats")}</p>
                     <div className="actions">
                         {isEmpty(statistics) && <Button txt={I18n.t("system.scim.retrieveStats")}
+                                                        onClick={this.retrieveStatistics}/>}
+                        {!isEmpty(statistics) && <Button txt={I18n.t("system.scim.reRetrieveStats")}
                                                         onClick={this.retrieveStatistics}/>}
                         {!isEmpty(statistics) && <Button txt={I18n.t("system.scim.clearStats")}
                                                          onClick={() => this.clearStatistics(true)}
