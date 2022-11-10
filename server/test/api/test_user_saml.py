@@ -22,7 +22,8 @@ class TestUserSaml(AbstractTest):
         attrs = res["attributes"]
         entitlements = attrs["eduPersonEntitlement"]
         self.assertListEqual(["urn:example:sbs:group:uuc",
-                              "urn:example:sbs:group:uuc:ai_computing"
+                              "urn:example:sbs:group:uuc:ai_computing",
+                              "urn:example:sbs:label:uuc:ai_computing:tag_uuc"
                               ], sorted(entitlements))
         self.assertListEqual(["sarah@test.sram.surf.nl"], attrs["eduPersonPrincipalName"])
         self.assertListEqual(["sarah"], attrs["uid"])
@@ -43,7 +44,8 @@ class TestUserSaml(AbstractTest):
         entitlements = attrs["eduPersonEntitlement"]
         self.assertListEqual(["urn:example:sbs:group:uuc",
                               "urn:example:sbs:group:uuc:ai_computing",
-                              "urn:example:sbs:group:uuc:ai_computing:ai_res"
+                              "urn:example:sbs:group:uuc:ai_computing:ai_res",
+                              "urn:example:sbs:label:uuc:ai_computing:tag_uuc"
                               ], sorted(entitlements))
         self.assertListEqual(["jane@test.sram.surf.nl"], attrs["eduPersonPrincipalName"])
         self.assertListEqual(["jane"], attrs["uid"])
