@@ -1,7 +1,5 @@
-
 from flask import Blueprint, request as current_request
 
-from server.api import collaboration
 from server.api.base import json_endpoint, emit_socket
 from server.auth.security import confirm_collaboration_admin
 from server.db.db import db
