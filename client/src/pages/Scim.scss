@@ -1,0 +1,38 @@
+@import "../stylesheets/vars.scss";
+
+.mod-scim-container {
+    table.scimServices {
+
+        thead {
+            th {
+                &.name {
+                    width: 20%;
+                    padding-left: 15px;
+                }
+
+                &.scim_url {
+                    width: 35%;
+                }
+
+                &.scim_enabled, &.scim_provision_users, &.scim_provision_groups {
+                    text-align: center;
+                    width: 15%;
+                }
+
+            }
+        }
+
+        tbody {
+            td {
+                &.name {
+                    padding-left: 15px;
+                }
+
+                &.scim_enabled, &.scim_provision_users, &.scim_provision_groups {
+                    text-align: center;
+                }
+            }
+        }
+    }
+
+}

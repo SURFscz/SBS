@@ -15,31 +15,31 @@ def _scim_enabled():
     return not os.environ.get("SCIM_DISABLED", None)
 
 
-def user_changed(user: User):
+def broadcast_user_changed(user: User):
     if _scim_enabled():
         return current_app.executor.submit(apply_user_change, user)
 
 
-def user_deleted(user: User):
+def broadcast_user_deleted(user: User):
     if _scim_enabled():
         return current_app.executor.submit(apply_user_change, user, True)
 
 
-def organisation_changed(organisation: Organisation):
+def broadcast_organisation_changed(organisation: Organisation):
     if _scim_enabled():
         return current_app.executor.submit(apply_organisation_change, organisation)
 
 
-def organisation_deleted(organisation: Organisation):
+def broadcast_organisation_deleted(organisation: Organisation):
     if _scim_enabled():
         return current_app.executor.submit(apply_organisation_change, organisation, True)
 
 
-def collaboration_changed(group: Union[Group, Collaboration]):
+def broadcast_collaboration_changed(group: Union[Group, Collaboration]):
     if _scim_enabled():
         return current_app.executor.submit(apply_group_change, group)
 
 
-def collaboration_deleted(group: Union[Group, Collaboration]):
+def broadcast_collaboration_deleted(group: Union[Group, Collaboration]):
     if _scim_enabled():
         return current_app.executor.submit(apply_group_change, group, True)

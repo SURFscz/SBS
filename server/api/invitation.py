@@ -15,7 +15,7 @@ from server.db.defaults import default_expiry_date
 from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, Organisation
 from server.db.models import delete
 from server.mail import mail_collaboration_invitation
-from server.scim.events import collaboration_changed
+from server.scim.events import broadcast_collaboration_changed
 
 invitations_api = Blueprint("invitations_api", __name__, url_prefix="/api/invitations")
 
@@ -171,6 +171,7 @@ def invitations_accept():
         collaboration_membership.invitation_id = invitation.id
 
     collaboration_membership = db.session.merge(collaboration_membership)
+
     # We need the persistent identifier of the collaboration_membership which will be generated after the delete-commit
     if invitation.external_identifier:
         invitation.status = "accepted"
@@ -185,11 +186,12 @@ def invitations_accept():
     for group in set(list({ag.id: ag for ag in groups}.values())):
         group.collaboration_memberships.append(collaboration_membership)
         db.session.merge(group)
+        broadcast_collaboration_changed(group)
 
     add_user_aups(collaboration, user_id)
 
-    collaboration_changed(collaboration)
     emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
+    broadcast_collaboration_changed(collaboration)
 
     res = {'collaboration_id': collaboration.id, 'user_id': user_id}
     return res, 201

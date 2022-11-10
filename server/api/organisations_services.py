@@ -7,6 +7,7 @@ from server.auth.security import confirm_organisation_admin_or_manager
 from server.db.db import db
 from server.db.domain import Service, Organisation
 from server.schemas import json_schema_validator
+from server.scim.events import broadcast_organisation_changed
 
 organisations_services_api = Blueprint("organisations_services_api", __name__,
                                        url_prefix="/api/organisations_services")
@@ -38,11 +39,13 @@ def add_collaborations_services():
 
     organisation.services.append(service)
     db.session.merge(organisation)
+
     # Create groups from service_groups
     for collaboration in organisation.collaborations:
         create_service_groups(service, collaboration)
 
     emit_socket(f"organisation_{organisation_id}")
+    broadcast_organisation_changed(organisation)
 
     return None, 201
 

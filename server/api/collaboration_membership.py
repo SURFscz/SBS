@@ -8,6 +8,7 @@ from server.auth.security import confirm_collaboration_admin, current_user_uid, 
 from server.db.defaults import STATUS_ACTIVE
 from server.db.domain import CollaborationMembership, db, Collaboration
 from server.logger.context_logger import ctx_logger
+from server.scim.events import broadcast_collaboration_changed
 
 collaboration_membership_api = Blueprint("collaboration_membership_api", __name__,
                                          url_prefix="/api/collaboration_memberships")
@@ -105,7 +106,9 @@ def create_collaboration_membership_role():
     for group in [group for group in collaboration.groups if group.auto_provision_members]:
         group.collaboration_memberships.append(collaboration_membership)
         db.session.merge(group)
+        broadcast_collaboration_changed(group)
 
     emit_socket(f"collaboration_{collaboration_id}", include_current_user_id=True)
+    broadcast_collaboration_changed(collaboration)
 
     return collaboration_membership_json, 201

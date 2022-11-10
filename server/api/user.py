@@ -279,6 +279,7 @@ def resume_session():
 
     uid = user_info_json["sub"]
     user = User.query.filter(User.uid == uid).first()
+
     if not user:
         user = User(uid=uid, external_id=str(uuid.uuid4()), created_by="system", updated_by="system")
         add_user_claims(user_info_json, uid, user)

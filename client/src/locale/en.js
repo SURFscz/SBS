@@ -565,6 +565,10 @@ I18n.translations.en = {
                 reactivated: "Reactivated token {{name}}",
             }
         },
+        scimServices: {
+            searchPlaceHolder: "Search for scim services..",
+            noEntities: "There are no service configured with the mock scim endpoint",
+        }
     },
     user: {
         titleUpdate: "Update your user profile keys",
@@ -1717,6 +1721,21 @@ I18n.translations.en = {
             total: "Logins",
             succeeded: "Succeeded",
             failed: "Failed",
+        },
+        scim: {
+            info: "If enabled there is a mock remote SCIM client available to test the SCIM messages." +
+                "Configure a Service with the following SCIM URL to start testing the SCIM functionality" ,
+            services: "These services are currently configured the SCIM mock endpoint",
+            stats: "All API calls and state updates send to the mock SCIM endpoints are stored in a in-memory database.",
+            retrieveStats: "Fetch stats",
+            clearStats: "Clear stats",
+            clearConfirmation: "Are you sure you want to clear the SCIM statistics?",
+            service: {
+                scimUrl: "Scim URL",
+                scimEnabled: "Scim enabled",
+                scimProvisionUsers: "Provision users?",
+                scimProvisionGroups: "Provision groups?"
+            }
         }
     },
     access: {
@@ -1827,7 +1846,7 @@ I18n.translations.en = {
         invitationNotFound: "This invitation does not exist (anymore). The invitation has probably already been used. Ask the person who invited you to send you a new one.",
         invalidSecondFactorUUID: "The redirect from eduTeams is expired. Please go back to the service where you we're trying to login and try again.",
         invalidPamWebSSO: "Your session has expired. Please go back to the service you were trying to login to and try again.",
-        msg: "Mmmm, seems you somehow ended up with a link that we can't help you with. Sorry for that " +
+        msg: "Mmmm, seems you somehow ended up with a link that we can't help you with. Sorry for that. </br></br>" +
             "You could try visiting the <a href='{{base_url}}'>homepage</a>. If that does not offer you an option you were looking for, " +
             "contact the person that invited you, or follow the help link which includes how to contact the SURF Research Access Management team."
     },
@@ -2098,7 +2117,7 @@ I18n.translations.en = {
             year: "in 1 year",
             years: "in %s years"
         }
-    }
+    },
 };
 
 export default I18n.translations.en;
