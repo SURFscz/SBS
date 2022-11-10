@@ -55,7 +55,7 @@ token = jwt.JWT(header={"alg": "RS256", "kid": eduteams_key.get("kid")},
                 claims=content)
 token.make_signed_token(eduteams_key)
 print("jwt content is:")
-print(json.dumps(content,indent=4))
+print(json.dumps(content, indent=4))
 print("serialized token is:")
 print(token.serialize())
 print(f"length is {len(token.serialize())}")
