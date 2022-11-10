@@ -1,6 +1,7 @@
 import re
 from collections.abc import Iterable
 from datetime import datetime, date, time, timedelta
+from typing import Optional
 
 from werkzeug.exceptions import BadRequest
 
@@ -62,3 +63,12 @@ def valid_uri_attributes(data, uri_attributes):
         if uri and not bool(uri_re.match(uri)):
             raise ValueError(f"{uri} is not a valid uri")
     return True
+
+
+tag_re = re.compile(r"^[a-z][a-z_0-9-]+$")
+
+
+def valid_tag_label(tag_value: Optional[str]) -> bool:
+    if tag_value is not None and len(tag_value) <= 32 and tag_re.fullmatch(tag_value):
+        return True
+    return False
