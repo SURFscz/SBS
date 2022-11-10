@@ -27,9 +27,14 @@ export const validateSSHKey = sshKey => {
 
 
 const shortNameRegexp = /^[^a-z]*|[^a-z_0-9]+/gi
+const tagNameRegexp   = /^[^a-z]*|[^a-z_0-9-]+/gi
 
 export const sanitizeShortName = shortName => {
     return shortName ? shortName.replace(shortNameRegexp, "").substring(0, 16).toLowerCase() : shortName;
+}
+
+export const sanitizeTagName = tagName => {
+    return tagName ? tagName.replace(tagNameRegexp, "").substring(0, 32).toLowerCase() : tagName;
 }
 
 export const CO_SHORT_NAME = "{co_short_name}";
