@@ -10,9 +10,7 @@ from server.scim.scim import apply_user_change, apply_group_change, apply_organi
 
 
 def _scim_enabled():
-    # This method is called before any event is submitted to the executor and we need db changes propagated
-    db.session.commit()
-    return not os.environ.get("SCIM_DISABLED", None)
+    return False or not os.environ.get("SCIM_DISABLED", None)
 
 
 def broadcast_user_changed(user: User):

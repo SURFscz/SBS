@@ -1,6 +1,15 @@
 @import "../stylesheets/vars.scss";
 
 .mod-scim-container {
+    .service-entities {
+        display: flex;
+        flex-direction: column;
+        border-bottom: solid 4px $lightest-grey;
+        padding: 15px 0;
+        width: 100%;
+
+    }
+
     table.scimServices {
 
         thead {

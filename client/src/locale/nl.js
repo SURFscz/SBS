@@ -1721,6 +1721,22 @@ I18n.translations.nl = {
             total: "Logins",
             succeeded: "Succeeded",
             failed: "Failed",
+        },
+        scim: {
+            info: "If enabled there is a mock remote SCIM client available to test the SCIM messages." +
+                "Configure a Service with the following SCIM URL to start testing the SCIM functionality",
+            services: "These services are currently configured with the SCIM mock endpoint",
+            stats: "All API calls and state updates send to the mock SCIM endpoints are stored in a in-memory database.",
+            retrieveStats: "Fetch stats",
+            reRetrieveStats: "Refresh stats",
+            clearStats: "Clear stats",
+            clearConfirmation: "Are you sure you want to clear the SCIM statistics?",
+            service: {
+                scimUrl: "Scim URL",
+                scimEnabled: "Scim enabled",
+                scimProvisionUsers: "Provision users?",
+                scimProvisionGroups: "Provision groups?"
+            }
         }
     },
     access: {
@@ -1775,7 +1791,7 @@ I18n.translations.nl = {
             "Als je bent uitgenodigd, volg dan de link uit de e-mail.",
         createCollRequest: "Vraag je eigen samenwerking aan",
         startCreateCollRequest: "Je ben geen lid van een samenwerking, {{name}} stelt je in staat om een eigen samenwerking aan te vragen. Een beheerder van {{name}} zal je aanvraag moeten goedkeuren." +
-           "Als je bent uitgenodigd, volg dan de link uit de e-mail.",
+            "Als je bent uitgenodigd, volg dan de link uit de e-mail.",
         createCollTxt: "Maak samenwerking aan",
         createCollRequestTxt: "Vraag samenwerking aan",
         contact: "",
