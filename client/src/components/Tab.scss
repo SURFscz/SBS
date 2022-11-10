@@ -10,6 +10,10 @@
     position: relative;
     border-bottom: 3px solid $background;
 
+    &.busy {
+        min-width: 85px;
+        margin: 0 10px;
+    }
 
     &:first-child {
         margin-left: 0;

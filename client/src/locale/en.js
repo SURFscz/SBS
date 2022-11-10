@@ -110,7 +110,8 @@ I18n.translations.en = {
             suspendedUsers: "Suspensions",
             userlogins: "Logins",
             details: "Details",
-            orgUsers: "Users"
+            orgUsers: "Users",
+            scim: "Scim"
         }
     },
     forms: {
