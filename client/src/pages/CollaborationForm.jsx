@@ -18,7 +18,7 @@ import Button from "../components/Button";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
-import {sanitizeShortName, validEmailRegExp} from "../validations/regExps";
+import {sanitizeShortName, sanitizeTagName, validEmailRegExp} from "../validations/regExps";
 import SelectField from "../components/SelectField";
 import {getParameterByName} from "../utils/QueryParameters";
 import CheckBox from "../components/CheckBox";
@@ -351,7 +351,7 @@ class CollaborationForm extends React.Component {
     };
 
     tagValueChanged = value => {
-        return sanitizeShortName(value);
+        return sanitizeTagName(value);
     }
 
     tagsSelectedChanged = selectedOptions => {
