@@ -110,7 +110,8 @@ I18n.translations.nl = {
             suspendedUsers: "Suspensions",
             userlogins: "Logins",
             details: "Details",
-            orgUsers: "Gebruikers"
+            orgUsers: "Gebruikers",
+            scim: "Scim"
         }
     },
     forms: {

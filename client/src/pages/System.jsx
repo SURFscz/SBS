@@ -342,6 +342,17 @@ class System extends React.Component {
         </div>)
     }
 
+    getScimTab = scimData => {
+        return (<div key="scim" name="scim" label={I18n.t("home.tabs.scim")}
+                     icon={<FontAwesomeIcon icon="snowflake"/>}>
+            <div className="mod-system">
+                <section className={"info-block-container"}>
+                    <p>TODO {scimData}</p>
+                </section>
+            </div>
+        </div>)
+    }
+
     activateUser = user => {
         this.setState({busy: true});
         activateUserForCollaboration(null, user.id).then(() => {
@@ -1013,7 +1024,8 @@ class System extends React.Component {
             confirmationDialogQuestion, busy, tab, filteredAuditLogs, databaseStats, suspendedUsers, cleanedRequests,
             limit, query, selectedTables, expiredCollaborations, suspendedCollaborations, expiredMemberships, cronJobs,
             validationData, showOrganisationsWithoutAdmin, showServicesWithoutAdmin, plscData, compositionData,
-            currentlySuspendedUsers, userLoginStats, deletedUsers, serverQuery, demoSeedResult, humanTestingSeedResult
+            currentlySuspendedUsers, userLoginStats, deletedUsers, serverQuery, demoSeedResult, humanTestingSeedResult,
+            scimData
         } = this.state;
         const {config} = this.props;
 
@@ -1030,7 +1042,8 @@ class System extends React.Component {
             this.getPlscTab(plscData),
             config.seed_allowed ? this.getCompositionTab(compositionData) : null,
             this.getSuspendedUsersTab(currentlySuspendedUsers),
-            this.getUserLoginTab(userLoginStats)
+            this.getUserLoginTab(userLoginStats),
+            this.getScimTab(scimData)
         ]
 
         return (
@@ -1042,7 +1055,7 @@ class System extends React.Component {
                                     question={confirmationDialogQuestion}/>
                 <UnitHeader obj={({name: I18n.t("system.title"), icon: "toolbox"})}/>
 
-                <Tabs activeTab={tab} tabChanged={this.tabChanged}>
+                <Tabs activeTab={tab} tabChanged={this.tabChanged} busy={true}>
                     {tabs}
                 </Tabs>
 
