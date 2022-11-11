@@ -113,17 +113,6 @@ class TestCollaborationsServices(AbstractTest):
         self.assertTrue(res["error"])
         self.assertTrue("automatic_connection_not_allowed" in res["message"])
 
-    def test_delete_all_services(self):
-        self.login("urn:john")
-        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
-        collaboration = self.get(f"/api/collaborations/{collaboration_id}")
-        self.assertEqual(2, len(collaboration["services"]))
-
-        self.delete("/api/collaborations_services/delete_all_services", primary_key=collaboration_id,
-                    with_basic_auth=False)
-        collaboration = self.get(f"/api/collaborations/{collaboration_id}")
-        self.assertEqual(0, len(collaboration["services"]))
-
     def test_connect_collaboration_service(self):
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
         collaboration = self.get(f"/api/collaborations/{collaboration_id}")

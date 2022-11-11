@@ -5,6 +5,10 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 class SQLAlchemyPrePing(SQLAlchemy):
+
+    def create_engine(self, sa_url, engine_opts):
+        return super().create_engine(sa_url, engine_opts)
+
     def apply_pool_defaults(self, app, options):
         options["pool_pre_ping"] = True
         options["echo"] = app.config["SQLALCHEMY_ECHO"]

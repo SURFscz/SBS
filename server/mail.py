@@ -83,9 +83,12 @@ def _do_send_mail(subject, recipients, template, context, preview, working_outsi
 
     if not preview and not suppress_mail and not open_mail_in_browser:
         mail = current_app.mail
-        ctx = current_app.app_context()
-        thr = Thread(target=_send_async_email, args=[ctx, msg, mail])
-        thr.start()
+        if "TESTING" in os.environ:
+            mail.send(msg)
+        else:
+            ctx = current_app.app_context()
+            thr = Thread(target=_send_async_email, args=[ctx, msg, mail])
+            thr.start()
 
     if suppress_mail and not preview:
         logger.info(f"Sending mail {msg.html}")

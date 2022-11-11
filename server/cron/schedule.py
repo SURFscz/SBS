@@ -1,5 +1,4 @@
 import atexit
-import logging
 import threading
 
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -34,12 +33,6 @@ def start_scheduling(app):
         scheduler.add_job(func=cleanup_non_open_requests, hour=cfq.user_requests_retention.cron_hour_of_day, **options)
     if cfq.orphan_users.enabled:
         scheduler.add_job(func=delete_orphan_users, hour=cfq.orphan_users.cron_hour_of_day, **options)
-    scheduler.start()
-
-    logger = logging.getLogger("scheduler")
-    jobs = scheduler.get_jobs()
-    for job in jobs:
-        logger.info(f"Running {job.name} job at {job.next_run_time}")
 
     if cfq.metadata.get("parse_at_startup", False):
         threading.Thread(target=parse_idp_metadata, args=(app,)).start()
@@ -47,4 +40,6 @@ def start_scheduling(app):
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
     app.scheduler = scheduler
+    # Otherwise no jobs will run
+    scheduler.start()
     return scheduler

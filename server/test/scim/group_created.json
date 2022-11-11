@@ -1,0 +1,17 @@
+{
+	"schemas": [
+		"urn:scim:schemas:core:1.0"
+	],
+	"id": "8d85ea05-fc5c-4222-8efd-130ff7938ee1",
+	"externalId": "9cc9531d-d8bb-4d19-91d7-4fd7968ccb7b",
+	"meta": {
+		"resourceType": "Group",
+		"created": "2022-10-21T13:18:06",
+		"lastModified": "2022-10-21T13:18:06",
+		"location": "/Groups/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
+		"version": "W/\"97b6a9668c0eab95c853f564261d28455d5f222e\""
+	},
+    "name": "uva:research ",
+    "displayName": "UVA UCC research",
+    "members": []
+}

@@ -22,6 +22,7 @@ from server.db.domain import Organisation, OrganisationMembership, OrganisationI
     CollaborationRequest, SchacHomeOrganisation, Collaboration, CollaborationMembership, Invitation
 from server.db.models import update, save, delete
 from server.mail import mail_organisation_invitation, mail_platform_admins
+from server.scim.events import broadcast_organisation_deleted
 
 organisation_api = Blueprint("organisation_api", __name__, url_prefix="/api/organisations")
 
@@ -360,6 +361,8 @@ def update_organisation():
 @json_endpoint
 def delete_organisation(organisation_id):
     confirm_write_access()
+
+    broadcast_organisation_deleted(Organisation.query.get(organisation_id))
     return delete(Organisation, organisation_id)
 
 

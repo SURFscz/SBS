@@ -565,6 +565,10 @@ I18n.translations.nl = {
                 reactivated: "Token {{name}} geheractiveerd",
             }
         },
+        scimServices: {
+            searchPlaceHolder: "Search for scim services..",
+            noEntities: "There are no service configured with the mock scim endpoint",
+        }
     },
     user: {
         titleUpdate: "Werk de sleutels in je gebruikersprofiel bij",
@@ -1717,6 +1721,22 @@ I18n.translations.nl = {
             total: "Logins",
             succeeded: "Succeeded",
             failed: "Failed",
+        },
+        scim: {
+            info: "If enabled there is a mock remote SCIM client available to test the SCIM messages." +
+                "Configure a Service with the following SCIM URL to start testing the SCIM functionality",
+            services: "These services are currently configured with the SCIM mock endpoint",
+            stats: "All API calls and state updates send to the mock SCIM endpoints are stored in an in-memory database.",
+            retrieveStats: "Fetch stats",
+            reRetrieveStats: "Refresh stats",
+            clearStats: "Clear stats",
+            clearConfirmation: "Are you sure you want to clear the SCIM statistics?",
+            service: {
+                scimUrl: "Scim URL",
+                scimEnabled: "Scim enabled",
+                scimProvisionUsers: "Provision users?",
+                scimProvisionGroups: "Provision groups?"
+            }
         }
     },
     access: {
@@ -1771,7 +1791,7 @@ I18n.translations.nl = {
             "Als je bent uitgenodigd, volg dan de link uit de e-mail.",
         createCollRequest: "Vraag je eigen samenwerking aan",
         startCreateCollRequest: "Je ben geen lid van een samenwerking, {{name}} stelt je in staat om een eigen samenwerking aan te vragen. Een beheerder van {{name}} zal je aanvraag moeten goedkeuren." +
-           "Als je bent uitgenodigd, volg dan de link uit de e-mail.",
+            "Als je bent uitgenodigd, volg dan de link uit de e-mail.",
         createCollTxt: "Maak samenwerking aan",
         createCollRequestTxt: "Vraag samenwerking aan",
         contact: "",
@@ -1827,8 +1847,8 @@ I18n.translations.nl = {
         invitationNotFound: "Deze uitnodiging bestaat niet (meer). Waarschijnlijk is de uitnodiging al eerder gebruikt. Vraag aan de uitnodiger of je een nieuwe uitnodiging kunt krijgen.",
         invalidSecondFactorUUID: "De redirect vanuit eduTeams is verlopen. Ga terug naar de service die je probeerde te bereiken en probeer het opnieuw.",
         invalidPamWebSSO: "Je sessie is verlopen. Ga terug naar de service waar je probeert in te loggen en probeer het opnieuw.",
-        msg: "Mmmm, het lijkt erop dat je op de een of andere manier een link hebt gekregen waar we je niet mee kunnen helpen. Sorry daarvoor." +
-            "Je zou kunnen proberen de <a href='{{base_url}}'> startpagina </a> te bezoeken. Als je daar niet iets vindt waar je mee geholpen bent, " +
+        msg: "Mmmm, het lijkt erop dat je op de een of andere manier een link hebt gekregen waar we je niet mee kunnen helpen. Sorry daarvoor. </br></br>" +
+            "Je zou kunnen proberen de <a href='{{base_url}}'>startpagina</a> te bezoeken. Als je daar niet iets vindt waar je mee geholpen bent, " +
             "neem dan contact op met de persoon die je heeft uitgenodigd, of volg de help-link waar ook staat hoe je contact kunt opnemen met het team van SURF Research Access Management."
     },
     mfa: {

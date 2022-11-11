@@ -2,6 +2,7 @@ import json
 import os
 import re
 import traceback
+import inspect
 from functools import wraps
 from pathlib import Path
 from urllib.parse import urlparse
@@ -42,7 +43,7 @@ def auth_filter(app_config):
     url_path = urlparse(url).path
     is_whitelisted_url = False
 
-    if url_path in white_listing or url_path.startswith("/pam-weblogin"):
+    if url_path in white_listing or url_path.startswith("/pam-weblogin") or url_path.startswith("/api/scim"):
         is_whitelisted_url = True
         session["destination_url"] = url
 
@@ -148,6 +149,9 @@ def json_endpoint(f):
             # This will mark the session modified again if something is stored like TOTP secret
             body, status = f(*args, **kwargs)
             response = jsonify(body)
+            # Sneaky way to implement callback to add headers to the status
+            if inspect.isfunction(status):
+                status = status(response)
             _audit_trail()
             _add_custom_header(response)
             db.session.commit()
@@ -208,6 +212,7 @@ def config():
             "continue_eduteams_redirect_uri": cfg.oidc.continue_eduteams_redirect_uri,
             "introspect_endpoint": f"{cfg.base_server_url}/api/tokens/introspect",
             "past_dates_allowed": cfg.feature.past_dates_allowed,
+            "mock_scim_enabled": cfg.feature.mock_scim_enabled,
             "threshold_for_collaboration_inactivity_warning": threshold_for_warning
             }, 200
 

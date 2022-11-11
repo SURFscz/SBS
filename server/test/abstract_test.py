@@ -4,6 +4,7 @@ import os
 import uuid
 from base64 import b64encode
 from time import time
+from typing import Union
 from uuid import uuid4
 
 import jwt
@@ -19,7 +20,7 @@ from server.auth.secrets import secure_hash
 from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, User, Organisation, Service, ServiceAup, UserToken, Invitation, \
-    PamSSOSession
+    PamSSOSession, Group
 from server.test.seed import seed, sarah_name
 from server.tools import read_file
 
@@ -46,6 +47,7 @@ class AbstractTest(TestCase):
     def setUpClass(cls):
         os.environ["CONFIG"] = "config/test_config.yml"
         os.environ["TESTING"] = "1"
+        os.environ["SCIM_DISABLED"] = "1"
 
         from server.__main__ import app
 
@@ -108,11 +110,13 @@ class AbstractTest(TestCase):
         with requests.Session():
             self.client.get("/api/users/resume-session?code=123456")
 
-    def get(self, url, query_data={}, response_status_code=200, with_basic_auth=True, headers={}):
+    def get(self, url, query_data={}, response_status_code=200, with_basic_auth=True, headers={}, expected_headers={}):
         with requests.Session():
             response = self.client.get(url, headers={**BASIC_AUTH_HEADER, **headers} if with_basic_auth else headers,
                                        query_string=query_data)
             self.assertEqual(response_status_code, response.status_code, msg=str(response.json))
+            for key, value in expected_headers.items():
+                self.assertEqual(response.headers.get(key), value)
             return response if response_status_code == 302 else response.json if hasattr(response, "json") else None
 
     def post(self, url, body={}, headers={}, response_status_code=201, with_basic_auth=True):
@@ -259,3 +263,9 @@ class AbstractTest(TestCase):
         db.session.merge(user)
         db.session.commit()
         return user.second_factor_auth
+
+    @staticmethod
+    def clear_group_memberships(group: Union[Group, Collaboration]):
+        group.collaboration_memberships.clear()
+        db.session.merge(group)
+        db.session.commit()
