@@ -1025,8 +1025,7 @@ class System extends React.Component {
             confirmationDialogQuestion, busy, tab, filteredAuditLogs, databaseStats, suspendedUsers, cleanedRequests,
             limit, query, selectedTables, expiredCollaborations, suspendedCollaborations, expiredMemberships, cronJobs,
             validationData, showOrganisationsWithoutAdmin, showServicesWithoutAdmin, plscData, compositionData,
-            currentlySuspendedUsers, userLoginStats, deletedUsers, serverQuery, demoSeedResult, humanTestingSeedResult,
-            scimData
+            currentlySuspendedUsers, userLoginStats, deletedUsers, serverQuery, demoSeedResult, humanTestingSeedResult
         } = this.state;
         const {config} = this.props;
 
