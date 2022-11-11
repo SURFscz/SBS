@@ -9,7 +9,7 @@ from flask import request as current_request
 from sqlalchemy import text
 from werkzeug.exceptions import BadRequest, Unauthorized
 
-from server.api.base import json_endpoint, query_param
+from server.api.base import query_param, json_endpoint
 from server.auth.security import confirm_write_access
 from server.db.db import db
 from server.db.domain import Service
@@ -56,11 +56,6 @@ def scim_endpoint(f):
     return wrapper
 
 
-def _get_external_id():
-    filter_param = query_param("filter")
-    return re.search(r"externalId eq \"(.*)\"", filter_param).groups()[0]
-
-
 def _get_database_service():
     service = database.get(request_context.service_id, None)
     if service is None:
@@ -70,7 +65,8 @@ def _get_database_service():
 
 
 def _find_scim_object(collection_name):
-    external_id = _get_external_id()
+    filter_param = query_param("filter")
+    external_id = re.search(r"externalId eq \"(.*)\"", filter_param).groups()[0]
     service = _get_database_service()
     res = list(filter(lambda obj: obj["externalId"] == external_id, list(service[collection_name].values())))
     return {"Resources": [res[0]]} if res else {"totalResults": 0}
@@ -149,7 +145,9 @@ def statistics():
 
     sql = "SELECT s.id, s.name, c.counter FROM scim_service_counters c INNER JOIN services s ON s.id = c.service_id"
     rows = db.session.execute(text(sql))
-    return {"counters": [{row[0], row[1]} for row in rows], "http_calls": http_calls, "database": database}, 200
+    counters = [{"id": row[0], "name": row[1], "counter": row[2]} for row in rows]
+    res = {"database": database, "http_calls": http_calls, "counters": counters}
+    return res, 200
 
 
 @scim_mock_api.route("/scim-services", methods=["GET"], strict_slashes=False)
@@ -171,5 +169,7 @@ def clear():
 
     global http_calls
     http_calls = {}
+
+    db.session.execute(text("DELETE FROM scim_service_counters"))
 
     return {}, 204

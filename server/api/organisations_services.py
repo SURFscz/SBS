@@ -44,6 +44,7 @@ def add_collaborations_services():
     for collaboration in organisation.collaborations:
         create_service_groups(service, collaboration)
 
+    db.session.commit()
     emit_socket(f"organisation_{organisation_id}")
     broadcast_organisation_changed(organisation)
 
