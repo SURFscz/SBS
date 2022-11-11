@@ -88,16 +88,9 @@ def connect_collaboration_service_api():
         request_new_service_connection(collaboration, None, True, service, admins[0])
         status = "pending"
 
-    return {
-               "status": status,
-               "collaboration": {
-                   "organisation_short_name": organisation.short_name,
-                   "short_name": coll_short_name
-               },
-               "service": {
-                   "entity_id": service.entity_id
-               }
-           }, 201
+    return {"status": status,
+            "collaboration": {"organisation_short_name": organisation.short_name, "short_name": coll_short_name},
+            "service": {"entity_id": service.entity_id}}, 201
 
 
 @collaborations_services_api.route("/<collaboration_id>/<service_id>", methods=["DELETE"], strict_slashes=False)

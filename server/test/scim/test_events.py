@@ -167,7 +167,7 @@ class TestEvents(AbstractTest):
     @responses.activate
     def test_delete_group(self):
         group_found = json.loads(read_file("test/scim/group_found.json"))
-        group= self.find_entity_by_name(Group, ai_researchers_group)
+        group = self.find_entity_by_name(Group, ai_researchers_group)
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=group_found, status=200)
             rsps.add(responses.DELETE,
