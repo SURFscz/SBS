@@ -348,7 +348,7 @@ class System extends React.Component {
                      icon={<FontAwesomeIcon icon="snowflake"/>}>
             <div className="mod-system">
                 <section className={"info-block-container"}>
-                    <Scim/>
+                    <Scim {...this.props}/>
                 </section>
             </div>
         </div>)
