@@ -1,6 +1,5 @@
 # -*- coding: future_fstrings -*-
 import os
-from typing import Union
 
 from flask import current_app
 
