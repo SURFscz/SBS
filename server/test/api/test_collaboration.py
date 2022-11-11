@@ -142,8 +142,8 @@ class TestCollaboration(AbstractTest):
 
         tag_existing = {'label': 'tag_uuc', 'value': Tag.query.filter(Tag.tag_value == "tag_uuc").one().id}
         tag_just_valid = {'label': value_just_valid, 'value': value_just_valid, '__isNew__': True}
-        tag_too_long = {'label': value_too_long,   'value': value_too_long,   '__isNew__': True}
-        tag_invalid = {'label': value_invalid,    'value': value_invalid,    '__isNew__': True}
+        tag_too_long = {'label': value_too_long, 'value': value_too_long, '__isNew__': True}
+        tag_invalid = {'label': value_invalid, 'value': value_invalid, '__isNew__': True}
 
         body = {
             "name": "new_collaboration",
