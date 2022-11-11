@@ -30,6 +30,7 @@ def connect_service_collaboration(service_id, collaboration_id, force=False):
 
     collaboration.services.append(service)
     db.session.merge(collaboration)
+    db.session.commit()
 
     # Create groups from service_groups
     create_service_groups(service, collaboration)
@@ -87,31 +88,9 @@ def connect_collaboration_service_api():
         request_new_service_connection(collaboration, None, True, service, admins[0])
         status = "pending"
 
-    return {
-        "status": status,
-        "collaboration": {
-            "organisation_short_name": organisation.short_name,
-            "short_name": coll_short_name
-        },
-        "service": {
-            "entity_id": service.entity_id
-        }
-    }, 201
-
-
-@collaborations_services_api.route("/delete_all_services/<collaboration_id>", methods=["DELETE"], strict_slashes=False)
-@json_endpoint
-def delete_all_services(collaboration_id):
-    confirm_collaboration_admin(collaboration_id)
-
-    collaboration = Collaboration.query.get(collaboration_id)
-
-    collaboration.services = []
-    db.session.merge(collaboration)
-
-    emit_socket(f"collaboration_{collaboration.id}")
-
-    return None, 204
+    return {"status": status,
+            "collaboration": {"organisation_short_name": organisation.short_name, "short_name": coll_short_name},
+            "service": {"entity_id": service.entity_id}}, 201
 
 
 @collaborations_services_api.route("/<collaboration_id>/<service_id>", methods=["DELETE"], strict_slashes=False)

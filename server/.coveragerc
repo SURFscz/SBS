@@ -1,0 +1,12 @@
+[run]
+omit =
+    test/*
+    migrations/*
+    mqtt/*
+    __main__.py
+    mail.py
+
+concurrency =
+    thread
+    eventlet
+    multiprocessing

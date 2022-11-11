@@ -5,6 +5,7 @@ import random
 import re
 import string
 import unicodedata
+import uuid
 from typing import Iterator
 
 from flask import current_app
@@ -69,6 +70,8 @@ def add_user_claims(user_info_json, uid, user, replace_none_values=True):
                 user.schac_home_organisation = schac_home
     if not user.username:
         user.username = generate_unique_username(user)
+    if not user.external_id:
+        user.external_id = str(uuid.uuid4())
 
 
 # return all active (non-expired/suspended) collaboration from the list

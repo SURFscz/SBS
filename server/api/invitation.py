@@ -9,12 +9,13 @@ from werkzeug.exceptions import Conflict, Forbidden
 
 from server.api.base import json_endpoint, query_param, emit_socket
 from server.api.service_aups import add_user_aups
-from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call
 from server.auth.secrets import generate_token
+from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call
 from server.db.defaults import default_expiry_date
 from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, Organisation
 from server.db.models import delete
 from server.mail import mail_collaboration_invitation
+from server.scim.events import broadcast_collaboration_changed, broadcast_group_changed
 
 invitations_api = Blueprint("invitations_api", __name__, url_prefix="/api/invitations")
 
@@ -170,6 +171,7 @@ def invitations_accept():
         collaboration_membership.invitation_id = invitation.id
 
     collaboration_membership = db.session.merge(collaboration_membership)
+
     # We need the persistent identifier of the collaboration_membership which will be generated after the delete-commit
     if invitation.external_identifier:
         invitation.status = "accepted"
@@ -181,13 +183,19 @@ def invitations_accept():
     # ensure all authorisation group membership are added
     groups = invitation.groups + list(filter(lambda ag: ag.auto_provision_members, collaboration.groups))
 
-    for group in set(list({ag.id: ag for ag in groups}.values())):
+    unique_groups = list(set({ag.id: ag for ag in groups}.values()))
+    for group in unique_groups:
         group.collaboration_memberships.append(collaboration_membership)
         db.session.merge(group)
+
+    db.session.commit()
+    for group in unique_groups:
+        broadcast_group_changed(group)
 
     add_user_aups(collaboration, user_id)
 
     emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
+    broadcast_collaboration_changed(collaboration)
 
     res = {'collaboration_id': collaboration.id, 'user_id': user_id}
     return res, 201

@@ -1,3 +1,4 @@
+# flake8: noqa
 import logging
 import os
 import sys
@@ -35,6 +36,7 @@ from server.api.invitation import invitations_api
 from server.api.ipaddress import ipaddress_api
 from server.api.join_request import join_request_api
 from server.api.mfa import mfa_api
+from server.api.mock_scim import scim_mock_api
 from server.api.mock_user import mock_user_api
 from server.api.organisation import organisation_api
 from server.api.organisation_invitation import organisation_invitations_api
@@ -42,6 +44,7 @@ from server.api.organisation_membership import organisation_membership_api
 from server.api.organisations_services import organisations_services_api
 from server.api.pam_websso import pam_websso_api
 from server.api.plsc import plsc_api
+from server.api.scim import scim_api
 from server.api.service import service_api
 from server.api.service_aups import service_aups_api
 from server.api.service_connection_request import service_connection_request_api
@@ -58,6 +61,7 @@ from server.api.user_saml import user_saml_api
 from server.api.user_token import user_token_api
 from server.cron.schedule import start_scheduling
 from server.db.db import db, db_migrations
+from server.db.executor import init_executor
 from server.db.redis import init_redis
 from server.logger.traceback_info_filter import TracebackInfoFilter
 from server.mqtt.mqtt import MqttClient
@@ -122,11 +126,14 @@ blueprints = [
     collaborations_services_api, group_api, group_members_api, api_key_api, aup_api, collaboration_request_api,
     service_connection_request_api, audit_log_api, ipaddress_api, system_api, organisations_services_api, mock_user_api,
     plsc_api, image_api, service_group_api, service_invitations_api, service_membership_api, service_aups_api,
-    user_token_api, token_api, tag_api, swagger_specs, pam_websso_api, user_login_api, service_token_api
+    user_token_api, token_api, tag_api, swagger_specs, pam_websso_api, user_login_api, service_token_api, scim_api
 ]
 
 for api_blueprint in blueprints:
     app.register_blueprint(api_blueprint)
+
+if config.feature.mock_scim_enabled:
+    app.register_blueprint(scim_mock_api)
 
 app.register_error_handler(404, page_not_found)
 
@@ -156,6 +163,7 @@ db.init_app(app)
 app.db = db
 
 app.redis_client = init_redis(config)
+app.executor = init_executor(app)
 
 app.app_config = config
 app.app_config["profile"] = profile

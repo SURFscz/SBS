@@ -8,6 +8,7 @@ from server.auth.security import confirm_collaboration_admin, current_user_uid, 
 from server.db.defaults import STATUS_ACTIVE
 from server.db.domain import CollaborationMembership, db, Collaboration
 from server.logger.context_logger import ctx_logger
+from server.scim.events import broadcast_collaboration_changed, broadcast_group_changed
 
 collaboration_membership_api = Blueprint("collaboration_membership_api", __name__,
                                          url_prefix="/api/collaboration_memberships")
@@ -32,7 +33,11 @@ def delete_collaboration_membership(collaboration_id, user_id):
 
     res = {'collaboration_id': collaboration_id, 'user_id': user_id}
 
-    emit_socket(f"collaboration_{collaboration_id}", include_current_user_id=True)
+    collaboration = memberships[0].collaboration if memberships else None
+    db.session.commit()
+    if collaboration:
+        emit_socket(f"collaboration_{collaboration_id}", include_current_user_id=True)
+        broadcast_collaboration_changed(collaboration)
 
     return (res, 204) if len(memberships) > 0 else (None, 404)
 
@@ -102,10 +107,16 @@ def create_collaboration_membership_role():
     collaboration_membership = db.session.merge(collaboration_membership)
     collaboration_membership_json = jsonify(collaboration_membership).json
 
-    for group in [group for group in collaboration.groups if group.auto_provision_members]:
+    auto_provision_groups = [group for group in collaboration.groups if group.auto_provision_members]
+    for group in auto_provision_groups:
         group.collaboration_memberships.append(collaboration_membership)
         db.session.merge(group)
 
+    db.session.commit()
+    for group in auto_provision_groups:
+        broadcast_group_changed(group)
+
     emit_socket(f"collaboration_{collaboration_id}", include_current_user_id=True)
+    broadcast_collaboration_changed(collaboration)
 
     return collaboration_membership_json, 201

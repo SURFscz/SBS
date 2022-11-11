@@ -881,4 +881,16 @@ export function deleteServiceToken(id) {
     return fetchDelete(`/api/service_tokens/${id}`)
 }
 
+//Mock-scim
+export function allMockScimServices() {
+    return fetchJson("/api/scim_mock/scim-services")
+}
+
+export function mockScimStatistics() {
+    return fetchJson("/api/scim_mock/statistics")
+}
+
+export function clearMockScimStatistics() {
+    return fetchDelete("/api/scim_mock/clear")
+}
 

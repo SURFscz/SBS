@@ -20,6 +20,7 @@ class User(Base, db.Model):
     __tablename__ = "users"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     uid = db.Column("uid", db.String(length=512), nullable=False)
+    external_id = db.Column("external_id", db.String(length=255), nullable=False)
     name = db.Column("name", db.String(length=255), nullable=True)
     username = db.Column("username", db.String(length=255), nullable=True)
     nick_name = db.Column("nick_name", db.String(length=255), nullable=True)
@@ -42,6 +43,8 @@ class User(Base, db.Model):
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
+    updated_at = db.Column("updated_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
     organisation_memberships = db.relationship("OrganisationMembership", back_populates="user",
                                                cascade_backrefs=False, passive_deletes=True)
     collaboration_memberships = db.relationship("CollaborationMembership", back_populates="user",
@@ -84,7 +87,6 @@ class User(Base, db.Model):
             "affiliation": self.affiliation,
             "scoped_affiliation": self.scoped_affiliation,
             "eduperson_principal_name": self.eduperson_principal_name,
-
         }
         if include_details:
             result["collaboration_memberships"] = [cm.allowed_attr_view() for cm in
@@ -247,6 +249,8 @@ class Collaboration(Base, db.Model, LogoMixin):
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
+    updated_at = db.Column("updated_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
     services = db.relationship("Service", secondary=services_collaborations_association, lazy="select",
                                back_populates="collaborations")
@@ -460,6 +464,12 @@ class Service(Base, db.Model, LogoMixin):
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.service_memberships))) > 0
 
+    def provision_scim_users(self):
+        return self.scim_enabled and self.scim_url and self.scim_provision_users
+
+    def provision_scim_groups(self):
+        return self.scim_enabled and self.scim_url and self.scim_provision_groups
+
 
 class ServiceInvitation(Base, db.Model):
     __tablename__ = "service_invitations"
@@ -498,6 +508,8 @@ class Group(Base, db.Model):
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
+    updated_at = db.Column("updated_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
     def is_member(self, user_id):
