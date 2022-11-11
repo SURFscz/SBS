@@ -33,7 +33,7 @@ class Scim extends React.Component {
         if (showConfirmation) {
             this.setState({
                 confirmationDialogOpen: true,
-                confirmationDialogQuestion: I18n.t("system.scim."),
+                confirmationDialogQuestion: I18n.t("system.scim.clearConfirmation"),
                 confirmationDialogAction: () => this.clearStatistics(false)
             });
         } else {
@@ -56,7 +56,7 @@ class Scim extends React.Component {
     };
 
     renderStatistics = statistics => {
-        return <ReactJson src={statistics} collapsed={3}/>
+        return <ReactJson src={statistics} collapsed={1}/>
     }
 
     renderServices = services => {

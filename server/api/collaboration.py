@@ -459,6 +459,8 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True):
                                                                  collaboration_id=collaboration.id,
                                                                  created_by=user.uid, updated_by=user.uid)
         db.session.merge(admin_collaboration_membership)
+        db.session.commit()
+
         broadcast_collaboration_changed(collaboration)
 
     services = organisation.services

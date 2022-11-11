@@ -35,6 +35,7 @@ from server.db.domain import User, OrganisationMembership, CollaborationMembersh
 from server.db.models import log_user_login
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error, mail_account_deletion
+from server.scim.events import broadcast_user_deleted
 
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 
@@ -645,6 +646,8 @@ def delete_user():
             user_name_history = UserNameHistory(username=user.username)
             db.session.merge(user_name_history)
     db.session.commit()
+
+    broadcast_user_deleted(user)
 
     session["user"] = None
     session.clear()

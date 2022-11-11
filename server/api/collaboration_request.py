@@ -131,6 +131,8 @@ def approve_request(collaboration_request_id):
                                                              collaboration_id=collaboration.id,
                                                              created_by=user.uid, updated_by=user.uid)
     db.session.merge(admin_collaboration_membership)
+    db.session.commit()
+
     broadcast_collaboration_changed(collaboration)
 
     mail_accepted_declined_collaboration_request({"salutation": f"Dear {user.name}",

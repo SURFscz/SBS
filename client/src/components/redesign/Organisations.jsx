@@ -68,7 +68,10 @@ class Organisations extends React.Component {
                 key: "schacHomes",
                 header: I18n.t("models.organisations.schacHomeOrganisations"),
                 mapper: org => isEmpty(org.schac_home_organisations) ? "-" :
-                    <div className={"schac_home_organisations"}>{org.schac_home_organisations.map(sho => <span>{sho.name}</span>)}</div>
+                    <div className={"schac_home_organisations"}>
+                        {org.schac_home_organisations.map((sho, index) => <span
+                            key={`${sho.name}_${index}`}>{sho.name}</span>)}
+                    </div>
             },
             {
                 key: "role",

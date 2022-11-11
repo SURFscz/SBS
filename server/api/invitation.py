@@ -15,7 +15,7 @@ from server.db.defaults import default_expiry_date
 from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, Organisation
 from server.db.models import delete
 from server.mail import mail_collaboration_invitation
-from server.scim.events import broadcast_collaboration_changed
+from server.scim.events import broadcast_collaboration_changed, broadcast_group_changed
 
 invitations_api = Blueprint("invitations_api", __name__, url_prefix="/api/invitations")
 
@@ -183,10 +183,14 @@ def invitations_accept():
     # ensure all authorisation group membership are added
     groups = invitation.groups + list(filter(lambda ag: ag.auto_provision_members, collaboration.groups))
 
-    for group in set(list({ag.id: ag for ag in groups}.values())):
+    unique_groups = list(set({ag.id: ag for ag in groups}.values()))
+    for group in unique_groups:
         group.collaboration_memberships.append(collaboration_membership)
         db.session.merge(group)
-        broadcast_collaboration_changed(group)
+
+    db.session.commit()
+    for group in unique_groups:
+        broadcast_group_changed(group)
 
     add_user_aups(collaboration, user_id)
 

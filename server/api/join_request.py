@@ -11,7 +11,7 @@ from server.auth.security import confirm_collaboration_admin, current_user_id, c
 from server.db.domain import CollaborationMembership, Collaboration, JoinRequest, db
 from server.db.models import delete
 from server.mail import mail_collaboration_join_request, mail_accepted_declined_join_request
-from server.scim.events import broadcast_collaboration_changed
+from server.scim.events import broadcast_collaboration_changed, broadcast_group_changed
 
 join_request_api = Blueprint("join_request_api", __name__, url_prefix="/api/join_requests")
 
@@ -126,12 +126,15 @@ def approve_join_request():
     join_request.status = STATUS_APPROVED
     collaboration_membership = db.session.merge(collaboration_membership)
     db.session.merge(join_request)
-    db.session.commit()
 
-    for group in [group for group in collaboration.groups if group.auto_provision_members]:
+    auto_provision_groups = [group for group in collaboration.groups if group.auto_provision_members]
+    for group in auto_provision_groups:
         group.collaboration_memberships.append(collaboration_membership)
         db.session.merge(group)
-        broadcast_collaboration_changed(group)
+
+    db.session.commit()
+    for group in auto_provision_groups:
+        broadcast_group_changed(group)
 
     emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
     broadcast_collaboration_changed(collaboration)
