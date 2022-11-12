@@ -182,7 +182,9 @@ def apply_service_changed(app, collaboration_id, service_id, deletion=False):
     with app.app_context():
         collaboration = Collaboration.query.filter(Collaboration.id == collaboration_id).one()
         services = Service.query.filter(Service.id == service_id).all()
-        return _do_apply_group_collaboration_change(collaboration, services, deletion)
+        results = [_do_apply_group_collaboration_change(group, services, deletion) for group in collaboration.groups]
+        results.append(_do_apply_group_collaboration_change(collaboration, services, deletion))
+        return any(results)
 
 
 # Organisation has a new service or a service is deleted from an organisation
@@ -192,6 +194,6 @@ def apply_organisation_change(app, organisation_id: int, deletion=False):
         organisation = Organisation.query.filter(Organisation.id == organisation_id).one()
         for co in organisation.collaborations:
             services = co.services + co.organisation.services
-            res = _do_apply_group_collaboration_change(co, services, deletion)
-            results.append(res)
+            results += [_do_apply_group_collaboration_change(group, services, deletion) for group in co.groups]
+            results.append(_do_apply_group_collaboration_change(co, services, deletion))
         return any(results)
