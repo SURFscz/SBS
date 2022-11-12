@@ -8,6 +8,7 @@ from server.auth.security import confirm_collaboration_admin, confirm_external_a
 from server.db.db import db
 from server.db.domain import Service, Collaboration
 from server.schemas import json_schema_validator
+from server.scim.events import broadcast_service_added, broadcast_service_deleted
 
 collaborations_services_api = Blueprint("collaborations_services_api", __name__,
                                         url_prefix="/api/collaborations_services")
@@ -36,6 +37,7 @@ def connect_service_collaboration(service_id, collaboration_id, force=False):
     create_service_groups(service, collaboration)
 
     emit_socket(f"collaboration_{collaboration.id}")
+    broadcast_service_added(collaboration, service)
 
     return 1
 
@@ -103,9 +105,11 @@ def delete_collaborations_services(collaboration_id, service_id):
 
     collaboration = Collaboration.query.get(collaboration_id)
 
-    collaboration.services.remove(Service.query.get(service_id))
+    service = Service.query.get(service_id)
+    collaboration.services.remove(service)
     db.session.merge(collaboration)
 
     emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
+    broadcast_service_deleted(collaboration, service)
 
     return {'collaboration_id': collaboration_id, 'service_id': service_id}, 204

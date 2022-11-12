@@ -80,6 +80,15 @@ class TestMockScim(AbstractTest):
         self.assertEqual(1, len(res["database"][str(cloud_service.id)]["groups"]))
         self.assertEqual(7, len(res["http_calls"][str(cloud_service.id)]))
 
+        self.delete("/api/scim_mock/Users", primary_key=scim_id_user, with_basic_auth=False, headers=headers)
+        self.delete("/api/scim_mock/Groups", primary_key=scim_id_group, with_basic_auth=False, headers=headers)
+
+        res = self.get("/api/scim_mock/statistics", with_basic_auth=False)
+
+        self.assertEqual(0, len(res["database"][str(cloud_service.id)]["users"]))
+        self.assertEqual(0, len(res["database"][str(cloud_service.id)]["groups"]))
+        self.assertEqual(9, len(res["http_calls"][str(cloud_service.id)]))
+
         # Now reset everything
         self.delete("/api/scim_mock/clear", with_basic_auth=False)
         res = self.get("/api/scim_mock/statistics", with_basic_auth=False)

@@ -69,7 +69,7 @@ def _find_scim_object(collection_name):
     external_id = re.search(r"externalId eq \"(.*)\"", filter_param).groups()[0]
     service = _get_database_service()
     res = list(filter(lambda obj: obj["externalId"] == external_id, list(service[collection_name].values())))
-    return {"Resources": [res[0]]} if res else {"totalResults": 0}
+    return {"totalResults": 1, "Resources": [res[0]]} if res else {"totalResults": 0}
 
 
 def _new_scim_object(collection_name, collection_type):
@@ -96,6 +96,14 @@ def _update_scim_object(scim_id, collection_name):
     return new_entry
 
 
+def _delete_scim_object(scim_id, collection_name):
+    service = _get_database_service()
+    res = service[collection_name].get(scim_id)
+    if res:
+        del service[collection_name][scim_id]
+    return res if res else {}
+
+
 @scim_mock_api.route("/Users", methods=["GET"], strict_slashes=False)
 @json_endpoint
 @scim_endpoint
@@ -117,6 +125,13 @@ def update_user(scim_id):
     return _update_scim_object(scim_id, "users"), 201
 
 
+@scim_mock_api.route("/Users/<scim_id>", methods=["DELETE"], strict_slashes=False)
+@json_endpoint
+@scim_endpoint
+def delete_user(scim_id):
+    return _delete_scim_object(scim_id, "users"), 204
+
+
 @scim_mock_api.route("/Groups", methods=["GET"], strict_slashes=False)
 @json_endpoint
 @scim_endpoint
@@ -136,6 +151,13 @@ def new_group():
 @scim_endpoint
 def update_group(scim_id):
     return _update_scim_object(scim_id, "groups"), 201
+
+
+@scim_mock_api.route("/Groups/<scim_id>", methods=["DELETE"], strict_slashes=False)
+@json_endpoint
+@scim_endpoint
+def delete_group(scim_id):
+    return _delete_scim_object(scim_id, "groups"), 204
 
 
 @scim_mock_api.route("/statistics", methods=["GET"], strict_slashes=False)
