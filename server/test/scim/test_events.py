@@ -7,8 +7,9 @@ import responses
 from server.db.domain import User, Collaboration, Group, Organisation, Service
 from server.scim.events import broadcast_user_changed, broadcast_user_deleted, broadcast_collaboration_changed, \
     broadcast_collaboration_deleted, \
-    broadcast_organisation_changed, broadcast_organisation_deleted, broadcast_group_changed, broadcast_service_added, \
-    broadcast_service_deleted, broadcast_group_deleted
+    broadcast_organisation_deleted, broadcast_group_changed, broadcast_service_added, \
+    broadcast_service_deleted, broadcast_group_deleted, broadcast_organisation_service_added, \
+    broadcast_organisation_service_deleted
 from server.test.abstract_test import AbstractTest
 from server.test.seed import sarah_name, uva_research_name, ai_researchers_group, amsterdam_uva_name, service_cloud_name
 from server.tools import read_file
@@ -183,13 +184,14 @@ class TestEvents(AbstractTest):
         group_created = json.loads(read_file("test/scim/group_created.json"))
         user_found = json.loads(read_file("test/scim/user_found.json"))
         organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
+        service = self.find_entity_by_name(Service, service_cloud_name)
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=group_found, status=200)
             # We mock that all members are already known in the remote SCIM DB
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=user_found, status=200)
             rsps.add(responses.PUT, "http://localhost:8080/api/scim_mock/Groups/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      json=group_created, status=201)
-            future = broadcast_organisation_changed(organisation)
+            future = broadcast_organisation_service_added(organisation, service)
             res = future.result()
             self.assertTrue(res)
 
@@ -208,6 +210,25 @@ class TestEvents(AbstractTest):
                      "http://localhost:8080/api/scim_mock/Groups/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      status=201)
             future = broadcast_organisation_deleted(organisation)
+            res = future.result()
+            self.assertTrue(res)
+
+    @responses.activate
+    def test_broadcast_organisation_service_deleted(self):
+        group_found = json.loads(read_file("test/scim/group_found.json"))
+        user_found = json.loads(read_file("test/scim/user_found.json"))
+        organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
+        service = self.find_entity_by_name(Service, service_cloud_name)
+        with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=group_found, status=200)
+            # We mock that all members are already known in the remote SCIM DB
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=user_found, status=200)
+            rsps.add(responses.DELETE, "http://localhost:8080/api/scim_mock/Users/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
+                     status=201)
+            rsps.add(responses.DELETE,
+                     "http://localhost:8080/api/scim_mock/Groups/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
+                     status=201)
+            future = broadcast_organisation_service_deleted(organisation, service)
             res = future.result()
             self.assertTrue(res)
 

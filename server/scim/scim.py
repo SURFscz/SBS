@@ -24,7 +24,7 @@ def _headers(service: Service, is_delete=False):
     return headers
 
 
-# Construct counter query parma
+# Construct counter query parameter
 def _counter_query_param(service: Service):
     return f"?counter={atomic_increment_counter_value(service)}"
 
@@ -161,7 +161,7 @@ def apply_user_change(app, user_id, deletion=False):
         return bool(scim_services)
 
 
-# Group has been created, updated or deleted. Propagate the changes to the remote SCIM DB's
+# Collaboration has been created, updated or deleted. Propagate the changes to the remote SCIM DB's
 def apply_collaboration_change(app, collaboration_id: int, deletion=False):
     with app.app_context():
         collaboration = Collaboration.query.filter(Collaboration.id == collaboration_id).one()
@@ -188,12 +188,16 @@ def apply_service_changed(app, collaboration_id, service_id, deletion=False):
 
 
 # Organisation has a new service or a service is deleted from an organisation
-def apply_organisation_change(app, organisation_id: int, deletion=False):
+def apply_organisation_change(app, organisation_id: int, service_id: int, deletion=False):
     with app.app_context():
         results = []
         organisation = Organisation.query.filter(Organisation.id == organisation_id).one()
+        if service_id:
+            services = Service.query.filter(Service.id == service_id).all()
+        else:
+            services = organisation.services
         for co in organisation.collaborations:
-            services = co.services + co.organisation.services
+            services = services if service_id else co.services + services
             results += [_do_apply_group_collaboration_change(group, services, deletion) for group in co.groups]
             results.append(_do_apply_group_collaboration_change(co, services, deletion))
         return any(results)

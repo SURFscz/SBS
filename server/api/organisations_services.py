@@ -7,7 +7,8 @@ from server.auth.security import confirm_organisation_admin_or_manager
 from server.db.db import db
 from server.db.domain import Service, Organisation
 from server.schemas import json_schema_validator
-from server.scim.events import broadcast_organisation_changed
+from server.scim.events import broadcast_organisation_service_added, \
+    broadcast_organisation_service_deleted
 
 organisations_services_api = Blueprint("organisations_services_api", __name__,
                                        url_prefix="/api/organisations_services")
@@ -46,7 +47,7 @@ def add_collaborations_services():
 
     db.session.commit()
     emit_socket(f"organisation_{organisation_id}")
-    broadcast_organisation_changed(organisation)
+    broadcast_organisation_service_added(organisation, service)
 
     return None, 201
 
@@ -58,9 +59,11 @@ def delete_organisations_services(organisation_id, service_id):
 
     organisation = Organisation.query.get(organisation_id)
 
-    organisation.services.remove(Service.query.get(service_id))
+    service = Service.query.get(service_id)
+    organisation.services.remove(service)
     db.session.merge(organisation)
 
     emit_socket(f"organisation_{organisation_id}")
+    broadcast_organisation_service_deleted(organisation, service)
 
     return None, 204

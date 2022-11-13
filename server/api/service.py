@@ -421,9 +421,9 @@ def add_allowed_organisations(service_id):
     data = current_request.get_json()
     allowed_organisations = data.get("allowed_organisations", None)
 
-    org_sql = f"DELETE FROM services_organisations WHERE service_id = {service_id}"
+    org_sql = f"DELETE FROM services_organisations WHERE service_id = {service.id}"
     coll_sql = f"DELETE sc FROM services_collaborations sc INNER JOIN collaborations c on c.id = sc.collaboration_id " \
-               f"WHERE sc.service_id = {service_id}"
+               f"WHERE sc.service_id = {service.id}"
 
     need_to_delete = not bool(allowed_organisations)
     if allowed_organisations:
