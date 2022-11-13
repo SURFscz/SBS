@@ -6,7 +6,7 @@ from flask import current_app
 
 from server.db.domain import User, Collaboration, Group, Organisation, Service
 from server.scim.scim import apply_user_change, apply_group_change, apply_organisation_change, \
-    apply_collaboration_change, apply_service_changed
+    apply_collaboration_change, apply_service_changed, apply_user_deletion
 
 
 def _scim_enabled():
@@ -28,8 +28,8 @@ def broadcast_user_changed(user: User):
 
 
 @broadcast_endpoint
-def broadcast_user_deleted(user: User):
-    return current_app.executor.submit(apply_user_change, current_app, user.id, True)
+def broadcast_user_deleted(external_id, collaboration_identifiers):
+    return current_app.executor.submit(apply_user_deletion, current_app, external_id, collaboration_identifiers)
 
 
 @broadcast_endpoint

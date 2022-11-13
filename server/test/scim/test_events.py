@@ -79,12 +79,18 @@ class TestEvents(AbstractTest):
     def test_apply_user_change_delete(self):
         sarah = self.find_entity_by_name(User, sarah_name)
         user_found = json.loads(read_file("test/scim/user_found.json"))
+        group_found = json.loads(read_file("test/scim/group_found.json"))
+        group_created = json.loads(read_file("test/scim/group_created.json"))
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=group_found, status=200)
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=user_found, status=200)
             rsps.add(responses.DELETE,
                      "http://localhost:8080/api/scim_mock/Users/8d85ea05-fc5c-4222-8efd-130ff7938ee1?counter=1",
                      status=201)
-            future = broadcast_user_deleted(sarah)
+            rsps.add(responses.PUT, "http://localhost:8080/api/scim_mock/Groups/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
+                     json=group_created, status=201)
+            collaboration_identifiers = [member.collaboration_id for member in sarah.collaboration_memberships]
+            future = broadcast_user_deleted(sarah.external_id, collaboration_identifiers)
             res = future.result()
             self.assertTrue(res)
 

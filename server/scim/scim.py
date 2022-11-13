@@ -115,10 +115,7 @@ def _do_apply_user_change(user: User, service: Union[None, Service], deletion: b
     else:
         # We need all services that are accessible for this user
         collaborations = [member.collaboration for member in user.collaboration_memberships if member.is_active]
-        organisations = [co.organisation for co in collaborations]
-        all_services = flatten([co.services for co in collaborations]) + flatten(
-            [org.services for org in organisations])
-        scim_services = _unique_scim_services(all_services, "provision_scim_users")
+        scim_services = _all_unique_scim_services_of_collaborations(collaborations)
     for service in scim_services:
         scim_object = _lookup_scim_object(service, SCIM_USERS, user.external_id)
         # No use to delete the user if the user is unknown in the remote system
@@ -129,6 +126,13 @@ def _do_apply_user_change(user: User, service: Union[None, Service], deletion: b
             response = _provision_user(scim_object, service, user)
         if response.status_code > 204:
             _log_scim_error(response, service)
+    return scim_services
+
+
+def _all_unique_scim_services_of_collaborations(collaborations):
+    organisations = [co.organisation for co in collaborations]
+    all_services = flatten([co.services for co in collaborations]) + flatten([org.services for org in organisations])
+    scim_services = _unique_scim_services(all_services, "provision_scim_users")
     return scim_services
 
 
@@ -153,11 +157,32 @@ def _do_apply_group_collaboration_change(group: Union[Group, Collaboration], ser
     return bool(scim_services)
 
 
-# User has been created, updated or deleted. Propagate the changes to the remote SCIM DB to all connected SCIM services
-def apply_user_change(app, user_id, deletion=False):
+# User has been updated. Propagate the changes to the remote SCIM DB to all connected SCIM services
+def apply_user_change(app, user_id):
     with app.app_context():
         user = User.query.filter(User.id == user_id).one()
-        scim_services = _do_apply_user_change(user, service=None, deletion=deletion)
+        scim_services = _do_apply_user_change(user, service=None, deletion=False)
+        return bool(scim_services)
+
+
+# User has been deleted. Propagate the changes to the remote SCIM DB to all connected SCIM services
+def apply_user_deletion(app, external_id, collaboration_identifiers: List[int]):
+    with app.app_context():
+        collaborations = Collaboration.query.filter(Collaboration.id.in_(collaboration_identifiers)).all()
+        scim_services = _all_unique_scim_services_of_collaborations(collaborations)
+        for service in scim_services:
+            scim_object = _lookup_scim_object(service, SCIM_USERS, external_id)
+            # No use to delete the user if the user is unknown in the remote system
+            if scim_object:
+                url = f"{service.scim_url}{scim_object['meta']['location']}{_counter_query_param(service)}"
+                response = requests.delete(url, headers=_headers(service, is_delete=True), timeout=10)
+                if response.status_code > 204:
+                    _log_scim_error(response, service)
+        for co in collaborations:
+            services = _all_unique_scim_services_of_collaborations([co])
+            _do_apply_group_collaboration_change(co, services, deletion=False)
+            for group in co.groups:
+                _do_apply_group_collaboration_change(group, services, deletion=False)
         return bool(scim_services)
 
 
