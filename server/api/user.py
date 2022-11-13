@@ -35,7 +35,7 @@ from server.db.domain import User, OrganisationMembership, CollaborationMembersh
 from server.db.models import log_user_login
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error, mail_account_deletion
-from server.scim.events import broadcast_user_deleted
+from server.scim.events import broadcast_user_deleted, broadcast_user_changed
 
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 
@@ -562,6 +562,9 @@ def update_user():
     user.updated_by = user.uid
     db.session.merge(user)
     db.session.commit()
+
+    broadcast_user_changed(user)
+
     return user, 201
 
 
@@ -638,16 +641,19 @@ def delete_user():
     user_id = current_user_id()
     user = User.query.get(user_id)
     mail_account_deletion(user)
-    db.session.delete(user)
 
     if user.username:
         history_not_exists = UserNameHistory.query.filter(UserNameHistory.username == user.username).count() == 0
         if history_not_exists:
             user_name_history = UserNameHistory(username=user.username)
             db.session.merge(user_name_history)
+
+    collaboration_identifiers = [member.collaboration_id for member in user.collaboration_memberships]
+
+    db.session.delete(user)
     db.session.commit()
 
-    broadcast_user_deleted(user)
+    broadcast_user_deleted(user.external_id, collaboration_identifiers)
 
     session["user"] = None
     session.clear()
