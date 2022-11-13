@@ -74,6 +74,11 @@ class Scim extends React.Component {
                                       onClick={this.openService(service)}>{service.name}</a>,
             },
             {
+                key: "id",
+                header: I18n.t("system.scim.service.id"),
+                mapper: service => service.id,
+            },
+            {
                 key: "scim_url",
                 header: I18n.t("system.scim.service.scimUrl"),
                 mapper: service => service.scim_url,

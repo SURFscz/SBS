@@ -1733,6 +1733,7 @@ I18n.translations.en = {
             clearConfirmation: "Are you sure you want to clear the SCIM statistics?",
             service: {
                 scimUrl: "Scim URL",
+                id: "Id",
                 scimEnabled: "Scim enabled",
                 scimProvisionUsers: "Provision users?",
                 scimProvisionGroups: "Provision groups?"
