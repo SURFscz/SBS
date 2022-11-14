@@ -1,5 +1,5 @@
 import base64
-import urllib
+import urllib.request
 import uuid
 from datetime import datetime, timedelta
 
@@ -19,7 +19,8 @@ from server.auth.security import confirm_collaboration_admin, current_user_id, c
     is_organisation_admin_or_manager, is_application_admin
 from server.db.db import db
 from server.db.defaults import (default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name,
-                                STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED, valid_uri_attributes, valid_tag_label)
+                                STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED, valid_uri_attributes, valid_tag_label,
+                                uri_re, max_logo_bytes)
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
     Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag
 from server.db.models import update, save, delete
@@ -413,11 +414,15 @@ def save_collaboration_api():
         User.uid == current_app.app_config.admin_users[0].uid).one()
     data["organisation_id"] = organisation.id
     logo = data.get("logo")
-    if logo and logo.startswith("http"):
+    valid_logo = False
+    if logo and logo.startswith("http") and bool(uri_re.match(logo)):
         res = urllib.request.urlopen(logo)
         if res.status == 200:
-            data["logo"] = base64.encodebytes(res.read()).decode("utf-8")
-    elif not logo:
+            logo_bytes = res.read()
+            if len(logo_bytes) < max_logo_bytes:
+                data["logo"] = base64.encodebytes(logo_bytes).decode("utf-8")
+                valid_logo = True
+    if not valid_logo:
         data["logo"] = next(db.engine.execute(text(f"SELECT logo FROM organisations where id = {organisation.id}")))[0]
 
     missing = [req for req in required if req not in data]

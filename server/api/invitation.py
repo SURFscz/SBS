@@ -19,7 +19,7 @@ from server.scim.events import broadcast_collaboration_changed, broadcast_group_
 
 invitations_api = Blueprint("invitations_api", __name__, url_prefix="/api/invitations")
 
-email_re = re.compile("^\S+@\S+$")
+email_re = re.compile("^\\S+@\\S+$")
 
 
 def _invitation_query():
