@@ -1,4 +1,3 @@
-
 from server.db.db import db
 from server.db.domain import Organisation, OrganisationInvitation, User
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
@@ -363,3 +362,9 @@ class TestOrganisation(AbstractTest):
         res = self.get(f"/api/organisations/{organisation.id}/invites", query_data={"q": "iou"}, with_basic_auth=False)
         self.assertEqual(1, len(res))
         self.assertEqual(res[0]["invitee_email"], "curious@ex.org")
+
+    def test_name_by_id(self):
+        self.login("urn:harry")
+        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        res = self.get(f"/api/organisations/name_by_id/{organisation.id}", with_basic_auth=False)
+        self.assertEqual(organisation.name, res["name"])
