@@ -72,15 +72,15 @@ def service_groups():
         .all()
     collaborations = _unique_scim_objects(service_collaborations + service_organisation_collaborations)
     all_groups = flatten(co.groups for co in collaborations)
-    return find_groups_template(service, collaborations + all_groups), 200
+    return find_groups_template(collaborations + all_groups), 200
 
 
 @scim_api.route("/Groups/<group_identifier>", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def service_group_by_identifier(group_identifier: str):
-    service = validate_service_token("scim_enabled")
+    validate_service_token("scim_enabled")
     stripped_group_identifier = group_identifier.replace(external_id_post_fix, "")
     group = Collaboration.query.filter(Collaboration.identifier == stripped_group_identifier).first()
     if not group:
         group = Group.query.filter(Group.identifier == stripped_group_identifier).one()
-    return find_group_by_id_template(service, group), _add_etag_header(group)
+    return find_group_by_id_template(group), _add_etag_header(group)
