@@ -44,7 +44,7 @@ def update_user_template(user: User, scim_identifier: str):
 
 
 def find_user_by_id_template(user: User):
-    user_template = update_user_template(user, user.external_id)
+    user_template = update_user_template(user, f"{user.external_id}{external_id_post_fix}")
     user_template["meta"] = _meta_info(user)
     return user_template
 

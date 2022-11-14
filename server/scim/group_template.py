@@ -1,7 +1,7 @@
 # -*- coding: future_fstrings -*-
 from typing import Union, List
 
-from server.db.domain import Group, Collaboration, Service
+from server.db.domain import Group, Collaboration
 from server.scim.user_template import external_id_post_fix, version_value
 
 
@@ -31,15 +31,14 @@ def update_group_template(group: Union[Group, Collaboration], membership_user_sc
     return result
 
 
-def find_group_by_id_template(service: Service, group: Union[Group, Collaboration]):
-    from server.scim.scim import membership_user_scim_identifiers
-    memberships = membership_user_scim_identifiers(service, group)
-    group_template = update_group_template(group, memberships, group.identifier)
+def find_group_by_id_template(group: Union[Group, Collaboration]):
+    members = [f"{m.user.external_id}{external_id_post_fix}" for m in group.collaboration_memberships if m.is_active]
+    group_template = update_group_template(group, members, f"{group.identifier}{external_id_post_fix}")
     group_template["meta"] = _meta_info(group)
     return group_template
 
 
-def find_groups_template(service: Service, groups: List[Union[Group, Collaboration]]):
+def find_groups_template(groups: List[Union[Group, Collaboration]]):
     base = {
         "schemas": [
             "urn:ietf:params:scim:api:messages:2.0:ListResponse"
@@ -50,6 +49,6 @@ def find_groups_template(service: Service, groups: List[Union[Group, Collaborati
     }
     resources = []
     for group in groups:
-        resources.append(find_group_by_id_template(service, group))
+        resources.append(find_group_by_id_template(group))
     base["Resources"] = resources
     return base
