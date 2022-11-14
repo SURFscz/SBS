@@ -119,6 +119,14 @@ def my_organisations_lite():
     return organisations, 200
 
 
+@organisation_api.route("/name_by_id/<organisation_id>", strict_slashes=False)
+@json_endpoint
+def organisation_name_by_id(organisation_id):
+    confirm_organisation_admin_or_manager(organisation_id)
+    res = Organisation.query.options(load_only("name")).filter(Organisation.id == organisation_id).one()
+    return {"name": res.name}, 200
+
+
 @organisation_api.route("/v1", strict_slashes=False)
 @swag_from("../swagger/public/paths/get_collaborations_by_organisation.yml")
 @json_endpoint

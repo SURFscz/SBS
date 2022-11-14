@@ -1,5 +1,5 @@
 import React from "react";
-import {auditLogsUser, findUserById, ipNetworks} from "../api";
+import {auditLogsUser, findUserById, ipNetworks, organisationNameById} from "../api";
 import I18n from "i18n-js";
 import "./UserDetail.scss";
 
@@ -37,22 +37,23 @@ class UserDetail extends React.Component {
 
     componentDidMount = () => {
         const {user: currentUser} = this.props;
-        const {id} = this.props.match.params;
+        const {id, org_id} = this.props.match.params;
         const promises = [findUserById(id)];
         if (currentUser.admin) {
             promises.push(auditLogsUser(id));
+        }
+        if (org_id) {
+            promises.push(organisationNameById(org_id))
         }
         Promise.all(promises)
             .then(res => {
                 const user = res[0];
                 const auditLogs = currentUser.admin ? res[1] : [];
-                const {org_id} = this.props.match.params;
                 let middlePath;
                 if (org_id) {
-                    const org_membership = currentUser.organisation_memberships.find(om => om.organisation_id === parseInt(org_id, 10)) || {organisation: {name: org_id}};
                     middlePath = {
                         path: `/organisations/${org_id}/users`,
-                        value: I18n.t("breadcrumb.organisation", {name: org_membership.organisation.name})
+                        value: I18n.t("breadcrumb.organisation", {name: res[res.length - 1].name})
                     }
                 } else {
                     middlePath = {path: "/home/users", value: I18n.t("breadcrumb.users")};

@@ -395,6 +395,10 @@ export function queryForOrganisationInvites(organisationId, q) {
     return fetchJson(`/api/organisations/${organisationId}/invites?q=${encodeURIComponent(q)}`);
 }
 
+export function organisationNameById(organisationId) {
+    return fetchJson(`/api/organisations/name_by_id/${organisationId}`);
+}
+
 //JoinRequests
 export function joinRequestForCollaboration(clientData) {
     return postPutJson("/api/join_requests", clientData, "post", false);
