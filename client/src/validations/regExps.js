@@ -1,6 +1,6 @@
 import {isEmpty} from "../utils/Utils";
 
-export const validEmailRegExp = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+export const validEmailRegExp = /^\S+@\S+$/;
 
 export const validSchacHomeRegExp = /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}$/;
 
@@ -27,7 +27,7 @@ export const validateSSHKey = sshKey => {
 
 
 const shortNameRegexp = /^[^a-z]*|[^a-z_0-9]+/gi
-const tagNameRegexp   = /^[^a-z]*|[^a-z_0-9-]+/gi
+const tagNameRegexp = /^[^a-z]*|[^a-z_0-9-]+/gi
 
 export const sanitizeShortName = shortName => {
     return shortName ? shortName.replace(shortNameRegexp, "").substring(0, 16).toLowerCase() : shortName;

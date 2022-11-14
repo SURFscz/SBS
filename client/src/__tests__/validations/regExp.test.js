@@ -1,4 +1,12 @@
-import {sanitizeShortName, validUrlRegExp} from "../../validations/regExps";
+import {sanitizeShortName, validUrlRegExp, validEmailRegExp} from "../../validations/regExps";
+
+test("Valid emails", () => {
+    expect(validEmailRegExp.test("a@a.com")).toEqual(true);
+    expect(validEmailRegExp.test("b@b")).toEqual(true);
+
+    expect(validEmailRegExp.test("nope")).toEqual(false);
+})
+
 
 test("Sanitize short names", () => {
     expect(sanitizeShortName(null)).toEqual(null);
@@ -17,4 +25,4 @@ test("Valid urls", () => {
     expect(validUrlRegExp.test("https://google")).toEqual(true);
 
     expect(validUrlRegExp.test("nope")).toEqual(false);
-})
+});
