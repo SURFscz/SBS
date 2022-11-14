@@ -1,6 +1,12 @@
+import re
+
 from flask import current_app
 from sqlalchemy import text, bindparam, String
-from werkzeug.exceptions import NotFound
+from werkzeug.exceptions import NotFound, BadRequest
+
+uuid4_reg_exp = re.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$")
+
+login_mixins_classes = ["collaborations", "collaboration_requests", "organisations", "services"]
 
 
 def _redis_key(object_type, sid):
@@ -9,6 +15,10 @@ def _redis_key(object_type, sid):
 
 def logo_from_cache(object_type, sid):
     value = current_app.redis_client.get(_redis_key(object_type, sid))
+    if object_type not in login_mixins_classes:
+        raise BadRequest(f"Not allowed object type {object_type}")
+    if not bool(uuid4_reg_exp.match(sid)):
+        raise BadRequest(f"Not allowed sid {sid}")
     if not value:
         # This will not happen often, but if external parties use the image url it is theoretically possible
         sql = text(f"SELECT logo FROM {object_type} where uuid4 = :sid")

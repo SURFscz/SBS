@@ -1,4 +1,5 @@
 import re
+import uuid
 
 from server.db.domain import Service, CollaborationRequest
 from server.test.abstract_test import AbstractTest
@@ -21,12 +22,16 @@ class TestImage(AbstractTest):
         for coll in collaborations:
             self.assertTrue(pattern.match(coll["logo"]))
 
-    def test_find_image_sql_injection(self):
+    def test_find_image_sql_injection_table_name(self):
         res = self.client.get("/api/images/evil/5")
         self.assertEqual(400, res.status_code)
 
+    def test_find_image_sql_injection_sid(self):
+        res = self.client.get("/api/images/collaborations/555")
+        self.assertEqual(400, res.status_code)
+
     def test_find_image_404(self):
-        res = self.client.get("/api/images/collaborations/5")
+        res = self.client.get(f"/api/images/collaborations/{str(uuid.uuid4())}")
         self.assertEqual(404, res.status_code)
 
     def test_collaboration_request(self):
