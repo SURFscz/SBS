@@ -97,7 +97,7 @@ jobs:
       - name: Run tests with coverage
         run: |
           cd ./server
-          pytest --cov=server test
+          pytest --cov=server -k test_members_forbidden test
         timeout-minutes: 15
 
       - name: Upload coverage
