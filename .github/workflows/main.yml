@@ -96,6 +96,7 @@ jobs:
       - name: Run tests with coverage
         run: |
           pytest --cov=server server/test
+        timeout-minutes: 15
 
       - name: Upload coverage
         run: codecov --token=${{ secrets.CODECOV_TOKEN }}
@@ -156,6 +157,7 @@ jobs:
         env:
           CI: true
           VNM_DIR: ~/.nvm
+        timeout-minutes: 15
 
       #- name: Setup tmate session
       #  uses: mxschmitt/action-tmate@v3
