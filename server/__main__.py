@@ -7,8 +7,8 @@ from logging.handlers import TimedRotatingFileHandler
 
 # monkey_patch before importing anything else!
 # see https://github.com/gevent/gevent/issues/1016#issuecomment-328529454
-import eventlet
-eventlet.monkey_patch()
+# import eventlet
+# eventlet.monkey_patch()
 
 import yaml
 from flask import Flask, jsonify, request as current_request
@@ -213,7 +213,8 @@ def connected():
 
 # In the WSGI production file the socket_io
 if __name__ == '__main__':
-    socket_io.run(app, debug=False, port=8080)
+    #socket_io.run(app, debug=False, port=8080)
+    app.run(port=8080, debug=False, host="localhost", threaded=True)
 # comment the lines above and uncomment the line under for debugging. See https://youtrack.jetbrains.com/issue/PY-38245
 # if is_local:
 #    app.run(port=8080, debug=False, host="localhost", threaded=False)
