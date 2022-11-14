@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 class SQLAlchemyPrePing(SQLAlchemy):
 
     def create_engine(self, sa_url, engine_opts):
+        engine_opts["echo_pool"] = True
         return super().create_engine(sa_url, engine_opts)
 
     def apply_pool_defaults(self, app, options):
