@@ -5,7 +5,8 @@ from unittest import TestCase
 from munch import munchify
 from werkzeug.exceptions import BadRequest
 
-from server.db.defaults import default_expiry_date, calculate_expiry_period, cleanse_short_name, valid_uri_attributes
+from server.db.defaults import default_expiry_date, calculate_expiry_period, cleanse_short_name, valid_uri_attributes, \
+    uri_re
 from server.db.domain import Invitation
 
 
@@ -88,3 +89,10 @@ class TestDefaults(TestCase):
             valid_uri_attributes({"url": "nope"}, ["url"])
 
         self.assertRaises(ValueError, invalid_uri)
+
+    def test_uri_regexp(self):
+        self.assertTrue(bool(uri_re.match("https://localhost/api/scim_mock")))
+        self.assertTrue(bool(uri_re.match("http://localhost/api/scim_mock")))
+        self.assertTrue(bool(uri_re.match("https://demo-sp.sram.surf.nl/test")))
+        self.assertTrue(bool(uri_re.match("https://google.nl")))
+        self.assertTrue(bool(uri_re.match("https://google")))
