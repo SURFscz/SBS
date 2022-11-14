@@ -178,7 +178,7 @@ with app.app_context():
     while result is None:
         try:
             result = db.engine.execute(text("SELECT 1"))
-        except OperationalError:
+        except SyntaxError: #OperationalError:
             logger.info("Waiting for the database...")
             time.sleep(1)
 
