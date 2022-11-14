@@ -47,7 +47,7 @@ def info():
             "error": True,
             "version": ip_network.version,
             "max": max_allowed_ipv4_sub_mask if _is4 else max_allowed_ipv6_prefix,
-            "network_value": address,
+            "network_value": str(ip_network),
             "prefix": prefix,
             "id": id
         }, 200
