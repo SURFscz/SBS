@@ -23,6 +23,7 @@ test("Valid urls", () => {
     expect(validUrlRegExp.test("https://demo-sp.sram.surf.nl/test")).toEqual(true);
 
     expect(validUrlRegExp.test("https://google.nl")).toEqual(true);
+    expect(validUrlRegExp.test("http://localhost:8080/api/scim_mock")).toEqual(true);
     expect(validUrlRegExp.test("https://google")).toEqual(true);
 
     expect(validUrlRegExp.test("nope")).toEqual(false);
