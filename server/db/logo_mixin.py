@@ -15,11 +15,12 @@ def _redis_key(object_type, sid):
 
 def logo_from_cache(object_type, sid):
     value = current_app.redis_client.get(_redis_key(object_type, sid))
-    if object_type not in login_mixins_classes:
-        raise BadRequest(f"Not allowed object type {object_type}")
-    if not bool(uuid4_reg_exp.match(sid)):
-        raise BadRequest(f"Not allowed sid {sid}")
     if not value:
+        if object_type not in login_mixins_classes:
+            raise BadRequest(f"Not allowed object type {object_type}")
+        if not bool(uuid4_reg_exp.match(sid)):
+            raise BadRequest(f"Not allowed sid {sid}")
+
         # This will not happen often, but if external parties use the image url it is theoretically possible
         sql = text(f"SELECT logo FROM {object_type} where uuid4 = :sid")
         sql = sql.bindparams(bindparam("sid", type_=String))

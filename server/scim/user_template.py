@@ -11,10 +11,14 @@ def version_value(scim_object: Union[User, Group, Collaboration]):
     return hashlib.sha256(bytes(str(int(scim_object.updated_at.timestamp())), "utf-8")).hexdigest()
 
 
+def date_time_format(date_at):
+    return date_at.strftime("%Y-%m-%dT%H:%M:%S")
+
+
 def _meta_info(user: User):
     return {"resourceType": "User",
-            "created": user.created_at.strftime("%Y-%m-%dT%H:%M:%S"),
-            "lastModified": user.updated_at.strftime("%Y-%m-%dT%H:%M:%S"),
+            "created": date_time_format(user.created_at),
+            "lastModified": date_time_format(user.updated_at),
             "version": version_value(user),
             "location": f"/Users/{user.external_id}{external_id_post_fix}"}
 
