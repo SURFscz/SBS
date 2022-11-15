@@ -571,7 +571,7 @@ I18n.translations.en = {
         ssh_key: "SSH public keys",
         ssh_keyPlaceholder: "Your public SSH keys to login on services",
         ssh_keyTooltip: "Your public SSH keys will be provisioned to the services you have access to. You can also upload your public SSH key.",
-        sshKeyError: "This SSH cipher isn't recognized. Please refer to the <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://edu.nl/87btm\">documentation</a> for supported formats.",
+        sshKeyError: "This SSH cipher isn't recognized. Please refer to the documentation at https://edu.nl/87btm for supported formats.",
         sshConvertInfo: "Public key will be converted to the <code>OpenSSH</code> format when saving the profile",
         update: "Update",
         flash: {
