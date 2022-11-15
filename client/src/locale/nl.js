@@ -571,7 +571,7 @@ I18n.translations.nl = {
         ssh_key: "Publieke SSH-sleutel",
         ssh_keyPlaceholder: "Je publieke SSH-sleutel om in te loggen op de dienst",
         ssh_keyTooltip: "Je publieke SSH-sleutel zal worden uitgewisseld met de diensten waar je toegang toe hebt. Je kunt je publieke SSH-sleutel ook uploaden.",
-        sshKeyError: "Deze SSH cipher wordt niet herkend. In de documentatie op https://edu.nl/87btm staan de ondersteunde formaten.",
+        sshKeyError: "Deze SSH cipher wordt niet herkend. In de <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://edu.nl/87btm\">documentatie</a> staan de ondersteunde formaten.",
         sshConvertInfo: "Je publieke SSH-sleutel wordt geconverteerd naar het bestandsformaat <code>OpenSSH-key</code> bij het opslaan van het profiel",
         update: "Opslaan",
         flash: {
