@@ -1,0 +1,215 @@
+database:
+  uri: "${DATABASE_URI}"
+
+secret_key: ${SECRET}
+
+# Lifetime of session in minutes (one day is 60 * 24)
+permanent_session_lifetime: 60
+
+redis:
+  host: ${REDIS_HOST}
+  port: ${REDIS_PORT}
+  password:
+
+socket_url: "${SOCKET_URL}"
+
+api_users:
+  - name: "sysadmin"
+    password: "secret"
+    scopes: [read, write, system]
+  - name: "sysread"
+    password: "secret"
+    scopes: [read]
+  - name: "research_cloud"
+    password: "secret"
+    scopes: ["restricted_co"]
+
+oidc:
+  client_id: ${CLIENT_ID}
+  client_secret: ${CLIENT_SECRET}
+  audience: ${AUDIENCE}
+  authorization_endpoint: ${AUDIENCE}/saml2sp/OIDC/authorization
+  token_endpoint: ${AUDIENCE}/OIDC/token
+  userinfo_endpoint: ${AUDIENCE}/OIDC/userinfo
+  jwks_endpoint: ${AUDIENCE}/OIDC/jwks
+  #Note that the paths for these  uri's is hardcoded and only domain and port differ per environment
+  redirect_uri: ${BASE_URL}/api/users/resume-session
+  sfo_eduteams_redirect_uri: ${AUDIENCE}/OIDC/sfo
+  continue_eduteams_redirect_uri: ${AUDIENCE}/continue
+  private_rsa_signing_key_path: config/test-jwt-private-key
+  public_rsa_signing_key_path: config/test-jwt-public-key
+  second_factor_authentication_required: True
+  totp_token_name: "SRAM local"
+  # The service_id of SBS. Most likely to equal the oidc.client_id
+  sram_service_entity_id: ${BASE_URL}
+
+  scopes:
+    - profile
+    - eduperson_scoped_affiliation
+    - voperson_external_affiliation
+    - email
+    - ssh_public_key
+    - eduperson_orcid
+    - uid
+    - voperson_external_id
+    - eduperson_entitlement
+    - eduperon_assurance
+    - openid
+    - eduperson_principal_name
+    - voperson_id
+
+base_scope: "test.sbs.local"
+entitlement_group_namespace: "urn:example:sbs"
+eppn_scope: "test.sram.surf.nl"
+collaboration_creation_allowed_entitlement: "urn:example:sbs:allow-create-co"
+
+restricted_co:
+  services_white_list: ["https://cloud"]
+  default_organisation: "rug.nl"
+
+mail:
+  host: localhost
+  port: 1025
+  sender_name: SURF_ResearchAccessManagement
+  sender_email: no-reply@surf.nl
+  suppress_sending_mails: False
+  info_email: sram-support@surf.nl
+  beheer_email: sram-beheer@surf.nl
+  eduteams_email: support+sram@eduteams.org
+  # Do we mail a summary of new Organizations and Services to the beheer_email?
+  audit_trail_notifications_enabled: True
+  account_deletion_notifications_enabled: True
+  send_exceptions: False
+  send_js_exceptions: False
+  send_exceptions_recipients: ["sram-support@surf.nl"]
+  environment: local
+
+aup:
+  version: 1
+  url_aup_en: https://wiki.surfnet.nl/display/SRAM/Acceptable+Use+Policy
+  url_aup_nl: https://wiki.surfnet.nl/display/SRAM/Acceptable+Use+Policy
+
+base_url: ${BASE_URL}
+base_server_url: ${BASE_URL}
+wiki_link: https://edu.nl/vw3jx
+
+admin_users:
+  - uid: "urn:john"
+  - uid: "urn:rocky"
+  - uid: "urn:mike"
+  - uid: "${ADMIN}"
+
+organisation_categories:
+  - "Research"
+  - "University"
+  - "Medical"
+
+feature:
+  seed_allowed: True
+  api_keys_enabled: True
+  feedback_enabled: True
+  impersonation_allowed: True
+  sbs_swagger_enabled: True
+  admin_platform_backdoor_totp: True
+  past_dates_allowed: True
+  mock_scim_enabled: True
+
+# The retention config determines how long users may be inactive, how long the reminder magic link is valid and when do we resent the magic link
+retention:
+  allowed_inactive_period_days: 90
+  reminder_expiry_period_days: 14
+  reminder_resent_period_days: 7
+  cron_hour_of_day: 7
+  remove_suspended_users_period_days: 540
+
+metadata:
+  idp_url: https://metadata.surfconext.nl/idps-metadata.xml
+  parse_at_startup: False
+
+service_bus:
+  enabled: False
+  host: "localhost"
+  client_id: "sbs"
+  user: "sbs"
+  password: "changethispassword"
+
+# note: all cron hours below ae in UTC
+platform_admin_notifications:
+  # Do we daily check for CO join_requests and CO requests and send a summary mail to beheer_email?
+  enabled: True
+  cron_hour_of_day: 11
+  # How long before we include open join_requests in the summary
+  outstanding_join_request_days_threshold: 7
+  # How long before we include open CO requests in the summary
+  outstanding_coll_request_days_threshold: 7
+
+user_requests_retention:
+  # Do we daily check for CO join_requests and CO requests and delete approved and denied?
+  enabled: True
+  cron_hour_of_day: 10
+  # How long before we delete approved / denied join_requests
+  outstanding_join_request_days_threshold: 21
+  # How long before we delete approved / denied CO requests
+  outstanding_coll_request_days_threshold: 21
+
+collaboration_expiration:
+  # Do we daily check for CO's that will be deleted because they have been expired?
+  enabled: True
+  cron_hour_of_day: 10
+  # How long after expiration do we actually delete expired collaborations
+  expired_collaborations_days_threshold: 90
+  # How many days before actual expiration do we mail the organisation members
+  expired_warning_mail_days_threshold: 5
+
+collaboration_suspension:
+  # Do we daily check for CO's that will be suspended because of inactivity?
+  enabled: True
+  cron_hour_of_day: 10
+  # After how many days of inactivity do we suspend collaborations
+  collaboration_inactivity_days_threshold: 360
+  # How many days before actual suspension do we mail the organisation members
+  inactivity_warning_mail_days_threshold: 5
+  # After how many days after suspension do we actually delete the collaboration
+  collaboration_deletion_days_threshold: 90
+
+membership_expiration:
+  # Do we daily check for memberships that will be deleted because they have been expired?
+  enabled: True
+  cron_hour_of_day: 10
+  # How long after expiration do we actually delete expired memberships
+  expired_memberships_days_threshold: 90
+  # How many days before actual expiration do we mail the co admin and member
+  expired_warning_mail_days_threshold: 14
+
+orphan_users:
+  # Do we daily check for users that are orphans so they can be deleted?
+  enabled: True
+  cron_hour_of_day: 10
+  # How long after created do we delete orphan users
+  delete_days_threshold: -1
+
+ldap:
+  url: "${LDAP_URL}"
+  bind_account: "${LDAP_BIND}"
+
+mfa_fallback_enabled: true
+# Lower case schachome organisations / entity ID's allowed skipping MFA
+mfa_idp_allowed:
+  - schac_home: "idp.test"
+    entity_id: "https://idp.test"
+
+# A MFA login in a different flow is valid for X minutes
+mfa_sso_time_in_minutes: 10
+
+# Lower case schachome organisations / entity ID's where SURFSecure ID is used for step-up
+# If this feature is no longer needed, just replace the value with an empty list []
+ssid_identity_providers:
+  - schac_home: "example.com"
+    entity_id: "https://example.com"
+
+ssid_config_folder: saml
+
+pam_web_sso:
+  session_timeout_seconds: 300
+
+rate_limit_totp_guesses_per_30_seconds: 1
