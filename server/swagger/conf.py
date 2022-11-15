@@ -14,7 +14,11 @@ SWAGGER_TEMPLATE = {
         },
         {
             "name": "SCIM Services",
-            "description": "All endpoints for external SCIM clients using a Service SCIM token"
+            "description": "All endpoints for external SCIM clients using a Service token"
+        },
+        {
+            "name": "Mock SCIM Services",
+            "description": "All mock endpoints for testing SCIM using a Service SCIM token"
         }
     ],
     "securityDefinitions": {
@@ -28,6 +32,11 @@ SWAGGER_TEMPLATE = {
             "description": "Authorization header using the Bearer scheme with a service token. "
                            "Example: \"Authorization: Bearer {service_token}\""
         },
+        "SCIMTokenHeader": {
+            "type": "apiKey", "name": "Authorization", "in": "header",
+            "description": "Authorization header using the Bearer scheme with a scim service token. "
+                           "Example: \"Authorization: Bearer {scim_token}\""
+        }
     }
 }
 
