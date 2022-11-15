@@ -1,5 +1,5 @@
 APScheduler==3.9.1
-PyMySQL==1.0.2
+mysqlclient==2.1.1
 PyYAML==6.0
 SQLAlchemy==1.4.40
 cryptography==38.0.3
