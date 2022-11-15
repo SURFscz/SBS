@@ -1,0 +1,35 @@
+summary: "Get group by external ID."
+description: "Retrieve the details of a group by external ID."
+
+tags:
+  - "SCIM Services"
+
+consumes:
+  - "application/json"
+
+produces:
+  - "application/json"
+
+security:
+  - APITokenHeader: [ 'Authorization' ]
+
+parameters:
+  - name: group_external_id
+    in: path
+    description: Unique external id of the Group
+    required: true
+    schema:
+      type: string
+      example: f92d7d1d-2192-43c7-b286-c86bb9862ddc@sram.surf.nl
+
+responses:
+  200:
+    description: Group details
+    schema:
+      $ref: '/swagger/schemas/ScimGroup.yaml'
+  401:
+    schema:
+      $ref: '/swagger/components/responses/Unauthorized.yaml'
+  404:
+    schema:
+      $ref: '/swagger/components/responses/NotFound.yaml'

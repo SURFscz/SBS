@@ -1,0 +1,57 @@
+---
+type: object
+properties:
+  id:
+    type: string
+    description: "Unique identifier of the user in SRAM"
+    example: "addb7a32-8c43-44eb-8b61-d1a041d3eb84@sram.surf.nl"
+  externalId:
+    type: string
+    description: "Unique external identifier of the user in SRAM"
+    example: "addb7a32-8c43-44eb-8b61-d1a041d3eb84@sram.surf.nl"
+  active:
+    type: boolean
+    description: "Is the user active"
+  name:
+    type: object
+    properties:
+      givenName:
+        type: string
+        example: "John"
+      familyName:
+        type: string
+        example: "Doe"
+  userName:
+    type: string
+    example: "jdoe5"
+  displayName:
+    type: string
+    example: "John Doe"
+  emails:
+    type: array
+    items:
+      type: object
+      properties:
+        primary:
+          type: boolean
+          example: true
+        value:
+          type: string
+          example: "john.doe@sram.nl"
+  x509Certificates:
+    type: array
+    items:
+      type: object
+      properties:
+        value:
+          type: string
+          example: "ssh-rsa AAAAB3NzaC1yc...."
+  schemas:
+    type: array
+    description: "SCIM schema's"
+    items:
+      type: string
+      example: "urn:scim:schemas:core:1.0"
+  meta:
+    type: object
+    $ref: '/swagger/schemas/ScimMeta.yaml'

@@ -1,5 +1,5 @@
-from flask import Blueprint, send_from_directory, current_app
 from flasgger import Swagger
+from flask import Blueprint, send_from_directory, current_app
 
 SWAGGER_TEMPLATE = {
     "info": {
@@ -7,11 +7,27 @@ SWAGGER_TEMPLATE = {
         "description": "Documentation for SRAM external API",
         "version": "1.0",
     },
+    "tags": [
+        {
+            "name": "Organisations",
+            "description": "All endpoints for external Organisations using an API-Key"
+        },
+        {
+            "name": "SCIM Services",
+            "description": "All endpoints for external SCIM clients using a Service SCIM token"
+        }
+    ],
     "securityDefinitions": {
         "APIKeyHeader": {
             "type": "apiKey", "name": "Authorization", "in": "header",
-            "description": "Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {api_key}\""
-        }
+            "description": "Authorization header using the Bearer scheme with an organisation API key. "
+                           "Example: \"Authorization: Bearer {api_key}\""
+        },
+        "APITokenHeader": {
+            "type": "apiKey", "name": "Authorization", "in": "header",
+            "description": "Authorization header using the Bearer scheme with a service token. "
+                           "Example: \"Authorization: Bearer {service_token}\""
+        },
     }
 }
 

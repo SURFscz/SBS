@@ -1,0 +1,23 @@
+---
+type: object
+properties:
+  created:
+    type: string
+    description: "Creation date"
+    example: "2022-11-15T13:38:34"
+  lastModified:
+    type: string
+    description: "Last modification date"
+    example: "2022-11-15T13:38:34"
+  location:
+    type: string
+    description: "Relative URI for the details of the SCIM resource"
+    example: "/Users/addb7a32-8c43-44eb-8b61-d1a041d3eb84@sram.surf.nl"
+  resourceType:
+    type: string
+    description: "Type of the SCIM resource"
+    example: "User"
+  version:
+    type: string
+    description: "The version of this resource"
+    example: "a3319cf33a6538363651526deccd6ff0d3768deb6e674c4f2a60dccc0fecaf1f"

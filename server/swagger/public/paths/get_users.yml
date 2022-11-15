@@ -1,0 +1,23 @@
+summary: "Get all users details."
+description: "Retrieves all users that can connect to the service."
+
+tags:
+  - "SCIM Services"
+
+consumes:
+  - "application/json"
+
+produces:
+  - "application/json"
+
+security:
+  - APITokenHeader: [ 'Authorization' ]
+
+responses:
+  200:
+    description: All users
+    schema:
+      $ref: '/swagger/schemas/ScimUserListResult.yaml'
+  401:
+    schema:
+      $ref: '/swagger/components/responses/Unauthorized.yaml'

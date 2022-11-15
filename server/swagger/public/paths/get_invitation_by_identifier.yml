@@ -1,6 +1,9 @@
 summary: "Get invitation details."
 description: "Retrieves a single invitation."
 
+tags:
+  - "Organisations"
+
 consumes:
   - "application/json"
 

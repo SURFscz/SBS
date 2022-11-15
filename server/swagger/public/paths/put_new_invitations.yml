@@ -1,6 +1,9 @@
 summary: "Put new invitations."
 description: "Bulk invites for a collaboration."
 
+tags:
+  - "Organisations"
+
 consumes:
   - "application/json"
 
