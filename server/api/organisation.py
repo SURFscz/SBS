@@ -135,6 +135,7 @@ def api_organisation_details():
     organisation = request_context.external_api_organisation
     for collaboration in organisation.collaborations:
         collaboration.groups
+        collaboration.tags
     return organisation, 200
 
 

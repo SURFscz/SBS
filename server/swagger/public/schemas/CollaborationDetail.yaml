@@ -98,3 +98,7 @@ properties:
     type: array
     items:
       $ref: '/swagger/schemas/Group.yaml'
+  tags:
+    type: array
+    items:
+      $ref: '/swagger/schemas/Tag.yaml'

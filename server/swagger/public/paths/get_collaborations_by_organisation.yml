@@ -1,5 +1,5 @@
-summary: "Get collaborations by organisation."
-description: "Retrieves all collaborations for an organisation."
+summary: "Get organisation including all collaborations"
+description: "Retrieves an organisation and all collaborations, groups and tags."
 
 consumes:
   - "application/json"

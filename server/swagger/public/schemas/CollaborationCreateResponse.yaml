@@ -78,3 +78,11 @@ properties:
     type: number
     description: "The date of the last activity at in epoch seconds"
     example: 1642947278
+  groups:
+    type: array
+    items:
+      $ref: '/swagger/schemas/Group.yaml'
+  tags:
+    type: array
+    items:
+      $ref: '/swagger/schemas/Tag.yaml'

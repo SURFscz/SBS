@@ -519,7 +519,8 @@ class TestCollaboration(AbstractTest):
                                         "disable_join_requests": True,
                                         "disclose_member_information": True,
                                         "disclose_email_information": True,
-                                        "logo": read_image("uuc.jpeg")
+                                        "logo": read_image("uuc.jpeg"),
+                                        "tags": ["label_1", "label_2", "!-INVALID"]
                                     }),
                                     content_type="application/json")
         self.assertEqual(201, response.status_code)
@@ -528,6 +529,7 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(0, len(collaboration.collaboration_memberships))
         self.assertIsNone(collaboration.accepted_user_policy)
         self.assertIsNotNone(collaboration.logo)
+        self.assertEqual(2, len(collaboration.tags))
         one_day_ago = datetime.datetime.now() - datetime.timedelta(days=1)
         self.assertTrue(collaboration.last_activity_date > one_day_ago)
 
@@ -718,6 +720,7 @@ class TestCollaboration(AbstractTest):
                        headers={"Authorization": f"Bearer {uuc_secret}"},
                        with_basic_auth=False)
         self.assertIsNotNone(res["groups"][0]["collaboration_memberships"][0]["user"]["email"])
+        self.assertEqual(res["tags"][0]["tag_value"], "tag_uuc")
 
     def test_find_by_identifier_api_not_allowed(self):
         self.get(f"/api/collaborations/v1/{collaboration_uva_researcher_uuid}",

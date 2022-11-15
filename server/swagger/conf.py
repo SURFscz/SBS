@@ -9,7 +9,8 @@ SWAGGER_TEMPLATE = {
     },
     "securityDefinitions": {
         "APIKeyHeader": {
-            "type": "apiKey", "name": "Authorization", "in": "header"
+            "type": "apiKey", "name": "Authorization", "in": "header",
+            "description": "Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {api_key}\""
         }
     }
 }

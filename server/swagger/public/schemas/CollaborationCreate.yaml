@@ -44,6 +44,12 @@ properties:
     items:
       type: string
       example: "jdoe@uniharderwijk.nl"
+  tags:
+    type: array
+    description: "Labels, must be <= 32 chars and start with a lowercase char and only containers chars, digits, '_' and '-'"
+    items:
+      type: string
+      example: "label_1"
 required:
   - name
   - short_name
