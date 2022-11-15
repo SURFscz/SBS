@@ -9,14 +9,10 @@ from server.scim.scim import apply_user_change, apply_group_change, apply_organi
     apply_collaboration_change, apply_service_changed, apply_user_deletion
 
 
-def _scim_enabled():
-    return not os.environ.get("SCIM_DISABLED", None)
-
-
 def broadcast_endpoint(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
-        if _scim_enabled():
+        if not os.environ.get("SCIM_DISABLED", None):
             return f(*args, **kwargs)
 
     return wrapper

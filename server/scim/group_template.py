@@ -2,13 +2,13 @@
 from typing import Union, List
 
 from server.db.domain import Group, Collaboration
-from server.scim.user_template import external_id_post_fix, version_value
+from server.scim.user_template import external_id_post_fix, version_value, date_time_format
 
 
 def _meta_info(group: Union[Group, Collaboration]):
     return {"resourceType": "Group",
-            "created": group.created_at.strftime("%Y-%m-%dT%H:%M:%S"),
-            "lastModified": group.updated_at.strftime("%Y-%m-%dT%H:%M:%S"),
+            "created": date_time_format(group.created_at),
+            "lastModified": date_time_format(group.updated_at),
             "version": version_value(group),
             "location": f"/Users/{group.identifier}{external_id_post_fix}"}
 
