@@ -41,10 +41,9 @@ def _del_non_disclosure_info(collaboration, json_collaboration):
             _del_non_disclosure_info(collaboration, gr)
 
 
-def _reconcile_tags(collaboration: Collaboration, tags):
+def _reconcile_tags(collaboration: Collaboration, tags, is_external_api=False):
     # [{'label': 'tag_uuc', 'value': 947}, {'label': 'new_tag_created', 'value': 'new_tag_created', '__isNew__': True}]
-
-    if is_application_admin() or is_organisation_admin_or_manager(collaboration.organisation_id):
+    if is_external_api or is_application_admin() or is_organisation_admin_or_manager(collaboration.organisation_id):
         # find delta, e.g. which tags to remove and which tags to add
         new_tags = [tag["value"] for tag in tags if "__isNew__" in tag and "value" in tag]
 
@@ -91,10 +90,12 @@ def api_collaboration_by_identifier(identifier):
         .outerjoin(Collaboration.collaboration_memberships) \
         .outerjoin(CollaborationMembership.user) \
         .options(selectinload(Collaboration.services)) \
+        .options(selectinload(Collaboration.tags)) \
         .options(selectinload(Collaboration.groups).selectinload(Group.collaboration_memberships)) \
         .options(selectinload(Collaboration.collaboration_memberships)
                  .selectinload(CollaborationMembership.user)) \
-        .filter(Collaboration.identifier == identifier).one()
+        .filter(Collaboration.identifier == identifier) \
+        .one()
 
     organisation = request_context.external_api_organisation
     if organisation.id != collaboration.organisation_id:
@@ -422,18 +423,27 @@ def save_collaboration_api():
             if len(logo_bytes) < max_logo_bytes:
                 data["logo"] = base64.encodebytes(logo_bytes).decode("utf-8")
                 valid_logo = True
-    if not valid_logo:
+    if not valid_logo and not logo:
         data["logo"] = next(db.engine.execute(text(f"SELECT logo FROM organisations where id = {organisation.id}")))[0]
 
     missing = [req for req in required if req not in data]
     if missing:
         raise BadRequest(f"Missing required attributes: {missing}")
+    # The do_save_collaboration strips out all non-collaboration keys
+    tags = data.get("tags", None)
+    res = do_save_collaboration(data, organisation, user, current_user_admin=False, save_tags=False)
+    collaboration = res[0]
+    # Prevent ValueError: Circular reference detected cause of tags
+    collaboration_json = jsonify(collaboration).json
+    if tags:
+        # expected format [{'label': 'new_tag_created', 'value': 'new_tag_created', '__isNew__': True}]
+        transformed_tags = [{"label": tag, "value": tag, "__isNew__": True} for tag in tags]
+        _reconcile_tags(collaboration, transformed_tags, is_external_api=True)
+        collaboration_json["tags"] = tags
+    return collaboration_json, 201
 
-    res = do_save_collaboration(data, organisation, user, current_user_admin=False)
-    return res
 
-
-def do_save_collaboration(data, organisation, user, current_user_admin=True):
+def do_save_collaboration(data, organisation, user, current_user_admin=True, save_tags=True):
     _validate_collaboration(data, organisation)
 
     administrators = data.get("administrators", [])
@@ -446,7 +456,7 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True):
     res = save(Collaboration, custom_json=data, allow_child_cascades=False)
     collaboration = res[0]
 
-    if tags:
+    if tags and save_tags:
         _reconcile_tags(collaboration, tags)
 
     administrators = list(filter(lambda admin: admin != user.email, administrators))
