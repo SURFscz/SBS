@@ -1,0 +1,78 @@
+# -*- coding: utf-8 -*-
+#
+version: "3.2"
+
+volumes:
+  data:
+    driver: local
+
+services:
+  redis:
+    image: redis
+    container_name: redis
+
+  client:
+    build: client
+    restart: "always"
+    links:
+      - server
+    ports:
+      - 8080:80
+    environment:
+      SERVER_HOST: server
+      SERVER_PORT: 8080
+    volumes:
+      - ${PWD}/etc/nginx.conf.template:/etc/nginx/templates/default.conf.template:ro
+
+  server:
+    build: server
+    restart: "always"
+    links:
+      - db
+      - redis
+      - ldap
+    volumes:
+      - ${PWD}/etc/config.yml:/etc/config.yml
+    ports:
+      - 8080
+    environment:
+      CONFIG_TEMPLATE: /etc/config.yml
+      OPEN_MAIL_IN_BROWSER: 1
+      TESTING: 1
+      DATABASE_URI: mysql+pymysql://sbs:sbs@db/sbs_test?charset=utf8mb4
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      BASE_URL: http://localhost:8080
+      SOCKET_URL: 0.0.0.0:8080/
+      SECRET: ${SECRET}
+      CLIENT_ID: ${CLIENT_ID}
+      CLIENT_SECRET: ${CLIENT_SECRET}
+      AUDIENCE: ${AUDIENCE}
+      ADMIN: ${ADMIN}
+      LDAP_URL: ldap://ldap/dc=example,dc=org
+      LDAP_BIND: cn=admin,dc=entity_id,dc=services,dc=example,dc=org
+
+  db:
+    image: biarms/mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-sbs}
+      MYSQL_DATABASE: sbs
+      MYSQL_USER: sbs
+      MYSQL_PASSWORD: sbs
+    ports:
+      - 3306:3306
+    volumes:
+      - data:/var/lib/mysql
+      - ${PWD}/etc/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  ldap:
+    image: osixia/openldap:latest
+    restart: always
+    environment:
+      LDAP_DOMAIN: example.org
+      LDAP_BASE_DN: dc=example,dc=org
+      LDAP_ADMIN_PASSWORD: ${LDAP_ADMIN_PASSWORD:-changeme}
+      LDAP_CONFIG_PASSWORD: ${LDAP_CONFIG_PASSWORD:-changeme}
+      LDAP_TLS: true
+    command: --loglevel debug --copy-service
