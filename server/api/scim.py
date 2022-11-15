@@ -1,6 +1,7 @@
 # -*- coding: future_fstrings -*-
 from typing import List, Union
 
+from flasgger import swag_from
 from flask import Blueprint, Response
 
 from server.api.base import json_endpoint
@@ -27,6 +28,7 @@ def _unique_scim_objects(objects: List[Union[User, Collaboration]]):
 
 
 @scim_api.route("/Users", methods=["GET"], strict_slashes=False)
+@swag_from("../swagger/public/paths/get_users.yml")
 @json_endpoint
 def service_users():
     service = validate_service_token("scim_enabled")
@@ -49,6 +51,7 @@ def service_users():
 
 
 @scim_api.route("/Users/<user_external_id>", methods=["GET"], strict_slashes=False)
+@swag_from("../swagger/public/paths/get_user_by_external_id.yml")
 @json_endpoint
 def service_user_by_external_id(user_external_id: str):
     validate_service_token("scim_enabled")
@@ -58,6 +61,7 @@ def service_user_by_external_id(user_external_id: str):
 
 
 @scim_api.route("/Groups", methods=["GET"], strict_slashes=False)
+@swag_from("../swagger/public/paths/get_groups.yml")
 @json_endpoint
 def service_groups():
     service = validate_service_token("scim_enabled")
@@ -75,11 +79,12 @@ def service_groups():
     return find_groups_template(collaborations + all_groups), 200
 
 
-@scim_api.route("/Groups/<group_identifier>", methods=["GET"], strict_slashes=False)
+@scim_api.route("/Groups/<group_external_id>", methods=["GET"], strict_slashes=False)
+@swag_from("../swagger/public/paths/get_group_by_external_id.yml")
 @json_endpoint
-def service_group_by_identifier(group_identifier: str):
+def service_group_by_identifier(group_external_id: str):
     validate_service_token("scim_enabled")
-    stripped_group_identifier = group_identifier.replace(external_id_post_fix, "")
+    stripped_group_identifier = group_external_id.replace(external_id_post_fix, "")
     group = Collaboration.query.filter(Collaboration.identifier == stripped_group_identifier).first()
     if not group:
         group = Group.query.filter(Group.identifier == stripped_group_identifier).one()

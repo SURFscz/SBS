@@ -1,6 +1,9 @@
 summary: "Get collaboration details."
 description: "Retrieves a single collection."
 
+tags:
+  - "Organisations"
+
 consumes:
   - "application/json"
 

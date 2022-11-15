@@ -1,0 +1,34 @@
+---
+type: object
+properties:
+  id:
+    type: string
+    description: "Unique identifier of the user in SRAM"
+    example: "addb7a32-8c43-44eb-8b61-d1a041d3eb84@sram.surf.nl"
+  externalId:
+    type: string
+    description: "Unique external identifier of the user in SRAM"
+    example: "addb7a32-8c43-44eb-8b61-d1a041d3eb84@sram.surf.nl"
+  name:
+    type: string
+    example: "hardewijk:science:research"
+  displayName:
+    type: string
+    example: "Research"
+  members:
+    type: array
+    items:
+      type: object
+      properties:
+        value:
+          type: string
+          example: "addb7a32-8c43-44eb-8b61-d1a041d3eb84@sram.surf.nl"
+  schemas:
+    type: array
+    description: "SCIM schema's"
+    items:
+      type: string
+      example: "urn:scim:schemas:core:1.0"
+  meta:
+    type: object
+    $ref: '/swagger/schemas/ScimMeta.yaml'

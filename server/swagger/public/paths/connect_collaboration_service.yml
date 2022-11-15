@@ -1,6 +1,9 @@
 summary: "Connect service to collaboration."
 description: "Connect a service to an existing collaboration."
 
+tags:
+  - "Organisations"
+
 consumes:
   - "application/json"
 

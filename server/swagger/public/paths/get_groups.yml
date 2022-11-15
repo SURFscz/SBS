@@ -1,0 +1,23 @@
+summary: "Get all group details."
+description: "Retrieves all groups that are linked to the service."
+
+tags:
+  - "SCIM Services"
+
+consumes:
+  - "application/json"
+
+produces:
+  - "application/json"
+
+security:
+  - APITokenHeader: [ 'Authorization' ]
+
+responses:
+  200:
+    description: All users
+    schema:
+      $ref: '/swagger/schemas/ScimGroupListResult.yaml'
+  401:
+    schema:
+      $ref: '/swagger/components/responses/Unauthorized.yaml'

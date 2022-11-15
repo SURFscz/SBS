@@ -1,6 +1,9 @@
 summary: "Post a new collaboration."
 description: "Save a new collaboration."
 
+tags:
+  - "Organisations"
+
 consumes:
   - "application/json"
 
