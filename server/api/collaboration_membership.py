@@ -14,7 +14,7 @@ collaboration_membership_api = Blueprint("collaboration_membership_api", __name_
                                          url_prefix="/api/collaboration_memberships")
 
 
-@collaboration_membership_api.route("/<collaboration_id>/<user_id>", methods=["DELETE"], strict_slashes=False)
+@collaboration_membership_api.route("/<int:collaboration_id>/<int:user_id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_collaboration_membership(collaboration_id, user_id):
     if current_user_id() != int(user_id):

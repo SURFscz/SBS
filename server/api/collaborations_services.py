@@ -98,7 +98,7 @@ def connect_collaboration_service_api():
             "service": {"entity_id": service.entity_id}}, 201
 
 
-@collaborations_services_api.route("/<collaboration_id>/<service_id>", methods=["DELETE"], strict_slashes=False)
+@collaborations_services_api.route("/<int:collaboration_id>/<int:service_id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_collaborations_services(collaboration_id, service_id):
     try:
