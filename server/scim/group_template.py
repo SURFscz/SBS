@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 from typing import Union, List
 
 from server.db.domain import Group, Collaboration

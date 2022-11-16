@@ -1,5 +1,3 @@
-# -*- coding: future_fstrings -*-
-
 SCHEMA_CORE = "urn:ietf:params:scim:schemas:core:2.0"
 
 

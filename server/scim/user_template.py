@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import hashlib
 from typing import List, Union
 

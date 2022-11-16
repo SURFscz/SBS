@@ -1,5 +1,3 @@
-# -*- coding: future_fstrings -*-
-
 from server.db.domain import Service
 from server.scim.counter import atomic_increment_counter_value
 from server.test.abstract_test import AbstractTest

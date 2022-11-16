@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import urllib.parse
 from typing import Union, List
 
