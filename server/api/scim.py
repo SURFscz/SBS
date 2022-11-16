@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 from typing import List, Union
 
 from flasgger import swag_from
