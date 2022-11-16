@@ -2,6 +2,7 @@ import hashlib
 from typing import List, Union
 
 from server.db.domain import User, Group, Collaboration
+from server.scim import SCIM_URL_PREFIX
 
 external_id_post_fix = "@sram.surf.nl"
 
@@ -19,7 +20,7 @@ def _meta_info(user: User):
             "created": date_time_format(user.created_at),
             "lastModified": date_time_format(user.updated_at),
             "version": version_value(user),
-            "location": f"/Users/{user.external_id}{external_id_post_fix}"}
+            "location": f"{SCIM_URL_PREFIX}/Users/{user.external_id}{external_id_post_fix}"}
 
 
 def create_user_template(user: User):
