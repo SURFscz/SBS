@@ -10,7 +10,7 @@ def _meta_info(group: Union[Group, Collaboration]):
             "created": date_time_format(group.created_at),
             "lastModified": date_time_format(group.updated_at),
             "version": version_value(group),
-            "location": f"{SCIM_URL_PREFIX}/Users/{group.identifier}{external_id_post_fix}"}
+            "location": f"{SCIM_URL_PREFIX}/Groups/{group.identifier}{external_id_post_fix}"}
 
 
 def create_group_template(group: Union[Group, Collaboration], membership_user_scim_identifiers):
