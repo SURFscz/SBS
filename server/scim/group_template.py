@@ -1,6 +1,7 @@
 from typing import Union, List
 
 from server.db.domain import Group, Collaboration
+from server.scim import SCIM_URL_PREFIX
 from server.scim.user_template import external_id_post_fix, version_value, date_time_format
 
 
@@ -9,7 +10,7 @@ def _meta_info(group: Union[Group, Collaboration]):
             "created": date_time_format(group.created_at),
             "lastModified": date_time_format(group.updated_at),
             "version": version_value(group),
-            "location": f"/Users/{group.identifier}{external_id_post_fix}"}
+            "location": f"{SCIM_URL_PREFIX}/Users/{group.identifier}{external_id_post_fix}"}
 
 
 def create_group_template(group: Union[Group, Collaboration], membership_user_scim_identifiers):
