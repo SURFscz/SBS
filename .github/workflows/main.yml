@@ -250,3 +250,16 @@ jobs:
           tag_name: "latest"
           prerelease: true
           files: "${{steps.fetch_artifact.outputs.download-path}}/sbs.tar.xz"
+
+      - name: Test new SBS build in SCZ-deploy's CI-runner
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.PAT_SRAM_DEPLOY }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'SURFscz',
+              repo: 'SRAM-deploy',
+              workflow_id: 'ci-runner.yml',
+              ref: 'main'
+            })
+
