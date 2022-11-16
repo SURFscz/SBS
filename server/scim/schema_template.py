@@ -1,5 +1,3 @@
-# -*- coding: future_fstrings -*-
-
 from server.scim import SCIM_URL_PREFIX
 
 SCHEMA_CORE = "urn:ietf:params:scim:schemas:core:2.0"
