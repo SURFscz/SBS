@@ -1,6 +1,5 @@
 import time
 from datetime import date
-from uuid import UUID
 
 from flask.json import JSONEncoder
 
