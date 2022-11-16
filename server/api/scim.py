@@ -39,11 +39,12 @@ def schema_template(name, schema, attributes):
         "meta": {
             "resourceType": "Schema",
             "location": f"/Schemas/{schema}"
-        }, 
+        },
         "name": name,
-        "Description": 	f"Defined attributes for the {name} schema",
-    	"attributes": attributes
+        "Description": f"Defined attributes for the {name} schema",
+        "attributes": attributes
     }
+
 
 def schema_user_template():
     return schema_template("User", f"{SCHEMA_CORE}:User", [
@@ -221,13 +222,13 @@ def schema_group_template():
             ]
         }
     ])
-    
+
 
 @scim_api.route(f"/Schemas/{SCHEMA_CORE}:User", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def schema_user():
     return schema_user_template(), 200
-    
+
 
 @scim_api.route(f"/Schemas/{SCHEMA_CORE}:Group", methods=["GET"], strict_slashes=False)
 @json_endpoint
@@ -238,17 +239,18 @@ def schema_group():
 @scim_api.route("/Schemas", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def schemas():
-    schemas = [ schema_user_template(), schema_group_template() ]
+    schemas = [schema_user_template(), schema_group_template()]
 
     return {
         "schemas": [
             "urn:ietf:params:scim:api:messages:2.0:ListResponse"
         ],
         "totalResults": len(schemas),
-	    "startIndex": 1,
-	    "itemsPerPage": len(schemas),
-    	"Resources": schemas
+        "startIndex": 1,
+        "itemsPerPage": len(schemas),
+        "Resources": schemas
     }, 200
+
 
 @scim_api.route("/Users", methods=["GET"], strict_slashes=False)
 @swag_from("../swagger/public/paths/get_users.yml")
