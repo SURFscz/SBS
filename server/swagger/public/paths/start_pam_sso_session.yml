@@ -1,0 +1,75 @@
+summary: "Start PAM WebSSO flow."
+description: "Start PAM WebSSO flow based on the service_token in the Authorization header."
+
+tags:
+  - "PAM Services"
+
+consumes:
+  - "application/json"
+
+produces:
+  - "application/json"
+
+security:
+  - APITokenHeader: [ 'Authorization' ]
+
+parameters:
+  - name: Auhtorization
+    in: header
+    description: Bearer API key
+    required: true
+    schema:
+      type: string
+      example: Bearer Am4Hp7GBO2lMseskWHRmEtE3DWD-VxZZ3qwMkNPv6qZ8
+  - name: user_id
+    in: body
+    description: The value of the attribute of the User for looking up the User
+    required: false
+    schema:
+      type: string
+      example: jdoe
+  - name: attribute
+    in: body
+    description: The name of the attribute of the User for looking up the User
+    required: false
+    schema:
+      type: string
+      example: username
+  - name: cache_duration
+    in: body
+    description: Cache duration in seconds to see if SSO can be applied
+    required: false
+    schema:
+      type: integer
+      example: 600
+
+responses:
+  200:
+    description: PAM WebSSO session details
+    schema:
+      type: object
+      properties:
+        result:
+          type: string
+          enum: [ "OK", "FAIL" ]
+          description: "Result of the request"
+          example: "OK"
+        session_id:
+          type: string
+          description: "Unique session identifier"
+          format: uuid
+          example: "8B0177D8-D7D1-4B86-ADEE-982317DC9188"
+        cached:
+          type: boolean
+          description: "If the user was cached e.g. SSO can be applied"
+          example: false
+        challenge:
+          type: string
+          description: "The challenge to present to the user"
+          example: "'Please sign in to: http://localhost:3000/weblogin/storage/fd69d7dc-df17-4d49-b992-1c447d257ad0'"
+  403:
+    schema:
+      $ref: '/swagger/components/responses/Forbidden.yaml'
+  404:
+    schema:
+      $ref: '/swagger/components/responses/NotFound.yaml'

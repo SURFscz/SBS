@@ -1,0 +1,25 @@
+---
+type: object
+properties:
+  service:
+    type: object
+    $ref: '/swagger/schemas/Service.yaml'
+  validation:
+    type: object
+    properties:
+      result:
+        type: string
+        enum: ["SUCCESS", "FAIL"]
+        description: "Result of the validation"
+        example: "SUCCESS"
+      username:
+        type: string
+        description: "If the PIN validation was successful the username of the user who logged in"
+        example: "jdoe5"
+      info:
+        type: string
+        description: "Extra information why the validation was OK or not"
+        example: "User urn:jdoe has authenticated successfully"
+  pin:
+    type: string
+    example: "1234"

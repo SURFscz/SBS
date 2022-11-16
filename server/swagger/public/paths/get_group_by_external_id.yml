@@ -14,6 +14,13 @@ security:
   - APITokenHeader: [ 'Authorization' ]
 
 parameters:
+  - name: Auhtorization
+    in: header
+    description: Bearer SCIM service token
+    required: true
+    schema:
+      type: string
+      example: Bearer Am4Hp7GBO2lMseskWHRmEtE3DWD-VxZZ3qwMkNPv6qZ8
   - name: group_external_id
     in: path
     description: Unique external id of the Group

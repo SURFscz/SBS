@@ -13,6 +13,15 @@ produces:
 security:
   - APITokenHeader: [ 'Authorization' ]
 
+parameters:
+  - name: Auhtorization
+    in: header
+    description: Bearer SCIM service token
+    required: true
+    schema:
+      type: string
+      example: Bearer Am4Hp7GBO2lMseskWHRmEtE3DWD-VxZZ3qwMkNPv6qZ8
+
 responses:
   200:
     description: All users

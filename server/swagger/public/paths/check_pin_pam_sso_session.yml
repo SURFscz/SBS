@@ -1,0 +1,64 @@
+summary: "Check the PIN of a PAM WebSSO session."
+description: "Check the user input and finalize the User login."
+
+tags:
+  - "PAM Services"
+
+consumes:
+  - "application/json"
+
+produces:
+  - "application/json"
+
+security:
+  - APITokenHeader: [ 'Authorization' ]
+
+parameters:
+  - name: Auhtorization
+    in: header
+    description: Bearer service token
+    required: true
+    schema:
+      type: string
+      example: Bearer Am4Hp7GBO2lMseskWHRmEtE3DWD-VxZZ3qwMkNPv6qZ8
+  - name: session_id
+    in: body
+    description: The unique identifier of the PAM WebSSO session
+    required: true
+    schema:
+      type: string
+      format: uuid
+      example: "8B0177D8-D7D1-4B86-ADEE-982317DC9188"
+  - name: pin
+    in: body
+    description: The entered PIN by the User
+    required: true
+    schema:
+      type: integer
+      example: 1234
+
+responses:
+  200:
+    description: PAM WebSSO session result
+    schema:
+      type: object
+      properties:
+        result:
+          type: string
+          enum: [ "TIMEOUT", "SUCCESS", "FAIL" ]
+          description: "Result of the request"
+          example: "SUCCESS"
+        info:
+          type: string
+          description: "Extra information why the validation was OK or not"
+          example: "User urn:jdoe has authenticated successfully"
+        username:
+          type: string
+          description: "If the PIN validation was successful the username of the user who logged in"
+          example: "jdoe5"
+  403:
+    schema:
+      $ref: '/swagger/components/responses/Forbidden.yaml'
+  404:
+    schema:
+      $ref: '/swagger/components/responses/NotFound.yaml'
