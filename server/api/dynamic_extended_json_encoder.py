@@ -11,6 +11,4 @@ class DynamicExtendedJSONEncoder(JSONEncoder):
             return o.__json__()
         if isinstance(o, date):
             return int(time.mktime(o.timetuple()))
-        if isinstance(o, UUID):
-            return str(o)
         return super(DynamicExtendedJSONEncoder, self).default(o)
