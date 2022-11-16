@@ -30,7 +30,6 @@ services:
     links:
       - db
       - redis
-      - ldap
     volumes:
       - ${PWD}/etc/config.yml:/etc/config.yml
     ports:
@@ -49,8 +48,8 @@ services:
       CLIENT_SECRET: ${CLIENT_SECRET}
       AUDIENCE: ${AUDIENCE}
       ADMIN: ${ADMIN}
-      LDAP_URL: ldap://ldap/dc=example,dc=org
-      LDAP_BIND: cn=admin,dc=entity_id,dc=services,dc=example,dc=org
+      LDAP_URL: ${LDAP_URL}
+      LDAP_BIND: ${LDAP_BIND}
 
   db:
     image: biarms/mysql:5.7
@@ -65,14 +64,3 @@ services:
     volumes:
       - data:/var/lib/mysql
       - ${PWD}/etc/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-
-  ldap:
-    image: osixia/openldap:latest
-    restart: always
-    environment:
-      LDAP_DOMAIN: example.org
-      LDAP_BASE_DN: dc=example,dc=org
-      LDAP_ADMIN_PASSWORD: ${LDAP_ADMIN_PASSWORD:-changeme}
-      LDAP_CONFIG_PASSWORD: ${LDAP_CONFIG_PASSWORD:-changeme}
-      LDAP_TLS: true
-    command: --loglevel debug --copy-service
