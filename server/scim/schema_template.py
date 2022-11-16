@@ -1,3 +1,7 @@
+# -*- coding: future_fstrings -*-
+
+from server.scim import SCIM_URL_PREFIX
+
 SCHEMA_CORE = "urn:ietf:params:scim:schemas:core:2.0"
 
 
@@ -9,7 +13,7 @@ def schema_template(name, schema, attributes):
         "id": schema,
         "meta": {
             "resourceType": "Schema",
-            "location": f"/Schemas/{schema}"
+            "location": f"{SCIM_URL_PREFIX}/Schemas/{schema}"
         },
         "name": name,
         "Description": f"Defined attributes for the {name} schema",

@@ -7,11 +7,12 @@ from server.api.base import json_endpoint
 from server.auth.tokens import validate_service_token
 from server.db.domain import User, CollaborationMembership, Service, Collaboration, Organisation, Group
 from server.db.models import flatten
+from server.scim import SCIM_URL_PREFIX
 from server.scim.schema_template import SCHEMA_CORE, schemas_template, schema_user_template, schema_group_template
 from server.scim.group_template import find_groups_template, find_group_by_id_template
 from server.scim.user_template import find_users_template, external_id_post_fix, find_user_by_id_template, version_value
 
-scim_api = Blueprint("scim_api", __name__, url_prefix="/api/scim/v2")
+scim_api = Blueprint("scim_api", __name__, url_prefix=SCIM_URL_PREFIX)
 
 
 def _add_etag_header(scim_object: Union[User, Group, Collaboration]):

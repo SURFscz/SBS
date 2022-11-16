@@ -48,3 +48,9 @@ class TestScim(AbstractTest):
         self.get("/api/scim/v2/Groups/nope",
                  headers={"Authorization": f"bearer {service_network_token}"},
                  response_status_code=404)
+
+    def test_schemas(self):
+        res = self.get("/api/scim/v2/Schemas")
+        self.assertEqual(2, len(res["Resources"]))
+        for resource in res["Resources"]:
+            res = self.get(f"{resource['meta']['location']}", response_status_code=200)
