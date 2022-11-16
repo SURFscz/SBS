@@ -278,8 +278,8 @@ def do_ssid_redirect(second_fa_uuid):
         db.session.commit()
         return redirect_to_surf_secure_id(user)
 
-    logger.warn(f"user {user.id} marked as ssid_required has no home_organisation_uid {user.home_organisation_uid} or"
-                f" no schac_home_organisation {user.schac_home_organisation}")
+    logger.warning(f"user {user.id} marked as ssid_required has no home_organisation_uid {user.home_organisation_uid}"
+                   f" or no schac_home_organisation {user.schac_home_organisation}")
 
     from server.api.user import redirect_to_client
 
