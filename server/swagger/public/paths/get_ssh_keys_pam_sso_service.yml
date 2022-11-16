@@ -1,8 +1,8 @@
-summary: "Get organisation including all collaborations"
-description: "Retrieves an organisation and all collaborations, groups and tags."
+summary: "Get all SSH keys for all User who can connect to the PAM Service."
+description: "Returns all SSH keys."
 
 tags:
-  - "Organisations"
+  - "PAM Services"
 
 consumes:
   - "application/json"
@@ -11,12 +11,12 @@ produces:
   - "application/json"
 
 security:
-  - APIKeyHeader: [ 'Authorization' ]
+  - APITokenHeader: [ 'Authorization' ]
 
 parameters:
   - name: Auhtorization
     in: header
-    description: Bearer API key
+    description: Bearer service token
     required: true
     schema:
       type: string
@@ -24,14 +24,14 @@ parameters:
 
 responses:
   200:
-    description: Organisation
+    description: SSH public
     schema:
       type: array
+      descriptiom: "All the public SSH keys"
       items:
-        $ref: '/swagger/schemas/OrganisationDetail.yaml'
-  401:
-    schema:
-      $ref: '/swagger/components/responses/Unauthorized.yaml'
+        type: string
+        example: "ssh-rsa AAAAB3NzaC1yc2EAAA..."
+
   403:
     schema:
       $ref: '/swagger/components/responses/Forbidden.yaml'

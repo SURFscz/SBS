@@ -3,6 +3,7 @@ import string
 import uuid
 from datetime import datetime, timedelta
 
+from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app, session
 from werkzeug.exceptions import NotFound, Forbidden
 
@@ -49,6 +50,7 @@ def _validate_pam_sso_session(pam_sso_session: PamSSOSession, pin, validate_pin,
 
 # This is the challenge URL
 @pam_websso_api.route("/<service_shortname>/<session_id>", methods=["GET"], strict_slashes=False)
+@swag_from("../swagger/public/paths/get_pam_sso_session_by_id.yml")
 @json_endpoint
 def find_by_session_id(service_shortname, session_id):
     pam_sso_session = _get_pam_sso_session(session_id)
@@ -67,6 +69,7 @@ def find_by_session_id(service_shortname, session_id):
 
 
 @pam_websso_api.route("/start", methods=["POST"], strict_slashes=False)
+@swag_from("../swagger/public/paths/start_pam_sso_session.yml")
 @json_endpoint
 def start():
     service = validate_service_token("pam_web_sso_enabled")
@@ -125,6 +128,7 @@ def start():
 
 
 @pam_websso_api.route("/check-pin", methods=["POST"], strict_slashes=False)
+@swag_from("../swagger/public/paths/check_pin_pam_sso_session.yml")
 @json_endpoint
 def check_pin():
     service = validate_service_token("pam_web_sso_enabled")
@@ -161,6 +165,7 @@ def check_pin():
 
 
 @pam_websso_api.route("/ssh_keys", methods=["GET"], strict_slashes=False)
+@swag_from("../swagger/public/paths/get_ssh_keys_pam_sso_service.yml")
 @json_endpoint
 def ssh_keys():
     service = validate_service_token("pam_web_sso_enabled")

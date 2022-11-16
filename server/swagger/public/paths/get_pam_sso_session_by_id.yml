@@ -1,0 +1,49 @@
+summary: "Get PAM WebSSO session details."
+description: "Returns the PAM WebSSO session."
+
+tags:
+  - "PAM Services"
+
+consumes:
+  - "application/json"
+
+produces:
+  - "application/json"
+
+security:
+  - APITokenHeader: [ 'Authorization' ]
+
+parameters:
+  - name: Auhtorization
+    in: header
+    description: Bearer service token
+    required: true
+    schema:
+      type: string
+      example: Bearer Am4Hp7GBO2lMseskWHRmEtE3DWD-VxZZ3qwMkNPv6qZ8
+  - name: service_shortname
+    in: path
+    description: Unique short_name of the Service
+    required: true
+    schema:
+      type: string
+      example: storage
+  - name: session_id
+    in: path
+    description: Unique session id of the PAM WebSSO session
+    required: true
+    schema:
+      type: string
+      example: 8B0177D8-D7D1-4B86-ADEE-982317DC9188
+
+responses:
+  200:
+    description: PAM WebSSO session details
+    schema:
+      $ref: '/swagger/schemas/PAMWebSSO.yaml'
+  403:
+    schema:
+      $ref: '/swagger/components/responses/Forbidden.yaml'
+  404:
+    schema:
+      $ref: '/swagger/components/responses/NotFound.yaml'

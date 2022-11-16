@@ -18,7 +18,7 @@ SWAGGER_TEMPLATE = {
         },
         {
             "name": "PAM Services",
-            "description": "All endpoints for external Services that support the PAM Weblogin flow"
+            "description": "All endpoints for external Services that support the PAM WebSSO flow"
         }
     ],
     "securityDefinitions": {
