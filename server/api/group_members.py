@@ -1,4 +1,4 @@
-from flask import Blueprint, request as current_request
+from flask import Blueprint, request as current_request, g as request_context
 
 from server.api.base import json_endpoint, emit_socket
 from server.auth.security import confirm_collaboration_admin
@@ -14,7 +14,7 @@ group_members_api = Blueprint("group_members_api", __name__,
 def do_add_group_members(data, assert_collaboration_admin):
     group_id = data["group_id"]
     collaboration_id = data["collaboration_id"]
-    if assert_collaboration_admin:
+    if assert_collaboration_admin and "skip_collaboration_admin_confirmation" not in request_context:
         confirm_collaboration_admin(collaboration_id)
 
     group = Group.query.get(group_id)

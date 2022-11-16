@@ -1,3 +1,5 @@
+import uuid
+
 from server.db.db import db
 from server.db.domain import Collaboration, Service, ServiceConnectionRequest
 from server.test.abstract_test import AbstractTest
@@ -159,3 +161,25 @@ class TestServiceConnectionRequest(AbstractTest):
         self.login("urn:service_admin")
         res = self.get(f"/api/service_connection_requests/all/{storage_id}", with_basic_auth=False)
         self.assertEqual(1, len(res))
+
+    def test_service_approve_with_service_groups(self):
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        wiki_service = self.find_entity_by_name(Service, service_wiki_name)
+
+        self.login("urn:jane", user_info={"email": "jdoe@ex.com"})
+        message = str(uuid.uuid4())
+        self.post("/api/service_connection_requests",
+                  body={"collaboration_id": collaboration.id,
+                        "service_id": wiki_service.id,
+                        "message": message
+                        }, with_basic_auth=False)
+        service_connection_request = ServiceConnectionRequest.query.filter(
+            ServiceConnectionRequest.message == message).one()
+
+        self.login("urn:service_admin")
+        self.put(f"/api/service_connection_requests/approve/{service_connection_request.hash}")
+
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+
+        group = list(filter(lambda group: group.global_urn == "uuc:ai_computing:wiki-wiki2", collaboration.groups))[0]
+        self.assertEqual(1, len(group.invitations))

@@ -1,6 +1,6 @@
 import uuid
 
-from flask import Blueprint, request as current_request
+from flask import Blueprint, request as current_request, g as request_context
 from sqlalchemy import func
 from sqlalchemy.orm import load_only
 
@@ -20,7 +20,8 @@ group_api = Blueprint("group_api", __name__, url_prefix="/api/groups")
 def do_add_group_invitations(data):
     group_id = data["group_id"]
     collaboration_id = data["collaboration_id"]
-    confirm_collaboration_admin(collaboration_id)
+    if "skip_collaboration_admin_confirmation" not in request_context:
+        confirm_collaboration_admin(collaboration_id)
 
     group = Group.query.get(group_id)
 

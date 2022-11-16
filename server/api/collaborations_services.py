@@ -31,11 +31,11 @@ def connect_service_collaboration(service_id, collaboration_id, force=False):
 
     collaboration.services.append(service)
     db.session.merge(collaboration)
-    db.session.commit()
 
     # Create groups from service_groups
     create_service_groups(service, collaboration)
 
+    db.session.commit()
     emit_socket(f"collaboration_{collaboration.id}")
     broadcast_service_added(collaboration, service)
 
