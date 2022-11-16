@@ -3,7 +3,7 @@ from server.scim import SCIM_URL_PREFIX
 SCHEMA_CORE = "urn:ietf:params:scim:schemas:core:2.0"
 
 
-def schema_template(name, schema, attributes):
+def _schema(name, schema, attributes):
     return {
         "schemas": [
             f"{SCHEMA_CORE}:Schema"
@@ -20,7 +20,7 @@ def schema_template(name, schema, attributes):
 
 
 def schema_user_template():
-    return schema_template("User", f"{SCHEMA_CORE}:User", [
+    return _schema("User", f"{SCHEMA_CORE}:User", [
         {
             "name": "userName",
             "type": "string",
@@ -141,7 +141,7 @@ def schema_user_template():
 
 
 def schema_group_template():
-    return schema_template("Group", f"{SCHEMA_CORE}:Group", [
+    return _schema("Group", f"{SCHEMA_CORE}:Group", [
         {
             "name": "displayName",
             "type": "string",
