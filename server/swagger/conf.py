@@ -17,8 +17,8 @@ SWAGGER_TEMPLATE = {
             "description": "All endpoints for external SCIM clients using a Service token"
         },
         {
-            "name": "Mock SCIM Services",
-            "description": "All mock endpoints for testing SCIM using a Service SCIM token"
+            "name": "PAM Services",
+            "description": "All endpoints for external Services that support the PAM Weblogin flow"
         }
     ],
     "securityDefinitions": {
