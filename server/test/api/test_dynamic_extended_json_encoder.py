@@ -13,8 +13,9 @@ class TestDynamicExtendedJSONEncoder(AbstractTest):
         _uuid = uuid.uuid4()
         today = date.today()
 
-        obj = {"1": _uuid, "2": today}
+        obj = {"1": _uuid, "2": today, "3": "default"}
         res = jsonify(obj).json
 
         self.assertEqual(res["1"], str(_uuid))
         self.assertEqual(res["2"], time.mktime(today.timetuple()))
+        self.assertEqual(res["3"], "default")
