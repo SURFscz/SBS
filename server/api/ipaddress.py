@@ -29,6 +29,8 @@ def validate_ip_networks(data, networks_name="ip_networks"):
 def info():
     address = query_param("address")
     id = query_param("id", required=False)
+    if id is not None:
+        id = int(id)
 
     try:
         ip_network = ipaddress.ip_network(address, False)
@@ -37,7 +39,7 @@ def info():
             "error": True,
             "network_value": address,
             "syntax": True,
-            "id": int(id)
+            "id": id
         }, 200
 
     _is4 = ip_network.version == 4
@@ -49,7 +51,7 @@ def info():
             "max": max_allowed_ipv4_sub_mask if _is4 else max_allowed_ipv6_prefix,
             "network_value": str(ip_network),
             "prefix": prefix,
-            "id": int(id)
+            "id": id
         }, 200
 
     return {
@@ -59,5 +61,5 @@ def info():
         "global": ip_network.is_global,
         "lower": str(ip_network[0]),
         "higher": str(ip_network[-1]),
-        "id": int(id)
+        "id": id
     }, 200
