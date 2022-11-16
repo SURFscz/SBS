@@ -141,7 +141,7 @@ def check_pin():
     try:
         pam_sso_session = _get_pam_sso_session(session_id)
     except NotFound:
-        return {"result": "TIMEOUT", "info": f"Pam session {session_id} has expired"}, 201
+        return {"result": "TIMEOUT", "info": f"Pam session not found or expired"}, 201
 
     user = pam_sso_session.user
     validation = _validate_pam_sso_session(pam_sso_session, pin, True, False)

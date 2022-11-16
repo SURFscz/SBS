@@ -37,7 +37,7 @@ def info():
             "error": True,
             "network_value": address,
             "syntax": True,
-            "id": id
+            "id": int(id)
         }, 200
 
     _is4 = ip_network.version == 4
@@ -49,7 +49,7 @@ def info():
             "max": max_allowed_ipv4_sub_mask if _is4 else max_allowed_ipv6_prefix,
             "network_value": str(ip_network),
             "prefix": prefix,
-            "id": id
+            "id": int(id)
         }, 200
 
     return {
@@ -59,5 +59,5 @@ def info():
         "global": ip_network.is_global,
         "lower": str(ip_network[0]),
         "higher": str(ip_network[-1]),
-        "id": id
+        "id": int(id)
     }, 200
