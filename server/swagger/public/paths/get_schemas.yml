@@ -1,0 +1,17 @@
+summary: "Get Schemas."
+description: "Retrieves the SCIM Schemas provided by SRAM."
+
+tags:
+    - "SCIM Services"
+
+consumes:
+    - "application/json"
+
+produces:
+    - "application/json"
+
+responses:
+    200:
+        description: All users
+        schema:
+            $ref: "/swagger/schemas/ScimSchemas.yaml"

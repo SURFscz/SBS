@@ -41,6 +41,7 @@ def schema_group():
 
 
 @scim_api.route("/Schemas", methods=["GET"], strict_slashes=False)
+@swag_from("../swagger/public/paths/get_schemas.yml")
 @json_endpoint
 def schemas():
     return schemas_template(), 200
