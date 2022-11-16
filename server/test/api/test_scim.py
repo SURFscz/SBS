@@ -1,4 +1,5 @@
 from server.db.domain import User, Collaboration, Group
+from server.scim.schema_template import schemas
 from server.scim.user_template import external_id_post_fix, version_value
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_network_token, jane_name, ai_computing_name, ai_researchers_group
@@ -52,5 +53,6 @@ class TestScim(AbstractTest):
     def test_schemas(self):
         res = self.get("/api/scim/v2/Schemas")
         self.assertEqual(2, len(res["Resources"]))
+        self.assertEqual(res, schemas())
         for resource in res["Resources"]:
-            res = self.get(f"{resource['meta']['location']}", response_status_code=200)
+            self.get(f"{resource['meta']['location']}", response_status_code=200)
