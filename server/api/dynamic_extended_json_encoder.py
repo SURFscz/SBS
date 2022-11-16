@@ -1,5 +1,6 @@
 import time
 from datetime import date
+from uuid import UUID
 
 from flask.json import JSONEncoder
 
@@ -10,4 +11,6 @@ class DynamicExtendedJSONEncoder(JSONEncoder):
             return o.__json__()
         if isinstance(o, date):
             return int(time.mktime(o.timetuple()))
+        if isinstance(o, UUID):
+            return str(o)
         return super(DynamicExtendedJSONEncoder, self).default(o)

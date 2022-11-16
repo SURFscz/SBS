@@ -387,7 +387,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                        service=wiki)
     service_group_wiki2 = ServiceGroup(name=service_group_wiki_name2,
                                        short_name="wiki2",
-                                       auto_provision_members=False,
+                                       auto_provision_members=True,
                                        description="Wiki group 2",
                                        service=wiki)
     persist_instance(db, service_group_mail, service_group_wiki1, service_group_wiki2)

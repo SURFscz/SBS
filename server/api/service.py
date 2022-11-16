@@ -382,7 +382,7 @@ def update_service():
     service = Service.query.filter(Service.id == service_id).one()
 
     if not is_application_admin():
-        forbidden = ["white_listed", "non_member_users_access_allowed", "token_enabled", "entity_id",
+        forbidden = ["white_listed", "non_member_users_access_allowed", "token_enabled", "entity_id", "abbreviation",
                      "pam_web_sso_enabled", "scim_enabled", "scim_url", "scim_bearer_token",
                      "scim_provision_users", "scim_provision_groups"]
         for attr in [fb for fb in forbidden if fb in data]:

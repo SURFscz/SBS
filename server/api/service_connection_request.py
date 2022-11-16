@@ -1,5 +1,5 @@
 
-from flask import Blueprint, request as current_request, current_app
+from flask import Blueprint, request as current_request, current_app, g as request_context
 from sqlalchemy.orm import contains_eager, load_only
 from werkzeug.exceptions import BadRequest
 
@@ -153,6 +153,8 @@ def service_connection_request_by_hash(hash_value):
 @service_connection_request_api.route("/approve/<hash_value>", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def approve_service_connection_request(hash_value):
+    # Ensure to skip current_user is CO admin check
+    request_context.skip_collaboration_admin_confirmation = True
     return _do_service_connection_request(hash_value, True)
 
 

@@ -890,7 +890,7 @@ class ServiceOverview extends React.Component {
             </div>)
     }
 
-    renderGeneral = (service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs) => {
+    renderGeneral = (service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs, showServiceAdminView) => {
         return <>
             <InputField value={service.name}
                         onChange={this.changeServiceProperty("name", false, {...alreadyExists, name: false})}
@@ -925,7 +925,7 @@ class ServiceOverview extends React.Component {
                         toolTip={I18n.t("service.abbreviationTooltip")}
                         error={alreadyExists.abbreviation || isEmpty(service.abbreviation)}
                         copyClipBoard={false}
-                        disabled={!isAdmin && !isServiceAdmin}/>
+                        disabled={!isAdmin || showServiceAdminView}/>
             {alreadyExists.abbreviation && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
                 attribute: I18n.t("service.abbreviation").toLowerCase(),
                 value: service.abbreviation
@@ -973,7 +973,7 @@ class ServiceOverview extends React.Component {
                         invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken) => {
         switch (currentTab) {
             case "general":
-                return this.renderGeneral(service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs);
+                return this.renderGeneral(service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs, showServiceAdminView);
             case "connection":
                 return this.renderConnection(config, service, alreadyExists, isAdmin, isServiceAdmin, showServiceAdminView);
             case "contacts":

@@ -431,6 +431,9 @@ def save_collaboration_api():
         raise BadRequest(f"Missing required attributes: {missing}")
     # The do_save_collaboration strips out all non-collaboration keys
     tags = data.get("tags", None)
+    # Ensure to skip current_user is CO admin check
+    request_context.skip_collaboration_admin_confirmation = True
+
     res = do_save_collaboration(data, organisation, user, current_user_admin=False, save_tags=False)
     collaboration = res[0]
     # Prevent ValueError: Circular reference detected cause of tags
