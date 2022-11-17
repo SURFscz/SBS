@@ -171,7 +171,7 @@ class TestUserSaml(AbstractTest):
         sarah = self.find_entity_by_name(User, sarah_name)
         self.assertEqual(status_["result"], "interrupt")
         self.assertEqual(res["status"]["redirect_url"],
-                         f"{self.app.app_config.base_url}/api/mfa/ssid_start/{sarah.second_fa_uuid}")
+                         f"{self.app.app_config.base_server_url}/api/mfa/ssid_start/{sarah.second_fa_uuid}")
         self.assertTrue(sarah.ssid_required)
 
     def test_proxy_authz_mfa_sbs_ssid_sso(self):
@@ -236,7 +236,7 @@ class TestUserSaml(AbstractTest):
 
         self.assertEqual(res["status"]["result"], "interrupt")
         self.assertEqual(res["status"]["redirect_url"],
-                         f"{self.app.app_config.base_url}/api/mfa/ssid_start/{sarah.second_fa_uuid}")
+                         f"{self.app.app_config.base_server_url}/api/mfa/ssid_start/{sarah.second_fa_uuid}")
 
         sarah = self.find_entity_by_name(User, sarah_name)
         self.assertTrue(sarah.ssid_required)
