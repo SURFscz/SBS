@@ -212,7 +212,7 @@ export default class CroppedImageDialog extends React.PureComponent {
                 {<input type="file"
                         id={`fileUpload_${name}`}
                         name={`fileUpload_${name}`}
-                        accept="image/png, image/jpeg, image/jpg, image/svg+xml"
+                        accept="image/png, image/jpeg, image/jpg, image/svg+xml, image/webp"
                         style={{display: "none"}}
                         onChange={this.internalOnChange}/>}
                 {!src && <span className="disclaimer">{I18n.t("forms.image")}</span>}
