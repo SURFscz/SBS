@@ -249,13 +249,13 @@ class TestUser(AbstractTest):
     def test_resume_session_dead_end(self):
         res = self.get("/api/users/resume-session", response_status_code=302)
         query_dict = dict(parse.parse_qs(parse.urlsplit(res.location).query))
-        self.assertListEqual(["http://localhost:3000"], query_dict["state"])
+        self.assertListEqual([self.app.app_config.base_url], query_dict["state"])
 
     @responses.activate
     def test_resume_session_token_error(self):
         responses.add(responses.POST, current_app.app_config.oidc.token_endpoint, status=500)
         res = self.get("/api/users/resume-session", query_data={"code": "123456"}, response_status_code=302)
-        self.assertEqual("http://localhost:3000/error", res.location)
+        self.assertEqual(current_app.app_config.base_url + "/error", res.location)
 
     @responses.activate
     def test_resume_session_user_info_error(self):
@@ -263,7 +263,7 @@ class TestUser(AbstractTest):
                       json={"access_token": "some_token"}, status=200)
         responses.add(responses.GET, current_app.app_config.oidc.userinfo_endpoint, status=500)
         res = self.get("/api/users/resume-session", query_data={"code": "123456"}, response_status_code=302)
-        self.assertEqual("http://localhost:3000/error", res.location)
+        self.assertEqual(current_app.app_config.base_url + "/error", res.location)
 
     def test_logout(self):
         self.login("urn:john")
@@ -344,7 +344,7 @@ class TestUser(AbstractTest):
                       read_file("test/data/public.json"), status=200)
         with requests.Session():
             res = self.client.get("/api/users/resume-session?code=123456")
-            self.assertEqual("http://localhost:3000/2fa", res.headers.get("Location"))
+            self.assertEqual(current_app.app_config.base_url + "/2fa", res.headers.get("Location"))
             user = self.client.get("/api/users/me", ).json
 
             self.assertFalse(user["second_factor_auth"])
@@ -359,7 +359,7 @@ class TestUser(AbstractTest):
         self.assertRaises(BadRequest, expect_bad_request)
 
     @responses.activate
-    def test_resume_session_with_allowed_idp(self, redirect_expected="http://localhost:3000"):
+    def test_resume_session_with_allowed_idp(self, redirect_expected=None):
         responses.add(responses.POST, current_app.app_config.oidc.token_endpoint,
                       json={"access_token": "some_token", "id_token": self.sign_jwt({"acr": "nope"})},
                       status=200)
@@ -369,6 +369,9 @@ class TestUser(AbstractTest):
         responses.add(responses.GET, current_app.app_config.oidc.jwks_endpoint,
                       read_file("test/data/public.json"), status=200)
         with requests.Session():
+            if not redirect_expected:
+                redirect_expected = current_app.app_config.base_url
+
             res = self.client.get("/api/users/resume-session?code=123456")
             self.assertEqual(redirect_expected, res.headers.get("Location"))
             user = self.client.get("/api/users/me", ).json
@@ -492,7 +495,7 @@ class TestUser(AbstractTest):
                                content_type="application/x-www-form-urlencoded")
 
         self.assertEqual(302, res.status_code)
-        self.assertEqual("http://localhost:3000", res.location)
+        self.assertEqual(self.app.app_config.base_url, res.location)
 
         sarah = User.query.filter(User.uid == "urn:sarah").one()
         self.assertFalse(sarah.ssid_required)
@@ -507,7 +510,7 @@ class TestUser(AbstractTest):
                                content_type="application/x-www-form-urlencoded")
 
         self.assertEqual(302, res.status_code)
-        self.assertEqual("http://localhost:3000/error", res.location)
+        self.assertEqual(self.app.app_config.base_url + "/error", res.location)
 
     def test_acs_error_saml_error(self):
         self.mark_user_ssid_required(name=sarah_name, home_organisation_uid="admin", schac_home_organisation="ssid.org")
@@ -521,4 +524,4 @@ class TestUser(AbstractTest):
                                content_type="application/x-www-form-urlencoded")
 
         self.assertEqual(302, res.status_code)
-        self.assertEqual("http://localhost:3000/2fa", res.location)
+        self.assertEqual(self.app.app_config.base_url + "/2fa", res.location)
