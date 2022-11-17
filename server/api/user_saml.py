@@ -91,13 +91,14 @@ def _perform_sram_login(uid, service, service_entity_id, home_organisation_uid, 
         # also skip if user has already recently performed MFA
         if not idp_allowed and (ssid_required or fallback_required) and not has_valid_mfa(user):
             base_url = current_app.app_config.base_url
+            base_server_url = current_app.app_config.base_server_url
             if ssid_required:
                 user.ssid_required = True
                 if home_organisation_uid:
                     user.home_organisation_uid = home_organisation_uid
                 if schac_home_organisation:
                     user.schac_home_organisation = schac_home_organisation
-                redirect_base_url = f"{base_url}/api/mfa/ssid_start"
+                redirect_base_url = f"{base_server_url}/api/mfa/ssid_start"
             else:
                 redirect_base_url = f"{base_url}/2fa"
 
@@ -240,6 +241,7 @@ def proxy_authz():
 
     def not_authorized_func(service_name, status):
         base_url = current_app.app_config.base_url
+        base_server_url = current_app.app_config.base_server_url
         if status == SECOND_FA_REQUIRED:
             # Internal contract, in case of SECOND_FA_REQUIRED we get the User instance returned
             user_not_authorized = service_name
@@ -248,7 +250,7 @@ def proxy_authz():
             db.session.merge(user_not_authorized)
             db.session.commit()
             if user_not_authorized.ssid_required:
-                redirect_url = f"{base_url}/api/mfa/ssid_start/{user_not_authorized.second_fa_uuid}"
+                redirect_url = f"{base_server_url}/api/mfa/ssid_start/{user_not_authorized.second_fa_uuid}"
             else:
                 redirect_url = f"{base_url}/2fa/{user_not_authorized.second_fa_uuid}"
             result = "interrupt"
