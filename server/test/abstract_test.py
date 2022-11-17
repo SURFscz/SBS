@@ -45,7 +45,7 @@ class AbstractTest(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        os.environ["CONFIG"] = "config/test_config.yml"
+        os.environ["CONFIG"] = os.environ.get("CONFIG", "config/test_config.yml")
         os.environ["TESTING"] = "1"
         os.environ["SCIM_DISABLED"] = "1"
 

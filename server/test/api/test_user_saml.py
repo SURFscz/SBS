@@ -60,8 +60,9 @@ class TestUserSaml(AbstractTest):
                         response_status_code=200)
         self.assertEqual(res["status"]["result"], "unauthorized")
         self.assertEqual(res["status"]["redirect_url"],
-                         "http://localhost:3000/service-denied?service_name=Network+Services&error_status=2"
-                         "&entity_id=https%3A%2F%2Fnetwork&issuer_id=issuer.com&user_id=urn%3Ajohn")
+                         self.app.app_config.base_url
+                         + "/service-denied?service_name=Network+Services&error_status=2"
+                         + "&entity_id=https%3A%2F%2Fnetwork&issuer_id=issuer.com&user_id=urn%3Ajohn")
 
     def test_proxy_authz_not_active_collaborations(self):
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
@@ -74,8 +75,9 @@ class TestUserSaml(AbstractTest):
                               "uid": "sarah", "homeorganization": "example.com"})
         self.assertEqual(res["status"]["result"], "unauthorized")
         self.assertEqual(res["status"]["redirect_url"],
-                         "http://localhost:3000/service-denied?service_name=Mail+Services&error_status=5"
-                         "&entity_id=https%3A%2F%2Fmail&issuer_id=issuer.com&user_id=urn%3Asarah")
+                         self.app.app_config.base_url
+                         + "/service-denied?service_name=Mail+Services&error_status=5"
+                         + "&entity_id=https%3A%2F%2Fmail&issuer_id=issuer.com&user_id=urn%3Asarah")
 
     def test_proxy_authz_no_aup(self):
         self.login_user_2fa("urn:jane")
@@ -87,7 +89,7 @@ class TestUserSaml(AbstractTest):
         self.assertEqual(res["status"]["result"], "interrupt")
 
         parameters = urlencode({"service_id": network_service.uuid4, "service_name": network_service.name})
-        self.assertEqual(res["status"]["redirect_url"], f"http://localhost:3000/service-aup?{parameters}")
+        self.assertEqual(res["status"]["redirect_url"], f"{self.app.app_config.base_url}/service-aup?{parameters}")
 
     def test_proxy_authz_no_user(self):
         res = self.post("/api/users/proxy_authz", body={"user_id": "urn:nope", "service_id": service_mail_entity_id,
@@ -128,7 +130,7 @@ class TestUserSaml(AbstractTest):
         status_ = res["status"]
         self.assertEqual(status_["result"], "interrupt")
         self.assertEqual(status_["error_status"], SECOND_FA_REQUIRED)
-        self.assertEqual(status_["redirect_url"], f"http://localhost:3000/2fa/{sarah.second_fa_uuid}")
+        self.assertEqual(status_["redirect_url"], f"{self.app.app_config.base_url}/2fa/{sarah.second_fa_uuid}")
 
     def test_proxy_authz_mfa_sbs_totp_new_user(self):
         res = self.post("/api/users/proxy_authz", response_status_code=200,
@@ -169,7 +171,7 @@ class TestUserSaml(AbstractTest):
         sarah = self.find_entity_by_name(User, sarah_name)
         self.assertEqual(status_["result"], "interrupt")
         self.assertEqual(res["status"]["redirect_url"],
-                         f"http://localhost:3000/api/mfa/ssid_start/{sarah.second_fa_uuid}")
+                         f"{self.app.app_config.base_url}/api/mfa/ssid_start/{sarah.second_fa_uuid}")
         self.assertTrue(sarah.ssid_required)
 
     def test_proxy_authz_mfa_sbs_ssid_sso(self):
@@ -207,7 +209,7 @@ class TestUserSaml(AbstractTest):
                               "homeorganization": "example.com"})
         sarah = self.find_entity_by_name(User, sarah_name)
         self.assertEqual(res["status"]["result"], "interrupt")
-        self.assertEqual(res["status"]["redirect_url"], f"http://localhost:3000/2fa/{sarah.second_fa_uuid}")
+        self.assertEqual(res["status"]["redirect_url"], f"{self.app.app_config.base_url}/2fa/{sarah.second_fa_uuid}")
 
     def test_proxy_authz_mfa_service_totp_sso(self):
         self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
@@ -234,7 +236,7 @@ class TestUserSaml(AbstractTest):
 
         self.assertEqual(res["status"]["result"], "interrupt")
         self.assertEqual(res["status"]["redirect_url"],
-                         f"http://localhost:3000/api/mfa/ssid_start/{sarah.second_fa_uuid}")
+                         f"{self.app.app_config.base_url}/api/mfa/ssid_start/{sarah.second_fa_uuid}")
 
         sarah = self.find_entity_by_name(User, sarah_name)
         self.assertTrue(sarah.ssid_required)
@@ -293,7 +295,7 @@ class TestUserSaml(AbstractTest):
                               "issuer_id": "nope"})
         sarah = self.find_entity_by_name(User, sarah_name)
         self.assertEqual(res["status"]["result"], "interrupt")
-        self.assertEqual(res["status"]["redirect_url"], f"http://localhost:3000/2fa/{sarah.second_fa_uuid}")
+        self.assertEqual(res["status"]["redirect_url"], f"{self.app.app_config.base_url}/2fa/{sarah.second_fa_uuid}")
 
     def test_proxy_authz_mfa_no_attr(self):
         res = self.post("/api/users/proxy_authz", response_status_code=500,
