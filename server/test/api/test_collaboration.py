@@ -296,6 +296,7 @@ class TestCollaboration(AbstractTest):
         self.assertEqual("UUC", collaboration["organisation"]["name"])
         self.assertTrue(len(collaboration["collaboration_memberships"]) >= 4)
         self.assertEqual(1, len(collaboration["invitations"]))
+        self.assertEqual(2, len(collaboration["services"]))
 
     def test_collaboration_by_id_v1(self):
         self.login()
