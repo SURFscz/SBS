@@ -64,9 +64,9 @@ export default function CollaborationAupAcceptance({
     return (
         <div className="mod-aup-services">
             {children}
-            <div className="services">
+            {services.length > 0 && <div className="services">
                 {services.map(service => renderServiceAup(service))}
-            </div>
+            </div>}
             <div className="terms">
                 <CheckBox name="aup" value={!disabled} info={I18n.t("aup.collaboration.agreeWithTerms")}
                           onChange={() => setDisabled(!disabled)}/>

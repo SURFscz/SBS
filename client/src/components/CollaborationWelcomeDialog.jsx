@@ -59,10 +59,11 @@ export default function CollaborationWelcomeDialog({
                 <p>{collaboration.description}</p>
             </section>
             <CollaborationAupAcceptance services={services}
-                                         disabled={disabled}
-                                         serviceEmails={serviceEmails}
-                                         setDisabled={setDisabled}
-                                         children={<h2>{I18n.t("models.collaboration.services", {nbr: services.length})}</h2>}
+                                        disabled={disabled}
+                                        serviceEmails={serviceEmails}
+                                        setDisabled={setDisabled}
+                                        children={services.length > 0 ?
+                                            <h2>{I18n.t("models.collaboration.services", {nbr: services.length})}</h2> : null}
             />
             <Button
                 txt={I18n.t("welcomeDialog.proceed", {name: collaboration.name})}
