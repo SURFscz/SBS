@@ -26,20 +26,26 @@ def delete_collaboration_membership(collaboration_id, user_id):
         .filter(CollaborationMembership.collaboration_id == collaboration_id) \
         .filter(CollaborationMembership.user_id == user_id) \
         .all()
-    for membership in memberships:
-        db.session.delete(membership)
 
     logger.info(f"Deleted {len(memberships)} collaboration memberships of {user_id}")
 
-    res = {'collaboration_id': collaboration_id, 'user_id': user_id}
+    if memberships:
+        for membership in memberships:
+            db.session.delete(membership)
 
-    collaboration = memberships[0].collaboration if memberships else None
-    db.session.commit()
-    if collaboration:
-        emit_socket(f"collaboration_{collaboration_id}", include_current_user_id=True)
+        collaboration = memberships[0].collaboration
+        user = memberships[0].user
+
+        db.session.commit()
+
+        emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
         broadcast_collaboration_changed(collaboration)
 
-    return (res, 204) if len(memberships) > 0 else (None, 404)
+        res = {'collaboration_id': collaboration.id, 'user_id': user.id}
+
+        return res, 204
+    else:
+        return None, 404
 
 
 @collaboration_membership_api.route("/expiry", methods=["PUT"], strict_slashes=False)

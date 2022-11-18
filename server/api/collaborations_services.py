@@ -115,4 +115,4 @@ def delete_collaborations_services(collaboration_id, service_id):
     emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
     broadcast_service_deleted(collaboration, service)
 
-    return {'collaboration_id': collaboration_id, 'service_id': service_id}, 204
+    return {'collaboration_id': collaboration.id, 'service_id': service.id}, 204
