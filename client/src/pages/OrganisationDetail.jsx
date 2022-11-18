@@ -209,8 +209,9 @@ class OrganisationDetail extends React.Component {
 
     getCollaborationRequestsTab = organisation => {
         const crl = (organisation.collaboration_requests || []).filter(cr => cr.status === "open").length;
+        const tabLabel = I18n.t("home.tabs.collaborationRequests", {count: (organisation.collaboration_requests || []).length});
         return (<div key="collaboration_requests" name="collaboration_requests"
-                     label={I18n.t("home.tabs.collaborationRequests", {count: (organisation.collaboration_requests || []).length})}
+                     label={tabLabel}
                      notifier={crl > 0 ? crl : null}
                      icon={<CollaborationRequestsIcon/>}>
             <CollaborationRequests {...this.props} organisation={organisation}/>
