@@ -10,6 +10,10 @@ ipaddress_api = Blueprint("ipaddress_api", __name__, url_prefix="/api/ipaddress"
 max_allowed_ipv4_sub_mask = 24
 max_allowed_ipv6_prefix = 64
 
+# >>> ipa = ipaddress.ip_network('172.16.0.0/24')
+# >>> ipa.is_private
+# IPv4Network('10.0.1.0/24').overlaps(IPv4Network('192.0.2.0/28'))
+
 
 def validate_ip_networks(data, networks_name="ip_networks"):
     ip_networks = data.get(networks_name, None)
@@ -28,9 +32,8 @@ def validate_ip_networks(data, networks_name="ip_networks"):
 @json_endpoint
 def info():
     address = query_param("address")
-    id = query_param("id", required=False)
-    if id is not None:
-        id = int(id)
+    ipaddress_id = query_param("id", required=False)
+    ipaddress_id = int(ipaddress_id) if ipaddress_id else None
 
     try:
         ip_network = ipaddress.ip_network(address, False)
@@ -39,7 +42,7 @@ def info():
             "error": True,
             "network_value": address,
             "syntax": True,
-            "id": id
+            "id": ipaddress_id
         }, 200
 
     _is4 = ip_network.version == 4
@@ -51,7 +54,7 @@ def info():
             "max": max_allowed_ipv4_sub_mask if _is4 else max_allowed_ipv6_prefix,
             "network_value": str(ip_network),
             "prefix": prefix,
-            "id": id
+            "id": ipaddress_id
         }, 200
 
     return {
@@ -61,5 +64,5 @@ def info():
         "global": ip_network.is_global,
         "lower": str(ip_network[0]),
         "higher": str(ip_network[-1]),
-        "id": id
+        "id": ipaddress_id
     }, 200

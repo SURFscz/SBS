@@ -12,7 +12,7 @@ from server.api.service_aups import add_user_aups
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call
 from server.db.defaults import default_expiry_date
-from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, Organisation
+from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, Organisation, JoinRequest
 from server.db.models import delete
 from server.mail import mail_collaboration_invitation
 from server.scim.events import broadcast_collaboration_changed, broadcast_group_changed
@@ -172,14 +172,6 @@ def invitations_accept():
 
     collaboration_membership = db.session.merge(collaboration_membership)
 
-    # We need the persistent identifier of the collaboration_membership which will be generated after the delete-commit
-    if invitation.external_identifier:
-        invitation.status = "accepted"
-        db.session.merge(invitation)
-        db.session.commit()
-    else:
-        delete(Invitation, invitation.id)
-
     # ensure all authorisation group membership are added
     groups = invitation.groups + list(filter(lambda ag: ag.auto_provision_members, collaboration.groups))
 
@@ -193,6 +185,17 @@ def invitations_accept():
         broadcast_group_changed(group)
 
     add_user_aups(collaboration, user_id)
+
+    # Any outstanding join request for this user and this collaboration can be deleted now
+    JoinRequest.query.filter(JoinRequest.user_id == user_id, JoinRequest.collaboration_id == collaboration.id).delete()
+
+    # We need the persistent identifier of the collaboration_membership which will be generated after the delete-commit
+    if invitation.external_identifier:
+        invitation.status = "accepted"
+        db.session.merge(invitation)
+        db.session.commit()
+    else:
+        delete(Invitation, invitation.id)
 
     emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
     broadcast_collaboration_changed(collaboration)

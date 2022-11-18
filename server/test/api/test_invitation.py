@@ -3,10 +3,11 @@ import time
 import uuid
 
 from server.db.db import db
-from server.db.domain import Invitation, CollaborationMembership, User, Collaboration, Organisation, ServiceAup
+from server.db.domain import Invitation, CollaborationMembership, User, Collaboration, Organisation, ServiceAup, \
+    JoinRequest
 from server.test.abstract_test import AbstractTest
 from server.test.seed import invitation_hash_no_way, ai_computing_name, invitation_hash_curious, invitation_hash_uva, \
-    uva_research_name, uuc_secret, uuc_name, ai_computing_short_name
+    uva_research_name, uuc_secret, uuc_name, ai_computing_short_name, join_request_peter_hash
 
 
 class TestInvitation(AbstractTest):
@@ -220,3 +221,9 @@ class TestInvitation(AbstractTest):
         res = self.get(f"/api/invitations/v1/{invitation_id}", headers={"Authorization": f"Bearer {uuc_secret}"},
                        with_basic_auth=False)
         self.assertEqual("accepted", res["status"])
+
+    def test_accept_with_existing_join_request(self):
+        self.assertEqual(1, JoinRequest.query.filter(JoinRequest.hash == join_request_peter_hash).count())
+        self.login("urn:peter")
+        self.put("/api/invitations/accept", body={"hash": invitation_hash_curious}, with_basic_auth=False)
+        self.assertEqual(0, JoinRequest.query.filter(JoinRequest.hash == join_request_peter_hash).count())
