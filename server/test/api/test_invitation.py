@@ -118,7 +118,7 @@ class TestInvitation(AbstractTest):
             self.assertEqual(1, len(outbox))
             mail_msg = outbox[0]
             self.assertListEqual(["curious@ex.org"], mail_msg.recipients)
-            self.assertTrue("http://localhost:3000/invitations/accept/" in mail_msg.html)
+            self.assertTrue(self.app.app_config.base_url + "/invitations/accept/" in mail_msg.html)
 
     def test_resend_bulk(self):
         invitation_identifiers = []
