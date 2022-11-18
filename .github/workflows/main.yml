@@ -251,10 +251,17 @@ jobs:
           prerelease: true
           files: "${{steps.fetch_artifact.outputs.download-path}}/sbs.tar.xz"
 
+      - name: Get token
+        id: get_token
+        uses: machine-learning-apps/actions-app-token@master
+        with:
+          APP_PEM: ${{ secrets.SRAM_ACTIONAPP_PEM }}
+          APP_ID: ${{ secrets.SRAM_ACTIONAPP_APPID }}
+
       - name: Test new SBS build in SCZ-deploy's CI-runner
         uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.PAT_SRAM_DEPLOY }}
+          github-token: ${{ steps.get_token.outputs.app_token }}
           script: |
             await github.rest.actions.createWorkflowDispatch({
               owner: 'SURFscz',
