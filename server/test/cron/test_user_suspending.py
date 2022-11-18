@@ -28,7 +28,7 @@ class TestUserSuspending(AbstractTest):
             self.assertListEqual(["two_suspend@example.org"], results["suspended"])
             self.assertListEqual(["to_be_deleted@example.org"], results["deleted"])
             self.assertEqual(3, len(outbox))
-            self.assertEqual("User to_be_deleted@example.org suspended account is deleted in environment local",
+            self.assertEqual("User to_be_deleted@example.org suspended account is deleted in environment local (local)",
                              outbox[2].subject)
 
         inactive = self.find_entity_by_name(User, "inactive")

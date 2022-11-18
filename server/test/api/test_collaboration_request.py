@@ -27,7 +27,7 @@ class TestCollaborationRequest(AbstractTest):
             collaboration_request = CollaborationRequest.query.get(res["id"])
             self.assertEqual("urn:roger", collaboration_request.requester.uid)
             mail_msg = outbox[0]
-            self.assertEqual("Request for new collaboration New Collaboration", mail_msg.subject)
+            self.assertEqual("Request for new collaboration New Collaboration (local)", mail_msg.subject)
 
     def test_request_collaboration_collaboration_creation_allowed(self):
         organisation = self.find_entity_by_name(Organisation, uuc_name)
@@ -45,7 +45,7 @@ class TestCollaborationRequest(AbstractTest):
             # Max length short_name
             self.assertEqual("new_collaboratio", collaboration.short_name)
             mail_msg = outbox[0]
-            self.assertEqual(f"New collaboration {collaboration.name} created in {organisation.name}", mail_msg.subject)
+            self.assertEqual(f"New collaboration {collaboration.name} created in {organisation.name} (local)", mail_msg.subject)
             self.assertTrue("automatically approve collaboration requests" in mail_msg.html)
 
     def test_request_collaboration_collaboration_creation_allowed_entitlement(self):
@@ -66,7 +66,7 @@ class TestCollaborationRequest(AbstractTest):
 
             self.assertEqual("new_collaboratio", collaboration.short_name)
             mail_msg = outbox[0]
-            self.assertEqual(f"New collaboration {collaboration.name} created in {organisation.name}", mail_msg.subject)
+            self.assertEqual(f"New collaboration {collaboration.name} created in {organisation.name} (local)", mail_msg.subject)
 
     def test_request_collaboration_no_schachome(self):
         self.login("urn:inactive", schac_home_organisation=None)
@@ -93,7 +93,7 @@ class TestCollaborationRequest(AbstractTest):
             self.assertEqual(collaboration_request.requester.uid, membership.user.uid)
 
             mail_msg = outbox[0]
-            self.assertEqual("Collaboration request for collaboration New Collaboration has been accepted",
+            self.assertEqual("Collaboration request for collaboration New Collaboration has been accepted (local)",
                              mail_msg.subject)
 
     def test_request_collaboration_approve_logo_url(self):
@@ -124,7 +124,7 @@ class TestCollaborationRequest(AbstractTest):
                      with_basic_auth=False)
 
             mail_msg = outbox[0]
-            self.assertEqual("Collaboration request for collaboration New Collaboration has been declined",
+            self.assertEqual("Collaboration request for collaboration New Collaboration has been declined (local)",
                              mail_msg.subject)
             self.assertTrue(reason in mail_msg.html)
 
