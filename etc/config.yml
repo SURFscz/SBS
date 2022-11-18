@@ -16,13 +16,16 @@ socket_url: "${SOCKET_URL}"
 api_users:
   - name: "sysadmin"
     password: "secret"
-    scopes: [read, write, system]
+    scopes: ["read", "write", "system", "ipaddress"]
   - name: "sysread"
     password: "secret"
     scopes: [read]
   - name: "research_cloud"
     password: "secret"
     scopes: ["restricted_co"]
+  - name: "ipaddress"
+    password: "secret"
+    scopes: ["ipaddress"]
 
 oidc:
   client_id: ${CLIENT_ID}
@@ -206,7 +209,10 @@ mfa_sso_time_in_minutes: 10
 ssid_identity_providers:
   - schac_home: "example.com"
     entity_id: "https://example.com"
-
+  - schac_home: "ssid.org"
+    entity_id: "https://ssid.org"
+  - schac_home: "erroridp.example.edu"
+    entity_id: "https://erroridp.example.edu"
 ssid_config_folder: saml_test
 
 pam_web_sso:
