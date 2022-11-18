@@ -40,7 +40,8 @@ class TestServiceConnectionRequest(AbstractTest):
             self.assertEqual(pre_count + 1, post_count)
 
             mail_msg = outbox[0]
-            self.assertEqual("Request for new service Wiki connection to collaboration AI computing", mail_msg.subject)
+            self.assertEqual("Request for new service Wiki connection to collaboration AI computing (local)",
+                             mail_msg.subject)
             self.assertEqual(["service_admin@ucc.org"], mail_msg.recipients)
             self.assertEqual(["help@wiki.com"], mail_msg.cc)
 
@@ -130,8 +131,8 @@ class TestServiceConnectionRequest(AbstractTest):
             self.assertEqual(pre_services_count + 1, post_services_count)
 
             mail_msg = outbox[0]
-            self.assertEqual("Service SSH UvA connection request for collaboration UVA UCC research has been accepted",
-                             mail_msg.subject)
+            self.assertEqual("Service SSH UvA connection request for collaboration UVA UCC research "
+                             "has been accepted (local)", mail_msg.subject)
 
     def test_deny_service_connection_request(self):
         pre_services_count = len(self.find_entity_by_name(Collaboration, uva_research_name).services)
@@ -143,8 +144,8 @@ class TestServiceConnectionRequest(AbstractTest):
             self.assertEqual(pre_services_count, post_services_count)
 
             mail_msg = outbox[0]
-            self.assertEqual("Service SSH UvA connection request for collaboration UVA UCC research has been declined",
-                             mail_msg.subject)
+            self.assertEqual("Service SSH UvA connection request for collaboration UVA UCC research "
+                             "has been declined (local)", mail_msg.subject)
 
     def test_resend_service_connection_request(self):
         res = self.get(f"/api/service_connection_requests/find_by_hash/{ssh_service_connection_request_hash}")
@@ -153,7 +154,7 @@ class TestServiceConnectionRequest(AbstractTest):
             self.login("urn:john")
             self.get(f"/api/service_connection_requests/resend/{res['id']}")
             mail_msg = outbox[0]
-            self.assertEqual("Request for new service SSH UvA connection to collaboration UVA UCC research",
+            self.assertEqual("Request for new service SSH UvA connection to collaboration UVA UCC research (local)",
                              mail_msg.subject)
 
     def test_all_service_request_connections_by_service(self):
