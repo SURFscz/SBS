@@ -1767,7 +1767,7 @@ I18n.translations.en = {
         title: "Welcome to {{name}}",
         label: "",
         role: "You are invited as a <strong>{{role}}</strong>",
-        ok: "All good, show me the {{type}}",
+        ok: "Accept, show me the {{type}}",
         organisation: "organisation",
         collaboration: "collaboration",
         service: "service",

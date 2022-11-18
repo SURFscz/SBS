@@ -1767,7 +1767,7 @@ I18n.translations.nl = {
         title: "Welkom bij {{name}}",
         label: "",
         role: "Je bent uitgenodigd als <strong>{{role}}</strong>",
-        ok: "Ok, door naar de {{type}}",
+        ok: "Akkoord, door naar de {{type}}",
         organisation: "organisatie",
         collaboration: "samenwerking",
         service: "dienst",
