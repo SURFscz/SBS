@@ -62,6 +62,9 @@ def _do_send_mail(subject, recipients, template, context, preview, working_outsi
         map(lambda x: x.strip(), recipients.split(",")))
 
     mail_ctx = current_app.app_config.mail
+    environment = mail_ctx.environment
+    if environment != "sram.surf.nl":
+        subject = f"{subject} ({environment})"
     msg = Message(subject=subject,
                   sender=(mail_ctx.get("sender_name", "SURF"), mail_ctx.get("sender_email", "no-reply@surf.nl")),
                   recipients=recipients,
@@ -71,6 +74,7 @@ def _do_send_mail(subject, recipients, template, context, preview, working_outsi
                       "X-Auto-Response-Suppress": "yes",
                       "Precedence": "bulk"
                   })
+    context = {**context, **{"environment": environment}}
     msg.html = render_template(f"{template}.html", **context)
     msg.body = render_template(f"{template}.txt", **context)
     msg.msgId = f"<{str(uuid.uuid4())}@{os.uname()[1]}.internal.sram.surf.nl>".replace("-", ".")
