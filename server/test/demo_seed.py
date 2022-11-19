@@ -164,7 +164,7 @@ def demo_seed(db):
         # Add Service memberships
         for user in service['service_memberships']:
             service_membership_user = ServiceMembership(
-                role="member",
+                role="admin",
                 user=user,
                 service=new_service
             )
