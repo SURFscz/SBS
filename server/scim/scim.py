@@ -7,9 +7,8 @@ from server.api.base import application_base_url
 from server.db.domain import Service, User, Group, Collaboration, Organisation
 from server.db.models import flatten
 from server.logger.context_logger import ctx_logger
-from server.scim import SCIM_URL_PREFIX
 from server.scim.counter import atomic_increment_counter_value
-from server.scim.group_template import update_group_template, create_group_template
+from server.scim.group_template import update_group_template, create_group_template, scim_member_object
 from server.scim.user_template import create_user_template, update_user_template, external_id_post_fix
 
 SCIM_USERS = "Users"
@@ -89,11 +88,7 @@ def membership_user_scim_objects(service: Service, group: Union[Group, Collabora
             else:
                 scim_object = response.json()
         if scim_object:
-            result.append({
-                "value": scim_object["id"],
-                "display": user.name,
-                "$ref": f"{base_url}{SCIM_URL_PREFIX}/Users/{user.external_id}{external_id_post_fix}"
-            })
+            result.append(scim_member_object(base_url, member))
     return result
 
 

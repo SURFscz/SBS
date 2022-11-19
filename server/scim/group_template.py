@@ -1,7 +1,7 @@
 from typing import Union, List
 
 from server.api.base import application_base_url
-from server.db.domain import Group, Collaboration
+from server.db.domain import Group, Collaboration, CollaborationMembership
 from server.scim import SCIM_URL_PREFIX
 from server.scim.user_template import external_id_post_fix, version_value, date_time_format
 
@@ -32,12 +32,18 @@ def update_group_template(group: Union[Group, Collaboration], membership_scim_ob
     return result
 
 
+def scim_member_object(base_url, membership: CollaborationMembership):
+    member_value = f"{membership.user.external_id}{external_id_post_fix}"
+    return {
+        "value": member_value,
+        "display": membership.user.name,
+        "$ref": f"{base_url}{SCIM_URL_PREFIX}/Users/{member_value}"
+    }
+
+
 def find_group_by_id_template(group: Union[Group, Collaboration]):
     base_url = application_base_url()
-    members = [{"value": f"{m.user.external_id}{external_id_post_fix}",
-                "display": m.user.name,
-                "$ref": f"{base_url}{SCIM_URL_PREFIX}/Users/{m.user.external_id}{external_id_post_fix}"} for m in
-               group.collaboration_memberships if m.is_active]
+    members = [scim_member_object(base_url, m) for m in group.collaboration_memberships if m.is_active]
     group_template = update_group_template(group, members, f"{group.identifier}{external_id_post_fix}")
     group_template["meta"] = _meta_info(group)
     return group_template
