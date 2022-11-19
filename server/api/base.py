@@ -59,7 +59,7 @@ def auth_filter(app_config):
     if "user" in session and not session["user"].get("guest"):
         if not session["user"].get("user_accepted_aup") and "api/aup/agree" not in url and not is_whitelisted_url:
             raise Unauthorized(description="AUP not accepted")
-        if current_request.method in _audit_trail_methods:
+        if current_request.method in _audit_trail_methods and not is_whitelisted_url:
             csrf_token_client = current_request.headers.get(CSRF_TOKEN)
             csrf_token_server = session.get(CSRF_TOKEN)
             prod_mode = not os.environ.get("TESTING")
