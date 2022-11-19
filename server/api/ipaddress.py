@@ -1,7 +1,7 @@
 
 import ipaddress
 
-from flask import Blueprint
+from flask import Blueprint, escape
 
 from server.api.base import json_endpoint, query_param
 
@@ -40,9 +40,9 @@ def info():
     except ValueError:
         return {
             "error": True,
-            "network_value": address,
+            "network_value": str(escape(address)),
             "syntax": True,
-            "id": ipaddress_id
+            "id": int(escape(ipaddress_id)) if ipaddress_id else None
         }, 200
 
     _is4 = ip_network.version == 4
