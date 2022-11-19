@@ -3,9 +3,11 @@ from typing import Union, List
 
 import requests
 
+from server.api.base import application_base_url
 from server.db.domain import Service, User, Group, Collaboration, Organisation
 from server.db.models import flatten
 from server.logger.context_logger import ctx_logger
+from server.scim import SCIM_URL_PREFIX
 from server.scim.counter import atomic_increment_counter_value
 from server.scim.group_template import update_group_template, create_group_template
 from server.scim.user_template import create_user_template, update_user_template, external_id_post_fix
@@ -56,21 +58,23 @@ def _provision_user(scim_object, service: Service, user: User):
 
 # If the group / collaboration is known in the remote SCIM then update the group else provision the group
 def _provision_group(scim_object, service: Service, group: Union[Group, Collaboration]):
-    membership_identifiers = membership_user_scim_identifiers(service, group)
+    membership_scim_objects = membership_user_scim_objects(service, group)
     if scim_object:
-        scim_dict = update_group_template(group, membership_identifiers, scim_object["id"])
+        scim_dict = update_group_template(group, membership_scim_objects, scim_object["id"])
     else:
-        scim_dict = create_group_template(group, membership_identifiers)
+        scim_dict = create_group_template(group, membership_scim_objects)
     request_method = requests.put if scim_object else requests.post
     postfix = scim_object['meta']['location'] if scim_object else "/Groups"
     url = f"{service.scim_url}{postfix}{_counter_query_param(service)}"
     return request_method(url, json=scim_dict, headers=_headers(service), timeout=10)
 
 
-# Get all external identifiers of the members of the group / collaboration and provision new ones
-def membership_user_scim_identifiers(service: Service, group: Union[Group, Collaboration]):
+# Get all SCIM members of the group / collaboration and provision new ones
+def membership_user_scim_objects(service: Service, group: Union[Group, Collaboration]):
     if not service.provision_scim_users():
         return []
+
+    base_url = application_base_url()
 
     members = [member for member in group.collaboration_memberships if member.is_active]
     result = []
@@ -85,7 +89,11 @@ def membership_user_scim_identifiers(service: Service, group: Union[Group, Colla
             else:
                 scim_object = response.json()
         if scim_object:
-            result.append(scim_object["id"])
+            result.append({
+                "value": scim_object["id"],
+                "display": user.name,
+                "$ref": f"{base_url}{SCIM_URL_PREFIX}/Users/{user.external_id}{external_id_post_fix}"
+            })
     return result
 
 
