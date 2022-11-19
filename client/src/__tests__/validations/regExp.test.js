@@ -21,6 +21,10 @@ test("Valid urls", () => {
     expect(validUrlRegExp.test("https://localhost/api/scim_mock")).toEqual(true);
     expect(validUrlRegExp.test("http://localhost/api/scim_mock")).toEqual(true);
     expect(validUrlRegExp.test("https://demo-sp.sram.surf.nl/test")).toEqual(true);
+    expect(validUrlRegExp.test("ssh://demo-sp.sram.surf.nl:8080")).toEqual(true);
+    expect(validUrlRegExp.test("ftp://demo-sp.sram.surf.nl:8080")).toEqual(true);
+    expect(validUrlRegExp.test("ssh://demo-sp.sram.surf.nl:8080/test")).toEqual(true);
+    expect(validUrlRegExp.test("ftp://demo-sp.sram.surf.nl:8080/test")).toEqual(true);
 
     expect(validUrlRegExp.test("https://google.nl")).toEqual(true);
     expect(validUrlRegExp.test("http://localhost:8080/api/scim_mock")).toEqual(true);
