@@ -2,7 +2,7 @@ import time
 
 from server.db.domain import CollaborationMembership, User, Collaboration
 from server.test.abstract_test import AbstractTest
-from server.test.seed import ai_computing_name, sarah_name, uva_research_name
+from server.test.seed import ai_computing_name, sarah_name, uva_research_name, uuc_teachers_name
 
 
 class TestCollaborationMembership(AbstractTest):
@@ -16,6 +16,12 @@ class TestCollaborationMembership(AbstractTest):
                     primary_key=f"{collaboration_membership.collaboration_id}/{collaboration_membership.user_id}")
         post_count = CollaborationMembership.query.count()
         self.assertEqual(pre_count - 1, post_count)
+
+    def test_delete_collaboration_membership_404(self):
+        collaboration = self.find_entity_by_name(Collaboration, uuc_teachers_name)
+        self.login("urn:john")
+        self.delete("/api/collaboration_memberships", with_basic_auth=False,
+                    primary_key=f"{collaboration.id}/9999999", response_status_code=404)
 
     def test_delete_collaboration_membership_me(self):
         self.login("urn:jane")

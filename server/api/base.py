@@ -1,8 +1,8 @@
+import inspect
 import json
 import os
 import re
 import traceback
-import inspect
 from functools import wraps
 from pathlib import Path
 from urllib.parse import urlparse
@@ -139,6 +139,12 @@ def send_error_mail(tb):
         mail_error(mail_conf.environment, user_id, mail_conf.send_exceptions_recipients, tb)
 
 
+def application_base_url():
+    cfg = current_app.app_config
+    base_url = cfg.base_url
+    return base_url[:-1] if base_url.endswith("/") else base_url
+
+
 def json_endpoint(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
@@ -194,12 +200,10 @@ def health():
 @json_endpoint
 def config():
     cfg = current_app.app_config
-    base_url = cfg.base_url
-    base_url = base_url[:-1] if base_url.endswith("/") else base_url
     cfq = cfg.collaboration_suspension
     threshold_for_warning = cfq.collaboration_inactivity_days_threshold - cfq.inactivity_warning_mail_days_threshold
     return {"local": current_app.config["LOCAL"],
-            "base_url": base_url,
+            "base_url": application_base_url(),
             "socket_url": cfg.socket_url,
             "api_keys_enabled": cfg.feature.api_keys_enabled,
             "feedback_enabled": cfg.feature.feedback_enabled,

@@ -3,7 +3,7 @@ import json
 import responses
 
 from server.db.domain import Collaboration, Service
-from server.scim.scim import membership_user_scim_identifiers
+from server.scim.scim import membership_user_scim_objects
 from server.test.abstract_test import AbstractTest
 from server.test.seed import uva_research_name, service_cloud_name, service_ssh_uva_name
 from server.tools import read_file
@@ -14,7 +14,7 @@ class TestEvents(AbstractTest):
     @responses.activate
     def test_membership_user_scim_identifiers_no_scim_service(self):
         service = self.find_entity_by_name(Service, service_ssh_uva_name)
-        identifiers = membership_user_scim_identifiers(service, None)
+        identifiers = membership_user_scim_objects(service, None)
         self.assertListEqual([], identifiers)
 
     @responses.activate
@@ -26,5 +26,5 @@ class TestEvents(AbstractTest):
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=no_user_found, status=200)
             # We mock that all member provisioning give an error response
             rsps.add(responses.POST, "http://localhost:8080/api/scim_mock/Users", status=400)
-            identifiers = membership_user_scim_identifiers(service, collaboration)
+            identifiers = membership_user_scim_objects(service, collaboration)
             self.assertListEqual([], identifiers)
