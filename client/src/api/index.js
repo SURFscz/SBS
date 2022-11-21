@@ -682,7 +682,8 @@ export function auditLogsActivity(limit, tableNames, query) {
 
 //IP-networks
 export function ipNetworks(address, id) {
-    return fetchJson(`/api/ipaddress/info?address=${address}&id=${id}`, {}, {}, false);
+    const ipQueryParam = id ? `&id=${id}` : "";
+    return fetchJson(`/api/ipaddress/info?address=${address}${ipQueryParam}`, {}, {}, false);
 }
 
 //System

@@ -284,11 +284,6 @@ class App extends React.Component {
                                                                 refreshUser={this.refreshUserMemberships}
                                                                 Component={ServiceDetail} {...props}/>}/>
 
-                        <Route exact path="/edit-service/:id"
-                               render={props => <ProtectedRoute config={config}
-                                                                currentUser={currentUser}
-                                                                Component={Service} {...props}/>}/>
-
                         <Route exact path="/new-service"
                                render={props => <ProtectedRoute config={config}
                                                                 currentUser={currentUser}
