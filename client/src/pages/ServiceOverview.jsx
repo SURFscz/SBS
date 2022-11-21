@@ -711,9 +711,10 @@ class ServiceOverview extends React.Component {
                 <FontAwesomeIcon onClick={() => this.deleteIpAddress(i)} icon="trash"/>
                 </span>}
                                 </div>
-                                {(network.error && !network.syntax) &&
+                                {(network.error && !network.syntax && !network.reserved) &&
                                 <ErrorIndicator msg={I18n.t("service.networkError", network)}/>}
                                 {network.syntax && <ErrorIndicator msg={I18n.t("service.networkSyntaxError")}/>}
+                                {network.reserved && <ErrorIndicator msg={I18n.t("service.networkReservedError", network)}/>}
                                 {network.higher &&
                                 <span className="network-info">{I18n.t("service.networkInfo", network)}</span>}
                                 {(network.higher && network.version === 6 && !network.global) &&

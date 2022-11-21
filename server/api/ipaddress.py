@@ -48,6 +48,7 @@ def info():
         return {
                    "error": True,
                    "network_value": str(escape(address)),
+                   "version": ip_network.version,
                    "reserved": True,
                    "id": int(escape(ipaddress_id)) if ipaddress_id else None
                }, 200

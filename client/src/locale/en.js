@@ -885,6 +885,7 @@ I18n.translations.en = {
         networkPlaceholder: "IPv4 or IPv6 address with an optional subnet size",
         networkError: "Subnet size {{prefix}} is not allowed. Max prefix allowed for IPv{{version}} is {{max}}",
         networkSyntaxError: "This is not a valid IPv4 or IPv6 address.",
+        networkReservedError: "This is a reserved IPv{{version}} address",
         networkNotGlobal: "Only global unicast addresses can be entered",
         networkInfo: "Lower bound IP: {{lower}}, higher bound IP: {{higher}}, # addresses: {{num_addresses}}, version: IPv{{version}}",
         automaticConnectionAllowed: "Collaborations can connect without your approval",
