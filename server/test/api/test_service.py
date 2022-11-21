@@ -88,7 +88,7 @@ class TestService(AbstractTest):
                 "administrators": ["the@ex.org"],
                 "abbreviation": "12qw$%OOOKaaaaaaaaaaaaaaaaaaaaaaaaaa",
                 "ip_networks": [{"network_value": "2001:1c02:2b2f:be00:1cf0:fd5a:a548:1a16/128"},
-                                {"network_value": "192.0.2.0/24"}]
+                                {"network_value": "82.217.86.55/24"}]
             })
 
             self.assertTrue(
@@ -122,7 +122,7 @@ class TestService(AbstractTest):
     def test_service_update(self):
         service = self._find_by_name()
         service["name"] = "changed"
-        service["ip_networks"] = [{"network_value": "192.0.2.0/24"}]
+        service["ip_networks"] = [{"network_value": "82.217.86.55/24"}]
 
         self.login("urn:john")
         service = self.put("/api/services", body=service, with_basic_auth=False)
