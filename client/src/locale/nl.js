@@ -685,7 +685,8 @@ I18n.translations.nl = {
         namePlaceHolder: "De unieke naam van de samenwerking",
         shortName: "Korte naam",
         shortNamePlaceHolder: "Korte naam van de samenwerking",
-        shortNameTooltip: "Ken korte namen toe aan de samenwerkingen zodat die namen bruikbaar zijn in de via ldap te koppelen diensten (zoals Linux groepsnamen)",
+        shortNameTooltip: "Ken korte namen toe aan de samenwerkingen zodat die namen bruikbaar zijn in de via ldap te koppelen diensten (zoals Linux groepsnamen).<br/><br/>" +
+            "Alleen getallen, alpha-numerieke karakers en de underscore zijn toegstaan.",
         globalUrn: "Globale urn",
         globalUrnTooltip: "Globale unieke en niet aanpasbare urn gebaseerd op de korte naam van de organisatie en deze samenwerking.",
         identifier: "Identifier",
@@ -851,7 +852,8 @@ I18n.translations.nl = {
         entity_idTooltip: "De SAML EntityID of OIDC client_id die het unieke kenmerk van je dienst is en deze koppelt aan de identity proxy",
         abbreviation: "Korte naam",
         abbreviationPlaceHolder: "De korte naam van de dienst",
-        abbreviationTooltip: "De korte naam van een dienst wordt gebruikt als prefix voor groepen aangemaakt door de dienstgroepen van deze dienst",
+        abbreviationTooltip: "De korte naam van een dienst wordt gebruikt als prefix voor groepen aangemaakt door de dienstgroepen van deze dienst.<br/><br/>" +
+            "Alleen getallen, alpha-numerieke karakers en de underscore zijn toegstaan.",
         service_request: "Link voor dienstverzoek",
         service_requestTooltip: "De URL om een koppeling met de dienst aan te vragen door een lid van samenwerking",
         service_requestError: "Vereist een valide URI en samenwerkingen moeten kunnen koppelen zonder toestemming",
@@ -984,7 +986,8 @@ I18n.translations.nl = {
         tenantPlaceHolder: "De unieke tenant-/organisatie-identifier die de organisatie verbindt met een instelling",
         shortName: "Korte naam",
         shortNamePlaceHolder: "Korte naam van de organisatie",
-        shortNameTooltip: "Ken korte namen toe aan organisaties zodat deze korte namen kunnen worden gebruikt in LDAP diensten (zoals Linux directory-namen).",
+        shortNameTooltip: "Ken korte namen toe aan organisaties zodat deze korte namen kunnen worden gebruikt in LDAP diensten (zoals Linux directory-namen).<br/><br/>" +
+            "Alleen getallen, alpha-numerieke karakers en de underscore zijn toegstaan.",
         identifier: "Identifier",
         identifierTooltip: "Gegenereerde, unieke en niet aanpasbare identifier van een organisatie die wordt gebruikt als identifier voor externe systemen",
         description: "Omschrijving",
@@ -1351,7 +1354,8 @@ I18n.translations.nl = {
         namePlaceholder: "Naam van de groep",
         short_name: "Korte naam",
         shortNamePlaceHolder: "Korte naam van de groep",
-        shortNameTooltip: "De korte naam van een dienstgroep wordt gebruikt (1) voor groepen aangemaakt in samenwerkingen, voorafgegaan door de korte naam van de dienst, gescheiden door een koppelteken '-' en (2) in de challenge URL gebruikt door PAM web login.",
+        shortNameTooltip: "De korte naam van een dienstgroep wordt gebruikt (1) voor groepen aangemaakt in samenwerkingen, voorafgegaan door de korte naam van de dienst, gescheiden door een koppelteken '-' en (2) in de challenge URL gebruikt door PAM web login.<br/><br/>" +
+            "Alleen getallen, alpha-numerieke karakers en de underscore zijn toegstaan.",
         identifier: "Identifier",
         identifierTooltip: "Gegenereerde, unieke en niet aanpasbare identifier van een groep die wordt gebruikt als identifier voor externe systemen",
         collaboration: "Samenwerking",
