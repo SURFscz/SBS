@@ -35,6 +35,12 @@ class TestUser(AbstractTest):
         not_changed_user = self.client.get("/api/users/me").json
         self.assertDictEqual(user, not_changed_user)
 
+    def test_personal(self):
+        self.login("urn:john")
+        user = self.client.get("/api/users/personal", ).json
+        self.assertTrue("email" in user)
+        self.assertFalse("second_fa_uuid" in user)
+
     def test_me_user_suspended(self):
         self.mark_user_suspended(john_name)
         self.login("urn:john")
