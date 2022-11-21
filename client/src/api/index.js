@@ -839,8 +839,9 @@ export function serviceAupDelete(service) {
 }
 
 //User Tokens
-export function userTokensOfUser() {
-    return fetchJson("/api/user_tokens");
+export function userTokensOfUser(serviceId) {
+    const queryPart = serviceId ? `?service_id=${serviceId}` : "";
+    return fetchJson(`/api/user_tokens${queryPart}`);
 }
 
 export function userTokenGenerateValue() {

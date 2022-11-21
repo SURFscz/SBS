@@ -7,7 +7,8 @@ import {
     searchOrganisations,
     serviceById,
     serviceInvitationAccept,
-    serviceInvitationByHash
+    serviceInvitationByHash,
+    userTokensOfUser
 } from "../api";
 import "./ServiceDetail.scss";
 import I18n from "i18n-js";
@@ -15,7 +16,10 @@ import Tabs from "../components/Tabs";
 import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {ReactComponent as DetailsIcon} from "../icons/services.svg";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
-import {ReactComponent as ServiceConnectionRequestsIcon} from "../icons/connections.svg";
+import {
+    ReactComponent as UserTokensIcon,
+    ReactComponent as ServiceConnectionRequestsIcon
+} from "../icons/connections.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
 import {ReactComponent as UserAdminIcon} from "../icons/users.svg";
@@ -37,6 +41,7 @@ import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import ServiceOverview from "./ServiceOverview";
 import {ReactComponent as EyeViewIcon} from "../icons/eye-svgrepo-com.svg";
 import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
+import UserTokens from "../components/redesign/UserTokens";
 
 class ServiceDetail extends React.Component {
 
@@ -47,6 +52,7 @@ class ServiceDetail extends React.Component {
             invitation: null,
             isInvitation: false,
             organisations: [],
+            userTokens: [],
             serviceConnectionRequests: [],
             firstTime: false,
             loading: true,
@@ -93,17 +99,17 @@ class ServiceDetail extends React.Component {
             const userServiceAdmin = isUserServiceAdmin(user, {id: parseInt(params.id, 10)}) || user.admin;
             if (userServiceAdmin) {
                 Promise.all([serviceById(params.id), searchOrganisations("*"),
-                    allServiceConnectionRequests(params.id)])
+                    allServiceConnectionRequests(params.id), userTokensOfUser(params.id)])
                     .then(res => {
                         const service = res[0];
                         const organisations = res[1];
                         const serviceConnectionRequests = res[2];
-                        this.afterFetch(params, service, organisations, serviceConnectionRequests);
+                        this.afterFetch(params, service, organisations, serviceConnectionRequests, res[3]);
                     }).catch(() => this.props.history.push("/404"));
             } else {
-                serviceById(params.id)
+                Promise.all([serviceById(params.id), userTokensOfUser(params.id)])
                     .then(res => {
-                        this.afterFetch(params, res, [], []);
+                        this.afterFetch(params, res[0], [], [], res[1]);
                     }).catch(() => this.props.history.push("/404"));
             }
         } else {
@@ -115,7 +121,7 @@ class ServiceDetail extends React.Component {
         this.setState({firstTime: true});
     }
 
-    afterFetch = (params, service, organisations, serviceConnectionRequests) => {
+    afterFetch = (params, service, organisations, serviceConnectionRequests, userTokens) => {
         const tab = params.tab || this.state.tab;
         const {socketSubscribed} = this.state;
         if (!socketSubscribed) {
@@ -137,6 +143,7 @@ class ServiceDetail extends React.Component {
             service: service,
             organisations: organisations,
             serviceConnectionRequests: serviceConnectionRequests,
+            userTokens: userTokens,
             tab: tab,
             loading: false
         });
@@ -209,20 +216,34 @@ class ServiceDetail extends React.Component {
     refresh = callback => {
         const params = this.props.match.params;
         this.setState({loading: true});
-        Promise.all([serviceById(params.id), allServiceConnectionRequests(params.id)])
-            .then(res => {
-                const service = res[0];
-                const serviceConnectionRequests = res[1];
-                this.setState({
-                    service: service,
-                    serviceConnectionRequests: serviceConnectionRequests,
-                    loading: false
-                }, callback);
-            }).catch(() => {
-            this.props.history.push("/404")
-        });
-    };
+        const {user} = this.props;
+        const userServiceAdmin = isUserServiceAdmin(user, {id: parseInt(params.id, 10)}) || user.admin;
+        if (userServiceAdmin) {
+            Promise.all([serviceById(params.id), allServiceConnectionRequests(params.id), userTokensOfUser(params.id)])
+                .then(res => {
+                    this.setState({
+                        service: res[0],
+                        serviceConnectionRequests: res[1],
+                        userTokens: res[2],
+                        loading: false
+                    }, callback);
+                }).catch(() => {
+                this.props.history.push("/404")
+            });
+        } else {
+            Promise.all([serviceById(params.id), userTokensOfUser(params.id)])
+                .then(res => {
+                    this.setState({
+                        service: res[0],
+                        userTokens: res[1],
+                        loading: false
+                    }, callback);
+                }).catch(() => {
+                this.props.history.push("/404")
+            });
 
+        }
+    };
     getDetailsTab = (service, userAdmin, serviceAdmin, showServiceAdminView) => {
         return (<div key="details" name="details"
                      label={I18n.t("home.tabs.details")}
@@ -317,8 +338,20 @@ class ServiceDetail extends React.Component {
                     modelName={"serviceConnectionRequests"}
                     {...this.props} />
             </div>);
-
     }
+
+    getUserTokensTab = (userTokens, service) => {
+        return (<div key="tokens" name="tokens"
+                     label={I18n.t("home.tabs.userTokens", {count: (userTokens || []).length})}
+                     icon={<UserTokensIcon/>}>
+            {<UserTokens {...this.props}
+                         services={[service]}
+                         service={service}
+                         userTokens={userTokens}
+                         refresh={this.refresh}/>}
+        </div>)
+    }
+
 
     tabChanged = (name, service) => {
         const serviceId = service ? service.id : this.state.service.id;
@@ -419,7 +452,7 @@ class ServiceDetail extends React.Component {
         const {
             service, loading, tab, firstTime, showServiceAdminView, serviceConnectionRequests,
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, organisations,
-            confirmationDialogQuestion, confirmationTxt, confirmationHeader, isWarning, lastAdminWarning
+            confirmationDialogQuestion, confirmationTxt, confirmationHeader, isWarning, lastAdminWarning, userTokens
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -444,7 +477,9 @@ class ServiceDetail extends React.Component {
                 tabs.push(this.getServiceConnectionRequestTab(service, serviceConnectionRequests));
             }
         }
-
+        if (service.token_enabled) {
+            tabs.push(this.getUserTokensTab(userTokens, service));
+        }
         return (
             <div className="mod-service-container">
                 <ServiceWelcomeDialog name={service.name}

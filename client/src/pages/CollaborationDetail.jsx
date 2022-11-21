@@ -340,10 +340,11 @@ class CollaborationDetail extends React.Component {
                 this.getMembersTab(collaboration, showMemberView, isJoinRequest),
                 this.getGroupsTab(collaboration, showMemberView, isJoinRequest),
             ];
-        const services = isJoinRequest ? [] : removeDuplicates(collaboration.services.concat(collaboration.organisation.services).filter(s => s.token_enabled), "id");
+        const services = isJoinRequest ? [] : removeDuplicates(collaboration.services.concat(collaboration.organisation.services)
+            .filter(s => s.token_enabled), "id");
         if (userTokens) {
             userTokens = userTokens.filter(userToken => services.find(service => service.id === userToken.service_id));
-            if (userTokens && !isJoinRequest && services.length > 0) {
+            if (!isJoinRequest && services.length > 0) {
                 tabs.push(this.getUserTokensTab(userTokens, collaboration, services))
             }
         }
@@ -400,8 +401,8 @@ class CollaborationDetail extends React.Component {
                          userTokens={userTokens}
                          refresh={callback => this.componentDidMount(callback)}/>}
         </div>)
-
     }
+
     getJoinRequestsTab = (collaboration) => {
         const openJoinRequests = (collaboration.join_requests || []).filter(jr => jr.status === "open").length;
         if (collaboration.disable_join_requests) {
