@@ -139,18 +139,22 @@ class TestCollaboration(AbstractTest):
         value_just_valid = "just_valid-234567890123456789012"
         value_too_long = "invalid__--2345678901234567890123"
         value_invalid = "invalid__#"
+        value_digit_start = "123_valid"
+        value_weird_start = "_123_invalid"
 
         tag_existing = {'label': 'tag_uuc', 'value': Tag.query.filter(Tag.tag_value == "tag_uuc").one().id}
         tag_just_valid = {'label': value_just_valid, 'value': value_just_valid, '__isNew__': True}
         tag_too_long = {'label': value_too_long, 'value': value_too_long, '__isNew__': True}
         tag_invalid = {'label': value_invalid, 'value': value_invalid, '__isNew__': True}
+        tag_digit_start = {'label': value_digit_start, 'value': value_digit_start, '__isNew__': True}
+        tag_weird_start = {'label': value_weird_start, 'value': value_weird_start, '__isNew__': True}
 
         body = {
             "name": "new_collaboration",
             "description": "new_collaboration",
             "organisation_id": organisation_id,
             "administrators": [],
-            "short_name": "new_short_name",
+            "short_name": "short__",
             "current_user_admin": False
         }
 
@@ -177,6 +181,23 @@ class TestCollaboration(AbstractTest):
         collaboration = self.post("/api/collaborations", body=body, with_basic_auth=False)
         collaboration = Collaboration.query.get(collaboration["id"])
         self.assertEqual(2, len(collaboration.tags))
+
+        # tag start with invalid char
+        body["tags"] = [tag_existing, tag_just_valid, tag_weird_start]
+        body["name"] += "_"
+        body["short_name"] += "_"
+        collaboration = self.post("/api/collaborations", body=body, with_basic_auth=False)
+        collaboration = Collaboration.query.get(collaboration["id"])
+        self.assertEqual(2, len(collaboration.tags))
+
+        # normal, add a tag
+        body["tags"] = [tag_existing, tag_just_valid, tag_digit_start]
+        body["name"] += "_"
+        body["short_name"] += "_"
+        collaboration = self.post("/api/collaborations", body=body, with_basic_auth=False)
+        collaboration = Collaboration.query.get(collaboration["id"])
+        self.assertEqual(3, len(collaboration.tags))
+
 
     @staticmethod
     def _collaboration_membership_count(collaboration):
