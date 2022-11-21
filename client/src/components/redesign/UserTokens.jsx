@@ -290,11 +290,12 @@ class UserTokens extends React.Component {
     gotoUserToken = userToken => e => {
         stopEvent(e);
         this.setState(this.newUserTokenState(userToken, userToken.hashed_token, this.getService(userToken)))
+        const {collaboration, service} = this.props;
+        const lastPathValue = collaboration ? `/collaborations/${collaboration.id}` : `/services/${service.id}`;
         AppStore.update(s => {
-            const {collaboration} = this.props;
             const paths = s.breadcrumb.paths;
             const lastPath = paths[paths.length - 1];
-            lastPath.path = `/collaborations/${collaboration.id}`
+            lastPath.path = lastPathValue;
             paths.push({
                 value: I18n.t("breadcrumb.userToken", {name: userToken.name})
             })

@@ -3,7 +3,7 @@ import datetime
 from flask import Blueprint, jsonify, request as current_request, session
 from werkzeug.exceptions import Forbidden
 
-from server.api.base import json_endpoint
+from server.api.base import json_endpoint, query_param
 from server.api.service import user_service
 from server.auth.secrets import generate_token, hash_secret_key
 from server.auth.security import current_user_id
@@ -35,7 +35,11 @@ def _sanitize_and_verify(data, hash_token=True):
 @json_endpoint
 def user_tokens():
     user = User.query.get(current_user_id())
-    tokens = jsonify(user.user_tokens).json
+    tokens = user.user_tokens
+    service_id = query_param("service_id", False)
+    if service_id:
+        tokens = [token for token in tokens if token.service_id == int(service_id)]
+    tokens = jsonify(tokens).json
     for token in tokens:
         del token["hashed_token"]
     return tokens, 200

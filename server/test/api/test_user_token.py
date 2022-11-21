@@ -4,7 +4,7 @@ from server.auth.secrets import generate_token
 from server.db.domain import Service, User, UserToken
 from server.test.abstract_test import AbstractTest
 from server.test.seed import sarah_name, service_wiki_name, service_mail_name, service_cloud_name, sarah_user_token, \
-    john_name
+    john_name, service_network_name
 
 
 class TestUserToken(AbstractTest):
@@ -24,6 +24,17 @@ class TestUserToken(AbstractTest):
         user_tokens_updated = self.get("/api/user_tokens")
         self.assertEqual("changed", user_tokens_updated[0]["name"])
         self.assertIsNone(user_tokens[0].get("hashed_token"))
+
+    def test_user_tokens_with_service(self):
+        service = self.find_entity_by_name(Service, service_network_name)
+        self.login("urn:sarah")
+        user_tokens = self.get("/api/user_tokens", query_data={"service_id": service.id})
+        self.assertEqual(1, len(user_tokens))
+
+    def test_user_tokens_with_service_not_found(self):
+        self.login("urn:sarah")
+        user_tokens = self.get("/api/user_tokens", query_data={"service_id": -1})
+        self.assertEqual(0, len(user_tokens))
 
     def test_generate(self):
         self.login("urn:sarah")
