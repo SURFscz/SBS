@@ -336,8 +336,14 @@ class Me extends React.Component {
                         </div>)}
                     </div>
                     <section className="actions">
-                        <Button warningButton={true} txt={I18n.t("user.delete")}
+                        <Button warningButton={true}
+                                txt={I18n.t("user.delete")}
                                 onClick={this.delete}/>
+                        <a className="button cancel"
+                           href={`${window.location.protocol}//${window.location.host}/api/users/personal`.replaceAll("3000", "8080")}
+                           download={`${I18n.t("home.tabs.me")}.json`}>
+                            {I18n.t("user.download")}
+                        </a>
                         <Button disabled={disabledSubmit} txt={I18n.t("user.update")}
                                 onClick={this.submit}/>
                     </section>

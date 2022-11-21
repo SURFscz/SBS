@@ -459,6 +459,21 @@ def me():
         return {"uid": "anonymous", "guest": True, "admin": False}, 200
 
 
+@user_api.route("/personal", strict_slashes=False)
+@json_endpoint
+def personal():
+    user_from_db = User.query \
+        .options(joinedload(User.service_aups)) \
+        .options(joinedload(User.ssh_keys)) \
+        .options(joinedload(User.user_ip_networks)) \
+        .options(joinedload(User.aups)) \
+        .filter(User.id == current_user_id()).first()
+    user_json = jsonify(user_from_db).json
+    for attr in ["second_factor_auth", "mfa_reset_token", "second_fa_uuid"]:
+        del user_json[attr]
+    return user_json, 200
+
+
 @user_api.route("/refresh", strict_slashes=False)
 @json_endpoint
 def refresh():
