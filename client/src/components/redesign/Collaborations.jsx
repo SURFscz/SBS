@@ -50,10 +50,7 @@ export default class Collaborations extends React.PureComponent {
         if (collaborations === undefined) {
             Promise.all(promises.concat([platformAdmin ? allCollaborations() : myCollaborations()])).then(res => {
                 const allFilterOptions = this.allLabelFilterOptions(res[1], showTagFilter);
-                res[1].forEach(co => {
-                    const membership = (user.collaboration_memberships || []).find(m => m.collaboration_id === co.id);
-                    co.role = membership ? membership.role : null;
-                });
+                this.addRoleInformation(user, res[1]);
                 this.setState({
                     standalone: true,
                     collaborations: res[1],
@@ -66,6 +63,7 @@ export default class Collaborations extends React.PureComponent {
             })
         } else {
             const allFilterOptions = this.allLabelFilterOptions(collaborations, showTagFilter);
+            this.addRoleInformation(user, collaborations);
             Promise.all(promises).then(res => {
                 this.setState({
                     showRequestCollaboration: res,
@@ -75,7 +73,13 @@ export default class Collaborations extends React.PureComponent {
                 })
             })
         }
+    }
 
+    addRoleInformation = (user, collaborations) => {
+        collaborations.forEach(co => {
+            const membership = (user.collaboration_memberships || []).find(m => m.collaboration_id === co.id);
+            co.role = membership ? membership.role : null;
+        });
     }
 
     allLabelFilterOptions = (collaborations, showTagFilter) => {
