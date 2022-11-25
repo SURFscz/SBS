@@ -183,6 +183,14 @@ organisations_services_association = db.Table(
     db.Column("service_id", db.Integer(), db.ForeignKey("services.id", ondelete="CASCADE"), primary_key=True),
 )
 
+automatic_connection_allowed_organisations_services_association = db.Table(
+    "automatic_connection_allowed_organisations_services",
+    metadata,
+    db.Column("organisation_id", db.Integer(), db.ForeignKey("organisations.id", ondelete="CASCADE"),
+              primary_key=True),
+    db.Column("service_id", db.Integer(), db.ForeignKey("services.id", ondelete="CASCADE"), primary_key=True),
+)
+
 
 class Invitation(Base, db.Model):
     __tablename__ = "invitations"
@@ -435,6 +443,10 @@ class Service(Base, db.Model, LogoMixin):
     allowed_organisations = db.relationship("Organisation", secondary=organisations_services_association, lazy="select")
     organisations = db.relationship("Organisation", secondary=services_organisations_association, lazy="select",
                                     back_populates="services")
+    automatic_connection_allowed_organisations = \
+        db.relationship("Organisation",
+                        secondary=automatic_connection_allowed_organisations_services_association,
+                        lazy="select")
     ip_networks = db.relationship("IpNetwork", cascade="all, delete-orphan", passive_deletes=True)
     service_connection_requests = db.relationship("ServiceConnectionRequest", back_populates="service",
                                                   cascade="all, delete-orphan", passive_deletes=True)

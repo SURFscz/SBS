@@ -304,6 +304,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                    public_visible=True, automatic_connection_allowed=False, logo=read_image("wiki.jpeg"),
                    allowed_organisations=[uuc, uva], contact_email="help@wiki.com", abbreviation="wiki",
                    accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org",
+                   automatic_connection_allowed_organisations=[uva],
                    ldap_password="$6$rounds=100000$bFyBZD0Fim7BCAqt$BSq4u2IqhyT2khkCMILpaEceMnvYIKvxyxttA8."
                                  "IddqWdPB.AEH2MBb1sggk8pDlrW/Xb00f8xa67cC0nfkuX.",
                    token_enabled=True, token_validity_days=365, security_email="sec@org.nl")
