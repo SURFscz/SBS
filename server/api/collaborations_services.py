@@ -77,8 +77,8 @@ def connect_collaboration_service_api():
     service_entity_id = data["service_entity_id"]
     service = Service.query.filter(Service.entity_id == service_entity_id).one()
 
-    if service.automatic_connection_allowed:
-        connect_service_collaboration(service.id, collaboration.id)
+    if service.automatic_connection_allowed or organisation in service.automatic_connection_allowed_organisations:
+        connect_service_collaboration(service.id, collaboration.id, force=True)
         status = "connected"
     else:
         # Avoid cyclic imports
