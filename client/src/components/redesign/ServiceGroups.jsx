@@ -24,6 +24,7 @@ import {sanitizeShortName} from "../../validations/regExps";
 import {AppStore} from "../../stores/AppStore";
 import ErrorIndicator from "./ErrorIndicator";
 import ServiceGroupsExplanation from "../explanations/ServicesGroups";
+import {isUserServiceAdmin} from "../../utils/UserRole";
 
 class ServiceGroups extends React.Component {
 
@@ -347,7 +348,7 @@ class ServiceGroups extends React.Component {
         }
         const {service, user: currentUser} = this.props;
         const selectedGroup = this.getSelectedGroup();
-        const mayCreateGroups = currentUser.admin;
+        const mayCreateGroups = isUserServiceAdmin(currentUser, service) || currentUser.admin;
         if (createNewGroup || (editGroup && selectedGroup)) {
             return this.renderGroupForm(createNewGroup, selectedGroup, mayCreateGroups);
         }
