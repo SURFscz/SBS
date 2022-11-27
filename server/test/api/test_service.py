@@ -293,8 +293,6 @@ class TestService(AbstractTest):
                  with_basic_auth=False)
 
         service = self.find_entity_by_name(Service, service_wiki_name)
-        allowed_organisations = service.allowed_organisations
-
         org_names = list(sorted([org.name for org in service.allowed_organisations]))
         self.assertListEqual([tue_name, uuc_name], org_names)
         self.assertEqual(0, len(service.automatic_connection_allowed_organisations))
