@@ -93,7 +93,6 @@ class ServiceDetail extends React.Component {
                     isInvitation: true,
                 });
             }).catch(() => this.props.history.push("/404"));
-
         } else if (params.id) {
             const {user} = this.props;
             const userServiceAdmin = isUserServiceAdmin(user, {id: parseInt(params.id, 10)}) || user.admin;

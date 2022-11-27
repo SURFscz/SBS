@@ -57,7 +57,11 @@ uuc_name = "UUC"
 uuc_secret = generate_token()
 uuc_hashed_secret = secure_hash(uuc_secret)
 
+uva_secret = generate_token()
+uva_hashed_secret = secure_hash(uva_secret)
+
 amsterdam_uva_name = "Amsterdam UVA"
+tue_name = "TUE"
 
 collaboration_uva_researcher_uuid = str(uuid.uuid4())
 
@@ -235,7 +239,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     uva = Organisation(name=amsterdam_uva_name, description="University of Amsterdam", identifier=str(uuid.uuid4()),
                        created_by="urn:admin", updated_by="urn:admin", short_name="uva", logo=read_image("uva.jpg"),
                        category="University")
-    tue = Organisation(name="TUE", description="University of Eindhoven", identifier=str(uuid.uuid4()),
+    tue = Organisation(name=tue_name, description="University of Eindhoven", identifier=str(uuid.uuid4()),
                        created_by="urn:admin", updated_by="urn:admin", short_name="tue", logo=read_image("tue.jpeg"),
                        category="University")
     persist_instance(db, uuc, uva, tue)
@@ -246,9 +250,12 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                    updated_by="urn:admin")
     persist_instance(db, shouuc, shouva)
 
-    api_key = ApiKey(hashed_secret=uuc_hashed_secret, organisation=uuc, description="API access",
-                     created_by="urn:admin", updated_by="urn:admin")
-    persist_instance(db, api_key)
+    api_key_uuc = ApiKey(hashed_secret=uuc_hashed_secret, organisation=uuc, description="API access",
+                         created_by="urn:admin", updated_by="urn:admin")
+    api_key_uva = ApiKey(hashed_secret=uva_hashed_secret, organisation=uva, description="API access",
+                         created_by="urn:admin", updated_by="urn:admin")
+    persist_instance(db, api_key_uuc, api_key_uva)
+
     organisation_invitation_roger = OrganisationInvitation(message="Please join", hash=organisation_invitation_hash,
                                                            expiry_date=datetime.date.today() + datetime.timedelta(
                                                                days=14),
@@ -449,7 +456,9 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                              website_url="https://www.google.nl",
                                              logo=read_image("uu.png"),
                                              identifier=str(uuid.uuid4()),
-                                             description="UU", disable_join_requests=True, organisation=uva,
+                                             description="UU",
+                                             disable_join_requests=True,
+                                             organisation=uva,
                                              services=[],
                                              join_requests=[], invitations=[])
     persist_instance(db, ai_computing, uva_research, uu_disabled_join_request, uuc_teachers)

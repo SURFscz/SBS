@@ -37,6 +37,7 @@ import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import CroppedImageField from "../components/redesign/CroppedImageField";
 import SpinnerField from "../components/redesign/SpinnerField";
 import CheckBox from "../components/CheckBox";
+import SelectField from "../components/SelectField";
 
 const toc = ["general", "connection", "contacts", "policy", "ldap", "tokens", "pamWebLogin", "SCIM"];
 
@@ -64,7 +65,9 @@ class ServiceOverview extends React.Component {
             description: "",
             hashedToken: null,
             serviceTokensEnabled: false,
-            hasServiceTokens: false
+            hasServiceTokens: false,
+            selectedAutomaticConnectionAllowedOrganisations: [],
+            automaticConnectionAllowedOrganisations: [],
         }
     }
 
@@ -88,6 +91,8 @@ class ServiceOverview extends React.Component {
                 currentTab: tab,
                 serviceTokensEnabled: service.token_enabled || service.pam_web_sso_enabled,
                 hasServiceTokens: !isEmpty(service.service_tokens),
+                automaticConnectionAllowedOrganisations: service.allowed_organisations.map(org => ({value: org.id, label: org.name})),
+                selectedAutomaticConnectionAllowedOrganisations: service.automatic_connection_allowed_organisations.map(org => ({value: org.id, label: org.name})),
                 loading: false
             }, () => {
                 const {ip_networks} = this.state.service;
@@ -353,7 +358,8 @@ class ServiceOverview extends React.Component {
 
     submit = override => {
         if (this.isValid()) {
-            const {service, hasServiceTokens, serviceTokensEnabled} = this.state;
+            const {service, hasServiceTokens, serviceTokensEnabled,
+                selectedAutomaticConnectionAllowedOrganisations} = this.state;
             if (serviceTokensEnabled && hasServiceTokens && !service.token_enabled && !service.pam_web_sso_enabled && !override) {
                 const count = service.service_tokens.length;
                 this.setState({
@@ -385,10 +391,12 @@ class ServiceOverview extends React.Component {
                         network.id = parseInt(network.id, 10)
                     }
                 });
-                this.setState({service: {...service, ip_networks: strippedIpNetworks}}, () => {
+                this.setState({service:
+                        {...service, ip_networks: strippedIpNetworks,
+                        automatic_connection_allowed_organisations: selectedAutomaticConnectionAllowedOrganisations}
+                }, () => {
                     updateService(this.state.service).then(() => this.afterUpdate(name, "updated"));
                 });
-
             }
         } else {
             window.scrollTo(0, 0);
@@ -437,6 +445,11 @@ class ServiceOverview extends React.Component {
         if (name === "abbreviation") {
             value = sanitizeShortName(value);
         }
+        if (name === "automatic_connection_allowed") {
+            const newSelectedAutomaticConnectionAllowedOrganisations = value ? [] :
+                    service.automatic_connection_allowed_organisations.map(org => ({value: org.id, label: org.name})) ;
+            this.setState({selectedAutomaticConnectionAllowedOrganisations: newSelectedAutomaticConnectionAllowedOrganisations});
+        }
         this.setState({alreadyExists, invalidInputs, "service": {...service, [name]: value}});
     }
 
@@ -452,6 +465,17 @@ class ServiceOverview extends React.Component {
             confirmationDialogAction: () => this.doDeleteToken(serviceToken)
         });
     };
+
+
+    selectedAutomaticConnectionAllowedOrganisationsChanged = selectedOptions => {
+        if (selectedOptions === null) {
+            this.setState({selectedAutomaticConnectionAllowedOrganisations: []});
+        } else {
+            const newSelectedAutomaticConnectionAllowedOrganisations = Array.isArray(selectedOptions) ? [...selectedOptions] : [selectedOptions];
+            this.setState({selectedAutomaticConnectionAllowedOrganisations: newSelectedAutomaticConnectionAllowedOrganisations});
+        }
+    }
+
 
     renderButtons = (isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView, createNewServiceToken) => {
         const {accepted_user_policy, pam_web_sso_enabled, token_enabled} = this.state.service;
@@ -714,7 +738,8 @@ class ServiceOverview extends React.Component {
                                 {(network.error && !network.syntax && !network.reserved) &&
                                 <ErrorIndicator msg={I18n.t("service.networkError", network)}/>}
                                 {network.syntax && <ErrorIndicator msg={I18n.t("service.networkSyntaxError")}/>}
-                                {network.reserved && <ErrorIndicator msg={I18n.t("service.networkReservedError", network)}/>}
+                                {network.reserved &&
+                                <ErrorIndicator msg={I18n.t("service.networkReservedError", network)}/>}
                                 {network.higher &&
                                 <span className="network-info">{I18n.t("service.networkInfo", network)}</span>}
                                 {(network.higher && network.version === 6 && !network.global) &&
@@ -835,7 +860,8 @@ class ServiceOverview extends React.Component {
             </div>)
     }
 
-    renderConnection = (config, service, alreadyExists, isAdmin, isServiceAdmin, showServiceAdminView) => {
+    renderConnection = (config, service, alreadyExists, isAdmin, isServiceAdmin, showServiceAdminView,
+                        selectedAutomaticConnectionAllowedOrganisations, automaticConnectionAllowedOrganisations) => {
         const serviceRequestUrlValid = !isEmpty(service.uri) && service.automatic_connection_allowed;
         const serviceRequestUrl = serviceRequestUrlValid ?
             `${config.base_url}/service-request?entityID=${encodeURIComponent(service.entity_id)}&redirectUri=${encodeURIComponent(service.uri)}` :
@@ -876,6 +902,16 @@ class ServiceOverview extends React.Component {
                           tooltip={I18n.t("service.automaticConnectionAllowedTooltip")}
                           onChange={this.changeServiceProperty("automatic_connection_allowed", true)}
                           readOnly={!isAdmin && !isServiceAdmin}/>
+
+                <SelectField value={selectedAutomaticConnectionAllowedOrganisations}
+                             options={automaticConnectionAllowedOrganisations
+                                 .filter(org => !selectedAutomaticConnectionAllowedOrganisations.find(selOrg => selOrg.value === org.value))}
+                             name={I18n.t("service.automaticConnectionAllowedOrganisations")}
+                             toolTip={I18n.t("service.automaticConnectionAllowedOrganisationsTooltip")}
+                             isMulti={true}
+                             disabled={service.automatic_connection_allowed}
+                             placeholder={I18n.t("service.automaticConnectionAllowedOrganisationsPlaceHolder")}
+                             onChange={this.selectedAutomaticConnectionAllowedOrganisationsChanged}/>
 
                 {(isAdmin && !showServiceAdminView) && <CheckBox name="non_member_users_access_allowed"
                                                                  value={service.non_member_users_access_allowed}
@@ -971,12 +1007,14 @@ class ServiceOverview extends React.Component {
     }
 
     renderCurrentTab = (config, currentTab, service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit,
-                        invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken) => {
+                        invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken,
+                        selectedAutomaticConnectionAllowedOrganisations, automaticConnectionAllowedOrganisations) => {
         switch (currentTab) {
             case "general":
                 return this.renderGeneral(service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs, showServiceAdminView);
             case "connection":
-                return this.renderConnection(config, service, alreadyExists, isAdmin, isServiceAdmin, showServiceAdminView);
+                return this.renderConnection(config, service, alreadyExists, isAdmin, isServiceAdmin, showServiceAdminView,
+                    selectedAutomaticConnectionAllowedOrganisations, automaticConnectionAllowedOrganisations);
             case "contacts":
                 return this.renderContacts(service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs, hasAdministrators);
             case "policy":
@@ -1013,7 +1051,9 @@ class ServiceOverview extends React.Component {
             confirmationDialogQuestion,
             ldapPassword,
             tokenValue,
-            createNewServiceToken
+            createNewServiceToken,
+            selectedAutomaticConnectionAllowedOrganisations,
+            automaticConnectionAllowedOrganisations
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -1038,7 +1078,8 @@ class ServiceOverview extends React.Component {
                 <div className={`service ${createNewServiceToken ? "no-grid" : ""}`}>
                     <h1 className="section-separator">{I18n.t(`serviceDetails.toc.${currentTab}`)}</h1>
                     {this.renderCurrentTab(config, currentTab, service, alreadyExists, isAdmin, isServiceAdmin,
-                        disabledSubmit, invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken)}
+                        disabledSubmit, invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken,
+                        selectedAutomaticConnectionAllowedOrganisations, automaticConnectionAllowedOrganisations)}
                     {this.renderButtons(isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView, createNewServiceToken)}
                 </div>
             </div>

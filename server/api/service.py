@@ -230,6 +230,7 @@ def service_by_id(service_id):
             .options(selectinload(Service.organisations)) \
             .options(selectinload(Service.service_invitations)) \
             .options(selectinload(Service.allowed_organisations)) \
+            .options(selectinload(Service.automatic_connection_allowed_organisations)) \
             .options(selectinload(Service.ip_networks)) \
             .options(selectinload(Service.service_tokens)) \
             .options(selectinload(Service.service_groups))
@@ -401,6 +402,19 @@ def update_service():
         data["token_enabled"] = service.token_enabled
         data["pam_web_sso_enabled"] = service.pam_web_sso_enabled
 
+    automatic_connection_allowed = data.get("automatic_connection_allowed", False)
+    if automatic_connection_allowed:
+        service.automatic_connection_allowed_organisations.clear()
+    else:
+        # We need to reconcile the automatic_connection_allowed_organisations, which ones were added and / or removed
+        organisations = [Organisation.query.get(org["value"]) for org in
+                         data.get("automatic_connection_allowed_organisations", [])]
+        existing_organisations = service.automatic_connection_allowed_organisations
+        for org in [org for org in organisations if org not in existing_organisations]:
+            service.automatic_connection_allowed_organisations.append(org)
+        for org in [org for org in existing_organisations if org not in organisations]:
+            service.automatic_connection_allowed_organisations.remove(org)
+
     res = update(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]
     service.ip_networks
@@ -435,7 +449,10 @@ def add_allowed_organisations(service_id):
         to_remove = [org_id for org_id in current_allowed if org_id not in new_allowed]
         to_append = [org_id for org_id in new_allowed if org_id not in current_allowed]
         for org_id in to_remove:
-            service.allowed_organisations.remove(Organisation.query.get(org_id))
+            organisation = Organisation.query.get(org_id)
+            service.allowed_organisations.remove(organisation)
+            if organisation in service.automatic_connection_allowed_organisations:
+                service.automatic_connection_allowed_organisations.remove(organisation)
         for org_id in to_append:
             service.allowed_organisations.append(Organisation.query.get(org_id))
 
@@ -447,6 +464,7 @@ def add_allowed_organisations(service_id):
 
     else:
         service.allowed_organisations.clear()
+        service.automatic_connection_allowed_organisations.clear()
 
     db.session.merge(service)
 
