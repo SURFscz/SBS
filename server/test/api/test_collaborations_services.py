@@ -4,7 +4,8 @@ from server.db.db import db
 from server.db.domain import Service, Collaboration
 from server.test.abstract_test import AbstractTest, BASIC_AUTH_HEADER
 from server.test.seed import service_mail_name, ai_computing_name, service_cloud_name, uva_research_name, \
-    service_network_name, service_wiki_name, uuc_secret, service_group_wiki_name1, service_group_wiki_name2
+    service_network_name, service_wiki_name, uuc_secret, service_group_wiki_name1, service_group_wiki_name2, \
+    uu_disabled_join_request_name, uva_secret
 
 
 class TestCollaborationsServices(AbstractTest):
@@ -74,6 +75,22 @@ class TestCollaborationsServices(AbstractTest):
         self.assertEqual(0, len(groups[0].collaboration_memberships))
         groups = list(filter(lambda item: item.name == service_group_wiki_name2, collaboration.groups))
         self.assertEqual(1, len(groups))
+
+    def test_add_collaborations_services_with_automatic_connection_allowed_organisations(self):
+        collaboration = self.find_entity_by_name(Collaboration, uu_disabled_join_request_name)
+        self.assertEqual(0, len(collaboration.services))
+
+        service_wiki = self.find_entity_by_name(Service, service_wiki_name)
+        self.client.put("/api/collaborations_services/v1/connect_collaboration_service",
+                        headers={"Authorization": f"Bearer {uva_secret}"},
+                        data=json.dumps({
+                            "short_name": collaboration.short_name,
+                            "service_entity_id": service_wiki.entity_id
+                        }), content_type="application/json")
+
+        # Reload
+        collaboration = self.find_entity_by_name(Collaboration, uu_disabled_join_request_name)
+        self.assertEqual(service_wiki.entity_id, collaboration.services[0].entity_id)
 
     def test_add_collaborations_services_forbidden(self):
         self.login("urn:admin")

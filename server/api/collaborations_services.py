@@ -77,6 +77,9 @@ def connect_collaboration_service_api():
     service_entity_id = data["service_entity_id"]
     service = Service.query.filter(Service.entity_id == service_entity_id).one()
 
+    # Ensure to skip current_user is CO admin check
+    request_context.skip_collaboration_admin_confirmation = True
+
     if service.automatic_connection_allowed or organisation in service.automatic_connection_allowed_organisations:
         connect_service_collaboration(service.id, collaboration.id, force=True)
         status = "connected"

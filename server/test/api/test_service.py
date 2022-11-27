@@ -7,9 +7,9 @@ from server.api.service import user_service
 from server.db.db import db
 from server.db.domain import Service, Organisation, Collaboration, ServiceInvitation, User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import service_mail_name, service_network_entity_id, amsterdam_uva_name, uuc_name, \
+from server.test.seed import service_mail_name, service_network_entity_id, uuc_name, \
     service_network_name, uuc_scheduler_name, service_wiki_name, uva_research_name, service_storage_name, \
-    service_cloud_name, service_storage_entity_id, service_ssh_uva_name
+    service_cloud_name, service_storage_entity_id, service_ssh_uva_name, tue_name, amsterdam_uva_name
 
 
 class TestService(AbstractTest):
@@ -281,18 +281,23 @@ class TestService(AbstractTest):
         self.assertTrue(len(services) > 0)
 
     def test_add_allowed_organisations(self):
-        service = self.find_entity_by_name(Service, service_network_name)
-        uva = self.find_entity_by_name(Organisation, amsterdam_uva_name)
+        service = self.find_entity_by_name(Service, service_wiki_name)
+        self.assertEqual(2, len(service.allowed_organisations))
+        self.assertEqual(1, len(service.automatic_connection_allowed_organisations))
+
+        ucc = self.find_entity_by_name(Organisation, uuc_name)
+        tue = self.find_entity_by_name(Organisation, tue_name)
         self.login("urn:service_admin")
         self.put(f"/api/services/allowed_organisations/{service.id}",
-                 body={"allowed_organisations": [{"organisation_id": uva.id}]},
+                 body={"allowed_organisations": [{"organisation_id": ucc.id}, {"organisation_id": tue.id}]},
                  with_basic_auth=False)
 
-        service = self.find_entity_by_name(Service, service_network_name)
+        service = self.find_entity_by_name(Service, service_wiki_name)
         allowed_organisations = service.allowed_organisations
 
-        self.assertEqual(1, len(allowed_organisations))
-        self.assertEqual(amsterdam_uva_name, allowed_organisations[0].name)
+        org_names = list(sorted([org.name for org in service.allowed_organisations]))
+        self.assertListEqual([tue_name, uuc_name], org_names)
+        self.assertEqual(0, len(service.automatic_connection_allowed_organisations))
 
     def test_add_allowed_organisations_none(self):
         coll = self.find_entity_by_name(Collaboration, uva_research_name)
@@ -336,3 +341,40 @@ class TestService(AbstractTest):
         self.login("urn:peter")
         self.get("/api/services/find_by_uuid4", query_data={"uuid4": cloud.uuid4}, with_basic_auth=False,
                  response_status_code=403)
+
+    def test_service_update_clear_automatic_connection_allowed_organisations(self):
+        service_from_db = self.find_entity_by_name(Service, service_wiki_name)
+
+        # Required to get the details
+        self.login("urn:service_admin")
+        service = self.get(f"api/services/{service_from_db.id}")
+        self.assertEqual(1, len(service["automatic_connection_allowed_organisations"]))
+        self.assertFalse(service["automatic_connection_allowed"])
+
+        service["automatic_connection_allowed"] = True
+        service["automatic_connection_allowed_organisations"] = \
+            [{"value": org.id} for org in service_from_db.automatic_connection_allowed_organisations]
+        self.put("/api/services", body=service, with_basic_auth=False)
+
+        service_from_db = self.find_entity_by_name(Service, service_wiki_name)
+        self.assertEqual(0, len(service_from_db.automatic_connection_allowed_organisations))
+        self.assertTrue(service_from_db.automatic_connection_allowed)
+
+    def test_service_update_change_automatic_connection_allowed_organisations(self):
+        service_from_db = self.find_entity_by_name(Service, service_wiki_name)
+
+        # Required to get the details
+        self.login("urn:service_admin")
+        service = self.get(f"api/services/{service_from_db.id}")
+
+        service["automatic_connection_allowed_organisations"] = [
+            {"value": self.find_entity_by_name(Organisation, tue_name).id},
+            {"value": self.find_entity_by_name(Organisation, amsterdam_uva_name).id},
+        ]
+        self.put("/api/services", body=service, with_basic_auth=False)
+
+        service_from_db = self.find_entity_by_name(Service, service_wiki_name)
+        organisations = service_from_db.automatic_connection_allowed_organisations
+        self.assertEqual(2, len(organisations))
+        org_names = list(sorted([org.name for org in organisations]))
+        self.assertListEqual([amsterdam_uva_name, tue_name], org_names)
