@@ -236,6 +236,15 @@
         }
     }
 
+    .toggle-json {
+        display: flex;
+        margin: 15px 0;
+
+        .copy-to-clipboard  {
+            margin-left: 25px;
+        }
+    }
+
     .search {
         position: relative;
         display: flex;

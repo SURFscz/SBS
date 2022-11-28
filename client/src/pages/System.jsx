@@ -1,28 +1,31 @@
 import React from "react";
 import "./System.scss";
 import I18n from "i18n-js";
+import JsonFormatter from 'react-json-formatter'
+
 import {
+    activateUserForCollaboration,
     auditLogsActivity,
     cleanSlate,
-    validations,
     cleanupNonOpenRequests,
     clearAuditLogs,
-    dbSeed,
+    composition,
     dbDemoSeed,
     dbHumanTestingSeed,
+    dbSeed,
     dbStats,
-    composition,
-    userLoginsSummary,
+    deleteOrphanUsers,
     expireCollaborationMemberships,
     expireCollaborations,
+    getSuspendedUsers,
     health,
     outstandingRequests,
+    plscSync,
     scheduledJobs,
     suspendCollaborations,
     suspendUsers,
-    plscSync,
-    getSuspendedUsers,
-    activateUserForCollaboration, deleteOrphanUsers
+    userLoginsSummary,
+    validations
 } from "../api";
 import ReactJson from "react-json-view";
 import Button from "../components/Button";
@@ -47,6 +50,8 @@ import ServicesWithoutAdmin from "../components/redesign/ServicesWithoutAdmin";
 import {dateFromEpoch} from "../utils/Date";
 import DOMPurify from "dompurify";
 import Scim from "./Scim";
+import CheckBox from "../components/CheckBox";
+import ClipBoardCopy from "../components/redesign/ClipBoardCopy";
 
 const options = [25, 50, 100, 150, 200, 250, 500].map(nbr => ({value: nbr, label: nbr}));
 
@@ -85,6 +90,7 @@ class System extends React.Component {
             showOrganisationsWithoutAdmin: true,
             showServicesWithoutAdmin: true,
             plscData: {},
+            plscView: false,
             compositionData: {},
             currentlySuspendedUsers: []
         }
@@ -260,12 +266,29 @@ class System extends React.Component {
         });
     }
 
-    getPlscTab = plscData => {
+    getPlscTab = (plscData, plscView) => {
+        const jsonStyle = {
+            propertyStyle: {color: "black"},
+            stringStyle: {color: "green"},
+            numberStyle: {color: 'darkorange'}
+        }
+        const plscJson = JSON.stringify(plscData);
         return (<div key="plsc" name="plsc" label={I18n.t("home.tabs.plsc")}
                      icon={<FontAwesomeIcon icon="table"/>}>
             <div className="mod-system">
                 <section className="info-block-container">
-                    <ReactJson src={plscData} collapsed={1}/>
+                    <div className={"toggle-json"}>
+                        <CheckBox name={"toggle-json"}
+                                  value={plscView}
+                                  info={I18n.t("system.toggleJson")}
+                                  onChange={() => this.setState({plscView: !plscView})} />
+                        <ClipBoardCopy txt={plscJson}/>
+                    </div>
+                    {plscView &&
+                    <ReactJson src={plscData} collapsed={1}/>}
+                    {!plscView &&
+                    <JsonFormatter json={plscJson} tabWith={4} jsonStyle={jsonStyle}/>}
+
                 </section>
             </div>
         </div>)
@@ -600,9 +623,9 @@ class System extends React.Component {
                 <p>{I18n.t("system.runOrphanUsers")}</p>
                 <div className="actions">
                     {isEmpty(deletedUsers) && <Button txt={I18n.t("system.runDailyJobs")}
-                                                            onClick={this.doOrphanUsers}/>}
+                                                      onClick={this.doOrphanUsers}/>}
                     {!isEmpty(deletedUsers) && <Button txt={I18n.t("system.clear")}
-                                                             onClick={this.clear} cancelButton={true}/>}
+                                                       onClick={this.clear} cancelButton={true}/>}
                 </div>
             </div>
         );
@@ -705,9 +728,9 @@ class System extends React.Component {
                 <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("system.runDbDemoSeedInfo"))}}/>
                 <div className="actions">
                     {isEmpty(demoSeedResult) && <Button txt={I18n.t("system.runDbSeed")}
-                                                    onClick={() => this.doDbDemoSeed(true)}/>}
+                                                        onClick={() => this.doDbDemoSeed(true)}/>}
                     {!isEmpty(demoSeedResult) && <Button txt={I18n.t("system.reload")}
-                                                     onClick={this.reload} cancelButton={true}/>}
+                                                         onClick={this.reload} cancelButton={true}/>}
                 </div>
             </div>
         );
@@ -720,9 +743,9 @@ class System extends React.Component {
                 <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("system.runDbHumanTestingSeedInfo"))}}/>
                 <div className="actions">
                     {isEmpty(humanTestingSeedResult) && <Button txt={I18n.t("system.runDbSeed")}
-                                                    onClick={() => this.doDbHumanTestingSeed(true)}/>}
+                                                                onClick={() => this.doDbHumanTestingSeed(true)}/>}
                     {!isEmpty(humanTestingSeedResult) && <Button txt={I18n.t("system.reload")}
-                                                     onClick={this.reload} cancelButton={true}/>}
+                                                                 onClick={this.reload} cancelButton={true}/>}
                 </div>
             </div>
         );
@@ -758,7 +781,7 @@ class System extends React.Component {
     }
 
     renderOrphanUsersResults = deletedUsers => {
-            return (
+        return (
             <div className="results">
                 {!isEmpty(deletedUsers) && <div className="results">
                     <table className="expired-memberships">
@@ -965,7 +988,7 @@ class System extends React.Component {
                 </thead>
                 <tbody>
                 {userLoginStats.map((stat, i) => <tr key={i}>
-                    {["login_type","count", "succeeded","failed"].map(col => <td className={col}>{stat[col]}</td>)}
+                    {["login_type", "count", "succeeded", "failed"].map(col => <td className={col}>{stat[col]}</td>)}
                 </tr>)}
 
                 </tbody>
@@ -1021,11 +1044,37 @@ class System extends React.Component {
             return null;
         }
         const {
-            seedResult, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, outstandingRequests,
-            confirmationDialogQuestion, busy, tab, filteredAuditLogs, databaseStats, suspendedUsers, cleanedRequests,
-            limit, query, selectedTables, expiredCollaborations, suspendedCollaborations, expiredMemberships, cronJobs,
-            validationData, showOrganisationsWithoutAdmin, showServicesWithoutAdmin, plscData, compositionData,
-            currentlySuspendedUsers, userLoginStats, deletedUsers, serverQuery, demoSeedResult, humanTestingSeedResult
+            seedResult,
+            confirmationDialogOpen,
+            cancelDialogAction,
+            confirmationDialogAction,
+            outstandingRequests,
+            confirmationDialogQuestion,
+            busy,
+            tab,
+            filteredAuditLogs,
+            databaseStats,
+            suspendedUsers,
+            cleanedRequests,
+            limit,
+            query,
+            selectedTables,
+            expiredCollaborations,
+            suspendedCollaborations,
+            expiredMemberships,
+            cronJobs,
+            validationData,
+            showOrganisationsWithoutAdmin,
+            showServicesWithoutAdmin,
+            plscData,
+            compositionData,
+            currentlySuspendedUsers,
+            userLoginStats,
+            deletedUsers,
+            serverQuery,
+            demoSeedResult,
+            humanTestingSeedResult,
+            plscView
         } = this.state;
         const {config} = this.props;
 
@@ -1039,7 +1088,7 @@ class System extends React.Component {
             config.seed_allowed ? this.getSeedTab(seedResult, demoSeedResult, humanTestingSeedResult) : null,
             this.getDatabaseTab(databaseStats, config),
             this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables, serverQuery),
-            this.getPlscTab(plscData),
+            this.getPlscTab(plscData, plscView),
             config.seed_allowed ? this.getCompositionTab(compositionData) : null,
             this.getSuspendedUsersTab(currentlySuspendedUsers),
             this.getUserLoginTab(userLoginStats),
