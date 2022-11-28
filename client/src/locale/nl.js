@@ -1717,6 +1717,7 @@ I18n.translations.nl = {
         clear: "Clear",
         reload: "Reload",
         seedResult: "Testgegevens toegevoegd in {{ms}} ms. Ververs deze pagina met een hard-reload om de cache te invalideren.",
+        toggleJson: "Toggle view",
         suspendedUsers: {
             title: "De onderstaande gebruikers zijn geschorst.",
             titleZeroState: "Er zijn geen geschorste gebruikers",

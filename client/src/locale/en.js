@@ -1717,6 +1717,7 @@ I18n.translations.en = {
         clear: "Clear",
         reload: "Reload",
         seedResult: "Test data is inserted in {{ms}} ms. Perform a hard-reload of the page to invalidate the cache.",
+        toggleJson: "Toggle view",
         suspendedUsers: {
             title: "The following users have been suspended.",
             titleZeroState: "There are no suspended users.",
