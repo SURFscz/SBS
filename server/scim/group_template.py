@@ -3,7 +3,7 @@ from typing import Union, List
 from server.api.base import application_base_url
 from server.db.domain import Group, Collaboration, CollaborationMembership
 from server.scim import SCIM_URL_PREFIX
-from server.scim.user_template import external_id_post_fix, version_value, date_time_format
+from server.scim.user_template import external_id_post_fix, version_value, date_time_format, replace_none_values
 
 
 def _meta_info(group: Union[Group, Collaboration]):
@@ -15,7 +15,7 @@ def _meta_info(group: Union[Group, Collaboration]):
 
 
 def create_group_template(group: Union[Group, Collaboration], membership_scim_objects):
-    return {
+    return replace_none_values({
         "schemas": [
             "urn:scim:schemas:core:1.0"
         ],
@@ -23,7 +23,7 @@ def create_group_template(group: Union[Group, Collaboration], membership_scim_ob
         "name": group.global_urn,
         "displayName": group.name,
         "members": membership_scim_objects
-    }
+    })
 
 
 def update_group_template(group: Union[Group, Collaboration], membership_scim_objects, scim_identifier: str):
