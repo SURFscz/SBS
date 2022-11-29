@@ -1,3 +1,4 @@
+import base64
 import hashlib
 from typing import List, Union
 
@@ -5,6 +6,15 @@ from server.db.domain import User, Group, Collaboration
 from server.scim import SCIM_URL_PREFIX
 
 external_id_post_fix = "@sram.surf.nl"
+
+
+def replace_none_values(d: dict):
+    for k, v in d.items():
+        if isinstance(v, dict):
+            replace_none_values(v)
+        elif v is None:
+            d[k] = ""
+    return d
 
 
 def version_value(scim_object: Union[User, Group, Collaboration]):
@@ -24,7 +34,7 @@ def _meta_info(user: User):
 
 
 def create_user_template(user: User):
-    return {
+    return replace_none_values({
         "schemas": [
             "urn:scim:schemas:core:1.0"
         ],
@@ -37,8 +47,9 @@ def create_user_template(user: User):
         "displayName": user.name,
         "active": not user.suspended,
         "emails": [{"value": user.email, "primary": True}],
-        "x509Certificates": [{"value": ssh_key.ssh_value} for ssh_key in user.ssh_keys]
-    }
+        "x509Certificates": [{"value": base64.b64encode(ssh_key.ssh_value.encode()).decode()} for ssh_key in
+                             user.ssh_keys]
+    })
 
 
 def update_user_template(user: User, scim_identifier: str):

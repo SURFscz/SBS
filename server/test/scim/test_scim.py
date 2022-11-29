@@ -9,7 +9,7 @@ from server.test.seed import uva_research_name, service_cloud_name, service_ssh_
 from server.tools import read_file
 
 
-class TestEvents(AbstractTest):
+class TestScim(AbstractTest):
 
     @responses.activate
     def test_membership_user_scim_identifiers_no_scim_service(self):

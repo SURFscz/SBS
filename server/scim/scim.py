@@ -9,7 +9,8 @@ from server.db.models import flatten
 from server.logger.context_logger import ctx_logger
 from server.scim.counter import atomic_increment_counter_value
 from server.scim.group_template import update_group_template, create_group_template, scim_member_object
-from server.scim.user_template import create_user_template, update_user_template, external_id_post_fix
+from server.scim.user_template import create_user_template, update_user_template, external_id_post_fix, \
+    replace_none_values
 
 SCIM_USERS = "Users"
 SCIM_GROUPS = "Groups"
@@ -52,7 +53,7 @@ def _provision_user(scim_object, service: Service, user: User):
     request_method = requests.put if scim_object else requests.post
     postfix = scim_object['meta']['location'] if scim_object else "/Users"
     url = f"{service.scim_url}{postfix}{_counter_query_param(service)}"
-    return request_method(url, json=scim_dict, headers=_headers(service), timeout=10)
+    return request_method(url, json=replace_none_values(scim_dict), headers=_headers(service), timeout=10)
 
 
 # If the group / collaboration is known in the remote SCIM then update the group else provision the group
@@ -65,7 +66,7 @@ def _provision_group(scim_object, service: Service, group: Union[Group, Collabor
     request_method = requests.put if scim_object else requests.post
     postfix = scim_object['meta']['location'] if scim_object else "/Groups"
     url = f"{service.scim_url}{postfix}{_counter_query_param(service)}"
-    return request_method(url, json=scim_dict, headers=_headers(service), timeout=10)
+    return request_method(url, json=replace_none_values(scim_dict), headers=_headers(service), timeout=10)
 
 
 # Get all SCIM members of the group / collaboration and provision new ones
