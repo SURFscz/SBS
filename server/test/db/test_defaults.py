@@ -92,7 +92,7 @@ class TestDefaults(TestCase):
 
     def test_uri_regexp(self):
         self.assertTrue(bool(uri_re.match("https://localhost/api/scim_mock")))
-        self.assertTrue(bool(uri_re.match("http://localhost/api/scim_mock")))
+        self.assertTrue(bool(uri_re.match("http://localhost:8080/api/scim_mock")))
         self.assertTrue(bool(uri_re.match("https://demo-sp.sram.surf.nl/test")))
         self.assertTrue(bool(uri_re.match("https://google.nl")))
         self.assertTrue(bool(uri_re.match("https://google")))
