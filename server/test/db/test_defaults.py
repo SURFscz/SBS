@@ -96,3 +96,12 @@ class TestDefaults(TestCase):
         self.assertTrue(bool(uri_re.match("https://demo-sp.sram.surf.nl/test")))
         self.assertTrue(bool(uri_re.match("https://google.nl")))
         self.assertTrue(bool(uri_re.match("https://google")))
+
+    def test_valid_uri_attributes_trim(self):
+        data = {"uri": "https://auth.tudelft.nl "}
+        self.assertTrue(valid_uri_attributes(data, ["uri"]))
+        self.assertTrue("https://auth.tudelft.nl", data["uri"])
+
+        self.assertTrue(valid_uri_attributes({}, ["uri"]))
+        data = {"uri": "https://auth.tudelft.nl/{co_short_name}{username}"}
+        self.assertTrue(valid_uri_attributes(data, ["uri"]))
