@@ -143,7 +143,7 @@ def get2fa_proxy_authz():
     user = _get_user_by_second_fa_uuid(second_fa_uuid)
     if user.second_factor_auth:
         return {}, 200
-    return _do_get2fa(user.schac_home_organisation, user.uid)
+    return _do_get2fa(user.schac_home_organisation, user.email)
 
 
 def _get_user_by_second_fa_uuid(second_fa_uuid):
