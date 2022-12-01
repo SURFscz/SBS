@@ -14,4 +14,3 @@ class TestGroupTemplate(AbstractTest):
         result = find_group_by_id_template(group)
 
         self.assertListEqual([], result["members"])
-        self.assertEquals(result["name"], "")
