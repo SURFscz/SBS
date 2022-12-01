@@ -1,4 +1,10 @@
+from eventlet.green import ssl
 import redis
+import eventlet
+import socket
+eventlet.monkey_patch()
+
+ssl.timeout_exc = socket.timeout
 
 
 def init_redis(app_conf):
