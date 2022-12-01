@@ -27,4 +27,4 @@ ENV LDAP_BIND=cn=admin,dc=entity_id,dc=services,dc=example,dc=com
 
 CMD [ "/bin/bash", "-c", \
   "envsubst <${CONFIG_TEMPLATE:-server/config/test_config.yml} >server/${CONFIG}; uwsgi --socket 0.0.0.0:8080 --protocol=http --module server.__main__:app;" \
-]
+  ]
