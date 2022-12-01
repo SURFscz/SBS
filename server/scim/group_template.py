@@ -20,7 +20,7 @@ def create_group_template(group: Union[Group, Collaboration], membership_scim_ob
             "urn:scim:schemas:core:1.0"
         ],
         "externalId": f"{group.identifier}{external_id_post_fix}",
-        "name": group.global_urn,
+        # HK: This attribute does not belong to schema --> "name": group.global_urn,
         "displayName": group.name,
         "members": membership_scim_objects
     })
