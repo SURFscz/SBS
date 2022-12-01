@@ -131,3 +131,4 @@ venvbackup/
 .vscode
 server/requirements/pipdeptree
 .venv310/
+server/config/_config.yml
