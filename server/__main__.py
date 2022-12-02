@@ -1,19 +1,16 @@
 # flake8: noqa
+# monkey_patch before importing anything else!
+# see https://github.com/gevent/gevent/issues/1016#issuecomment-328529454
+import eventlet
+eventlet.monkey_patch()
+
 import logging
 import os
 import sys
 import time
 from datetime import timedelta
 from logging.handlers import TimedRotatingFileHandler
-
-# monkey_patch before importing anything else!
-# see https://github.com/gevent/gevent/issues/1016#issuecomment-328529454
-import eventlet
-
 from server.api.mock_user import mock_user_api
-
-eventlet.monkey_patch()
-
 import yaml
 from flask import Flask, jsonify, request as current_request
 from flask_mail import Mail
@@ -212,7 +209,7 @@ if not test:
 
 redis_password = config.redis.password
 redis_protocol = "rediss" if redis_password else "redis"
-redis_password_part = f"{redis_password}@" if redis_password else ""
+redis_password_part = f":{redis_password}@" if redis_password else ""
 socket_io = SocketIO(app,
                      message_queue=f"{redis_protocol}://{redis_password_part}{config.redis.host}:{config.redis.port}",
                      cors_allowed_origins="*")
