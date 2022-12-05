@@ -112,7 +112,7 @@ def demo_seed(db):
             "service_memberships": [user_list[0], user_list[1]]
         },
         {
-            "name": "Demo OIDC RP",
+            "name": "Demo SAML SP",
             "entity_id": "https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/prd",
             "logo": "service_02.jpg",
             "mail": users[1]['email'],
