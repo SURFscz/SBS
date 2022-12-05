@@ -11,4 +11,4 @@ ssl.timeout_exc = socket.timeout
 
 
 def init_redis(app_conf):
-    return redis.form_url(app_conf.redis.uri)
+    return redis.from_url(app_conf.redis.uri)
