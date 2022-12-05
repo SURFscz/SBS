@@ -103,7 +103,7 @@ def demo_seed(db):
     services = [
         {
             "name": "Demo OIDC RP",
-            "entity_id": "APP-04994294-94DD-4980-A161-A02E611065DA",
+            "entity_id": "APP-18DE6298-7BDD-4CFA-9399-E1CC62E8DE05",
             "logo": "service_01.jpg",
             "mail": users[0]['email'],
             "allowed_organisations": [org_list[0], org_list[1]],
@@ -113,7 +113,7 @@ def demo_seed(db):
         },
         {
             "name": "Demo SAML SP",
-            "entity_id": "https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/prd",
+            "entity_id": "https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/test",
             "logo": "service_02.jpg",
             "mail": users[1]['email'],
             "allowed_organisations": [org_list[0], org_list[1]],
