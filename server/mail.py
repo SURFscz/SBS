@@ -272,15 +272,18 @@ def mail_accepted_declined_service_connection_request(context, service_name, col
     )
 
 
-def mail_suspend_notification(context, recipients, is_primary, preview=False):
-    if not preview:
-        _store_mail(context["user"], SUSPEND_NOTIFICATION_MAIL, recipients)
+def mail_suspend_notification(context, recipients, is_warning, is_suspension):
+    _store_mail(context["user"], SUSPEND_NOTIFICATION_MAIL, recipients)
+    if is_warning:
+        template = "suspend_suspend_warning_notification" if is_suspension else "suspend_delete_warning_notification"
+    else:
+        template = "suspend_suspend_notification" if is_suspension else "suspend_delete_notification"
     return _do_send_mail(
         subject="SURF SRAM: suspend notification",
         recipients=recipients,
-        template="suspend_notification" if is_primary else "suspend_notification_reminder",
+        template=template,
         context=context,
-        preview=preview,
+        preview=False,
         working_outside_of_request_context=True
     )
 
@@ -366,7 +369,7 @@ def mail_suspended_account_deletion(user):
     _do_send_mail(
         subject=f"User {user.email} suspended account is deleted in environment {mail_cfg.environment}",
         recipients=recipients,
-        template="suspended_user_account_deleted",
+        template="admin_suspended_user_account_deleted",
         context={"environment": mail_cfg.environment,
                  "date": datetime.datetime.now(),
                  "attributes": _user_attributes(user),

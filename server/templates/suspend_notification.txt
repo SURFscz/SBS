@@ -7,7 +7,7 @@ You have not logged in for {{ retention.allowed_inactive_period_days }} days. Yo
 {{ base_url }}/login.
 
 If you let your user account be suspended you will not be able to use your services connected to your collaborations.
-This reminder will be suspended after {{ retention.reminder_expiry_period_days }} days.
+This reminder will be suspended after {{ retention.reminder_suspend_period_days }} days.
 
 {% endblock %}
 
