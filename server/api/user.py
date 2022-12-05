@@ -27,7 +27,6 @@ from server.auth.security import confirm_allow_impersonation, is_admin_user, cur
     confirm_organisation_admin_or_manager, is_application_admin, CSRF_TOKEN
 from server.auth.ssid import AUTHN_REQUEST_ID, saml_auth, redirect_to_surf_secure_id, USER_UID
 from server.auth.user_claims import add_user_claims
-from server.cron.user_suspending import create_suspend_notification
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit, SBS_LOGIN
 from server.db.domain import User, OrganisationMembership, CollaborationMembership, JoinRequest, CollaborationRequest, \
@@ -500,15 +499,12 @@ def activate():
     else:
         confirm_write_access()
 
-    user = User.query.get(body["user_id"])
+    user = User.query.get(int(body["user_id"]))
 
     user.suspended = False
-    retention = current_app.app_config.retention
-    user.last_login_date = datetime.datetime.now() - datetime.timedelta(days=retention.allowed_inactive_period_days)
+    user.last_login_date = datetime.datetime.now()
     user.suspend_notifications = []
     db.session.merge(user)
-
-    create_suspend_notification(user, retention, current_app, True)
     return {}, 201
 
 

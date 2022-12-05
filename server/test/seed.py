@@ -210,20 +210,22 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     sarah_other_user_ip_network = UserIpNetwork(network_value="255.0.0.9/24", user=sarah)
     persist_instance(db, sarah_user_ip_network, sarah_other_user_ip_network)
 
-    resend_suspension_date = current_time - datetime.timedelta(retention.reminder_resent_period_days + 1)
-    user_one_suspend_notification1 = SuspendNotification(user=user_one_suspend, sent_at=resend_suspension_date,
-                                                         is_primary=True)
-
-    resend_suspension_date = current_time - datetime.timedelta(retention.reminder_resent_period_days + 1)
-    user_two_suspend_notification1 = SuspendNotification(user=user_two_suspend, sent_at=resend_suspension_date,
-                                                         is_primary=True)
     resend_suspension_date = current_time - datetime.timedelta(retention.reminder_expiry_period_days + 1)
+    user_one_suspend_notification1 = SuspendNotification(user=user_one_suspend, sent_at=resend_suspension_date,
+                                                         is_warning=True, is_suspension=True)
+
+    resend_suspension_date = current_time - datetime.timedelta(retention.reminder_expiry_period_days + 1)
+    user_two_suspend_notification1 = SuspendNotification(user=user_two_suspend, sent_at=resend_suspension_date,
+                                                         is_warning=True, is_suspension=True)
+    resend_suspension_date = current_time - datetime.timedelta(retention.reminder_suspend_period_days + 1)
     user_two_suspend_notification2 = SuspendNotification(user=user_two_suspend, sent_at=resend_suspension_date,
-                                                         is_primary=False)
+                                                         is_warning=False, is_suspension=True)
     user_suspended_notification1 = SuspendNotification(user=user_suspended, sent_at=resend_suspension_date,
-                                                       is_primary=True)
+                                                       is_warning=True, is_suspension=True)
     user_suspended_notification2 = SuspendNotification(user=user_suspended, sent_at=resend_suspension_date,
-                                                       is_primary=False)
+                                                       is_warning=False, is_suspension=True)
+    user_suspended_notification3 = SuspendNotification(user=user_suspended, sent_at=resend_suspension_date,
+                                                       is_warning=True, is_suspension=False)
 
     persist_instance(db, user_one_suspend_notification1, user_two_suspend_notification1, user_two_suspend_notification2,
                      user_suspended_notification1, user_suspended_notification2)

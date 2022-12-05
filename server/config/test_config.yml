@@ -119,8 +119,8 @@ feature:
 # The retention config determines how long users may be inactive, how long the reminder magic link is valid and when do we resent the magic link
 retention:
   allowed_inactive_period_days: 90
-  reminder_expiry_period_days: 14
-  reminder_resent_period_days: 7
+  reminder_suspend_period_days: 14
+  reminder_expiry_period_days: 7
   cron_hour_of_day: 7
   remove_suspended_users_period_days: 540
 
@@ -135,7 +135,7 @@ service_bus:
   user: "sbs"
   password: "changethispassword"
 
-# note: all cron hours below ae in UTC
+# note: all cron hours below are in UTC
 platform_admin_notifications:
   # Do we daily check for CO join_requests and CO requests and send a summary mail to beheer_email?
   enabled: True
