@@ -207,12 +207,8 @@ if not test:
 if not test:
     start_scheduling(app)
 
-redis_password = config.redis.password
-redis_protocol = "rediss" if redis_password else "redis"
-redis_password_part = f":{redis_password}@" if redis_password else ""
-socket_io = SocketIO(app,
-                     message_queue=f"{redis_protocol}://{redis_password_part}{config.redis.host}:{config.redis.port}",
-                     cors_allowed_origins="*")
+redis_uri = config.redis.uri
+socket_io = SocketIO(app, message_queue=redis_uri, cors_allowed_origins="*")
 app.socket_io = socket_io
 
 
