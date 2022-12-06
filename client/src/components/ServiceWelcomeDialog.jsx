@@ -29,7 +29,7 @@ export default function ServiceWelcomeDialog({
             <section className="role">
                 <InformationIcon/>
                 <span
-                    dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcomeDialog.role", {role: I18n.t("access.serviceAdmin").toLowerCase()}))}}/>
+                    dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcomeDialog.roleServiceAdmin"))}}/>
             </section>
             <section className="responsibilities">
                 {I18n.locale === "en" ? <ServiceEn/> : <ServiceNl/>}
