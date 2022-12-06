@@ -49,10 +49,13 @@ export default function CollaborationWelcomeDialog({
             <section className="role">
                 <InformationIcon/>
                 <span
-                    dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcomeDialog.role", {role: I18n.t(`access.${toggleRole}`).toLowerCase()}))}}/>
+                    dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(
+                            I18n.t(`welcomeDialog.${toggleRole === ROLES.COLL_ADMIN ? "roleCollaborationAdmin" : "roleCollaborationMember"}`))
+                    }}/>
             </section>
             <section className="responsibilities welcome">
-                <p>{I18n.t("welcomeDialog.info")}</p>
+                <p>{I18n.t(`welcomeDialog.${toggleRole === ROLES.COLL_ADMIN ? "infoAdmin" : "infoMember"}`)}</p>
             </section>
             <h2>{I18n.t("welcomeDialog.purpose")}</h2>
             <section className="responsibilities welcome">

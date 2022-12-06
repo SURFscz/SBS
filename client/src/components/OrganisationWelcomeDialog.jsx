@@ -44,7 +44,9 @@ export default function OrganisationWelcomeDialog({
             <section className="role">
                 <InformationIcon/>
                 <span
-                    dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcomeDialog.role", {role: I18n.t(`access.${toggleRole}`).toLowerCase()}))}}/>
+                    dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(
+                        I18n.t(`welcomeDialog.${toggleRole === ROLES.ORG_ADMIN ? "roleOrganisationAdmin" : "roleOrganisationManager"}`)
+                        )}}/>
             </section>
             <section className="responsibilities">
                 {I18n.locale === "en" ? <OrganisationEn role={toggleRole}/> : <OrganisationNl role={toggleRole}/>}
