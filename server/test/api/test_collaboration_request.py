@@ -69,7 +69,7 @@ class TestCollaborationRequest(AbstractTest):
             self.assertEqual(f"New collaboration {collaboration.name} created in {organisation.name} (local)", mail_msg.subject)
 
     def test_request_collaboration_no_schachome(self):
-        self.login("urn:inactive", schac_home_organisation=None)
+        self.login("urn:user_suspend_warning", schac_home_organisation=None)
         self.post("/api/collaboration_requests", body={}, response_status_code=400, with_basic_auth=False)
 
     def test_request_collaboration_approve(self):

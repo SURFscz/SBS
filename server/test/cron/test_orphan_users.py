@@ -25,11 +25,11 @@ class TestOrphanUsers(AbstractTest):
             self.assertTrue("urn:mary" in outbox[0].html)
             self.assertFalse("urn:jane" in outbox[0].html)
 
-            self.assertEqual(16, len(results["orphan_users"]))
+            self.assertEqual(15, len(results["orphan_users"]))
 
             results = delete_orphan_users(self.app)
             self.assertEqual(0, len(results["orphan_users"]))
 
     def test_system_orphan_users(self):
         results = self.put("/api/system/orphan_users")
-        self.assertEqual(17, len(results["orphan_users"]))
+        self.assertEqual(16, len(results["orphan_users"]))
