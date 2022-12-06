@@ -34,7 +34,7 @@ def create_suspend_notification(user, retention, app, is_warning, is_suspension)
     mail_suspend_notification({"salutation": f"Hi {user.given_name}",
                                "base_url": app.app_config.base_url,
                                "retention": retention,
-                               "days_ago": datetime.datetime.utcnow() - user.last_login_date,
+                               "days_ago": (datetime.datetime.utcnow() - user.last_login_date).days,
                                "suspend_notification": suspend_notification,
                                "suspension_date": format_date_time(suspension_date),
                                "deletion_date": format_date_time(deletion_date),
