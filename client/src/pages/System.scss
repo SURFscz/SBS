@@ -76,32 +76,41 @@
                 margin: 10px 0;
             }
 
-            table.table-counts, table.suspended-users, table.suspended-collaborations, table.expired-collaborations, table.expired-memberships {
+            table {
                 width: 100%;
                 margin-top: 25px;
 
-                th {
-                    text-align: left;
-                    padding: 5px;
-                    width: 50%;
+                thead {
+                    tr {
+                        border-bottom: 3px solid $lighter-grey;
+                    }
+
+                    th {
+                        padding: 10px 0;
+                        color: $primary-orange;
+                        text-align: left;
+                        width: 50%;
+
+                    }
                 }
 
                 tbody {
                     tr {
+                        color: black;
+                        border-bottom: 1px solid $lighter-grey;
+
                         &:nth-child(odd) {
                             background-color: $lightest-grey;
                         }
+
+                        td {
+                            padding: 10px 0;
+
+                            &.action {
+                                vertical-align: top;
+                            }
+                        }
                     }
-                }
-
-                td {
-                    vertical-align: middle;
-                    padding: 5px;
-
-                    &.action {
-                        vertical-align: top;
-                    }
-
                 }
             }
 
@@ -201,46 +210,11 @@
 
     }
 
-    table.suspended-users {
-        margin-top: 25px;
-
-        thead {
-            tr {
-                border-bottom: 3px solid $lighter-grey;
-            }
-
-            th {
-                padding: 10px 0;
-                color: $primary-orange;
-
-            }
-        }
-
-        tbody {
-            tr {
-                color: black;
-                border-bottom: 1px solid $lighter-grey;
-
-                &:nth-child(odd) {
-                    background-color: $lightest-grey;
-                }
-
-                td {
-                    padding: 10px 0;
-
-                    &:last-child {
-                        text-align: right;
-                    }
-                }
-            }
-        }
-    }
-
     .toggle-json {
         display: flex;
         margin: 15px 0;
 
-        .copy-to-clipboard  {
+        .copy-to-clipboard {
             margin-left: 25px;
         }
     }
