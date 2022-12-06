@@ -1776,7 +1776,7 @@ I18n.translations.nl = {
     welcomeDialog: {
         title: "Welkom bij {{name}}",
         label: "",
-        roleServiceAdmin: "Je bent uitgenodigd om <strong>beheerder</strong> te worden",
+        roleServiceAdmin: "Je bent uitgenodigd om <strong>dienstbeheerder</strong> te worden",
         roleOrganisationAdmin: "Je bent uitgenodigd om <strong>beheerder</strong> te worden",
         roleOrganisationManager: "Je bent uitgenodigd om <strong>manager</strong> te worden",
         roleCollaborationAdmin: "Je bent uitgenodigd om <strong>beheerder</strong> te worden",

@@ -11,6 +11,7 @@ import {AppStore} from "../../stores/AppStore";
 import {convertToHtml} from "../../utils/Markdown";
 import {rawGlobalUserRole, ROLES} from "../../utils/UserRole";
 import DOMPurify from "dompurify";
+import LandingInfo from "../LandingInfo";
 
 class Welcome extends React.Component {
 
@@ -85,7 +86,6 @@ class Welcome extends React.Component {
     unknownOrganisation = () => {
         return (
             <div>
-                <h1>{I18n.t("welcome.whatYouCanDo")}</h1>
                 <h3 className="step">
                     <span>{I18n.t("welcome.contact")}</span>
                 </h3>
@@ -107,18 +107,21 @@ class Welcome extends React.Component {
 
         const orphanUser = isEmpty(organisation) || !organisation.has_members;
         return (
-            <div className="mod-welcome-container">
-                <div className="mod-welcome">
-                    <h1>{I18n.t("welcome.title", {name: user.given_name || user.name || I18n.t("welcome.mysterious")})}</h1>
-                    <p>{I18n.t("welcome.subTitle")}</p>
-                    <div className="institution">
-                        <InformationIcon/>
-                        <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcome.institution", {name: idpDisplayName}))}}/>
+            <>
+                <div className="mod-welcome-container">
+                    <div className="mod-welcome">
+                        <h1>{I18n.t("welcome.title", {name: user.given_name || user.name || I18n.t("welcome.mysterious")})}</h1>
+                        <p>{I18n.t("welcome.subTitle")}</p>
+                        <div className="institution">
+                            <InformationIcon/>
+                            <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcome.institution", {name: idpDisplayName}))}}/>
+                        </div>
+                        {orphanUser && this.unknownOrganisation()}
+                        {!orphanUser && this.knownOrganisation(organisation)}
                     </div>
-                    {orphanUser && this.unknownOrganisation()}
-                    {!orphanUser && this.knownOrganisation(organisation)}
                 </div>
-            </div>
+                <LandingInfo/>
+            </>
         );
     }
 }

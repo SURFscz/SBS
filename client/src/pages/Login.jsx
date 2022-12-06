@@ -4,15 +4,12 @@ import I18n from "i18n-js";
 import {health} from "../api";
 import {getParameterByName} from "../utils/QueryParameters";
 import HappyLogo from "../icons/landing/happy.svg";
-import CreateLogo from "../icons/landing/sketch.svg";
-import InviteLogo from "../icons/landing/mail.svg";
-import CollaborateLogo from "../icons/landing/collaborate.svg";
-import JoinLogo from "../icons/landing/screen.svg";
 import Button from "../components/Button";
 import {login} from "../utils/Login";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import DOMPurify from "dompurify";
+import LandingInfo from "../components/LandingInfo";
 
 class Login extends React.Component {
 
@@ -40,22 +37,6 @@ class Login extends React.Component {
         }
     });
 
-    infoBlock = (name, isAdminFunction, Logo, reversed) =>
-        <div key={name} className={`mod-login info ${reversed ? "reversed" : ""}`}>
-            <div className="header-left info">
-                <div className={"info-title"}>
-                    <h3>{I18n.t(`landing.${name}`)}</h3>
-                    {isAdminFunction && <div className={"admin-function-container"}>
-                        <span className={"admin-function"}>{I18n.t("landing.adminFunction")}</span>
-                    </div>}
-                </div>
-                <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t(`landing.${name}Info`))}}/>
-            </div>
-            <div className="header-right info">
-                <img src={Logo} alt="logo" className={`${reversed ? "reversed" : ""}`}/>
-            </div>
-        </div>
-
     render() {
         const {confirmationDialogOpen, confirmationDialogAction, confirmationQuestion} = this.state;
         return (
@@ -79,18 +60,7 @@ class Login extends React.Component {
                         </div>
                     </div>
                 </div>
-                <div className="mod-login-container bottom">
-                    <div className="mod-login bottom">
-                        <h2>{I18n.t("landing.works")}</h2>
-                        {this.infoBlock("create", true, CreateLogo, true)}
-                        {this.infoBlock("invite", true, InviteLogo, false)}
-                        {this.infoBlock("join", false, JoinLogo, true)}
-                        {this.infoBlock("collaborate", false, CollaborateLogo, false)}
-                        <div className={"landing-footer"}>
-                            <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t(`landing.footer`))}}/>
-                        </div>
-                    </div>
-                </div>
+                <LandingInfo/>
             </div>)
     }
 }
