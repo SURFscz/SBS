@@ -26,7 +26,7 @@ class TestPlsc(AbstractTest):
         res_image = self.client.get(logo.replace("http://localhost:8080", ""))
         self.assertIsNotNone(res_image.data)
         users_ = res["users"]
-        self.assertEqual(17, len(users_))
+        self.assertEqual(16, len(users_))
         sarah = next(u for u in users_ if u["name"] == sarah_name)
         self.assertEqual("sarah@uva.org", sarah["email"])
         self.assertEqual("sarah", sarah["username"])
@@ -38,8 +38,8 @@ class TestPlsc(AbstractTest):
         self.assertEqual("None", sarah["last_login_date"])
         boss = next(u for u in users_ if u["name"] == the_boss_name)
         self.assertEqual(2, len(boss["accepted_aups"]))
-        to_be_deleted = next(u for u in users_ if u["name"] == "to_be_deleted")
-        self.assertIsNotNone(to_be_deleted["last_login_date"])
+        user_gets_deleted = next(u for u in users_ if u["name"] == "user_gets_deleted")
+        self.assertIsNotNone(user_gets_deleted["last_login_date"])
         services_ = res["services"]
         self.assertEqual(9, len(services_))
         wiki = next(s for s in services_ if s["entity_id"] == service_wiki_entity_id)

@@ -47,8 +47,8 @@ class TestUser(AbstractTest):
         res = self.client.get("/api/users/me")
         self.assertEqual(409, res.status_code)
 
-    def test_me_user_with_suspend_notifactions(self):
-        self.login("urn:two_suspend")
+    def test_me_user_with_suspend_notifications(self):
+        self.login("urn:user_gets_suspended")
         res = self.client.get("/api/users/me")
         self.assertEqual(True, res.json["successfully_activated"])
 
@@ -84,19 +84,17 @@ class TestUser(AbstractTest):
         self.do_test_activate("urn:john", {})
 
     def do_test_activate(self, login_urn, object_dict):
-        user = User.query.filter(User.name == "suspended").one()
+        user = User.query.filter(User.name == "user_deletion_warning").one()
         self.assertEqual(True, user.suspended)
-        self.assertEqual(2, len(user.suspend_notifications))
 
         self.login(login_urn)
         self.put("/api/users/activate", body={**object_dict, "user_id": user.id})
 
-        user = User.query.filter(User.name == "suspended").one()
+        user = User.query.filter(User.name == "user_deletion_warning").one()
         self.assertEqual(False, user.suspended)
         retention = current_app.app_config.retention
         retention_date = datetime.datetime.now() - datetime.timedelta(days=retention.allowed_inactive_period_days + 1)
         self.assertTrue(user.last_login_date > retention_date)
-        self.assertEqual(1, len(user.suspend_notifications))
 
     def test_search(self):
         self.login("urn:john")
@@ -430,10 +428,10 @@ class TestUser(AbstractTest):
         self.assertEqual("james@example.org", res[0]["email"])
 
         res = self.get("/api/users/query", query_data={"q": "@EX"})
-        self.assertEqual(12, len(res))
+        self.assertEqual(11, len(res))
 
         res = self.get("/api/users/query", query_data={"q": "@"})
-        self.assertEqual(17, len(res))
+        self.assertEqual(16, len(res))
 
     def test_aup_agreed(self):
         sarah = self.find_entity_by_name(User, sarah_name)

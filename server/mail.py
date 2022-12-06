@@ -122,7 +122,7 @@ def _get_coll_emails(collaboration, mail_type, membership=None, include_org_memb
     return emails
 
 
-def _format_date_time(date_time_instance):
+def format_date_time(date_time_instance):
     return date_time_instance.strftime("%b %d %Y") if date_time_instance else ""
 
 
@@ -405,7 +405,7 @@ def mail_collaboration_expires_notification(collaboration, is_warning):
         template="collaboration_expires_warning" if is_warning else "collaboration_expired_notification",
         context={"salutation": "Dear", "collaboration": collaboration,
                  "base_url": current_app.app_config.base_url,
-                 "expiry_date": _format_date_time(collaboration.expiry_date)},
+                 "expiry_date": format_date_time(collaboration.expiry_date)},
         preview=False,
         working_outside_of_request_context=True
     )
@@ -422,12 +422,12 @@ def mail_collaboration_suspension_notification(collaboration, is_warning):
     else:
         subject = f"Collaboration {collaboration.name} has been suspended"
     now = datetime.datetime.utcnow()
-    suspension_date = _format_date_time(now + datetime.timedelta(days=cfq.inactivity_warning_mail_days_threshold))
+    suspension_date = format_date_time(now + datetime.timedelta(days=cfq.inactivity_warning_mail_days_threshold))
     _do_send_mail(
         subject=subject,
         recipients=recipients,
         template="collaboration_suspension_warning" if is_warning else "collaboration_suspensed_notification",
-        context={"salutation": "Dear", "now": _format_date_time(now), "collaboration": collaboration,
+        context={"salutation": "Dear", "now": format_date_time(now), "collaboration": collaboration,
                  "base_url": current_app.app_config.base_url,
                  "suspension_date": suspension_date},
         preview=False,
@@ -450,7 +450,7 @@ def mail_membership_expires_notification(membership, is_warning):
         template="membership_expires_warning" if is_warning else "membership_expired_notification",
         context={"salutation": "Dear", "membership": membership,
                  "base_url": current_app.app_config.base_url,
-                 "expiry_date": _format_date_time(membership.expiry_date)},
+                 "expiry_date": format_date_time(membership.expiry_date)},
         preview=False,
         working_outside_of_request_context=True
     )

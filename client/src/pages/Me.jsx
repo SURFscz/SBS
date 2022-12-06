@@ -58,6 +58,12 @@ class Me extends React.Component {
                     this.setState({"user_ip_networks": res, loading: false});
                 });
         }
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const deleteLink = urlSearchParams.get("delete");
+        if (deleteLink) {
+            this.delete();
+        }
+
     }
 
     gotoHome = e => {
