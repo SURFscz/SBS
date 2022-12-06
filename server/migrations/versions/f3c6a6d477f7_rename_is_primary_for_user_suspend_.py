@@ -17,7 +17,7 @@ depends_on = None
 
 def upgrade():
     conn = op.get_bind()
-    conn.execute(text("ALTER TABLE suspend_notifications RENAME COLUMN is_primary TO is_suspension"))
+    conn.execute(text("ALTER TABLE suspend_notifications CHANGE COLUMN is_primary is_suspension tinyint(1) default 0"))
     conn.execute(text("ALTER TABLE suspend_notifications ADD COLUMN is_warning tinyint(1) default 0"))
     conn.execute(text("UPDATE suspend_notifications SET is_warning = 1"))
 
