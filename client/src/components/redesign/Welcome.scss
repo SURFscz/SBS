@@ -4,7 +4,7 @@
 .mod-welcome-container {
     @include mde-preview;
 
-    max-width: 570px;
+    max-width: 768px;
     margin: 0 auto;
     width: 100%;
 
@@ -52,6 +52,7 @@
         }
 
         div.welcome-unknown {
+            margin-bottom: 25px;
             p {
                 margin-bottom: 15px;
             }
