@@ -44,11 +44,11 @@ print(json.dumps({"keys": [json.loads(eduteams_pubkey)]}, indent=4))
 # create jwt
 content = {
     'sub': subject,
-    'auth_time': time.time()-1,
+    'auth_time': time.time() - 1,
     'nonce': str(uuid.uuid4()),
     'iss': redirect_url,
-    'iat': time.time()-1,
-    'exp': time.time()+900,
+    'iat': time.time() - 1,
+    'exp': time.time() + 900,
     'aud': [audience_sbs]
 }
 token = jwt.JWT(header={"alg": "RS256", "kid": eduteams_key.get("kid")},

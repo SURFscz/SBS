@@ -198,7 +198,6 @@ class TestCollaboration(AbstractTest):
         collaboration = Collaboration.query.get(collaboration["id"])
         self.assertEqual(3, len(collaboration.tags))
 
-
     @staticmethod
     def _collaboration_membership_count(collaboration):
         return CollaborationMembership.query \
