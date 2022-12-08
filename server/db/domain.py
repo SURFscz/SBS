@@ -468,6 +468,9 @@ class Service(Base, db.Model, LogoMixin):
     scim_bearer_token = db.Column("scim_bearer_token", db.String(length=512), nullable=True)
     scim_provision_users = db.Column("scim_provision_users", db.Boolean(), nullable=True, default=False)
     scim_provision_groups = db.Column("scim_provision_groups", db.Boolean(), nullable=True, default=False)
+    sweep_scim_enabled = db.Column("sweep_scim_enabled", db.Boolean(), nullable=True, default=False)
+    sweep_scim_daily_rate = db.Column("sweep_scim_daily_rate", db.Integer(), nullable=True, default=0)
+    sweep_scim_last_run = db.Column("sweep_scim_last_run", db.DateTime(timezone=True), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
