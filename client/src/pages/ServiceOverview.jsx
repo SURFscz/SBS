@@ -250,7 +250,7 @@ class ServiceOverview extends React.Component {
 
     validateIpAddress = index => e => {
         this.setState({validatingNetwork: true});
-        const currentIpNetwork = this.state.ip_networks[index];
+        const currentIpNetwork = this.state.service.ip_networks[index];
         const address = e.target.value;
         if (!isEmpty(address)) {
             ipNetworks(address, currentIpNetwork.id)
