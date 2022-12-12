@@ -309,7 +309,7 @@ class TestUser(AbstractTest):
                           body={"weird": "msg"},
                           headers={CSRF_TOKEN: me[CSRF_TOKEN]},
                           response_status_code=201)
-                self.assertEqual(1, len(outbox))
+                self.assertTrue(len(outbox) > 0)
                 mail_msg = outbox[0]
                 self.assertTrue("weird" in mail_msg.html)
                 self.assertTrue("An error occurred in local" in mail_msg.html)
