@@ -5,7 +5,7 @@ from server.db.domain import Service, Collaboration
 from server.test.abstract_test import AbstractTest, BASIC_AUTH_HEADER
 from server.test.seed import service_mail_name, ai_computing_name, service_cloud_name, uva_research_name, \
     service_network_name, service_wiki_name, uuc_secret, service_group_wiki_name1, service_group_wiki_name2, \
-    uu_disabled_join_request_name, uva_secret, service_ssh_uva_name, service_wiki_entity_id
+    uu_disabled_join_request_name, uva_secret, service_ssh_uva_name
 
 
 class TestCollaborationsServices(AbstractTest):
