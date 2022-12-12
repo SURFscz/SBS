@@ -39,8 +39,7 @@ services:
       CONFIG_TEMPLATE: /etc/config.yml
       TESTING: 1
       DATABASE_URI: mysql+mysqldb://sbs:sbs@db/sbs_test?charset=utf8mb4
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
+      REDIS_URI: redis://redis:6379/
       BASE_URL: http://localhost:8080
       SOCKET_URL: 0.0.0.0:8080/
       SECRET: ${SECRET}

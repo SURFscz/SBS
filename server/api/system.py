@@ -114,7 +114,7 @@ def run_seed():
 
     check_seed_allowed("seed")
 
-    seed(db, current_app.app_config, skip_seed=False, perf_test=True)
+    seed(db, current_app.app_config, skip_seed=False, perf_test=False)
 
     return {}, 201
 

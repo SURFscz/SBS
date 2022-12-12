@@ -92,7 +92,7 @@ class TestService(AbstractTest):
             })
 
             self.assertTrue(
-                "urn:john invited you as an admin for service new_service" in outbox[0].html)
+                "urn:john invited you to become an admin for service new_service" in outbox[0].html)
 
             self.assertIsNotNone(service["id"])
             self.assertEqual("new_service", service["name"])
