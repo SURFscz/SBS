@@ -209,7 +209,7 @@ def apply_group_change(app, group_id: int, deletion=False):
 def apply_service_changed(app, collaboration_id, service_id, deletion=False):
     with app.app_context():
         collaboration = Collaboration.query.filter(Collaboration.id == collaboration_id).one()
-        services = Service.query.filter(Service.id == service_id).all()
+        services = [Service.query.filter(Service.id == service_id).one()]
         results = [_do_apply_group_collaboration_change(group, services, deletion) for group in collaboration.groups]
         results.append(_do_apply_group_collaboration_change(collaboration, services, deletion))
         return any(results)

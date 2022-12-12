@@ -12,7 +12,7 @@ from server.db.defaults import cleanse_short_name
 from server.db.domain import Group, Collaboration, Invitation
 from server.db.models import update, save, delete
 from server.schemas import json_schema_validator
-from server.scim.events import broadcast_group_deleted
+from server.scim.events import broadcast_group_deleted, broadcast_group_changed
 
 group_api = Blueprint("group_api", __name__, url_prefix="/api/groups")
 
@@ -147,6 +147,7 @@ def update_group():
     auto_provision_all_members_and_invites(res[0])
 
     emit_socket(f"collaboration_{collaboration.id}")
+    broadcast_group_changed(res[0])
 
     return res
 
