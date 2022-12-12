@@ -398,7 +398,9 @@ class ServiceOverview extends React.Component {
                         {...service, ip_networks: strippedIpNetworks,
                         automatic_connection_allowed_organisations: selectedAutomaticConnectionAllowedOrganisations}
                 }, () => {
-                    updateService(this.state.service).then(() => this.afterUpdate(name, "updated"));
+                    updateService(this.state.service)
+                        .then(() => this.afterUpdate(name, "updated"))
+                        .catch(() => this.setState({loading: false}));
                 });
             }
         } else {

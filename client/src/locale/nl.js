@@ -1790,6 +1790,7 @@ I18n.translations.nl = {
         infoAdmin: "Om beheerder te worden van deze samenwerking moet je de acceptable use policy (AUP) en het privacybeleid van de dienst(en) accepteren.",
         infoJoinRequest: "Bijna zover! Voordat je kunt verzoeken lid te worden van deze samenwerking moet je de acceptable use policy (AUP) en het privacybeleid van de dienst lezen. Geef hieronder aan of je deze accepteert.",
         purpose: "Doel van deze samenwerking",
+        noServices: "Nog geen diensten gekoppeld.",
         proceed: "Ga door naar {{name}}"
     },
     welcome: {

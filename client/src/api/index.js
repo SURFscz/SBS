@@ -234,7 +234,7 @@ export function createService(service) {
 }
 
 export function updateService(service) {
-    return postPutJson("/api/services", service, "put");
+    return postPutJson("/api/services", service, "put", false);
 }
 
 export function allowedOrganisations(serviceId, allowedOrganisations = {"allowed_organisations": []}) {
