@@ -22,7 +22,11 @@ def connect_service_collaboration(service_id, collaboration_id, force=False):
     if organisation_not_allowed and not service.access_allowed_for_all:
         raise BadRequest("not_allowed_organisation")
 
-    if not force and not service.automatic_connection_allowed:
+    allowed_to_connect = service.automatic_connection_allowed or [org for org in
+                                                                  service.automatic_connection_allowed_organisations if
+                                                                  org.id == organisation_id]
+
+    if not force and not allowed_to_connect:
         raise BadRequest("automatic_connection_not_allowed")
 
     collaboration = Collaboration.query.get(collaboration_id)

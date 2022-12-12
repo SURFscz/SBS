@@ -5,7 +5,7 @@ from server.db.domain import Service, Collaboration
 from server.test.abstract_test import AbstractTest, BASIC_AUTH_HEADER
 from server.test.seed import service_mail_name, ai_computing_name, service_cloud_name, uva_research_name, \
     service_network_name, service_wiki_name, uuc_secret, service_group_wiki_name1, service_group_wiki_name2, \
-    uu_disabled_join_request_name, uva_secret
+    uu_disabled_join_request_name, uva_secret, service_ssh_uva_name
 
 
 class TestCollaborationsServices(AbstractTest):
@@ -119,8 +119,8 @@ class TestCollaborationsServices(AbstractTest):
 
     def test_add_collaborations_no_automatic_connection_allowed(self):
         self.login("urn:john")
-        collaboration_id = self.find_entity_by_name(Collaboration, uva_research_name).id
-        service_id = self.find_entity_by_name(Service, service_wiki_name).id
+        collaboration_id = self.find_entity_by_name(Collaboration, uu_disabled_join_request_name).id
+        service_id = self.find_entity_by_name(Service, service_ssh_uva_name).id
 
         res = self.put("/api/collaborations_services/", body={
             "collaboration_id": collaboration_id,
@@ -129,6 +129,16 @@ class TestCollaborationsServices(AbstractTest):
 
         self.assertTrue(res["error"])
         self.assertTrue("automatic_connection_not_allowed" in res["message"])
+
+    def test_add_collaborations_automatic_connection_allowed_organisations(self):
+        self.login("urn:john")
+        collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
+        service = self.find_entity_by_name(Service, service_wiki_name)
+
+        self.put("/api/collaborations_services/", body={
+            "collaboration_id": collaboration.id,
+            "service_id": service.id
+        })
 
     def test_connect_collaboration_service(self):
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id

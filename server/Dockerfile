@@ -13,8 +13,8 @@ EXPOSE 8080
 ENV CONFIG=config/_config.yml
 
 # DEFAULTS SUBSTITUTES...
-ENV REDIS_host=localhost
-ENV REDIS_PORT=6379
+ENV DATABASE_URI=mysql+mysqldb://sbs:sbs@127.0.0.1/sbs_test?charset=utf8mb4
+ENV REDIS_URI=redis://localhost:6379/
 ENV SOCKET_URL=127.0.0.1:8080/
 ENV SECRET=secret
 ENV CLIENT_ID=sram
