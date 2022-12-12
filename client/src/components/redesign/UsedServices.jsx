@@ -92,7 +92,9 @@ class UsedServices extends React.Component {
         } else if (service.usedService) {
             service.status = service.connectionRequest ? I18n.t("models.services.awaitingApproval") : ""
         } else {
-            service.status = service.automatic_connection_allowed ? I18n.t("models.services.automaticConnectionAllowed") : "";
+            const allowedToConnect = service.automatic_connection_allowed ||
+                service.automatic_connection_allowed_organisations.filter(org => org.id === collaboration.organisation.id) .length > 0;
+            service.status = allowedToConnect ? I18n.t("models.services.automaticConnectionAllowed") : "";
         }
         return service.status;
 
@@ -287,16 +289,18 @@ class UsedServices extends React.Component {
                            onClick={() => this.unlinkService(service, collaboration)}
                            txt={I18n.t("models.services.removeFromCO")}/>
         }
-        if (!service.usedService && service.automatic_connection_allowed) {
+        const allowedToConnect = service.automatic_connection_allowed ||
+                service.automatic_connection_allowed_organisations.filter(org => org.id === collaboration.organisation.id) .length > 0;
+
+        if (!service.usedService && allowedToConnect) {
             return <Button className={"white"}
                            onClick={() => this.linkService(service, collaboration)}
                            txt={I18n.t("models.services.addToCO")}/>;
         }
-        if (!service.usedService && !service.automatic_connection_allowed) {
+        if (!service.usedService && !allowedToConnect) {
             return <Button className={"white"}
                            onClick={() => this.setState({requestConnectionService: service})}
                            txt={I18n.t("models.services.requestConnection")}/>;
-
         }
         throw new Error("Invalid code - should not be reached");
     }
