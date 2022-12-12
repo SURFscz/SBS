@@ -62,6 +62,7 @@ def delete_organisations_services(organisation_id, service_id):
     service = Service.query.get(service_id)
     organisation.services.remove(service)
     db.session.merge(organisation)
+    db.session.commit()
 
     emit_socket(f"organisation_{organisation_id}")
     broadcast_organisation_service_deleted(organisation, service)

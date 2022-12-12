@@ -10,7 +10,7 @@ class TestExecutor(AbstractTest):
         def fn(a: int, b: int):
             return a + b
 
-        executor = init_executor(None, True)
+        executor = init_executor(current_app, True)
         self.assertEqual(5, executor.submit(fn, 2, 3))
 
         executor = init_executor(current_app)
