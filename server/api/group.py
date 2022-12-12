@@ -44,6 +44,8 @@ def auto_provision_all_members_and_invites(group: Group):
         "collaboration_id": group.collaboration_id,
         "members_ids": missing_members
     }, True)
+    # Session is closed in do_add_group_members, but we are not ready yet, so re-fetch the Group
+    group = Group.query.get(group.id)
 
     ag_invitation_identifiers = [i.id for i in group.invitations]
     c_invitation_identifiers = [i.id for i in group.collaboration.invitations if i.status == "open"]
@@ -114,7 +116,11 @@ def create_group(collaboration_id, data, do_cleanse_short_name=True):
     _assign_global_urn(collaboration, data)
     data["identifier"] = str(uuid.uuid4())
     res = save(Group, custom_json=data, allow_child_cascades=False)
-    auto_provision_all_members_and_invites(res[0])
+
+    # Session is closed in save, but we are not ready yet, so re-fetch the Grouo
+    group = Group.query.get(res[0].id)
+
+    auto_provision_all_members_and_invites(group)
 
     emit_socket(f"collaboration_{collaboration.id}")
 
