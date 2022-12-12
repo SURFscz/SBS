@@ -33,8 +33,8 @@ def _counter_query_param(service: Service):
 # Remove duplicates from services
 def _unique_scim_services(services: List[Service], provision_enabled_method):
     seen = set()
-    return [service for service in services if
-            service.id not in seen and not seen.add(service.id) and getattr(service, provision_enabled_method)()]
+    return [s for s in services if
+            s.id not in seen and not seen.add(s.id) and getattr(s, provision_enabled_method)() and s.scim_enabled]
 
 
 # Is the user connected - through memberships excluding collaboration_to_exclude - to the service

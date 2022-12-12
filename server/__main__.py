@@ -162,7 +162,7 @@ db.init_app(app)
 app.db = db
 
 app.redis_client = init_redis(config)
-app.executor = init_executor(app, blocking=False)
+app.executor = init_executor(app, blocking=True)
 
 app.app_config = config
 app.app_config["profile"] = profile

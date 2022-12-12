@@ -91,8 +91,14 @@ class ServiceOverview extends React.Component {
                 currentTab: tab,
                 serviceTokensEnabled: service.token_enabled || service.pam_web_sso_enabled,
                 hasServiceTokens: !isEmpty(service.service_tokens),
-                automaticConnectionAllowedOrganisations: service.allowed_organisations.map(org => ({value: org.id, label: org.name})),
-                selectedAutomaticConnectionAllowedOrganisations: service.automatic_connection_allowed_organisations.map(org => ({value: org.id, label: org.name})),
+                automaticConnectionAllowedOrganisations: service.allowed_organisations.map(org => ({
+                    value: org.id,
+                    label: org.name
+                })),
+                selectedAutomaticConnectionAllowedOrganisations: service.automatic_connection_allowed_organisations.map(org => ({
+                    value: org.id,
+                    label: org.name
+                })),
                 loading: false
             }, () => {
                 const {ip_networks} = this.state.service;
@@ -358,8 +364,10 @@ class ServiceOverview extends React.Component {
 
     submit = override => {
         if (this.isValid()) {
-            const {service, hasServiceTokens, serviceTokensEnabled,
-                selectedAutomaticConnectionAllowedOrganisations} = this.state;
+            const {
+                service, hasServiceTokens, serviceTokensEnabled,
+                selectedAutomaticConnectionAllowedOrganisations
+            } = this.state;
             if (serviceTokensEnabled && hasServiceTokens && !service.token_enabled && !service.pam_web_sso_enabled && !override) {
                 const count = service.service_tokens.length;
                 this.setState({
@@ -391,9 +399,14 @@ class ServiceOverview extends React.Component {
                         network.id = parseInt(network.id, 10)
                     }
                 });
-                this.setState({service:
-                        {...service, ip_networks: strippedIpNetworks,
-                        automatic_connection_allowed_organisations: selectedAutomaticConnectionAllowedOrganisations}
+                this.setState({
+                    service:
+                        {
+                            ...service,
+                            ip_networks: strippedIpNetworks,
+                            automatic_connection_allowed_organisations: selectedAutomaticConnectionAllowedOrganisations,
+                            sweep_scim_daily_rate: service.sweep_scim_daily_rate ? service.sweep_scim_daily_rate.value : 0
+                        }
                 }, () => {
                     updateService(this.state.service).then(() => this.afterUpdate(name, "updated"));
                 });
@@ -447,7 +460,7 @@ class ServiceOverview extends React.Component {
         }
         if (name === "automatic_connection_allowed") {
             const newSelectedAutomaticConnectionAllowedOrganisations = value ? [] :
-                    service.automatic_connection_allowed_organisations.map(org => ({value: org.id, label: org.name})) ;
+                service.automatic_connection_allowed_organisations.map(org => ({value: org.id, label: org.name}));
             this.setState({selectedAutomaticConnectionAllowedOrganisations: newSelectedAutomaticConnectionAllowedOrganisations});
         }
         this.setState({alreadyExists, invalidInputs, "service": {...service, [name]: value}});
@@ -520,6 +533,12 @@ class ServiceOverview extends React.Component {
     }
 
     renderSCIM = (service, isAdmin, showServiceAdminView, alreadyExists, invalidInputs) => {
+        let sweepScimDailyRate = null;
+        if (service.sweep_scim_daily_rate && service.sweep_scim_daily_rate.value) {
+            sweepScimDailyRate = service.sweep_scim_daily_rate
+        } else if (service.sweep_scim_daily_rate !== null && service.sweep_scim_daily_rate !== 0) {
+            sweepScimDailyRate = {label: service.sweep_scim_daily_rate, value: parseInt(service.sweep_scim_daily_rate, 10)}
+        }
         return (
             <div className={"scim"}>
                 <RadioButton label={I18n.t("scim.scimEnabled")}
@@ -566,21 +585,29 @@ class ServiceOverview extends React.Component {
                              value={service.sweep_scim_enabled}
                              disabled={!isAdmin || showServiceAdminView || !service.scim_enabled}
                              tooltip={I18n.t("scim.sweepScimEnabledTooltip")}
-                             onChange={val => this.setState({"service": {...service, sweep_scim_enabled: val}})}/>
+                             onChange={val =>
+                                 this.setState({
+                                     "service": {
+                                         ...service,
+                                         sweep_scim_enabled: val,
+                                         sweep_scim_daily_rate: val ? {label: 1, value: 1} : null
+                                     }
+                                 })}/>
 
-                <InputField value={service.sweep_scim_enabled ? service.sweep_scim_daily_rate : ""}
-                            name={I18n.t("userTokens.sweepScimDailyRate")}
-                            maxLength={2}
-                            tooltip={I18n.t("userTokens.sweepScimDailyRateTooltip")}
-                            onChange={e => this.setState({
-                                "service": {
-                                    ...service,
-                                    sweep_scim_daily_rate: e.target.value.replace(/\D/, "")
-                                }
-                            })}
+                <SelectField value={sweepScimDailyRate}
+                             options={[...Array(25).keys()].filter(i => i % 4 === 0).map(i => ({
+                                 label: i === 0 ? 1 : i,
+                                 value: i === 0 ? 1 : i
+                             }))}
+                             name={I18n.t("scim.sweepScimDailyRate")}
+                             toolTip={I18n.t("scim.sweepScimDailyRateTooltip")}
                              disabled={!isAdmin || showServiceAdminView || !service.scim_enabled || !service.sweep_scim_enabled}
-                />
-
+                             onChange={item => this.setState({
+                                 "service": {
+                                     ...service,
+                                     sweep_scim_daily_rate: item
+                                 }
+                             })}/>
             </div>)
     }
 

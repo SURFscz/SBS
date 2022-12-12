@@ -177,7 +177,9 @@ def scim_service():
     confirm_write_access()
 
     scim_mock_url = f"{current_app.app_config.base_server_url}/api/scim_mock"
-    return Service.query.filter(Service.scim_url == scim_mock_url).all(), 200
+    return Service.query \
+               .filter(Service.scim_url == scim_mock_url) \
+               .filter(Service.scim_enabled == True).all(), 200  # noqa: E712
 
 
 @scim_mock_api.route("/clear", methods=["DELETE"], strict_slashes=False)

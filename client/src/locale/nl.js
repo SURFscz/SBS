@@ -1735,7 +1735,7 @@ I18n.translations.nl = {
         scim: {
             info: "If enabled there is a mock remote SCIM client available to test the SCIM messages." +
                 "Configure a Service with the following SCIM URL to start testing the SCIM functionality",
-            services: "These services are currently configured with the SCIM mock endpoint",
+            services: "These services are currently configured with SCIM enabled and the SCIM mock endpoint",
             stats: "All API calls and state updates send to the mock SCIM endpoints are stored in an in-memory database.",
             retrieveStats: "Fetch stats",
             reRetrieveStats: "Refresh stats",
@@ -2009,6 +2009,10 @@ I18n.translations.nl = {
         scimProvisionUsersTooltip: "Does this service wants to receive SCIM User messages?",
         scimProvisionGroups: "Group provisioning inschakelen?",
         scimProvisionGroupsTooltip: "Does this service wants to receive SCIM Group messages?",
+        sweepScimEnabled: "Enable SCIM Sweeping?",
+        sweepScimEnabledTooltip: "Do we periodically sweep the SCIM data? Meaning we check (and update if necessary) if the Service data is still in sync with the SRAM data.",
+        sweepScimDailyRate: "Sweep daily rate",
+        sweepScimDailyRateTooltip: "The number of times within one day (24 hours) we sweep the remote SCIM data"
     },
     userTokens: {
         actionTitle: "Nieuwe API-token",
