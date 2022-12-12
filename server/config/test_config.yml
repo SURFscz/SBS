@@ -1,5 +1,6 @@
 database:
-  uri: "mysql+mysqldb://sbs:sbs@127.0.0.1/sbs_test?charset=utf8mb4"
+#  uri: "mysql+mysqldb://sbs:sbs@127.0.0.1/sbs_test?charset=utf8mb4"
+  uri: "mysql+mysqldb://sbs:sbs@127.0.0.1/sbs?charset=utf8mb4"
 
 secret_key: secret
 
