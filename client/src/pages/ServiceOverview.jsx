@@ -561,6 +561,26 @@ class ServiceOverview extends React.Component {
                           onChange={this.changeServiceProperty("scim_provision_groups", true)}
                           readOnly={!isAdmin || showServiceAdminView || !service.scim_enabled}/>
 
+                <RadioButton label={I18n.t("scim.sweepScimEnabled")}
+                             name={"sweep_scim_enabled"}
+                             value={service.sweep_scim_enabled}
+                             disabled={!isAdmin || showServiceAdminView || !service.scim_enabled}
+                             tooltip={I18n.t("scim.sweepScimEnabledTooltip")}
+                             onChange={val => this.setState({"service": {...service, sweep_scim_enabled: val}})}/>
+
+                <InputField value={service.sweep_scim_enabled ? service.sweep_scim_daily_rate : ""}
+                            name={I18n.t("userTokens.sweepScimDailyRate")}
+                            maxLength={2}
+                            tooltip={I18n.t("userTokens.sweepScimDailyRateTooltip")}
+                            onChange={e => this.setState({
+                                "service": {
+                                    ...service,
+                                    sweep_scim_daily_rate: e.target.value.replace(/\D/, "")
+                                }
+                            })}
+                             disabled={!isAdmin || showServiceAdminView || !service.scim_enabled || !service.sweep_scim_enabled}
+                />
+
             </div>)
     }
 
