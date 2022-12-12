@@ -67,6 +67,9 @@ export default function CollaborationAupAcceptance({
             {services.length > 0 && <div className="services">
                 {services.map(service => renderServiceAup(service))}
             </div>}
+            {services.length === 0 && <div className="services">
+                <span>{I18n.t("welcomeDialog.noServices")}</span>
+            </div>}
             <div className="terms">
                 <CheckBox name="aup" value={!disabled} info={I18n.t("aup.collaboration.agreeWithTerms")}
                           onChange={() => setDisabled(!disabled)}/>
