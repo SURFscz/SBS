@@ -408,6 +408,7 @@ I18n.translations.nl = {
             multipleAdminsHeader: "Georganiseerd door <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong> en <strong>{{nbr}} anderen</strong></a>",
             about: "Over onze samenwerking",
             services: "Waar we samenwerken ({{nbr}} diensten)",
+            noServicesYet: "Waar we samenwerken",
             noServices: "Er zijn nog geen diensten gekoppeld aan deze samenwerking",
             noServicesJoinRequest: "Diensten zijn alleen zichtbaar voor leden",
             servicesStart: "Gebruik de knop om de dienst te starten, of lees eerst de instructies.",

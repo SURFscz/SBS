@@ -408,6 +408,7 @@ I18n.translations.en = {
             multipleAdminsHeader: "Organised by <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong> and <strong>{{nbr}} others</strong></a>",
             about: "What our collaboration is about",
             services: "Where we collaborate ({{nbr}} services)",
+            noServicesYet: "Where we collaborate",
             noServices: "There are no services available in this collaboration",
             noServicesJoinRequest: "Services are only visible for members",
             servicesStart: "Click the button to start the service, or read the instructions first.",
