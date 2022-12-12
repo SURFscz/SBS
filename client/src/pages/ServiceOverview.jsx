@@ -68,6 +68,7 @@ class ServiceOverview extends React.Component {
             hasServiceTokens: false,
             selectedAutomaticConnectionAllowedOrganisations: [],
             automaticConnectionAllowedOrganisations: [],
+            validatingNetwork: false
         }
     }
 
@@ -248,15 +249,17 @@ class ServiceOverview extends React.Component {
     };
 
     validateIpAddress = index => e => {
+        this.setState({validatingNetwork: true});
         const currentIpNetwork = this.state.ip_networks[index];
         const address = e.target.value;
         if (!isEmpty(address)) {
             ipNetworks(address, currentIpNetwork.id)
                 .then(res => {
+                    this.setState({validatingNetwork: false});
                     const {ip_networks} = this.state.service;
                     ip_networks.splice(index, 1, res);
-                    this.setState({...this.state.service, ip_networks: [...ip_networks]});
-                });
+                    this.setState({ ...this.state.service, ip_networks: [...ip_networks]});
+                }).catch(() => this.setState({validatingNetwork: false}));
         }
     }
 
@@ -314,7 +317,7 @@ class ServiceOverview extends React.Component {
     };
 
     isValid = () => {
-        const {required, alreadyExists, invalidInputs, hasAdministrators, service}
+        const {required, alreadyExists, invalidInputs, hasAdministrators, service, validatingNetwork}
             = this.state;
         const {contact_email, ip_networks} = service;
         const inValid = Object.values(alreadyExists).some(val => val) ||
@@ -322,7 +325,7 @@ class ServiceOverview extends React.Component {
             Object.keys(invalidInputs).some(key => invalidInputs[key]);
         const contactEmailRequired = !hasAdministrators && isEmpty(contact_email);
         const invalidIpNetworks = ip_networks.some(ipNetwork => ipNetwork.error || (ipNetwork.version === 6 && !ipNetwork.global));
-        const valid = !inValid && !contactEmailRequired && !invalidIpNetworks;
+        const valid = !inValid && !contactEmailRequired && !invalidIpNetworks && !validatingNetwork;
         return valid;
     };
 
