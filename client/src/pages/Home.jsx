@@ -176,15 +176,14 @@ class Home extends React.Component {
 
     getCollaborationRequestsTab = collaboration_requests => {
         const crl = (collaboration_requests || []).filter(cr => cr.status === "open").length;
-        return (<div key="collaboration_requests" name="collaboration_requests"
-                     label={I18n.t("home.tabs.collaborationRequests")}
+        return (<div key="collaboration_requests"
+                     name="collaboration_requests"
+                     label={I18n.t("home.tabs.collaborationRequests", {count: (collaboration_requests || []).length})}
                      notifier={crl > 0 ? crl : null}
                      icon={<CollaborationRequestsIcon/>}>
             <MemberCollaborationRequests {...this.props} collaboration_requests={collaboration_requests}/>
         </div>)
-
     }
-
 
     tabChanged = (name) => {
         this.setState({tab: name}, () =>
