@@ -164,7 +164,7 @@ app.db = db
 app.redis_client = init_redis(config)
 
 # Initialize the executors to be used in broadcasting SCIM changes
-init_executor(app, blocking=True)
+init_executor(app, blocking=False)
 
 app.app_config = config
 app.app_config["profile"] = profile

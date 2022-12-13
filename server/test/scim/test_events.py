@@ -140,8 +140,7 @@ class TestEvents(AbstractTest):
             rsps.add(responses.DELETE,
                      "http://localhost:8080/api/scim_mock/Groups/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      status=201)
-            future = broadcast_collaboration_deleted(collaboration)
-            res = future.result()
+            res = broadcast_collaboration_deleted(collaboration)
             self.assertTrue(res)
 
     @responses.activate
@@ -179,8 +178,7 @@ class TestEvents(AbstractTest):
             rsps.add(responses.DELETE,
                      "http://localhost:8080/api/scim_mock/Groups/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      status=201)
-            future = broadcast_group_deleted(group)
-            res = future.result()
+            res = broadcast_group_deleted(group)
             self.assertTrue(res)
 
     @responses.activate
@@ -214,8 +212,7 @@ class TestEvents(AbstractTest):
             rsps.add(responses.DELETE,
                      "http://localhost:8080/api/scim_mock/Groups/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      status=201)
-            future = broadcast_organisation_deleted(organisation)
-            res = future.result()
+            res = broadcast_organisation_deleted(organisation)
             self.assertTrue(res)
 
     @responses.activate
@@ -272,6 +269,5 @@ class TestEvents(AbstractTest):
             rsps.add(responses.DELETE,
                      "http://localhost:8080/api/scim_mock/Users/8d85ea05-fc5c-4222-8efd-130ff7938ee1",
                      status=201)
-            future = broadcast_service_deleted(collaboration, service)
-            res = future.result()
+            res = broadcast_service_deleted(collaboration, service)
             self.assertTrue(res)
