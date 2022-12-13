@@ -535,9 +535,9 @@ class ServiceOverview extends React.Component {
 
     renderSCIM = (service, isAdmin, showServiceAdminView, alreadyExists, invalidInputs) => {
         let sweepScimDailyRate = null;
-        if (service.sweep_scim_daily_rate && service.sweep_scim_daily_rate.value) {
+        if (service.sweep_scim_enabled && service.sweep_scim_daily_rate && service.sweep_scim_daily_rate.value) {
             sweepScimDailyRate = service.sweep_scim_daily_rate
-        } else if (service.sweep_scim_daily_rate !== null && service.sweep_scim_daily_rate !== 0) {
+        } else if (service.sweep_scim_enabled && service.sweep_scim_daily_rate !== null && service.sweep_scim_daily_rate !== 0) {
             sweepScimDailyRate = {label: service.sweep_scim_daily_rate, value: parseInt(service.sweep_scim_daily_rate, 10)}
         }
         return (

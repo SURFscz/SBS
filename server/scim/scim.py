@@ -194,6 +194,8 @@ def apply_collaboration_change(app, collaboration_id: int, deletion=False):
     with app.app_context():
         collaboration = Collaboration.query.filter(Collaboration.id == collaboration_id).one()
         services = collaboration.services + collaboration.organisation.services
+        for group in collaboration.groups:
+            _do_apply_group_collaboration_change(group, services, deletion)
         return _do_apply_group_collaboration_change(collaboration, services, deletion)
 
 

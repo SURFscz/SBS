@@ -189,18 +189,23 @@ def invitations_accept():
     # Any outstanding join request for this user and this collaboration can be deleted now
     JoinRequest.query.filter(JoinRequest.user_id == user_id, JoinRequest.collaboration_id == collaboration.id).delete()
 
+    res = {'collaboration_id': collaboration.id, 'user_id': user_id}
+
+    # Need to reload to prevent sqlalchemy.orm.exc.DetachedInstanceError
+    invitation = _invitation_query() \
+        .filter(Invitation.hash == current_request.get_json()["hash"]) \
+        .one()
+    collaboration = invitation.collaboration
     # We need the persistent identifier of the collaboration_membership which will be generated after the delete-commit
     if invitation.external_identifier:
         invitation.status = "accepted"
         db.session.merge(invitation)
-        db.session.commit()
     else:
         delete(Invitation, invitation.id)
 
     emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
     broadcast_collaboration_changed(collaboration)
 
-    res = {'collaboration_id': collaboration.id, 'user_id': user_id}
     return res, 201
 
 
