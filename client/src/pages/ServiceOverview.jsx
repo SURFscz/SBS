@@ -394,6 +394,7 @@ class ServiceOverview extends React.Component {
                         network.id = parseInt(network.id, 10)
                     }
                 });
+                ["entity_id"].forEach(attr => service[attr] = service[attr] ? service[attr].trim() : null);
                 this.setState({service:
                         {...service, ip_networks: strippedIpNetworks,
                         automatic_connection_allowed_organisations: selectedAutomaticConnectionAllowedOrganisations}
