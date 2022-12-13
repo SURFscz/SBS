@@ -14,7 +14,7 @@ security:
   - APIKeyHeader: [ 'Authorization' ]
 
 parameters:
-  - name: Auhtorization
+  - name:
     in: header
     description: Bearer API key
     required: true
