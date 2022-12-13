@@ -7,9 +7,9 @@ class BlockingExecutor():
         return fn(*args, **kwargs)
 
 
-# The async flask executor does not log stack traces, for local testing purposes we use the BlockingExecutor
+# The async flask executor omits stack traces, for local testing and delete propagations we use the BlockingExecutor
 def init_executor(app, blocking=False):
-    executor_ = Executor(app) if not blocking else BlockingExecutor()
-    app.executor = executor_
+    executor_instance = Executor(app) if not blocking else BlockingExecutor()
+    app.executor = executor_instance
     app.sync_executor = BlockingExecutor()
-    return executor_
+    return executor_instance
