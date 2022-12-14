@@ -408,6 +408,7 @@ I18n.translations.nl = {
             multipleAdminsHeader: "Georganiseerd door <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong> en <strong>{{nbr}} anderen</strong></a>",
             about: "Over onze samenwerking",
             services: "Waar we samenwerken ({{nbr}} diensten)",
+            noServicesYet: "Waar we samenwerken",
             noServices: "Er zijn nog geen diensten gekoppeld aan deze samenwerking",
             noServicesJoinRequest: "Diensten zijn alleen zichtbaar voor leden",
             servicesStart: "Gebruik de knop om de dienst te starten, of lees eerst de instructies.",
@@ -1790,6 +1791,7 @@ I18n.translations.nl = {
         infoAdmin: "Om beheerder te worden van deze samenwerking moet je de acceptable use policy (AUP) en het privacybeleid van de dienst(en) accepteren.",
         infoJoinRequest: "Bijna zover! Voordat je kunt verzoeken lid te worden van deze samenwerking moet je de acceptable use policy (AUP) en het privacybeleid van de dienst lezen. Geef hieronder aan of je deze accepteert.",
         purpose: "Doel van deze samenwerking",
+        noServices: "Nog geen diensten gekoppeld.",
         proceed: "Ga door naar {{name}}"
     },
     welcome: {

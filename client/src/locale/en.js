@@ -408,6 +408,7 @@ I18n.translations.en = {
             multipleAdminsHeader: "Organised by <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong> and <strong>{{nbr}} others</strong></a>",
             about: "What our collaboration is about",
             services: "Where we collaborate ({{nbr}} services)",
+            noServicesYet: "Where we collaborate",
             noServices: "There are no services available in this collaboration",
             noServicesJoinRequest: "Services are only visible for members",
             servicesStart: "Click the button to start the service, or read the instructions first.",
@@ -1790,6 +1791,7 @@ I18n.translations.en = {
         infoAdmin: "Before you can become an admin of this collaboration, you must review the acceptable use policy (AUP) and privacy policy of the service and accept them.",
         infoJoinRequest: " Before you can request to join this collaboration, you must review the acceptable use policy (AUP) and privacy policy of the service. Indicate below whether you accept them.",
         purpose: "Purpose of the collaboration",
+        noServices: "No services connected yet.",
         proceed: "Proceed to {{name}}"
     },
     welcome: {
