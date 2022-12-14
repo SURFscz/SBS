@@ -5,12 +5,10 @@ from functools import wraps
 
 from flask import Blueprint, g as request_context, current_app
 from flask import request as current_request
-from sqlalchemy import text
 from werkzeug.exceptions import BadRequest, Unauthorized
 
 from server.api.base import query_param, json_endpoint
 from server.auth.security import confirm_write_access
-from server.db.db import db
 from server.db.domain import Service
 
 scim_mock_api = Blueprint("scim_mock_api", __name__, url_prefix="/api/scim_mock")
@@ -164,10 +162,7 @@ def delete_group(scim_id):
 def statistics():
     confirm_write_access()
 
-    sql = "SELECT s.id, s.name, c.counter FROM scim_service_counters c INNER JOIN services s ON s.id = c.service_id"
-    rows = db.session.execute(text(sql))
-    counters = [{"id": row[0], "name": row[1], "counter": row[2]} for row in rows]
-    res = {"database": database, "http_calls": http_calls, "counters": counters}
+    res = {"database": database, "http_calls": http_calls}
     return res, 200
 
 
@@ -192,7 +187,5 @@ def clear():
 
     global http_calls
     http_calls = {}
-
-    db.session.execute(text("DELETE FROM scim_service_counters"))
 
     return {}, 204

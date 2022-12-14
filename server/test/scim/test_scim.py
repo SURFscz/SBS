@@ -5,17 +5,11 @@ import responses
 from server.db.domain import Collaboration, Service
 from server.scim.scim import membership_user_scim_objects
 from server.test.abstract_test import AbstractTest
-from server.test.seed import uva_research_name, service_cloud_name, service_ssh_uva_name
+from server.test.seed import uva_research_name, service_cloud_name
 from server.tools import read_file
 
 
 class TestScim(AbstractTest):
-
-    @responses.activate
-    def test_membership_user_scim_identifiers_no_scim_service(self):
-        service = self.find_entity_by_name(Service, service_ssh_uva_name)
-        identifiers = membership_user_scim_objects(service, None)
-        self.assertListEqual([], identifiers)
 
     @responses.activate
     def test_membership_user_scim_identifiers_provisioning_error(self):

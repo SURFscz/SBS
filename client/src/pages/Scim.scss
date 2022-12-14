@@ -18,16 +18,18 @@
                     width: 25%;
                     padding-left: 15px;
                 }
+
                 &.id {
-                    width: 10%;
-                }
-                &.scim_url {
-                    width: 30%;
+                    width: 5%;
                 }
 
-                &.scim_enabled, &.scim_provision_users, &.scim_provision_groups {
+                &.scim_url {
+                    width: 40%;
+                }
+
+                &.scim_enabled {
                     text-align: center;
-                    width: 10%;
+                    width: 15%;
                 }
 
             }
@@ -39,7 +41,7 @@
                     padding-left: 15px;
                 }
 
-                &.scim_enabled, &.scim_provision_users, &.scim_provision_groups {
+                &.scim_enabled {
                     text-align: center;
                 }
             }

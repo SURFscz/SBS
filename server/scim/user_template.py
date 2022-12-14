@@ -3,9 +3,7 @@ import hashlib
 from typing import List, Union
 
 from server.db.domain import User, Group, Collaboration
-from server.scim import SCIM_URL_PREFIX
-
-external_id_post_fix = "@sram.surf.nl"
+from server.scim import SCIM_URL_PREFIX, EXTERNAL_ID_POST_FIX
 
 
 def replace_none_values(d: dict):
@@ -30,7 +28,7 @@ def _meta_info(user: User):
             "created": date_time_format(user.created_at),
             "lastModified": date_time_format(user.updated_at),
             "version": version_value(user),
-            "location": f"{SCIM_URL_PREFIX}/Users/{user.external_id}{external_id_post_fix}"}
+            "location": f"{SCIM_URL_PREFIX}/Users/{user.external_id}{EXTERNAL_ID_POST_FIX}"}
 
 
 def create_user_template(user: User):
@@ -38,7 +36,7 @@ def create_user_template(user: User):
         "schemas": [
             "urn:scim:schemas:core:1.0"
         ],
-        "externalId": f"{user.external_id}{external_id_post_fix}",
+        "externalId": f"{user.external_id}{EXTERNAL_ID_POST_FIX}",
         "userName": user.username,
         "name": {
             "givenName": user.given_name,
@@ -59,7 +57,7 @@ def update_user_template(user: User, scim_identifier: str):
 
 
 def find_user_by_id_template(user: User):
-    user_template = update_user_template(user, f"{user.external_id}{external_id_post_fix}")
+    user_template = update_user_template(user, f"{user.external_id}{EXTERNAL_ID_POST_FIX}")
     user_template["meta"] = _meta_info(user)
     return user_template
 

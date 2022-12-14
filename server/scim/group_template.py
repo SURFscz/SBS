@@ -2,8 +2,8 @@ from typing import Union, List
 
 from server.api.base import application_base_url
 from server.db.domain import Group, Collaboration, CollaborationMembership
-from server.scim import SCIM_URL_PREFIX
-from server.scim.user_template import external_id_post_fix, version_value, date_time_format, replace_none_values
+from server.scim import SCIM_URL_PREFIX, EXTERNAL_ID_POST_FIX
+from server.scim.user_template import version_value, date_time_format, replace_none_values
 
 
 def _meta_info(group: Union[Group, Collaboration]):
@@ -11,7 +11,7 @@ def _meta_info(group: Union[Group, Collaboration]):
             "created": date_time_format(group.created_at),
             "lastModified": date_time_format(group.updated_at),
             "version": version_value(group),
-            "location": f"{SCIM_URL_PREFIX}/Groups/{group.identifier}{external_id_post_fix}"}
+            "location": f"{SCIM_URL_PREFIX}/Groups/{group.identifier}{EXTERNAL_ID_POST_FIX}"}
 
 
 def create_group_template(group: Union[Group, Collaboration], membership_scim_objects):
@@ -19,9 +19,8 @@ def create_group_template(group: Union[Group, Collaboration], membership_scim_ob
         "schemas": [
             "urn:scim:schemas:core:1.0"
         ],
-        "externalId": f"{group.identifier}{external_id_post_fix}",
-        # HK: This attribute does not belong to schema --> "name": group.global_urn,
-        "displayName": group.name,
+        "externalId": f"{group.identifier}{EXTERNAL_ID_POST_FIX}",
+        "displayName": group.global_urn,
         "members": membership_scim_objects
     })
 
@@ -32,10 +31,11 @@ def update_group_template(group: Union[Group, Collaboration], membership_scim_ob
     return result
 
 
-def scim_member_object(base_url, membership: CollaborationMembership):
-    member_value = f"{membership.user.external_id}{external_id_post_fix}"
+# This is used for internal SRAM groups and external SCIM providers
+def scim_member_object(base_url, membership: CollaborationMembership, scim_object=None):
+    member_value = f"{membership.user.external_id}{EXTERNAL_ID_POST_FIX}"
     return {
-        "value": member_value,
+        "value": scim_object["id"] if scim_object else member_value,
         "display": membership.user.name,
         "$ref": f"{base_url}{SCIM_URL_PREFIX}/Users/{member_value}"
     }
@@ -44,7 +44,7 @@ def scim_member_object(base_url, membership: CollaborationMembership):
 def find_group_by_id_template(group: Union[Group, Collaboration]):
     base_url = application_base_url()
     members = [scim_member_object(base_url, m) for m in group.collaboration_memberships if m.is_active]
-    group_template = update_group_template(group, members, f"{group.identifier}{external_id_post_fix}")
+    group_template = update_group_template(group, members, f"{group.identifier}{EXTERNAL_ID_POST_FIX}")
     group_template["meta"] = _meta_info(group)
     return group_template
 

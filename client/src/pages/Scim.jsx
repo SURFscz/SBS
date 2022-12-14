@@ -88,17 +88,8 @@ class Scim extends React.Component {
                 key: "scim_enabled",
                 header: I18n.t("system.scim.service.scimEnabled"),
                 mapper: service => <span>{I18n.t(`forms.${service.scim_enabled ? "yes" : "no"}`)}</span>
-            },
-            {
-                key: "scim_provision_users",
-                header: I18n.t("system.scim.service.scimProvisionUsers"),
-                mapper: service => <span>{I18n.t(`forms.${service.scim_provision_users ? "yes" : "no"}`)}</span>
-            },
-            {
-                key: "scim_provision_groups",
-                header: I18n.t("system.scim.service.scimProvisionGroups"),
-                mapper: service => <span>{I18n.t(`forms.${service.scim_provision_groups ? "yes" : "no"}`)}</span>
-            }];
+            }
+        ];
         return (
 
                 <Entities entities={services}

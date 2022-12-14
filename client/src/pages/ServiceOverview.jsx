@@ -567,20 +567,6 @@ class ServiceOverview extends React.Component {
                             toolTip={I18n.t("scim.scimBearerTokenTooltip")}
                             disabled={!isAdmin || showServiceAdminView || !service.scim_enabled}/>
 
-                <CheckBox name="scim_provision_users"
-                          value={service.scim_provision_users}
-                          info={I18n.t("scim.scimProvisionUsers")}
-                          tooltip={I18n.t("scim.scimProvisionUsersTooltip")}
-                          onChange={this.changeServiceProperty("scim_provision_users", true)}
-                          readOnly={!isAdmin || showServiceAdminView || !service.scim_enabled}/>
-
-                <CheckBox name="scim_provision_groups"
-                          value={service.scim_provision_groups}
-                          info={I18n.t("scim.scimProvisionGroups")}
-                          tooltip={I18n.t("scim.scimProvisionGroupsTooltip")}
-                          onChange={this.changeServiceProperty("scim_provision_groups", true)}
-                          readOnly={!isAdmin || showServiceAdminView || !service.scim_enabled}/>
-
                 <RadioButton label={I18n.t("scim.sweepScimEnabled")}
                              name={"sweep_scim_enabled"}
                              value={service.sweep_scim_enabled}
