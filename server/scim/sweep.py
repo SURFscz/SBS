@@ -125,28 +125,38 @@ def perform_sweep(service: Service):
         if user.external_id not in remote_users_by_external_id:
             scim_dict = create_user_template(user)
             url = f"{service.scim_url}/{SCIM_USERS}"
-            response = requests.post(url, json=replace_none_values(scim_dict), headers=scim_headers(service),
+            scim_dict_cleansed = replace_none_values(scim_dict)
+            response = requests.post(url, json=scim_dict_cleansed, headers=scim_headers(service),
                                      timeout=10)
             if validate_response(response, service):
                 # Add the new remote user to the remote_users_by_external_id for membership lookup
                 remote_users_by_external_id[user.external_id] = response.json()
-                sync_results["users"][""]
+                sync_results["users"]["created"].append(scim_dict_cleansed)
         else:
             remote_user = remote_users_by_external_id[user.external_id]
             if _user_changed(user, replace_empty_string_values(remote_user)):
                 scim_dict = update_user_template(user, remote_user["id"])
                 url = f"{service.scim_url}{remote_user['meta']['location']}"
-                requests.put(url, json=replace_none_values(scim_dict), headers=scim_headers(service), timeout=10)
+                scim_dict_cleansed = replace_none_values(scim_dict)
+                response = requests.put(url, json=scim_dict_cleansed, headers=scim_headers(service), timeout=10)
+                if validate_response(response, service):
+                    sync_results["users"]["updated"].append(scim_dict_cleansed)
 
     for group in all_groups:
         membership_scim_objects = _memberships(group, remote_users_by_external_id)
         if group.identifier not in remote_groups_by_external_id:
             scim_dict = create_group_template(group, membership_scim_objects)
             url = f"{service.scim_url}/{SCIM_GROUPS}"
-            requests.post(url, json=replace_none_values(scim_dict), headers=scim_headers(service), timeout=10)
+            scim_dict_cleansed = replace_none_values(scim_dict)
+            response = requests.post(url, json=scim_dict_cleansed, headers=scim_headers(service), timeout=10)
+            if validate_response(response, service):
+                sync_results["groups"]["created"].append(scim_dict_cleansed)
         else:
             remote_group = remote_groups_by_external_id[group.identifier]
             if _group_changed(group, replace_empty_string_values(remote_group), remote_scim_users):
                 scim_dict = update_group_template(group, membership_scim_objects, remote_group["id"])
                 url = f"{service.scim_url}{remote_group['meta']['location']}"
-                requests.put(url, json=replace_none_values(scim_dict), headers=scim_headers(service), timeout=10)
+                scim_dict_cleansed = replace_none_values(scim_dict)
+                response = requests.put(url, json=scim_dict_cleansed, headers=scim_headers(service), timeout=10)
+                if validate_response(response, service):
+                    sync_results["groups"]["updated"].append(scim_dict_cleansed)
