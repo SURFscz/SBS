@@ -1,6 +1,7 @@
 from server.db.domain import User, Collaboration, Service
+from server.scim import EXTERNAL_ID_POST_FIX
 from server.scim.group_template import create_group_template
-from server.scim.user_template import create_user_template, external_id_post_fix
+from server.scim.user_template import create_user_template
 from server.test.abstract_test import AbstractTest
 from server.test.seed import sarah_name, ai_computing_name, service_cloud_name
 
@@ -40,7 +41,7 @@ class TestMockScim(AbstractTest):
 
         # Find by externalId
         res = self.get("/api/scim_mock/Users",
-                       query_data={"filter": f"externalId eq \"{sarah.external_id}{external_id_post_fix}\""},
+                       query_data={"filter": f"externalId eq \"{sarah.external_id}{EXTERNAL_ID_POST_FIX}\""},
                        headers=headers,
                        with_basic_auth=False)
         self.assertEqual(scim_id_user, res["Resources"][0]["id"])
@@ -57,17 +58,17 @@ class TestMockScim(AbstractTest):
         self.assertIsNotNone(scim_id_group)
 
         # Update the group
-        collaboration.name = "Changed"
+        collaboration.global_urn = "Changed"
         body = create_group_template(collaboration, [scim_id_user])
         res = self.put(f"/api/scim_mock/Groups/{scim_id_group}",
                        body=body,
                        headers=headers,
                        with_basic_auth=False)
-        self.assertEqual(collaboration.name, res["displayName"])
+        self.assertEqual(collaboration.global_urn, res["displayName"])
 
         # Find the group by externalId
         res = self.get("/api/scim_mock/Groups",
-                       query_data={"filter": f"externalId eq \"{collaboration.identifier}{external_id_post_fix}\""},
+                       query_data={"filter": f"externalId eq \"{collaboration.identifier}{EXTERNAL_ID_POST_FIX}\""},
                        headers=headers,
                        with_basic_auth=False)
         self.assertEqual(scim_id_group, res["Resources"][0]["id"])

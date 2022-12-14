@@ -129,7 +129,6 @@ def clean_db(db):
     for table in tables:
         db.session.execute(table.delete())
     db.session.execute(text("DELETE FROM audit_logs"))
-    db.session.execute(text("DELETE FROM scim_service_counters"))
     db.session.commit()
 
 
@@ -281,16 +280,14 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                     public_visible=True, automatic_connection_allowed=True, logo=read_image("cloud.jpg"),
                     allowed_organisations=[uuc, uva], abbreviation="cloud", privacy_policy="https://privacy.org",
                     token_enabled=True, token_validity_days=1, security_email="sec@org.nl",
-                    scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret",
-                    scim_provision_users=True, scim_provision_groups=True)
+                    scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret")
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, uva],
                       description="SURF Storage Service", logo=read_image("storage.jpeg"), abbreviation="storage",
                       public_visible=True, automatic_connection_allowed=True, white_listed=True,
                       uri="https://storage.net", support_email="support@storage.net",
                       pam_web_sso_enabled=True, security_email="sec@org.nl",
                       accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org",
-                      scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret",
-                      scim_provision_users=True, scim_provision_groups=True)
+                      scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret")
     wiki = Service(entity_id=service_wiki_entity_id, name=service_wiki_name, description="No more wiki's please",
                    uri="https://wiki.surfnet.nl/display/SCZ/Collaboration+Management+System+%28Dutch%3A+"
                        "SamenwerkingBeheerSysteem%29+-+SBS#CollaborationManagementSystem"
@@ -309,8 +306,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                       public_visible=False, automatic_connection_allowed=True, abbreviation="network",
                       allowed_organisations=[uuc], privacy_policy="https://privacy.org",
                       token_enabled=True, token_validity_days=365, security_email="sec@org.nl",
-                      scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret",
-                      scim_provision_users=True, scim_provision_groups=True)
+                      scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret")
     service_ssh_uva = Service(entity_id="service_ssh_uva", name=service_ssh_uva_name,
                               description="Uva SSH access",
                               uri="https://uri.com/ssh", identity_type="SSH KEY", accepted_user_policy="https://ssh",

@@ -1,0 +1,256 @@
+{
+    "schemas": [
+        "urn:ietf:params:scim:api:messages:2.0:ListResponse"
+    ],
+    "totalResults": 8,
+    "startIndex": 0,
+    "itemsPerPage": 8,
+    "Resources": [
+        {
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ],
+            "id": "807e3bea-82d7-4b4c-9891-12d18bde2f43",
+            "externalId": "9ae9a3b1-1512-4f53-bc3b-9a48805ce3c0@sram.surf.nl",
+            "meta": {
+                "resourceType": "User",
+                "created": "2022-12-09T13:17:26",
+                "lastModified": "2022-12-09T13:17:26",
+                "location": "/Users/807e3bea-82d7-4b4c-9891-12d18bde2f43",
+                "version": "W/\"38e9c0ecf8b28281effca104f73e4a6e02abe341\""
+            },
+            "userName": "hkodden",
+            "name": {
+                "familyName": "Kodden",
+                "givenName": "Harry"
+            },
+            "displayName": "Harry Kodden",
+            "active": true,
+            "emails": [
+                {
+                    "value": "harry.kodden@surf.nl",
+                    "primary": true
+                }
+            ],
+            "x509Certificates": [
+                {
+                    "value": "c3NoLXJzYSBBQUFBQjNOemFDMXljMkVBQUFBREFRQUJBQUFCQVFEZkN4eDh6TmtGZEdsZE0xK2N6TTdKRE83VllPaTc0aStkdU8vSUwyQitDU3hkZUZQSGZUZlVCM09HSnlYS0VkSjl3TWlES2p5YnZRTHFFRm8xdXFLNDA0dmZUR0c3bnJ0VWx0TUZ3cEFFcE15OUpYTElIMEZ1RFdIOWFJelhYb0FUZDJDOFZ6YW5ERU11dmkvZjNuRmpzekNlZ3RzYWUwWW1vZ1VJbGd5dmhKNzhMekd6L3A5ZUMxeWF4SENqRTNRNTZNbHFFSU1QYVRCVWdKR3p2K1puaHFVVTBlK2paMVlIRmRaVlVhWDRBRWwyUUhWVGV0aXhyVHc5bmtFamNTNTVyWjg4cXdOaVFuOGVxSXl4MXdjcWFVenhOV3NMYzdOWEZyVXBVZTF1RWgwaVdEMmd5c1laOVpmVlNsbklVb1hjRExxUEJaTGhjSXBPTDBReHF0WUogaGFycnlrQE0wNDE3MDA1"
+                }
+            ]
+        },
+        {
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ],
+            "id": "5ad81d1b-e5fe-4dcf-a359-a40d2f2219d2",
+            "externalId": "6dbba4b3-a8a0-498b-a86a-7e0502e426b3@sram.surf.nl",
+            "meta": {
+                "resourceType": "User",
+                "created": "2022-12-09T13:17:26",
+                "lastModified": "2022-12-09T13:17:26",
+                "location": "/Users/5ad81d1b-e5fe-4dcf-a359-a40d2f2219d2",
+                "version": "W/\"70bb63023d13ac238ca1d5d9aed754d29e9a27c0\""
+            },
+            "userName": "shockyboy",
+            "name": {
+                "familyName": "Schok",
+                "givenName": "Michiel"
+            },
+            "displayName": "Michiel Schok",
+            "active": true,
+            "emails": [
+                {
+                    "value": "michiel.schok@surf.nl",
+                    "primary": true
+                }
+            ]
+        },
+        {
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ],
+            "id": "a78ce338-e3a3-47bd-8f19-0310e25c437c",
+            "externalId": "e1e8b912-daf8-40b1-b650-a51f14e1bf12@sram.surf.nl",
+            "meta": {
+                "resourceType": "User",
+                "created": "2022-12-09T13:17:27",
+                "lastModified": "2022-12-09T13:17:27",
+                "location": "/Users/a78ce338-e3a3-47bd-8f19-0310e25c437c",
+                "version": "W/\"4ab8b0bc5e7873556f01f6ab3d79c3b2619f4b75\""
+            },
+            "userName": "hkodden10",
+            "name": {
+                "familyName": "Kodden",
+                "givenName": "Harry"
+            },
+            "displayName": "Harry Kodden",
+            "active": true,
+            "emails": [
+                {
+                    "value": "harry+333@kodden.nl",
+                    "primary": true
+                }
+            ],
+            "x509Certificates": [
+                {
+                    "value": "c3NoLXJzYSBBQUFBQjNOemFDMXljMkVBQUFBREFRQUJBQUFCQVFEZkN4eDh6TmtGZEdsZE0xK2N6TTdKRE83VllPaTc0aStkdU8vSUwyQitDU3hkZUZQSGZUZlVCM09HSnlYS0VkSjl3TWlES2p5YnZRTHFFRm8xdXFLNDA0dmZUR0c3bnJ0VWx0TUZ3cEFFcE15OUpYTElIMEZ1RFdIOWFJelhYb0FUZDJDOFZ6YW5ERU11dmkvZjNuRmpzekNlZ3RzYWUwWW1vZ1VJbGd5dmhKNzhMekd6L3A5ZUMxeWF4SENqRTNRNTZNbHFFSU1QYVRCVWdKR3p2K1puaHFVVTBlK2paMVlIRmRaVlVhWDRBRWwyUUhWVGV0aXhyVHc5bmtFamNTNTVyWjg4cXdOaVFuOGVxSXl4MXdjcWFVenhOV3NMYzdOWEZyVXBVZTF1RWgwaVdEMmd5c1laOVpmVlNsbklVb1hjRExxUEJaTGhjSXBPTDBReHF0WUogaGFycnlrQE0wNDE3MDA1"
+                }
+            ]
+        },
+        {
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ],
+            "id": "df64ac62-074d-411d-82fd-3af89f32b5da",
+            "externalId": "1760a039-1363-4fd3-b08b-11d350ae4126@sram.surf.nl",
+            "meta": {
+                "resourceType": "User",
+                "created": "2022-12-09T13:17:27",
+                "lastModified": "2022-12-09T13:17:27",
+                "location": "/Users/df64ac62-074d-411d-82fd-3af89f32b5da",
+                "version": "W/\"620883c84eb0fa01f005dc5a31171b67500890a1\""
+            },
+            "userName": "dikkebertha",
+            "name": {
+                "familyName": "Kodden",
+                "givenName": "Harry"
+            },
+            "displayName": "Harry Kodden",
+            "active": true,
+            "emails": [
+                {
+                    "value": "harry+334@kodden.nl",
+                    "primary": true
+                }
+            ]
+        },
+        {
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ],
+            "id": "6a177160-8ef4-46d2-b4aa-2a570d7e12dd",
+            "externalId": "0b7d05cc-27e8-4131-adb6-d4bd820a7d1d@sram.surf.nl",
+            "meta": {
+                "resourceType": "User",
+                "created": "2022-12-09T13:17:27",
+                "lastModified": "2022-12-09T13:17:27",
+                "location": "/Users/6a177160-8ef4-46d2-b4aa-2a570d7e12dd",
+                "version": "W/\"a050ace03719b2cdd589f29b2b0deac0c6a8f666\""
+            },
+            "userName": "demouser",
+            "name": {
+                "familyName": "Kodden",
+                "givenName": "Harry"
+            },
+            "displayName": "Harry Kodden",
+            "active": true,
+            "emails": [
+                {
+                    "value": "harry+335@kodden.nl",
+                    "primary": true
+                }
+            ],
+            "x509Certificates": [
+                {
+                    "value": "c3NoLXJzYSBBQUFBQjNOemFDMXljMkVBQUFBREFRQUJBQUFCQVFEZkN4eDh6TmtGZEdsZE0xK2N6TTdKRE83VllPaTc0aStkdU8vSUwyQitDU3hkZUZQSGZUZlVCM09HSnlYS0VkSjl3TWlES2p5YnZRTHFFRm8xdXFLNDA0dmZUR0c3bnJ0VWx0TUZ3cEFFcE15OUpYTElIMEZ1RFdIOWFJelhYb0FUZDJDOFZ6YW5ERU11dmkvZjNuRmpzekNlZ3RzYWUwWW1vZ1VJbGd5dmhKNzhMekd6L3A5ZUMxeWF4SENqRTNRNTZNbHFFSU1QYVRCVWdKR3p2K1puaHFVVTBlK2paMVlIRmRaVlVhWDRBRWwyUUhWVGV0aXhyVHc5bmtFamNTNTVyWjg4cXdOaVFuOGVxSXl4MXdjcWFVenhOV3NMYzdOWEZyVXBVZTF1RWgwaVdEMmd5c1laOVpmVlNsbklVb1hjRExxUEJaTGhjSXBPTDBReHF0WUogaGFycnlrQE0wNDE3MDA1Cg=="
+                }
+            ]
+        },
+        {
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ],
+            "id": "6af8d6cb-d9e0-497f-94a9-4a6fd6d3c65e",
+            "externalId": "5ca15490-743c-40c2-910e-549f207aa096@sram.surf.nl",
+            "meta": {
+                "resourceType": "User",
+                "created": "2022-12-09T13:17:27",
+                "lastModified": "2022-12-09T13:17:27",
+                "location": "/Users/6af8d6cb-d9e0-497f-94a9-4a6fd6d3c65e",
+                "version": "W/\"50a11cbe30c7602c6daa01000a044c1bc617ee5a\""
+            },
+            "userName": "wurdemo",
+            "name": {
+                "familyName": "Kodden",
+                "givenName": "Harry"
+            },
+            "displayName": "Harry Kodden",
+            "active": true,
+            "emails": [
+                {
+                    "value": "harry+666@kodden.nl",
+                    "primary": true
+                }
+            ],
+            "x509Certificates": [
+                {
+                    "value": "c3NoLXJzYSBBQUFBQjNOemFDMXljMkVBQUFBREFRQUJBQUFCQVFEZkN4eDh6TmtGZEdsZE0xK2N6TTdKRE83VllPaTc0aStkdU8vSUwyQitDU3hkZUZQSGZUZlVCM09HSnlYS0VkSjl3TWlES2p5YnZRTHFFRm8xdXFLNDA0dmZUR0c3bnJ0VWx0TUZ3cEFFcE15OUpYTElIMEZ1RFdIOWFJelhYb0FUZDJDOFZ6YW5ERU11dmkvZjNuRmpzekNlZ3RzYWUwWW1vZ1VJbGd5dmhKNzhMekd6L3A5ZUMxeWF4SENqRTNRNTZNbHFFSU1QYVRCVWdKR3p2K1puaHFVVTBlK2paMVlIRmRaVlVhWDRBRWwyUUhWVGV0aXhyVHc5bmtFamNTNTVyWjg4cXdOaVFuOGVxSXl4MXdjcWFVenhOV3NMYzdOWEZyVXBVZTF1RWgwaVdEMmd5c1laOVpmVlNsbklVb1hjRExxUEJaTGhjSXBPTDBReHF0WUogaGFycnlrQE0wNDE3MDA1"
+                }
+            ]
+        },
+        {
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ],
+            "id": "edb9c410-160e-4b78-9567-f87c12d4b47a",
+            "externalId": "8aeb962d-6130-419e-8905-6970efb1cb1c@sram.surf.nl",
+            "meta": {
+                "resourceType": "User",
+                "created": "2022-12-12T17:51:27",
+                "lastModified": "2022-12-12T17:51:27",
+                "location": "/Users/edb9c410-160e-4b78-9567-f87c12d4b47a",
+                "version": "W/\"1a15244763552747549945e713545f14985587a1\""
+            },
+            "userName": "john",
+            "name": {
+                "familyName": "",
+                "givenName": ""
+            },
+            "displayName": "John Doe",
+            "active": true,
+            "emails": [
+                {
+                    "value": "john@onlineresearch.com",
+                    "primary": true
+                }
+            ],
+            "x509Certificates": [
+                {
+                    "value": "c29tZS1zc2gta2V5"
+                }
+            ]
+        },
+        {
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ],
+            "id": "fbf7f0c9-98b5-4388-9e49-8ed7a7432821",
+            "externalId": "2767d517-ba5f-4b70-8f95-4a20787bfe03@sram.surf.nl",
+            "meta": {
+                "resourceType": "User",
+                "created": "2022-12-12T17:51:27",
+                "lastModified": "2022-12-12T17:51:27",
+                "location": "/Users/fbf7f0c9-98b5-4388-9e49-8ed7a7432821",
+                "version": "W/\"29a151636759ba6f899b27be5bb8577f93af7c18\""
+            },
+            "userName": "peter",
+            "name": {
+                "familyName": "",
+                "givenName": ""
+            },
+            "displayName": "Peter Doe",
+            "active": true,
+            "emails": [
+                {
+                    "value": "peter@school4us.org",
+                    "primary": true
+                }
+            ],
+            "x509Certificates": [
+                {
+                    "value": "c29tZS1zc2gta2V5"
+                }
+            ]
+        }
+    ]
+}

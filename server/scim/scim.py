@@ -7,17 +7,27 @@ from server.api.base import application_base_url
 from server.db.domain import Service, User, Group, Collaboration, Organisation
 from server.db.models import flatten
 from server.logger.context_logger import ctx_logger
-from server.scim.counter import atomic_increment_counter_value
+from server.scim import EXTERNAL_ID_POST_FIX, SCIM_USERS, SCIM_GROUPS
 from server.scim.group_template import update_group_template, create_group_template, scim_member_object
-from server.scim.user_template import create_user_template, update_user_template, external_id_post_fix, \
-    replace_none_values
+from server.scim.user_template import create_user_template, update_user_template, replace_none_values
 
-SCIM_USERS = "Users"
-SCIM_GROUPS = "Groups"
+
+def _log_scim_error(response, service):
+    logger = ctx_logger("scim")
+    is_json = "json" in response.headers.get("Content-Type", "").lower()
+    scim_json = response.json() if is_json else {}
+    logger.error(f"Scim endpoint {service.scim_url} returned an error: {scim_json}")
+
+
+def validate_response(response, service):
+    if response.status_code > 204:
+        _log_scim_error(response, service)
+        return False
+    return True
 
 
 # Get the headers with the bearer authentication
-def _headers(service: Service, is_delete=False):
+def scim_headers(service: Service, is_delete=False):
     headers = {"Authorization": f"Bearer {service.scim_bearer_token}",
                "X-Service": str(service.id)}
     if not is_delete:
@@ -25,16 +35,10 @@ def _headers(service: Service, is_delete=False):
     return headers
 
 
-# Construct counter query parameter
-def _counter_query_param(service: Service):
-    return f"?counter={atomic_increment_counter_value(service)}"
-
-
 # Remove duplicates from services
-def _unique_scim_services(services: List[Service], provision_enabled_method):
+def _unique_scim_services(services: List[Service]):
     seen = set()
-    return [s for s in services if
-            s.id not in seen and not seen.add(s.id) and getattr(s, provision_enabled_method)() and s.scim_enabled]
+    return [s for s in services if s.id not in seen and not seen.add(s.id) and s.scim_enabled]
 
 
 # Is the user connected - through memberships excluding collaboration_to_exclude - to the service
@@ -43,7 +47,7 @@ def _has_user_service_access(user: User, service: Service, collaboration_to_excl
                       member.collaboration.identifier != collaboration_to_exclude.identifier and member.is_active()]
     collaboration_services = flatten([coll.services for coll in collaborations])
     organisation_services = flatten([coll.organisation.services for coll in collaborations])
-    services = _unique_scim_services(collaboration_services + organisation_services, "provision_scim_users")
+    services = _unique_scim_services(collaboration_services + organisation_services)
     return service in services
 
 
@@ -52,8 +56,8 @@ def _provision_user(scim_object, service: Service, user: User):
     scim_dict = update_user_template(user, scim_object["id"]) if scim_object else create_user_template(user)
     request_method = requests.put if scim_object else requests.post
     postfix = scim_object['meta']['location'] if scim_object else "/Users"
-    url = f"{service.scim_url}{postfix}{_counter_query_param(service)}"
-    return request_method(url, json=replace_none_values(scim_dict), headers=_headers(service), timeout=10)
+    url = f"{service.scim_url}{postfix}"
+    return request_method(url, json=replace_none_values(scim_dict), headers=scim_headers(service), timeout=10)
 
 
 # If the group / collaboration is known in the remote SCIM then update the group else provision the group
@@ -65,15 +69,12 @@ def _provision_group(scim_object, service: Service, group: Union[Group, Collabor
         scim_dict = create_group_template(group, membership_scim_objects)
     request_method = requests.put if scim_object else requests.post
     postfix = scim_object['meta']['location'] if scim_object else "/Groups"
-    url = f"{service.scim_url}{postfix}{_counter_query_param(service)}"
-    return request_method(url, json=replace_none_values(scim_dict), headers=_headers(service), timeout=10)
+    url = f"{service.scim_url}{postfix}"
+    return request_method(url, json=replace_none_values(scim_dict), headers=scim_headers(service), timeout=10)
 
 
 # Get all SCIM members of the group / collaboration and provision new ones
 def membership_user_scim_objects(service: Service, group: Union[Group, Collaboration]):
-    if not service.provision_scim_users():
-        return []
-
     base_url = application_base_url()
 
     members = [member for member in group.collaboration_memberships if member.is_active]
@@ -84,29 +85,19 @@ def membership_user_scim_objects(service: Service, group: Union[Group, Collabora
         if not scim_object:
             # We need to provision this user first as it is unknown in the remote SCIM DB
             response = _provision_user(scim_object, service, user)
-            if response.status_code > 204:
-                _log_scim_error(response, service)
-            else:
+            if validate_response(response, service):
                 scim_object = response.json()
         if scim_object:
-            result.append(scim_member_object(base_url, member))
+            result.append(scim_member_object(base_url, member, scim_object))
     return result
-
-
-def _log_scim_error(response, service):
-    logger = ctx_logger("scim")
-    is_json = "json" in response.headers.get("Content-Type", "").lower()
-    scim_json = response.json() if is_json else {}
-    logger.error(f"Scim endpoint {service.scim_url} returned an error: {scim_json}")
 
 
 # Do a lookup of the user or group in the external SCIM DB belonging to this service
 def _lookup_scim_object(service: Service, scim_type: str, external_id: str):
-    query_filter = f"externalId eq \"{external_id}{external_id_post_fix}\""
+    query_filter = f"externalId eq \"{external_id}{EXTERNAL_ID_POST_FIX}\""
     url = f"{service.scim_url}/{scim_type}?filter={urllib.parse.quote(query_filter)}"
-    response = requests.get(url, headers=_headers(service), timeout=10)
-    if response.status_code > 204:
-        _log_scim_error(response, service)
+    response = requests.get(url, headers=scim_headers(service), timeout=10)
+    if not validate_response(response, service):
         return None
     scim_json = response.json()
     return None if scim_json["totalResults"] == 0 else scim_json["Resources"][0]
@@ -123,30 +114,29 @@ def _do_apply_user_change(user: User, service: Union[None, Service], deletion: b
         scim_object = _lookup_scim_object(service, SCIM_USERS, user.external_id)
         # No use to delete the user if the user is unknown in the remote system
         if deletion and scim_object:
-            url = f"{service.scim_url}{scim_object['meta']['location']}{_counter_query_param(service)}"
-            response = requests.delete(url, headers=_headers(service, is_delete=True), timeout=10)
+            url = f"{service.scim_url}{scim_object['meta']['location']}"
+            response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10)
         else:
             response = _provision_user(scim_object, service, user)
-        if response.status_code > 204:
-            _log_scim_error(response, service)
+        validate_response(response, service)
     return scim_services
 
 
 def _all_unique_scim_services_of_collaborations(collaborations):
     organisations = [co.organisation for co in collaborations]
     all_services = flatten([co.services for co in collaborations]) + flatten([org.services for org in organisations])
-    scim_services = _unique_scim_services(all_services, "provision_scim_users")
+    scim_services = _unique_scim_services(all_services)
     return scim_services
 
 
 def _do_apply_group_collaboration_change(group: Union[Group, Collaboration], services: List[Service], deletion: bool):
-    scim_services = _unique_scim_services(services, "provision_scim_groups")
+    scim_services = _unique_scim_services(services)
     for service in scim_services:
         scim_object = _lookup_scim_object(service, SCIM_GROUPS, group.identifier)
         # No use to delete the group if the group is unknown in the remote system
         if deletion and scim_object:
-            url = f"{service.scim_url}{scim_object['meta']['location']}{_counter_query_param(service)}"
-            response = requests.delete(url, headers=_headers(service, is_delete=True), timeout=10)
+            url = f"{service.scim_url}{scim_object['meta']['location']}"
+            response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10)
             if isinstance(group, Collaboration):
                 for co_group in group.groups:
                     _do_apply_group_collaboration_change(co_group, services=scim_services, deletion=True)
@@ -155,8 +145,7 @@ def _do_apply_group_collaboration_change(group: Union[Group, Collaboration], ser
                         _do_apply_user_change(user, service=service, deletion=True)
         else:
             response = _provision_group(scim_object, service, group)
-        if response.status_code > 204:
-            _log_scim_error(response, service)
+        validate_response(response, service)
     return bool(scim_services)
 
 
@@ -177,10 +166,9 @@ def apply_user_deletion(app, external_id, collaboration_identifiers: List[int]):
             scim_object = _lookup_scim_object(service, SCIM_USERS, external_id)
             # No use to delete the user if the user is unknown in the remote system
             if scim_object:
-                url = f"{service.scim_url}{scim_object['meta']['location']}{_counter_query_param(service)}"
-                response = requests.delete(url, headers=_headers(service, is_delete=True), timeout=10)
-                if response.status_code > 204:
-                    _log_scim_error(response, service)
+                url = f"{service.scim_url}{scim_object['meta']['location']}"
+                response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10)
+                validate_response(response, service)
         for co in collaborations:
             services = _all_unique_scim_services_of_collaborations([co])
             _do_apply_group_collaboration_change(co, services, deletion=False)

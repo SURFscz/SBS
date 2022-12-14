@@ -466,8 +466,6 @@ class Service(Base, db.Model, LogoMixin):
     scim_enabled = db.Column("scim_enabled", db.Boolean(), nullable=True, default=False)
     scim_url = db.Column("scim_url", db.String(length=255), nullable=True)
     scim_bearer_token = db.Column("scim_bearer_token", db.String(length=512), nullable=True)
-    scim_provision_users = db.Column("scim_provision_users", db.Boolean(), nullable=True, default=False)
-    scim_provision_groups = db.Column("scim_provision_groups", db.Boolean(), nullable=True, default=False)
     sweep_scim_enabled = db.Column("sweep_scim_enabled", db.Boolean(), nullable=True, default=False)
     sweep_scim_daily_rate = db.Column("sweep_scim_daily_rate", db.Integer(), nullable=True, default=0)
     sweep_scim_last_run = db.Column("sweep_scim_last_run", db.DateTime(timezone=True), nullable=True)
@@ -478,12 +476,6 @@ class Service(Base, db.Model, LogoMixin):
 
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.service_memberships))) > 0
-
-    def provision_scim_users(self):
-        return self.scim_enabled and self.scim_url and self.scim_provision_users
-
-    def provision_scim_groups(self):
-        return self.scim_enabled and self.scim_url and self.scim_provision_groups
 
 
 class ServiceInvitation(Base, db.Model):

@@ -10,6 +10,7 @@ from server.cron.idp_metadata_parser import parse_idp_metadata
 from server.cron.membership_expiration import expire_memberships
 from server.cron.orphan_users import delete_orphan_users
 from server.cron.outstanding_requests import outstanding_requests
+from server.cron.scim_sweep_services import scim_sweep_services
 from server.cron.user_suspending import suspend_users
 
 
@@ -21,6 +22,9 @@ def start_scheduling(app):
                "misfire_grace_time": 60 * 60 * 12, "coalesce": True}
     scheduler.add_job(func=suspend_users, hour=retention.cron_hour_of_day, **options)
     scheduler.add_job(func=parse_idp_metadata, hour=retention.cron_hour_of_day, **options)
+    sweep_services_options = {**options, **{"hour": "*", "minute": "*/15"}}
+    scheduler.add_job(func=scim_sweep_services, **sweep_services_options)
+
     if cfq.platform_admin_notifications.enabled:
         scheduler.add_job(func=outstanding_requests, hour=cfq.platform_admin_notifications.cron_hour_of_day, **options)
     if cfq.collaboration_expiration.enabled:

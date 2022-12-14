@@ -1,0 +1,264 @@
+{
+    "schemas": [
+        "urn:ietf:params:scim:api:messages:2.0:ListResponse"
+    ],
+    "totalResults": 7,
+    "startIndex": 0,
+    "itemsPerPage": 7,
+    "Resources": [
+        {
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ],
+            "id": "76853897-464a-4a87-aafd-4ae13a39eee9",
+            "externalId": "837cd542-a0b2-4629-a2e6-d16ae8bfb3f3@sram.surf.nl",
+            "meta": {
+                "resourceType": "Group",
+                "created": "2022-12-09T13:17:27",
+                "lastModified": "2022-12-09T13:17:27",
+                "location": "/Groups/76853897-464a-4a87-aafd-4ae13a39eee9",
+                "version": "W/\"6180bb8a5174f7633d18888b9b91b154052e4c39\""
+            },
+            "displayName": "xxx",
+            "members": [
+                {
+                    "value": "9ae9a3b1-1512-4f53-bc3b-9a48805ce3c0@sram.surf.nl",
+                    "$ref": "https://acc.sram.surf.nl/api/scim/v2/Users/9ae9a3b1-1512-4f53-bc3b-9a48805ce3c0@sram.surf.nl",
+                    "display": "Harry Kodden"
+                },
+                {
+                    "value": "6dbba4b3-a8a0-498b-a86a-7e0502e426b3@sram.surf.nl",
+                    "$ref": "https://acc.sram.surf.nl/api/scim/v2/Users/6dbba4b3-a8a0-498b-a86a-7e0502e426b3@sram.surf.nl",
+                    "display": "Michiel Schok"
+                },
+                {
+                    "value": "e1e8b912-daf8-40b1-b650-a51f14e1bf12@sram.surf.nl",
+                    "$ref": "https://acc.sram.surf.nl/api/scim/v2/Users/e1e8b912-daf8-40b1-b650-a51f14e1bf12@sram.surf.nl",
+                    "display": "Harry Kodden"
+                },
+                {
+                    "value": "1760a039-1363-4fd3-b08b-11d350ae4126@sram.surf.nl",
+                    "$ref": "https://acc.sram.surf.nl/api/scim/v2/Users/1760a039-1363-4fd3-b08b-11d350ae4126@sram.surf.nl",
+                    "display": "Harry Kodden"
+                },
+                {
+                    "value": "0b7d05cc-27e8-4131-adb6-d4bd820a7d1d@sram.surf.nl",
+                    "$ref": "https://acc.sram.surf.nl/api/scim/v2/Users/0b7d05cc-27e8-4131-adb6-d4bd820a7d1d@sram.surf.nl",
+                    "display": "Harry Kodden"
+                },
+                {
+                    "value": "5ca15490-743c-40c2-910e-549f207aa096@sram.surf.nl",
+                    "$ref": "https://acc.sram.surf.nl/api/scim/v2/Users/5ca15490-743c-40c2-910e-549f207aa096@sram.surf.nl",
+                    "display": "Harry Kodden"
+                }
+            ]
+        },
+        {
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ],
+            "id": "9fd4e057-59a0-4388-8458-025b5254da35",
+            "externalId": "1a366947-c57c-4b96-8a52-0f26858c24ff@sram.surf.nl",
+            "meta": {
+                "resourceType": "Group",
+                "created": "2022-12-09T13:20:40",
+                "lastModified": "2022-12-09T13:20:40",
+                "location": "/Groups/9fd4e057-59a0-4388-8458-025b5254da35",
+                "version": "W/\"9e7deaabf37f64dcafbdf316fac3403a423f5f19\""
+            },
+            "displayName": "yyyy",
+            "members": [
+                {
+                    "value": "9ae9a3b1-1512-4f53-bc3b-9a48805ce3c0@sram.surf.nl",
+                    "$ref": "https://acc.sram.surf.nl/api/scim/v2/Users/9ae9a3b1-1512-4f53-bc3b-9a48805ce3c0@sram.surf.nl",
+                    "display": "Harry Kodden"
+                },
+                {
+                    "value": "6dbba4b3-a8a0-498b-a86a-7e0502e426b3@sram.surf.nl",
+                    "$ref": "https://acc.sram.surf.nl/api/scim/v2/Users/6dbba4b3-a8a0-498b-a86a-7e0502e426b3@sram.surf.nl",
+                    "display": "Michiel Schok"
+                },
+                {
+                    "value": "e1e8b912-daf8-40b1-b650-a51f14e1bf12@sram.surf.nl",
+                    "$ref": "https://acc.sram.surf.nl/api/scim/v2/Users/e1e8b912-daf8-40b1-b650-a51f14e1bf12@sram.surf.nl",
+                    "display": "Harry Kodden"
+                },
+                {
+                    "value": "1760a039-1363-4fd3-b08b-11d350ae4126@sram.surf.nl",
+                    "$ref": "https://acc.sram.surf.nl/api/scim/v2/Users/1760a039-1363-4fd3-b08b-11d350ae4126@sram.surf.nl",
+                    "display": "Harry Kodden"
+                },
+                {
+                    "value": "0b7d05cc-27e8-4131-adb6-d4bd820a7d1d@sram.surf.nl",
+                    "$ref": "https://acc.sram.surf.nl/api/scim/v2/Users/0b7d05cc-27e8-4131-adb6-d4bd820a7d1d@sram.surf.nl",
+                    "display": "Harry Kodden"
+                },
+                {
+                    "value": "5ca15490-743c-40c2-910e-549f207aa096@sram.surf.nl",
+                    "$ref": "https://acc.sram.surf.nl/api/scim/v2/Users/5ca15490-743c-40c2-910e-549f207aa096@sram.surf.nl",
+                    "display": "Harry Kodden"
+                }
+            ]
+        },
+        {
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ],
+            "id": "26161ccf-8676-4cde-b99a-c007ea6381be",
+            "externalId": "e7fa3b89-be7a-495a-8aec-88e0e1c05722@sram.surf.nl",
+            "meta": {
+                "resourceType": "Group",
+                "created": "2022-12-09T13:22:46",
+                "lastModified": "2022-12-09T13:38:25",
+                "location": "/Groups/26161ccf-8676-4cde-b99a-c007ea6381be",
+                "version": "W/\"01695c27b52a58f669e008a8e374fc9f62437544\""
+            },
+            "displayName": "Group 2 XCC",
+            "members": [
+                {
+                    "value": "6dbba4b3-a8a0-498b-a86a-7e0502e426b3@sram.surf.nl",
+                    "$ref": "https://acc.sram.surf.nl/api/scim/v2/Users/6dbba4b3-a8a0-498b-a86a-7e0502e426b3@sram.surf.nl",
+                    "display": "Michiel Schok"
+                },
+                {
+                    "value": "e1e8b912-daf8-40b1-b650-a51f14e1bf12@sram.surf.nl",
+                    "$ref": "https://acc.sram.surf.nl/api/scim/v2/Users/e1e8b912-daf8-40b1-b650-a51f14e1bf12@sram.surf.nl",
+                    "display": "Harry Kodden"
+                },
+                {
+                    "value": "0b7d05cc-27e8-4131-adb6-d4bd820a7d1d@sram.surf.nl",
+                    "$ref": "https://acc.sram.surf.nl/api/scim/v2/Users/0b7d05cc-27e8-4131-adb6-d4bd820a7d1d@sram.surf.nl",
+                    "display": "Harry Kodden"
+                },
+                {
+                    "value": "1760a039-1363-4fd3-b08b-11d350ae4126@sram.surf.nl",
+                    "$ref": "https://acc.sram.surf.nl/api/scim/v2/Users/1760a039-1363-4fd3-b08b-11d350ae4126@sram.surf.nl",
+                    "display": "Harry Kodden"
+                }
+            ]
+        },
+        {
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ],
+            "id": "c6aa8313-c958-434a-a56c-b171d11cdcb1",
+            "externalId": "589c4e33-d8dd-484a-abe5-970f00d2d73e@sram.surf.nl",
+            "meta": {
+                "resourceType": "Group",
+                "created": "2022-12-09T13:38:58",
+                "lastModified": "2022-12-09T13:38:58",
+                "location": "/Groups/c6aa8313-c958-434a-a56c-b171d11cdcb1",
+                "version": "W/\"ce5f24b987b0773b677abd3dbcfcba96c463b012\""
+            },
+            "displayName": "iRODS Demo",
+            "members": [
+                {
+                    "value": "9ae9a3b1-1512-4f53-bc3b-9a48805ce3c0@sram.surf.nl",
+                    "$ref": "https://acc.sram.surf.nl/api/scim/v2/Users/9ae9a3b1-1512-4f53-bc3b-9a48805ce3c0@sram.surf.nl",
+                    "display": "Harry Kodden"
+                },
+                {
+                    "value": "6dbba4b3-a8a0-498b-a86a-7e0502e426b3@sram.surf.nl",
+                    "$ref": "https://acc.sram.surf.nl/api/scim/v2/Users/6dbba4b3-a8a0-498b-a86a-7e0502e426b3@sram.surf.nl",
+                    "display": "Michiel Schok"
+                },
+                {
+                    "value": "e1e8b912-daf8-40b1-b650-a51f14e1bf12@sram.surf.nl",
+                    "$ref": "https://acc.sram.surf.nl/api/scim/v2/Users/e1e8b912-daf8-40b1-b650-a51f14e1bf12@sram.surf.nl",
+                    "display": "Harry Kodden"
+                },
+                {
+                    "value": "0b7d05cc-27e8-4131-adb6-d4bd820a7d1d@sram.surf.nl",
+                    "$ref": "https://acc.sram.surf.nl/api/scim/v2/Users/0b7d05cc-27e8-4131-adb6-d4bd820a7d1d@sram.surf.nl",
+                    "display": "Harry Kodden"
+                },
+                {
+                    "value": "5ca15490-743c-40c2-910e-549f207aa096@sram.surf.nl",
+                    "$ref": "https://acc.sram.surf.nl/api/scim/v2/Users/5ca15490-743c-40c2-910e-549f207aa096@sram.surf.nl",
+                    "display": "Harry Kodden"
+                }
+            ]
+        },
+        {
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ],
+            "id": "604b1b49-4169-406d-9fbc-87197a39231a",
+            "externalId": "a2a2f695-28d5-485a-a763-75c079df5ae4@sram.surf.nl",
+            "meta": {
+                "resourceType": "Group",
+                "created": "2022-12-12T17:51:27",
+                "lastModified": "2022-12-12T17:51:27",
+                "location": "/Groups/604b1b49-4169-406d-9fbc-87197a39231a",
+                "version": "W/\"589c324157d7606988b7c98d680e791b84c338af\""
+            },
+            "displayName": "Student",
+            "members": [
+                {
+                    "value": "8aeb962d-6130-419e-8905-6970efb1cb1c@sram.surf.nl",
+                    "$ref": "https://test.sram.surf.nl/api/scim/v2/Users/8aeb962d-6130-419e-8905-6970efb1cb1c@sram.surf.nl",
+                    "display": "John Doe"
+                },
+                {
+                    "value": "2767d517-ba5f-4b70-8f95-4a20787bfe03@sram.surf.nl",
+                    "$ref": "https://test.sram.surf.nl/api/scim/v2/Users/2767d517-ba5f-4b70-8f95-4a20787bfe03@sram.surf.nl",
+                    "display": "Peter Doe"
+                }
+            ]
+        },
+        {
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ],
+            "id": "5c256896-7f5f-42c1-a22f-a67acc0aa610",
+            "externalId": "6a11722c-5285-403f-a13f-8cce0dbd735e@sram.surf.nl",
+            "meta": {
+                "resourceType": "Group",
+                "created": "2022-12-12T17:51:27",
+                "lastModified": "2022-12-12T17:51:27",
+                "location": "/Groups/5c256896-7f5f-42c1-a22f-a67acc0aa610",
+                "version": "W/\"7e9a12dabe32f9df20b8e0c76cc1383e3388407a\""
+            },
+            "displayName": "Teacher",
+            "members": [
+                {
+                    "value": "8aeb962d-6130-419e-8905-6970efb1cb1c@sram.surf.nl",
+                    "$ref": "https://test.sram.surf.nl/api/scim/v2/Users/8aeb962d-6130-419e-8905-6970efb1cb1c@sram.surf.nl",
+                    "display": "John Doe"
+                },
+                {
+                    "value": "2767d517-ba5f-4b70-8f95-4a20787bfe03@sram.surf.nl",
+                    "$ref": "https://test.sram.surf.nl/api/scim/v2/Users/2767d517-ba5f-4b70-8f95-4a20787bfe03@sram.surf.nl",
+                    "display": "Peter Doe"
+                }
+            ]
+        },
+        {
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ],
+            "id": "30b4ac5f-69a1-405b-b5e7-c03ca36216aa",
+            "externalId": "d29cd5a8-fa16-4e51-b6fc-7946ac19221f@sram.surf.nl",
+            "meta": {
+                "resourceType": "Group",
+                "created": "2022-12-12T17:51:27",
+                "lastModified": "2022-12-12T17:51:27",
+                "location": "/Groups/30b4ac5f-69a1-405b-b5e7-c03ca36216aa",
+                "version": "W/\"ca4bee8c0fd06ce33ecae55fa3d9776a4a8eac55\""
+            },
+            "displayName": "Genomics Group",
+            "members": [
+                {
+                    "value": "8aeb962d-6130-419e-8905-6970efb1cb1c@sram.surf.nl",
+                    "$ref": "https://test.sram.surf.nl/api/scim/v2/Users/8aeb962d-6130-419e-8905-6970efb1cb1c@sram.surf.nl",
+                    "display": "John Doe"
+                },
+                {
+                    "value": "2767d517-ba5f-4b70-8f95-4a20787bfe03@sram.surf.nl",
+                    "$ref": "https://test.sram.surf.nl/api/scim/v2/Users/2767d517-ba5f-4b70-8f95-4a20787bfe03@sram.surf.nl",
+                    "display": "Peter Doe"
+                }
+            ]
+        }
+    ]
+}
