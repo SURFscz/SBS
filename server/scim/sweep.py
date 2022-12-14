@@ -1,4 +1,3 @@
-# Sync all Users and Groups
 import base64
 from typing import List, Union
 
@@ -27,7 +26,7 @@ def _user_changed(user: User, remote_user: dict):
         return True
     if remote_user.get("name", {}).get("givenName") != user.given_name:
         return True
-    if remote_user.get("name", {}).get("familyName") != user.given_name:
+    if remote_user.get("name", {}).get("familyName") != user.family_name:
         return True
     if remote_user.get("displayName") != user.name:
         return True
