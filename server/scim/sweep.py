@@ -40,7 +40,7 @@ def _user_changed(user: User, remote_user: dict):
     return False
 
 
-def _group_changed(group: Group, remote_group: dict, remote_scim_users: List[dict]):
+def _group_changed(group: Union[Group, Collaboration], remote_group: dict, remote_scim_users: List[dict]):
     if remote_group.get("displayName") != group.global_urn:
         return True
     sram_members = sorted([member.user.external_id for member in group.collaboration_memberships if member.is_active])
