@@ -20,7 +20,7 @@
                 }
 
                 &.id {
-                    width: 5%;
+                    width: 10%;
                 }
 
                 &.scim_url {
@@ -29,9 +29,11 @@
 
                 &.scim_enabled {
                     text-align: center;
+                    width: 10%;
+                }
+                &.sweep {
                     width: 15%;
                 }
-
             }
         }
 
@@ -43,6 +45,9 @@
 
                 &.scim_enabled {
                     text-align: center;
+                }
+                &.sweep {
+                    text-align: right;
                 }
             }
         }
