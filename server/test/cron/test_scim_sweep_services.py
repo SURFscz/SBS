@@ -18,8 +18,7 @@ class TestScimSweepServices(AbstractTest):
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=remote_users, status=200)
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=remote_groups, status=200)
             sweep_result = scim_sweep_services(self.app)
-            self.assertEqual(1, len(sweep_result))
-            self.assertEqual(service_network_name, sweep_result[0]["name"])
-            sync_results = sweep_result[0]["sync_results"]
+            self.assertEqual(service_network_name, sweep_result["services"][0]["name"])
+            sync_results = sweep_result["services"][0]["sync_results"]
             self.assertEqual(0, len(sync_results["groups"]["created"]))
             self.assertEqual(0, len(sync_results["users"]["created"]))

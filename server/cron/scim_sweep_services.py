@@ -11,7 +11,7 @@ scim_sweep_services_lock_name = "scim_sweep_services_lock_name"
 
 
 def _result_container():
-    return []
+    return {"services": []}
 
 
 def _do_scim_sweep_services(app):
@@ -33,10 +33,10 @@ def _do_scim_sweep_services(app):
             return now > cutoff_time
 
         services_sweeping = [service for service in services if service_needs_sweeping(service)]
-        aggregated_results = []
+        aggregated_results = _result_container()
         for service in services_sweeping:
             sync_results = perform_sweep(service)
-            aggregated_results.append({"name": service.name, "sync_results": sync_results})
+            aggregated_results["services"].append({"name": service.name, "sync_results": sync_results})
             service.sweep_scim_last_run = datetime.datetime.utcnow()
             db.session.merge(service)
             db.session.commit()
