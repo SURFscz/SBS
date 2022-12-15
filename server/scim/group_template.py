@@ -26,7 +26,7 @@ def create_group_template(group: Union[Group, Collaboration], membership_scim_ob
 
 
 def update_group_template(group: Union[Group, Collaboration], membership_scim_objects, scim_identifier: str):
-    result = create_group_template(group, membership_scim_objects)
+    result = create_group_template(group, sorted(membership_scim_objects, key=lambda m: m["value"]))
     result["id"] = scim_identifier
     return result
 

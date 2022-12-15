@@ -30,12 +30,13 @@ def _user_changed(user: User, remote_user: dict):
         return True
     if remote_user.get("displayName") != user.name:
         return True
-    if remote_user.get("active") != user.suspended:
+    if remote_user.get("active") is user.suspended:
         return True
-    if remote_user.get("emails", {}).get("value") != user.email:
+    if remote_user.get("emails", [{"value": None}])[0].get("value") != user.email:
         return True
     ssh_keys = sorted([base64.b64encode(ssh_key.ssh_value.encode()).decode() for ssh_key in user.ssh_keys])
-    if sorted([c.value for c in remote_user.get("x509Certificates", [])]) != ssh_keys:
+    remote_ssh_keys = sorted([c.get("value") for c in remote_user.get("x509Certificates", [])])
+    if remote_ssh_keys != ssh_keys:
         return True
     return False
 
@@ -46,7 +47,7 @@ def _group_changed(group: Union[Group, Collaboration], remote_group: dict, remot
     sram_members = sorted([member.user.external_id for member in group.collaboration_memberships if member.is_active])
     remote_users_by_id = {u["id"]: u for u in remote_scim_users}
     remote_members = []
-    for remote_member in remote_scim_users:
+    for remote_member in remote_group.get("members", []):
         remote_user = remote_users_by_id.get(remote_member["value"])
         if remote_user:
             remote_members.append(remote_user["externalId"].replace(EXTERNAL_ID_POST_FIX, ""))
@@ -160,3 +161,4 @@ def perform_sweep(service: Service):
                 response = requests.put(url, json=scim_dict_cleansed, headers=scim_headers(service), timeout=10)
                 if validate_response(response, service):
                     sync_results["groups"]["updated"].append(scim_dict_cleansed)
+    return sync_results
