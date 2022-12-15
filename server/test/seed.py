@@ -47,7 +47,7 @@ service_wiki_token = generate_token()
 sarah_user_token = generate_token()
 betty_user_token_wiki = generate_token()
 
-collaboration_ai_computing_uuid = str(uuid.uuid4())
+collaboration_ai_computing_uuid = "a71a2b01-4642-4e1a-b3ac-0a06b2bf66f2"
 ai_computing_name = "AI computing"
 ai_computing_short_name = "ai_computing"
 
@@ -93,6 +93,8 @@ service_group_wiki_name2 = "service_group_wiki_name_2"
 
 ai_researchers_group = "AI researchers"
 ai_researchers_group_short_name = "ai_res"
+ai_researchers_group_identifier = "9734e4c4-d23e-4228-b0e0-8e6a5b85e72e"
+ai_dev_identifier = "4c270cff-de30-49e8-a3bc-df032536b37c"
 group_science_name = "Science"
 
 network_service_connection_request_hash = generate_token()
@@ -139,21 +141,23 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
         return
 
     john = User(uid="urn:john", name=john_name, email="john@example.org", username="john",
-                address="Postal 1234AA")
+                address="Postal 1234AA", external_id="86eee601-770f-4df3-bd4c-181a2edcbb2f")
     peter = User(uid="urn:peter", name="Peter Doe", email="peter@example.org", username="peter")
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org", username="mdoe",
                 schac_home_organisation=schac_home_organisation)
-    admin = User(uid="urn:admin", name=the_boss_name, email="boss@example.org", username="admin")
+    admin = User(uid="urn:admin", name=the_boss_name, email="boss@example.org", username="admin",
+                 external_id="e906cf88-cdb3-480d-8bb3-ce53bdcda4e7")
     roger = User(uid="urn:roger", name=roger_name, email="roger@example.org",
                  schac_home_organisation=schac_home_organisation, username="roger")
     harry = User(uid="urn:harry", name="Harry Doe", email="harry@example.org", username="harry")
     james = User(uid="urn:james", name=james_name, email="james@example.org", username="james",
                  schac_home_organisation=schac_home_organisation_uuc, given_name="James")
     sarah = User(uid="urn:sarah", name=sarah_name, email="sarah@uva.org", application_uid="sarah_application_uid",
-                 username="sarah")
-    betty = User(uid="urn:betty", name="betty", email="betty@uuc.org", username="betty")
+                 username="sarah", external_id="8297d8a5-a2a4-4208-9fb6-100a5865f022")
+    betty = User(uid="urn:betty", name="betty", email="betty@uuc.org", username="betty",
+                 external_id="bbd8123c-b0f9-4e3d-b3ff-288aa1c1edd6")
     jane = User(uid="urn:jane", name=jane_name, email="jane@ucc.org", username="jane",
-                entitlement="urn:mace:surf.nl:sram:allow-create-co")
+                entitlement="urn:mace:surf.nl:sram:allow-create-co", external_id="502e861e-f548-4335-89d8-f1764f803964")
     paul = User(uid="urn:paul", name="Paul Doe", email="paul@ucc.org", username="paul",
                 schac_home_organisation="example.com")
     service_admin = User(uid="urn:service_admin", name="Service Admin", email="service_admin@ucc.org",
@@ -471,7 +475,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     group_researchers = Group(name=ai_researchers_group,
                               short_name=ai_researchers_group_short_name,
                               global_urn="uuc:ai_computing:ai_res",
-                              identifier=str(uuid.uuid4()),
+                              identifier=ai_researchers_group_identifier,
                               auto_provision_members=False,
                               description="Artifical computing researchers",
                               collaboration=ai_computing,
@@ -480,7 +484,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     group_developers = Group(name="AI developers",
                              short_name="ai_dev",
                              global_urn="uuc:ai_computing:ai_dev",
-                             identifier=str(uuid.uuid4()),
+                             identifier=ai_dev_identifier,
                              auto_provision_members=False,
                              description="Artifical computing developers",
                              collaboration=ai_computing,

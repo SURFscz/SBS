@@ -1,0 +1,153 @@
+{
+    "itemsPerPage": 5,
+    "schemas": [
+        "urn:ietf:params:scim:api:messages:2.0:ListResponse"
+    ],
+    "startIndex": 0,
+    "totalResults": 5,
+    "Resources": [
+        {
+            "active": true,
+            "displayName": "John Doe",
+            "emails": [
+                {
+                    "primary": true,
+                    "value": "john@example.org"
+                }
+            ],
+            "externalId": "86eee601-770f-4df3-bd4c-181a2edcbb2f@sram.surf.nl",
+            "id": "3DC907C5-58D1-425A-A1D4-36D4A119B0FA",
+            "meta": {
+                "created": "2022-12-14T16:41:01",
+                "lastModified": "2022-12-15T07:46:13",
+                "location": "/Users/3DC907C5-58D1-425A-A1D4-36D4A119B0FA",
+                "resourceType": "User",
+                "version": "bfa684d98574c2a25791bd23d3d0e859d524769c433ad8426968f494da0a99c8"
+            },
+            "name": {
+                "familyName": "",
+                "givenName": ""
+            },
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ],
+            "userName": "john",
+            "x509Certificates": [
+                {
+                    "value": "c3NoLXJzYSBBQUFBQjNOemFDMXljMkVBQUFBREFRQUJBQUFCQVFDL252amVhMXpKSk5DbnlVZlQ2SExjSERod0NNcDd1cXI0Qnp4aERBakJualdjZ1c0aFpKdnRMVHFDTHNwUzZtb2dDcTJkMC8zMURVNERuR2IyTU8yOGdrNzRNaVZCdEFRV0k1K1RzTzVRSHVwTzNWNmFMcktobW44eG4xUEtjOUp5Y2dqT2E0Qk1RMW1lb21uM1ptcGg2b284N01DdEYydzc1Y3hZRUJKOWRKZ0h6WnNuOW13K3c4WjNIMXZZbmtjQlQvaTJNSUsrcWZzdWUvdHZFZTh5YmkrMjZiR1FJWklQRGNkK09tRFVCeERMV3lCd0NiVk95Ukw1TTZ5d25XSklOTGRwSXdmcUNVazI0SjFxMXFpSjVlWnUwbTB1RGNHNUtSemdaK2dyblNTWUJ3Q3gxeEN1bm9Hak1nN2l3eEVNZ1NjRDAybkt0aWlqeEVwdThzb0wgb2trZUBNaWtlcy1NQlAtMi5mcml0ei5ib3g="
+                }
+            ]
+        },
+        {
+            "active": true,
+            "displayName": "The Boss",
+            "emails": [
+                {
+                    "primary": true,
+                    "value": "boss@example.org"
+                }
+            ],
+            "externalId": "e906cf88-cdb3-480d-8bb3-ce53bdcda4e7@sram.surf.nl",
+            "id": "4EDA5BB4-A708-4782-BCFB-D76588F79D4B",
+            "meta": {
+                "created": "2022-12-14T16:41:01",
+                "lastModified": "2022-12-14T16:41:01",
+                "location": "/Users/4EDA5BB4-A708-4782-BCFB-D76588F79D4B",
+                "resourceType": "User",
+                "version": "cb293160f7268629c54ae5d8f44d347a0d87b9f0fe8e2b0b918f92375fbfa79a"
+            },
+            "name": {
+                "familyName": "",
+                "givenName": ""
+            },
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ],
+            "userName": "admin",
+            "x509Certificates": []
+        },
+        {
+            "active": true,
+            "displayName": "Jane Doe",
+            "emails": [
+                {
+                    "primary": true,
+                    "value": "jane@ucc.org"
+                }
+            ],
+            "externalId": "502e861e-f548-4335-89d8-f1764f803964@sram.surf.nl",
+            "id": "B608F146-73F4-4613-A2E8-05A40C77F3F3",
+            "meta": {
+                "created": "2022-12-14T16:41:01",
+                "lastModified": "2022-12-14T16:41:01",
+                "location": "/Users/B608F146-73F4-4613-A2E8-05A40C77F3F3",
+                "resourceType": "User",
+                "version": "cb293160f7268629c54ae5d8f44d347a0d87b9f0fe8e2b0b918f92375fbfa79a"
+            },
+            "name": {
+                "familyName": "",
+                "givenName": ""
+            },
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ],
+            "userName": "jane",
+            "x509Certificates": []
+        },
+        {
+            "active": false,
+            "displayName": "Sarah Cross",
+            "emails": [
+                {
+                    "primary": true,
+                    "value": "sarah@uva.org"
+                }
+            ],
+            "externalId": "8297d8a5-a2a4-4208-9fb6-100a5865f022@sram.surf.nl",
+            "id": "CC7352C1-D752-4588-9FF3-014800EA094B",
+            "meta": {
+                "created": "2022-12-14T16:41:01",
+                "lastModified": "2022-12-14T16:41:01",
+                "location": "/Users/CC7352C1-D752-4588-9FF3-014800EA094B",
+                "resourceType": "User",
+                "version": "cb293160f7268629c54ae5d8f44d347a0d87b9f0fe8e2b0b918f92375fbfa79a"
+            },
+            "name": {
+                "familyName": "",
+                "givenName": ""
+            },
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ],
+            "userName": "sarah",
+            "x509Certificates": [
+                {
+                    "value": "c29tZS1sYW1lLWtleQ=="
+                }
+            ]
+        },
+        {
+            "active": true,
+            "displayName": "unknown_user",
+            "emails": [],
+            "externalId": "1DE53F36-2DB3-4CD4-8204-6692958F1133@sram.surf.nl",
+            "id": "1DE53F36-2DB3-4CD4-8204-6692958F1133",
+            "meta": {
+                "created": "2022-12-14T16:41:01",
+                "lastModified": "2022-12-14T16:41:01",
+                "location": "/Users/1DE53F36-2DB3-4CD4-8204-6692958F1133",
+                "resourceType": "User",
+                "version": "cb293160f7268629c54ae5d8f44d347a0d87b9f0fe8e2b0b918f92375fbfa79a"
+            },
+            "name": {
+                "familyName": "",
+                "givenName": ""
+            },
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ],
+            "userName": "unknown",
+            "x509Certificates": []
+        }
+    ]
+}

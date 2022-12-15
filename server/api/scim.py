@@ -84,9 +84,7 @@ def service_group_by_identifier(group_external_id: str):
 
 
 @scim_api.route("/sweep", methods=["PUT"], strict_slashes=False)
-@swag_from("../swagger/public/paths/sweep.yml")
 @json_endpoint
 def sweep():
     service = validate_service_token("scim_enabled")
-    perform_sweep(service)
-    return None, 201
+    return perform_sweep(service), 201
