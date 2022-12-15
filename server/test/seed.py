@@ -303,6 +303,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                    ldap_password="$6$rounds=100000$bFyBZD0Fim7BCAqt$BSq4u2IqhyT2khkCMILpaEceMnvYIKvxyxttA8."
                                  "IddqWdPB.AEH2MBb1sggk8pDlrW/Xb00f8xa67cC0nfkuX.",
                    token_enabled=True, token_validity_days=365, security_email="sec@org.nl")
+    sweep_scim_last_run = current_time - datetime.timedelta(days=1)
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
                       description="Network enabling service SSH access", address="Some address",
                       uri="https://uri.net", identity_type="SSH KEY", accepted_user_policy="https://aup.org",
@@ -310,7 +311,8 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                       public_visible=False, automatic_connection_allowed=True, abbreviation="network",
                       allowed_organisations=[uuc], privacy_policy="https://privacy.org",
                       token_enabled=True, token_validity_days=365, security_email="sec@org.nl",
-                      scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret")
+                      scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret",
+                      sweep_scim_last_run=sweep_scim_last_run, sweep_scim_daily_rate=1,sweep_scim_enabled=True)
     service_ssh_uva = Service(entity_id="service_ssh_uva", name=service_ssh_uva_name,
                               description="Uva SSH access",
                               uri="https://uri.com/ssh", identity_type="SSH KEY", accepted_user_policy="https://ssh",
