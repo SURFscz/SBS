@@ -60,7 +60,7 @@ class TestScim(AbstractTest):
 
     def test_sweep(self):
         sweep_result = self.put("/api/scim/v2/sweep", headers={"Authorization": f"bearer {service_network_token}"},
-                       with_basic_auth=False)
+                                with_basic_auth=False)
         # The mock_scim in-memory is empty, all users and groups / collaboration connected to networks are provisioned
         self.assertEqual(3, len(sweep_result["groups"]["created"]))
         self.assertEqual(5, len(sweep_result["users"]["created"]))
