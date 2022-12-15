@@ -88,6 +88,11 @@ class Scim extends React.Component {
                 key: "scim_enabled",
                 header: I18n.t("system.scim.service.scimEnabled"),
                 mapper: service => <span>{I18n.t(`forms.${service.scim_enabled ? "yes" : "no"}`)}</span>
+            },
+            {
+                key: "sweep",
+                header: "",
+                mapper: service => service.sweep_scim_enabled ? <Button txt={"Sweep"} onClick={() => true}/> : null
             }
         ];
         return (
