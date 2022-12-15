@@ -72,6 +72,11 @@ class AbstractTest(TestCase):
         return cls.query.filter(cls.name == name).first()
 
     @staticmethod
+    def save_entity(entity):
+        db.session.merge(entity)
+        db.session.commit()
+
+    @staticmethod
     def change_collaboration(user_name, do_change):
         user = AbstractTest.find_entity_by_name(User, user_name)
         connected_collaborations = [cm.collaboration for cm in user.collaboration_memberships]
