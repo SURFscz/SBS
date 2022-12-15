@@ -22,6 +22,7 @@ def replace_empty_string_values(d: dict):
 
 
 def _user_changed(user: User, remote_user: dict):
+    remote_user = replace_empty_string_values(remote_user)
     if remote_user.get("userName") != user.username:
         return True
     if remote_user.get("name", {}).get("givenName") != user.given_name:
@@ -135,7 +136,7 @@ def perform_sweep(service: Service):
                 sync_results["users"]["created"].append(scim_dict_cleansed)
         else:
             remote_user = remote_users_by_external_id[user.external_id]
-            if _user_changed(user, replace_empty_string_values(remote_user)):
+            if _user_changed(user, remote_user):
                 scim_dict = update_user_template(user, remote_user["id"])
                 url = f"{service.scim_url}{remote_user['meta']['location']}"
                 scim_dict_cleansed = replace_none_values(scim_dict)

@@ -3,6 +3,7 @@ import logging
 import time
 
 from server.cron.shared import obtain_lock
+from server.db.db import db
 from server.db.domain import Service
 from server.scim.sweep import perform_sweep
 
@@ -36,6 +37,9 @@ def _do_scim_sweep_services(app):
         for service in services_sweeping:
             sync_results = perform_sweep(service)
             aggregated_results.append({"name": service.name, "sync_results": sync_results})
+            service.sweep_scim_last_run = datetime.datetime.utcnow()
+            db.session.merge(service)
+            db.session.commit()
 
         end = int(time.time() * 1000.0)
         logger.info(f"Finished running scim_sweep_services job in {end - start} ms")

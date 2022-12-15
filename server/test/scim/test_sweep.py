@@ -91,6 +91,7 @@ class TestSweep(AbstractTest):
     def test_user_changed(self):
         user = self.find_entity_by_name(User, john_name)
         remote_user = create_user_template(user)
+        self.assertFalse(_user_changed(user, remote_user))
         for attr in ["username", "given_name", "family_name", "name", "email"]:
             stored_attr = getattr(user, attr)
             setattr(user, attr, "changed")
