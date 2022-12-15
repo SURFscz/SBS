@@ -1,9 +1,14 @@
+import json
+
+import responses
+
 from server.db.domain import User, Collaboration, Group
 from server.scim import EXTERNAL_ID_POST_FIX
 from server.scim.schema_template import schemas_template
 from server.scim.user_template import version_value
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_network_token, jane_name, ai_computing_name, ai_researchers_group
+from server.tools import read_file
 
 
 class TestScim(AbstractTest):
@@ -58,9 +63,14 @@ class TestScim(AbstractTest):
         for resource in res["Resources"]:
             self.get(f"{resource['meta']['location']}", response_status_code=200)
 
+    @responses.activate
     def test_sweep(self):
-        sweep_result = self.put("/api/scim/v2/sweep", headers={"Authorization": f"bearer {service_network_token}"},
-                                with_basic_auth=False)
-        # The mock_scim in-memory is empty, all users and groups / collaboration connected to networks are provisioned
-        self.assertEqual(3, len(sweep_result["groups"]["created"]))
-        self.assertEqual(5, len(sweep_result["users"]["created"]))
+        with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
+            remote_groups = json.loads(read_file("test/scim/sweep/remote_groups_unchanged.json"))
+            remote_users = json.loads(read_file("test/scim/sweep/remote_users_unchanged.json"))
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=remote_users, status=200)
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=remote_groups, status=200)
+            sweep_result = self.put("/api/scim/v2/sweep", headers={"Authorization": f"bearer {service_network_token}"},
+                                    with_basic_auth=False)
+            self.assertEqual(0, len(sweep_result["groups"]["created"]))
+            self.assertEqual(0, len(sweep_result["users"]["created"]))
