@@ -1,3 +1,4 @@
+import logging
 import urllib.parse
 from typing import Union, List
 
@@ -12,16 +13,16 @@ from server.scim.group_template import update_group_template, create_group_templ
 from server.scim.user_template import create_user_template, update_user_template, replace_none_values
 
 
-def _log_scim_error(response, service):
-    logger = ctx_logger("scim")
+def _log_scim_error(response, service, outside_user_context):
+    logger = ctx_logger("scim") if not outside_user_context else logging.getLogger("scim")
     is_json = "json" in response.headers.get("Content-Type", "").lower()
     scim_json = response.json() if is_json else {}
     logger.error(f"Scim endpoint {service.scim_url} returned an error: {scim_json}")
 
 
-def validate_response(response, service):
+def validate_response(response, service, outside_user_context=False):
     if response.status_code > 204:
-        _log_scim_error(response, service)
+        _log_scim_error(response, service, outside_user_context)
         return False
     return True
 

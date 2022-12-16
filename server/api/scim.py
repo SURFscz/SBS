@@ -2,10 +2,12 @@ from typing import Union
 
 from flasgger import swag_from
 from flask import Blueprint, Response
+from werkzeug.exceptions import Unauthorized
 
-from server.api.base import json_endpoint
+from server.api.base import json_endpoint, query_param
+from server.auth.security import confirm_write_access
 from server.auth.tokens import validate_service_token
-from server.db.domain import User, Collaboration, Group
+from server.db.domain import User, Collaboration, Group, Service
 from server.scim import SCIM_URL_PREFIX, EXTERNAL_ID_POST_FIX
 from server.scim.group_template import find_groups_template, find_group_by_id_template
 from server.scim.repo import all_scim_users_by_service, all_scim_groups_by_service
@@ -86,5 +88,9 @@ def service_group_by_identifier(group_external_id: str):
 @scim_api.route("/sweep", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def sweep():
-    service = validate_service_token("scim_enabled")
+    try:
+        service = validate_service_token("scim_enabled")
+    except Unauthorized:
+        confirm_write_access()
+        service = Service.query.get(query_param("service_id"))
     return perform_sweep(service), 201

@@ -2,12 +2,13 @@ import json
 
 import responses
 
-from server.db.domain import User, Collaboration, Group
+from server.db.domain import User, Collaboration, Group, Service
 from server.scim import EXTERNAL_ID_POST_FIX
 from server.scim.schema_template import schemas_template
 from server.scim.user_template import version_value
 from server.test.abstract_test import AbstractTest
-from server.test.seed import service_network_token, jane_name, ai_computing_name, ai_researchers_group
+from server.test.seed import service_network_token, jane_name, ai_computing_name, ai_researchers_group, \
+    service_network_name
 from server.tools import read_file
 
 
@@ -72,5 +73,10 @@ class TestScim(AbstractTest):
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=remote_groups, status=200)
             sweep_result = self.put("/api/scim/v2/sweep", headers={"Authorization": f"bearer {service_network_token}"},
                                     with_basic_auth=False)
+            self.assertEqual(0, len(sweep_result["groups"]["created"]))
+            self.assertEqual(0, len(sweep_result["users"]["created"]))
+
+            service = self.find_entity_by_name(Service, service_network_name)
+            sweep_result = self.put(f"/api/scim/v2/sweep?service_id={service.id}", with_basic_auth=True)
             self.assertEqual(0, len(sweep_result["groups"]["created"]))
             self.assertEqual(0, len(sweep_result["users"]["created"]))

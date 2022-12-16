@@ -84,7 +84,7 @@ class TestSweep(AbstractTest):
 
     def test_group_changed(self):
         group = self.find_entity_by_name(Group, ai_researchers_group)
-        remote_group = create_group_template(group, ["scim_id"])
+        remote_group = create_group_template(group, [{"id": "scim_id", "value": "value"}])
         group.global_urn = "changed"
         self.assertTrue(_group_changed(group, remote_group, []))
 
