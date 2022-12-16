@@ -23,7 +23,8 @@ class Scim extends React.Component {
             confirmationDialogAction: null,
             confirmationDialogQuestion: "",
             statistics: null,
-            sweepResults: null
+            sweepResults: null,
+            sweepService: null
         };
     }
 
@@ -52,8 +53,12 @@ class Scim extends React.Component {
     doSweep = service => {
         this.setState({loading: true});
         sweep(service).then(res => {
-            this.setState({sweepResults: res, loading: false});
+            this.setState({sweepResults: res, sweepService: service, loading: false});
         })
+    }
+
+    clearSweepResults = () => {
+        this.setState({sweepResults: null, sweepService: null});
     }
 
     openService = service => e => {
@@ -68,9 +73,17 @@ class Scim extends React.Component {
         return <ReactJson src={statistics} collapsed={1}/>
     }
 
-    renderSweepResults = sweepResults => {
-        return <ReactJson src={sweepResults}/>
+    renderSweepResults = (sweepResults, sweepService) => {
+        return (
+            <div className="sweep-results-container">
+                <div className="sweep-results">
+                    <h2>{`Results from SCIM sync for service ${sweepService.name}`}</h2>
+                    <Button txt={"Clear"} onClick={() => this.clearSweepResults()}/>
+                </div>
+                <ReactJson src={sweepResults}/>
+            </div>)
     }
+
     renderServices = services => {
         const columns = [
             {
@@ -103,8 +116,7 @@ class Scim extends React.Component {
             {
                 key: "sweep",
                 header: "",
-                mapper: service => service.sweep_scim_enabled ?
-                    <Button txt={"Sweep"} onClick={() => this.doSweep(service)}/> : null
+                mapper: service => <Button txt={"Sweep"} onClick={() => this.doSweep(service)}/>
             }
         ];
         return (
@@ -128,7 +140,7 @@ class Scim extends React.Component {
     render() {
         const {
             services, loading, statistics, confirmationDialogOpen, confirmationDialogAction,
-            confirmationDialogQuestion, sweepResults
+            confirmationDialogQuestion, sweepResults, sweepService
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -166,7 +178,7 @@ class Scim extends React.Component {
                     {this.renderServices(services)}
                 </div>
                 {sweepResults && <div className="info-block">
-                    {this.renderSweepResults(sweepResults)}
+                    {this.renderSweepResults(sweepResults, sweepService)}
                 </div>}
 
 

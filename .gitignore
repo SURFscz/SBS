@@ -133,3 +133,4 @@ server/requirements/pipdeptree
 .venv310/
 server/config/_config.yml
 server/pipdeptree.txt
+sample_json/
