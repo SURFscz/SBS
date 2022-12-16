@@ -1,0 +1,35 @@
+summary: "Sync all remotes groups and users with the SRAM groups and users for a SCIM service."
+description: "Sweep all diffs between the remote SCIM and SRAM groups and users."
+
+tags:
+  - "SCIM Services"
+
+consumes:
+  - "application/json"
+
+produces:
+  - "application/json"
+
+security:
+  - APITokenHeader: [ 'Authorization' ]
+
+parameters:
+  - name: Authorization
+    in: header
+    description: Bearer SCIM service token
+    required: true
+    schema:
+      type: string
+      example: Bearer Am4Hp7GBO2lMseskWHRmEtE3DWD-VxZZ3qwMkNPv6qZ8
+
+responses:
+  200:
+    description: Sweep results
+    schema:
+      $ref: '/swagger/schemas/SweepResults.yaml'
+  401:
+    schema:
+      $ref: '/swagger/components/responses/Unauthorized.yaml'
+  404:
+    schema:
+      $ref: '/swagger/components/responses/NotFound.yaml'

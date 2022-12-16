@@ -1,0 +1,38 @@
+---
+type: object
+properties:
+  users:
+    type: object
+    description: "All operations performed for Users"
+    properties:
+      deleted:
+        type: array
+        items:
+          type: string
+          example: "http://localhost:8080/api/scim/v2/Users/a71a2b01-4642-4e1a-b3ac-0a06b2bf66f2"
+      updated:
+          type: array
+          items:
+            $ref: "/swagger/schemas/ScimUser.yaml"
+      created:
+          type: array
+          items:
+            $ref: "/swagger/schemas/ScimUser.yaml"
+  groups:
+    type: object
+    description: "All operations performed for Groups"
+    properties:
+      deleted:
+        type: array
+        items:
+          type: string
+          example: "http://localhost:8080/api/scim/v2/Groups/a71a2b01-4642-4e1a-b3ac-0a06b2bf66f2"
+      updated:
+          type: array
+          items:
+            $ref: "/swagger/schemas/ScimGroup.yaml"
+      created:
+          type: array
+          items:
+            $ref: "/swagger/schemas/ScimGroup.yaml"
+
