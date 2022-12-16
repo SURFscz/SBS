@@ -22,7 +22,7 @@ def _check_authorization_header(service_id):
     authorization_header = current_request.headers.get("Authorization")
     if not authorization_header or not authorization_header.lower().startswith("bearer"):
         raise Unauthorized(description="Invalid bearer token")
-    service = Service.query.get(service_id)
+    service = Service.query.filter(Service.id == service_id).one()
     if service.scim_bearer_token != authorization_header[len('bearer '):]:
         raise Unauthorized(description="Invalid bearer token")
 
@@ -62,10 +62,13 @@ def _get_database_service():
 
 
 def _find_scim_object(collection_name):
-    filter_param = query_param("filter")
-    external_id = re.search(r"externalId eq \"(.*)\"", filter_param).groups()[0]
     service = _get_database_service()
-    res = list(filter(lambda obj: obj["externalId"] == external_id, list(service[collection_name].values())))
+    filter_param = query_param("filter", required=False)
+    resources = list(service[collection_name].values())
+    if not filter_param:
+        return {"totalResults": len(resources), "Resources": resources}
+    external_id = re.search(r"externalId eq \"(.*)\"", filter_param).groups()[0]
+    res = list(filter(lambda obj: obj["externalId"] == external_id, resources))
     return {"totalResults": 1, "Resources": [res[0]]} if res else {"totalResults": 0}
 
 

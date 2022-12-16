@@ -15,18 +15,19 @@ def _meta_info(group: Union[Group, Collaboration]):
 
 
 def create_group_template(group: Union[Group, Collaboration], membership_scim_objects):
+    sorted_members = sorted(membership_scim_objects, key=lambda m: m["value"])
     return replace_none_values({
         "schemas": [
             "urn:scim:schemas:core:1.0"
         ],
         "externalId": f"{group.identifier}{EXTERNAL_ID_POST_FIX}",
         "displayName": group.global_urn,
-        "members": membership_scim_objects
+        "members": sorted_members
     })
 
 
 def update_group_template(group: Union[Group, Collaboration], membership_scim_objects, scim_identifier: str):
-    result = create_group_template(group, sorted(membership_scim_objects, key=lambda m: m["value"]))
+    result = create_group_template(group, membership_scim_objects)
     result["id"] = scim_identifier
     return result
 

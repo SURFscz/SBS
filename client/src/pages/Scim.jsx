@@ -1,5 +1,5 @@
 import React from "react";
-import {allMockScimServices, clearMockScimStatistics, mockScimStatistics} from "../api";
+import {allMockScimServices, clearMockScimStatistics, mockScimStatistics, sweep} from "../api";
 import "./Scim.scss";
 import I18n from "i18n-js";
 import SpinnerField from "../components/redesign/SpinnerField";
@@ -22,7 +22,8 @@ class Scim extends React.Component {
             confirmationDialogOpen: false,
             confirmationDialogAction: null,
             confirmationDialogQuestion: "",
-            statistics: null
+            statistics: null,
+            sweepResults: null
         };
     }
 
@@ -48,6 +49,13 @@ class Scim extends React.Component {
         mockScimStatistics().then(res => this.setState({loading: false, statistics: res}));
     }
 
+    doSweep = service => {
+        this.setState({loading: true});
+        sweep(service).then(res => {
+            this.setState({sweepResults: res, loading: false});
+        })
+    }
+
     openService = service => e => {
         if (e.metaKey || e.ctrlKey) {
             return;
@@ -60,6 +68,9 @@ class Scim extends React.Component {
         return <ReactJson src={statistics} collapsed={1}/>
     }
 
+    renderSweepResults = sweepResults => {
+        return <ReactJson src={sweepResults}/>
+    }
     renderServices = services => {
         const columns = [
             {
@@ -92,22 +103,23 @@ class Scim extends React.Component {
             {
                 key: "sweep",
                 header: "",
-                mapper: service => service.sweep_scim_enabled ? <Button txt={"Sweep"} onClick={() => true}/> : null
+                mapper: service => service.sweep_scim_enabled ?
+                    <Button txt={"Sweep"} onClick={() => this.doSweep(service)}/> : null
             }
         ];
         return (
 
-                <Entities entities={services}
-                          title={I18n.t("system.scim.services")}
-                          modelName="scimServices"
-                          explain={<ScimExplanation/>}
-                          searchAttributes={["name"]}
-                          defaultSort="name"
-                          columns={columns}
-                          showNew={false}
-                          loading={false}
-                          rowLinkMapper={() => this.openService}
-                          {...this.props}/>
+            <Entities entities={services}
+                      title={I18n.t("system.scim.services")}
+                      modelName="scimServices"
+                      explain={<ScimExplanation/>}
+                      searchAttributes={["name"]}
+                      defaultSort="name"
+                      columns={columns}
+                      showNew={false}
+                      loading={false}
+                      rowLinkMapper={() => this.openService}
+                      {...this.props}/>
 
         )
 
@@ -116,7 +128,7 @@ class Scim extends React.Component {
     render() {
         const {
             services, loading, statistics, confirmationDialogOpen, confirmationDialogAction,
-            confirmationDialogQuestion,
+            confirmationDialogQuestion, sweepResults
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -141,7 +153,7 @@ class Scim extends React.Component {
                         {isEmpty(statistics) && <Button txt={I18n.t("system.scim.retrieveStats")}
                                                         onClick={this.retrieveStatistics}/>}
                         {!isEmpty(statistics) && <Button txt={I18n.t("system.scim.reRetrieveStats")}
-                                                        onClick={this.retrieveStatistics}/>}
+                                                         onClick={this.retrieveStatistics}/>}
                         {!isEmpty(statistics) && <Button txt={I18n.t("system.scim.clearStats")}
                                                          onClick={() => this.clearStatistics(true)}
                                                          cancelButton={true}/>}
@@ -153,6 +165,9 @@ class Scim extends React.Component {
                 <div className="info-block">
                     {this.renderServices(services)}
                 </div>
+                {sweepResults && <div className="info-block">
+                    {this.renderSweepResults(sweepResults)}
+                </div>}
 
 
             </div>);
