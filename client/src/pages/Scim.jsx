@@ -24,7 +24,8 @@ class Scim extends React.Component {
             confirmationDialogQuestion: "",
             statistics: null,
             sweepResults: null,
-            sweepService: null
+            sweepService: null,
+            sweepTime: 0
         };
     }
 
@@ -52,8 +53,13 @@ class Scim extends React.Component {
 
     doSweep = service => {
         this.setState({loading: true});
+        const now = new Date();
         sweep(service).then(res => {
-            this.setState({sweepResults: res, sweepService: service, loading: false});
+            this.setState({
+                sweepResults: res,
+                sweepService: service,
+                sweepTime: new Date().getMilliseconds() - now.getMilliseconds(),
+                loading: false});
         })
     }
 
@@ -73,11 +79,11 @@ class Scim extends React.Component {
         return <ReactJson src={statistics} collapsed={1}/>
     }
 
-    renderSweepResults = (sweepResults, sweepService) => {
+    renderSweepResults = (sweepResults, sweepService, sweepTime) => {
         return (
             <div className="sweep-results-container">
                 <div className="sweep-results">
-                    <h2>{`Results from SCIM sync for service ${sweepService.name}`}</h2>
+                    <h2>{`Results from SCIM sync for service ${sweepService.name} (in ${sweepTime} ms)`}</h2>
                     <Button txt={"Clear"} onClick={() => this.clearSweepResults()}/>
                 </div>
                 <ReactJson src={sweepResults}/>
@@ -140,7 +146,7 @@ class Scim extends React.Component {
     render() {
         const {
             services, loading, statistics, confirmationDialogOpen, confirmationDialogAction,
-            confirmationDialogQuestion, sweepResults, sweepService
+            confirmationDialogQuestion, sweepResults, sweepService, sweepTime
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -178,7 +184,7 @@ class Scim extends React.Component {
                     {this.renderServices(services)}
                 </div>
                 {sweepResults && <div className="info-block">
-                    {this.renderSweepResults(sweepResults, sweepService)}
+                    {this.renderSweepResults(sweepResults, sweepService, sweepTime)}
                 </div>}
 
 
