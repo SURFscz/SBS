@@ -11,6 +11,8 @@ class TestMockScim(AbstractTest):
 
     # Very lengthy flow test, but we need the ordering right
     def test_mock_scim_flow(self):
+        self.delete("/api/scim_mock/clear")
+
         cloud_service = self.find_entity_by_name(Service, service_cloud_name)
         headers = {"X-Service": str(cloud_service.id), "Authorization": f"bearer {cloud_service.scim_bearer_token}"}
         sarah = self.find_entity_by_name(User, sarah_name)

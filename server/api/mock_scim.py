@@ -13,9 +13,9 @@ from server.db.domain import Service
 
 scim_mock_api = Blueprint("scim_mock_api", __name__, url_prefix="/api/scim_mock")
 
-# Global in-memory database and http call history
-database = {}
-http_calls = {}
+# Global in-memory database and http call history using redis (for load-balanced environments)
+DATABASE_KEY = "database_redis_key"
+HTTP_CALLS_KEY = "http_calls_redis_key"
 
 
 def _check_authorization_header(service_id):
@@ -27,18 +27,30 @@ def _check_authorization_header(service_id):
         raise Unauthorized(description="Invalid bearer token")
 
 
+def _get_redis(redis_key):
+    redis_value = current_app.redis_client.get(redis_key)
+    if not redis_value:
+        current_app.redis_client.set(redis_key, "{}")
+    return json.loads(redis_value) if redis_value else {}
+
+
+def _set_redis(redis_key, value):
+    current_app.redis_client.set(redis_key, json.dumps(value))
+
+
 def _log_scim_request(service_id):
-    global http_calls
-    service = http_calls.get(service_id, None)
+    http_calls_db = _get_redis(HTTP_CALLS_KEY)
+    service = http_calls_db.get(service_id, None)
     if service is None:
         service = []
-        http_calls[service_id] = service
+        http_calls_db[service_id] = service
     method = current_request.method
     body = current_request.json if method in ["PUT", "POST"] and current_request.is_json else {}
     service.append({"method": method,
                     "path": current_request.path,
                     "args": current_request.args,
                     "body": json.dumps(body, default=str)})
+    _set_redis(HTTP_CALLS_KEY, http_calls_db)
 
 
 def scim_endpoint(f):
@@ -46,19 +58,35 @@ def scim_endpoint(f):
     def wrapper(*args, **kwargs):
         service_id = current_request.headers.get("X-Service")
         _check_authorization_header(service_id)
-        request_context.service_id = service_id
+        # Dict keys are strings
+        request_context.service_id = str(service_id)
         _log_scim_request(service_id)
         return f(*args, **kwargs)
 
     return wrapper
 
 
-def _get_database_service():
+def _ensure_service_exists(database):
     service = database.get(request_context.service_id, None)
     if service is None:
         service = {"users": {}, "groups": {}}
         database[request_context.service_id] = service
+        _set_redis(DATABASE_KEY, database)
     return service
+
+
+def _get_database_service():
+    database = _get_redis(DATABASE_KEY)
+    return _ensure_service_exists(database)
+
+
+def _save_database_service(collection_name, service_data, new_id):
+    database = _get_redis(DATABASE_KEY)
+    service = _ensure_service_exists(database)
+    if collection_name not in service:
+        service[collection_name] = {}
+    service[collection_name][new_id] = service_data
+    _set_redis(DATABASE_KEY, database)
 
 
 def _find_scim_object(collection_name):
@@ -69,19 +97,18 @@ def _find_scim_object(collection_name):
         return {"totalResults": len(resources), "Resources": resources}
     external_id = re.search(r"externalId eq \"(.*)\"", filter_param).groups()[0]
     res = list(filter(lambda obj: obj["externalId"] == external_id, resources))
-    return {"totalResults": 1, "Resources": [res[0]]} if res else {"totalResults": 0}
+    return {"totalResults": len(res), "Resources": res}
 
 
 def _new_scim_object(collection_name, collection_type):
     data = current_request.get_json()
-    service = _get_database_service()
     new_id = str(uuid.uuid4())
     data["id"] = new_id
     data["meta"] = {
         "resourceType": collection_type,
         "location": f"/{collection_name.capitalize()}/{new_id}",
     }
-    service[collection_name][new_id] = data
+    _save_database_service(collection_name, data, new_id)
     return data
 
 
@@ -92,16 +119,19 @@ def _update_scim_object(scim_id, collection_name):
     if not res:
         raise BadRequest(f"No scim {collection_name} found with id {scim_id}")
     new_entry = {**res, **data}
-    service[collection_name][scim_id] = new_entry
+    _save_database_service(collection_name, new_entry, scim_id)
     return new_entry
 
 
 def _delete_scim_object(scim_id, collection_name):
-    service = _get_database_service()
-    res = service[collection_name].get(scim_id)
-    if res:
-        del service[collection_name][scim_id]
-    return res if res else {}
+    database = _get_redis(DATABASE_KEY)
+    service = database.get(request_context.service_id, None)
+    if service:
+        res = service[collection_name].get(scim_id)
+        if res:
+            del service[collection_name][scim_id]
+        _set_redis(DATABASE_KEY, database)
+    return {}
 
 
 @scim_mock_api.route("/Users", methods=["GET"], strict_slashes=False)
@@ -165,7 +195,7 @@ def delete_group(scim_id):
 def statistics():
     confirm_write_access()
 
-    res = {"database": database, "http_calls": http_calls}
+    res = {"database": _get_redis(DATABASE_KEY), "http_calls": _get_redis(HTTP_CALLS_KEY)}
     return res, 200
 
 
@@ -185,10 +215,7 @@ def scim_service():
 def clear():
     confirm_write_access()
 
-    global database
-    database = {}
-
-    global http_calls
-    http_calls = {}
+    _set_redis(DATABASE_KEY, {})
+    _set_redis(HTTP_CALLS_KEY, {})
 
     return {}, 204
