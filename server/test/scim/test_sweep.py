@@ -45,22 +45,26 @@ class TestSweep(AbstractTest):
             rsps.add(responses.DELETE,
                      "http://localhost:8080/api/scim_mock/Users/1DE53F36-2DB3-4CD4-8204-6692958F1133",
                      status=204)
+            user_created = json.loads(read_file("test/scim/user_created.json"))
             rsps.add(responses.PUT,
                      "http://localhost:8080/api/scim_mock/Users/CC7352C1-D752-4588-9FF3-014800EA094B",
-                     status=201)
-            user_created = json.loads(read_file("test/scim/user_created.json"))
+                     json=user_created, status=201)
             rsps.add(responses.POST, "http://localhost:8080/api/scim_mock/Users", json=user_created, status=201)
 
-            rsps.add(responses.PUT, "http://localhost:8080/api/scim_mock/Groups/768F27CF-98E2-42B4-9913-3AACF370D8FD",
-                     status=201)
-            rsps.add(responses.PUT, "http://localhost:8080/api/scim_mock/Groups/204DD260-D297-41E2-97AF-CDEF68EFB35B",
-                     status=201)
             group_created = json.loads(read_file("test/scim/group_created.json"))
+            rsps.add(responses.PUT, "http://localhost:8080/api/scim_mock/Groups/768F27CF-98E2-42B4-9913-3AACF370D8FD",
+                     json=group_created, status=201)
+            rsps.add(responses.PUT, "http://localhost:8080/api/scim_mock/Groups/204DD260-D297-41E2-97AF-CDEF68EFB35B",
+                     json=group_created, status=201)
             rsps.add(responses.POST, "http://localhost:8080/api/scim_mock/Groups", json=group_created, status=201)
 
             sync_results = perform_sweep(service)
-            sync_results_expected = json.loads(read_file("test/scim/sweep/sync_results_expected.json"))
-            self.assertDictEqual(sync_results_expected, sync_results)
+            self.assertEqual(1, len(sync_results["users"]["deleted"]))
+            self.assertEqual(1, len(sync_results["users"]["created"]))
+            self.assertEqual(1, len(sync_results["users"]["updated"]))
+            self.assertEqual(1, len(sync_results["groups"]["deleted"]))
+            self.assertEqual(1, len(sync_results["groups"]["created"]))
+            self.assertEqual(2, len(sync_results["groups"]["updated"]))
 
     @responses.activate
     def test_paginated_scim_results(self):
