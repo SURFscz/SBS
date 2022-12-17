@@ -12,17 +12,17 @@ from server.scim.scim import scim_headers, validate_response
 from server.scim.user_template import create_user_template, replace_none_values, update_user_template
 
 
-def replace_empty_string_values(d: dict):
+def _replace_empty_string_values(d: dict):
     for k, v in d.items():
         if isinstance(v, dict):
-            replace_empty_string_values(v)
+            _replace_empty_string_values(v)
         elif v == "":
             d[k] = None
     return d
 
 
 def _user_changed(user: User, remote_user: dict):
-    remote_user = replace_empty_string_values(remote_user)
+    remote_user = _replace_empty_string_values(remote_user)
     if remote_user.get("userName") != user.username:
         return True
     if remote_user.get("name", {}).get("givenName") != user.given_name:
@@ -43,6 +43,7 @@ def _user_changed(user: User, remote_user: dict):
 
 
 def _group_changed(group: Union[Group, Collaboration], remote_group: dict, remote_scim_users: List[dict]):
+    remote_group = _replace_empty_string_values(remote_group)
     if remote_group.get("displayName") != group.global_urn:
         return True
     sram_members = sorted([member.user.external_id for member in group.collaboration_memberships if member.is_active])
@@ -158,7 +159,7 @@ def perform_sweep(service: Service):
                 sync_results["groups"]["created"].append(response_json)
         else:
             remote_group = remote_groups_by_external_id[group.identifier]
-            if _group_changed(group, replace_empty_string_values(remote_group), remote_scim_users):
+            if _group_changed(group, remote_group, remote_scim_users):
                 scim_dict = update_group_template(group, membership_scim_objects, remote_group["id"])
                 url = f"{service.scim_url}{remote_group['meta']['location']}"
                 scim_dict_cleansed = replace_none_values(scim_dict)
@@ -166,4 +167,5 @@ def perform_sweep(service: Service):
                 if validate_response(response, service, outside_user_context=True):
                     response_json = response.json()
                     sync_results["groups"]["updated"].append(response_json)
+
     return sync_results
