@@ -24,6 +24,7 @@ import Logo from "./Logo";
 import CheckBox from "../CheckBox";
 import MissingServices from "../MissingServices";
 import moment from "moment";
+import {socket, subscriptionIdCookieName} from "../../utils/SocketIO";
 
 class UsedServices extends React.Component {
 
@@ -42,8 +43,14 @@ class UsedServices extends React.Component {
             disabledConfirm: false,
             confirmationChildren: false,
             selectedService: null,
-            warning: false
+            warning: false,
+            socketSubscribed: false
         }
+    }
+
+    componentWillUnmount = () => {
+        const {collaboration} = this.props;
+        socket.then(s => s.off(`collaboration_${collaboration.id}`));
     }
 
     componentDidMount = () => {
@@ -61,7 +68,6 @@ class UsedServices extends React.Component {
                 .concat(requestedServices)
                 .concat(memberRequestedServices)
                 .map(e => e.id);
-
             const filteredServices = services
                 .filter(service => {
                     return (service.allowed_organisations.some(org => org.id === collaboration.organisation_id)
@@ -69,6 +75,19 @@ class UsedServices extends React.Component {
                         && (service.white_listed || !collaboration.organisation.services_restricted);
                 });
             this.setState({services: filteredServices, loading: false});
+            const {socketSubscribed} = this.state;
+            if (!socketSubscribed) {
+                [`collaboration_${collaboration.id}`, "service"].forEach(topic => {
+                    socket.then(s => s.on(topic, data => {
+                        const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
+                        if (subscriptionIdSessionStorage !== data.subscription_id) {
+                            //Ensure we don't get race conditions with the refresh in CollaborationDetail
+                            setTimeout(this.componentDidMount, 1500);
+                        }
+                    }));
+                })
+                this.setState({socketSubscribed: true})
+            }
         });
     }
 
@@ -93,7 +112,7 @@ class UsedServices extends React.Component {
             service.status = service.connectionRequest ? I18n.t("models.services.awaitingApproval") : ""
         } else {
             const allowedToConnect = service.automatic_connection_allowed ||
-                service.automatic_connection_allowed_organisations.filter(org => org.id === collaboration.organisation.id) .length > 0;
+                service.automatic_connection_allowed_organisations.filter(org => org.id === collaboration.organisation.id).length > 0;
             service.status = allowedToConnect ? I18n.t("models.services.automaticConnectionAllowed") : "";
         }
         return service.status;
@@ -290,7 +309,7 @@ class UsedServices extends React.Component {
                            txt={I18n.t("models.services.removeFromCO")}/>
         }
         const allowedToConnect = service.automatic_connection_allowed ||
-                service.automatic_connection_allowed_organisations.filter(org => org.id === collaboration.organisation.id) .length > 0;
+            service.automatic_connection_allowed_organisations.filter(org => org.id === collaboration.organisation.id).length > 0;
 
         if (!service.usedService && allowedToConnect) {
             return <Button className={"white"}

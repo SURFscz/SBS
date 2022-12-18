@@ -2,7 +2,7 @@
 from flask import Blueprint, request as current_request, session
 from werkzeug.exceptions import Forbidden
 
-from server.api.base import json_endpoint
+from server.api.base import json_endpoint, emit_socket
 from server.auth.secrets import generate_token, hash_secret_key
 from server.auth.security import confirm_service_admin
 from server.db.domain import ServiceToken, Service
@@ -36,6 +36,8 @@ def save_service_token():
         service.token_validity_days = data.get("token_validity_days", 1)
         db.session.merge(service)
 
+    emit_socket(f"service_{service.id}")
+
     return save(ServiceToken, custom_json=data)
 
 
@@ -44,4 +46,7 @@ def save_service_token():
 def delete_service_token(service_token_id):
     service_id = ServiceToken.query.get(service_token_id).service_id
     confirm_service_admin(service_id)
+
+    emit_socket(f"service_{service_id}")
+
     return delete(ServiceToken, service_token_id)

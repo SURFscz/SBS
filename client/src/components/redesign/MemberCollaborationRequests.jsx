@@ -8,6 +8,7 @@ import Select from "react-select";
 import SpinnerField from "./SpinnerField";
 import UserColumn from "./UserColumn";
 import {dateFromEpoch} from "../../utils/Date";
+import {socket, subscriptionIdCookieName} from "../../utils/SocketIO";
 
 const allValue = "all";
 
@@ -18,11 +19,19 @@ export default class MemberCollaborationRequests extends React.PureComponent {
         this.state = {
             filterOptions: [],
             filterValue: {},
-            loading: true
+            loading: true,
+            socketSubscribed: false
         }
     }
 
-    componentDidMount = () => {
+    componentWillUnmount = () => {
+        const {collaboration_requests} = this.props;
+        collaboration_requests.forEach(collaborationRequests => {
+            socket.then(s => s.off(`organisation_${collaborationRequests.organisation_id}`));
+        });
+    }
+
+    componentDidMount = callback => {
         const {collaboration_requests, user, isPersonal = true} = this.props;
         if (isPersonal) {
             collaboration_requests.forEach(cr => {
@@ -51,11 +60,24 @@ export default class MemberCollaborationRequests extends React.PureComponent {
             value: option.status
         })).sort((o1, o2) => o1.label.localeCompare(o2.label));
 
+        const {socketSubscribed} = this.state;
+        if (!socketSubscribed) {
+            collaboration_requests.forEach(collaborationRequests => {
+                socket.then(s => s.on(`organisation_${collaborationRequests.organisation_id}`, data => {
+                    const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
+                    const {refreshUserHook} = this.props;
+                    if (subscriptionIdSessionStorage !== data.subscription_id) {
+                        refreshUserHook(() => this.componentDidMount());
+                    }
+                }));
+            })
+            this.setState({socketSubscribed: true})
+        }
         this.setState({
             filterOptions: filterOptions.concat(statusOptions),
             filterValue: filterOptions[0],
             loading: false
-        });
+        }, callback);
     }
 
 

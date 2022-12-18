@@ -8,6 +8,7 @@ import UserColumn from "./UserColumn";
 import Select from "react-select";
 import Logo from "./Logo";
 import {dateFromEpoch} from "../../utils/Date";
+import {socket, subscriptionIdCookieName} from "../../utils/SocketIO";
 
 const allValue = "all";
 
@@ -19,8 +20,15 @@ class MemberJoinRequests extends React.Component {
             loading: true,
             filterOptions: [],
             filterValue: {},
-
+            socketSubscribed: false
         }
+    }
+
+    componentWillUnmount = () => {
+        const {join_requests} = this.props;
+        join_requests.forEach(joinRequest => {
+            socket.then(s => s.off(`collaboration_${joinRequest.collaboration_id}`));
+        });
     }
 
     componentDidMount = callback => {
@@ -46,6 +54,20 @@ class MemberJoinRequests extends React.Component {
             label: `${I18n.t("collaborationRequest.statuses." + option.status)} (${option.nbr})`,
             value: option.status
         })).sort((o1, o2) => o1.label.localeCompare(o2.label));
+
+        const {socketSubscribed} = this.state;
+        if (!socketSubscribed) {
+            join_requests.forEach(joinRequest => {
+                socket.then(s => s.on(`collaboration_${joinRequest.collaboration_id}`, data => {
+                    const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
+                    const {refreshUserHook} = this.props;
+                    if (subscriptionIdSessionStorage !== data.subscription_id) {
+                        refreshUserHook(() => this.componentDidMount());
+                    }
+                }));
+            })
+            this.setState({socketSubscribed: true})
+        }
 
         this.setState({
             filterOptions: filterOptions.concat(statusOptions),

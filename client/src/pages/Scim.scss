@@ -31,7 +31,7 @@
         thead {
             th {
                 &.name {
-                    width: 25%;
+                    width: 15%;
                     padding-left: 15px;
                 }
 
@@ -40,12 +40,12 @@
                 }
 
                 &.scim_url {
-                    width: 40%;
+                    width: 30%;
                 }
 
-                &.scim_enabled {
+                &.scim_enabled, &.sweep_scim_enabled  {
                     text-align: center;
-                    width: 10%;
+                    width: 15%;
                 }
 
                 &.sweep {
@@ -60,7 +60,7 @@
                     padding-left: 15px;
                 }
 
-                &.scim_enabled {
+                &.scim_enabled, &.sweep_scim_enabled {
                     text-align: center;
                 }
 

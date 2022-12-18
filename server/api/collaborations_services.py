@@ -40,7 +40,9 @@ def connect_service_collaboration(service_id, collaboration_id, force=False):
     create_service_groups(service, collaboration)
 
     db.session.commit()
+
     emit_socket(f"collaboration_{collaboration.id}")
+    emit_socket(f"service_{service.id}", include_current_user_id=True)
     broadcast_service_added(collaboration, service)
 
     return 1
@@ -118,8 +120,10 @@ def delete_collaborations_services(collaboration_id, service_id):
     service = Service.query.get(service_id)
     collaboration.services.remove(service)
     db.session.merge(collaboration)
+    db.session.commit()
 
-    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
+    emit_socket(f"collaboration_{collaboration.id}")
+    emit_socket(f"service_{service.id}")
     broadcast_service_deleted(collaboration, service)
 
     return {'collaboration_id': collaboration.id, 'service_id': service.id}, 204

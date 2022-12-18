@@ -16,8 +16,6 @@ def _result_container():
 
 def _do_scim_sweep_services(app):
     with app.app_context():
-        now = datetime.datetime.utcnow()
-
         start = int(time.time() * 1000.0)
         logger = logging.getLogger("scheduler")
         logger.info("Start running scim_sweep_services job")
@@ -26,18 +24,20 @@ def _do_scim_sweep_services(app):
             .filter(Service.sweep_scim_enabled == True) \
             .all()  # noqa: E712
 
+        now = datetime.datetime.utcnow()
+
         def service_needs_sweeping(service: Service):
             if service.sweep_scim_last_run is None:
                 return True
-            cutoff_time = service.sweep_scim_last_run + datetime.timedelta(hours=service.sweep_scim_daily_rate)
-            return now > cutoff_time
+            cutoff_time = service.sweep_scim_last_run + datetime.timedelta(hours=24 / service.sweep_scim_daily_rate)
+            return cutoff_time < now
 
         services_sweeping = [service for service in services if service_needs_sweeping(service)]
         aggregated_results = _result_container()
         for service in services_sweeping:
             sync_results = perform_sweep(service)
             aggregated_results["services"].append({"name": service.name, "sync_results": sync_results})
-            service.sweep_scim_last_run = datetime.datetime.utcnow()
+            service.sweep_scim_last_run = now
             db.session.merge(service)
             db.session.commit()
 

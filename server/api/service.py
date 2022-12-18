@@ -327,6 +327,7 @@ def toggle_access_allowed_for_all(service_id):
     db.session.merge(service)
 
     emit_socket(f"service_{service_id}")
+    emit_socket("service")
 
     return None, 201
 
@@ -403,6 +404,7 @@ def update_service():
         data["pam_web_sso_enabled"] = service.pam_web_sso_enabled
 
     automatic_connection_allowed = data.get("automatic_connection_allowed", False)
+    emit_organisations = (automatic_connection_allowed is not service.automatic_connection_allowed)
     if automatic_connection_allowed:
         service.automatic_connection_allowed_organisations.clear()
     else:
@@ -411,8 +413,10 @@ def update_service():
                          data.get("automatic_connection_allowed_organisations", [])]
         existing_organisations = service.automatic_connection_allowed_organisations
         for org in [org for org in organisations if org not in existing_organisations]:
+            emit_organisations = True
             service.automatic_connection_allowed_organisations.append(org)
         for org in [org for org in existing_organisations if org not in organisations]:
+            emit_organisations = True
             service.automatic_connection_allowed_organisations.remove(org)
 
     res = update(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
@@ -420,6 +424,8 @@ def update_service():
     service.ip_networks
 
     emit_socket(f"service_{service_id}")
+    if emit_organisations:
+        emit_socket("service")
 
     return res
 
@@ -473,6 +479,7 @@ def add_allowed_organisations(service_id):
         db.engine.execute(text(coll_sql))
 
     emit_socket(f"service_{service_id}")
+    emit_socket("service")
 
     return None, 201
 

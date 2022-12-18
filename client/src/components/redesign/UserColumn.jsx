@@ -3,6 +3,9 @@ import I18n from "i18n-js";
 import "./UserColumn.scss";
 
 export default function UserColumn({entity, currentUser, gotoInvitation, hideEmail = false, showMe = true}) {
+    if (!entity.invite && !entity.user) {
+        return null;
+    }
 
     return (
         <div className="user-name-email-container">

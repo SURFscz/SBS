@@ -77,9 +77,7 @@ class ServiceDetail extends React.Component {
         AppStore.update(s => {
             s.sideComponent = null;
         });
-
     }
-
 
     componentDidMount = () => {
         const params = this.props.match.params;

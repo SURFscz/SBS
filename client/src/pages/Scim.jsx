@@ -59,7 +59,8 @@ class Scim extends React.Component {
                 sweepResults: res,
                 sweepService: service,
                 sweepTime: new Date().getMilliseconds() - now.getMilliseconds(),
-                loading: false});
+                loading: false
+            });
         })
     }
 
@@ -120,9 +121,15 @@ class Scim extends React.Component {
                 mapper: service => <span>{I18n.t(`forms.${service.scim_enabled ? "yes" : "no"}`)}</span>
             },
             {
+                key: "sweep_scim_enabled",
+                header: I18n.t("system.scim.service.sweepScimEnabled"),
+                mapper: service => <span>{I18n.t(`forms.${service.sweep_scim_enabled ? "yes" : "no"}`)}</span>
+            },
+            {
                 key: "sweep",
                 header: "",
-                mapper: service => <Button txt={"Sweep"} onClick={() => this.doSweep(service)}/>
+                mapper: service => <Button txt={I18n.t("system.scim.service.sweep")}
+                                           onClick={() => this.doSweep(service)}/>
             }
         ];
         return (
