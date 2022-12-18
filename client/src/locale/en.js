@@ -1746,6 +1746,8 @@ I18n.translations.en = {
                 scimUrl: "Scim URL",
                 id: "Id",
                 scimEnabled: "Scim enabled",
+                sweepScimEnabled: "Sweep enabled",
+                sweep: "Sweep",
                 scimProvisionUsers: "Provision users?",
                 scimProvisionGroups: "Provision groups?"
             }

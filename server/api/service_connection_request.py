@@ -51,6 +51,7 @@ def _do_service_connection_request(hash_value, approved):
     db.session.delete(service_connection_request)
 
     emit_socket(f"service_{service.id}", include_current_user_id=True)
+    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
 
     return {}, 201
 
@@ -100,6 +101,7 @@ def delete_service_request_connection(service_connection_request_id):
     service = service_connection_request.service
 
     emit_socket(f"service_{service.id}")
+    emit_socket(f"collaboration_{service_connection_request.collaboration_id}", include_current_user_id=True)
 
     return delete(ServiceConnectionRequest, service_connection_request_id)
 
@@ -140,6 +142,7 @@ def request_new_service_connection(collaboration, message, is_admin, service, us
     db.session.commit()
 
     emit_socket(f"service_{service.id}")
+    emit_socket(f"collaboration_{collaboration.id}")
 
     _do_mail_request(collaboration, service, service_connection_request, is_admin, user)
 

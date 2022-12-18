@@ -253,6 +253,7 @@ class App extends React.Component {
                                    }
                                    return <ProtectedRoute
                                        currentUser={currentUser}
+                                       refreshUser={this.refreshUserMemberships}
                                        Component={Home} config={config} {...props}/>
                                }}/>
 

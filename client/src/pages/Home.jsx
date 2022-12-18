@@ -36,7 +36,7 @@ class Home extends React.Component {
         };
     }
 
-    componentDidMount = () => {
+    componentDidMount = callback => {
         const params = this.props.match.params;
         let tab = params.tab || this.state.tab;
         const {user} = this.props;
@@ -85,7 +85,7 @@ class Home extends React.Component {
                     return;
                 }
         }
-        const tabSuggestion = this.addRequestsTabs(user, tabs, tab);
+        const tabSuggestion = this.addRequestsTabs(user, this.refreshUserHook, tabs, tab);
         if (role === ROLES.USER) {
             tab = tabSuggestion;
         }
@@ -103,16 +103,22 @@ class Home extends React.Component {
             ];
         });
         this.tabChanged(tab);
+        callback && callback();
         this.setState({role: role, loading: false, tabs, tab});
     };
 
-    addRequestsTabs = (user, tabs, tab) => {
+    refreshUserHook = callback => {
+        const {refreshUser} = this.props;
+        refreshUser(() => this.componentDidMount(callback));
+    }
+
+    addRequestsTabs = (user, refreshUserHook, tabs, tab) => {
         if (!isEmpty(user.join_requests)) {
-            tabs.push(this.getMemberJoinRequestsTab(user.join_requests));
+            tabs.push(this.getMemberJoinRequestsTab(user.join_requests, refreshUserHook));
             tab = (tab !== "collaboration_requests") ? "joinrequests" : tab;
         }
         if (!isEmpty(user.collaboration_requests)) {
-            tabs.push(this.getCollaborationRequestsTab(user.collaboration_requests));
+            tabs.push(this.getCollaborationRequestsTab(user.collaboration_requests, refreshUserHook));
             if (isEmpty(user.join_requests)) {
                 tab = "collaboration_requests"
             }
@@ -163,25 +169,26 @@ class Home extends React.Component {
         </div>)
     }
 
-    getMemberJoinRequestsTab = join_requests => {
+    getMemberJoinRequestsTab = (join_requests, refreshUserHook) => {
         const openJoinRequests = (join_requests || []).filter(jr => jr.status === "open").length;
         return (<div key="joinrequests"
                      name="joinrequests"
                      label={I18n.t("home.tabs.joinRequests", {count: (join_requests || []).length})}
                      icon={<JoinRequestsIcon/>}
                      notifier={openJoinRequests > 0 ? openJoinRequests : null}>
-            <MemberJoinRequests join_requests={join_requests} {...this.props} />
+            <MemberJoinRequests join_requests={join_requests} refreshUserHook={refreshUserHook} {...this.props} />
         </div>)
     }
 
-    getCollaborationRequestsTab = collaboration_requests => {
+    getCollaborationRequestsTab = (collaboration_requests, refreshUserHook) => {
         const crl = (collaboration_requests || []).filter(cr => cr.status === "open").length;
         return (<div key="collaboration_requests"
                      name="collaboration_requests"
                      label={I18n.t("home.tabs.collaborationRequests", {count: (collaboration_requests || []).length})}
                      notifier={crl > 0 ? crl : null}
                      icon={<CollaborationRequestsIcon/>}>
-            <MemberCollaborationRequests {...this.props} collaboration_requests={collaboration_requests}/>
+            <MemberCollaborationRequests {...this.props} refreshUserHook={refreshUserHook}
+                                         collaboration_requests={collaboration_requests}/>
         </div>)
     }
 

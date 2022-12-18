@@ -91,16 +91,18 @@ class OrganisationDetail extends React.Component {
                     }
                     const {socketSubscribed} = this.state;
                     if (!socketSubscribed) {
-                        socket.then(s => s.on(`organisation_${organisation_id}`, data => {
-                            const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
-                            if (subscriptionIdSessionStorage !== data.subscription_id) {
-                                if (data.current_user_id === user.id) {
-                                    this.props.refreshUser(() => this.componentDidMount());
-                                } else {
-                                    this.componentDidMount();
+                        [`organisation_${organisation_id}`, "service"].forEach(topic => {
+                            socket.then(s => s.on(topic, data => {
+                                const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
+                                if (subscriptionIdSessionStorage !== data.subscription_id) {
+                                    if (data.current_user_id === user.id) {
+                                        this.props.refreshUser(() => this.componentDidMount());
+                                    } else {
+                                        this.componentDidMount();
+                                    }
                                 }
-                            }
-                        }));
+                            }));
+                        });
                         this.setState({socketSubscribed: true})
                     }
                     const adminOfOrganisation = json.organisation_memberships

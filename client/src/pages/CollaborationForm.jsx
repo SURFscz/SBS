@@ -9,7 +9,8 @@ import {
     deleteCollaboration,
     myOrganisationsLite,
     organisationsByUserSchacHomeOrganisation,
-    requestCollaboration, tagsByOrganisation,
+    requestCollaboration,
+    tagsByOrganisation,
     updateCollaboration
 } from "../api";
 import I18n from "i18n-js";

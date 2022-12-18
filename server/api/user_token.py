@@ -3,7 +3,7 @@ import datetime
 from flask import Blueprint, jsonify, request as current_request, session
 from werkzeug.exceptions import Forbidden
 
-from server.api.base import json_endpoint, query_param
+from server.api.base import json_endpoint, query_param, emit_socket
 from server.api.service import user_service
 from server.auth.secrets import generate_token, hash_secret_key
 from server.auth.security import current_user_id
@@ -63,6 +63,9 @@ def save_token():
     data["hashed_token"] = generated_token
     data = _sanitize_and_verify(data)
     del session["generated_token"]
+
+    emit_socket(f"service_{data['service_id']}")
+
     return save(UserToken, custom_json=data)
 
 
@@ -71,10 +74,14 @@ def save_token():
 def update_token():
     data = _sanitize_and_verify(current_request.get_json(), hash_token=False)
     user_token = UserToken.query.get(data["id"])
-    user_token.service = Service.query.get(data["service_id"])
+    service_id = data["service_id"]
+    user_token.service = Service.query.get(service_id)
     user_token.name = data.get("name")
     user_token.description = data.get("description")
     db.session.merge(user_token)
+
+    emit_socket(f"service_{service_id}")
+
     return {}, 201
 
 
@@ -94,4 +101,7 @@ def delete_api_key(user_token_id):
     user_token = UserToken.query.get(user_token_id)
     if current_user_id() != user_token.user_id:
         raise Forbidden("Can not delete user_token from someone else")
+
+    emit_socket(f"service_{user_token.service_id}")
+
     return delete(UserToken, user_token_id)

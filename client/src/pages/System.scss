@@ -20,6 +20,10 @@
             align-items: stretch;
             flex-direction: column;
 
+            p {
+                margin: 5px 0 20px 0;
+            }
+
             @media (max-width: $tablet-max) {
                 flex-direction: column;
             }
@@ -269,6 +273,14 @@
             }
         }
 
+    }
+
+    table.suspended-users {
+        tbody {
+            td {
+                padding: 2px 2px;
+            }
+        }
     }
 
 }
