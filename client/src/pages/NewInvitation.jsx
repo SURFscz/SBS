@@ -77,7 +77,7 @@ class NewInvitation extends React.Component {
                         groups: collaboration.groups.map(ag => ({value: ag.id, label: ag.name})),
                     });
                     this.updateAppStore(collaboration, this.props.user);
-                });
+                }).catch(() => this.props.history.push("/"));
         } else {
             this.props.history.push("/404");
         }

@@ -55,7 +55,10 @@ class OrganisationDetail extends React.Component {
         const params = this.props.match.params;
         if (params.id) {
             const organisation_id = parseInt(params.id, 10);
-            socket.then(s => s.off(`organisation_${organisation_id}`));
+            [`organisation_${organisation_id}`, "service"].forEach(topic => {
+                socket.then(s => s.off(topic));
+            });
+
         }
     }
 
@@ -86,7 +89,7 @@ class OrganisationDetail extends React.Component {
                     const member = (user.organisation_memberships || [])
                         .find(membership => membership.organisation_id === json.id);
                     if (isEmpty(member) && !user.admin) {
-                        this.props.history.push("/404");
+                        this.props.history.push("/");
                         return;
                     }
                     const {socketSubscribed} = this.state;
@@ -130,9 +133,8 @@ class OrganisationDetail extends React.Component {
                         loading: false
                     }, callBack);
 
-                })
-                .catch(() => {
-                    this.props.history.push("/404")
+                }).catch(() => {
+                    this.props.history.push("/")
                 });
         } else {
             this.props.history.push("/404");

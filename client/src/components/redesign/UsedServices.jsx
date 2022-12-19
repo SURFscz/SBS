@@ -50,12 +50,16 @@ class UsedServices extends React.Component {
 
     componentWillUnmount = () => {
         const {collaboration} = this.props;
-        socket.then(s => s.off(`collaboration_${collaboration.id}`));
+        [`collaboration_${collaboration.id}`, "service"].forEach(topic => {
+            socket.then(s => s.off(topic));
+        });
+
     }
 
     componentDidMount = () => {
         const {collaboration} = this.props;
-        allServices().then(json => {
+        allServices()
+            .then(json => {
             const services = json;
             const requestedServices = collaboration.service_connection_requests
                 .filter(r => !r.is_member_request)
@@ -82,13 +86,13 @@ class UsedServices extends React.Component {
                         const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
                         if (subscriptionIdSessionStorage !== data.subscription_id) {
                             //Ensure we don't get race conditions with the refresh in CollaborationDetail
-                            setTimeout(this.componentDidMount, 1500);
+                            setTimeout(this.componentDidMount, 1000);
                         }
                     }));
                 })
                 this.setState({socketSubscribed: true})
             }
-        });
+        }).catch(() => this.props.history.push("/"));
     }
 
     openService = service => e => {

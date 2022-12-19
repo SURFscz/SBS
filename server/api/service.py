@@ -390,6 +390,9 @@ def update_service():
         for attr in [fb for fb in forbidden if fb in data]:
             data[attr] = getattr(service, attr)
 
+    if "sweep_scim_last_run" in data:
+        del data["sweep_scim_last_run"]
+
     if "ldap_password" in data:
         del data["ldap_password"]
 

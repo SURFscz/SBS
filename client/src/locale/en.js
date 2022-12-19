@@ -2016,7 +2016,7 @@ I18n.translations.en = {
         sweepScimEnabled: "Enable SCIM Sweeping?",
         sweepScimEnabledTooltip: "Do we periodically sweep the SCIM data? Meaning we check (and update if necessary) if the Service data is still in sync with the SRAM data.",
         scimSweepDeleteOrphans: "Delete orphan user and empty collaborations / groups",
-        scimSweepDeleteOrphansTooltip: "If checked then we delete users that have no more memberships and groups / collaboration without any members",
+        scimSweepDeleteOrphansTooltip: "If checked then during the SCIM sweep we delete users that have no more memberships and groups / collaboration without any members in the remote SCIM system of this Service",
         sweepScimDailyRate: "Sweep daily rate",
         sweepScimDailyRateTooltip: "The number of times within one day (24 hours) we sweep the remote SCIM data"
     },

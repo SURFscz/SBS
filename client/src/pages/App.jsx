@@ -78,6 +78,10 @@ class App extends React.Component {
                 window.location.href = "/404";
                 return;
             }
+            if (err && err.response && err.response.status === 403) {
+                window.location.href = "/";
+                return;
+            }
             this.setState({errorDialogOpen: true});
             const info = err || {};
             const response = info.response || {};

@@ -23,6 +23,7 @@ function validateResponse(showErrorDialog) {
             error.response = res;
             if (showErrorDialog && res.status === 401) {
                 window.location.reload(true);
+                return;
             }
             if (showErrorDialog) {
                 setTimeout(() => {
@@ -100,8 +101,8 @@ export function me(config) {
     if (config.local && 1 == 1) {
         let sub = "urn:service_admin";
         sub = "urn:john";
-        // sub = "urn:peter"
-        //Need to mock a login
+        // sub = "urn:peter";
+        // Need to mock a login
         return postPutJson("/api/mock", {sub, "name": "John Doe", "email": "john@example.org"}, "PUT")
             .then(() => fetchJson("/api/users/me", {}, {}, false));
     } else {
@@ -222,7 +223,7 @@ export function serviceByEntityId(entityid) {
 
 export function allServices(includeCounts) {
     const query = includeCounts ? "?include_counts=true" : "";
-    return fetchJson(`/api/services/all${query}`);
+    return fetchJson(`/api/services/all${query}`,{}, {}, false);
 }
 
 export function mineServices() {
