@@ -8,7 +8,7 @@ from server.auth.security import confirm_collaboration_admin, confirm_external_a
 from server.db.db import db
 from server.db.domain import Service, Collaboration
 from server.schemas import json_schema_validator
-from server.scim.events import broadcast_service_added
+from server.scim.events import broadcast_service_added, broadcast_service_deleted
 
 collaborations_services_api = Blueprint("collaborations_services_api", __name__,
                                         url_prefix="/api/collaborations_services")
@@ -124,6 +124,6 @@ def delete_collaborations_services(collaboration_id, service_id):
 
     emit_socket(f"collaboration_{collaboration.id}")
     emit_socket(f"service_{service.id}")
-    # broadcast_service_deleted(collaboration, service)
+    broadcast_service_deleted(collaboration, service)
 
     return {'collaboration_id': collaboration.id, 'service_id': service.id}, 204
