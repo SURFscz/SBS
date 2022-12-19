@@ -168,4 +168,5 @@ def perform_sweep(service: Service):
                     response_json = response.json()
                     sync_results["groups"]["updated"].append(response_json)
 
+    # Now delete all orphaned user (e.g. users in SRAM which do not have any collaboration memberships)
     return sync_results
