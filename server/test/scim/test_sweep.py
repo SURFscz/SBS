@@ -5,6 +5,7 @@ import responses
 from server.db.domain import Service, Group, User
 from server.scim import SCIM_GROUPS
 from server.scim.group_template import create_group_template
+from server.scim.repo import all_scim_groups_by_service
 from server.scim.sweep import perform_sweep, _all_remote_scim_objects, _group_changed, _user_changed
 from server.scim.user_template import create_user_template
 from server.test.abstract_test import AbstractTest
@@ -65,6 +66,37 @@ class TestSweep(AbstractTest):
             self.assertEqual(1, len(sync_results["groups"]["deleted"]))
             self.assertEqual(1, len(sync_results["groups"]["created"]))
             self.assertEqual(2, len(sync_results["groups"]["updated"]))
+
+    @responses.activate
+    def test_sweep_orphaned_users_groups(self):
+        service = self.find_entity_by_name(Service, service_network_name)
+        remote_groups = json.loads(read_file("test/scim/sweep/remote_groups_unchanged.json"))
+        remote_users = json.loads(read_file("test/scim/sweep/remote_users_unchanged.json"))
+
+        all_groups = all_scim_groups_by_service(service)
+        for group in all_groups:
+            group.collaboration_memberships.clear()
+            self.save_entity(group)
+
+        with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=remote_users, status=200)
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=remote_groups, status=200)
+            for group_id in [g["id"] for g in remote_groups["Resources"]]:
+                rsps.add(responses.DELETE,
+                         f"http://localhost:8080/api/scim_mock/Groups/{group_id}",
+                         status=204)
+            for user_id in [u["id"] for u in remote_users["Resources"]]:
+                rsps.add(responses.DELETE,
+                         f"http://localhost:8080/api/scim_mock/Users/{user_id}",
+                         status=204)
+
+            sync_results = perform_sweep(service)
+            self.assertEqual(5, len(sync_results["users"]["deleted"]))
+            self.assertEqual(0, len(sync_results["users"]["created"]))
+            self.assertEqual(0, len(sync_results["users"]["updated"]))
+            self.assertEqual(3, len(sync_results["groups"]["deleted"]))
+            self.assertEqual(0, len(sync_results["groups"]["created"]))
+            self.assertEqual(0, len(sync_results["groups"]["updated"]))
 
     @responses.activate
     def test_paginated_scim_results(self):

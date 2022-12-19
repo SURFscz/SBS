@@ -125,7 +125,7 @@ def perform_sweep(service: Service):
 
     for user in all_users:
         # A User with no memberships is deleted in the external SCIM database
-        if not user.collaboration_memberships:
+        if not user.collaboration_memberships and service.sweep_remove_orphans:
             remote_user = remote_users_by_external_id.get(user.external_id)
             if remote_user:
                 url = f"{service.scim_url}{remote_user['meta']['location']}"
@@ -158,7 +158,7 @@ def perform_sweep(service: Service):
 
     for group in all_groups:
         membership_scim_objects = _memberships(group, remote_users_by_external_id)
-        if not membership_scim_objects:
+        if not membership_scim_objects and service.sweep_remove_orphans:
             remote_group = remote_groups_by_external_id.get(group.identifier)
             if remote_group:
                 url = f"{service.scim_url}{remote_group['meta']['location']}"

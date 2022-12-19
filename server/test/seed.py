@@ -312,7 +312,8 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                       allowed_organisations=[uuc], privacy_policy="https://privacy.org",
                       token_enabled=True, token_validity_days=365, security_email="sec@org.nl",
                       scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret",
-                      sweep_scim_last_run=sweep_scim_last_run, sweep_scim_daily_rate=1, sweep_scim_enabled=True)
+                      sweep_scim_last_run=sweep_scim_last_run, sweep_scim_daily_rate=1, sweep_scim_enabled=True,
+                      sweep_remove_orphans=True)
     service_ssh_uva = Service(entity_id="service_ssh_uva", name=service_ssh_uva_name,
                               description="Uva SSH access",
                               uri="https://uri.com/ssh", identity_type="SSH KEY", accepted_user_policy="https://ssh",

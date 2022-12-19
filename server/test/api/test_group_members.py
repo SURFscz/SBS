@@ -30,21 +30,6 @@ class TestGroupMembers(AbstractTest):
             "members_ids": ["nasty sql"]
         }, with_basic_auth=False, response_status_code=400)
 
-    def test_delete_all_group_members(self):
-        group = self.find_entity_by_name(Group, ai_researchers_group)
-        count = len(group.collaboration_memberships)
-
-        self.assertEqual(2, count)
-
-        self.login("urn:admin")
-        self.delete("/api/group_members/delete_all_members",
-                    primary_key=f"{group.id}/{group.collaboration_id}")
-
-        group = self.find_entity_by_name(Group, ai_researchers_group)
-        count = len(group.collaboration_memberships)
-
-        self.assertEqual(0, count)
-
     def test_delete_group_member(self):
         group = self.find_entity_by_name(Group, ai_researchers_group)
         count = len(group.collaboration_memberships)
