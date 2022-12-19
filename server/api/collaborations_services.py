@@ -124,6 +124,6 @@ def delete_collaborations_services(collaboration_id, service_id):
 
     emit_socket(f"collaboration_{collaboration.id}")
     emit_socket(f"service_{service.id}")
-    broadcast_service_deleted(collaboration, service)
+    # broadcast_service_deleted(collaboration, service)
 
     return {'collaboration_id': collaboration.id, 'service_id': service.id}, 204
