@@ -264,7 +264,7 @@ class ServiceOverview extends React.Component {
                     this.setState({validatingNetwork: false});
                     const {ip_networks} = this.state.service;
                     ip_networks.splice(index, 1, res);
-                    this.setState({ ...this.state.service, ip_networks: [...ip_networks]});
+                    this.setState({...this.state.service, ip_networks: [...ip_networks]});
                 }).catch(() => this.setState({validatingNetwork: false}));
         }
     }
@@ -543,7 +543,10 @@ class ServiceOverview extends React.Component {
         if (service.sweep_scim_enabled && service.sweep_scim_daily_rate && service.sweep_scim_daily_rate.value) {
             sweepScimDailyRate = service.sweep_scim_daily_rate
         } else if (service.sweep_scim_enabled && service.sweep_scim_daily_rate !== null && service.sweep_scim_daily_rate !== 0) {
-            sweepScimDailyRate = {label: service.sweep_scim_daily_rate, value: parseInt(service.sweep_scim_daily_rate, 10)}
+            sweepScimDailyRate = {
+                label: service.sweep_scim_daily_rate,
+                value: parseInt(service.sweep_scim_daily_rate, 10)
+            }
         }
         return (
             <div className={"scim"}>
@@ -585,6 +588,14 @@ class ServiceOverview extends React.Component {
                                          sweep_scim_daily_rate: val ? {label: 1, value: 1} : null
                                      }
                                  })}/>
+
+                <RadioButton label={I18n.t("scim.scimSweepDeleteOrphans")}
+                             name={"sweep_remove_orphans"}
+                             value={service.sweep_remove_orphans && service.sweep_scim_enabled}
+                             disabled={!service.sweep_scim_enabled}
+                             tooltip={I18n.t("scim.scimSweepDeleteOrphansTooltip")}
+                             onChange={val => this.setState({"service": {...service, sweep_remove_orphans: val}})}/>
+
 
                 <SelectField value={sweepScimDailyRate}
                              options={[...Array(25).keys()].filter(i => i % 4 === 0).map(i => ({

@@ -43,22 +43,6 @@ def add_group_members():
     return (res, 201) if count > 0 else (None, 404)
 
 
-@group_members_api.route("/delete_all_members/<group_id>/<collaboration_id>",
-                         methods=["DELETE"], strict_slashes=False)
-@json_endpoint
-def delete_all_group_members(group_id, collaboration_id):
-    confirm_collaboration_admin(collaboration_id)
-
-    group = Group.query.get(group_id)
-    group.collaboration_memberships = []
-    db.session.merge(group)
-
-    emit_socket(f"collaboration_{collaboration_id}")
-
-    group = Group.query.get(group_id)
-    return group, 204
-
-
 @group_members_api.route("/<group_id>/<collaboration_membership_id>/<collaboration_id>",
                          methods=["DELETE"], strict_slashes=False)
 @json_endpoint
