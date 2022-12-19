@@ -10,4 +10,4 @@ class TestSchedule(AbstractTest):
         jobs = scheduler.get_jobs()
 
         self.assertTrue(scheduler.running)
-        self.assertEqual(9, len(jobs))
+        self.assertEqual(8, len(jobs))
