@@ -111,21 +111,29 @@ def perform_sweep(service: Service):
             url = f"{service.scim_url}{remote_group['meta']['location']}"
             response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10)
             if validate_response(response, service, outside_user_context=True):
-                sync_results["users"]["deleted"].append(url)
+                sync_results["groups"]["deleted"].append(url)
 
     for remote_user in remote_scim_users:
         if f"{remote_user['externalId'].replace(EXTERNAL_ID_POST_FIX, '')}" not in users_by_external_id:
             url = f"{service.scim_url}{remote_user['meta']['location']}"
             response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10)
             if validate_response(response, service, outside_user_context=True):
-                sync_results["groups"]["deleted"].append(url)
+                sync_results["users"]["deleted"].append(url)
 
     remote_groups_by_external_id = {g["externalId"].replace(EXTERNAL_ID_POST_FIX, ""): g for g in remote_scim_groups}
     remote_users_by_external_id = {u["externalId"].replace(EXTERNAL_ID_POST_FIX, ""): u for u in remote_scim_users}
 
-    # Now add all SRAM users and groups that are not present in the remote SCIM database
     for user in all_users:
-        if user.external_id not in remote_users_by_external_id:
+        # A User with no memberships is deleted in the external SCIM database
+        if not user.collaboration_memberships:
+            remote_user = remote_users_by_external_id.get(user.external_id)
+            if remote_user:
+                url = f"{service.scim_url}{remote_user['meta']['location']}"
+                response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10)
+                if validate_response(response, service, outside_user_context=True):
+                    sync_results["groups"]["deleted"].append(url)
+        # Add all SRAM users that are not present in the remote SCIM database
+        elif user.external_id not in remote_users_by_external_id:
             scim_dict = create_user_template(user)
             url = f"{service.scim_url}/{SCIM_USERS}"
             scim_dict_cleansed = replace_none_values(scim_dict)
@@ -138,6 +146,7 @@ def perform_sweep(service: Service):
                 sync_results["users"]["created"].append(response_json)
         else:
             remote_user = remote_users_by_external_id[user.external_id]
+            # Update SRAM users that are not equal to their counterpart in the remote SCIM database
             if _user_changed(user, remote_user):
                 scim_dict = update_user_template(user, remote_user["id"])
                 url = f"{service.scim_url}{remote_user['meta']['location']}"
@@ -149,7 +158,14 @@ def perform_sweep(service: Service):
 
     for group in all_groups:
         membership_scim_objects = _memberships(group, remote_users_by_external_id)
-        if group.identifier not in remote_groups_by_external_id:
+        if not membership_scim_objects:
+            remote_group = remote_groups_by_external_id.get(group.identifier)
+            if remote_group:
+                url = f"{service.scim_url}{remote_group['meta']['location']}"
+                response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10)
+                if validate_response(response, service, outside_user_context=True):
+                    sync_results["groups"]["deleted"].append(url)
+        elif group.identifier not in remote_groups_by_external_id:
             scim_dict = create_group_template(group, membership_scim_objects)
             url = f"{service.scim_url}/{SCIM_GROUPS}"
             scim_dict_cleansed = replace_none_values(scim_dict)
@@ -168,5 +184,4 @@ def perform_sweep(service: Service):
                     response_json = response.json()
                     sync_results["groups"]["updated"].append(response_json)
 
-    # Now delete all orphaned user (e.g. users in SRAM which do not have any collaboration memberships)
     return sync_results
