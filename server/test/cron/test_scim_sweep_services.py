@@ -15,7 +15,7 @@ class TestScimSweepServices(AbstractTest):
     def test_schedule_sweep(self):
         remote_groups = json.loads(read_file("test/scim/sweep/remote_groups_unchanged.json"))
         remote_users = json.loads(read_file("test/scim/sweep/remote_users_unchanged.json"))
-        with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
+        with responses.RequestsMock(assert_all_requests_are_fired=False) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=remote_users, status=200)
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=remote_groups, status=200)
             sweep_result = scim_sweep_services(self.app)
