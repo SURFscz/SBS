@@ -80,9 +80,14 @@ class ServiceOverview extends React.Component {
     }
 
     componentDidMount = nextProps => {
-        const {service, serviceAdmin} = nextProps ? nextProps : this.props;
+        const {service, serviceAdmin, organisations} = nextProps ? nextProps : this.props;
         const {params} = this.props.match;
         const tab = params.subTab || this.state.currentTab;
+        const automaticConnectionAllowedOrganisations =
+            (service.access_allowed_for_all ? organisations : service.allowed_organisations).map(org => ({
+                    value: org.id,
+                    label: org.name
+                }));
         this.validateService(service, () => {
             service.ip_networks = service.ip_networks.filter(ipNetwork => !isEmpty(ipNetwork.network_value));
             this.setState({
@@ -92,10 +97,7 @@ class ServiceOverview extends React.Component {
                 currentTab: tab,
                 serviceTokensEnabled: service.token_enabled || service.pam_web_sso_enabled,
                 hasServiceTokens: !isEmpty(service.service_tokens),
-                automaticConnectionAllowedOrganisations: service.allowed_organisations.map(org => ({
-                    value: org.id,
-                    label: org.name
-                })),
+                automaticConnectionAllowedOrganisations: automaticConnectionAllowedOrganisations,
                 selectedAutomaticConnectionAllowedOrganisations: service.automatic_connection_allowed_organisations.map(org => ({
                     value: org.id,
                     label: org.name
