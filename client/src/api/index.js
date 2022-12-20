@@ -101,7 +101,7 @@ export function me(config) {
     if (config.local && 1 == 1) {
         let sub = "urn:service_admin";
         sub = "urn:john";
-        // sub = "urn:peter";
+        //sub = "urn:peter";
         // Need to mock a login
         return postPutJson("/api/mock", {sub, "name": "John Doe", "email": "john@example.org"}, "PUT")
             .then(() => fetchJson("/api/users/me", {}, {}, false));
