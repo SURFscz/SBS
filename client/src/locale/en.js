@@ -1736,7 +1736,7 @@ I18n.translations.en = {
         scim: {
             info: "If enabled there is a mock remote SCIM client available to test the SCIM messages." +
                 "Configure a Service with the following SCIM URL to start testing the SCIM functionality" ,
-            services: "These services are currently configured with SCIM enabled and the SCIM mock endpoint",
+            services: "SCIM enabled Services",
             stats: "All API calls and state updates send to the mock SCIM endpoints are stored in an in-memory database.",
             retrieveStats: "Fetch stats",
             reRetrieveStats: "Refresh stats",
