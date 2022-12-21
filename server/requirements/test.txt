@@ -1,6 +1,6 @@
 -r base.txt
 blinker==1.5
-flake8==5.0.4
+flake8==6.0.0
 flask-testing==0.8.1
 flask-webtest==0.0.9
 hbmqtt2==0.9.7
