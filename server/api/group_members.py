@@ -12,15 +12,15 @@ group_members_api = Blueprint("group_members_api", __name__,
 
 
 def do_add_group_members(data, assert_collaboration_admin):
-    group_id = data["group_id"]
-    collaboration_id = data["collaboration_id"]
+    group_id = int(data["group_id"])
+    collaboration_id = int(data["collaboration_id"])
     if assert_collaboration_admin and "skip_collaboration_admin_confirmation" not in request_context:
         confirm_collaboration_admin(collaboration_id)
 
     group = Group.query.get(group_id)
     members_ids = data["members_ids"]
     for members_id in members_ids:
-        group.collaboration_memberships.append(CollaborationMembership.query.get(members_id))
+        group.collaboration_memberships.append(CollaborationMembership.query.get(int(members_id)))
 
     db.session.merge(group)
     db.session.commit()
@@ -38,9 +38,7 @@ def add_group_members():
     data = current_request.get_json()
     count = do_add_group_members(data, True)
 
-    res = data
-
-    return (res, 201) if count > 0 else (None, 404)
+    return ({}, 201) if count > 0 else (None, 404)
 
 
 @group_members_api.route("/<group_id>/<collaboration_membership_id>/<collaboration_id>",
