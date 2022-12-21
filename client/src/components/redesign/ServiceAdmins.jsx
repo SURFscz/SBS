@@ -41,12 +41,25 @@ class ServiceAdmins extends React.Component {
             isWarning: false,
             lastAdminWarning: false,
             lastAdminWarningUser: false,
-            loading: true
+            loading: false
+        }
+    }
+
+    componentDidUpdate = prevProps => {
+        const nextService = this.props.service;
+        const {service} = prevProps;
+        if (service) {
+            const prevAdmins = nextService.service_memberships || [];
+            const prevInvites = nextService.service_invitations || [];
+            const admins = service.service_memberships || [];
+            const invites = service.service_invitations || [];
+            if (prevAdmins.length !== admins.length || prevInvites.length !== invites.length) {
+                this.componentDidMount();
+            }
         }
     }
 
     componentDidMount = () => {
-        this.setState({loading: true});
         const {service} = this.props;
         const admins = service.service_memberships || [];
         const invites = service.service_invitations || [];
@@ -66,10 +79,10 @@ class ServiceAdmins extends React.Component {
     onCheck = memberShip => e => {
         const {selectedMembers} = this.state;
         const checked = e.target.checked;
-        selectedMembers[this.getIdentifier(memberShip)].selected = checked;
+        const selectedMember = selectedMembers[this.getIdentifier(memberShip)];
+        selectedMember.selected = checked;
         this.setState({selectedMembers: {...selectedMembers}});
     }
-
 
     remove = showConfirmation => () => {
         const {selectedMembers} = this.state;

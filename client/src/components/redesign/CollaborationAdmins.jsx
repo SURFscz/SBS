@@ -63,7 +63,21 @@ class CollaborationAdmins extends React.Component {
             hideInvitees: false,
             resultAfterSearch: false,
             openExpirationFields: {},
-            loading: true
+            loading: false
+        }
+    }
+
+    componentDidUpdate= prevProps => {
+        const nextCollaboration = this.props.collaboration;
+        const {collaboration} = prevProps;
+        if (collaboration) {
+            const prevMembers = nextCollaboration.collaboration_memberships || [];
+            const prevInvites = nextCollaboration.invitations || [];
+            const members = collaboration.collaboration_memberships || [];
+            const invites = collaboration.invitations || [];
+            if (prevMembers.length !== members.length || prevInvites.length !== invites.length) {
+                this.componentDidMount();
+            }
         }
     }
 

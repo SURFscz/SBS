@@ -47,12 +47,25 @@ class OrganisationAdmins extends React.Component {
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationQuestion: "",
             isWarning: false,
-            loading: true
+            loading: false
+        }
+    }
+
+    componentDidUpdate= prevProps => {
+        const nextOrganisation = this.props.organisation;
+        const {organisation} = prevProps;
+        if (organisation) {
+            const prevMembers = nextOrganisation.organisation_memberships || [];
+            const prevInvites = nextOrganisation.organisation_invitations || [];
+            const members = organisation.organisation_memberships || [];
+            const invites = organisation.organisation_invitations || [];
+            if (prevMembers.length !== members.length || prevInvites.length !== invites.length) {
+                this.componentDidMount();
+            }
         }
     }
 
     componentDidMount = () => {
-        this.setState({loading: true});
         const {organisation} = this.props;
         const admins = organisation.organisation_memberships;
         const invites = organisation.organisation_invitations;
