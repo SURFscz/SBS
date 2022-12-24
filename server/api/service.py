@@ -137,6 +137,12 @@ def _do_get_services(restrict_for_current_user=False, include_counts=False):
     return services_json, 200
 
 
+def _token_validity_days(data):
+    days = data.get("token_validity_days")
+    if isinstance(days, str):
+        data["token_validity_days"] = int(days) if len(days.strip()) > 0 else None
+
+
 @service_api.route("/name_exists", strict_slashes=False)
 @json_endpoint
 def name_exists():
@@ -362,12 +368,6 @@ def service_invites():
     emit_socket(f"service_{service_id}", include_current_user_id=True)
 
     return None, 201
-
-
-def _token_validity_days(data):
-    days = data.get("token_validity_days")
-    if isinstance(days, str):
-        data["token_validity_days"] = int(days) if len(days.strip()) > 0 else None
 
 
 @service_api.route("/", methods=["PUT"], strict_slashes=False)
