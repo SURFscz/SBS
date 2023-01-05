@@ -1,15 +1,11 @@
 {
-    "schemas": [
-        "urn:ietf:params:scim:api:messages:2.0:ListResponse"
-    ],
+    "schemas": ["urn:ietf:params:scim:api:messages:2.0:ListResponse"],
     "totalResults": 1,
     "startIndex": 0,
     "itemsPerPage": 1,
     "Resources": [
         {
-            "schemas": [
-                "urn:scim:schemas:core:1.0"
-            ],
+            "schemas": ["urn:ietf:params:scim:schemas:core:2.0:Group"],
             "id": "8d85ea05-fc5c-4222-8efd-130ff7938ee1",
             "externalId": "9cc9531d-d8bb-4d19-91d7-4fd7968ccb7b",
             "meta": {
