@@ -4,7 +4,7 @@ from server.api.base import application_base_url
 from server.db.domain import Group, Collaboration, CollaborationMembership
 from server.scim import SCIM_URL_PREFIX, EXTERNAL_ID_POST_FIX
 from server.scim.user_template import version_value, date_time_format, replace_none_values
-
+from server.scim.schema_template import SCIM_SCHEMA_CORE, SCIM_API_MESSAGES
 
 def _meta_info(group: Union[Group, Collaboration]):
     return {"resourceType": "Group",
@@ -18,7 +18,7 @@ def create_group_template(group: Union[Group, Collaboration], membership_scim_ob
     sorted_members = sorted(membership_scim_objects, key=lambda m: m["value"])
     return replace_none_values({
         "schemas": [
-            "urn:scim:schemas:core:1.0"
+            f"{SCIM_SCHEMA_CORE}:Group"
         ],
         "externalId": f"{group.identifier}{EXTERNAL_ID_POST_FIX}",
         "displayName": group.global_urn,
@@ -53,7 +53,7 @@ def find_group_by_id_template(group: Union[Group, Collaboration]):
 def find_groups_template(groups: List[Union[Group, Collaboration]]):
     base = {
         "schemas": [
-            "urn:ietf:params:scim:api:messages:2.0:ListResponse"
+            f"{SCIM_API_MESSAGES}:ListResponse"
         ],
         "totalResults": len(groups),
         "startIndex": 0,
