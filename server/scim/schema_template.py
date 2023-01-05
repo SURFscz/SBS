@@ -1,12 +1,13 @@
 from server.scim import SCIM_URL_PREFIX
 
-SCHEMA_CORE = "urn:ietf:params:scim:schemas:core:2.0"
+SCIM_SCHEMA_CORE = "urn:ietf:params:scim:schemas:core:2.0"
+SCIM_API_MESSAGES = "urn:ietf:params:scim:api:messages:2.0"
 
 
 def _schema(name, schema, attributes):
     return {
         "schemas": [
-            f"{SCHEMA_CORE}:Schema"
+            f"{SCIM_SCHEMA_CORE}:Schema"
         ],
         "id": schema,
         "meta": {
@@ -20,7 +21,7 @@ def _schema(name, schema, attributes):
 
 
 def schema_user_template():
-    return _schema("User", f"{SCHEMA_CORE}:User", [
+    return _schema("User", f"{SCIM_SCHEMA_CORE}:User", [
         {
             "name": "userName",
             "type": "string",
@@ -141,7 +142,7 @@ def schema_user_template():
 
 
 def schema_group_template():
-    return _schema("Group", f"{SCHEMA_CORE}:Group", [
+    return _schema("Group", f"{SCIM_SCHEMA_CORE}:Group", [
         {
             "name": "displayName",
             "type": "string",
@@ -202,7 +203,7 @@ def schemas_template():
 
     return {
           "schemas": [
-              "urn:ietf:params:scim:api:messages:2.0:ListResponse"
+              f"{SCIM_API_MESSAGES}:ListResponse"
           ],
           "totalResults": len(schemas),
           "startIndex": 1,

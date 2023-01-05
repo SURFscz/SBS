@@ -4,6 +4,7 @@ from typing import List, Union
 
 from server.db.domain import User, Group, Collaboration
 from server.scim import SCIM_URL_PREFIX, EXTERNAL_ID_POST_FIX
+from server.scim.schema_template import SCIM_SCHEMA_CORE, SCIM_API_MESSAGES
 
 
 def replace_none_values(d: dict):
@@ -34,7 +35,7 @@ def _meta_info(user: User):
 def create_user_template(user: User):
     return replace_none_values({
         "schemas": [
-            "urn:scim:schemas:core:1.0"
+            f"{SCIM_SCHEMA_CORE}:User"
         ],
         "externalId": f"{user.external_id}{EXTERNAL_ID_POST_FIX}",
         "userName": user.username,
@@ -65,7 +66,7 @@ def find_user_by_id_template(user: User):
 def find_users_template(users: List[User]):
     base = {
         "schemas": [
-            "urn:ietf:params:scim:api:messages:2.0:ListResponse"
+            f"{SCIM_API_MESSAGES}:ListResponse"
         ],
         "totalResults": len(users),
         "startIndex": 0,
