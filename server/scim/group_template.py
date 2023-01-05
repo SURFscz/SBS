@@ -6,6 +6,7 @@ from server.scim import SCIM_URL_PREFIX, EXTERNAL_ID_POST_FIX
 from server.scim.user_template import version_value, date_time_format, replace_none_values
 from server.scim.schema_template import SCIM_SCHEMA_CORE, SCIM_API_MESSAGES
 
+
 def _meta_info(group: Union[Group, Collaboration]):
     return {"resourceType": "Group",
             "created": date_time_format(group.created_at),
