@@ -1,5 +1,3 @@
-from server.scim import SCIM_URL_PREFIX
-
 SCIM_SCHEMA_CORE = "urn:ietf:params:scim:schemas:core:2.0"
 SCIM_API_MESSAGES = "urn:ietf:params:scim:api:messages:2.0"
 
@@ -12,7 +10,7 @@ def _schema(name, schema, attributes):
         "id": schema,
         "meta": {
             "resourceType": "Schema",
-            "location": f"{SCIM_URL_PREFIX}/Schemas/{schema}"
+            "location": f"/Schemas/{schema}"
         },
         "name": name,
         "Description": f"Defined attributes for the {name} schema",
@@ -199,14 +197,14 @@ def schema_group_template():
 
 
 def schemas_template():
-    schemas = [schema_user_template(), schema_group_template()]
+    resources = [schema_user_template(), schema_group_template()]
 
     return {
           "schemas": [
               f"{SCIM_API_MESSAGES}:ListResponse"
           ],
-          "totalResults": len(schemas),
+          "totalResults": len(resources),
           "startIndex": 1,
-          "itemsPerPage": len(schemas),
-          "Resources": schemas
+          "itemsPerPage": len(resources),
+          "Resources": resources
     }
