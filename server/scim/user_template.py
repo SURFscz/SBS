@@ -3,7 +3,7 @@ import hashlib
 from typing import List, Union
 
 from server.db.domain import User, Group, Collaboration
-from server.scim import SCIM_URL_PREFIX, EXTERNAL_ID_POST_FIX
+from server.scim import EXTERNAL_ID_POST_FIX
 from server.scim.schema_template import SCIM_SCHEMA_CORE, SCIM_API_MESSAGES
 
 
@@ -29,7 +29,7 @@ def _meta_info(user: User):
             "created": date_time_format(user.created_at),
             "lastModified": date_time_format(user.updated_at),
             "version": version_value(user),
-            "location": f"{SCIM_URL_PREFIX}/Users/{user.external_id}{EXTERNAL_ID_POST_FIX}"}
+            "location": f"/Users/{user.external_id}{EXTERNAL_ID_POST_FIX}"}
 
 
 def create_user_template(user: User):

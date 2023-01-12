@@ -1,0 +1,17 @@
+summary: "Get Resource Types."
+description: "Retrieves the SCIM Resource Types provided by SRAM."
+
+tags:
+  - "SCIM Services"
+
+consumes:
+  - "application/json"
+
+produces:
+  - "application/json"
+
+responses:
+  200:
+    description: All users
+    schema:
+      $ref: "/swagger/schemas/ScimResourceTypes.yml"

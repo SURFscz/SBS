@@ -12,6 +12,7 @@ from server.scim import SCIM_URL_PREFIX, EXTERNAL_ID_POST_FIX
 from server.scim.group_template import find_groups_template, find_group_by_id_template
 from server.scim.repo import all_scim_users_by_service, all_scim_groups_by_service
 from server.scim.schema_template import SCIM_SCHEMA_CORE, schemas_template, schema_user_template, schema_group_template
+from server.scim.resource_type_template import resource_type_template, resource_type_user_template, resource_type_group_template
 from server.scim.sweep import perform_sweep
 from server.scim.user_template import find_users_template, find_user_by_id_template, version_value
 
@@ -43,6 +44,25 @@ def schema_group():
 @json_endpoint
 def schemas():
     return schemas_template(), 200
+
+
+@scim_api.route("/ResourceTypes/User", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def resource_types_user():
+    return resource_type_user_template(), 200
+
+
+@scim_api.route("/ResourceTypes/Group", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def resource_types_group():
+    return resource_type_group_template(), 200
+
+
+@scim_api.route("/ResourceTypes", methods=["GET"], strict_slashes=False)
+@swag_from("../swagger/public/paths/get_resource_types.yml")
+@json_endpoint
+def resource_types():
+    return resource_type_template(), 200
 
 
 @scim_api.route("/Users", methods=["GET"], strict_slashes=False)
