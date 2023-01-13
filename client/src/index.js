@@ -15,6 +15,7 @@ import "./locale/en";
 import "./locale/nl";
 import {reportError} from "./api";
 import {createRoot} from 'react-dom/client';
+import '@surfnet/sds/styles/sds.css';
 
 polyfill();
 

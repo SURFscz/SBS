@@ -9,17 +9,17 @@
 
     .__react_component_tooltip {
         text-align: center;
-        opacity: 1;
-        border-radius: $br;
-        border: 1px solid $lighter-grey;
-        background-color: $lightest-grey;
-        color: $dark-grey;
         max-width: 280px;
         word-break: break-word;
+        padding: var(--sds--space--1) var(--sds--space--1-and-a-half);
+        border-radius: 6px;
+        background-color: var(--sds--color--gray--500);
+        color: var(--sds--color--white);
+        align-items: center;
     }
 
     .__react_component_tooltip.place-top:after {
-        border-top-color: $lighter-grey !important;
+        border-top-color: var(--sds--color--gray--500) !important;
     }
 
     .__react_component_tooltip.show {
@@ -27,7 +27,7 @@
     }
 
     .select-disabled__single-value {
-        color: $dark-grey;
+        color: var(--sds--color--gray--500);
     }
 
 }

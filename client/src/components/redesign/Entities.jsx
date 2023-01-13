@@ -9,7 +9,7 @@ import {headerIcon} from "../../forms/helpers";
 import "./Entities.scss";
 import SpinnerField from "./SpinnerField";
 import Explain from "../Explain";
-import Pagination from "../Pagination";
+import {Pagination} from "@surfnet/sds";
 import {pageCount} from "../../utils/Pagination";
 
 class Entities extends React.Component {
@@ -162,16 +162,38 @@ class Entities extends React.Component {
                 <p className="no-entities">{customNoEntities || I18n.t(`models.${modelName}.noEntities`)}</p>}
                 {pagination && <Pagination currentPage={page}
                                            onChange={nbr => this.setState({page: nbr})}
-                                           total={total}/>}
+                                           total={total}
+                                           pageCount={pageCount}/>}
             </section>
         );
     };
 
     render() {
         const {
-            modelName, entities, showNew, newLabel, searchAttributes, columns, children, loading, customSearch,
-            actions, title, filters, explain, rowLinkMapper, tableClassName, explainTitle, className = "",
-            customNoEntities, hideTitle, onHover, actionHeader = "", pagination = true, showActionsAlways, displaySearch = true
+            modelName,
+            entities,
+            showNew,
+            newLabel,
+            searchAttributes,
+            columns,
+            children,
+            loading,
+            customSearch,
+            actions,
+            title,
+            filters,
+            explain,
+            rowLinkMapper,
+            tableClassName,
+            explainTitle,
+            className = "",
+            customNoEntities,
+            hideTitle,
+            onHover,
+            actionHeader = "",
+            pagination = true,
+            showActionsAlways,
+            displaySearch = true
         } = this.props;
         if (loading) {
             return <SpinnerField/>;
