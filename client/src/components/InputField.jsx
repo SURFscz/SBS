@@ -47,8 +47,10 @@ export default function InputField({
             {(name && displayLabel) && <label htmlFor={name}>{name} {toolTip &&
             <span className="tool-tip-section">
                 <span data-tip data-for={name}><FontAwesomeIcon icon="info-circle"/></span>
-                <ReactTooltip id={name} type="light" effect="solid" data-html={true}>
-                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(toolTip)}}/>
+                <ReactTooltip id={name} type="light" effect="solid" data-html={true}
+                              className={"sds--tooltip"}>
+                    <span className="sds--tooltip--textual sds--text--body--small"
+                          dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(toolTip)}}/>
                 </ReactTooltip>
             </span>}
             </label>}

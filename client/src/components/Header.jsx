@@ -80,7 +80,7 @@ export default class Header extends React.PureComponent {
 
                 <FeedbackDialog isOpen={showFeedBack} close={() => this.setState({showFeedBack: false})}/>
 
-                <div className="header" onClick={this.toggleStyle}>
+                <div className="header-inner" onClick={this.toggleStyle}>
                     <Link className="logo" to="/"><Logo/></Link>
                     {(showProfile && currentUser.user_accepted_aup) &&
                     <div className="user-profile" onClick={() => this.setState({dropDownActive: !dropDownActive})}>

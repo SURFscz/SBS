@@ -1,4 +1,4 @@
-export const pageCount = 25;
+export const pageCount = 2;//25;
 
 //https://gist.github.com/kottenator/9d936eb3e4e3c3e02598
 export const pagination = (page, totalResults) => {

@@ -1,11 +1,11 @@
 @mixin input-field {
     label {
         display: inline-block;
-        margin: 12px 0 6px 0;
         min-width: 210px;
         color: black;
         position: relative;
-        font-weight: bold;
+        font-weight: 600;
+        margin: 12px 0 var(--sds--space--1);
     }
 
     span.tool-tip-section {
@@ -13,7 +13,7 @@
         color: $lighter-grey;
         cursor: pointer;
         padding: 0 4px;
-
+        font-weight: normal;
         &:hover {
             color: darken($light-blue, 20%);
         }

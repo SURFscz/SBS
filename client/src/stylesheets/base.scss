@@ -1,13 +1,6 @@
 @import "./vars.scss";
 
 body {
-    font-family: "Source Sans Pro", sans-serif;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 20px;
-    color: black;
-    background-color: white;
-    -webkit-font-smoothing: antialiased;
 
     &:after {
         position: fixed;
@@ -27,8 +20,8 @@ body {
 
     @media (max-width: $compact-medium) {
         &:after {
-            content: ""!important;
-            background: transparent!important;
+            content: "" !important;
+            background: transparent !important;
             z-index: -1;
         }
     }
@@ -43,19 +36,6 @@ body {
         overflow-y: auto;
     }
 
-}
-
-a {
-    cursor: pointer;
-    color: $blue;
-
-    &:visited {
-        color: $blue;
-    }
-}
-
-*, *:before, *:after {
-    box-sizing: border-box;
 }
 
 ::-webkit-input-placeholder {
@@ -78,7 +58,7 @@ textarea {
     font-family: "Source Sans Pro", sans-serif !important;
 }
 
-h1, h2, h3, .title, .title-header {
+.title, .title-header {
     font-family: Nunito, sans-serif;
 }
 
