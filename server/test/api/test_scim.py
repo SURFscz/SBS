@@ -5,6 +5,7 @@ import responses
 from server.db.domain import User, Collaboration, Group, Service
 from server.scim import EXTERNAL_ID_POST_FIX
 from server.scim.schema_template import schemas_template
+from server.scim.resource_type_template import resource_type_template
 from server.scim.user_template import version_value
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_network_token, jane_name, ai_computing_name, ai_researchers_group, \
@@ -62,7 +63,14 @@ class TestScim(AbstractTest):
         self.assertEqual(2, len(res["Resources"]))
         self.assertEqual(res, schemas_template())
         for resource in res["Resources"]:
-            self.get(f"{resource['meta']['location']}", response_status_code=200)
+            self.get(f"/api/scim/v2{resource['meta']['location']}", response_status_code=200)
+
+    def test_resource_types(self):
+        res = self.get("/api/scim/v2/ResourceTypes")
+        self.assertEqual(2, len(res["Resources"]))
+        self.assertEqual(res, resource_type_template())
+        for resource in res["Resources"]:
+            self.get(f"/api/scim/v2{resource['meta']['location']}", response_status_code=200)
 
     @responses.activate
     def test_sweep(self):
