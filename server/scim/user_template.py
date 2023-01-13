@@ -47,7 +47,11 @@ def create_user_template(user: User):
         "active": not user.suspended,
         "emails": [{"value": user.email, "primary": True}],
         "x509Certificates": [{"value": base64.b64encode(ssh_key.ssh_value.encode()).decode()} for ssh_key in
-                             user.ssh_keys]
+                             user.ssh_keys],
+        "eduPersonScopedAffiliation": user.affiliation,
+        "eduPersonUniqueId": user.eduperson_principal_name,
+        "voPersonExternalAffiliation": user.scoped_affiliation,
+        "voPersonExternalId": user.home_organisation_uid
     })
 
 

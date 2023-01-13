@@ -83,6 +83,46 @@ def schema_user_template():
             "uniqueness": "none"
         },
         {
+            "name": "eduPersonScopedAffiliation",
+            "type": "string",
+            "multiValued": False,
+            "required": False,
+            "caseExact": False,
+            "mutability": "readOnly",
+            "returned": "default",
+            "uniqueness": "none"
+        },
+        {
+            "name": "eduPersonUniqueId",
+            "type": "string",
+            "multiValued": False,
+            "required": False,
+            "caseExact": False,
+            "mutability": "readOnly",
+            "returned": "default",
+            "uniqueness": "none"
+        },
+        {
+            "name": "voPersonExternalAffiliation",
+            "type": "string",
+            "multiValued": False,
+            "required": False,
+            "caseExact": False,
+            "mutability": "readOnly",
+            "returned": "default",
+            "uniqueness": "none"
+        },
+        {
+            "name": "voPersonExternalId",
+            "type": "string",
+            "multiValued": False,
+            "required": False,
+            "caseExact": False,
+            "mutability": "readOnly",
+            "returned": "default",
+            "uniqueness": "none"
+        },
+        {
             "name": "emails",
             "type": "complex",
             "multiValued": False,
@@ -145,6 +185,36 @@ def schema_group_template():
             "name": "displayName",
             "type": "string",
             "multiValued": False,
+            "required": False,
+            "caseExact": False,
+            "mutability": "readOnly",
+            "returned": "default",
+            "uniqueness": "none"
+        },
+        {
+            "name": "description",
+            "type": "string",
+            "multiValued": False,
+            "required": False,
+            "caseExact": False,
+            "mutability": "readOnly",
+            "returned": "default",
+            "uniqueness": "none"
+        },
+        {
+            "name": "urn",
+            "type": "string",
+            "multiValued": False,
+            "required": False,
+            "caseExact": False,
+            "mutability": "readOnly",
+            "returned": "default",
+            "uniqueness": "none"
+        },
+        {
+            "name": "labels",
+            "type": "string",
+            "multiValued": True,
             "required": False,
             "caseExact": False,
             "mutability": "readOnly",
