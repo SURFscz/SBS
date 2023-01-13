@@ -16,13 +16,22 @@ def _meta_info(group: Union[Group, Collaboration]):
 
 
 def create_group_template(group: Union[Group, Collaboration], membership_scim_objects):
+
+    labels = [
+        t.tag_value for t in group.tags
+    ] if group.tags else []
+
     sorted_members = sorted(membership_scim_objects, key=lambda m: m["value"])
+
     return replace_none_values({
         "schemas": [
             f"{SCIM_SCHEMA_CORE}:Group"
         ],
         "externalId": f"{group.identifier}{EXTERNAL_ID_POST_FIX}",
-        "displayName": group.global_urn,
+        "displayName": group.name,
+        "description": group.description,
+        "urn": group.global_urn,
+        "labels": labels,
         "members": sorted_members
     })
 
