@@ -1,25 +1,32 @@
-SCIM_SCHEMA_CORE = "urn:ietf:params:scim:schemas:core:2.0"
 SCIM_API_MESSAGES = "urn:ietf:params:scim:api:messages:2.0"
 
+SCIM_SCHEMA_CORE = "urn:ietf:params:scim:schemas:core:2.0"
+SCIM_SCHEMA_CORE_USER = f"{SCIM_SCHEMA_CORE}:User"
+SCIM_SCHEMA_CORE_GROUP = f"{SCIM_SCHEMA_CORE}:Group"
 
-def _schema(name, schema, attributes):
+SCIM_SCHEMA_SRAM = "urn:sram:extension:schema"
+SCIM_SCHEMA_SRAM_USER = f"{SCIM_SCHEMA_SRAM}:User"
+SCIM_SCHEMA_SRAM_GROUP = f"{SCIM_SCHEMA_SRAM}:Group"
+
+
+def _schema(id, attributes):
     return {
         "schemas": [
             f"{SCIM_SCHEMA_CORE}:Schema"
         ],
-        "id": schema,
+        "id": id,
         "meta": {
             "resourceType": "Schema",
-            "location": f"/Schemas/{schema}"
+            "location": f"/Schemas/{id}"
         },
-        "name": name,
-        "Description": f"Defined attributes for the {name} schema",
+        "name":  id,
+        "Description": f"Defined attributes for the {id} schema",
         "attributes": attributes
     }
 
 
-def schema_user_template():
-    return _schema("User", f"{SCIM_SCHEMA_CORE}:User", [
+def schema_core_user_template():
+    return _schema(SCIM_SCHEMA_CORE_USER, [
         {
             "name": "userName",
             "type": "string",
@@ -179,40 +186,55 @@ def schema_user_template():
     ])
 
 
-def schema_group_template():
-    return _schema("Group", f"{SCIM_SCHEMA_CORE}:Group", [
+def schema_sram_user_template():
+    return _schema(SCIM_SCHEMA_SRAM_USER, [
+        {
+            "name": "eduPersonScopedAffiliation",
+            "type": "string",
+            "multiValued": False,
+            "required": False,
+            "caseExact": False,
+            "mutability": "readOnly",
+            "returned": "default",
+            "uniqueness": "none"
+        },
+        {
+            "name": "eduPersonUniqueId",
+            "type": "string",
+            "multiValued": False,
+            "required": False,
+            "caseExact": False,
+            "mutability": "readOnly",
+            "returned": "default",
+            "uniqueness": "none"
+        },
+        {
+            "name": "voPersonExternalAffiliation",
+            "type": "string",
+            "multiValued": False,
+            "required": False,
+            "caseExact": False,
+            "mutability": "readOnly",
+            "returned": "default",
+            "uniqueness": "none"
+        },
+        {
+            "name": "voPersonExternalId",
+            "type": "string",
+            "multiValued": False,
+            "required": False,
+            "caseExact": False,
+            "mutability": "readOnly",
+            "returned": "default",
+            "uniqueness": "none"
+        }
+    ])
+ 
+
+def schema_core_group_template():
+    return _schema(SCIM_SCHEMA_CORE_GROUP, [
         {
             "name": "displayName",
-            "type": "string",
-            "multiValued": False,
-            "required": False,
-            "caseExact": False,
-            "mutability": "readOnly",
-            "returned": "default",
-            "uniqueness": "none"
-        },
-        {
-            "name": "description",
-            "type": "string",
-            "multiValued": False,
-            "required": False,
-            "caseExact": False,
-            "mutability": "readOnly",
-            "returned": "default",
-            "uniqueness": "none"
-        },
-        {
-            "name": "urn",
-            "type": "string",
-            "multiValued": False,
-            "required": False,
-            "caseExact": False,
-            "mutability": "readOnly",
-            "returned": "default",
-            "uniqueness": "none"
-        },
-        {
-            "name": "labels",
             "type": "string",
             "multiValued": True,
             "required": False,
@@ -266,8 +288,48 @@ def schema_group_template():
     ])
 
 
+def schema_sram_group_template():
+    return _schema(SCIM_SCHEMA_SRAM_GROUP, [
+        {
+            "name": "description",
+            "type": "string",
+            "multiValued": False,
+            "required": False,
+            "caseExact": False,
+            "mutability": "readOnly",
+            "returned": "default",
+            "uniqueness": "none"
+        },
+        {
+            "name": "urn",
+            "type": "string",
+            "multiValued": False,
+            "required": False,
+            "caseExact": False,
+            "mutability": "readOnly",
+            "returned": "default",
+            "uniqueness": "none"
+        },
+        {
+            "name": "labels",
+            "type": "string",
+            "multiValued": True,
+            "required": False,
+            "caseExact": False,
+            "mutability": "readOnly",
+            "returned": "default",
+            "uniqueness": "none"
+        },
+    ])
+
+
 def schemas_template():
-    resources = [schema_user_template(), schema_group_template()]
+    resources = [
+        schema_core_user_template(),
+        schema_core_group_template(),
+        schema_sram_user_template(),
+        schema_sram_group_template(),
+    ]
 
     return {
           "schemas": [

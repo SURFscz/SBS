@@ -1,7 +1,10 @@
-from server.scim.schema_template import SCIM_SCHEMA_CORE, SCIM_API_MESSAGES
+from server.scim.schema_template import \
+    SCIM_API_MESSAGES, SCIM_SCHEMA_CORE, \
+    SCIM_SCHEMA_CORE_USER, SCIM_SCHEMA_CORE_GROUP, \
+    SCIM_SCHEMA_SRAM_USER, SCIM_SCHEMA_SRAM_GROUP
 
 
-def _resource_type(name):
+def _resource_type(name, schema):
     return {
         "description": f"Defined resource types for the {name} schema",
         "endpoint": f"/{name}s",
@@ -11,7 +14,7 @@ def _resource_type(name):
             "resourceType": "ResourceType"
         },
         "name": f"{name}",
-        "schema": f"{SCIM_SCHEMA_CORE}:{name}",
+        "schema": schema,
         "schemas": [
             f"{SCIM_SCHEMA_CORE}:ResourceType"
         ]
@@ -19,11 +22,25 @@ def _resource_type(name):
 
 
 def resource_type_user_template():
-    return _resource_type("User")
+    return _resource_type("User", SCIM_SCHEMA_CORE_USER) | {
+        "schemaExtensions": [
+           {
+             "schema": SCIM_SCHEMA_SRAM_USER,
+             "required": True
+           }
+        ]
+    }
 
 
 def resource_type_group_template():
-    return _resource_type("Group")
+    return _resource_type("Group", SCIM_SCHEMA_CORE_GROUP) | {
+        "schemaExtensions": [
+           {
+             "schema": SCIM_SCHEMA_SRAM_GROUP,
+             "required": True
+           }
+        ]
+    }
 
 
 def resource_type_template():
