@@ -60,7 +60,7 @@ class TestScim(AbstractTest):
 
     def test_schemas(self):
         res = self.get("/api/scim/v2/Schemas")
-        self.assertEqual(2, len(res["Resources"]))
+        self.assertEqual(4, len(res["Resources"]))
         self.assertEqual(res, schemas_template())
         for resource in res["Resources"]:
             self.get(f"/api/scim/v2{resource['meta']['location']}", response_status_code=200)

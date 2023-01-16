@@ -11,7 +11,11 @@ from server.db.domain import User, Collaboration, Group, Service
 from server.scim import SCIM_URL_PREFIX, EXTERNAL_ID_POST_FIX
 from server.scim.group_template import find_groups_template, find_group_by_id_template
 from server.scim.repo import all_scim_users_by_service, all_scim_groups_by_service
-from server.scim.schema_template import SCIM_SCHEMA_CORE, schemas_template, schema_user_template, schema_group_template
+from server.scim.schema_template import schemas_template, \
+    schema_core_user_template, schema_core_group_template, \
+    schema_sram_user_template, schema_sram_group_template, \
+    SCIM_SCHEMA_CORE_USER, SCIM_SCHEMA_CORE_GROUP, \
+    SCIM_SCHEMA_SRAM_USER, SCIM_SCHEMA_SRAM_GROUP
 from server.scim.resource_type_template import resource_type_template, resource_type_user_template, resource_type_group_template
 from server.scim.sweep import perform_sweep
 from server.scim.user_template import find_users_template, find_user_by_id_template, version_value
@@ -27,16 +31,28 @@ def _add_etag_header(scim_object: Union[User, Group, Collaboration]):
     return response_header
 
 
-@scim_api.route(f"/Schemas/{SCIM_SCHEMA_CORE}:User", methods=["GET"], strict_slashes=False)
+@scim_api.route(f"/Schemas/{SCIM_SCHEMA_CORE_USER}", methods=["GET"], strict_slashes=False)
 @json_endpoint
-def schema_user():
-    return schema_user_template(), 200
+def schema_core_user():
+    return schema_core_user_template(), 200
 
 
-@scim_api.route(f"/Schemas/{SCIM_SCHEMA_CORE}:Group", methods=["GET"], strict_slashes=False)
+@scim_api.route(f"/Schemas/{SCIM_SCHEMA_CORE_GROUP}", methods=["GET"], strict_slashes=False)
 @json_endpoint
-def schema_group():
-    return schema_group_template(), 200
+def schema_core_group():
+    return schema_core_group_template(), 200
+
+
+@scim_api.route(f"/Schemas/{SCIM_SCHEMA_SRAM_USER}", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def schema_sram_user():
+    return schema_sram_user_template(), 200
+
+
+@scim_api.route(f"/Schemas/{SCIM_SCHEMA_SRAM_GROUP}", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def schema_sram_group():
+    return schema_sram_group_template(), 200
 
 
 @scim_api.route("/Schemas", methods=["GET"], strict_slashes=False)

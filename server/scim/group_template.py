@@ -4,7 +4,8 @@ from server.api.base import application_base_url
 from server.db.domain import Group, Collaboration, CollaborationMembership
 from server.scim import SCIM_URL_PREFIX, EXTERNAL_ID_POST_FIX
 from server.scim.user_template import version_value, date_time_format, replace_none_values
-from server.scim.schema_template import SCIM_SCHEMA_CORE, SCIM_API_MESSAGES
+from server.scim.schema_template import \
+    SCIM_SCHEMA_CORE_GROUP, SCIM_SCHEMA_SRAM_GROUP, SCIM_API_MESSAGES
 
 
 def _meta_info(group: Union[Group, Collaboration]):
@@ -16,14 +17,26 @@ def _meta_info(group: Union[Group, Collaboration]):
 
 
 def create_group_template(group: Union[Group, Collaboration], membership_scim_objects):
+
+    labels = [
+        t.tag_value for t in group.tags
+    ] if hasattr(group, 'tags') else []
+
     sorted_members = sorted(membership_scim_objects, key=lambda m: m["value"])
+
     return replace_none_values({
         "schemas": [
-            f"{SCIM_SCHEMA_CORE}:Group"
+            SCIM_SCHEMA_CORE_GROUP,
+            SCIM_SCHEMA_SRAM_GROUP
         ],
         "externalId": f"{group.identifier}{EXTERNAL_ID_POST_FIX}",
-        "displayName": group.global_urn,
-        "members": sorted_members
+        "displayName": group.name,
+        "members": sorted_members,
+        SCIM_SCHEMA_SRAM_GROUP: {
+            "description": group.description,
+            "urn": group.global_urn,
+            "labels": labels
+        }
     })
 
 
