@@ -229,7 +229,7 @@ def schema_sram_user_template():
             "uniqueness": "none"
         }
     ])
- 
+
 
 def schema_core_group_template():
     return _schema(SCIM_SCHEMA_CORE_GROUP, [
