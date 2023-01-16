@@ -1,13 +1,11 @@
 {
     "itemsPerPage": 3,
-    "schemas": [
-        "urn:ietf:params:scim:api:messages:2.0:ListResponse"
-    ],
+    "schemas": ["urn:ietf:params:scim:api:messages:2.0:ListResponse"],
     "startIndex": 0,
     "totalResults": 3,
     "Resources": [
         {
-            "displayName": "ucc:ai_computing",
+            "displayName": "AI computing",
             "externalId": "a71a2b01-4642-4e1a-b3ac-0a06b2bf66f2@sram.surf.nl",
             "id": "768F27CF-98E2-42B4-9913-3AACF370D8FD",
             "members": [
@@ -44,12 +42,10 @@
                 "resourceType": "Group",
                 "version": "cb293160f7268629c54ae5d8f44d347a0d87b9f0fe8e2b0b918f92375fbfa79a"
             },
-            "schemas": [
-                "urn:scim:schemas:core:1.0"
-            ]
+            "schemas": ["urn:scim:schemas:core:1.0"]
         },
         {
-            "displayName": "uuc:ai_computing:ai_res",
+            "displayName": "AI researchers",
             "externalId": "9734e4c4-d23e-4228-b0e0-8e6a5b85e72e@sram.surf.nl",
             "id": "204DD260-D297-41E2-97AF-CDEF68EFB35B",
             "members": [
@@ -71,12 +67,10 @@
                 "resourceType": "Group",
                 "version": "cb293160f7268629c54ae5d8f44d347a0d87b9f0fe8e2b0b918f92375fbfa79a"
             },
-            "schemas": [
-                "urn:scim:schemas:core:1.0"
-            ]
+            "schemas": ["urn:scim:schemas:core:1.0"]
         },
         {
-            "displayName": "uuc:ai_computing:ai_dev",
+            "displayName": "AI developers",
             "externalId": "4c270cff-de30-49e8-a3bc-df032536b37c@sram.surf.nl",
             "id": "0747BBDA-837A-479A-B55D-BB0C1B836747",
             "members": [
@@ -93,9 +87,7 @@
                 "resourceType": "Group",
                 "version": "cb293160f7268629c54ae5d8f44d347a0d87b9f0fe8e2b0b918f92375fbfa79a"
             },
-            "schemas": [
-                "urn:scim:schemas:core:1.0"
-            ]
+            "schemas": ["urn:scim:schemas:core:1.0"]
         }
     ]
 }
