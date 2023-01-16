@@ -32,3 +32,4 @@ Flask-Executor==1.0.0
 eventlet==0.33.1
 Flask-SocketIO==5.2.0
 Flask-Cors==3.0.10
+dnspython==2.2.0
