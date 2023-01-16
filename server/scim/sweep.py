@@ -6,6 +6,7 @@ import requests
 from server.api.base import application_base_url
 from server.db.domain import Service, Group, User, Collaboration
 from server.scim import EXTERNAL_ID_POST_FIX, SCIM_GROUPS, SCIM_USERS
+from server.scim.schema_template import SCIM_SCHEMA_SRAM_USER, SCIM_SCHEMA_SRAM_GROUP
 from server.scim.group_template import create_group_template, update_group_template, scim_member_object
 from server.scim.repo import all_scim_groups_by_service, all_scim_users_by_service
 from server.scim.scim import scim_headers, validate_response
@@ -39,12 +40,21 @@ def _user_changed(user: User, remote_user: dict):
     remote_ssh_keys = sorted([c.get("value") for c in remote_user.get("x509Certificates", [])])
     if remote_ssh_keys != ssh_keys:
         return True
+    if SCIM_SCHEMA_SRAM_USER in remote_user:
+        if remote_user[SCIM_SCHEMA_SRAM_USER].get("eduPersonScopedAffiliation") != user.affiliation:
+            return True
+        if remote_user[SCIM_SCHEMA_SRAM_USER].get("eduPersonUniqueId") != user.eduperson_principal_name:
+            return True
+        if remote_user[SCIM_SCHEMA_SRAM_USER].get("voPersonExternalAffiliation") != user.scoped_affiliation:
+            return True
+        if remote_user[SCIM_SCHEMA_SRAM_USER].get("voPersonExternalId") != user.home_organisation_uid:
+            return True
     return False
 
 
 def _group_changed(group: Union[Group, Collaboration], remote_group: dict, remote_scim_users: List[dict]):
     remote_group = _replace_empty_string_values(remote_group)
-    if remote_group.get("displayName") != group.global_urn:
+    if remote_group.get("displayName") != group.name:
         return True
     sram_members = sorted([member.user.external_id for member in group.collaboration_memberships if member.is_active])
     remote_users_by_id = {u["id"]: u for u in remote_scim_users}
@@ -55,6 +65,18 @@ def _group_changed(group: Union[Group, Collaboration], remote_group: dict, remot
             remote_members.append(remote_user["externalId"].replace(EXTERNAL_ID_POST_FIX, ""))
     if sram_members != sorted(remote_members):
         return True
+    if SCIM_SCHEMA_SRAM_GROUP in remote_group:
+        if remote_group[SCIM_SCHEMA_SRAM_GROUP].get("description") != group.description:
+            return True
+        if remote_group[SCIM_SCHEMA_SRAM_GROUP].get("urn") != group.global_urn:
+            return True
+
+        labels = [
+            t.tag_value for t in group.tags
+        ] if hasattr(group, 'tags') else []
+
+        if sorted(remote_group[SCIM_SCHEMA_SRAM_GROUP].get("labels", [])) != sorted(labels):
+            return True
     return False
 
 
