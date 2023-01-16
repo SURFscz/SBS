@@ -33,25 +33,25 @@ def _add_etag_header(scim_object: Union[User, Group, Collaboration]):
 
 @scim_api.route(f"/Schemas/{SCIM_SCHEMA_CORE_USER}", methods=["GET"], strict_slashes=False)
 @json_endpoint
-def schema_user():
+def schema_core_user():
     return schema_core_user_template(), 200
 
 
 @scim_api.route(f"/Schemas/{SCIM_SCHEMA_CORE_GROUP}", methods=["GET"], strict_slashes=False)
 @json_endpoint
-def schema_group():
+def schema_core_group():
     return schema_core_group_template(), 200
 
 
 @scim_api.route(f"/Schemas/{SCIM_SCHEMA_SRAM_USER}", methods=["GET"], strict_slashes=False)
 @json_endpoint
-def schema_group():
+def schema_sram_user():
     return schema_sram_user_template(), 200
 
 
 @scim_api.route(f"/Schemas/{SCIM_SCHEMA_SRAM_GROUP}", methods=["GET"], strict_slashes=False)
 @json_endpoint
-def schema_group():
+def schema_sram_group():
     return schema_sram_group_template(), 200
 
 

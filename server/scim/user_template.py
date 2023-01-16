@@ -4,7 +4,8 @@ from typing import List, Union
 
 from server.db.domain import User, Group, Collaboration
 from server.scim import EXTERNAL_ID_POST_FIX
-from server.scim.schema_template import SCIM_SCHEMA_CORE, SCIM_API_MESSAGES
+from server.scim.schema_template import \
+    SCIM_SCHEMA_CORE_USER, SCIM_SCHEMA_SRAM_USER, SCIM_API_MESSAGES
 
 
 def replace_none_values(d: dict):
@@ -35,7 +36,8 @@ def _meta_info(user: User):
 def create_user_template(user: User):
     return replace_none_values({
         "schemas": [
-            f"{SCIM_SCHEMA_CORE}:User"
+            SCIM_SCHEMA_CORE_USER,
+            SCIM_SCHEMA_SRAM_USER
         ],
         "externalId": f"{user.external_id}{EXTERNAL_ID_POST_FIX}",
         "userName": user.username,
@@ -48,10 +50,12 @@ def create_user_template(user: User):
         "emails": [{"value": user.email, "primary": True}],
         "x509Certificates": [{"value": base64.b64encode(ssh_key.ssh_value.encode()).decode()} for ssh_key in
                              user.ssh_keys],
-        "eduPersonScopedAffiliation": user.affiliation,
-        "eduPersonUniqueId": user.eduperson_principal_name,
-        "voPersonExternalAffiliation": user.scoped_affiliation,
-        "voPersonExternalId": user.home_organisation_uid
+        SCIM_SCHEMA_SRAM_USER: {
+            "eduPersonScopedAffiliation": user.affiliation,
+            "eduPersonUniqueId": user.eduperson_principal_name,
+            "voPersonExternalAffiliation": user.scoped_affiliation,
+            "voPersonExternalId": user.home_organisation_uid
+        }
     })
 
 
