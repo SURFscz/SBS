@@ -35,7 +35,7 @@ def create_group_template(group: Union[Group, Collaboration], membership_scim_ob
         SCIM_SCHEMA_SRAM_GROUP: {
             "description": group.description,
             "urn": group.global_urn,
-            "labels": labels
+            "labels": sorted(labels)
         }
     })
 
