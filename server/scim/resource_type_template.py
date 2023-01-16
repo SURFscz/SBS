@@ -23,23 +23,19 @@ def _resource_type(name, schema):
 
 def resource_type_user_template():
     return _resource_type("User", SCIM_SCHEMA_CORE_USER) | {
-        "schemaExtensions": [
-           {
-                "schema": SCIM_SCHEMA_SRAM_USER,
-                "required": True
-           }
-        ]
+        "schemaExtensions": [{
+            "schema": SCIM_SCHEMA_SRAM_USER,
+            "required": True
+        }]
     }
 
 
 def resource_type_group_template():
     return _resource_type("Group", SCIM_SCHEMA_CORE_GROUP) | {
-        "schemaExtensions": [
-           {
-                "schema": SCIM_SCHEMA_SRAM_GROUP,
-                "required": True
-           }
-        ]
+        "schemaExtensions": [{
+            "schema": SCIM_SCHEMA_SRAM_GROUP,
+            "required": True
+        }]
     }
 
 

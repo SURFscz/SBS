@@ -19,7 +19,7 @@ def _schema(id, attributes):
             "resourceType": "Schema",
             "location": f"/Schemas/{id}"
         },
-        "name":  id,
+        "name": id,
         "Description": f"Defined attributes for the {id} schema",
         "attributes": attributes
     }
