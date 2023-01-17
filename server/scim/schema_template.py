@@ -4,7 +4,7 @@ SCIM_SCHEMA_CORE = "urn:ietf:params:scim:schemas:core:2.0"
 SCIM_SCHEMA_CORE_USER = f"{SCIM_SCHEMA_CORE}:User"
 SCIM_SCHEMA_CORE_GROUP = f"{SCIM_SCHEMA_CORE}:Group"
 
-SCIM_SCHEMA_SRAM = "urn:sram:extension:schema"
+SCIM_SCHEMA_SRAM = "urn:mace:surf.nl:sram:scim:extension"
 SCIM_SCHEMA_SRAM_USER = f"{SCIM_SCHEMA_SRAM}:User"
 SCIM_SCHEMA_SRAM_GROUP = f"{SCIM_SCHEMA_SRAM}:Group"
 
