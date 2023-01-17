@@ -90,46 +90,6 @@ def schema_core_user_template():
             "uniqueness": "none"
         },
         {
-            "name": "eduPersonScopedAffiliation",
-            "type": "string",
-            "multiValued": False,
-            "required": False,
-            "caseExact": False,
-            "mutability": "readOnly",
-            "returned": "default",
-            "uniqueness": "none"
-        },
-        {
-            "name": "eduPersonUniqueId",
-            "type": "string",
-            "multiValued": False,
-            "required": False,
-            "caseExact": False,
-            "mutability": "readOnly",
-            "returned": "default",
-            "uniqueness": "none"
-        },
-        {
-            "name": "voPersonExternalAffiliation",
-            "type": "string",
-            "multiValued": False,
-            "required": False,
-            "caseExact": False,
-            "mutability": "readOnly",
-            "returned": "default",
-            "uniqueness": "none"
-        },
-        {
-            "name": "voPersonExternalId",
-            "type": "string",
-            "multiValued": False,
-            "required": False,
-            "caseExact": False,
-            "mutability": "readOnly",
-            "returned": "default",
-            "uniqueness": "none"
-        },
-        {
             "name": "emails",
             "type": "complex",
             "multiValued": False,
