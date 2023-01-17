@@ -618,7 +618,7 @@ class CollaborationDetail extends React.Component {
             });
         }
         const almostSuspended = this.isCollaborationAlmostSuspended(user, collaboration, config);
-        if (almostSuspended && showMemberView) {
+        if (almostSuspended && allowedToEdit && showMemberView) {
             actions.push({
                 icon: "unlock",
                 name: I18n.t("home.resetLastActivity"),
