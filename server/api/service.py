@@ -111,7 +111,7 @@ def _do_get_services(restrict_for_current_user=False, include_counts=False):
             .filter(ServiceMembership.user_id == current_user_id())
 
     services = query.all()
-    if not include_counts:
+    if not include_counts or len(services) == 0:
         return services, 200
 
     query = """
