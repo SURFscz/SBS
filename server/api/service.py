@@ -124,7 +124,7 @@ def _do_get_services(restrict_for_current_user=False, include_counts=False):
                     select sc.collaboration_id from services_collaborations sc where sc.service_id = s.id
             ))) as c_count from services s
     """
-    if restrict_for_current_user:
+    if restrict_for_current_user and len(services) > 0:
         query += f" where s.id in ({','.join([str(s.id) for s in services])})"
 
     result_set = db.engine.execute(text(query))
