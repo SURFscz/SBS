@@ -196,7 +196,7 @@ def schema_core_group_template():
         {
             "name": "displayName",
             "type": "string",
-            "multiValued": True,
+            "multiValued": False,
             "required": False,
             "caseExact": False,
             "mutability": "readOnly",
