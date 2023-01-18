@@ -98,11 +98,7 @@ class OrganisationDetail extends React.Component {
                             socket.then(s => s.on(topic, data => {
                                 const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
                                 if (subscriptionIdSessionStorage !== data.subscription_id) {
-                                    if (data.current_user_id === user.id) {
-                                        this.props.refreshUser(() => this.componentDidMount());
-                                    } else {
-                                        this.componentDidMount();
-                                    }
+                                    this.props.refreshUser(() => this.componentDidMount());
                                 }
                             }));
                         });
