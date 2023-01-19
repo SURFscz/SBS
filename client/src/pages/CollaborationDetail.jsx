@@ -130,12 +130,7 @@ class CollaborationDetail extends React.Component {
                         socket.then(s => s.on(`collaboration_${collaboration_id}`, data => {
                             const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
                             if (subscriptionIdSessionStorage !== data.subscription_id) {
-                                const {user} = this.props;
-                                if (data.current_user_id === user.id) {
-                                    this.props.refreshUser(() => this.componentDidMount());
-                                } else {
-                                    this.componentDidMount();
-                                }
+                                this.props.refreshUser(() => this.componentDidMount());
                             }
                         }));
                         this.setState({socketSubscribed: true})
@@ -618,7 +613,7 @@ class CollaborationDetail extends React.Component {
             });
         }
         const almostSuspended = this.isCollaborationAlmostSuspended(user, collaboration, config);
-        if (almostSuspended && showMemberView) {
+        if (almostSuspended && allowedToEdit && showMemberView) {
             actions.push({
                 icon: "unlock",
                 name: I18n.t("home.resetLastActivity"),

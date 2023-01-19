@@ -4,7 +4,7 @@ SCIM_SCHEMA_CORE = "urn:ietf:params:scim:schemas:core:2.0"
 SCIM_SCHEMA_CORE_USER = f"{SCIM_SCHEMA_CORE}:User"
 SCIM_SCHEMA_CORE_GROUP = f"{SCIM_SCHEMA_CORE}:Group"
 
-SCIM_SCHEMA_SRAM = "urn:sram:extension:schema"
+SCIM_SCHEMA_SRAM = "urn:mace:surf.nl:sram:scim:extension"
 SCIM_SCHEMA_SRAM_USER = f"{SCIM_SCHEMA_SRAM}:User"
 SCIM_SCHEMA_SRAM_GROUP = f"{SCIM_SCHEMA_SRAM}:Group"
 
@@ -82,46 +82,6 @@ def schema_core_user_template():
         {
             "name": "active",
             "type": "boolean",
-            "multiValued": False,
-            "required": False,
-            "caseExact": False,
-            "mutability": "readOnly",
-            "returned": "default",
-            "uniqueness": "none"
-        },
-        {
-            "name": "eduPersonScopedAffiliation",
-            "type": "string",
-            "multiValued": False,
-            "required": False,
-            "caseExact": False,
-            "mutability": "readOnly",
-            "returned": "default",
-            "uniqueness": "none"
-        },
-        {
-            "name": "eduPersonUniqueId",
-            "type": "string",
-            "multiValued": False,
-            "required": False,
-            "caseExact": False,
-            "mutability": "readOnly",
-            "returned": "default",
-            "uniqueness": "none"
-        },
-        {
-            "name": "voPersonExternalAffiliation",
-            "type": "string",
-            "multiValued": False,
-            "required": False,
-            "caseExact": False,
-            "mutability": "readOnly",
-            "returned": "default",
-            "uniqueness": "none"
-        },
-        {
-            "name": "voPersonExternalId",
-            "type": "string",
             "multiValued": False,
             "required": False,
             "caseExact": False,
@@ -236,7 +196,7 @@ def schema_core_group_template():
         {
             "name": "displayName",
             "type": "string",
-            "multiValued": True,
+            "multiValued": False,
             "required": False,
             "caseExact": False,
             "mutability": "readOnly",

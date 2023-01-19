@@ -125,12 +125,7 @@ class ServiceDetail extends React.Component {
             socket.then(s => s.on(`service_${service.id}`, data => {
                 const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
                 if (subscriptionIdSessionStorage !== data.subscription_id) {
-                    const {user} = this.props;
-                    if (data.current_user_id === user.id) {
-                        this.props.refreshUser(() => this.componentDidMount());
-                    } else {
-                        this.componentDidMount();
-                    }
+                    this.props.refreshUser(() => this.componentDidMount());
                 }
             }));
             this.setState({socketSubscribed: true})
