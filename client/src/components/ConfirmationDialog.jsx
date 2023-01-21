@@ -1,9 +1,10 @@
 import React from "react";
-import Modal from "react-modal";
+import {Modal, } from "@surfnet/sds";
 import I18n from "i18n-js";
 
 import "./ConfirmationDialog.scss";
 import Button from "./Button";
+import {pseudoGuid} from "../utils/Utils";
 
 export default function ConfirmationDialog({
                                                isOpen = false, cancel, confirm, question = "",
@@ -13,6 +14,8 @@ export default function ConfirmationDialog({
                                                largeWidth =false,
                                                confirmationHeader = I18n.t("confirmationDialog.title")
                                            }) {
+    AlertType
+    return <Modal confirm={confirm} cancel={cancel}/>
     const className = isError ? " error " : isWarning ? " warning " : "";
     return (
         <Modal
