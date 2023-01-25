@@ -3,6 +3,7 @@ import "regenerator-runtime/runtime";
 import {polyfill} from "es6-promise";
 import React from 'react';
 import './stylesheets/index.scss';
+import "react-tooltip/dist/react-tooltip.css";
 import App from './pages/App';
 import {getParameterByName} from "./utils/QueryParameters";
 import {isEmpty} from "./utils/Utils";

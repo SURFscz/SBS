@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";

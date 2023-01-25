@@ -2,7 +2,7 @@ import React from "react";
 import I18n from "i18n-js";
 import "./InstituteColumn.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
 export default function InstituteColumn({entity, currentUser, greyed=true}) {
     const isMe = !entity.invite && entity.user.id === currentUser.id;

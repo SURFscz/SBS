@@ -1,11 +1,10 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import ReactTooltip from "react-tooltip";
+import {Tooltip} from "@surfnet/sds";
 import "./InputField.scss";
 import {isEmpty} from "../utils/Utils";
 import ClipBoardCopy from "./redesign/ClipBoardCopy";
 import {validUrlRegExp} from "../validations/regExps";
-import DOMPurify from "dompurify";
 
 export default function InputField({
                                        onChange,
@@ -44,15 +43,8 @@ export default function InputField({
     const validExternalLink = externalLink && !isEmpty(value) && validUrlRegExp.test(value);
     return (
         <div className="input-field">
-            {(name && displayLabel) && <label htmlFor={name}>{name} {toolTip &&
-            <span className="tool-tip-section">
-                <span data-tip data-for={name}><FontAwesomeIcon icon="info-circle"/></span>
-                <ReactTooltip id={name} type="light" effect="solid" data-html={true}
-                              className={"sds--tooltip"}>
-                    <span className="sds--tooltip--textual sds--text--body--small"
-                          dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(toolTip)}}/>
-                </ReactTooltip>
-            </span>}
+            {(name && displayLabel) && <label htmlFor={name}>{name}
+                {toolTip && <Tooltip tip={toolTip}/>}
             </label>}
             {!isEmpty(fileName) && <em className="file-name">{fileName}</em>}
             <div className="inner-input-field">

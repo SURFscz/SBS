@@ -107,10 +107,6 @@
 
     }
 
-    div.entities-list {
-        position: relative;
-    }
-
     section.entities-list {
         position: relative;
 
@@ -128,6 +124,10 @@
                 left: 0;
                 top: -2px;
             }
+        }
+
+        .sds--pagination {
+            margin-top: 25px;
         }
     }
 

@@ -29,7 +29,7 @@ import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import SpinnerField from "./SpinnerField";
 import moment from "moment";
 import Tooltip from "./Tooltip";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import LastAdminWarning from "./LastAdminWarning";
 import DateField from "../DateField";
 import InstituteColumn from "./InstitueColumn";

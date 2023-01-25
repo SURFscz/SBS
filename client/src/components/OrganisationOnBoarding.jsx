@@ -6,7 +6,7 @@ import "./OrganisationOnBoarding.scss";
 import "react-mde/lib/styles/css/react-mde-all.css";
 import {convertToHtml} from "../utils/Markdown";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {isEmpty} from "../utils/Utils";
 import DOMPurify from "dompurify";
 

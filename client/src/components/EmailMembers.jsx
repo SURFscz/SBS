@@ -3,7 +3,7 @@ import I18n from "i18n-js";
 import "./Footer.scss"
 import {emailMembersLink, isEmpty} from "../utils/Utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import "./EmailMembers.scss";
 
 export default function EmailMembers({title, members, allowEmailLink}) {

@@ -37,7 +37,7 @@
     &:not(.active) {
         cursor: pointer;
 
-        h2, svg {
+        span.tab-label, svg {
             color: $dark-grey;
         }
 
@@ -46,7 +46,7 @@
         }
 
         &:not(.read-only):hover {
-            h2, svg {
+            span.tab-label, svg {
                 color: black;
             }
 
@@ -60,7 +60,7 @@
         &.read-only {
             cursor: not-allowed;
 
-            h2, svg {
+            span.tab-label, svg {
                 color: $medium-grey;
             }
 
@@ -73,7 +73,7 @@
     &.active {
         border-bottom: 3px solid $light-orange;
 
-        h2, svg {
+        span.tab-label, svg {
             color: $primary-orange;
             font-weight: bold;
         }
@@ -131,8 +131,7 @@
         }
     }
 
-    h2 {
-        font-family: "Source Sans Pro", sans-serif !important;
+    span.tab-label {
         font-weight: 600;
     }
 }
