@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import "./CheckBox.scss";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import DOMPurify from "dompurify";
 
 export default class CheckBox extends React.PureComponent {

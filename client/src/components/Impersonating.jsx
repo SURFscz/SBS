@@ -1,5 +1,5 @@
 import {NavLink, Route} from "react-router-dom";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import I18n from "i18n-js";
 import React from "react";
 import {globalUserRole} from "../utils/UserRole";

@@ -1,6 +1,6 @@
 import React from "react";
 import "./ToggleSwitch.scss";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {pseudoGuid} from "../../utils/Utils";
 import DOMPurify from "dompurify";
 

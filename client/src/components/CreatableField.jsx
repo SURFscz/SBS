@@ -1,6 +1,6 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import "./CreatableField.scss";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import DOMPurify from "dompurify";

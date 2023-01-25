@@ -17,7 +17,7 @@ import Explain from "../components/Explain";
 import ServicesRequestExplanation from "../components/explanations/ServicesRequest";
 import CheckBox from "../components/CheckBox";
 import Button from "../components/Button";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {escapeHtmlTooltip, isEmpty, stopEvent} from "../utils/Utils";
 import {getParameterByName} from "../utils/QueryParameters";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";

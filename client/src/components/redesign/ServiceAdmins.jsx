@@ -16,7 +16,7 @@ import UserColumn from "./UserColumn";
 import {isUserServiceAdmin} from "../../utils/UserRole";
 import SpinnerField from "./SpinnerField";
 import Tooltip from "./Tooltip";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import InstituteColumn from "./InstitueColumn";
 import {isEmpty} from "../../utils/Utils";
 import {emitImpersonation} from "../../utils/Impersonation";

@@ -27,7 +27,7 @@ import {
     validUrlRegExp
 } from "../validations/regExps";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import RadioButton from "../components/redesign/RadioButton";
 import DOMPurify from "dompurify";
 import {ReactComponent as ChevronLeft} from "../icons/chevron-left.svg";

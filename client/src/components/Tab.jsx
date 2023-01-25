@@ -41,7 +41,7 @@ class Tab extends Component {
         return (
             <div className={className} onClick={this.onClick}>
                 {notifier && <span className="notifier">{notifier}</span>}
-                {icon && icon}<h2>{label}</h2>
+                {icon && icon}<span className={"tab-label"}>{label}</span>
             </div>
         );
     }

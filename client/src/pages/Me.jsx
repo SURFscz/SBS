@@ -11,7 +11,7 @@ import {ReactComponent as CriticalIcon} from "../icons/critical.svg";
 import {validateSSHKey,} from "../validations/regExps";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import InstituteColumn from "../components/redesign/InstitueColumn";
 import moment from "moment";
 import DOMPurify from "dompurify";
