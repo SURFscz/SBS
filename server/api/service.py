@@ -9,13 +9,15 @@ from server.api.base import json_endpoint, query_param, emit_socket
 from server.api.ipaddress import validate_ip_networks
 from server.auth.secrets import generate_token, generate_ldap_password_with_hash
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
-    is_organisation_admin_or_manager, is_application_admin, is_service_admin, confirm_service_admin
+    is_organisation_admin_or_manager, is_application_admin, is_service_admin, confirm_service_admin, \
+    confirm_external_api_call
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, cleanse_short_name, default_expiry_date, valid_uri_attributes
 from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, \
     User, ServiceInvitation, ServiceMembership, ServiceToken
 from server.db.models import update, save, delete
 from server.mail import mail_platform_admins, mail_service_invitation
+from server.scim.repo import _unique_scim_objects
 
 URI_ATTRIBUTES = ["uri", "uri_info", "privacy_policy", "accepted_user_policy"]
 
@@ -276,6 +278,38 @@ def all_services():
 @json_endpoint
 def mine_services():
     return _do_get_services(restrict_for_current_user=True, include_counts=True)
+
+
+@service_api.route("/v1/access/<user_id>", strict_slashes=False)
+@json_endpoint
+def user_services(user_id):
+    def convert_service(service: Service):
+        return {
+            "name": service.name,
+            "description": service.description,
+            "entity_id": service.entity_id,
+            "logo": service.logo,
+            "privacy_policy": service.privacy_policy,
+            "uri": service.uri,
+            "support_email": service.support_email
+        }
+
+    confirm_external_api_call()
+    organisation = request_context.external_api_organisation
+    count = CollaborationMembership.query \
+        .options(load_only("id")) \
+        .join(CollaborationMembership.collaboration)\
+        .join(Collaboration.organisation) \
+        .filter(CollaborationMembership.user_id == user_id) \
+        .filter(Collaboration.organisation_id == organisation.id)\
+        .count()
+    if count == 0:
+        raise Forbidden(f"User {user_id} is not a member of a collaboration in the {organisation.name} organisation")
+
+    services = services_from_organisation_memberships(user_id)
+    services += services_from_organisation_collaboration_memberships(user_id)
+    services += services_from_collaboration_memberships(user_id)
+    return [convert_service(service) for service in _unique_scim_objects(services)], 200
 
 
 @service_api.route("/", methods=["POST"], strict_slashes=False)

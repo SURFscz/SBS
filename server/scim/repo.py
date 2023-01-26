@@ -4,7 +4,7 @@ from server.db.domain import User, CollaborationMembership, Collaboration, Servi
 from server.db.models import flatten
 
 
-def _unique_scim_objects(objects: List[Union[User, Collaboration]]):
+def _unique_scim_objects(objects: List[Union[User, Collaboration, Service]]):
     seen = set()
     return [obj for obj in objects if obj.id not in seen and not seen.add(obj.id)]
 
