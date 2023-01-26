@@ -20,7 +20,7 @@ import {isEmpty, stopEvent} from "../utils/Utils";
 import {sanitizeShortName, validEmailRegExp, validUrlRegExp} from "../validations/regExps";
 import CheckBox from "../components/CheckBox";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+import {Tooltip} from "@surfnet/sds";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
 import RadioButton from "../components/redesign/RadioButton";

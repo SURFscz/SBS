@@ -2,7 +2,7 @@ import React from "react";
 import "./RadioButton.scss";
 import I18n from "i18n-js";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+import {Tooltip} from "@surfnet/sds";
 import DOMPurify from "dompurify";
 
 export default function RadioButton({label, name, value, onChange, tooltip, disabled = false, tooltipOnHover = false}) {

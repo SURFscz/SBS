@@ -1,6 +1,6 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+import {Tooltip} from "@surfnet/sds";
 import "./EmailField.scss";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import I18n from "i18n-js";
@@ -20,15 +20,8 @@ export default function EmailField({
 
     return (
         <div className={`email-field ${error ? "error" : ""}`}>
-            <label htmlFor={name}>{name} <span className="tool-tip-section">
-                <span data-tip data-for={name}><FontAwesomeIcon icon="info-circle"/></span>
-                <ReactTooltip id={name} type="light" effect="solid" data-html={true}>
-                    <p dangerouslySetInnerHTML={{
-                        __html:
-                            DOMPurify.sanitize(`${I18n.t("invitation.inviteesMessagesTooltip")}${isAdmin ? I18n.t("invitation.appendAdminNote") : ""}`)
-                    }}/>
-                </ReactTooltip>
-            </span>
+            <label htmlFor={name}>{name}
+                <Tooltip tip={`${I18n.t("invitation.inviteesMessagesTooltip")}${isAdmin ? I18n.t("invitation.appendAdminNote") : ""}`} />
             </label>
             <div className={`inner-email-field ${error ? "error" : ""}`}>
                 {emails.map(mail =>

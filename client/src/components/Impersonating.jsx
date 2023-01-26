@@ -1,5 +1,5 @@
 import {NavLink, Route} from "react-router-dom";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+import {Tooltip} from "@surfnet/sds";
 import I18n from "i18n-js";
 import React from "react";
 import {globalUserRole} from "../utils/UserRole";
@@ -23,17 +23,10 @@ export default function Impersonating({impersonator, currentUser}) {
 
   return <div className="impersonator ">
     <NavLink to="/impersonate">
-                            <span data-tip data-for="impersonator">
-                                <HandIcon/></span>
-      <ReactTooltip id="impersonator" type="light" effect="solid" data-html={true}
-                    place="bottom">
-        <p dangerouslySetInnerHTML={{
-          __html: DOMPurify.sanitize(I18n.t("impersonate.impersonatorTooltip", {
+           <Tooltip children={<HandIcon/>} tip={I18n.t("impersonate.impersonatorTooltip", {
             currentUser: currentUser.name,
             impersonator: impersonator.name
-          }))
-        }}/>
-      </ReactTooltip>
+          })} />}
     </NavLink>
     <p dangerouslySetInnerHTML={{
       __html: DOMPurify.sanitize(I18n.t("impersonate.impersonator", {
