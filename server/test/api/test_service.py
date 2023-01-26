@@ -9,7 +9,8 @@ from server.db.domain import Service, Organisation, Collaboration, ServiceInvita
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_network_entity_id, uuc_name, \
     service_network_name, uuc_scheduler_name, service_wiki_name, uva_research_name, service_storage_name, \
-    service_cloud_name, service_storage_entity_id, service_ssh_uva_name, tue_name, amsterdam_uva_name
+    service_cloud_name, service_storage_entity_id, service_ssh_uva_name, tue_name, amsterdam_uva_name, uuc_secret, \
+    jane_name, roger_name
 
 
 class TestService(AbstractTest):
@@ -279,6 +280,20 @@ class TestService(AbstractTest):
         self.login("urn:jane")
         services = self.get("/api/services/mine", with_basic_auth=False)
         self.assertEqual(0, len(services))
+
+    def test_services_access(self):
+        jane = self.find_entity_by_name(User, jane_name)
+        res = self.get(f"/api/services/v1/access/{jane.id}",
+                       headers={"Authorization": f"Bearer {uuc_secret}"},
+                       with_basic_auth=False)
+        self.assertEqual(4, len(res))
+
+    def test_services_access_forbidden(self):
+        roger = self.find_entity_by_name(User, roger_name)
+        self.get(f"/api/services/v1/access/{roger.id}",
+                 headers={"Authorization": f"Bearer {uuc_secret}"},
+                 with_basic_auth=False,
+                 response_status_code=403)
 
     def test_services_all_org_member(self):
         self.login("urn:harry")
