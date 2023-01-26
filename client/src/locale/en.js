@@ -392,7 +392,7 @@ I18n.translations.en = {
             autoProvisioning: "Auto provisioning",
             on: "On",
             off: "Off",
-            deleteMemberConfirmation: "Are you sure you want to delete {{name}}?"
+            deleteMemberConfirmation: "Are you sure you want to remove {{name}} from this group?"
         },
         groupMembers: {
             title: "Members",
