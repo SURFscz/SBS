@@ -48,7 +48,7 @@ import Tooltip from "../components/redesign/Tooltip";
 import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+import {Tooltip} from "@surfnet/sds";
 import {ErrorOrigins, getSchacHomeOrg, isEmpty, removeDuplicates} from "../utils/Utils";
 import UserTokens from "../components/redesign/UserTokens";
 import {socket, subscriptionIdCookieName} from "../utils/SocketIO";

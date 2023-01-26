@@ -1,6 +1,6 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+import {Tooltip} from "@surfnet/sds";
 import "./CreatableField.scss";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import DOMPurify from "dompurify";
@@ -21,12 +21,7 @@ export default function CreatableField({
     return (
         <div className={`creatable-field ${error ? "error" : ""}`}>
             <label htmlFor={name}>{name}
-                {toolTip && <span className="tool-tip-section">
-                <span data-tip data-for={name}><FontAwesomeIcon icon="info-circle"/></span>
-                <ReactTooltip id={name} type="light" effect="solid" data-html={true}>
-                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(toolTip)}}/>
-                </ReactTooltip>
-            </span>}
+                {toolTip && <Tooltip tip={toolTip} />}
             </label>
             <div className={`inner-creatable-field ${error ? "error" : ""}${disabled ? "disabled" : ""}`}>
                 {values.map(val =>

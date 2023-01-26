@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+import {Tooltip} from "@surfnet/sds";
 import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -59,13 +59,7 @@ export default class DateField extends React.Component {
         return (
             <div className="date-field">
                 {name && <label className="date-field-label" htmlFor={name}>{name}
-                    {toolTip &&
-                    <span className="tool-tip-section">
-                        <span data-tip data-for={name}><FontAwesomeIcon icon="info-circle"/></span>
-                        <ReactTooltip id={name} type="light" effect="solid" data-html={true}>
-                            <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(toolTip)}}/>
-                        </ReactTooltip>
-                    </span>}
+                    {toolTip && <Tooltip tip={toolTip} />}
                 </label>}
                 <label className={"date-picker-container"} htmlFor={name}>
                     <DatePicker

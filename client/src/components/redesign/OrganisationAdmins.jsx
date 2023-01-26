@@ -24,7 +24,7 @@ import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import SpinnerField from "./SpinnerField";
 import Tooltip from "./Tooltip";
 import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+import {Tooltip} from "@surfnet/sds";
 import InstituteColumn from "./InstitueColumn";
 import {ReactComponent as InformationCircle} from "../../icons/information-circle.svg";
 import {isEmpty} from "../../utils/Utils";

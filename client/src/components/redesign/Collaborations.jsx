@@ -12,7 +12,7 @@ import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
 import CheckBox from "../CheckBox";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+import {Tooltip} from "@surfnet/sds";
 import ConfirmationDialog from "../ConfirmationDialog";
 import Tooltip from "./Tooltip";
 import {ReactComponent as InformationCircle} from "../../icons/information-circle.svg";
