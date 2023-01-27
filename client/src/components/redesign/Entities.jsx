@@ -58,7 +58,7 @@ class Entities extends React.Component {
         return (
             <section className="entities-search">
                 {showNew &&
-                <Button onClick={this.newEntity} className={`plus ${hideTitle && !filters ? "no-title" : ""}`}
+                <Button onClick={this.newEntity} small={true} className={`ghost ${hideTitle && !filters ? "no-title" : ""}`}
                         txt={newLabel || I18n.t(`models.${modelName}.new`)}/>
                 }
                 {!hideTitle && <h1>{title || `${I18n.t(`models.${modelName}.title`)} (${entities.length})`}</h1>}

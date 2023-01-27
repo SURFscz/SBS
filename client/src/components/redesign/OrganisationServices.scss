@@ -4,6 +4,14 @@
 .organisation-services {
     display: flex;
     flex-direction: column;
+
+    .toggle-switch-container {
+        display: flex;
+        .toggle-switch-inner-container {
+            margin-left: auto;
+            display: flex;
+        }
+    }
 }
 
 
@@ -31,17 +39,6 @@ table.organisationServicesUsed {
 
             &.allowed {
                 text-align: right;
-
-                svg.fa-info-circle, svg.fa-circle-info {
-                    color: $lighter-grey;
-                    cursor: pointer;
-
-                    &:hover {
-                        color: darken($light-blue, 20%);
-                    }
-
-                    margin-left: 3px;
-                }
             }
         }
     }

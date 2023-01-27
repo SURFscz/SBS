@@ -440,8 +440,7 @@ class OrganisationForm extends React.Component {
 
                         <section className="actions">
                             {(user.admin && !isNew) &&
-                            <Button warningButton={true} txt={I18n.t("organisationDetail.delete")}
-                                    onClick={this.delete}/>}
+                            <Button warningButton={true} onClick={this.delete}/>}
                             <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                             <Button disabled={disabledSubmit} txt={I18n.t("forms.save")} onClick={this.submit}/>
                         </section>

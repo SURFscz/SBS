@@ -226,15 +226,7 @@ class Me extends React.Component {
     renderIpNetworks = user_ip_networks => {
         return (<div className="ip-networks">
             <label className="title" htmlFor={I18n.t("profile.network")}>{I18n.t("profile.network")}
-                <span className="tool-tip-section">
-                                <span data-tip data-for={I18n.t("profile.network")}>
-                                    <FontAwesomeIcon icon="info-circle"/>
-                                </span>
-                                <ReactTooltip id={I18n.t("profile.network")} type="light" effect="solid"
-                                              data-html={true}>
-                                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("profile.networkTooltip"))}}/>
-                                </ReactTooltip>
-                            </span>
+                <Tooltip tip={I18n.t("profile.networkTooltip")}/>
                 <span className="add-network" onClick={() => this.addIpAddress()}><FontAwesomeIcon icon="plus"/></span>
             </label>
             <span className="network-explanation">{I18n.t("profile.networkExplanation")}</span>
@@ -306,16 +298,7 @@ class Me extends React.Component {
 
                     <div className="ssh-keys-container">
                         <label className="title" htmlFor={I18n.t("user.ssh_key")}>{I18n.t("user.ssh_key")}
-                            <span className="tool-tip-section">
-                                    <span data-tip data-for={I18n.t("user.ssh_key")}>
-                                        <FontAwesomeIcon icon="info-circle"/>
-                                    </span>
-                                    <ReactTooltip id={I18n.t("user.ssh_key")} type="light" effect="solid"
-                                                  data-html={true}>
-                                        <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.ssh_keyTooltip"))}}/>
-                                    </ReactTooltip>
-                                </span>
-
+                            <Tooltip tip={I18n.t("user.ssh_keyTooltip")}/>
                             <span className="add-ssh-key" onClick={() => this.addSshKey()}><FontAwesomeIcon
                                 icon="plus"/></span>
                         </label>

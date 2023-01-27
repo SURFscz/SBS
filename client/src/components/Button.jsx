@@ -1,39 +1,24 @@
 import React from "react";
 import {stopEvent} from "../utils/Utils";
-import "./Button.scss";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import DOMPurify from "dompurify";
+// import "./Button.scss";
+import {Button as SDSButton, ButtonSize, ButtonType} from "@surfnet/sds";
 
 export default function Button({
                                    onClick, txt, disabled = false, cancelButton = false,
-                                   warningButton = false, className = "", icon = null, small = false,
-                                   html = null, centralize = false
+                                   warningButton = false, icon = null, small = false,
+                                   centralize = false, className = ""
                                }) {
-    const disable = disabled ? "disabled" : "";
-    const cancel = cancelButton ? "cancel" : warningButton ? "delete" : "blue";
-    const smallButton = small ? "small" : "";
-    const cn = `button ${disable} ${cancel} ${className} ${smallButton}`;
+
     const onClickInternal = e => {
         stopEvent(e);
         if (!disabled) {
             onClick();
         }
     }
-    icon = warningButton ? <FontAwesomeIcon icon="trash"/> : icon;
-    const withoutHtml = <a className={cn} href={`/${encodeURIComponent(txt)}`} onClick={onClickInternal}>
-        {!warningButton && txt}{icon}
-    </a>
-    const withHtml = <a className={cn} href={`/${encodeURIComponent(txt)}`} onClick={onClickInternal}>
-        <span dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(html)}}/>
-    </a>
-    if (centralize) {
-        return (
-            <section className="button-container">
-                {html && withHtml}
-                {!html && withoutHtml}
-            </section>
-        );
+    const buttonType = cancelButton ? ButtonType.Secondary : warningButton ?
+        ButtonType.Delete : className.indexOf("ghost") > -1 ? ButtonType.GhostDark : ButtonType.Primary;
+    const buttonSize = small ? ButtonSize.Small : centralize ? ButtonSize.Full : ButtonSize.Default;
+    return <SDSButton txt={txt} onClick={onClickInternal} disabled={disabled} centralize={centralize} icon={icon}
+                      size={buttonSize} type={buttonType}/>
 
-    }
-    return html ? withHtml : withoutHtml;
 }
