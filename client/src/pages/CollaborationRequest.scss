@@ -73,7 +73,7 @@
                     flex-direction: column;
                 }
 
-                a:not(:first-child) {
+                button:not(:first-child) {
                     margin-left: 25px;
                     @media (max-width: $compact-medium) {
                         margin-top: 5px;
