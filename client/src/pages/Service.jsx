@@ -29,7 +29,6 @@ import SpinnerField from "../components/redesign/SpinnerField";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import EmailField from "../components/EmailField";
 import {isUserServiceAdmin} from "../utils/UserRole";
-import DOMPurify from "dompurify";
 
 class Service extends React.Component {
 
@@ -294,15 +293,7 @@ class Service extends React.Component {
     renderIpNetworks = (ip_networks, isAdmin, isServiceAdmin) => {
         return (<div className="ip-networks">
             <label className="title" htmlFor={I18n.t("service.network")}>{I18n.t("service.network")}
-                <span className="tool-tip-section">
-                                <span data-tip data-for={I18n.t("service.network")}>
-                                    <FontAwesomeIcon icon="info-circle"/>
-                                </span>
-                                <ReactTooltip id={I18n.t("service.network")} type="light" effect="solid"
-                                              data-html={true}>
-                                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("service.networkTooltip"))}}/>
-                                </ReactTooltip>
-                            </span>
+                <Tooltip tip={I18n.t("service.networkTooltip")}/>
                 {(isAdmin || isServiceAdmin) &&
                 <span className="add-network" onClick={() => this.addIpAddress()}><FontAwesomeIcon icon="plus"/></span>}
             </label>

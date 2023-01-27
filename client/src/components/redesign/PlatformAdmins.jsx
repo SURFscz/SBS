@@ -7,7 +7,7 @@ import {platformAdmins} from "../../api";
 import {ReactComponent as PlatformAdminIcon} from "../../icons/users.svg";
 import "./PlatformAdmins.scss";
 import UserColumn from "./UserColumn";
-import Tooltip from "./Tooltip";
+import {Tooltip} from "@surfnet/sds";
 import InstituteColumn from "./InstitueColumn";
 import {stopEvent} from "../../utils/Utils";
 
@@ -45,8 +45,9 @@ class PlatformAdmins extends React.Component {
                 key: "icon",
                 header: "",
                 mapper: () => <div className="member-icon">
-                    <Tooltip children={<PlatformAdminIcon/>} id={"platform-admin-icon"}
-                             msg={I18n.t("tooltips.platformAdmin")}/>
+                    <Tooltip standalone={true}
+                             children={<PlatformAdminIcon/>}
+                             tip={I18n.t("tooltips.platformAdmin")}/>
                 </div>
             },
             {

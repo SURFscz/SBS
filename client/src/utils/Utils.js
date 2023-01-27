@@ -115,8 +115,7 @@ export const ErrorOrigins = {
 }
 
 export const getSchacHomeOrg = (currentUser, organisations) => {
-    const organisation = organisations.find(org => org.schac_home_organisations.some(sho => sho === currentUser.schac_home_organisation));
-    return organisation;
+    return organisations.find(org => org.schac_home_organisations.some(sho => sho === currentUser.schac_home_organisation));
 }
 
 

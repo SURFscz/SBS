@@ -3,7 +3,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Tooltip} from "@surfnet/sds";
 import "./CreatableField.scss";
 import {isEmpty, stopEvent} from "../utils/Utils";
-import DOMPurify from "dompurify";
 
 export default function CreatableField({
                                            onChange,
@@ -21,7 +20,7 @@ export default function CreatableField({
     return (
         <div className={`creatable-field ${error ? "error" : ""}`}>
             <label htmlFor={name}>{name}
-                {toolTip && <Tooltip tip={toolTip} />}
+                {toolTip && <Tooltip tip={toolTip}/>}
             </label>
             <div className={`inner-creatable-field ${error ? "error" : ""}${disabled ? "disabled" : ""}`}>
                 {values.map(val =>
@@ -34,19 +33,19 @@ export default function CreatableField({
 
                     </div>)}
                 {!disabled && <textarea id="creatable-field" value={value} onChange={onChange} onBlur={addValue}
-                          onKeyDown={e => {
-                              if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
-                                  addValue(e);
-                                  setTimeout(() => document.getElementById("creatable-field").focus(), 50);
-                                  return stopEvent(e);
-                              } else if (e.key === "Backspace" && isEmpty(value) && values.length > 0) {
-                                  const val = values[values.length - 1];
-                                  removeValue(val)();
-                              } else if (e.key === "Tab") {
-                                  addValue(e);
-                              }
-                          }}
-                          placeholder={placeHolder} cols={1}/>}
+                                        onKeyDown={e => {
+                                            if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+                                                addValue(e);
+                                                setTimeout(() => document.getElementById("creatable-field").focus(), 50);
+                                                return stopEvent(e);
+                                            } else if (e.key === "Backspace" && isEmpty(value) && values.length > 0) {
+                                                const val = values[values.length - 1];
+                                                removeValue(val)();
+                                            } else if (e.key === "Tab") {
+                                                addValue(e);
+                                            }
+                                        }}
+                                        placeholder={placeHolder} cols={1}/>}
             </div>
         </div>
     );

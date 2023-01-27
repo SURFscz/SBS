@@ -10,17 +10,6 @@
         font-weight: bold;
     }
 
-    span.tool-tip-section {
-        font-size: 14px;
-        color: $lighter-grey;
-        cursor: pointer;
-        padding: 0 4px;
-
-        &:hover {
-            color: darken($light-blue, 20%);
-        }
-    }
-
     .r-buttons {
         display: flex;
         align-items: center;

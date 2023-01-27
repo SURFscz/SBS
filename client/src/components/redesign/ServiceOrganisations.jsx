@@ -8,7 +8,7 @@ import {allowedOrganisations, toggleAccessAllowedForAll} from "../../api";
 import {setFlash} from "../../utils/Flash";
 import Logo from "./Logo";
 import ConfirmationDialog from "../ConfirmationDialog";
-import Tooltip from "./Tooltip";
+import {Tooltip} from "@surfnet/sds";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 
@@ -64,9 +64,9 @@ class ServiceOrganisations extends React.Component {
         const value = organisationsSelected[organisation.id];
         const access_allowed_for_all = service.access_allowed_for_all;
         if (access_allowed_for_all) {
-            return <Tooltip children={<FontAwesomeIcon icon="info-circle"/>}
-                            id={`not-allowed-${organisation.id}`}
-                            msg={I18n.t("service.accessAllowedForAllInfo")}/>
+            return <Tooltip standalone={true}
+                            children={<FontAwesomeIcon icon="info-circle"/>}
+                            tip={I18n.t("service.accessAllowedForAllInfo")}/>
         }
         return <ToggleSwitch value={access_allowed_for_all ? true : value || false}
                              animate={false}

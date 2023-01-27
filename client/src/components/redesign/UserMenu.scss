@@ -1,43 +1,5 @@
-@import "../../stylesheets/vars";
-
 .user-menu {
-    position: absolute;
-    display: block;
-    top: 52px;
-    right: 0;
-    min-width: 220px;
-    z-index: 99;
-    background: white;
-    border: solid 1px $lightest-grey;
-    border-radius: 4px;
-    box-shadow: 0 1px 0 1px $lighter-grey;
-
-    &:focus {
-        outline: none;
-    }
-
-    li {
-        &:hover {
-            background-color: $lightest-grey;
-        }
-
-        &:not(:first-child) {
-            border-top: 3px solid $background;
-        }
-
-        a {
-            width: 100%;
-            padding: 15px 5px 15px 10px;
-            color: $darker-grey;
-            text-decoration: none;
-            display: inline-block;
-
-            &:hover {
-                color: $primary-orange;
-                font-weight: bold;
-            }
-        }
-    }
-
+    margin-left: auto;
+    z-index: 999;
 }
 

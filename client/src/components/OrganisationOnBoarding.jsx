@@ -5,10 +5,8 @@ import ReactMde from "react-mde";
 import "./OrganisationOnBoarding.scss";
 import "react-mde/lib/styles/css/react-mde-all.css";
 import {convertToHtml} from "../utils/Markdown";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Tooltip} from "@surfnet/sds";
 import {isEmpty} from "../utils/Utils";
-import DOMPurify from "dompurify";
 
 export default class OrganisationOnBoarding extends React.Component {
 
@@ -35,10 +33,7 @@ export default class OrganisationOnBoarding extends React.Component {
             <div className="organisation-onboarding">
                 <label className="label">{title || I18n.t("organisation.onBoarding.label")}</label>
                 <span className="tool-tip-section">
-                        <span data-tip data-for="on-boarding"><FontAwesomeIcon icon="info-circle"/></span>
-                        <ReactTooltip id="on-boarding" type="light" effect="solid" data-html={true}>
-                            <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t(tooltip || "organisation.onBoarding.tooltip"))}}/>
-                        </ReactTooltip>
+                    <Tooltip id="on-boarding" msg={I18n.t(tooltip || "organisation.onBoarding.tooltip")}/>
                     </span>
                 <div className="container">
                     <ReactMde
