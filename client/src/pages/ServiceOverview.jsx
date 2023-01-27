@@ -704,14 +704,7 @@ class ServiceOverview extends React.Component {
                 {(service.token_enabled || service.pam_web_sso_enabled) &&
                 <div className="input-field">
                     <label>{I18n.t("serviceDetails.tokens")}
-                        <span className="tool-tip-section">
-                            <span data-tip data-for="tokens">
-                                <FontAwesomeIcon icon="info-circle"/>
-                            </span>
-                            <ReactTooltip id="tokens" type="light" effect="solid" data-html={true}>
-                                <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("serviceDetails.tokensTooltip"))}}/>
-                            </ReactTooltip>
-                        </span>
+                        <Tooltip tip={I18n.t("serviceDetails.tokensTooltip")} />
                     </label>
                     <Entities entities={service.service_tokens}
                               modelName="serviceTokens"

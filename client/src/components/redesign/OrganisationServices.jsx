@@ -15,7 +15,6 @@ import Logo from "./Logo";
 import ConfirmationDialog from "../ConfirmationDialog";
 import MissingServices from "../MissingServices";
 import {Tooltip} from "@surfnet/sds";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class OrganisationServices extends React.Component {
 
@@ -104,17 +103,16 @@ class OrganisationServices extends React.Component {
             tooltip = I18n.t("organisationServices.notAllowedOrganisation");
         }
         return (
-            <div>
-                <ToggleSwitch onChange={this.onToggle(service, organisation)}
-                              disabled={!allowed || tooltip}
-                              value={organisation.services.some(s => s.id === service.id)}
-                              animate={false}
-                              tooltip={tooltip}/>
-                {tooltip &&
-                <Tooltip standalone={true}
-                         children={<FontAwesomeIcon icon="info-circle"/>}
-                         id={`not-allowed-${service.id}`}
-                         msg={tooltip}/>}
+            <div className={"toggle-switch-container"}>
+                <div className={"toggle-switch-inner-container"}>
+                    <ToggleSwitch onChange={this.onToggle(service, organisation)}
+                                  disabled={!allowed || tooltip}
+                                  value={organisation.services.some(s => s.id === service.id)}
+                                  animate={false}
+                                  tooltip={tooltip}/>
+                    {tooltip &&
+                    <Tooltip tip={tooltip}/>}
+                </div>
             </div>
         )
     }

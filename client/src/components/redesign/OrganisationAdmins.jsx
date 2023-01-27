@@ -28,7 +28,6 @@ import InstituteColumn from "./InstitueColumn";
 import {ReactComponent as InformationCircle} from "../../icons/information-circle.svg";
 import {isEmpty} from "../../utils/Utils";
 import {emitImpersonation} from "../../utils/Impersonation";
-import DOMPurify from "dompurify";
 
 const INVITE_IDENTIFIER = "INVITE_IDENTIFIER";
 const MEMBER_IDENTIFIER = "MEMBER_IDENTIFIER";
@@ -50,7 +49,7 @@ class OrganisationAdmins extends React.Component {
         }
     }
 
-    componentDidUpdate= prevProps => {
+    componentDidUpdate = prevProps => {
         const nextOrganisation = this.props.organisation;
         const {organisation} = prevProps;
         if (organisation) {
@@ -266,26 +265,21 @@ class OrganisationAdmins extends React.Component {
         }
         return (
             <div className="admin-actions">
-                {anySelected && <div data-tip data-for="delete-members">
-                    <Button onClick={this.remove(true)} txt={I18n.t("models.orgMembers.remove")}
-                            icon={<FontAwesomeIcon icon="trash"/>}/>
-                    <ReactTooltip id="delete-members" type="light" effect="solid" data-html={true}
-                                  place="bottom">
-                    <span
-                        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(!anySelected ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip"))}}/>
-                    </ReactTooltip>
-                </div>}
+                {anySelected &&
+                <Tooltip
+                    tip={!anySelected ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}
+                    children={<Button onClick={this.remove(true)}
+                                      txt={I18n.t("models.orgMembers.remove")}
+                                      icon={<FontAwesomeIcon icon="trash"/>}/>}
+                    standalone={true}/>
+                }
                 {showResendInvite &&
-                <div data-tip data-for="resend-invites">
-                    <Button onClick={this.resend(true)} txt={I18n.t("models.orgMembers.resend")}
-                            icon={<FontAwesomeIcon icon="voicemail"/>}/>
-                    <ReactTooltip id="resend-invites" type="light" effect="solid" data-html={true}
-                                  place="bottom">
-                        <span
-                            dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(!showResendInvite ? I18n.t("models.orgMembers.resendTooltipDisabled") : I18n.t("models.orgMembers.resendTooltip"))}}/>
-                    </ReactTooltip>
-                </div>}
-
+                <Tooltip
+                    tip={!showResendInvite ? I18n.t("models.orgMembers.resendTooltipDisabled") : I18n.t("models.orgMembers.resendTooltip")}
+                    children={<Button onClick={this.resend(true)}
+                                      txt={I18n.t("models.orgMembers.remove")}
+                                      icon={<FontAwesomeIcon icon="trash"/>}/>}
+                    standalone={true}/>}
             </div>);
     }
 
@@ -322,26 +316,20 @@ class OrganisationAdmins extends React.Component {
         return (
             <div className="admin-icons">
                 {showDelete &&
-                <div data-tip data-for={`delete-org-member-${entity.id}`}
-                     onClick={() => this.removeFromActionIcon(entity.id, entity.invite, true)}>
-                    <ThrashIcon/>
-                    <ReactTooltip id={`delete-org-member-${entity.id}`} type="light" effect="solid" data-html={true}
-                                  place="bottom">
-                        <span dangerouslySetInnerHTML={{
-                            __html: DOMPurify.sanitize(entity.invite ? I18n.t("models.orgMembers.removeInvitationTooltip") :
-                                I18n.t("models.orgMembers.removeMemberTooltip"))
-                        }}/>
-                    </ReactTooltip>
+                <div onClick={() => this.removeFromActionIcon(entity.id, entity.invite, true)}>
+                    <Tooltip
+                        tip={entity.invite ? I18n.t("models.orgMembers.removeInvitationTooltip") :
+                            I18n.t("models.orgMembers.removeMemberTooltip")}
+                        children={<ThrashIcon/>}
+                        standalone={true}/>
                 </div>}
                 {showResendInvite &&
-                <div data-tip data-for={`resend-invite-${entity.id}`}>
-                    <FontAwesomeIcon icon="voicemail" onClick={this.resendFromActionMenu(entity.id, true)}/>
-                    <ReactTooltip id={`resend-invite-${entity.id}`} type="light" effect="solid" data-html={true}
-                                  place="bottom">
-                        <span
-                            dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("models.orgMembers.resendInvitationTooltip"))}}/>
-                    </ReactTooltip>
-                </div>}
+                <Tooltip
+                    tip={I18n.t("models.orgMembers.resendInvitationTooltip")}
+                    children={<FontAwesomeIcon icon="voicemail"
+                                               onClick={this.resendFromActionMenu(entity.id, true)}/>}
+                    standalone={true}/>
+                }
 
             </div>);
     }
@@ -406,11 +394,14 @@ class OrganisationAdmins extends React.Component {
                 header: "",
                 mapper: entity => <div className="member-icon">
                     {entity.invite &&
-                    <Tooltip standalone={true} children={<InviteIcon/>} id={"invite-icon"} msg={I18n.t("tooltips.invitations")}/>}
+                    <Tooltip standalone={true} children={<InviteIcon/>} id={"invite-icon"}
+                             msg={I18n.t("tooltips.invitations")}/>}
                     {(!entity.invite && entity.role === "admin") &&
-                    <Tooltip standalone={true} children={<UserIcon/>} id={"admin-icon"} msg={I18n.t("tooltips.admin")}/>}
+                    <Tooltip standalone={true} children={<UserIcon/>} id={"admin-icon"}
+                             msg={I18n.t("tooltips.admin")}/>}
                     {(!entity.invite && entity.role !== "admin") &&
-                    <Tooltip standalone={true} children={<MembersIcon/>} id={"user-icon"} msg={I18n.t("tooltips.manager")}/>}
+                    <Tooltip standalone={true} children={<MembersIcon/>} id={"user-icon"}
+                             msg={I18n.t("tooltips.manager")}/>}
                 </div>
             },
             {

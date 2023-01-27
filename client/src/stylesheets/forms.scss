@@ -6,11 +6,11 @@ section.actions {
     justify-content: flex-end;
     position: relative;
 
-    a:not(:first-child) {
+    button:not(:first-child) {
         margin-left: 25px;
     }
 
-    a.delete {
+    button.sds--btn--delete {
         margin-right: auto;
         margin-left: 0;
     }

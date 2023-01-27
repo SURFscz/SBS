@@ -46,7 +46,6 @@ import Button from "../components/Button";
 import JoinRequestDialog from "../components/JoinRequestDialog";
 import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import moment from "moment";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Tooltip} from "@surfnet/sds";
 import {ErrorOrigins, getSchacHomeOrg, isEmpty, removeDuplicates} from "../utils/Utils";
 import UserTokens from "../components/redesign/UserTokens";
@@ -710,18 +709,11 @@ class CollaborationDetail extends React.Component {
         }
         return (
             <div className="org-attributes">
-                    <span className="contains-tooltip">{I18n.t(`organisationMembership.status.name`)}
-                        <FontAwesomeIcon data-tip data-for="membership-status" icon="info-circle"/>
-                            <ReactTooltip id="membership-status" type="light" effect="solid" data-html={true}>
-                                <span className="tooltip-wrapper-inner"
-                                      dangerouslySetInnerHTML={{
-                                          __html: DOMPurify.sanitize(I18n.t(`organisationMembership.status.${status}Tooltip`,
-                                              {date: expiryDate}))
-                                      }}/>
-                            </ReactTooltip>
-                    </span>
-                <span
-                    className={className}>{I18n.t(`organisationMembership.status.${status}`, {date: expiryDate})}</span>
+                <span>{I18n.t(`organisationMembership.status.name`)}</span>
+                <Tooltip tip={I18n.t(`organisationMembership.status.${status}Tooltip`, {date: expiryDate})}/>
+                <span className={className}>
+                    {I18n.t(`organisationMembership.status.${status}`, {date: expiryDate})}
+                </span>
             </div>
         );
     }
