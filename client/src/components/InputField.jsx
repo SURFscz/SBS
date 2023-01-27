@@ -42,7 +42,7 @@ export default function InputField({
     }
     const validExternalLink = externalLink && !isEmpty(value) && validUrlRegExp.test(value);
     return (
-        <div className="input-field">
+        <div className="input-field sds--text-field">
             {(name && displayLabel) && <label htmlFor={name}>{name}
                 {toolTip && <Tooltip tip={toolTip}/>}
             </label>}
@@ -57,7 +57,7 @@ export default function InputField({
                        maxLength={maxLength}
                        ref={ref => onRef && onRef(ref)}
                        placeholder={placeholder}
-                       className={className}
+                       className={`${className} sds--text-field--input`}
                        onKeyDown={e => {
                            if (onEnter && e.keyCode === 13) {//enter
                                onEnter(e);
@@ -97,6 +97,7 @@ export default function InputField({
                                id={`fileUpload_${name}`}
                                name={`fileUpload_${name}`}
                                accept={acceptFileFormat}
+                               className={`${className} sds--text-field`}
                                style={{display: "none"}}
                                onChange={onFileUpload}/>
                     </section>
