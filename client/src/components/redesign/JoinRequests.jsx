@@ -14,7 +14,7 @@ import {joinRequestAccept, joinRequestDecline, joinRequestDelete} from "../../ap
 import UserColumn from "./UserColumn";
 import moment from "moment";
 import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
-import Tooltip from "./Tooltip";
+import {Tooltip} from "@surfnet/sds";
 import Select from "react-select";
 import InstituteColumn from "./InstitueColumn";
 
@@ -261,7 +261,7 @@ class JoinRequests extends React.Component {
                 key: "icon",
                 header: "",
                 mapper: () => <div className="member-icon">
-                    <Tooltip children={<MembersIcon/>} id={"user-icon"} msg={I18n.t("tooltips.joinRequest")}/>
+                    <Tooltip standalone={true} children={<MembersIcon/>} tip={I18n.t("tooltips.joinRequest")}/>
                 </div>
             },
             {

@@ -1,10 +1,9 @@
 import React from "react";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {Tooltip} from "@surfnet/sds";
+
 import "./SelectField.scss";
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
-import DOMPurify from "dompurify";
+import {Tooltip} from "@surfnet/sds";
 
 export default function SelectField({
                                         onChange, name, value, options, placeholder = "", disabled = false,
@@ -14,13 +13,8 @@ export default function SelectField({
                                     }) {
     return (
         <div className="select-field">
-            <label htmlFor={name}>{name} {toolTip &&
-            <span className="tool-tip-section">
-                <span data-tip data-for={name}><FontAwesomeIcon icon="info-circle"/></span>
-                <ReactTooltip id={name} type="light" effect="solid" data-html={true}>
-                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(toolTip)}}/>
-                </ReactTooltip>
-            </span>}
+            <label htmlFor={name}>{name}
+                {toolTip && <Tooltip tip={toolTip}/>}
             </label>
             {creatable &&
             <CreatableSelect

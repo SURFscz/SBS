@@ -44,7 +44,6 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import ClipBoardCopy from "../components/redesign/ClipBoardCopy";
 import Button from "../components/Button";
 import JoinRequestDialog from "../components/JoinRequestDialog";
-import Tooltip from "../components/redesign/Tooltip";
 import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -529,20 +528,20 @@ class CollaborationDetail extends React.Component {
                 <section className="unit-info">
                     <ul>
                         <li>
-                            <Tooltip children={<MemberIcon/>} id={"members-icon"} msg={I18n.t("tooltips.members")}/>
+                            <Tooltip children={<MemberIcon/>} standalone={true} tip={I18n.t("tooltips.members")}/>
                             <span>{I18n.t("models.collaboration.memberHeader", {
                                 nbrMember: collaboration.collaboration_memberships.length,
                                 nbrGroups: collaboration.groups.length
                             })}</span></li>
                         {!collaborationJoinRequest && <li>
-                            <Tooltip children={<AdminIcon/>} id={"admins-icon"} msg={I18n.t("tooltips.admins")}/>
+                            <Tooltip children={<AdminIcon/>} standalone={true} tip={I18n.t("tooltips.admins")}/>
                             <span
                                 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(this.getAdminHeader(collaboration))}}/>
                         </li>}
                         {collaboration.website_url &&
                         <li className="collaboration-url">
-                            <Tooltip children={<GlobeIcon/>} id={"collaboration-icon"}
-                                     msg={I18n.t("tooltips.collaborationUrl")}/>
+                            <Tooltip standalone={true} children={<GlobeIcon/>} anchorId={"collaboration-icon"}
+                                     tip={I18n.t("tooltips.collaborationUrl")}/>
                             <span>
                             <a href={collaboration.website_url} rel="noopener noreferrer"
                                target="_blank">{collaboration.website_url}</a>
@@ -662,10 +661,6 @@ class CollaborationDetail extends React.Component {
             <div className="org-attributes">
                 <span
                     className={`${className} contains-tooltip`}>{I18n.t(`collaboration.status.${status}`, {expiryDate: expiryDate})}</span>
-                {/*<Tooltip children={<FontAwesomeIcon icon="info-circle"/>} id={`collaboration-${collaboration.id}`}*/}
-                {/*         msg={I18n.t(`collaboration.status.${status}Tooltip`,*/}
-                {/*             {expiryDate: expiryDate, lastActivityDate: lastActivityDate})}/>*/}
-
             </div>
         );
     }

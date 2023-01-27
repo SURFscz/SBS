@@ -14,11 +14,10 @@ import CheckBox from "../CheckBox";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Tooltip} from "@surfnet/sds";
 import ConfirmationDialog from "../ConfirmationDialog";
-import Tooltip from "./Tooltip";
+
 import {ReactComponent as InformationCircle} from "../../icons/information-circle.svg";
 import {setFlash} from "../../utils/Flash";
 import Select from "react-select";
-import DOMPurify from "dompurify";
 import {displayExpiryDate, displayLastActivityDate} from "../../utils/Date";
 import moment from "moment";
 
@@ -161,16 +160,11 @@ export default class Collaborations extends React.PureComponent {
         }
         return (
             <div className="admin-actions">
-                <div data-tip data-for="remove-collaborations">
-                    <Button onClick={() => this.removeCollaboration(true)}
-                            txt={I18n.t("models.serviceCollaborations.disconnect")}
-                            icon={<FontAwesomeIcon icon="trash"/>}/>
-                    <ReactTooltip id="remove-collaborations" type="light" effect="solid" data-html={true}
-                                  place="bottom">
-                    <span
-                        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("models.serviceCollaborations.disconnectTooltip"))}}/>
-                    </ReactTooltip>
-                </div>
+                <Tooltip standalone={true} children={<Button onClick={() => this.removeCollaboration(true)}
+                                           txt={I18n.t("models.serviceCollaborations.disconnect")}
+                                           icon={<FontAwesomeIcon icon="trash"/>}/>}
+                         tip={I18n.t("models.serviceCollaborations.disconnectTooltip")}
+                />
             </div>);
     }
 
@@ -181,14 +175,9 @@ export default class Collaborations extends React.PureComponent {
         return (
             <div className={"action-icons-container"}>
                 <div className="admin-icons">
-                    <div data-tip data-for={`delete-org-member-${entity.id}`}
-                         onClick={() => this.removeCollaboration(true, entity.id)}>
-                        <FontAwesomeIcon icon="trash"/>
-                        <ReactTooltip id={`delete-org-member-${entity.id}`} type="light" effect="solid" data-html={true}
-                                      place="bottom">
-                            <span
-                                dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("models.serviceCollaborations.disconnectOneTooltip"))}}/>
-                        </ReactTooltip>
+                    <div onClick={() => this.removeCollaboration(true, entity.id)}>
+                        <Tooltip standalone={true} tip={I18n.t("models.serviceCollaborations.disconnectOneTooltip")}
+                                 children={<FontAwesomeIcon icon="trash"/>} />
                     </div>
                 </div>
             </div>
@@ -275,8 +264,8 @@ export default class Collaborations extends React.PureComponent {
                             </div>)
                     } else {
                         return (
-                            <Tooltip children={<InformationCircle/>} id={"collaboration-warning" + ++i}
-                                     msg={I18n.t("models.serviceCollaborations.organisationWarningTooltip")}/>
+                            <Tooltip standalone={true} children={<InformationCircle/>} anchorId={"collaboration-warning" + ++i}
+                                     tip={I18n.t("models.serviceCollaborations.organisationWarningTooltip")}/>
                         )
                     }
                 }
@@ -336,11 +325,11 @@ export default class Collaborations extends React.PureComponent {
                         const warning = days < 60;
                         const className = collaboration.status === "expired" ? "expired" : warning ? "warning" : "";
                         return <div>
-                            <Tooltip children={<span className={`expiry-date ${className}`}>
+                            <Tooltip standalone={true} children={<span className={`expiry-date ${className}`}>
                                     {displayExpiryDate(collaboration.expiry_date)}
                                 </span>}
-                                     id={`${collaboration.id}-expiry_date`}
-                                     msg={moment(expiryDate).format("LLLL")}>
+                                     anchorId={`${collaboration.id}-expiry_date`}
+                                     tip={moment(expiryDate).format("LLLL")}>
                             </Tooltip>
                         </div>;
                     }
@@ -362,8 +351,9 @@ export default class Collaborations extends React.PureComponent {
                         <Tooltip children={<span className={`last-activity-date ${className}`}>
                                     {displayLastActivityDate(collaboration.last_activity_date)}
                                 </span>}
-                                 id={`${collaboration.id}-last_activity_date`}
-                                 msg={moment(lastActivityDate).format("LLLL")}>
+                                 standalone={true}
+                                 anchorId={`${collaboration.id}-last_activity_date`}
+                                 tip={moment(lastActivityDate).format("LLLL")}>
                         </Tooltip>
                         {collaboration.status === "suspended" && <span className="suspended">
                             {I18n.t("collaboration.lastActivitySuspended")}

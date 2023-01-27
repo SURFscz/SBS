@@ -23,7 +23,7 @@ export default function Impersonating({impersonator, currentUser}) {
 
   return <div className="impersonator ">
     <NavLink to="/impersonate">
-           <Tooltip children={<HandIcon/>} tip={I18n.t("impersonate.impersonatorTooltip", {
+           <Tooltip children={<HandIcon/>} standalone={true} tip={I18n.t("impersonate.impersonatorTooltip", {
             currentUser: currentUser.name,
             impersonator: impersonator.name
           })} />}

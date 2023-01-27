@@ -7,7 +7,7 @@ import {ReactComponent as IllustrationCO} from "../../icons/illustration-CO.svg"
 import {removeDuplicates, stopEvent} from "../../utils/Utils";
 import Logo from "./Logo";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
-import Tooltip from "./Tooltip";
+import {Tooltip} from "@surfnet/sds";
 import {CO_SHORT_NAME, SRAM_USERNAME} from "../../validations/regExps";
 
 const memberCutOff = 10;
@@ -83,10 +83,10 @@ class AboutCollaboration extends React.Component {
                                         <span className="border-left">{service.name}</span>
                                         {service.uri &&
                                         <span className="border-left no-border open-service">
-                                        <Tooltip id={`${service.id}`}
-                                                 children={service.uri.startsWith("http") ? <ServicesIcon/> :
+                                        <Tooltip children={service.uri.startsWith("http") ? <ServicesIcon/> :
                                                      <TerminalIcon/>}
-                                                 msg={I18n.t("models.collaboration.servicesHoover",
+                                                 standalone={true}
+                                                 tip={I18n.t("models.collaboration.servicesHoover",
                                                      {uri: this.formatServiceUri(service.uri, collaboration, user)})}/>
                                         </span>}
                                     </li>

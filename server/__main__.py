@@ -222,7 +222,7 @@ def connected():
 
 # In the WSGI production file the socket_io
 if __name__ == '__main__':
-    socket_io.run(app, log_output=True, port=8080)
+    socket_io.run(app, log_output=False, port=8080)
 # comment the lines above and uncomment the line under for debugging. See https://youtrack.jetbrains.com/issue/PY-38245
 # if is_local:
 #    app.run(port=8080, debug=False, host="localhost", threaded=False)

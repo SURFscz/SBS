@@ -4,7 +4,6 @@ import {Tooltip} from "@surfnet/sds";
 import "./EmailField.scss";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import I18n from "i18n-js";
-import DOMPurify from "dompurify";
 
 export default function EmailField({
                                        onChange,
@@ -21,7 +20,8 @@ export default function EmailField({
     return (
         <div className={`email-field ${error ? "error" : ""}`}>
             <label htmlFor={name}>{name}
-                <Tooltip tip={`${I18n.t("invitation.inviteesMessagesTooltip")}${isAdmin ? I18n.t("invitation.appendAdminNote") : ""}`} />
+                <Tooltip
+                    tip={`${I18n.t("invitation.inviteesMessagesTooltip")}${isAdmin ? I18n.t("invitation.appendAdminNote") : ""}`}/>
             </label>
             <div className={`inner-email-field ${error ? "error" : ""}`}>
                 {emails.map(mail =>

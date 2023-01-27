@@ -8,7 +8,7 @@ import {ReactComponent as UserIcon} from "../../icons/single-neutral.svg";
 import {ReactComponent as InviteIcon} from "../../icons/single-neutral-question.svg";
 import "./Users.scss";
 import UserColumn from "./UserColumn";
-import Tooltip from "./Tooltip";
+
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import debounce from "lodash.debounce";
 import SpinnerField from "./SpinnerField";
@@ -107,8 +107,9 @@ class Users extends React.Component {
                 key: "icon",
                 header: "",
                 mapper: entity => <div className="member-icon">
-                    {entity.isUser ? <Tooltip children={<UserIcon/>} id={"user-icon"} msg={I18n.t("tooltips.user")}/> :
-                        <Tooltip children={<InviteIcon/>} id={"invite-icon"} msg={I18n.t("tooltips.invitations")}/>}
+                    {entity.isUser ? <Tooltip standalone={true} children={<UserIcon/>}
+                                              tip={I18n.t("tooltips.user")}/> :
+                        <Tooltip children={<InviteIcon/>} tip={I18n.t("tooltips.invitations")}/>}
                 </div>
             },
             {

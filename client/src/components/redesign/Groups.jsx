@@ -31,7 +31,7 @@ import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import ClipBoardCopy from "./ClipBoardCopy";
 import {AppStore} from "../../stores/AppStore";
 import ErrorIndicator from "./ErrorIndicator";
-import Tooltip from "./Tooltip";
+import {Tooltip} from "@surfnet/sds";
 import InstituteColumn from "./InstitueColumn";
 
 class Groups extends React.Component {
@@ -162,9 +162,9 @@ class Groups extends React.Component {
                 header: "",
                 mapper: membership => <div className="member-icon">
                     {(membership.role === "admin") &&
-                    <Tooltip children={<UserIcon/>} id={"admin-icon"} msg={I18n.t("tooltips.admin")}/>}
+                    <Tooltip standalone={true} children={<UserIcon/>} tip={I18n.t("tooltips.admin")}/>}
                     {(membership.role !== "admin") &&
-                    <Tooltip children={<MembersIcon/>} id={"user-icon"} msg={I18n.t("tooltips.user")}/>}
+                    <Tooltip standalone={true} children={<MembersIcon/>} tip={I18n.t("tooltips.user")}/>}
                 </div>
             },
             {

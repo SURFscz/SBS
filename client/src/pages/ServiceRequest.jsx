@@ -160,32 +160,12 @@ class ServiceRequest extends React.Component {
                         />
                     </td>
                     <td>{coll.linkNotAllowed &&
-                            <span className="tooltip-container">
-                                <span data-tip data-for={`coll_lna${coll.id}`}>
-                                    <FontAwesomeIcon icon="info-circle"/>
-                                </span>
-                                <ReactTooltip id={`coll_lna${coll.id}`} type="info" effect="solid" data-html={true}>
-                                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("serviceRequest.collaboration.linkNotAllowed"))}}/>
-                                </ReactTooltip>
-                            </span>}
+                                <Tooltip tip={I18n.t("serviceRequest.collaboration.linkNotAllowed")}/>
+                            }
                         {coll.alreadyLinked &&
-                            <span className="tooltip-container">
-                                <span data-tip data-for={`coll_al${coll.id}`}>
-                                    <FontAwesomeIcon icon="info-circle"/>
-                                </span>
-                                <ReactTooltip id={`coll_al${coll.id}`} type="info" effect="solid" data-html={true}>
-                                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("serviceRequest.collaboration.alreadyLinked"))}}/>
-                                </ReactTooltip>
-                            </span>}
+                                <Tooltip tip={I18n.t("serviceRequest.collaboration.alreadyLinked")}/>}
                         {(coll.outstandingServiceConnectionRequest && this.roleOfUserInCollaboration(coll, user) === "member") &&
-                            <span className="tooltip-container">
-                                <span data-tip data-for={`coll_osr${coll.id}`}>
-                                    <FontAwesomeIcon icon="info-circle"/>
-                                </span>
-                                <ReactTooltip id={`coll_osr${coll.id}`} type="info" effect="solid" data-html={true}>
-                                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("serviceRequest.collaboration.outstandingServiceConnectionRequest"))}}/>
-                                </ReactTooltip>
-                            </span>}
+                                <Tooltip tip={I18n.t("serviceRequest.collaboration.outstandingServiceConnectionRequest")}/>}
                     </td>
                 </tr>)}
                 </tbody>

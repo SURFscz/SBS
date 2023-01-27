@@ -9,7 +9,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./DateField.scss"
 import moment from "moment";
 import {stopEvent} from "../utils/Utils";
-import DOMPurify from "dompurify";
 
 export default class DateField extends React.Component {
 

@@ -1,7 +1,6 @@
 import React from "react";
 import I18n from "i18n-js";
 import "./InstituteColumn.scss";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Tooltip} from "@surfnet/sds";
 
 export default function InstituteColumn({entity, currentUser, greyed=true}) {
@@ -17,12 +16,7 @@ export default function InstituteColumn({entity, currentUser, greyed=true}) {
         <div className={`institute-column ${greyed ? 'greyed' : ''}`}>
             <span>{txt}</span>
             {(isMe && !entity.user.schac_home_organisation) && <div>
-            <span data-tip data-for="user-institution">
-                        <FontAwesomeIcon icon="info-circle"/>
-                    </span>
-                <ReactTooltip id="user-institution" type="info" effect="solid" data-html={true}>
-                    <span>{I18n.t(`models.users.${isMe ? 'instituteUnknownMeTooltip' : 'instituteUnknownTooltip'}`)}</span>
-                </ReactTooltip>
+            <Tooltip tip={I18n.t(`models.users.${isMe ? 'instituteUnknownMeTooltip' : 'instituteUnknownTooltip'}`)}/>
             </div>}
         </div>
     );

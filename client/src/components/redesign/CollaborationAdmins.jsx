@@ -28,7 +28,6 @@ import UserColumn from "./UserColumn";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import SpinnerField from "./SpinnerField";
 import moment from "moment";
-import Tooltip from "./Tooltip";
 import {Tooltip} from "@surfnet/sds";
 import LastAdminWarning from "./LastAdminWarning";
 import DateField from "../DateField";
@@ -36,7 +35,6 @@ import InstituteColumn from "./InstitueColumn";
 import {ReactComponent as ChevronUp} from "../../icons/chevron-up.svg";
 import {ReactComponent as ChevronDown} from "../../icons/chevron-down.svg";
 import {emitImpersonation} from "../../utils/Impersonation";
-import DOMPurify from "dompurify";
 
 const memberFilterValue = "members";
 
@@ -67,7 +65,7 @@ class CollaborationAdmins extends React.Component {
         }
     }
 
-    componentDidUpdate= prevProps => {
+    componentDidUpdate = prevProps => {
         const nextCollaboration = this.props.collaboration;
         const {collaboration} = prevProps;
         if (collaboration) {
@@ -397,41 +395,30 @@ class CollaborationAdmins extends React.Component {
         const bcc = (collaboration.disclose_email_information && collaboration.disclose_member_information) ? "" : "?bcc=";
         return (
             <div className="admin-icons">
-                <div data-tip data-for={`delete-member-${entity.id}`}
-                     onClick={() => this.removeFromActionIcon(entity.id, entity.invite, true)}>
-                    <ThrashIcon/>
-                    <ReactTooltip id={`delete-member-${entity.id}`} type="light" effect="solid" data-html={true}
-                                  place="bottom">
-                        <span
-                            dangerouslySetInnerHTML={{
-                                __html: DOMPurify.sanitize(entity.invite ? I18n.t("models.orgMembers.removeInvitationTooltip") :
-                                    I18n.t("models.orgMembers.removeMemberTooltip"))
-                            }}/>
-                    </ReactTooltip>
+                <div onClick={() => this.removeFromActionIcon(entity.id, entity.invite, true)}>
+                    <Tooltip anchorId={`delete-member-${entity.id}`}
+                             standalone={true}
+                             tip={entity.invite ? I18n.t("models.orgMembers.removeInvitationTooltip") :
+                                 I18n.t("models.orgMembers.removeMemberTooltip")}
+                             children={<ThrashIcon/>}/>
                 </div>
-
-                {
-                    <div data-tip data-for={`mail-member-${entity.id}`}>
-                        <a href={`mailto:${bcc}${hrefValue}`}
-                           rel="noopener noreferrer">
-                            <EmailIcon/>
-                        </a>
-                        <ReactTooltip id={`mail-member-${entity.id}`} type="light" effect="solid" data-html={true}
-                                      place="bottom">
-                        <span
-                            dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(entity.invite ? I18n.t("models.orgMembers.mailInvitationTooltip") : I18n.t("models.orgMembers.mailMemberTooltip"))}}/>
-                        </ReactTooltip>
-                    </div>}
+                <div>
+                    <a href={`mailto:${bcc}${hrefValue}`}
+                       rel="noopener noreferrer">
+                        <Tooltip
+                            tip={entity.invite ? I18n.t("models.orgMembers.mailInvitationTooltip") : I18n.t("models.orgMembers.mailMemberTooltip")}
+                            anchorId={`mail-member-${entity.id}`}
+                            standalone={true}
+                            children={<EmailIcon/>}/>
+                    </a>
+                </div>
                 {showResendInvite &&
-                <div data-tip data-for={`resend-invite-${entity.id}`}>
-                    <FontAwesomeIcon icon="voicemail" onClick={this.resendFromActionMenu(entity.id, true)}/>
-                    <ReactTooltip id={`resend-invite-${entity.id}`} type="light" effect="solid" data-html={true}
-                                  place="bottom">
-                        <span
-                            dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("models.orgMembers.resendInvitationTooltip"))}}/>
-                    </ReactTooltip>
+                <div onClick={this.resendFromActionMenu(entity.id, true)}>
+                    <Tooltip tip={I18n.t("models.orgMembers.resendInvitationTooltip")}
+                             anchorId={`resend-invite-${entity.id}`}
+                             standalone={true}
+                             children={<FontAwesomeIcon icon="voicemail"/>}/>
                 </div>}
-
             </div>);
     }
 
@@ -453,18 +440,16 @@ class CollaborationAdmins extends React.Component {
         return (
             <div className="admin-actions">
                 {(any && isAdminOfCollaboration && !disabled) &&
-                <div data-tip data-for="delete-members">
-                    <Button onClick={this.remove(true)} txt={I18n.t("models.orgMembers.remove")}
-                            icon={<ThrashIcon/>}/>
-                    <ReactTooltip id="delete-members" type="light" effect="solid" data-html={true}
-                                  place="bottom">
-                        <span
-                            dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(disabled ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip"))}}/>
-                    </ReactTooltip>
+                <div>
+                    <Tooltip anchorId={"delete-members"}
+                             standalone={true}
+                             tip={disabled ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}
+                             children={<Button onClick={this.remove(true)} txt={I18n.t("models.orgMembers.remove")}
+                                               icon={<ThrashIcon/>}/>}/>
                 </div>}
                 {(any && (isAdminOfCollaboration || collaboration.disclose_email_information) && !disabled)
                 &&
-                <div data-tip data-for="mail-members">
+                <div>
                     <a href={`${disabled ? "" : "mailto:"}${bcc}${hrefValue}`}
                        className="button"
                        rel="noopener noreferrer" onClick={e => {
@@ -474,23 +459,21 @@ class CollaborationAdmins extends React.Component {
                             return true;
                         }
                     }}>
-                        {I18n.t("models.orgMembers.mail")}<FontAwesomeIcon icon="mail-bulk"/>
+                        {I18n.t("models.orgMembers.mail")}
+                        <Tooltip anchorId={"mail-members"}
+                                 standalone={true}
+                                 tip={disabled ? I18n.t("models.orgMembers.mailTooltipDisabled") : I18n.t("models.orgMembers.mailTooltip")}
+                                 children={<FontAwesomeIcon icon="mail-bulk"/>}/>
                     </a>
-                    <ReactTooltip id="mail-members" type="light" effect="solid" data-html={true}
-                                  place="bottom">
-                        <span
-                            dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(disabled ? I18n.t("models.orgMembers.mailTooltipDisabled") : I18n.t("models.orgMembers.mailTooltip"))}}/>
-                    </ReactTooltip>
                 </div>}
                 {(any && isAdminOfCollaboration && showResendInvite) &&
-                <div data-tip data-for="resend-invites">
-                    <Button onClick={this.resend(true)} txt={I18n.t("models.orgMembers.resend")}
-                            icon={<FontAwesomeIcon icon="voicemail"/>}/>
-                    <ReactTooltip id="resend-invites" type="light" effect="solid" data-html={true}
-                                  place="bottom">
-                        <span
-                            dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(disabled ? I18n.t("models.orgMembers.resendTooltipDisabled") : I18n.t("models.orgMembers.resendTooltip"))}}/>
-                    </ReactTooltip>
+                <div>
+                    <Tooltip tip={disabled ? I18n.t("models.orgMembers.resendTooltipDisabled") : I18n.t("models.orgMembers.resendTooltip")}
+                             anchorId={"resend-invites"}
+                             standalone={true}
+                             children={<Button onClick={this.resend(true)}
+                                               txt={I18n.t("models.orgMembers.resend")}
+                                               icon={<FontAwesomeIcon icon="voicemail"/>}/>}/>
                 </div>}
 
             </div>);
@@ -687,11 +670,11 @@ class CollaborationAdmins extends React.Component {
                 header: "",
                 mapper: entity => <div className="member-icon">
                     {entity.invite &&
-                    <Tooltip children={<InviteIcon/>} id={"invite-icon"} msg={I18n.t("tooltips.invitations")}/>}
+                    <Tooltip children={<InviteIcon/>} tip={I18n.t("tooltips.invitations")} standalone={true}/>}
                     {(!entity.invite && entity.role === "admin") &&
-                    <Tooltip children={<UserIcon/>} id={"admin-icon"} msg={I18n.t("tooltips.admin")}/>}
+                    <Tooltip children={<UserIcon/>} standalone={true} tip={I18n.t("tooltips.admin")}/>}
                     {(!entity.invite && entity.role !== "admin") &&
-                    <Tooltip children={<MembersIcon/>} id={"user-icon"} msg={I18n.t("tooltips.user")}/>}
+                    <Tooltip children={<MembersIcon/>} standalone={true} tip={I18n.t("tooltips.user")}/>}
 
                 </div>
             },

@@ -14,7 +14,7 @@ import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
 import ConfirmationDialog from "../ConfirmationDialog";
 import MissingServices from "../MissingServices";
-import Tooltip from "./Tooltip";
+import {Tooltip} from "@surfnet/sds";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class OrganisationServices extends React.Component {
@@ -111,7 +111,8 @@ class OrganisationServices extends React.Component {
                               animate={false}
                               tooltip={tooltip}/>
                 {tooltip &&
-                <Tooltip children={<FontAwesomeIcon icon="info-circle"/>}
+                <Tooltip standalone={true}
+                         children={<FontAwesomeIcon icon="info-circle"/>}
                          id={`not-allowed-${service.id}`}
                          msg={tooltip}/>}
             </div>
