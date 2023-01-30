@@ -36,7 +36,7 @@ export default function InputField({
                                        displayLabel = true
                                    }) {
     placeholder = disabled ? "" : placeholder;
-    let className = `${fileUpload ? "file-upload" : ""}`;
+    let className = "sds--text-field--input";
     if (error) {
         className += "error ";
     }
