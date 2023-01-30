@@ -392,7 +392,7 @@ I18n.translations.nl = {
             autoProvisioning: "Iedereen automatisch lid",
             on: "Aan",
             off: "Uit",
-            deleteMemberConfirmation: "Weet je zeker dat je de groep {{name}} wil verwijderen?"
+            deleteMemberConfirmation: "Weet je zeker dat je {{name}} wil verwijderen uit deze groep?"
         },
         groupMembers: {
             title: "Leden",
