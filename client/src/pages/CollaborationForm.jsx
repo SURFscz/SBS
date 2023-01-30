@@ -673,7 +673,7 @@ class CollaborationForm extends React.Component {
                     })}/>}
                     <section className="actions">
                         {!isNew &&
-                        <Button warningButton={true} txt={I18n.t("collaborationDetail.delete")}
+                        <Button warningButton={true}
                                 onClick={this.delete}/>}
                         <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                         <Button disabled={disabledSubmit}

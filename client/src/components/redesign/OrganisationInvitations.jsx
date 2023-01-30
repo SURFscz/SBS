@@ -155,7 +155,7 @@ class OrganisationInvitations extends React.Component {
                                 multiline={true}/>
 
                     <section className="actions">
-                        <Button warningButton={true} txt={I18n.t("organisationInvitation.delete")}
+                        <Button warningButton={true}
                                 onClick={this.delete}/>
                         <Button cancelButton={true} txt={I18n.t("forms.close")} onClick={this.cancelSideScreen}/>
                         <Button txt={I18n.t("organisationInvitation.resend")}

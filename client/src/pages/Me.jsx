@@ -326,7 +326,6 @@ class Me extends React.Component {
                     </div>
                     <section className="actions">
                         <Button warningButton={true}
-                                txt={I18n.t("user.delete")}
                                 onClick={this.delete}/>
                         <a className="button cancel"
                            href={`${window.location.protocol}//${window.location.host}/api/users/personal`.replaceAll("3000", "8080")}
