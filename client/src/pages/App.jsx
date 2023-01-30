@@ -187,7 +187,7 @@ class App extends React.Component {
         return (
             <Router>
                 <Flash/>
-                <div className="app-container sds--color-palette--blue">
+                <div className="app-container sds--color-palette--orange">
                     {currentUser && <div>
                         <Header currentUser={currentUser} config={config}/>
                         {impersonator &&

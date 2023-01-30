@@ -6,7 +6,7 @@ table.servicesUsed, table.servicesAvailable, table.servicesRequested {
     thead {
         th {
             &.name {
-                width: 30%;
+                width: 20%;
                 padding-left: 15px;
             }
 
@@ -15,7 +15,7 @@ table.servicesUsed, table.servicesAvailable, table.servicesRequested {
             }
 
             &.action {
-                width: 40%;
+                width: 45%;
                 text-align: right;
             }
         }
@@ -36,9 +36,10 @@ table.servicesUsed, table.servicesAvailable, table.servicesRequested {
             }
 
             div.actions {
+                word-break: keep-all;
                 display: flex;
 
-                a {
+                button {
                     &:first-child {
                         margin-left: auto;
                     }

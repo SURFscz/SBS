@@ -160,9 +160,12 @@ export default class Collaborations extends React.PureComponent {
         }
         return (
             <div className="admin-actions">
-                <Tooltip standalone={true} children={<Button onClick={() => this.removeCollaboration(true)}
-                                           txt={I18n.t("models.serviceCollaborations.disconnect")}
-                                           icon={<FontAwesomeIcon icon="trash"/>}/>}
+                <Tooltip standalone={true} children={
+                    <Button
+                        onClick={() => this.removeCollaboration(true)}
+                        small={true}
+                        txt={I18n.t("models.serviceCollaborations.disconnect")}
+                        icon={<FontAwesomeIcon icon="trash"/>}/>}
                          tip={I18n.t("models.serviceCollaborations.disconnectTooltip")}
                 />
             </div>);
@@ -177,7 +180,7 @@ export default class Collaborations extends React.PureComponent {
                 <div className="admin-icons">
                     <div onClick={() => this.removeCollaboration(true, entity.id)}>
                         <Tooltip standalone={true} tip={I18n.t("models.serviceCollaborations.disconnectOneTooltip")}
-                                 children={<FontAwesomeIcon icon="trash"/>} />
+                                 children={<FontAwesomeIcon icon="trash"/>}/>
                     </div>
                 </div>
             </div>
@@ -264,7 +267,8 @@ export default class Collaborations extends React.PureComponent {
                             </div>)
                     } else {
                         return (
-                            <Tooltip standalone={true} children={<InformationCircle/>} anchorId={"collaboration-warning" + ++i}
+                            <Tooltip standalone={true} children={<InformationCircle/>}
+                                     anchorId={"collaboration-warning" + ++i}
                                      tip={I18n.t("models.serviceCollaborations.organisationWarningTooltip")}/>
                         )
                     }

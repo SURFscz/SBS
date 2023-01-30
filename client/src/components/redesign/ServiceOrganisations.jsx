@@ -5,7 +5,7 @@ import I18n from "i18n-js";
 import Entities from "./Entities";
 import ToggleSwitch from "./ToggleSwitch";
 import {allowedOrganisations, toggleAccessAllowedForAll} from "../../api";
-import {setFlash} from "../../utils/Flash";
+import {clearFlash, setFlash} from "../../utils/Flash";
 import Logo from "./Logo";
 import ConfirmationDialog from "../ConfirmationDialog";
 import {Tooltip} from "@surfnet/sds";
@@ -42,6 +42,7 @@ class ServiceOrganisations extends React.Component {
 
     openOrganisation = organisation => e => {
         stopEvent(e);
+        clearFlash();
         this.props.history.push(`/organisations/${organisation.id}`);
     };
 

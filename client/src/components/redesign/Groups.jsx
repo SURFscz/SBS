@@ -14,7 +14,7 @@ import "./Groups.scss";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Button from "../Button";
-import {setFlash} from "../../utils/Flash";
+import {clearFlash, setFlash} from "../../utils/Flash";
 import ConfirmationDialog from "../ConfirmationDialog";
 import Entities from "./Entities";
 import SpinnerField from "./SpinnerField";
@@ -212,9 +212,13 @@ class Groups extends React.Component {
                     {mayCreateGroups &&
                     <div className="header-actions">
                         <Button onClick={() => this.setState(this.newGroupState(selectedGroup))}
+                                small={true}
                                 txt={I18n.t("models.groups.edit")}/>
                         {currentUser.admin && <span className="history"
-                                                    onClick={() => this.props.history.push(`/audit-logs/groups/${selectedGroup.id}?${queryParam}`)}>
+                                                    onClick={() => {
+                                                        clearFlash();
+                                                        this.props.history.push(`/audit-logs/groups/${selectedGroup.id}?${queryParam}`)
+                                                    }}>
                             <FontAwesomeIcon icon="history"/>{I18n.t("home.history")}
                         </span>}
                     </div>}

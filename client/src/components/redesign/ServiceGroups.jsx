@@ -141,6 +141,7 @@ class ServiceGroups extends React.Component {
                     {
                         <div className="header-actions">
                             <Button onClick={() => this.setState(this.newGroupState(selectedGroup))}
+                                    small={true}
                                     txt={I18n.t("models.groups.edit")}/>
                             <span className="history"
                                   onClick={() => this.props.history.push(`/audit-logs/service_groups/${selectedGroup.id}?${queryParam}`)}>

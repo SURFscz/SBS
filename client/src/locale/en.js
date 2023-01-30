@@ -1633,7 +1633,8 @@ I18n.translations.en = {
         fileImport: "Upload",
     },
     confirmationDialog: {
-        title: "Please confirm",
+        title: "Confirm",
+        subTitle: "This action requires a confirmation",
         confirm: "Confirm",
         ok: "Ok",
         cancel: "Cancel",

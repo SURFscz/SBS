@@ -1,56 +1,8 @@
-@import "../stylesheets/vars.scss";
+.sds--alert {
+    z-index: 4;
 
-div.flash {
-    color: white;
-
-    position: sticky;
-    width: 100%;
-    top: 0;
-    z-index: 6;
-    opacity: .97;
-
-    transition: top 150ms ease-in-out;
-
-    &.hide {
-        transition: top 1000ms ease-in-out;
-        top: -80px;
-        position: absolute;
-    }
-
-    &.info {
-        background-color: $styleboard-green;
-        color: white;
-        font-weight: bold;
-    }
-
-    &.warning {
-        background-color: $primary-orange;
-    }
-
-    &.error {
-        background-color: $red;
-    }
-
-    .message-container {
-        margin: 0 auto;
-        position: relative;
-
-        p {
-            padding: 10px 25px 10px 35px;
-        }
-
-    }
-
-    a.close {
-        text-decoration: none;
-        position: absolute;
-        right: 6px;
-        top: -2px;
-        color: white;
-        padding: 6px;
-        font-size: 16px;
-        font-weight: normal;
-    }
-
-
+    //&:not(.hide) {
+    //    min-height: 61px;
+    //    display: flex;
+    //}
 }

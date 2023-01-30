@@ -242,7 +242,9 @@ class ServiceAdmins extends React.Component {
                         tip={anySelected ? I18n.t("models.orgMembers.removeTooltip") : I18n.t("models.orgMembers.removeTooltipDisabled")}
                         anchorId={"delete-members"}
                         standalone={true}
-                        children={<Button onClick={this.remove(true)} txt={I18n.t("models.orgMembers.remove")}
+                        children={<Button onClick={this.remove(true)}
+                                          txt={I18n.t("models.orgMembers.remove")}
+                                          small={true}
                                           icon={<FontAwesomeIcon icon="trash"/>}/>}/>
                 </div>}
 

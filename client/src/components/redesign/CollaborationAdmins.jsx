@@ -441,17 +441,19 @@ class CollaborationAdmins extends React.Component {
             <div className="admin-actions">
                 {(any && isAdminOfCollaboration && !disabled) &&
                 <div>
-                    <Tooltip anchorId={"delete-members"}
-                             standalone={true}
+                    <Tooltip standalone={true}
                              tip={disabled ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}
-                             children={<Button onClick={this.remove(true)} txt={I18n.t("models.orgMembers.remove")}
+                             children={<Button onClick={this.remove(true)}
+                                               small={true}
+                                               txt={I18n.t("models.orgMembers.remove")}
                                                icon={<ThrashIcon/>}/>}/>
                 </div>}
                 {(any && (isAdminOfCollaboration || collaboration.disclose_email_information) && !disabled)
                 &&
                 <div>
                     <a href={`${disabled ? "" : "mailto:"}${bcc}${hrefValue}`}
-                       className="button"
+                       className="sds--btn sds--btn--primary sds--btn--small"
+                       style={{border: "none", cursor: "default"}}
                        rel="noopener noreferrer" onClick={e => {
                         if (disabled) {
                             stopEvent(e);
@@ -460,8 +462,7 @@ class CollaborationAdmins extends React.Component {
                         }
                     }}>
                         {I18n.t("models.orgMembers.mail")}
-                        <Tooltip anchorId={"mail-members"}
-                                 standalone={true}
+                        <Tooltip standalone={true}
                                  tip={disabled ? I18n.t("models.orgMembers.mailTooltipDisabled") : I18n.t("models.orgMembers.mailTooltip")}
                                  children={<FontAwesomeIcon icon="mail-bulk"/>}/>
                     </a>
@@ -469,7 +470,6 @@ class CollaborationAdmins extends React.Component {
                 {(any && isAdminOfCollaboration && showResendInvite) &&
                 <div>
                     <Tooltip tip={disabled ? I18n.t("models.orgMembers.resendTooltipDisabled") : I18n.t("models.orgMembers.resendTooltip")}
-                             anchorId={"resend-invites"}
                              standalone={true}
                              children={<Button onClick={this.resend(true)}
                                                txt={I18n.t("models.orgMembers.resend")}

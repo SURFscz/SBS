@@ -16,7 +16,7 @@ import {isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
 import Button from "../Button";
-import {setFlash} from "../../utils/Flash";
+import {clearFlash, setFlash} from "../../utils/Flash";
 import InputField from "../InputField";
 import SpinnerField from "./SpinnerField";
 import ConfirmationDialog from "../ConfirmationDialog";
@@ -97,6 +97,7 @@ class UsedServices extends React.Component {
 
     openService = service => e => {
         stopEvent(e);
+        clearFlash()
         this.props.history.push(`/services/${service.id}`);
     };
 
@@ -293,22 +294,25 @@ class UsedServices extends React.Component {
             return null;
         }
         if (service.connectionRequest && service.isMemberRequest) {
-            return <Button className={"white"}
+            return <Button cancelButton={true}
                            onClick={this.openServiceConnectionRequest(service)}
                            txt={I18n.t("forms.open")}/>
         }
         if (service.usedService && service.connectionRequest) {
             return <div className="actions">
-                <Button className={"white"}
+                <Button cancelButton={true}
+                        centralize={true}
                         onClick={() => this.resendServiceConnectionRequest(service, collaboration)}
                         txt={I18n.t("models.services.resendConnectionRequest")}/>
-                <Button className={"white"}
+                <Button cancelButton={true}
+                        centralize={true}
                         onClick={() => this.removeServiceConnectionRequest(service, collaboration)}
                         txt={I18n.t("models.services.deleteConnectionRequest")}/>
             </div>
         }
         if (service.usedService && !service.connectionRequest) {
-            return <Button className={"white"}
+            return <Button cancelButton={true}
+                           centralize={true}
                            onClick={() => this.unlinkService(service, collaboration)}
                            txt={I18n.t("models.services.removeFromCO")}/>
         }
@@ -316,12 +320,14 @@ class UsedServices extends React.Component {
             service.automatic_connection_allowed_organisations.filter(org => org.id === collaboration.organisation.id).length > 0;
 
         if (!service.usedService && allowedToConnect) {
-            return <Button className={"white"}
+            return <Button cancelButton={true}
+                           centralize={true}
                            onClick={() => this.linkService(service, collaboration)}
                            txt={I18n.t("models.services.addToCO")}/>;
         }
         if (!service.usedService && !allowedToConnect) {
-            return <Button className={"white"}
+            return <Button cancelButton={true}
+                           centralize={true}
                            onClick={() => this.setState({requestConnectionService: service})}
                            txt={I18n.t("models.services.requestConnection")}/>;
         }

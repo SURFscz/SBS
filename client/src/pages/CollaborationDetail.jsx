@@ -39,7 +39,7 @@ import {actionMenuUserRole, isUserAllowed, ROLES} from "../utils/UserRole";
 import {getParameterByName} from "../utils/QueryParameters";
 import CollaborationWelcomeDialog from "../components/CollaborationWelcomeDialog";
 import JoinRequests from "../components/redesign/JoinRequests";
-import {setFlash} from "../utils/Flash";
+import {clearFlash, setFlash} from "../utils/Flash";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import ClipBoardCopy from "../components/redesign/ClipBoardCopy";
 import Button from "../components/Button";
@@ -600,7 +600,10 @@ class CollaborationDetail extends React.Component {
             actions.push({
                 icon: "pencil-alt",
                 name: I18n.t("home.edit"),
-                perform: () => this.props.history.push("/edit-collaboration/" + collaboration.id)
+                perform: () => {
+                    clearFlash();
+                    this.props.history.push("/edit-collaboration/" + collaboration.id)
+                }
             });
         }
         if (allowedToEdit && showMemberView && collaboration.status === "suspended") {
