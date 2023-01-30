@@ -9,7 +9,7 @@ export default function LastAdminWarning({organisation, currentUserDeleted = tru
         {name: organisation.name});
     return (
         <span className="last-admin-error-indication"><CriticalIcon/>
-            <h2 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(msg)}}/>
+            <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(msg)}}/>
         </span>);
 
 }

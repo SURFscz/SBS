@@ -5,7 +5,7 @@ import {Tooltip} from "@surfnet/sds";
 export default function ToggleSwitch({value, onChange, disabled = false, animate = true, tooltip = undefined}) {
     return (
         <Tooltip tip={tooltip}
-                 standalone={true}
+
                  children={<label className="switch">
                      <input type="checkbox" checked={value} disabled={true}/>
                      <span

@@ -1633,7 +1633,8 @@ I18n.translations.nl = {
         fileImport: "Upload",
     },
     confirmationDialog: {
-        title: "Bevestig actie",
+        title: "Bevestiging",
+        subTitle: "Deze actie vereist een bevestiging",
         confirm: "Bevestig",
         ok: "Ok",
         cancel: "Annuleer",

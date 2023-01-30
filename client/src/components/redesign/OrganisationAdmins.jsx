@@ -270,6 +270,7 @@ class OrganisationAdmins extends React.Component {
                     tip={!anySelected ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}
                     children={<Button onClick={this.remove(true)}
                                       txt={I18n.t("models.orgMembers.remove")}
+                                      small={true}
                                       icon={<FontAwesomeIcon icon="trash"/>}/>}
                     standalone={true}/>
                 }
@@ -278,6 +279,7 @@ class OrganisationAdmins extends React.Component {
                     tip={!showResendInvite ? I18n.t("models.orgMembers.resendTooltipDisabled") : I18n.t("models.orgMembers.resendTooltip")}
                     children={<Button onClick={this.resend(true)}
                                       txt={I18n.t("models.orgMembers.remove")}
+                                      small={true}
                                       icon={<FontAwesomeIcon icon="trash"/>}/>}
                     standalone={true}/>}
             </div>);

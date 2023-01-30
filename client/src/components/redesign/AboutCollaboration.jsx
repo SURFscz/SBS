@@ -9,6 +9,7 @@ import Logo from "./Logo";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import {Tooltip} from "@surfnet/sds";
 import {CO_SHORT_NAME, SRAM_USERNAME} from "../../validations/regExps";
+import {clearFlash} from "../../utils/Flash";
 
 const memberCutOff = 10;
 
@@ -29,6 +30,7 @@ class AboutCollaboration extends React.Component {
 
     openService = service => e => {
         stopEvent(e);
+        clearFlash();
         this.props.history.push(`/services/${service.id}`);
     }
 

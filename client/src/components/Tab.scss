@@ -3,12 +3,11 @@
 
 .tab {
     min-width: 110px;
-    padding: 10px 15px;
     margin: 0 20px;
     display: flex;
     align-items: center;
     position: relative;
-    border-bottom: 3px solid $background;
+    border-bottom: 0.25rem solid transparent;
 
     &.busy {
         min-width: 85px;
@@ -35,14 +34,12 @@
     }
 
     &:not(.active) {
-        cursor: pointer;
-
         span.tab-label, svg {
-            color: $dark-grey;
+            color: var(--sds--color--black);
         }
 
         svg {
-            fill: $dark-grey;
+            color: var(--sds--color--black);
         }
 
         &:not(.read-only):hover {
@@ -53,8 +50,6 @@
             svg {
                 fill: black;
             }
-
-            border-bottom: 3px solid $medium-grey;
         }
 
         &.read-only {
@@ -71,16 +66,24 @@
     }
 
     &.active {
-        border-bottom: 3px solid $light-orange;
+        color: var(--sds--color--black);
+        border-bottom-color: var(--sds--palette--support-color--400);
+        box-shadow: 0 0.0625rem 0 0 var(--sds--palette--support-color--400);
 
         span.tab-label, svg {
-            color: $primary-orange;
-            font-weight: bold;
+            color: var(--sds--color--black);
         }
 
         svg {
-            fill: $primary-orange;
+            fill: var(--sds--color--black);
+
         }
+    }
+
+    button {
+        padding: var(--sds--space--1-and-a-half) var(--sds--space--2);
+        min-height: 3rem;
+        font-weight: 600;
     }
 
     span.notifier {

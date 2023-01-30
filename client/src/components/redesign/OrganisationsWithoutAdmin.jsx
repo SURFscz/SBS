@@ -4,6 +4,7 @@ import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
 import Logo from "./Logo";
+import {clearFlash} from "../../utils/Flash";
 
 
 class OrganisationsWithoutAdmin extends React.Component {
@@ -13,6 +14,7 @@ class OrganisationsWithoutAdmin extends React.Component {
             return;
         }
         stopEvent(e);
+        clearFlash();
         this.props.history.push(`/organisations/${organisation.id}`);
     };
 
