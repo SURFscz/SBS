@@ -244,7 +244,7 @@ class ServiceGroups extends React.Component {
 
                 <section className="actions">
                     {!createNewGroup &&
-                    <Button warningButton={true} txt={I18n.t("groups.delete")}
+                    <Button warningButton={true}
                             onClick={this.delete}/>}
                     <Button cancelButton={true} txt={I18n.t("forms.cancel")}
                             onClick={() => this.setState({editGroup: false, createNewGroup: false})}/>

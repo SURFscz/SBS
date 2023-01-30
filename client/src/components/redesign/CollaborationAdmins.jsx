@@ -442,38 +442,43 @@ class CollaborationAdmins extends React.Component {
                 {(any && isAdminOfCollaboration && !disabled) &&
                 <div>
                     <Tooltip standalone={true}
+                             anchorId={"remove-members"}
                              tip={disabled ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}
                              children={<Button onClick={this.remove(true)}
                                                small={true}
+                                               anchorId={"remove-members"}
                                                txt={I18n.t("models.orgMembers.remove")}
                                                icon={<ThrashIcon/>}/>}/>
                 </div>}
                 {(any && (isAdminOfCollaboration || collaboration.disclose_email_information) && !disabled)
                 &&
                 <div>
-                    <a href={`${disabled ? "" : "mailto:"}${bcc}${hrefValue}`}
-                       className="sds--btn sds--btn--primary sds--btn--small"
-                       style={{border: "none", cursor: "default"}}
-                       rel="noopener noreferrer" onClick={e => {
-                        if (disabled) {
-                            stopEvent(e);
-                        } else {
-                            return true;
-                        }
-                    }}>
-                        {I18n.t("models.orgMembers.mail")}
-                        <Tooltip standalone={true}
-                                 tip={disabled ? I18n.t("models.orgMembers.mailTooltipDisabled") : I18n.t("models.orgMembers.mailTooltip")}
-                                 children={<FontAwesomeIcon icon="mail-bulk"/>}/>
-                    </a>
+                    <Tooltip standalone={true}
+                             tip={disabled ? I18n.t("models.orgMembers.mailTooltipDisabled") : I18n.t("models.orgMembers.mailTooltip")}
+                             children={<a href={`${disabled ? "" : "mailto:"}${bcc}${hrefValue}`}
+                                          className="sds--btn sds--btn--primary sds--btn--small"
+                                          style={{border: "none", cursor: "default"}}
+                                          rel="noopener noreferrer" onClick={e => {
+                                 if (disabled) {
+                                     stopEvent(e);
+                                 } else {
+                                     return true;
+                                 }
+                             }}>
+                                 {I18n.t("models.orgMembers.mail")}<FontAwesomeIcon icon="mail-bulk"/>
+                             </a>}/>
+
                 </div>}
                 {(any && isAdminOfCollaboration && showResendInvite) &&
                 <div>
-                    <Tooltip tip={disabled ? I18n.t("models.orgMembers.resendTooltipDisabled") : I18n.t("models.orgMembers.resendTooltip")}
-                             standalone={true}
-                             children={<Button onClick={this.resend(true)}
-                                               txt={I18n.t("models.orgMembers.resend")}
-                                               icon={<FontAwesomeIcon icon="voicemail"/>}/>}/>
+                    <Tooltip
+                        tip={disabled ? I18n.t("models.orgMembers.resendTooltipDisabled") : I18n.t("models.orgMembers.resendTooltip")}
+                        standalone={true}
+                        anchorId={"resend-invites"}
+                        children={<Button onClick={this.resend(true)}
+                                          anchorId={"resend-invites"}
+                                          txt={I18n.t("models.orgMembers.resend")}
+                                          icon={<FontAwesomeIcon icon="voicemail"/>}/>}/>
                 </div>}
 
             </div>);

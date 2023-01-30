@@ -6,7 +6,7 @@ import {Button as SDSButton, ButtonSize, ButtonType} from "@surfnet/sds";
 export default function Button({
                                    onClick, txt, disabled = false, cancelButton = false,
                                    warningButton = false, icon = null, small = false,
-                                   centralize = false, className = ""
+                                   centralize = false, className = "", anchorId = null
                                }) {
 
     const onClickInternal = e => {
@@ -18,7 +18,12 @@ export default function Button({
     const buttonType = cancelButton ? ButtonType.Secondary : warningButton ?
         ButtonType.Delete : className.indexOf("ghost") > -1 ? ButtonType.GhostDark : ButtonType.Primary;
     const buttonSize = small ? ButtonSize.Small : centralize ? ButtonSize.Full : ButtonSize.Default;
-    return <SDSButton txt={txt} onClick={onClickInternal} disabled={disabled} centralize={centralize} icon={icon}
+    return <SDSButton txt={txt}
+                      onClick={onClickInternal}
+                      disabled={disabled}
+                      centralize={centralize}
+                      icon={icon}
+                      anchorId={anchorId}
                       size={buttonSize} type={buttonType}/>
 
 }

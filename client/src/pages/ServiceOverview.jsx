@@ -508,7 +508,7 @@ class ServiceOverview extends React.Component {
                 {invalidTabsMsg && <span className={"error"}>{invalidTabsMsg}</span>}
                 <section className="actions">
                     {(isAdmin && currentTab === "general" && !showServiceAdminView) &&
-                    <Button warningButton={true} txt={I18n.t("service.delete")}
+                    <Button warningButton={true}
                             onClick={this.delete}/>}
                     {currentTab === "policy" &&
                     <Button txt={I18n.t("service.aup.title")}

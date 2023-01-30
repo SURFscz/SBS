@@ -240,10 +240,11 @@ class ServiceAdmins extends React.Component {
                 {anySelected && <div>
                     <Tooltip
                         tip={anySelected ? I18n.t("models.orgMembers.removeTooltip") : I18n.t("models.orgMembers.removeTooltipDisabled")}
-                        anchorId={"delete-members"}
+                        anchorId={"delete-service-members"}
                         standalone={true}
                         children={<Button onClick={this.remove(true)}
                                           txt={I18n.t("models.orgMembers.remove")}
+                                          anchorId={"delete-service-members"}
                                           small={true}
                                           icon={<FontAwesomeIcon icon="trash"/>}/>}/>
                 </div>}
@@ -251,10 +252,12 @@ class ServiceAdmins extends React.Component {
                 {showResendInvite && <div>
                     <Tooltip
                         tip={!showResendInvite ? I18n.t("models.orgMembers.resendTooltipDisabled") : I18n.t("models.orgMembers.resendTooltip")}
+                        anchorId={"resend-service-invites"}
                         standalone={true}
                         children={<Button onClick={this.resend(true)} txt={I18n.t("models.orgMembers.resend")}
+                                          anchorId={"resend-service-invites"}
                                           icon={<FontAwesomeIcon icon="voicemail"/>}/>}
-                        anchorId={"resend-invites"}/>
+                    />
                 </div>}
 
             </div>);
