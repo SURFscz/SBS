@@ -20,16 +20,16 @@ export default class CroppedImageDialog extends React.PureComponent {
     }
 
     initialState = (props = {}) => ({
-            error: "",
-            source: props.value,
-            copy: props.value,
-            isSvg: false,
-            initialSvg: false,
-            result: null,
-            busy: false,
-            crop: {},
-            addWhiteSpace: false
-        });
+        error: "",
+        source: props.value,
+        copy: props.value,
+        isSvg: false,
+        initialSvg: false,
+        result: null,
+        busy: false,
+        crop: {},
+        addWhiteSpace: false
+    });
 
     internalOnChange = e => {
         const files = e.target.files;
@@ -188,9 +188,9 @@ export default class CroppedImageDialog extends React.PureComponent {
 
     onCropChange = (crop, percentCrop) => this.setState({crop: percentCrop});
 
-    renderImages = (error, src, isSvg, crop, onCancel, onSave, name) => {
+    renderImages = (error, src, isSvg, crop, onCancel, onSave, name, addWhiteSpace) => {
         const type = isSvg ? "svg+xml" : "jpeg";
-        const img = srcUrl(src, type) ;
+        const img = srcUrl(src, type);
         return (
             <div className="cropped-image-dialog-container">
                 {(!src) && <div className="no-image">
@@ -206,7 +206,8 @@ export default class CroppedImageDialog extends React.PureComponent {
                         onChange={this.onCropChange}
                     />
                 </div>}
-                {<label className="file-upload-label button" htmlFor={`fileUpload_${name}`}>
+                {<label className="file-upload-label sds--btn sds--btn--primary"
+                        htmlFor={`fileUpload_${name}`}>
                     {I18n.t("forms.upload")}
                 </label>}
                 {<input type="file"
@@ -217,12 +218,10 @@ export default class CroppedImageDialog extends React.PureComponent {
                         onChange={this.internalOnChange}/>}
                 {!src && <span className="disclaimer">{I18n.t("forms.image")}</span>}
                 {src && <span className="disclaimer">{I18n.t("forms.dragImage")}</span>}
-                {src && <div className="add-white-space">
-                    <CheckBox name={"add-white-space"}
-                              value={this.state.addWhiteSpace}
-                              onChange={this.onWhiteSpace}
-                              info={I18n.t("forms.whiteSpace")}/>
-                </div>
+                {src && <CheckBox name={"add-white-space"}
+                                  value={addWhiteSpace}
+                                  onChange={this.onWhiteSpace}
+                                  info={I18n.t("forms.whiteSpace")}/>
                 }
                 {!isEmpty(error) && <ErrorIndicator msg={error}/>}
             </div>
@@ -237,7 +236,7 @@ export default class CroppedImageDialog extends React.PureComponent {
 
     render() {
         const {onSave, onCancel, isOpen, name, value, title} = this.props;
-        const {error, crop, source, isSvg, busy} = this.state;
+        const {error, crop, source, isSvg, busy, addWhiteSpace} = this.state;
         const src = source || value;
         return (
             <Modal
@@ -248,10 +247,14 @@ export default class CroppedImageDialog extends React.PureComponent {
                 closeTimeoutMS={0}
                 ariaHideApp={false}>
                 <h2>{title}</h2>
-                {this.renderImages(error, src, isSvg, crop, onCancel, onSave, name)}
+                {this.renderImages(error, src, isSvg, crop, onCancel, onSave, name, addWhiteSpace)}
                 <section className="actions">
-                    <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.onCancelInternal}/>
-                    <Button txt={I18n.t("forms.apply")} disabled={busy || !src}
+                    <Button cancelButton={true}
+                            txt={I18n.t("forms.cancel")}
+                            onClick={this.onCancelInternal}/>
+                    <Button txt={I18n.t("forms.apply")}
+
+                            disabled={busy || !src}
                             onClick={this.onSaveInternal}/>
                 </section>
             </Modal>

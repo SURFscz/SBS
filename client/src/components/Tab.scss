@@ -43,6 +43,8 @@
         }
 
         &:not(.read-only):hover {
+            background-color: var(--sds--palette--support-color--100);
+
             span.tab-label, svg {
                 color: black;
             }

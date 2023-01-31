@@ -495,7 +495,8 @@ class CollaborationAdmins extends React.Component {
                     isSearchable={false}
                     isClearable={false}
                 />
-                {isAdminOfCollaboration && <CheckBox name="hide_invitees" value={hideInvitees}
+                {isAdminOfCollaboration && <CheckBox name="hide_invitees"
+                                                     value={hideInvitees}
                                                      onChange={e => this.setState({hideInvitees: e.target.checked})}
                                                      info={I18n.t("models.collaborations.hideInvites")}/>}
             </div>

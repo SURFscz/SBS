@@ -51,7 +51,7 @@ class CollaborationForm extends React.Component {
             expiry_date: null,
             disclose_email_information: true,
             disclose_member_information: true,
-            disable_join_requests: false,
+            allow_join_requests: true,
             required: ["name", "description", "short_name", "organisation", "logo"],
             alreadyExists: {},
             organisation: {},
@@ -258,7 +258,7 @@ class CollaborationForm extends React.Component {
                 tagsSelected,
                 organisation,
                 isCollaborationRequest,
-                disable_join_requests,
+                allow_join_requests,
                 current_user_admin,
                 disclose_member_information,
                 disclose_email_information
@@ -274,7 +274,7 @@ class CollaborationForm extends React.Component {
                 message,
                 expiry_date: expiry_date ? expiry_date.getTime() / 1000 : null,
                 organisation_id: organisation.value,
-                disable_join_requests,
+                disable_join_requests: !allow_join_requests,
                 current_user_admin,
                 disclose_member_information,
                 disclose_email_information
@@ -320,7 +320,7 @@ class CollaborationForm extends React.Component {
                 tagsSelected,
                 expiry_date,
                 organisation,
-                disable_join_requests,
+                allow_join_requests,
                 current_user_admin,
                 disclose_member_information,
                 disclose_email_information
@@ -338,7 +338,7 @@ class CollaborationForm extends React.Component {
                 expiry_date: expiry_date ? expiry_date.getTime() / 1000 : null,
                 message,
                 organisation_id: organisation.value,
-                disable_join_requests,
+                disable_join_requests: !allow_join_requests,
                 current_user_admin,
                 disclose_member_information,
                 disclose_email_information
@@ -435,7 +435,7 @@ class CollaborationForm extends React.Component {
             isCollaborationRequest,
             disclose_member_information,
             disclose_email_information,
-            disable_join_requests,
+            allow_join_requests,
             current_user_admin,
             logo,
             warning,
@@ -457,7 +457,7 @@ class CollaborationForm extends React.Component {
         }
         const unitHeaderName = (!isCollaborationRequest || autoCreateCollaborationRequest) ? I18n.t("models.collaborations.new") :
             I18n.t("models.collaborations.newCollaborationRequest")
-        const joinRequestUrl = (isNew || disable_join_requests) ? I18n.t("collaboration.joinRequestUrlDisabled") :
+        const joinRequestUrl = (isNew || !allow_join_requests) ? I18n.t("collaboration.joinRequestUrlDisabled") :
             `${config.base_url}/registration?collaboration=${collaboration.identifier}`;
         const accessAllowedToOrg = organisation && isUserAllowed(ROLES.ORG_MANAGER, user, organisation.id);
         return (
@@ -591,11 +591,11 @@ class CollaborationForm extends React.Component {
                                                            name={I18n.t("collaboration.expiryDate")}
                                                            toolTip={I18n.t("collaboration.expiryDateTooltip")}/>}
 
-                    {!isCollaborationRequest && <CheckBox name="disable_join_requests"
-                                                          value={disable_join_requests}
-                                                          info={I18n.t("collaboration.disableJoinRequests")}
-                                                          tooltip={I18n.t("collaboration.disableJoinRequestsTooltip")}
-                                                          onChange={() => this.setState({disable_join_requests: !disable_join_requests})}/>}
+                    {!isCollaborationRequest && <CheckBox name="allow_join_requests"
+                                                          value={allow_join_requests}
+                                                          info={I18n.t("collaboration.allowJoinRequests")}
+                                                          tooltip={I18n.t("collaboration.allowJoinRequestsTooltip")}
+                                                          onChange={() => this.setState({allow_join_requests: !allow_join_requests})}/>}
 
                     {!isCollaborationRequest && <CheckBox name="disclose_member_information"
                                                           value={disclose_member_information}
