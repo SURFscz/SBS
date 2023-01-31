@@ -2,17 +2,13 @@
 
 .header-container {
 
-    background-color: $background;
+    background-color: $light-orange;
     margin: 0 auto;
     padding: 5px 0 10px 0;
     color: black;
 
     &.guest {
         background-color: white;
-    }
-
-    &.ugly {
-        background-color: $light-orange;
     }
 
     .header-inner {
@@ -30,62 +26,6 @@
 
         span.logo {
             margin-top: 10px;
-        }
-
-        .user-profile {
-            margin-left: auto;
-            position: relative;
-            cursor: pointer;
-            @media (max-width: $tablet-max) {
-                margin-right: 65px;
-            }
-        }
-
-        .menu {
-            display: flex;
-            align-items: center;
-            color: black;
-            font-weight: bold;
-
-            .user {
-                display: flex;
-                flex-direction: column;
-                margin-right: 40px;
-
-                @media (max-width: $compact-medium) {
-                    display: none;
-                }
-
-
-                span.role {
-                    font-weight: normal;
-                    color: #7b1900;
-                }
-            }
-
-            .drop-down {
-                border-radius: 50%;
-                padding: 18px;
-                background-color: $darker-grey;
-                position: relative;
-
-                svg {
-                    fill: white;
-                    position: absolute;
-                    top: 6px;
-                    right: 6px;
-                    width: 26px;
-                }
-
-                &.ugly {
-                    background-color: #ffcb8a;
-
-                    svg {
-                        fill: #7b1900;
-                    }
-                }
-
-            }
         }
 
     }

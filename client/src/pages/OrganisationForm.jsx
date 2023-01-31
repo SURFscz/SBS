@@ -20,7 +20,6 @@ import {setFlash} from "../utils/Flash";
 import {sanitizeShortName, validEmailRegExp, validSchacHomeRegExp} from "../validations/regExps";
 import {AppStore} from "../stores/AppStore";
 import UnitHeader from "../components/redesign/UnitHeader";
-import RadioButton from "../components/redesign/RadioButton";
 import CroppedImageField from "../components/redesign/CroppedImageField";
 import SelectField from "../components/SelectField";
 import SpinnerField from "../components/redesign/SpinnerField";
@@ -30,6 +29,7 @@ import OrganisationOnBoarding from "../components/OrganisationOnBoarding";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import CreatableField from "../components/CreatableField";
 import EmailField from "../components/EmailField";
+import CheckBox from "../components/CheckBox";
 
 
 class OrganisationForm extends React.Component {
@@ -398,22 +398,21 @@ class OrganisationForm extends React.Component {
                             })}/>
                         )}
 
-                        <RadioButton
-                            label={I18n.t("organisation.collaborationCreationAllowed")}
-                            name={"collaboration_creation_allowed"}
-                            disabled={isEmpty(schac_home_organisations)}
-                            value={collaboration_creation_allowed}
-                            tooltipOnHover={true}
-                            tooltip={I18n.t("organisation.collaborationCreationAllowedTooltip")}
-                            onChange={val => this.setState({collaboration_creation_allowed: val})}/>
+                        <CheckBox name={"collaboration_creation_allowed"}
+                                  value={collaboration_creation_allowed}
+                                  tooltip={I18n.t("organisation.collaborationCreationAllowedTooltip")}
+                                  onChange={val => this.setState({collaboration_creation_allowed: val})}
+                                  info={I18n.t("organisation.collaborationCreationAllowed")}
+                                  readOnly={isEmpty(schac_home_organisations)}
+                        />
 
-                        <RadioButton
-                            label={I18n.t("organisation.servicesRestricted")}
-                            name={"services_restricted"}
-                            disabled={!user.admin}
-                            value={services_restricted}
-                            tooltip={I18n.t("organisation.servicesRestrictedTooltip")}
-                            onChange={() => this.setState({services_restricted: !services_restricted})}/>
+                        <CheckBox name={"services_restricted"}
+                                  value={services_restricted}
+                                  tooltip={I18n.t("organisation.servicesRestrictedTooltip")}
+                                  onChange={() => this.setState({services_restricted: !services_restricted})}
+                                  info={I18n.t("organisation.servicesRestricted")}
+                                  readOnly={!user.admin}
+                        />
 
                         {isNew &&
                         <div>

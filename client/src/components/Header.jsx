@@ -13,7 +13,6 @@ export default class Header extends React.PureComponent {
         super(props, context);
         this.state = {
             organisation: null,
-            orangeMode: true,
             showFeedBack: false
         };
     }
@@ -41,7 +40,12 @@ export default class Header extends React.PureComponent {
     toggleStyle = e => {
         stopEvent(e);
         if (e && e.shiftKey && e.metaKey) {
-            this.setState({orangeMode: !this.state.orangeMode});
+            const classList = document.body.classList;
+            const classValue = classList.value;
+            const styles = ["green", "blue", "red", "orange", "purple"].map(s => `sds--color-palette--${s}`);
+            const index = styles.indexOf(classValue);
+            const newClassValue = styles[index === (styles.length - 1) ? 0 : index + 1]
+            classList.replace(classValue, newClassValue);
         }
     }
 
@@ -54,10 +58,10 @@ export default class Header extends React.PureComponent {
 
     render() {
         const {currentUser, config} = this.props;
-        const {organisation, orangeMode, showFeedBack} = this.state;
+        const {organisation, showFeedBack} = this.state;
         const showProfile = !currentUser.guest && currentUser.second_factor_confirmed;
         return (
-            <div className={`header-container ${currentUser.guest ? "guest" : ""} ${orangeMode ? "ugly" : ""}`}>
+            <div className={`header-container ${currentUser.guest ? "guest" : ""}`}>
                 <FeedbackDialog isOpen={showFeedBack} close={() => this.setState({showFeedBack: false})}/>
                 <div className="header-inner" onClick={this.toggleStyle}>
                     <span className="logo">

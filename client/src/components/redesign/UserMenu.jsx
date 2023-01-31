@@ -19,7 +19,7 @@ class UserMenu extends React.Component {
     }
 
     toggleUserMenu = () => {
-        this.setState({dropDownActive: !this.state.dropDownActive})
+        this.setState({dropDownActive: false})
         clearFlash();
     }
 
@@ -67,7 +67,7 @@ class UserMenu extends React.Component {
             <div className="user-menu"
                  ref={ref => this.ref = ref}
                  tabIndex={1}
-                 onBlur={() => setTimeout(() => this.setState({dropDownActive: !dropDownActive}), 250)}>
+                 onBlur={() => setTimeout(() => this.setState({dropDownActive: false}), 250)}>
                 <UserInfo isOpen={dropDownActive}
                           children={this.renderMenu(currentUser, adminLinks, collCreateAllowed, provideFeedback, collMenuItemRequired, config)}
                           organisationName={organisation || "-"}

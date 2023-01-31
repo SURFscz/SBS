@@ -42,7 +42,7 @@ export default function InputField({
     }
     const validExternalLink = externalLink && !isEmpty(value) && validUrlRegExp.test(value);
     return (
-        <div className="input-field sds--text-field">
+        <div className={`input-field sds--text-field ${error ? "sds--text-field--status-error" : ""}`}>
             {(name && displayLabel) && <label htmlFor={name}>{name}
                 {toolTip && <Tooltip tip={toolTip}/>}
             </label>}

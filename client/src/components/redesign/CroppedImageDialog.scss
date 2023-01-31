@@ -49,11 +49,11 @@
                 fill: $lighter-grey;
             }
 
-            div.add-white-space {
+            div.checkbox {
                 display: flex;
                 width: 100%;
                 margin: 10px 0 0 15px;
-                div.checkbox label {
+                label {
                     font-weight: normal;
                     font-size: 14px;
                 }
