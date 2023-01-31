@@ -137,13 +137,7 @@
         table-layout: fixed;
 
         thead {
-            tr {
-                border-bottom: 3px solid $lighter-grey;
-            }
-
             th {
-                padding: 10px 0;
-                color: $primary-orange;
 
                 &.sortable {
                     cursor: pointer;
@@ -188,15 +182,8 @@
 
         tbody {
             tr {
-                color: black;
-                border-bottom: 1px solid $lighter-grey;
-
                 &.clickable {
                     cursor: pointer;
-
-                    &:hover {
-                        background-color: $lightest-grey;
-                    }
                 }
 
                 .action-icons-container {
@@ -231,7 +218,6 @@
             }
 
             td {
-                padding: 10px 0;
                 word-break: break-all;
 
                 &.center {

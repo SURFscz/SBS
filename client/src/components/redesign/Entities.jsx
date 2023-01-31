@@ -58,7 +58,8 @@ class Entities extends React.Component {
         return (
             <section className="entities-search">
                 {showNew &&
-                <Button onClick={this.newEntity} small={true} className={`ghost ${hideTitle && !filters ? "no-title" : ""}`}
+                <Button onClick={this.newEntity} small={true}
+                        className={`ghost ${hideTitle && !filters ? "no-title" : ""}`}
                         txt={newLabel || I18n.t(`models.${modelName}.new`)}/>
                 }
                 {!hideTitle && <h1>{title || `${I18n.t(`models.${modelName}.title`)} (${entities.length})`}</h1>}
@@ -130,34 +131,36 @@ class Entities extends React.Component {
                     {actions}
                 </div>}
                 {hasEntities &&
-                <table className={tableClassName || modelName}>
-                    <thead>
-                    <tr>
-                        {columns.map((column, i) =>
-                            <th key={`th_${column.key}_${i}`}
-                                className={`${column.key} ${column.class || ""} ${column.nonSortable ? "" : "sortable"}`}
-                                onClick={this.setSorted(column.key)}>
-                                {(!actions || i < 2) && column.header}
-                                {headerIcon(column, sorted, reverse)}
-                            </th>
-                        )}
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {entities.map((entity, index) =>
-                        <tr key={`tr_${entity.id}_${index}`}
-                            className={`${(typeof rowLinkMapper === "function" && rowLinkMapper(entity)) ? "clickable" : ""} ${onHover ? "hoverable" : ""}`}>
+                <div className={"sds--table"}>
+                    <table className={tableClassName || modelName}>
+                        <thead>
+                        <tr>
                             {columns.map((column, i) =>
-                                <td key={`td_${column.key}_${i}`}
-                                    onClick={(column.key !== "check" && column.key !== "role" && !column.hasLink) ?
-                                        this.onRowClick(rowLinkMapper, entity) : undefined}
-                                    className={`${column.key} ${column.nonSortable ? "" : "sortable"} ${column.className ? column.className : ""}`}>
-                                    {this.getEntityValue(entity, column)}
-                                </td>)}
+                                <th key={`th_${column.key}_${i}`}
+                                    className={`${column.key} ${column.class || ""} ${column.nonSortable ? "" : "sortable"}`}
+                                    onClick={this.setSorted(column.key)}>
+                                    {(!actions || i < 2) && column.header}
+                                    {headerIcon(column, sorted, reverse)}
+                                </th>
+                            )}
                         </tr>
-                    )}
-                    </tbody>
-                </table>}
+                        </thead>
+                        <tbody>
+                        {entities.map((entity, index) =>
+                            <tr key={`tr_${entity.id}_${index}`}
+                                className={`${(typeof rowLinkMapper === "function" && rowLinkMapper(entity)) ? "clickable" : ""} ${onHover ? "hoverable" : ""}`}>
+                                {columns.map((column, i) =>
+                                    <td key={`td_${column.key}_${i}`}
+                                        onClick={(column.key !== "check" && column.key !== "role" && !column.hasLink) ?
+                                            this.onRowClick(rowLinkMapper, entity) : undefined}
+                                        className={`${column.key} ${column.nonSortable ? "" : "sortable"} ${column.className ? column.className : ""}`}>
+                                        {this.getEntityValue(entity, column)}
+                                    </td>)}
+                            </tr>
+                        )}
+                        </tbody>
+                    </table>
+                </div>}
                 {(!hasEntities && !children) &&
                 <p className="no-entities">{customNoEntities || I18n.t(`models.${modelName}.noEntities`)}</p>}
                 {pagination && <Pagination currentPage={page}

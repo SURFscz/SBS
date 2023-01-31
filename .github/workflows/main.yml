@@ -195,7 +195,7 @@ jobs:
     if: >
       github.actor!='dependabot[bot]' &&
       github.event_name!='pull_request' &&
-      ( github.ref_type=='tag' || github.ref_name=='main' || github.ref_name=='feature/design-system')
+      ( github.ref_type=='tag' || github.ref_name=='main')
     needs:
       - "Client_build"
       - "Server_tests"
