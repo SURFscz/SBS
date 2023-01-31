@@ -531,12 +531,14 @@ class ServiceOverview extends React.Component {
     renderPamWebLogin = (service, isAdmin, showServiceAdminView) => {
         return (
             <div className={"pamWebLogin"}>
-                <RadioButton label={I18n.t("userTokens.pamWebSSOEnabled")}
-                             name={"pam_web_sso_enabled"}
-                             value={service.pam_web_sso_enabled}
-                             disabled={!isAdmin || showServiceAdminView}
-                             tooltip={I18n.t("userTokens.pamWebSSOEnabledTooltip")}
-                             onChange={val => this.setState({"service": {...service, pam_web_sso_enabled: val}})}/>
+                <CheckBox name={"pam_web_sso_enabled"}
+                              value={service.pam_web_sso_enabled}
+                              onChange={e => this.setState({"service": {...service, pam_web_sso_enabled: e.target.checked}})}
+                              tooltip={I18n.t("userTokens.pamWebSSOEnabledTooltip")}
+                              readOnly={!isAdmin || showServiceAdminView}
+                              info={I18n.t("userTokens.pamWebSSOEnabled")}
+                    />
+
             </div>)
     }
 
@@ -552,12 +554,13 @@ class ServiceOverview extends React.Component {
         }
         return (
             <div className={"scim"}>
-                <RadioButton label={I18n.t("scim.scimEnabled")}
-                             name={"scim_enabled"}
-                             value={service.scim_enabled}
-                             disabled={!isAdmin || showServiceAdminView}
-                             tooltip={I18n.t("scim.scimEnabledTooltip")}
-                             onChange={val => this.setState({"service": {...service, scim_enabled: val}})}/>
+                <CheckBox name={"scim_enabled"}
+                          value={service.scim_enabled}
+                          tooltip={I18n.t("scim.scimEnabledTooltip")}
+                          info={I18n.t("scim.scimEnabled")}
+                          readOnly={!isAdmin || showServiceAdminView}
+                          onChange={e => this.setState({"service": {...service, scim_enabled: e.target.checked}})}
+                />
 
                 <InputField value={service.scim_url}
                             name={I18n.t("scim.scimURL")}
@@ -577,27 +580,29 @@ class ServiceOverview extends React.Component {
                             toolTip={I18n.t("scim.scimBearerTokenTooltip")}
                             disabled={!isAdmin || showServiceAdminView || !service.scim_enabled}/>
 
-                <RadioButton label={I18n.t("scim.sweepScimEnabled")}
-                             name={"sweep_scim_enabled"}
-                             value={service.sweep_scim_enabled}
-                             disabled={!isAdmin || showServiceAdminView || !service.scim_enabled}
-                             tooltip={I18n.t("scim.sweepScimEnabledTooltip")}
-                             onChange={val =>
+                <CheckBox name={"sweep_scim_enabled"}
+                          value={service.sweep_scim_enabled}
+                          tooltip={I18n.t("scim.sweepScimEnabledTooltip")}
+                          info={I18n.t("scim.sweepScimEnabled")}
+                          readOnly={!isAdmin || showServiceAdminView || !service.scim_enabled}
+                          onChange={e =>
                                  this.setState({
                                      "service": {
                                          ...service,
-                                         sweep_scim_enabled: val,
-                                         sweep_scim_daily_rate: val ? {label: 1, value: 1} : null
+                                         sweep_scim_enabled: e.target.checked,
+                                         sweep_scim_daily_rate: e.target.checked ? {label: 1, value: 1} : null
                                      }
-                                 })}/>
+                                 })}
+                />
 
-                <RadioButton label={I18n.t("scim.scimSweepDeleteOrphans")}
-                             name={"sweep_remove_orphans"}
-                             value={service.sweep_remove_orphans && service.sweep_scim_enabled}
-                             disabled={!service.sweep_scim_enabled}
-                             tooltip={I18n.t("scim.scimSweepDeleteOrphansTooltip")}
-                             onChange={val => this.setState({"service": {...service, sweep_remove_orphans: val}})}/>
 
+                <CheckBox name={"sweep_remove_orphans"}
+                          value={service.sweep_remove_orphans && service.sweep_scim_enabled}
+                          tooltip={I18n.t("scim.scimSweepDeleteOrphansTooltip")}
+                          info={I18n.t("scim.scimSweepDeleteOrphans")}
+                          readOnly={!service.sweep_scim_enabled}
+                          onChange={e => this.setState({"service": {...service, sweep_remove_orphans: e.target.checked}})}
+                />
 
                 <SelectField value={sweepScimDailyRate}
                              options={[...Array(25).keys()].filter(i => i % 4 === 0).map(i => ({

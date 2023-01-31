@@ -89,18 +89,14 @@
     }
 
     span.notifier {
-        border-radius: 50%;
-        background-color: $blue;
-        color: white;
-        font-size: 14px;
-        display: inline-block;
-        width: 18px;
-        text-align: center;
-        height: 18px;
-        line-height: 18px;
         position: absolute;
-        right: 0;
-        top: -4px;
+        right: -2px;
+        top: -2px;
+
+        svg.alert-circle {
+            width: 14px;
+            height: auto;
+        }
 
         @media (max-width: $compact-medium) {
             top: 8px;

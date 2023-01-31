@@ -54,9 +54,9 @@ class Service extends React.Component {
         access_allowed_for_all: false,
         non_member_users_access_allowed: false,
         white_listed: false,
-        research_scholarship_compliant: false,
-        code_of_conduct_compliant: false,
-        sirtfi_compliant: false,
+        research_scholarship_compliant: null,
+        code_of_conduct_compliant: null,
+        sirtfi_compliant: null,
         token_enabled: false,
         token_validity_days: "",
         pam_web_sso_enabled: false,
@@ -67,7 +67,8 @@ class Service extends React.Component {
         administrators: [],
         email: "",
         message: "",
-        required: ["name", "entity_id", "abbreviation", "privacy_policy", "logo", "security_email"],
+        required: ["name", "entity_id", "abbreviation", "privacy_policy", "logo", "security_email",
+            "research_scholarship_compliant", "code_of_conduct_compliant", "sirtfi_compliant"],
         alreadyExists: {},
         initial: true,
         isNew: true,
@@ -615,50 +616,67 @@ class Service extends React.Component {
                                  value={sirtfi_compliant}
                                  tooltip={I18n.t("service.sirtfiCompliantTooltip")}
                                  onChange={val => this.setState({sirtfi_compliant: val})}/>
-
+                    {(!initial && isEmpty(sirtfi_compliant)) &&
+                    <ErrorIndicator msg={I18n.t("service.required", {
+                        attribute: I18n.t("service.sirtfiCompliant").toLowerCase()
+                    })}/>}
                     <RadioButton label={I18n.t("service.codeOfConductCompliant")}
                                  name={"code_of_conduct_compliant"}
                                  value={code_of_conduct_compliant}
                                  tooltip={I18n.t("service.codeOfConductCompliantTooltip")}
                                  onChange={val => this.setState({code_of_conduct_compliant: val})}/>
+                    {(!initial && isEmpty(code_of_conduct_compliant)) &&
+                    <ErrorIndicator msg={I18n.t("service.required", {
+                        attribute: I18n.t("service.codeOfConductCompliant").toLowerCase()
+                    })}/>}
 
                     <RadioButton label={I18n.t("service.researchScholarshipCompliant")}
                                  name={"research_scholarship_compliant"}
                                  value={research_scholarship_compliant}
                                  tooltip={I18n.t("service.researchScholarshipCompliantTooltip")}
                                  onChange={val => this.setState({research_scholarship_compliant: val})}/>
+                    {(!initial && isEmpty(research_scholarship_compliant)) &&
+                    <ErrorIndicator msg={I18n.t("service.required", {
+                        attribute: I18n.t("service.researchScholarshipCompliant").toLowerCase()
+                    })}/>}
+
                 </div>
                 <div className="tokens">
                     <h1 className="section-separator first">{I18n.t("userTokens.tokens")}</h1>
 
-                    <RadioButton label={I18n.t("userTokens.tokenEnabled")}
-                                 name={"token_enabled"}
-                                 value={token_enabled}
-                                 disabled={!isAdmin}
-                                 tooltip={I18n.t("userTokens.tokenEnabledTooltip")}
-                                 onChange={val => this.setState({
-                                     token_enabled: val,
-                                     token_validity_days: val ? 1 : ""
-                                 })}/>
+
+                    <CheckBox name={"token_enabled"}
+                              value={token_enabled}
+                              tooltip={I18n.t("userTokens.tokenEnabledTooltip")}
+                              info={I18n.t("userTokens.tokenEnabled")}
+                              readOnly={!isAdmin}
+                              onChange={() => this.setState({
+                                  token_enabled: !token_enabled,
+                                  token_validity_days: token_enabled ? "" : 1
+                              })}
+                    />
 
                     <InputField value={token_validity_days}
                                 name={I18n.t("userTokens.tokenValidityDays")}
                                 maxLength={3}
                                 tooltip={I18n.t("userTokens.tokenValidityDaysTooltip")}
                                 onChange={e => this.setState({token_validity_days: e.target.value.replace(/\D/, '')})}
-                                disabled={!token_enabled}/>
+                                disabled={!token_enabled}
+                    />
 
-                    <RadioButton label={I18n.t("userTokens.pamWebSSOEnabled")}
-                                 name={"pam_web_sso_enabled"}
-                                 value={pam_web_sso_enabled}
-                                 disabled={!isAdmin}
-                                 tooltip={I18n.t("userTokens.pamWebSSOEnabledTooltip")}
-                                 onChange={val => this.setState({pam_web_sso_enabled: val})}/>
+                    <CheckBox name={"pam_web_sso_enabled"}
+                              value={pam_web_sso_enabled}
+                              onChange={() => this.setState({pam_web_sso_enabled: !pam_web_sso_enabled})}
+                              tooltip={I18n.t("userTokens.pamWebSSOEnabledTooltip")}
+                              readOnly={!isAdmin}
+                              info={I18n.t("userTokens.pamWebSSOEnabled")}
+                    />
 
                     <InputField value={config.introspect_endpoint}
                                 name={I18n.t("userTokens.introspectionEndpoint")}
                                 copyClipBoard={true}
-                                disabled={true}/>
+                                disabled={true}
+                    />
 
                 </div>
                 {isNew &&

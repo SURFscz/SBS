@@ -46,6 +46,7 @@ export default class Header extends React.PureComponent {
             const index = styles.indexOf(classValue);
             const newClassValue = styles[index === (styles.length - 1) ? 0 : index + 1]
             classList.replace(classValue, newClassValue);
+            alert("New color palette is:" + newClassValue);
         }
     }
 

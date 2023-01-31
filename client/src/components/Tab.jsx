@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-
+import {ReactComponent as AlertIcon} from "../icons/alert-circle.svg";
 import "./Tab.scss";
 
 class Tab extends Component {
@@ -40,7 +40,7 @@ class Tab extends Component {
 
         return (
             <div className={className} onClick={this.onClick}>
-                {notifier && <span className="notifier">{notifier}</span>}
+                {notifier && <span className="notifier"><AlertIcon/></span>}
                 <button className={"tab-label"}>{icon && icon}{label}</button>
             </div>
         );

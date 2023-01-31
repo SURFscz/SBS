@@ -403,14 +403,14 @@ class OrganisationAdmins extends React.Component {
                 header: "",
                 mapper: entity => <div className="member-icon">
                     {entity.invite &&
-                    <Tooltip standalone={true} children={<InviteIcon/>} id={"invite-icon"}
-                             msg={I18n.t("tooltips.invitations")}/>}
+                    <Tooltip standalone={true} children={<InviteIcon/>}
+                             tip={I18n.t("tooltips.invitations")}/>}
                     {(!entity.invite && entity.role === "admin") &&
-                    <Tooltip standalone={true} children={<UserIcon/>} id={"admin-icon"}
-                             msg={I18n.t("tooltips.admin")}/>}
+                    <Tooltip standalone={true} children={<UserIcon/>}
+                             tip={I18n.t("tooltips.admin")}/>}
                     {(!entity.invite && entity.role !== "admin") &&
-                    <Tooltip standalone={true} children={<MembersIcon/>} id={"user-icon"}
-                             msg={I18n.t("tooltips.manager")}/>}
+                    <Tooltip standalone={true} children={<MembersIcon/>}
+                             tip={I18n.t("tooltips.manager")}/>}
                 </div>
             },
             {

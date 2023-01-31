@@ -5,6 +5,7 @@ import DOMPurify from "dompurify";
 
 export default function ErrorIndicator({msg, standalone = false, decode = true}) {
     const className = `error-indication ${standalone ? "standalone" : ""}`;
+    msg = msg.replaceAll("?" ,"");
     return decode ? <span className={className}><CriticalIcon/>{msg}</span> :
         <span className={className}>
             <CriticalIcon/>

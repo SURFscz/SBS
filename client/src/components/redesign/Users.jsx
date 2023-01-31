@@ -2,6 +2,7 @@ import React from "react";
 import "./Organisations.scss";
 import I18n from "i18n-js";
 import "./Entities.scss";
+import {Tooltip} from "@surfnet/sds";
 import Entities from "./Entities";
 import {queryForOrganisationInvites, queryForOrganisationUsers, queryForUsers} from "../../api";
 import {ReactComponent as UserIcon} from "../../icons/single-neutral.svg";
