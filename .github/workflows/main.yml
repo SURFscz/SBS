@@ -195,7 +195,7 @@ jobs:
     if: >
       github.actor!='dependabot[bot]' &&
       github.event_name!='pull_request' &&
-      ( github.ref_type=='tag' || github.ref_name=='main')
+      ( github.ref_type=='tag' || github.ref_type=='branch' )
     needs:
       - "Client_build"
       - "Server_tests"
@@ -227,27 +227,27 @@ jobs:
           files: "${{steps.fetch_artifact.outputs.download-path}}/*"
 
       - name: Advance latest tag
-        if: "github.ref_name=='main'"
+        if: "github.ref_type=='branch'"
         uses: EndBug/latest-tag@v1
         with:
-          tag-name: "latest"
-          description: "Latest commit in the main branch"
+          ref: "branch+${{github.ref_name}}"
+          description: "Latest commit in branch ${{github.ref_name}}"
 
       - name: remove all previous "latest" releases
-        if: "github.ref_name=='main'"
+        if: "github.ref_type=='branch'"
         uses: dev-drprasad/delete-older-releases@v0.2.1
         with:
           keep_latest: 0
-          delete_tag_pattern: "latest"
+          delete_tag_pattern: "branch+${{github.ref_name}}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Release for main/latest
-        if: "github.ref_name=='main'"
+        if: "github.ref_type=='branch'"
         uses: softprops/action-gh-release@v1
         with:
-          name: "latest"
-          tag_name: "latest"
+          name: "Latest from branch ${{github.ref_name}}"
+          tag_name: "branch+${{github.ref_name}}"
           prerelease: true
           files: "${{steps.fetch_artifact.outputs.download-path}}/sbs.tar.xz"
 
@@ -259,6 +259,7 @@ jobs:
           APP_ID: ${{ secrets.SRAM_ACTIONAPP_APPID }}
 
       - name: Test new SBS build in SCZ-deploy's CI-runner
+        if: "github.ref_name=='main'"
         uses: actions/github-script@v6
         with:
           github-token: ${{ steps.get_token.outputs.app_token }}
