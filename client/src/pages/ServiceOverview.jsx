@@ -912,11 +912,6 @@ class ServiceOverview extends React.Component {
 
     renderConnection = (config, service, alreadyExists, isAdmin, isServiceAdmin, showServiceAdminView,
                         selectedAutomaticConnectionAllowedOrganisations, automaticConnectionAllowedOrganisations) => {
-        const serviceRequestUrlValid = !isEmpty(service.uri) && service.automatic_connection_allowed;
-        const serviceRequestUrl = serviceRequestUrlValid ?
-            `${config.base_url}/service-request?entityID=${encodeURIComponent(service.entity_id)}&redirectUri=${encodeURIComponent(service.uri)}` :
-            I18n.t("service.service_requestError");
-
         return (
             <div className={"connection"}>
                 <InputField value={service.entity_id}
@@ -937,14 +932,6 @@ class ServiceOverview extends React.Component {
                 {isEmpty(service.entity_id) && <ErrorIndicator msg={I18n.t("service.required", {
                     attribute: I18n.t("service.entity_id").toLowerCase()
                 })}/>}
-
-                {(isAdmin && !showServiceAdminView) && <InputField value={serviceRequestUrl}
-                                                                   name={I18n.t("service.service_request")}
-                                                                   toolTip={I18n.t("service.service_requestTooltip")}
-                                                                   copyClipBoard={serviceRequestUrlValid}
-                                                                   history={this.props.history}
-                                                                   disabled={true}
-                />}
 
                 <CheckBox name="automatic_connection_allowed"
                           value={service.automatic_connection_allowed}

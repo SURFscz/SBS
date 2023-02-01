@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {ReactComponent as AlertIcon} from "../icons/alert-circle.svg";
 import "./Tab.scss";
+import {BadgeNumber} from "@surfnet/sds";
 
 class Tab extends Component {
     static propTypes = {
@@ -37,11 +38,16 @@ class Tab extends Component {
         if (busy) {
             className += " busy";
         }
-
+        let chipCount = null;
+        if (label && label.indexOf("(") > -1) {
+            const count = label.substring(label.indexOf("(") + 1, label.indexOf(")"));
+            label = label.substring(0, label.indexOf("(") - 1);
+            chipCount = <BadgeNumber value={count} small={true}/>
+        }
         return (
             <div className={className} onClick={this.onClick}>
                 {notifier && <span className="notifier"><AlertIcon/></span>}
-                <button className={"tab-label"}>{icon && icon}{label}</button>
+                <button className={"tab-label"}>{icon && icon}{label}{chipCount}</button>
             </div>
         );
     }

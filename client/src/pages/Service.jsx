@@ -358,9 +358,6 @@ class Service extends React.Component {
                         accepted_user_policy, uri_info, privacy_policy, isNew, service, disabledSubmit, white_listed, sirtfi_compliant, token_enabled, pam_web_sso_enabled,
                         token_validity_days, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, administrators, message, email, logo, isServiceAdmin) => {
-        const serviceRequestUrlValid = !isEmpty(uri) && automatic_connection_allowed;
-        const serviceRequestUrl = serviceRequestUrlValid ? `${config.base_url}/service-request?entityID=${encodeURIComponent(entity_id)}&redirectUri=${encodeURIComponent(uri)}` :
-            I18n.t("service.service_requestError");
         const ldapBindAccount = config.ldap_bind_account;
         return (
             <div className="service">
@@ -445,14 +442,6 @@ class Service extends React.Component {
                 {invalidInputs["privacy_policy"] &&
                 <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
 
-
-                {(!isNew && isAdmin) && <InputField value={serviceRequestUrl}
-                                                    name={I18n.t("service.service_request")}
-                                                    toolTip={I18n.t("service.service_requestTooltip")}
-                                                    copyClipBoard={true}
-                                                    history={this.props.history}
-                                                    disabled={true}
-                />}
 
                 <InputField value={description}
                             name={I18n.t("service.description")}

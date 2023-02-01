@@ -70,18 +70,10 @@ table.collaborations, table.serviceCollaborations, table.memberCollaborations {
             &.name {
                 width: 26%;
                 padding-left: 15px;
-
-                &.services {
-                    width: 40%;
-                }
             }
 
             &.organisation__name {
                 width: 20%;
-
-                &.services {
-                    width: 30%;
-                }
             }
 
             &.expiry_date {
@@ -94,11 +86,6 @@ table.collaborations, table.serviceCollaborations, table.memberCollaborations {
 
             &.fromCollaboration {
                 width: 8%;
-
-                &.services {
-                    width: 15%;
-                }
-
             }
 
             &.collaboration_memberships_count {
@@ -148,7 +135,7 @@ table.collaborations, table.serviceCollaborations, table.memberCollaborations {
 
             &.expiry_date, &.last_activity_date {
                 span.warning {
-                    color: $light-orange;
+                    color: var(--sds--palette--main-color--200);
                     font-weight: bold;
 
                     &:last-child {
@@ -184,17 +171,21 @@ table.serviceCollaborations {
                 }
             }
 
+            &.check {
+                width: 50px;
+            }
+
             &.name {
                 width: 20%;
                 padding-left: 15px;
             }
 
-            &.short_name {
-                width: 20%;
-            }
-
             &.organisation__name {
                 width: 15%;
+            }
+
+            &.short_name {
+                width: 25%;
             }
 
             &.role {
@@ -203,17 +194,7 @@ table.serviceCollaborations {
             }
 
             &.fromCollaboration {
-                width: 10%;
-            }
-
-            &.collaboration_memberships_count {
-                width: 10%;
-                text-align: center;
-            }
-
-            &.invitations_count {
-                width: 10%;
-                text-align: center;
+                width: 20%;
             }
         }
     }

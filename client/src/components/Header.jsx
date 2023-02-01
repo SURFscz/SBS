@@ -6,6 +6,7 @@ import {organisationsByUserSchacHomeOrganisation} from "../api";
 import {emitter} from "../utils/Events";
 import {getSchacHomeOrg, stopEvent} from "../utils/Utils";
 import FeedbackDialog from "./Feedback";
+import {Link} from "react-router-dom";
 
 export default class Header extends React.PureComponent {
 
@@ -65,9 +66,9 @@ export default class Header extends React.PureComponent {
             <div className={`header-container ${currentUser.guest ? "guest" : ""}`}>
                 <FeedbackDialog isOpen={showFeedBack} close={() => this.setState({showFeedBack: false})}/>
                 <div className="header-inner" onClick={this.toggleStyle}>
-                    <span className="logo">
+                    <Link className="logo" to={"/"}>
                         <Logo label={"Research Access Management"} position={LogoType.Bottom}/>
-                    </span>
+                    </Link>
                     {(showProfile && currentUser.user_accepted_aup) &&
                     <UserMenu currentUser={currentUser}
                               organisation={organisation}
