@@ -79,7 +79,7 @@
             font-weight: bold;
 
             &.expires {
-                color: $light-orange;
+                color: var(--sds--palette--main-color--200);
             }
 
             &.expired {
