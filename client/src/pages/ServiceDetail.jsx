@@ -251,6 +251,9 @@ class ServiceDetail extends React.Component {
     }
 
     getOrganisationsTab = (service, organisations, userAdmin, serviceAdmin) => {
+        if (!service.white_listed) {
+            organisations = organisations.filter(org => !org.services_restricted);
+        }
         return (<div key="organisations" name="organisations"
                      label={I18n.t("home.tabs.serviceOrganisations", {count: organisations.length})}
                      icon={<OrganisationsIcon/>}>

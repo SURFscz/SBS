@@ -89,7 +89,7 @@ def organisation_search():
     res = []
     q = query_param("q")
     if q and len(q):
-        base_query = "SELECT id, name, description, category, logo, short_name FROM organisations "
+        base_query = "SELECT id, name, description, category, logo, short_name, services_restricted FROM organisations "
         not_wild_card = "*" not in q
         if not_wild_card:
             q = replace_full_text_search_boolean_mode_chars(q)
@@ -101,7 +101,7 @@ def organisation_search():
         result_set = db.engine.execute(sql, {"q": f"{q}*"}) if not_wild_card else db.engine.execute(sql)
 
         res = [{"id": row[0], "name": row[1], "description": row[2], "category": row[3], "logo": row[4],
-                "short_name": row[5]} for row in result_set]
+                "short_name": row[5], "services_restricted": row[6]} for row in result_set]
     return res, 200
 
 
