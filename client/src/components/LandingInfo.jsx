@@ -1,5 +1,4 @@
 import React from "react";
-import "./Button.scss";
 import DOMPurify from "dompurify";
 import I18n from "i18n-js";
 import CreateLogo from "../icons/landing/sketch.svg";
