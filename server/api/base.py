@@ -145,6 +145,11 @@ def application_base_url():
     return base_url[:-1] if base_url.endswith("/") else base_url
 
 
+def _remote_address():
+    forwarded = current_request.headers.get("X-Forwarded-For", None)
+    return forwarded if forwarded else current_request.remote_addr
+
+
 def json_endpoint(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
@@ -164,12 +169,12 @@ def json_endpoint(f):
             return response, status
         except Exception as e:
             if isinstance(e, Forbidden) and "You don't have the permission" in e.description:
-                e.description = f"Forbidden 403: {current_request.url}. IP: {current_request.remote_addr}"
+                e.description = f"Forbidden 403: {current_request.url}. IP: {_remote_address()}"
             elif isinstance(e, Unauthorized) and "The server could not verify" in e.description:
-                e.description = f"Unauthorized 401: {current_request.url}. IP: {current_request.remote_addr}"
+                e.description = f"Unauthorized 401: {current_request.url}. IP: {_remote_address()}"
             elif hasattr(e, "description"):
                 e.description = f"{e.__class__.__name__}: {current_request.url}." \
-                                f" IP: {current_request.remote_addr}. " + e.description
+                                f" IP: {_remote_address()}. " + e.description
             response = jsonify(message=e.description if isinstance(e, HTTPException) else str(e),
                                error=True)
             response.status_code = 500
