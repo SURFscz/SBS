@@ -2,7 +2,6 @@ import React from "react";
 import "./Login.scss";
 import I18n from "i18n-js";
 import {health} from "../api";
-import {getParameterByName} from "../utils/QueryParameters";
 import HappyLogo from "../icons/landing/happy.svg";
 import Button from "../components/Button";
 import {login} from "../utils/Login";
@@ -23,14 +22,6 @@ class Login extends React.Component {
     }
 
     componentDidMount = () => health().then(() => {
-        const logout = getParameterByName("logout", window.location.search);
-        const afterDelete = getParameterByName("delete", window.location.search);
-        if (logout || afterDelete) {
-            this.setState({
-                confirmationDialogOpen: true,
-                confirmationQuestion: logout ? I18n.t("login.closeBrowser") : I18n.t("login.closeBrowserAfterDelete")
-            });
-        }
         const {rateLimited} = this.props;
         if (rateLimited) {
             setFlash(I18n.t("login.rateLimited"), "error");
