@@ -79,7 +79,7 @@ class Me extends React.Component {
     };
 
     doDelete = () => {
-        deleteUser().then(() => window.location.href = "/landing?delete=true")
+        deleteUser().then(() => window.location.href = "/landing")
     }
 
     submit = () => {
@@ -327,7 +327,7 @@ class Me extends React.Component {
                     <section className="actions">
                         <Button warningButton={true}
                                 onClick={this.delete}/>
-                        <a className="button cancel"
+                        <a className="sds--btn sds--btn--secondary"
                            href={`${window.location.protocol}//${window.location.host}/api/users/personal`.replaceAll("3000", "8080")}
                            download={`${I18n.t("home.tabs.me")}.json`}>
                             {I18n.t("user.download")}
