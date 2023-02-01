@@ -26,7 +26,7 @@ export default function Impersonating({impersonator, currentUser}) {
            <Tooltip children={<HandIcon/>} standalone={true} tip={I18n.t("impersonate.impersonatorTooltip", {
             currentUser: currentUser.name,
             impersonator: impersonator.name
-          })} />}
+          })} />
     </NavLink>
     <p dangerouslySetInnerHTML={{
       __html: DOMPurify.sanitize(I18n.t("impersonate.impersonator", {
@@ -35,7 +35,7 @@ export default function Impersonating({impersonator, currentUser}) {
       }))
     }}/>
     <Route render={({history}) => (
-      <Button onClick={() => clearImpersonation(history)} txt={I18n.t("impersonate.exit")}/>
+      <Button small={true} onClick={() => clearImpersonation(history)} txt={I18n.t("impersonate.exit")}/>
     )}/>
   </div>
 }

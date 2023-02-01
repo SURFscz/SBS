@@ -528,14 +528,13 @@ class ServiceOverview extends React.Component {
         </>
     }
 
-    renderPamWebLogin = (service, isAdmin, showServiceAdminView) => {
+    renderPamWebLogin = (service) => {
         return (
             <div className={"pamWebLogin"}>
                 <CheckBox name={"pam_web_sso_enabled"}
                               value={service.pam_web_sso_enabled}
                               onChange={e => this.setState({"service": {...service, pam_web_sso_enabled: e.target.checked}})}
                               tooltip={I18n.t("userTokens.pamWebSSOEnabledTooltip")}
-                              readOnly={!isAdmin || showServiceAdminView}
                               info={I18n.t("userTokens.pamWebSSOEnabled")}
                     />
 
@@ -684,7 +683,6 @@ class ServiceOverview extends React.Component {
                 <RadioButton label={I18n.t("userTokens.tokenEnabled")}
                              name={"token_enabled"}
                              value={service.token_enabled}
-                             disabled={!isAdmin}
                              tooltip={I18n.t("userTokens.tokenEnabledTooltip")}
                              onChange={val => this.setState({
                                  "service": {
@@ -704,7 +702,7 @@ class ServiceOverview extends React.Component {
                                     token_validity_days: e.target.value.replace(/\D/, "")
                                 }
                             })}
-                            disabled={!service.token_enabled || !isAdmin}/>
+                            disabled={!service.token_enabled}/>
 
                 {(service.token_enabled || service.pam_web_sso_enabled) &&
                 <div className="input-field">
@@ -1061,7 +1059,7 @@ class ServiceOverview extends React.Component {
             case "tokens":
                 return this.renderTokens(config, service, isAdmin, createNewServiceToken);
             case "pamWebLogin":
-                return this.renderPamWebLogin(service, isAdmin, showServiceAdminView);
+                return this.renderPamWebLogin(service);
             case "SCIM":
                 return this.renderSCIM(service, isAdmin, showServiceAdminView, alreadyExists, invalidInputs);
 
