@@ -281,6 +281,14 @@ class TestUser(AbstractTest):
         count = User.query.filter(User.uid == "urn:john").count()
         self.assertEqual(0, count)
 
+    def test_delete_other(self):
+        self.login("urn:john")
+
+        sarah = self.find_entity_by_name(User, sarah_name)
+        self.delete("/api/users/delete_other", primary_key=sarah.id, with_basic_auth=False)
+        count = User.query.filter(User.uid == sarah.uid).count()
+        self.assertEqual(0, count)
+
     def test_error(self):
         self.post("/api/users/error", body={"error": "403"}, response_status_code=201)
 

@@ -586,7 +586,8 @@ I18n.translations.nl = {
         delete: "Verwijder",
         deleteConfirmation: "Weet je zeker dat je je account voorgoed wil verwijderen?",
         deleteConfirmationWarning: "Al je lidmaatschappen worden verwijderd. Dit kan niet worden teruggedraaid.",
-        deleteConfirmationCheck: "Als je toch wil doorgaan, typ dan ter bevestiging je volledige naam in."
+        deleteConfirmationCheck: "Als je toch wil doorgaan, typ dan ter bevestiging je volledige naam in.",
+        deleteOtherConfirmation: "Are you sure you want to delete the user {{name}} for all eternity?",
     },
     impersonate: {
         title: "Wie wil je zijn?",

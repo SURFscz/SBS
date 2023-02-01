@@ -388,6 +388,22 @@ def redirect_to_client(cfg, second_factor_confirmed, user):
     return redirect(location)
 
 
+def _do_delete_user(user_id, send_mail_account_deletion=True):
+    user = User.query.get(user_id)
+    if send_mail_account_deletion:
+        mail_account_deletion(user)
+    if user.username:
+        history_not_exists = UserNameHistory.query.filter(UserNameHistory.username == user.username).count() == 0
+        if history_not_exists:
+            user_name_history = UserNameHistory(username=user.username)
+            db.session.merge(user_name_history)
+    collaboration_identifiers = [member.collaboration_id for member in user.collaboration_memberships]
+    db.session.delete(user)
+    db.session.commit()
+    broadcast_user_deleted(user.external_id, collaboration_identifiers)
+    return user
+
+
 # This is the SAML redirect-url after step-up in surf secure ID
 @user_api.route("/acs", methods=["POST"], strict_slashes=False)
 def acs():
@@ -650,24 +666,19 @@ def logout():
 @json_endpoint
 def delete_user():
     user_id = current_user_id()
-    user = User.query.get(user_id)
-    mail_account_deletion(user)
-
-    if user.username:
-        history_not_exists = UserNameHistory.query.filter(UserNameHistory.username == user.username).count() == 0
-        if history_not_exists:
-            user_name_history = UserNameHistory(username=user.username)
-            db.session.merge(user_name_history)
-
-    collaboration_identifiers = [member.collaboration_id for member in user.collaboration_memberships]
-
-    db.session.delete(user)
-    db.session.commit()
-
-    broadcast_user_deleted(user.external_id, collaboration_identifiers)
+    user = _do_delete_user(user_id)
 
     session["user"] = None
     session.clear()
+    return user, 204
+
+
+@user_api.route("/delete_other/<user_id>", strict_slashes=False, methods=["DELETE"])
+@json_endpoint
+def delete_other_user(user_id):
+    confirm_write_access()
+    user = _do_delete_user(user_id, send_mail_account_deletion=False)
+
     return user, 204
 
 
