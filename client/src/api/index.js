@@ -154,6 +154,10 @@ export function deleteUser() {
     return fetchDelete("/api/users")
 }
 
+export function deleteOtherUser(userId) {
+    return fetchDelete(`/api/users/delete_other/${userId}`)
+}
+
 export function platformAdmins() {
     return fetchJson("/api/users/platform_admins");
 }

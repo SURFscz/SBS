@@ -586,7 +586,8 @@ I18n.translations.en = {
         delete: "Delete",
         deleteConfirmation: "Are you sure you want to delete your account for all eternity?",
         deleteConfirmationWarning: "All your memberships will be deleted and there is no way to revert this afterwards.",
-        deleteConfirmationCheck: "If you wish to proceed, please type in your full name for confirmation."
+        deleteConfirmationCheck: "If you wish to proceed, please type in your full name for confirmation.",
+        deleteOtherConfirmation: "Are you sure you want to delete the user {{name}} for all eternity?",
     },
     impersonate: {
         title: "Who do you want to be?",

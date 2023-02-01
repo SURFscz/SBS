@@ -1,5 +1,5 @@
 import React from "react";
-import {auditLogsUser, findUserById, ipNetworks, organisationNameById} from "../api";
+import {auditLogsUser, deleteOtherUser, findUserById, ipNetworks, organisationNameById} from "../api";
 import I18n from "i18n-js";
 import "./UserDetail.scss";
 
@@ -17,6 +17,8 @@ import Tabs from "../components/Tabs";
 import Activity from "../components/Activity";
 import UserDetailSshDialog from "./UserDetailSshDialog";
 import {Link} from "react-router-dom";
+import Button from "../components/Button";
+import ConfirmationDialog from "../components/ConfirmationDialog";
 
 class UserDetail extends React.Component {
 
@@ -24,6 +26,10 @@ class UserDetail extends React.Component {
         super(props, context);
         this.state = {
             loading: true,
+            confirmationDialogOpen: false,
+            confirmationDialogAction: () => true,
+            cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+            confirmationQuestion: "",
             user: {},
             auditLogs: [],
             filteredAuditLogs: [],
@@ -82,6 +88,20 @@ class UserDetail extends React.Component {
             })
     };
 
+    deleteUser = showConfirmation => {
+        const {user} = this.state;
+        if (showConfirmation) {
+            this.setState({
+                confirmationDialogOpen: true,
+                confirmationDialogAction: () => this.deleteUser(false),
+                cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+                confirmationQuestion: I18n.t("user.deleteOtherConfirmation", {name: user.name})
+            });
+        } else {
+            deleteOtherUser(user.id)
+                .then(() => this.props.history.push("/home/users"));
+        }
+    }
     getDetailsTab = (user, currentUser) => {
         const attributes = ["name", "email", "username", "uid", "affiliation", "entitlement", "schac_home_organisation", "eduperson_principal_name"];
         return (<div key="details" name="details" label={I18n.t("home.details")}
@@ -177,6 +197,9 @@ class UserDetail extends React.Component {
                             </li>)}
                     </ul>}
                 </div>}
+                {currentUser.admin && <div className={"actions"}>
+                    <Button warningButton={true} onClick={() => this.deleteUser(true)}/>
+                </div>}
             </div>
         </div>)
     }
@@ -222,7 +245,10 @@ class UserDetail extends React.Component {
     }
 
     render() {
-        const {loading, tab, user, filteredAuditLogs, query, showSshKeys} = this.state;
+        const {
+            loading, tab, user, filteredAuditLogs, query, showSshKeys,
+            confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, confirmationQuestion
+        } = this.state;
         if (loading) {
             return <SpinnerField/>
         }
@@ -233,6 +259,11 @@ class UserDetail extends React.Component {
         }
         return (
             <div className="mod-user-details">
+                <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                    cancel={cancelDialogAction}
+                                    question={confirmationQuestion}
+                                    confirm={confirmationDialogAction}
+                                    isWarning={true}/>
                 <UnitHeader obj={({name: user.name, svg: PersonIcon})}
                             mayEdit={false}
                             svg={PersonIcon}
@@ -246,7 +277,8 @@ class UserDetail extends React.Component {
                     {tabs}
                 </Tabs>
                 {showSshKeys && <UserDetailSshDialog user={user} toggle={this.toggleSsh}/>}
-            </div>);
+            </div>
+        );
     }
 
 }
