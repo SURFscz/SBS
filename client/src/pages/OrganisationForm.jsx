@@ -401,7 +401,7 @@ class OrganisationForm extends React.Component {
                         <CheckBox name={"collaboration_creation_allowed"}
                                   value={collaboration_creation_allowed}
                                   tooltip={I18n.t("organisation.collaborationCreationAllowedTooltip")}
-                                  onChange={val => this.setState({collaboration_creation_allowed: val})}
+                                  onChange={() => this.setState({collaboration_creation_allowed: !collaboration_creation_allowed})}
                                   info={I18n.t("organisation.collaborationCreationAllowed")}
                                   readOnly={isEmpty(schac_home_organisations)}
                         />

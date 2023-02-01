@@ -178,6 +178,7 @@ class Groups extends React.Component {
             {
                 key: "user__schac_home_organisation",
                 header: I18n.t("models.users.institute"),
+                showHeader: true,
                 mapper: membership => <InstituteColumn entity={membership} currentUser={currentUser}/>
             },
         ];

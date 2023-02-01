@@ -139,7 +139,7 @@ class Entities extends React.Component {
                                 <th key={`th_${column.key}_${i}`}
                                     className={`${column.key} ${column.class || ""} ${column.nonSortable ? "" : "sortable"}`}
                                     onClick={this.setSorted(column.key)}>
-                                    {(!actions || i < 2) && column.header}
+                                    {(!actions || i < 2 || column.showHeader) && column.header}
                                     {headerIcon(column, sorted, reverse)}
                                 </th>
                             )}

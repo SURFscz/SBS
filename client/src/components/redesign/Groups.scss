@@ -132,12 +132,15 @@ table.groups {
     table.groupMembers {
         thead {
             th {
+                &.icon {
+                    width: 30px;
+                }
                 &.name {
                     width: 50%;
                 }
 
                 &.user__schac_home_organisation {
-                    width: 35%;
+                    width: 45%;
                 }
 
                 &.trash {

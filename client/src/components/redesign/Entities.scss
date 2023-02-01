@@ -116,6 +116,7 @@
                 width: 100%;
                 left: 0;
                 top: -2px;
+                position: relative;
             }
         }
 
@@ -137,6 +138,8 @@
 
                 &.icon {
                     width: 64px;
+                    padding-right: 0;
+                    padding-left: 0;
                 }
 
                 &.logo {
@@ -222,10 +225,16 @@
 
                 &.icon {
                     text-align: center;
+                    padding-left: 0;
+                    padding-right: 0;
 
                     div.member-icon {
-                        margin: 0 25px;
-                        width: 26px;
+                        display: flex;
+                        justify-content: space-around;
+
+                        svg {
+                            width: 24px;
+                        }
                     }
                 }
 
