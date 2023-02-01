@@ -394,7 +394,10 @@ class SecondFactorAuthentication extends React.Component {
                 {!update && <div className="step">
                     <h1>{I18n.t("mfa.register.getApp")}</h1>
                     <ul>
-                        <li dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("mfa.register.getAppInfo", {new: update ? I18n.t("mfa.register.new") : ""}))}}/>
+                        <li dangerouslySetInnerHTML={{
+                            __html: DOMPurify.sanitize(I18n.t("mfa.register.getAppInfo", {new: update ? I18n.t("mfa.register.new") : ""}),
+                                {ADD_ATTR: ['target']})
+                        }}/>
                         <li dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("mfa.register.addSRAM"))}}/>
                         <li dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("mfa.register.scan"))}}/>
                     </ul>
@@ -414,7 +417,10 @@ class SecondFactorAuthentication extends React.Component {
                 {update && <div className="step">
                     {update ? <h1>{I18n.t("mfa.register.getAppUpdate")}</h1> : <h1>{I18n.t("mfa.register.getApp")}</h1>}
                     <ul>
-                        <li dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("mfa.register.getAppInfo", {new: update ? I18n.t("mfa.register.new") : " "}))}}/>
+                        <li dangerouslySetInnerHTML={{
+                            __html: DOMPurify.sanitize(I18n.t("mfa.register.getAppInfo", {new: update ? I18n.t("mfa.register.new") : " "}),
+                                {ADD_ATTR: ['target']})
+                        }}/>
                         <li dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("mfa.register.addSRAM"))}}/>
                         <li dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("mfa.register.scan"))}}/>
                     </ul>

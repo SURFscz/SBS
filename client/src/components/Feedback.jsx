@@ -57,7 +57,10 @@ export default function FeedbackDialog({isOpen = false, close}) {
                 <span dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("feedback.helpInfo"))}}/>
             </section>
             <section className="disclaimer">
-                <span dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("feedback.disclaimer"))}}/>
+                <span dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(I18n.t("feedback.disclaimer"),
+                        {ADD_ATTR: ['target']})
+                }}/>
             </section>
             <section className="actions">
                 <Button txt={I18n.t("forms.cancel")} cancelButton={true} onClick={doClose}/>
