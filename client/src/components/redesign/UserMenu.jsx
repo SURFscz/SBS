@@ -48,8 +48,6 @@ class UserMenu extends React.Component {
                 </ul>
             </>
         )
-            ;
-
     }
 
     render() {
@@ -63,6 +61,7 @@ class UserMenu extends React.Component {
         const collMenuItemRequired = lessThenOrgManager && !isEmpty(organisation) && organisation.has_members
         const collCreateAllowed = !isEmpty(organisation)
             && (organisation.collaboration_creation_allowed_entitlement || organisation.collaboration_creation_allowed);
+        const organisationName = organisation ? organisation.name : "-";
         return (
             <div className="user-menu"
                  ref={ref => this.ref = ref}
@@ -70,7 +69,7 @@ class UserMenu extends React.Component {
                  onBlur={() => setTimeout(() => this.setState({dropDownActive: false}), 250)}>
                 <UserInfo isOpen={dropDownActive}
                           children={this.renderMenu(currentUser, adminLinks, collCreateAllowed, provideFeedback, collMenuItemRequired, config)}
-                          organisationName={organisation || "-"}
+                          organisationName={organisationName}
                           userName={currentUser.name}
                           toggle={() => this.setState({dropDownActive: !dropDownActive})}
                 />
