@@ -1,6 +1,5 @@
 import React from "react";
 import {stopEvent} from "../utils/Utils";
-// import "./Button.scss";
 import {Button as SDSButton, ButtonSize, ButtonType} from "@surfnet/sds";
 
 export default function Button({

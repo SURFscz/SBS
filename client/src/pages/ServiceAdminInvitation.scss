@@ -50,11 +50,11 @@
         }
 
         .step-container {
-            a.button.blue, a.button.cancel {
+            button {
                 min-width: 100%;
                 max-width: 100%;
 
-                &.blue {
+                &.sds--btn--primary {
                     margin-top: 20px;
                 }
 
