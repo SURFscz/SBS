@@ -506,8 +506,12 @@ class CollaborationAdmins extends React.Component {
     getImpersonateMapper = entity => {
         const {user: currentUser, showMemberView, collaboration} = this.props;
         const {impersonation_allowed} = this.props.config;
-
-        const showImpersonation = currentUser.admin && entity.user.id !== currentUser.id && !showMemberView && impersonation_allowed && !entity.invite;
+        const showImpersonation = currentUser.admin &&
+            entity.user &&
+            entity.user.id !== currentUser.id
+            && !showMemberView
+            && impersonation_allowed
+            && !entity.invite;
         return (
             <div className={"action-icons-container"}>
                 {this.actionIcons(entity, collaboration)}

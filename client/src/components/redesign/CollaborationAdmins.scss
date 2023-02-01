@@ -115,12 +115,12 @@
 
                 &.role {
                     width: 20%;
-                    padding-left: 5px;
+                    padding-left: calc(var(--sds--space--2) + 5px);
                 }
 
                 &.expiry_date {
                     width: 25%;
-                    padding-left: 5px;
+                    padding-left: calc(var(--sds--space--2) + 5px);
                 }
 
                 &.impersonate {
