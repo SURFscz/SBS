@@ -12,7 +12,10 @@ table.serviceConnectionRequests {
             }
 
             &.requester__name {
-                width: 60%;
+                width: 30%;
+            }
+            &.user__schac_home_organisation {
+                width: 30%;
             }
 
         }
