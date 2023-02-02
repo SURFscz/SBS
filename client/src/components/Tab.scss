@@ -86,6 +86,8 @@
         padding: var(--sds--space--1-and-a-half) var(--sds--space--2);
         min-height: 3rem;
         font-weight: 600;
+        display: flex;
+        align-items: center;
     }
 
     .sds--badge--number {

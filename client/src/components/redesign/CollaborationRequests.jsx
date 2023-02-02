@@ -6,6 +6,8 @@ import I18n from "i18n-js";
 import Entities from "./Entities";
 import Logo from "./Logo";
 import Select from "react-select";
+import InstituteColumn from "./InstitueColumn";
+import UserColumn from "./UserColumn";
 
 const allValue = "all";
 
@@ -69,7 +71,7 @@ export default class CollaborationRequests extends React.PureComponent {
     }
 
     render() {
-        const {organisation} = this.props;
+        const {organisation, user} = this.props;
         const {filterOptions, filterValue} = this.state;
         const columns = [
             {
@@ -93,12 +95,12 @@ export default class CollaborationRequests extends React.PureComponent {
             {
                 key: "requester",
                 header: I18n.t("models.collaboration_requests.requester"),
-                mapper: cr => <div className="user-name-email-container">
-                    <div className="user-name-email">
-                        <span className="name">{cr.requester.name}</span>
-                        <span className="email">{cr.requester.email}</span>
-                    </div>
-                </div>
+                mapper: cr => <UserColumn entity={{user:cr.requester}} currentUser={user}/>
+            },
+            {
+                key: "user__schac_home_organisation",
+                header: I18n.t("models.users.institute"),
+                mapper: cr => <InstituteColumn entity={{user:cr.requester}} currentUser={user}/>
             },
         ]
         const filteredCollaborationRequests = filterValue.value === allValue ? organisation.collaboration_requests :

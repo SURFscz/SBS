@@ -168,7 +168,9 @@ I18n.translations.nl = {
             noEntities: "Er zijn nog geen leden...",
             searchPlaceHolder: "Zoek beheerders...",
             new: "Nieuw lid",
-            me: "Jij"
+            me: "Jij",
+            userTooltip: "Lid {{username}} sinds {{date}}",
+            inviteTooltip: "Uitnodiging voor {{email}} verstuurd door {{name}} op {{date}}"
         },
         allUsers: {
             name_email: "Naam / e-mail",

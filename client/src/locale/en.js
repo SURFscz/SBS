@@ -168,7 +168,9 @@ I18n.translations.en = {
             noEntities: "There are no members yet...",
             searchPlaceHolder: "Search admins...",
             new: "New Member",
-            me: "You"
+            me: "You",
+            userTooltip: "Member {{username}} since {{date}}",
+            inviteTooltip: "Invite for {{email}} send by {{name}} on {{date}}"
         },
         allUsers: {
             name_email: "Name / email",

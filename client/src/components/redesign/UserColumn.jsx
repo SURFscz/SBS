@@ -2,15 +2,24 @@ import React from "react";
 import I18n from "i18n-js";
 import "./UserColumn.scss";
 import {Tooltip} from "@surfnet/sds";
+import {dateFromEpoch} from "../../utils/Date";
 
 export default function UserColumn({entity, currentUser, gotoInvitation, hideEmail = false, showMe = true}) {
     if (!entity.invite && !entity.user) {
         return null;
     }
-
     return (
         <div className="user-name-email-container">
-            <Tooltip tip={entity.invite ? entity.invitee_email : entity.user && entity.user.username}
+            <Tooltip tip={entity.invite ?
+                I18n.t("models.users.inviteTooltip", {
+                    email: entity.invitee_email,
+                    name: entity.user.name,
+                    date: dateFromEpoch(entity.created_at)
+                }) :
+                entity.user && entity.created_at ? I18n.t("models.users.userTooltip", {
+                    username: entity.user.username,
+                    date: dateFromEpoch(entity.created_at)
+                }) : entity.user.username}
                      standalone={true}
                      children={
                          <div className="user-name-email">

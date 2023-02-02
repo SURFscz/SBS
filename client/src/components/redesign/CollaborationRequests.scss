@@ -5,7 +5,7 @@ table.collaboration_requests {
     thead {
         th {
             &.name {
-                width: 40%;
+                width: 30%;
                 padding-left: 15px;
             }
 
@@ -15,9 +15,11 @@ table.collaboration_requests {
             }
 
             &.requester {
-                width: 35%;
+                width: 25%;
             }
-
+            &.user__schac_home_organisation {
+                width: 15%;
+            }
         }
     }
 

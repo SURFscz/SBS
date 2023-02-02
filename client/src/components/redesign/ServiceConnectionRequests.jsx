@@ -14,6 +14,8 @@ import InputField from "../InputField";
 import {approveServiceConnectionRequestByHash, denyServiceConnectionRequestByHash} from "../../api";
 import moment from "moment";
 import Logo from "./Logo";
+import InstituteColumn from "./InstitueColumn";
+import UserColumn from "./UserColumn";
 
 class ServiceConnectionRequests extends React.Component {
 
@@ -95,20 +97,6 @@ class ServiceConnectionRequests extends React.Component {
         this.setState({selectedServiceConnectionRequestId: serviceConnectionRequest.id});
     };
 
-    renderRequester = (serviceConnectionRequest, currentUser) => {
-        return (
-            <div className="user-name-email-container">
-                <div className="user-name-email">
-                    <span className="name">{serviceConnectionRequest.requester.name}</span>
-                    <span className="email">{serviceConnectionRequest.requester.email}</span>
-                </div>
-                {serviceConnectionRequest.requester.id === currentUser.id &&
-                <span className="person-role me">{I18n.t("models.users.me")}</span>}
-            </div>
-
-        );
-    }
-
     renderServiceConnectionRequest = (service, serviceConnectionRequest) => {
         const {
             confirmationDialogOpen,
@@ -180,7 +168,12 @@ class ServiceConnectionRequests extends React.Component {
             {
                 key: "requester__name",
                 header: I18n.t("models.serviceConnectionRequests.requester"),
-                mapper: serviceConnectionRequest => this.renderRequester(serviceConnectionRequest, currentUser)
+                mapper: serviceConnectionRequest => <UserColumn entity={{user:serviceConnectionRequest.requester}} currentUser={currentUser}/>
+            },
+            {
+                key: "user__schac_home_organisation",
+                header: I18n.t("models.users.institute"),
+                mapper: serviceConnectionRequest => <InstituteColumn entity={{user:serviceConnectionRequest.requester}} currentUser={currentUser}/>
             },
 
         ]
