@@ -145,6 +145,7 @@ class ApiKeys extends React.Component {
             {
                 key: "description",
                 header: I18n.t("apiKeys.description"),
+                mapper: apiKey => <span className={"cut-of-lines"}>{apiKey.description}</span>
             },
             {
                 nonSortable: true,

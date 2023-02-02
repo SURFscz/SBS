@@ -371,6 +371,7 @@ class ServiceGroups extends React.Component {
             {
                 key: "description",
                 header: I18n.t("models.serviceGroups.description"),
+                mapper: group => <span className={"cut-of-lines"}>{group.description}</span>
             },
         ]
         if (mayCreateGroups) {
