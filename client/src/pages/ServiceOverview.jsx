@@ -667,6 +667,7 @@ class ServiceOverview extends React.Component {
             {
                 key: "description",
                 header: I18n.t("serviceDetails.description"),
+                mapper: group => <span className={"cut-of-lines"}>{group.description}</span>
             },
             {
                 nonSortable: true,

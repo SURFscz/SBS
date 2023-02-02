@@ -337,6 +337,7 @@ class UserTokens extends React.Component {
             {
                 key: "description",
                 header: I18n.t("models.userTokens.description"),
+                mapper: group => <span className={"cut-of-lines"}>{group.description}</span>
             },
             {
                 key: "service__name",

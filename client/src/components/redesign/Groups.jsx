@@ -487,6 +487,7 @@ class Groups extends React.Component {
             {
                 key: "description",
                 header: I18n.t("models.groups.description"),
+                mapper: group => <span className={"cut-of-lines"}>{group.description}</span>
             },
             {
                 nonSortable: true,
