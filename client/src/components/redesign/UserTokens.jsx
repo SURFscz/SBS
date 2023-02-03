@@ -176,7 +176,6 @@ class UserTokens extends React.Component {
                         attribute: I18n.t("models.userTokens.name").toLowerCase()
                     })}/>}
 
-
                 <InputField value={description}
                             name={I18n.t("models.userTokens.description")}
                             placeholder={I18n.t("models.userTokens.descriptionPlaceholder")}

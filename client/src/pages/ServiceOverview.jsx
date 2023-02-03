@@ -38,6 +38,7 @@ import CroppedImageField from "../components/redesign/CroppedImageField";
 import SpinnerField from "../components/redesign/SpinnerField";
 import CheckBox from "../components/CheckBox";
 import SelectField from "../components/SelectField";
+import {dateFromEpoch} from "../utils/Date";
 
 const toc = ["general", "connection", "contacts", "policy", "ldap", "tokens", "pamWebLogin", "SCIM"];
 
@@ -68,7 +69,8 @@ class ServiceOverview extends React.Component {
             hasServiceTokens: false,
             selectedAutomaticConnectionAllowedOrganisations: [],
             automaticConnectionAllowedOrganisations: [],
-            validatingNetwork: false
+            validatingNetwork: false,
+            initial: true
         }
     }
 
@@ -85,9 +87,9 @@ class ServiceOverview extends React.Component {
         const tab = params.subTab || this.state.currentTab;
         const automaticConnectionAllowedOrganisations =
             (service.access_allowed_for_all ? organisations : service.allowed_organisations).map(org => ({
-                    value: org.id,
-                    label: org.name
-                }));
+                value: org.id,
+                label: org.name
+            }));
         this.validateService(service, () => {
             service.ip_networks = service.ip_networks.filter(ipNetwork => !isEmpty(ipNetwork.network_value));
             this.setState({
@@ -163,27 +165,31 @@ class ServiceOverview extends React.Component {
 
     newServiceToken = () => {
         serviceTokenValue().then(res => {
-            this.setState({createNewServiceToken: true, description: "", hashedToken: res.value});
+            this.setState({createNewServiceToken: true, description: "", hashedToken: res.value, initial: true});
         })
     }
 
     cancelSideScreen = e => {
         stopEvent(e);
-        this.setState({createNewServiceToken: false});
+        this.setState({createNewServiceToken: false, initial: true});
     }
 
     saveServiceToken = () => {
         const {hashedToken, description, service} = this.state;
-        createServiceToken({
-            hashed_token: hashedToken,
-            description: description,
-            service_id: service.id,
-            pam_web_sso_enabled: service.pam_web_sso_enabled,
-            token_enabled: service.token_enabled,
-            token_validity_days: service.token_validity_days
-        }).then(() => {
-            this.afterUpdate(service.name, "tokenAdded")
-        });
+        if (isEmpty(description)) {
+            this.setState({initial: false});
+        } else {
+            createServiceToken({
+                hashed_token: hashedToken,
+                description: description,
+                service_id: service.id,
+                pam_web_sso_enabled: service.pam_web_sso_enabled,
+                token_enabled: service.token_enabled,
+                token_validity_days: service.token_validity_days
+            }).then(() => {
+                this.afterUpdate(service.name, "tokenAdded")
+            });
+        }
     }
 
     ldapResetAction = showConfirmation => {
@@ -426,7 +432,7 @@ class ServiceOverview extends React.Component {
 
     afterUpdate = (name, action) => {
         setFlash(I18n.t(`service.flash.${action}`, {name: name}));
-        this.setState({loading: false});
+        this.setState({loading: false, initial: false});
         this.props.refresh();
     };
 
@@ -531,12 +537,17 @@ class ServiceOverview extends React.Component {
     renderPamWebLogin = (service, isAdmin, showServiceAdminView) => {
         return (
             <div className={"pamWebLogin"}>
-                <RadioButton label={I18n.t("userTokens.pamWebSSOEnabled")}
-                             name={"pam_web_sso_enabled"}
-                             value={service.pam_web_sso_enabled}
-                             disabled={!isAdmin || showServiceAdminView}
-                             tooltip={I18n.t("userTokens.pamWebSSOEnabledTooltip")}
-                             onChange={val => this.setState({"service": {...service, pam_web_sso_enabled: val}})}/>
+                <CheckBox name={"pam_web_sso_enabled"}
+                          value={service.pam_web_sso_enabled}
+                          onChange={e => this.setState({
+                              "service": {
+                                  ...service,
+                                  pam_web_sso_enabled: e.target.checked
+                              }
+                          })}
+                          tooltip={I18n.t("userTokens.pamWebSSOEnabledTooltip")}
+                          info={I18n.t("userTokens.pamWebSSOEnabled")}
+                />
             </div>)
     }
 
@@ -577,6 +588,7 @@ class ServiceOverview extends React.Component {
                             toolTip={I18n.t("scim.scimBearerTokenTooltip")}
                             disabled={!isAdmin || showServiceAdminView || !service.scim_enabled}/>
 
+<<<<<<< HEAD
                 <RadioButton label={I18n.t("scim.sweepScimEnabled")}
                              name={"sweep_scim_enabled"}
                              value={service.sweep_scim_enabled}
@@ -590,14 +602,34 @@ class ServiceOverview extends React.Component {
                                          sweep_scim_daily_rate: val ? {label: 1, value: 1} : null
                                      }
                                  })}/>
+=======
+                <CheckBox name={"sweep_scim_enabled"}
+                          value={service.sweep_scim_enabled}
+                          tooltip={I18n.t("scim.sweepScimEnabledTooltip")}
+                          info={I18n.t("scim.sweepScimEnabled")}
+                          readOnly={!isAdmin || showServiceAdminView || !service.scim_enabled}
+                          onChange={e =>
+                              this.setState({
+                                  "service": {
+                                      ...service,
+                                      sweep_scim_enabled: e.target.checked,
+                                      sweep_scim_daily_rate: e.target.checked ? {label: 1, value: 1} : null
+                                  }
+                              })}
+                />
 
-                <RadioButton label={I18n.t("scim.scimSweepDeleteOrphans")}
-                             name={"sweep_remove_orphans"}
-                             value={service.sweep_remove_orphans && service.sweep_scim_enabled}
-                             disabled={!service.sweep_scim_enabled}
-                             tooltip={I18n.t("scim.scimSweepDeleteOrphansTooltip")}
-                             onChange={val => this.setState({"service": {...service, sweep_remove_orphans: val}})}/>
-
+                <CheckBox name={"sweep_remove_orphans"}
+                          value={service.sweep_remove_orphans && service.sweep_scim_enabled}
+                          tooltip={I18n.t("scim.scimSweepDeleteOrphansTooltip")}
+                          info={I18n.t("scim.scimSweepDeleteOrphans")}
+                          readOnly={!service.sweep_scim_enabled}
+                          onChange={e => this.setState({
+                              "service": {
+                                  ...service,
+                                  sweep_remove_orphans: e.target.checked
+                              }
+                          })}
+                />
 
                 <SelectField value={sweepScimDailyRate}
                              options={[...Array(25).keys()].filter(i => i % 4 === 0).map(i => ({
@@ -617,7 +649,7 @@ class ServiceOverview extends React.Component {
     }
 
     renderNewServiceTokenForm = () => {
-        const {description, hashedToken} = this.state;
+        const {description, hashedToken, initial} = this.state;
         return (
             <div className="api-key-container">
                 <div>
@@ -636,9 +668,14 @@ class ServiceOverview extends React.Component {
                     <InputField value={description}
                                 onChange={e => this.setState({description: e.target.value})}
                                 placeholder={I18n.t("serviceDetails.descriptionPlaceHolder")}
+                                error={(!initial && isEmpty(description))}
                                 name={I18n.t("serviceDetails.description")}
                                 toolTip={I18n.t("serviceDetails.descriptionTooltip")}
                     />
+                    {(!initial && isEmpty(description)) && <ErrorIndicator
+                        msg={I18n.t("models.userTokens.required", {
+                            attribute: I18n.t("serviceDetails.description").toLowerCase()
+                        })}/>}
                     <section className="actions">
                         <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancelSideScreen}/>
                         <Button txt={I18n.t("forms.submit")}
@@ -663,6 +700,12 @@ class ServiceOverview extends React.Component {
             {
                 key: "description",
                 header: I18n.t("serviceDetails.description"),
+                mapper: serviceToken => <span className={"cut-of-lines"}>{serviceToken.description}</span>
+            },
+            {
+                key: "created_at",
+                header: I18n.t("models.userTokens.createdAt"),
+                mapper: serviceToken => dateFromEpoch(serviceToken.created_at)
             },
             {
                 nonSortable: true,

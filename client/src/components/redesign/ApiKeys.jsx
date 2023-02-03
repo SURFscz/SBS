@@ -11,10 +11,12 @@ import InputField from "../InputField";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ConfirmationDialog from "../ConfirmationDialog";
 import ApiKeysExplanation from "../explanations/ApiKeys";
-import {stopEvent} from "../../utils/Utils";
+import {isEmpty, stopEvent} from "../../utils/Utils";
 import SpinnerField from "./SpinnerField";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import DOMPurify from "dompurify";
+import {dateFromEpoch} from "../../utils/Date";
+import ErrorIndicator from "./ErrorIndicator";
 
 class ApiKeys extends React.Component {
 
@@ -28,7 +30,8 @@ class ApiKeys extends React.Component {
             confirmationDialogQuestion: undefined,
             confirmationDialogAction: () => true,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
-            loading: true
+            loading: true,
+            initial: true
         }
     }
 
@@ -68,22 +71,26 @@ class ApiKeys extends React.Component {
 
     cancelSideScreen = e => {
         stopEvent(e);
-        this.setState({createNewApiKey: false});
+        this.setState({createNewApiKey: false, initial: true});
     }
 
     submit = () => {
         const {hashedSecret, description} = this.state;
         const {organisation} = this.props;
-        this.refreshAndFlash(createApiKey({
-                organisation_id: organisation.id,
-                hashed_secret: hashedSecret,
-                description: description
-            }), I18n.t("apiKeys.flash.created", {name: organisation.name}),
-            () => this.setState({createNewApiKey: false}));
+        if (isEmpty(description)) {
+            this.setState({initial: false});
+        } else {
+            this.refreshAndFlash(createApiKey({
+                    organisation_id: organisation.id,
+                    hashed_secret: hashedSecret,
+                    description: description
+                }), I18n.t("apiKeys.flash.created", {name: organisation.name}),
+                () => this.setState({createNewApiKey: false, initial: true}));
+        }
     };
 
     renderNewApiKeyForm = () => {
-        const {description, hashedSecret} = this.state;
+        const {description, hashedSecret, initial} = this.state;
         return (
             <div className="api-key-container">
                 <div>
@@ -104,8 +111,14 @@ class ApiKeys extends React.Component {
                                 onChange={e => this.setState({description: e.target.value})}
                                 placeholder={I18n.t("apiKeys.descriptionPlaceHolder")}
                                 name={I18n.t("apiKeys.description")}
+                                error={(!initial && isEmpty(description))}
                                 toolTip={I18n.t("apiKeys.descriptionTooltip")}
                     />
+                    {(!initial && isEmpty(description)) && <ErrorIndicator
+                        msg={I18n.t("models.userTokens.required", {
+                            attribute: I18n.t("apiKeys.description").toLowerCase()
+                        })}/>}
+
                     <section className="actions">
                         <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancelSideScreen}/>
                         <Button txt={I18n.t("forms.submit")}
@@ -145,6 +158,11 @@ class ApiKeys extends React.Component {
             {
                 key: "description",
                 header: I18n.t("apiKeys.description"),
+            },
+            {
+                key: "created_at",
+                header: I18n.t("models.userTokens.createdAt"),
+                mapper: apiKey => dateFromEpoch(apiKey.created_at)
             },
             {
                 nonSortable: true,

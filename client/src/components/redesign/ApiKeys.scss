@@ -6,11 +6,15 @@ table.apiKeys, table.serviceTokens {
     thead {
         th {
             &.secret, &.hashed_token {
-                width: 40%;
+                width: 30%;
             }
 
             &.description {
                 width: 40%;
+            }
+
+            &.created_at {
+                width: 25%;
             }
 
             &.trash {
