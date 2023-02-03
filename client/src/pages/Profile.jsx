@@ -8,6 +8,7 @@ import {ReactComponent as PersonIcon} from "../icons/personal_info.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import Me from "./Me";
 import SpinnerField from "../components/redesign/SpinnerField";
+import {dateFromEpoch} from "../utils/Date";
 
 class Profile extends React.Component {
 
@@ -20,11 +21,10 @@ class Profile extends React.Component {
 
     componentDidMount = () => {
         health().then(() => {
-            const {user} = this.props;
             AppStore.update(s => {
                 s.breadcrumb.paths = [
                     {path: "/", value: I18n.t("breadcrumb.home")},
-                    {path: "", value: user.name}
+                    {path: "", value: I18n.t("breadcrumb.profile")}
                 ];
             });
             this.setState({loading: false});
@@ -46,7 +46,7 @@ class Profile extends React.Component {
                             auditLogPath={"me/me"}
                             svg={PersonIcon}
                             name={user.name}>
-                    <p>{I18n.t("models.users.subProfile")}</p>
+                    <p>{I18n.t("models.users.subProfile", {date: dateFromEpoch(user.created_at)})}</p>
                 </UnitHeader>
                 <Me {...this.props}/>
             </div>);
