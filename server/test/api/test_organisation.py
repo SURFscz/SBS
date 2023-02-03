@@ -92,6 +92,12 @@ class TestOrganisation(AbstractTest):
         self.assertTrue(len(organisation["organisation_memberships"]) > 0)
         self.assertTrue(len(organisation["api_keys"]) > 0)
 
+    def test_schac_home(self):
+        self.login("urn:betty")
+        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        name = self.get(f"/api/organisations/schac_home/{organisation_id}", with_basic_auth=False)
+        self.assertEqual("rug.nl", name)
+
     def test_organisation_by_id(self):
         self.login()
         organisation_id = self.find_entity_by_name(Organisation, uuc_name).id

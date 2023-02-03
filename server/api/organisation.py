@@ -55,21 +55,10 @@ def short_name_exists():
     return org is not None, 200
 
 
-@organisation_api.route("/schac_home_exists", strict_slashes=False)
+@organisation_api.route("/schac_home/<organisation_id>", strict_slashes=False)
 @json_endpoint
-def schac_home_exists():
-    confirm_organisation_admin()
-
-    schac_home = query_param("schac_home")
-    if not schac_home:
-        return False, 200
-    existing_organisation_id = query_param("existing_organisation_id", required=False)
-    query = SchacHomeOrganisation.query \
-        .filter(func.lower(SchacHomeOrganisation.name) == func.lower(schac_home))
-    if existing_organisation_id:
-        query = query \
-            .filter(SchacHomeOrganisation.organisation_id != int(existing_organisation_id))
-    res = query.first()
+def schac_home(organisation_id):
+    res = SchacHomeOrganisation.query.filter(SchacHomeOrganisation.organisation_id == organisation_id).first()
     return res.name if res else False, 200
 
 

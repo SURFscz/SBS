@@ -12,7 +12,8 @@ class TestServiceToken(AbstractTest):
         service = self.find_entity_by_name(Service, service_network_name)
 
         self.login("urn:john")
-        service_token = self.post("/api/service_tokens", body={"service_id": service.id, "hashed_token": secret},
+        service_token = self.post("/api/service_tokens", body={"service_id": service.id, "hashed_token": secret,
+                                                               "description": "Test"},
                                   with_basic_auth=False)
         self.assertIsNotNone(service_token["id"])
         self.assertEqual(service.id, service_token["service_id"])
@@ -44,7 +45,7 @@ class TestServiceToken(AbstractTest):
         self.login("urn:john")
         self.post("/api/service_tokens",
                   body={"service_id": service.id, "hashed_token": secret, "token_enabled": True,
-                        "pam_web_sso_enabled": True},
+                        "description": "Test", "pam_web_sso_enabled": True},
                   with_basic_auth=False)
         service = self.find_entity_by_name(Service, service_mail_name)
         self.assertTrue(service.pam_web_sso_enabled)
