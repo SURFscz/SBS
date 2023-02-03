@@ -7,20 +7,23 @@ table.memberJoinRequests, table.systemJoinRequests, table.deletedJoinRequests {
     thead {
         th {
             &.name {
-                width: 25%;
+                width: 20%;
                 padding-left: 15px;
             }
 
             &.user__name {
-                width: 40%;
+                width: 35%;
+            }
+            &.user__schac_home_organisation {
+                width: 20%;
             }
 
             &.created_at {
-                width: 17%;
+                width: 15%;
             }
 
             &.status {
-                width: 17%;
+                width: 15%;
                 text-align: center;
             }
 
