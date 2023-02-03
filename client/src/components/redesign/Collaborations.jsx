@@ -16,7 +16,7 @@ import {Tooltip} from "@surfnet/sds";
 import ConfirmationDialog from "../ConfirmationDialog";
 
 import {ReactComponent as InformationCircle} from "../../icons/information-circle.svg";
-import {setFlash} from "../../utils/Flash";
+import {clearFlash, setFlash} from "../../utils/Flash";
 import Select from "react-select";
 import {displayExpiryDate, displayLastActivityDate} from "../../utils/Date";
 import moment from "moment";
@@ -192,6 +192,7 @@ export default class Collaborations extends React.PureComponent {
             return;
         }
         stopEvent(e);
+        clearFlash();
         this.props.history.push(`/collaborations/${collaboration.id}`);
     };
 
@@ -234,7 +235,8 @@ export default class Collaborations extends React.PureComponent {
         const {collaborations} = standalone ? this.state : this.props;
         const {
             modelName = "collaborations", organisation, mayCreate = true, showOrigin = false,
-            showExpiryDate = false, showLastActivityDate = false, userAdmin = false, userServiceAdmin = false
+            showExpiryDate = false, showLastActivityDate = false, userAdmin = false, platformAdmin = false,
+            userServiceAdmin = false
         } = this.props;
 
         if (isEmpty(collaborations) && !loading && modelName === "collaborations") {
@@ -286,9 +288,10 @@ export default class Collaborations extends React.PureComponent {
                 key: "name",
                 class: serviceKey,
                 header: I18n.t("models.collaborations.name"),
-                mapper: collaboration => !userAdmin ? <span>{collaboration.name}</span> :
+                mapper: collaboration => (userAdmin || platformAdmin) ?
                     <a href={`/collaborations/${collaboration.id}`}
-                       onClick={this.openCollaboration(collaboration)}>{collaboration.name}</a>,
+                       onClick={this.openCollaboration(collaboration)}>{collaboration.name}</a>
+                    : <span>{collaboration.name}</span>
             },
             {
                 key: "organisation__name",

@@ -35,6 +35,7 @@ class UsedServices extends React.Component {
             requestConnectionService: null,
             selectedServiceConnectionRequestId: null,
             message: "",
+            confirmedAupConnectionRequest: false,
             loading: true,
             confirmationDialogOpen: false,
             confirmationDialogQuestion: undefined,
@@ -60,44 +61,47 @@ class UsedServices extends React.Component {
         const {collaboration} = this.props;
         allServices()
             .then(json => {
-            const services = json;
-            const requestedServices = collaboration.service_connection_requests
-                .filter(r => !r.is_member_request)
-                .map(r => r.service);
-            const memberRequestedServices = collaboration.service_connection_requests
-                .filter(r => r.is_member_request)
-                .map(r => r.service);
-            const servicesInUse = collaboration.services
-                .concat(collaboration.organisation.services)
-                .concat(requestedServices)
-                .concat(memberRequestedServices)
-                .map(e => e.id);
-            const filteredServices = services
-                .filter(service => {
-                    return (service.allowed_organisations.some(org => org.id === collaboration.organisation_id)
-                            || service.access_allowed_for_all) && servicesInUse.indexOf(service.id) === -1
-                        && (service.white_listed || !collaboration.organisation.services_restricted);
-                });
-            this.setState({services: filteredServices, loading: false});
-            const {socketSubscribed} = this.state;
-            if (!socketSubscribed) {
-                [`collaboration_${collaboration.id}`, "service"].forEach(topic => {
-                    socket.then(s => s.on(topic, data => {
-                        const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
-                        if (subscriptionIdSessionStorage !== data.subscription_id) {
-                            //Ensure we don't get race conditions with the refresh in CollaborationDetail
-                            setTimeout(this.componentDidMount, 1000);
-                        }
-                    }));
-                })
-                this.setState({socketSubscribed: true})
-            }
-        }).catch(() => this.props.history.push("/"));
+                const services = json;
+                const requestedServices = collaboration.service_connection_requests
+                    .filter(r => !r.is_member_request)
+                    .map(r => r.service);
+                const memberRequestedServices = collaboration.service_connection_requests
+                    .filter(r => r.is_member_request)
+                    .map(r => r.service);
+                const servicesInUse = collaboration.services
+                    .concat(collaboration.organisation.services)
+                    .concat(requestedServices)
+                    .concat(memberRequestedServices)
+                    .map(e => e.id);
+                const filteredServices = services
+                    .filter(service => {
+                        return (service.allowed_organisations.some(org => org.id === collaboration.organisation_id)
+                                || service.access_allowed_for_all) && servicesInUse.indexOf(service.id) === -1
+                            && (service.white_listed || !collaboration.organisation.services_restricted);
+                    });
+                this.setState({services: filteredServices, loading: false});
+                const {socketSubscribed} = this.state;
+                if (!socketSubscribed) {
+                    [`collaboration_${collaboration.id}`, "service"].forEach(topic => {
+                        socket.then(s => s.on(topic, data => {
+                            const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
+                            if (subscriptionIdSessionStorage !== data.subscription_id) {
+                                //Ensure we don't get race conditions with the refresh in CollaborationDetail
+                                setTimeout(this.componentDidMount, 1000);
+                            }
+                        }));
+                    })
+                    this.setState({socketSubscribed: true})
+                }
+            }).catch(() => this.props.history.push("/"));
     }
 
     openService = service => e => {
+        if (e.metaKey || e.ctrlKey) {
+                return;
+        }
         stopEvent(e);
-        clearFlash()
+        clearFlash();
         this.props.history.push(`/services/${service.id}`);
     };
 
@@ -155,6 +159,7 @@ class UsedServices extends React.Component {
             loading: true,
             confirmationDialogOpen: false,
             confirmationChildren: false,
+            confirmedAupConnectionRequest: false,
             disabledConfirm: false
         })
         promise.then(() => {
@@ -336,10 +341,16 @@ class UsedServices extends React.Component {
 
     cancelRequestConnectionService = e => {
         stopEvent(e);
-        this.setState({requestConnectionService: null, selectedServiceConnectionRequestId: null, message: ""});
+        this.setState({
+            requestConnectionService: null,
+            selectedServiceConnectionRequestId: null,
+            message: "",
+            confirmedAupConnectionRequest: false,
+        });
     }
 
-    renderRequestConnectionService = (requestConnectionService, message) => {
+    renderRequestConnectionService = (requestConnectionService, message, confirmedAupConnectionRequest) => {
+        const needToAcceptUserPolicy = !isEmpty(requestConnectionService.accepted_user_policy);
         return (
             <div className="request-connection-service">
                 <div>
@@ -356,10 +367,18 @@ class UsedServices extends React.Component {
                                 multiline={true}
                                 large={true}
                                 onChange={e => this.setState({message: e.target.value})}/>
+                    {needToAcceptUserPolicy && <CheckBox name="disabledConfirm"
+                              value={confirmedAupConnectionRequest}
+                              onChange={() => this.setState({confirmedAupConnectionRequest: !this.state.confirmedAupConnectionRequest})}
+                              info={I18n.t("models.services.confirmations.check", {
+                                  aup: requestConnectionService.accepted_user_policy,
+                                  name: requestConnectionService.name
+                              })}/>}
                     <section className="actions">
                         <Button cancelButton={true} txt={I18n.t("forms.cancel")}
                                 onClick={this.cancelRequestConnectionService}/>
-                        <Button disabled={isEmpty(message)} txt={I18n.t("collaborationServices.send")}
+                        <Button disabled={isEmpty(message) || (!confirmedAupConnectionRequest && needToAcceptUserPolicy)}
+                                txt={I18n.t("collaborationServices.send")}
                                 onClick={this.serviceConnectionRequest}/>
                     </section>
                 </div>
@@ -368,7 +387,8 @@ class UsedServices extends React.Component {
 
     renderConfirmationChildren = (service, disabledConfirm) => {
         return <div className="service-confirmation">
-            <CheckBox name="disabledConfirm" value={!disabledConfirm}
+            <CheckBox name="disabledConfirm"
+                      value={!disabledConfirm}
                       onChange={() => this.setState({disabledConfirm: !this.state.disabledConfirm})}
                       info={I18n.t("models.services.confirmations.check", {
                           aup: service.accepted_user_policy,
@@ -381,13 +401,13 @@ class UsedServices extends React.Component {
         const {
             services, loading, requestConnectionService, message, confirmationChildren, disabledConfirm, warning,
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationDialogQuestion,
-            selectedService
+            selectedService, confirmedAupConnectionRequest
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
         }
         if (requestConnectionService) {
-            return this.renderRequestConnectionService(requestConnectionService, message);
+            return this.renderRequestConnectionService(requestConnectionService, message, confirmedAupConnectionRequest);
         }
         const selectedServiceConnectionRequest = this.getSelectedServiceConnectionRequest();
         if (selectedServiceConnectionRequest) {
