@@ -50,7 +50,7 @@ section.dialog-content {
     .service {
         width: 100%;
         display: grid;
-        grid-template-columns: [first] 12fr [second] 8fr;
+        grid-template-columns: [first] 16fr [second] 4fr;
         column-gap: 50px;
 
         &.no-grid {
