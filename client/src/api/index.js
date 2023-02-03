@@ -344,6 +344,10 @@ export function myOrganisations() {
     return fetchJson(`/api/organisations`);
 }
 
+export function schacHome(organisationId) {
+    return fetchJson(`/api/organisations/schac_home/${organisationId}`);
+}
+
 export function allOrganisations() {
     return fetchJson(`/api/organisations/all`);
 }

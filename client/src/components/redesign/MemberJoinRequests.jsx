@@ -10,6 +10,7 @@ import Logo from "./Logo";
 import {dateFromEpoch} from "../../utils/Date";
 import {socket, subscriptionIdCookieName} from "../../utils/SocketIO";
 import InstituteColumn from "./InstitueColumn";
+import {schacHome} from "../../api";
 
 const allValue = "all";
 
@@ -72,11 +73,15 @@ class MemberJoinRequests extends React.Component {
                 this.setState({socketSubscribed: true})
             }
         }
-        this.setState({
-            filterOptions: filterOptions.concat(statusOptions),
-            filterValue: filterOptions[0],
-            loading: false
-        }, callback);
+        Promise.all(join_requests.map(jr => schacHome(jr.collaboration.organisation_id))).then(results => {
+            results.forEach((schacHome, index) => join_requests[index].schacHome = schacHome)
+            this.setState({
+                filterOptions: filterOptions.concat(statusOptions),
+                filterValue: filterOptions[0],
+                loading: false
+            }, callback);
+
+        })
     }
 
     filter = (filterOptions, filterValue) => {
@@ -113,15 +118,16 @@ class MemberJoinRequests extends React.Component {
                 mapper: entity => entity.collaboration.name,
             },
             {
+                key: "user__schac_home_organisation",
+                header: I18n.t("models.users.institute"),
+                mapper: entity => <InstituteColumn entity={{user: {schac_home_organisation: entity.schacHome}}}
+                                                   currentUser={currentUser}/>
+            },
+            {
                 key: "user__name",
                 header: I18n.t("models.users.name_email"),
                 mapper: entity => <UserColumn entity={entity} currentUser={isPersonal ? currentUser : entity.user}
                                               showMe={isPersonal}/>
-            },
-            {
-                key: "user__schac_home_organisation",
-                header: I18n.t("models.users.institute"),
-                mapper: entity => <InstituteColumn entity={entity} currentUser={currentUser}/>
             },
             {
                 key: "created_at",
