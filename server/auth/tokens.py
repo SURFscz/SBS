@@ -3,6 +3,7 @@ from werkzeug.exceptions import Unauthorized
 
 from server.auth.secrets import secure_hash
 from server.db.domain import Service, ServiceToken
+from server.logger.context_logger import ctx_logger
 
 
 def get_authorization_header(is_external_api_url, ignore_missing_auth_header=False):
@@ -21,6 +22,10 @@ def validate_service_token(attr_enabled) -> Service:
         .filter(ServiceToken.hashed_token == hashed_bearer_token) \
         .first()
     if not service or not getattr(service, attr_enabled):
+        logger = ctx_logger("validate_service_token")
+        has_json = current_request.method != "DELETE" and current_request.method != "GET"
+        body = current_request.json if has_json and current_request.is_json else current_request.headers
+        logger.warning(f"Invalid service_token: {body}")
         raise Unauthorized()
     request_context.service_token = f"Service token {service.name}"
     return service
