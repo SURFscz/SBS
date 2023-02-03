@@ -9,6 +9,7 @@ import Select from "react-select";
 import Logo from "./Logo";
 import {dateFromEpoch} from "../../utils/Date";
 import {socket, subscriptionIdCookieName} from "../../utils/SocketIO";
+import InstituteColumn from "./InstitueColumn";
 
 const allValue = "all";
 
@@ -116,6 +117,11 @@ class MemberJoinRequests extends React.Component {
                 header: I18n.t("models.users.name_email"),
                 mapper: entity => <UserColumn entity={entity} currentUser={isPersonal ? currentUser : entity.user}
                                               showMe={isPersonal}/>
+            },
+            {
+                key: "user__schac_home_organisation",
+                header: I18n.t("models.users.institute"),
+                mapper: entity => <InstituteColumn entity={entity} currentUser={currentUser}/>
             },
             {
                 key: "created_at",
