@@ -419,8 +419,8 @@ def update_service():
     service = Service.query.filter(Service.id == service_id).one()
 
     if not is_application_admin():
-        forbidden = ["white_listed", "non_member_users_access_allowed", "token_enabled", "entity_id", "abbreviation",
-                     "pam_web_sso_enabled", "scim_enabled", "scim_url", "scim_bearer_token"]
+        forbidden = ["white_listed", "non_member_users_access_allowed", "entity_id", "abbreviation",
+                     "scim_enabled", "scim_url", "scim_bearer_token"]
         for attr in [fb for fb in forbidden if fb in data]:
             data[attr] = getattr(service, attr)
 
@@ -430,15 +430,11 @@ def update_service():
     if "ldap_password" in data:
         del data["ldap_password"]
 
-    if is_application_admin():
-        token_enabled = data["token_enabled"]
-        pam_web_sso_enabled = data["pam_web_sso_enabled"]
-        if not token_enabled and not pam_web_sso_enabled:
-            for service_token in ServiceToken.query.filter(ServiceToken.service_id == service_id).all():
-                db.session.delete(service_token)
-    else:
-        data["token_enabled"] = service.token_enabled
-        data["pam_web_sso_enabled"] = service.pam_web_sso_enabled
+    token_enabled = data["token_enabled"]
+    pam_web_sso_enabled = data["pam_web_sso_enabled"]
+    if not token_enabled and not pam_web_sso_enabled:
+        for service_token in ServiceToken.query.filter(ServiceToken.service_id == service_id).all():
+            db.session.delete(service_token)
 
     automatic_connection_allowed = data.get("automatic_connection_allowed", False)
     emit_organisations = (automatic_connection_allowed is not service.automatic_connection_allowed)
