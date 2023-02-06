@@ -534,7 +534,7 @@ class ServiceOverview extends React.Component {
         </>
     }
 
-    renderPamWebLogin = (service, isAdmin, showServiceAdminView) => {
+    renderPamWebLogin = service => {
         return (
             <div className={"pamWebLogin"}>
                 <CheckBox name={"pam_web_sso_enabled"}
@@ -588,21 +588,6 @@ class ServiceOverview extends React.Component {
                             toolTip={I18n.t("scim.scimBearerTokenTooltip")}
                             disabled={!isAdmin || showServiceAdminView || !service.scim_enabled}/>
 
-<<<<<<< HEAD
-                <RadioButton label={I18n.t("scim.sweepScimEnabled")}
-                             name={"sweep_scim_enabled"}
-                             value={service.sweep_scim_enabled}
-                             disabled={!isAdmin || showServiceAdminView || !service.scim_enabled}
-                             tooltip={I18n.t("scim.sweepScimEnabledTooltip")}
-                             onChange={val =>
-                                 this.setState({
-                                     "service": {
-                                         ...service,
-                                         sweep_scim_enabled: val,
-                                         sweep_scim_daily_rate: val ? {label: 1, value: 1} : null
-                                     }
-                                 })}/>
-=======
                 <CheckBox name={"sweep_scim_enabled"}
                           value={service.sweep_scim_enabled}
                           tooltip={I18n.t("scim.sweepScimEnabledTooltip")}
