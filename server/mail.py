@@ -110,15 +110,15 @@ def _store_mail(user, mail_type, recipients):
     db.session.commit()
 
 
-def _get_coll_emails(collaboration, mail_type, membership=None, include_org_members=True):
+def _get_coll_emails(collaboration, mail_type, membership):
     coll_admins = [m.user for m in collaboration.collaboration_memberships if m.role == "admin"]
-    if include_org_members:
-        coll_admins += [m.user for m in collaboration.organisation.organisation_memberships]
     if membership:
         coll_admins.append(membership.user)
+    if not coll_admins:
+        coll_admins += [m.user for m in collaboration.organisation.organisation_memberships]
     emails = [r.email for r in coll_admins]
-    for r in coll_admins:
-        _store_mail(r, mail_type, emails)
+    for user in coll_admins:
+        _store_mail(user, mail_type, emails)
     return emails
 
 
@@ -392,7 +392,7 @@ def mail_reset_token(admin_email, user, message):
 
 def mail_collaboration_expires_notification(collaboration, is_warning):
     mail_type = COLLABORATION_EXPIRES_WARNING_MAIL if is_warning else COLLABORATION_EXPIRED_NOTIFICATION_MAIL
-    recipients = _get_coll_emails(collaboration, mail_type)
+    recipients = _get_coll_emails(collaboration, mail_type, None)
 
     threshold = current_app.app_config.collaboration_expiration.expired_warning_mail_days_threshold
     if is_warning:
@@ -413,7 +413,7 @@ def mail_collaboration_expires_notification(collaboration, is_warning):
 
 def mail_collaboration_suspension_notification(collaboration, is_warning):
     mail_type = COLLABORATION_SUSPENDED_NOTIFICATION_MAIL if is_warning else COLLABORATION_SUSPENSION_WARNING_MAIL
-    recipients = _get_coll_emails(collaboration, mail_type)
+    recipients = _get_coll_emails(collaboration, mail_type, None)
 
     cfq = current_app.app_config.collaboration_suspension
     threshold = cfq.inactivity_warning_mail_days_threshold
@@ -437,7 +437,7 @@ def mail_collaboration_suspension_notification(collaboration, is_warning):
 
 def mail_membership_expires_notification(membership, is_warning):
     mail_type = MEMBERSHIP_EXPIRES_WARNING_MAIL if is_warning else MEMBERSHIP_EXPIRED_NOTIFICATION_MAIL
-    recipients = _get_coll_emails(membership.collaboration, mail_type, membership=membership, include_org_members=False)
+    recipients = _get_coll_emails(membership.collaboration, mail_type, membership)
 
     threshold = current_app.app_config.membership_expiration.expired_warning_mail_days_threshold
     if is_warning:

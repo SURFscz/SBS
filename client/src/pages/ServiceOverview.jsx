@@ -534,7 +534,7 @@ class ServiceOverview extends React.Component {
         </>
     }
 
-    renderPamWebLogin = (service) => {
+    renderPamWebLogin = service => {
         return (
             <div className={"pamWebLogin"}>
                 <CheckBox name={"pam_web_sso_enabled"}
@@ -548,7 +548,6 @@ class ServiceOverview extends React.Component {
                           tooltip={I18n.t("userTokens.pamWebSSOEnabledTooltip")}
                           info={I18n.t("userTokens.pamWebSSOEnabled")}
                 />
-
             </div>)
     }
 
@@ -604,7 +603,6 @@ class ServiceOverview extends React.Component {
                                   }
                               })}
                 />
-
 
                 <CheckBox name={"sweep_remove_orphans"}
                           value={service.sweep_remove_orphans && service.sweep_scim_enabled}
