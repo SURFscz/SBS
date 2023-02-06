@@ -166,6 +166,11 @@ class ApiKeys extends React.Component {
                 mapper: apiKey => dateFromEpoch(apiKey.created_at)
             },
             {
+                key: "created_at",
+                header: I18n.t("models.userTokens.createdAt"),
+                mapper: apiKey => dateFromEpoch(apiKey.created_at)
+            },
+            {
                 nonSortable: true,
                 key: "trash",
                 header: "",
