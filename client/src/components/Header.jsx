@@ -63,7 +63,7 @@ export default class Header extends React.PureComponent {
         const {organisation, showFeedBack} = this.state;
         const showProfile = !currentUser.guest && currentUser.second_factor_confirmed;
         return (
-            <div className={`header-container ${currentUser.guest ? "guest" : ""}`}>
+            <div className="header-container">
                 <FeedbackDialog isOpen={showFeedBack} close={() => this.setState({showFeedBack: false})}/>
                 <div className="header-inner" onClick={this.toggleStyle}>
                     <Link className="logo" to={"/"}>
