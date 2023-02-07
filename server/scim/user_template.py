@@ -52,9 +52,9 @@ def create_user_template(user: User):
                              user.ssh_keys],
         SCIM_SCHEMA_SRAM_USER: {
             "eduPersonScopedAffiliation": user.affiliation,
-            "eduPersonUniqueId": user.eduperson_principal_name,
+            "eduPersonUniqueId": user.uid,
             "voPersonExternalAffiliation": user.scoped_affiliation,
-            "voPersonExternalId": user.home_organisation_uid
+            "voPersonExternalId": user.eduperson_principal_name
         }
     })
 

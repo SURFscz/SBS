@@ -43,11 +43,11 @@ def _user_changed(user: User, remote_user: dict):
     if SCIM_SCHEMA_SRAM_USER in remote_user:
         if remote_user[SCIM_SCHEMA_SRAM_USER].get("eduPersonScopedAffiliation") != user.affiliation:
             return True
-        if remote_user[SCIM_SCHEMA_SRAM_USER].get("eduPersonUniqueId") != user.eduperson_principal_name:
+        if remote_user[SCIM_SCHEMA_SRAM_USER].get("eduPersonUniqueId") != user.uid:
             return True
         if remote_user[SCIM_SCHEMA_SRAM_USER].get("voPersonExternalAffiliation") != user.scoped_affiliation:
             return True
-        if remote_user[SCIM_SCHEMA_SRAM_USER].get("voPersonExternalId") != user.home_organisation_uid:
+        if remote_user[SCIM_SCHEMA_SRAM_USER].get("voPersonExternalId") != user.eduperson_principal_name:
             return True
     return False
 
