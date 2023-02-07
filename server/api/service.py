@@ -237,7 +237,7 @@ def service_by_id(service_id):
             .options(selectinload(Service.collaborations).selectinload(Collaboration.organisation)) \
             .options(selectinload(Service.service_memberships).selectinload(ServiceMembership.user)) \
             .options(selectinload(Service.organisations)) \
-            .options(selectinload(Service.service_invitations)) \
+            .options(selectinload(Service.service_invitations).selectinload(ServiceInvitation.user)) \
             .options(selectinload(Service.allowed_organisations)) \
             .options(selectinload(Service.automatic_connection_allowed_organisations)) \
             .options(selectinload(Service.ip_networks)) \

@@ -317,6 +317,10 @@ class CollaborationDetail extends React.Component {
     }
 
     getTabs = (collaboration, userTokens, schacHomeOrganisation, adminOfCollaboration, showMemberView, isJoinRequest = false) => {
+        const {user} = this.props;
+        if (!isUserAllowed(ROLES.COLL_MEMBER, user, collaboration.organisation_id, collaboration.id)) {
+            return [];
+        }
         //Actually this collaboration is not for members to view
         if ((!adminOfCollaboration || showMemberView) && !collaboration.disclose_member_information) {
             return [this.getAboutTab(collaboration, showMemberView, isJoinRequest)];
@@ -713,10 +717,11 @@ class CollaborationDetail extends React.Component {
         return (
             <div className="org-attributes">
                 <span>{I18n.t(`organisationMembership.status.name`)}</span>
-                <Tooltip tip={I18n.t(`organisationMembership.status.${status}Tooltip`, {date: expiryDate})}/>
                 <span className={className}>
                     {I18n.t(`organisationMembership.status.${status}`, {date: expiryDate})}
+                <Tooltip tip={I18n.t(`organisationMembership.status.${status}Tooltip`, {date: expiryDate})}/>
                 </span>
+
             </div>
         );
     }

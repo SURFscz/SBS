@@ -2,13 +2,12 @@
 
 div.footer {
     background-color: $background;
-    padding: 15px;
+    padding: 5px 15px;
     margin-top: auto;
 
     div.footer-inner {
         margin: 0 15px;
-        //margin: 0 auto;
-
+        align-items: center;
         display: flex;
         justify-content: space-between;
 

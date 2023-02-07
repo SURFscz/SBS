@@ -2,6 +2,7 @@ import React from "react";
 import I18n from "i18n-js";
 import "./Footer.scss"
 import LanguageSelector from "./LanguageSelector";
+import {Logo, LogoType} from "@surfnet/sds";
 
 export default function Footer() {
     return (
@@ -14,9 +15,8 @@ export default function Footer() {
             </section>
                 <LanguageSelector />
             <section className="info right">
-                <span>{I18n.t("footer.product")}</span>
                 <a href={I18n.t("footer.surfLink")} target="_blank"
-                         rel="noopener noreferrer">{I18n.t("footer.surf")}</a>
+                         rel="noopener noreferrer">{<Logo label={""} position={LogoType.Bottom}/>}</a>
             </section>
 
             </div>
