@@ -1,11 +1,12 @@
 import json
+import urllib.parse
 
 import responses
 
 from server.db.domain import User, Collaboration, Group, Service
 from server.scim import EXTERNAL_ID_POST_FIX
-from server.scim.schema_template import schemas_template
 from server.scim.resource_type_template import resource_type_template
+from server.scim.schema_template import schemas_template, SCIM_SCHEMA_SRAM_USER
 from server.scim.user_template import version_value
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_network_token, jane_name, ai_computing_name, ai_researchers_group, \
@@ -71,6 +72,27 @@ class TestScim(AbstractTest):
         self.assertEqual(res, resource_type_template())
         for resource in res["Resources"]:
             self.get(f"/api/scim/v2{resource['meta']['location']}", response_status_code=200)
+
+    def test_users_filter(self):
+        query = urllib.parse.quote(f"{SCIM_SCHEMA_SRAM_USER}.eduPersonUniqueId eq \"urn:john\"")
+        res = self.get("/api/scim/v2/Users",
+                       query_data={"filter": query},
+                       headers={"Authorization": f"bearer {service_network_token}"})
+        self.assertEqual(1, len(res["Resources"]))
+
+    def test_users_filter_single_quote(self):
+        query = urllib.parse.quote(f"{SCIM_SCHEMA_SRAM_USER}.eduPersonUniqueId eq 'urn:john'")
+        res = self.get("/api/scim/v2/Users",
+                       query_data={"filter": query},
+                       headers={"Authorization": f"bearer {service_network_token}"})
+        self.assertEqual(1, len(res["Resources"]))
+
+    def test_users_filter_not_implemented(self):
+        query = urllib.parse.quote(f"{SCIM_SCHEMA_SRAM_USER}.voPersonExternalId eq 'urn:john'")
+        self.get("/api/scim/v2/Users",
+                 query_data={"filter": query},
+                 headers={"Authorization": f"bearer {service_network_token}"},
+                 response_status_code=500)
 
     @responses.activate
     def test_sweep(self):
