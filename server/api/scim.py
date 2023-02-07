@@ -1,7 +1,10 @@
+import re
+import urllib.parse
 from typing import Union
 
 from flasgger import swag_from
 from flask import Blueprint, Response
+from sqlalchemy import func
 from werkzeug.exceptions import Unauthorized
 
 from server.api.base import json_endpoint, query_param
@@ -11,12 +14,13 @@ from server.db.domain import User, Collaboration, Group, Service
 from server.scim import SCIM_URL_PREFIX, EXTERNAL_ID_POST_FIX
 from server.scim.group_template import find_groups_template, find_group_by_id_template
 from server.scim.repo import all_scim_users_by_service, all_scim_groups_by_service
+from server.scim.resource_type_template import resource_type_template, resource_type_user_template, \
+    resource_type_group_template
 from server.scim.schema_template import schemas_template, \
     schema_core_user_template, schema_core_group_template, \
     schema_sram_user_template, schema_sram_group_template, \
     SCIM_SCHEMA_CORE_USER, SCIM_SCHEMA_CORE_GROUP, \
     SCIM_SCHEMA_SRAM_USER, SCIM_SCHEMA_SRAM_GROUP
-from server.scim.resource_type_template import resource_type_template, resource_type_user_template, resource_type_group_template
 from server.scim.sweep import perform_sweep
 from server.scim.user_template import find_users_template, find_user_by_id_template, version_value
 
@@ -86,7 +90,16 @@ def resource_types():
 @json_endpoint
 def service_users():
     service = validate_service_token("scim_enabled")
-    users = all_scim_users_by_service(service)
+    filter_param = query_param("filter", required=False)
+    if filter_param:
+        query = urllib.parse.unquote(filter_param)
+        if not query.lower().startswith(f"{SCIM_SCHEMA_SRAM_USER}.eduPersonUniqueId".lower()):
+            raise NotImplementedError(f"Not supported filter {query}")
+        # uid = re.search(r'"([^"]*)"', query).group(1)
+        uid = re.search(r"(?:'|\")(.*)(?:'|\")", query).group(1)
+        users = User.query.filter(func.lower(User.uid) == func.lower(uid)).all()
+    else:
+        users = all_scim_users_by_service(service)
     return find_users_template(users), 200
 
 
