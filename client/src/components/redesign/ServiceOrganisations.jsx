@@ -167,7 +167,7 @@ class ServiceOrganisations extends React.Component {
             {
                 key: "toggle",
                 header: I18n.t("service.accessAllowed"),
-                mapper: org => this.toggle(org, organisationsSelected, service, serviceAdmin)
+                mapper: org => <div className={"switch-container"}>{this.toggle(org, organisationsSelected, service, serviceAdmin)}</div>
             }]
         return (<div>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
