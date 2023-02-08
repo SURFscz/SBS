@@ -50,17 +50,11 @@
                 }
 
                 &.toggle {
-                    text-align: right;
-
-                    svg.fa-info-circle, svg.fa-circle-info {
-                        color: $lighter-grey;
-                        cursor: pointer;
-
-                        &:hover {
-                            color: darken($light-blue, 20%);
-                        }
-
-                        margin-left: 3px;
+                    .switch-container {
+                        display: flex;
+                    }
+                    .sds--tooltip-parent {
+                        margin-left: auto;
                     }
 
                 }

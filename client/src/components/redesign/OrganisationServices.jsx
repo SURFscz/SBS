@@ -14,7 +14,6 @@ import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
 import ConfirmationDialog from "../ConfirmationDialog";
 import MissingServices from "../MissingServices";
-import {Tooltip} from "@surfnet/sds";
 
 class OrganisationServices extends React.Component {
 
@@ -110,8 +109,6 @@ class OrganisationServices extends React.Component {
                                   value={organisation.services.some(s => s.id === service.id)}
                                   animate={false}
                                   tooltip={tooltip}/>
-                    {tooltip &&
-                    <Tooltip tip={tooltip}/>}
                 </div>
             </div>
         )
