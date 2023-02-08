@@ -513,6 +513,8 @@ class Group(Base, db.Model):
                                                 lazy="select")
     invitations = db.relationship("Invitation", secondary=groups_invitations_association, lazy="select",
                                   back_populates="groups")
+    service_group_id = db.Column(db.Integer(), db.ForeignKey("service_groups.id"), nullable=True)
+    service_group = db.relationship("ServiceGroup", back_populates="groups")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
@@ -710,6 +712,8 @@ class ServiceGroup(Base, db.Model):
     auto_provision_members = db.Column("auto_provision_members", db.Boolean(), nullable=True, default=False)
     service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
     service = db.relationship("Service", back_populates="service_groups")
+    groups = db.relationship("Group", back_populates="service_group", cascade="all",
+                             passive_deletes=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
