@@ -12,7 +12,7 @@ table.groups {
             }
 
             &.description {
-                width: 40%;
+                width: 38%;
             }
 
             &.member {
@@ -20,12 +20,17 @@ table.groups {
             }
 
             &.memberCount {
-                width: 20%;
+                width: 14%;
+                text-align: center;
+            }
+
+            &.service_group {
+                width: 14%;
                 text-align: center;
             }
 
             &.auto_provision_members {
-                width: 20%;
+                width: 14%;
                 text-align: center;
             }
         }
@@ -38,6 +43,10 @@ table.groups {
             }
 
             &.memberCount {
+                text-align: center;
+            }
+
+            &.service_group {
                 text-align: center;
             }
 
@@ -117,6 +126,14 @@ table.groups {
         .org-attributes-container {
             padding-bottom: 20px;
             border-bottom: 3px solid $light-grey;
+
+            .right-divider {
+                margin-right: 40px;
+            }
+
+            .copy-to-clipboard {
+                margin-left: 15px;
+            }
         }
 
         .group-detail-actions {
@@ -135,6 +152,7 @@ table.groups {
                 &.icon {
                     width: 30px;
                 }
+
                 &.name {
                     width: 50%;
                 }

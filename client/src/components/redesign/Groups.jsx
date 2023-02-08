@@ -227,7 +227,7 @@ class Groups extends React.Component {
                 </section>
                 <p className={`description ${mayCreateGroups ? "" : "no-header-actions"}`}>{selectedGroup.description}</p>
                 <div className="org-attributes-container">
-                    <div className="org-attributes">
+                    <div className="org-attributes right-divider">
                         <span>{I18n.t("models.groups.autoProvisioning")}</span>
                         <span>{I18n.t(`models.groups.${selectedGroup.auto_provision_members ? "on" : "off"}`)}</span>
                     </div>
@@ -499,6 +499,11 @@ class Groups extends React.Component {
             {
                 key: "memberCount",
                 header: I18n.t("models.groups.memberCount")
+            },
+            {
+                key: "service_group",
+                header: I18n.t("models.groups.service_group"),
+                mapper: group => I18n.t(`forms.${group.service_group_id ? "yes" : "no"}`)
             },
         ]
         if (mayCreateGroups) {

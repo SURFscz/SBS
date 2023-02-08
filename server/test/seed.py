@@ -342,6 +342,23 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
 
     persist_instance(db, mail, wireless, cloud, storage, wiki, network, service_ssh_uva, uuc_scheduler, demo_sp)
 
+    service_group_mail = ServiceGroup(name=service_group_mail_name,
+                                      short_name="mail",
+                                      auto_provision_members=True,
+                                      description="Mail group",
+                                      service=mail)
+    service_group_wiki1 = ServiceGroup(name=service_group_wiki_name1,
+                                       short_name="wiki1",
+                                       auto_provision_members=False,
+                                       description="Wiki group 1",
+                                       service=wiki)
+    service_group_wiki2 = ServiceGroup(name=service_group_wiki_name2,
+                                       short_name="wiki2",
+                                       auto_provision_members=True,
+                                       description="Wiki group 2",
+                                       service=wiki)
+    persist_instance(db, service_group_mail, service_group_wiki1, service_group_wiki2)
+
     service_token_cloud = ServiceToken(hashed_token=secure_hash(service_cloud_token), description="Cloud token",
                                        service=cloud)
     service_token_network = ServiceToken(hashed_token=secure_hash(service_network_token), description="Network token",
@@ -372,23 +389,6 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     persist_instance(db, service_membership_james, service_membership_service_admin_1,
                      service_membership_service_admin_2,
                      service_membership_wiki)
-
-    service_group_mail = ServiceGroup(name=service_group_mail_name,
-                                      short_name="mail",
-                                      auto_provision_members=True,
-                                      description="Mail group",
-                                      service=mail)
-    service_group_wiki1 = ServiceGroup(name=service_group_wiki_name1,
-                                       short_name="wiki1",
-                                       auto_provision_members=False,
-                                       description="Wiki group 1",
-                                       service=wiki)
-    service_group_wiki2 = ServiceGroup(name=service_group_wiki_name2,
-                                       short_name="wiki2",
-                                       auto_provision_members=True,
-                                       description="Wiki group 2",
-                                       service=wiki)
-    persist_instance(db, service_group_mail, service_group_wiki1, service_group_wiki2)
 
     service_iprange_cloud_v4 = IpNetwork(network_value="82.217.86.55/24", service=cloud)
     service_iprange_cloud_v6 = IpNetwork(network_value="2001:1c02:2b2f:be00:1cf0:fd5a:a548:1a16/128", service=cloud)
@@ -500,7 +500,17 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                           description="Science",
                           collaboration=uva_research,
                           collaboration_memberships=[roger_uva_research])
-    persist_instance(db, group_researchers, group_developers, group_science)
+
+    group_service_mail = Group(name=service_group_mail_name,
+                               short_name="mail-mail",
+                               global_urn="uuc:ai_computing:mail-mail",
+                               identifier=str(uuid.uuid4()),
+                               auto_provision_members=False,
+                               description="Provisioned by service Mail Services - Mail group",
+                               collaboration=uva_research,
+                               collaboration_memberships=[],
+                               service_group=service_group_mail)
+    persist_instance(db, group_researchers, group_developers, group_science, group_service_mail)
 
     join_request_john = JoinRequest(message="Please...", reference=join_request_reference, user=john,
                                     collaboration=ai_computing, hash=generate_token(), status="open")
