@@ -135,14 +135,15 @@ class Entities extends React.Component {
                     <table className={tableClassName || modelName}>
                         <thead>
                         <tr>
-                            {columns.map((column, i) =>
-                                <th key={`th_${column.key}_${i}`}
-                                    className={`${column.key} ${column.class || ""} ${column.nonSortable ? "" : "sortable"}`}
-                                    onClick={this.setSorted(column.key)}>
-                                    {(!actions || i < 2 || column.showHeader) && column.header}
+                            {columns.map((column, i) => {
+                                const hide = !actions || i < 2 || column.showHeader;
+                                return <th key={`th_${column.key}_${i}`}
+                                           className={`${column.key} ${column.class || ""} ${column.nonSortable ? "" : "sortable"} ${hide ? "" : "hide"}`}
+                                           onClick={this.setSorted(column.key)}>
+                                    {column.header}
                                     {headerIcon(column, sorted, reverse)}
                                 </th>
-                            )}
+                            })}
                         </tr>
                         </thead>
                         <tbody>
