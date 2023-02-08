@@ -162,6 +162,11 @@
                     text-align: right;
                 }
 
+                &.hide {
+                    color: white;
+                    cursor: default;
+                }
+
                 @media (max-width: $compact-medium) {
                     &.status, &.requester, &.impersonate, &.logo, &.collaboration_memberships_count,
                     &.invitations_count, &.organisation_memberships_count, &.collaborations_count,
