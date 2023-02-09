@@ -141,15 +141,20 @@ def update_group():
     collaboration = Collaboration.query.get(collaboration_id)
     _assign_global_urn(collaboration, data)
     cleanse_short_name(data)
+    group = Group.query.get(data["id"])
+    if group.service_group:
+        group.auto_provision_members = data.get("auto_provision_members", False)
+        db.session.merge(group)
+    else:
+        res = update(Group, custom_json=data, allow_child_cascades=False)
+        group = res[0]
 
-    res = update(Group, custom_json=data, allow_child_cascades=False)
-
-    auto_provision_all_members_and_invites(res[0])
+    auto_provision_all_members_and_invites(group)
 
     emit_socket(f"collaboration_{collaboration.id}")
-    broadcast_group_changed(res[0])
+    broadcast_group_changed(group)
 
-    return res
+    return group, 201
 
 
 @group_api.route("/<group_id>", methods=["DELETE"], strict_slashes=False)
