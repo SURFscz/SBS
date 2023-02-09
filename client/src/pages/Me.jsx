@@ -10,7 +10,6 @@ import {isEmpty, stopEvent} from "../utils/Utils";
 import {ReactComponent as CriticalIcon} from "../icons/critical.svg";
 import {validateSSHKey,} from "../validations/regExps";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Tooltip} from "@surfnet/sds";
 import InstituteColumn from "../components/redesign/InstituteColumn";
 import moment from "moment";
@@ -147,7 +146,7 @@ class Me extends React.Component {
         d.setUTCSeconds(createdAt);
         const values = {"created_at": moment(d).format("LLLL")};
         const firstAttributes = ["email", "name"];
-        const secondAttributes = [ "affiliation", "username"];
+        const secondAttributes = ["affiliation", "username"];
         const mfaValue = user.second_factor_auth ? I18n.t("mfa.profile.handledBySRAM") :
             I18n.t("mfa.profile.handledByIdp", {name: user.schac_home_organisation || I18n.t("mfa.profile.institution")});
         return (
