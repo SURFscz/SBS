@@ -214,7 +214,6 @@ class Groups extends React.Component {
                     <div className="header-actions">
                         <Button onClick={() => this.setState(this.newGroupState(selectedGroup))}
                                 small={true}
-                                disabled={!isEmpty(selectedGroup.service_group_id)}
                                 txt={I18n.t("models.groups.edit")}/>
                         {currentUser.admin && <span className="history"
                                                     onClick={() => {
@@ -285,7 +284,7 @@ class Groups extends React.Component {
                             placeholder={I18n.t("groups.namePlaceholder")}
                             onBlur={this.validateGroupName}
                             name={I18n.t("groups.name")}
-                            disabled={!adminOfCollaboration}/>
+                            disabled={!adminOfCollaboration || !isEmpty(selectedGroup.service_group_id)}/>
                 {alreadyExists.name && <ErrorIndicator msg={I18n.t("groups.alreadyExists", {
                     attribute: I18n.t("groups.name").toLowerCase(),
                     value: name
@@ -305,7 +304,7 @@ class Groups extends React.Component {
                             })}
                             error={alreadyExists.short_name || (!initial && isEmpty(short_name))}
                             toolTip={I18n.t("groups.shortNameTooltip")}
-                            disabled={!createNewGroup && !user.admin}/>
+                            disabled={(!createNewGroup && !user.admin) || !isEmpty(selectedGroup.service_group_id)}/>
                 {alreadyExists.short_name && <ErrorIndicator msg={I18n.t("groups.alreadyExists", {
                     attribute: I18n.t("groups.short_name").toLowerCase(),
                     value: short_name
@@ -331,7 +330,7 @@ class Groups extends React.Component {
                             placeholder={I18n.t("groups.descriptionPlaceholder")}
                             onChange={e => this.setState({description: e.target.value})}
                             multiline={true}
-                            disabled={!adminOfCollaboration}/>
+                            disabled={!adminOfCollaboration || !isEmpty(selectedGroup.service_group_id)}/>
 
                 <CheckBox name="auto_provision_members" value={auto_provision_members}
                           info={I18n.t("groups.autoProvisionMembers")}
