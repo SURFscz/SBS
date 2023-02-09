@@ -55,18 +55,28 @@ class TestServiceGroup(AbstractTest):
             "service_id": service_id,
         }, with_basic_auth=False)
         service_group = self.find_entity_by_name(ServiceGroup, service_group_name)
-        self.assertIsNotNone(service_group)
+        groups = service_group.groups
+        self.assertEqual(1, len(groups))
+        self.assertEqual("uva:research:cloud-new_auth_service", groups[0].global_urn)
 
     def test_update_service_group(self):
         self.login("urn:service_admin")
-        service_group = jsonify(self.find_entity_by_name(ServiceGroup, service_group_wiki_name1)).json
-        service_group["short_name"] = "new_short_name"
-        service_group["auto_provision_members"] = True
-        self.put("/api/servicegroups/", body=service_group, with_basic_auth=False)
+        service_group = self.find_entity_by_name(ServiceGroup, service_group_mail_name)
+        self.assertFalse(False, service_group.groups[0].auto_provision_members)
+        self.assertEqual(0, len(service_group.groups[0].collaboration_memberships))
 
-        service_group = self.find_entity_by_name(ServiceGroup, service_group_wiki_name1)
+        service_group_json = jsonify(service_group).json
+        service_group_json["short_name"] = "new_short_name"
+        service_group_json["auto_provision_members"] = True
+        self.put("/api/servicegroups/", body=service_group_json, with_basic_auth=False)
 
+        service_group = self.find_entity_by_name(ServiceGroup, service_group_mail_name)
         self.assertEqual("new_short_name", service_group.short_name)
+
+        groups = service_group.groups
+        self.assertEqual(1, len(groups))
+        self.assertEqual("uva:research:mail-new_short_name", groups[0].global_urn)
+        self.assertEqual(4, len(groups[0].collaboration_memberships))
 
     def test_delete_service_group(self):
         self.login("urn:service_admin")

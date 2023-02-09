@@ -1,28 +1,34 @@
-from flask import Blueprint, request as current_request
+from flask import Blueprint, request as current_request, g as request_context
 from sqlalchemy import func
 from sqlalchemy.orm import load_only
 
 from server.api.base import json_endpoint, query_param, emit_socket
-from server.api.group import create_group
+from server.api.group import create_group, auto_provision_all_members_and_invites
 from server.auth.security import confirm_service_admin
 from server.db.defaults import cleanse_short_name
-from server.db.domain import ServiceGroup, Service, Collaboration
-from server.db.models import update, save, delete
+from server.db.domain import ServiceGroup, Service, Collaboration, Group
+from server.db.models import update, save, delete, flatten
 from server.schemas import json_schema_validator
+from server.scim.events import broadcast_group_changed
 
 service_group_api = Blueprint("service_group_api", __name__, url_prefix="/api/servicegroups")
 
 
+def create_service_group(service: Service, collaboration: Collaboration, service_group: ServiceGroup):
+    data = {
+        "name": service_group.name,
+        "description": f"Provisioned by service {service.name} - {service_group.description}",
+        "short_name": f"{service.abbreviation}-{service_group.short_name}",
+        "collaboration_id": collaboration.id,
+        "auto_provision_members": service_group.auto_provision_members,
+        "service_group_id": service_group.id
+    }
+    create_group(collaboration.id, data, do_cleanse_short_name=False)
+
+
 def create_service_groups(service: Service, collaboration: Collaboration):
     for service_group in service.service_groups:
-        data = {
-            "name": service_group.name,
-            "description": f"Provisioned by service {service.name} - {service_group.description}",
-            "short_name": f"{service.abbreviation}-{service_group.short_name}",
-            "collaboration_id": collaboration.id,
-            "auto_provision_members": service_group.auto_provision_members
-        }
-        create_group(collaboration.id, data, do_cleanse_short_name=False)
+        create_service_group(service, collaboration, service_group)
 
 
 @service_group_api.route("/name_exists", strict_slashes=False)
@@ -69,7 +75,13 @@ def save_service_group():
 
     emit_socket(f"service_{service_id}")
 
-    return save(ServiceGroup, custom_json=data, allow_child_cascades=False)
+    res = save(ServiceGroup, custom_json=data, allow_child_cascades=False)
+    service_group = res[0]
+    service = service_group.service
+    collaborations = list(set(flatten([org.collaborations for org in service.organisations]) + service.collaborations))
+    for collaboration in collaborations:
+        create_service_group(service, collaboration, service_group)
+    return res
 
 
 @service_group_api.route("/", methods=["PUT"], strict_slashes=False)
@@ -83,7 +95,33 @@ def update_service_group():
 
     emit_socket(f"service_{service_id}")
 
-    return update(ServiceGroup, custom_json=data, allow_child_cascades=False)
+    res = update(ServiceGroup, custom_json=data, allow_child_cascades=False)
+    service_group = res[0]
+    service = service_group.service
+    # Ensure to skip current_user is CO admin check
+    request_context.skip_collaboration_admin_confirmation = True
+    for group in service_group.groups:
+        short_name = f"{service.abbreviation}-{service_group.short_name}"
+        collaboration = group.collaboration
+        group_data = {
+            "id": group.id,
+            "name": service_group.name,
+            "short_name": short_name,
+            "description": f"Provisioned by service {service.name} - {service_group.description}",
+            "auto_provision_members": service_group.auto_provision_members,
+            "global_urn": f"{collaboration.organisation.short_name}:{collaboration.short_name}:{short_name}",
+            "identifier": group.identifier,
+            "collaboration_id": collaboration.id,
+            "service_group_id": service_group.id
+        }
+        updated_group = update(Group, custom_json=group_data, allow_child_cascades=False)[0]
+        auto_provision_all_members_and_invites(updated_group)
+        broadcast_group_changed(updated_group)
+
+    if service_group.groups:
+        emit_socket(f"collaboration_{service_group.groups[0].collaboration_id}")
+
+    return res
 
 
 @service_group_api.route("/<service_group_id>", methods=["DELETE"], strict_slashes=False)
