@@ -116,6 +116,7 @@ class TestCollaboration(AbstractTest):
         wiki_group = self.find_entity_by_name(Group, co_group_names[0])
         self.assertEqual(1, len(wiki_group.collaboration_memberships))
         self.assertEqual("urn:john", wiki_group.collaboration_memberships[0].user.uid)
+        self.assertEqual(service_group_names[0], wiki_group.service_group.name)
 
     def test_collaboration_without_default_current_user_admin(self):
         organisation_id = Organisation.query.filter(Organisation.name == uuc_name).one().id
