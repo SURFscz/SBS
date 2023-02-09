@@ -2,7 +2,7 @@
 @import "../stylesheets/forms";
 
 div.confirmation-warning-container {
-    margin: 0 25px 15px 25px;
+    margin-bottom: 15px;
     text-align: left;
 
     div.confirmation-warning {
@@ -44,7 +44,6 @@ div.user-profile-tab-container {
     }
 
     div.user-profile-tab {
-        width: 50%;
         margin: 25px 0;
 
         @media (max-width: $compact-medium) {
@@ -52,12 +51,49 @@ div.user-profile-tab-container {
         }
 
         h1 {
-            font-size: 22px;
-            line-height: 26px;
             margin-bottom: 10px;
-            color: $primary-orange;
         }
 
+
+        .sds--table {
+            margin: 20px 0;
+
+            table {
+
+                th {
+                    border-bottom: none;
+
+                    &.attribute-value {
+                        width: 70%;
+                    }
+
+                    &.attribute-key {
+                        width: 25%;
+                    }
+
+                    &.actions {
+                        width: 240px;
+                    }
+                }
+
+                td {
+                    &.attribute-value {
+                        font-weight: 600;
+                        word-break: break-all;
+                    }
+
+                    &.actions {
+                        .icon-container {
+                            display: flex;
+                            svg {
+                                margin-left: auto;
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
 
         .attributes {
             display: flex;

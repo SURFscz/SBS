@@ -96,7 +96,7 @@ I18n.translations.nl = {
             collaborationRequests: "Verzoeken ({{count}})",
             joinRequests: "Lidmaatschapsverzoeken ({{count}})",
             serviceConnectionRequests: "Koppelverzoeken ({{count}})",
-            me: "Profiel",
+            me: "Je details",
             about: "Over",
             apikeys: "API-sleutels ({{count}})",
             welcome: "Welkom",
@@ -652,6 +652,7 @@ I18n.translations.nl = {
         sbs: "Applicatie",
         collaborations: "Samenwerkingen",
         network: "IP-ranges",
+        addSSHKey: "Voeg een nieuwe SSH Key toe",
         networkTooltip: "Configureer je IP-bereiken voor deze dienst. Je kunt IPv4 en IPv6 network ranges toevoegen. " +
             "Bijvoorbeeld: <ul>" +
             "<li>Enkelvoudig IPv4-adres 198.51.100.12 waar een /32 is aangenomen</li>" +

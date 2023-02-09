@@ -32,7 +32,7 @@ import ClipBoardCopy from "./ClipBoardCopy";
 import {AppStore} from "../../stores/AppStore";
 import ErrorIndicator from "./ErrorIndicator";
 import {Tooltip} from "@surfnet/sds";
-import InstituteColumn from "./InstitueColumn";
+import InstituteColumn from "./InstituteColumn";
 
 class Groups extends React.Component {
 

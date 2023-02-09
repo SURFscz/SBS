@@ -258,7 +258,7 @@ class SecondFactorAuthentication extends React.Component {
         const submitDisabled = respondents.filter(respondent => respondent.selected).length === 0;
         return (<div className="authenticator-problems">
 
-            <h1>{I18n.t("mfa.lost.title")}</h1>
+            <h2>{I18n.t("mfa.lost.title")}</h2>
             <p>{I18n.t("mfa.lost.info")}</p>
             <ul>
                 {I18n.translations[I18n.locale].mfa.lost.reasons.map((option, i) =>
@@ -304,7 +304,7 @@ class SecondFactorAuthentication extends React.Component {
         return (
             <div>
                 <section className="register-header">
-                    <h1>{I18n.t("mfa.verify.title")}</h1>
+                    <h2>{I18n.t("mfa.verify.title")}</h2>
                     <p dangerouslySetInnerHTML={{
                         __html: DOMPurify.sanitize(`${I18n.t("mfa.verify.info1")}`)
                     }}/>
@@ -331,7 +331,7 @@ class SecondFactorAuthentication extends React.Component {
         return (
             <div>
                 <section className="register-header">
-                    <h1>{I18n.t("mfa.reset.title")}</h1>
+                    <h2>{I18n.t("mfa.reset.title")}</h2>
                     <p dangerouslySetInnerHTML={{
                         __html: DOMPurify.sanitize(`${I18n.t("mfa.reset.info1")}`)
                     }}/>
@@ -384,7 +384,7 @@ class SecondFactorAuthentication extends React.Component {
         return (
             <div>
                 <section className="register-header">
-                    <h1>{I18n.t(`mfa.register.${update ? "titleUpdate" : "title"}`)}</h1>
+                    <h2>{I18n.t(`mfa.register.${update ? "titleUpdate" : "title"}`)}</h2>
                     <div className="information">
                         <InformationIcon/>
                         <p>{I18n.t(`mfa.${action}.info1`, {name: idp_name})}</p>
@@ -392,7 +392,7 @@ class SecondFactorAuthentication extends React.Component {
                     <p>{I18n.t(`mfa.${action}.info2`)}</p>
                 </section>
                 {!update && <div className="step">
-                    <h1>{I18n.t("mfa.register.getApp")}</h1>
+                    <h2>{I18n.t("mfa.register.getApp")}</h2>
                     <ul>
                         <li dangerouslySetInnerHTML={{
                             __html: DOMPurify.sanitize(I18n.t("mfa.register.getAppInfo", {new: update ? I18n.t("mfa.register.new") : ""}),
@@ -407,7 +407,7 @@ class SecondFactorAuthentication extends React.Component {
                 </div>}
                 {update &&
                 <div className="step">
-                    <h1>{I18n.t("mfa.update.currentCode")}</h1>
+                    <h2>{I18n.t("mfa.update.currentCode")}</h2>
                     <div className="step-actions">
                         <p>{I18n.t("mfa.update.currentCodeInfo")}</p>
                         {this.totpValueContainer(totp, "totp", this.totpRefs, false)}
@@ -415,7 +415,7 @@ class SecondFactorAuthentication extends React.Component {
                     </div>
                 </div>}
                 {update && <div className="step">
-                    {update ? <h1>{I18n.t("mfa.register.getAppUpdate")}</h1> : <h1>{I18n.t("mfa.register.getApp")}</h1>}
+                    {update ? <h2>{I18n.t("mfa.register.getAppUpdate")}</h2> : <h2>{I18n.t("mfa.register.getApp")}</h2>}
                     <ul>
                         <li dangerouslySetInnerHTML={{
                             __html: DOMPurify.sanitize(I18n.t("mfa.register.getAppInfo", {new: update ? I18n.t("mfa.register.new") : " "}),
@@ -431,8 +431,8 @@ class SecondFactorAuthentication extends React.Component {
 
                 <div className="step">
                     <div className="step-actions">
-                        {update ? <h1>{I18n.t("mfa.register.verificationCodeUpdate")}</h1> :
-                            <h1>{I18n.t("mfa.register.verificationCode")}</h1>}
+                        {update ? <h2>{I18n.t("mfa.register.verificationCodeUpdate")}</h2> :
+                            <h2>{I18n.t("mfa.register.verificationCode")}</h2>}
                         <p>{I18n.t("mfa.register.verificationCodeInfo")}</p>
                         {!update && <>
                             {this.totpValueContainer(totp, "totp", this.totpRefs, true)}

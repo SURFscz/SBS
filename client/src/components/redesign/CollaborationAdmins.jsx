@@ -31,7 +31,7 @@ import moment from "moment";
 import {Tooltip} from "@surfnet/sds";
 import LastAdminWarning from "./LastAdminWarning";
 import DateField from "../DateField";
-import InstituteColumn from "./InstitueColumn";
+import InstituteColumn from "./InstituteColumn";
 import {ReactComponent as ChevronUp} from "../../icons/chevron-up.svg";
 import {ReactComponent as ChevronDown} from "../../icons/chevron-down.svg";
 import {emitImpersonation} from "../../utils/Impersonation";
