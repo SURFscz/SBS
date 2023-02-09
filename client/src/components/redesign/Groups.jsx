@@ -214,6 +214,7 @@ class Groups extends React.Component {
                     <div className="header-actions">
                         <Button onClick={() => this.setState(this.newGroupState(selectedGroup))}
                                 small={true}
+                                disabled={!isEmpty(selectedGroup.service_group_id)}
                                 txt={I18n.t("models.groups.edit")}/>
                         {currentUser.admin && <span className="history"
                                                     onClick={() => {

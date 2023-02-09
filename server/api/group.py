@@ -117,7 +117,7 @@ def create_group(collaboration_id, data, do_cleanse_short_name=True):
     data["identifier"] = str(uuid.uuid4())
     res = save(Group, custom_json=data, allow_child_cascades=False)
 
-    # Session is closed in save, but we are not ready yet, so re-fetch the Grouo
+    # Session is closed in save, but we are not ready yet, so re-fetch the Group
     group = Group.query.get(res[0].id)
 
     auto_provision_all_members_and_invites(group)
