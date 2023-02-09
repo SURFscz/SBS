@@ -2,7 +2,8 @@ from flask import jsonify
 
 from server.db.domain import Collaboration, Group
 from server.test.abstract_test import AbstractTest
-from server.test.seed import ai_researchers_group, ai_computing_name, ai_researchers_group_short_name
+from server.test.seed import ai_researchers_group, ai_computing_name, ai_researchers_group_short_name, \
+    service_group_mail_name
 
 
 class TestGroup(AbstractTest):
@@ -118,3 +119,18 @@ class TestGroup(AbstractTest):
             "collaboration_id": collaboration_id,
         })
         self.assertEqual(0, len(res))
+
+    def test_update_service_group(self):
+        self.login("urn:sarah")
+        group_json = jsonify(self.find_entity_by_name(Group, service_group_mail_name)).json
+        group_json["name"] = "changed_name"
+        group_json["short_name"] = "changed_short_name"
+        group_json["auto_provision_members"] = True
+        self.put("/api/groups/", body=group_json, with_basic_auth=False)
+
+        group = self.find_entity_by_name(Group, service_group_mail_name)
+
+        self.assertTrue(group.auto_provision_members)
+        self.assertEqual(group.short_name, "mail-mail")
+        self.assertEqual(3, len(group.collaboration_memberships))
+
