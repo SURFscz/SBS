@@ -122,8 +122,12 @@ class TestGroup(AbstractTest):
 
     def test_update_service_group(self):
         self.login("urn:sarah")
-        group_json = jsonify(self.find_entity_by_name(Group, service_group_mail_name)).json
+        group_before_update = self.find_entity_by_name(Group, service_group_mail_name)
+        self.assertEqual(0, len(group_before_update.collaboration_memberships))
+
+        group_json = jsonify(group_before_update).json
         group_json["name"] = "changed_name"
+        group_json["description"] = "changed_description"
         group_json["short_name"] = "changed_short_name"
         group_json["auto_provision_members"] = True
         self.put("/api/groups/", body=group_json, with_basic_auth=False)
@@ -131,6 +135,8 @@ class TestGroup(AbstractTest):
         group = self.find_entity_by_name(Group, service_group_mail_name)
 
         self.assertTrue(group.auto_provision_members)
-        self.assertEqual(group.short_name, "mail-mail")
-        self.assertEqual(3, len(group.collaboration_memberships))
+        self.assertEqual(group.short_name, group_before_update.short_name)
+        self.assertEqual(group.description, group_before_update.description)
+        self.assertEqual(group.global_urn, group_before_update.global_urn)
+        self.assertEqual(4, len(group.collaboration_memberships))
 
