@@ -9,7 +9,7 @@ import Select from "react-select";
 import Logo from "./Logo";
 import {dateFromEpoch} from "../../utils/Date";
 import {socket, subscriptionIdCookieName} from "../../utils/SocketIO";
-import InstituteColumn from "./InstitueColumn";
+import InstituteColumn from "./InstituteColumn";
 import {schacHome} from "../../api";
 
 const allValue = "all";

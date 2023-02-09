@@ -6,7 +6,7 @@ import I18n from "i18n-js";
 import Entities from "./Entities";
 import Logo from "./Logo";
 import Select from "react-select";
-import InstituteColumn from "./InstitueColumn";
+import InstituteColumn from "./InstituteColumn";
 import UserColumn from "./UserColumn";
 
 const allValue = "all";

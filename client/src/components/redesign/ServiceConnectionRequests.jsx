@@ -14,7 +14,7 @@ import InputField from "../InputField";
 import {approveServiceConnectionRequestByHash, denyServiceConnectionRequestByHash} from "../../api";
 import moment from "moment";
 import Logo from "./Logo";
-import InstituteColumn from "./InstitueColumn";
+import InstituteColumn from "./InstituteColumn";
 import UserColumn from "./UserColumn";
 
 class ServiceConnectionRequests extends React.Component {

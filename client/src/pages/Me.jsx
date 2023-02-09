@@ -1,5 +1,5 @@
 import React from "react";
-import {deleteUser, ipNetworks, updateUser,} from "../api";
+import {deleteUser, updateUser,} from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
 import "./Me.scss";
@@ -12,9 +12,12 @@ import {validateSSHKey,} from "../validations/regExps";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Tooltip} from "@surfnet/sds";
-import InstituteColumn from "../components/redesign/InstitueColumn";
+import InstituteColumn from "../components/redesign/InstituteColumn";
 import moment from "moment";
 import DOMPurify from "dompurify";
+import {ReactComponent as EditIcon} from "@surfnet/sds/icons/functional-icons/edit.svg";
+import {ReactComponent as TrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
+import UploadButton from "../components/UploadButton";
 
 class Me extends React.Component {
 
@@ -38,7 +41,7 @@ class Me extends React.Component {
     }
 
     componentDidMount() {
-        const {ssh_keys, user_ip_networks} = this.props.user;
+        const {ssh_keys} = this.props.user;
         ssh_keys.forEach((sshKey, i) => {
             sshKey.fileInputKey = new Date().getMilliseconds() + i + 1
         });
@@ -49,15 +52,6 @@ class Me extends React.Component {
             });
         }
         this.setState({ssh_keys: ssh_keys});
-        if (isEmpty(user_ip_networks)) {
-            this.addIpAddress();
-            this.setState({loading: false})
-        } else {
-            Promise.all(user_ip_networks.map(n => ipNetworks(n.network_value, n.id)))
-                .then(res => {
-                    this.setState({"user_ip_networks": res, loading: false});
-                });
-        }
         const urlSearchParams = new URLSearchParams(window.location.search);
         const deleteLink = urlSearchParams.get("delete");
         if (deleteLink) {
@@ -91,47 +85,11 @@ class Me extends React.Component {
         }
     };
 
-    validateIpAddress = index => e => {
-        const currentIpNetwork = this.state.user_ip_networks[index];
-        const address = e.target.value;
-        if (!isEmpty(address)) {
-            ipNetworks(address, currentIpNetwork.id)
-                .then(res => {
-                    const {user_ip_networks} = this.state;
-                    user_ip_networks.splice(index, 1, res);
-                    const updatedIpNetworks = [...user_ip_networks];
-                    this.setState({user_ip_networks: updatedIpNetworks});
-                });
-        }
-    }
-
-    saveIpAddress = index => e => {
-        const {user_ip_networks} = this.state;
-        const network = user_ip_networks[index];
-        network.network_value = e.target.value;
-        user_ip_networks.splice(index, 1, network)
-        const updatedIpNetworks = [...user_ip_networks];
-        this.setState({user_ip_networks: updatedIpNetworks});
-    }
-
-    addIpAddress = () => {
-        const {user_ip_networks} = this.state;
-        user_ip_networks.push({network_value: ""});
-        this.setState({user_ip_networks: [...user_ip_networks]});
-    }
-
-    deleteIpAddress = index => {
-        const {user_ip_networks} = this.state;
-        user_ip_networks.splice(index, 1);
-        this.setState({user_ip_networks: [...user_ip_networks]});
-    }
-
     isValid = () => {
-        const {invalidInputs, ssh_keys, user_ip_networks} = this.state;
+        const {invalidInputs, ssh_keys} = this.state;
         const inValid = Object.keys(invalidInputs).some(key => invalidInputs[key]);
         const isValidSsh = ssh_keys.every(ssh_key => validateSSHKey(ssh_key.ssh_value));
-        const invalidIpNetworks = user_ip_networks.some(ipNetwork => ipNetwork.error);
-        return !inValid && isValidSsh && !invalidIpNetworks;
+        return !inValid && isValidSsh;
     };
 
     configureMfa = () => {
@@ -142,55 +100,13 @@ class Me extends React.Component {
     doSubmit = () => {
         if (this.isValid()) {
             this.setState({loading: true});
-            const {user_ip_networks} = this.state;
-            const strippedIpNetworks = user_ip_networks
-                .filter(network => network.network_value && network.network_value.trim())
-                .map(network => ({network_value: network.network_value, id: network.id}));
-            // Prevent deletion / re-creation of existing IP Network
-            strippedIpNetworks.forEach(network => {
-                if (isEmpty(network.id)) {
-                    delete network.id;
-                } else {
-                    network.id = parseInt(network.id, 10)
-                }
-            });
-            this.setState({user_ip_networks: strippedIpNetworks}, () => {
-                updateUser(this.state).then(() => {
-                    this.props.refreshUser();
-                    this.gotoHome();
-                    setFlash(I18n.t("user.flash.updated"));
-                });
+            updateUser(this.state).then(() => {
+                this.props.refreshUser();
+                this.gotoHome();
+                setFlash(I18n.t("user.flash.updated"));
             });
         }
     };
-
-    validateSSHKey = index => e => {
-        const {ssh_keys} = this.state;
-        const ssh_key = ssh_keys[index];
-        const sshValue = e.target.value;
-        ssh_key.fileTypeError = !validateSSHKey(sshValue);
-        ssh_key.fileInputKey = new Date().getMilliseconds();
-        this.setState({ssh_keys: [...ssh_keys]});
-    };
-
-    saveSshKeyValue = index => e => {
-        const {ssh_keys} = this.state;
-        const ssh_key = ssh_keys[index];
-        ssh_key.ssh_value = e.target.value;//.replace(/[\n\t\r]/g,"");
-        ssh_keys.splice(index, 1, ssh_key)
-        this.setState({ssh_keys: [...ssh_keys]});
-    }
-
-    addSshKey = () => {
-        const {ssh_keys} = this.state;
-        ssh_keys.push({
-            fileInputKey: new Date().getMilliseconds(),
-            fileTypeError: false,
-            ssh_value: "",
-            fileName: null
-        });
-        this.setState({ssh_keys: [...ssh_keys]});
-    }
 
     onFileRemoval = index => e => {
         stopEvent(e);
@@ -199,7 +115,7 @@ class Me extends React.Component {
         this.setState({ssh_keys: [...ssh_keys]});
     };
 
-    onFileUpload = index => e => {
+    onFileUpload = e => {
         const files = e.target.files;
         if (!isEmpty(files)) {
             const file = files[0];
@@ -208,10 +124,12 @@ class Me extends React.Component {
                 const sshValue = reader.result.toString();
                 const validSsh = validateSSHKey(sshValue);
                 const {ssh_keys} = this.state;
-                const sshKey = ssh_keys[index];
-                sshKey.fileName = file.name;
-                sshKey.ssh_value = validSsh ? sshValue : "";
-                sshKey.fileTypeError = !validSsh;
+                ssh_keys.push({
+                    fileInputKey: new Date().getMilliseconds(),
+                    fileTypeError: !validSsh,
+                    ssh_value: validSsh ? sshValue : "",
+                    fileName: file.name
+                });
                 this.setState({ssh_keys: [...ssh_keys]});
             };
             reader.readAsText(file);
@@ -223,107 +141,80 @@ class Me extends React.Component {
         sshKey.startsWith("-----BEGIN PUBLIC KEY-----") ||
         sshKey.startsWith("-----BEGIN RSA PUBLIC KEY-----"));
 
-    renderIpNetworks = user_ip_networks => {
-        return (<div className="ip-networks">
-            <label className="title" htmlFor={I18n.t("profile.network")}>{I18n.t("profile.network")}
-                <Tooltip tip={I18n.t("profile.networkTooltip")}/>
-                <span className="add-network" onClick={() => this.addIpAddress()}><FontAwesomeIcon icon="plus"/></span>
-            </label>
-            <span className="network-explanation">{I18n.t("profile.networkExplanation")}</span>
-            {user_ip_networks.map((network, i) =>
-                <div className="network-container" key={i}>
-                    <div className="network">
-                        <InputField value={network.network_value}
-                                    onChange={this.saveIpAddress(i)}
-                                    onBlur={this.validateIpAddress(i)}
-                                    placeholder={I18n.t("service.networkPlaceholder")}
-                                    error={network.error || network.syntax}
-                                    onEnter={e => {
-                                        this.validateIpAddress(i);
-                                        e.target.blur()
-                                    }}
-                        />
-                        <span className="trash" onClick={() => this.deleteIpAddress(i)}>
-                            <FontAwesomeIcon icon="trash"/>
-                        </span>
-                    </div>
-                    {(network.error && !network.syntax) &&
-                    <ErrorIndicator msg={I18n.t("service.networkError", network)}/>}
-                    {network.syntax && <ErrorIndicator msg={I18n.t("service.networkSyntaxError")}/>}
-                    {network.higher && <span className="network-info">{I18n.t("service.networkInfo", network)}</span>}
-
-                </div>
-            )}
-        </div>);
-    }
-
     renderForm = (user, ssh_keys, user_ip_networks, disabledSubmit, config) => {
-        // const attributes = ["name", "email", "created_at", "username", , "uid", "eduperson_principal_name",
-        //     "affiliation", "scoped_affiliation", "entitlement", "schac_home_organisation", "edu_members"];
         const createdAt = user.created_at;
         const d = new Date(0);
         d.setUTCSeconds(createdAt);
         const values = {"created_at": moment(d).format("LLLL")};
-        const attributes = ["name", "email", "username", "created_at"];
+        const firstAttributes = ["email", "name"];
+        const secondAttributes = [ "affiliation", "username"];
         const mfaValue = user.second_factor_auth ? I18n.t("mfa.profile.handledBySRAM") :
             I18n.t("mfa.profile.handledByIdp", {name: user.schac_home_organisation || I18n.t("mfa.profile.institution")});
         return (
             <div className="user-profile-tab-container">
                 <div className="user-profile-tab">
-                    <h1>{I18n.t("home.tabs.me")}</h1>
-                    {attributes.map(attribute =>
-                        <div className={"attributes"} key={attribute}>
-                            <span className="attribute-key">{I18n.t(`profile.${attribute}`)}</span>
-                            <span className="attribute-value">{values[attribute] || user[attribute] || "-"}</span>
-                        </div>)
-                    }
-                    <div className={"attributes"} key={"schac_home_organisation"}>
-                        <span className="attribute-key">{I18n.t("profile.schac_home_organisation")}</span>
-                        <InstituteColumn entity={{user: user}} currentUser={user} greyed={false}/>
+                    <h3>{I18n.t("home.tabs.me")}</h3>
+                    <div className={"sds--table"}>
+                        <table className={"my-attributes"}>
+                            <thead>
+                            <th className={"attribute-key"}/>
+                            <th className={"attribute-value"}/>
+                            <th className={"actions"}/>
+                            </thead>
+                            <tbody>
+                            {firstAttributes.map(attribute =>
+                                <tr key={attribute}>
+                                    <td className="attribute-key">{I18n.t(`profile.${attribute}`)}</td>
+                                    <td className="attribute-value">{values[attribute] || user[attribute] || "-"}</td>
+                                    <td className="actions"/>
+                                </tr>)
+                            }
+                            <tr>
+                                <td className="attribute-key">{I18n.t("profile.schac_home_organisation")}</td>
+                                <td className="attribute-value"><InstituteColumn entity={{user: user}}
+                                                                                 currentUser={user} greyed={false}/>
+                                </td>
+                                <td className="actions"/>
+                            </tr>
+                            {secondAttributes.map(attribute =>
+                                <tr key={attribute}>
+                                    <td className="attribute-key">{I18n.t(`profile.${attribute}`)}</td>
+                                    <td className="attribute-value">{values[attribute] || user[attribute] || "-"}</td>
+                                    <td className="actions"/>
+                                </tr>)
+                            }
+                            {config.second_factor_authentication_required && <tr>
+                                <td className="attribute-key">{I18n.t("mfa.profile.name")}</td>
+                                <td className="attribute-value">{mfaValue}</td>
+                                <td className="actions" onClick={() => user.second_factor_auth && this.configureMfa()}>
+                                    {user.second_factor_auth && <div className={"icon-container"}><EditIcon/></div>}
+                                </td>
+                            </tr>}
+                            {ssh_keys.map((ssh_key, index) =>
+                                <tr key={index}>
+                                    <td className="attribute-key">{index === 0 && <span>{I18n.t("user.ssh_key")}<Tooltip
+                                        tip={I18n.t("user.ssh_keyTooltip")}/></span>}</td>
+                                    <td className="attribute-value">
+                                        {ssh_key.ssh_value}
+                                        {ssh_key.fileTypeError &&
+                                        <ErrorIndicator msg={I18n.t("user.sshKeyError")} decode={false}/>}
+                                        {this.showConvertSSHKey(ssh_key.ssh_value) &&
+                                        <span className="ssh-convert"
+                                              dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.sshConvertInfo"))}}/>}
+
+                                    </td>
+                                    <td className="actions" onClick={this.onFileRemoval(index)}>
+                                        <div className={"icon-container"}><TrashIcon/></div>
+                                    </td>
+                                </tr>)}
+                            </tbody>
+                        </table>
                     </div>
 
-                    {config.second_factor_authentication_required && <div className="second-factor">
-                        <InputField value={mfaValue}
-                                    name={I18n.t("mfa.profile.name")}
-                                    tooltip={I18n.t("mfa.profile.tooltip")}
-                                    noInput={true}/>
-                        {user.second_factor_auth && <div className="button-container">
-                            <Button txt={I18n.t("mfa.profile.edit")}
-                                    onClick={this.configureMfa}/>
-                        </div>}
-                    </div>}
-                    {/* disabled for now; see https://github.com/SURFscz/SBS/issues/185 and https://github.com/SURFscz/SBS/issues/188
-                    {this.renderIpNetworks(user_ip_networks)}
-                    */}
+                    <UploadButton name={I18n.t("profile.addSSHKey")}
+                                  acceptFileFormat={".pub"}
+                                  onFileUpload={this.onFileUpload}/>
 
-                    <div className="ssh-keys-container">
-                        <label className="title" htmlFor={I18n.t("user.ssh_key")}>{I18n.t("user.ssh_key")}
-                            <Tooltip tip={I18n.t("user.ssh_keyTooltip")}/>
-                            <span className="add-ssh-key" onClick={() => this.addSshKey()}><FontAwesomeIcon
-                                icon="plus"/></span>
-                        </label>
-                        {ssh_keys.map((ssh_key, index) => <div key={index} className={`index-${index}`}>
-                            <InputField value={ssh_key.ssh_value}
-                                        name={`ssh_key_${index}`}
-                                        placeholder={I18n.t("user.ssh_keyPlaceholder")}
-                                        onChange={this.saveSshKeyValue(index)}
-                                        onBlur={this.validateSSHKey(index)}
-                                        fileUpload={true}
-                                        multiline={true}
-                                        displayLabel={false}
-                                        error={ssh_key.fileTypeError}
-                                        fileName={ssh_key.fileName}
-                                        onFileInitialRemoval={this.onFileRemoval(index)}
-                                        fileInputKey={ssh_key.fileInputKey}
-                                        onFileRemoval={this.onFileRemoval(index)}
-                                        onFileUpload={this.onFileUpload(index)}
-                                        acceptFileFormat=".pub"/>
-                            {ssh_key.fileTypeError && <ErrorIndicator msg={I18n.t("user.sshKeyError")} decode={false}/>}
-                            {this.showConvertSSHKey(ssh_key.ssh_value) &&
-                            <span className="ssh-convert"
-                                  dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.sshConvertInfo"))}}/>}
-                        </div>)}
-                    </div>
                     <section className="actions">
                         <Button warningButton={true}
                                 onClick={this.delete}/>

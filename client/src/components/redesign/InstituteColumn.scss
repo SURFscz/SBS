@@ -7,14 +7,4 @@
         color: $dark-grey;
     }
 
-    svg {
-        color: $lighter-grey;
-        cursor: pointer;
-
-        &:hover {
-            color: darken($light-blue, 20%);
-        }
-
-        margin-left: 3px;
-    }
 }

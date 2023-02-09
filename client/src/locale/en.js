@@ -96,7 +96,7 @@ I18n.translations.en = {
             collaborationRequests: "Requests ({{count}})",
             joinRequests: "Join requests ({{count}})",
             serviceConnectionRequests: "Connection requests ({{count}})",
-            me: "Profile",
+            me: "Your details",
             about: "About",
             apikeys: "API Keys ({{count}})",
             welcome: "Welcome",
@@ -632,8 +632,8 @@ I18n.translations.en = {
         name: "Name",
         email: "Email",
         uid: "UID",
-        affiliation: "Affiliations",
-        username: "Username",
+        affiliation: "Affiliation(s)",
+        username: "SRAM internal username",
         scoped_affiliation: "Scoped affiliations",
         entitlement: "Entitlements",
         nick_name: "Nick name",
@@ -652,6 +652,7 @@ I18n.translations.en = {
         sbs: "Application",
         collaborations: "Collaborations",
         network: "IP ranges",
+        addSSHKey: "Add new SSH Key",
         networkTooltip: "Configure your IP ranges for this service. You can add IPv4 and IPv6 network ranges. " +
             "For example: <ul>" +
             "<li>Single IPv4 address 198.51.100.12 where a /32 is implied</li>" +

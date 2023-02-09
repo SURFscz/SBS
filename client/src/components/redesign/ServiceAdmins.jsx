@@ -16,7 +16,7 @@ import UserColumn from "./UserColumn";
 import {isUserServiceAdmin} from "../../utils/UserRole";
 import SpinnerField from "./SpinnerField";
 import {Tooltip} from "@surfnet/sds";
-import InstituteColumn from "./InstitueColumn";
+import InstituteColumn from "./InstituteColumn";
 import {isEmpty} from "../../utils/Utils";
 import {emitImpersonation} from "../../utils/Impersonation";
 import LastAdminWarning from "./LastAdminWarning";
