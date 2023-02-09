@@ -386,9 +386,9 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     service_membership_service_admin_1 = ServiceMembership(role="admin", user=service_admin, service=storage)
     service_membership_service_admin_2 = ServiceMembership(role="admin", user=service_admin, service=network)
     service_membership_wiki = ServiceMembership(role="admin", user=service_admin, service=wiki)
+    service_membership_mail = ServiceMembership(role="admin", user=service_admin, service=mail)
     persist_instance(db, service_membership_james, service_membership_service_admin_1,
-                     service_membership_service_admin_2,
-                     service_membership_wiki)
+                     service_membership_service_admin_2, service_membership_wiki, service_membership_mail)
 
     service_iprange_cloud_v4 = IpNetwork(network_value="82.217.86.55/24", service=cloud)
     service_iprange_cloud_v6 = IpNetwork(network_value="2001:1c02:2b2f:be00:1cf0:fd5a:a548:1a16/128", service=cloud)
