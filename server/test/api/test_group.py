@@ -139,4 +139,3 @@ class TestGroup(AbstractTest):
         self.assertEqual(group.description, group_before_update.description)
         self.assertEqual(group.global_urn, group_before_update.global_urn)
         self.assertEqual(4, len(group.collaboration_memberships))
-
