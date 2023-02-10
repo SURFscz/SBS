@@ -73,14 +73,14 @@ def save_service_group():
     confirm_service_admin(service_id)
     cleanse_short_name(data)
 
-    emit_socket(f"service_{service_id}")
-
     res = save(ServiceGroup, custom_json=data, allow_child_cascades=False)
     service_group = res[0]
     service = service_group.service
     collaborations = list(set(flatten([org.collaborations for org in service.organisations]) + service.collaborations))
     for collaboration in collaborations:
         create_service_group(service, collaboration, service_group)
+
+    emit_socket(f"service_{service_id}")
     return res
 
 
@@ -92,8 +92,6 @@ def update_service_group():
     confirm_service_admin(service_id)
 
     cleanse_short_name(data)
-
-    emit_socket(f"service_{service_id}")
 
     res = update(ServiceGroup, custom_json=data, allow_child_cascades=False)
     service_group = res[0]
@@ -117,6 +115,8 @@ def update_service_group():
         updated_group = update(Group, custom_json=group_data, allow_child_cascades=False)[0]
         auto_provision_all_members_and_invites(updated_group)
         broadcast_group_changed(updated_group)
+
+    emit_socket(f"service_{service_id}")
 
     if service_group.groups:
         emit_socket(f"collaboration_{service_group.groups[0].collaboration_id}")
