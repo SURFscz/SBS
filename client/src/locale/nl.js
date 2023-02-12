@@ -391,7 +391,7 @@ I18n.translations.nl = {
             description: "Omschrijving",
             member: "Leden",
             memberCount: "Leden",
-            service_group: "Service groep",
+            service_group: "Voor dienst",
             autoProvisioning: "Iedereen automatisch lid",
             on: "Aan",
             off: "Uit",
