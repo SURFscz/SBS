@@ -284,7 +284,7 @@ class Groups extends React.Component {
                             placeholder={I18n.t("groups.namePlaceholder")}
                             onBlur={this.validateGroupName}
                             name={I18n.t("groups.name")}
-                            disabled={!adminOfCollaboration || !isEmpty(selectedGroup.service_group_id)}/>
+                            disabled={!adminOfCollaboration || !isEmpty(selectedGroup?.service_group_id)}/>
                 {alreadyExists.name && <ErrorIndicator msg={I18n.t("groups.alreadyExists", {
                     attribute: I18n.t("groups.name").toLowerCase(),
                     value: name
@@ -304,7 +304,7 @@ class Groups extends React.Component {
                             })}
                             error={alreadyExists.short_name || (!initial && isEmpty(short_name))}
                             toolTip={I18n.t("groups.shortNameTooltip")}
-                            disabled={(!createNewGroup && !user.admin) || !isEmpty(selectedGroup.service_group_id)}/>
+                            disabled={(!createNewGroup && !user.admin) || !isEmpty(selectedGroup?.service_group_id)}/>
                 {alreadyExists.short_name && <ErrorIndicator msg={I18n.t("groups.alreadyExists", {
                     attribute: I18n.t("groups.short_name").toLowerCase(),
                     value: short_name
@@ -330,7 +330,7 @@ class Groups extends React.Component {
                             placeholder={I18n.t("groups.descriptionPlaceholder")}
                             onChange={e => this.setState({description: e.target.value})}
                             multiline={true}
-                            disabled={!adminOfCollaboration || !isEmpty(selectedGroup.service_group_id)}/>
+                            disabled={!adminOfCollaboration || !isEmpty(selectedGroup?.service_group_id)}/>
 
                 <CheckBox name="auto_provision_members" value={auto_provision_members}
                           info={I18n.t("groups.autoProvisionMembers")}
