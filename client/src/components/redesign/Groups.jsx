@@ -506,15 +506,15 @@ class Groups extends React.Component {
                     <span className="person-role me">{I18n.t("models.groups.member")}</span> : null
             },
             {
-                key: "memberCount",
-                header: I18n.t("models.groups.memberCount")
-            },
-            {
                 key: "service_group",
                 header: I18n.t("models.groups.service_group"),
                 mapper: group => group.service_group ? <a href={`/services/${group.service_group.service_id}`}
                                                           onClick={this.openService(group.service_group)}>
                     {group.service_group.service.name}</a> : ""
+            },
+            {
+                key: "memberCount",
+                header: I18n.t("models.groups.memberCount")
             },
         ]
         if (mayCreateGroups) {
