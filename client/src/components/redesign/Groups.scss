@@ -12,7 +12,7 @@ table.groups {
             }
 
             &.description {
-                width: 38%;
+                width: 32%;
             }
 
             &.member {
@@ -25,8 +25,7 @@ table.groups {
             }
 
             &.service_group {
-                width: 14%;
-                text-align: center;
+                width: 20%;
             }
 
             &.auto_provision_members {
@@ -43,10 +42,6 @@ table.groups {
             }
 
             &.memberCount {
-                text-align: center;
-            }
-
-            &.service_group {
                 text-align: center;
             }
 

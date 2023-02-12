@@ -456,6 +456,15 @@ class Groups extends React.Component {
         });
     }
 
+    openService = service_group => e => {
+        if (e.metaKey || e.ctrlKey) {
+                return;
+        }
+        stopEvent(e);
+        clearFlash();
+        this.props.history.push(`/services/${service_group.service_id}`);
+    };
+
     render() {
         const {
             loading, createNewGroup, editGroup
@@ -503,7 +512,8 @@ class Groups extends React.Component {
             {
                 key: "service_group",
                 header: I18n.t("models.groups.service_group"),
-                mapper: group => I18n.t(`forms.${group.service_group_id ? "yes" : "no"}`)
+                mapper: group => group.service_group ? <a href={`/services/${group.service_group.service_id}`}
+                                                          onClick={this.openService(group.service_group)}>{group.service_group.name}</a> : ""
             },
         ]
         if (mayCreateGroups) {
