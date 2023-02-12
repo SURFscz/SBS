@@ -276,6 +276,7 @@ def collaboration_by_id(collaboration_id):
         .options(selectinload(Collaboration.groups).selectinload(Group.collaboration_memberships)
                  .selectinload(CollaborationMembership.user)) \
         .options(selectinload(Collaboration.groups).selectinload(Group.invitations)) \
+        .options(selectinload(Collaboration.groups).selectinload(Group.service_group)) \
         .options(selectinload(Collaboration.invitations).selectinload(Invitation.user)) \
         .options(selectinload(Collaboration.join_requests).selectinload(JoinRequest.user)) \
         .options(selectinload(Collaboration.services)) \
