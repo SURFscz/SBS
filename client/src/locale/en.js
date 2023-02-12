@@ -391,7 +391,7 @@ I18n.translations.en = {
             description: "Description",
             member: "Member",
             memberCount: "Members",
-            service_group: "Service group",
+            service_group: "For Service",
             autoProvisioning: "Auto provisioning",
             on: "On",
             off: "Off",
