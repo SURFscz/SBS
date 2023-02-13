@@ -608,7 +608,7 @@ class ServiceOverview extends React.Component {
                           value={service.sweep_remove_orphans && service.sweep_scim_enabled}
                           tooltip={I18n.t("scim.scimSweepDeleteOrphansTooltip")}
                           info={I18n.t("scim.scimSweepDeleteOrphans")}
-                          readOnly={!service.sweep_scim_enabled}
+                          readOnly={!service.scim_enabled || !service.sweep_scim_enabled}
                           onChange={e => this.setState({
                               "service": {
                                   ...service,
@@ -777,15 +777,7 @@ class ServiceOverview extends React.Component {
                             disabled={true}/>
                 <div className="ip-networks">
                     <label className="title" htmlFor={I18n.t("service.network")}>{I18n.t("service.network")}
-                        <span className="tool-tip-section">
-                <span data-tip data-for={I18n.t("service.network")}>
-                <FontAwesomeIcon icon="info-circle"/>
-                </span>
-                <ReactTooltip id={I18n.t("service.network")} type="light" effect="solid"
-                              data-html={true}>
-                <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("service.networkTooltip"))}}/>
-                </ReactTooltip>
-                </span>
+                        <Tooltip tip={I18n.t("service.networkTooltip")}/>
                         {(isAdmin || isServiceAdmin) &&
                         <span className="add-network" onClick={() => this.addIpAddress()}><FontAwesomeIcon
                             icon="plus"/></span>}
