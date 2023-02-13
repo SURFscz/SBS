@@ -296,6 +296,9 @@ class Collaboration(Base, db.Model, LogoMixin):
                 return True
         return False
 
+    def admin_emails(self):
+        return [m.user.email for m in self.collaboration_memberships if m.role == "admin"]
+
     def service_emails(self):
         services = self.services + self.organisation.services
         res = {}

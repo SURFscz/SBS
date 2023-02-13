@@ -323,6 +323,10 @@ export function mayRequestCollaboration() {
     return fetchJson("/api/collaborations/may_request_collaboration");
 }
 
+export function collaborationAdmins(service) {
+    return service ? fetchJson(`/api/collaborations/admins/${service.id}`) : Promise.resolve([]);
+}
+
 export function unsuspendCollaboration(collaborationId) {
     return postPutJson("/api/collaborations/unsuspend", {collaboration_id: collaborationId}, "put");
 }

@@ -125,6 +125,15 @@
         }
     }
 
+    svg.impersonate {
+        width: 40px;
+        height: auto;
+        cursor: pointer;
+        fill: #737373;
+        padding: 5px;
+    }
+
+
     table {
         width: 100%;
         table-layout: fixed;
@@ -193,7 +202,7 @@
 
                 .admin-icons {
                     display: none;
-                    margin-left: auto;
+                    margin: auto 0;
 
                     svg {
                         color: $dark-grey;
@@ -219,6 +228,7 @@
 
             td {
                 word-break: break-all;
+                vertical-align: middle;
 
                 &.center {
                     text-align: center;

@@ -16,14 +16,14 @@ from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_collaboration_member, \
     confirm_authorized_api_call, \
     confirm_allow_impersonation, confirm_organisation_admin_or_manager, confirm_external_api_call, \
-    is_organisation_admin_or_manager, is_application_admin
+    is_organisation_admin_or_manager, is_application_admin, confirm_service_admin
 from server.db.db import db
 from server.db.defaults import (default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name,
                                 STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED, valid_uri_attributes, valid_tag_label,
                                 uri_re, max_logo_bytes)
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
-    Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag, ServiceGroup
-from server.db.models import update, save, delete
+    Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag, ServiceGroup, ServiceMembership
+from server.db.models import update, save, delete, flatten, unique_model_objects
 from server.mail import mail_collaboration_invitation
 from server.scim.events import broadcast_collaboration_changed, broadcast_collaboration_deleted
 
@@ -65,6 +65,15 @@ def _reconcile_tags(collaboration: Collaboration, tags, is_external_api=False):
             collaboration.tags.append(Tag.query.get(tag_id))
         for tag_value in new_tags:
             collaboration.tags.append(Tag(tag_value=tag_value))
+
+
+@collaboration_api.route("/admins/<service_id>", strict_slashes=False)
+@json_endpoint
+def collaboration_admins(service_id):
+    confirm_service_admin(service_id)
+    service = Service.query.get(service_id)
+    collaborations = service.collaborations + flatten([o.collaborations for o in service.organisations])
+    return {c.name: c.admin_emails() for c in unique_model_objects(collaborations)}, 200
 
 
 @collaboration_api.route("/find_by_identifier", strict_slashes=False)

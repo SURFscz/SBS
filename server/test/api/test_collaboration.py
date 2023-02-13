@@ -8,11 +8,12 @@ from sqlalchemy import text
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, Organisation, Invitation, CollaborationMembership, User, Group, \
-    ServiceGroup, Tag
+    ServiceGroup, Tag, Service
 from server.db.models import flatten
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uva_research_name, john_name, \
-    ai_computing_short_name, uuc_teachers_name, read_image, collaboration_uva_researcher_uuid, service_group_wiki_name1
+    ai_computing_short_name, uuc_teachers_name, read_image, collaboration_uva_researcher_uuid, service_group_wiki_name1, \
+    service_storage_name
 from server.test.seed import uuc_secret, uuc_name
 
 
@@ -771,3 +772,9 @@ class TestCollaboration(AbstractTest):
             self.assertTrue("in the past" in response.json["message"])
         finally:
             self.app.app_config.feature.past_dates_allowed = True
+
+    def test_collaboration_admins(self):
+        self.login("urn:service_admin")
+        service = self.find_entity_by_name(Service, service_storage_name)
+        res = self.get(f"/api/collaborations/admins/{service.id}")
+        self.assertDictEqual({"UVA UCC research": ["sarah@uva.org"]}, res)

@@ -1,5 +1,6 @@
-button.sds--btn  {
-    svg.trash-svg {
+button.sds--btn, a.sds--btn {
+    svg.trash-svg, svg.bin-svg, svg.email-svg {
         width: 18px;
+
     }
 }

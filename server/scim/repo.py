@@ -1,12 +1,5 @@
-from typing import List, Union
-
 from server.db.domain import User, CollaborationMembership, Collaboration, Service, Organisation
-from server.db.models import flatten
-
-
-def _unique_scim_objects(objects: List[Union[User, Collaboration, Service]]):
-    seen = set()
-    return [obj for obj in objects if obj.id not in seen and not seen.add(obj.id)]
+from server.db.models import flatten, unique_model_objects
 
 
 def all_scim_users_by_service(service):
@@ -23,7 +16,7 @@ def all_scim_users_by_service(service):
         .join(Organisation.services) \
         .filter(Service.id == service.id) \
         .all()
-    users = _unique_scim_objects(users_from_collaborations + users_from_organisations)
+    users = unique_model_objects(users_from_collaborations + users_from_organisations)
     return users
 
 
@@ -37,6 +30,6 @@ def all_scim_groups_by_service(service):
         .join(Organisation.services) \
         .filter(Service.id == service.id) \
         .all()
-    collaborations = _unique_scim_objects(service_collaborations + service_organisation_collaborations)
+    collaborations = unique_model_objects(service_collaborations + service_organisation_collaborations)
     groups = flatten(co.groups for co in collaborations)
     return collaborations + groups
