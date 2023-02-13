@@ -1,5 +1,6 @@
 import logging
 import urllib.parse
+from functools import wraps
 from typing import Union, List
 
 import requests
@@ -11,6 +12,19 @@ from server.logger.context_logger import ctx_logger
 from server.scim import EXTERNAL_ID_POST_FIX, SCIM_USERS, SCIM_GROUPS
 from server.scim.group_template import update_group_template, create_group_template, scim_member_object
 from server.scim.user_template import create_user_template, update_user_template, replace_none_values
+
+
+def apply_change(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        except Exception as e:
+            logger = logging.getLogger("scim")
+            logger.error("Error in applying SCIM change", exc_info=1)
+            raise e
+
+    return wrapper
 
 
 def _log_scim_error(response, service, outside_user_context):
@@ -151,6 +165,7 @@ def _do_apply_group_collaboration_change(group: Union[Group, Collaboration], ser
 
 
 # User has been updated. Propagate the changes to the remote SCIM DB to all connected SCIM services
+@apply_change
 def apply_user_change(app, user_id):
     with app.app_context():
         user = User.query.filter(User.id == user_id).one()
@@ -159,6 +174,7 @@ def apply_user_change(app, user_id):
 
 
 # User has been deleted. Propagate the changes to the remote SCIM DB to all connected SCIM services
+@apply_change
 def apply_user_deletion(app, external_id, collaboration_identifiers: List[int]):
     with app.app_context():
         collaborations = Collaboration.query.filter(Collaboration.id.in_(collaboration_identifiers)).all()
@@ -179,6 +195,7 @@ def apply_user_deletion(app, external_id, collaboration_identifiers: List[int]):
 
 
 # Collaboration has been created, updated or deleted. Propagate the changes to the remote SCIM DB's
+@apply_change
 def apply_collaboration_change(app, collaboration_id: int, deletion=False):
     with app.app_context():
         collaboration = Collaboration.query.filter(Collaboration.id == collaboration_id).one()
@@ -189,6 +206,7 @@ def apply_collaboration_change(app, collaboration_id: int, deletion=False):
 
 
 # Group has been created, updated or deleted. Propagate the changes to the remote SCIM DB's
+@apply_change
 def apply_group_change(app, group_id: int, deletion=False):
     with app.app_context():
         group = Group.query.filter(Group.id == group_id).one()
@@ -197,6 +215,7 @@ def apply_group_change(app, group_id: int, deletion=False):
 
 
 # Service has been added to collaboration or removed from collaboration
+@apply_change
 def apply_service_changed(app, collaboration_id, service_id, deletion=False):
     with app.app_context():
         collaboration = Collaboration.query.filter(Collaboration.id == collaboration_id).one()
@@ -207,6 +226,7 @@ def apply_service_changed(app, collaboration_id, service_id, deletion=False):
 
 
 # Organisation has a new service or a service is deleted from an organisation
+@apply_change
 def apply_organisation_change(app, organisation_id: int, service_id: int, deletion=False):
     with app.app_context():
         results = []

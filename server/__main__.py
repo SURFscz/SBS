@@ -164,6 +164,7 @@ app.db = db
 app.redis_client = init_redis(config)
 
 # Initialize the executors to be used in broadcasting SCIM changes
+app.config["EXECUTOR_PROPAGATE_EXCEPTIONS"] = True
 init_executor(app, blocking=False)
 
 app.app_config = config
