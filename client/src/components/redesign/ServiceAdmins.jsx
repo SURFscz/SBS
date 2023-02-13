@@ -4,6 +4,7 @@ import Entities from "./Entities";
 import {ReactComponent as UserIcon} from "../../icons/users.svg";
 import {ReactComponent as InviteIcon} from "../../icons/single-neutral-question.svg";
 import {ReactComponent as HandIcon} from "../../icons/puppet_new.svg";
+import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 import CheckBox from "../CheckBox";
 import {deleteServiceMembership, serviceInvitationBulkResend, serviceInvitationDelete} from "../../api";
 import {setFlash} from "../../utils/Flash";
@@ -246,7 +247,7 @@ class ServiceAdmins extends React.Component {
                                           txt={I18n.t("models.orgMembers.remove")}
                                           anchorId={"delete-service-members"}
                                           small={true}
-                                          icon={<FontAwesomeIcon icon="trash"/>}/>}/>
+                                          icon={<ThrashIcon/>}/>}/>
                 </div>}
 
                 {showResendInvite && <div>
@@ -272,7 +273,7 @@ class ServiceAdmins extends React.Component {
                         I18n.t("models.orgMembers.removeMemberTooltip")}
                              anchorId={`delete-org-member-${entity.id}`}
                              standalone={true}
-                             children={<FontAwesomeIcon icon="trash"/>}/>
+                             children={<ThrashIcon/>}/>
                 </div>
                 {showResendInvite &&
                 <div onClick={this.resendFromActionMenu(entity.id, true)}>

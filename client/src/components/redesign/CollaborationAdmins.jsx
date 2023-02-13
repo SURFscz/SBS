@@ -465,7 +465,7 @@ class CollaborationAdmins extends React.Component {
                                      return true;
                                  }
                              }}>
-                                 {I18n.t("models.orgMembers.mail")}<FontAwesomeIcon icon="mail-bulk"/>
+                                 {I18n.t("models.orgMembers.mail")}<EmailIcon/>
                              </a>}/>
 
                 </div>}

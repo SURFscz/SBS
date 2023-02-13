@@ -231,6 +231,7 @@ I18n.translations.nl = {
             removeTooltip: "Verwijder alle geselecteerde leden",
             mailTooltipDisabled: "Selecteer eerst gebruikers om te e-mailen",
             mailTooltip: "E-mail alle geselecteerde leden",
+            mailAdminTooltip: "E-mail beheerders",
             mailMemberTooltip: "E-mail lid",
             mailInvitationTooltip: "E-mail invitee",
             resendTooltipDisabled: "Selecteer eerst verlopen uitnodigingen om opnieuw te versturen",

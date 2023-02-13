@@ -15,9 +15,8 @@ from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, cleanse_short_name, default_expiry_date, valid_uri_attributes
 from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, \
     User, ServiceInvitation, ServiceMembership, ServiceToken
-from server.db.models import update, save, delete
+from server.db.models import update, save, delete, unique_model_objects
 from server.mail import mail_platform_admins, mail_service_invitation
-from server.scim.repo import _unique_scim_objects
 
 URI_ATTRIBUTES = ["uri", "uri_info", "privacy_policy", "accepted_user_policy"]
 
@@ -309,7 +308,7 @@ def user_services(user_id):
     services = services_from_organisation_memberships(user_id)
     services += services_from_organisation_collaboration_memberships(user_id)
     services += services_from_collaboration_memberships(user_id)
-    return [convert_service(service) for service in _unique_scim_objects(services)], 200
+    return [convert_service(service) for service in unique_model_objects(services)], 200
 
 
 @service_api.route("/", methods=["POST"], strict_slashes=False)

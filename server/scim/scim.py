@@ -7,7 +7,7 @@ import requests
 
 from server.api.base import application_base_url
 from server.db.domain import Service, User, Group, Collaboration, Organisation
-from server.db.models import flatten
+from server.db.models import flatten, unique_model_objects
 from server.logger.context_logger import ctx_logger
 from server.scim import EXTERNAL_ID_POST_FIX, SCIM_USERS, SCIM_GROUPS
 from server.scim.group_template import update_group_template, create_group_template, scim_member_object
@@ -52,8 +52,7 @@ def scim_headers(service: Service, is_delete=False):
 
 # Remove duplicates from services
 def _unique_scim_services(services: List[Service]):
-    seen = set()
-    return [s for s in services if s.id not in seen and not seen.add(s.id) and s.scim_enabled]
+    return [s for s in unique_model_objects(services) if s.scim_enabled]
 
 
 # Is the user connected - through memberships excluding collaboration_to_exclude - to the service

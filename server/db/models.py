@@ -163,3 +163,8 @@ def log_user_login(login_type, succeeded, user, uid, service, service_entity_id,
                            service_entity_id=service_entity_id)
     db.session.merge(user_login)
     db.session.commit()
+
+
+def unique_model_objects(objects):
+    seen = set()
+    return [obj for obj in objects if obj.id not in seen and not seen.add(obj.id)]

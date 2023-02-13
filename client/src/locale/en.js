@@ -231,6 +231,7 @@ I18n.translations.en = {
             removeTooltip: "Delete all selected members",
             mailTooltipDisabled: "First select users to email",
             mailTooltip: "Email all selected members",
+            mailAdminTooltip: "Email admins",
             mailMemberTooltip: "Email member",
             mailInvitationTooltip: "Email invitee",
             resendTooltipDisabled: "First select expired invitations to resend",

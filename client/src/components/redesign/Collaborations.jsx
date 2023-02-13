@@ -6,20 +6,27 @@ import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
 import Button from "../Button";
-import {allCollaborations, deleteCollaborationServices, mayRequestCollaboration, myCollaborations} from "../../api";
+import {
+    allCollaborations,
+    collaborationAdmins,
+    deleteCollaborationServices,
+    mayRequestCollaboration,
+    myCollaborations
+} from "../../api";
 import SpinnerField from "./SpinnerField";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
 import CheckBox from "../CheckBox";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Tooltip} from "@surfnet/sds";
 import ConfirmationDialog from "../ConfirmationDialog";
 
-import {ReactComponent as InformationCircle} from "../../icons/information-circle.svg";
+import {ReactComponent as InformationCircle} from "@surfnet/sds/icons/functional-icons/info.svg";
 import {clearFlash, setFlash} from "../../utils/Flash";
 import Select from "react-select";
 import {displayExpiryDate, displayLastActivityDate} from "../../utils/Date";
 import moment from "moment";
+import {ReactComponent as EmailIcon} from "../../icons/email_new.svg";
+import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 
 const allValue = "all";
 
@@ -34,6 +41,7 @@ export default class Collaborations extends React.PureComponent {
             selectedCollaborations: {},
             filterOptions: [],
             filterValue: {},
+            collaborationAdminEmails: {},
             confirmationDialogOpen: false,
             confirmationTxt: I18n.t("confirmationDialog.confirm"),
             confirmationDialogAction: () => true,
@@ -44,16 +52,17 @@ export default class Collaborations extends React.PureComponent {
     }
 
     componentDidMount = () => {
-        const {collaborations, user, showTagFilter = false, platformAdmin = false} = this.props;
-        const promises = [mayRequestCollaboration()];
+        const {collaborations, user, service, showTagFilter = false, platformAdmin = false} = this.props;
+        const promises = [mayRequestCollaboration(), collaborationAdmins(service)];
         if (collaborations === undefined) {
             Promise.all(promises.concat([platformAdmin ? allCollaborations() : myCollaborations()])).then(res => {
-                const allFilterOptions = this.allLabelFilterOptions(res[1], showTagFilter);
-                this.addRoleInformation(user, res[1]);
+                const allFilterOptions = this.allLabelFilterOptions(res[2], showTagFilter);
+                this.addRoleInformation(user, res[2]);
                 this.setState({
                     standalone: true,
-                    collaborations: res[1],
                     showRequestCollaboration: res[0],
+                    collaborationAdminEmails: res[1],
+                    collaborations: res[2],
                     filterOptions: allFilterOptions,
                     filterValue: allFilterOptions[0],
                     loading: false
@@ -65,7 +74,8 @@ export default class Collaborations extends React.PureComponent {
             this.addRoleInformation(user, collaborations);
             Promise.all(promises).then(res => {
                 this.setState({
-                    showRequestCollaboration: res,
+                    showRequestCollaboration: res[0],
+                    collaborationAdminEmails: res[1],
                     filterOptions: allFilterOptions,
                     filterValue: allFilterOptions[0],
                     loading: false
@@ -152,36 +162,65 @@ export default class Collaborations extends React.PureComponent {
         }
     }
 
-    actionButtons = selectedCollaborations => {
+    actionButtons = (selectedCollaborations, collaborationAdminEmails, collaborations) => {
         const selected = Object.values(selectedCollaborations).filter(v => v);
         const anySelected = selected.length > 0;
         if (!anySelected) {
             return null;
         }
+        const names = collaborations.filter(coll => selectedCollaborations[coll.id]).map(coll => coll.name);
+        const adminEmails = Object.keys(collaborationAdminEmails)
+            .filter(name => names.includes(name))
+            .map(name => collaborationAdminEmails[name]);
+        const hrefValue = encodeURI(adminEmails.join(","));
         return (
             <div className="admin-actions">
                 <Tooltip standalone={true} children={
-                    <Button
-                        onClick={() => this.removeCollaboration(true)}
-                        small={true}
-                        txt={I18n.t("models.serviceCollaborations.disconnect")}
-                        icon={<FontAwesomeIcon icon="trash"/>}/>}
-                         tip={I18n.t("models.serviceCollaborations.disconnectTooltip")}
-                />
+                    <Button onClick={() => this.removeCollaboration(true)}
+                            small={true}
+                            txt={I18n.t("models.serviceCollaborations.disconnect")}
+                            icon={<ThrashIcon/>}
+                            tip={I18n.t("models.serviceCollaborations.disconnectTooltip")}
+                />}/>
+                {adminEmails.length > 0 &&
+                <div>
+                    <Tooltip standalone={true}
+                             tip={I18n.t("models.orgMembers.mailTooltip")}
+                             children={<a href={`mailto:?bcc=${hrefValue}`}
+                                          className="sds--btn sds--btn--primary sds--btn--small"
+                                          style={{border: "none", cursor: "default"}}
+                                          rel="noopener noreferrer">
+                                 {I18n.t("models.orgMembers.mail")}<EmailIcon/>
+                             </a>}/>
+
+                </div>}
+
             </div>);
     }
 
-    getActionIcons = entity => {
-        if (!entity.fromCollaboration) {
-            return null;
-        }
+    getActionIcons = (entity, collaborationAdminEmails) => {
+        const hrefValue = encodeURI((collaborationAdminEmails[entity.name] || []).join(","));
+        const bcc = (entity.disclose_email_information && entity.disclose_member_information) ? "" : "?bcc=";
         return (
             <div className={"action-icons-container"}>
                 <div className="admin-icons">
-                    <div onClick={() => this.removeCollaboration(true, entity.id)}>
-                        <Tooltip standalone={true} tip={I18n.t("models.serviceCollaborations.disconnectOneTooltip")}
-                                 children={<FontAwesomeIcon icon="trash"/>}/>
-                    </div>
+                    {!isEmpty(hrefValue) && <div>
+                        <a href={`mailto:${bcc}${hrefValue}`}
+                           rel="noopener noreferrer">
+                            <Tooltip
+                                tip={I18n.t("models.orgMembers.mailAdminTooltip")}
+                                anchorId={`mail-member-${entity.id}`}
+                                standalone={true}
+                                children={<EmailIcon/>}/>
+                        </a>
+                    </div>}
+                    {entity.fromCollaboration && <div
+                        onClick={() => this.removeCollaboration(true, entity.id)}>
+                        <Tooltip standalone={true}
+                                 tip={I18n.t("models.serviceCollaborations.disconnectOneTooltip")}
+                                 children={<ThrashIcon/>}/>
+                    </div>}
+
                 </div>
             </div>
         );
@@ -223,6 +262,7 @@ export default class Collaborations extends React.PureComponent {
             selectedCollaborations,
             filterOptions,
             filterValue,
+            collaborationAdminEmails,
             confirmationDialogOpen,
             cancelDialogAction,
             confirmationDialogAction,
@@ -382,7 +422,7 @@ export default class Collaborations extends React.PureComponent {
                     nonSortable: true,
                     key: "action-icons",
                     header: "",
-                    mapper: entity => this.getActionIcons(entity)
+                    mapper: entity => this.getActionIcons(entity, collaborationAdminEmails)
                 },
             )
         }
@@ -415,7 +455,7 @@ export default class Collaborations extends React.PureComponent {
                           onHover={true}
                           filters={this.filters(filterOptions, filterValue, showTagFilter)}
                           actionHeader={"collaboration-services"}
-                          actions={serviceModule ? this.actionButtons(selectedCollaborations) : null}
+                          actions={serviceModule ? this.actionButtons(selectedCollaborations, collaborationAdminEmails, collaborations) : null}
                           showNew={(mayCreateCollaborations || showRequestCollaboration) && mayCreate}
                           newEntityPath={`/new-collaboration${organisationQueryParam}`}
                           loading={loading}
