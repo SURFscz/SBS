@@ -22,7 +22,7 @@ from server.db.defaults import (default_expiry_date, full_text_search_autocomple
                                 STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED, valid_uri_attributes, valid_tag_label,
                                 uri_re, max_logo_bytes)
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
-    Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag, ServiceGroup, ServiceMembership
+    Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag, ServiceGroup
 from server.db.models import update, save, delete, flatten, unique_model_objects
 from server.mail import mail_collaboration_invitation
 from server.scim.events import broadcast_collaboration_changed, broadcast_collaboration_deleted
