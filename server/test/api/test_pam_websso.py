@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 
+import requests
+
 from server.db.db import db
 from server.db.domain import PamSSOSession, User, Service
 from server.test.abstract_test import AbstractTest
@@ -104,6 +106,14 @@ class TestPamWebSSO(AbstractTest):
                         headers={"Authorization": f"bearer {service_storage_token}"})
 
         self.assertEqual(res["cached"], True)
+
+    def test_check_pin_fail(self):
+        with requests.Session():
+            response = self.client.post("/pam-weblogin/check-pin",
+                                        headers={"Authorization": f"bearer {service_storage_token}"},
+                                        data="faulty")
+            res = response.json
+            self.assertEqual("FAIL", res["result"])
 
     def test_check_pin_success(self):
         self.login("urn:peter")
