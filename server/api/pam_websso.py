@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app, session
-from werkzeug.exceptions import NotFound, Forbidden
+from werkzeug.exceptions import NotFound, Forbidden, BadRequest
 
 from server.api.base import json_endpoint
 from server.api.service import user_service
@@ -134,8 +134,12 @@ def check_pin():
     service = validate_service_token("pam_web_sso_enabled")
 
     logger = ctx_logger("pam_weblogin")
+    try:
+        data = current_request.get_json()
+    except BadRequest:
+        logger.error("BadRequest in /api.pam/check-pin", exc_info=1)
+        return {"result": "FAIL", "info": "Invalid JSON"}, 201
 
-    data = current_request.get_json()
     session_id = data["session_id"]
     pin = data["pin"]
     try:

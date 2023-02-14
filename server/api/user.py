@@ -686,16 +686,17 @@ def delete_other_user(user_id):
 @json_endpoint
 def error():
     request_json = current_request.json
-    if request_json.get("status", 429) == 429:
+    if request_json.get("status") == 429:
         return {}, 201
     user = current_user()
-    user_id = user.get("email", user.get("name", user.get("id")))
+    user_id = user.get("id")
     if not user_id:
         return {}, 201
     js_dump = json.dumps(request_json, default=str)
     ctx_logger("user").exception(js_dump)
     mail_conf = current_app.app_config.mail
     if mail_conf.send_js_exceptions and not os.environ.get("TESTING"):
+        user_id = user.get("email") or user.get("name") or user_id
         mail_error(mail_conf.environment, user_id, mail_conf.send_exceptions_recipients, js_dump)
 
     return {}, 201
