@@ -8,7 +8,6 @@ white_listing = [
     "/api/mock",
     "/api/organisation_invitations/find_by_hash",
     "/api/tokens/introspect",
-    "/api/users/error",
     "/api/aup/info",
     "/api/service_connection_requests/approve",
     "/api/service_connection_requests/deny",
