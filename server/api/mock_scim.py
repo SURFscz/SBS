@@ -199,13 +199,6 @@ def statistics():
     return res, 200
 
 
-@scim_mock_api.route("/scim-services", methods=["GET"], strict_slashes=False)
-@json_endpoint
-def scim_service():
-    confirm_write_access()
-    return Service.query.filter(Service.scim_enabled == True).all(), 200  # noqa: E712
-
-
 @scim_mock_api.route("/clear", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def clear():

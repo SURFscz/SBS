@@ -144,3 +144,10 @@ def sweep():
         confirm_write_access()
         service = Service.query.get(query_param("service_id"))
     return perform_sweep(service), 201
+
+
+@scim_api.route("/scim-services", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def scim_service():
+    confirm_write_access()
+    return Service.query.filter(Service.scim_enabled == True).all(), 200  # noqa: E712

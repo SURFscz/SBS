@@ -155,6 +155,7 @@ class Scim extends React.Component {
             services, loading, statistics, confirmationDialogOpen, confirmationDialogAction,
             confirmationDialogQuestion, sweepResults, sweepService, sweepTime
         } = this.state;
+        const {mock_scim_enabled} = this.props.config;
         if (loading) {
             return <SpinnerField/>;
         }
@@ -165,14 +166,14 @@ class Scim extends React.Component {
                                     cancel={() => this.setState({confirmationDialogOpen: false})}
                                     confirm={confirmationDialogAction}
                                     question={confirmationDialogQuestion}/>
-                <div className="service-entities">
+                {mock_scim_enabled && <div className="service-entities">
                     <p>{I18n.t("system.scim.info")}</p>
                     <InputField value={scimMockUrl}
                                 disabled={true}
                                 displayLabel={false}
                                 copyClipBoard={true}/>
-                </div>
-                <div className="info-block">
+                </div>}
+                {mock_scim_enabled && <div className="info-block">
                     <p>{I18n.t("system.scim.stats")}</p>
                     <div className="actions">
                         {isEmpty(statistics) && <Button txt={I18n.t("system.scim.retrieveStats")}
@@ -183,7 +184,7 @@ class Scim extends React.Component {
                                                          onClick={() => this.clearStatistics(true)}
                                                          cancelButton={true}/>}
                     </div>
-                </div>
+                </div>}
                 {statistics && <div className="info-block">
                     {this.renderStatistics(statistics)}
                 </div>}
