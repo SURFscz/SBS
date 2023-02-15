@@ -281,7 +281,7 @@ class System extends React.Component {
                         <CheckBox name={"toggle-json"}
                                   value={plscView}
                                   info={I18n.t("system.toggleJson")}
-                                  onChange={() => this.setState({plscView: !plscView})} />
+                                  onChange={() => this.setState({plscView: !plscView})}/>
                         <ClipBoardCopy txt={plscJson}/>
                     </div>
                     {plscView &&

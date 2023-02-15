@@ -110,3 +110,8 @@ class TestScim(AbstractTest):
             sweep_result = self.put(f"/api/scim/v2/sweep?service_id={service.id}", with_basic_auth=True)
             self.assertEqual(0, len(sweep_result["groups"]["created"]))
             self.assertEqual(0, len(sweep_result["users"]["created"]))
+
+    def test_scim_services(self):
+        self.login("urn:john")
+        scim_services = self.get("/api/scim/v2/scim-services", with_basic_auth=False)
+        self.assertEqual(3, len(scim_services))

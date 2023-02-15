@@ -902,7 +902,7 @@ export function deleteServiceToken(id) {
 
 //Mock-SCIM
 export function allMockScimServices() {
-    return fetchJson("/api/scim_mock/scim-services")
+    return fetchJson("/api/scim/v2/scim-services")
 }
 
 export function mockScimStatistics() {
