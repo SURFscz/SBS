@@ -331,20 +331,21 @@ class ServiceOverview extends React.Component {
     };
 
     isValid = () => {
-        const {required, alreadyExists, invalidInputs, hasAdministrators, service, validatingNetwork}
+        const {required, alreadyExists, invalidInputs, hasAdministrators, service, validatingNetwork, initial}
             = this.state;
-        const {contact_email, ip_networks} = service;
+        const {contact_email, ip_networks, scim_enabled, scim_url} = service;
         const inValid = Object.values(alreadyExists).some(val => val) ||
             required.some(attr => isEmpty(service[attr])) ||
             Object.keys(invalidInputs).some(key => invalidInputs[key]);
         const contactEmailRequired = !hasAdministrators && isEmpty(contact_email);
         const invalidIpNetworks = ip_networks.some(ipNetwork => ipNetwork.error || (ipNetwork.version === 6 && !ipNetwork.global));
-        const valid = !inValid && !contactEmailRequired && !invalidIpNetworks && !validatingNetwork;
+        const scimInvalid = scim_enabled && isEmpty(scim_url) && !initial;
+        const valid = !inValid && !contactEmailRequired && !invalidIpNetworks && !validatingNetwork && !scimInvalid;
         return valid;
     };
 
     isValidTab = tab => {
-        const {alreadyExists, invalidInputs, hasAdministrators, service}
+        const {alreadyExists, invalidInputs, hasAdministrators, service, initial}
             = this.state;
         const {contact_email, ip_networks} = service;
         const contactEmailRequired = !hasAdministrators && isEmpty(contact_email);
@@ -367,67 +368,69 @@ class ServiceOverview extends React.Component {
             case "pamWebLogin":
                 return true;
             case "SCIM":
-                return !invalidInputs.scim_url;
+                return !invalidInputs.scim_url && !(service.scim_enabled && isEmpty(service.scim_url) && !initial);
             default:
                 throw new Error("unknown-tab")
         }
     };
 
     submit = override => {
-        if (this.isValid()) {
-            const {
-                service, hasServiceTokens, serviceTokensEnabled,
-                selectedAutomaticConnectionAllowedOrganisations
-            } = this.state;
-            if (serviceTokensEnabled && hasServiceTokens && !service.token_enabled && !service.pam_web_sso_enabled && !override) {
-                const count = service.service_tokens.length;
-                this.setState({
-                    confirmationDialogOpen: true,
-                    leavePage: false,
-                    confirmationDialogQuestion: I18n.t("serviceDetails.disableTokenConfirmation",
-                        {
-                            count: count,
-                            tokens: I18n.t(`serviceDetails.${count > 1 ? "multiple" : "single"}Tokens`)
-                        }),
-                    warning: true,
-                    confirmationTxt: I18n.t("confirmationDialog.confirm"),
-                    cancelDialogAction: this.closeConfirmationDialog,
-                    confirmationHeader: I18n.t("confirmationDialog.title"),
-                    confirmationDialogAction: () => this.submit(true)
-                });
-            } else {
-                this.setState({loading: true});
+        this.setState({initial: false}, () => {
+            if (this.isValid()) {
+                const {
+                    service, hasServiceTokens, serviceTokensEnabled,
+                    selectedAutomaticConnectionAllowedOrganisations
+                } = this.state;
+                if (serviceTokensEnabled && hasServiceTokens && !service.token_enabled && !service.pam_web_sso_enabled && !override) {
+                    const count = service.service_tokens.length;
+                    this.setState({
+                        confirmationDialogOpen: true,
+                        leavePage: false,
+                        confirmationDialogQuestion: I18n.t("serviceDetails.disableTokenConfirmation",
+                            {
+                                count: count,
+                                tokens: I18n.t(`serviceDetails.${count > 1 ? "multiple" : "single"}Tokens`)
+                            }),
+                        warning: true,
+                        confirmationTxt: I18n.t("confirmationDialog.confirm"),
+                        cancelDialogAction: this.closeConfirmationDialog,
+                        confirmationHeader: I18n.t("confirmationDialog.title"),
+                        confirmationDialogAction: () => this.submit(true)
+                    });
+                } else {
+                    this.setState({loading: true});
 
-                const {name, ip_networks} = service;
-                const strippedIpNetworks = ip_networks
-                    .filter(network => network.network_value && network.network_value.trim())
-                    .map(network => ({network_value: network.network_value, id: network.id}));
-                // Prevent deletion / re-creation of existing IP Network
-                strippedIpNetworks.forEach(network => {
-                    if (isEmpty(network.id)) {
-                        delete network.id;
-                    } else {
-                        network.id = parseInt(network.id, 10)
-                    }
-                });
-                ["entity_id"].forEach(attr => service[attr] = service[attr] ? service[attr].trim() : null)
-                this.setState({
-                    service:
-                        {
-                            ...service,
-                            ip_networks: strippedIpNetworks,
-                            automatic_connection_allowed_organisations: selectedAutomaticConnectionAllowedOrganisations,
-                            sweep_scim_daily_rate: service.sweep_scim_daily_rate ? service.sweep_scim_daily_rate.value : 0
+                    const {name, ip_networks} = service;
+                    const strippedIpNetworks = ip_networks
+                        .filter(network => network.network_value && network.network_value.trim())
+                        .map(network => ({network_value: network.network_value, id: network.id}));
+                    // Prevent deletion / re-creation of existing IP Network
+                    strippedIpNetworks.forEach(network => {
+                        if (isEmpty(network.id)) {
+                            delete network.id;
+                        } else {
+                            network.id = parseInt(network.id, 10)
                         }
-                }, () => {
-                    updateService(this.state.service)
-                        .then(() => this.afterUpdate(name, "updated"))
-                        .catch(() => this.setState({loading: false}));
-                });
+                    });
+                    ["entity_id"].forEach(attr => service[attr] = service[attr] ? service[attr].trim() : null)
+                    this.setState({
+                        service:
+                            {
+                                ...service,
+                                ip_networks: strippedIpNetworks,
+                                automatic_connection_allowed_organisations: selectedAutomaticConnectionAllowedOrganisations,
+                                sweep_scim_daily_rate: service.sweep_scim_daily_rate ? service.sweep_scim_daily_rate.value : 0
+                            }
+                    }, () => {
+                        updateService(this.state.service)
+                            .then(() => this.afterUpdate(name, "updated"))
+                            .catch(() => this.setState({loading: false}));
+                    });
+                }
+            } else {
+                window.scrollTo(0, 0);
             }
-        } else {
-            window.scrollTo(0, 0);
-        }
+        });
     };
 
     afterUpdate = (name, action) => {
@@ -551,7 +554,7 @@ class ServiceOverview extends React.Component {
             </div>)
     }
 
-    renderSCIM = (service, isAdmin, showServiceAdminView, alreadyExists, invalidInputs) => {
+    renderSCIM = (service, isAdmin, showServiceAdminView, alreadyExists, invalidInputs, initial) => {
         let sweepScimDailyRate = null;
         if (service.sweep_scim_enabled && service.sweep_scim_daily_rate && service.sweep_scim_daily_rate.value) {
             sweepScimDailyRate = service.sweep_scim_daily_rate
@@ -577,11 +580,15 @@ class ServiceOverview extends React.Component {
                             onChange={e => this.changeServiceProperty("scim_url", false, alreadyExists,
                                 {...invalidInputs, scim_url: false})(e)}
                             toolTip={I18n.t("scim.scimURLTooltip")}
-                            error={invalidInputs.scim_url}
+                            error={invalidInputs.scim_url || (!initial && isEmpty(service.scim_url) && service.scim_enabled)}
                             onBlur={this.validateURI("scim_url")}
                             disabled={!isAdmin || showServiceAdminView || !service.scim_enabled}/>
                 {invalidInputs.scim_url &&
                 <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
+                {(!initial && isEmpty(service.scim_url) && service.scim_enabled) &&
+                <ErrorIndicator msg={I18n.t("models.userTokens.required", {
+                    attribute: I18n.t("scim.scimURL")
+                })}/>}
 
                 <InputField value={service.scim_bearer_token}
                             name={I18n.t("scim.scimBearerToken")}
@@ -1060,7 +1067,7 @@ class ServiceOverview extends React.Component {
 
     renderCurrentTab = (config, currentTab, service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit,
                         invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken,
-                        selectedAutomaticConnectionAllowedOrganisations, automaticConnectionAllowedOrganisations) => {
+                        selectedAutomaticConnectionAllowedOrganisations, automaticConnectionAllowedOrganisations, initial) => {
         switch (currentTab) {
             case "general":
                 return this.renderGeneral(service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs, showServiceAdminView);
@@ -1078,7 +1085,7 @@ class ServiceOverview extends React.Component {
             case "pamWebLogin":
                 return this.renderPamWebLogin(service);
             case "SCIM":
-                return this.renderSCIM(service, isAdmin, showServiceAdminView, alreadyExists, invalidInputs);
+                return this.renderSCIM(service, isAdmin, showServiceAdminView, alreadyExists, invalidInputs, initial);
 
             default:
                 throw new Error("unknown-tab")
@@ -1105,7 +1112,8 @@ class ServiceOverview extends React.Component {
             tokenValue,
             createNewServiceToken,
             selectedAutomaticConnectionAllowedOrganisations,
-            automaticConnectionAllowedOrganisations
+            automaticConnectionAllowedOrganisations,
+            initial
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -1131,7 +1139,7 @@ class ServiceOverview extends React.Component {
                     <h1 className="section-separator">{I18n.t(`serviceDetails.toc.${currentTab}`)}</h1>
                     {this.renderCurrentTab(config, currentTab, service, alreadyExists, isAdmin, isServiceAdmin,
                         disabledSubmit, invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken,
-                        selectedAutomaticConnectionAllowedOrganisations, automaticConnectionAllowedOrganisations)}
+                        selectedAutomaticConnectionAllowedOrganisations, automaticConnectionAllowedOrganisations, initial)}
                     {this.renderButtons(isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView, createNewServiceToken)}
                 </div>
             </div>
