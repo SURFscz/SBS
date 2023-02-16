@@ -971,18 +971,6 @@ class ServiceOverview extends React.Component {
                              disabled={service.automatic_connection_allowed}
                              placeholder={I18n.t("service.automaticConnectionAllowedOrganisationsPlaceHolder")}
                              onChange={this.selectedAutomaticConnectionAllowedOrganisationsChanged}/>
-
-                {(isAdmin && !showServiceAdminView) && <CheckBox name="non_member_users_access_allowed"
-                                                                 value={service.non_member_users_access_allowed}
-                                                                 info={I18n.t("service.nonMemberUsersAccessAllowed")}
-                                                                 tooltip={I18n.t("service.nonMemberUsersAccessAllowedTooltip")}
-                                                                 onChange={this.changeServiceProperty("non_member_users_access_allowed", true)}/>}
-
-                {(isAdmin && !showServiceAdminView) && <CheckBox name="white_listed"
-                                                                 value={service.white_listed}
-                                                                 info={I18n.t("service.whiteListed")}
-                                                                 tooltip={I18n.t("service.whiteListedTooltip")}
-                                                                 onChange={this.changeServiceProperty("white_listed", true)}/>}
             </div>)
     }
 

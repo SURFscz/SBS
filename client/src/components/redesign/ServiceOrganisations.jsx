@@ -4,11 +4,12 @@ import {isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
 import ToggleSwitch from "./ToggleSwitch";
-import {allowedOrganisations, toggleAccessAllowedForAll} from "../../api";
+import {allowedOrganisations, toggleAccessAllowedForAll, toggleWhiteListed} from "../../api";
 import {clearFlash, setFlash} from "../../utils/Flash";
 import Logo from "./Logo";
 import ConfirmationDialog from "../ConfirmationDialog";
 import {Tooltip} from "@surfnet/sds";
+import CheckBox from "../CheckBox";
 
 
 class ServiceOrganisations extends React.Component {
@@ -46,8 +47,16 @@ class ServiceOrganisations extends React.Component {
         this.props.history.push(`/organisations/${organisation.id}`);
     };
 
-    togglesAccessAllowedForAll = service => {
+    doToggleAccessAllowedForAll = service => {
         toggleAccessAllowedForAll(service.id, !service.access_allowed_for_all)
+            .then(() => this.props.refresh(() => {
+                this.componentDidMount();
+                setFlash(I18n.t("service.flash.updated", {name: service.name}));
+            }));
+    }
+
+    doTogglesWhiteListed = service => {
+        toggleWhiteListed(service.id, !service.white_listed)
             .then(() => this.props.refresh(() => {
                 this.componentDidMount();
                 setFlash(I18n.t("service.flash.updated", {name: service.name}));
@@ -129,8 +138,9 @@ class ServiceOrganisations extends React.Component {
             organisationsSelected, organisationsDeselected, confirmationDialogOpen, cancelDialogAction,
             confirmationDialogAction,
         } = this.state;
-        const {organisations, service, user, serviceAdmin, userAdmin} = this.props;
-        organisations.forEach(org => org.toggle = organisationsSelected[org.id]);
+        const {organisations, service, user, serviceAdmin, userAdmin, showServiceAdminView} = this.props;
+        const availableOrganisations = service.white_listed ? organisations : organisations.filter(org => !org.services_restricted);
+        availableOrganisations.forEach(org => org.toggle = organisationsSelected[org.id]);
         const columns = [
             {
                 nonSortable: true,
@@ -167,7 +177,8 @@ class ServiceOrganisations extends React.Component {
             {
                 key: "toggle",
                 header: I18n.t("service.accessAllowed"),
-                mapper: org => <div className={"switch-container"}>{this.toggle(org, organisationsSelected, service, serviceAdmin)}</div>
+                mapper: org => <div
+                    className={"switch-container"}>{this.toggle(org, organisationsSelected, service, serviceAdmin)}</div>
             }]
         return (<div>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -178,8 +189,15 @@ class ServiceOrganisations extends React.Component {
                                     isWarning={true}>
                     {confirmationDialogOpen && this.renderConfirmation(service, organisationsDeselected)}
                 </ConfirmationDialog>
-
-                <Entities entities={organisations}
+                <div className={"service-container"}>
+                    {(user.admin && !showServiceAdminView) &&
+                    <CheckBox name="white_listed"
+                              value={service.white_listed}
+                              info={I18n.t("service.whiteListed")}
+                              tooltip={I18n.t("service.whiteListedTooltip")}
+                              onChange={() => this.doTogglesWhiteListed(service)}/>}
+                </div>
+                <Entities entities={availableOrganisations}
                           modelName="serviceOrganisations"
                           searchAttributes={["name"]}
                           defaultSort="name"
@@ -187,7 +205,7 @@ class ServiceOrganisations extends React.Component {
                           columns={columns}
                           showNew={organisations.length > 0}
                           newLabel={I18n.t(`models.serviceOrganisations.${service.access_allowed_for_all ? "notAvailableForAll" : "availableForAll"}`)}
-                          newEntityFunc={() => this.togglesAccessAllowedForAll(service)}
+                          newEntityFunc={() => this.doToggleAccessAllowedForAll(service)}
                           loading={false}
                           {...this.props}>
                 </Entities>

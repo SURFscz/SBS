@@ -57,7 +57,7 @@ def _group_changed(group: Union[Group, Collaboration], remote_group: dict, remot
     if remote_group.get("displayName") != group.name:
         return True
     sram_members = sorted([member.user.external_id for member in group.collaboration_memberships if member.is_active])
-    remote_users_by_id = {u["id"]: u for u in remote_scim_users}
+    remote_users_by_id = {u["externalId"]: u for u in remote_scim_users}
     remote_members = []
     for remote_member in remote_group.get("members", []):
         remote_user = remote_users_by_id.get(remote_member["value"])

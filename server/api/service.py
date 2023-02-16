@@ -144,6 +144,16 @@ def _token_validity_days(data):
         data["token_validity_days"] = int(days) if len(days.strip()) > 0 else None
 
 
+def _do_toggle_attribute(service_id, attribute):
+    confirm_service_admin(service_id)
+    service = Service.query.get(service_id)
+    setattr(service, attribute, current_request.get_json().get(attribute))
+    db.session.merge(service)
+    emit_socket(f"service_{service_id}")
+    emit_socket("service")
+    return None, 201
+
+
 @service_api.route("/name_exists", strict_slashes=False)
 @json_endpoint
 def name_exists():
@@ -297,10 +307,10 @@ def user_services(user_id):
     organisation = request_context.external_api_organisation
     count = CollaborationMembership.query \
         .options(load_only("id")) \
-        .join(CollaborationMembership.collaboration)\
+        .join(CollaborationMembership.collaboration) \
         .join(Collaboration.organisation) \
         .filter(CollaborationMembership.user_id == user_id) \
-        .filter(Collaboration.organisation_id == organisation.id)\
+        .filter(Collaboration.organisation_id == organisation.id) \
         .count()
     if count == 0:
         raise Forbidden(f"User {user_id} is not a member of a collaboration in the {organisation.name} organisation")
@@ -355,20 +365,13 @@ def save_service():
 @service_api.route("/toggle_access_allowed_for_all/<service_id>", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def toggle_access_allowed_for_all(service_id):
-    def override_func():
-        return is_service_admin(service_id)
+    return _do_toggle_attribute(service_id, "access_allowed_for_all")
 
-    confirm_write_access(override_func=override_func)
-    service = Service.query.get(service_id)
-    data = current_request.get_json()
-    allowed_for_all = data.get("allowed_for_all")
-    service.access_allowed_for_all = allowed_for_all
-    db.session.merge(service)
 
-    emit_socket(f"service_{service_id}")
-    emit_socket("service")
-
-    return None, 201
+@service_api.route("/toggle_white_listed/<service_id>", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def toggle_white_listed(service_id):
+    return _do_toggle_attribute(service_id, "white_listed")
 
 
 @service_api.route("/invites", methods=["PUT"], strict_slashes=False)

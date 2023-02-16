@@ -5,8 +5,10 @@ import {RadioOptions} from "@surfnet/sds";
 
 export default function RadioButton({label, name, value, onChange, tooltip, disabled = false}) {
 
-    const internalOnChange = () => {
-        onChange(!value);
+    const internalOnChange = e => {
+        const id = e.target.id;
+        const yesId = `${name}_${I18n.t("forms.yes")}`;
+        onChange(id === yesId);
     }
 
     return <RadioOptions label={label}

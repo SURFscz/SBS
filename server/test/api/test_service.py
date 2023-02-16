@@ -156,6 +156,18 @@ class TestService(AbstractTest):
         service = self.find_entity_by_name(Service, service_cloud_name)
         self.assertTrue(service.access_allowed_for_all)
 
+    def test_toggle_white_listed(self):
+        service = self.find_entity_by_name(Service, service_cloud_name)
+        self.assertFalse(service.white_listed)
+
+        self.login("urn:james")
+        self.put(f"/api/services/toggle_white_listed/{service.id}",
+                 body={"white_listed": True},
+                 with_basic_auth=False)
+
+        service = self.find_entity_by_name(Service, service_cloud_name)
+        self.assertTrue(service.white_listed)
+
     def test_service_update_do_not_clear_ldap_password(self):
         service = self._find_by_name(service_wiki_name)
 

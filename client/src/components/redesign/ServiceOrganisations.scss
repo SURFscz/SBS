@@ -1,6 +1,13 @@
 @import "../../stylesheets/vars.scss";
 
 .mod-service-container {
+
+    .service-container {
+        max-width: 1280px;
+        display: flex;
+        margin: 32px auto 0 auto;
+    }
+
     table.serviceOrganisations {
 
         thead {
@@ -53,7 +60,8 @@
                     .switch-container {
                         display: flex;
                     }
-                    .sds--tooltip-parent {
+
+                    .sds--tooltip-parent, .sds--tooltip-container {
                         margin-left: auto;
                     }
 
