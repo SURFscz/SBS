@@ -25,8 +25,6 @@ import {clearFlash, setFlash} from "../../utils/Flash";
 import Select from "react-select";
 import {displayExpiryDate, displayLastActivityDate} from "../../utils/Date";
 import moment from "moment";
-import {ReactComponent as EmailIcon} from "../../icons/email_new.svg";
-import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 
 const allValue = "all";
 
@@ -52,11 +50,11 @@ export default class Collaborations extends React.PureComponent {
     }
 
     componentDidMount = () => {
-        const {collaborations, user, service, showTagFilter = false, platformAdmin = false} = this.props;
+        const {collaborations, user, service} = this.props;
         const promises = [mayRequestCollaboration(), collaborationAdmins(service)];
         if (collaborations === undefined) {
-            Promise.all(promises.concat([platformAdmin ? allCollaborations() : myCollaborations()])).then(res => {
-                const allFilterOptions = this.allLabelFilterOptions(res[2], showTagFilter);
+            Promise.all(promises.concat([user.admin ? allCollaborations() : myCollaborations()])).then(res => {
+                const allFilterOptions = this.allLabelFilterOptions(res[2]);
                 this.addRoleInformation(user, res[2]);
                 this.setState({
                     standalone: true,
@@ -70,7 +68,7 @@ export default class Collaborations extends React.PureComponent {
 
             })
         } else {
-            const allFilterOptions = this.allLabelFilterOptions(collaborations, showTagFilter);
+            const allFilterOptions = this.allLabelFilterOptions(collaborations);
             this.addRoleInformation(user, collaborations);
             Promise.all(promises).then(res => {
                 this.setState({
@@ -91,10 +89,7 @@ export default class Collaborations extends React.PureComponent {
         });
     }
 
-    allLabelFilterOptions = (collaborations, showTagFilter) => {
-        if (!showTagFilter) {
-            return [{}];
-        }
+    allLabelFilterOptions = (collaborations) => {
         const filterOptions = [{
             label: I18n.t("models.collaborations.allLabels", {nbr: collaborations.length}),
             value: allValue
@@ -162,70 +157,6 @@ export default class Collaborations extends React.PureComponent {
         }
     }
 
-    actionButtons = (selectedCollaborations, collaborationAdminEmails, collaborations) => {
-        const selected = Object.values(selectedCollaborations).filter(v => v);
-        const anySelected = selected.length > 0;
-        if (!anySelected) {
-            return null;
-        }
-        const names = collaborations.filter(coll => selectedCollaborations[coll.id]).map(coll => coll.name);
-        const adminEmails = Object.keys(collaborationAdminEmails)
-            .filter(name => names.includes(name))
-            .map(name => collaborationAdminEmails[name]);
-        const hrefValue = encodeURI(adminEmails.join(","));
-        return (
-            <div className="admin-actions">
-                <Tooltip standalone={true} children={
-                    <Button onClick={() => this.removeCollaboration(true)}
-                            small={true}
-                            txt={I18n.t("models.serviceCollaborations.disconnect")}
-                            icon={<ThrashIcon/>}
-                            tip={I18n.t("models.serviceCollaborations.disconnectTooltip")}
-                />}/>
-                {adminEmails.length > 0 &&
-                <div>
-                    <Tooltip standalone={true}
-                             tip={I18n.t("models.orgMembers.mailTooltip")}
-                             children={<a href={`mailto:?bcc=${hrefValue}`}
-                                          className="sds--btn sds--btn--primary sds--btn--small"
-                                          style={{border: "none", cursor: "default"}}
-                                          rel="noopener noreferrer">
-                                 {I18n.t("models.orgMembers.mail")}<EmailIcon/>
-                             </a>}/>
-
-                </div>}
-
-            </div>);
-    }
-
-    getActionIcons = (entity, collaborationAdminEmails) => {
-        const hrefValue = encodeURI((collaborationAdminEmails[entity.name] || []).join(","));
-        const bcc = (entity.disclose_email_information && entity.disclose_member_information) ? "" : "?bcc=";
-        return (
-            <div className={"action-icons-container"}>
-                <div className="admin-icons">
-                    {!isEmpty(hrefValue) && <div>
-                        <a href={`mailto:${bcc}${hrefValue}`}
-                           rel="noopener noreferrer">
-                            <Tooltip
-                                tip={I18n.t("models.orgMembers.mailAdminTooltip")}
-                                anchorId={`mail-member-${entity.id}`}
-                                standalone={true}
-                                children={<EmailIcon/>}/>
-                        </a>
-                    </div>}
-                    {entity.fromCollaboration && <div
-                        onClick={() => this.removeCollaboration(true, entity.id)}>
-                        <Tooltip standalone={true}
-                                 tip={I18n.t("models.serviceCollaborations.disconnectOneTooltip")}
-                                 children={<ThrashIcon/>}/>
-                    </div>}
-
-                </div>
-            </div>
-        );
-    }
-
     openCollaboration = collaboration => e => {
         if (e.metaKey || e.ctrlKey) {
             return;
@@ -235,10 +166,7 @@ export default class Collaborations extends React.PureComponent {
         this.props.history.push(`/collaborations/${collaboration.id}`);
     };
 
-    filters = (filterOptions, filterValue, showTagFilter) => {
-        if (!showTagFilter) {
-            return null;
-        }
+    filters = (filterOptions, filterValue) => {
         return (
             <div className="collaboration-label-filter">
                 <Select
@@ -254,7 +182,6 @@ export default class Collaborations extends React.PureComponent {
     }
 
     render() {
-        const {showTagFilter} = this.props;
         const {
             loading,
             standalone,
@@ -273,11 +200,7 @@ export default class Collaborations extends React.PureComponent {
             return <SpinnerField/>;
         }
         const {collaborations} = standalone ? this.state : this.props;
-        const {
-            modelName = "collaborations", organisation, mayCreate = true, showOrigin = false,
-            showExpiryDate = false, showLastActivityDate = false, userAdmin = false, platformAdmin = false,
-            userServiceAdmin = false
-        } = this.props;
+        const {modelName = "collaborations", organisation} = this.props;
 
         if (isEmpty(collaborations) && !loading && modelName === "collaborations") {
             return this.noCollaborations(organisation);
@@ -328,10 +251,8 @@ export default class Collaborations extends React.PureComponent {
                 key: "name",
                 class: serviceKey,
                 header: I18n.t("models.collaborations.name"),
-                mapper: collaboration => (userAdmin || platformAdmin) ?
-                    <a href={`/collaborations/${collaboration.id}`}
-                       onClick={this.openCollaboration(collaboration)}>{collaboration.name}</a>
-                    : <span>{collaboration.name}</span>
+                mapper: collaboration => <a href={`/collaborations/${collaboration.id}`}
+                                            onClick={this.openCollaboration(collaboration)}>{collaboration.name}</a>
             },
             {
                 key: "organisation__name",
@@ -350,18 +271,8 @@ export default class Collaborations extends React.PureComponent {
                     }
                     return null;
                 }
-            }
-        );
-        if (serviceModule) {
-            columns.push({
-                key: "short_name",
-                header: I18n.t("organisation.shortName"),
-                mapper: collaboration =>
-                    <span>{`${collaboration.organisation.short_name}:${collaboration.short_name}`}</span>,
-            });
-        }
-        if (showExpiryDate) {
-            columns.push({
+            },
+            {
                 key: "expiry_date",
                 header: I18n.t("collaboration.expiryDate"),
                 mapper: collaboration => {
@@ -382,10 +293,8 @@ export default class Collaborations extends React.PureComponent {
                     }
                     return I18n.t("expirations.never");
                 }
-            });
-        }
-        if (showLastActivityDate) {
-            columns.push({
+            },
+            {
                 key: "last_activity_date",
                 header: I18n.t("collaboration.lastActivityDate"),
                 mapper: collaboration => {
@@ -407,35 +316,16 @@ export default class Collaborations extends React.PureComponent {
                         </span>}
                     </div>;
                 }
-            });
-        }
-        if (showOrigin) {
-            columns.push({
-                key: "fromCollaboration",
-                header: I18n.t("models.serviceCollaborations.origin"),
-                mapper: collaboration => collaboration.fromCollaboration ?
-                    I18n.t("models.serviceCollaborations.fromCollaboration") : I18n.t("models.serviceCollaborations.fromOrganisation")
-            });
-        }
-        if (serviceModule) {
-            columns.push({
-                    nonSortable: true,
-                    key: "action-icons",
-                    header: "",
-                    mapper: entity => this.getActionIcons(entity, collaborationAdminEmails)
-                },
-            )
-        }
-        const allColumns = serviceModule ? columns : columns.concat([{
-            key: "collaboration_memberships_count",
-            header: I18n.t("models.collaborations.memberCount")
-        },
+            }, {
+                key: "collaboration_memberships_count",
+                header: I18n.t("models.collaborations.memberCount")
+            },
             {
                 key: "invitations_count",
                 header: I18n.t("models.collaborations.invitationsCount")
-            }]);
-
-        const filteredCollaborations = (filterValue.value === allValue || !showTagFilter) ? collaborations :
+            }
+        );
+        const filteredCollaborations = (filterValue.value === allValue) ? collaborations :
             collaborations.filter(coll => coll.tags.some(tag => tag.tag_value === filterValue.value));
         return (
             <>
@@ -450,13 +340,13 @@ export default class Collaborations extends React.PureComponent {
                           searchAttributes={["name"]}
                           defaultSort="name"
                           hideTitle={true}
-                          rowLinkMapper={userServiceAdmin ? null : () => this.openCollaboration}
-                          columns={allColumns}
+                          rowLinkMapper={() => this.openCollaboration}
+                          columns={columns}
                           onHover={true}
-                          filters={this.filters(filterOptions, filterValue, showTagFilter)}
+                          filters={this.filters(filterOptions, filterValue)}
                           actionHeader={"collaboration-services"}
                           actions={serviceModule ? this.actionButtons(selectedCollaborations, collaborationAdminEmails, collaborations) : null}
-                          showNew={(mayCreateCollaborations || showRequestCollaboration) && mayCreate}
+                          showNew={true}
                           newEntityPath={`/new-collaboration${organisationQueryParam}`}
                           loading={loading}
                           {...this.props}/>

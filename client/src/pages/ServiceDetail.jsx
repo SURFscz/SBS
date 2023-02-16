@@ -250,17 +250,16 @@ class ServiceDetail extends React.Component {
         </div>)
     }
 
-    getOrganisationsTab = (service, organisations, userAdmin, serviceAdmin) => {
-        if (!service.white_listed) {
-            organisations = organisations.filter(org => !org.services_restricted);
-        }
-        return (<div key="organisations" name="organisations"
+    getOrganisationsTab = (service, organisations, userAdmin, serviceAdmin, showServiceAdminView) => {
+        return (<div key="organisations"
+                     name="organisations"
                      label={I18n.t("home.tabs.serviceOrganisations", {count: organisations.length})}
                      icon={<OrganisationsIcon/>}>
             <ServiceOrganisations {...this.props}
                                   refresh={this.refresh}
                                   service={service}
                                   organisations={organisations}
+                                  showServiceAdminView={showServiceAdminView}
                                   userAdmin={userAdmin}
                                   serviceAdmin={serviceAdmin}/>
         </div>)
@@ -297,7 +296,7 @@ class ServiceDetail extends React.Component {
         </div>)
     }
 
-    getCollaborationsTab = (service, userAdmin, userServiceAdmin) => {
+    getCollaborationsTab = (service, userAdmin, userServiceAdmin, showServiceAdminView) => {
         const collaborations = service.collaborations;
         collaborations.forEach(coll => coll.fromCollaboration = true);
         const collFromOrganisations = service.service_organisation_collaborations;
@@ -310,6 +309,7 @@ class ServiceDetail extends React.Component {
                 <Collaborations mayCreate={false}
                                 showOrigin={true}
                                 service={service}
+                                showServiceAdminView={showServiceAdminView}
                                 collaborations={colls}
                                 userServiceAdmin={userServiceAdmin}
                                 userAdmin={userAdmin}
@@ -462,10 +462,10 @@ class ServiceDetail extends React.Component {
         } else if (userServiceAdmin) {
             tabs = [
                 this.getDetailsTab(service, user.admin, userServiceAdmin, showServiceAdminView, organisations),
-                this.getOrganisationsTab(service, organisations, user.admin, userServiceAdmin),
-                this.getCollaborationsTab(service, user.admin, userServiceAdmin),
                 this.getAdminsTab(service),
-                this.getServiceGroupsTab(service)
+                this.getServiceGroupsTab(service),
+                this.getOrganisationsTab(service, organisations, user.admin, userServiceAdmin, showServiceAdminView),
+                this.getCollaborationsTab(service, user.admin, userServiceAdmin, showServiceAdminView),
             ];
             if (serviceConnectionRequests.length > 0) {
                 tabs.push(this.getServiceConnectionRequestTab(service, serviceConnectionRequests));

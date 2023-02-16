@@ -161,11 +161,7 @@ class Home extends React.Component {
         return (<div key="collaborations" name="collaborations"
                      label={I18n.t("home.tabs.collaborations", {count: count})}
                      icon={<CollaborationsIcon/>}>
-            <Collaborations {...this.props}
-                            platformAdmin={platformAdmin}
-                            showExpiryDate={true}
-                            showTagFilter={true}
-                            showLastActivityDate={true}/>
+                        <Collaborations {...this.props}/>
         </div>)
     }
 

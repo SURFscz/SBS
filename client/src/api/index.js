@@ -247,7 +247,11 @@ export function allowedOrganisations(serviceId, allowedOrganisations = {"allowed
 }
 
 export function toggleAccessAllowedForAll(serviceId, allowedForAll) {
-    return postPutJson(`/api/services/toggle_access_allowed_for_all/${serviceId}`, {allowed_for_all: allowedForAll}, "put")
+    return postPutJson(`/api/services/toggle_access_allowed_for_all/${serviceId}`, {access_allowed_for_all: allowedForAll}, "put")
+}
+
+export function toggleWhiteListed(serviceId, whiteListed) {
+    return postPutJson(`/api/services/toggle_white_listed/${serviceId}`, {white_listed: whiteListed}, "put")
 }
 
 export function deleteService(id) {

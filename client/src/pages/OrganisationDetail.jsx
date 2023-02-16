@@ -130,8 +130,8 @@ class OrganisationDetail extends React.Component {
                     }, callBack);
 
                 }).catch(() => {
-                    this.props.history.push("/")
-                });
+                this.props.history.push("/")
+            });
         } else {
             this.props.history.push("/404");
         }
@@ -200,10 +200,7 @@ class OrganisationDetail extends React.Component {
                      icon={<CollaborationsIcon/>}>
             <Collaborations {...this.props}
                             collaborations={organisation.collaborations}
-                            organisation={organisation}
-                            showExpiryDate={true}
-                            showTagFilter={true}
-                            showLastActivityDate={true}/>
+                            organisation={organisation}/>
         </div>)
     }
 

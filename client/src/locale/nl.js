@@ -91,7 +91,7 @@ I18n.translations.nl = {
             members: "Leden ({{count}})",
             users: "Gebruikers ({{count}})",
             serviceOrganisations: "Organisatietoegang ({{count}})",
-            serviceCollaborations: "Samenwerkingen ({{count}})",
+            serviceCollaborations: "Samenwerkingentoegang ({{count}})",
             userTokens: "Tokens ({{count}})",
             collaborationRequests: "Verzoeken ({{count}})",
             joinRequests: "Lidmaatschapsverzoeken ({{count}})",
