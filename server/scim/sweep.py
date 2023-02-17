@@ -6,9 +6,9 @@ import requests
 from server.api.base import application_base_url
 from server.db.domain import Service, Group, User, Collaboration
 from server.scim import EXTERNAL_ID_POST_FIX, SCIM_GROUPS, SCIM_USERS
-from server.scim.schema_template import SCIM_SCHEMA_SRAM_USER, SCIM_SCHEMA_SRAM_GROUP
 from server.scim.group_template import create_group_template, update_group_template, scim_member_object
 from server.scim.repo import all_scim_groups_by_service, all_scim_users_by_service
+from server.scim.schema_template import SCIM_SCHEMA_SRAM_USER, SCIM_SCHEMA_SRAM_GROUP
 from server.scim.scim import scim_headers, validate_response
 from server.scim.user_template import create_user_template, replace_none_values, update_user_template
 
@@ -57,7 +57,7 @@ def _group_changed(group: Union[Group, Collaboration], remote_group: dict, remot
     if remote_group.get("displayName") != group.name:
         return True
     sram_members = sorted([member.user.external_id for member in group.collaboration_memberships if member.is_active])
-    remote_users_by_id = {u["externalId"]: u for u in remote_scim_users}
+    remote_users_by_id = {u["id"]: u for u in remote_scim_users}
     remote_members = []
     for remote_member in remote_group.get("members", []):
         remote_user = remote_users_by_id.get(remote_member["value"])
@@ -71,10 +71,7 @@ def _group_changed(group: Union[Group, Collaboration], remote_group: dict, remot
         if remote_group[SCIM_SCHEMA_SRAM_GROUP].get("urn") != group.global_urn:
             return True
 
-        labels = [
-            t.tag_value for t in group.tags
-        ] if hasattr(group, 'tags') else []
-
+        labels = [t.tag_value for t in group.tags] if hasattr(group, "tags") else []
         if sorted(remote_group[SCIM_SCHEMA_SRAM_GROUP].get("labels", [])) != sorted(labels):
             return True
     return False
