@@ -26,7 +26,7 @@ PyJWT==2.4.0
 Authlib==1.0.1
 passlib==1.7.4
 flasgger==0.9.5
-werkzeug==2.2.2
+werkzeug==2.2.3
 Flask-Executor==1.0.0
 eventlet==0.33.1
 Flask-SocketIO==5.2.0
