@@ -150,7 +150,7 @@ class TestService(AbstractTest):
 
         self.login("urn:james")
         self.put(f"/api/services/toggle_access_allowed_for_all/{service.id}",
-                 body={"allowed_for_all": True},
+                 body={"access_allowed_for_all": True},
                  with_basic_auth=False)
 
         service = self.find_entity_by_name(Service, service_cloud_name)
