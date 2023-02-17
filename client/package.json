@@ -41,7 +41,7 @@
         "socket.io-client": "^4.5.1",
         "source-map-explorer": "^2.5.0",
         "timeago.js": "^4.0.2",
-        "@surfnet/sds": "^0.0.31"
+        "@surfnet/sds": "^0.0.32"
     },
     "devDependencies": {
         "dot-prop": "^7.2.0",
