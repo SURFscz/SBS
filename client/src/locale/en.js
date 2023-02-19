@@ -334,7 +334,13 @@ I18n.translations.en = {
                 allowAllRequests: "Allow connection requests from collaborations for all organisations",
                 allowAll: "Always allow connections from collaborations for all organisations"
             },
-            serviceNonMemberUsersAccessAllowed: "This service is configured to allow all users access."
+            serviceNonMemberUsersAccessAllowed: "This service is configured to allow all users access.",
+            options: {
+                header: "Connections from collaborations",
+                disallow: "Disallow",
+                onRequest:  "On request",
+                always: "Always"
+            }
         },
         memberCollaborations: {
             searchPlaceHolder: "Search for collaborations...",
