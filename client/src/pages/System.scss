@@ -42,7 +42,7 @@
             .actions {
                 margin-left: auto;
 
-                a:not(:first-child) {
+                button:not(:first-child) {
                     margin-left: 25px;
                 }
 
@@ -156,6 +156,7 @@
             display: flex;
             align-items: center;
             margin-top: 10px;
+            justify-content: space-between;
 
             @media (max-width: $compact-medium) {
                 flex-direction: column;
@@ -171,7 +172,7 @@
 
             }
 
-            a.delete {
+            button.sds--delete {
                 margin: 0 25px 0 auto;
 
                 @media (max-width: $compact-medium) {
@@ -208,7 +209,7 @@
             display: flex;
 
             button {
-                margin: auto 0 8px 15px;
+                margin: auto 0 0 15px;
             }
         }
 
