@@ -13,7 +13,7 @@ import {
 import {clearFlash, setFlash} from "../../utils/Flash";
 import Logo from "./Logo";
 import ConfirmationDialog from "../ConfirmationDialog";
-import {RadioButton, Tooltip} from "@surfnet/sds";
+import {RadioButton, SegmentedControl, Tooltip} from "@surfnet/sds";
 import CheckBox from "../CheckBox";
 
 
@@ -75,9 +75,15 @@ class ServiceOrganisations extends React.Component {
     }
 
     permissionOptions = (organisation, service) => {
-        if (organisation && service) {
-            return null;
-        }
+        const disabled = service.automatic_connection_allowed || service.access_allowed_for_all;
+        const options = ["disallow", "onRequest", "always"]
+            .map(option => I18n.t(`models.serviceOrganisations.options.${option}`));
+        return (
+            <SegmentedControl onClick={() => true}
+                              options={options}
+                              option={options[1]}
+                              disabled={disabled}/>
+        );
     }
 
     toggle = (organisation, organisationsSelected, service, serviceAdmin) => {
@@ -149,7 +155,7 @@ class ServiceOrganisations extends React.Component {
             organisationsSelected, organisationsDeselected, confirmationDialogOpen, cancelDialogAction,
             confirmationDialogAction,
         } = this.state;
-        const {organisations, service, user, serviceAdmin, userAdmin, showServiceAdminView} = this.props;
+        const {organisations, service, user, userAdmin, showServiceAdminView} = this.props;
         const availableOrganisations = service.white_listed ? organisations : organisations.filter(org => !org.services_restricted);
         availableOrganisations.forEach(org => org.toggle = organisationsSelected[org.id]);
         const columns = [
@@ -158,6 +164,12 @@ class ServiceOrganisations extends React.Component {
                 key: "logo",
                 header: "",
                 mapper: org => <Logo src={org.logo}/>
+            },
+            {
+                nonSortable: false,
+                key: "permissions",
+                header: I18n.t("models.serviceOrganisations.options.header"),
+                mapper: org => this.permissionOptions(org, service)
             },
             {
                 key: "name",
@@ -184,12 +196,6 @@ class ServiceOrganisations extends React.Component {
             {
                 key: "category",
                 header: I18n.t("models.organisations.category")
-            },
-            {
-                key: "toggle",
-                header: I18n.t("service.accessAllowed"),
-                mapper: org => <div
-                    className={"switch-container"}>{this.toggle(org, organisationsSelected, service, serviceAdmin)}</div>
             }]
         return (<div>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -240,9 +246,6 @@ class ServiceOrganisations extends React.Component {
                           defaultSort="name"
                           hideTitle={true}
                           columns={columns}
-                          showNew={organisations.length > 0}
-                          newLabel={I18n.t(`models.serviceOrganisations.${service.access_allowed_for_all ? "notAvailableForAll" : "availableForAll"}`)}
-                          newEntityFunc={() => this.doToggleAccessAllowedForAll(service)}
                           loading={false}
                           {...this.props}>
                 </Entities>
