@@ -144,8 +144,11 @@ def _token_validity_days(data):
         data["token_validity_days"] = int(days) if len(days.strip()) > 0 else None
 
 
-def _do_toggle_attribute(service_id, attribute):
-    confirm_service_admin(service_id)
+def _do_toggle_attribute(service_id, attribute, confirm_admin=False):
+    if confirm_admin:
+        confirm_write_access()
+    else:
+        confirm_service_admin(service_id)
     service = Service.query.get(service_id)
     setattr(service, attribute, current_request.get_json().get(attribute))
     db.session.merge(service)
@@ -374,6 +377,18 @@ def toggle_white_listed(service_id):
     return _do_toggle_attribute(service_id, "white_listed")
 
 
+@service_api.route("/toggle_non_member_users_access_allowed/<service_id>", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def toggle_non_member_users_access_allowed(service_id):
+    return _do_toggle_attribute(service_id, "non_member_users_access_allowed", confirm_admin=True)
+
+
+@service_api.route("/toggle_automatic_connection_allowed/<service_id>", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def toggle_automatic_connection_allowed(service_id):
+    return _do_toggle_attribute(service_id, "automatic_connection_allowed")
+
+
 @service_api.route("/invites", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def service_invites():
@@ -468,10 +483,7 @@ def update_service():
 @service_api.route("/allowed_organisations/<service_id>", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def add_allowed_organisations(service_id):
-    def override_func():
-        return is_service_admin(service_id)
-
-    confirm_write_access(override_func=override_func)
+    confirm_service_admin(service_id)
 
     service = Service.query.get(service_id)
     data = current_request.get_json()

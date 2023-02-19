@@ -23,8 +23,6 @@ import {
 import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
 import {ReactComponent as UserAdminIcon} from "../icons/users.svg";
-
-import Collaborations from "../components/redesign/Collaborations";
 import ServiceOrganisations from "../components/redesign/ServiceOrganisations";
 import SpinnerField from "../components/redesign/SpinnerField";
 import {removeDuplicates} from "../utils/Utils";
@@ -42,6 +40,7 @@ import ServiceOverview from "./ServiceOverview";
 import {ReactComponent as EyeViewIcon} from "../icons/eye-svgrepo-com.svg";
 import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
 import UserTokens from "../components/redesign/UserTokens";
+import ServiceCollaborations from "../components/redesign/ServiceCollaborations";
 
 class ServiceDetail extends React.Component {
 
@@ -296,7 +295,7 @@ class ServiceDetail extends React.Component {
         </div>)
     }
 
-    getCollaborationsTab = (service, userAdmin, userServiceAdmin, showServiceAdminView) => {
+    getCollaborationsTab = (service, showServiceAdminView) => {
         const collaborations = service.collaborations;
         collaborations.forEach(coll => coll.fromCollaboration = true);
         const collFromOrganisations = service.service_organisation_collaborations;
@@ -306,17 +305,13 @@ class ServiceDetail extends React.Component {
             <div key="collaborations" name="collaborations"
                  label={I18n.t("home.tabs.serviceCollaborations", {count: colls.length})}
                  icon={<CollaborationsIcon/>}>
-                <Collaborations mayCreate={false}
-                                showOrigin={true}
-                                service={service}
-                                showServiceAdminView={showServiceAdminView}
-                                collaborations={colls}
-                                userServiceAdmin={userServiceAdmin}
-                                userAdmin={userAdmin}
-                                showTagFilter={false}
-                                refresh={this.refresh}
-                                modelName={"serviceCollaborations"}
-                                {...this.props} />
+                <ServiceCollaborations
+                    service={service}
+                    showServiceAdminView={showServiceAdminView}
+                    collaborations={colls}
+                    refresh={this.refresh}
+                    modelName={"serviceCollaborations"}
+                    {...this.props} />
             </div>);
     }
 
@@ -465,7 +460,7 @@ class ServiceDetail extends React.Component {
                 this.getAdminsTab(service),
                 this.getServiceGroupsTab(service),
                 this.getOrganisationsTab(service, organisations, user.admin, userServiceAdmin, showServiceAdminView),
-                this.getCollaborationsTab(service, user.admin, userServiceAdmin, showServiceAdminView),
+                this.getCollaborationsTab(service, showServiceAdminView),
             ];
             if (serviceConnectionRequests.length > 0) {
                 tabs.push(this.getServiceConnectionRequestTab(service, serviceConnectionRequests));

@@ -168,6 +168,30 @@ class TestService(AbstractTest):
         service = self.find_entity_by_name(Service, service_cloud_name)
         self.assertTrue(service.white_listed)
 
+    def test_toggle_non_member_users_access_allowed(self):
+        service = self.find_entity_by_name(Service, service_cloud_name)
+        self.assertFalse(service.non_member_users_access_allowed)
+
+        self.login("urn:john")
+        self.put(f"/api/services/toggle_non_member_users_access_allowed/{service.id}",
+                 body={"non_member_users_access_allowed": True},
+                 with_basic_auth=False)
+
+        service = self.find_entity_by_name(Service, service_cloud_name)
+        self.assertTrue(service.non_member_users_access_allowed)
+
+    def test_toggle_automatic_connection_allowed(self):
+        service = self.find_entity_by_name(Service, service_cloud_name)
+        self.assertTrue(service.automatic_connection_allowed)
+
+        self.login("urn:john")
+        self.put(f"/api/services/toggle_automatic_connection_allowed/{service.id}",
+                 body={"automatic_connection_allowed": False},
+                 with_basic_auth=False)
+
+        service = self.find_entity_by_name(Service, service_cloud_name)
+        self.assertFalse(service.automatic_connection_allowed)
+
     def test_service_update_do_not_clear_ldap_password(self):
         service = self._find_by_name(service_wiki_name)
 

@@ -4,11 +4,16 @@ import {isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
 import ToggleSwitch from "./ToggleSwitch";
-import {allowedOrganisations, toggleAccessAllowedForAll, toggleWhiteListed} from "../../api";
+import {
+    allowedOrganisations,
+    toggleAccessAllowedForAll,
+    toggleAutomaticConnectionAllowed,
+    toggleWhiteListed
+} from "../../api";
 import {clearFlash, setFlash} from "../../utils/Flash";
 import Logo from "./Logo";
 import ConfirmationDialog from "../ConfirmationDialog";
-import {Tooltip} from "@surfnet/sds";
+import {RadioButton, Tooltip} from "@surfnet/sds";
 import CheckBox from "../CheckBox";
 
 
@@ -67,6 +72,12 @@ class ServiceOrganisations extends React.Component {
         const organisationsSelected = {...this.state.organisationsSelected};
         organisationsSelected[organisation.id] = value;
         this.submit(organisationsSelected, value ? [] : [organisation.id]);
+    }
+
+    permissionOptions = (organisation, service) => {
+        if (organisation && service) {
+            return null;
+        }
     }
 
     toggle = (organisation, organisationsSelected, service, serviceAdmin) => {
@@ -189,13 +200,39 @@ class ServiceOrganisations extends React.Component {
                                     isWarning={true}>
                     {confirmationDialogOpen && this.renderConfirmation(service, organisationsDeselected)}
                 </ConfirmationDialog>
-                <div className={"service-container"}>
-                    {(user.admin && !showServiceAdminView) &&
-                    <CheckBox name="white_listed"
-                              value={service.white_listed}
-                              info={I18n.t("service.whiteListed")}
-                              tooltip={I18n.t("service.whiteListedTooltip")}
-                              onChange={() => this.doTogglesWhiteListed(service)}/>}
+                <div className={"options-container"}>
+                    {(user.admin && !showServiceAdminView) && <div className={"service-container"}>
+                        <CheckBox name="white_listed"
+                                  value={service.white_listed}
+                                  info={I18n.t("service.whiteListed")}
+                                  tooltip={I18n.t("service.whiteListedTooltip")}
+                                  onChange={() => this.doTogglesWhiteListed(service)}/>
+                    </div>}
+                    {!service.non_member_users_access_allowed &&
+                    <div className={"radio-button-container"}>
+                        <RadioButton label={I18n.t("models.serviceOrganisations.permissions.eachOrganisation")}
+                                     name={"permissions"}
+                                     value={!service.automatic_connection_allowed && !service.access_allowed_for_all}
+                                     onChange={() => true}
+                        />
+                        <RadioButton label={I18n.t("models.serviceOrganisations.permissions.allowAllRequests")}
+                                     name={"permissions"}
+                                     value={service.access_allowed_for_all}
+                                     onChange={() => this.doToggleAccessAllowedForAll(service)}
+                        />
+                        <RadioButton label={I18n.t("models.serviceOrganisations.permissions.allowAll")}
+                                     name={"permissions"}
+                                     value={service.automatic_connection_allowed}
+                                     onChange={() => toggleAutomaticConnectionAllowed(service.id, service.automatic_connection_allowed)
+                                         .then(() => this.props.refresh(() => {
+                                             this.componentDidMount();
+                                             setFlash(I18n.t("service.flash.updated", {name: service.name}));
+                                         }))}
+                        />
+                    </div>}
+                    {service.non_member_users_access_allowed && <div className={"radio-button-container"}>
+                        <span>{I18n.t("models.serviceOrganisations.serviceNonMemberUsersAccessAllowed")}</span>
+                    </div>}
                 </div>
                 <Entities entities={availableOrganisations}
                           modelName="serviceOrganisations"

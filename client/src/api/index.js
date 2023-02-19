@@ -254,6 +254,16 @@ export function toggleWhiteListed(serviceId, whiteListed) {
     return postPutJson(`/api/services/toggle_white_listed/${serviceId}`, {white_listed: whiteListed}, "put")
 }
 
+export function toggleNonMemberUsersAccessAllowed(serviceId, nonMemberUsersAccessAllowed) {
+    return postPutJson(`/api/services/toggle_non_member_users_access_allowed/${serviceId}`,
+        {non_member_users_access_allowed: nonMemberUsersAccessAllowed}, "put")
+}
+
+export function toggleAutomaticConnectionAllowed(serviceId, automaticConnectionAllowed) {
+    return postPutJson(`/api/services/toggle_automatic_connection_allowed/${serviceId}`,
+        {automatic_connection_allowed: automaticConnectionAllowed}, "put")
+}
+
 export function deleteService(id) {
     return fetchDelete(`/api/services/${id}`)
 }
