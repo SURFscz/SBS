@@ -1,11 +1,11 @@
 import React from "react";
 
-import "./Collaborations.scss";
+import "./ServiceCollaborations.scss";
 import {isEmpty} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
 import Button from "../Button";
-import {collaborationAdmins} from "../../api";
+import {collaborationAdmins, deleteCollaborationServices, toggleNonMemberUsersAccessAllowed} from "../../api";
 import SpinnerField from "./SpinnerField";
 import Logo from "./Logo";
 import CheckBox from "../CheckBox";
@@ -15,6 +15,7 @@ import ConfirmationDialog from "../ConfirmationDialog";
 import {ReactComponent as InformationCircle} from "@surfnet/sds/icons/functional-icons/info.svg";
 import {ReactComponent as EmailIcon} from "../../icons/email_new.svg";
 import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
+import {setFlash} from "../../utils/Flash";
 
 export default class ServiceCollaborations extends React.PureComponent {
 
@@ -40,6 +41,30 @@ export default class ServiceCollaborations extends React.PureComponent {
                 collaborationAdminEmails: res
             })
         );
+    }
+
+    removeCollaboration = (showConfirmation, entityId) => {
+        const {collaborations, service} = this.props;
+        const name = (collaborations.find(coll => coll.id === entityId) || {}).name;
+        if (showConfirmation) {
+            this.setState({
+                confirmationDialogOpen: true,
+                confirmationQuestion: I18n.t(`models.serviceCollaborations.confirmation.remove${entityId ? "One" : ""}`,
+                    {name: name}),
+                confirmationDialogAction: () => this.removeCollaboration(false, entityId),
+            });
+        } else {
+            const {selectedCollaborations} = this.state;
+            const collaborationIdentifiers = entityId ? [entityId] : Object.entries(selectedCollaborations)
+                .filter(l => l[1])
+                .map(e => parseInt(e[0], 10));
+            const promises = collaborationIdentifiers.map(id => deleteCollaborationServices(id, service.id));
+            Promise.all(promises).then(() => this.props.refresh(() => {
+                this.componentDidMount();
+                setFlash(I18n.t("models.serviceCollaborations.flash.removed"));
+            }));
+
+        }
     }
 
 
@@ -151,14 +176,14 @@ export default class ServiceCollaborations extends React.PureComponent {
                     if (entity.fromCollaboration) {
                         return (
                             <div className="check">
-                                <CheckBox name={"" + ++i}
+                                <CheckBox name={entity.name}
                                           onChange={this.onCheck(entity)}
                                           value={(selectedCollaborations[entity.id]) || false}/>
                             </div>)
                     } else {
                         return (
-                            <Tooltip standalone={true} children={<InformationCircle/>}
-                                     anchorId={"collaboration-warning" + ++i}
+                            <Tooltip standalone={true}
+                                     children={<InformationCircle/>}
                                      tip={I18n.t("models.serviceCollaborations.organisationWarningTooltip")}/>
                         )
                     }
@@ -180,7 +205,7 @@ export default class ServiceCollaborations extends React.PureComponent {
                 key: "organisation__name",
                 class: serviceKey,
                 header: I18n.t("models.serviceCollaborations.organisationName"),
-                mapper: collaboration => organisation ? organisation.name : collaboration.organisation.name
+                mapper: collaboration => collaboration.organisation.name
             },
             {
                 key: "short_name",
@@ -214,22 +239,29 @@ export default class ServiceCollaborations extends React.PureComponent {
             }
         ];
         return (
-            <>
+            <div className={"mod-service-collaborations"}>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     isWarning={true}
                                     confirmationTxt={confirmationTxt}
                                     question={confirmationQuestion}/>
-                <div className={"service-container"}>
+                <div className={"options-container"}>
                     {(user.admin && !showServiceAdminView) &&
                     <CheckBox name="non_member_users_access_allowed"
                               value={service.non_member_users_access_allowed}
                               info={I18n.t("service.nonMemberUsersAccessAllowed")}
                               tooltip={I18n.t("service.nonMemberUsersAccessAllowedTooltip")}
-                              onChange={e =>}/>}
+                              onChange={() => toggleNonMemberUsersAccessAllowed(service.id, !service.non_member_users_access_allowed)
+                                  .then(() =>
+                                  this.props.refresh(() => {
+                                      this.componentDidMount();
+                                      setFlash(I18n.t("service.flash.updated", {name: service.name}));
+                                  })
+                              )}
+                    />}
                 </div>
-                <Entities entities={collaborations}
+                {!service.non_member_users_access_allowed && <Entities entities={collaborations}
                           modelName={modelName}
                           searchAttributes={["name"]}
                           defaultSort="name"
@@ -239,8 +271,8 @@ export default class ServiceCollaborations extends React.PureComponent {
                           actionHeader={"collaboration-services"}
                           actions={this.actionButtons(selectedCollaborations, collaborationAdminEmails, collaborations)}
                           loading={loading}
-                          {...this.props}/>
-            </>)
+                          {...this.props}/>}
+            </div>)
     }
 
 }

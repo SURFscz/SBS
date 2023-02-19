@@ -6,13 +6,7 @@ import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
 import Button from "../Button";
-import {
-    allCollaborations,
-    collaborationAdmins,
-    deleteCollaborationServices,
-    mayRequestCollaboration,
-    myCollaborations
-} from "../../api";
+import {allCollaborations, collaborationAdmins, mayRequestCollaboration, myCollaborations} from "../../api";
 import SpinnerField from "./SpinnerField";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
@@ -21,7 +15,7 @@ import {Tooltip} from "@surfnet/sds";
 import ConfirmationDialog from "../ConfirmationDialog";
 
 import {ReactComponent as InformationCircle} from "@surfnet/sds/icons/functional-icons/info.svg";
-import {clearFlash, setFlash} from "../../utils/Flash";
+import {clearFlash} from "../../utils/Flash";
 import Select from "react-select";
 import {displayExpiryDate, displayLastActivityDate} from "../../utils/Date";
 import moment from "moment";
@@ -131,30 +125,6 @@ export default class Collaborations extends React.PureComponent {
         const {selectedCollaborations} = this.state;
         selectedCollaborations[collaboration.id] = e.target.checked;
         this.setState({selectedCollaborations: {...selectedCollaborations}});
-    }
-
-    removeCollaboration = (showConfirmation, entityId) => {
-        const {collaborations, service} = this.props;
-        const name = (collaborations.find(coll => coll.id === entityId) || {}).name;
-        if (showConfirmation) {
-            this.setState({
-                confirmationDialogOpen: true,
-                confirmationQuestion: I18n.t(`models.serviceCollaborations.confirmation.remove${entityId ? "One" : ""}`,
-                    {name: name}),
-                confirmationDialogAction: () => this.removeCollaboration(false, entityId),
-            });
-        } else {
-            const {selectedCollaborations} = this.state;
-            const collaborationIdentifiers = entityId ? [entityId] : Object.entries(selectedCollaborations)
-                .filter(l => l[1])
-                .map(e => parseInt(e[0], 10));
-            const promises = collaborationIdentifiers.map(id => deleteCollaborationServices(id, service.id));
-            Promise.all(promises).then(() => this.props.refresh(() => {
-                this.componentDidMount();
-                setFlash(I18n.t("models.serviceCollaborations.flash.removed"));
-            }));
-
-        }
     }
 
     openCollaboration = collaboration => e => {

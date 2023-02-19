@@ -329,6 +329,12 @@ I18n.translations.en = {
             collaboration: "collaboration",
             organisation: "organisation",
             noEntities: "There are no organisations using this service",
+            permissions: {
+                eachOrganisation: "Choose permission for each organisation",
+                allowAllRequests: "Allow connection requests from collaborations for all organisations",
+                allowAll: "Always allow connections from collaborations for all organisations"
+            },
+            serviceNonMemberUsersAccessAllowed: "This service is configured to allow all users access."
         },
         memberCollaborations: {
             searchPlaceHolder: "Search for collaborations...",

@@ -2,10 +2,16 @@
 
 .mod-service-container {
 
-    .service-container {
+    .options-container {
         max-width: 1280px;
-        display: flex;
         margin: 32px auto 0 auto;
+
+        .radio-button-container {
+            margin: 32px 0 16px 0 ;
+            display: flex;
+            flex-direction: column;
+            row-gap: 15px;
+        }
     }
 
     table.serviceOrganisations {

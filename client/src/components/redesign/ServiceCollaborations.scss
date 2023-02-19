@@ -1,166 +1,12 @@
 @import "../../stylesheets/vars";
 
-.no-collaborations {
-    display: flex;
-    flex-direction: column;
-    margin: 80px auto;
-    max-width: 800px;
-    align-items: center;
+.mod-service-collaborations {
+    .options-container {
+        max-width: 1280px;
+        margin: 32px auto 0 auto;
 
-    h2 {
-        color: $darker-grey;
-        font-size: 18px;
-        margin: 25px 0;
-        text-align: center;
-        line-height: 26px;
-    }
-
-    svg#swinging {
-        max-height: 300px;
-    }
-
-    button {
-        min-width: 325px;
     }
 }
-
-.mod-entities {
-
-    .collaboration-label-filter {
-        display: flex;
-        @media (max-width: $compact-medium) {
-            flex-direction: column;
-        }
-
-        .collaboration-label-filter-select {
-            width: 290px;
-            margin: 0 25px 0 0;
-            @media (max-width: $compact-medium) {
-                margin: 15px 0;
-            }
-
-        }
-    }
-
-}
-
-table.collaborations, table.serviceCollaborations, table.memberCollaborations {
-
-    thead {
-        th {
-            @media (max-width: $compact-medium) {
-                &.role {
-                    display: none;
-                }
-            }
-
-            &.check {
-                width: 30px;
-
-                svg.information-circle {
-                    width: 20px;
-                    height: 20px;
-                }
-            }
-
-            &.action-icons {
-                width: 70px;
-            }
-
-            &.name {
-                width: 26%;
-                padding-left: 15px;
-            }
-
-            &.organisation__name {
-                width: 20%;
-            }
-
-            &.expiry_date {
-                width: 18%;
-            }
-
-            &.last_activity_date {
-                width: 12%;
-            }
-
-            &.fromCollaboration {
-                width: 8%;
-            }
-
-            &.collaboration_memberships_count {
-                width: 8%;
-                text-align: center;
-            }
-
-            &.role {
-                width: 13%;
-                text-align: center;
-            }
-
-            &.invitations_count {
-                width: 8%;
-                text-align: center;
-            }
-
-            &.action_icons {
-                width: 8%;
-                text-align: center;
-            }
-        }
-    }
-
-    tbody {
-        td {
-            @media (max-width: $compact-medium) {
-                &.role {
-                    display: none;
-                }
-            }
-
-            &.check {
-                svg.information-circle {
-                    width: 20px;
-                    height: 20px;
-                }
-            }
-
-            &.name {
-                padding-left: 15px;
-            }
-
-            &.collaboration_memberships_count {
-                text-align: center;
-            }
-
-            &.expiry_date, &.last_activity_date {
-                span.warning {
-                    color: var(--sds--palette--main-color--200);
-                    font-weight: bold;
-
-                    &:last-child {
-                        margin-top: 6px;
-                    }
-                }
-
-                span.expired, span.suspended {
-                    color: $red;
-                    display: block;
-                    font-weight: bold;
-                }
-            }
-
-            &.role {
-                text-align: center;
-            }
-
-            &.invitations_count {
-                text-align: center;
-            }
-        }
-    }
-}
-
 table.serviceCollaborations {
 
     thead {
@@ -194,8 +40,41 @@ table.serviceCollaborations {
             }
 
             &.fromCollaboration {
-                width: 20%;
+                width: 15%;
             }
+
+            &.action-icons {
+                width: 70px;
+            }
+
         }
     }
+
+    tbody {
+        td {
+            @media (max-width: $compact-medium) {
+                &.role {
+                    display: none;
+                }
+            }
+
+            &.check {
+                svg.information-circle {
+                    width: 20px;
+                    height: 20px;
+                }
+            }
+
+            &.name {
+                padding-left: 15px;
+            }
+
+            &.role {
+                width: 15%;
+                text-align: center;
+            }
+
+        }
+    }
+
 }
