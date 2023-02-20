@@ -5,10 +5,10 @@ from sqlalchemy import text
 
 from server.api.service import user_service
 from server.db.db import db
-from server.db.domain import Service, Organisation, Collaboration, ServiceInvitation, User
+from server.db.domain import Service, Organisation, ServiceInvitation, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_network_entity_id, uuc_name, \
-    service_network_name, uuc_scheduler_name, service_wiki_name, uva_research_name, service_storage_name, \
+    service_network_name, uuc_scheduler_name, service_wiki_name, service_storage_name, \
     service_cloud_name, service_storage_entity_id, service_ssh_uva_name, tue_name, amsterdam_uva_name, uuc_secret, \
     jane_name, roger_name
 
@@ -144,24 +144,35 @@ class TestService(AbstractTest):
         service = self._find_by_name(service_network_name)
         self.assertEqual(0, len(service["service_tokens"]))
 
+    def test_toggle_not_allowed(self):
+        service = self.find_entity_by_name(Service, service_cloud_name)
+
+        self.login("urn:john")
+        self.put(f"/api/services/toggle_access_property/{service.id}",
+                 body={"nope": True},
+                 with_basic_auth=False,
+                 response_status_code=400)
+
     def test_toggle_access_allowed_for_all(self):
         service = self.find_entity_by_name(Service, service_cloud_name)
         self.assertFalse(service.access_allowed_for_all)
 
         self.login("urn:james")
-        self.put(f"/api/services/toggle_access_allowed_for_all/{service.id}",
+        self.put(f"/api/services/toggle_access_property/{service.id}",
                  body={"access_allowed_for_all": True},
                  with_basic_auth=False)
 
         service = self.find_entity_by_name(Service, service_cloud_name)
         self.assertTrue(service.access_allowed_for_all)
+        self.assertFalse(service.non_member_users_access_allowed)
+        self.assertFalse(service.automatic_connection_allowed)
 
     def test_toggle_white_listed(self):
         service = self.find_entity_by_name(Service, service_cloud_name)
         self.assertFalse(service.white_listed)
 
-        self.login("urn:james")
-        self.put(f"/api/services/toggle_white_listed/{service.id}",
+        self.login("urn:john")
+        self.put(f"/api/services/toggle_access_property/{service.id}",
                  body={"white_listed": True},
                  with_basic_auth=False)
 
@@ -173,24 +184,46 @@ class TestService(AbstractTest):
         self.assertFalse(service.non_member_users_access_allowed)
 
         self.login("urn:john")
-        self.put(f"/api/services/toggle_non_member_users_access_allowed/{service.id}",
+        self.put(f"/api/services/toggle_access_property/{service.id}",
                  body={"non_member_users_access_allowed": True},
                  with_basic_auth=False)
 
         service = self.find_entity_by_name(Service, service_cloud_name)
         self.assertTrue(service.non_member_users_access_allowed)
+        self.assertFalse(service.access_allowed_for_all)
+        self.assertFalse(service.automatic_connection_allowed)
 
     def test_toggle_automatic_connection_allowed(self):
-        service = self.find_entity_by_name(Service, service_cloud_name)
-        self.assertTrue(service.automatic_connection_allowed)
+        service = self.find_entity_by_name(Service, service_wiki_name)
+        self.assertFalse(service.automatic_connection_allowed)
 
         self.login("urn:john")
-        self.put(f"/api/services/toggle_automatic_connection_allowed/{service.id}",
-                 body={"automatic_connection_allowed": False},
+        self.put(f"/api/services/toggle_access_property/{service.id}",
+                 body={"automatic_connection_allowed": True},
+                 with_basic_auth=False)
+
+        service = self.find_entity_by_name(Service, service_cloud_name)
+        self.assertTrue(service.automatic_connection_allowed)
+        self.assertFalse(service.non_member_users_access_allowed)
+        self.assertFalse(service.access_allowed_for_all)
+
+    def test_toggle_reset(self):
+        service = self.find_entity_by_name(Service, service_cloud_name)
+        service.automatic_connection_allowed = False
+        service.non_member_users_access_allowed = False
+        service.access_allowed_for_all = False
+        db.session.merge(service)
+        db.session.commit()
+
+        self.login("urn:john")
+        self.put(f"/api/services/toggle_access_property/{service.id}",
+                 body={"reset": True},
                  with_basic_auth=False)
 
         service = self.find_entity_by_name(Service, service_cloud_name)
         self.assertFalse(service.automatic_connection_allowed)
+        self.assertFalse(service.non_member_users_access_allowed)
+        self.assertFalse(service.access_allowed_for_all)
 
     def test_service_update_do_not_clear_ldap_password(self):
         service = self._find_by_name(service_wiki_name)
@@ -336,33 +369,44 @@ class TestService(AbstractTest):
         services = self.get("/api/services/all", with_basic_auth=False)
         self.assertTrue(len(services) > 0)
 
-    def test_add_allowed_organisations(self):
+    def test_on_request_organisation(self):
         service = self.find_entity_by_name(Service, service_wiki_name)
-        self.assertEqual(2, len(service.allowed_organisations))
-        self.assertEqual(1, len(service.automatic_connection_allowed_organisations))
+        organisation = self.find_entity_by_name(Organisation, tue_name)
+        self.assertFalse(organisation in service.allowed_organisations)
 
-        ucc = self.find_entity_by_name(Organisation, uuc_name)
-        tue = self.find_entity_by_name(Organisation, tue_name)
         self.login("urn:service_admin")
-        self.put(f"/api/services/allowed_organisations/{service.id}",
-                 body={"allowed_organisations": [{"organisation_id": ucc.id}, {"organisation_id": tue.id}]},
-                 with_basic_auth=False)
+        self.put(f"/api/services/on_request_organisation/{service.id}/{organisation.id}", with_basic_auth=False)
 
         service = self.find_entity_by_name(Service, service_wiki_name)
-        org_names = list(sorted([org.name for org in service.allowed_organisations]))
-        self.assertListEqual([tue_name, uuc_name], org_names)
-        self.assertEqual(0, len(service.automatic_connection_allowed_organisations))
+        self.assertTrue(organisation in service.allowed_organisations)
+        self.assertFalse(organisation in service.automatic_connection_allowed_organisations)
 
-    def test_add_allowed_organisations_none(self):
-        coll = self.find_entity_by_name(Collaboration, uva_research_name)
-        pre = len(coll.services)
+    def test_trust_organisation(self):
         service = self.find_entity_by_name(Service, service_wiki_name)
-        self.put(f"/api/services/allowed_organisations/{service.id}",
-                 body={"allowed_organisations": []})
+        organisation = self.find_entity_by_name(Organisation, tue_name)
+        self.assertFalse(organisation in service.allowed_organisations)
+        self.assertFalse(organisation in service.automatic_connection_allowed_organisations)
 
-        coll = self.find_entity_by_name(Collaboration, uva_research_name)
-        post = len(coll.services)
-        self.assertEqual(pre - 1, post)
+        self.login("urn:service_admin")
+        self.put(f"/api/services/trust_organisation/{service.id}/{organisation.id}", with_basic_auth=False)
+
+        service = self.find_entity_by_name(Service, service_wiki_name)
+        self.assertFalse(organisation in service.allowed_organisations)
+        self.assertTrue(organisation in service.automatic_connection_allowed_organisations)
+
+    def test_disallow_organisation(self):
+        service = self.find_entity_by_name(Service, service_wiki_name)
+        organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
+
+        self.assertTrue(organisation in service.allowed_organisations)
+        self.assertTrue(organisation in service.automatic_connection_allowed_organisations)
+
+        self.put(f"/api/services/disallow_organisation/{service.id}/{organisation.id}",
+                 body={})
+
+        service = self.find_entity_by_name(Service, service_wiki_name)
+        self.assertFalse(organisation in service.allowed_organisations)
+        self.assertFalse(organisation in service.automatic_connection_allowed_organisations)
 
     def test_reset_ldap_password(self):
         service = self._find_by_name()

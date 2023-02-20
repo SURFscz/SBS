@@ -334,12 +334,11 @@ I18n.translations.en = {
                 allowAllRequests: "Allow connection requests from collaborations for all organisations",
                 allowAll: "Always allow connections from collaborations for all organisations"
             },
-            serviceNonMemberUsersAccessAllowed: "This service is configured to allow all users access.",
             options: {
                 header: "Connections from collaborations",
-                disallow: "Disallow",
-                onRequest:  "On request",
-                always: "Always"
+                DISALLOW: "Disallow",
+                ON_REQUEST:  "On request",
+                ALWAYS: "Always"
             }
         },
         memberCollaborations: {
@@ -919,7 +918,7 @@ I18n.translations.en = {
         accessAllowedForAllTooltip: "Is this service available for all current and future organisations?",
         accessAllowedForAllInfo: "All organisations are enabled by default for this service",
         nonMemberUsersAccessAllowed: "Accessible without membership of a collaboration",
-        nonMemberUsersAccessAllowedTooltip: "All users of the platform can access this service, regardless of membership of or connections to any collaboration",
+        nonMemberUsersAccessAllowedTooltip: "All users of the platform can access this service, regardless of any collaboration membership.",
         whiteListed: "SURF service",
         whiteListedTooltip: "Allow this service to be linked to collaborations of a SURF organisation.",
         sirtfiCompliant: "Sirtfi compliant?",

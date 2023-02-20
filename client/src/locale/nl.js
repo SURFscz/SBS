@@ -329,6 +329,17 @@ I18n.translations.nl = {
             collaboration: "samenwerking",
             organisation: "organisatie",
             noEntities: "Er zijn geen organisaties die deze dienst gebruiken",
+            permissions: {
+                eachOrganisation: "Kies de toestemming voor elke organisatie",
+                allowAllRequests: "Sta koppelverzoeken toe van samenwerkingen van alle organisaties",
+                allowAll: "Sta alle koppelingen toe met samenwerkingen van alle organisaties"
+            },
+            options: {
+                header: "Koppelingen met samenwerkingen",
+                DISALLOW: "Niet toestaan",
+                ON_REQUEST:  "Op verzoek",
+                ALWAYS: "Altijd"
+            }
         },
         memberCollaborations: {
             searchPlaceHolder: "Zoek samenwerkingen...",
