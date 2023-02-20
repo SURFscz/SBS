@@ -3,7 +3,7 @@ import urllib.parse
 from flask import Blueprint, request as current_request, g as request_context, jsonify, current_app
 from sqlalchemy import text, func
 from sqlalchemy.orm import load_only, selectinload
-from werkzeug.exceptions import Forbidden
+from werkzeug.exceptions import Forbidden, BadRequest
 
 from server.api.base import json_endpoint, query_param, emit_socket
 from server.api.ipaddress import validate_ip_networks
@@ -19,6 +19,10 @@ from server.db.models import update, save, delete, unique_model_objects
 from server.mail import mail_platform_admins, mail_service_invitation
 
 URI_ATTRIBUTES = ["uri", "uri_info", "privacy_policy", "accepted_user_policy"]
+
+DISALLOW = "DISALLOW"
+ON_REQUEST = "ON_REQUEST"
+ALWAYS = "ALWAYS"
 
 service_api = Blueprint("service_api", __name__, url_prefix="/api/services")
 
@@ -144,16 +148,36 @@ def _token_validity_days(data):
         data["token_validity_days"] = int(days) if len(days.strip()) > 0 else None
 
 
-def _do_toggle_attribute(service_id, attribute, confirm_admin=False):
-    if confirm_admin:
-        confirm_write_access()
-    else:
-        confirm_service_admin(service_id)
+def _do_toggle_permission_organisation(service_id, organisation_id, action):
+    confirm_service_admin(service_id)
+    organisation = Organisation.query.get(organisation_id)
     service = Service.query.get(service_id)
-    setattr(service, attribute, current_request.get_json().get(attribute))
+
+    if action == ALWAYS:
+        if organisation in service.allowed_organisations:
+            service.allowed_organisations.remove(organisation)
+        if organisation not in service.automatic_connection_allowed_organisations:
+            service.automatic_connection_allowed_organisations.append(organisation)
+    elif action == ON_REQUEST:
+        if organisation in service.automatic_connection_allowed_organisations:
+            service.automatic_connection_allowed_organisations.remove(organisation)
+        if organisation not in service.allowed_organisations:
+            service.allowed_organisations.append(organisation)
+    elif action == DISALLOW:
+        if organisation in service.allowed_organisations:
+            service.allowed_organisations.remove(organisation)
+        if organisation in service.automatic_connection_allowed_organisations:
+            service.automatic_connection_allowed_organisations.remove(organisation)
+        if organisation in service.organisations:
+            service.organisations.remove(organisation)
+        for collaboration in [coll for coll in service.collaborations if coll.organisation == organisation]:
+            service.collaborations.remove(collaboration)
+
     db.session.merge(service)
+
     emit_socket(f"service_{service_id}")
-    emit_socket("service")
+    emit_socket(f"organisation_{organisation_id}")
+
     return None, 201
 
 
@@ -365,28 +389,39 @@ def save_service():
     return res
 
 
-@service_api.route("/toggle_access_allowed_for_all/<service_id>", methods=["PUT"], strict_slashes=False)
+@service_api.route("/toggle_access_property/<service_id>", methods=["PUT"], strict_slashes=False)
 @json_endpoint
-def toggle_access_allowed_for_all(service_id):
-    return _do_toggle_attribute(service_id, "access_allowed_for_all")
-
-
-@service_api.route("/toggle_white_listed/<service_id>", methods=["PUT"], strict_slashes=False)
-@json_endpoint
-def toggle_white_listed(service_id):
-    return _do_toggle_attribute(service_id, "white_listed")
-
-
-@service_api.route("/toggle_non_member_users_access_allowed/<service_id>", methods=["PUT"], strict_slashes=False)
-@json_endpoint
-def toggle_non_member_users_access_allowed(service_id):
-    return _do_toggle_attribute(service_id, "non_member_users_access_allowed", confirm_admin=True)
-
-
-@service_api.route("/toggle_automatic_connection_allowed/<service_id>", methods=["PUT"], strict_slashes=False)
-@json_endpoint
-def toggle_automatic_connection_allowed(service_id):
-    return _do_toggle_attribute(service_id, "automatic_connection_allowed")
+def toggle_access_property(service_id):
+    json_dict = current_request.get_json()
+    attribute = list(json_dict.keys())[0]
+    if attribute not in ["reset", "white_listed", "non_member_users_access_allowed", "access_allowed_for_all",
+                         "automatic_connection_allowed"]:
+        raise BadRequest(f"attribute {attribute} not allowed")
+    if attribute in ["white_listed", "non_member_users_access_allowed"]:
+        confirm_write_access()
+    else:
+        confirm_service_admin(service_id)
+    service = Service.query.get(service_id)
+    enabled = json_dict.get(attribute)
+    if attribute == "reset":
+        service.automatic_connection_allowed = False
+        service.non_member_users_access_allowed = False
+        service.access_allowed_for_all = False
+    else:
+        setattr(service, attribute, enabled)
+    if attribute == "access_allowed_for_all" and enabled:
+        service.automatic_connection_allowed = False
+        service.non_member_users_access_allowed = False
+    if attribute == "automatic_connection_allowed" and enabled:
+        service.access_allowed_for_all = False
+        service.non_member_users_access_allowed = False
+    if attribute == "non_member_users_access_allowed" and enabled:
+        service.automatic_connection_allowed = False
+        service.access_allowed_for_all = False
+    db.session.merge(service)
+    emit_socket(f"service_{service_id}")
+    emit_socket("service")
+    return None, 201
 
 
 @service_api.route("/invites", methods=["PUT"], strict_slashes=False)
@@ -480,55 +515,25 @@ def update_service():
     return res
 
 
-@service_api.route("/allowed_organisations/<service_id>", methods=["PUT"], strict_slashes=False)
+@service_api.route("/disallow_organisation/<service_id>/<organisation_id>",
+                   methods=["PUT"], strict_slashes=False)
 @json_endpoint
-def add_allowed_organisations(service_id):
-    confirm_service_admin(service_id)
+def disallow_organisation(service_id, organisation_id):
+    return _do_toggle_permission_organisation(service_id, organisation_id, DISALLOW)
 
-    service = Service.query.get(service_id)
-    data = current_request.get_json()
-    allowed_organisations = data.get("allowed_organisations", None)
 
-    org_sql = f"DELETE FROM services_organisations WHERE service_id = {service.id}"
-    coll_sql = f"DELETE sc FROM services_collaborations sc INNER JOIN collaborations c on c.id = sc.collaboration_id " \
-               f"WHERE sc.service_id = {service.id}"
+@service_api.route("/on_request_organisation/<service_id>/<organisation_id>",
+                   methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def on_request_organisation(service_id, organisation_id):
+    return _do_toggle_permission_organisation(service_id, organisation_id, ON_REQUEST)
 
-    need_to_delete = not bool(allowed_organisations)
-    if allowed_organisations:
-        # find delta, e.g. which one to remove and which ones to add
-        current_allowed = [org.id for org in service.allowed_organisations]
-        new_allowed = [int(value["organisation_id"]) for value in allowed_organisations]
 
-        to_remove = [org_id for org_id in current_allowed if org_id not in new_allowed]
-        to_append = [org_id for org_id in new_allowed if org_id not in current_allowed]
-        for org_id in to_remove:
-            organisation = Organisation.query.get(org_id)
-            service.allowed_organisations.remove(organisation)
-            if organisation in service.automatic_connection_allowed_organisations:
-                service.automatic_connection_allowed_organisations.remove(organisation)
-        for org_id in to_append:
-            service.allowed_organisations.append(Organisation.query.get(org_id))
-
-        if to_remove:
-            need_to_delete = True
-            org_del_ids = ",".join([str(org_id) for org_id in to_remove])
-            org_sql += f" AND organisation_id in ({org_del_ids})"
-            coll_sql += f" AND c.organisation_id in ({org_del_ids})"
-
-    else:
-        service.allowed_organisations.clear()
-        service.automatic_connection_allowed_organisations.clear()
-
-    db.session.merge(service)
-
-    if need_to_delete:
-        db.engine.execute(text(org_sql))
-        db.engine.execute(text(coll_sql))
-
-    emit_socket(f"service_{service_id}")
-    emit_socket("service")
-
-    return None, 201
+@service_api.route("/trust_organisation/<service_id>/<organisation_id>",
+                   methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def trust_organisation(service_id, organisation_id):
+    return _do_toggle_permission_organisation(service_id, organisation_id, ALWAYS)
 
 
 @service_api.route("/<service_id>", methods=["DELETE"], strict_slashes=False)

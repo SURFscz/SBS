@@ -1,7 +1,14 @@
 .mod-spinner-loading {
     height: 275px;
     display: flex;
+
     span {
         margin: auto;
+    }
+
+    &.absolute {
+        position: absolute;
+        left: 50%;
+        height: 0;
     }
 }

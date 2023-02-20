@@ -1,20 +1,24 @@
 import React from "react";
 import "./ServiceOrganisations.scss";
-import {isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
+import {removeDuplicates, stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
-import ToggleSwitch from "./ToggleSwitch";
 import {
-    allowedOrganisations,
+    disallowOrganisation,
+    onRequestOrganisation,
     toggleAccessAllowedForAll,
     toggleAutomaticConnectionAllowed,
-    toggleWhiteListed
+    toggleReset,
+    toggleWhiteListed,
+    trustOrganisation
 } from "../../api";
 import {clearFlash, setFlash} from "../../utils/Flash";
 import Logo from "./Logo";
 import ConfirmationDialog from "../ConfirmationDialog";
-import {RadioButton, SegmentedControl, Tooltip} from "@surfnet/sds";
+import {RadioButton, SegmentedControl} from "@surfnet/sds";
 import CheckBox from "../CheckBox";
+import {ALWAYS, DISALLOW, ON_REQUEST, PERMISSION_OPTIONS} from "../../utils/Permissions";
+import SpinnerField from "./SpinnerField";
 
 
 class ServiceOrganisations extends React.Component {
@@ -22,110 +26,95 @@ class ServiceOrganisations extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            organisationsSelected: {},
-            organisationsDeselected: [],
-            toggleAll: false,
             confirmationDialogOpen: false,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
-            confirmationDialogAction: undefined
+            confirmationDialogAction: undefined,
+            disallowedOrganisation: null,
+            loading: false
         }
     }
 
-    componentDidMount = toggleAll => {
-        const {service, organisations} = this.props;
-        const allowedOrganisationIdentifiers = service.allowed_organisations.map(org => org.id);
-        const organisationsSelected = organisations.reduce((acc, org) => {
-            acc[org.id] = allowedOrganisationIdentifiers.indexOf(org.id) > -1;
-            return acc;
-        }, {})
-
-        this.setState({
-            organisationsSelected: organisationsSelected,
-            organisationsDeselected: [],
-            toggleAll: toggleAll === undefined ? allowedOrganisationIdentifiers.length === organisations.length : toggleAll
-        });
-    }
-
     openOrganisation = organisation => e => {
+        if (e.metaKey || e.ctrlKey) {
+            return;
+        }
         stopEvent(e);
         clearFlash();
         this.props.history.push(`/organisations/${organisation.id}`);
     };
 
+    doToggleAutomaticConnectionAllowed = service => {
+        this.setState({loading: true});
+        toggleAutomaticConnectionAllowed(service.id)
+            .then(() => this.refreshService());
+    }
+
+    doToggleReset = service => {
+        this.setState({loading: true});
+        toggleReset(service.id)
+            .then(() => this.refreshService())
+    }
+
     doToggleAccessAllowedForAll = service => {
-        toggleAccessAllowedForAll(service.id, !service.access_allowed_for_all)
-            .then(() => this.props.refresh(() => {
-                this.componentDidMount();
-                setFlash(I18n.t("service.flash.updated", {name: service.name}));
-            }));
+        this.setState({loading: true});
+        toggleAccessAllowedForAll(service.id)
+            .then(() => this.refreshService())
     }
 
     doTogglesWhiteListed = service => {
+        this.setState({loading: true});
         toggleWhiteListed(service.id, !service.white_listed)
-            .then(() => this.props.refresh(() => {
-                this.componentDidMount();
-                setFlash(I18n.t("service.flash.updated", {name: service.name}));
-            }));
+            .then(() => this.refreshService())
     }
 
-    toggleChanged = organisation => value => {
-        const organisationsSelected = {...this.state.organisationsSelected};
-        organisationsSelected[organisation.id] = value;
-        this.submit(organisationsSelected, value ? [] : [organisation.id]);
+    changePermission = (organisation, option) => {
+        const {service} = this.props;
+        if (option === DISALLOW) {
+            this.doDisallow(organisation, true);
+        } else if (option === ON_REQUEST) {
+            this.setState({loading: true});
+            onRequestOrganisation(service.id, organisation.id)
+                .then(() => this.refreshService());
+        } else if (option === ALWAYS) {
+            this.setState({loading: true});
+            trustOrganisation(service.id, organisation.id)
+                .then(() => this.refreshService());
+        }
     }
 
     permissionOptions = (organisation, service) => {
-        const disabled = service.automatic_connection_allowed || service.access_allowed_for_all;
-        const options = ["disallow", "onRequest", "always"]
-            .map(option => I18n.t(`models.serviceOrganisations.options.${option}`));
+        const disabled = service.automatic_connection_allowed || service.access_allowed_for_all || service.non_member_users_access_allowed;
+        const allowed = service.allowed_organisations.some(org => org.id === organisation.id)
+        const always = service.automatic_connection_allowed_organisations.some(org => org.id === organisation.id)
         return (
-            <SegmentedControl onClick={() => true}
-                              options={options}
-                              option={options[1]}
+            <SegmentedControl onClick={option => this.changePermission(organisation, option)}
+                              options={PERMISSION_OPTIONS}
+                              optionLabelResolver={option => I18n.t(`models.serviceOrganisations.options.${option}`)}
+                              option={always ? PERMISSION_OPTIONS[2] : allowed ? PERMISSION_OPTIONS[1] : PERMISSION_OPTIONS[0]}
                               disabled={disabled}/>
         );
     }
 
-    toggle = (organisation, organisationsSelected, service, serviceAdmin) => {
-        const value = organisationsSelected[organisation.id];
-        const access_allowed_for_all = service.access_allowed_for_all;
-        if (access_allowed_for_all) {
-            return <Tooltip standalone={true}
-                            tip={I18n.t("service.accessAllowedForAllInfo")}/>
-        }
-        return <ToggleSwitch value={access_allowed_for_all ? true : value || false}
-                             animate={false}
-                             disabled={!serviceAdmin}
-                             onChange={this.toggleChanged(organisation)}/>;
-    }
-
-    submit = (organisationsSelected, organisationsDeselected, toggleAll, showConfirmation = true) => {
-        const {collAffected, orgAffected} = this.getAffectedEntities(organisationsDeselected, this.props.service);
+    doDisallow = (organisation, showConfirmation = true) => {
+        const {service} = this.props;
+        const {collAffected, orgAffected} = this.getAffectedEntities(organisation, service);
         if (showConfirmation && (collAffected.length > 0 || orgAffected.length > 0)) {
             this.setState({
                 confirmationDialogOpen: true,
                 confirmationDialogAction: () => {
                     this.setState({confirmationDialogOpen: false});
-                    this.submit(organisationsSelected, organisationsDeselected, toggleAll, false)
+                    this.doDisallow(organisation, false);
                 },
-                organisationsDeselected: organisationsDeselected
+                disallowedOrganisation: organisation
             });
         } else {
-            const organisations = Object.entries(organisationsSelected)
-                .filter(e => e[1])
-                .map(e => ({"organisation_id": e[0]}));
-            const {service} = this.props;
-            allowedOrganisations(service.id, {"allowed_organisations": organisations})
-                .then(() => this.props.refresh(() => {
-                    this.componentDidMount(isEmpty(toggleAll) ? this.state.toggleAll : toggleAll);
-                    setFlash(I18n.t("service.flash.updated", {name: service.name}));
-                }));
+            this.setState({loading: true});
+            disallowOrganisation(service.id, organisation.id).then(() => this.refreshService());
         }
     }
 
-    renderConfirmation = (service, organisationsDeselected) => {
-        const {collAffected, orgAffected} = this.getAffectedEntities(organisationsDeselected, service);
-
+    renderConfirmation = (service, disallowedOrganisation) => {
+        const {collAffected, orgAffected} = this.getAffectedEntities(disallowedOrganisation, service);
         const collAffectedUnique = removeDuplicates(collAffected, "id");
         return (
             <div className="allowed-organisations-confirmation">
@@ -144,20 +133,25 @@ class ServiceOrganisations extends React.Component {
         );
     }
 
-    getAffectedEntities = (organisationsDeselected, service) => {
-        const collAffected = service.collaborations.filter(coll => organisationsDeselected.includes(coll.organisation_id));
-        const orgAffected = service.organisations.filter(org => organisationsDeselected.includes(org.id));
+    refreshService = () => {
+        this.props.refresh(() => {
+            this.setState({loading: false});
+            setFlash(I18n.t("service.flash.updated", {name: this.props.service.name}));
+        });
+    }
+
+    getAffectedEntities = (organisation, service) => {
+        const collAffected = service.collaborations.filter(coll => organisation.id === coll.organisation_id);
+        const orgAffected = service.organisations.filter(org => organisation.id === org.id);
         return {collAffected, orgAffected};
     }
 
     render() {
         const {
-            organisationsSelected, organisationsDeselected, confirmationDialogOpen, cancelDialogAction,
-            confirmationDialogAction,
+            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, loading, disallowedOrganisation
         } = this.state;
         const {organisations, service, user, userAdmin, showServiceAdminView} = this.props;
         const availableOrganisations = service.white_listed ? organisations : organisations.filter(org => !org.services_restricted);
-        availableOrganisations.forEach(org => org.toggle = organisationsSelected[org.id]);
         const columns = [
             {
                 nonSortable: true,
@@ -204,8 +198,9 @@ class ServiceOrganisations extends React.Component {
                                     question={I18n.t("models.serviceOrganisations.disableAccessConfirmation")}
                                     closeTimeoutMS={0}
                                     isWarning={true}>
-                    {confirmationDialogOpen && this.renderConfirmation(service, organisationsDeselected)}
+                    {confirmationDialogOpen && this.renderConfirmation(service, disallowedOrganisation)}
                 </ConfirmationDialog>
+                {loading && <SpinnerField absolute={true}/>}
                 <div className={"options-container"}>
                     {(user.admin && !showServiceAdminView) && <div className={"service-container"}>
                         <CheckBox name="white_listed"
@@ -219,25 +214,21 @@ class ServiceOrganisations extends React.Component {
                         <RadioButton label={I18n.t("models.serviceOrganisations.permissions.eachOrganisation")}
                                      name={"permissions"}
                                      value={!service.automatic_connection_allowed && !service.access_allowed_for_all}
-                                     onChange={() => true}
+                                     onChange={() => this.doToggleReset(service)}
                         />
                         <RadioButton label={I18n.t("models.serviceOrganisations.permissions.allowAllRequests")}
                                      name={"permissions"}
-                                     value={service.access_allowed_for_all}
+                                     value={service.access_allowed_for_all && !service.automatic_connection_allowed}
                                      onChange={() => this.doToggleAccessAllowedForAll(service)}
                         />
                         <RadioButton label={I18n.t("models.serviceOrganisations.permissions.allowAll")}
                                      name={"permissions"}
                                      value={service.automatic_connection_allowed}
-                                     onChange={() => toggleAutomaticConnectionAllowed(service.id, service.automatic_connection_allowed)
-                                         .then(() => this.props.refresh(() => {
-                                             this.componentDidMount();
-                                             setFlash(I18n.t("service.flash.updated", {name: service.name}));
-                                         }))}
+                                     onChange={() => this.doToggleAutomaticConnectionAllowed(service)}
                         />
                     </div>}
                     {service.non_member_users_access_allowed && <div className={"radio-button-container"}>
-                        <span>{I18n.t("models.serviceOrganisations.serviceNonMemberUsersAccessAllowed")}</span>
+                        <span>{I18n.t("service.nonMemberUsersAccessAllowedTooltip")}</span>
                     </div>}
                 </div>
                 <Entities entities={availableOrganisations}
@@ -247,8 +238,7 @@ class ServiceOrganisations extends React.Component {
                           hideTitle={true}
                           columns={columns}
                           loading={false}
-                          {...this.props}>
-                </Entities>
+                          {...this.props}/>
             </div>
         )
     }

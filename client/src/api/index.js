@@ -227,7 +227,7 @@ export function serviceByEntityId(entityid) {
 
 export function allServices(includeCounts) {
     const query = includeCounts ? "?include_counts=true" : "";
-    return fetchJson(`/api/services/all${query}`,{}, {}, false);
+    return fetchJson(`/api/services/all${query}`, {}, {}, false);
 }
 
 export function mineServices() {
@@ -242,26 +242,41 @@ export function updateService(service) {
     return postPutJson("/api/services", service, "put", false);
 }
 
-export function allowedOrganisations(serviceId, allowedOrganisations = {"allowed_organisations": []}) {
-    return postPutJson(`/api/services/allowed_organisations/${serviceId}`, allowedOrganisations, "put")
+export function toggleReset(serviceId) {
+    return postPutJson(`/api/services/toggle_access_property/${serviceId}`, {reset: true}, "put")
 }
 
-export function toggleAccessAllowedForAll(serviceId, allowedForAll) {
-    return postPutJson(`/api/services/toggle_access_allowed_for_all/${serviceId}`, {access_allowed_for_all: allowedForAll}, "put")
+export function toggleAccessAllowedForAll(serviceId) {
+    return postPutJson(`/api/services/toggle_access_property/${serviceId}`, {access_allowed_for_all: true}, "put")
 }
 
 export function toggleWhiteListed(serviceId, whiteListed) {
-    return postPutJson(`/api/services/toggle_white_listed/${serviceId}`, {white_listed: whiteListed}, "put")
+    return postPutJson(`/api/services/toggle_access_property/${serviceId}`, {white_listed: whiteListed}, "put")
 }
 
 export function toggleNonMemberUsersAccessAllowed(serviceId, nonMemberUsersAccessAllowed) {
-    return postPutJson(`/api/services/toggle_non_member_users_access_allowed/${serviceId}`,
+    return postPutJson(`/api/services/toggle_access_property/${serviceId}`,
         {non_member_users_access_allowed: nonMemberUsersAccessAllowed}, "put")
 }
 
-export function toggleAutomaticConnectionAllowed(serviceId, automaticConnectionAllowed) {
-    return postPutJson(`/api/services/toggle_automatic_connection_allowed/${serviceId}`,
-        {automatic_connection_allowed: automaticConnectionAllowed}, "put")
+export function toggleAutomaticConnectionAllowed(serviceId) {
+    return postPutJson(`/api/services/toggle_access_property/${serviceId}`,
+        {automatic_connection_allowed: true}, "put")
+}
+
+export function disallowOrganisation(serviceId, organisationId) {
+    const path = `/api/services/disallow_organisation/${serviceId}/${organisationId}`;
+    return postPutJson(path, {}, "put")
+}
+
+export function onRequestOrganisation(serviceId, organisationId) {
+    const path = `/api/services/on_request_organisation/${serviceId}/${organisationId}`;
+    return postPutJson(path, {}, "put")
+}
+
+export function trustOrganisation(serviceId, organisationId) {
+    const path = `/api/services/trust_organisation/${serviceId}/${organisationId}`;
+    return postPutJson(path, {}, "put")
 }
 
 export function deleteService(id) {
