@@ -1678,16 +1678,11 @@ I18n.translations.en = {
         loginLink: "Login"
     },
     footer: {
-        tips: "Need tips or info?",
-        help: "Help & FAQ",
-        product: "Proudly powered by",
-        productLink: "https://edu.nl/vw3jx",
-        surf: "SURF",
-        surfLink: "https://surf.nl",
         terms: "Terms of Use",
         termsLink: "https://edu.nl/6wb63",
         privacy: "Privacy policy",
         privacyLink: "https://edu.nl/fcgbd",
+        surfLink: "https://surf.nl",
     },
     system: {
         title: "System maintenance",
