@@ -488,29 +488,11 @@ def update_service():
         for service_token in ServiceToken.query.filter(ServiceToken.service_id == service_id).all():
             db.session.delete(service_token)
 
-    automatic_connection_allowed = data.get("automatic_connection_allowed", False)
-    emit_organisations = (automatic_connection_allowed is not service.automatic_connection_allowed)
-    if automatic_connection_allowed:
-        service.automatic_connection_allowed_organisations.clear()
-    else:
-        # We need to reconcile the automatic_connection_allowed_organisations, which ones were added and / or removed
-        organisations = [Organisation.query.get(org["value"]) for org in
-                         data.get("automatic_connection_allowed_organisations", [])]
-        existing_organisations = service.automatic_connection_allowed_organisations
-        for org in [org for org in organisations if org not in existing_organisations]:
-            emit_organisations = True
-            service.automatic_connection_allowed_organisations.append(org)
-        for org in [org for org in existing_organisations if org not in organisations]:
-            emit_organisations = True
-            service.automatic_connection_allowed_organisations.remove(org)
-
     res = update(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]
     service.ip_networks
 
     emit_socket(f"service_{service_id}")
-    if emit_organisations:
-        emit_socket("service")
 
     return res
 
