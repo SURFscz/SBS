@@ -48,6 +48,7 @@ div.org-attributes-container {
                 white-space: nowrap;
                 overflow: hidden;
                 display: inline-block;
+                font-weight: 700;
 
                 @media (max-width: $compact-medium) {
                     max-width: 200px;
@@ -124,6 +125,7 @@ div.org-attributes-container-grid, div.org-attributes-container-flex {
                 white-space: nowrap;
                 overflow: hidden;
                 max-width: 480px;
+                font-weight: 700;
 
                 @media (max-width: $medium) {
                     max-width: 400px;

@@ -6,6 +6,7 @@ import InviteLogo from "../icons/landing/mail.svg";
 import JoinLogo from "../icons/landing/screen.svg";
 import CollaborateLogo from "../icons/landing/collaborate.svg";
 import "./LandingInfo.scss";
+import {Chip} from "@surfnet/sds"
 
 export default function LandingInfo() {
     const infoBlock = (name, isAdminFunction, Logo, reversed) =>
@@ -14,7 +15,7 @@ export default function LandingInfo() {
                 <div className={"info-title"}>
                     <h3>{I18n.t(`landing.${name}`)}</h3>
                     {isAdminFunction && <div className={"admin-function-container"}>
-                        <span className={"admin-function"}>{I18n.t("landing.adminFunction")}</span>
+                        <Chip label={I18n.t("landing.adminFunction")} isActive={true}/>
                     </div>}
                 </div>
                 <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t(`landing.${name}Info`))}}/>

@@ -127,9 +127,10 @@ def _do_apply_user_change(user: User, service: Union[None, Service], deletion: b
     for service in scim_services:
         scim_object = _lookup_scim_object(service, SCIM_USERS, user.external_id)
         # No use to delete the user if the user is unknown in the remote system
-        if deletion and scim_object:
-            url = f"{service.scim_url}{scim_object['meta']['location']}"
-            response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10)
+        if deletion:
+            if scim_object:
+                url = f"{service.scim_url}{scim_object['meta']['location']}"
+                response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10)
         else:
             response = _provision_user(scim_object, service, user)
         validate_response(response, service)
@@ -147,16 +148,17 @@ def _do_apply_group_collaboration_change(group: Union[Group, Collaboration], ser
     scim_services = _unique_scim_services(services)
     for service in scim_services:
         scim_object = _lookup_scim_object(service, SCIM_GROUPS, group.identifier)
-        # No use to delete the group if the group is unknown in the remote system
-        if deletion and scim_object:
-            url = f"{service.scim_url}{scim_object['meta']['location']}"
-            response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10)
-            if isinstance(group, Collaboration):
-                for co_group in group.groups:
-                    _do_apply_group_collaboration_change(co_group, services=scim_services, deletion=True)
-                for user in [member.user for member in group.collaboration_memberships]:
-                    if not _has_user_service_access(user, service, group):
-                        _do_apply_user_change(user, service=service, deletion=True)
+        if deletion:
+            # No use to delete the group if the group is unknown in the remote system
+            if scim_object:
+                url = f"{service.scim_url}{scim_object['meta']['location']}"
+                response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10)
+                if isinstance(group, Collaboration):
+                    for co_group in group.groups:
+                        _do_apply_group_collaboration_change(co_group, services=scim_services, deletion=True)
+                    for user in [member.user for member in group.collaboration_memberships]:
+                        if not _has_user_service_access(user, service, group):
+                            _do_apply_user_change(user, service=service, deletion=True)
         else:
             response = _provision_group(scim_object, service, group)
         validate_response(response, service)

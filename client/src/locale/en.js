@@ -1684,8 +1684,10 @@ I18n.translations.en = {
         productLink: "https://edu.nl/vw3jx",
         surf: "SURF",
         surfLink: "https://surf.nl",
-        privacy: "Terms & Privacy",
-        privacyLink: "https://edu.nl/93cdm"
+        terms: "Terms of Use",
+        termsLink: "https://edu.nl/6wb63",
+        privacy: "Privacy policy",
+        privacyLink: "https://edu.nl/fcgbd",
     },
     system: {
         title: "System maintenance",

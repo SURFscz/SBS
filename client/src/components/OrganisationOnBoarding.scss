@@ -23,16 +23,6 @@ div.organisation-onboarding {
         border-color: $dark-grey;
         background-color: $background;
 
-        .mde-tabs button {
-            color: $blue;
-
-            &.selected, &:focus {
-                outline: $dark-grey;
-                border-color: $dark-grey;
-                color: black;
-                cursor: default;
-            }
-        }
     }
 
     .mde-textarea-wrapper {

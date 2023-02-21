@@ -39,7 +39,7 @@ class Login extends React.Component {
                 <div className="mod-login-container">
                     <div className="mod-login">
                         <div className="header-left">
-                            <h1 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("landing.header.title"))}}/>
+                            <h2 className={"header-title"} dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("landing.header.title"))}}/>
                             <Button txt={"Login"}
                                     html={I18n.t("landing.header.login")}
                                     onClick={login}/>

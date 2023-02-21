@@ -15,6 +15,10 @@
         }
         background-color: white;
 
+        .header-title {
+            margin-bottom: 60px;
+        }
+
         &.bottom {
             background-color: $background;
         }
@@ -117,57 +121,11 @@
             }
         }
 
-        h1 {
-            font-size: 32px;
-            line-height: 38px;
-            font-weight: 700;
-            margin-bottom: 60px;
-        }
-
-        h2 {
-            font-size: 32px;
-            line-height: 38px;
-            font-weight: 700;
-            color: var(--sds--palette--main-color--200);
-        }
-
-        .info-title {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-
-            .admin-function-container {
-                margin-left: auto;
-
-                span.admin-function {
-                    align-items: center;
-                    display: flex;
-                    background-color: #b2e4fe;
-                    border-radius: 40px;
-                    padding: 2px 8px;
-                    font-size: 13px;
-                }
-
-            }
-        }
-
-        h3 {
-            font-size: 26px;
-            line-height: 34px;
-            font-weight: 700;
-        }
-
         p.sup {
             margin-top: 20px;
             font-size: 18px;
             line-height: 22px;
         }
 
-        .landing-footer {
-            background-color: white;
-            border-radius: 16px;
-            padding: 15px 25px;
-            margin: 30px auto 0;
-        }
     }
 }
