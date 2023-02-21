@@ -6,20 +6,28 @@ import {Logo, LogoType} from "@surfnet/sds";
 
 export default function Footer() {
     return (
-        <div className="footer">
-            <div className="footer-inner">
-            <section className="info left">
-                <span>{I18n.t("footer.tips")}</span>
-                <a href={I18n.t("footer.productLink")} target="_blank"
-                         rel="noopener noreferrer">{I18n.t("footer.help")}</a>
-            </section>
-                <LanguageSelector />
-            <section className="info right">
-                <a href={I18n.t("footer.surfLink")} target="_blank"
-                         rel="noopener noreferrer">{<Logo label={""} position={LogoType.Bottom}/>}</a>
-            </section>
-
+        <footer className="sds--footer sds--footer--single-bar">
+            <div className="sds--page-container">
+                <div className="sds--footer--inner">
+                    <nav className="menu sds--text--body--small">
+                        <ul>
+                            <li>
+                                <a href={I18n.t("footer.termsLink")} target="_blank"
+                                   rel="noopener noreferrer"><span>{I18n.t("footer.terms")}</span></a>
+                            </li>
+                            <li>
+                                <a href={I18n.t("footer.privacyLink")} target="_blank"
+                                   rel="noopener noreferrer"><span>{I18n.t("footer.privacy")}</span></a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <LanguageSelector/>
+                    <div className="sds--branding">
+                        <a href={I18n.t("footer.surfLink")} target="_blank"
+                           rel="noopener noreferrer">{<Logo label={""} position={LogoType.Bottom}/>}</a>
+                    </div>
+                </div>
             </div>
-        </div>
+        </footer>
     );
 }

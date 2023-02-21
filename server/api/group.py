@@ -34,27 +34,26 @@ def do_add_group_invitations(data):
 
 
 def auto_provision_all_members_and_invites(group: Group):
-    if not group.auto_provision_members:
-        return
-    ag_member_identifiers = [m.id for m in group.collaboration_memberships]
-    c_member_identifiers = [m.id for m in group.collaboration.collaboration_memberships]
-    missing_members = list(filter(lambda m: m not in ag_member_identifiers, c_member_identifiers))
-    do_add_group_members({
-        "group_id": group.id,
-        "collaboration_id": group.collaboration_id,
-        "members_ids": missing_members
-    }, True)
-    # Session is closed in do_add_group_members, but we are not ready yet, so re-fetch the Group
-    group = Group.query.get(group.id)
+    if group.auto_provision_members:
+        ag_member_identifiers = [m.id for m in group.collaboration_memberships]
+        c_member_identifiers = [m.id for m in group.collaboration.collaboration_memberships]
+        missing_members = list(filter(lambda m: m not in ag_member_identifiers, c_member_identifiers))
+        do_add_group_members({
+            "group_id": group.id,
+            "collaboration_id": group.collaboration_id,
+            "members_ids": missing_members
+        }, True)
+        # Session is closed in do_add_group_members, but we are not ready yet, so re-fetch the Group
+        group = Group.query.get(group.id)
 
-    ag_invitation_identifiers = [i.id for i in group.invitations]
-    c_invitation_identifiers = [i.id for i in group.collaboration.invitations if i.status == "open"]
-    missing_invitations = list(filter(lambda i: i not in ag_invitation_identifiers, c_invitation_identifiers))
-    do_add_group_invitations({
-        "group_id": group.id,
-        "collaboration_id": group.collaboration_id,
-        "invitations_ids": missing_invitations
-    })
+        ag_invitation_identifiers = [i.id for i in group.invitations]
+        c_invitation_identifiers = [i.id for i in group.collaboration.invitations if i.status == "open"]
+        missing_invitations = list(filter(lambda i: i not in ag_invitation_identifiers, c_invitation_identifiers))
+        do_add_group_invitations({
+            "group_id": group.id,
+            "collaboration_id": group.collaboration_id,
+            "invitations_ids": missing_invitations
+        })
 
 
 @group_api.route("/name_exists", strict_slashes=False)
@@ -123,6 +122,7 @@ def create_group(collaboration_id, data, do_cleanse_short_name=True):
     auto_provision_all_members_and_invites(group)
 
     emit_socket(f"collaboration_{collaboration.id}")
+    broadcast_group_changed(group)
 
     return res
 

@@ -62,3 +62,12 @@ textarea {
     font-family: Nunito, sans-serif;
 }
 
+a {
+    font-weight: 700;
+    color: var(--sds--palette--support-color--400);
+
+    &:visited {
+        color: var(--sds--palette--support-color--500);
+    }
+}
+

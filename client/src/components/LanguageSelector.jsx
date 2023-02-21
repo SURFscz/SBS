@@ -20,23 +20,26 @@ export default class LanguageSelector extends React.PureComponent {
 
     renderLocaleChooser(locale) {
         return (
-            <li key={locale}>
-                <a href={"locale"} className={`${I18n.currentLocale() === locale ? "active" : ""}`}
-                   title={I18n.t("select_locale", {locale: locale})}
-                   onClick={this.handleChooseLocale(locale)}>
-                    {I18n.t("code", {locale: locale})}
-                </a>
-            </li>
+            <a href={"locale"} className={`${I18n.currentLocale() === locale ? "is-active" : ""}`}
+               title={I18n.t("select_locale", {locale: locale})}
+               onClick={this.handleChooseLocale(locale)}>
+                {I18n.t("code", {locale: locale})}
+            </a>
         );
     }
 
     render() {
         return (
-            <ul className="language-selector">
-                {this.renderLocaleChooser("en")}
-                <li className="separator">|</li>
-                {this.renderLocaleChooser("nl")}
-            </ul>
+            <nav className="sds--language-switcher sds--text--body--small" aria-label="Language">
+                <ul>
+                    <li>{this.renderLocaleChooser("nl")}
+                        <span className="sds--language-sds--divider">|</span>
+                    </li>
+                    <li>
+                        {this.renderLocaleChooser("en")}
+                    </li>
+                </ul>
+            </nav>
         );
     }
 }
