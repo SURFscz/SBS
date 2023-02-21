@@ -9,7 +9,7 @@ from server.db.domain import Service, Organisation, ServiceInvitation, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_network_entity_id, uuc_name, \
     service_network_name, uuc_scheduler_name, service_wiki_name, service_storage_name, \
-    service_cloud_name, service_storage_entity_id, service_ssh_uva_name, tue_name, amsterdam_uva_name, uuc_secret, \
+    service_cloud_name, service_storage_entity_id, service_ssh_uva_name, amsterdam_uva_name, uuc_secret, \
     jane_name, roger_name
 
 
@@ -398,6 +398,8 @@ class TestService(AbstractTest):
     def test_disallow_organisation(self):
         service = self.find_entity_by_name(Service, service_wiki_name)
         organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
+        organisation.services.append(service)
+        self.save_entity(organisation)
 
         self.assertTrue(organisation in service.allowed_organisations)
         self.assertTrue(organisation in service.automatic_connection_allowed_organisations)
@@ -408,6 +410,7 @@ class TestService(AbstractTest):
         service = self.find_entity_by_name(Service, service_wiki_name)
         self.assertFalse(organisation in service.allowed_organisations)
         self.assertFalse(organisation in service.automatic_connection_allowed_organisations)
+        self.assertFalse(service in organisation.services)
 
     def test_reset_ldap_password(self):
         service = self._find_by_name()

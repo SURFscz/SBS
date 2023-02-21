@@ -235,14 +235,10 @@ class SecondFactorAuthentication extends React.Component {
             });
         } else {
             verify2fa(totp.join("")).then(r => {
-                if (r.in_proxy_flow) {
-                    window.location.href = r.location;
-                } else {
-                    this.props.refreshUser(() => {
-                        const url = new URL(r.location)
-                        this.props.history.push(url.pathname + url.search);
-                    });
-                }
+                this.props.refreshUser(() => {
+                    const url = new URL(r.location)
+                    this.props.history.push(url.pathname + url.search);
+                });
             }).catch(e => {
                 if (e.response && e.response.status === 429) {
                     this.props.history.push("/landing?rate-limited=true");

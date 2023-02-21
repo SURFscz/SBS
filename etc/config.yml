@@ -37,8 +37,6 @@ oidc:
   redirect_uri: ${BASE_URL}/api/users/resume-session
   sfo_eduteams_redirect_uri: ${AUDIENCE}/OIDC/sfo
   continue_eduteams_redirect_uri: ${AUDIENCE}/continue
-  private_rsa_signing_key_path: config/test-jwt-private-key
-  public_rsa_signing_key_path: config/test-jwt-public-key
   second_factor_authentication_required: True
   totp_token_name: "SRAM local"
   # The service_id of SBS. Most likely to equal the oidc.client_id

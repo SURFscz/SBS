@@ -25,18 +25,19 @@ def add_collaborations_services():
     confirm_organisation_admin_or_manager(organisation_id)
     # Ensure that the connection is allowed
     service = Service.query.get(service_id)
-    is_allowed = organisation_id in list(
-        map(lambda org: org.id, service.allowed_organisations)) or service.access_allowed_for_all
+    organisation = Organisation.query.get(organisation_id)
+
+    allowed_org = organisation in service.allowed_organisations
+    automatic_allowed_org = organisation in service.automatic_connection_allowed_organisations
+    is_allowed = allowed_org or automatic_allowed_org or service.access_allowed_for_all
     if not is_allowed:
         raise BadRequest("not_allowed_organisation")
 
-    if not service.automatic_connection_allowed and not service.access_allowed_for_all:
+    if not service.automatic_connection_allowed and not service.access_allowed_for_all and not automatic_allowed_org:
         raise BadRequest("automatic_connection_not_allowed")
 
-    organisation = Organisation.query.get(organisation_id)
-
     if organisation.services_restricted and not service.white_listed:
-        raise BadRequest("SURG org can only connect SURF services")
+        raise BadRequest("SURF organisations can only connect to SURF services")
 
     organisation.services.append(service)
     db.session.merge(organisation)
