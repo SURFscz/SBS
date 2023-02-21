@@ -344,12 +344,13 @@ class Groups extends React.Component {
                             name={I18n.t("organisation.created")}/>}
 
                 <section className="actions">
-                    {(adminOfCollaboration && !createNewGroup) &&
+                    {(adminOfCollaboration && !createNewGroup && isEmpty(selectedGroup?.service_group_id)) &&
                     <Button warningButton={true}
                             onClick={this.delete}/>}
                     <Button cancelButton={true} txt={I18n.t("forms.cancel")}
                             onClick={this.cancelSideScreen}/>
-                    <Button disabled={disabledSubmit} txt={I18n.t(`forms.save`)}
+                    <Button disabled={disabledSubmit}
+                            txt={I18n.t(`forms.save`)}
                             onClick={this.submit}/>
                 </section>
 

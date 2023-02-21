@@ -1678,15 +1678,12 @@ I18n.translations.nl = {
         loginLink: "Login"
     },
     footer: {
-        tips: "Tips of help nodig?",
-        help: "Hulp & FAQ",
-        product: "Dit is een dienst van",
-        productLink: "https://edu.nl/vw3jx",
-        surf: "SURF",
+        terms: "Terms of Use",
+        termsLink: "https://edu.nl/6wb63",
+        privacy: "Privacy policy",
+        privacyLink: "https://edu.nl/fcgbd",
         surfLink: "https://surf.nl",
-        privacy: "Voorwaarden & Privacy",
-        privacyLink: "https://edu.nl/93cdm"
-    },
+   },
     system: {
         title: "Systeemonderhoud",
         runDailyJobsInfo: "Voer de dagelijkse cron-taak uit om notificatie-e-mails te verzenden en mogelijk gebruikers op te schorten die zich gedurende de geconfigureerde periode niet hebben aangemeld",
