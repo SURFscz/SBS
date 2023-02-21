@@ -1,19 +1,14 @@
 import base64
 import datetime
 from io import BytesIO
-from time import time
-from urllib.parse import quote
-from uuid import uuid4
 
-import jwt
 import pyotp
 import qrcode
-from authlib.jose import jwk
-from flask import Blueprint, current_app, redirect, session, request as current_request
+from flask import Blueprint, current_app, session, request as current_request
 from werkzeug.exceptions import Forbidden, BadRequest
 
 from server.api.base import query_param, json_endpoint
-from server.auth.mfa import ACR_VALUES, decode_jwt_token, store_user_in_session, eligible_users_to_reset_token
+from server.auth.mfa import store_user_in_session, eligible_users_to_reset_token
 from server.auth.rate_limit import clear_rate_limit, check_rate_limit
 from server.auth.secrets import generate_token
 from server.auth.security import current_user_id, is_admin_user
@@ -23,50 +18,8 @@ from server.db.db import db
 from server.db.domain import User
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_reset_token
-from server.tools import read_file
 
 mfa_api = Blueprint("mfa_api", __name__, url_prefix="/api/mfa")
-
-private_key = None
-public_key_json = None
-
-
-def _get_private_key():
-    global private_key
-    if private_key is None:
-        private_key = read_file(current_app.app_config.oidc.private_rsa_signing_key_path)
-    return private_key
-
-
-def _get_public_key():
-    global public_key_json
-    if public_key_json is None:
-        public_key = read_file(current_app.app_config.oidc.public_rsa_signing_key_path)
-        jwks = jwk.dumps(public_key, kty='RSA')
-        jwks["alg"] = "RS256"
-        jwks["kid"] = "sbs"
-        jwks["use"] = "sig"
-        public_key_json = {"keys": [jwks]}
-    return public_key_json
-
-
-def _construct_jwt(user, nonce, oidc_config):
-    now = int(time())
-    payload = {
-        "sub": user.uid,
-        "auth_time": now,
-        "acr": [ACR_VALUES],
-        "nonce": nonce,
-        "aud": [oidc_config.audience],
-        "exp": now + (60 * 10),
-        "iat": now,
-        "iss": oidc_config.client_id,
-        "jti": str(uuid4())
-    }
-    public_signing_key = _get_public_key()["keys"][0]
-    return jwt.encode(payload, _get_private_key(),
-                      algorithm=public_signing_key["alg"],
-                      headers={"kid": public_signing_key["kid"]})
 
 
 def _do_get2fa(schac_home_organisation, user_identifier):
@@ -163,13 +116,8 @@ def verify2fa():
 
     if valid_totp:
         location = session.get("original_destination", current_app.app_config.base_url)
-        in_proxy_flow = session.get("in_proxy_flow", False)
         clear_rate_limit(user)
-        if in_proxy_flow:
-            oidc_config = current_app.app_config.oidc
-            id_token = _construct_jwt(user, str(uuid4()), oidc_config)
-            location = f"{oidc_config.sfo_eduteams_redirect_uri}?id_token={id_token}"
-        return {"location": location, "in_proxy_flow": in_proxy_flow}, 201
+        return {"location": location}, 201
     else:
         return {"new_totp": False}, 400
 
@@ -227,41 +175,6 @@ def reset2fa():
     db.session.merge(user)
     db.session.commit()
     return {}, 201
-
-
-@mfa_api.route("/sfo", strict_slashes=False)
-def sfo():
-    logger = ctx_logger("oidc")
-
-    oidc_config = current_app.app_config.oidc
-    encoded_access_token = query_param("access_token")
-
-    access_token = decode_jwt_token(encoded_access_token)
-
-    logger.debug(f"MFA endpoint with access_token {access_token}")
-
-    uid = access_token["sub"]
-    user = User.query.filter(User.uid == uid).first()
-    if not user:
-        error_msg = f"Unknown user with sub {uid}"
-        logger.error(error_msg)
-        return redirect(f"{oidc_config.sfo_eduteams_redirect_uri}?error={quote(error_msg)}")
-
-    if not oidc_config.second_factor_authentication_required:
-        id_token = _construct_jwt(user, access_token.get("nonce", str(uuid4())), oidc_config)
-        return redirect(f"{oidc_config.sfo_eduteams_redirect_uri}?id_token={id_token}")
-    # need to remember this if the user response comes back
-    session["in_proxy_flow"] = True
-
-    store_user_in_session(user, False, user.has_agreed_with_aup())
-
-    return redirect(f"{current_app.app_config.base_url}/2fa")
-
-
-@mfa_api.route("/jwks", strict_slashes=False)
-@json_endpoint
-def jwks():
-    return _get_public_key(), 200
 
 
 @mfa_api.route("/ssid_start/<second_fa_uuid>", strict_slashes=False)
