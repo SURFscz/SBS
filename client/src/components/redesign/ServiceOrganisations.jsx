@@ -9,7 +9,7 @@ import {
     toggleAccessAllowedForAll,
     toggleAutomaticConnectionAllowed,
     toggleReset,
-    toggleWhiteListed,
+    toggleAllowRestrictedOrgs,
     trustOrganisation
 } from "../../api";
 import {clearFlash, setFlash} from "../../utils/Flash";
@@ -61,9 +61,9 @@ class ServiceOrganisations extends React.Component {
             .then(() => this.refreshService())
     }
 
-    doTogglesWhiteListed = service => {
+    doTogglesAllowRestrictedOrgs = service => {
         this.setState({loading: true});
-        toggleWhiteListed(service.id, !service.white_listed)
+        toggleAllowRestrictedOrgs(service.id, !service.allow_restricted_orgs)
             .then(() => this.refreshService())
     }
 
@@ -151,7 +151,7 @@ class ServiceOrganisations extends React.Component {
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, loading, disallowedOrganisation
         } = this.state;
         const {organisations, service, user, userAdmin, showServiceAdminView} = this.props;
-        const availableOrganisations = service.white_listed ? organisations : organisations.filter(org => !org.services_restricted);
+        const availableOrganisations = service.allow_restricted_orgs ? organisations : organisations.filter(org => !org.services_restricted);
         const columns = [
             {
                 nonSortable: true,
@@ -203,11 +203,11 @@ class ServiceOrganisations extends React.Component {
                 {loading && <SpinnerField absolute={true}/>}
                 <div className={"options-container"}>
                     {(user.admin && !showServiceAdminView) && <div className={"service-container"}>
-                        <CheckBox name="white_listed"
-                                  value={service.white_listed}
-                                  info={I18n.t("service.whiteListed")}
-                                  tooltip={I18n.t("service.whiteListedTooltip")}
-                                  onChange={() => this.doTogglesWhiteListed(service)}/>
+                        <CheckBox name="allow_restricted_orgs"
+                                  value={service.allow_restricted_orgs}
+                                  info={I18n.t("service.allowRestrictedOrgs")}
+                                  tooltip={I18n.t("service.allowRestrictedOrgsTooltip")}
+                                  onChange={() => this.doTogglesAllowRestrictedOrgs(service)}/>
                     </div>}
                     {!service.non_member_users_access_allowed &&
                     <div className={"radio-button-container"}>

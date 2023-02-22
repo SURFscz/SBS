@@ -30,7 +30,7 @@ def connect_service_collaboration(service_id, collaboration_id, force=False):
         raise BadRequest("automatic_connection_not_allowed")
 
     collaboration = Collaboration.query.get(collaboration_id)
-    if collaboration.organisation.services_restricted and not service.white_listed:
+    if collaboration.organisation.services_restricted and not service.allow_restricted_orgs:
         raise BadRequest(f"Organisation {collaboration.organisation.name} can only be linked to SURF services")
 
     collaboration.services.append(service)

@@ -394,10 +394,10 @@ def save_service():
 def toggle_access_property(service_id):
     json_dict = current_request.get_json()
     attribute = list(json_dict.keys())[0]
-    if attribute not in ["reset", "white_listed", "non_member_users_access_allowed", "access_allowed_for_all",
+    if attribute not in ["reset", "allow_restricted_orgs", "non_member_users_access_allowed", "access_allowed_for_all",
                          "automatic_connection_allowed"]:
         raise BadRequest(f"attribute {attribute} not allowed")
-    if attribute in ["white_listed", "non_member_users_access_allowed"]:
+    if attribute in ["allow_restricted_orgs", "non_member_users_access_allowed"]:
         confirm_write_access()
     else:
         confirm_service_admin(service_id)
@@ -471,7 +471,7 @@ def update_service():
     service = Service.query.filter(Service.id == service_id).one()
 
     if not is_application_admin():
-        forbidden = ["white_listed", "non_member_users_access_allowed", "entity_id", "abbreviation",
+        forbidden = ["allow_restricted_orgs", "non_member_users_access_allowed", "entity_id", "abbreviation",
                      "scim_enabled", "scim_url", "scim_bearer_token"]
         for attr in [fb for fb in forbidden if fb in data]:
             data[attr] = getattr(service, attr)

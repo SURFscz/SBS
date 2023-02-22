@@ -287,7 +287,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                     scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret")
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, uva],
                       description="SURF Storage Service", logo=read_image("storage.jpeg"), abbreviation="storage",
-                      public_visible=True, automatic_connection_allowed=True, white_listed=True,
+                      public_visible=True, automatic_connection_allowed=True, allow_restricted_orgs=True,
                       uri="https://storage.net", support_email="support@storage.net",
                       pam_web_sso_enabled=True, security_email="sec@org.nl",
                       accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org",
@@ -335,7 +335,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                       logo=read_image("test.png"), uri=("https://demo-sp.sram.surf.nl/"),
                       privacy_policy="https://wiki.surfnet.nl/display/SRAM/Privacy+Policy",
                       contact_email="sram-beheer@surf.nl", security_email="sram-beheer@surf.nl",
-                      public_visible=True, automatic_connection_allowed=True, white_listed=True,
+                      public_visible=True, automatic_connection_allowed=True, allow_restricted_orgs=True,
                       access_allowed_for_all=True,
                       sirtfi_compliant=True,
                       research_scholarship_compliant=True, code_of_conduct_compliant=True,
