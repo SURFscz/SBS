@@ -1,11 +1,6 @@
 @mixin mde-preview {
 
     .mde-preview-content {
-        h3 {
-            color: $primary-orange;
-            font-size: 18px;
-        }
-
         p {
             margin: 0!important;
         }

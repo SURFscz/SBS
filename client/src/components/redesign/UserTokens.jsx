@@ -153,7 +153,7 @@ class UserTokens extends React.Component {
         const disabledSubmit = !initial && !this.isValid();
         const children = (
             <div className="user-token-form">
-                <h1>{createNewUserToken ? I18n.t("models.userTokens.new") : name}</h1>
+                <h2>{createNewUserToken ? I18n.t("models.userTokens.new") : name}</h2>
                 {createNewUserToken && <div>
                     <p className="disclaimer"
                        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("models.userTokens.tokenDisclaimer"))}}/>

@@ -201,7 +201,7 @@ class NewServiceInvitation extends React.Component {
                 <UnitHeader obj={service}
                             name={service.name}/>
                 <div className="mod-new-service-invitation">
-                    <h1>{I18n.t("tabs.invitation_form")}</h1>
+                    <h2>{I18n.t("tabs.invitation_form")}</h2>
                     <div className="new-service-invitation">
                         {this.invitationForm(service, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
                             administrators, expiry_date, disabledSubmit, intended_role)}

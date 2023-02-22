@@ -137,7 +137,7 @@ class ServiceGroups extends React.Component {
         const children = (
             <div className={"service-group-details"}>
                 <section className="header">
-                    <h1>{selectedGroup.name}</h1>
+                    <h2>{selectedGroup.name}</h2>
                     {
                         <div className="header-actions">
                             <Button onClick={() => this.setState(this.newGroupState(selectedGroup))}
@@ -187,7 +187,7 @@ class ServiceGroups extends React.Component {
         const disabledSubmit = !initial && !this.isValid();
         const children = (
             <div className="service-group-form">
-                <h1>{createNewGroup ? I18n.t("models.serviceGroups.new") : selectedGroup.name}</h1>
+                <h2>{createNewGroup ? I18n.t("models.serviceGroups.new") : selectedGroup.name}</h2>
 
                 <InputField value={name || ""}
                             onChange={e => this.setState({

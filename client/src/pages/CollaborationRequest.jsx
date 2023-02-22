@@ -214,7 +214,7 @@ class CollaborationRequest extends React.Component {
                 <div className="collaboration-request-header-container">
                     <div className="collaboration-request-header">
                         <div className="left">
-                            <h1>{I18n.t("collaborationRequest.request", {id: collaborationRequest.id})}</h1>
+                            <h2>{I18n.t("collaborationRequest.request", {id: collaborationRequest.id})}</h2>
                             <div className="header-attributes">
                                 <div className="header-keys">
                                     <span className="name">{I18n.t("collaborationRequest.requester")}</span>
@@ -260,7 +260,7 @@ class CollaborationRequest extends React.Component {
 
                     <div className="collaboration-request">
 
-                        <h1 className="section-separator">{I18n.t("collaboration.about")}</h1>
+                        <h2 className="section-separator">{I18n.t("collaboration.about")}</h2>
 
                         <InputField value={collaborationRequest.name}
                                     onChange={this.updateState("name")}

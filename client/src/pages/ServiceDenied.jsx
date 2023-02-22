@@ -31,7 +31,7 @@ export default function ServiceDenied() {
     return (
         <div className="mod-service-denied">
             <div className="content">
-                <h1 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize( I18n.t("sfo.title", {name: serviceName}))}}/>
+                <h2 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize( I18n.t("sfo.title", {name: serviceName}))}}/>
                 <Player
                     autoplay
                     loop
