@@ -14,7 +14,7 @@ from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest, Forbidd
 
 from server.auth.security import current_user_id, CSRF_TOKEN
 from server.auth.tokens import get_authorization_header
-from server.auth.urls import white_listing, mfa_listing, external_api_listing
+from server.auth.urls import noauth_listing, mfa_listing, external_api_listing
 from server.db.db import db
 from server.db.domain import ApiKey, User
 from server.logger.context_logger import ctx_logger
@@ -41,10 +41,10 @@ def auth_filter(app_config):
     oidc_config = current_app.app_config.oidc
 
     url_path = urlparse(url).path
-    is_whitelisted_url = False
+    url_is_on_allowlist = False
 
-    if url_path in white_listing or url_path.startswith("/pam-weblogin") or url_path.startswith("/api/scim"):
-        is_whitelisted_url = True
+    if url_path in noauth_listing or url_path.startswith("/pam-weblogin") or url_path.startswith("/api/scim"):
+        url_is_on_allowlist = True
         session["destination_url"] = url
 
     if "user" in session and "admin" in session["user"] and session["user"]["admin"]:
@@ -57,9 +57,9 @@ def auth_filter(app_config):
             return
 
     if "user" in session and not session["user"].get("guest"):
-        if not session["user"].get("user_accepted_aup") and "api/aup/agree" not in url and not is_whitelisted_url:
+        if not session["user"].get("user_accepted_aup") and "api/aup/agree" not in url and not url_is_on_allowlist:
             raise Unauthorized(description="AUP not accepted")
-        if current_request.method in _audit_trail_methods and not is_whitelisted_url:
+        if current_request.method in _audit_trail_methods and not url_is_on_allowlist:
             csrf_token_client = current_request.headers.get(CSRF_TOKEN)
             csrf_token_server = session.get(CSRF_TOKEN)
             prod_mode = not os.environ.get("TESTING")
@@ -82,7 +82,7 @@ def auth_filter(app_config):
     auth = current_request.authorization
     is_authorized_api_call = bool(auth and len(get_user(app_config, auth)) > 0)
 
-    if not (is_whitelisted_url or is_authorized_api_call):
+    if not (url_is_on_allowlist or is_authorized_api_call):
         hashed_secret = get_authorization_header(is_external_api_url)
         api_key = ApiKey.query.filter(ApiKey.hashed_secret == hashed_secret).first()
         if not api_key:
