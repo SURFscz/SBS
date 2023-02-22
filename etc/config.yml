@@ -62,10 +62,6 @@ entitlement_group_namespace: "urn:example:sbs"
 eppn_scope: "test.sram.surf.nl"
 collaboration_creation_allowed_entitlement: "urn:example:sbs:allow-create-co"
 
-restricted_co:
-  services_white_list: ["https://cloud"]
-  default_organisation: "rug.nl"
-
 mail:
   host: localhost
   port: 1025

@@ -96,7 +96,7 @@ class OrganisationServices extends React.Component {
         let tooltip = null;
         const trusted_org = service.automatic_connection_allowed_organisations.some(org => org.id === organisation.id)
         const allowed_org = service.allowed_organisations.some(org => org.id === organisation.id) || trusted_org;
-        if (!service.white_listed && organisation.services_restricted) {
+        if (!service.allow_restricted_orgs && organisation.services_restricted) {
             tooltip = I18n.t("organisationServices.serviceRestrictedOrganisation");
         } else if (!service.access_allowed_for_all && !allowed_org) {
             tooltip = I18n.t("organisationServices.notEnabledOrganisation");

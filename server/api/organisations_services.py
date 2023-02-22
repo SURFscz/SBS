@@ -36,7 +36,7 @@ def add_collaborations_services():
     if not service.automatic_connection_allowed and not service.access_allowed_for_all and not automatic_allowed_org:
         raise BadRequest("automatic_connection_not_allowed")
 
-    if organisation.services_restricted and not service.white_listed:
+    if organisation.services_restricted and not service.allow_restricted_orgs:
         raise BadRequest("SURF organisations can only connect to SURF services")
 
     organisation.services.append(service)

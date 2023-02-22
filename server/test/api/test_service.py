@@ -167,17 +167,17 @@ class TestService(AbstractTest):
         self.assertFalse(service.non_member_users_access_allowed)
         self.assertFalse(service.automatic_connection_allowed)
 
-    def test_toggle_white_listed(self):
+    def test_toggle_allow_restricted(self):
         service = self.find_entity_by_name(Service, service_cloud_name)
-        self.assertFalse(service.white_listed)
+        self.assertFalse(service.allow_restricted_orgs)
 
         self.login("urn:john")
         self.put(f"/api/services/toggle_access_property/{service.id}",
-                 body={"white_listed": True},
+                 body={"allow_restricted_orgs": True},
                  with_basic_auth=False)
 
         service = self.find_entity_by_name(Service, service_cloud_name)
-        self.assertTrue(service.white_listed)
+        self.assertTrue(service.allow_restricted_orgs)
 
     def test_toggle_non_member_users_access_allowed(self):
         service = self.find_entity_by_name(Service, service_cloud_name)
@@ -236,7 +236,7 @@ class TestService(AbstractTest):
 
     def test_service_update_service_admin(self):
         service = self._find_by_name(service_storage_name)
-        service["white_listed"] = False
+        service["allow_restricted_orgs"] = False
         service["non_member_users_access_allowed"] = True
         service["entity_id"] = "https://changed"
 
@@ -245,7 +245,7 @@ class TestService(AbstractTest):
         # assert that forbidden attributes are unchanged
         service = self.find_entity_by_name(Service, service_storage_name)
 
-        self.assertEqual(True, service.white_listed)
+        self.assertEqual(True, service.allow_restricted_orgs)
         self.assertEqual(False, service.non_member_users_access_allowed)
         self.assertEqual(service_storage_entity_id, service.entity_id)
 

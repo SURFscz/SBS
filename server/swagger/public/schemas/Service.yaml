@@ -65,7 +65,7 @@ properties:
     type: boolean
     description: "If true then tokens can be created for users"
     example: true
-  white_listed:
+  allow_restricted_orgs:
     type: boolean
     description: "If true, this service is allowed to be connected to collaborations of restricted organisations"
     example: true

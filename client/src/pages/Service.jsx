@@ -53,7 +53,7 @@ class Service extends React.Component {
         automatic_connection_allowed: false,
         access_allowed_for_all: false,
         non_member_users_access_allowed: false,
-        white_listed: false,
+        allow_restricted_orgs: false,
         research_scholarship_compliant: null,
         code_of_conduct_compliant: null,
         sirtfi_compliant: null,
@@ -355,7 +355,7 @@ class Service extends React.Component {
 
     serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
                         access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired,
-                        accepted_user_policy, uri_info, privacy_policy, isNew, service, disabledSubmit, white_listed, sirtfi_compliant, token_enabled, pam_web_sso_enabled,
+                        accepted_user_policy, uri_info, privacy_policy, isNew, service, disabledSubmit, allow_restricted_orgs, sirtfi_compliant, token_enabled, pam_web_sso_enabled,
                         token_validity_days, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, administrators, message, email, logo, isServiceAdmin) => {
         const ldapBindAccount = config.ldap_bind_account;
@@ -497,10 +497,10 @@ class Service extends React.Component {
                                       onChange={e => this.setState({non_member_users_access_allowed: e.target.checked})}
                                       readOnly={!isAdmin && !isServiceAdmin}/>}
 
-                {isAdmin && <CheckBox name="white_listed" value={white_listed}
-                                      info={I18n.t("service.whiteListed")}
-                                      tooltip={I18n.t("service.whiteListedTooltip")}
-                                      onChange={e => this.setState({white_listed: e.target.checked})}
+                {isAdmin && <CheckBox name="allow_restricted_orgs" value={allow_restricted_orgs}
+                                      info={I18n.t("service.allowRestrictedOrgs")}
+                                      tooltip={I18n.t("service.allowRestrictedOrgsTooltip")}
+                                      onChange={e => this.setState({allow_restricted_orgs: e.target.checked})}
                                       readOnly={!isAdmin && !isServiceAdmin}/>}
 
                 <InputField value={accepted_user_policy}
@@ -728,7 +728,7 @@ class Service extends React.Component {
             automatic_connection_allowed,
             access_allowed_for_all,
             non_member_users_access_allowed,
-            white_listed,
+            allow_restricted_orgs,
             sirtfi_compliant,
             token_enabled,
             pam_web_sso_enabled,
@@ -768,7 +768,7 @@ class Service extends React.Component {
 
                     {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
                         access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, uri_info, privacy_policy,
-                        isNew, service, disabledSubmit, white_listed, sirtfi_compliant, token_enabled, pam_web_sso_enabled, token_validity_days, code_of_conduct_compliant,
+                        isNew, service, disabledSubmit, allow_restricted_orgs, sirtfi_compliant, token_enabled, pam_web_sso_enabled, token_validity_days, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, administrators, message, email, logo, isServiceAdmin)}
                 </div>
             </>);
