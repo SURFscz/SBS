@@ -360,7 +360,7 @@ class NewInvitation extends React.Component {
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}/>
                 <div className="mod-new-collaboration-invitation">
-                    <h1>{I18n.t("tabs.invitation_form")}</h1>
+                    <h2>{I18n.t("tabs.invitation_form")}</h2>
                     <div className="new-collaboration-invitation">
                         {this.invitationForm(email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
                             administrators, intended_role, message, expiry_date, disabledSubmit, groups,

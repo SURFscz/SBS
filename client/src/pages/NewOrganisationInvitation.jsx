@@ -231,7 +231,7 @@ class NewOrganisationInvitation extends React.Component {
                 <UnitHeader obj={organisation}
                             name={organisation.name}/>
                 <div className="mod-new-organisation-invitation">
-                    <h1>{I18n.t("tabs.invitation_form")}</h1>
+                    <h2>{I18n.t("tabs.invitation_form")}</h2>
                     <div className="new-organisation-invitation">
                         {this.invitationForm(organisation, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
                             administrators, expiry_date, disabledSubmit, intended_role)}

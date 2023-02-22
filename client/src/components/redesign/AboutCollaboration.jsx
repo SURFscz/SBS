@@ -67,12 +67,12 @@ class AboutCollaboration extends React.Component {
         return (
             <div className="collaboration-about-mod">
                 <div className="about">
-                    <h1>{I18n.t("models.collaboration.about")}</h1>
+                    <h2>{I18n.t("models.collaboration.about")}</h2>
                     <p>{collaboration.description}</p>
                 </div>
                 <div className="details">
                     {services.length > 0 && <div className="services">
-                        <h1>{I18n.t("models.collaboration.services", {nbr: services.length})}</h1>
+                        <h2>{I18n.t("models.collaboration.services", {nbr: services.length})}</h2>
                         {!isJoinRequest && <span className="info">
                         {I18n.t("models.collaboration.servicesStart")}
                         </span>}
@@ -112,13 +112,13 @@ class AboutCollaboration extends React.Component {
                     {services.length === 0 &&
                     <div className="services">
                         {(services.length === 0 && !isJoinRequest) &&
-                        <h1>{I18n.t("models.collaboration.noServices")}</h1>}
-                        {isJoinRequest && <h1>{I18n.t("models.collaboration.noServicesJoinRequest")}</h1>}
+                        <h2>{I18n.t("models.collaboration.noServices")}</h2>}
+                        {isJoinRequest && <h2>{I18n.t("models.collaboration.noServicesJoinRequest")}</h2>}
                     </div>}
                     {showMembers &&
                     <div className="members">
                         <div className="members-header">
-                            <h1>{I18n.t("models.collaboration.members", {nbr: collaboration.collaboration_memberships.length})}</h1>
+                            <h2>{I18n.t("models.collaboration.members", {nbr: collaboration.collaboration_memberships.length})}</h2>
                             <a href="/details"
                                onClick={this.openMembersDetails}>{I18n.t("models.collaboration.showMemberDetails")}</a>
                         </div>
@@ -142,12 +142,12 @@ class AboutCollaboration extends React.Component {
                     </div>}
                     {(!showMembers && !isJoinRequest) && <div className="members">
                         <div className="members-header">
-                            <h1>{I18n.t("models.collaboration.discloseNoMemberInformation")}</h1>
+                            <h2>{I18n.t("models.collaboration.discloseNoMemberInformation")}</h2>
                         </div>
                     </div>}
                     {isJoinRequest && <div className="members">
                         <div className="members-header join-request">
-                            <h1>{I18n.t("models.collaboration.members", {nbr: collaboration.collaboration_memberships.length})}</h1>
+                            <h2>{I18n.t("models.collaboration.members", {nbr: collaboration.collaboration_memberships.length})}</h2>
                             <p>{I18n.t("models.collaboration.discloseNoMemberInformationJoinRequest")}</p>
                         </div>
                     </div>}

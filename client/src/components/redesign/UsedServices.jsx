@@ -268,12 +268,12 @@ class UsedServices extends React.Component {
                     </a>
                 </div>
                 <div className={"request-connection-service-form"}>
-                    <h2>{I18n.t("models.serviceConnectionRequests.details",
+                    <h3>{I18n.t("models.serviceConnectionRequests.details",
                         {
                             date: moment(serviceConnectionRequest.created_at * 1000).format("LL"),
                             name: serviceConnectionRequest.requester.name,
                             collaborationName: collaboration.name
-                        })}</h2>
+                        })}</h3>
                     <Logo src={serviceConnectionRequest.service.logo}/>
                     <InputField name={I18n.t("serviceConnectionRequest.message")}
                                 value={serviceConnectionRequest.message}
@@ -359,7 +359,7 @@ class UsedServices extends React.Component {
                     </a>
                 </div>
                 <div className={"request-connection-service-form"}>
-                    <h1>{I18n.t("models.services.connectionRequest", {name: requestConnectionService.name})}</h1>
+                    <h2>{I18n.t("models.services.connectionRequest", {name: requestConnectionService.name})}</h2>
                     <Logo src={requestConnectionService.logo}/>
                     <InputField value={message}
                                 name={I18n.t("collaborationServices.motivation")}
