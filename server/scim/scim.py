@@ -29,13 +29,13 @@ def apply_change(f):
 
 def _log_scim_error(response, service, outside_user_context):
     logger = ctx_logger("scim") if not outside_user_context else logging.getLogger("scim")
-    is_json = "json" in response.headers.get("Content-Type", "").lower()
+    is_json = response and "json" in response.headers.get("Content-Type", "").lower()
     scim_json = response.json() if is_json else {}
     logger.error(f"Scim endpoint {service.scim_url} returned an error: {scim_json}")
 
 
 def validate_response(response, service, outside_user_context=False):
-    if response.status_code > 204:
+    if not response or response.status_code > 204:
         _log_scim_error(response, service, outside_user_context)
         return False
     return True
@@ -125,6 +125,7 @@ def _do_apply_user_change(user: User, service: Union[None, Service], deletion: b
         collaborations = [member.collaboration for member in user.collaboration_memberships if member.is_active]
         scim_services = _all_unique_scim_services_of_collaborations(collaborations)
     for service in scim_services:
+        response = None
         scim_object = _lookup_scim_object(service, SCIM_USERS, user.external_id)
         # No use to delete the user if the user is unknown in the remote system
         if deletion:
@@ -133,7 +134,8 @@ def _do_apply_user_change(user: User, service: Union[None, Service], deletion: b
                 response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10)
         else:
             response = _provision_user(scim_object, service, user)
-        validate_response(response, service)
+        if response:
+            validate_response(response, service)
     return scim_services
 
 
@@ -146,6 +148,7 @@ def _all_unique_scim_services_of_collaborations(collaborations):
 
 def _do_apply_group_collaboration_change(group: Union[Group, Collaboration], services: List[Service], deletion: bool):
     scim_services = _unique_scim_services(services)
+    response = None
     for service in scim_services:
         scim_object = _lookup_scim_object(service, SCIM_GROUPS, group.identifier)
         if deletion:
@@ -161,7 +164,8 @@ def _do_apply_group_collaboration_change(group: Union[Group, Collaboration], ser
                             _do_apply_user_change(user, service=service, deletion=True)
         else:
             response = _provision_group(scim_object, service, group)
-        validate_response(response, service)
+        if response:
+            validate_response(response, service)
     return bool(scim_services)
 
 
