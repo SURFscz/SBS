@@ -159,6 +159,7 @@ class JoinRequests extends React.Component {
                 <Select
                     className={"join-request-filter-select"}
                     value={filterValue}
+                    classNamePrefix={"filter-select"}
                     onChange={option => this.setState({filterValue: option})}
                     options={filterOptions}
                     isSearchable={false}

@@ -61,6 +61,7 @@ export default class CollaborationRequests extends React.PureComponent {
                 <Select
                     className={"collaboration-request-filter-select"}
                     value={filterValue}
+                    classNamePrefix={"filter-select"}
                     onChange={option => this.setState({filterValue: option})}
                     options={filterOptions}
                     isSearchable={false}

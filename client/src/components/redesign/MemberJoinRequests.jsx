@@ -89,6 +89,7 @@ class MemberJoinRequests extends React.Component {
             <div className="join-request-filter">
                 <Select
                     className={"join-request-filter-select"}
+                    classNamePrefix={"filter-select"}
                     value={filterValue}
                     onChange={option => this.setState({filterValue: option})}
                     options={filterOptions}
