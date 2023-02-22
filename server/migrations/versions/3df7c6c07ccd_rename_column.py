@@ -17,7 +17,7 @@ depends_on = None
 
 def upgrade():
     conn = op.get_bind()
-    conn.execute(text("ALTER TABLE services RENAME COLUMN white_listed TO allow_restricted_orgs"))
+    conn.execute(text("ALTER TABLE services CHANGE white_listed allow_restricted_orgs tinyint(1)"))
 
 
 def downgrade():
