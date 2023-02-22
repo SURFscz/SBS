@@ -91,6 +91,7 @@ def resource_types():
 def service_users():
     service = validate_service_token("scim_enabled")
     filter_param = query_param("filter", required=False)
+    # note: we only support "eq" here.
     if filter_param:
         query = urllib.parse.unquote(filter_param)
         if not query.lower().startswith(f"{SCIM_SCHEMA_SRAM_USER}.eduPersonUniqueId".lower()):
