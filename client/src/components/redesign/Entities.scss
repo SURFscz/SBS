@@ -54,6 +54,7 @@
 
         .search {
             position: relative;
+            display: flex;
 
             &.standalone {
                 margin-left: auto;
@@ -63,39 +64,20 @@
                 margin-left: 0;
             }
 
-            display: flex;
-
-            svg.fa-search, svg.fa-magnifying-glass {
-                position: absolute;
-                font-size: 16px;
-                color: $blue;
-                top: 7px;
-                right: 9px;
-            }
-
-            input[type=text] {
+            input[type=search] {
                 flex-grow: 2;
-                border: 1px solid $medium-grey;
-                padding: 0 15px 0 10px;
-                min-height: 36px;
-                font-size: 16px;
-                border-radius: $br;
                 min-width: 360px;
 
                 @media (max-width: $compact-medium) {
                     min-width: 0;
                 }
-
-
-                &[disabled] {
-                    background-color: $light-grey;
-                }
-
-                &:focus {
-                    outline: none;
-                    box-shadow: 1px 1px 1px $blue-hover, -1px -1px 1px $blue-hover;
-                }
             }
+
+            .sds--text-field--icon svg {
+                width: calc(15em / 16);
+                height: calc(15em / 16)
+            }
+
         }
 
     }

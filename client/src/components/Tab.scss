@@ -3,15 +3,16 @@
 
 .tab {
     min-width: 110px;
-    margin: 0 20px;
     display: flex;
     align-items: center;
     position: relative;
     border-bottom: 0.25rem solid transparent;
+    font-weight: 600;
+    border-top: 0.1875rem solid transparent;
+    background-color: var(--sds--color--gray--300);
 
     &.busy {
         min-width: 85px;
-        margin: 0 10px;
     }
 
     &:first-child {
@@ -33,6 +34,18 @@
         margin-right: 10px;
     }
 
+    &:not(.read-only):hover {
+        background-color: var(--sds--palette--support-color--100);
+
+        span.tab-label, svg {
+            color: black;
+        }
+
+        svg {
+            fill: black;
+        }
+    }
+
     &:not(.active) {
         span.tab-label, svg {
             color: var(--sds--color--black);
@@ -42,17 +55,6 @@
             color: var(--sds--color--black);
         }
 
-        &:not(.read-only):hover {
-            background-color: var(--sds--palette--support-color--100);
-
-            span.tab-label, svg {
-                color: black;
-            }
-
-            svg {
-                fill: black;
-            }
-        }
 
         &.read-only {
             cursor: not-allowed;
@@ -69,8 +71,8 @@
 
     &.active {
         color: var(--sds--color--black);
-        border-bottom-color: var(--sds--palette--support-color--400);
-        box-shadow: 0 0.0625rem 0 0 var(--sds--palette--support-color--400);
+        border-top: 0.1875rem solid var(--sds--palette--support-color--400);
+        background-color: var(--sds--color--white);
 
         span.tab-label, svg {
             color: var(--sds--color--black);
@@ -96,8 +98,8 @@
 
     span.notifier {
         position: absolute;
-        right: -2px;
-        top: -2px;
+        right: -8px;
+        top: 0;
 
         svg.alert-circle {
             width: 16px;

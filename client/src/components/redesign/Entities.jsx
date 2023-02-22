@@ -2,6 +2,7 @@ import React from "react";
 import "./Organisations.scss";
 import I18n from "i18n-js";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {ReactComponent as SearchIcon} from "@surfnet/sds/icons/functional-icons/search.svg";
 import Button from "../Button";
 import PropTypes from "prop-types";
 import {isEmpty, sortObjects, valueForSort} from "../../utils/Utils";
@@ -58,7 +59,7 @@ class Entities extends React.Component {
         return (
             <section className="entities-search">
                 {showNew &&
-                <Button onClick={this.newEntity} small={true}
+                <Button onClick={this.newEntity}
                         className={`ghost ${hideTitle && !filters ? "no-title" : ""}`}
                         txt={newLabel || I18n.t(`models.${modelName}.new`)}/>
                 }
@@ -68,14 +69,21 @@ class Entities extends React.Component {
                     {explain && <FontAwesomeIcon className="help" icon="question-circle"
                                                  id="impersonate_close_explanation"
                                                  onClick={() => this.setState({showExplanation: true})}/>}
-                    {(!isEmpty(searchAttributes) || customSearch) && <div>
-
-                        <input type="text"
-                               onChange={this.queryChanged}
-                               ref={ref => this.input = ref}
-                               value={query}
-                               placeholder={I18n.t(`models.${modelName}.searchPlaceHolder`)}/>
-                        <FontAwesomeIcon icon="search"/>
+                    {(!isEmpty(searchAttributes) || customSearch) &&
+                    <div className={"sds--text-field sds--text-field--has-icon"}>
+                        <div className="sds--text-field--shape">
+                            <div className="sds--text-field--input-and-icon">
+                                <input className={"sds--text-field--input"}
+                                       type="search"
+                                       onChange={this.queryChanged}
+                                       ref={ref => this.input = ref}
+                                       value={query}
+                                       placeholder={I18n.t(`models.${modelName}.searchPlaceHolder`)}/>
+                                <span className="sds--text-field--icon">
+                                    <SearchIcon/>
+                                </span>
+                            </div>
+                        </div>
                     </div>}
 
                 </div>
