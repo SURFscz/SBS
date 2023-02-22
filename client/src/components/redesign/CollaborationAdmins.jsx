@@ -489,6 +489,7 @@ class CollaborationAdmins extends React.Component {
             <div className="member-filter">
                 <Select
                     className={"member-filter-select"}
+                    classNamePrefix={"filter-select"}
                     value={filterValue}
                     onChange={option => this.setState({filterValue: option})}
                     options={filterOptions}
