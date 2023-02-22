@@ -42,7 +42,7 @@ class UnitHeader extends React.Component {
                         {obj.icon && <FontAwesomeIcon icon={obj.icon}/>}
                     </div>
                     <div className="obj-name">
-                        {obj.name && <h1>{obj.name}</h1>}
+                        {obj.name && <h2>{obj.name}</h2>}
                         {obj.organisation && <span className="name">{obj.organisation.name}</span>}
                         <div className="children">
                             {children}

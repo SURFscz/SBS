@@ -14,15 +14,14 @@ export default function ScimExplanation() {
             propagated to this endpoint.
         </section>,
         < section key={3} className="example">
-            All POST (new memberships) and PUT (update memberships) messages are stored in memory. To test the SCIM
+            All POST (new SCIM objects), PUT (updated SCIM objects) and DELETE (deleted SCIM objects) messages are stored in memory. To test the SCIM
             functionality configure one of more
-            services with the mock SCIM endpoint and start making changes to collaborations and groups that are
+            services with the mock SCIM endpoint and start making changes to collaborations, groups and memberships that are
             connected to one
-            of those services. Then fetch the statistics and validate the database content in the JSON root element.
+            of those services. Then fetch the statistics and validate the database and content in the JSON root element.
         </section>,
         <section key={4} className="details">
-            The statistics <code>root</code> contains <code>counters</code> (sequence number per
-            service), <code>database</code> (the in-memory
+            The statistics <code>root</code> contains <code>database</code> (the in-memory
             content per service) and <code>http_calls</code> (all incoming HTTP-calls per service).
         </section>,
     ];
