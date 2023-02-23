@@ -344,6 +344,9 @@ export function searchCollaborations(q) {
 }
 
 export function updateCollaboration(collaboration) {
+    //We need to limit the size so we delete the relations-ships that are not used server-side
+    ["service_connection_requests", "invitations", "join_requests", "groups", "services", "collaboration_memberships"]
+        .forEach(relation => delete collaboration[relation])
     return postPutJson("/api/collaborations", collaboration, "put");
 }
 
@@ -417,6 +420,10 @@ export function createOrganisation(organisation) {
 }
 
 export function updateOrganisation(organisation) {
+    //We need to limit the size so we delete the relations-ships that are not used server-side
+    ["organisation_invitations", "organisation_memberships", "collaboration_requests", "services", "collaborations", "organisation_invitations",
+        "organisation_memberships"]
+        .forEach(relation => delete organisation[relation])
     return postPutJson("/api/organisations", organisation, "put");
 }
 
