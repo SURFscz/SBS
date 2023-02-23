@@ -241,7 +241,8 @@ export function createService(service) {
 export function updateService(service) {
     //We need to limit the size so we delete the relations-ships that are not used server-side
     ["service_groups", "automatic_connection_allowed_organisations", "organisations", "allowed_organisations",
-        "collaborations", "service_invitations", "service_memberships"].forEach(relation => delete service[relation])
+        "collaborations", "service_invitations", "service_memberships", "service_organisation_collaborations"]
+        .forEach(relation => delete service[relation])
     return postPutJson("/api/services", service, "put", false);
 }
 
