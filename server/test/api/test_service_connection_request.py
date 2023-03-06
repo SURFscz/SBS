@@ -83,11 +83,11 @@ class TestServiceConnectionRequest(AbstractTest):
     def test_service_connection_request_by_member(self):
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
         service = self.find_entity_by_name(Service, service_cloud_name)
-
+        service_id = service.id
         self.login("urn:jane")
         data = {
             "collaboration_id": collaboration.id,
-            "service_id": service.id,
+            "service_id": service_id,
             "message": "Pretty please"
         }
         with self.app.mail.record_messages() as outbox:
@@ -98,7 +98,7 @@ class TestServiceConnectionRequest(AbstractTest):
 
             mail_msg = outbox[0]
             self.assertTrue("You received this email because you are an admin of this collaboration" in mail_msg.html)
-            req = ServiceConnectionRequest.query.filter(ServiceConnectionRequest.service_id == service.id).first()
+            req = ServiceConnectionRequest.query.filter(ServiceConnectionRequest.service_id == service_id).first()
             self.assertEqual(True, req.is_member_request)
 
     def test_existing_service_connection_request(self):

@@ -105,6 +105,7 @@ class TestCollaboration(AbstractTest):
         count = self._collaboration_membership_count(collaboration)
         self.assertEqual(1, count)
 
+        organisation = Organisation.query.filter(Organisation.name == uuc_name).one()
         service_groups = flatten([service.service_groups for service in organisation.services])
         collaboration_groups = self.find_entity_by_name(Collaboration, collaboration["name"]).groups
 

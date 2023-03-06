@@ -61,15 +61,16 @@ class TestCollaborationMembership(AbstractTest):
     def test_create_collaboration_membership(self):
         self.login("urn:mary")
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        collaboration_id = collaboration.id
         self.post("/api/collaboration_memberships",
-                  body={"collaborationId": collaboration.id},
+                  body={"collaborationId": collaboration_id},
                   with_basic_auth=False)
 
         collaboration_membership = CollaborationMembership \
             .query \
             .join(CollaborationMembership.user) \
             .filter(User.uid == "urn:mary") \
-            .filter(CollaborationMembership.collaboration_id == collaboration.id) \
+            .filter(CollaborationMembership.collaboration_id == collaboration_id) \
             .one()
         self.assertEqual("admin", collaboration_membership.role)
 
@@ -88,18 +89,17 @@ class TestCollaborationMembership(AbstractTest):
 
     def test_update_expiry_date(self):
         self.login("urn:admin")
-        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
         sarah = self.find_entity_by_name(User, sarah_name)
         memberships = sarah.collaboration_memberships
-        membership = next(
-            cm for cm in memberships if cm.user_id == sarah.id and cm.collaboration.id == collaboration.id)
-
+        membership_id = next(
+            cm for cm in memberships if cm.user_id == sarah.id and cm.collaboration.id == collaboration_id).id
         self.put("/api/collaboration_memberships/expiry",
-                 body={"collaboration_id": collaboration.id, "membership_id": membership.id,
+                 body={"collaboration_id": collaboration_id, "membership_id": membership_id,
                        "expiry_date": int(time.time())}, with_basic_auth=False)
-        self.assertIsNotNone(CollaborationMembership.query.get(membership.id).expiry_date)
+        self.assertIsNotNone(CollaborationMembership.query.get(membership_id).expiry_date)
 
         self.put("/api/collaboration_memberships/expiry",
-                 body={"collaboration_id": collaboration.id, "membership_id": membership.id,
+                 body={"collaboration_id": collaboration_id, "membership_id": membership_id,
                        "expiry_date": None}, with_basic_auth=False)
-        self.assertIsNone(CollaborationMembership.query.get(membership.id).expiry_date)
+        self.assertIsNone(CollaborationMembership.query.get(membership_id).expiry_date)

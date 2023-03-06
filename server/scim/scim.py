@@ -6,6 +6,7 @@ from typing import Union, List
 import requests
 
 from server.api.base import application_base_url
+from server.db.db import db
 from server.db.domain import Service, User, Group, Collaboration, Organisation
 from server.db.models import flatten, unique_model_objects
 from server.logger.context_logger import ctx_logger
@@ -18,11 +19,16 @@ def apply_change(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         try:
-            return f(*args, **kwargs)
+            res = f(*args, **kwargs)
+            db.session.commit()
+            return res
         except Exception as e:
+            db.session.rollback()
             logger = logging.getLogger("scim")
             logger.error("Error in applying SCIM change", exc_info=1)
             raise e
+        finally:
+            db.session.close()
 
     return wrapper
 

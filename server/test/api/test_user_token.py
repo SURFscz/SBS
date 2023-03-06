@@ -42,14 +42,15 @@ class TestUserToken(AbstractTest):
         self.assertIsNotNone(token_value)
 
     def test_create_user_token(self):
-        sarah = self.find_entity_by_name(User, sarah_name)
-        wiki = self.find_entity_by_name(Service, service_wiki_name)
+        sarah_id = self.find_entity_by_name(User, sarah_name).id
 
         self.login("urn:sarah")
         user_tokens = self.get("/api/user_tokens")
         self.assertEqual(1, len(user_tokens))
 
-        user_token = {"name": "token", "hashed_token": self._get_token(), "user_id": sarah.id, "service_id": wiki.id}
+        hashed_token = self._get_token()
+        wiki = self.find_entity_by_name(Service, service_wiki_name)
+        user_token = {"name": "token", "hashed_token": hashed_token, "user_id": sarah_id, "service_id": wiki.id}
         self.post("/api/user_tokens", body=user_token)
 
         user_tokens = self.get("/api/user_tokens")
@@ -64,20 +65,21 @@ class TestUserToken(AbstractTest):
         self.post("/api/user_tokens", body=user_token, response_status_code=403)
 
     def test_create_user_token_with_tampering(self):
-        sarah = self.find_entity_by_name(User, sarah_name)
-        wiki = self.find_entity_by_name(Service, service_wiki_name)
+        sarah_id = self.find_entity_by_name(User, sarah_name).id
 
         self.login("urn:sarah")
         self._get_token()
-        user_token = {"name": "token", "hashed_token": "nope", "user_id": sarah.id, "service_id": wiki.id}
+        wiki = self.find_entity_by_name(Service, service_wiki_name)
+        user_token = {"name": "token", "hashed_token": "nope", "user_id": sarah_id, "service_id": wiki.id}
         self.post("/api/user_tokens", body=user_token, response_status_code=403)
 
     def test_create_user_token_platform_admin(self):
-        john = self.find_entity_by_name(User, john_name)
-        service = self.find_entity_by_name(Service, service_cloud_name)
-
+        john_id = self.find_entity_by_name(User, john_name).id
         self.login("urn:john")
-        user_token = {"name": "token", "hashed_token": self._get_token(), "user_id": john.id, "service_id": service.id}
+
+        hashed_token = self._get_token()
+        service = self.find_entity_by_name(Service, service_cloud_name)
+        user_token = {"name": "token", "hashed_token": hashed_token, "user_id": john_id, "service_id": service.id}
         self.post("/api/user_tokens", body=user_token)
 
         user_tokens = self.get("/api/user_tokens")
@@ -90,19 +92,21 @@ class TestUserToken(AbstractTest):
         self.post("/api/user_tokens", body=user_token, response_status_code=403)
 
     def test_create_user_token_service_not_token_enabled(self):
-        sarah = self.find_entity_by_name(User, sarah_name)
-        mail = self.find_entity_by_name(Service, service_mail_name)
-
+        sarah_id = self.find_entity_by_name(User, sarah_name).id
         self.login("urn:sarah")
-        user_token = {"name": "token", "hashed_token": self._get_token(), "user_id": sarah.id, "service_id": mail.id}
+
+        hashed_token = self._get_token()
+        mail = self.find_entity_by_name(Service, service_mail_name)
+        user_token = {"name": "token", "hashed_token": hashed_token, "user_id": sarah_id, "service_id": mail.id}
         self.post("/api/user_tokens", body=user_token, response_status_code=403)
 
     def test_create_user_token_service_not_allowed(self):
-        betty = self.find_entity_by_name(User, "betty")
-        cloud = self.find_entity_by_name(Service, service_cloud_name)
-
+        betty_id = self.find_entity_by_name(User, "betty").id
         self.login("urn:betty")
-        user_token = {"name": "token", "hashed_token": self._get_token(), "user_id": betty.id, "service_id": cloud.id}
+
+        hashed_token = self._get_token()
+        cloud = self.find_entity_by_name(Service, service_cloud_name)
+        user_token = {"name": "token", "hashed_token": hashed_token, "user_id": betty_id, "service_id": cloud.id}
         self.post("/api/user_tokens", body=user_token, response_status_code=403)
 
     def test_delete_user_token(self):

@@ -81,13 +81,12 @@ class TestUserSaml(AbstractTest):
 
     def test_proxy_authz_no_aup(self):
         self.login_user_2fa("urn:jane")
-
-        network_service = Service.query.filter(Service.entity_id == service_network_entity_id).one()
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:jane", "service_id": service_network_entity_id,
                               "issuer_id": "issuer.com", "uid": "sarah", "homeorganization": "example.com"})
         self.assertEqual(res["status"]["result"], "interrupt")
 
+        network_service = Service.query.filter(Service.entity_id == service_network_entity_id).one()
         parameters = urlencode({"service_id": network_service.uuid4, "service_name": network_service.name})
         self.assertEqual(res["status"]["redirect_url"], f"{self.app.app_config.base_url}/service-aup?{parameters}")
 

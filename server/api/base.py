@@ -191,6 +191,8 @@ def json_endpoint(f):
             if response.status_code == 500 or response.status_code == 400:
                 send_error_mail(tb=traceback.format_exc())
             return response
+        finally:
+            db.session.close()
 
     return wrapper
 

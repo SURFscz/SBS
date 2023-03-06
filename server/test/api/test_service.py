@@ -371,14 +371,17 @@ class TestService(AbstractTest):
 
     def test_on_request_organisation(self):
         service = self.find_entity_by_name(Service, uuc_scheduler_name)
+        service_id = service.id
         organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
+        organisation_id = organisation.id
         self.assertTrue(organisation in service.automatic_connection_allowed_organisations)
         self.assertFalse(organisation in service.allowed_organisations)
 
         self.login("urn:john")
-        self.put(f"/api/services/on_request_organisation/{service.id}/{organisation.id}", with_basic_auth=False)
+        self.put(f"/api/services/on_request_organisation/{service_id}/{organisation_id}", with_basic_auth=False)
 
         service = self.find_entity_by_name(Service, uuc_scheduler_name)
+        organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
         self.assertTrue(organisation in service.allowed_organisations)
         self.assertFalse(organisation in service.automatic_connection_allowed_organisations)
 
@@ -392,6 +395,7 @@ class TestService(AbstractTest):
         self.put(f"/api/services/trust_organisation/{service.id}/{organisation.id}", with_basic_auth=False)
 
         service = self.find_entity_by_name(Service, service_mail_name)
+        organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
         self.assertFalse(organisation in service.allowed_organisations)
         self.assertTrue(organisation in service.automatic_connection_allowed_organisations)
 
@@ -410,6 +414,7 @@ class TestService(AbstractTest):
         service = self.find_entity_by_name(Service, service_wiki_name)
         self.assertFalse(organisation in service.allowed_organisations)
         self.assertFalse(organisation in service.automatic_connection_allowed_organisations)
+        organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
         self.assertFalse(service in organisation.services)
 
     def test_reset_ldap_password(self):
@@ -424,19 +429,23 @@ class TestService(AbstractTest):
 
     def test_service_by_uuid4(self):
         cloud = self.find_entity_by_name(Service, service_cloud_name)
+        cloud_uuid4 = cloud.uuid4
+        cloud_id = cloud.id
+
         self.login("urn:peter")
-        res = self.get("/api/services/find_by_uuid4", query_data={"uuid4": cloud.uuid4}, with_basic_auth=False)
+        res = self.get("/api/services/find_by_uuid4", query_data={"uuid4": cloud_uuid4}, with_basic_auth=False)
 
         self.assertEqual(1, len(res["collaborations"]))
-        self.assertEqual(cloud.name, res["service"]["name"])
-        self.assertEqual("james@example.org", res["service_emails"][str(cloud.id)][0])
+        self.assertEqual(service_cloud_name, res["service"]["name"])
+        self.assertEqual("james@example.org", res["service_emails"][str(cloud_id)][0])
 
     def test_service_by_uuid4_contact_email(self):
-        wiki = self.find_entity_by_name(Service, service_wiki_name)
         self.login("urn:peter")
+        wiki = self.find_entity_by_name(Service, service_wiki_name)
+        wiki_id = wiki.id
         res = self.get("/api/services/find_by_uuid4", query_data={"uuid4": wiki.uuid4}, with_basic_auth=False)
 
-        self.assertEqual("help@wiki.com", res["service_emails"][str(wiki.id)][0])
+        self.assertEqual("help@wiki.com", res["service_emails"][str(wiki_id)][0])
 
     def test_service_by_uuid4_forbidden(self):
         cloud = self.find_entity_by_name(Service, service_ssh_uva_name)
