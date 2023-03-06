@@ -21,7 +21,7 @@ def validate_service_token(attr_enabled) -> Service:
         .join(Service.service_tokens) \
         .filter(ServiceToken.hashed_token == hashed_bearer_token) \
         .first()
-    if not service or not getattr(service, attr_enabled):
+    if not service or (attr_enabled and not getattr(service, attr_enabled)):
         logger = ctx_logger("validate_service_token")
         has_json = current_request.method != "DELETE" and current_request.method != "GET"
         body = current_request.json if has_json and current_request.is_json else current_request.headers
