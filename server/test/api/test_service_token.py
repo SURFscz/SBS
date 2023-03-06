@@ -10,19 +10,20 @@ class TestServiceToken(AbstractTest):
         secret = self.get("/api/service_tokens")["value"]
 
         service = self.find_entity_by_name(Service, service_network_name)
+        service_id = service.id
 
         self.login("urn:john")
         service_token = self.post("/api/service_tokens", body={"service_id": service.id, "hashed_token": secret,
                                                                "description": "Test"},
                                   with_basic_auth=False)
         self.assertIsNotNone(service_token["id"])
-        self.assertEqual(service.id, service_token["service_id"])
+        self.assertEqual(service_id, service_token["service_id"])
         self.assertIsNone(service_token.get("hashed_token"))
 
         post_count = ServiceToken.query.count()
         self.assertEqual(pre_count, post_count - 1)
 
-        service = self.get(f"/api/services/{service.id}")
+        service = self.get(f"/api/services/{service_id}")
         self.assertEqual(2, len(service["service_tokens"]))
 
         self.delete("/api/service_tokens", primary_key=service_token["id"])

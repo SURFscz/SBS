@@ -327,6 +327,7 @@ class TestUser(AbstractTest):
 
     def test_update_date_bug(self):
         roger = self.find_entity_by_name(User, roger_name)
+        roger_id = roger.id
         now = datetime.datetime.now()
         roger.last_login_date = now
         roger.last_accessed_date = now
@@ -340,7 +341,7 @@ class TestUser(AbstractTest):
                 "email": "bogus"}
         self.put("/api/users", body, with_basic_auth=False)
 
-        roger = User.query.get(roger.id)
+        roger = User.query.get(roger_id)
         now = now.date()
         self.assertEqual(roger.last_accessed_date.date(), now)
         self.assertEqual(roger.last_login_date.date(), now)

@@ -371,6 +371,6 @@ class TestOrganisation(AbstractTest):
 
     def test_name_by_id(self):
         self.login("urn:harry")
-        organisation = self.find_entity_by_name(Organisation, uuc_name)
-        res = self.get(f"/api/organisations/name_by_id/{organisation.id}", with_basic_auth=False)
-        self.assertEqual(organisation.name, res["name"])
+        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        res = self.get(f"/api/organisations/name_by_id/{organisation_id}", with_basic_auth=False)
+        self.assertEqual(uuc_name, res["name"])

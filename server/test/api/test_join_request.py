@@ -45,8 +45,8 @@ class TestJoinRequest(AbstractTest):
 
     def test_new_join_request_with_existing(self):
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
-        user = self.find_entity_by_name(User, "Peter Doe")
-        join_request = JoinRequest(user_id=user.id, collaboration_id=collaboration.id, hash=str(uuid.uuid4()),
+        user_id = self.find_entity_by_name(User, "Peter Doe").id
+        join_request = JoinRequest(user_id=user_id, collaboration_id=collaboration.id, hash=str(uuid.uuid4()),
                                    status="open")
         db.session.merge(join_request)
         db.session.commit()
@@ -55,7 +55,7 @@ class TestJoinRequest(AbstractTest):
         self.post("/api/join_requests",
                   body={"collaborationId": collaboration.id, "motivation": "please"},
                   with_basic_auth=False)
-        self.assertEqual(1, JoinRequest.query.filter(JoinRequest.user_id == user.id).count())
+        self.assertEqual(1, JoinRequest.query.filter(JoinRequest.user_id == user_id).count())
 
     def test_disabled_join_requests(self):
         collaboration = self.find_entity_by_name(Collaboration, uu_disabled_join_request_name)
@@ -85,6 +85,7 @@ class TestJoinRequest(AbstractTest):
         self.assertEqual(4, JoinRequest.query.count())
         join_request = self._join_request_by_user("urn:peter")
         join_request_hash = join_request.hash
+        join_request_id = join_request.id
         self.login("urn:admin")
         mail = self.app.mail
         with mail.record_messages() as outbox:
@@ -93,7 +94,7 @@ class TestJoinRequest(AbstractTest):
             mail_msg = outbox[0]
             self.assertListEqual(["peter@example.org"], mail_msg.recipients)
             self.assertTrue("accepted" in mail_msg.html)
-            join_request = JoinRequest.query.get(join_request.id)
+            join_request = JoinRequest.query.get(join_request_id)
             self.assertEqual(STATUS_APPROVED, join_request.status)
 
     def test_accept_join_request_already_member(self):
@@ -103,6 +104,7 @@ class TestJoinRequest(AbstractTest):
 
     def test_decline_join_request(self):
         join_request = self._join_request_by_user("urn:peter")
+        join_request_id = join_request.id
         join_request_hash = join_request.hash
         self.login("urn:admin")
         mail = self.app.mail
@@ -116,17 +118,18 @@ class TestJoinRequest(AbstractTest):
             self.assertTrue("declined" in mail_msg.html)
             self.assertTrue(rejection_reason in mail_msg.html)
 
-            join_request = JoinRequest.query.get(join_request.id)
+            join_request = JoinRequest.query.get(join_request_id)
             self.assertEqual(STATUS_DENIED, join_request.status)
             self.assertEqual(rejection_reason, join_request.rejection_reason)
 
     def test_delete_join_request(self):
         pre_count = JoinRequest.query.count()
         join_request = self._join_request_by_user("urn:peter")
+        join_request_id = join_request.id
         join_request_hash = join_request.hash
         self.login("urn:admin")
         self.put("/api/join_requests/accept", body={"hash": join_request_hash})
-        self.delete("/api/join_requests", primary_key=join_request.id, with_basic_auth=False)
+        self.delete("/api/join_requests", primary_key=join_request_id, with_basic_auth=False)
         self.assertEqual(pre_count - 1, JoinRequest.query.count())
 
     def test_delete_join_request_with_open_status(self):

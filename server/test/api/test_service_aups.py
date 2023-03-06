@@ -18,12 +18,12 @@ class TestServiceAup(AbstractTest):
         self.assertEqual(4, len(service_aups))
 
     def test_delete_by_service(self):
+        self.login("urn:john")
         service_aups = self._service_aups_by_user("urn:admin")
         self.assertEqual(2, len(service_aups))
-
-        self.login("urn:john")
-        for service_aup in service_aups:
-            self.put("/api/service_aups/delete_by_service", body={"service_id": service_aup.service.id})
+        service_ids = [service_aup.service.id for service_aup in service_aups]
+        for service_id in service_ids:
+            self.put("/api/service_aups/delete_by_service", body={"service_id": service_id})
 
         service_aups = self._service_aups_by_user("urn:admin")
         self.assertEqual(0, len(service_aups))
@@ -43,7 +43,7 @@ class TestServiceAup(AbstractTest):
         self.post("/api/service_aups", body={"service_id": service.id})
         service_aups = self._service_aups_by_user("urn:betty")
         self.assertEqual(1, len(service_aups))
-        self.assertEqual(service.name, service_aups[0].service.name)
+        self.assertEqual(service_mail_name, service_aups[0].service.name)
 
     def test_create_service_aup_already_exists(self):
         service_aups = self._service_aups_by_user("urn:admin")

@@ -30,13 +30,14 @@ class TestAuditLog(AbstractTest):
 
     def test_other_(self):
         sarah = self.find_entity_by_name(User, sarah_name)
+        sarah_id = sarah.id
         self.login("urn:sarah")
         body = {
             "ssh_keys": [{"ssh_value": "some_ssh"}, {"ssh_value": "overwrite_existing", "id": sarah.ssh_keys[0].id}]}
         self.put("/api/users", body, with_basic_auth=False)
 
         self.login("urn:john")
-        res = self.get(f"/api/audit_logs/other/{sarah.id}")
+        res = self.get(f"/api/audit_logs/other/{sarah_id}")
         self.assertEqual("sarah", res["users"][0]["username"])
 
     def test_other_403(self):

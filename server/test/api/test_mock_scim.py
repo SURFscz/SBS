@@ -15,6 +15,7 @@ class TestMockScim(AbstractTest):
         self.delete("/api/scim_mock/clear")
 
         cloud_service = self.find_entity_by_name(Service, service_cloud_name)
+        cloud_service_id = cloud_service.id
         headers = {"X-Service": str(cloud_service.id), "Authorization": f"bearer {cloud_service.scim_bearer_token}"}
         sarah = self.find_entity_by_name(User, sarah_name)
 
@@ -27,6 +28,7 @@ class TestMockScim(AbstractTest):
         scim_id_user = res["id"]
         self.assertIsNotNone(scim_id_user)
 
+        sarah = self.find_entity_by_name(User, sarah_name)
         sarah.email = "changed@example.com"
         body = create_user_template(sarah)
         # Update a user
@@ -44,11 +46,13 @@ class TestMockScim(AbstractTest):
                  response_status_code=400)
 
         # Find by externalId
+        sarah = self.find_entity_by_name(User, sarah_name)
         res = self.get("/api/scim_mock/Users",
                        query_data={"filter": f"externalId eq \"{sarah.external_id}{EXTERNAL_ID_POST_FIX}\""},
                        headers=headers,
                        with_basic_auth=False)
         self.assertEqual(scim_id_user, res["Resources"][0]["id"])
+        sarah = self.find_entity_by_name(User, sarah_name)
         self.assertEqual(sarah.email, res["Resources"][0]["emails"][0]["value"])
 
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
@@ -65,12 +69,14 @@ class TestMockScim(AbstractTest):
         self.assertIsNotNone(scim_id_group)
 
         # Update the group
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
         collaboration.global_urn = "Changed"
         body = update_group_template(collaboration, [member_object], scim_id_group)
         res = self.put(f"/api/scim_mock/Groups/{scim_id_group}",
                        body=body,
                        headers=headers,
                        with_basic_auth=False)
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
         self.assertEqual(collaboration.global_urn, res[SCIM_SCHEMA_SRAM_GROUP]["urn"])
         self.assertEqual(scim_id_user, res["members"][0]["value"])
 
@@ -90,18 +96,18 @@ class TestMockScim(AbstractTest):
         self.login("urn:john")
         res = self.get("/api/scim_mock/statistics", with_basic_auth=False)
 
-        self.assertEqual(1, len(res["database"][str(cloud_service.id)]["users"]))
-        self.assertEqual(1, len(res["database"][str(cloud_service.id)]["groups"]))
-        self.assertEqual(8, len(res["http_calls"][str(cloud_service.id)]))
+        self.assertEqual(1, len(res["database"][str(cloud_service_id)]["users"]))
+        self.assertEqual(1, len(res["database"][str(cloud_service_id)]["groups"]))
+        self.assertEqual(8, len(res["http_calls"][str(cloud_service_id)]))
 
         self.delete("/api/scim_mock/Users", primary_key=scim_id_user, with_basic_auth=False, headers=headers)
         self.delete("/api/scim_mock/Groups", primary_key=scim_id_group, with_basic_auth=False, headers=headers)
 
         res = self.get("/api/scim_mock/statistics", with_basic_auth=False)
 
-        self.assertEqual(0, len(res["database"][str(cloud_service.id)]["users"]))
-        self.assertEqual(0, len(res["database"][str(cloud_service.id)]["groups"]))
-        self.assertEqual(10, len(res["http_calls"][str(cloud_service.id)]))
+        self.assertEqual(0, len(res["database"][str(cloud_service_id)]["users"]))
+        self.assertEqual(0, len(res["database"][str(cloud_service_id)]["groups"]))
+        self.assertEqual(10, len(res["http_calls"][str(cloud_service_id)]))
 
         # Now reset everything
         self.delete("/api/scim_mock/clear", with_basic_auth=False)
@@ -109,16 +115,16 @@ class TestMockScim(AbstractTest):
         self.assertEqual(0, len(res["database"]))
 
     def test_mock_scim_authorization(self):
-        cloud_service = self.find_entity_by_name(Service, service_cloud_name)
+        cloud_service_id = self.find_entity_by_name(Service, service_cloud_name).id
 
         self.post("/api/scim_mock/Users",
                   body={},
-                  headers={"X-Service": str(cloud_service.id)},
+                  headers={"X-Service": str(cloud_service_id)},
                   with_basic_auth=False,
                   response_status_code=401)
 
         self.post("/api/scim_mock/Users",
                   body={},
-                  headers={"X-Service": str(cloud_service.id), "Authorization": "bearer nope"},
+                  headers={"X-Service": str(cloud_service_id), "Authorization": "bearer nope"},
                   with_basic_auth=False,
                   response_status_code=401)

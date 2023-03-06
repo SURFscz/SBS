@@ -22,10 +22,11 @@ class TestScim(AbstractTest):
 
     def test_user_by_external_id(self):
         jane = self.find_entity_by_name(User, jane_name)
-        res = self.get(f"/api/scim/v2/Users/{jane.external_id}{EXTERNAL_ID_POST_FIX}",
+        jane_external_id = jane.external_id
+        res = self.get(f"/api/scim/v2/Users/{jane_external_id}{EXTERNAL_ID_POST_FIX}",
                        headers={"Authorization": f"bearer {service_network_token}"},
                        expected_headers={"Etag": version_value(jane)})
-        self.assertEqual(f"{jane.external_id}{EXTERNAL_ID_POST_FIX}", res["externalId"])
+        self.assertEqual(f"{jane_external_id}{EXTERNAL_ID_POST_FIX}", res["externalId"])
         self.assertEqual("User", res["meta"]["resourceType"])
 
     def test_user_by_external_id_404(self):
@@ -39,19 +40,21 @@ class TestScim(AbstractTest):
 
     def test_collaboration_by_identifier(self):
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
-        res = self.get(f"/api/scim/v2/Groups/{collaboration.identifier}{EXTERNAL_ID_POST_FIX}",
+        collaboration_identifier = collaboration.identifier
+        res = self.get(f"/api/scim/v2/Groups/{collaboration_identifier}{EXTERNAL_ID_POST_FIX}",
                        headers={"Authorization": f"bearer {service_network_token}"},
                        expected_headers={"Etag": version_value(collaboration)})
-        self.assertEqual(f"{collaboration.identifier}{EXTERNAL_ID_POST_FIX}", res["externalId"])
-        self.assertEqual(f"{collaboration.identifier}{EXTERNAL_ID_POST_FIX}", res["id"])
+        self.assertEqual(f"{collaboration_identifier}{EXTERNAL_ID_POST_FIX}", res["externalId"])
+        self.assertEqual(f"{collaboration_identifier}{EXTERNAL_ID_POST_FIX}", res["id"])
 
     def test_group_by_identifier(self):
         group = self.find_entity_by_name(Group, ai_researchers_group)
+        group_identifier = group.identifier
         # We mock that all members are already known in the remote SCIM DB
-        res = self.get(f"/api/scim/v2/Groups/{group.identifier}{EXTERNAL_ID_POST_FIX}",
+        res = self.get(f"/api/scim/v2/Groups/{group_identifier}{EXTERNAL_ID_POST_FIX}",
                        headers={"Authorization": f"bearer {service_network_token}"})
-        self.assertEqual(f"{group.identifier}{EXTERNAL_ID_POST_FIX}", res["externalId"])
-        self.assertEqual(f"{group.identifier}{EXTERNAL_ID_POST_FIX}", res["id"])
+        self.assertEqual(f"{group_identifier}{EXTERNAL_ID_POST_FIX}", res["externalId"])
+        self.assertEqual(f"{group_identifier}{EXTERNAL_ID_POST_FIX}", res["id"])
         self.assertEqual("Group", res["meta"]["resourceType"])
 
     def test_collaboration_by_identifier_404(self):

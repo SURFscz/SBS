@@ -90,6 +90,7 @@ class TestCollaborationsServices(AbstractTest):
 
         # Reload
         collaboration = self.find_entity_by_name(Collaboration, uu_disabled_join_request_name)
+        service_wiki = self.find_entity_by_name(Service, service_wiki_name)
         self.assertEqual(service_wiki.entity_id, collaboration.services[0].entity_id)
 
     def test_add_collaborations_services_forbidden(self):
