@@ -136,7 +136,7 @@ collaboration_tags_association = db.Table(
 class CollaborationMembership(Base, db.Model):
     __tablename__ = "collaboration_memberships"
     __table_args__ = (
-        db.UniqueConstraint('user_id', 'collaboration_id', name='unique_members'),
+        db.UniqueConstraint("user_id", "collaboration_id", name="unique_members"),
     )
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     role = db.Column("role", db.String(length=255), nullable=False)
@@ -313,6 +313,9 @@ class Collaboration(Base, db.Model, LogoMixin):
 
 class OrganisationMembership(Base, db.Model):
     __tablename__ = "organisation_memberships"
+    __table_args__ = (
+        db.UniqueConstraint("user_id", "organisation_id", name="unique_members"),
+    )
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     role = db.Column("role", db.String(length=255), nullable=False)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"), primary_key=True)
@@ -384,6 +387,9 @@ class Organisation(Base, db.Model, LogoMixin):
 
 class ServiceMembership(Base, db.Model):
     __tablename__ = "service_memberships"
+    __table_args__ = (
+        db.UniqueConstraint("user_id", "service_id", name="unique_members"),
+    )
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     role = db.Column("role", db.String(length=255), nullable=False)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"), primary_key=True)
