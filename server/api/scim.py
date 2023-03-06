@@ -89,14 +89,13 @@ def resource_types():
 @swag_from("../swagger/public/paths/get_users.yml")
 @json_endpoint
 def service_users():
-    service = validate_service_token("scim_enabled")
+    service = validate_service_token(None)
     filter_param = query_param("filter", required=False)
     # note: we only support "eq" here.
     if filter_param:
         query = urllib.parse.unquote(filter_param)
         if not query.lower().startswith(f"{SCIM_SCHEMA_SRAM_USER}.eduPersonUniqueId".lower()):
             raise NotImplementedError(f"Not supported filter {query}")
-        # uid = re.search(r'"([^"]*)"', query).group(1)
         uid = re.search(r"(?:'|\")(.*)(?:'|\")", query).group(1)
         users = User.query.filter(func.lower(User.uid) == func.lower(uid)).all()
     else:
@@ -108,7 +107,6 @@ def service_users():
 @swag_from("../swagger/public/paths/get_user_by_external_id.yml")
 @json_endpoint
 def service_user_by_external_id(user_external_id: str):
-    validate_service_token("scim_enabled")
     stripped_external_id = user_external_id.replace(EXTERNAL_ID_POST_FIX, "")
     user = User.query.filter(User.external_id == stripped_external_id).one()
     return find_user_by_id_template(user), _add_etag_header(user)
@@ -118,7 +116,7 @@ def service_user_by_external_id(user_external_id: str):
 @swag_from("../swagger/public/paths/get_groups.yml")
 @json_endpoint
 def service_groups():
-    service = validate_service_token("scim_enabled")
+    service = validate_service_token(None)
     all_scim_groups = all_scim_groups_by_service(service)
     return find_groups_template(all_scim_groups), 200
 
@@ -127,7 +125,6 @@ def service_groups():
 @swag_from("../swagger/public/paths/get_group_by_external_id.yml")
 @json_endpoint
 def service_group_by_identifier(group_external_id: str):
-    validate_service_token("scim_enabled")
     stripped_group_identifier = group_external_id.replace(EXTERNAL_ID_POST_FIX, "")
     group = Collaboration.query.filter(Collaboration.identifier == stripped_group_identifier).first()
     if not group:

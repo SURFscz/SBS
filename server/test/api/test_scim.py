@@ -10,7 +10,7 @@ from server.scim.schema_template import schemas_template, SCIM_SCHEMA_SRAM_USER
 from server.scim.user_template import version_value
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_network_token, jane_name, ai_computing_name, ai_researchers_group, \
-    service_network_name
+    service_network_name, service_wiki_token, service_wiki_name
 from server.tools import read_file
 
 
@@ -19,6 +19,13 @@ class TestScim(AbstractTest):
     def test_users(self):
         res = self.get("/api/scim/v2/Users", headers={"Authorization": f"bearer {service_network_token}"})
         self.assertEqual(5, len(res["Resources"]))
+
+    def test_users_no_scim_enabled(self):
+        wiki = self.find_entity_by_name(Service, service_wiki_name)
+        self.assertFalse(wiki.scim_enabled)
+
+        res = self.get("/api/scim/v2/Users", headers={"Authorization": f"bearer {service_wiki_token}"})
+        self.assertEqual(8, len(res["Resources"]))
 
     def test_user_by_external_id(self):
         jane = self.find_entity_by_name(User, jane_name)
