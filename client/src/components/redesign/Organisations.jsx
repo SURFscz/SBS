@@ -58,6 +58,7 @@ class Organisations extends React.Component {
                 key: "name",
                 header: I18n.t("models.organisations.name"),
                 mapper: org => <a href={`/organisations/${org.id}`}
+                                  className={"neutral-appearance"}
                                   onClick={this.openOrganisation(org)}>{org.name}</a>,
             },
             {

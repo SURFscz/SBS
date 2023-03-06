@@ -3,7 +3,7 @@ import React from "react";
 import "./UserMenu.scss";
 import {Link} from "react-router-dom";
 import {logout} from "../../utils/Login";
-import {isUserAllowed, ROLES} from "../../utils/UserRole";
+import {globalUserRole, isUserAllowed, ROLES} from "../../utils/UserRole";
 import {isEmpty} from "../../utils/Utils";
 import {clearFlash} from "../../utils/Flash";
 import {UserInfo} from "@surfnet/sds";
@@ -61,7 +61,9 @@ class UserMenu extends React.Component {
         const collMenuItemRequired = lessThenOrgManager && !isEmpty(organisation) && organisation.has_members
         const collCreateAllowed = !isEmpty(organisation)
             && (organisation.collaboration_creation_allowed_entitlement || organisation.collaboration_creation_allowed);
-        const organisationName = organisation ? organisation.name : "-";
+        const role = globalUserRole(currentUser);
+        const userRole = role.charAt(0).toUpperCase() + role.slice(1);
+        const organisationName = organisation ? organisation.name : userRole;
         return (
             <div className="user-menu"
                  ref={ref => this.ref = ref}

@@ -2,8 +2,18 @@
     margin-left: auto;
     z-index: 4;
 
-    .sds--user-info--textual p.role {
-        color: #0077c8;
+    color: black;
+
+    button.sds--user-info--button {
+        background-color: white;
+
+        svg {
+            color: var(--sds--palette--main-color--400);
+        }
+    }
+
+    .sds--user-info--textual p.name, .sds--user-info--textual p.role {
+        color: white;
     }
 }
 

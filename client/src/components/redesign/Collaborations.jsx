@@ -223,6 +223,7 @@ export default class Collaborations extends React.PureComponent {
                 class: serviceKey,
                 header: I18n.t("models.collaborations.name"),
                 mapper: collaboration => <a href={`/collaborations/${collaboration.id}`}
+                                            className={"neutral-appearance"}
                                             onClick={this.openCollaboration(collaboration)}>{collaboration.name}</a>
             },
             {

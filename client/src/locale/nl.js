@@ -598,7 +598,7 @@ I18n.translations.nl = {
         flash: {
             updated: "Je profiel is bijgewerkt"
         },
-        delete: "Verwijder",
+        delete: "Verwijder mijn account",
         deleteConfirmation: "Weet je zeker dat je je account voorgoed wil verwijderen?",
         deleteConfirmationWarning: "Al je lidmaatschappen worden verwijderd. Dit kan niet worden teruggedraaid.",
         deleteConfirmationCheck: "Als je toch wil doorgaan, typ dan ter bevestiging je volledige naam in.",

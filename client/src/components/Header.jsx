@@ -1,6 +1,6 @@
 import React from "react";
 import "./Header.scss";
-import {Logo, LogoType} from "@surfnet/sds";
+import {Logo, LogoColor, LogoType} from "@surfnet/sds";
 import UserMenu from "./redesign/UserMenu";
 import {organisationsByUserSchacHomeOrganisation} from "../api";
 import {emitter} from "../utils/Events";
@@ -67,7 +67,7 @@ export default class Header extends React.PureComponent {
                 <FeedbackDialog isOpen={showFeedBack} close={() => this.setState({showFeedBack: false})}/>
                 <div className="header-inner" onClick={this.toggleStyle}>
                     <Link className="logo" to={"/"}>
-                        <Logo label={"Research Access Management"} position={LogoType.Bottom}/>
+                        <Logo label={"Research Access Management"} position={LogoType.Bottom} color={LogoColor.White}/>
                     </Link>
                     {(showProfile && currentUser.user_accepted_aup) &&
                     <UserMenu currentUser={currentUser}
