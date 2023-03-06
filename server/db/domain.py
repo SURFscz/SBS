@@ -46,14 +46,15 @@ class User(Base, db.Model):
     updated_at = db.Column("updated_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
     organisation_memberships = db.relationship("OrganisationMembership", back_populates="user",
-                                               cascade_backrefs=False, passive_deletes=True)
+                                               cascade="all, delete, delete-orphan", passive_deletes=True)
     collaboration_memberships = db.relationship("CollaborationMembership", back_populates="user",
-                                                cascade_backrefs=False, passive_deletes=True)
+                                                cascade="all, delete, delete-orphan", passive_deletes=True)
     collaboration_requests = db.relationship("CollaborationRequest", back_populates="requester",
-                                             cascade_backrefs=False, passive_deletes=True)
+                                             cascade="all, delete, delete-orphan", passive_deletes=True)
     service_memberships = db.relationship("ServiceMembership", back_populates="user",
-                                          cascade_backrefs=False, passive_deletes=True)
-    join_requests = db.relationship("JoinRequest", back_populates="user", cascade_backrefs=False, passive_deletes=True)
+                                          cascade="all, delete, delete-orphan", passive_deletes=True)
+    join_requests = db.relationship("JoinRequest", back_populates="user",
+                                    cascade="all, delete, delete-orphan", passive_deletes=True)
     aups = db.relationship("Aup", back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
     service_aups = db.relationship("ServiceAup", back_populates="user", cascade="all, delete-orphan",
                                    passive_deletes=True)
