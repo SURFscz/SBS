@@ -598,7 +598,7 @@ I18n.translations.en = {
         flash: {
             updated: "Your profile has been updated"
         },
-        delete: "Delete",
+        delete: "Delete your account",
         deleteConfirmation: "Are you sure you want to delete your account for all eternity?",
         deleteConfirmationWarning: "All your memberships will be deleted and there is no way to revert this afterwards.",
         deleteConfirmationCheck: "If you wish to proceed, please type in your full name for confirmation.",

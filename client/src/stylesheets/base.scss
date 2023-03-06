@@ -69,4 +69,14 @@ a {
     &:visited {
         color: var(--sds--palette--support-color--500);
     }
+
+    &.neutral-appearance {
+        font-weight: normal!important;
+        text-decoration: none!important;
+        color: black!important;
+    }
+}
+
+.sds--modal {
+    z-index: 9999;
 }

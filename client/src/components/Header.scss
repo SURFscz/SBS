@@ -2,10 +2,10 @@
 
 .header-container {
 
-    background-color: $light-orange;
+    background-color: var(--sds--palette--main-color--400);
+    color: var(--sds--color--white);
     margin: 0 auto;
     padding: 5px 0 10px 0;
-    color: black;
 
     .header-inner {
         position: relative;

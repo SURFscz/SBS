@@ -1753,10 +1753,10 @@
   resolved "https://registry.yarnpkg.com/@socket.io/component-emitter/-/component-emitter-3.1.0.tgz#96116f2a912e0c02817345b3c10751069920d553"
   integrity sha512-+9jVqKhRSpsc591z5vX+X5Yyw+he/HCB4iQ/RYxw35CEPaY1gnsNE43nf9n9AaYjAQrTiI/mOwKUKdUs9vf7Xg==
 
-"@surfnet/sds@^0.0.37":
-  version "0.0.37"
-  resolved "https://registry.yarnpkg.com/@surfnet/sds/-/sds-0.0.37.tgz#71d8cdfc706b504dfe77a8443ba8b45fd01076ff"
-  integrity sha512-KW/2xsY3mBRSsRZPehKNSp8z+Bv+WGeIS9Q4MdMTmStOqaV8AyGj3LWc1vfUwojeeADRgAiozhMyJhicwKLU8g==
+"@surfnet/sds@^0.0.39":
+  version "0.0.39"
+  resolved "https://registry.yarnpkg.com/@surfnet/sds/-/sds-0.0.39.tgz#d625d69c2f8bd2fce86980dc88d5fee5eecbe8cd"
+  integrity sha512-BpQurBuApUnF8mN+Bg8M7dpvVGEFzyBu7pAxtybAiJ1TR9Ee885EFun8FDNSilVmFpHTbh6jn3Gr1lYgVE+SWA==
 
 "@surma/rollup-plugin-off-main-thread@^2.2.3":
   version "2.2.3"

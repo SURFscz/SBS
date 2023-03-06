@@ -1,7 +1,6 @@
 import React from "react";
 import "./Organisations.scss";
 import I18n from "i18n-js";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {ReactComponent as SearchIcon} from "@surfnet/sds/icons/functional-icons/search.svg";
 import Button from "../Button";
 import PropTypes from "prop-types";
@@ -66,9 +65,6 @@ class Entities extends React.Component {
                 {!hideTitle && <h1>{title || `${I18n.t(`models.${modelName}.title`)} (${entities.length})`}</h1>}
                 <div className={filterClassName}>{filters}</div>
                 <div className={`search ${showNew ? "" : "standalone"}`}>
-                    {explain && <FontAwesomeIcon className="help" icon="question-circle"
-                                                 id="impersonate_close_explanation"
-                                                 onClick={() => this.setState({showExplanation: true})}/>}
                     {(!isEmpty(searchAttributes) || customSearch) &&
                     <div className={"sds--text-field sds--text-field--has-icon"}>
                         <div className="sds--text-field--shape">

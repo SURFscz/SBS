@@ -44,12 +44,6 @@ class Me extends React.Component {
         ssh_keys.forEach((sshKey, i) => {
             sshKey.fileInputKey = new Date().getMilliseconds() + i + 1
         });
-        if (ssh_keys.length === 0) {
-            ssh_keys.push({
-                fileInputKey: new Date().getMilliseconds() - 5,
-                ssh_value: ""
-            });
-        }
         this.setState({ssh_keys: ssh_keys});
         const urlSearchParams = new URLSearchParams(window.location.search);
         const deleteLink = urlSearchParams.get("delete");
@@ -170,8 +164,10 @@ class Me extends React.Component {
                             }
                             <tr>
                                 <td className="attribute-key">{I18n.t("profile.schac_home_organisation")}</td>
-                                <td className="attribute-value"><InstituteColumn entity={{user: user}}
-                                                                                 currentUser={user} greyed={false}/>
+                                <td className="attribute-value">
+                                    <InstituteColumn entity={{user: user}}
+                                                     currentUser={user}
+                                                     greyed={false}/>
                                 </td>
                                 <td className="actions"/>
                             </tr>
@@ -189,7 +185,7 @@ class Me extends React.Component {
                                     {user.second_factor_auth && <div className={"icon-container"}><EditIcon/></div>}
                                 </td>
                             </tr>}
-                            {ssh_keys.map((ssh_key, index) =>
+                            {!isEmpty(ssh_keys) && ssh_keys.map((ssh_key, index) =>
                                 <tr key={index}>
                                     <td className="attribute-key">{index === 0 && <span>{I18n.t("user.ssh_key")}<Tooltip
                                         tip={I18n.t("user.ssh_keyTooltip")}/></span>}</td>
@@ -216,6 +212,7 @@ class Me extends React.Component {
 
                     <section className="actions">
                         <Button warningButton={true}
+                                txt={I18n.t("user.delete")}
                                 onClick={this.delete}/>
                         <a className="sds--btn sds--btn--secondary"
                            href={`${window.location.protocol}//${window.location.host}/api/users/personal`.replaceAll("3000", "8080")}

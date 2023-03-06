@@ -1,34 +1,38 @@
 import React from "react";
-import {health} from "../api";
+import {organisationsByUserSchacHomeOrganisation} from "../api";
 import I18n from "i18n-js";
 import "./Profile.scss";
 import {AppStore} from "../stores/AppStore";
-import {ReactComponent as PersonIcon} from "../icons/personal_info.svg";
+import {ReactComponent as PersonIcon} from "../icons/single-neutral-check.svg";
 
 import UnitHeader from "../components/redesign/UnitHeader";
 import Me from "./Me";
 import SpinnerField from "../components/redesign/SpinnerField";
 import {dateFromEpoch} from "../utils/Date";
+import {getSchacHomeOrg} from "../utils/Utils";
 
 class Profile extends React.Component {
 
     constructor(props, context) {
         super(props, context);
         this.state = {
-            loading: true
+            loading: true,
+            organisation: null
         }
     }
 
     componentDidMount = () => {
-        health().then(() => {
-            AppStore.update(s => {
-                s.breadcrumb.paths = [
-                    {path: "/", value: I18n.t("breadcrumb.home")},
-                    {path: "", value: I18n.t("breadcrumb.profile")}
-                ];
+        const {user} = this.props;
+        organisationsByUserSchacHomeOrganisation()
+            .then(res => {
+                AppStore.update(s => {
+                    s.breadcrumb.paths = [
+                        {path: "/", value: I18n.t("breadcrumb.home")},
+                        {path: "", value: I18n.t("breadcrumb.profile")}
+                    ];
+                });
+                this.setState({organisation: getSchacHomeOrg(user, res), loading: false})
             });
-            this.setState({loading: false});
-        })
     };
 
     render() {
@@ -38,6 +42,7 @@ class Profile extends React.Component {
         }
 
         const {user} = this.props;
+        const meProps = {...this.props, ...this.state}
         return (
             <div className="mod-user-profile">
                 <UnitHeader obj={({name: I18n.t("models.users.profile", {name: user.name}), svg: PersonIcon})}
@@ -48,7 +53,7 @@ class Profile extends React.Component {
                             name={user.name}>
                     <p>{I18n.t("models.users.subProfile", {date: dateFromEpoch(user.created_at)})}</p>
                 </UnitHeader>
-                <Me {...this.props}/>
+                <Me {...meProps}/>
             </div>);
     }
 
