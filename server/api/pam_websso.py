@@ -1,8 +1,10 @@
+import io
 import random
 import string
 import uuid
 from datetime import datetime, timedelta
 
+import qrcode
 from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app, session
 from werkzeug.exceptions import NotFound, Forbidden, BadRequest
@@ -120,10 +122,20 @@ def start():
     db.session.add(pam_sso_session)
 
     logger.debug(f"PamWebSSO user {user.uid if user else None} new session")
+    url = f"{current_app.app_config.base_url}/weblogin/{service.abbreviation}/{pam_sso_session.session_id}"
+
+    qr = qrcode.QRCode()
+    qr.add_data(url)
+
+    f = io.StringIO()
+    qr.print_ascii(out=f, invert=True)
+    f.seek(0)
+
+    qr_code = f.read()
+
     return {"result": "OK",
             "session_id": pam_sso_session.session_id,
-            "challenge": f"Please sign in to: {current_app.app_config.base_url}/"
-                         f"weblogin/{service.abbreviation}/{pam_sso_session.session_id}",
+            "challenge": f"Please sign in to: {url}\n{qr_code}",
             "cached": False}, 201
 
 
