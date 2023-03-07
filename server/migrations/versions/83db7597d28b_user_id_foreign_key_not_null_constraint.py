@@ -18,7 +18,7 @@ depends_on = None
 def upgrade():
     conn = op.get_bind()
     conn.execute(text("DELETE FROM collaboration_memberships WHERE user_id IS NULL"))
-    conn.execute(text("ALTER TABLE collaboration_memberships CHANGE user_id user_id INT NOT NULL"))
+    conn.execute(text("ALTER TABLE collaboration_memberships CHANGE user_id user_id INT(11) NOT NULL"))
 
 
 def downgrade():
