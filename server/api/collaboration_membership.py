@@ -33,14 +33,13 @@ def delete_collaboration_membership(collaboration_id, user_id):
         for membership in memberships:
             db.session.delete(membership)
 
-        collaboration = memberships[0].collaboration
         user = memberships[0].user
 
-        res = {'collaboration_id': collaboration.id, 'user_id': user.id}
+        res = {'collaboration_id': collaboration_id, 'user_id': user.id}
         db.session.commit()
 
-        emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
-        broadcast_collaboration_changed(collaboration)
+        emit_socket(f"collaboration_{collaboration_id}", include_current_user_id=True)
+        broadcast_collaboration_changed(collaboration_id)
 
         return res, 204
     else:
@@ -119,9 +118,9 @@ def create_collaboration_membership_role():
 
     db.session.commit()
     for group in auto_provision_groups:
-        broadcast_group_changed(group)
+        broadcast_group_changed(group.id)
 
     emit_socket(f"collaboration_{collaboration_id}", include_current_user_id=True)
-    broadcast_collaboration_changed(collaboration)
+    broadcast_collaboration_changed(collaboration_id)
 
     return collaboration_membership_json, 201

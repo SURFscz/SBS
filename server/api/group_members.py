@@ -26,7 +26,7 @@ def do_add_group_members(data, assert_collaboration_admin):
     db.session.commit()
 
     emit_socket(f"collaboration_{collaboration_id}")
-    broadcast_group_changed(group)
+    broadcast_group_changed(group.id)
 
     return len(members_ids)
 
@@ -53,6 +53,6 @@ def delete_group_members(group_id, collaboration_membership_id, collaboration_id
     db.session.commit()
 
     emit_socket(f"collaboration_{collaboration_id}", include_current_user_id=True)
-    broadcast_group_changed(group)
+    broadcast_group_changed(group.id)
 
     return group, 204

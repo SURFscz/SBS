@@ -378,7 +378,7 @@ def update_organisation():
 def delete_organisation(organisation_id):
     confirm_write_access()
 
-    broadcast_organisation_deleted(Organisation.query.get(organisation_id))
+    broadcast_organisation_deleted(organisation_id)
     return delete(Organisation, organisation_id)
 
 
