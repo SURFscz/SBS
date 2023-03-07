@@ -130,10 +130,11 @@ def approve_request(collaboration_request_id):
     admin_collaboration_membership = CollaborationMembership(role="admin", user_id=user.id,
                                                              collaboration_id=collaboration.id,
                                                              created_by=user.uid, updated_by=user.uid)
+    collaboration_id = collaboration.id
     db.session.merge(admin_collaboration_membership)
     db.session.commit()
 
-    broadcast_collaboration_changed(collaboration)
+    broadcast_collaboration_changed(collaboration_id)
 
     mail_accepted_declined_collaboration_request({"salutation": f"Dear {user.name}",
                                                   "base_url": current_app.app_config.base_url,
@@ -148,8 +149,7 @@ def approve_request(collaboration_request_id):
     collaboration_request.status = STATUS_APPROVED
     db.session.merge(collaboration_request)
 
-    organisation = collaboration_request.organisation
-    emit_socket(f"organisation_{organisation.id}", include_current_user_id=True)
+    emit_socket(f"organisation_{collaboration_id}", include_current_user_id=True)
 
     return res
 

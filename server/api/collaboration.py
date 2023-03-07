@@ -491,10 +491,11 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True, sav
         admin_collaboration_membership = CollaborationMembership(role="admin", user_id=user.id,
                                                                  collaboration_id=collaboration.id,
                                                                  created_by=user.uid, updated_by=user.uid)
+        collaboration_id = collaboration.id
         db.session.merge(admin_collaboration_membership)
         db.session.commit()
 
-        broadcast_collaboration_changed(collaboration)
+        broadcast_collaboration_changed(collaboration_id)
 
     services = organisation.services
     for service in services:
@@ -574,5 +575,5 @@ def update_collaboration():
 def delete_collaboration(collaboration_id):
     confirm_collaboration_admin(collaboration_id)
 
-    broadcast_collaboration_deleted(Collaboration.query.get(collaboration_id))
+    broadcast_collaboration_deleted(collaboration_id)
     return delete(Collaboration, collaboration_id)

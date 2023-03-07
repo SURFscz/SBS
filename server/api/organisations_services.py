@@ -48,7 +48,7 @@ def add_collaborations_services():
 
     db.session.commit()
     emit_socket(f"organisation_{organisation_id}")
-    broadcast_organisation_service_added(organisation, service)
+    broadcast_organisation_service_added(organisation_id, service_id)
 
     return None, 201
 
@@ -66,6 +66,6 @@ def delete_organisations_services(organisation_id, service_id):
     db.session.commit()
 
     emit_socket(f"organisation_{organisation_id}")
-    broadcast_organisation_service_deleted(organisation, service)
+    broadcast_organisation_service_deleted(organisation_id, service_id)
 
     return None, 204

@@ -114,7 +114,7 @@ def update_service_group():
         }
         updated_group = update(Group, custom_json=group_data, allow_child_cascades=False)[0]
         auto_provision_all_members_and_invites(updated_group)
-        broadcast_group_changed(updated_group)
+        broadcast_group_changed(updated_group.id)
 
     emit_socket(f"service_{service_id}")
 

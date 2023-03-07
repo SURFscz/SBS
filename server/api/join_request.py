@@ -101,7 +101,8 @@ def approve_join_request():
     join_request = _get_join_request(join_request_hash)
     collaboration = join_request.collaboration
 
-    confirm_collaboration_admin(collaboration.id)
+    collaboration_id = collaboration.id
+    confirm_collaboration_admin(collaboration_id)
 
     user_id = join_request.user.id
     if collaboration.is_member(user_id):
@@ -118,7 +119,7 @@ def approve_join_request():
         [join_request.user.email])
 
     collaboration_membership = CollaborationMembership(user_id=user_id,
-                                                       collaboration_id=collaboration.id,
+                                                       collaboration_id=collaboration_id,
                                                        role="member",
                                                        created_by=current_user_uid(),
                                                        updated_by=current_user_uid())
@@ -134,12 +135,12 @@ def approve_join_request():
 
     db.session.commit()
     for group in auto_provision_groups:
-        broadcast_group_changed(group)
+        broadcast_group_changed(group.id)
 
-    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
-    broadcast_collaboration_changed(collaboration)
+    emit_socket(f"collaboration_{collaboration_id}", include_current_user_id=True)
+    broadcast_collaboration_changed(collaboration_id)
 
-    return {'collaboration_id': collaboration.id, 'user_id': user_id}, 201
+    return {'collaboration_id': collaboration_id, 'user_id': user_id}, 201
 
 
 @join_request_api.route("/decline", methods=["PUT"], strict_slashes=False)

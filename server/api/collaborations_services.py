@@ -43,7 +43,7 @@ def connect_service_collaboration(service_id, collaboration_id, force=False):
 
     emit_socket(f"collaboration_{collaboration.id}")
     emit_socket(f"service_{service.id}", include_current_user_id=True)
-    broadcast_service_added(collaboration, service)
+    broadcast_service_added(collaboration.id, service.id)
 
     return 1
 
@@ -124,6 +124,6 @@ def delete_collaborations_services(collaboration_id, service_id):
 
     emit_socket(f"collaboration_{collaboration.id}")
     emit_socket(f"service_{service.id}")
-    broadcast_service_deleted(collaboration, service)
+    broadcast_service_deleted(collaboration.id, service.id)
 
     return {'collaboration_id': collaboration.id, 'service_id': service.id}, 204

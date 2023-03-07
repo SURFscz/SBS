@@ -122,7 +122,7 @@ def create_group(collaboration_id, data, do_cleanse_short_name=True):
     auto_provision_all_members_and_invites(group)
 
     emit_socket(f"collaboration_{collaboration.id}")
-    broadcast_group_changed(group)
+    broadcast_group_changed(group.id)
 
     return res
 
@@ -152,7 +152,7 @@ def update_group():
     auto_provision_all_members_and_invites(group)
 
     emit_socket(f"collaboration_{collaboration.id}")
-    broadcast_group_changed(group)
+    broadcast_group_changed(group.id)
 
     return group, 201
 
@@ -165,6 +165,6 @@ def delete_group(group_id):
     confirm_collaboration_admin(group.collaboration_id)
 
     emit_socket(f"collaboration_{group.collaboration_id}")
-    broadcast_group_deleted(group)
+    broadcast_group_deleted(group_id)
 
     return delete(Group, group_id)

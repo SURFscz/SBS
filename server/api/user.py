@@ -587,10 +587,11 @@ def update_user():
         db.session.merge(SshKey(ssh_value=ssh_value, user_id=user.id))
 
     user.updated_by = user.uid
+    user_id = user.id
     db.session.merge(user)
     db.session.commit()
 
-    broadcast_user_changed(user)
+    broadcast_user_changed(user_id)
 
     return user, 201
 

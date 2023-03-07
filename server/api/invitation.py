@@ -182,7 +182,7 @@ def invitations_accept():
 
     db.session.commit()
     for group in unique_groups:
-        broadcast_group_changed(group)
+        broadcast_group_changed(group.id)
 
     add_user_aups(collaboration, user_id)
 
@@ -195,7 +195,7 @@ def invitations_accept():
     invitation = _invitation_query() \
         .filter(Invitation.hash == current_request.get_json()["hash"]) \
         .one()
-    collaboration = invitation.collaboration
+    collaboration_id = invitation.collaboration.id
     # We need the persistent identifier of the collaboration_membership which will be generated after the delete-commit
     if invitation.external_identifier:
         invitation.status = "accepted"
@@ -203,8 +203,8 @@ def invitations_accept():
     else:
         delete(Invitation, invitation.id)
 
-    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
-    broadcast_collaboration_changed(collaboration)
+    emit_socket(f"collaboration_{collaboration_id}", include_current_user_id=True)
+    broadcast_collaboration_changed(collaboration_id)
 
     return res, 201
 
