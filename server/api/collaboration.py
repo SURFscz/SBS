@@ -107,7 +107,7 @@ def api_collaboration_by_identifier(identifier):
         .one()
 
     organisation = request_context.external_api_organisation
-    if organisation.id != collaboration.organisation_id:
+    if not organisation or organisation.id != collaboration.organisation_id:
         raise Forbidden()
 
     return collaboration, 200
