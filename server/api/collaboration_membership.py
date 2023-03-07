@@ -35,7 +35,7 @@ def delete_collaboration_membership(collaboration_id, user_id):
 
         user = memberships[0].user
 
-        res = {'collaboration_id': collaboration_id, 'user_id': user.id}
+        res = {'collaboration_id': int(collaboration_id), 'user_id': user.id}
         db.session.commit()
 
         emit_socket(f"collaboration_{collaboration_id}", include_current_user_id=True)
