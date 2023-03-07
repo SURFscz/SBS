@@ -18,7 +18,10 @@ depends_on = None
 def upgrade():
     conn = op.get_bind()
     conn.execute(text("DELETE FROM collaboration_memberships WHERE user_id IS NULL"))
+    conn.execute(text("ALTER TABLE collaboration_memberships DROP FOREIGN KEY collaboration_memberships_ibfk_1"))
     conn.execute(text("ALTER TABLE collaboration_memberships CHANGE user_id user_id INT(11) NOT NULL"))
+    conn.execute(text("ALTER TABLE collaboration_memberships ADD CONSTRAINT collaboration_memberships_ibfk_1 "
+                      "FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE"))
 
 
 def downgrade():
