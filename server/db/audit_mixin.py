@@ -1,6 +1,6 @@
 import os
 
-from flask import session
+from flask import session, current_app
 from flask_jsontools.formatting import JsonSerializableBase
 from sqlalchemy import MetaData
 from sqlalchemy import event, inspect
@@ -8,7 +8,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import class_mapper
 from sqlalchemy.orm.attributes import get_history
 
-from server.api.dynamic_extended_json_encoder import DynamicExtendedJSONEncoder
 from server.db.db import db
 
 ACTION_CREATE = 1
@@ -17,8 +16,6 @@ ACTION_DELETE = 3
 
 ignore_attributes = ["logo", "created_by", "updated_by", "created_at", "updated_at", "last_login_date",
                      "sweep_scim_last_run"]
-
-dynamicExtendedJSONEncoder = DynamicExtendedJSONEncoder()
 
 relationship_configuration = {
     "groups": ["collaboration_memberships", "invitations"],
@@ -85,7 +82,7 @@ def find_subject(mapper, target):
 def target_state(mapper, target):
     attributes = {attr.key: getattr(target, attr.key) for attr in mapper.column_attrs
                   if attr.key not in ignore_attributes}
-    return dynamicExtendedJSONEncoder.encode(attributes)
+    return current_app.json.response(attributes).json
 
 
 parent_configuration = {
@@ -210,9 +207,11 @@ class AuditMixin(JsonSerializableBase):
         # connection, subject_id, target_type, target_id, parent_id, parent_name, action
         pi = parent_info(target)
         if state_before and state_after:
+            before_response = current_app.json.response(state_before)
+            after_response = current_app.json.response(state_after)
             target.create_audit(connection, find_subject(mapper, target), target, pi[0], pi[1], ACTION_UPDATE,
-                                state_before=dynamicExtendedJSONEncoder.encode(state_before),
-                                state_after=dynamicExtendedJSONEncoder.encode(state_after))
+                                state_before=before_response.json,
+                                state_after=after_response.json)
 
 
 metadata = MetaData()

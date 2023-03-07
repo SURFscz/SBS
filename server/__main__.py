@@ -2,6 +2,7 @@
 # monkey_patch before importing anything else!
 # see https://github.com/gevent/gevent/issues/1016#issuecomment-328529454
 import eventlet
+
 eventlet.monkey_patch()
 
 import logging
@@ -28,7 +29,7 @@ from server.api.collaboration import collaboration_api
 from server.api.collaboration_membership import collaboration_membership_api
 from server.api.collaboration_request import collaboration_request_api
 from server.api.collaborations_services import collaborations_services_api
-from server.api.dynamic_extended_json_encoder import DynamicExtendedJSONEncoder
+from server.api.dynamic_extended_json_provider import DynamicExtendedJSONProvider
 from server.api.group import group_api
 from server.api.group_members import group_members_api
 from server.api.image import image_api
@@ -156,7 +157,7 @@ app.jinja_env.globals.update({
 
 app.mail = Mail(app)
 
-app.json_encoder = DynamicExtendedJSONEncoder
+app.json = DynamicExtendedJSONProvider(app)
 
 db.init_app(app)
 app.db = db
