@@ -260,6 +260,9 @@ export default class ServiceCollaborations extends React.PureComponent {
                                   })
                               )}
                     />}
+                    {service.non_member_users_access_allowed && <div className={"radio-button-container"}>
+                        <span>{I18n.t("service.nonMemberUsersAccessAllowedTooltip")}</span>
+                    </div>}
                 </div>
                 {!service.non_member_users_access_allowed && <Entities entities={collaborations}
                           modelName={modelName}
