@@ -510,7 +510,8 @@ I18n.translations.nl = {
             searchPlaceHolder: "Zoek verzoeken...",
             noEntities: "Geen verzoeken gevonden",
             collaborationName: "Naam samenwerking",
-            requested: "Verzocht op"
+            requested: "Verzocht op",
+            organisationName: "Instelling",
         },
         systemJoinRequests: {
             title: "Verlopen open verzoeken voor samenwerkingen",
