@@ -1,7 +1,7 @@
 import React from "react";
 import "./Header.scss";
 import {Logo, LogoColor, LogoType} from "@surfnet/sds";
-import UserMenu from "./redesign/UserMenu";
+import {UserMenu} from "./redesign/UserMenu";
 import {organisationsByUserSchacHomeOrganisation} from "../api";
 import {emitter} from "../utils/Events";
 import {getSchacHomeOrg, stopEvent} from "../utils/Utils";

@@ -29,7 +29,6 @@ import {ReactComponent as JoinRequestsIcon} from "../icons/single-neutral-questi
 import {ReactComponent as AboutIcon} from "../icons/common-file-text-home.svg";
 import {ReactComponent as AdminIcon} from "../icons/single-neutral-actions-key.svg";
 import {ReactComponent as GlobeIcon} from "../icons/network-information.svg";
-import {ReactComponent as LeaveIcon} from "../icons/safety-exit-door-left.svg";
 import CollaborationAdmins from "../components/redesign/CollaborationAdmins";
 import SpinnerField from "../components/redesign/SpinnerField";
 import UsedServices from "../components/redesign/UsedServices";
@@ -46,7 +45,7 @@ import Button from "../components/Button";
 import JoinRequestDialog from "../components/JoinRequestDialog";
 import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import moment from "moment";
-import {Tooltip} from "@surfnet/sds";
+import {ButtonType, Tooltip} from "@surfnet/sds";
 import {ErrorOrigins, getSchacHomeOrg, isEmpty, removeDuplicates} from "../utils/Utils";
 import UserTokens from "../components/redesign/UserTokens";
 import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
@@ -88,6 +87,7 @@ class CollaborationDetail extends React.Component {
     componentWillUnmount = () => {
         AppStore.update(s => {
             s.sideComponent = null;
+            s.actions = [];
         });
         const params = this.props.match.params;
         if (params.id) {
@@ -195,7 +195,6 @@ class CollaborationDetail extends React.Component {
                                     ]
                                     s.sideComponent = null;
                                 });
-
                             })
                         }
                     }).catch(() => {
@@ -268,7 +267,7 @@ class CollaborationDetail extends React.Component {
         return false;
     }
 
-    updateAppStore = (collaboration, adminOfCollaboration, orgManager) => {
+    updateAppStore = (user, config, collaboration, adminOfCollaboration, orgManager) => {
         AppStore.update(s => {
             s.breadcrumb.paths = orgManager ? [
                 {path: "/", value: I18n.t("breadcrumb.home")},
@@ -282,6 +281,7 @@ class CollaborationDetail extends React.Component {
                 {value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
             ];
             s.sideComponent = adminOfCollaboration ? this.eyeView() : null;
+            s.actions = this.getHeaderActions(user, config, collaboration)
         });
     }
 
@@ -488,8 +488,9 @@ class CollaborationDetail extends React.Component {
     tabChanged = (name, id) => {
         const collId = id || this.state.collaboration.id;
         const {collaboration, adminOfCollaboration, orgManager} = this.state;
+        const {user, config} = this.props;
         if (collaboration) {
-            this.updateAppStore(collaboration, adminOfCollaboration, orgManager);
+            this.updateAppStore(user, config, collaboration, adminOfCollaboration, orgManager);
         }
         this.setState({tab: name}, () =>
             this.props.history.replace(`/collaborations/${collId}/${name}`));
@@ -606,11 +607,23 @@ class CollaborationDetail extends React.Component {
         }
     }
 
+    getHeaderActions = (user, config, collaboration) => {
+        const actions = [];
+        const isMember = collaboration.collaboration_memberships.some(m => m.user_id === user.id);
+        if (isMember) {
+            actions.push({
+                name: I18n.t("models.collaboration.leave"),
+                perform: this.deleteMe
+            });
+        }
+        return actions;
+    }
+
     getActions = (user, config, collaboration, allowedToEdit, showMemberView) => {
         const actions = [];
         if (allowedToEdit && showMemberView) {
             actions.push({
-                icon: "pencil-alt",
+                buttonType: ButtonType.Primary,
                 name: I18n.t("home.edit"),
                 perform: () => {
                     clearFlash();
@@ -620,7 +633,7 @@ class CollaborationDetail extends React.Component {
         }
         if (allowedToEdit && showMemberView && collaboration.status === "suspended") {
             actions.push({
-                icon: "unlock",
+                buttonType: ButtonType.Secondary,
                 name: I18n.t("home.unsuspend"),
                 perform: this.unsuspend(true)
             });
@@ -628,23 +641,15 @@ class CollaborationDetail extends React.Component {
         const almostSuspended = this.isCollaborationAlmostSuspended(user, collaboration, config);
         if (almostSuspended && allowedToEdit && showMemberView) {
             actions.push({
-                icon: "unlock",
+                buttonType: ButtonType.Secondary,
                 name: I18n.t("home.resetLastActivity"),
                 perform: this.resetLastActivityDate(true)
             });
         }
         const isMember = collaboration.collaboration_memberships.some(m => m.user_id === user.id);
-        if (isMember) {
+        if (!isMember && user.admin && showMemberView) {
             actions.push({
-                svg: LeaveIcon,
-                name: I18n.t("models.collaboration.leave"),
-                perform: this.deleteMe
-            });
-        }
-        const isAdminOfCollaboration = isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id);
-        if (!isMember && isAdminOfCollaboration && showMemberView) {
-            actions.push({
-                icon: "plus-circle",
+                buttonType: ButtonType.Chevron,
                 name: I18n.t("collaborationDetail.addMe"),
                 perform: this.addMe
             })
@@ -727,7 +732,7 @@ class CollaborationDetail extends React.Component {
                 <span>{I18n.t(`organisationMembership.status.name`)}</span>
                 <span className={className}>
                     {I18n.t(`organisationMembership.status.${status}`, {date: expiryDate})}
-                <Tooltip tip={I18n.t(`organisationMembership.status.${status}Tooltip`, {date: expiryDate})}/>
+                    <Tooltip tip={I18n.t(`organisationMembership.status.${status}Tooltip`, {date: expiryDate})}/>
                 </span>
 
             </div>

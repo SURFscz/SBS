@@ -1,5 +1,5 @@
 import I18n from "i18n-js";
-import React from "react";
+import React, {useState} from "react";
 import "./UserMenu.scss";
 import {Link} from "react-router-dom";
 import {logout} from "../../utils/Login";
@@ -7,39 +7,39 @@ import {globalUserRole, isUserAllowed, ROLES} from "../../utils/UserRole";
 import {isEmpty} from "../../utils/Utils";
 import {clearFlash} from "../../utils/Flash";
 import {UserInfo} from "@surfnet/sds";
+import {AppStore} from "../../stores/AppStore";
 
 
-class UserMenu extends React.Component {
+export const UserMenu = ({currentUser, organisation, config, provideFeedback}) => {
+    const [dropDownActive, setDropDownActive] = useState(false);
 
-    constructor(props, context) {
-        super(props, context);
-        this.state = {
-            dropDownActive: false
-        };
-    }
+    const {actions} = AppStore.useState(state => state);
 
-    toggleUserMenu = () => {
-        this.setState({dropDownActive: false})
+    const toggleUserMenu = () => {
+        setDropDownActive(false);
         clearFlash();
     }
 
-    renderMenu = (currentUser, adminLinks, collCreateAllowed, provideFeedback, collMenuItemRequired, config) => {
+    const renderMenu = (adminLinks, collCreateAllowed, provideFeedback, collMenuItemRequired) => {
         return (<>
                 <ul>
                     {currentUser.admin && adminLinks.map(l => <li key={l}>
-                        <Link onClick={this.toggleUserMenu} to={`/${l}`}>{I18n.t(`header.links.${l}`)}</Link>
+                        <Link onClick={toggleUserMenu} to={`/${l}`}>{I18n.t(`header.links.${l}`)}</Link>
                     </li>)}
                     {collMenuItemRequired && <li>
-                        <Link onClick={this.toggleUserMenu} to={`/new-collaboration`}>
+                        <Link onClick={toggleUserMenu} to={`/new-collaboration`}>
                             {I18n.t(`header.links.${collCreateAllowed ? "createCollaboration" : "requestCollaboration"}`)}
                         </Link>
                     </li>}
                     <li>
-                        <Link onClick={this.toggleUserMenu} to={`/profile`}>{I18n.t(`header.links.profile`)}</Link>
+                        <Link onClick={toggleUserMenu} to={`/profile`}>{I18n.t(`header.links.profile`)}</Link>
                     </li>
                     {config.feedback_enabled && <li>
                         <a href="/feedback" onClick={provideFeedback}>{I18n.t(`header.links.feedback`)}</a>
                     </li>}
+                    {actions.map(action => <li>
+                        <a href={`/${action.name}`} onClick={action.perform}>{action.name}</a>
+                    </li>)}
                 </ul>
                 <ul>
                     <li>
@@ -50,34 +50,30 @@ class UserMenu extends React.Component {
         )
     }
 
-    render() {
-        const {currentUser, organisation, config, provideFeedback} = this.props;
-        const {dropDownActive} = this.state;
-        const adminLinks = ["system"];
-        if (config.impersonation_allowed) {
-            adminLinks.push("impersonate")
-        }
-        const lessThenOrgManager = !isUserAllowed(ROLES.ORG_MANAGER, currentUser);
-        const collMenuItemRequired = lessThenOrgManager && !isEmpty(organisation) && organisation.has_members
-        const collCreateAllowed = !isEmpty(organisation)
-            && (organisation.collaboration_creation_allowed_entitlement || organisation.collaboration_creation_allowed);
-        const role = globalUserRole(currentUser);
-        const userRole = role.charAt(0).toUpperCase() + role.slice(1);
-        const organisationName = organisation ? organisation.name : userRole;
-        return (
-            <div className="user-menu"
-                 ref={ref => this.ref = ref}
-                 tabIndex={1}
-                 onBlur={() => setTimeout(() => this.setState({dropDownActive: false}), 250)}>
-                <UserInfo isOpen={dropDownActive}
-                          children={this.renderMenu(currentUser, adminLinks, collCreateAllowed, provideFeedback, collMenuItemRequired, config)}
-                          organisationName={organisationName}
-                          userName={currentUser.name}
-                          toggle={() => this.setState({dropDownActive: !dropDownActive})}
-                />
-            </div>
-        );
+    const adminLinks = ["system"];
+    if (config.impersonation_allowed) {
+        adminLinks.push("impersonate")
     }
-}
+    const lessThenOrgManager = !isUserAllowed(ROLES.ORG_MANAGER, currentUser);
+    const collMenuItemRequired = lessThenOrgManager && !isEmpty(organisation) && organisation.has_members
+    const collCreateAllowed = !isEmpty(organisation)
+        && (organisation.collaboration_creation_allowed_entitlement || organisation.collaboration_creation_allowed);
+    const role = globalUserRole(currentUser);
+    const userRole = role.charAt(0).toUpperCase() + role.slice(1);
+    const organisationPart = organisation ? ` (${organisation.name})` : "";
+    const organisationName = `${userRole}${organisationPart}`;
+    return (
+        <div className="user-menu"
+             tabIndex={1}
+             onBlur={() => setTimeout(() => setDropDownActive(false), 250)}>
+            <UserInfo isOpen={dropDownActive}
+                      children={renderMenu(adminLinks, collCreateAllowed, provideFeedback, collMenuItemRequired, config)}
+                      organisationName={organisationName}
+                      userName={currentUser.name}
+                      toggle={() => setDropDownActive(!dropDownActive)}
+            />
+        </div>
+    );
 
-export default UserMenu;
+
+}
