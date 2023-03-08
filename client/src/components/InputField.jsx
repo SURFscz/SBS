@@ -68,7 +68,7 @@ export default function InputField({
                           value={value}
                           onChange={onChange}
                           onBlur={onBlur}
-                          className={`${className} ${large ? "large" : ""} ${fileUpload ? "file-upload" : ""}`}
+                          className={`${className} sds--text-area ${large ? "large" : ""} ${fileUpload ? "file-upload" : ""}`}
                           onKeyDown={e => {
                               if (onEnter && e.keyCode === 13) {//enter
                                   onEnter(e);
