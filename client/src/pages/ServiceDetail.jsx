@@ -249,9 +249,10 @@ class ServiceDetail extends React.Component {
     }
 
     getOrganisationsTab = (service, organisations, userAdmin, serviceAdmin, showServiceAdminView) => {
+        const availableOrganisations = service.allow_restricted_orgs ? organisations : organisations.filter(org => !org.services_restricted);
         return (<div key="organisations"
                      name="organisations"
-                     label={I18n.t("home.tabs.serviceOrganisations", {count: organisations.length})}
+                     label={I18n.t("home.tabs.serviceOrganisations", {count: availableOrganisations.length})}
                      icon={<OrganisationsIcon/>}>
             <ServiceOrganisations {...this.props}
                                   refresh={this.refresh}

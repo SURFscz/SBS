@@ -154,12 +154,6 @@ class ServiceOrganisations extends React.Component {
         const availableOrganisations = service.allow_restricted_orgs ? organisations : organisations.filter(org => !org.services_restricted);
         const columns = [
             {
-                nonSortable: true,
-                key: "logo",
-                header: "",
-                mapper: org => <Logo src={org.logo}/>
-            },
-            {
                 nonSortable: false,
                 key: "permissions",
                 header: I18n.t("models.serviceOrganisations.options.header"),
@@ -171,6 +165,12 @@ class ServiceOrganisations extends React.Component {
                 mapper: org => userAdmin ?
                     <a href={`/organisations/${org.id}`} onClick={this.openOrganisation(org)}>{org.name}</a> :
                     <span>{org.name}</span>,
+            },
+            {
+                nonSortable: true,
+                key: "logo",
+                header: "",
+                mapper: org => <Logo src={org.logo}/>
             },
             {
                 key: "short_name",
