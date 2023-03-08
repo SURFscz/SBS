@@ -321,9 +321,15 @@ class CollaborationDetail extends React.Component {
         if (!isUserAllowed(ROLES.COLL_MEMBER, user, collaboration.organisation_id, collaboration.id)) {
             return [];
         }
+        const services = isJoinRequest ? [] : removeDuplicates(collaboration.services.concat(collaboration.organisation.services)
+            .filter(s => s.token_enabled), "id");
         //Actually this collaboration is not for members to view
         if ((!adminOfCollaboration || showMemberView) && !collaboration.disclose_member_information) {
-            return [this.getAboutTab(collaboration, showMemberView, isJoinRequest)];
+            const minimalTabs = [
+                this.getAboutTab(collaboration, showMemberView, isJoinRequest),
+            ];
+            this.addUserTokenTab(userTokens, services, isJoinRequest, minimalTabs, collaboration);
+            return minimalTabs;
         }
         const tabs = (adminOfCollaboration && !showMemberView) ?
             [
@@ -337,18 +343,20 @@ class CollaborationDetail extends React.Component {
                 this.getMembersTab(collaboration, showMemberView, isJoinRequest),
                 this.getGroupsTab(collaboration, showMemberView, isJoinRequest),
             ];
-        const services = isJoinRequest ? [] : removeDuplicates(collaboration.services.concat(collaboration.organisation.services)
-            .filter(s => s.token_enabled), "id");
+        this.addUserTokenTab(userTokens, services, isJoinRequest, tabs, collaboration);
+
+        return tabs.filter(tab => tab !== null);
+    }
+
+
+    addUserTokenTab(userTokens, services, isJoinRequest, tabs, collaboration) {
         if (userTokens) {
             userTokens = userTokens.filter(userToken => services.find(service => service.id === userToken.service_id));
             if (!isJoinRequest && services.length > 0) {
                 tabs.push(this.getUserTokensTab(userTokens, collaboration, services))
             }
         }
-
-        return tabs.filter(tab => tab !== null);
     }
-
 
     getCollaborationAdminsTab = collaboration => {
         const openInvitations = (collaboration.invitations || []).filter(inv => inv.intended_role === "admin").length;
