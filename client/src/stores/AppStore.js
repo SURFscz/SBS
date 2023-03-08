@@ -5,8 +5,13 @@ export const AppStore = new Store({
         //{path: "/organisation/4", value: org.name}
         paths: [],
     },
-    sideComponent: null
+    sideComponent: null,
+    actions: [
+        //{name: I18n.t("home.edit"), perform: () => this.props.history.push("/edit-collaboration/" + collaboration.id)
+    ]
 });
+
+
 
 let csrfToken = null;
 
