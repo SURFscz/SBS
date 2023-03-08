@@ -116,6 +116,11 @@ export default class MemberCollaborationRequests extends React.PureComponent {
                 mapper: entity => entity.name,
             },
             {
+                key: "organisation__name",
+                header: I18n.t("models.memberJoinRequests.organisationName"),
+                mapper: entity => entity.organisation.name,
+            },
+            {
                 key: "user__name",
                 header: I18n.t("models.users.name_email"),
                 mapper: entity => <UserColumn entity={entity} currentUser={isPersonal ? user : entity.requester}

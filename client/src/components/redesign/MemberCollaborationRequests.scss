@@ -5,12 +5,16 @@ table.member_collaboration_requests, table.system_collaboration_requests, table.
     thead {
         th {
             &.name {
-                width: 28%;
+                width: 22%;
                 padding-left: 15px;
             }
 
             &.user__name {
-                width: 38%;
+                width: 22%;
+            }
+
+            &.organisation__name {
+                width: 22%;
             }
 
             &.created_at {

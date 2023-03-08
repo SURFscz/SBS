@@ -510,6 +510,7 @@ I18n.translations.en = {
             searchPlaceHolder: "Search for requests...",
             noEntities: "No join requests were found",
             collaborationName: "Collaboration name",
+            organisationName: "Institution",
             requested: "Requested at"
         },
         systemJoinRequests: {
