@@ -564,10 +564,13 @@ def update_collaboration():
     if "tags" in data:
         _reconcile_tags(collaboration, data["tags"])
 
-    emit_socket(f"collaboration_{collaboration.id}")
-
     # For updating references like services, groups, memberships there are more fine-grained API methods
-    return update(Collaboration, custom_json=data, allow_child_cascades=False)
+    res = update(Collaboration, custom_json=data, allow_child_cascades=False)
+
+    emit_socket(f"collaboration_{collaboration.id}")
+    broadcast_collaboration_changed(collaboration.id)
+
+    return res
 
 
 @collaboration_api.route("/<collaboration_id>", methods=["DELETE"], strict_slashes=False)
