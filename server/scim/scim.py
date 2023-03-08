@@ -1,6 +1,8 @@
 import logging
+import os
 import urllib.parse
 from functools import wraps
+from time import sleep
 from typing import Union, List
 
 import requests
@@ -19,6 +21,8 @@ def apply_change(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         try:
+            if not os.environ.get("TESTING", False):
+                sleep(1)
             res = f(*args, **kwargs)
             db.session.commit()
             return res
