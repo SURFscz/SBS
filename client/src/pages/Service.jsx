@@ -603,6 +603,7 @@ class Service extends React.Component {
                     <RadioButton label={I18n.t("service.sirtfiCompliant")}
                                  name={"sirtfi_compliant"}
                                  value={sirtfi_compliant}
+                                 checked={sirtfi_compliant}
                                  tooltip={I18n.t("service.sirtfiCompliantTooltip")}
                                  onChange={val => this.setState({sirtfi_compliant: val})}/>
                     {(!initial && isEmpty(sirtfi_compliant)) &&
@@ -612,6 +613,7 @@ class Service extends React.Component {
                     <RadioButton label={I18n.t("service.codeOfConductCompliant")}
                                  name={"code_of_conduct_compliant"}
                                  value={code_of_conduct_compliant}
+                                 checked={code_of_conduct_compliant}
                                  tooltip={I18n.t("service.codeOfConductCompliantTooltip")}
                                  onChange={val => this.setState({code_of_conduct_compliant: val})}/>
                     {(!initial && isEmpty(code_of_conduct_compliant)) &&
@@ -622,6 +624,7 @@ class Service extends React.Component {
                     <RadioButton label={I18n.t("service.researchScholarshipCompliant")}
                                  name={"research_scholarship_compliant"}
                                  value={research_scholarship_compliant}
+                                 checked={research_scholarship_compliant}
                                  tooltip={I18n.t("service.researchScholarshipCompliantTooltip")}
                                  onChange={val => this.setState({research_scholarship_compliant: val})}/>
                     {(!initial && isEmpty(research_scholarship_compliant)) &&

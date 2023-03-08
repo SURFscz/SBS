@@ -191,6 +191,7 @@ class ServiceOrganisations extends React.Component {
                 key: "category",
                 header: I18n.t("models.organisations.category")
             }]
+        // debugger; // eslint-disable-line no-debugger
         return (<div>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
@@ -214,16 +215,19 @@ class ServiceOrganisations extends React.Component {
                         <RadioButton label={I18n.t("models.serviceOrganisations.permissions.eachOrganisation")}
                                      name={"permissions"}
                                      value={!service.automatic_connection_allowed && !service.access_allowed_for_all}
+                                     checked={!service.automatic_connection_allowed && !service.access_allowed_for_all}
                                      onChange={() => this.doToggleReset(service)}
                         />
                         <RadioButton label={I18n.t("models.serviceOrganisations.permissions.allowAllRequests")}
                                      name={"permissions"}
                                      value={service.access_allowed_for_all && !service.automatic_connection_allowed}
+                                     checked={service.access_allowed_for_all && !service.automatic_connection_allowed}
                                      onChange={() => this.doToggleAccessAllowedForAll(service)}
                         />
                         <RadioButton label={I18n.t("models.serviceOrganisations.permissions.allowAll")}
                                      name={"permissions"}
                                      value={service.automatic_connection_allowed}
+                                     checked={service.automatic_connection_allowed}
                                      onChange={() => this.doToggleAutomaticConnectionAllowed(service)}
                         />
                     </div>}

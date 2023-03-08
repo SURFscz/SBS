@@ -17,15 +17,13 @@ collaborations_services_api = Blueprint("collaborations_services_api", __name__,
 def connect_service_collaboration(service_id, collaboration_id, force=False):
     # Ensure that the connection is allowed
     service = Service.query.get(service_id)
-    organisation_id = Collaboration.query.get(collaboration_id).organisation_id
-    organisation_not_allowed = organisation_id not in list(map(lambda org: org.id, service.allowed_organisations))
-    if organisation_not_allowed and not service.access_allowed_for_all:
+    organisation = Collaboration.query.get(collaboration_id).organisation
+    org_allowed = organisation in service.allowed_organisations
+    org_automatic_allowed = organisation in service.automatic_connection_allowed_organisations
+    if not org_allowed and not org_automatic_allowed and not service.access_allowed_for_all:
         raise BadRequest("not_allowed_organisation")
 
-    allowed_to_connect = service.automatic_connection_allowed or [org for org in
-                                                                  service.automatic_connection_allowed_organisations if
-                                                                  org.id == organisation_id]
-
+    allowed_to_connect = service.automatic_connection_allowed or org_automatic_allowed
     if not force and not allowed_to_connect:
         raise BadRequest("automatic_connection_not_allowed")
 
