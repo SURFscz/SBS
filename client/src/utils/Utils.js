@@ -101,10 +101,6 @@ export function escapeDeep(obj) {
     }
 }
 
-export function emailMembersLink(members) {
-    return encodeURI(members.map(m => `"${m.user.name}" <${m.user.email}>`).join(","));
-}
-
 export const removeDuplicates = (arr, attr) => arr
     .filter((obj, pos, arr) => arr.map(mapObj => mapObj[attr]).indexOf(obj[attr]) === pos);
 

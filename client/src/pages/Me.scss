@@ -64,7 +64,7 @@ div.user-profile-tab-container {
                     border-bottom: none;
 
                     &.attribute-value {
-                        width: 70%;
+                        width: 50%;
                     }
 
                     &.attribute-key {
@@ -72,7 +72,7 @@ div.user-profile-tab-container {
                     }
 
                     &.actions {
-                        width: 240px;
+                        width: 25px;
                     }
                 }
 
@@ -83,8 +83,11 @@ div.user-profile-tab-container {
                     }
 
                     &.actions {
+                        text-align: right;
+
                         .icon-container {
                             display: flex;
+
                             svg {
                                 margin-left: auto;
                             }
@@ -264,6 +267,15 @@ div.user-profile-tab-container {
             }
         }
 
+        .ssh-keys-actions {
+            display: flex;
+            align-items: center;
+
+            a {
+                margin-left: 25px;
+                color: var(--sds--palette--support-color--500);
+            }
+        }
     }
 }
 

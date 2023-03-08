@@ -11,6 +11,10 @@ span.error-indication {
         margin-bottom: 15px;
     }
 
+    span.error-message {
+        word-break: keep-all;
+    }
+
     svg {
         margin-right: 10px;
         width: 18px;

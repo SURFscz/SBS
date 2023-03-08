@@ -598,6 +598,8 @@ I18n.translations.nl = {
         flash: {
             updated: "Je profiel is bijgewerkt"
         },
+        providedBy: "Geleverd door <strong>{{institution}}</strong>",
+        generatedBy: "Gegeneerd door <strong>SRAM</strong>",
         delete: "Verwijder mijn account",
         deleteConfirmation: "Weet je zeker dat je je account voorgoed wil verwijderen?",
         deleteConfirmationWarning: "Al je lidmaatschappen worden verwijderd. Dit kan niet worden teruggedraaid.",
@@ -664,7 +666,8 @@ I18n.translations.nl = {
         sbs: "Applicatie",
         collaborations: "Samenwerkingen",
         network: "IP-ranges",
-        addSSHKey: "Voeg een nieuwe SSH Key toe",
+        addSSHKey: "Upload een nieuwe SSH Key toe",
+        addSSHKeyManually: "Voeg handmatig een SSH Key toe",
         networkTooltip: "Configureer je IP-bereiken voor deze dienst. Je kunt IPv4 en IPv6 network ranges toevoegen. " +
             "Bijvoorbeeld: <ul>" +
             "<li>Enkelvoudig IPv4-adres 198.51.100.12 waar een /32 is aangenomen</li>" +
