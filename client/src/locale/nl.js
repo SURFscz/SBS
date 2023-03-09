@@ -1787,14 +1787,13 @@ I18n.translations.nl = {
         user: "gebruiker"
     },
     actionRoles: {
-        title: "Jij bent {{role}}",
-        orgAdmin: " organisatiebeheerder",
-        orgManager: " organisatiemanager",
-        coAdmin: " beheerder",
-        coMember: " lid",
-        platformAdmin: " platformbeheerder",
-        user: " gebruiker",
-        serviceAdmin: "dienstbeheerder"
+        orgAdmin: "Organisatiebeheerder",
+        orgManager: "Organisatiemanager",
+        coAdmin: "Beheerder",
+        coMember: "Lid",
+        platformAdmin: "Platformbeheerder",
+        user: "Gebruiker",
+        serviceAdmin: "Dienstbeheerder"
     },
     welcomeDialog: {
         title: "Welkom bij {{name}}",

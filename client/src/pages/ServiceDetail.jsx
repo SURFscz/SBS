@@ -73,7 +73,7 @@ class ServiceDetail extends React.Component {
             socket.then(s => s.off(`service_${service_id}`));
         }
         AppStore.update(s => {
-            s.sideComponent = null;
+            s.objectRole = null;
             s.actions = [];
         });
     }
@@ -141,6 +141,7 @@ class ServiceDetail extends React.Component {
     }
 
     updateBreadCrumb(service) {
+        const {showServiceAdminView} = this.state;
         const currentService = service || this.state.service;
         const {user} = this.props;
         AppStore.update(s => {
@@ -152,6 +153,8 @@ class ServiceDetail extends React.Component {
                 },
             ];
             s.actions = this.getHeaderActions(user, currentService);
+            s.objectRole = showServiceAdminView ? I18n.t("service.fakeServiceAdmin") :
+                actionMenuUserRole(user, null, null, service, true)
         });
     }
 
@@ -492,7 +495,6 @@ class ServiceDetail extends React.Component {
                             breadcrumbName={I18n.t("breadcrumb.service", {name: service.name})}
                             name={service.name}
                             firstTime={(user.admin && !showServiceAdminView) ? this.onBoarding : undefined}
-                            dropDownTitle={showServiceAdminView ? I18n.t("service.fakeServiceAdmin") : actionMenuUserRole(user, null, null, service, true)}
                             actions={this.getActions(user, service, showServiceAdminView)}>
                     <p>{service.description}</p>
                     <div className="org-attributes-container-grid">

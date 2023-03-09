@@ -6,7 +6,7 @@ export const AppStore = new Store({
             //{path: "/organisation/4", value: org.name}
         ],
     },
-    sideComponent: null,
+    objectRole: null,
     actions: [
         //{name: I18n.t("home.edit"), perform: () => this.props.history.push("/edit-collaboration/" + collaboration.id)
     ]

@@ -10,9 +10,8 @@ import DOMPurify from "dompurify";
 export const BreadCrumb = () => {
 
     const {paths} = AppStore.useState(state => state.breadcrumb);
-    const {sideComponent} = AppStore.useState(state => state);
 
-    if (isEmpty(paths) && isEmpty(sideComponent)) {
+    if (isEmpty(paths)) {
         return null;
     }
 
@@ -31,7 +30,6 @@ export const BreadCrumb = () => {
                         {(i + 1) === paths.length &&
                         <span className={"last"} dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(p.value)}}/>}
                     </li>)}
-                {sideComponent}
             </ol>
 
         </nav>

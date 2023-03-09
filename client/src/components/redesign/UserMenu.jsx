@@ -3,7 +3,7 @@ import React, {useState} from "react";
 import "./UserMenu.scss";
 import {Link} from "react-router-dom";
 import {logout} from "../../utils/Login";
-import {globalUserRole, isUserAllowed, ROLES} from "../../utils/UserRole";
+import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import {isEmpty} from "../../utils/Utils";
 import {clearFlash} from "../../utils/Flash";
 import {UserInfo} from "@surfnet/sds";
@@ -14,7 +14,7 @@ export const UserMenu = ({currentUser, organisation, config, provideFeedback}) =
 
     const [dropDownActive, setDropDownActive] = useState(false);
 
-    const {actions} = AppStore.useState(state => state);
+    const {actions, objectRole} = AppStore.useState(state => state);
 
     const toggleUserMenu = () => {
         setDropDownActive(false);
@@ -59,10 +59,8 @@ export const UserMenu = ({currentUser, organisation, config, provideFeedback}) =
     const collMenuItemRequired = lessThenOrgManager && !isEmpty(organisation) && organisation.has_members
     const collCreateAllowed = !isEmpty(organisation)
         && (organisation.collaboration_creation_allowed_entitlement || organisation.collaboration_creation_allowed);
-    const role = globalUserRole(currentUser);
-    const userRole = role.charAt(0).toUpperCase() + role.slice(1);
-    const organisationPart = organisation ? ` (${organisation.name})` : "";
-    const organisationName = `${userRole}${organisationPart}`;
+    const organisationPart = organisation ? organisation.name : "";
+    const organisationName = objectRole || organisationPart;
     return (
         <div className="user-menu"
              tabIndex={1}

@@ -54,7 +54,7 @@ class OrganisationDetail extends React.Component {
 
     componentWillUnmount = () => {
         AppStore.update(s => {
-            s.sideComponent = null;
+            s.objectRole = null;
             s.actions = [];
         });
         const params = this.props.match.params;
@@ -122,6 +122,7 @@ class OrganisationDetail extends React.Component {
                             {value: I18n.t("breadcrumb.organisation", {name: json.name})}
                         ];
                         s.actions = this.getHeaderActions(user, json, adminOfOrganisation)
+                        s.objectRole = actionMenuUserRole(user, json, null, null, true)
                     });
                     const firstTime = getParameterByName("first", window.location.search) === "true";
                     this.tabChanged(tab, json.id);
@@ -344,7 +345,6 @@ class OrganisationDetail extends React.Component {
                             breadcrumbName={I18n.t("breadcrumb.organisation", {name: organisation.name})}
                             firstTime={user.admin ? this.onBoarding : undefined}
                             name={organisation.name}
-                            dropDownTitle={actionMenuUserRole(user, organisation, null, null, true)}
                             actions={this.getActions(user, organisation, adminOfOrganisation)}>
 
                     <p>{organisation.description}</p>

@@ -1787,14 +1787,13 @@ I18n.translations.en = {
         user: "user"
     },
     actionRoles: {
-        title: "You're {{role}}",
-        orgAdmin: " organisation admin",
-        orgManager: " organisation manager",
-        coAdmin: " admin",
-        coMember: " member",
-        platformAdmin: " platform admin",
-        user: " user",
-        serviceAdmin: "service admin"
+        orgAdmin: "Organisation admin",
+        orgManager: "Organisation manager",
+        coAdmin: "Admin",
+        coMember: "Member",
+        platformAdmin: "Platform admin",
+        user: "User",
+        serviceAdmin: "Service admin"
     },
     welcomeDialog: {
         title: "Welcome to {{name}}",
