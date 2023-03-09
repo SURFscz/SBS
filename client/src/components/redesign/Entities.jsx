@@ -36,7 +36,6 @@ class Entities extends React.Component {
         } else {
             this.props.history.push(newEntityPath);
         }
-
     };
 
     closeExplanation = () => this.setState({showExplanation: false});
@@ -59,7 +58,7 @@ class Entities extends React.Component {
             <section className="entities-search">
                 {showNew &&
                 <Button onClick={this.newEntity}
-                        className={`ghost ${hideTitle && !filters ? "no-title" : ""}`}
+                        className={`${hideTitle && !filters ? "no-title" : ""}`}
                         txt={newLabel || I18n.t(`models.${modelName}.new`)}/>
                 }
                 {!hideTitle && <h1>{title || `${I18n.t(`models.${modelName}.title`)} (${entities.length})`}</h1>}
