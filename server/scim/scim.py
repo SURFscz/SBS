@@ -21,7 +21,8 @@ def apply_change(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         try:
-            if not os.environ.get("TESTING", False):
+            # We dont want to sleep in the sync_executor
+            if not os.environ.get("TESTING", False) and args[len(args) - 1] is not True:
                 sleep(1)
             res = f(*args, **kwargs)
             db.session.commit()
