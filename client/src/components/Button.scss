@@ -2,4 +2,9 @@ button.sds--btn, a.sds--btn {
     svg.trash-svg, svg.bin-svg, svg.email-svg {
         width: 18px;
     }
+    &.sds--btn--delete {
+        svg.trash-svg, svg.bin-svg {
+            width: 22px;
+        }
+    }
 }
