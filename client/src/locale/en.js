@@ -70,6 +70,7 @@ I18n.translations.en = {
         unsuspend: "Revert suspension",
         resetLastActivity: "Reset activity",
         details: "Details",
+        otherOptions: "Other options",
         backToHome: "Back to home",
         firstTime: "Onboarding",
         collaborationRequest: "Request for new collaboration",

@@ -31,6 +31,7 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
 import {ReactComponent as MembersIcon} from "../icons/single-neutral.svg";
 import Users from "../components/redesign/Users";
+import {ButtonType} from "@surfnet/sds";
 
 class OrganisationDetail extends React.Component {
 
@@ -52,6 +53,10 @@ class OrganisationDetail extends React.Component {
     }
 
     componentWillUnmount = () => {
+        AppStore.update(s => {
+            s.sideComponent = null;
+            s.actions = [];
+        });
         const params = this.props.match.params;
         if (params.id) {
             const organisation_id = parseInt(params.id, 10);
@@ -116,6 +121,7 @@ class OrganisationDetail extends React.Component {
                             {path: "/", value: I18n.t("breadcrumb.home")},
                             {value: I18n.t("breadcrumb.organisation", {name: json.name})}
                         ];
+                        s.actions = this.getHeaderActions(user, json, adminOfOrganisation)
                     });
                     const firstTime = getParameterByName("first", window.location.search) === "true";
                     this.tabChanged(tab, json.id);
@@ -273,15 +279,8 @@ class OrganisationDetail extends React.Component {
         });
     };
 
-    getActions = (user, organisation, adminOfOrganisation) => {
+    getHeaderActions = (user, organisation, adminOfOrganisation) => {
         const actions = [];
-        if (adminOfOrganisation) {
-            actions.push({
-                icon: "pencil-alt",
-                name: I18n.t("home.edit"),
-                perform: () => this.props.history.push("/edit-organisation/" + organisation.id)
-            });
-        }
         const isMember = organisation.organisation_memberships.find(m => m.user.id === user.id);
         const lastAdmin = adminOfOrganisation && organisation.organisation_memberships.filter(m => m.role === "admin").length < 2;
         if (isMember && (!lastAdmin || isMember.role !== "admin")) {
@@ -294,6 +293,17 @@ class OrganisationDetail extends React.Component {
         return actions;
     }
 
+    getActions = (user, organisation, adminOfOrganisation) => {
+        const actions = [];
+        if (adminOfOrganisation) {
+            actions.push({
+                buttonType: ButtonType.Primary,
+                name: I18n.t("home.edit"),
+                perform: () => this.props.history.push("/edit-organisation/" + organisation.id)
+            });
+        }
+        return actions;
+    }
 
     render() {
         const {

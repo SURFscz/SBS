@@ -72,4 +72,14 @@
 
     }
 
+    .action-menu-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .sds--menu-button .sds--user-info--dropdown {
+        z-index: 99;
+    }
+
 }

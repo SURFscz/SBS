@@ -2,37 +2,58 @@ import React from "react";
 import "./UnitHeader.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Logo from "./Logo";
-import {ReactComponent as ChevronUp} from "../../icons/chevron-up.svg";
-import {ReactComponent as ChevronDown} from "../../icons/chevron-down.svg";
-import {isEmpty} from "../../utils/Utils";
+import {isEmpty, stopEvent} from "../../utils/Utils";
 import PropTypes from "prop-types";
-import UnitHeaderActionMenu from "./UnitHeaderActionMenu";
+import Button from "../Button";
+import {ButtonType, MenuButton} from "@surfnet/sds";
+import {Link} from "react-router-dom";
+import I18n from "i18n-js";
 
 class UnitHeader extends React.Component {
 
     constructor(props, context) {
         super(props, context);
         this.state = {
-            showDropDown: true
+            showDropDown: false
         };
     }
 
-    renderDropDownLink = (showDropDown, dropDownTitle) => {
+    performAction = action => e => {
+        stopEvent(e);
+        !action.disabled && action.perform();
+    }
+
+    otherOptions = (chevronActions, firstTime, auditLogPath, history, queryParam) => {
         return (
-            <div className="unit-menu" onClick={() => this.setState({showDropDown: !showDropDown})}>
-                <span>{dropDownTitle}</span>
-                {showDropDown ? <ChevronUp/> : <ChevronDown/>}
-            </div>
-        );
+            <ul>
+                {chevronActions.map((action, index) => <li key={index} onClick={this.performAction(action)}>
+                    <a href={`/${action.name}`}>{action.name}</a>
+                </li>)}
+                {(history && auditLogPath) &&
+                <li onClick={() => this.props.history.push(`/audit-logs/${auditLogPath}?${queryParam}`)}>
+                    <Link to={`/audit-logs/${auditLogPath}?${queryParam}`}>
+                        {I18n.t("home.history")}
+                    </Link>
+                </li>}
+                {firstTime &&
+                <li onClick={this.performAction({perform: firstTime})}>
+                    <a href={"/" + I18n.t("home.firstTime")}>
+                        {I18n.t("home.firstTime")}
+                    </a>
+                </li>}
+            </ul>
+        )
     }
 
     render() {
         const {
-            obj, history, auditLogPath, name, breadcrumbName, svgClick, firstTime, actions, dropDownTitle, children,
-            customAction
+            obj, history, auditLogPath, name, breadcrumbName, svgClick, firstTime, actions, children, customAction
         } = this.props;
         const {showDropDown} = this.state;
         const queryParam = `name=${encodeURIComponent(breadcrumbName || name)}&back=${encodeURIComponent(window.location.pathname)}`;
+        const nonChevronActions = (actions || []).filter(action => action.buttonType !== ButtonType.Chevron);
+        const chevronActions = (actions || []).filter(action => action.buttonType === ButtonType.Chevron);
+        const showChevronAction = (history && auditLogPath) || firstTime || chevronActions.length > 0;
         return (
             <div className="unit-header-container">
                 <div className="unit-header">
@@ -50,13 +71,21 @@ class UnitHeader extends React.Component {
                     </div>
                     {!isEmpty(actions) &&
                     <div className="action-menu-container">
-                        {this.renderDropDownLink(showDropDown, dropDownTitle)}
-                        {showDropDown && <UnitHeaderActionMenu actions={actions}
-                                                               firstTime={firstTime}
-                                                               auditLogPath={auditLogPath}
-                                                               close={() => this.setState({showDropDown: false})}
-                                                               history={history}
-                                                               queryParam={queryParam}/>}
+                        {nonChevronActions.map((action, index) =>
+                            <Button key={index}
+                                    onClick={() => !action.disabled && action.perform()}
+                                    txt={action.name}
+                                    cancelButton={action.buttonType === ButtonType.Secondary}/>)
+                        }
+                        {showChevronAction &&
+                        <div tabIndex={1}
+                             onBlur={() => setTimeout(() => this.setState({showDropDown: false}), 250)}>
+                            <MenuButton txt={I18n.t("home.otherOptions")}
+                                        isOpen={showDropDown}
+                                        toggle={() => this.setState({showDropDown: !showDropDown})}
+                                        buttonType={ButtonType.Secondary}
+                                        children={this.otherOptions(chevronActions, firstTime, auditLogPath, history, queryParam)}/>
+                        </div>}
                     </div>}
                     {customAction && customAction}
                 </div>
@@ -70,7 +99,6 @@ UnitHeader.propTypes = {
     obj: PropTypes.object,
     history: PropTypes.any,
     auditLogPath: PropTypes.string,
-    dropDownTitle: PropTypes.string,
     name: PropTypes.string,
     breadcrumbName: PropTypes.string,
     svgClick: PropTypes.func,

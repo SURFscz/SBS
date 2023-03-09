@@ -11,6 +11,7 @@ import {AppStore} from "../../stores/AppStore";
 
 
 export const UserMenu = ({currentUser, organisation, config, provideFeedback}) => {
+
     const [dropDownActive, setDropDownActive] = useState(false);
 
     const {actions} = AppStore.useState(state => state);

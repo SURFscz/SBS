@@ -34,13 +34,12 @@ import ServiceAdmins from "../components/redesign/ServiceAdmins";
 import {setFlash} from "../utils/Flash";
 import ServiceWelcomeDialog from "../components/ServiceWelcomeDialog";
 import ConfirmationDialog from "../components/ConfirmationDialog";
-import {ReactComponent as LeaveIcon} from "../icons/safety-exit-door-left.svg";
 import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import ServiceOverview from "./ServiceOverview";
-import {ReactComponent as EyeViewIcon} from "../icons/eye-svgrepo-com.svg";
 import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
 import UserTokens from "../components/redesign/UserTokens";
 import ServiceCollaborations from "../components/redesign/ServiceCollaborations";
+import {ButtonType} from "@surfnet/sds";
 
 class ServiceDetail extends React.Component {
 
@@ -75,6 +74,7 @@ class ServiceDetail extends React.Component {
         }
         AppStore.update(s => {
             s.sideComponent = null;
+            s.actions = [];
         });
     }
 
@@ -151,32 +151,19 @@ class ServiceDetail extends React.Component {
                     value: I18n.t("breadcrumb.service", {name: currentService.name})
                 },
             ];
-            s.sideComponent = user.admin ? this.eyeView() : null;
+            s.actions = this.getHeaderActions(user, currentService);
         });
     }
 
-    eyeView = () => {
-        return (
-            <div className={`eye-view`} onClick={() => {
-                health().then(() => {
-                    const {showServiceAdminView, tab} = this.state;
-                    const newTab = tab === "groups" ? "details" : tab;
-                    this.setState({
-                            showServiceAdminView: !showServiceAdminView,
-                            tab: newTab
-                        },
-                        () => {
-                            AppStore.update(s => {
-                                s.sideComponent = this.eyeView();
-                            });
-
-                        });
-                });
-            }}>
-                <EyeViewIcon/>
-                <span>{I18n.t(`service.viewAs${this.state.showServiceAdminView ? "PlatformAdmin" : "ServiceAdmin"}`)}</span>
-            </div>
-        );
+    toggleAdminMemberView = () => {
+        health().then(() => {
+            const {showServiceAdminView, tab} = this.state;
+            const newTab = tab === "groups" ? "details" : tab;
+            this.setState({
+                showServiceAdminView: !showServiceAdminView,
+                tab: newTab
+            });
+        });
     }
 
     doAcceptInvitation = () => {
@@ -408,19 +395,30 @@ class ServiceDetail extends React.Component {
         });
     };
 
-    getActions = (user, service, showServiceAdminView) => {
+    getHeaderActions = (user, service) => {
         const actions = [];
         const serviceAdmin = isUserServiceAdmin(user, service);
-        if (serviceAdmin || showServiceAdminView)
+        if (serviceAdmin)
             actions.push({
-                svg: LeaveIcon,
-                disabled: !serviceAdmin,
                 name: I18n.t("service.leave"),
                 perform: this.deleteMe
             });
+        return actions;
+    }
+
+    getActions = (user, service, showServiceAdminView) => {
+        const actions = [];
+        const serviceAdmin = isUserServiceAdmin(user, service);
+        if (user.admin) {
+            actions.push({
+                buttonType: ButtonType.Secondary,
+                name: I18n.t(`service.viewAs${this.state.showServiceAdminView ? "PlatformAdmin" : "ServiceAdmin"}`),
+                perform: () => this.toggleAdminMemberView()
+            });
+        }
         if (user.admin && !serviceAdmin && !showServiceAdminView) {
             actions.push({
-                icon: "plus-circle",
+                buttonType: ButtonType.Chevron,
                 name: I18n.t("service.addMe"),
                 perform: this.addMe
             })

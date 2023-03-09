@@ -69,6 +69,7 @@ I18n.translations.nl = {
         history: "Geschiedenis",
         unsuspend: "Schorsing ongedaan maken",
         resetLastActivity: "Reset activiteit",
+        otherOptions: "Meer opties",
         details: "Details",
         backToHome: "Terug naar home",
         firstTime: "Onboarding",

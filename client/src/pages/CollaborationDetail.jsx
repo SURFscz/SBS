@@ -21,7 +21,6 @@ import UnitHeader from "../components/redesign/UnitHeader";
 import Tabs from "../components/Tabs";
 import {ReactComponent as CoAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
-import {ReactComponent as EyeViewIcon} from "../icons/eye-svgrepo-com.svg";
 import {ReactComponent as MemberIcon} from "../icons/groups.svg";
 import {ReactComponent as GroupsIcon} from "../icons/ticket-group.svg";
 import {ReactComponent as UserTokensIcon} from "../icons/connections.svg";
@@ -280,36 +279,22 @@ class CollaborationDetail extends React.Component {
                 {path: "/", value: I18n.t("breadcrumb.home")},
                 {value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
             ];
-            s.sideComponent = adminOfCollaboration ? this.eyeView() : null;
-            s.actions = this.getHeaderActions(user, config, collaboration)
+            s.actions = this.getHeaderActions(user, config, collaboration);
         });
     }
 
-    eyeView = () => {
-        const {showMemberView, adminOfCollaboration} = this.state;
-        return (
-            <div className={`eye-view`} onClick={() => {
-                health().then(() => {
-                    const {showMemberView, collaboration, schacHomeOrganisation, userTokens} = this.state;
-                    const newTab = showMemberView ? "about" : "admins";
-                    this.tabChanged(newTab, collaboration.id);
-                    this.setState({
-                            showMemberView: !showMemberView,
-                            tabs: this.getTabs(collaboration, userTokens, schacHomeOrganisation, adminOfCollaboration, showMemberView),
-                            tab: newTab
-                        },
-                        () => {
-                            AppStore.update(s => {
-                                s.sideComponent = this.eyeView();
-                            });
-
-                        });
-                });
-            }}>
-                <EyeViewIcon/>
-                <span>{I18n.t(`models.collaboration.${showMemberView ? "viewAsMember" : "viewAsAdmin"}`)}</span>
-            </div>
-        );
+    toggleAdminMemberView = () => {
+        const {adminOfCollaboration} = this.state;
+        health().then(() => {
+            const {showMemberView, collaboration, schacHomeOrganisation, userTokens} = this.state;
+            const newTab = showMemberView ? "about" : "admins";
+            this.tabChanged(newTab, collaboration.id);
+            this.setState({
+                showMemberView: !showMemberView,
+                tabs: this.getTabs(collaboration, userTokens, schacHomeOrganisation, adminOfCollaboration, showMemberView),
+                tab: newTab
+            });
+        });
     }
 
     onBoarding = () => {
@@ -529,11 +514,11 @@ class CollaborationDetail extends React.Component {
         );
     }
 
-    getUnitHeaderForMemberNew = (user, config, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember) => {
+    getUnitHeaderForMemberNew = (user, config, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember, adminOfCollaboration) => {
         const customAction = collaborationJoinRequest ? this.collaborationJoinRequestAction(collaboration, alreadyMember) : null;
         return <UnitHeader obj={collaboration}
                            dropDownTitle={actionMenuUserRole(user, collaboration.organisation, collaboration, null, true)}
-                           actions={collaborationJoinRequest ? [] : this.getActions(user, config, collaboration, allowedToEdit, showMemberView)}
+                           actions={collaborationJoinRequest ? [] : this.getActions(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}
                            name={collaboration.name}
                            customAction={customAction}>
             <div className="org-attributes-container-grid">
@@ -619,7 +604,7 @@ class CollaborationDetail extends React.Component {
         return actions;
     }
 
-    getActions = (user, config, collaboration, allowedToEdit, showMemberView) => {
+    getActions = (user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration) => {
         const actions = [];
         if (allowedToEdit && showMemberView) {
             actions.push({
@@ -629,6 +614,13 @@ class CollaborationDetail extends React.Component {
                     clearFlash();
                     this.props.history.push("/edit-collaboration/" + collaboration.id)
                 }
+            });
+        }
+        if (adminOfCollaboration) {
+            actions.push({
+                buttonType: ButtonType.Secondary,
+                name: I18n.t(`models.collaboration.${showMemberView ? "viewAsMember" : "viewAsAdmin"}`),
+                perform: () => this.toggleAdminMemberView()
             });
         }
         if (allowedToEdit && showMemberView && collaboration.status === "suspended") {
@@ -739,7 +731,7 @@ class CollaborationDetail extends React.Component {
         );
     }
 
-    getUnitHeader = (user, config, collaboration, allowedToEdit, showMemberView) => {
+    getUnitHeader = (user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration) => {
         const joinRequestUrl = `${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`
         return (<UnitHeader obj={collaboration}
                             firstTime={user.admin ? this.onBoarding : undefined}
@@ -748,7 +740,7 @@ class CollaborationDetail extends React.Component {
                             breadcrumbName={I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
                             name={collaboration.name}
                             dropDownTitle={actionMenuUserRole(user, collaboration.organisation, collaboration, null, true)}
-                            actions={this.getActions(user, config, collaboration, allowedToEdit, showMemberView)}>
+                            actions={this.getActions(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}>
             <p>{collaboration.description}</p>
             <div className="org-attributes-container-grid">
                 <div className="org-attributes">
@@ -793,9 +785,10 @@ class CollaborationDetail extends React.Component {
         return (
             <>
                 {(adminOfCollaboration && showMemberView) &&
-                this.getUnitHeader(user, config, collaboration, allowedToEdit, showMemberView)}
+                this.getUnitHeader(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}
                 {(!showMemberView || !adminOfCollaboration) &&
-                this.getUnitHeaderForMemberNew(user, config, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember)}
+                this.getUnitHeaderForMemberNew(user, config, collaboration, allowedToEdit, showMemberView,
+                    collaborationJoinRequest, alreadyMember, adminOfCollaboration)}
 
                 {!collaborationJoinRequest && <CollaborationWelcomeDialog name={collaboration.name}
                                                                           isOpen={firstTime}
