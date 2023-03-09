@@ -5,6 +5,7 @@ from flask.json.provider import DefaultJSONProvider
 
 
 class DynamicExtendedJSONProvider(DefaultJSONProvider):
+
     def default(self, o):
         if hasattr(o, "__json__"):
             return o.__json__()
