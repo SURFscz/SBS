@@ -76,6 +76,13 @@
         display: flex;
         flex-direction: column;
         gap: 20px;
+        button {
+            width: 100%;
+        }
+    }
+
+    .other-options, .sds--user-info--dropdown {
+        background-color: $background;
     }
 
     .sds--menu-button .sds--user-info--dropdown {
