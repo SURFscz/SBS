@@ -66,7 +66,7 @@ export function rawGlobalUserRole(user, organisation, collaboration, service, me
         return ROLES.ORG_ADMIN;
     }
     if (user.organisation_memberships && user.organisation_memberships.find(m => m.role === "manager" &&
-        ((!organisation && !membershipRequired)|| (organisation && m.organisation_id === organisation.id)))) {
+        ((!organisation && !membershipRequired) || (organisation && m.organisation_id === organisation.id)))) {
         return ROLES.ORG_MANAGER;
     }
     if (user.collaboration_memberships && user.collaboration_memberships.find(m => m.role === "admin" &&
@@ -94,5 +94,5 @@ export function globalUserRole(user) {
 
 export function actionMenuUserRole(user, organisation, collaboration, service, membershipRequired) {
     const userRole = rawGlobalUserRole(user, organisation, collaboration, service, membershipRequired);
-    return I18n.t("actionRoles.title", {role: I18n.t(`actionRoles.${userRole}`)});
+    return I18n.t(`actionRoles.${userRole}`);
 }

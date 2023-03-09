@@ -85,7 +85,7 @@ class CollaborationDetail extends React.Component {
 
     componentWillUnmount = () => {
         AppStore.update(s => {
-            s.sideComponent = null;
+            s.objectRole = null;
             s.actions = [];
         });
         const params = this.props.match.params;
@@ -192,7 +192,7 @@ class CollaborationDetail extends React.Component {
                                         {path: "/", value: I18n.t("breadcrumb.home")},
                                         {value: I18n.t("breadcrumb.collaborationJoinRequest", {name: collaboration.name})}
                                     ]
-                                    s.sideComponent = null;
+                                    s.objectRole = actionMenuUserRole(user, collaboration.organisation, collaboration, null, true);
                                 });
                             })
                         }
@@ -280,6 +280,7 @@ class CollaborationDetail extends React.Component {
                 {value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
             ];
             s.actions = this.getHeaderActions(user, config, collaboration);
+            s.objectRole = actionMenuUserRole(user, collaboration.organisation, collaboration, null, true);
         });
     }
 
@@ -517,7 +518,6 @@ class CollaborationDetail extends React.Component {
     getUnitHeaderForMemberNew = (user, config, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember, adminOfCollaboration) => {
         const customAction = collaborationJoinRequest ? this.collaborationJoinRequestAction(collaboration, alreadyMember) : null;
         return <UnitHeader obj={collaboration}
-                           dropDownTitle={actionMenuUserRole(user, collaboration.organisation, collaboration, null, true)}
                            actions={collaborationJoinRequest ? [] : this.getActions(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}
                            name={collaboration.name}
                            customAction={customAction}>
@@ -739,7 +739,6 @@ class CollaborationDetail extends React.Component {
                             auditLogPath={`collaborations/${collaboration.id}`}
                             breadcrumbName={I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
                             name={collaboration.name}
-                            dropDownTitle={actionMenuUserRole(user, collaboration.organisation, collaboration, null, true)}
                             actions={this.getActions(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}>
             <p>{collaboration.description}</p>
             <div className="org-attributes-container-grid">

@@ -75,7 +75,7 @@ class Impersonate extends React.Component {
         } else {
             AppStore.update(s => {
                 s.breadcrumb.paths = [];
-                s.sideComponent = null;
+                s.objectRole = null;
             });
             emitImpersonation(selectedUser, this.props.history, "/aup");
             this.setState({
