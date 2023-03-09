@@ -3,4 +3,9 @@ button.sds--btn, a.sds--btn {
         width: 18px;
 
     }
+    &.sds--btn--delete {
+        svg.trash-svg, svg.bin-svg {
+            width: 22px;
+        }
+    }
 }
