@@ -1,4 +1,3 @@
-import json
 import os
 
 from flask import session, current_app
