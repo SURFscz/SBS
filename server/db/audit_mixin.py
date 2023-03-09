@@ -83,7 +83,8 @@ def find_subject(mapper, target):
 def target_state(mapper, target):
     attributes = {attr.key: getattr(target, attr.key) for attr in mapper.column_attrs
                   if attr.key not in ignore_attributes}
-    return current_app.json.response(attributes).json
+    response = current_app.json.response(attributes)
+    return response.data.decode()
 
 
 parent_configuration = {
@@ -208,8 +209,8 @@ class AuditMixin(JsonSerializableBase):
         # connection, subject_id, target_type, target_id, parent_id, parent_name, action
         pi = parent_info(target)
         if state_before and state_after:
-            before_response = json.dumps(current_app.json.response(state_before).json)
-            after_response = json.dumps(current_app.json.response(state_after).json)
+            before_response = current_app.json.response(state_before).data.decode()
+            after_response = current_app.json.response(state_after).data.decode()
             target.create_audit(connection, find_subject(mapper, target), target, pi[0], pi[1], ACTION_UPDATE,
                                 state_before=before_response,
                                 state_after=after_response)
