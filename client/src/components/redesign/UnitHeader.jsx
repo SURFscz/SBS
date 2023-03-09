@@ -25,7 +25,7 @@ class UnitHeader extends React.Component {
 
     otherOptions = (chevronActions, firstTime, auditLogPath, history, queryParam) => {
         return (
-            <ul>
+            <ul className={"other-options"}>
                 {chevronActions.map((action, index) => <li key={index} onClick={this.performAction(action)}>
                     <a href={`/${action.name}`}>{action.name}</a>
                 </li>)}
