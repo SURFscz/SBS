@@ -209,8 +209,8 @@ class AuditMixin(JsonSerializableBase):
         pi = parent_info(target)
         if state_before and state_after:
 
-            before_response = current_app.json.response(state_before).data.decode("utf-8", "ignore")
-            after_response = current_app.json.response(state_after).data.decode("utf-8", "ignore")
+            before_response = current_app.json.response(state_before).data.decode("ascii", "ignore")
+            after_response = current_app.json.response(state_after).data.decode("ascii", "ignore")
             target.create_audit(connection, find_subject(mapper, target), target, pi[0], pi[1], ACTION_UPDATE,
                                 state_before=before_response,
                                 state_after=after_response)
