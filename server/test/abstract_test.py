@@ -20,7 +20,7 @@ from server.auth.secrets import secure_hash
 from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, User, Organisation, Service, ServiceAup, UserToken, Invitation, \
-    PamSSOSession, Group
+    PamSSOSession, Group, CollaborationMembership
 from server.test.seed import seed, sarah_name
 from server.tools import read_file
 
@@ -274,3 +274,21 @@ class AbstractTest(TestCase):
         group.collaboration_memberships.clear()
         db.session.merge(group)
         db.session.commit()
+
+    @staticmethod
+    def find_group_membership(group_identifier, user_uid):
+        return CollaborationMembership.query \
+            .join(CollaborationMembership.groups) \
+            .join(CollaborationMembership.user) \
+            .filter(Group.identifier == group_identifier) \
+            .filter(User.uid == user_uid) \
+            .first()
+
+    @staticmethod
+    def find_collaboration_membership(collaboration_identifier, user_uid):
+        return CollaborationMembership.query \
+            .join(CollaborationMembership.user) \
+            .join(CollaborationMembership.collaboration) \
+            .filter(Collaboration.identifier == collaboration_identifier) \
+            .filter(User.uid == user_uid) \
+            .first()

@@ -90,10 +90,10 @@ def collaboration_by_identifier():
     return collaboration, 200
 
 
-@collaboration_api.route("/v1/<identifier>", strict_slashes=False)
+@collaboration_api.route("/v1/<co_identifier>", strict_slashes=False, methods=["GET"])
 @swag_from("../swagger/public/paths/get_collaboration_by_identifier.yml")
 @json_endpoint
-def api_collaboration_by_identifier(identifier):
+def api_collaboration_by_identifier(co_identifier):
     confirm_external_api_call()
     collaboration = Collaboration.query \
         .outerjoin(Collaboration.collaboration_memberships) \
@@ -103,7 +103,7 @@ def api_collaboration_by_identifier(identifier):
         .options(selectinload(Collaboration.groups).selectinload(Group.collaboration_memberships)) \
         .options(selectinload(Collaboration.collaboration_memberships)
                  .selectinload(CollaborationMembership.user)) \
-        .filter(Collaboration.identifier == identifier) \
+        .filter(Collaboration.identifier == co_identifier) \
         .one()
 
     organisation = request_context.external_api_organisation
@@ -111,6 +111,48 @@ def api_collaboration_by_identifier(identifier):
         raise Forbidden()
 
     return collaboration, 200
+
+
+@collaboration_api.route("/v1/<co_identifier>", methods=["DELETE"], strict_slashes=False)
+@swag_from("../swagger/public/paths/delete_collaboration.yml")
+@json_endpoint
+def delete_collaboration_api(co_identifier):
+    confirm_external_api_call()
+
+    organisation = request_context.external_api_organisation
+    collaboration = Collaboration.query.filter(Collaboration.identifier == co_identifier).one()
+
+    if not organisation or organisation.id != collaboration.organisation_id:
+        raise Forbidden()
+
+    broadcast_collaboration_deleted(collaboration.id)
+    return delete(Collaboration, collaboration.id)
+
+
+@collaboration_api.route("/v1/<co_identifier>/members/<user_uid>", methods=["DELETE"], strict_slashes=False)
+@swag_from("../swagger/public/paths/delete_collaboration_membership.yml")
+@json_endpoint
+def api_delete_user_from_collaboration(co_identifier, user_uid):
+    confirm_external_api_call()
+
+    organisation = request_context.external_api_organisation
+    membership = CollaborationMembership.query \
+        .join(CollaborationMembership.user) \
+        .join(CollaborationMembership.collaboration) \
+        .filter(Collaboration.identifier == co_identifier) \
+        .filter(User.uid == user_uid) \
+        .one()
+
+    if not organisation or organisation.id != membership.collaboration.organisation_id:
+        raise Forbidden()
+
+    db.session.delete(membership)
+    db.session.commit()
+
+    emit_socket(f"collaboration_{membership.collaboration.id}")
+    broadcast_collaboration_changed(membership.collaboration.id)
+
+    return None, 204
 
 
 @collaboration_api.route("/name_exists", strict_slashes=False)

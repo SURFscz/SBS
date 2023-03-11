@@ -13,7 +13,7 @@ from server.db.models import flatten
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uva_research_name, john_name, \
     ai_computing_short_name, uuc_teachers_name, read_image, collaboration_uva_researcher_uuid, service_group_wiki_name1, \
-    service_storage_name
+    service_storage_name, uva_secret
 from server.test.seed import uuc_secret, uuc_name
 
 
@@ -779,3 +779,31 @@ class TestCollaboration(AbstractTest):
         service = self.find_entity_by_name(Service, service_storage_name)
         res = self.get(f"/api/collaborations/admins/{service.id}")
         self.assertDictEqual({"UVA UCC research": ["sarah@uva.org"]}, res)
+
+    def test_delete_membership_api(self):
+        self.assertIsNotNone(self.find_collaboration_membership(collaboration_ai_computing_uuid, 'urn:jane'))
+
+        self.delete(f"/api/collaborations/v1/{collaboration_ai_computing_uuid}/members/{'urn:jane'}",
+                    headers={"Authorization": f"Bearer {uuc_secret}"},
+                    with_basic_auth=False)
+
+        self.assertIsNone(self.find_collaboration_membership(collaboration_ai_computing_uuid, 'urn:jane'))
+
+    def test_delete_membership_api_forbidden(self):
+        self.delete(f"/api/collaborations/v1/{collaboration_ai_computing_uuid}/members/{'urn:jane'}",
+                    headers={"Authorization": f"Bearer {uva_secret}"},
+                    with_basic_auth=False,
+                    response_status_code=403)
+
+    def test_delete_collaboration_api(self):
+        self.delete(f"/api/collaborations/v1/{collaboration_ai_computing_uuid}",
+                    headers={"Authorization": f"Bearer {uuc_secret}"},
+                    with_basic_auth=False)
+
+        self.assertIsNone(self.find_entity_by_name(Collaboration, ai_computing_name))
+
+    def test_delete_collaboration_api_forbidden(self):
+        self.delete(f"/api/collaborations/v1/{collaboration_ai_computing_uuid}",
+                    headers={"Authorization": f"Bearer {uva_secret}"},
+                    with_basic_auth=False,
+                    response_status_code=403)
