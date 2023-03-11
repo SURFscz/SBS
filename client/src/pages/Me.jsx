@@ -174,9 +174,11 @@ class Me extends React.Component {
                     <div className={"sds--table"}>
                         <table className={"my-attributes"}>
                             <thead>
-                            <th className={"attribute-key"}/>
-                            <th className={"attribute-value"}/>
-                            <th className={"actions"}/>
+                            <tr>
+                                <th className={"attribute-key"}/>
+                                <th className={"attribute-value"}/>
+                                <th className={"actions"}/>
+                            </tr>
                             </thead>
                             <tbody>
                             {firstAttributes.map(attribute =>
