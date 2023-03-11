@@ -1,15 +1,17 @@
 import uuid
 
+from flasgger import swag_from
 from flask import Blueprint, request as current_request, g as request_context
 from sqlalchemy import func
 from sqlalchemy.orm import load_only
+from werkzeug.exceptions import Forbidden, Conflict
 
 from server.api.base import json_endpoint, query_param, emit_socket
 from server.api.group_members import do_add_group_members
-from server.auth.security import confirm_collaboration_admin
+from server.auth.security import confirm_collaboration_admin, confirm_external_api_call
 from server.db.db import db
 from server.db.defaults import cleanse_short_name
-from server.db.domain import Group, Collaboration, Invitation
+from server.db.domain import Group, Collaboration, Invitation, User, CollaborationMembership
 from server.db.models import update, save, delete
 from server.schemas import json_schema_validator
 from server.scim.events import broadcast_group_deleted, broadcast_group_changed
@@ -168,3 +170,65 @@ def delete_group(group_id):
     broadcast_group_deleted(group_id)
 
     return delete(Group, group_id)
+
+
+@group_api.route("/v1/<group_identifier>", methods=["POST"], strict_slashes=False)
+@swag_from("../swagger/public/paths/add_group_membership.yml")
+@json_endpoint
+def api_add_group_membership(group_identifier):
+    confirm_external_api_call()
+
+    organisation = request_context.external_api_organisation
+    group = Group.query \
+        .filter(Group.identifier == group_identifier) \
+        .one()
+
+    if not organisation or organisation.id != group.collaboration.organisation_id:
+        raise Forbidden()
+
+    user = User.query \
+        .filter(User.uid == current_request.get_json().get("uid")) \
+        .one()
+
+    if not group.collaboration.is_member(user.id):
+        raise Conflict(f"User {user.uid} is not a member of collaboration {group.collaboration.name}")
+    if group.is_member(user.id):
+        raise Conflict(f"User {user.uid} is already member of group {group.name}")
+
+    cm = [m for m in group.collaboration.collaboration_memberships if m.user_id == user.id][0]
+    group.collaboration_memberships.append(cm)
+
+    db.session.merge(group)
+    db.session.commit()
+
+    emit_socket(f"collaboration_{group.collaboration_id}")
+    broadcast_group_changed(group.id)
+
+    return group, 201
+
+
+@group_api.route("/v1/<group_identifier>/members/<user_uid>", methods=["DELETE"], strict_slashes=False)
+@swag_from("../swagger/public/paths/delete_group_membership.yml")
+@json_endpoint
+def api_delete_group_membership(group_identifier, user_uid):
+    confirm_external_api_call()
+
+    organisation = request_context.external_api_organisation
+    group_membership = CollaborationMembership.query \
+        .join(CollaborationMembership.groups) \
+        .join(CollaborationMembership.user) \
+        .filter(Group.identifier == group_identifier) \
+        .filter(User.uid == user_uid) \
+        .one()
+
+    if not organisation or organisation.id != group_membership.collaboration.organisation_id:
+        raise Forbidden()
+
+    db.session.delete(group_membership)
+    db.session.commit()
+
+    emit_socket(f"collaboration_{group_membership.collaboration_id}")
+    group = Group.query.filter(Group.identifier == group_identifier).one()
+    broadcast_group_changed(group.id)
+
+    return None, 204

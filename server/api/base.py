@@ -1,11 +1,13 @@
 import inspect
 import json
+import logging
 import os
 import re
 import traceback
 from functools import wraps
 from pathlib import Path
 from urllib.parse import urlparse
+from uuid import uuid4
 
 from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
 from jsonschema import ValidationError
@@ -30,7 +32,8 @@ _audit_trail_methods = ["PUT", "POST", "DELETE"]
 
 
 def emit_socket(topic, include_current_user_id=False):
-    data = {"subscription_id": current_request.cookies.get("subscription_id")}
+    subscription_id = current_request.cookies.get("subscription_id")
+    data = {"subscription_id": subscription_id if subscription_id else str(uuid4())}
     if include_current_user_id:
         data["current_user_id"] = current_user_id()
     current_app.socket_io.emit(topic, data)
@@ -88,6 +91,8 @@ def auth_filter(app_config):
         if not api_key:
             raise Unauthorized(description="Invalid API key")
         request_context.external_api_organisation = api_key.organisation
+        logger = logging.getLogger("external_api")
+        logger.info(f"Authorized API call for organisation {api_key.organisation.name} with key {api_key.description}")
 
     request_context.is_authorized_api_call = is_authorized_api_call
     if is_authorized_api_call:

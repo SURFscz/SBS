@@ -1,5 +1,5 @@
-summary: "Get collaboration details."
-description: "Retrieves a single collection."
+summary: "Delete group membership."
+description: "Delete a group membership."
 
 tags:
   - "Organisations"
@@ -21,20 +21,26 @@ parameters:
     schema:
       type: string
       example: Bearer Am4Hp7GBO2lMseskWHRmEtE3DWD-VxZZ3qwMkNPv6qZ8
-  - name: co_identifier
+  - name: group_identifier
     in: path
-    description: Unique identifier of the collaboration
+    description: Unique identifier of the group
     required: true
     schema:
       type: string
       format: uuid
       example: 301ee8e6-b5d1-40b5-a27e-47611f803371
+  - name: user_uid
+    in: path
+    description: Unique identifier of the user
+    required: true
+    schema:
+      type: string
+      format: string
+      example: 'urn:user_id'
 
 responses:
-  200:
-    description: Collaboration details
-    schema:
-      $ref: '/swagger/schemas/CollaborationDetail.yaml'
+  204:
+    description: Ok
   401:
     schema:
       $ref: '/swagger/components/responses/Unauthorized.yaml'
@@ -44,3 +50,6 @@ responses:
   404:
     schema:
       $ref: '/swagger/components/responses/NotFound.yaml'
+  409:
+    schema:
+      $ref: '/swagger/components/responses/Conflict.yaml'

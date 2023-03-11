@@ -1,9 +1,9 @@
 from flask import jsonify
 
-from server.db.domain import Collaboration, Group
+from server.db.domain import Collaboration, Group, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import ai_researchers_group, ai_computing_name, ai_researchers_group_short_name, \
-    service_group_mail_name
+    service_group_mail_name, ai_dev_identifier, uuc_secret, john_name, uva_secret
 
 
 class TestGroup(AbstractTest):
@@ -140,3 +140,48 @@ class TestGroup(AbstractTest):
         self.assertEqual(group.description, group_before_update_json["description"])
         self.assertEqual(group.global_urn, group_before_update_json["global_urn"])
         self.assertEqual(4, len(group.collaboration_memberships))
+
+    def test_add_membership_api(self):
+        self.assertIsNone(self.find_group_membership(ai_dev_identifier, "urn:jane"))
+
+        self.post(f"/api/groups/v1/{ai_dev_identifier}",
+                  body={"uid": "urn:jane"},
+                  headers={"Authorization": f"Bearer {uuc_secret}"},
+                  with_basic_auth=False)
+
+        self.assertIsNotNone(self.find_group_membership(ai_dev_identifier, "urn:jane"))
+
+    def test_add_membership_api_not_collaboration_member_forbidden(self):
+        peter = self.find_entity_by_name(User, "Peter Doe")
+        self.assertFalse(self.find_entity_by_name(Collaboration, ai_computing_name).is_member(peter.id))
+
+        self.post(f"/api/groups/v1/{ai_dev_identifier}",
+                  body={"uid": "urn:peter"},
+                  headers={"Authorization": f"Bearer {uuc_secret}"},
+                  response_status_code=409,
+                  with_basic_auth=False)
+
+    def test_add_membership_api_already_group_member_forbidden(self):
+        john = self.find_entity_by_name(User, john_name)
+        self.assertTrue(self.find_entity_by_name(Group, "AI developers").is_member(john.id))
+
+        self.post(f"/api/groups/v1/{ai_dev_identifier}",
+                  body={"uid": "urn:john"},
+                  headers={"Authorization": f"Bearer {uuc_secret}"},
+                  response_status_code=409,
+                  with_basic_auth=False)
+
+    def test_delete_membership_api(self):
+        self.assertIsNotNone(self.find_group_membership(ai_dev_identifier, "urn:john"))
+
+        self.delete(f"/api/groups/v1/{ai_dev_identifier}/members/urn:john",
+                    headers={"Authorization": f"Bearer {uuc_secret}"},
+                    with_basic_auth=False)
+
+        self.assertIsNone(self.find_group_membership(ai_dev_identifier, "urn:john"))
+
+    def test_delete_membership_api_forbidden(self):
+        self.delete(f"/api/groups/v1/{ai_dev_identifier}/members/urn:john",
+                    headers={"Authorization": f"Bearer {uva_secret}"},
+                    response_status_code=403,
+                    with_basic_auth=False)
