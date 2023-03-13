@@ -560,6 +560,13 @@ class TestCollaboration(AbstractTest):
         count = Invitation.query.filter(Invitation.collaboration_id == collaboration.id).count()
         self.assertEqual(2, count)
 
+    def test_api_call_invalid_json(self):
+        response = self.client.post("/api/collaborations/v1",
+                                    headers={"Authorization": f"Bearer {uuc_secret}"},
+                                    data="{{",
+                                    content_type="application/json")
+        self.assertEqual(400, response.status_code)
+
     def test_api_call_with_logo_url(self):
         response = self.client.post("/api/collaborations/v1",
                                     headers={"Authorization": f"Bearer {uuc_secret}"},

@@ -193,7 +193,8 @@ def json_endpoint(f):
             db.session.rollback()
             # We want to send emails if the exception is unexpected and validation errors should not happen server-side
             ctx_logger("base").exception(response)
-            if response.status_code == 500 or response.status_code == 400:
+            skip_email = 'sent a request that this server could not understand' in e.description
+            if not skip_email and (response.status_code == 500 or response.status_code == 400):
                 send_error_mail(tb=traceback.format_exc())
             return response
         finally:
