@@ -209,7 +209,7 @@ class Groups extends React.Component {
         const children = (
             <div className={"group-details"}>
                 <section className="header">
-                    <h2>{selectedGroup.name}</h2>
+                    <h1>{selectedGroup.name}</h1>
                     {mayCreateGroups &&
                     <div className="header-actions">
                         <Button onClick={() => this.setState(this.newGroupState(selectedGroup))}
@@ -273,7 +273,7 @@ class Groups extends React.Component {
         const disabledSubmit = !initial && !this.isValid();
         const children = (
             <div className="group-form">
-                <h2>{createNewGroup ? I18n.t("models.groups.new") : selectedGroup.name}</h2>
+                <h1>{createNewGroup ? I18n.t("models.groups.new") : selectedGroup.name}</h1>
 
                 <InputField value={name || ""}
                             onChange={e => this.setState({

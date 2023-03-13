@@ -362,7 +362,7 @@ class Service extends React.Component {
         return (
             <div className="service">
 
-                <h1 className="section-separator">{I18n.t("service.about")}</h1>
+                <h2 className="section-separator">{I18n.t("service.about")}</h2>
 
                 <InputField value={name} onChange={e => this.setState({
                     name: e.target.value,
@@ -519,7 +519,7 @@ class Service extends React.Component {
 
                 {this.renderIpNetworks(ip_networks, isAdmin, isServiceAdmin)}
                 <div className="contacts">
-                    <h1 className="section-separator first">{I18n.t("service.contacts")}</h1>
+                    <h2 className="section-separator first">{I18n.t("service.contacts")}</h2>
 
                     <InputField value={contact_email}
                                 name={I18n.t("service.contact_email")}
@@ -579,7 +579,7 @@ class Service extends React.Component {
 
                 </div>
                 <div className="ldap">
-                    <h1 className="section-separator first">{I18n.t("service.ldap.section")}</h1>
+                    <h2 className="section-separator first">{I18n.t("service.ldap.section")}</h2>
                     <InputField value={config.ldap_url}
                                 name={I18n.t("service.ldap.url")}
                                 toolTip={I18n.t("service.ldap.urlTooltip")}
@@ -598,7 +598,7 @@ class Service extends React.Component {
                         disabled={true}/>
                 </div>
                 <div className="compliance">
-                    <h1 className="section-separator first">{I18n.t("service.compliancy")}</h1>
+                    <h2 className="section-separator first">{I18n.t("service.compliancy")}</h2>
 
                     <RadioButton label={I18n.t("service.sirtfiCompliant")}
                                  name={"sirtfi_compliant"}
@@ -634,7 +634,7 @@ class Service extends React.Component {
 
                 </div>
                 <div className="tokens">
-                    <h1 className="section-separator first">{I18n.t("userTokens.tokens")}</h1>
+                    <h2 className="section-separator first">{I18n.t("userTokens.tokens")}</h2>
 
 
                     <CheckBox name={"token_enabled"}
@@ -673,7 +673,7 @@ class Service extends React.Component {
                 </div>
                 {isNew &&
                 <div className="email-invitations">
-                    <h1 className="section-separator first last">{I18n.t("service.invitations")}</h1>
+                    <h2 className="section-separator first last">{I18n.t("service.invitations")}</h2>
 
                     <EmailField value={email}
                                 onChange={e => this.setState({email: e.target.value})}

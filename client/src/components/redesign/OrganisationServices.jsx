@@ -13,7 +13,6 @@ import ToggleSwitch from "./ToggleSwitch";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
 import ConfirmationDialog from "../ConfirmationDialog";
-import MissingServices from "../MissingServices";
 
 class OrganisationServices extends React.Component {
 
@@ -164,7 +163,6 @@ class OrganisationServices extends React.Component {
                           explain={<OrganisationServicesExplanation/>}
                           explainTitle={I18n.t("explain.services")}
                           {...this.props}/>
-                <MissingServices nbrServices={services.length}/>
             </div>
         )
     }

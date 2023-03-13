@@ -322,7 +322,7 @@ class OrganisationForm extends React.Component {
 
                     <div className="new-organisation">
 
-                        <h1 className="section-separator">{I18n.t("organisation.about")}</h1>
+                        <h2 className="section-separator">{I18n.t("organisation.about")}</h2>
 
                         <InputField value={name} onChange={e => {
                             this.setState({
@@ -416,7 +416,7 @@ class OrganisationForm extends React.Component {
 
                         {isNew &&
                         <div>
-                            <h1 className="section-separator">{I18n.t("organisation.invitations")}</h1>
+                            <h2 className="section-separator">{I18n.t("organisation.invitations")}</h2>
 
                             <EmailField value={email}
                                         onChange={e => this.setState({email: e.target.value})}

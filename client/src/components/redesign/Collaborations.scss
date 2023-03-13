@@ -7,12 +7,10 @@
     max-width: 800px;
     align-items: center;
 
-    h2 {
-        color: $darker-grey;
-        font-size: 18px;
+    p {
         margin: 25px 0;
+        font-size: large;
         text-align: center;
-        line-height: 26px;
     }
 
     svg#swinging {

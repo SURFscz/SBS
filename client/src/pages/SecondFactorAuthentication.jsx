@@ -300,7 +300,7 @@ class SecondFactorAuthentication extends React.Component {
         return (
             <div>
                 <section className="register-header">
-                    <h2>{I18n.t("mfa.verify.title")}</h2>
+                    <h1>{I18n.t("mfa.verify.title")}</h1>
                     <p dangerouslySetInnerHTML={{
                         __html: DOMPurify.sanitize(`${I18n.t("mfa.verify.info1")}`)
                     }}/>
@@ -327,7 +327,7 @@ class SecondFactorAuthentication extends React.Component {
         return (
             <div>
                 <section className="register-header">
-                    <h2>{I18n.t("mfa.reset.title")}</h2>
+                    <h1>{I18n.t("mfa.reset.title")}</h1>
                     <p dangerouslySetInnerHTML={{
                         __html: DOMPurify.sanitize(`${I18n.t("mfa.reset.info1")}`)
                     }}/>
@@ -380,7 +380,7 @@ class SecondFactorAuthentication extends React.Component {
         return (
             <div>
                 <section className="register-header">
-                    <h2>{I18n.t(`mfa.register.${update ? "titleUpdate" : "title"}`)}</h2>
+                    <h1>{I18n.t(`mfa.register.${update ? "titleUpdate" : "title"}`)}</h1>
                     <div className="information">
                         <InformationIcon/>
                         <p>{I18n.t(`mfa.${action}.info1`, {name: idp_name})}</p>

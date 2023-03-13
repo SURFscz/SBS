@@ -61,7 +61,7 @@ class Entities extends React.Component {
                         className={`${hideTitle && !filters ? "no-title" : ""}`}
                         txt={newLabel || I18n.t(`models.${modelName}.new`)}/>
                 }
-                {!hideTitle && <h1>{title || `${I18n.t(`models.${modelName}.title`)} (${entities.length})`}</h1>}
+                {!hideTitle && <h2>{title || `${I18n.t(`models.${modelName}.title`)} (${entities.length})`}</h2>}
                 <div className={filterClassName}>{filters}</div>
                 <div className={`search ${showNew ? "" : "standalone"}`}>
                     {(!isEmpty(searchAttributes) || customSearch) &&

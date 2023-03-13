@@ -89,11 +89,6 @@ table.memberJoinRequests, table.systemJoinRequests, table.deletedJoinRequests {
         }
     }
 
-    h1 {
-        font-size: 26px;
-        line-height: 30px;
-    }
-
     div.join-request-form {
         width: 60%;
         @media (max-width: $compact-medium) {

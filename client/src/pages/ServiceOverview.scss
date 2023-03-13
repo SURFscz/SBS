@@ -79,10 +79,6 @@ section.dialog-content {
 
         .section-separator {
             grid-column: 1/-1;
-            color: $blue;
-            font-size: 18px;
-            font-weight: bold;
-            border-bottom: 1px solid $blue;
             padding-bottom: 5px;
 
             &.first {
