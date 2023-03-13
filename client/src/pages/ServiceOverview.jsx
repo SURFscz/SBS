@@ -1075,7 +1075,7 @@ class ServiceOverview extends React.Component {
 
                 {this.sidebar(currentTab)}
                 <div className={`service ${createNewServiceToken ? "no-grid" : ""}`}>
-                    <h1 className="section-separator">{I18n.t(`serviceDetails.toc.${currentTab}`)}</h1>
+                    <h2 className="section-separator">{I18n.t(`serviceDetails.toc.${currentTab}`)}</h2>
                     {this.renderCurrentTab(config, currentTab, service, alreadyExists, isAdmin, isServiceAdmin,
                         disabledSubmit, invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken, initial)}
                     {this.renderButtons(isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView, createNewServiceToken)}

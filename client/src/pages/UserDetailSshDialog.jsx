@@ -20,7 +20,7 @@ class UserDetailDialog extends React.Component {
                 overlayClassName="ssh-dialog-overlay"
                 closeTimeoutMS={250}
                 ariaHideApp={false}>
-                <section class="ssh-keys-container">
+                <section className="ssh-keys-container">
                     <h2>{I18n.t("models.allUsers.ssh.title", {name: user.name})}</h2>
                     <div className="shh-dialog-inner">
                         {user.ssh_keys.map((ssh_key, index) => <div key={index} className={`index-${index}`}>

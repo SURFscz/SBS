@@ -110,7 +110,7 @@ export default class Collaborations extends React.PureComponent {
         return (
             <div className="no-collaborations">
                 <TreeSwing/>
-                <h2>{I18n.t("models.collaborations.noCollaborations")}</h2>
+                <p>{I18n.t("models.collaborations.noCollaborations")}</p>
                 <Button txt={I18n.t("models.collaborations.new")}
                         onClick={() => {
                             const organisationQueryParam = organisation ? `?organisationId=${organisation.id}` : "";

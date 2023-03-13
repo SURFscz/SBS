@@ -19,7 +19,7 @@ import Button from "../components/Button";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
-import {sanitizeShortName, sanitizeTagName, validEmailRegExp} from "../validations/regExps";
+import {sanitizeShortName, sanitizeTagName, validEmailRegExp, validUrlRegExp} from "../validations/regExps";
 import SelectField from "../components/SelectField";
 import {getParameterByName} from "../utils/QueryParameters";
 import CheckBox from "../components/CheckBox";
@@ -56,6 +56,7 @@ class CollaborationForm extends React.Component {
             alreadyExists: {},
             organisation: {},
             organisations: [],
+            invalidInputs: {},
             tags: [],
             tagsSelected: [],
             isNew: true,
@@ -238,8 +239,10 @@ class CollaborationForm extends React.Component {
     };
 
     isValid = () => {
-        const {required, alreadyExists} = this.state;
-        const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(this.state[attr]));
+        const {required, alreadyExists, invalidInputs} = this.state;
+
+        const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(this.state[attr])) ||
+            Object.keys(invalidInputs).some(key => invalidInputs[key]);
         return !inValid;
     };
 
@@ -399,6 +402,13 @@ class CollaborationForm extends React.Component {
         this.setState({administrators: newAdministrators, current_user_admin: checked})
     }
 
+    validateURI = name => e => {
+        const uri = e.target.value;
+        const {invalidInputs} = this.state;
+        const inValid = !isEmpty(uri) && !validUrlRegExp.test(uri);
+        this.setState({invalidInputs: {...invalidInputs, [name]: inValid}});
+    };
+
     renderNoOrganisations = user => {
         const msg = user.admin ? I18n.t("home.noOrganisationsPlatformAdmin") :
             user.schac_home_organisation ? I18n.t("home.noOrganisations", {schac_home: user.schac_home_organisation}) : I18n.t("home.noShacHome");
@@ -445,7 +455,8 @@ class CollaborationForm extends React.Component {
             autoCreateCollaborationRequest,
             useOrganisationLogo,
             tags,
-            tagsSelected
+            tagsSelected,
+            invalidInputs,
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -478,7 +489,7 @@ class CollaborationForm extends React.Component {
 
                 <div className="new-collaboration">
 
-                    <h1 className="section-separator">{I18n.t("collaboration.about")}</h1>
+                    <h2 className="section-separator">{I18n.t("collaboration.about")}</h2>
 
                     <InputField value={name} onChange={e => {
                         this.setState({
@@ -580,8 +591,10 @@ class CollaborationForm extends React.Component {
                                 onChange={e => this.setState({website_url: e.target.value})}
                                 placeholder={I18n.t("collaboration.websiteUrlPlaceholder")}
                                 externalLink={true}
-                                name={I18n.t("collaboration.websiteUrl")}/>
-
+                                name={I18n.t("collaboration.websiteUrl")}
+                                onBlur={this.validateURI("website_url")}/>
+                    {invalidInputs["website_url"] &&
+                    <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
 
                     {!isCollaborationRequest && <DateField value={expiry_date}
                                                            onChange={e => this.setState({expiry_date: e})}
@@ -642,7 +655,7 @@ class CollaborationForm extends React.Component {
                     })}/>}
                     {(!isCollaborationRequest && isNew) &&
                     <div>
-                        <h1 className="section-separator">{I18n.t("collaboration.invitations")}</h1>
+                        <h2 className="section-separator">{I18n.t("collaboration.invitations")}</h2>
 
                         <EmailField value={email}
                                     onChange={e => this.setState({email: e.target.value})}

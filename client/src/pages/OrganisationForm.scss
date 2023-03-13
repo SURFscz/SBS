@@ -37,10 +37,6 @@
 
         .section-separator {
             grid-column: 1/-1;
-            color: $blue;
-            font-size: 18px;
-            font-weight: bold;
-            border-bottom: 1px solid $blue;
             padding: 25px 0 5px 0;
 
             &.last {

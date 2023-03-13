@@ -27,10 +27,7 @@
             align-items: normal;
         }
 
-        h1 {
-            font-size: 22px;
-            line-height: 26px;
-
+        h2 {
             @media (max-width: $compact-medium) {
                 margin-bottom: 15px
             }
