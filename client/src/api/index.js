@@ -76,7 +76,8 @@ function fetchJson(path, options = {}, headers = {}, showErrorDialog = true) {
 }
 
 function postPutJson(path, body, method, showErrorDialog = true) {
-    return fetchJson(path, {method: method, body: JSON.stringify(body)}, {}, showErrorDialog);
+    const jsonBody = JSON.stringify(body);
+    return fetchJson(path, {method: method, body: jsonBody}, {}, showErrorDialog);
 }
 
 function fetchDelete(path, showErrorDialog = true) {
