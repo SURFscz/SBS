@@ -35,7 +35,7 @@
         }
 
         .required {
-            color: $red;
+            color: var(--sds--color--red--400);
         }
 
         div.checkbox, label.policy {

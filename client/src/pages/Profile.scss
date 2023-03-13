@@ -28,7 +28,7 @@
         }
 
         .required-marker {
-            color: $red;
+            color: var(--sds--color--red--400);
             font-size: 18px;
             font-weight: bold;
         }

@@ -76,7 +76,7 @@
             }
 
             &.expired {
-                color: $red;
+                color: var(--sds--color--red--400);
             }
         }
 

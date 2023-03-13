@@ -147,17 +147,12 @@ section.dialog-content {
                     position: absolute;
                     right: 10px;
                     top: 14px;
-                    color: $red;
+                    color: var(--sds--color--red--400);
                     cursor: pointer;
                     padding: 0 4px;
                     font-size: 22px;
                     display: inline-block;
                     margin-left: 25px;
-
-                    &:hover {
-                        color: darken($red, 10%);
-                    }
-
                 }
             }
 
@@ -170,7 +165,7 @@ section.dialog-content {
         }
 
         .required-marker {
-            color: $red;
+            color: var(--sds--color--red--400);
             font-size: 18px;
             font-weight: bold;
         }

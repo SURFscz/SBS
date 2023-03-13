@@ -7,7 +7,6 @@ import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {isEmpty, stopEvent} from "../utils/Utils";
-import {ReactComponent as CriticalIcon} from "../icons/critical.svg";
 import {validateSSHKey,} from "../validations/regExps";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import {Tooltip} from "@surfnet/sds";
@@ -310,7 +309,6 @@ class Me extends React.Component {
                                     disabledConfirm={disabledConfirm}>
                     <div className="confirmation-warning-container">
                         <div className="confirmation-warning">
-                            <CriticalIcon/>
                             <p>{I18n.t("user.deleteConfirmationWarning")}</p>
                         </div>
                         <p className="delete-confirmation-check">{I18n.t("user.deleteConfirmationCheck")}</p>

@@ -85,7 +85,7 @@ div.email-field {
                 top: -2px;
 
                 &:hover {
-                    color: $red;
+                    color: var(--sds--color--red--400);
                 }
 
                 &.disabled {
