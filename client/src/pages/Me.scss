@@ -6,18 +6,11 @@ div.confirmation-warning-container {
     text-align: left;
 
     div.confirmation-warning {
-        background-color: $warning-red;
         display: flex;
         border-radius: 4px;
-        padding: 15px;
+        padding: 15px 0;
         margin-bottom: 15px;
-
-        svg {
-            margin-right: 25px;
-            height: 60px;
-            width: auto;
-        }
-
+        color: $red;
     }
 
     .input-field {
@@ -123,7 +116,7 @@ div.user-profile-tab-container {
         }
 
         .required-marker {
-            color: $red;
+            color: var(--sds--color--red--400);
             font-size: 18px;
             font-weight: bold;
         }
@@ -244,18 +237,12 @@ div.user-profile-tab-container {
                     margin: 15px 0 0 16px;
                     max-height: 44px;
                     text-align: center;
-                    border: 1px solid $red;
+                    border: 1px solid var(--sds--color--red--400);
                     border-radius: 4px;
                     padding: 8px 14px;
-                    color: $red;
+                    color: var(--sds--color--red--400);
                     cursor: pointer;
                     display: inline-block;
-
-                    &:hover {
-                        color: darken($red, 10%);
-                        background-color: #ffe9e9;
-                    }
-
                 }
             }
 

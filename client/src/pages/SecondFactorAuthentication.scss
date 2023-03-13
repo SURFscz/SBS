@@ -108,7 +108,6 @@
                 flex-direction: column;
                 display: flex;
                 margin: 0 auto 25px auto;
-                align-items: center;
             }
 
         }
@@ -148,7 +147,7 @@
     span.error {
         display: block;
         margin-top: 5px;
-        color: $red;
+        color: var(--sds--color--red--400);
     }
 
     section.actions {

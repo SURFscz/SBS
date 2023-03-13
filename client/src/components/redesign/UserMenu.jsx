@@ -38,7 +38,7 @@ export const UserMenu = ({currentUser, organisation, config, provideFeedback}) =
                     {config.feedback_enabled && <li>
                         <a href="/feedback" onClick={provideFeedback}>{I18n.t(`header.links.feedback`)}</a>
                     </li>}
-                    {actions.map(action => <li>
+                    {actions.map(action => <li key={action.name}>
                         <a href={`/${action.name}`} onClick={action.perform}>{action.name}</a>
                     </li>)}
                 </ul>

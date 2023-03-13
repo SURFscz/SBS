@@ -15,7 +15,7 @@
 
         &.denied {
             background-color: $lighter-grey;
-            color: $red;
+            color: var(--sds--color--red--400);
         }
 
         &.open {

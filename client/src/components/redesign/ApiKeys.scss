@@ -28,7 +28,7 @@ table.apiKeys, table.serviceTokens {
         td {
             &.trash {
                 text-align: right;
-                color: $red;
+                color: var(--sds--color--red--400);
                 cursor: pointer;
             }
         }

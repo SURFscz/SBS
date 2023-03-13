@@ -141,7 +141,7 @@ table.collaborations, table.memberCollaborations {
                 }
 
                 span.expired, span.suspended {
-                    color: $red;
+                    color: var(--sds--color--red--400);
                     display: block;
                     font-weight: bold;
                 }

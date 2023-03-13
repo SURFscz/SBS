@@ -34,7 +34,7 @@ div.org-attributes-container {
 
             &.warning {
                 font-weight: bold;
-                color: $red;
+                color: var(--sds--color--red--400);
             }
 
             &.multiple-attributes {
@@ -109,7 +109,7 @@ div.org-attributes-container-grid, div.org-attributes-container-flex {
 
             &.warning {
                 font-weight: bold;
-                color: $red;
+                color: var(--sds--color--red--400);
             }
 
             &.multiple-attributes {
