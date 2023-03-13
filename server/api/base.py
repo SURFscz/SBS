@@ -173,6 +173,7 @@ def json_endpoint(f):
             db.session.commit()
             return response, status
         except Exception as e:
+            skip_email = False
             if isinstance(e, Forbidden) and "You don't have the permission" in e.description:
                 e.description = f"Forbidden 403: {current_request.url}. IP: {_remote_address()}"
             elif isinstance(e, Unauthorized) and "The server could not verify" in e.description:
@@ -180,6 +181,7 @@ def json_endpoint(f):
             elif hasattr(e, "description"):
                 e.description = f"{e.__class__.__name__}: {current_request.url}." \
                                 f" IP: {_remote_address()}. " + e.description
+                skip_email = "sent a request that this server could not understand" in e.description
             response = jsonify(message=e.description if isinstance(e, HTTPException) else str(e),
                                error=True)
             response.status_code = 500
@@ -193,7 +195,6 @@ def json_endpoint(f):
             db.session.rollback()
             # We want to send emails if the exception is unexpected and validation errors should not happen server-side
             ctx_logger("base").exception(response)
-            skip_email = 'sent a request that this server could not understand' in e.description
             if not skip_email and (response.status_code == 500 or response.status_code == 400):
                 send_error_mail(tb=traceback.format_exc())
             return response
