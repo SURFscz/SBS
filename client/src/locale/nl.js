@@ -602,7 +602,7 @@ I18n.translations.nl = {
             updated: "Je profiel is bijgewerkt"
         },
         providedBy: "Geleverd door <strong>{{institution}}</strong>",
-        generatedBy: "Gegeneerd door <strong>SRAM</strong>",
+        generatedBy: "Gegenereerd door <strong>SRAM</strong>",
         delete: "Verwijder mijn account",
         deleteConfirmation: "Weet je zeker dat je je account voorgoed wil verwijderen?",
         deleteConfirmationWarning: "Al je lidmaatschappen worden verwijderd. Dit kan niet worden teruggedraaid.",
