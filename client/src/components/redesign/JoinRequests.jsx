@@ -17,6 +17,8 @@ import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
 import {Tooltip} from "@surfnet/sds";
 import Select from "react-select";
 import InstituteColumn from "./InstituteColumn";
+import {chipTypeForStatus} from "../../utils/UserRole";
+import {Chip} from "@surfnet/sds";
 
 const allValue = "all";
 
@@ -278,8 +280,8 @@ class JoinRequests extends React.Component {
             {
                 key: "status",
                 header: I18n.t("collaborationRequest.status"),
-                mapper: entity => <span
-                    className={`person-role ${entity.status}`}>{I18n.t(`collaborationRequest.statuses.${entity.status}`)}</span>
+                mapper: entity => <Chip type={chipTypeForStatus(entity)}
+                label={I18n.t(`collaborationRequest.statuses.${entity.status}`)} />
             },
         ]
         const filteredJoinRequests = filterValue.value === allValue ? collaboration.join_requests :

@@ -125,6 +125,7 @@ I18n.translations.nl = {
         showMore: "Meer",
         hideSome: "Minder",
         open: "Open",
+        update: "Bijwerken",
         today: "Vandaag",
         manage: "Beheren",
         invalidInput: "Ongeldige waarde voor {{name}}",

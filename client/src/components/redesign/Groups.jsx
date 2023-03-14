@@ -31,7 +31,7 @@ import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import ClipBoardCopy from "./ClipBoardCopy";
 import {AppStore} from "../../stores/AppStore";
 import ErrorIndicator from "./ErrorIndicator";
-import {Tooltip} from "@surfnet/sds";
+import {ChipType, Chip, Tooltip} from "@surfnet/sds";
 import InstituteColumn from "./InstituteColumn";
 
 class Groups extends React.Component {
@@ -504,7 +504,9 @@ class Groups extends React.Component {
                 key: "member",
                 header: "",
                 mapper: group => group.collaboration_memberships.some(cm => cm.user.id === currentUser.id) ?
-                    <span className="person-role me">{I18n.t("models.groups.member")}</span> : null
+                    <Chip type={ChipType.Main_100}
+                          label={I18n.t("models.groups.member")}/>
+                     : null
             },
             {
                 key: "service_group",

@@ -285,10 +285,14 @@ class SecondFactorAuthentication extends React.Component {
                         onChange={e => this.setState({message: e.target.value})}/>
 
             <section className="actions">
-                <Button cancelButton={true} onClick={this.closeExplanation} html={I18n.t("forms.cancel")}
-                        txt="cancel"/>
-                <Button disabled={submitDisabled} onClick={this.sendResetRequest} html={I18n.t("mfa.lost.sendMail")}
-                        txt="update"/>
+                <Button cancelButton={true}
+                        onClick={this.closeExplanation}
+                        txt={I18n.t("forms.cancel")}
+                />
+                <Button disabled={submitDisabled}
+                        onClick={this.sendResetRequest}
+                        txt={I18n.t("mfa.lost.sendMail")}
+                />
             </section>
         </div>)
 
@@ -311,8 +315,10 @@ class SecondFactorAuthentication extends React.Component {
                         {error && <span className="error">{I18n.t("mfa.verify.invalid")}</span>}
                     </div>
                 </div>
-                <Button disabled={verifyDisabled} onClick={this.verify} html={I18n.t("mfa.verify.signIn")}
-                        txt="login" centralize={true}/>
+                <Button disabled={verifyDisabled}
+                        onClick={this.verify}
+                        txt={I18n.t("mfa.verify.signIn")}
+                        centralize={true}/>
                 <div className="explain">
                     <span>{I18n.t("mfa.verify.problems")}</span>
                     <a href="/reset-token" onClick={this.openResetRequest}>{I18n.t("mfa.verify.resetRequest")}</a>
@@ -342,9 +348,13 @@ class SecondFactorAuthentication extends React.Component {
                     </div>
                 </div>
                 <section className="actions">
-                    <Button cancelButton={true} onClick={this.closeResetCode} html={I18n.t("forms.cancel")}
+                    <Button cancelButton={true}
+                            onClick={this.closeResetCode}
+                            txt={I18n.t("forms.cancel")}
                             txt="cancel"/>
-                    <Button disabled={submitDisabled} onClick={this.submitResetCode} html={I18n.t("mfa.reset.submit")}
+                    <Button disabled={submitDisabled}
+                            onClick={this.submitResetCode}
+                            txt={I18n.t("mfa.reset.submit")}
                             txt="update"/>
                 </section>
             </div>
@@ -441,13 +451,18 @@ class SecondFactorAuthentication extends React.Component {
                     </div>
                 </div>
                 {!update &&
-                <Button disabled={verifyDisabled} onClick={this.verify} html={I18n.t("mfa.register.next")}
-                        txt={I18n.t("mfa.register.next")} centralize={true}/>}
+                <Button disabled={verifyDisabled} onClick={this.verify}
+                        txt={I18n.t("mfa.register.next")}
+                        centralize={true}/>}
                 {update && <section className="actions">
-                    <Button cancelButton={true} onClick={this.cancel} html={I18n.t("forms.cancel")}
-                            txt="cancel"/>
-                    <Button disabled={updateDisabled} onClick={this.verify} html={I18n.t("mfa.update.verify")}
-                            txt="update"/>
+                    <Button cancelButton={true}
+                            onClick={this.cancel}
+                            txt={I18n.t("forms.cancel")}
+                            />
+                    <Button disabled={updateDisabled}
+                            onClick={this.verify}
+                            txt={I18n.t("mfa.update.verify")}
+                    />
                 </section>}
             </div>
         )

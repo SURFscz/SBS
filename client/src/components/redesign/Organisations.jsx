@@ -6,6 +6,8 @@ import I18n from "i18n-js";
 import Entities from "./Entities";
 import Logo from "./Logo";
 import SpinnerField from "./SpinnerField";
+import {Chip} from "@surfnet/sds";
+import {chipType} from "../../utils/UserRole";
 
 
 class Organisations extends React.Component {
@@ -79,7 +81,8 @@ class Organisations extends React.Component {
                 header: I18n.t("profile.yourRole"),
                 mapper: org => {
                     if (org.role) {
-                        return <span className={`person-role ${org.role}`}>{I18n.t(`profile.${org.role}`)}</span>
+                        return <Chip label={I18n.t(`profile.${org.role}`)}
+                                     type={chipType(org)}/>
                     }
                     return null;
                 }

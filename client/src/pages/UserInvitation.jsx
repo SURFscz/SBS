@@ -59,7 +59,9 @@ class UserInvitation extends React.Component {
                 </div>
                 <p className="info"
                    dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("models.invitation.followingSteps"))}}/>
-                <Button onClick={login} centralize={true} html={I18n.t("models.invitation.loginWithSub")} txt="login"/>
+                <Button onClick={login}
+                        centralize={true}
+                        txt={I18n.t("models.invitation.loginWithSub")}/>
             </section>
         )
     }

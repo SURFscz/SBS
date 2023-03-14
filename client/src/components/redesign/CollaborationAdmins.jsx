@@ -25,10 +25,10 @@ import Button from "../Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ConfirmationDialog from "../ConfirmationDialog";
 import UserColumn from "./UserColumn";
-import {isUserAllowed, ROLES} from "../../utils/UserRole";
+import {chipType, isUserAllowed, ROLES} from "../../utils/UserRole";
 import SpinnerField from "./SpinnerField";
 import moment from "moment";
-import {Tooltip} from "@surfnet/sds";
+import {Chip, Tooltip, ChipType} from "@surfnet/sds";
 import LastAdminWarning from "./LastAdminWarning";
 import DateField from "../DateField";
 import InstituteColumn from "./InstituteColumn";
@@ -575,11 +575,9 @@ class CollaborationAdmins extends React.Component {
     }
 
     renderSelectRole = (entity, isAdminOfCollaboration) => {
-        if (entity.invite) {
-            return <span className="member-role">{I18n.t(`organisation.${entity.intended_role}`)}</span>;
-        }
-        if (!isAdminOfCollaboration) {
-            return <span className="member-role">{I18n.t(`organisation.${entity.role}`)}</span>;
+        if (entity.invite || !isAdminOfCollaboration) {
+            return <Chip label={I18n.t(`organisation.${entity.invite ? entity.intended_role : entity.role}`)}
+                         type={chipType(entity)}/>
         }
         const roles = [
             {value: "admin", label: I18n.t(`organisation.admin`)},
@@ -717,12 +715,12 @@ class CollaborationAdmins extends React.Component {
                     if (isAdminOfCollaboration || entity.user.id === currentUser.id) {
                         const isExpired = entity.invite && isInvitationExpired(entity);
                         return entity.invite ?
-                            <span
-                                className={`person-role no-margin invite ${isExpired ? "expired" : ""}`}>
-                            {isExpired ? I18n.t("models.orgMembers.expiredAt", {date: shortDateFromEpoch(entity.expiry_date)}) :
+                            <div className={"chip-container"}>
+                                <Chip label={isExpired ? I18n.t("models.orgMembers.expiredAt", {date: shortDateFromEpoch(entity.expiry_date)}) :
                                 I18n.t("models.orgMembers.inviteSend", {date: shortDateFromEpoch(entity.created_at)})}
-                        </span> :
-                            this.renderExpiryDate(entity, openExpirationFields, isAdminOfCollaboration);
+                                  type={isExpired ? ChipType.Status_error: ChipType.Status_info}/>
+                            </div>
+                            : this.renderExpiryDate(entity, openExpirationFields, isAdminOfCollaboration);
                     }
                     return null;
                 }

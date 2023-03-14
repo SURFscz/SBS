@@ -125,6 +125,7 @@ I18n.translations.en = {
         showMore: "More",
         hideSome: "Less",
         open: "Open",
+        update: "Update",
         today: "Today",
         manage: "Configure",
         invalidInput: "Invalid input for {{name}}",
