@@ -25,7 +25,6 @@ import SpinnerField from "./SpinnerField";
 import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
 import {Tooltip} from "@surfnet/sds";
 import InstituteColumn from "./InstituteColumn";
-import {ReactComponent as InformationCircle} from "../../icons/information-circle.svg";
 import {isEmpty} from "../../utils/Utils";
 import {emitImpersonation} from "../../utils/Impersonation";
 
@@ -269,7 +268,7 @@ class OrganisationAdmins extends React.Component {
                 <Tooltip
                     tip={!anySelected ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}
                     clickable={true}
-                                      anchorId={"remove-org-members"}
+                    anchorId={"remove-org-members"}
                     children={<Button onClick={this.remove(true)}
                                       txt={I18n.t("models.orgMembers.remove")}
                                       anchorId={"remove-org-members"}
@@ -281,9 +280,9 @@ class OrganisationAdmins extends React.Component {
                 <Tooltip
                     tip={!showResendInvite ? I18n.t("models.orgMembers.resendTooltipDisabled") : I18n.t("models.orgMembers.resendTooltip")}
                     clickable={true}
-                         anchorId={"resend-org-invites"}
+                    anchorId={"resend-org-invites"}
                     children={<Button onClick={this.resend(true)}
-                         anchorId={"resend-org-invites"}
+                                      anchorId={"resend-org-invites"}
                                       txt={I18n.t("models.orgMembers.remove")}
                                       small={true}
 
@@ -392,8 +391,13 @@ class OrganisationAdmins extends React.Component {
                         {displayCheckbox && <CheckBox name={"" + ++i} onChange={this.onCheck(entity)}
                                                       value={(selectedMembers[this.getIdentifier(entity)] || {}).selected || false}/>}
                         {!displayCheckbox &&
-                        <Tooltip standalone={true} children={<InformationCircle/>} anchorId={"admin-warning"}
-                                 tip={I18n.t("tooltips.oneAdminWarning")}/>}
+                        <div className={"tooltip-table-cell"}>
+
+                            <CheckBox name={"" + ++i}
+                                      value={false}
+                                      tooltip={I18n.t("tooltips.oneAdminWarning")}
+                                      readOnly={true}
+                            /></div>}
                     </div>
                 }
             },

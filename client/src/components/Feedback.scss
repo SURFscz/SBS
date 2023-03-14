@@ -1,102 +1,21 @@
 @import "../stylesheets/vars.scss";
 
-
-.feedback-dialog-overlay {
-    position: fixed;
+.feedback-content {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(255, 255, 255, 0.85);
-    z-index: 5;
+    flex-direction: column;
+    color: black;
 
-    .feedback-dialog-content {
-        padding: 40px 60px;
-
-        @media (max-width: $compact-medium) {
-            padding: 20px;
-        }
-
-
-        background-color: white;
-        overflow: auto;
-        border-radius: $br;
-        outline: none;
-        z-index: 5;
-        display: flex;
-        flex-direction: column;
-        border: 1px solid $lighter-grey;
-        box-shadow: 1px 2px 2px 0 rgba(0, 0, 0, 0.3);
-
-        h1 {
-            margin-bottom: 15px;
-        }
-
-        h2 {
-            margin: 15px 0 10px 0;
-
-            &.title {
-                margin-bottom: 3px;
-            }
-        }
-
-        section.info {
-            display: flex;
-            align-items: center;
-            border-radius: 4px;
-            padding: 15px;
-            margin-bottom: 15px;
-
-            svg {
-                margin-right: 15px;
-            }
-
-            background-color: #95d7e4;
-        }
-
-        textarea {
-            display: block;
-            width: 100%;
-            border: 1px solid $dark-grey;
-            padding: 6px 12px;
-            border-radius: $br;
-            font-size: 16px;
-            margin-bottom: 10px;
-            &:focus {
-                outline: none;
-                box-shadow: 3px 3px 3px $blue-hover, -3px -3px 1px $blue-hover;
-            }
-
-        }
-
-        section.disclaimer {
-            font-size: 13px;
-            margin-top: 25px;
-        }
-
-    }
-}
-
-.ReactModalPortal .feedback-dialog-overlay {
-    transition: opacity 250ms ease-in-out;
-
-    &--before-close {
-        opacity: 0;
-    }
-}
-
-.ReactModalPortal .feedback-dialog-content {
-    transition: top 250ms ease-in-out, bottom 250ms ease-in-out;
-    width: 660px;
-    @media (max-width: $compact-medium) {
-        width: 280px;
+    .sds--toaster {
+        max-width: initial;
+        margin: 25px 0;
     }
 
-    &--before-close {
-        top: -50%;
-        bottom: 100%;
+    section.help {
+        margin-top: 15px;
+    }
+
+    section.disclaimer {
+        font-size: 13px;
+        margin-top: 25px;
     }
 }

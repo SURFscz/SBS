@@ -14,6 +14,11 @@
     .invitation-container {
         margin: 0 auto;
 
+        .sds--toaster {
+            max-width: initial;
+            margin: 25px 0;
+        }
+
         p.info {
             margin: 25px 0;
         }
@@ -71,17 +76,6 @@
             }
         }
 
-        div.disclaimer {
-            background-color: #fef595;
-            padding: 25px;
-
-            p {
-                margin-bottom: 6px;
-                font-size: 14px;
-                line-height: 18px;
-                color: $darker-grey;
-            }
-        }
 
     }
 }

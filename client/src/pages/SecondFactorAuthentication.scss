@@ -22,20 +22,10 @@
     .register-header {
         padding: $medium-padding 0 10px 0;
 
-        div.information {
-            display: flex;
-            background-color: $information-blue;
-            padding: 15px;
+        .sds--toaster {
+            max-width: initial;
             margin: 20px 0;
-            border-radius: $br;
-            align-items: center;
-
-            svg {
-                margin-right: 20px;
-                width: 20px;
-            }
         }
-
     }
 
     .authenticator-problems {

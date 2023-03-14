@@ -8,6 +8,7 @@ import {login} from "../utils/Login";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import SpinnerField from "../components/redesign/SpinnerField";
 import DOMPurify from "dompurify";
+import {Toaster, ToasterType} from "@surfnet/sds";
 
 class ServiceAdminInvitation extends React.Component {
 
@@ -83,14 +84,10 @@ class ServiceAdminInvitation extends React.Component {
                     {!isExpired && <h1>Hi,</h1>}
                     {isExpired &&
                     <p className="expired"><ErrorIndicator msg={expiredMessage}/></p>}
-                    {!isExpired && <div className="invitation-inner">
-                        <section className="invitation">
-                            <span dangerouslySetInnerHTML={{
-                                __html: html
-                            }}/>
-                        </section>
+                    {!isExpired && <>
+                        <Toaster toasterType={ToasterType.Info} message={html}/>
                         {this.renderLoginStep()}
-                    </div>}
+                    </>}
 
                 </div>}
             </div>);

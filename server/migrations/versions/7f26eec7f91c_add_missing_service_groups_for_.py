@@ -26,7 +26,7 @@ def insert_group(conn, row):
                  f"('{row['sg_name']}', "  # name
                  f"'{short_name}',"  # short_name
                  f"'{row['o_short_name']}:{row['c_short_name']}:{short_name}',"  # global_urn
-                 f"'Provisioned by service {row['s_name']} - {row['sg_description']}',"  #
+                 f"'Provisioned by service {row['s_name']} - {row['sg_description']}',"  # description
                  f"{auto_provision_members},"  # auto_provision_members
                  f"{collaboration_id},"  # collaboration_id
                  f"'migration',"  # created_by

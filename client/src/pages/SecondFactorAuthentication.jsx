@@ -18,8 +18,8 @@ import InputField from "../components/InputField";
 import {setFlash} from "../utils/Flash";
 import CheckBox from "../components/CheckBox";
 import {ErrorOrigins, isEmpty, stopEvent} from "../utils/Utils";
-import {ReactComponent as InformationIcon} from "../icons/informational.svg";
 import DOMPurify from "dompurify";
+import {Toaster, ToasterType} from "@surfnet/sds";
 
 class SecondFactorAuthentication extends React.Component {
 
@@ -391,10 +391,8 @@ class SecondFactorAuthentication extends React.Component {
             <div>
                 <section className="register-header">
                     <h1>{I18n.t(`mfa.register.${update ? "titleUpdate" : "title"}`)}</h1>
-                    <div className="information">
-                        <InformationIcon/>
-                        <p>{I18n.t(`mfa.${action}.info1`, {name: idp_name})}</p>
-                    </div>
+                    <Toaster message={I18n.t(`mfa.${action}.info1`, {name: idp_name})}
+                             toasterType={ToasterType.Info}/>
                     <p>{I18n.t(`mfa.${action}.info2`)}</p>
                 </section>
                 {!update && <div className="step">
@@ -458,7 +456,7 @@ class SecondFactorAuthentication extends React.Component {
                     <Button cancelButton={true}
                             onClick={this.cancel}
                             txt={I18n.t("forms.cancel")}
-                            />
+                    />
                     <Button disabled={updateDisabled}
                             onClick={this.verify}
                             txt={I18n.t("mfa.update.verify")}
