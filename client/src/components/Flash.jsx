@@ -17,7 +17,7 @@ export default class Flash extends React.PureComponent {
         this.callback = flash => {
             this.setState({flash: flash, className: isEmpty(flash) || isEmpty(flash.message) ? "hide" : ""});
             if ((flash && flash.message) && (!flash.type || flash.type === "info")) {
-                setTimeout(() => this.setState({className: "hide", flash: {}}), 2225000);
+                setTimeout(() => this.setState({className: "hide", flash: {}}), 5000);
             }
         };
     }

@@ -1,6 +1,5 @@
 import React from "react";
 import Modal from "react-modal";
-import "./ConfirmationDialog.scss";
 import I18n from "i18n-js";
 import Button from "./Button";
 

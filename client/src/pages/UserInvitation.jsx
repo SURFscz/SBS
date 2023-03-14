@@ -9,6 +9,7 @@ import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import SpinnerField from "../components/redesign/SpinnerField";
 import {ErrorOrigins} from "../utils/Utils";
 import DOMPurify from "dompurify";
+import {Toaster, ToasterType} from "@surfnet/sds";
 
 class UserInvitation extends React.Component {
 
@@ -72,7 +73,6 @@ class UserInvitation extends React.Component {
         if (loading) {
             return <SpinnerField/>
         }
-
         const expiredMessage = I18n.t("invitation.expired", {expiry_date: moment(invite.expiry_date * 1000).format("LL")});
         const html = DOMPurify.sanitize(I18n.t("models.invitation.invited", {
             type: isOrganisationInvite ? I18n.t("welcomeDialog.organisation") : I18n.t("welcomeDialog.collaboration"),
@@ -87,14 +87,10 @@ class UserInvitation extends React.Component {
                     {!isExpired && <h1>Hi,</h1>}
                     {isExpired &&
                     <p className="expired"><ErrorIndicator msg={expiredMessage}/></p>}
-                    {!isExpired && <div className="invitation-inner">
-                        <section className="invitation">
-                            <span dangerouslySetInnerHTML={{
-                                __html: html
-                            }}/>
-                        </section>
+                    {!isExpired && <>
+                        <Toaster toasterType={ToasterType.Info} message={html}/>
                         {this.renderLoginStep(isOrganisationInvite)}
-                    </div>}
+                    </>}
 
                 </div>}
             </div>);

@@ -14,6 +14,11 @@
     .invitation-container {
         margin: 0 auto;
 
+        .sds--toaster {
+            max-width: initial;
+            margin: 25px 0;
+        }
+
         p.info {
             margin: 25px 0;
         }
@@ -36,12 +41,6 @@
         div.checkbox, label.policy {
             display: inline-block;
             margin-top: 10px;
-        }
-
-        section.invitation {
-            background-color: $yellow;
-            padding: 25px;
-            margin: 25px 0;
         }
 
         .step-container {

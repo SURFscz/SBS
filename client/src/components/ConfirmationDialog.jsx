@@ -2,7 +2,7 @@ import React from "react";
 import {AlertType, Modal,} from "@surfnet/sds";
 import I18n from "i18n-js";
 
-import "./ConfirmationDialog.scss";
+
 
 export default function ConfirmationDialog({
                                                isOpen = false,

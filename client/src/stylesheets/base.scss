@@ -26,7 +26,6 @@ body {
         }
     }
 
-
     &.ReactModal__Body--open {
         overflow: hidden;
     }
@@ -71,12 +70,17 @@ a {
     }
 
     &.neutral-appearance {
-        font-weight: normal!important;
-        text-decoration: none!important;
-        color: black!important;
+        font-weight: normal !important;
+        text-decoration: none !important;
+        color: black !important;
     }
 }
 
 .sds--modal {
     z-index: 9999;
+
+    .sds--backdrop {
+        background-color: hsla(0, 0%, 100%, .85);
+        padding: 0;
+    }
 }

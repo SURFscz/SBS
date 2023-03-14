@@ -61,6 +61,15 @@
             }
         }
 
+        .tooltip-table-cell {
+            position: relative;
+
+            .sds--tooltip-container {
+                position: absolute;
+                top: -18px;
+                left: 5px;
+            }
+        }
     }
 
 }
