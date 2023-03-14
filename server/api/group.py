@@ -111,7 +111,13 @@ def create_group(collaboration_id, data, do_cleanse_short_name=True):
         cleanse_short_name(data)
     # Check uniqueness of name and short_name of group for the collaboration
     collaboration = Collaboration.query.get(collaboration_id)
-    duplicates = [g.id for g in collaboration.groups if g.name == data["name"] or g.short_name == data["short_name"]]
+
+    def is_duplicate(g: Group):
+        short_name_dup = g.short_name == data["short_name"]
+        name_dup = g.name == data["name"] and data.get("service_group_id", None) == g.service_group_id
+        return name_dup or short_name_dup
+
+    duplicates = [g.id for g in collaboration.groups if is_duplicate(g)]
     if duplicates:
         return {}, 201
     _assign_global_urn(collaboration, data)
