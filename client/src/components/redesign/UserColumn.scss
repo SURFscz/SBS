@@ -1,4 +1,8 @@
 .user-name-email-container {
     display: flex;
     align-items: center;
+
+    .sds--chips {
+        margin: 0 15px;
+    }
 }

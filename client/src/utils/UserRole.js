@@ -1,4 +1,6 @@
 import I18n from "i18n-js";
+import {ChipType} from "@surfnet/sds";
+
 
 export const ROLES = {
     PLATFORM_ADMIN: "platformAdmin",
@@ -95,4 +97,15 @@ export function globalUserRole(user) {
 export function actionMenuUserRole(user, organisation, collaboration, service, membershipRequired) {
     const userRole = rawGlobalUserRole(user, organisation, collaboration, service, membershipRequired);
     return I18n.t(`actionRoles.${userRole}`);
+}
+
+export function chipType(entity) {
+    const role = entity.invite ? entity.intended_role : entity.role;
+    return role === "admin" ? ChipType.Main_400 : role === "manager" ? ChipType.Main_300 : ChipType.Main_100;
+}
+
+export function chipTypeForStatus(entity) {
+    const status = entity.status;
+    return status === "approved" ? ChipType.Status_success : status === "open" ? ChipType.Status_info : ChipType.Status_error;
+    // "suspended", "expired", "active"
 }

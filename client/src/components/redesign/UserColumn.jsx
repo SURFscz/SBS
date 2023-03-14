@@ -1,7 +1,7 @@
 import React from "react";
 import I18n from "i18n-js";
 import "./UserColumn.scss";
-import {Tooltip} from "@surfnet/sds";
+import {ChipType, Chip, Tooltip} from "@surfnet/sds";
 import {dateFromEpoch} from "../../utils/Date";
 
 export default function UserColumn({entity, currentUser, gotoInvitation, hideEmail = false, showMe = true}) {
@@ -33,7 +33,7 @@ export default function UserColumn({entity, currentUser, gotoInvitation, hideEma
                              <span className="email">{entity.user && entity.user.email}</span>}
                          </div>}/>
             {(showMe && !entity.invite && entity.user.id === currentUser.id) &&
-            <span className="person-role me">{I18n.t("models.users.me")}</span>}
+                <Chip type={ChipType.Main_400} label={I18n.t("models.users.me")} />}
         </div>
     );
 }

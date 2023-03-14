@@ -8,10 +8,10 @@ import Entities from "./Entities";
 import Button from "../Button";
 import {allCollaborations, collaborationAdmins, mayRequestCollaboration, myCollaborations} from "../../api";
 import SpinnerField from "./SpinnerField";
-import {isUserAllowed, ROLES} from "../../utils/UserRole";
+import {chipType, isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
 import CheckBox from "../CheckBox";
-import {Tooltip} from "@surfnet/sds";
+import {Chip, Tooltip} from "@surfnet/sds";
 import ConfirmationDialog from "../ConfirmationDialog";
 
 import {ReactComponent as InformationCircle} from "@surfnet/sds/icons/functional-icons/info.svg";
@@ -238,8 +238,8 @@ export default class Collaborations extends React.PureComponent {
                 header: I18n.t("profile.yourRole"),
                 mapper: collaboration => {
                     if (collaboration.role) {
-                        return <span
-                            className={`person-role ${collaboration.role}`}>{I18n.t(`profile.${collaboration.role}`)}</span>
+                        return <Chip label={I18n.t(`profile.${collaboration.role}`)}
+                                     type={chipType(collaboration)}/>
                     }
                     return null;
                 }
