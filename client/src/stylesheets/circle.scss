@@ -26,34 +26,34 @@ $width: 70px;
     &.one-third:before {
         @include colored-borders;
         border: solid 5px transparent;
-        border-top-color: $blue;
+        border-top-color: var(--sds--palette--main-color--400);
         z-index: 2;
     }
 
     &.one-third:after {
         @include colored-borders;
-        border-top-color: $blue;
+        border-top-color: var(--sds--palette--main-color--400);
         transform: rotate(78deg);
     }
 
     &.two-third:before {
         @include colored-borders;
         border: solid 5px transparent;
-        border-top-color: $blue;
+        border-top-color: var(--sds--palette--main-color--400);
         z-index: 2;
     }
 
     &.two-third:after {
         @include colored-borders;
-        border-top-color: $blue;
-        border-right-color: $blue;
+        border-top-color: var(--sds--palette--main-color--400);
+        border-right-color: var(--sds--palette--main-color--400);
         transform: rotate(102deg);
     }
 
     &.two-quarters:before {
         @include colored-borders;
-        border-top-color: $blue;
-        border-right-color: $blue;
+        border-top-color: var(--sds--palette--main-color--400);
+        border-right-color: var(--sds--palette--main-color--400);
     }
 
     span {
@@ -62,7 +62,7 @@ $width: 70px;
     }
 
     &.full {
-        border: solid 5px $blue;
+        border: solid 5px var(--sds--palette--main-color--400);
         border-radius: 50%;
 
         span {
