@@ -163,7 +163,7 @@ class Me extends React.Component {
         d.setUTCSeconds(createdAt);
         const values = {"created_at": moment(d).format("LLLL")};
         const firstAttributes = ["email", "name"];
-        const secondAttributes = ["affiliation", "username"];
+        const secondAttributes = ["scoped_affiliation", "affiliation", "username"];
         const mfaValue = user.second_factor_auth ? I18n.t("mfa.profile.handledBySRAM") :
             I18n.t("mfa.profile.handledByIdp", {name: user.schac_home_organisation || I18n.t("mfa.profile.institution")});
         return (
@@ -211,14 +211,15 @@ class Me extends React.Component {
                                 <tr key={attribute}>
                                     <td className="attribute-key">{I18n.t(`profile.${attribute}`)}</td>
                                     <td className="attribute-value">{values[attribute] || user[attribute] || "-"}</td>
-                                    {(attribute === "affiliation")
+                                    {(attribute === "scoped_affiliation")
                                     && <td className="actions">
                                         {(!isEmpty(user.schac_home_organisation) && (values[attribute] || user[attribute])) &&
                                         <span
-                                            dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.providedBy", {institution: user.schac_home_organisation}))}}/>
+                                            dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.providedBy",
+                                                    {institution: user.schac_home_organisation}))}}/>
                                         }
                                     </td>}
-                                    {attribute === "username"
+                                    {(attribute === "username" ||  attribute === "affiliation")
                                     && <td className="actions">
                                         <span
                                             dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.generatedBy"))}}/>
