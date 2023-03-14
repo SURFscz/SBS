@@ -1,5 +1,5 @@
 import React from "react";
-import Modal from "react-modal";
+
 import I18n from "i18n-js";
 import "./JoinRequestDialog.scss";
 import Button from "./Button";
@@ -8,6 +8,7 @@ import {isEmpty} from "../utils/Utils";
 import {joinRequestForCollaboration} from "../api";
 import {ReactComponent as InformationIcon} from "../icons/informational.svg";
 import DOMPurify from "dompurify";
+import {AlertType, Modal} from "@surfnet/sds";
 
 export default class JoinRequestDialog extends React.Component {
 
@@ -30,31 +31,14 @@ export default class JoinRequestDialog extends React.Component {
         refresh(() => setTimeout(() => this.props.history.push("/home/joinrequests"), 75));
     }
 
-    joinRequestDisclaimer = () => {
-        return (<div className="join-request-disclaimer">
-            <p>{I18n.t("welcomeDialog.infoJoinRequest")}</p>
-        </div>);
-    }
-
-    renderForm = (collaboration, motivation, close) => {
+    renderForm = (collaboration, motivation) => {
         return (
             <div>
-                <section className="explanation">
-                    <span
-                        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("registration.explanation", {name: collaboration.name}))}}/>
-                </section>
                 <InputField name={I18n.t("registration.motivation", {name: collaboration.name})}
                             value={motivation}
                             multiline={true}
                             placeholder={I18n.t("registration.motivationPlaceholder")}
                             onChange={e => this.setState({motivation: e.target.value})}/>
-                <section className="actions">
-                    <Button cancelButton={true} txt={I18n.t("forms.cancel")}
-                            onClick={close}/>
-                    <Button txt={I18n.t("forms.request")}
-                            disabled={isEmpty(motivation)}
-                            onClick={this.submit}/>
-                </section>
             </div>
         );
     }
@@ -79,27 +63,35 @@ export default class JoinRequestDialog extends React.Component {
             ;
     }
 
+    content = (submitted, collaboration, motivation) => {
+        return (
+            <div className="join-request-form">
+                {!submitted &&
+                this.renderForm(collaboration, motivation, close)}
+            </div>
+        );
+    }
+
     render() {
         const {collaboration, isOpen = false, close} = this.props;
         const {motivation, submitted} = this.state;
+        if (!isOpen) {
+            return null;
+        }
+        const subTitle = submitted ? I18n.t("registration.feedback.info", {name: collaboration.name}) :
+            I18n.t("registration.explanation", {name: collaboration.name});
         return (
             <Modal
-                isOpen={isOpen}
-                onRequestClose={close}
-                contentLabel={I18n.t("registration.title", {name: collaboration.name})}
-                className="join-request-dialog-content"
-                overlayClassName="join-request-dialog-overlay"
-                closeTimeoutMS={250}
-                ariaHideApp={false}>
-                <h1>{I18n.t("registration.title", {name: collaboration.name})}</h1>
-                <div className="join-request-form">
-                    {!submitted &&
-                    this.renderForm(collaboration, motivation, close)}
-                    {submitted && this.renderFeedback(collaboration)}
-                </div>
-
-
-            </Modal>
+                confirm={submitted ? this.gotoHome : this.submit}
+                cancel={submitted ? null : close}
+                alertType={AlertType.Info}
+                subTitle={subTitle}
+                children={this.content(submitted, collaboration, motivation)}
+                title={I18n.t("registration.title", {name: collaboration.name})}
+                cancelButtonLabel={submitted ? null : I18n.t("forms.cancel")}
+                confirmationButtonLabel={submitted ? I18n.t("confirmationDialog.ok") : I18n.t("forms.request")}
+                confirmDisabled={isEmpty(motivation)}
+                question={null}/>
         );
     }
 

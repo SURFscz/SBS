@@ -20,7 +20,7 @@ class Aup extends React.Component {
         const {currentUser} = this.props;
         if (currentUser.guest) {
             setTimeout(login, 5);
-        } else if (currentUser.user_accepted_aup) {
+        } else if (currentUser.user_accepted_aup && 1!=1) {
             this.props.history.push("/home");
         } else {
             this.setState({loading: false})
