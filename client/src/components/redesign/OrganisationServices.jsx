@@ -13,6 +13,7 @@ import ToggleSwitch from "./ToggleSwitch";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
 import ConfirmationDialog from "../ConfirmationDialog";
+import {Tooltip} from "@surfnet/sds";
 
 class OrganisationServices extends React.Component {
 
@@ -105,11 +106,13 @@ class OrganisationServices extends React.Component {
         return (
             <div className={"toggle-switch-container"}>
                 <div className={"toggle-switch-inner-container"}>
+                    {(allowed && !tooltip) &&
                     <ToggleSwitch onChange={this.onToggle(service, organisation)}
-                                  disabled={!allowed || tooltip}
                                   value={organisation.services.some(s => s.id === service.id)}
                                   animate={false}
-                                  tooltip={tooltip}/>
+                                  tooltip={tooltip}/>}
+                    {tooltip &&
+                    <Tooltip tip={tooltip} standalone={true}/>}
                 </div>
             </div>
         )
