@@ -1,90 +1,10 @@
 @import "../stylesheets/vars.scss";
 
 
-.join-request-dialog-overlay {
-    position: fixed;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(255, 255, 255, 0.85);
-    z-index: 5;
+.join-request-form {
 
-    .join-request-dialog-content {
-        padding: 40px 60px;
-
-        @media (max-width: $compact-medium) {
-            padding: 20px;
-        }
-
-        background-color: white;
-        overflow: auto;
-        border-radius: $br;
-        outline: none;
-        z-index: 5;
-        display: flex;
-        flex-direction: column;
-        box-shadow: 1px 2px 2px 0 rgba(0, 0, 0, 0.3);
-        border: 1px solid $lighter-grey;
-
-
-        h1 {
-            margin-bottom: 30px;
-        }
-
-        .join-request-disclaimer {
-            p {
-                margin-bottom: 20px
-            }
-        }
-
-        section.explanation {
-            background-color: $yellow;
-            padding: 15px;
-            border-radius: $br;
-
-            &.informational {
-                display: flex;
-                align-items: center;
-                background-color: #95d7e4;
-
-                svg {
-                    margin-right: 15px;
-                    width: 64px;
-                    height: auto;
-                }
-            }
-        }
-
-        textarea, .checkbox {
-            margin-bottom: 25px;
-        }
-
-    }
-}
-
-.ReactModalPortal .join-request-dialog-overlay {
-    transition: opacity 250ms ease-in-out;
-
-    &--before-close {
-        opacity: 0;
-    }
-}
-
-.ReactModalPortal .join-request-dialog-content {
-    transition: top 250ms ease-in-out, bottom 250ms ease-in-out;
-    width: 860px;
-    max-height: 85vh;
-
-    @media (max-width: $compact-medium) {
-        width: 280px;
+    textarea, .checkbox {
+        margin-bottom: 25px;
     }
 
-    &--before-close {
-        top: -50%;
-        bottom: 100%;
-    }
 }
