@@ -22,39 +22,48 @@ def _replace_empty_string_values(d: dict):
     return d
 
 
+def _compare_with_none_equals_empty(attr_remote, attr_sram):
+    if isinstance(attr_sram, str) and not len(attr_sram.strip()):
+        attr_sram = None
+    return attr_sram != attr_remote
+
+
 def _user_changed(user: User, remote_user: dict):
     remote_user = _replace_empty_string_values(remote_user)
-    if remote_user.get("userName") != user.username:
+    if _compare_with_none_equals_empty(remote_user.get("userName"), user.username):
         return True
-    if remote_user.get("name", {}).get("givenName") != user.given_name:
+    if _compare_with_none_equals_empty(remote_user.get("name", {}).get("givenName"), user.given_name):
         return True
-    if remote_user.get("name", {}).get("familyName") != user.family_name:
+    if _compare_with_none_equals_empty(remote_user.get("name", {}).get("familyName"), user.family_name):
         return True
-    if remote_user.get("displayName") != user.name:
+    if _compare_with_none_equals_empty(remote_user.get("displayName"), user.name):
         return True
     if remote_user.get("active") is user.suspended:
         return True
-    if remote_user.get("emails", [{"value": None}])[0].get("value") != user.email:
+    if _compare_with_none_equals_empty(remote_user.get("emails", [{"value": None}])[0].get("value"), user.email):
         return True
     ssh_keys = sorted([base64.b64encode(ssh_key.ssh_value.encode()).decode() for ssh_key in user.ssh_keys])
     remote_ssh_keys = sorted([c.get("value") for c in remote_user.get("x509Certificates", [])])
     if remote_ssh_keys != ssh_keys:
         return True
     if SCIM_SCHEMA_SRAM_USER in remote_user:
-        if remote_user[SCIM_SCHEMA_SRAM_USER].get("eduPersonScopedAffiliation") != user.affiliation:
+        eduPersonScopedAffiliation = remote_user[SCIM_SCHEMA_SRAM_USER].get("eduPersonScopedAffiliation")
+        if _compare_with_none_equals_empty(eduPersonScopedAffiliation, user.affiliation):
             return True
-        if remote_user[SCIM_SCHEMA_SRAM_USER].get("eduPersonUniqueId") != user.uid:
+        if _compare_with_none_equals_empty(remote_user[SCIM_SCHEMA_SRAM_USER].get("eduPersonUniqueId"), user.uid):
             return True
-        if remote_user[SCIM_SCHEMA_SRAM_USER].get("voPersonExternalAffiliation") != user.scoped_affiliation:
+        voPersonExternalAffiliation = remote_user[SCIM_SCHEMA_SRAM_USER].get("voPersonExternalAffiliation")
+        if _compare_with_none_equals_empty(voPersonExternalAffiliation, user.scoped_affiliation):
             return True
-        if remote_user[SCIM_SCHEMA_SRAM_USER].get("voPersonExternalId") != user.eduperson_principal_name:
+        voPersonExternalId = remote_user[SCIM_SCHEMA_SRAM_USER].get("voPersonExternalId")
+        if _compare_with_none_equals_empty(voPersonExternalId, user.eduperson_principal_name):
             return True
     return False
 
 
 def _group_changed(group: Union[Group, Collaboration], remote_group: dict, remote_scim_users: List[dict]):
     remote_group = _replace_empty_string_values(remote_group)
-    if remote_group.get("displayName") != group.name:
+    if _compare_with_none_equals_empty(remote_group.get("displayName"), group.name):
         return True
     sram_members = sorted([member.user.external_id for member in group.collaboration_memberships if member.is_active])
     remote_users_by_id = {u["id"]: u for u in remote_scim_users}
@@ -66,9 +75,9 @@ def _group_changed(group: Union[Group, Collaboration], remote_group: dict, remot
     if sram_members != sorted(remote_members):
         return True
     if SCIM_SCHEMA_SRAM_GROUP in remote_group:
-        if remote_group[SCIM_SCHEMA_SRAM_GROUP].get("description") != group.description:
+        if _compare_with_none_equals_empty(remote_group[SCIM_SCHEMA_SRAM_GROUP].get("description"), group.description):
             return True
-        if remote_group[SCIM_SCHEMA_SRAM_GROUP].get("urn") != group.global_urn:
+        if _compare_with_none_equals_empty(remote_group[SCIM_SCHEMA_SRAM_GROUP].get("urn"), group.global_urn):
             return True
 
         labels = [t.tag_value for t in group.tags] if hasattr(group, "tags") else []
