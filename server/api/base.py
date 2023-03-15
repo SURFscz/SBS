@@ -69,7 +69,7 @@ def auth_filter(app_config):
             csrf_valid = csrf_token_client and csrf_token_server and csrf_token_client == csrf_token_server
             if prod_mode and not csrf_valid and url_path != "/api/mock":
                 raise Unauthorized(description="Invalid CSRFToken")
-        if "api/aup/agree" in url or "api/users/refresh" in url:
+        if "api/aup/agree" in url or "api/users/refresh" in url or "api/mfa/token_reset_request" in url:
             return
         if not oidc_config.second_factor_authentication_required or session["user"].get("second_factor_confirmed"):
             request_context.is_authorized_api_call = False
