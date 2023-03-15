@@ -1,101 +1,43 @@
 @import "../stylesheets/vars.scss";
 
-.welcome-dialog-overlay {
-    position: fixed;
+.sds--modal--container.welcome-dialog {
+    width: 75vw;
+    max-width: 620px;
+    max-height: 75vh;
+    overflow: initial;
+}
+
+.welcome-dialog-content {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(255, 255, 255, 0.75);
-    z-index: 5;
+    flex-direction: column;
 
-    .welcome-dialog-content {
-        padding: 40px 60px;
-
-        @media (max-width: $compact-medium) {
-            padding: 20px;
-        }
-
-        background-color: white;
-        overflow: auto;
-        border-radius: $br;
-        outline: none;
-        z-index: 5;
+    div.toggle-role {
+        margin-left: auto;
         display: flex;
-        flex-direction: column;
-        border: 1px solid $lighter-grey;
-        box-shadow: 1px 2px 2px 0 rgba(0, 0, 0, 0.3);
+        align-items: center;
+        margin-bottom: 25px;
 
-        h1 {
-            margin-bottom: 30px;
+        label.switch {
+            margin-left: auto;
         }
 
-        div.toggle-role {
-            display: flex;
-            align-items: center;
-            padding-bottom: 25px;
-            margin-bottom: 25px;
-            border-bottom: 2px solid $lighter-grey;
-
-            label.switch {
-                margin-left: auto;
-            }
-
-            span.toggle-txt {
-                margin-left: 15px;
-                font-size: 18px;
-            }
+        span.toggle-txt {
+            margin-left: 15px;
+            font-size: 18px;
         }
-
-        section.role {
-            display: flex;
-            align-items: center;
-            border-radius: 4px;
-            padding: 15px;
-            margin-bottom: 35px;
-
-            svg {
-                margin-right: 15px;
-            }
-
-            background-color: #95d7e4;
-        }
-
-        button {
-            margin-top: 25px;
-        }
-
-
-        h2 {
-            margin-bottom: 20px;
-        }
-
-
-    }
-}
-
-.ReactModalPortal .welcome-dialog-overlay {
-    transition: opacity 250ms ease-in-out;
-
-    &--before-close {
-        opacity: 0;
-    }
-}
-
-.ReactModalPortal .welcome-dialog-content {
-    transition: top 250ms ease-in-out, bottom 250ms ease-in-out;
-    width: 860px;
-    max-height: 85vh;
-
-    @media (max-width: $compact-medium) {
-        width: 280px;
     }
 
-    &--before-close {
-        top: -50%;
-        bottom: 100%;
+    section.role {
+        display: flex;
+        align-items: center;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 35px;
+
+        svg {
+            margin-right: 15px;
+        }
+
+        background-color: #95d7e4;
     }
 }
