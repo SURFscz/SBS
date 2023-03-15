@@ -1,70 +1,18 @@
 @import "../stylesheets/vars.scss";
-@import "../stylesheets/mde_preview.scss";
 
-.ssh-dialog-overlay {
-    position: fixed;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(255, 255, 255, 0.85);
-    z-index: 5;
-
-    .ssh-dialog-content {
-        padding: 40px 60px;
-        max-height: 80vh;
-        @media (max-width: $compact-medium) {
-            padding: 20px;
-        }
-        background-color: white;
-        overflow: auto;
-        border-radius: $br;
-        outline: none;
-        z-index: 5;
-        display: flex;
-        flex-direction: column;
-        border: 1px solid $lighter-grey;
-        box-shadow: 1px 2px 2px 0 rgba(0, 0, 0, 0.3);
-
-        h1 {
-            margin-bottom: 35px;
-        }
-
-    }
-
-
-    section.ssh-keys-container {
-        h2 {
-            margin: 25px 0 20px 0;
-        }
-
-        .copy-to-clipboard.right {
-            max-height: 40px;
-        }
-
-    }
+.sds--modal--container.ssh-modal {
+    width: 75vw;
+    max-width: 75vw;
+    max-height: 75vh;
+    overflow: initial;
 }
 
-.ReactModalPortal .ssh-dialog-overlay {
-    transition: opacity 250ms ease-in-out;
-
-    &--before-close {
-        opacity: 0;
+.shh-dialog-inner {
+    .copy-to-clipboard.right {
+        max-height: 40px;
     }
-}
-
-.ReactModalPortal .ssh-dialog-content {
-    transition: top 250ms ease-in-out, bottom 250ms ease-in-out;
-    width: 660px;
-    @media (max-width: $compact-medium) {
-        width: 280px;
+    textarea {
+        height: 200px;
     }
 
-    &--before-close {
-        top: -50%;
-        bottom: 100%;
-    }
 }
