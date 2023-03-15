@@ -2,9 +2,13 @@
 
 .sds--modal--container.welcome-dialog {
     width: 75vw;
-    max-width: 620px;
+    max-width: 665px;
     max-height: 75vh;
     overflow: initial;
+
+    &.collaboration {
+        margin-top: 40px;
+    }
 }
 
 .welcome-dialog-content {

@@ -67,9 +67,8 @@ export default function CollaborationWelcomeDialog({
             title={I18n.t("welcomeDialog.title", {name: name})}
             confirmationButtonLabel={I18n.t("welcomeDialog.proceed", {name: collaboration.name})}
             confirmDisabled={disabled}
-            className={"welcome-dialog"}
+            className={"welcome-dialog collaboration"}
         />
-
     );
 
 }
