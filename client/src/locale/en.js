@@ -1674,6 +1674,7 @@ I18n.translations.en = {
     },
     error_dialog: {
         title: "Unexpected error",
+        subTitle: "An error has occurred",
         body: "This is embarrassing; an unexpected error has occurred. It has been logged and reported. Please try again...",
         deadEnd: "Nowhere to go from here",
         ok: "Close"
