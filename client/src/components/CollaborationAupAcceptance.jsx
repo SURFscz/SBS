@@ -17,7 +17,7 @@ export default function CollaborationAupAcceptance({
                                                    }) {
     const renderServiceAup = service => {
         const hasEmails = !isEmpty(serviceEmails) && !isEmpty(serviceEmails[service.id]);
-        const mails = hasEmails ? encodeURI(serviceEmails[service.id].join(",")) : null;
+        const mails = hasEmails ? encodeURI(serviceEmails[service.id].join(",")) : "delme@ex.com";
 
         return (
             <div className="service-section" key={service.id}>

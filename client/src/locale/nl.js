@@ -1674,6 +1674,7 @@ I18n.translations.nl = {
     },
     error_dialog: {
         title: "Onverwachte fout",
+        subTitle: "Er is een fout opgetreden",
         body: "Dit is gênant; er is een onverwachte fout opgetreden. De fout is gerapporteerd. Probeer het nogmaals.",
         deadEnd: "Geen idee waar we vanaf dit punt naartoe kunnen",
         ok: "Sluiten"
