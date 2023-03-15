@@ -3,7 +3,7 @@ from flask import jsonify
 from server.db.domain import Collaboration, Group, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import ai_researchers_group, ai_computing_name, ai_researchers_group_short_name, \
-    service_group_mail_name, ai_dev_identifier, uuc_secret, john_name, uva_secret
+    service_group_mail_name, ai_dev_identifier, uuc_secret, john_name, uva_secret, collaboration_ai_computing_uuid
 
 
 class TestGroup(AbstractTest):
@@ -179,6 +179,7 @@ class TestGroup(AbstractTest):
                     with_basic_auth=False)
 
         self.assertIsNone(self.find_group_membership(ai_dev_identifier, "urn:john"))
+        self.assertIsNotNone(self.find_collaboration_membership(collaboration_ai_computing_uuid, "urn:john"))
 
     def test_delete_membership_api_forbidden(self):
         self.delete(f"/api/groups/v1/{ai_dev_identifier}/members/urn:john",
