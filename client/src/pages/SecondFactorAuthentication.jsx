@@ -351,11 +351,11 @@ class SecondFactorAuthentication extends React.Component {
                     <Button cancelButton={true}
                             onClick={this.closeResetCode}
                             txt={I18n.t("forms.cancel")}
-                            txt="cancel"/>
+                            />
                     <Button disabled={submitDisabled}
                             onClick={this.submitResetCode}
                             txt={I18n.t("mfa.reset.submit")}
-                            txt="update"/>
+                            />
                 </section>
             </div>
         )

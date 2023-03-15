@@ -1862,7 +1862,7 @@ I18n.translations.nl = {
         createInfo: "<p>Beheerders maken een pagina aan voor de onderzoekers van hun samenwerking.</p>" +
             "<p>Vervolgens selecteren zij diensten uit de catalogus om ze beschikbaar te maken voor de samenwerking.</p>",
         invite: "Uitnodigen",
-        inviteInfo: "<p>Beheerders nodige medeonderzoekers uit voor de samenwerkingspagina.</p>" +
+        inviteInfo: "<p>Beheerders nodigen medeonderzoekers uit voor de samenwerkingspagina.</p>" +
             "<p>Ze kunnen ook leden uitnodigen mee te helpen als beheerder.</p>",
         join: "Meedoen",
         joinInfo: "<p>Uitgenodigde onderzoekers loggen in via hun instelling of eduID.nl.</p>",
@@ -1959,7 +1959,7 @@ I18n.translations.nl = {
         },
         reset: {
             title: "Reset je authenticatiecode",
-            info1: "Voer het reset token in dat je beheerder hebt gekregen",
+            info1: "Voer het reset token in dat je beheerder je hebt gegeven",
             submit: "Verzend",
             resetCodePlaceholder: "Reset token",
             invalid: "Foutief reset token",
