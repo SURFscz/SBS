@@ -1,9 +1,6 @@
 import React from "react";
-import Modal from "react-modal";
 import I18n from "i18n-js";
 import "./CroppedImageDialog.scss";
-
-import Button from "../Button";
 import {ReactComponent as NotFoundIcon} from "../../icons/image-not-found.svg";
 import {isEmpty} from "../../utils/Utils";
 import ReactCrop from "react-image-crop";
@@ -11,6 +8,7 @@ import ErrorIndicator from "./ErrorIndicator";
 import CheckBox from "../CheckBox";
 import {sanitizeHtml} from "../../utils/Markdown";
 import {srcUrl} from "../../utils/Image";
+import {Modal} from "@surfnet/sds";
 
 export default class CroppedImageDialog extends React.PureComponent {
 
@@ -238,26 +236,19 @@ export default class CroppedImageDialog extends React.PureComponent {
         const {onSave, onCancel, isOpen, name, value, title} = this.props;
         const {error, crop, source, isSvg, busy, addWhiteSpace} = this.state;
         const src = source || value;
+        if (!isOpen) {
+            return null;
+        }
         return (
             <Modal
-                isOpen={isOpen}
-                onRequestClose={this.onCancelInternal}
-                className="cropped-image-dialog-content"
-                overlayClassName="cropped-image-dialog-overlay"
-                closeTimeoutMS={0}
-                ariaHideApp={false}>
-                <h2>{title}</h2>
-                {this.renderImages(error, src, isSvg, crop, onCancel, onSave, name, addWhiteSpace)}
-                <section className="actions">
-                    <Button cancelButton={true}
-                            txt={I18n.t("forms.cancel")}
-                            onClick={this.onCancelInternal}/>
-                    <Button txt={I18n.t("forms.apply")}
-
-                            disabled={busy || !src}
-                            onClick={this.onSaveInternal}/>
-                </section>
-            </Modal>
+                confirm={this.onSaveInternal}
+                cancel={this.onCancelInternal}
+                children={this.renderImages(error, src, isSvg, crop, onCancel, onSave, name, addWhiteSpace)}
+                title={title}
+                cancelButtonLabel={I18n.t("forms.cancel")}
+                confirmationButtonLabel={I18n.t("forms.apply")}
+                confirmDisabled={busy || !src}
+            />
         );
 
     }
