@@ -230,11 +230,13 @@ def api_delete_group_membership(group_identifier, user_uid):
     if not organisation or organisation.id != group_membership.collaboration.organisation_id:
         raise Forbidden()
 
-    db.session.delete(group_membership)
+    group = Group.query.filter(Group.identifier == group_identifier).one()
+    group.collaboration_memberships.remove(group_membership)
+
+    db.session.merge(group)
     db.session.commit()
 
     emit_socket(f"collaboration_{group_membership.collaboration_id}")
-    group = Group.query.filter(Group.identifier == group_identifier).one()
     broadcast_group_changed(group.id)
 
     return None, 204
