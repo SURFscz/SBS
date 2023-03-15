@@ -47,16 +47,16 @@ def _user_changed(user: User, remote_user: dict):
     if remote_ssh_keys != ssh_keys:
         return True
     if SCIM_SCHEMA_SRAM_USER in remote_user:
-        eduPersonScopedAffiliation = remote_user[SCIM_SCHEMA_SRAM_USER].get("eduPersonScopedAffiliation")
-        if _compare_with_none_equals_empty(eduPersonScopedAffiliation, user.affiliation):
+        edu_person_scoped_affiliation = remote_user[SCIM_SCHEMA_SRAM_USER].get("eduPersonScopedAffiliation")
+        if _compare_with_none_equals_empty(edu_person_scoped_affiliation, user.affiliation):
             return True
         if _compare_with_none_equals_empty(remote_user[SCIM_SCHEMA_SRAM_USER].get("eduPersonUniqueId"), user.uid):
             return True
-        voPersonExternalAffiliation = remote_user[SCIM_SCHEMA_SRAM_USER].get("voPersonExternalAffiliation")
-        if _compare_with_none_equals_empty(voPersonExternalAffiliation, user.scoped_affiliation):
+        vo_person_external_affiliation = remote_user[SCIM_SCHEMA_SRAM_USER].get("voPersonExternalAffiliation")
+        if _compare_with_none_equals_empty(vo_person_external_affiliation, user.scoped_affiliation):
             return True
-        voPersonExternalId = remote_user[SCIM_SCHEMA_SRAM_USER].get("voPersonExternalId")
-        if _compare_with_none_equals_empty(voPersonExternalId, user.eduperson_principal_name):
+        vo_person_external_id = remote_user[SCIM_SCHEMA_SRAM_USER].get("voPersonExternalId")
+        if _compare_with_none_equals_empty(vo_person_external_id, user.eduperson_principal_name):
             return True
     return False
 
