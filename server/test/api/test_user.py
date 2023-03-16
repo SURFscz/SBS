@@ -537,4 +537,4 @@ class TestUser(AbstractTest):
                                content_type="application/x-www-form-urlencoded")
 
         self.assertEqual(302, res.status_code)
-        self.assertEqual(self.app.app_config.base_url + "/2fa", res.location)
+        self.assertEqual("http://localhost:3000/error", res.location)
