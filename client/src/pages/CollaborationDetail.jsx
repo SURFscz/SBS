@@ -84,6 +84,7 @@ class CollaborationDetail extends React.Component {
     }
 
     componentWillUnmount = () => {
+        clearFlash();
         AppStore.update(s => {
             s.objectRole = null;
             s.actions = [];

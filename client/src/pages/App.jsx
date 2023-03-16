@@ -199,8 +199,8 @@ class App extends React.Component {
                     {!reloading &&
                     <Switch>
                         <Route exact path="/" render={props => {
-                            if (currentUser.guest) {
-                                const rateLimited = getParameterByName("rate-limited", window.location.search)
+                            const rateLimited = getParameterByName("rate-limited", window.location.search)
+                            if (rateLimited || currentUser.guest) {
                                 return <Login user={currentUser} {...props} rateLimited={rateLimited}/>;
                             }
                             const state = getParameterByName("state", window.location.search);
