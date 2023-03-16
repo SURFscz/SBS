@@ -51,6 +51,10 @@
                 padding: 25px 40px;
                 margin: 30px auto 0;
                 min-height: 244px;
+
+                @media (max-width: $compact-medium) {
+                    padding: 15px 20px;
+                }
             }
 
             .header-left {
