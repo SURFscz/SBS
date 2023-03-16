@@ -8,6 +8,7 @@ Create Date: 2023-03-14 11:24:52.875046
 import uuid
 
 from alembic import op
+from sqlalchemy import text
 
 # revision identifiers, used by Alembic.
 revision = '7f26eec7f91c'
@@ -21,19 +22,27 @@ def insert_group(conn, row):
     collaboration_id = row["collaboration_id"]
     auto_provision_members = row["sg_auto_provision_members"]
     short_name = f"{row['abbreviation']}-{row['sg_short_name']}"
-    conn.execute(f"INSERT INTO `groups` (name, short_name, global_urn, description, auto_provision_members, "
-                 f"collaboration_id, created_by, updated_by, identifier, service_group_id) VALUES "
-                 f"('{row['sg_name']}', "  # name
-                 f"'{short_name}',"  # short_name
-                 f"'{row['o_short_name']}:{row['c_short_name']}:{short_name}',"  # global_urn
-                 f"'Provisioned by service {row['s_name']} - {row['sg_description']}',"  # description
-                 f"{auto_provision_members},"  # auto_provision_members
-                 f"{collaboration_id},"  # collaboration_id
-                 f"'migration',"  # created_by
-                 f"'migration',"  # updated_by
-                 f"'{str(uuid.uuid4())}',"  # identifier
-                 f"{service_group_id})")  # service_group_id
+    query = text("""
+        INSERT INTO `groups`
+            (name, short_name, global_urn, description, auto_provision_members,
+             collaboration_id, created_by, updated_by, identifier, service_group_id)
+        VALUES
+            (:name, :short_name, :global_urn, :description, :auto_prov,
+             :collaboration_id, :created_by, :updated_by, :identifier, :service_group_id)
+    """)
 
+    conn.execute(query,
+                 name             = row['sg_name'],
+                 short_name       = short_name,
+                 global_urn       = f"{row['o_short_name']}:{row['c_short_name']}:{short_name}",
+                 description      = f"Provisioned by service {row['s_name']} - {row['sg_description']}",
+                 auto_prov        = auto_provision_members,
+                 collaboration_id = collaboration_id,
+                 created_by       = "migration",
+                 updated_by       = "migration",
+                 identifier       =  str(uuid.uuid4()),
+                 service_group_id =  service_group_id
+     )
 
 def upgrade():
     conn = op.get_bind()
