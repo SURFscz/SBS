@@ -11,13 +11,12 @@ export default class Flash extends React.PureComponent {
         super(props, context);
         this.state = {
             flash: {},
-            className: "hide",
             type: "info"
         };
         this.callback = flash => {
-            this.setState({flash: flash, className: isEmpty(flash) || isEmpty(flash.message) ? "hide" : ""});
+            this.setState({flash: flash});
             if ((flash && flash.message) && (!flash.type || flash.type === "info")) {
-                setTimeout(() => this.setState({className: "hide", flash: {}}), 5000);
+                setTimeout(() => this.setState({flash: {}}), 5000);
             }
         };
     }
@@ -32,16 +31,15 @@ export default class Flash extends React.PureComponent {
     }
 
     render() {
-        const {flash, className} = this.state;
-        if (flash.type === "error" || flash.type === "warning") {
+        const {flash} = this.state;
+        if (!isEmpty(flash) && (flash.type === "error" || flash.type === "warning")) {
             return (
                 <Alert message={flash.message}
                        alertType={flash.type === "warning" ? AlertType.Warning : AlertType.Error}
-                       hide={className === "hide"}
                        close={clearFlash}/>
             );
         }
-        if (flash.message) {
+        if (!isEmpty(flash) && !isEmpty(flash.message)) {
             return (
                 <ToasterContainer>
                     <Toaster message={flash.message}
@@ -49,15 +47,5 @@ export default class Flash extends React.PureComponent {
                 </ToasterContainer>);
         }
         return null;
-        // return (
-        //     <div className={`flash ${className} ${flash.type}`}>
-        //         <div className="message-container">
-        //             {messages.map((message, index) => <p key={index}>{message}</p>)}
-        //         </div>
-        //         <a className="close" href="/close" onClick={clearFlash}>
-        //             <FontAwesomeIcon icon="times"/>
-        //         </a>
-        //     </div>
-        // );
     }
 }

@@ -54,7 +54,7 @@
             }
 
             .header-left {
-                margin-right: 50px;
+                margin-right: 40px;
                 width: 50%;
 
                 button.sds--btn--primary {
@@ -69,7 +69,7 @@
                 }
 
                 &.info {
-                    width: 45%;
+                    width: 50%;
                     @media (max-width: $compact-medium) {
                         width: auto;
                         margin: 25px auto;
@@ -79,7 +79,7 @@
             }
 
             .header-right {
-                width: 50%;
+                width: 48%;
                 @media (max-width: $compact-medium) {
                     width: auto;
                     margin: 25px auto;

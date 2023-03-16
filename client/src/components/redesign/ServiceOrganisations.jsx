@@ -191,7 +191,6 @@ class ServiceOrganisations extends React.Component {
                 key: "category",
                 header: I18n.t("models.organisations.category")
             }]
-        // debugger; // eslint-disable-line no-debugger
         return (<div>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
