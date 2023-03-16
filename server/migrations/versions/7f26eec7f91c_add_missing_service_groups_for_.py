@@ -32,17 +32,18 @@ def insert_group(conn, row):
     """)
 
     conn.execute(query,
-                 name             = row['sg_name'],
-                 short_name       = short_name,
-                 global_urn       = f"{row['o_short_name']}:{row['c_short_name']}:{short_name}",
-                 description      = f"Provisioned by service {row['s_name']} - {row['sg_description']}",
-                 auto_prov        = auto_provision_members,
-                 collaboration_id = collaboration_id,
-                 created_by       = "migration",
-                 updated_by       = "migration",
-                 identifier       =  str(uuid.uuid4()),
-                 service_group_id =  service_group_id
-     )
+                 name=row['sg_name'],
+                 short_name=short_name,
+                 global_urn=f"{row['o_short_name']}:{row['c_short_name']}:{short_name}",
+                 description=f"Provisioned by service {row['s_name']} - {row['sg_description']}",
+                 auto_prov=auto_provision_members,
+                 collaboration_id=collaboration_id,
+                 created_by="migration",
+                 updated_by="migration",
+                 identifier=str(uuid.uuid4()),
+                 service_group_id=service_group_id
+                 )
+
 
 def upgrade():
     conn = op.get_bind()
