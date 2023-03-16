@@ -420,8 +420,6 @@ def acs():
     if not user:
         return redirect(location=f"{cfg.base_url}/error")
 
-    user.ssid_required = False
-
     # There is no other way to get the status back
     status = OneLogin_Saml2_Utils.get_status(auth._last_response)
     second_factor_confirmed = OneLogin_Saml2_Constants.STATUS_SUCCESS == status["code"]
@@ -429,7 +427,11 @@ def acs():
     logger.debug(f"User {user_uid} got SSID response (status={status})")
 
     if second_factor_confirmed:
+        user.ssid_required = False
         user.last_login_date = datetime.datetime.now()
+    else:
+        return redirect(location=f"{cfg.base_url}/error")
+
     return redirect_to_client(cfg, second_factor_confirmed, user)
 
 
