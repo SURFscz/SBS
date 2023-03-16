@@ -125,6 +125,7 @@ class SecondFactorAuthentication extends React.Component {
         setTimeout(() => {
             if (this.totpRefs && this.totpRefs[0] !== "") {
                 this.totpRefs[0].focus();
+                window.scrollTo(0, 0);
             }
         }, 350);
     }

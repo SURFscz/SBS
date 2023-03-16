@@ -37,7 +37,7 @@ def login_user():
         "name": user.name,
         "email": user.email,
         "user_accepted_aup": user.has_agreed_with_aup(),
-        "second_factor_confirmed": True
+        "second_factor_confirmed": data.get("second_factor_confirmed", True)
     }
     session["user"] = {**session_data, **res}
     if CSRF_TOKEN not in session:
