@@ -62,7 +62,11 @@ def _do_verify_2fa(user: User, secret):
 @mfa_api.route("/token_reset_request", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def token_reset_request():
-    user = User.query.filter(User.id == current_user_id()).one()
+    second_fa_uuid = query_param("second_fa_uuid", required=False)
+    if second_fa_uuid:
+        user = _get_user_by_second_fa_uuid(second_fa_uuid)
+    else:
+        user = User.query.filter(User.id == current_user_id()).one()
     return eligible_users_to_reset_token(user), 200
 
 
@@ -71,7 +75,11 @@ def token_reset_request():
 def token_reset_request_post():
     data = current_request.get_json()
     email = data["email"]
-    user = User.query.filter(User.id == current_user_id()).one()
+    second_fa_uuid = data.get("second_fa_uuid", None)
+    if second_fa_uuid:
+        user = _get_user_by_second_fa_uuid(second_fa_uuid)
+    else:
+        user = User.query.filter(User.id == current_user_id()).one()
     admins = eligible_users_to_reset_token(user)
     if len(list(filter(lambda admin: admin["email"] == email, admins))) == 0:
         raise Forbidden()

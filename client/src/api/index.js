@@ -189,12 +189,17 @@ export function update2fa(new_totp_value, current_totp) {
     return postPutJson("/api/mfa/update2fa", {new_totp_value, current_totp}, "POST", false);
 }
 
-export function tokenResetRespondents() {
-    return fetchJson("/api/mfa/token_reset_request");
+export function tokenResetRespondents(second_fa_uuid) {
+    const queryPart = second_fa_uuid ? `?second_fa_uuid=${second_fa_uuid}` : ""
+    return fetchJson(`/api/mfa/token_reset_request${queryPart}`);
 }
 
-export function tokenResetRequest(admin, message) {
-    return postPutJson("/api/mfa/token_reset_request", {email: admin.email, message}, "POST", false);
+export function tokenResetRequest(admin, message, second_fa_uuid) {
+    const body = {email: admin.email, message};
+    if (second_fa_uuid) {
+        body.second_fa_uuid = second_fa_uuid;
+    }
+    return postPutJson("/api/mfa/token_reset_request", body, "POST", false);
 }
 
 export function reset2fa(token) {

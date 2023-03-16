@@ -4,6 +4,7 @@ noauth_listing = [
     "/api/mfa/jwks",
     "/api/mfa/sfo",
     "/api/mfa/ssid_start",
+    "/api/mfa/token_reset_request",
     "/api/mfa/verify2fa_proxy_authz",
     "/api/mock",
     "/api/organisation_invitations/find_by_hash",

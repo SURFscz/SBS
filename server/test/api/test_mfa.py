@@ -102,6 +102,13 @@ class TestMfa(AbstractTest):
         self.assertEqual(1, len(res))
         self.assertEqual("john@example.org", res[0]["email"])
 
+    def test_token_reset_request_anonymous(self):
+        mary = self.add_second_fa_uuid_to_user("urn:mary")
+        res = self.get("/api/mfa/token_reset_request", query_data={"second_fa_uuid": mary.second_fa_uuid},
+                       with_basic_auth=False)
+        self.assertEqual(1, len(res))
+        self.assertEqual("john@example.org", res[0]["email"])
+
     def test_token_reset_request_post(self):
         mail = self.app.mail
         with mail.record_messages() as outbox:
@@ -113,6 +120,17 @@ class TestMfa(AbstractTest):
             self.assertTrue("please" in mail_msg.html)
             mary = User.query.filter(User.uid == "urn:mary").one()
             self.assertTrue(mary.mfa_reset_token in mail_msg.html)
+
+    def test_token_reset_request_post_anonymous(self):
+        mary = self.add_second_fa_uuid_to_user("urn:mary")
+        self.assertIsNone(mary.mfa_reset_token)
+
+        self.post("/api/mfa/token_reset_request",
+                  body={"email": "john@example.org", "message": "please", "second_fa_uuid": mary.second_fa_uuid},
+                  with_basic_auth=False)
+
+        mary = User.query.filter(User.uid == "urn:mary").one()
+        self.assertIsNotNone(mary.mfa_reset_token)
 
     def test_token_reset_request_post_invalid_email(self):
         self.login("urn:mary")
