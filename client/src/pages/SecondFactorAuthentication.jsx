@@ -254,7 +254,7 @@ class SecondFactorAuthentication extends React.Component {
         const submitDisabled = respondents.filter(respondent => respondent.selected).length === 0;
         return (<div className="authenticator-problems">
 
-            <h2>{I18n.t("mfa.lost.title")}</h2>
+            <h1>{I18n.t("mfa.lost.title")}</h1>
             <p>{I18n.t("mfa.lost.info")}</p>
             <ul>
                 {I18n.translations[I18n.locale].mfa.lost.reasons.map((option, i) =>
