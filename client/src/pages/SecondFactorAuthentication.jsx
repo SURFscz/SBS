@@ -171,9 +171,9 @@ class SecondFactorAuthentication extends React.Component {
     }
 
     sendResetRequest = () => {
-        const {respondents, message} = this.state;
+        const {respondents, message, secondFaUuid} = this.state;
         const admin = respondents.find(respondent => respondent.selected);
-        tokenResetRequest(admin, message).then(() => {
+        tokenResetRequest(admin, message, secondFaUuid).then(() => {
             setFlash(I18n.t("mfa.lost.flash"));
             this.setState({showExplanation: false, message: ""});
         });
