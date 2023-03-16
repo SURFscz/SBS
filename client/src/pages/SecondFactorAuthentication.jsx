@@ -136,10 +136,10 @@ class SecondFactorAuthentication extends React.Component {
 
     openResetRequest = e => {
         stopEvent(e);
-        const {respondents} = this.state;
+        const {respondents, secondFaUuid} = this.state;
         if (respondents.length === 0) {
             this.setState({loading: true});
-            tokenResetRespondents().then(res => {
+            tokenResetRespondents(secondFaUuid).then(res => {
                 res.forEach(respondent => respondent.selected = false);
                 res[0].selected = true;
                 this.setState({respondents: res, loading: false, showExplanation: true});
