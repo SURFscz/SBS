@@ -1,6 +1,7 @@
 import React from "react";
 import "./InputField.scss";
 import Button from "./Button";
+import I18n from "i18n-js";
 
 export default function UploadButton({
                                          name,
@@ -22,7 +23,7 @@ export default function UploadButton({
                    accept={acceptFileFormat}
                    style={{display: "none"}}
                    onChange={onFileUpload}/>
-            <Button txt={"Add SSH key"} onClick={onClick}/>
+            <Button txt={I18n.t("forms.uploadSSH")} onClick={onClick}/>
         </div>
     );
 

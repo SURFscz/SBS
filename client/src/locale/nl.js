@@ -133,6 +133,7 @@ I18n.translations.nl = {
         reset: "Herstel",
         yes: "Ja",
         upload: "Upload afbeelding",
+        uploadSSH: "Voeg SSH key toe",
         add: "Voeg een afbeelding toe",
         change: "Wijzig afbeelding",
         image: "Afbeelding moet tenminste 300x120 pixels en kleiner dan 2MB zijn",

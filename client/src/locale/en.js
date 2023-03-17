@@ -133,6 +133,7 @@ I18n.translations.en = {
         reset: "Reset",
         yes: "Yes",
         upload: "Upload image",
+        uploadSSH: "Add SSH key",
         add: "Add an image",
         change: "Change image",
         image: "Image must at least be 300x120 pixels and smaller then 2MB.",
