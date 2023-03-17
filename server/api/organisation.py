@@ -280,7 +280,7 @@ def organisation_invites():
             "recipient": administrator
         }, organisation, [administrator])
 
-    emit_socket(f"collaboration_{organisation.id}", include_current_user_id=True)
+    emit_socket(f"organisation_{organisation.id}", include_current_user_id=True)
 
     return None, 201
 
