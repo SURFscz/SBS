@@ -57,11 +57,11 @@ I18n.translations.nl = {
     login: {
         title: "Research Access Management",
         subTitle: "Login...",
-        suspended: "Je account is geschorst. Neem contact op sram-support@surf.nl om dit op te lossen",
-        rateLimited: "Je hebt de TOTP-verificatie rate-limited en daarom bent je uitgelogd en is je gebruikersaccount geschorst. Neem contact op met uw beheerder om dit op te lossen",
-        successfullyActivated: "Gelukt: je account is geheractiveerd",
+        suspended: "Je profiel is geschorst. Neem contact op sram-support@surf.nl om dit op te lossen",
+        rateLimited: "Je hebt de TOTP-verificatie rate-limited en daarom bent je uitgelogd en is je profiel geschorst. Neem contact op met uw beheerder om dit op te lossen",
+        successfullyActivated: "Gelukt: je profiel is geheractiveerd",
         closeBrowser: "Om volledig uit te loggen, moet je je browser sluiten",
-        closeBrowserAfterDelete: "Om het verwijderen van je account te voltooien, moet je je browser sluiten."
+        closeBrowserAfterDelete: "Om het verwijderen van je profiel te voltooien, moet je je browser sluiten."
     },
     home: {
         sram: "SURF Research Access Management",
@@ -159,7 +159,7 @@ I18n.translations.nl = {
             icon: "",
             profile: "Je profiel",
             subProfile: "Aangemaakt op {{date}}",
-            subOtherProfile: "Het account van {{name}} is aangemaakt op {{date}}",
+            subOtherProfile: "Het profiel van {{name}} is aangemaakt op {{date}}",
             institute: "Instelling",
             instituteUnknown: "onbekend",
             instituteUnknownMeTooltip: "Je instelling heeft het identificerende attribuut 'shacHomeOrganization' niet vrijgegeven.",
@@ -603,8 +603,8 @@ I18n.translations.nl = {
         },
         providedBy: "Geleverd door <strong>{{institution}}</strong>",
         generatedBy: "Gegenereerd door <strong>SRAM</strong>",
-        delete: "Verwijder mijn account",
-        deleteConfirmation: "Weet je zeker dat je je account voorgoed wil verwijderen?",
+        delete: "Verwijder mijn profiel",
+        deleteConfirmation: "Weet je zeker dat je je profiel voorgoed wil verwijderen?",
         deleteConfirmationWarning: "Al je lidmaatschappen worden verwijderd. Dit kan niet worden teruggedraaid.",
         deleteConfirmationCheck: "Als je toch wil doorgaan, typ dan ter bevestiging je volledige naam in.",
         deleteOtherConfirmation: "Are you sure you want to delete the user {{name}} for all eternity?",
@@ -657,7 +657,7 @@ I18n.translations.nl = {
         schac_home_organisation: "Organisatie domeinnaam",
         edu_members: "EDU lidmaatschap",
         eduperson_principal_name: "EPPN",
-        created_at: "Account gemaakt op",
+        created_at: "Profiel gemaakt op",
         superUser: "Super User",
         yourRole: "Je rol",
         role: "Rol",
@@ -1649,7 +1649,7 @@ I18n.translations.nl = {
     },
     confirmation: {
         title: "Promoveer tot platformbeheerder",
-        info: "Je bent geconfigureerd als platformbeheerder, maar je moet dit verifiëren met een sterkere verificatie. Klik op de onderstaande knop om de upgrade van je account te starten.",
+        info: "Je bent geconfigureerd als platformbeheerder, maar je moet dit verifiëren met een sterkere verificatie. Klik op de onderstaande knop om de upgrade van je profiel te starten.",
         confirmAccount: "Start verificatie"
     },
     inputField: {
@@ -1969,7 +1969,7 @@ I18n.translations.nl = {
         title: "Je hebt geen toegang tot <i>{{name}}</i>",
         info: "Pech gehad...",
         info1: "Je bent niet ingelogd bij SURF Research Access Management, daarom heb je geen toegang tot <i>{{name}}</i>.",
-        info2: "<p>Je bent niet ingelogd bij SURF Research Access Management omdat je account is geschorst. Daarom heb je geen toegang tot <i>{{name}}</i>.</p><p>Neem contact op met de beheerder(s) van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
+        info2: "<p>Je bent niet ingelogd bij SURF Research Access Management omdat je profiel is geschorst. Daarom heb je geen toegang tot <i>{{name}}</i>.</p><p>Neem contact op met de beheerder(s) van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
         info3: "Je bent ingelogd bij SURF Research Access Management, maar de dienst <i>{{name}}</i> is onbekend.",
         info4: "<p>Je bent ingelogd via SURF Research Access Management, maar de samenwerking(en) waar je lid van bent, geven geen toegang tot <i>{{name}}</i>.</p><p>Neem contact op met de beheerder(s) van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
         info5: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i> omdat de samenwerking(en) waarvan je lid bent niet actief zijn.</p><p>Neem contact op met de beheerder(s) van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
@@ -2165,8 +2165,7 @@ I18n.translations.nl = {
             year: "over 1 jaar",
             years: "over %s jaar"
         }
-    }
-
+    },
 };
 
 export default I18n.translations.nl;
