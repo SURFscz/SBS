@@ -204,7 +204,7 @@ I18n.translations.nl = {
             activity: "User-historie",
             showSsh: "Toon",
             ssh: {
-                title: "Publieke SSH keys van {{name}}"
+                title: "Publieke SSH-sleutels van {{name}}"
             }
         },
         orgMembers: {
@@ -332,9 +332,9 @@ I18n.translations.nl = {
             organisation: "organisatie",
             noEntities: "Er zijn geen organisaties die deze dienst gebruiken",
             permissions: {
-                eachOrganisation: "Kies de toestemming voor elke organisatie",
-                allowAllRequests: "Sta koppelverzoeken toe van samenwerkingen van alle organisaties",
-                allowAll: "Sta alle koppelingen toe met samenwerkingen van alle organisaties"
+                eachOrganisation: "Configureer de toestemming per organisatie",
+                allowAllRequests: "Koppelverzoeken handmatig goedkeuren van samenwerkingen van alle organisaties",
+                allowAll: "Samenwerkingen van alle organisaties mogen zelfstandig koppelen"
             },
             options: {
                 header: "Koppelingen met samenwerkingen",
@@ -669,8 +669,8 @@ I18n.translations.nl = {
         sbs: "Applicatie",
         collaborations: "Samenwerkingen",
         network: "IP-ranges",
-        addSSHKey: "Upload een nieuwe SSH Key toe",
-        addSSHKeyManually: "Voeg handmatig een SSH Key toe",
+        addSSHKey: "Upload een SSH-sleutel",
+        addSSHKeyManually: "Voeg handmatig een SSH-sleutel toe",
         networkTooltip: "Configureer je IP-bereiken voor deze dienst. Je kunt IPv4 en IPv6 network ranges toevoegen. " +
             "Bijvoorbeeld: <ul>" +
             "<li>Enkelvoudig IPv4-adres 198.51.100.12 waar een /32 is aangenomen</li>" +

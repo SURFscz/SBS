@@ -333,7 +333,7 @@ I18n.translations.en = {
             noEntities: "There are no organisations using this service",
             permissions: {
                 eachOrganisation: "Choose permission for each organisation",
-                allowAllRequests: "Allow connection requests from collaborations for all organisations",
+                allowAllRequests: "Manually approve connection requests from collaborations for all organisations",
                 allowAll: "Always allow connections from collaborations for all organisations"
             },
             options: {
