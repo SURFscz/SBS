@@ -492,7 +492,9 @@ class Groups extends React.Component {
             {
                 key: "name",
                 header: I18n.t("models.groups.name"),
-                mapper: group => <a href={`${group.name}`} onClick={this.gotoGroup(group)}>{group.name}</a>,
+                mapper: group => <a href={`${group.name}`}
+                                    className={"neutral-appearance"}
+                                    onClick={this.gotoGroup(group)}>{group.name}</a>,
             },
             {
                 key: "description",
