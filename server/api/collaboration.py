@@ -543,6 +543,8 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True, sav
     for service in services:
         create_service_groups(service, res[0])
 
+    emit_socket(f"organisation_{organisation.id}")
+
     return res
 
 
