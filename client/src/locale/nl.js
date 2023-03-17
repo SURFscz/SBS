@@ -1960,7 +1960,7 @@ I18n.translations.nl = {
         },
         reset: {
             title: "Reset je authenticatiecode",
-            info1: "Voer het reset token in dat je beheerder je hebt gegeven",
+            info1: "Voer het reset token in dat je beheerder je heeft gegeven",
             submit: "Verzend",
             resetCodePlaceholder: "Reset token",
             invalid: "Foutief reset token",
