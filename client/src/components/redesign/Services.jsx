@@ -80,7 +80,7 @@ class Services extends React.Component {
         return (
             <Entities entities={services}
                       modelName="services"
-                      searchAttributes={["name"]}
+                      searchAttributes={["name", "entity_id"]}
                       defaultSort="name"
                       columns={columns}
                       showNew={user.admin}
