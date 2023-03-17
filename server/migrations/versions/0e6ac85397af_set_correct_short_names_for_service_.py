@@ -18,7 +18,7 @@ depends_on = None
 
 def upgrade():
     sql = """
-        update groups g
+        update `groups` g
             left join service_groups sg on g.service_group_id=sg.id
             left join services s on sg.service_id=s.id
             left join collaborations c on g.collaboration_id=c.id
