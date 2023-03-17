@@ -58,7 +58,7 @@ I18n.translations.en = {
         title: "Research Access Management",
         subTitle: "Please login...",
         suspended: "Your profile has been suspended. Please contact sram-support@surf.nl to resolve this",
-        rateLimited: "You have rate limited the TOTP verification and therefore you are logged out and your profile has been suspended. Contact your admin to resolve this",
+        rateLimited: "You have attempted the TOTP verification too many times, and therefore you are logged out and your profile has been suspended. Contact your admin to resolve this",
         successfullyActivated: "You have re-activated your profile",
         closeBrowser: "To finish your logout you'll have to close your browser.",
         closeBrowserAfterDelete: "To finish the deletion of your profile you'll have to close your browser."
@@ -75,7 +75,7 @@ I18n.translations.en = {
         firstTime: "Onboarding",
         collaborationRequest: "Request for new collaboration",
         noOrganisations: "To request a new collaboration it is required that institution '{{schac_home}}' where you logged in, can create and manage collaborations. This does not seem to be the case. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for more information",
-        noShacHome: "To request / create a new collaboration it is required that your institution releases the schac_home attribute. This does not seem to be the case. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for more information",
+        noShacHome: "To request / create a new collaboration it is required that your institution releases the schacHomeOrganization attribute. This does not seem to be the case. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for more information",
         noOrganisationsPlatformAdmin: "To create a new collaboration it is required you first create a new organisation.",
         tabs: {
             groups: "Groups ({{count}})",
@@ -163,8 +163,8 @@ I18n.translations.en = {
             subOtherProfile: "The profile of {{name}} was created at {{date}}",
             institute: "Institution",
             instituteUnknown: "unknown",
-            instituteUnknownMeTooltip: "Your organisation did not release the identifying attribute 'shacHomeOrganization'.",
-            instituteUnknownTooltip: "The organisation of this user did not release the identifying attribute 'shacHomeOrganization'.",
+            instituteUnknownMeTooltip: "Your organisation did not release the identifying attribute 'schacHomeOrganization'.",
+            instituteUnknownTooltip: "The organisation of this user did not release the identifying attribute 'schacHomeOrganization'.",
             role: "Role",
             title: "Platform admins",
             platformAdmin: "Platform admin",
