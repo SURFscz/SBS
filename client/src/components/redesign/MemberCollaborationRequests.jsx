@@ -9,6 +9,8 @@ import SpinnerField from "./SpinnerField";
 import UserColumn from "./UserColumn";
 import {dateFromEpoch} from "../../utils/Date";
 import {socket, subscriptionIdCookieName} from "../../utils/SocketIO";
+import {chipTypeForStatus} from "../../utils/UserRole";
+import {Chip} from "@surfnet/sds";
 
 const allValue = "all";
 
@@ -134,8 +136,8 @@ export default class MemberCollaborationRequests extends React.PureComponent {
             {
                 key: "status",
                 header: I18n.t("collaborationRequest.status"),
-                mapper: entity => <span
-                    className={`person-role ${entity.status}`}>{I18n.t(`collaborationRequest.statuses.${entity.status}`)}</span>
+                mapper: entity => <Chip type={chipTypeForStatus(entity)}
+                                        label={I18n.t(`collaborationRequest.statuses.${entity.status}`)}/>
             }
         ]
         const filteredCollaborationRequests = filterValue.value === allValue ? collaboration_requests :

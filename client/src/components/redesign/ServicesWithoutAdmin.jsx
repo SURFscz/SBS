@@ -28,7 +28,9 @@ class ServicesWithoutAdmin extends React.Component {
             {
                 key: "name",
                 header: I18n.t("models.services.name"),
-                mapper: service => <a href={`/services/${service.id}`} onClick={this.openService(service)}>{service.name}</a>,
+                mapper: service => <a href={`/services/${service.id}`}
+                                      className={"neutral-appearance"}
+                                      onClick={this.openService(service)}>{service.name}</a>,
             },
             {
                 key: "contact_email",

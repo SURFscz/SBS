@@ -8,6 +8,8 @@ import Logo from "./Logo";
 import Select from "react-select";
 import InstituteColumn from "./InstituteColumn";
 import UserColumn from "./UserColumn";
+import {chipTypeForStatus} from "../../utils/UserRole";
+import {Chip} from "@surfnet/sds";
 
 const allValue = "all";
 
@@ -91,8 +93,8 @@ export default class CollaborationRequests extends React.PureComponent {
             {
                 key: "status",
                 header: I18n.t("collaborationRequest.status"),
-                mapper: cr => <span
-                    className={`person-role ${cr.status}`}>{I18n.t(`collaborationRequest.statuses.${cr.status}`)}</span>
+                mapper: cr => <Chip type={chipTypeForStatus(cr)}
+                                    label={I18n.t(`collaborationRequest.statuses.${cr.status}`)} />
             },
             {
                 key: "requester",

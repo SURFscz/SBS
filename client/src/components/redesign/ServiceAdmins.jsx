@@ -16,7 +16,7 @@ import ConfirmationDialog from "../ConfirmationDialog";
 import UserColumn from "./UserColumn";
 import {isUserServiceAdmin} from "../../utils/UserRole";
 import SpinnerField from "./SpinnerField";
-import {Tooltip} from "@surfnet/sds";
+import {Chip, ChipType, Tooltip} from "@surfnet/sds";
 import InstituteColumn from "./InstituteColumn";
 import {isEmpty} from "../../utils/Utils";
 import {emitImpersonation} from "../../utils/Impersonation";
@@ -373,12 +373,11 @@ class ServiceAdmins extends React.Component {
                 mapper: entity => {
                     const isExpired = entity.invite && isInvitationExpired(entity);
                     return entity.invite ?
-                        <span
-                            className={`person-role invite ${isExpired ? "expired" : ""}`}>
-                            {isExpired ? I18n.t("models.orgMembers.expiredAt", {date: shortDateFromEpoch(entity.expiry_date)}) :
+                        <Chip
+                            label={isExpired ? I18n.t("models.orgMembers.expiredAt", {date: shortDateFromEpoch(entity.expiry_date)}) :
                                 I18n.t("models.orgMembers.inviteSend", {date: shortDateFromEpoch(entity.created_at)})}
-                        </span> :
-                        <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}</span>
+                            type={isExpired ? ChipType.Status_error : ChipType.Status_info}/> :
+                        <span>{I18n.t("models.orgMembers.accepted")}</span>
                 }
             },
             {
