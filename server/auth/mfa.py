@@ -94,12 +94,17 @@ def eligible_users_to_reset_token(user):
 
 def _idp_configured(identity_providers, action, schac_home=None, entity_id=None):
     entity_id_allowed = entity_id and [idp for idp in identity_providers if idp.entity_id == entity_id.lower()]
-    schac_home_allowed = schac_home and [idp for idp in identity_providers if idp.schac_home == schac_home.lower()]
+
+    def schac_match(configured_schac_home, schac_home):
+        schac_home_lower = schac_home.lower()
+        return configured_schac_home == schac_home_lower or schac_home_lower.endswith(f".{configured_schac_home}")
+
+    schac_home_allowed = schac_home and [idp for idp in identity_providers if schac_match(idp.schac_home, schac_home)]
 
     result = entity_id_allowed or schac_home_allowed
 
     logger = ctx_logger("user_api")
-    logger.debug(f"{action}: {bool(result)} (entity_id_allowed={entity_id_allowed}, "
+    logger.debug(f"{action}: {result} (entity_id_allowed={entity_id_allowed}, "
                  f"schac_home_allowed={schac_home_allowed}, "
                  f"entity_id={entity_id}, schac_home={schac_home}")
 

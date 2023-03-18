@@ -1,7 +1,6 @@
-
 from jwt import algorithms
 
-from server.auth.mfa import _get_algorithm, eligible_users_to_reset_token
+from server.auth.mfa import _get_algorithm, eligible_users_to_reset_token, mfa_idp_allowed
 from server.db.db import db
 from server.db.domain import User
 from server.test.abstract_test import AbstractTest
@@ -51,3 +50,10 @@ class TestSecurity(AbstractTest):
         user = User.query.filter(User.uid == "urn:james").one()
         res = eligible_users_to_reset_token(user)
         self.assertEqual(4, len(res))
+
+    def test_mfa_idp_allowed(self):
+        self.assertTrue(mfa_idp_allowed(schac_home="idp.test", entity_id=None))
+        self.assertTrue(mfa_idp_allowed(schac_home="SUB.IDP.TEST", entity_id=None))
+        self.assertTrue(mfa_idp_allowed(schac_home="nope", entity_id="HTTPS://IDP.TEST"))
+
+        self.assertFalse(mfa_idp_allowed(schac_home="nope", entity_id="nope"))
