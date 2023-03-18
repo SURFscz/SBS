@@ -17,7 +17,7 @@ import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
-import {sanitizeShortName, validEmailRegExp, validSchacHomeRegExp} from "../validations/regExps";
+import {sanitizeShortName, validSchacHomeRegExp} from "../validations/regExps";
 import {AppStore} from "../stores/AppStore";
 import UnitHeader from "../components/redesign/UnitHeader";
 import CroppedImageField from "../components/redesign/CroppedImageField";
@@ -51,7 +51,6 @@ class OrganisationForm extends React.Component {
             categoryOptions: categoryOptions,
             category: category,
             administrators: [],
-            email: "",
             message: "",
             required: ["name", "short_name", "logo"],
             alreadyExists: {},
@@ -274,27 +273,15 @@ class OrganisationForm extends React.Component {
         this.setState({administrators: newAdministrators});
     };
 
-    addEmail = e => {
-        const email = e.target.value;
+    addEmails = emails => {
         const {administrators} = this.state;
-        const delimiters = [",", " ", ";", "\n", "\t"];
-        let emails;
-        if (!isEmpty(email) && delimiters.some(delimiter => email.indexOf(delimiter) > -1)) {
-            emails = email.replace(/[;\s]/g, ",").split(",").filter(part => part.trim().length > 0 && validEmailRegExp.test(part));
-        } else if (!isEmpty(email) && validEmailRegExp.test(email.trim())) {
-            emails = [email];
-        }
-        if (isEmpty(emails)) {
-            this.setState({email: ""});
-        } else {
-            const uniqueEmails = [...new Set(administrators.concat(emails))];
-            this.setState({email: "", administrators: uniqueEmails});
-        }
+        const uniqueEmails = [...new Set(administrators.concat(emails))];
+        this.setState({administrators: uniqueEmails});
     };
 
     render() {
         const {
-            name, description, initial, alreadyExists, administrators, message, email,
+            name, description, initial, alreadyExists, administrators, message,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, short_name,
             schac_home_organisations, collaboration_creation_allowed, services_restricted, logo, on_boarding_msg,
             category, categoryOptions, schac_home_organisation, isNew, organisation, warning, loading
@@ -418,9 +405,7 @@ class OrganisationForm extends React.Component {
                         <div>
                             <h2 className="section-separator">{I18n.t("organisation.invitations")}</h2>
 
-                            <EmailField value={email}
-                                        onChange={e => this.setState({email: e.target.value})}
-                                        addEmail={this.addEmail}
+                            <EmailField addEmails={this.addEmails}
                                         removeMail={this.removeMail}
                                         name={I18n.t("invitation.invitees")}
                                         isAdmin={true}

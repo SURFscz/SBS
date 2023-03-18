@@ -22,6 +22,7 @@ import CheckBox from "../components/CheckBox";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Tooltip} from "@surfnet/sds";
 import UnitHeader from "../components/redesign/UnitHeader";
+import {ReactComponent as TrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 import {AppStore} from "../stores/AppStore";
 import RadioButton from "../components/redesign/RadioButton";
 import CroppedImageField from "../components/redesign/CroppedImageField";
@@ -65,7 +66,6 @@ class Service extends React.Component {
         security_email: "",
         ip_networks: [],
         administrators: [],
-        email: "",
         message: "",
         required: ["name", "entity_id", "abbreviation", "privacy_policy", "logo", "security_email",
             "research_scholarship_compliant", "code_of_conduct_compliant", "sirtfi_compliant"],
@@ -312,8 +312,9 @@ class Service extends React.Component {
                                         e.target.blur()
                                     }}
                         />
-                        {(isAdmin || isServiceAdmin) && <span className="trash">
-                            <FontAwesomeIcon onClick={() => this.deleteIpAddress(i)} icon="trash"/>
+                        {(isAdmin || isServiceAdmin) &&
+                        <span className="trash" onClick={() => this.deleteIpAddress(i)}>
+                            <TrashIcon/>
                         </span>}
                     </div>
                     {(network.error && !network.syntax) &&
@@ -335,29 +336,17 @@ class Service extends React.Component {
         this.setState({administrators: newAdministrators});
     };
 
-    addEmail = e => {
-        const email = e.target.value;
+    addEmails = emails => {
         const {administrators} = this.state;
-        const delimiters = [",", " ", ";", "\n", "\t"];
-        let emails;
-        if (!isEmpty(email) && delimiters.some(delimiter => email.indexOf(delimiter) > -1)) {
-            emails = email.replace(/[;\s]/g, ",").split(",").filter(part => part.trim().length > 0 && validEmailRegExp.test(part));
-        } else if (!isEmpty(email) && validEmailRegExp.test(email.trim())) {
-            emails = [email];
-        }
-        if (isEmpty(emails)) {
-            this.setState({email: ""});
-        } else {
-            const uniqueEmails = [...new Set(administrators.concat(emails))];
-            this.setState({email: "", administrators: uniqueEmails});
-        }
+        const uniqueEmails = [...new Set(administrators.concat(emails))];
+        this.setState({administrators: uniqueEmails});
     };
 
     serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
                         access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired,
                         accepted_user_policy, uri_info, privacy_policy, isNew, service, disabledSubmit, allow_restricted_orgs, sirtfi_compliant, token_enabled, pam_web_sso_enabled,
                         token_validity_days, code_of_conduct_compliant,
-                        research_scholarship_compliant, config, ip_networks, administrators, message, email, logo, isServiceAdmin) => {
+                        research_scholarship_compliant, config, ip_networks, administrators, message, logo, isServiceAdmin) => {
         const ldapBindAccount = config.ldap_bind_account;
         return (
             <div className="service">
@@ -675,9 +664,7 @@ class Service extends React.Component {
                 <div className="email-invitations">
                     <h2 className="section-separator first last">{I18n.t("service.invitations")}</h2>
 
-                    <EmailField value={email}
-                                onChange={e => this.setState({email: e.target.value})}
-                                addEmail={this.addEmail}
+                    <EmailField addEmails={this.addEmails}
                                 removeMail={this.removeMail}
                                 name={I18n.t("invitation.invitees")}
                                 isAdmin={true}
@@ -739,7 +726,9 @@ class Service extends React.Component {
             code_of_conduct_compliant,
             research_scholarship_compliant,
             ip_networks,
-            administrators, message, email, isServiceAdmin,
+            administrators,
+            message,
+            isServiceAdmin,
             logo,
             warning,
             loading,
@@ -772,7 +761,7 @@ class Service extends React.Component {
                     {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
                         access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, uri_info, privacy_policy,
                         isNew, service, disabledSubmit, allow_restricted_orgs, sirtfi_compliant, token_enabled, pam_web_sso_enabled, token_validity_days, code_of_conduct_compliant,
-                        research_scholarship_compliant, config, ip_networks, administrators, message, email, logo, isServiceAdmin)}
+                        research_scholarship_compliant, config, ip_networks, administrators, message, logo, isServiceAdmin)}
                 </div>
             </>);
     }
