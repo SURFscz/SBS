@@ -12,6 +12,7 @@ import {socket, subscriptionIdCookieName} from "../../utils/SocketIO";
 import InstituteColumn from "./InstituteColumn";
 import {schacHome} from "../../api";
 import {chipTypeForStatus} from "../../utils/UserRole";
+import {Chip} from "@surfnet/sds";
 
 const allValue = "all";
 
