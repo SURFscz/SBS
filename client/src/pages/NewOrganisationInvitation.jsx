@@ -36,7 +36,6 @@ class NewOrganisationInvitation extends React.Component {
             organisation: undefined,
             administrators: administrators,
             fileName: null,
-            email: "",
             fileEmails: [],
             fileTypeError: false,
             fileInputKey: new Date().getMilliseconds(),
@@ -121,22 +120,10 @@ class NewOrganisationInvitation extends React.Component {
         this.setState({administrators: newAdministrators});
     };
 
-    addEmail = e => {
-        const email = e.target.value;
+    addEmails = emails => {
         const {administrators} = this.state;
-        const delimiters = [",", " ", ";", "\n", "\t"];
-        let emails;
-        if (!isEmpty(email) && delimiters.some(delimiter => email.indexOf(delimiter) > -1)) {
-            emails = email.replace(/[;\s]/g, ",").split(",").filter(part => part.trim().length > 0 && validEmailRegExp.test(part));
-        } else if (!isEmpty(email) && validEmailRegExp.test(email.trim())) {
-            emails = [email];
-        }
-        if (isEmpty(emails)) {
-            this.setState({email: ""});
-        } else {
-            const uniqueEmails = [...new Set(administrators.concat(emails))];
-            this.setState({email: "", administrators: uniqueEmails});
-        }
+        const uniqueEmails = [...new Set(administrators.concat(emails))];
+        this.setState({administrators: uniqueEmails});
     };
 
     tabChanged = activeTab => {
@@ -165,12 +152,10 @@ class NewOrganisationInvitation extends React.Component {
     );
 
 
-    invitationForm = (organisation, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, expiry_date,
+    invitationForm = (organisation, message, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, expiry_date,
                       disabledSubmit, intended_role) =>
         <div className={"invitation-form"}>
-            <EmailField value={email}
-                        onChange={e => this.setState({email: e.target.value})}
-                        addEmail={this.addEmail}
+            <EmailField addEmails={this.addEmails}
                         removeMail={this.removeMail}
                         name={I18n.t("invitation.invitees")}
                         error={!initial && isEmpty(administrators)}
@@ -214,7 +199,7 @@ class NewOrganisationInvitation extends React.Component {
 
     render() {
         const {
-            email, initial, administrators, expiry_date, organisation,
+            initial, administrators, expiry_date, organisation,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, fileName,
             fileTypeError, fileEmails, fileInputKey, intended_role, loading
         } = this.state;
@@ -233,7 +218,7 @@ class NewOrganisationInvitation extends React.Component {
                 <div className="mod-new-organisation-invitation">
                     <h2>{I18n.t("tabs.invitation_form")}</h2>
                     <div className="new-organisation-invitation">
-                        {this.invitationForm(organisation, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
+                        {this.invitationForm(organisation, message, fileInputKey, fileName, fileTypeError, fileEmails, initial,
                             administrators, expiry_date, disabledSubmit, intended_role)}
                     </div>
                 </div>

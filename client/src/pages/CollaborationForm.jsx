@@ -19,7 +19,7 @@ import Button from "../components/Button";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
-import {sanitizeShortName, sanitizeTagName, validEmailRegExp, validUrlRegExp} from "../validations/regExps";
+import {sanitizeShortName, sanitizeTagName, validUrlRegExp} from "../validations/regExps";
 import SelectField from "../components/SelectField";
 import {getParameterByName} from "../utils/QueryParameters";
 import CheckBox from "../components/CheckBox";
@@ -47,7 +47,6 @@ class CollaborationForm extends React.Component {
             website_url: "",
             administrators: [],
             message: "",
-            email: "",
             expiry_date: null,
             disclose_email_information: true,
             disclose_member_information: true,
@@ -375,22 +374,10 @@ class CollaborationForm extends React.Component {
         this.setState({administrators: newAdministrators});
     };
 
-    addEmail = e => {
-        const email = e.target.value;
+    addEmails = emails => {
         const {administrators} = this.state;
-        const delimiters = [",", " ", ";", "\n", "\t"];
-        let emails;
-        if (!isEmpty(email) && delimiters.some(delimiter => email.indexOf(delimiter) > -1)) {
-            emails = email.replace(/[;\s]/g, ",").split(",").filter(part => part.trim().length > 0 && validEmailRegExp.test(part));
-        } else if (!isEmpty(email) && validEmailRegExp.test(email.trim())) {
-            emails = [email];
-        }
-        if (isEmpty(emails)) {
-            this.setState({email: ""});
-        } else {
-            const uniqueEmails = [...new Set(administrators.concat(emails))];
-            this.setState({email: "", administrators: uniqueEmails});
-        }
+        const uniqueEmails = [...new Set(administrators.concat(emails))];
+        this.setState({administrators: uniqueEmails});
     };
 
     flipCurrentUserAdmin = e => {
@@ -433,7 +420,6 @@ class CollaborationForm extends React.Component {
             expiry_date,
             organisation,
             organisations,
-            email,
             initial,
             alreadyExists,
             confirmationDialogOpen,
@@ -657,9 +643,7 @@ class CollaborationForm extends React.Component {
                     <div>
                         <h2 className="section-separator">{I18n.t("collaboration.invitations")}</h2>
 
-                        <EmailField value={email}
-                                    onChange={e => this.setState({email: e.target.value})}
-                                    addEmail={this.addEmail}
+                        <EmailField addEmails={this.addEmails}
                                     removeMail={this.removeMail}
                                     name={I18n.t("invitation.invitees")}
                                     pinnedEmails={current_user_admin ? [this.props.user.email] : []}

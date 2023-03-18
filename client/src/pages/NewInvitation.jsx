@@ -41,7 +41,6 @@ class NewInvitation extends React.Component {
             groups: [],
             selectedGroup: [],
             fileName: null,
-            email: "",
             fileEmails: [],
             fileTypeError: false,
             fileInputKey: new Date().getMilliseconds(),
@@ -157,56 +156,10 @@ class NewInvitation extends React.Component {
         this.setState({administrators: newAdministrators});
     };
 
-    addEmail = e => {
-        const email = e.target.value;
+    addEmails = emails => {
         const {administrators} = this.state;
-        const delimiters = [",", " ", ";", "\n", "\t"];
-        let emails;
-        if (!isEmpty(email) && delimiters.some(delimiter => email.indexOf(delimiter) > -1)) {
-            emails = email.replace(/[;\s]/g, ",").split(",")
-                .filter(part => part.trim().length > 0 && validEmailRegExp.test(part));
-        } else if (!isEmpty(email) && validEmailRegExp.test(email.trim())) {
-            emails = [email];
-        }
-        if (isEmpty(emails)) {
-            this.setState({email: ""});
-        } else {
-            const uniqueEmails = [...new Set(administrators.concat(emails))];
-            this.setState({email: "", administrators: uniqueEmails});
-        }
-        return true;
-    };
-
-    onFileRemoval = e => {
-        stopEvent(e);
-        this.setState({
-            fileName: null, fileEmails: [], fileTypeError: false,
-            fileInputKey: new Date().getMilliseconds()
-        });
-    };
-
-    onFileUpload = e => {
-        const files = e.target.files;
-        if (!isEmpty(files)) {
-            const file = files[0];
-            if (file.name.endsWith("csv")) {
-                const reader = new FileReader();
-                reader.onload = () => {
-                    const csvEmails = reader.result;
-                    const fileEmails = csvEmails.split(/[,\n\r]/)
-                        .map(s => s.trim().replace(/[\t\r\n]/g, ""))
-                        .filter(mail => validEmailRegExp.test(mail));
-                    this.setState({
-                        fileName: file.name,
-                        fileTypeError: false,
-                        fileEmails: fileEmails
-                    });
-                };
-                reader.readAsText(file);
-            } else {
-                this.setState({fileName: file.name, fileTypeError: true, fileEmails: []});
-            }
-        }
+        const uniqueEmails = [...new Set(administrators.concat(emails))];
+        this.setState({administrators: uniqueEmails});
     };
 
     getMembershipExpiryDate = () => {
@@ -259,13 +212,11 @@ class NewInvitation extends React.Component {
         }
     }
 
-    invitationForm = (email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators,
+    invitationForm = (fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators,
                       intended_role, message, expiry_date, disabledSubmit, groups, selectedGroup, membership_expiry_date) =>
         <div className={"invitation-form"}>
 
-            <EmailField value={email}
-                        onChange={e => this.setState({email: e.target.value})}
-                        addEmail={this.addEmail}
+            <EmailField addEmails={this.addEmails}
                         removeMail={this.removeMail}
                         name={I18n.t("invitation.invitees")}
                         emails={administrators}
@@ -327,7 +278,6 @@ class NewInvitation extends React.Component {
 
     render() {
         const {
-            email,
             initial,
             administrators,
             expiry_date,
@@ -362,7 +312,7 @@ class NewInvitation extends React.Component {
                 <div className="mod-new-collaboration-invitation">
                     <h2>{I18n.t("tabs.invitation_form")}</h2>
                     <div className="new-collaboration-invitation">
-                        {this.invitationForm(email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
+                        {this.invitationForm(fileInputKey, fileName, fileTypeError, fileEmails, initial,
                             administrators, intended_role, message, expiry_date, disabledSubmit, groups,
                             selectedGroup, membership_expiry_date)}
                     </div>

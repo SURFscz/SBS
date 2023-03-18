@@ -39,7 +39,6 @@ div.email-field {
         }
 
         &.error {
-            background-color: $error-red-background;
             border: 1px solid $error-red;
         }
 
@@ -94,6 +93,11 @@ div.email-field {
                 }
             }
         }
+    }
+
+    p.error {
+        color: var(--sds--color--red--400);
+        margin-top: var(--sds--space--1);
     }
 
 

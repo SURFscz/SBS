@@ -1273,6 +1273,7 @@ I18n.translations.nl = {
         messagePlaceholder: "Bericht aan de beheerders",
         messageTooltip: "De boodschap nemen we op in de e-mail waarmee beheerders worden uitgenodigd.",
         inviteesMessagesTooltip: "Voer e-mailadressen in, gescheiden door een komma, spatie of puntkomma of voer ze stuk voor stuk in met een enter. Je kunt ook een csv-bestand plakken met daarin regelgescheiden e-mailadressen.",
+        invalidEmails: "Ongeldige e-mailadressen verwijderd: {{emails}}.",
         appendAdminNote: "Let op: de genodigen zullen <strong>beheerder</strong> worden na het accepteren van de uitnodiging.",
         inviteesMessagePlaceholder: "Bericht aan genodigden",
         inviter: "Uitnodiger",

@@ -35,7 +35,6 @@ class NewServiceInvitation extends React.Component {
             service: undefined,
             administrators: administrators,
             fileName: null,
-            email: "",
             fileEmails: [],
             fileTypeError: false,
             fileInputKey: new Date().getMilliseconds(),
@@ -118,30 +117,16 @@ class NewServiceInvitation extends React.Component {
         this.setState({administrators: newAdministrators});
     };
 
-    addEmail = e => {
-        const email = e.target.value;
+    addEmails = emails => {
         const {administrators} = this.state;
-        const delimiters = [",", " ", ";", "\n", "\t"];
-        let emails;
-        if (!isEmpty(email) && delimiters.some(delimiter => email.indexOf(delimiter) > -1)) {
-            emails = email.replace(/[;\s]/g, ",").split(",").filter(part => part.trim().length > 0 && validEmailRegExp.test(part));
-        } else if (!isEmpty(email) && validEmailRegExp.test(email.trim())) {
-            emails = [email];
-        }
-        if (isEmpty(emails)) {
-            this.setState({email: ""});
-        } else {
-            const uniqueEmails = [...new Set(administrators.concat(emails))];
-            this.setState({email: "", administrators: uniqueEmails});
-        }
+        const uniqueEmails = [...new Set(administrators.concat(emails))];
+        this.setState({administrators: uniqueEmails});
     };
 
-    invitationForm = (service, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, expiry_date,
+    invitationForm = (service, message, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, expiry_date,
                       disabledSubmit) =>
         <div className={"invitation-form"}>
-            <EmailField value={email}
-                        onChange={e => this.setState({email: e.target.value})}
-                        addEmail={this.addEmail}
+            <EmailField addEmails={this.addEmails}
                         removeMail={this.removeMail}
                         name={I18n.t("invitation.invitees")}
                         error={!initial && isEmpty(administrators)}
@@ -184,7 +169,7 @@ class NewServiceInvitation extends React.Component {
 
     render() {
         const {
-            email, initial, administrators, expiry_date, service,
+            initial, administrators, expiry_date, service,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, fileName,
             fileTypeError, fileEmails, fileInputKey, intended_role, loading
         } = this.state;
@@ -203,7 +188,7 @@ class NewServiceInvitation extends React.Component {
                 <div className="mod-new-service-invitation">
                     <h2>{I18n.t("tabs.invitation_form")}</h2>
                     <div className="new-service-invitation">
-                        {this.invitationForm(service, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
+                        {this.invitationForm(service, message, fileInputKey, fileName, fileTypeError, fileEmails, initial,
                             administrators, expiry_date, disabledSubmit, intended_role)}
                     </div>
                 </div>
