@@ -1,8 +1,10 @@
 .sds--alert {
+    display: flex;
     z-index: 4;
+    min-height: 3.75rem;
 
-    //&:not(.hide) {
-    //    min-height: 61px;
-    //    display: flex;
-    //}
+    .sds--alert--inner {
+        max-width: 1300px;
+    }
+
 }
