@@ -169,7 +169,7 @@ class Me extends React.Component {
         return (
             <div className="user-profile-tab-container">
                 <div className="user-profile-tab">
-                    <h3>{I18n.t("home.tabs.me")}</h3>
+                    <h2>{I18n.t("home.tabs.me")}</h2>
                     <div className={"sds--table"}>
                         <table className={"my-attributes"}>
                             <thead>
@@ -215,11 +215,13 @@ class Me extends React.Component {
                                     && <td className="actions">
                                         {(!isEmpty(user.schac_home_organisation) && (values[attribute] || user[attribute])) &&
                                         <span
-                                            dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.providedBy",
-                                                    {institution: user.schac_home_organisation}))}}/>
+                                            dangerouslySetInnerHTML={{
+                                                __html: DOMPurify.sanitize(I18n.t("user.providedBy",
+                                                    {institution: user.schac_home_organisation}))
+                                            }}/>
                                         }
                                     </td>}
-                                    {(attribute === "username" ||  attribute === "affiliation")
+                                    {(attribute === "username" || attribute === "affiliation")
                                     && <td className="actions">
                                         <span
                                             dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.generatedBy"))}}/>
@@ -276,9 +278,6 @@ class Me extends React.Component {
                         <a href="/" onClick={e => this.addSshKey(e)}>{I18n.t("profile.addSSHKeyManually")}</a>
                     </div>
                     <section className="actions">
-                        <Button warningButton={true}
-                                txt={I18n.t("user.delete")}
-                                onClick={this.delete}/>
                         <a className="sds--btn sds--btn--secondary"
                            href={`${window.location.protocol}//${window.location.host}/api/users/personal`.replaceAll("3000", "8080")}
                            download={`${I18n.t("home.tabs.me")}.json`}>
@@ -287,7 +286,14 @@ class Me extends React.Component {
                         <Button disabled={disabledSubmit} txt={I18n.t("user.update")}
                                 onClick={this.submit}/>
                     </section>
+                    <section className={"delete-profile"}>
+                        <h3>{I18n.t("profile.deleteHeader")}</h3>
+                        <p>{I18n.t("profile.deleteDisclaimer")}</p>
+                        <Button warningButton={true}
+                                txt={I18n.t("user.delete")}
+                                onClick={this.delete}/>
 
+                    </section>
                 </div>
             </div>);
     };
