@@ -9,13 +9,14 @@ import {collaborationAdmins, deleteCollaborationServices, toggleNonMemberUsersAc
 import SpinnerField from "./SpinnerField";
 import Logo from "./Logo";
 import CheckBox from "../CheckBox";
-import {Tooltip} from "@surfnet/sds";
+import {Chip, Tooltip} from "@surfnet/sds";
 import ConfirmationDialog from "../ConfirmationDialog";
 
 import {ReactComponent as InformationCircle} from "@surfnet/sds/icons/functional-icons/info.svg";
 import {ReactComponent as EmailIcon} from "../../icons/email_new.svg";
 import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 import {setFlash} from "../../utils/Flash";
+import {chipType} from "../../utils/UserRole";
 
 export default class ServiceCollaborations extends React.PureComponent {
 
@@ -219,8 +220,8 @@ export default class ServiceCollaborations extends React.PureComponent {
                 header: I18n.t("profile.yourRole"),
                 mapper: collaboration => {
                     if (collaboration.role) {
-                        return <span
-                            className={`person-role ${collaboration.role}`}>{I18n.t(`profile.${collaboration.role}`)}</span>
+                        return <Chip label={I18n.t(`profile.${collaboration.role}`)}
+                                     type={chipType(collaboration)}/>
                     }
                     return null;
                 }
@@ -254,27 +255,27 @@ export default class ServiceCollaborations extends React.PureComponent {
                               tooltip={I18n.t("service.nonMemberUsersAccessAllowedTooltip")}
                               onChange={() => toggleNonMemberUsersAccessAllowed(service.id, !service.non_member_users_access_allowed)
                                   .then(() =>
-                                  this.props.refresh(() => {
-                                      this.componentDidMount();
-                                      setFlash(I18n.t("service.flash.updated", {name: service.name}));
-                                  })
-                              )}
+                                      this.props.refresh(() => {
+                                          this.componentDidMount();
+                                          setFlash(I18n.t("service.flash.updated", {name: service.name}));
+                                      })
+                                  )}
                     />}
                     {service.non_member_users_access_allowed && <div className={"radio-button-container"}>
                         <span>{I18n.t("service.nonMemberUsersAccessAllowedTooltip")}</span>
                     </div>}
                 </div>
                 {!service.non_member_users_access_allowed && <Entities entities={collaborations}
-                          modelName={modelName}
-                          searchAttributes={["name"]}
-                          defaultSort="name"
-                          hideTitle={true}
-                          columns={columns}
-                          onHover={true}
-                          actionHeader={"collaboration-services"}
-                          actions={this.actionButtons(selectedCollaborations, collaborationAdminEmails, collaborations)}
-                          loading={loading}
-                          {...this.props}/>}
+                                                                       modelName={modelName}
+                                                                       searchAttributes={["name"]}
+                                                                       defaultSort="name"
+                                                                       hideTitle={true}
+                                                                       columns={columns}
+                                                                       onHover={true}
+                                                                       actionHeader={"collaboration-services"}
+                                                                       actions={this.actionButtons(selectedCollaborations, collaborationAdminEmails, collaborations)}
+                                                                       loading={loading}
+                                                                       {...this.props}/>}
             </div>)
     }
 

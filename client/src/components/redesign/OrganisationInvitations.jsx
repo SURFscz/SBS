@@ -15,6 +15,7 @@ import Logo from "./Logo";
 import {organisationInvitationDelete, organisationInvitationResend} from "../../api";
 import SpinnerField from "./SpinnerField";
 import {setFlash} from "../../utils/Flash";
+import {Chip, ChipType} from "@surfnet/sds";
 
 class OrganisationInvitations extends React.Component {
 
@@ -212,11 +213,10 @@ class OrganisationInvitations extends React.Component {
                 header: I18n.t("models.orgMembers.status"),
                 mapper: entity => {
                     const isExpired = entity.invite && isInvitationExpired(entity);
-                    return <span
-                        className={`person-role invite ${isExpired ? "expired" : ""}`}>
-                            {isExpired ? I18n.t("models.orgMembers.expiredAt", {date: shortDateFromEpoch(entity.expiry_date)}) :
+                    return <Chip
+                            label={isExpired ? I18n.t("models.orgMembers.expiredAt", {date: shortDateFromEpoch(entity.expiry_date)}) :
                                 I18n.t("models.orgMembers.inviteSend", {date: shortDateFromEpoch(entity.created_at)})}
-                        </span>
+                            type={isExpired ? ChipType.Status_error : ChipType.Status_info}/>
                 }
             },
         ]

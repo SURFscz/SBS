@@ -11,6 +11,7 @@ import {dateFromEpoch} from "../../utils/Date";
 import {socket, subscriptionIdCookieName} from "../../utils/SocketIO";
 import InstituteColumn from "./InstituteColumn";
 import {schacHome} from "../../api";
+import {chipTypeForStatus} from "../../utils/UserRole";
 
 const allValue = "all";
 
@@ -138,8 +139,8 @@ class MemberJoinRequests extends React.Component {
             {
                 key: "status",
                 header: I18n.t("collaborationRequest.status"),
-                mapper: entity => <span
-                    className={`person-role ${entity.status}`}>{I18n.t(`collaborationRequest.statuses.${entity.status}`)}</span>
+                mapper: entity => <Chip type={chipTypeForStatus(entity)}
+                                    label={I18n.t(`collaborationRequest.statuses.${entity.status}`)} />
             }
         ]
         const filteredJoinRequests = filterValue.value === allValue ? join_requests :

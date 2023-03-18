@@ -7,18 +7,19 @@ import {
     disallowOrganisation,
     onRequestOrganisation,
     toggleAccessAllowedForAll,
+    toggleAllowRestrictedOrgs,
     toggleAutomaticConnectionAllowed,
     toggleReset,
-    toggleAllowRestrictedOrgs,
     trustOrganisation
 } from "../../api";
 import {clearFlash, setFlash} from "../../utils/Flash";
 import Logo from "./Logo";
 import ConfirmationDialog from "../ConfirmationDialog";
-import {RadioButton, SegmentedControl} from "@surfnet/sds";
+import {Chip, RadioButton, SegmentedControl} from "@surfnet/sds";
 import CheckBox from "../CheckBox";
 import {ALWAYS, DISALLOW, ON_REQUEST, PERMISSION_OPTIONS} from "../../utils/Permissions";
 import SpinnerField from "./SpinnerField";
+import {chipType} from "../../utils/UserRole";
 
 
 class ServiceOrganisations extends React.Component {
@@ -163,7 +164,9 @@ class ServiceOrganisations extends React.Component {
                 key: "name",
                 header: I18n.t("models.organisations.name"),
                 mapper: org => userAdmin ?
-                    <a href={`/organisations/${org.id}`} onClick={this.openOrganisation(org)}>{org.name}</a> :
+                    <a href={`/organisations/${org.id}`}
+                       className={"neutral-appearance"}
+                       onClick={this.openOrganisation(org)}>{org.name}</a> :
                     <span>{org.name}</span>,
             },
             {
@@ -183,8 +186,8 @@ class ServiceOrganisations extends React.Component {
                 header: "",
                 mapper: org => {
                     const cm = user.organisation_memberships.find(m => m.organisation_id === org.id);
-                    return cm ?
-                        <span className={`person-role ${cm.role}`}>{I18n.t(`profile.${cm.role}`)}</span> : null;
+                    return cm ? <Chip label={I18n.t(`profile.${cm.role}`)}
+                                      type={chipType(cm)}/> : null;
                 }
             },
             {

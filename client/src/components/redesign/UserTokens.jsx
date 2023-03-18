@@ -331,6 +331,7 @@ class UserTokens extends React.Component {
                 key: "name",
                 header: I18n.t("models.userTokens.name"),
                 mapper: userToken => <a href={`${userToken.name}`}
+                                        className={"neutral-appearance"}
                                         onClick={this.gotoUserToken(userToken)}>{userToken.name}</a>,
             },
             {
