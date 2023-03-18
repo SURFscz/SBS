@@ -10,8 +10,7 @@ export const pagination = (page, totalResults) => {
     let l;
 
     for (let i = 1; i <= totalResults; i++) {
-        // eslint-disable-next-line
-        if (i === 1 || i === totalResults || i >= left && i < right) {
+        if ((i === 1 || i === totalResults) || (i >= left && i < right)) {
             range.push(i);
         }
     }
