@@ -109,7 +109,8 @@ export function me(config) {
             sub,
             "name": "John Doe",
             "email": "john@example.org",
-            "second_factor_confirmed": second_factor_confirmed
+            "second_factor_confirmed": second_factor_confirmed,
+            "voperson_external_id": "john@example.com"
         }, "PUT")
             .then(() => fetchJson("/api/users/me", {}, {}, false));
     } else {
