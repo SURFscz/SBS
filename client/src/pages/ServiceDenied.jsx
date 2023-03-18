@@ -31,13 +31,13 @@ export default function ServiceDenied() {
     return (
         <div className="mod-service-denied">
             <div className="content">
-                <h2 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize( I18n.t("sfo.title", {name: serviceName}))}}/>
+                <h1 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize( I18n.t("sfo.title", {name: serviceName}))}}/>
                 <Player
                     autoplay
                     loop
                     src={service_denied}
                     style={{height: "auto", width: "85px", "maxWidth": "85px"}}/>
-                {<span className={"status"}
+                {<div className={"status"}
                        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t(`sfo.info${status || ""}`, {name: serviceName}))}}/>}
             </div>
             <div className={"ticket"}>
