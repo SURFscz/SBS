@@ -305,7 +305,7 @@ class Me extends React.Component {
         } = this.state;
         const {user, config, organisation} = this.props;
         const disabledSubmit = !initial && !this.isValid();
-        const disabledConfirm = user.name !== nameConfirmation;
+        const disabledConfirm = user.name !== nameConfirmation && !isEmpty(user.name);
         return (
             <div className="user-profile-mod">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -318,9 +318,11 @@ class Me extends React.Component {
                         <div className="confirmation-warning">
                             <p>{I18n.t("user.deleteConfirmationWarning")}</p>
                         </div>
-                        <p className="delete-confirmation-check">{I18n.t("user.deleteConfirmationCheck")}</p>
-                        <InputField name={I18n.t("profile.name")} value={nameConfirmation}
-                                    onChange={e => this.setState({nameConfirmation: e.target.value})}/>
+                        {!isEmpty(user.name) && <>
+                            <p className="delete-confirmation-check">{I18n.t("user.deleteConfirmationCheck")}</p>
+                            <InputField name={I18n.t("profile.name")} value={nameConfirmation}
+                                        onChange={e => this.setState({nameConfirmation: e.target.value})}/>
+                        </>}
                     </div>
                 </ConfirmationDialog>
 
