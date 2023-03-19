@@ -1,5 +1,6 @@
 import React from "react";
 import {
+    activateCollaboration,
     collaborationAccessAllowed,
     collaborationById,
     collaborationByIdentifier,
@@ -142,7 +143,7 @@ class CollaborationDetail extends React.Component {
                             const schacHomeOrganisation = adminOfCollaboration ? null : getSchacHomeOrg(user, res[1]);
                             const orgManager = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id, null);
                             const firstTime = getParameterByName("first", window.location.search) === "true";
-                            this.showExpiryDateFlash(user, collaboration, config);
+                            this.showExpiryDateFlash(user, collaboration, config, true);
                             this.setState({
                                 collaboration: collaboration,
                                 userTokens: userTokens,
@@ -212,8 +213,10 @@ class CollaborationDetail extends React.Component {
         return days < 60;
     }
 
-    showExpiryDateFlash = (user, collaboration, config) => {
+    showExpiryDateFlash = (user, collaboration, config, showMemberView) => {
         let msg = "";
+        let action = null;
+        let actionLabel = null;
         const membership = collaboration.collaboration_memberships.find(m => m.user_id === user.id);
 
         if (membership && membership.expiry_date) {
@@ -228,6 +231,10 @@ class CollaborationDetail extends React.Component {
             const formattedCollaborationExpiryDate = moment(collaboration.expiry_date * 1000).format("LL");
             if (collaboration.status === "expired") {
                 msg += I18n.t("collaboration.status.expiredTooltip", {expiryDate: formattedCollaborationExpiryDate});
+                if (isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id) && showMemberView) {
+                    action = this.activate(true);
+                    actionLabel = I18n.t("collaboration.status.activate");
+                }
             } else if (this.isExpiryDateWarning(collaboration.expiry_date)) {
                 msg += I18n.t("collaboration.status.activeWithExpiryDateTooltip", {expiryDate: formattedCollaborationExpiryDate});
             }
@@ -236,8 +243,9 @@ class CollaborationDetail extends React.Component {
             msg += I18n.t("collaboration.status.suspendedTooltip", {
                 lastActivityDate: moment(collaboration.last_activity_date * 1000).format("LL")
             });
-            if (isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id)) {
-                msg += I18n.t("collaboration.status.revertSuspension")
+            if (isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id) && showMemberView) {
+                action = this.unsuspend(true);
+                actionLabel = I18n.t("home.unsuspend");
             }
         }
         if (collaboration && collaboration.last_activity_date) {
@@ -252,7 +260,7 @@ class CollaborationDetail extends React.Component {
             }
         }
         if (!isEmpty(msg)) {
-            setFlash(msg, "warning");
+            setFlash(msg, "warning", action, actionLabel);
         }
     }
 
@@ -286,11 +294,12 @@ class CollaborationDetail extends React.Component {
     }
 
     toggleAdminMemberView = () => {
-        const {adminOfCollaboration} = this.state;
         health().then(() => {
-            const {showMemberView, collaboration, schacHomeOrganisation, userTokens} = this.state;
+            const {showMemberView, collaboration, schacHomeOrganisation, userTokens, adminOfCollaboration} = this.state;
+            const {config, user} = this.props;
             const newTab = showMemberView ? "about" : "admins";
             this.tabChanged(newTab, collaboration.id);
+            this.showExpiryDateFlash(user, collaboration, config, !showMemberView);
             this.setState({
                 showMemberView: !showMemberView,
                 tabs: this.getTabs(collaboration, userTokens, schacHomeOrganisation, adminOfCollaboration, showMemberView),
@@ -574,6 +583,25 @@ class CollaborationDetail extends React.Component {
         }
     }
 
+    activate = showConfirmation => () => {
+        if (showConfirmation) {
+            this.setState({
+                confirmationDialogOpen: true,
+                confirmationQuestion: I18n.t("activate.confirmation"),
+                confirmationDialogAction: this.activate(false),
+                isWarning: false
+            });
+        } else {
+            this.setState({loading: true});
+            activateCollaboration(this.state.collaboration.id).then(() => {
+                this.componentDidMount(() => {
+                    this.setState({loading: false});
+                    setFlash(I18n.t("activate.flash", {name: this.state.collaboration.name}));
+                })
+            });
+        }
+    }
+
     resetLastActivityDate = showConfirmation => () => {
         if (showConfirmation) {
             this.setState({
@@ -624,13 +652,13 @@ class CollaborationDetail extends React.Component {
                 perform: () => this.toggleAdminMemberView()
             });
         }
-        if (allowedToEdit && showMemberView && collaboration.status === "suspended") {
-            actions.push({
-                buttonType: ButtonType.Secondary,
-                name: I18n.t("home.unsuspend"),
-                perform: this.unsuspend(true)
-            });
-        }
+        // if (allowedToEdit && showMemberView && collaboration.status === "suspended") {
+        //     actions.push({
+        //         buttonType: ButtonType.Secondary,
+        //         name: I18n.t("home.unsuspend"),
+        //         perform: this.unsuspend(true)
+        //     });
+        // }
         const almostSuspended = this.isCollaborationAlmostSuspended(user, collaboration, config);
         if (almostSuspended && allowedToEdit && showMemberView) {
             actions.push({

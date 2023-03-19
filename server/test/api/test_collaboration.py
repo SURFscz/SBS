@@ -746,6 +746,19 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(STATUS_ACTIVE, coll.status)
         self.assertTrue(coll.last_activity_date > datetime.datetime.now() - datetime.timedelta(hours=1))
 
+    def test_activate(self):
+        coll = self.find_entity_by_name(Collaboration, ai_computing_name)
+        coll.expiry_date = datetime.datetime.now() - datetime.timedelta(days=365)
+        coll.status = STATUS_EXPIRED
+        db.session.merge(coll)
+        db.session.commit()
+
+        self.put("/api/collaborations/activate", body={"collaboration_id": coll.id})
+        coll = self.find_entity_by_name(Collaboration, ai_computing_name)
+        self.assertEqual(STATUS_ACTIVE, coll.status)
+        self.assertIsNone(coll.expiry_date)
+        self.assertTrue(coll.last_activity_date > datetime.datetime.now() - datetime.timedelta(hours=1))
+
     def test_find_by_identifier_api(self):
         res = self.get(f"/api/collaborations/v1/{collaboration_ai_computing_uuid}",
                        headers={"Authorization": f"Bearer {uuc_secret}"},

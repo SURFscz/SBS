@@ -7,8 +7,8 @@ export function getFlash() {
     return {...flash};
 }
 
-export function setFlash(message, type) {
-    flash = {message, type: type || "info"};
+export function setFlash(message, type, action = null, actionLabel = null) {
+    flash = {message: message, type: type || "info", action: action, actionLabel: actionLabel};
     emitter.emit("flash", flash);
 }
 
