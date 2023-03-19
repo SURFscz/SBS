@@ -30,6 +30,7 @@ class Login extends React.Component {
 
     render() {
         const {confirmationDialogOpen, confirmationDialogAction, confirmationQuestion} = this.state;
+        const {user} = this.props;
         return (
             <div className="top-container">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -41,6 +42,7 @@ class Login extends React.Component {
                         <div className="header-left">
                             <h2 className={"header-title"} dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("landing.header.title"))}}/>
                             <Button txt={I18n.t("landing.header.login")}
+                                    disabled={user.suspended}
                                     onClick={login}/>
                             <p className={"sup"}
                                dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("landing.header.sup"))}}/>

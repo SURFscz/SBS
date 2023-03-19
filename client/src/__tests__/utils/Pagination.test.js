@@ -2,7 +2,8 @@ import {pagination} from "../../utils/Pagination";
 
 test("pagination", () => {
 
-    const expectations = [[1, 2, 3, "...", 20],
+    const expectations = [
+        [1, 2, 3, "...", 20],
         [1, 2, 3, 4, "...", 20],
         [1, 2, 3, 4, 5, "...", 20],
         [1, 2, 3, 4, 5, 6, "...", 20],

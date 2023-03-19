@@ -132,7 +132,7 @@ class App extends React.Component {
                 }).catch(e => {
                     if (e.response && e.response.status === 409) {
                         this.setState({
-                            currentUser: {"uid": "anonymous", "guest": true, "admin": false},
+                            currentUser: {"uid": "anonymous", "guest": true, "admin": false, "suspended": true},
                             loading: false
                         });
                         setFlash(I18n.t("login.suspended"), "error");
@@ -186,15 +186,15 @@ class App extends React.Component {
         return (
             <Router>
                 <div className="app-container">
-                    {currentUser && <div>
-                        <Header currentUser={currentUser} config={config}/>
+                    <div>
+                        {currentUser && <Header currentUser={currentUser} config={config}/>}
                         <Flash/>
                         {impersonator &&
                         <Impersonating impersonator={impersonator} currentUser={currentUser}/>}
                         {!currentUser.guest && <BreadCrumb/>}
                         <ErrorDialog isOpen={errorDialogOpen}
                                      close={errorDialogAction}/>
-                    </div>}
+                    </div>
                     {reloading && <SpinnerField/>}
                     {!reloading &&
                     <Switch>

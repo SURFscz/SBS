@@ -380,6 +380,10 @@ export function unsuspendCollaboration(collaborationId) {
     return postPutJson("/api/collaborations/unsuspend", {collaboration_id: collaborationId}, "put");
 }
 
+export function activateCollaboration(collaborationId) {
+    return postPutJson("/api/collaborations/activate", {collaboration_id: collaborationId}, "put");
+}
+
 //Organisations
 export function myOrganisationsLite() {
     return fetchJson(`/api/organisations/mine_lite`);

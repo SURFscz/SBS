@@ -35,6 +35,8 @@ export default class Flash extends React.PureComponent {
         if (!isEmpty(flash) && (flash.type === "error" || flash.type === "warning")) {
             return (
                 <Alert message={flash.message}
+                       action={flash.action}
+                       actionLabel={flash.actionLabel}
                        alertType={flash.type === "warning" ? AlertType.Warning : AlertType.Error}
                        close={clearFlash}/>
             );
