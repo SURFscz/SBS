@@ -1,7 +1,7 @@
 import React from "react";
 
 import "./ServiceCollaborations.scss";
-import {isEmpty} from "../../utils/Utils";
+import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
 import Button from "../Button";
@@ -15,8 +15,8 @@ import ConfirmationDialog from "../ConfirmationDialog";
 import {ReactComponent as InformationCircle} from "@surfnet/sds/icons/functional-icons/info.svg";
 import {ReactComponent as EmailIcon} from "../../icons/email_new.svg";
 import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
-import {setFlash} from "../../utils/Flash";
-import {chipType} from "../../utils/UserRole";
+import {clearFlash, setFlash} from "../../utils/Flash";
+import {chipType, isUserAllowed, ROLES} from "../../utils/UserRole";
 
 export default class ServiceCollaborations extends React.PureComponent {
 
@@ -68,6 +68,14 @@ export default class ServiceCollaborations extends React.PureComponent {
         }
     }
 
+    openCollaboration = collaboration => e => {
+        if (e.metaKey || e.ctrlKey) {
+            return;
+        }
+        stopEvent(e);
+        clearFlash();
+        this.props.history.push(`/collaborations/${collaboration.id}`);
+    };
 
     addRoleInformation = (user, collaborations) => {
         collaborations.forEach(co => {
@@ -200,7 +208,13 @@ export default class ServiceCollaborations extends React.PureComponent {
                 key: "name",
                 class: serviceKey,
                 header: I18n.t("models.collaborations.name"),
-                mapper: collaboration => <span>{collaboration.name}</span>
+                mapper: collaboration => {
+                    return isUserAllowed(ROLES.COLL_ADMIN, user, null, collaboration.id) ?
+                        <a href={`/collaborations/${collaboration.id}`}
+                           className={"neutral-appearance"}
+                           onClick={this.openCollaboration(collaboration)}>{collaboration.name}</a>
+                        : <span>{collaboration.name}</span>
+                }
             },
             {
                 key: "organisation__name",
