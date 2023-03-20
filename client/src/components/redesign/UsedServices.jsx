@@ -100,7 +100,7 @@ class UsedServices extends React.Component {
 
     openService = service => e => {
         if (e.metaKey || e.ctrlKey) {
-                return;
+            return;
         }
         stopEvent(e);
         clearFlash();
@@ -109,7 +109,9 @@ class UsedServices extends React.Component {
 
     getServiceLink = entity => {
         const ref = entity.connectionRequest ? entity.service : entity;
-        return <a href={`/services/${ref.id}`} onClick={this.openService(ref)}>{ref.name}</a>
+        return <a href={`/services/${ref.id}`}
+                  className={"neutral-appearance"}
+                  onClick={this.openService(ref)}>{ref.name}</a>
     }
 
     getServiceStatus = service => {
@@ -370,18 +372,19 @@ class UsedServices extends React.Component {
                                 large={true}
                                 onChange={e => this.setState({message: e.target.value})}/>
                     {needToAcceptUserPolicy && <CheckBox name="disabledConfirm"
-                              value={confirmedAupConnectionRequest}
-                              onChange={() => this.setState({confirmedAupConnectionRequest: !this.state.confirmedAupConnectionRequest})}
-                              info={I18n.t("models.services.confirmations.check", {
-                                  aup: requestConnectionService.accepted_user_policy,
-                                  name: requestConnectionService.name
-                              })}/>}
+                                                         value={confirmedAupConnectionRequest}
+                                                         onChange={() => this.setState({confirmedAupConnectionRequest: !this.state.confirmedAupConnectionRequest})}
+                                                         info={I18n.t("models.services.confirmations.check", {
+                                                             aup: requestConnectionService.accepted_user_policy,
+                                                             name: requestConnectionService.name
+                                                         })}/>}
                     <section className="actions">
                         <Button cancelButton={true} txt={I18n.t("forms.cancel")}
                                 onClick={this.cancelRequestConnectionService}/>
-                        <Button disabled={isEmpty(message) || (!confirmedAupConnectionRequest && needToAcceptUserPolicy)}
-                                txt={I18n.t("collaborationServices.send")}
-                                onClick={this.serviceConnectionRequest}/>
+                        <Button
+                            disabled={isEmpty(message) || (!confirmedAupConnectionRequest && needToAcceptUserPolicy)}
+                            txt={I18n.t("collaborationServices.send")}
+                            onClick={this.serviceConnectionRequest}/>
                     </section>
                 </div>
             </div>);
