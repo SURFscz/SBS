@@ -157,12 +157,21 @@ class TestMfa(AbstractTest):
 
         second_factor_auth = AbstractTest.set_second_factor_auth("urn:mary")
 
-        body = {"current_totp": pyotp.TOTP(second_factor_auth).now(),
-                "new_totp_value": pyotp.TOTP(secret).now()}
-        self.post("/api/mfa/update2fa", body=body)
+        self.post("/api/mfa/pre-update2fa", body={"totp_value": pyotp.TOTP(second_factor_auth).now()})
+        self.post("/api/mfa/update2fa", body={"new_totp_value": pyotp.TOTP(secret).now()})
 
         mary = User.query.filter(User.uid == "urn:mary").one()
         self.assertEqual(secret, mary.second_factor_auth)
+
+    def test_update2fa_invalid_current_totp(self):
+        self.login("urn:mary")
+        res = self.post("/api/mfa/update2fa", body={"new_totp_value": "123456"}, response_status_code=400)
+        self.assertEqual(res["current_totp"], False)
+
+    def test_update2fa_invalid_current_totp_value(self):
+        self.login("urn:mary")
+        res = self.post("/api/mfa/pre-update2fa", body={"totp_value": "123456"}, response_status_code=400)
+        self.assertEqual(res["current_totp"], False)
 
     def test_update2fa_invalid_totp(self):
         self.login("urn:mary")
@@ -170,9 +179,8 @@ class TestMfa(AbstractTest):
 
         second_factor_auth = AbstractTest.set_second_factor_auth("urn:mary")
 
-        body = {"current_totp": pyotp.TOTP(second_factor_auth).now(),
-                "new_totp_value": "123456"}
-        res = self.post("/api/mfa/update2fa", body=body, response_status_code=400)
+        self.post("/api/mfa/pre-update2fa", body={"totp_value": pyotp.TOTP(second_factor_auth).now()})
+        res = self.post("/api/mfa/update2fa", body={"new_totp_value": "123456"}, response_status_code=400)
         self.assertEqual(res["new_totp"], True)
 
     def test_verify2fa_proxy_authz(self):

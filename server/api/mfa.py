@@ -150,19 +150,33 @@ def verify2fa_proxy_authz():
         return {"new_totp": False}, 400
 
 
+@mfa_api.route("/pre-update2fa", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def pre_update2fa():
+    user = User.query.filter(User.id == current_user_id()).one()
+    current_secret = user.second_factor_auth
+    data = current_request.get_json()
+    current_totp_value = data["totp_value"]
+    verified_current = pyotp.TOTP(current_secret).verify(current_totp_value)
+    if not verified_current:
+        return {"current_totp": False}, 400
+    session["validated_current_totp"] = True
+    return {}, 201
+
+
 @mfa_api.route("/update2fa", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def update2fa():
     user = User.query.filter(User.id == current_user_id()).one()
-    current_secret = user.second_factor_auth
+    validated_current_totp = session.get("validated_current_totp")
+    if not validated_current_totp:
+        return {"current_totp": False}, 400
     new_secret = session["second_factor_auth"]
     data = current_request.get_json()
-    current_totp_value = data["current_totp"]
     new_totp_value = data["new_totp_value"]
-    verified_current = pyotp.TOTP(current_secret).verify(current_totp_value)
     verified_new = pyotp.TOTP(new_secret).verify(new_totp_value)
-    if not verified_current or not verified_new:
-        return {"current_totp": not verified_current, "new_totp": not verified_new}, 400
+    if not verified_new:
+        return {"new_totp": False}, 400
 
     user.second_factor_auth = new_secret
     db.session.merge(user)

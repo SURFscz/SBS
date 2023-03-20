@@ -25,7 +25,7 @@ import {AppStore} from "../stores/AppStore";
 import {ReactComponent as UserAdminIcon} from "../icons/users.svg";
 import ServiceOrganisations from "../components/redesign/ServiceOrganisations";
 import SpinnerField from "../components/redesign/SpinnerField";
-import {removeDuplicates} from "../utils/Utils";
+import {removeDuplicates, splitListSemantically} from "../utils/Utils";
 import {actionMenuUserRole, isUserServiceAdmin} from "../utils/UserRole";
 import ServiceConnectionRequests from "../components/redesign/ServiceConnectionRequests";
 import {ReactComponent as GroupsIcon} from "../icons/ticket-group.svg";
@@ -355,11 +355,7 @@ class ServiceDetail extends React.Component {
         if (compliancies.length === 0) {
             return null;
         }
-        let compliant = compliancies.join(` ${I18n.t("service.compliancySeparator")} `);
-        if (compliancies.length > 2) {
-            const upToLast = compliancies.slice(0, compliancies.length - 1).join(", ");
-            compliant = `${upToLast} ${I18n.t("service.compliancySeparator")} ${compliancies[compliancies.length - 1]}`
-        }
+        const compliant = splitListSemantically(compliancies, I18n.t("service.compliancySeparator"));
         return I18n.t("service.compliancyLong", {compliant: compliant});
     }
 

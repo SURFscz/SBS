@@ -1926,7 +1926,8 @@ I18n.translations.en = {
             scanInfo: "Open your new authenticator app and:",
             verificationCodeInfo: "Once the QR-code above is scanned, enter the 6-digit authentication code from your new authenticator app.",
             verify: "Verify and update",
-            flash: "Your two-factor authentication has been updated to use your new authenticator app"
+            flash: "Your two-factor authentication has been updated to use your new authenticator app",
+            preValidatedFlash: "Correct!"
         },
         verify: {
             title: "Enter your authentication code",
