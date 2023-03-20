@@ -1926,7 +1926,8 @@ I18n.translations.nl = {
             scanInfo: "Open je nieuwe authenticator-app en:",
             verificationCodeInfo: "Zodra de QR-code hierboven is gescand, voer je de 6-cijferige authenticatiecode van je nieuwe authenticator-app in.",
             verify: "Verifiëren en opslaan",
-            flash: "Je tweefactorauthenticatie is aangepast voor je nieuwe authenticator-app"
+            flash: "Je tweefactorauthenticatie is aangepast voor je nieuwe authenticator-app",
+            preValidatedFlash: "Correct!"
         },
         verify: {
             title: "Vul je authenticatiecode in",

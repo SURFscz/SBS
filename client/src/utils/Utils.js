@@ -74,17 +74,8 @@ export function valueForSort(attribute, obj) {
 
 }
 
-export function escapeHtmlTooltip(msg) {
-    msg = escape(msg);
-    msg = msg.replace(/\n/g, "<br/>");
-    msg = msg.replace(/%20/g, " ");
-    return msg;
-}
-
-const S4 = () => (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-
 export function pseudoGuid() {
-    return (S4() + S4() + "-" + S4() + "-4" + S4().substr(0, 3) + "-" + S4() + "-" + S4() + S4() + S4()).toLowerCase();
+    return crypto.randomUUID()
 }
 
 export function escapeDeep(obj) {
@@ -112,6 +103,10 @@ export const ErrorOrigins = {
 
 export const getSchacHomeOrg = (currentUser, organisations) => {
     return organisations.find(org => org.schac_home_organisations.some(sho => sho === currentUser.schac_home_organisation));
+}
+
+export const splitListSemantically = (arr, lastSeparator) => {
+    return [arr.slice(0, -1).join(", "), arr.slice(-1)[0]].join(arr.length < 2 ? "" : ` ${lastSeparator} `);
 }
 
 

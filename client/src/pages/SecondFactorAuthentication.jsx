@@ -4,6 +4,7 @@ import "./SecondFactorAuthentication.scss";
 import {
     get2fa,
     get2faProxyAuthz,
+    preUpdate2fa,
     reset2fa,
     tokenResetRequest,
     tokenResetRespondents,
@@ -20,6 +21,9 @@ import CheckBox from "../components/CheckBox";
 import {ErrorOrigins, isEmpty, stopEvent} from "../utils/Utils";
 import DOMPurify from "dompurify";
 import {Toaster, ToasterType} from "@surfnet/sds";
+
+const TOTP_ATTRIBUTE_NAME = "totp";
+const NEW_TOTP_ATTRIBUTE_NAME = "newTotp";
 
 class SecondFactorAuthentication extends React.Component {
 
@@ -103,6 +107,7 @@ class SecondFactorAuthentication extends React.Component {
     }
 
     onChangeTotp = (index, attributeName, refs, onLastEntryVerify) => e => {
+        const {update} = this.props;
         const val = e.target.value;
         if (isNaN(val)) {
             return;
@@ -115,6 +120,8 @@ class SecondFactorAuthentication extends React.Component {
                 refs[index + 1].focus();
             } else if (onLastEntryVerify) {
                 this.verify();
+            } else if (update) {
+                this.preUpdateVerify();
             } else {
                 this.totpNewRefs[0].focus();
             }
@@ -194,35 +201,30 @@ class SecondFactorAuthentication extends React.Component {
         });
     }
 
+    preUpdateVerify = () => {
+        this.setState({busy: true});
+        const {totp} = this.state;
+        preUpdate2fa(totp.join("")).then(() => {
+            setFlash(I18n.t("mfa.update.preValidatedFlash"));
+            this.setState({busy: false, error: false},
+                () => this.totpNewRefs[0].focus());
+        }).catch(() => this.setState({busy: false, error: true, totp: Array(6).fill("")},
+            () => this.totpRefs[0].focus()));
+    }
+
     verify = () => {
         this.setState({busy: true});
         const {totp, newTotp, secondFaUuid, continueUrl} = this.state;
         const {update} = this.props;
         if (update) {
-            update2fa(newTotp.join(""), totp.join("")).then(() => {
+            update2fa(newTotp.join("")).then(() => {
                 this.props.history.push("/profile");
                 setFlash(I18n.t("mfa.update.flash"));
-            }).catch(e => {
-                if (e.response && e.response.json) {
-                    e.response.json().then(res => {
-                        const newState = {
+            }).catch(() => this.setState({
                             busy: false,
-                            error: res.current_totp,
-                            newError: res.new_totp,
-                        };
-                        let focusField = null;
-                        if (res.new_totp) {
-                            newState.newTotp = Array(6).fill("");
-                            focusField = this.totpNewRefs[0];
-                        }
-                        if (res.current_totp) {
-                            newState.totp = Array(6).fill("");
-                            focusField = this.totpRefs[0];
-                        }
-                        this.setState(newState, () => focusField.focus());
-                    })
-                }
-            });
+                            newError: true,
+                            newTotp: Array(6).fill("")
+                        }, () => this.totpNewRefs[0].focus()));
         } else if (secondFaUuid && continueUrl) {
             verify2faProxyAuthz(totp.join(""), secondFaUuid, continueUrl).then(r => {
                 window.location.href = r.location;
@@ -312,7 +314,7 @@ class SecondFactorAuthentication extends React.Component {
                 </section>
                 <div className="step-actions center">
                     <div className="input-field-container">
-                        {this.totpValueContainer(totp, "totp", this.totpRefs, true)}
+                        {this.totpValueContainer(totp, TOTP_ATTRIBUTE_NAME, this.totpRefs, true)}
                         {error && <span className="error">{I18n.t("mfa.verify.invalid")}</span>}
                     </div>
                 </div>
@@ -352,11 +354,11 @@ class SecondFactorAuthentication extends React.Component {
                     <Button cancelButton={true}
                             onClick={this.closeResetCode}
                             txt={I18n.t("forms.cancel")}
-                            />
+                    />
                     <Button disabled={submitDisabled}
                             onClick={this.submitResetCode}
                             txt={I18n.t("mfa.reset.submit")}
-                            />
+                    />
                 </section>
             </div>
         )
@@ -415,7 +417,7 @@ class SecondFactorAuthentication extends React.Component {
                     <h2>{I18n.t("mfa.update.currentCode")}</h2>
                     <div className="step-actions">
                         <p>{I18n.t("mfa.update.currentCodeInfo")}</p>
-                        {this.totpValueContainer(totp, "totp", this.totpRefs, false)}
+                        {this.totpValueContainer(totp, TOTP_ATTRIBUTE_NAME, this.totpRefs, false)}
                         {error && <span className="error">{I18n.t("mfa.verify.invalid")}</span>}
                     </div>
                 </div>}
@@ -440,11 +442,11 @@ class SecondFactorAuthentication extends React.Component {
                             <h2>{I18n.t("mfa.register.verificationCode")}</h2>}
                         <p>{I18n.t("mfa.register.verificationCodeInfo")}</p>
                         {!update && <>
-                            {this.totpValueContainer(totp, "totp", this.totpRefs, true)}
+                            {this.totpValueContainer(totp, TOTP_ATTRIBUTE_NAME, this.totpRefs, true)}
                             {error && <span className="error">{I18n.t("mfa.verify.invalid")}</span>}
                         </>}
                         {update && <>
-                            {this.totpValueContainer(newTotp, "newTotp", this.totpNewRefs, true, true)}
+                            {this.totpValueContainer(newTotp, NEW_TOTP_ATTRIBUTE_NAME, this.totpNewRefs, true, true)}
                             {newError && <span className="error">{I18n.t("mfa.verify.invalid")}</span>}
                         </>}
                     </div>

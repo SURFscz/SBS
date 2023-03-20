@@ -1,4 +1,4 @@
-import {groupBy, removeDuplicates, sortObjects} from "../../utils/Utils";
+import {groupBy, removeDuplicates, sortObjects, splitListSemantically} from "../../utils/Utils";
 
 test("GroupBy", () => {
     expect({
@@ -44,4 +44,12 @@ test("Remove duplicates", () => {
         {id: 1, name:"one"},
         {id: 2, name:"two"},
     ]);
+});
+
+test("splitListSemantically", () => {
+    const arr = ["1","2","3","4"]
+    expect(splitListSemantically(arr, "and")).toEqual("1, 2, 3 and 4");
+    expect(splitListSemantically(["1", "2"], "and")).toEqual("1 and 2");
+    expect(splitListSemantically(["1"], "and")).toEqual("1");
+    expect(splitListSemantically([], "and")).toEqual("");
 });
