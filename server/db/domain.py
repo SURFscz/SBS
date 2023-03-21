@@ -407,6 +407,7 @@ class ServiceToken(Base, db.Model, SecretMixin):
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     hashed_token = db.Column("hashed_token", db.String(length=512), nullable=False)
     description = db.Column("description", db.Text(), nullable=True)
+    token_type = db.Column("token_type", db.String(length=255), nullable=False)
     service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
     service = db.relationship("Service", back_populates="service_tokens")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)

@@ -5,6 +5,7 @@ from sqlalchemy import text
 
 from server.api.service import user_service
 from server.db.db import db
+from server.db.defaults import SERVICE_TOKEN_SCIM
 from server.db.domain import Service, Organisation, ServiceInvitation, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_network_entity_id, uuc_name, \
@@ -134,15 +135,16 @@ class TestService(AbstractTest):
         service = self.find_entity_by_name(Service, service_network_name)
         self.login("urn:john")
         service = self.get(f"api/services/{service.id}", with_basic_auth=False)
-        self.assertEqual(1, len(service["service_tokens"]))
+        self.assertEqual(2, len(service["service_tokens"]))
 
         service["token_enabled"] = False
         service["pam_web_sso_enabled"] = False
 
         self.put("/api/services", body=service, with_basic_auth=False)
 
-        service = self._find_by_name(service_network_name)
-        self.assertEqual(0, len(service["service_tokens"]))
+        service = self.find_entity_by_name(Service, service_network_name)
+        self.assertEqual(1, len(service.service_tokens))
+        self.assertEqual(SERVICE_TOKEN_SCIM, service.service_tokens[0].token_type)
 
     def test_toggle_not_allowed(self):
         service = self.find_entity_by_name(Service, service_cloud_name)

@@ -7,7 +7,7 @@ from server.auth.secrets import secure_hash
 from server.auth.tokens import validate_service_token
 from server.auth.user_claims import user_memberships, collaboration_memberships_for_service
 from server.db.db import db
-from server.db.defaults import USER_TOKEN_INTROSPECT
+from server.db.defaults import USER_TOKEN_INTROSPECT, SERVICE_TOKEN_INTROSPECTION
 from server.db.domain import UserToken
 from server.db.models import log_user_login
 
@@ -17,7 +17,7 @@ token_api = Blueprint("token_api", __name__, url_prefix="/api/tokens")
 @token_api.route("/introspect", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def introspect():
-    service = validate_service_token("token_enabled")
+    service = validate_service_token("token_enabled", SERVICE_TOKEN_INTROSPECTION)
     token = current_request.form.get("token")
     hashed_token = secure_hash(token)
     user_token = UserToken.query.filter(UserToken.hashed_token == hashed_token).first()

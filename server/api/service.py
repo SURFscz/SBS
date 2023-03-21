@@ -12,7 +12,8 @@ from server.auth.security import confirm_write_access, current_user_id, confirm_
     is_organisation_admin_or_manager, is_application_admin, is_service_admin, confirm_service_admin, \
     confirm_external_api_call
 from server.db.db import db
-from server.db.defaults import STATUS_ACTIVE, cleanse_short_name, default_expiry_date, valid_uri_attributes
+from server.db.defaults import STATUS_ACTIVE, cleanse_short_name, default_expiry_date, valid_uri_attributes, \
+    service_token_options
 from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, \
     User, ServiceInvitation, ServiceMembership, ServiceToken
 from server.db.models import update, save, delete, unique_model_objects
@@ -482,11 +483,12 @@ def update_service():
     if "ldap_password" in data:
         del data["ldap_password"]
 
-    token_enabled = data["token_enabled"]
-    pam_web_sso_enabled = data["pam_web_sso_enabled"]
-    if not token_enabled and not pam_web_sso_enabled:
-        for service_token in ServiceToken.query.filter(ServiceToken.service_id == service_id).all():
-            db.session.delete(service_token)
+    for enabled, token_type in service_token_options.items():
+        if not data.get(enabled):
+            ServiceToken.query \
+                .filter(ServiceToken.service_id == service_id) \
+                .filter(ServiceToken.token_type == token_type) \
+                .delete()
 
     res = update(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]

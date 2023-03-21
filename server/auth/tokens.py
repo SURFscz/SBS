@@ -15,11 +15,12 @@ def get_authorization_header(is_external_api_url, ignore_missing_auth_header=Fal
     return hashed_secret
 
 
-def validate_service_token(attr_enabled) -> Service:
+def validate_service_token(attr_enabled, token_type) -> Service:
     hashed_bearer_token = get_authorization_header(True)
     service = Service.query \
         .join(Service.service_tokens) \
         .filter(ServiceToken.hashed_token == hashed_bearer_token) \
+        .filter(ServiceToken.token_type == token_type) \
         .first()
     if not service or (attr_enabled and not getattr(service, attr_enabled)):
         logger = ctx_logger("validate_service_token")

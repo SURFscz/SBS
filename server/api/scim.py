@@ -10,6 +10,7 @@ from werkzeug.exceptions import Unauthorized
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_write_access
 from server.auth.tokens import validate_service_token
+from server.db.defaults import SERVICE_TOKEN_SCIM
 from server.db.domain import User, Collaboration, Group, Service
 from server.scim import SCIM_URL_PREFIX, EXTERNAL_ID_POST_FIX
 from server.scim.group_template import find_groups_template, find_group_by_id_template
@@ -89,7 +90,7 @@ def resource_types():
 @swag_from("../swagger/public/paths/get_users.yml")
 @json_endpoint
 def service_users():
-    service = validate_service_token(None)
+    service = validate_service_token(None, SERVICE_TOKEN_SCIM)
     filter_param = query_param("filter", required=False)
     # note: we only support "eq" here.
     if filter_param:
@@ -116,7 +117,7 @@ def service_user_by_external_id(user_external_id: str):
 @swag_from("../swagger/public/paths/get_groups.yml")
 @json_endpoint
 def service_groups():
-    service = validate_service_token(None)
+    service = validate_service_token(None, SERVICE_TOKEN_SCIM)
     all_scim_groups = all_scim_groups_by_service(service)
     return find_groups_template(all_scim_groups), 200
 
@@ -137,7 +138,7 @@ def service_group_by_identifier(group_external_id: str):
 @json_endpoint
 def sweep():
     try:
-        service = validate_service_token("scim_enabled")
+        service = validate_service_token("scim_enabled", SERVICE_TOKEN_SCIM)
     except Unauthorized:
         confirm_write_access()
         service = Service.query.get(query_param("service_id"))

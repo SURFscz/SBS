@@ -1,13 +1,12 @@
-
 from flask import Blueprint, request as current_request, session
 from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint, emit_socket
 from server.auth.secrets import generate_token, hash_secret_key
 from server.auth.security import confirm_service_admin
+from server.db.defaults import service_token_options, SERVICE_TOKEN_SCIM
 from server.db.domain import ServiceToken, Service
 from server.db.models import save, delete
-from server.db.db import db
 
 service_token_api = Blueprint("service_token_api", __name__, url_prefix="/api/service_tokens")
 
@@ -30,11 +29,13 @@ def save_service_token():
         raise Forbidden("Tampering with generated hashed_token is not allowed")
     data = hash_secret_key(data, "hashed_token")
     service = Service.query.get(data["service_id"])
-    if not service.pam_web_sso_enabled and not service.token_enabled:
-        service.pam_web_sso_enabled = data["pam_web_sso_enabled"]
-        service.token_enabled = data["token_enabled"]
-        service.token_validity_days = data.get("token_validity_days", 1)
-        db.session.merge(service)
+    token_type = data.get("token_type")
+    if token_type not in list(service_token_options.values()) + [SERVICE_TOKEN_SCIM]:
+        raise Forbidden(f"Invalid token_type {token_type}")
+
+    for enabled, type in service_token_options.items():
+        if token_type == type and not getattr(service, enabled):
+            raise Forbidden(f"Service {service.name} is not {enabled}")
 
     emit_socket(f"service_{service.id}")
 
