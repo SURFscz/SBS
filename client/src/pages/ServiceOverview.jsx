@@ -419,7 +419,7 @@ class ServiceOverview extends React.Component {
 
     afterUpdate = (name, action) => {
         setFlash(I18n.t(`service.flash.${action}`, {name: name}));
-        this.setState({loading: false, initial: false});
+        this.setState({loading: false, initial: false, createNewServiceToken: false, confirmationDialogOpen: false});
         this.props.refresh();
     };
 

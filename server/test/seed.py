@@ -8,7 +8,7 @@ from sqlalchemy import text
 from server.api.collaboration_request import STATUS_OPEN
 from server.auth.secrets import secure_hash, generate_token
 from server.db.audit_mixin import metadata
-from server.db.defaults import default_expiry_date
+from server.db.defaults import default_expiry_date, SERVICE_TOKEN_INTROSPECTION, SERVICE_TOKEN_SCIM, SERVICE_TOKEN_PAM
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
     CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey, CollaborationRequest, \
     ServiceConnectionRequest, SuspendNotification, Aup, SchacHomeOrganisation, SshKey, ServiceGroup, ServiceInvitation, \
@@ -104,12 +104,19 @@ wireless_service_connection_request_hash = generate_token()
 pam_session_id = str(uuid.uuid4())
 invalid_service_pam_session_id = str(uuid.uuid4())
 
+image_cache = {}
+
 
 def read_image(file_name, directory="images"):
     file = f"{os.path.dirname(os.path.realpath(__file__))}/{directory}/{file_name}"
+    global image_cache
+    if file in image_cache:
+        return image_cache.get(file)
     with open(file, "rb") as f:
         c = f.read()
-        return base64.encodebytes(c).decode("utf-8")
+        decoded = base64.encodebytes(c).decode("utf-8")
+        image_cache[file] = decoded
+        return decoded
 
 
 def persist_instance(db, *objs):
@@ -360,15 +367,31 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                        service=wiki)
     persist_instance(db, service_group_mail, service_group_wiki1, service_group_wiki2)
 
-    service_token_cloud = ServiceToken(hashed_token=secure_hash(service_cloud_token), description="Cloud token",
-                                       service=cloud)
-    service_token_network = ServiceToken(hashed_token=secure_hash(service_network_token), description="Network token",
-                                         service=network)
-    service_token_storage = ServiceToken(hashed_token=secure_hash(service_storage_token), description="Storage token",
-                                         service=storage)
-    service_token_wiki = ServiceToken(hashed_token=secure_hash(service_wiki_token), description="Wiki token",
-                                      service=wiki)
-    persist_instance(db, service_token_cloud, service_token_storage, service_token_wiki, service_token_network)
+    service_token_cloud_introspection = ServiceToken(hashed_token=secure_hash(service_cloud_token),
+                                                     description="Cloud token", service=cloud,
+                                                     token_type=SERVICE_TOKEN_INTROSPECTION)
+    service_token_cloud_scim = ServiceToken(hashed_token=secure_hash(service_cloud_token), description="Cloud token",
+                                            service=cloud, token_type=SERVICE_TOKEN_SCIM)
+    service_token_network_introspection = ServiceToken(hashed_token=secure_hash(service_network_token),
+                                                       description="Network token", service=network,
+                                                       token_type=SERVICE_TOKEN_INTROSPECTION)
+    service_token_network_scim = ServiceToken(hashed_token=secure_hash(service_network_token),
+                                              description="Network token", service=network,
+                                              token_type=SERVICE_TOKEN_SCIM)
+    service_token_storage_pam = ServiceToken(hashed_token=secure_hash(service_storage_token),
+                                             description="Storage token", service=storage, token_type=SERVICE_TOKEN_PAM)
+    service_token_storage_scim = ServiceToken(hashed_token=secure_hash(service_storage_token),
+                                              description="Storage token", service=storage,
+                                              token_type=SERVICE_TOKEN_PAM)
+    service_token_wiki_introspection = ServiceToken(hashed_token=secure_hash(service_wiki_token),
+                                                    description="Wiki token", service=wiki,
+                                                    token_type=SERVICE_TOKEN_INTROSPECTION)
+    service_token_wiki_scim = ServiceToken(hashed_token=secure_hash(service_wiki_token),
+                                           description="Wiki token", service=wiki,
+                                           token_type=SERVICE_TOKEN_SCIM)
+    persist_instance(db, service_token_cloud_introspection, service_token_cloud_scim,
+                     service_token_network_introspection, service_token_network_scim, service_token_storage_pam,
+                     service_token_storage_scim, service_token_wiki_introspection, service_token_wiki_scim)
 
     service_invitation_cloud = ServiceInvitation(message="Please join", hash=service_invitation_hash,
                                                  expiry_date=datetime.date.today() + datetime.timedelta(days=14),

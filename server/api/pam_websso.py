@@ -14,7 +14,7 @@ from server.api.service import user_service
 from server.auth.security import current_user_id
 from server.auth.tokens import validate_service_token
 from server.db.db import db
-from server.db.defaults import PAM_WEB_LOGIN
+from server.db.defaults import PAM_WEB_LOGIN, SERVICE_TOKEN_PAM
 from server.db.domain import User, PamSSOSession
 from server.db.models import log_user_login, flatten
 from server.logger.context_logger import ctx_logger
@@ -74,7 +74,7 @@ def find_by_session_id(service_shortname, session_id):
 @swag_from("../swagger/public/paths/start_pam_sso_session.yml")
 @json_endpoint
 def start():
-    service = validate_service_token("pam_web_sso_enabled")
+    service = validate_service_token("pam_web_sso_enabled", SERVICE_TOKEN_PAM)
 
     logger = ctx_logger("pam_weblogin")
 
@@ -143,7 +143,7 @@ def start():
 @swag_from("../swagger/public/paths/check_pin_pam_sso_session.yml")
 @json_endpoint
 def check_pin():
-    service = validate_service_token("pam_web_sso_enabled")
+    service = validate_service_token("pam_web_sso_enabled", SERVICE_TOKEN_PAM)
 
     logger = ctx_logger("pam_weblogin")
     try:
@@ -184,7 +184,7 @@ def check_pin():
 @swag_from("../swagger/public/paths/get_ssh_keys_pam_sso_service.yml")
 @json_endpoint
 def ssh_keys():
-    service = validate_service_token("pam_web_sso_enabled")
+    service = validate_service_token("pam_web_sso_enabled", SERVICE_TOKEN_PAM)
 
     logger = ctx_logger("pam_weblogin")
 

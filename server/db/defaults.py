@@ -12,6 +12,13 @@ STATUS_ACTIVE = "active"
 STATUS_EXPIRED = "expired"
 STATUS_SUSPENDED = "suspended"
 
+SERVICE_TOKEN_INTROSPECTION = "introspection"
+SERVICE_TOKEN_PAM = "pam"
+SERVICE_TOKEN_SCIM = "scim"
+
+service_token_options = {"token_enabled": SERVICE_TOKEN_INTROSPECTION,
+                         "pam_web_sso_enabled": SERVICE_TOKEN_PAM}
+
 SBS_LOGIN = "sbs_login"
 PROXY_AUTHZ = "proxy_authz"
 PROXY_AUTHZ_SBS = "proxy_authz_sbs"
