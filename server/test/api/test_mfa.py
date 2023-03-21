@@ -169,6 +169,7 @@ class TestMfa(AbstractTest):
         self.assertEqual(res["current_totp"], False)
 
     def test_update2fa_invalid_current_totp_value(self):
+        self.set_second_factor_auth("urn:mary")
         self.login("urn:mary")
         res = self.post("/api/mfa/pre-update2fa", body={"totp_value": "123456"}, response_status_code=400)
         self.assertEqual(res["current_totp"], False)
