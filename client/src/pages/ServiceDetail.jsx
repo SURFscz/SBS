@@ -196,7 +196,6 @@ class ServiceDetail extends React.Component {
 
     refresh = callback => {
         const params = this.props.match.params;
-        this.setState({loading: true});
         const {user} = this.props;
         const userServiceAdmin = isUserServiceAdmin(user, {id: parseInt(params.id, 10)}) || user.admin;
         if (userServiceAdmin) {
@@ -225,6 +224,7 @@ class ServiceDetail extends React.Component {
 
         }
     };
+
     getDetailsTab = (service, userAdmin, serviceAdmin, showServiceAdminView) => {
         return (<div key="details" name="details"
                      label={I18n.t("home.tabs.details")}

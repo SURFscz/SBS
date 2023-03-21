@@ -511,7 +511,7 @@ class Groups extends React.Component {
                      : null
             },
             {
-                key: "service_group",
+                key: "service_group__service__name",
                 header: I18n.t("models.groups.service_group"),
                 mapper: group => group.service_group ? <a href={`/services/${group.service_group.service_id}`}
                                                           className={"neutral-appearance"}
