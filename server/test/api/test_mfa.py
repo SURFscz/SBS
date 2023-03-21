@@ -182,7 +182,7 @@ class TestMfa(AbstractTest):
 
         self.post("/api/mfa/pre-update2fa", body={"totp_value": pyotp.TOTP(second_factor_auth).now()})
         res = self.post("/api/mfa/update2fa", body={"new_totp_value": "123456"}, response_status_code=400)
-        self.assertEqual(res["new_totp"], True)
+        self.assertFalse(res["new_totp"])
 
     def test_verify2fa_proxy_authz(self):
         sarah = self.add_totp_to_user("urn:sarah")
