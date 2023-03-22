@@ -106,7 +106,7 @@ def _memberships(group: Union[Group, Collaboration], remote_users_by_external_id
     result = []
     active_members = [member for member in group.collaboration_memberships if member.is_active]
     for member in active_members:
-        scim_object = remote_users_by_external_id[member.user.external_id]
+        scim_object = remote_users_by_external_id.get(member.user.external_id)
         result.append(scim_member_object(base_url, member, scim_object))
     return result
 
@@ -177,7 +177,7 @@ def perform_sweep(service: Service):
                 remote_users_by_external_id[user.external_id] = response_json
                 sync_results["users"]["created"].append(response_json)
         else:
-            remote_user = remote_users_by_external_id[user.external_id]
+            remote_user = remote_users_by_external_id.get(user.external_id)
             # Update SRAM users that are not equal to their counterpart in the remote SCIM database
             if _user_changed(user, remote_user):
                 scim_dict = update_user_template(user, remote_user["id"])

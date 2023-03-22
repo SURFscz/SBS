@@ -172,7 +172,49 @@ section.dialog-content {
 
         .mod-entities {
             margin-bottom: 0;
+            @media (max-width: $tablet-max) {
+                padding: 0;
+            }
         }
 
     }
+
+    table.serviceTokens {
+
+        thead {
+            th {
+                &.hashed_token {
+                    width: 20%;
+                }
+
+                &.description {
+                    width: 35%;
+                }
+
+                &.token_type {
+                    width: 20%;
+                }
+
+                &.created_at {
+                    width: 20%;
+                }
+
+                &.trash {
+                    width: 40px;
+                }
+
+            }
+        }
+
+        tbody {
+            td {
+                &.trash {
+                    text-align: right;
+                    color: var(--sds--color--red--400);
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+
 }
