@@ -44,7 +44,7 @@ class TestServiceToken(AbstractTest):
         service = self.find_entity_by_name(Service, service_mail_name)
         self.assertFalse(service.pam_web_sso_enabled)
         self.assertFalse(service.token_enabled)
-        self.assertFalse(service.scim_enabled)
+        self.assertFalse(service.scim_client_enabled)
 
         self.login("urn:john")
         self.post("/api/service_tokens",
@@ -53,9 +53,10 @@ class TestServiceToken(AbstractTest):
                   with_basic_auth=False)
 
         service = self.find_entity_by_name(Service, service_mail_name)
+        self.assertTrue(service.scim_client_enabled)
         self.assertEqual(1, len(service.service_tokens))
 
-    def test_service_token_not_allowed(self):
+    def test_service_token_pam_allowed(self):
         secret = self.get("/api/service_tokens")["value"]
         self.login("urn:john")
 
@@ -65,7 +66,11 @@ class TestServiceToken(AbstractTest):
         self.post("/api/service_tokens",
                   body={"service_id": service.id, "hashed_token": secret, "token_enabled": True,
                         "description": "Test", "pam_web_sso_enabled": True, "token_type": SERVICE_TOKEN_PAM},
-                  with_basic_auth=False, response_status_code=403)
+                  with_basic_auth=False)
+
+        service = self.find_entity_by_name(Service, service_mail_name)
+        self.assertTrue(service.pam_web_sso_enabled)
+        self.assertEquals(1, len(service.service_tokens))
 
     def test_service_token_wrong_token_type(self):
         secret = self.get("/api/service_tokens")["value"]

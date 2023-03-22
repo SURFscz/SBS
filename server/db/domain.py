@@ -475,6 +475,7 @@ class Service(Base, db.Model, LogoMixin):
                                      cascade="delete, delete-orphan",
                                      passive_deletes=True)
     scim_enabled = db.Column("scim_enabled", db.Boolean(), nullable=True, default=False)
+    scim_client_enabled = db.Column("scim_client_enabled", db.Boolean(), nullable=True, default=False)
     scim_url = db.Column("scim_url", db.String(length=255), nullable=True)
     scim_bearer_token = db.Column("scim_bearer_token", db.String(length=512), nullable=True)
     sweep_scim_enabled = db.Column("sweep_scim_enabled", db.Boolean(), nullable=True, default=False)

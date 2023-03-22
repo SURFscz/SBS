@@ -17,7 +17,8 @@ SERVICE_TOKEN_PAM = "pam"
 SERVICE_TOKEN_SCIM = "scim"
 
 service_token_options = {"token_enabled": SERVICE_TOKEN_INTROSPECTION,
-                         "pam_web_sso_enabled": SERVICE_TOKEN_PAM}
+                         "pam_web_sso_enabled": SERVICE_TOKEN_PAM,
+                         "scim_client_enabled": SERVICE_TOKEN_SCIM}
 
 SBS_LOGIN = "sbs_login"
 PROXY_AUTHZ = "proxy_authz"

@@ -290,7 +290,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     cloud = Service(entity_id=service_cloud_entity_id, name=service_cloud_name, description="SARA Cloud Service",
                     public_visible=True, automatic_connection_allowed=True, logo=read_image("cloud.jpg"),
                     allowed_organisations=[uuc, uva], abbreviation="cloud", privacy_policy="https://privacy.org",
-                    token_enabled=True, token_validity_days=1, security_email="sec@org.nl",
+                    token_enabled=True, token_validity_days=1, security_email="sec@org.nl", scim_client_enabled=True,
                     scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret")
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, uva],
                       description="SURF Storage Service", logo=read_image("storage.jpeg"), abbreviation="storage",
@@ -309,7 +309,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                    automatic_connection_allowed_organisations=[uva],
                    ldap_password="$6$rounds=100000$bFyBZD0Fim7BCAqt$BSq4u2IqhyT2khkCMILpaEceMnvYIKvxyxttA8."
                                  "IddqWdPB.AEH2MBb1sggk8pDlrW/Xb00f8xa67cC0nfkuX.",
-                   token_enabled=True, token_validity_days=365, security_email="sec@org.nl")
+                   token_enabled=True, scim_client_enabled=True, token_validity_days=365, security_email="sec@org.nl")
     sweep_scim_last_run = current_time - datetime.timedelta(days=1)
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
                       description="Network enabling service SSH access", address="Some address",
@@ -320,7 +320,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                       token_enabled=True, token_validity_days=365, security_email="sec@org.nl",
                       scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret",
                       sweep_scim_last_run=sweep_scim_last_run, sweep_scim_daily_rate=1, sweep_scim_enabled=True,
-                      sweep_remove_orphans=True)
+                      sweep_remove_orphans=True, scim_client_enabled=True)
     service_ssh_uva = Service(entity_id="service_ssh_uva", name=service_ssh_uva_name,
                               description="Uva SSH access",
                               uri="https://uri.com/ssh", identity_type="SSH KEY", accepted_user_policy="https://ssh",
