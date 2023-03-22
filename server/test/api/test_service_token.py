@@ -70,7 +70,7 @@ class TestServiceToken(AbstractTest):
 
         service = self.find_entity_by_name(Service, service_mail_name)
         self.assertTrue(service.pam_web_sso_enabled)
-        self.assertEquals(1, len(service.service_tokens))
+        self.assertEqual(1, len(service.service_tokens))
 
     def test_service_token_wrong_token_type(self):
         secret = self.get("/api/service_tokens")["value"]

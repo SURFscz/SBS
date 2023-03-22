@@ -5,7 +5,7 @@ from server.api.base import json_endpoint, emit_socket
 from server.auth.secrets import generate_token, hash_secret_key
 from server.auth.security import confirm_service_admin
 from server.db.db import db
-from server.db.defaults import service_token_options
+from server.db.defaults import service_token_options, SERVICE_TOKEN_INTROSPECTION
 from server.db.domain import ServiceToken, Service
 from server.db.models import save, delete
 
@@ -37,6 +37,8 @@ def save_service_token():
     for enabled, type in service_token_options.items():
         if token_type == type and not getattr(service, enabled):
             setattr(service, enabled, True)
+            if type == SERVICE_TOKEN_INTROSPECTION and not service.token_validity_days:
+                service.token_validity_days = data.get("token_validity_days", 1)
             db.session.merge(service)
 
     emit_socket(f"service_{service.id}")

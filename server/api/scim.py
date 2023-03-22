@@ -90,7 +90,7 @@ def resource_types():
 @swag_from("../swagger/public/paths/get_users.yml")
 @json_endpoint
 def service_users():
-    service = validate_service_token(None, SERVICE_TOKEN_SCIM)
+    service = validate_service_token("scim_client_enabled", SERVICE_TOKEN_SCIM)
     filter_param = query_param("filter", required=False)
     # note: we only support "eq" here.
     if filter_param:
@@ -117,7 +117,7 @@ def service_user_by_external_id(user_external_id: str):
 @swag_from("../swagger/public/paths/get_groups.yml")
 @json_endpoint
 def service_groups():
-    service = validate_service_token(None, SERVICE_TOKEN_SCIM)
+    service = validate_service_token("scim_client_enabled", SERVICE_TOKEN_SCIM)
     all_scim_groups = all_scim_groups_by_service(service)
     return find_groups_template(all_scim_groups), 200
 
