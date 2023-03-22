@@ -2096,13 +2096,17 @@ I18n.translations.nl = {
     serviceDetails: {
         details: "Dienstgegevens",
         tokens: "Dienst tokens",
-        tokensTooltip: "Dienst tokens enable the service to introspect users and / or use the PAM SSO module",
+        tokensTooltips: {
+            scim: "SCIM dienst tokens stellen de dienst in staat om de SCIM endpoints van SRAM aan te roepen",
+            pam: "PAM dienst tokens stellen de dienst in staat om de PAM functionaliteit van SRAM te gebruiken",
+            introspection: "Introspect dienst tokens stellen de dienst in staat om tokens van gebruikers te introspecten"
+        },
         hashedToken: "Hashed token",
         tokenValue: "**** **** ****",
         tokenType: "Type",
         tokenTypeTooltip: "Je kan dit token alleen gebruiken voor {{tokenType}} verzoeken",
         tokenDeleteConfirmation: "Weet je zeker dat je dit token wilt verwijderen?",
-        disableTokenConfirmation: "Weet je zeker dat je de token functionaliteit voor deze dienst wilt uitzetten? {{count}} bestaande {{tokens}} zal worden verwijderd.",
+        disableTokenConfirmation: "Weet je zeker dat je de {{type}} functionaliteit voor deze dienst wilt uitzetten? {{count}} bestaande {{tokens}} zal worden verwijderd.",
         multipleTokens: "tokens",
         singleTokens: "token",
         noTokens: "Er zijn geen tokens...",
