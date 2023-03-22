@@ -342,11 +342,11 @@ class OrganisationAdmins extends React.Component {
             </div>);
     }
 
-    getImpersonateMapper = (entity, currentUser, impersonation_allowed) => {
+    getImpersonateMapper = (entity, currentUser, impersonation_allowed, isAdmin) => {
         const showImpersonation = currentUser.admin && !entity.invite && entity.user.id !== currentUser.id && impersonation_allowed;
         return (
             <div className={"action-icons-container"}>
-                {this.actionIcons(entity)}
+                {isAdmin && this.actionIcons(entity)}
                 {showImpersonation && <div className="impersonation">
                     <HandIcon className="impersonate"
                               onClick={() => emitImpersonation(entity.user, this.props.history)}/>
@@ -453,7 +453,7 @@ class OrganisationAdmins extends React.Component {
                 nonSortable: true,
                 key: "impersonate",
                 header: "",
-                mapper: entity => this.getImpersonateMapper(entity, currentUser, impersonation_allowed)
+                mapper: entity => this.getImpersonateMapper(entity, currentUser, impersonation_allowed, isAdmin)
             },
         ]
         const entities = admins.concat(invites);
