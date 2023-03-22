@@ -4,7 +4,8 @@ from werkzeug.exceptions import Forbidden
 from server.api.base import json_endpoint, emit_socket
 from server.auth.secrets import generate_token, hash_secret_key
 from server.auth.security import confirm_service_admin
-from server.db.defaults import service_token_options, SERVICE_TOKEN_SCIM
+from server.db.db import db
+from server.db.defaults import service_token_options
 from server.db.domain import ServiceToken, Service
 from server.db.models import save, delete
 
@@ -30,12 +31,13 @@ def save_service_token():
     data = hash_secret_key(data, "hashed_token")
     service = Service.query.get(data["service_id"])
     token_type = data.get("token_type")
-    if token_type not in list(service_token_options.values()) + [SERVICE_TOKEN_SCIM]:
+    if token_type not in list(service_token_options.values()):
         raise Forbidden(f"Invalid token_type {token_type}")
 
     for enabled, type in service_token_options.items():
         if token_type == type and not getattr(service, enabled):
-            raise Forbidden(f"Service {service.name} is not {enabled}")
+            setattr(service, enabled, True)
+            db.session.merge(service)
 
     emit_socket(f"service_{service.id}")
 
