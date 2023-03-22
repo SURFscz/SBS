@@ -18,7 +18,7 @@ import "./ServiceOverview.scss";
 import "../components/redesign/ApiKeys.scss";
 import Button from "../components/Button";
 import {setFlash} from "../utils/Flash";
-import {isEmpty, stopEvent} from "../utils/Utils";
+import {isEmpty, splitListSemantically, stopEvent} from "../utils/Utils";
 import {
     CO_SHORT_NAME,
     sanitizeShortName,
@@ -66,8 +66,6 @@ class ServiceOverview extends React.Component {
             tokenType: null,
             description: "",
             hashedToken: null,
-            serviceTokensEnabled: false,
-            hasServiceTokens: false,
             validatingNetwork: false,
             initial: true
         }
@@ -91,8 +89,6 @@ class ServiceOverview extends React.Component {
                 hasAdministrators: service.service_memberships.length > 0,
                 isServiceAdmin: serviceAdmin,
                 currentTab: tab,
-                serviceTokensEnabled: service.token_enabled || service.pam_web_sso_enabled,
-                hasServiceTokens: !isEmpty(service.service_tokens),
                 loading: false
             }, () => {
                 const {ip_networks} = this.state.service;
@@ -373,17 +369,32 @@ class ServiceOverview extends React.Component {
     submit = override => {
         this.setState({initial: false}, () => {
             if (this.isValid()) {
-                const {service, hasServiceTokens, serviceTokensEnabled} = this.state;
-                if (serviceTokensEnabled && hasServiceTokens && !service.token_enabled && !service.pam_web_sso_enabled && !override) {
-                    const count = service.service_tokens.length;
+                const {service} = this.state;
+                const tokenInfo =
+                    [
+                        {type: "scim", label: I18n.t("serviceDetails.toc.SCIMClient"), enabled: "scim_client_enabled"},
+                        {type: "pam", label: I18n.t("serviceDetails.toc.pamWebLogin"), enabled: "pam_web_sso_enabled"},
+                        {type: "introspection", label: I18n.t("serviceDetails.toc.tokens"), enabled: "token_enabled"},
+                    ]
+                tokenInfo.forEach(obj => obj.count = service.service_tokens.filter(token => token.token_type === obj.type).length);
+                const filteredTokenInfo = tokenInfo
+                    .filter(obj => obj.count > 0 && !service[obj.enabled]);
+                const count = filteredTokenInfo.reduce((acc, info) => {
+                    acc = acc + info.count;
+                    return acc;
+                }, 0);
+                const types = filteredTokenInfo.map(info => info.label);
+                const typesInfo = splitListSemantically(types, I18n.t("service.compliancySeparator"));
+                const question = I18n.t("serviceDetails.disableTokenConfirmation", {
+                        count: count,
+                        type: typesInfo,
+                        tokens: I18n.t(`serviceDetails.${count > 1 ? "multiple" : "single"}Tokens`)
+                    })
+                if (!isEmpty(filteredTokenInfo) && !override) {
                     this.setState({
                         confirmationDialogOpen: true,
                         leavePage: false,
-                        confirmationDialogQuestion: I18n.t("serviceDetails.disableTokenConfirmation",
-                            {
-                                count: count,
-                                tokens: I18n.t(`serviceDetails.${count > 1 ? "multiple" : "single"}Tokens`)
-                            }),
+                        confirmationDialogQuestion: question,
                         warning: true,
                         confirmationTxt: I18n.t("confirmationDialog.confirm"),
                         cancelDialogAction: this.closeConfirmationDialog,
@@ -392,7 +403,6 @@ class ServiceOverview extends React.Component {
                     });
                 } else {
                     this.setState({loading: true});
-
                     const {name, ip_networks} = service;
                     const strippedIpNetworks = ip_networks
                         .filter(network => network.network_value && network.network_value.trim())
@@ -774,7 +784,7 @@ class ServiceOverview extends React.Component {
         return <>
             <div className="input-field">
                 <label>{I18n.t("serviceDetails.tokens")}
-                    <Tooltip tip={I18n.t("serviceDetails.tokensTooltip")}/>
+                    <Tooltip tip={I18n.t(`serviceDetails.tokensTooltips.${tokenType}`)}/>
                 </label>
                 <Entities
                     entities={enabled ? service.service_tokens.filter(token => token.token_type === tokenType) : []}

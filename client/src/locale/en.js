@@ -2096,13 +2096,17 @@ I18n.translations.en = {
     serviceDetails: {
         details: "Service details",
         tokens: "Service tokens",
-        tokensTooltip: "Service tokens enable the service to introspect users and / or use the PAM SSO module",
+        tokensTooltips: {
+            scim: "SCIM service tokens enables the service to call the SCIM endpoints of SRAM",
+            pam: "PAM service tokens enables the service to use the PAM SSO module",
+            introspection: "Introspect service tokens enable the service to introspect users"
+        },
         hashedToken: "Hashed token",
         tokenValue: "**** **** ****",
         tokenType: "Type",
         tokenTypeTooltip: "You can only use this token for {{tokenType}} requests",
         tokenDeleteConfirmation: "Are you sure you want to remove this service token?",
-        disableTokenConfirmation: "Are you sure you want to disable token functionality for this service? The {{count}} existing {{tokens}} will be deleted.",
+        disableTokenConfirmation: "Are you sure you want to disable {{type}} functionality for this service? The {{count}} existing {{tokens}} will be deleted.",
         multipleTokens: "tokens",
         singleTokens: "token",
         noTokens: "There are no service tokens...",
