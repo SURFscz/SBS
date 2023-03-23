@@ -45,7 +45,7 @@ import Button from "../components/Button";
 import JoinRequestDialog from "../components/JoinRequestDialog";
 import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import moment from "moment";
-import {ButtonType, Tooltip} from "@surfnet/sds";
+import {ButtonType, MetaDataList, Tooltip} from "@surfnet/sds";
 import {ErrorOrigins, getSchacHomeOrg, isEmpty, removeDuplicates} from "../utils/Utils";
 import UserTokens from "../components/redesign/UserTokens";
 import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
@@ -761,7 +761,26 @@ class CollaborationDetail extends React.Component {
     }
 
     getUnitHeader = (user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration) => {
-        const joinRequestUrl = `${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`
+        const joinRequestUrl = `${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`;
+        const expiryDate = collaboration.expiry_date ? moment(collaboration.expiry_date * 1000).format("LL") : null;
+        const metaDataListItems = [{
+            label: I18n.t("models.orgMembers.expires"),
+            values: [expiryDate || I18n.t("expirations.never")]
+        }, {
+            label: I18n.t("collaboration.joinRequestsHeader"),
+            values: [
+                collaboration.disable_join_requests ? I18n.t("collaboration.noJoinRequests") :
+                    <span className="contains-copy">
+                        {I18n.t("collaboration.enabled")}
+                        <ClipBoardCopy transparentBackground={true}
+                                       txt={`${joinRequestUrl}`}/>
+                        </span>
+            ]
+        }, {
+            label: I18n.t("collaboration.memberList"),
+            values: [I18n.t(`collaboration.${collaboration.disclose_member_information ? "visible" : "hidden"}`)]
+        }];
+
         return (<UnitHeader obj={collaboration}
                             firstTime={user.admin ? this.onBoarding : undefined}
                             history={(user.admin && allowedToEdit) && this.props.history}
@@ -770,25 +789,7 @@ class CollaborationDetail extends React.Component {
                             name={collaboration.name}
                             actions={this.getActions(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}>
             <p>{collaboration.description}</p>
-            <div className="org-attributes-container-grid">
-                <div className="org-attributes">
-                    <span className="contains-copy">
-                        {collaboration.disable_join_requests && I18n.t("collaboration.noJoinRequests")}
-                        {!collaboration.disable_join_requests && <span>
-                            <a href={joinRequestUrl} target="_blank"
-                               rel="noopener noreferrer">{I18n.t("collaboration.joinRequests")}</a>
-                            <ClipBoardCopy transparentBackground={true}
-                                           txt={`${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`}/></span>}
-                    </span>
-                </div>
-                {this.getCollaborationStatus(collaboration)}
-                <div className="org-attributes">
-                    {(collaboration.disclose_email_information || collaboration.disclose_member_information) &&
-                    <span>{I18n.t("collaboration.discloseMembers")}</span>}
-                    {(!collaboration.disclose_email_information && !collaboration.disclose_member_information) &&
-                    <span>{I18n.t("collaboration.discloseNoMembers")}</span>}
-                </div>
-            </div>
+            {metaDataListItems.length > 0 && <MetaDataList items={metaDataListItems}/>}
         </UnitHeader>);
     }
 

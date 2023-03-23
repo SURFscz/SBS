@@ -84,3 +84,15 @@ a {
         padding: 0;
     }
 }
+
+.sds--metadata-list {
+    .sds--metadata-list--item {
+        dd.max {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 350px;
+        }
+    }
+}
+
