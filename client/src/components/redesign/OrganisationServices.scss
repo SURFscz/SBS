@@ -17,7 +17,6 @@
     }
 }
 
-
 table.organisationServicesUsed {
 
     thead {
@@ -27,7 +26,7 @@ table.organisationServicesUsed {
                 padding-left: 15px;
             }
 
-            &.allowed {
+            &.disabled {
                 width: 50%;
                 text-align: right;
             }

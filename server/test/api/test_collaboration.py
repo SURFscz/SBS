@@ -165,7 +165,7 @@ class TestCollaboration(AbstractTest):
 
         # normal, add a tag
         body["tags"] = [tag_existing, tag_just_valid]
-        collaboration = self.post("/api/collaborations", body=body, with_basic_auth=False)
+        self.post("/api/collaborations", body=body, with_basic_auth=False)
         collaboration = Collaboration.query.get(collaboration["id"])
         self.assertEqual(2, len(collaboration.tags))
 
@@ -173,7 +173,7 @@ class TestCollaboration(AbstractTest):
         body["tags"] = [tag_existing, tag_just_valid, tag_too_long]
         body["name"] += "_"
         body["short_name"] += "_"
-        collaboration = self.post("/api/collaborations", body=body, with_basic_auth=False)
+        self.post("/api/collaborations", body=body, with_basic_auth=False)
         collaboration = Collaboration.query.get(collaboration["id"])
         self.assertEqual(2, len(collaboration.tags))
 
@@ -189,7 +189,7 @@ class TestCollaboration(AbstractTest):
         body["tags"] = [tag_existing, tag_just_valid, tag_weird_start]
         body["name"] += "_"
         body["short_name"] += "_"
-        collaboration = self.post("/api/collaborations", body=body, with_basic_auth=False)
+        self.post("/api/collaborations", body=body, with_basic_auth=False)
         collaboration = Collaboration.query.get(collaboration["id"])
         self.assertEqual(2, len(collaboration.tags))
 
@@ -197,7 +197,7 @@ class TestCollaboration(AbstractTest):
         body["tags"] = [tag_existing, tag_just_valid, tag_digit_start]
         body["name"] += "_"
         body["short_name"] += "_"
-        collaboration = self.post("/api/collaborations", body=body, with_basic_auth=False)
+        self.post("/api/collaborations", body=body, with_basic_auth=False)
         collaboration = Collaboration.query.get(collaboration["id"])
         self.assertEqual(3, len(collaboration.tags))
 
