@@ -1775,8 +1775,6 @@ I18n.translations.nl = {
                 scimEnabled: "Scim enabled",
                 sweepScimEnabled: "Sweep enabled",
                 sweep: "Sweep",
-                scimProvisionUsers: "Provision users?",
-                scimProvisionGroups: "Provision groups?"
             }
         }
     },
