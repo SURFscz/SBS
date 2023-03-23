@@ -33,7 +33,7 @@ class OrganisationServices extends React.Component {
         const {organisation} = this.props;
         allServices().then(services => {
             services.forEach(service => {
-                service.disabled = !organisation.services.some(s => s.id === service.id);
+                service.disabled = this.serviceSortProperty(service, organisation);
             });
             this.setState({services: services, loading: false});
         });
@@ -95,6 +95,27 @@ class OrganisationServices extends React.Component {
     getServiceAction = service => {
         const {organisation, user} = this.props;
         const allowed = isUserAllowed(ROLES.ORG_MANAGER, user, organisation.id, null);
+        const tooltip = this.deductTooltip(service, organisation);
+        return (
+            <div className={"toggle-switch-container"}>
+                <div className={"toggle-switch-inner-container"}>
+                    {(allowed && !tooltip) &&
+                    <ToggleSwitch onChange={this.onToggle(service, organisation)}
+                                  value={organisation.services.some(s => s.id === service.id)}/>}
+                    {tooltip &&
+                    <Tooltip tip={tooltip} standalone={true}/>}
+                </div>
+            </div>
+        )
+    }
+
+    serviceSortProperty = (service, organisation) => {
+        const tooltip = this.deductTooltip(service, organisation);
+        const connected = organisation.services.some(s => s.id === service.id);
+        return (connected && !tooltip) ? 0 : tooltip ? 2 :  1;
+    }
+
+    deductTooltip = (service, organisation) => {
         let tooltip = null;
         const trusted_org = service.automatic_connection_allowed_organisations.some(org => org.id === organisation.id)
         const allowed_org = service.allowed_organisations.some(org => org.id === organisation.id) || trusted_org;
@@ -105,19 +126,7 @@ class OrganisationServices extends React.Component {
         } else if (!service.automatic_connection_allowed && !trusted_org) {
             tooltip = I18n.t("organisationServices.notAllowedOrganisation");
         }
-        return (
-            <div className={"toggle-switch-container"}>
-                <div className={"toggle-switch-inner-container"}>
-                    {(allowed && !tooltip) &&
-                    <ToggleSwitch onChange={this.onToggle(service, organisation)}
-                                  value={organisation.services.some(s => s.id === service.id)}
-                                  animate={false}
-                                  tooltip={tooltip}/>}
-                    {tooltip &&
-                    <Tooltip tip={tooltip} standalone={true}/>}
-                </div>
-            </div>
-        )
+        return tooltip;
     }
 
     render() {
@@ -142,7 +151,7 @@ class OrganisationServices extends React.Component {
                 mapper: this.getServiceLink,
             },
             {
-                key: "allowed",
+                key: "disabled",
                 header: I18n.t("models.services.mandatory"),
                 mapper: this.getServiceAction
             }]
