@@ -173,32 +173,32 @@ class TestCollaboration(AbstractTest):
         body["tags"] = [tag_existing, tag_just_valid, tag_too_long]
         body["name"] += "_"
         body["short_name"] += "_"
-        self.post("/api/collaborations", body=body, with_basic_auth=False)
-        collaboration = Collaboration.query.get(collaboration["id"])
+        res = self.post("/api/collaborations", body=body, with_basic_auth=False)
+        collaboration = Collaboration.query.get(res["id"])
         self.assertEqual(2, len(collaboration.tags))
 
         # tag too long
         body["tags"] = [tag_existing, tag_just_valid, tag_invalid]
         body["name"] += "_"
         body["short_name"] += "_"
-        collaboration = self.post("/api/collaborations", body=body, with_basic_auth=False)
-        collaboration = Collaboration.query.get(collaboration["id"])
+        res = self.post("/api/collaborations", body=body, with_basic_auth=False)
+        collaboration = Collaboration.query.get(res["id"])
         self.assertEqual(2, len(collaboration.tags))
 
         # tag start with invalid char
         body["tags"] = [tag_existing, tag_just_valid, tag_weird_start]
         body["name"] += "_"
         body["short_name"] += "_"
-        self.post("/api/collaborations", body=body, with_basic_auth=False)
-        collaboration = Collaboration.query.get(collaboration["id"])
+        res = self.post("/api/collaborations", body=body, with_basic_auth=False)
+        collaboration = Collaboration.query.get(res["id"])
         self.assertEqual(2, len(collaboration.tags))
 
         # normal, add a tag
         body["tags"] = [tag_existing, tag_just_valid, tag_digit_start]
         body["name"] += "_"
         body["short_name"] += "_"
-        self.post("/api/collaborations", body=body, with_basic_auth=False)
-        collaboration = Collaboration.query.get(collaboration["id"])
+        res = self.post("/api/collaborations", body=body, with_basic_auth=False)
+        collaboration = Collaboration.query.get(res["id"])
         self.assertEqual(3, len(collaboration.tags))
 
     @staticmethod
