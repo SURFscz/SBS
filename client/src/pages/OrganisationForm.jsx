@@ -44,6 +44,7 @@ class OrganisationForm extends React.Component {
             short_name: "",
             schac_home_organisations: [],
             schac_home_organisation: "",
+            invalid_schac_home_organisation: null,
             collaboration_creation_allowed: false,
             logo: "",
             services_restricted: false,
@@ -126,6 +127,7 @@ class OrganisationForm extends React.Component {
                     const anyInvalid = res.filter(b => b);
                     this.setState({
                         schac_home_organisations: newSchac_home_organisations,
+                        invalid_schac_home_organisation: null,
                         alreadyExists: {
                             ...alreadyExists,
                             schac_home_organisations: isEmpty(anyInvalid) ? null : anyInvalid
@@ -135,6 +137,7 @@ class OrganisationForm extends React.Component {
         } else {
             this.setState({
                 schac_home_organisations: [],
+                invalid_schac_home_organisation: null,
                 alreadyExists: {...alreadyExists, schac_home_organisations: null}
             });
         }
@@ -144,22 +147,29 @@ class OrganisationForm extends React.Component {
         stopEvent(e);
         const schac_home_organisation = e.target.value;
         const {schac_home_organisations, isNew, organisation, alreadyExists} = this.state;
-        if (!isEmpty(schac_home_organisation) && validSchacHomeRegExp.test(schac_home_organisation.trim()) &&
-            !schac_home_organisations.find(sho => sho.name === schac_home_organisation.trim())) {
-            const existingOrganisationId = isNew ? null : organisation.id;
-            schac_home_organisations.push({name: schac_home_organisation});
-            organisationSchacHomeOrganisationExists(schac_home_organisation, existingOrganisationId).then(schacHomeOrganisationExists => {
-                let existingSchacHomes = alreadyExists.schac_home_organisations;
-                if (schacHomeOrganisationExists) {
-                    existingSchacHomes = existingSchacHomes || [];
-                    existingSchacHomes.push(schac_home_organisation);
-                }
-                this.setState({
-                    schac_home_organisation: "",
-                    schac_home_organisations: [...schac_home_organisations],
-                    alreadyExists: {...alreadyExists, schac_home_organisations: existingSchacHomes}
+        if (!isEmpty(schac_home_organisation)) {
+            const invalid = !validSchacHomeRegExp.test(schac_home_organisation.trim());
+            const duplicate = schac_home_organisations.find(sho => sho.name === schac_home_organisation.trim());
+            if (invalid || duplicate) {
+                const invalid_schac_home_organisation = I18n.t(`organisation.${invalid ? "invalidSchacHome": "duplicateSchacHome"}`,
+                    {schac: schac_home_organisation.trim()});
+                this.setState({invalid_schac_home_organisation: invalid_schac_home_organisation});
+            } else {
+                const existingOrganisationId = isNew ? null : organisation.id;
+                schac_home_organisations.push({name: schac_home_organisation});
+                organisationSchacHomeOrganisationExists(schac_home_organisation, existingOrganisationId).then(schacHomeOrganisationExists => {
+                    let existingSchacHomes = alreadyExists.schac_home_organisations;
+                    if (schacHomeOrganisationExists) {
+                        existingSchacHomes = existingSchacHomes || [];
+                        existingSchacHomes.push(schac_home_organisation);
+                    }
+                    this.setState({
+                        schac_home_organisation: "",
+                        schac_home_organisations: [...schac_home_organisations],
+                        alreadyExists: {...alreadyExists, schac_home_organisations: existingSchacHomes}
+                    });
                 });
-            });
+            }
         } else {
             this.setState({schac_home_organisation: ""});
         }
@@ -284,7 +294,7 @@ class OrganisationForm extends React.Component {
             name, description, initial, alreadyExists, administrators, message,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, short_name,
             schac_home_organisations, collaboration_creation_allowed, services_restricted, logo, on_boarding_msg,
-            category, categoryOptions, schac_home_organisation, isNew, organisation, warning, loading
+            category, categoryOptions, schac_home_organisation, isNew, organisation, warning, loading, invalid_schac_home_organisation
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -366,7 +376,10 @@ class OrganisationForm extends React.Component {
                             on_boarding_msg={(isEmpty(on_boarding_msg) && isNew) ? I18n.t("organisation.onBoarding.template") : on_boarding_msg}
                             saveOnBoarding={val => this.setState({on_boarding_msg: val})}/>
 
-                        <CreatableField onChange={e => this.setState({schac_home_organisation: e.target.value})}
+                        <CreatableField onChange={e => this.setState({
+                            schac_home_organisation: e.target.value,
+                            invalid_schac_home_organisation: null
+                        })}
                                         name={I18n.t("organisation.schacHomeOrganisation")}
                                         value={schac_home_organisation}
                                         values={schac_home_organisations}
@@ -384,6 +397,7 @@ class OrganisationForm extends React.Component {
                                 value: sho
                             })}/>
                         )}
+                        {invalid_schac_home_organisation && <ErrorIndicator msg={invalid_schac_home_organisation}/>}
 
                         <CheckBox name={"collaboration_creation_allowed"}
                                   value={collaboration_creation_allowed}

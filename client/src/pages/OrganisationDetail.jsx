@@ -31,7 +31,7 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
 import {ReactComponent as MembersIcon} from "../icons/single-neutral.svg";
 import Users from "../components/redesign/Users";
-import {ButtonType} from "@surfnet/sds";
+import {ButtonType, MetaDataList} from "@surfnet/sds";
 
 class OrganisationDetail extends React.Component {
 
@@ -322,7 +322,18 @@ class OrganisationDetail extends React.Component {
         } else {
             role = adminOfOrganisation ? ROLES.ORG_ADMIN : ROLES.ORG_MANAGER;
         }
-
+        const metaDataListItems = [];
+        if (!isEmpty(organisation.schac_home_organisations)) {
+            metaDataListItems.push({
+                label: organisation.schac_home_organisations.length > 1 ? I18n.t("organisation.schacHomeOrganisationShortNames") :
+                    I18n.t("organisation.schacHomeOrganisationShortName"),
+                values: organisation.schac_home_organisations.map(schac => schac.name)
+            });
+            metaDataListItems.push({
+                label: I18n.t("organisation.collaborationCreationLabel"),
+                values: [I18n.t(`organisation.${organisation.collaboration_creation_allowed ? "collaborationCreationIsAllowed" : "collaborationCreationNotAllowed"}`)]
+            })
+        }
         return (
             <div className="mod-organisation-container">
                 <OrganisationWelcomeDialog name={organisation.name}
@@ -348,19 +359,7 @@ class OrganisationDetail extends React.Component {
                             actions={this.getActions(user, organisation, adminOfOrganisation)}>
 
                     <p>{organisation.description}</p>
-                    <div className="org-attributes-container">
-                        {!isEmpty(organisation.schac_home_organisations) && <div className="org-attributes">
-                            <span>{organisation.schac_home_organisations.length > 1 ? I18n.t("organisation.schacHomeOrganisationShortNames") :
-                                I18n.t("organisation.schacHomeOrganisationShortName")}</span>
-                            <ul>
-                                {organisation.schac_home_organisations.map(sho => <li key={sho.name}>{sho.name}</li>)}
-                            </ul>
-                        </div>}
-                    </div>
-                    {!isEmpty(organisation.schac_home_organisations) && <span className="org-attributes-after">
-                                {I18n.t(`organisation.${organisation.collaboration_creation_allowed ? "collaborationCreationIsAllowed" : "collaborationCreationNotAllowed"}`
-                                    , {schacHome: I18n.t(`organisation.${organisation.schac_home_organisations.length === 1 ? "singleSchacHome" : "multipleSchacHome"}`)})}
-                            </span>}
+                    {metaDataListItems.length > 0 && <MetaDataList items={metaDataListItems}/>}
                 </UnitHeader>
                 <Tabs activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}

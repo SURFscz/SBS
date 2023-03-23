@@ -29,7 +29,7 @@ div.collaboration-about-mod {
     }
 
     div.services {
-        width: 65%;
+        width: 60%;
 
         div.service-links {
             display: flex;
@@ -40,6 +40,10 @@ div.collaboration-about-mod {
 
         }
     }
+        div.members {
+        width: 30%;
+        }
+
 
     @media (max-width: $tablet-max) {
         padding: 32px 15px;
