@@ -878,7 +878,7 @@ I18n.translations.en = {
         namePlaceHolder: "The unique name of the service",
         entity_id: "Entity ID",
         entity_idPlaceHolder: "The unique entity ID of the service",
-        entity_idTooltip: "The SAML EntityID or OIDC client_id which uniquely identifies your service and links it to the identity proxy",
+        entity_idTooltip: "The Entity ID is used as the unique identitfier with SAML (Entity ID) or OIDC (client_id) and uniquely identifies your service at the identity proxy. It is also used for provisioning with LDAP.",
         abbreviation: "Short name",
         abbreviationPlaceHolder: "The short name of this service",
         abbreviationTooltip: "The short name of the service is used as a prefix for groups provisioned by this service's service groups.<br/><br/>" +
@@ -905,7 +905,7 @@ I18n.translations.en = {
         privacy_policyTooltip: "A Privacy Policy is a legal requirement for all websites and apps that collect or use personal information from users.",
         accepted_user_policy: "Acceptable use policy URL",
         accepted_user_policyPlaceholder: "The Acceptable Use Policy (AUP) of the service",
-        accepted_user_policyTooltip: "An acceptable use policy (AUP) is a document stipulating constraints and practices that a user must agree to for access to a corporate network or the Internet.",
+        accepted_user_policyTooltip: "An acceptable use policy (AUP) is a document stipulating constraints and practices that a user must agree to for access to a service or system.",
         network: "LDAP ACL IP ranges",
         networkTooltip: "The IP ranges this service uses to connect to the platform LDAP service. You can add IPv4 and IPv6 network ranges. " +
             "For example: <ul>" +
@@ -2032,24 +2032,20 @@ I18n.translations.en = {
     },
     scim: {
         scimEnabled: "SCIM server provisioning",
-        scimEnabledTooltip: "Allow this service to receive SCIM messages?",
+        scimEnabledTooltip: "Send this service SCIM messages",
         scimClientEnabled: "SCIM client",
-        scimClientEnabledTooltip: "Allow this service to call the SCIM endpoints?",
+        scimClientEnabledTooltip: "Allow this service to call the SCIM endpoints",
         scimURL: "SCIM endpoint base URL",
         scimURLPlaceHolder: "https://service.com.scim",
-        scimURLTooltip: "The SCIM endpoint base URL is the URL where all SCIM events are send to.",
+        scimURLTooltip: "The SCIM endpoint's base URL to send SCIM events to",
         scimBearerToken: "Server token",
-        scimBearerTokenTooltip: "The server token is the external token needed to authorize the SRAM calls to the SCIM endpoints using the Bearer authorization",
-        scimProvisionUsers: "Enable User provisioning?",
-        scimProvisionUsersTooltip: "Does this service wants to receive SCIM User messages?",
-        scimProvisionGroups: "Enable Group provisioning?",
-        scimProvisionGroupsTooltip: "Does this service wants to receive SCIM Group messages?",
-        sweepScimEnabled: "SCIM Sweeping",
-        sweepScimEnabledTooltip: "Do we periodically sweep the SCIM data? Meaning we check (and update if necessary) if the Service data is still in sync with the SRAM data.",
-        scimSweepDeleteOrphans: "Delete orphan user and empty collaborations / groups",
-        scimSweepDeleteOrphansTooltip: "If checked then during the SCIM sweep we delete users that have no more memberships and groups / collaboration without any members in the remote SCIM system of this Service",
-        sweepScimDailyRate: "Sweep daily rate",
-        sweepScimDailyRateTooltip: "The number of times within one day (24 hours) we sweep the remote SCIM data"
+        scimBearerTokenTooltip: "The external token needed to authorize the SRAM calls to the SCIM endpoints using the bearer authorization",
+        sweepScimEnabled: "SCIM sweeping",
+        sweepScimEnabledTooltip: "A periodic check, and update if necessary, to keep the service's data in sync.",
+        scimSweepDeleteOrphans: "Sweep deletes orphaned users, and empty collaborations and groups",
+        scimSweepDeleteOrphansTooltip: "While sweeping, delete users without memberships, and collaboration and groups without members",
+        sweepScimDailyRate: "Sweeps per day",
+        sweepScimDailyRateTooltip: "The number of times within 24 hours remote SCIM data is sweeped"
     },
     userTokens: {
         actionTitle: "New API token",
@@ -2057,7 +2053,7 @@ I18n.translations.en = {
         tokenEnabled: "User token introspection",
         tokenEnabledTooltip: "Allow this service to call the introspection endpoint to receive user information?",
         pamWebSSOEnabled: "PAM web login",
-        pamWebSSOEnabledTooltip: "Allow this service to call the PAM web login endpoints to login an user on a terminal-based app (e.g. an SSH client)?",
+        pamWebSSOEnabledTooltip: "Allow this service to call the PAM web login endpoints to login an user on a terminal-based app (e.g., an SSH client)?",
         tokenValue: "One-way hashed token",
         tokenValidityDays: "User token validity (days)",
         tokenValidityDaysTooltip: "The number of days the user tokens are valid validity",
@@ -2095,9 +2091,9 @@ I18n.translations.en = {
         details: "Service details",
         tokens: "Service tokens",
         tokensTooltips: {
-            scim: "SCIM service tokens enables the service to call the SCIM endpoints of SRAM",
-            pam: "PAM service tokens enables the service to use the PAM SSO module",
-            introspection: "Introspect service tokens enable the service to introspect users"
+            scim: "A SCIM service token enables the service to call the SCIM endpoints of SRAM",
+            pam: "A PAM service tokens enables the service to use the PAM web login module",
+            introspection: "An introspect service token enables the service to introspect users"
         },
         hashedToken: "Hashed token",
         tokenValue: "**** **** ****",
