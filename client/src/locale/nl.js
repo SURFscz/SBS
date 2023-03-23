@@ -878,7 +878,7 @@ I18n.translations.nl = {
         namePlaceHolder: "De unieke naam van de dienst",
         entity_id: "Entity ID",
         entity_idPlaceHolder: "De unieke entity ID van de dienst",
-        entity_idTooltip: "De SAML EntityID of OIDC client_id die het unieke kenmerk van je dienst is en deze koppelt aan de identity proxy",
+        entity_idTooltip: "De Entity ID is bij SAML (Entity ID) en OIDC (client_id) het unieke kenmerk van je dienst voor de identity proxy. Het wordt ook gebruikt bij provisioning via LDAP.",
         abbreviation: "Korte naam",
         abbreviationPlaceHolder: "De korte naam van de dienst",
         abbreviationTooltip: "De korte naam van een dienst wordt gebruikt als prefix voor groepen aangemaakt door de dienstgroepen van deze dienst.<br/><br/>" +
@@ -2037,19 +2037,15 @@ I18n.translations.nl = {
         scimClientEnabledTooltip: "Sta deze service toe om de SCIM-eindpunten aan te roepen?",
         scimURL: "SCIM-endpoints base URL",
         scimURLPlaceHolder: "https://service.com.scim",
-        scimURLTooltip: "De base URL van het SCIM endpoint is de URL waarnaar alle SCIM event worden verzonden.",
+        scimURLTooltip: "De base URL van het SCIM endpoint waarnaar alle SCIM event worden verzonden.",
         scimBearerToken: "Server token",
-        scimBearerTokenTooltip: "Het server token is het externe token dat nodig is om de SRAM-aanroepen naar de SCIM-eindpunten te autoriseren middels Bearer autorisatie",
-        scimProvisionUsers: "User provisioning inschakelen?",
-        scimProvisionUsersTooltip: "Does this service wants to receive SCIM User messages?",
-        scimProvisionGroups: "Group provisioning inschakelen?",
-        scimProvisionGroupsTooltip: "Does this service wants to receive SCIM Group messages?",
-        sweepScimEnabled: "SCIM Sweeping",
-        sweepScimEnabledTooltip: "Do we periodically sweep the SCIM data? Meaning we check (and update if necessary) if the Service data is still in sync with the SRAM data.",
-        scimSweepDeleteOrphans: "Delete orphan user and empty collaborations / groups",
-        scimSweepDeleteOrphansTooltip: "If checked then during the SCIM sweep we delete users that have no more memberships and groups / collaboration without any members in the remote SCIM system of this Service",
-        sweepScimDailyRate: "Sweep daily rate",
-        sweepScimDailyRateTooltip: "The number of times within one day (24 hours) we sweep the remote SCIM data"
+        scimBearerTokenTooltip: "Het externe token om de SRAM calls naar de SCIM endpoints te autoriseren door bearer autorisatie",
+        sweepScimEnabled: "SCIM sweeping",
+        sweepScimEnabledTooltip: "Een periodieke controle en, indien nodig, aanpassing om de data bij de dienst actueel te houden.",
+        scimSweepDeleteOrphans: "Sweep verwijdert weesgebruikers en lege samenwerkingen en groepen",
+        scimSweepDeleteOrphansTooltip: "Verwijder met een sweep gebruikers zonder lidmaatschappen en samenwerkingen en groepen zonder leden",
+        sweepScimDailyRate: "Sweeps per dag",
+        sweepScimDailyRateTooltip: "Aantal maal per 24 uur dat de SCIM data op de service gesweept wordt"
     },
     userTokens: {
         actionTitle: "Nieuwe API-token",
@@ -2093,11 +2089,11 @@ I18n.translations.nl = {
     },
     serviceDetails: {
         details: "Dienstgegevens",
-        tokens: "Dienst tokens",
+        tokens: "Diensttokens",
         tokensTooltips: {
-            scim: "SCIM dienst tokens stellen de dienst in staat om de SCIM endpoints van SRAM aan te roepen",
-            pam: "PAM dienst tokens stellen de dienst in staat om de PAM functionaliteit van SRAM te gebruiken",
-            introspection: "Introspect dienst tokens stellen de dienst in staat om tokens van gebruikers te introspecten"
+            scim: "Een SCIM diensttoken stelt de dienst in staat om de SCIM endpoints van SRAM aan te roepen",
+            pam: "Een PAM diensttoken stelt de dienst in staat om de PAM web login-functionaliteit van SRAM te gebruiken",
+            introspection: "Een introspect diensttoken stelt de dienst in staat om tokens van gebruikers te introspecten"
         },
         hashedToken: "Hashed token",
         tokenValue: "**** **** ****",
