@@ -165,8 +165,8 @@ class TestCollaboration(AbstractTest):
 
         # normal, add a tag
         body["tags"] = [tag_existing, tag_just_valid]
-        self.post("/api/collaborations", body=body, with_basic_auth=False)
-        collaboration = Collaboration.query.get(collaboration["id"])
+        res = self.post("/api/collaborations", body=body, with_basic_auth=False)
+        collaboration = Collaboration.query.get(res["id"])
         self.assertEqual(2, len(collaboration.tags))
 
         # tag too long
