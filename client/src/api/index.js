@@ -66,7 +66,8 @@ function validFetch(path, options, headers = {}, showErrorDialog = true) {
         redirect: "manual"
     });
     const subscriptionId = sessionStorage.getItem("subscription_id");
-    Cookies.set("subscription_id", subscriptionId, {secure: document.location.protocol.startsWith("https")});
+    const cookieOptions = {secure: document.location.protocol.startsWith("https"), sameSite: "Lax"};
+    Cookies.set("subscription_id", subscriptionId, cookieOptions);
     return fetch(path, fetchOptions).then(validateResponse(showErrorDialog))
 }
 
