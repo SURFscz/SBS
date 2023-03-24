@@ -20,6 +20,7 @@ import {
     ReactComponent as UserTokensIcon,
     ReactComponent as ServiceConnectionRequestsIcon
 } from "../icons/connections.svg";
+import {ReactComponent as AboutIcon} from "../icons/common-file-text-home.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
 import {ReactComponent as UserAdminIcon} from "../icons/users.svg";
@@ -39,7 +40,8 @@ import ServiceOverview from "./ServiceOverview";
 import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
 import UserTokens from "../components/redesign/UserTokens";
 import ServiceCollaborations from "../components/redesign/ServiceCollaborations";
-import {ButtonType} from "@surfnet/sds";
+import {ButtonType, MetaDataList} from "@surfnet/sds";
+import AboutService from "../components/redesign/AboutService";
 
 class ServiceDetail extends React.Component {
 
@@ -305,6 +307,14 @@ class ServiceDetail extends React.Component {
             </div>);
     }
 
+    getAboutTab = service => {
+        return (<div key="about" name="about" label={I18n.t("home.tabs.about")} icon={<AboutIcon/>}>
+            <AboutService service={service}
+                                tabChanged={this.tabChanged}
+                                {...this.props} />
+        </div>);
+    }
+
     getServiceConnectionRequestTab = (service, serviceConnectionRequests) => {
         const nbr = (serviceConnectionRequests || []).length;
         return (
@@ -353,10 +363,10 @@ class ServiceDetail extends React.Component {
             compliancies.push("R&S")
         }
         if (compliancies.length === 0) {
-            return null;
+            return I18n.t("service.none");
         }
-        const compliant = splitListSemantically(compliancies, I18n.t("service.compliancySeparator"));
-        return I18n.t("service.compliancyLong", {compliant: compliant});
+        return splitListSemantically(compliancies, I18n.t("service.compliancySeparator"));
+
     }
 
     doDeleteMe = () => {
@@ -463,9 +473,47 @@ class ServiceDetail extends React.Component {
                 tabs.push(this.getServiceConnectionRequestTab(service, serviceConnectionRequests));
             }
         }
+        if (!userServiceAdmin) {
+            tabs.push(this.getAboutTab(service));
+        }
         if (service.token_enabled) {
             tabs.push(this.getUserTokensTab(userTokens, service));
         }
+        const serviceAccessLinks = [];
+        if (service.uri) {
+            serviceAccessLinks.push(<a href={service.uri} target="_blank"
+                                       rel="noopener noreferrer">{I18n.t("service.login")}</a>)
+        }
+        if (service.uri_info) {
+            serviceAccessLinks.push(<a href={service.uri_info} target="_blank"
+                                       rel="noopener noreferrer">{I18n.t("service.infoUri")}</a>)
+        }
+        const policies = [];
+        if (service.privacy_policy) {
+            policies.push(<a href={service.privacy_policy} target="_blank" rel="noopener noreferrer">
+                {I18n.t("service.privacy_policy")}</a>)
+        }
+        if (service.accepted_user_policy) {
+            policies.push(<a href={service.accepted_user_policy} target="_blank" rel="noopener noreferrer">
+                {I18n.t("service.accepted_user_policy")}</a>)
+        }
+        const metaDataListItems = [];
+        if (serviceAccessLinks.length > 0) {
+            metaDataListItems.push({
+                label: I18n.t("service.access"),
+                values: serviceAccessLinks
+            })
+        }
+        if (policies.length > 0) {
+            metaDataListItems.push({
+                label: I18n.t("service.policies"),
+                values: policies
+            })
+        }
+        metaDataListItems.push({
+            label: I18n.t("service.policyCompliance"),
+            values: [this.compliancy(service)]
+        })
         return (
             <div className="mod-service-container">
                 <ServiceWelcomeDialog name={service.name}
@@ -485,6 +533,7 @@ class ServiceDetail extends React.Component {
                 </ConfirmationDialog>
 
                 <UnitHeader obj={service}
+                            displayDescription={true}
                             mayEdit={user.admin || isUserServiceAdmin(user, service)}
                             history={user.admin && !showServiceAdminView && this.props.history}
                             auditLogPath={`services/${service.id}`}
@@ -492,58 +541,7 @@ class ServiceDetail extends React.Component {
                             name={service.name}
                             firstTime={(user.admin && !showServiceAdminView) ? this.onBoarding : undefined}
                             actions={this.getActions(user, service, showServiceAdminView)}>
-                    <p>{service.description}</p>
-                    <div className="org-attributes-container-grid">
-                        <div className="org-attributes">
-                            <span>{I18n.t("service.uri")}</span>
-                            <span>{service.uri ?
-                                <a href={service.uri} target="_blank" rel="noopener noreferrer">{service.uri}</a> :
-                                I18n.t("service.none")}</span>
-                        </div>
-                        <div className="org-attributes">
-                            <span>{I18n.t("service.contact_email")}</span>
-                            <span className="multiple-attributes">
-                            {service.contact_email &&
-                            <a href={`mailto:${service.contact_email}`}>{service.contact_email}</a>}
-                                {service.service_memberships
-                                    .filter(sm => sm.user && sm.user.email !== service.contact_email)
-                                    .map(sm => sm.user &&
-                                        <a key={sm.user.id} href={`mailto:${sm.user.email}`}>{sm.user.email}</a>)}
-                            </span>
-
-                        </div>
-                        <div className="org-attributes">
-                            <span>{I18n.t("service.infoUri")}</span>
-                            <span>{service.uri_info ?
-                                <a href={service.uri_info} target="_blank"
-                                   rel="noopener noreferrer">{service.uri_info}</a> :
-                                I18n.t("service.none")}</span>
-                        </div>
-                        {service.support_email &&
-                        <div className="org-attributes">
-                            <span>{I18n.t("service.support_email")}</span>
-                            <span>
-                                <a href={`mailto:${service.support_email}`}>{service.support_email}</a>
-                            </span>
-                        </div>}
-                        <div className="org-attributes">
-                            <span>{I18n.t("service.privacy_policy")}</span>
-                            {service.privacy_policy && <span>
-                                <a href={service.privacy_policy} target="_blank" rel="noopener noreferrer">
-                                    {service.privacy_policy}</a></span>}
-                            {!service.privacy_policy && <span>{I18n.t("service.none")}</span>}
-                        </div>
-                        <div className="org-attributes">
-                            <span>{I18n.t("service.accepted_user_policy")}</span>
-                            {service.accepted_user_policy && <span>
-                                <a href={service.accepted_user_policy} target="_blank" rel="noopener noreferrer">
-                                    {service.accepted_user_policy}</a></span>}
-                            {!service.accepted_user_policy && <span>{I18n.t("service.none")}</span>}
-                        </div>
-                        <div className="org-attributes">
-                            <span className={"orphan"}>{this.compliancy(service)}</span>
-                        </div>
-                    </div>
+                    {metaDataListItems.length > 0 && <MetaDataList items={metaDataListItems}/>}
                 </UnitHeader>
                 <div className="mod-service-container">
                     <Tabs activeTab={tab} tabChanged={this.tabChanged}>

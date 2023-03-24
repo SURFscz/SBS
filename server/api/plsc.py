@@ -32,7 +32,7 @@ def internal_sync():
     rs = db.engine.execute("SELECT name, organisation_id FROM schac_home_organisations")
     schac_home_organisations = [{"name": row[0], "organisation_id": row[1]} for row in rs]
     rs = db.engine.execute("SELECT id, name, entity_id, contact_email, uuid4, ldap_password, accepted_user_policy, "
-                           "support_email, security_email, privacy_policy FROM services")
+                           "support_email, security_email, privacy_policy FROM services WHERE ldap_enabled = 1")
     services = [{"id": row[0], "name": row[1], "entity_id": row[2], "contact_email": row[3],
                  "logo": logo_url("services", row[4]), "ldap_password": row[5],
                  "accepted_user_policy": row[6], "support_email": row[7], "security_email": row[8],

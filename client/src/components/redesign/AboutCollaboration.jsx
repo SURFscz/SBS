@@ -60,10 +60,12 @@ class AboutCollaboration extends React.Component {
             isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id) && !showMemberView;
         const services = isJoinRequest ? [] : removeDuplicates(collaboration.services.concat(collaboration.organisation.services), "id");
         const {collaboration_memberships} = collaboration
-        const memberships = isJoinRequest ? [] : collaboration_memberships
-            .sort((m1, m2) => m1.role.localeCompare(m2.role))
-            .slice(0, showAll ? collaboration_memberships.length : memberCutOff);
         const showMembers = !isJoinRequest && (collaboration.disclose_member_information || isAllowedToSeeMembers);
+        let memberships = isJoinRequest ? [] : collaboration_memberships
+            .filter(m => m.role === "admin" || showMembers)
+            .sort((m1, m2) => m1.role.localeCompare(m2.role));
+        const membershipCount = memberships.length;
+         memberships =   memberships.slice(0, showAll ? collaboration_memberships.length : memberCutOff);
         return (
             <div className="collaboration-about-mod">
                 <div className="about">
@@ -86,7 +88,7 @@ class AboutCollaboration extends React.Component {
                                         {service.uri &&
                                         <span className="border-left no-border open-service">
                                         <Tooltip children={service.uri.startsWith("http") ? <ServicesIcon/> :
-                                                     <TerminalIcon/>}
+                                            <TerminalIcon/>}
                                                  standalone={true}
                                                  tip={I18n.t("models.collaboration.servicesHoover",
                                                      {uri: this.formatServiceUri(service.uri, collaboration, user)})}/>
@@ -115,21 +117,22 @@ class AboutCollaboration extends React.Component {
                         <h2>{I18n.t("models.collaboration.noServices")}</h2>}
                         {isJoinRequest && <h2>{I18n.t("models.collaboration.noServicesJoinRequest")}</h2>}
                     </div>}
-                    {showMembers &&
+                    {!isJoinRequest &&
                     <div className="members">
                         <div className="members-header">
-                            <h2>{I18n.t("models.collaboration.members", {nbr: collaboration.collaboration_memberships.length})}</h2>
-                            <a href="/details"
-                               onClick={this.openMembersDetails}>{I18n.t("models.collaboration.showMemberDetails")}</a>
+                            <h2>{I18n.t("models.collaboration.members", {nbr: membershipCount})}</h2>
+                            {showMembers && <a href="/details"
+                                               onClick={this.openMembersDetails}>{I18n.t("models.collaboration.showMemberDetails")}</a>}
                         </div>
                         <ul>
                             {memberships.map(m => <li key={m.id}>
                                 <span className="member">
-                                    {m.user.name}
+                                    <a href={`mailto:${m.user.email}`}>{m.user.name}</a>
                                     {m.role === "admin" &&
                                     <span className="role">{` (${I18n.t("models.collaboration.admin")})`}</span>}
                                 </span>
-                            </li>)}
+                                </li>)}
+                            {!showMembers && <li className={"member-disclaimer"}>{I18n.t("models.collaboration.discloseNoMemberInformation")}</li>}
                         </ul>
                         {collaboration.collaboration_memberships.length > memberCutOff &&
                         <a href={showAll ? "/more" : "/less"}
@@ -137,17 +140,12 @@ class AboutCollaboration extends React.Component {
                             {nbr: collaboration_memberships.length - memberCutOff})}</a>}
 
                     </div>}
-                    {showMembers && <div className="playing-svg">
+                    {!isJoinRequest && <div className="playing-svg">
                         <IllustrationCO/>
-                    </div>}
-                    {(!showMembers && !isJoinRequest) && <div className="members">
-                        <div className="members-header">
-                            <h2>{I18n.t("models.collaboration.discloseNoMemberInformation")}</h2>
-                        </div>
                     </div>}
                     {isJoinRequest && <div className="members">
                         <div className="members-header join-request">
-                            <h2>{I18n.t("models.collaboration.members", {nbr: collaboration.collaboration_memberships.length})}</h2>
+                            <h2>{I18n.t("models.collaboration.members", {nbr: memberships.length})}</h2>
                             <p>{I18n.t("models.collaboration.discloseNoMemberInformationJoinRequest")}</p>
                         </div>
                     </div>}

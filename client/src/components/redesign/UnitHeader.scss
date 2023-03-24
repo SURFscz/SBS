@@ -11,14 +11,8 @@
 
     width: 100%;
 
-    .children {
-        max-width: 710px;
-
-        p {
-            margin: 20px 0;
-            white-space: pre-line;
-        }
-
+    .sds--metadata-list {
+        margin-top: auto;
     }
 
     .unit-header {
@@ -63,10 +57,16 @@
         .obj-name {
             margin-left: 26px;
             flex-grow: 3;
+            display: flex;
+            flex-direction: column;
 
             span.name {
                 color: black;
                 font-weight: bold;
+            }
+
+            span.description {
+                margin: 20px 0;
             }
         }
 

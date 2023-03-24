@@ -386,10 +386,10 @@ class ServiceOverview extends React.Component {
                 const types = filteredTokenInfo.map(info => info.label);
                 const typesInfo = splitListSemantically(types, I18n.t("service.compliancySeparator"));
                 const question = I18n.t("serviceDetails.disableTokenConfirmation", {
-                        count: count,
-                        type: typesInfo,
-                        tokens: I18n.t(`serviceDetails.${count > 1 ? "multiple" : "single"}Tokens`)
-                    })
+                    count: count,
+                    type: typesInfo,
+                    tokens: I18n.t(`serviceDetails.${count > 1 ? "multiple" : "single"}Tokens`)
+                })
                 if (!isEmpty(filteredTokenInfo) && !override) {
                     this.setState({
                         confirmationDialogOpen: true,
@@ -495,7 +495,7 @@ class ServiceOverview extends React.Component {
 
 
     renderButtons = (isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView, createNewServiceToken) => {
-        const {accepted_user_policy, pam_web_sso_enabled, token_enabled, scim_client_enabled} = this.state.service;
+        const {accepted_user_policy, pam_web_sso_enabled, token_enabled, scim_client_enabled, ldap_enabled} = this.state.service;
         const validAcceptedUserPolicy = validUrlRegExp.test(accepted_user_policy);
         const invalidTabsMsg = this.getInvalidTabs();
         return <>
@@ -524,6 +524,7 @@ class ServiceOverview extends React.Component {
                             onClick={() => this.newServiceToken("scim")}/>}
                     {currentTab === "ldap" &&
                     <Button txt={I18n.t("service.ldap.title")}
+                            disabled={!ldap_enabled}
                             onClick={() => this.ldapResetAction(true)}/>}
                     <Button disabled={disabledSubmit} txt={I18n.t("service.update")}
                             onClick={this.submit}/>
@@ -806,60 +807,79 @@ class ServiceOverview extends React.Component {
         const {entity_id} = this.state.service;
         return (
             <div className={"ldap"}>
-                <InputField value={config.ldap_url}
-                            name={I18n.t("service.ldap.url")}
-                            toolTip={I18n.t("service.ldap.urlTooltip")}
-                            copyClipBoard={true}
-                            disabled={true}/>
-                <InputField
-                    value={ldapBindAccount.substring(ldapBindAccount.indexOf(",") + 1).replace("entity_id", entity_id)}
-                    name={I18n.t("service.ldap.basedn")}
-                    toolTip={I18n.t("service.ldap.basednTooltip")}
-                    copyClipBoard={true}
-                    disabled={true}/>
-                <InputField value={ldapBindAccount.replace("entity_id", entity_id)}
-                            name={I18n.t("service.ldap.username")}
-                            toolTip={I18n.t("service.ldap.usernameTooltip")}
-                            copyClipBoard={true}
-                            disabled={true}/>
-                <div className="ip-networks">
-                    <label className="title" htmlFor={I18n.t("service.network")}>{I18n.t("service.network")}
-                        <Tooltip tip={I18n.t("service.networkTooltip")}/>
-                        {(isAdmin || isServiceAdmin) &&
-                        <span className="add-network" onClick={() => this.addIpAddress()}><FontAwesomeIcon
-                            icon="plus"/></span>}
+                <CheckBox name={"ldap_enabled"}
+                          value={service.ldap_enabled}
+                          tooltip={I18n.t("service.ldap.ldapEnabledTooltip")}
+                          info={I18n.t("service.ldap.ldapClient")}
+                          onChange={e => this.setState({
+                              "service": {
+                                  ...service,
+                                  ldap_enabled: e.target.checked
+                              }
+                          })}
+                />
+                {!service.ldap_enabled && <div className={"input-field"}>
+                    <label>{I18n.t("service.ldap.section")}
+                        <Tooltip tip={I18n.t("service.ldap.sectionTooltip")}/>
                     </label>
-                    {service.ip_networks.map((network, i) =>
-                            <div className="network-container" key={i}>
-                                <div className="network">
-                                    <InputField value={network.network_value}
-                                                onChange={this.saveIpAddress(i)}
-                                                onBlur={this.validateIpAddress(i)}
-                                                placeholder={I18n.t("service.networkPlaceholder")}
-                                                error={network.error || network.syntax || (network.higher && !network.global && network.version === 6)}
-                                                disabled={!isAdmin && !isServiceAdmin}
-                                                onEnter={e => {
-                                                    this.validateIpAddress(i);
-                                                    e.target.blur()
-                                                }}
-                                    />
-                                    {(isAdmin || isServiceAdmin) && <span className="trash">
+                    <p>{I18n.t("service.ldap.ldapDisclaimer")}</p>
+                </div>}
+                {service.ldap_enabled && <div>
+                    <InputField value={config.ldap_url}
+                                name={I18n.t("service.ldap.section")}
+                                toolTip={I18n.t("service.ldap.urlTooltip")}
+                                copyClipBoard={true}
+                                disabled={true}/>
+                    <InputField
+                        value={ldapBindAccount.substring(ldapBindAccount.indexOf(",") + 1).replace("entity_id", entity_id)}
+                        name={I18n.t("service.ldap.basedn")}
+                        toolTip={I18n.t("service.ldap.basednTooltip")}
+                        copyClipBoard={true}
+                        disabled={true}/>
+                    <InputField value={ldapBindAccount.replace("entity_id", entity_id)}
+                                name={I18n.t("service.ldap.username")}
+                                toolTip={I18n.t("service.ldap.usernameTooltip")}
+                                copyClipBoard={true}
+                                disabled={true}/>
+                    <div className="ip-networks">
+                        <label className="title" htmlFor={I18n.t("service.network")}>{I18n.t("service.network")}
+                            <Tooltip tip={I18n.t("service.networkTooltip")}/>
+                            {(isAdmin || isServiceAdmin) &&
+                            <span className="add-network" onClick={() => this.addIpAddress()}><FontAwesomeIcon
+                                icon="plus"/></span>}
+                        </label>
+                        {service.ip_networks.map((network, i) =>
+                                <div className="network-container" key={i}>
+                                    <div className="network">
+                                        <InputField value={network.network_value}
+                                                    onChange={this.saveIpAddress(i)}
+                                                    onBlur={this.validateIpAddress(i)}
+                                                    placeholder={I18n.t("service.networkPlaceholder")}
+                                                    error={network.error || network.syntax || (network.higher && !network.global && network.version === 6)}
+                                                    disabled={!isAdmin && !isServiceAdmin}
+                                                    onEnter={e => {
+                                                        this.validateIpAddress(i);
+                                                        e.target.blur()
+                                                    }}
+                                        />
+                                        {(isAdmin || isServiceAdmin) && <span className="trash">
                 <FontAwesomeIcon onClick={() => this.deleteIpAddress(i)} icon="trash"/>
                 </span>}
-                                </div>
-                                {(network.error && !network.syntax && !network.reserved) &&
-                                <ErrorIndicator msg={I18n.t("service.networkError", network)}/>}
-                                {network.syntax && <ErrorIndicator msg={I18n.t("service.networkSyntaxError")}/>}
-                                {network.reserved &&
-                                <ErrorIndicator msg={I18n.t("service.networkReservedError", network)}/>}
-                                {network.higher &&
-                                <span className="network-info">{I18n.t("service.networkInfo", network)}</span>}
-                                {(network.higher && network.version === 6 && !network.global) &&
-                                <ErrorIndicator msg={I18n.t("service.networkNotGlobal")}/>}
+                                    </div>
+                                    {(network.error && !network.syntax && !network.reserved) &&
+                                    <ErrorIndicator msg={I18n.t("service.networkError", network)}/>}
+                                    {network.syntax && <ErrorIndicator msg={I18n.t("service.networkSyntaxError")}/>}
+                                    {network.reserved &&
+                                    <ErrorIndicator msg={I18n.t("service.networkReservedError", network)}/>}
+                                    {network.higher &&
+                                    <span className="network-info">{I18n.t("service.networkInfo", network)}</span>}
+                                    {(network.higher && network.version === 6 && !network.global) &&
+                                    <ErrorIndicator msg={I18n.t("service.networkNotGlobal")}/>}
 
-                            </div>
-                    )}
-                </div>
+                                </div>
+                        )}
+                    </div>
+                </div>}
             </div>)
     }
 
