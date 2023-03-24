@@ -335,7 +335,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                             description="UUC Scheduler Service", logo=read_image("scheduler_uuc.jpeg"),
                             automatic_connection_allowed_organisations=[uva],
                             public_visible=True, automatic_connection_allowed=False, allowed_organisations=[uuc],
-                            privacy_policy="https://privacy.org", security_email="sec@org.nl")
+                            privacy_policy="https://privacy.org", security_email="sec@org.nl", ldap_enabled=False)
 
     demo_sp = Service(entity_id="https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/test",
                       name="SRAM Demo SP", abbreviation="sram_demosp", description="Generic SRAM demo sp",

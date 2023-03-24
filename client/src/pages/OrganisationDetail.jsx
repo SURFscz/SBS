@@ -351,14 +351,13 @@ class OrganisationDetail extends React.Component {
                                     question={confirmationQuestion}/>
                 <UnitHeader obj={organisation}
                             mayEdit={adminOfOrganisation}
+                            displayDescription={true}
                             history={user.admin ? this.props.history : null}
                             auditLogPath={`organisations/${organisation.id}`}
                             breadcrumbName={I18n.t("breadcrumb.organisation", {name: organisation.name})}
                             firstTime={user.admin ? this.onBoarding : undefined}
                             name={organisation.name}
                             actions={this.getActions(user, organisation, adminOfOrganisation)}>
-
-                    <p>{organisation.description}</p>
                     {metaDataListItems.length > 0 && <MetaDataList items={metaDataListItems}/>}
                 </UnitHeader>
                 <Tabs activeTab={tab} tabChanged={this.tabChanged}>

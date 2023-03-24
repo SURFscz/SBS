@@ -27,8 +27,6 @@ import {ReactComponent as GroupsIcon} from "../icons/ticket-group.svg";
 import {ReactComponent as UserTokensIcon} from "../icons/connections.svg";
 import {ReactComponent as JoinRequestsIcon} from "../icons/single-neutral-question.svg";
 import {ReactComponent as AboutIcon} from "../icons/common-file-text-home.svg";
-import {ReactComponent as AdminIcon} from "../icons/single-neutral-actions-key.svg";
-import {ReactComponent as GlobeIcon} from "../icons/network-information.svg";
 import CollaborationAdmins from "../components/redesign/CollaborationAdmins";
 import SpinnerField from "../components/redesign/SpinnerField";
 import UsedServices from "../components/redesign/UsedServices";
@@ -40,7 +38,6 @@ import CollaborationWelcomeDialog from "../components/CollaborationWelcomeDialog
 import JoinRequests from "../components/redesign/JoinRequests";
 import {clearFlash, setFlash} from "../utils/Flash";
 import ConfirmationDialog from "../components/ConfirmationDialog";
-import ClipBoardCopy from "../components/redesign/ClipBoardCopy";
 import Button from "../components/Button";
 import JoinRequestDialog from "../components/JoinRequestDialog";
 import LastAdminWarning from "../components/redesign/LastAdminWarning";
@@ -49,7 +46,8 @@ import {ButtonType, MetaDataList, Tooltip} from "@surfnet/sds";
 import {ErrorOrigins, getSchacHomeOrg, isEmpty, removeDuplicates} from "../utils/Utils";
 import UserTokens from "../components/redesign/UserTokens";
 import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
-import DOMPurify from "dompurify";
+import ClipBoardCopy from "../components/redesign/ClipBoardCopy";
+import {CopyToClipboard} from "react-copy-to-clipboard";
 
 class CollaborationDetail extends React.Component {
 
@@ -527,40 +525,46 @@ class CollaborationDetail extends React.Component {
 
     getUnitHeaderForMemberNew = (user, config, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember, adminOfCollaboration) => {
         const customAction = collaborationJoinRequest ? this.collaborationJoinRequestAction(collaboration, alreadyMember) : null;
+        const memberCount = collaboration.collaboration_memberships.length;
+        const groupCount = collaboration.groups.length;
+        const metaDataListItems = [{
+            label: I18n.t("models.members.title"),
+            values: [`${memberCount} ${memberCount > 1 ? I18n.t("models.members.title").toLowerCase() :
+                I18n.t("profile.member").toLowerCase()}`]
+        },
+            {
+                label: I18n.t("collaborations.groups"),
+                values: [`${groupCount} ${groupCount > 1 ? I18n.t("collaborations.groups").toLowerCase() :
+                    I18n.t("collaborations.group").toLowerCase()}`]
+            }
+        ];
+        if (collaboration.website_url) {
+            metaDataListItems.push({
+                label: I18n.t("collaborations.moreInformation"),
+                values: [<a href={collaboration.website_url} target={"_blank"}>
+                    {I18n.t("collaborations.website")}
+                </a>]
+            });
+        }
+        if (collaboration.expiry_date) {
+            metaDataListItems.push({
+                label: I18n.t("models.orgMembers.expires"),
+                values: [moment(collaboration.expiry_date * 1000).format("LL")]
+            });
+        }
+        const membershipStatus = this.getMembershipStatus(collaboration, user);
+        if (!collaborationJoinRequest && membershipStatus) {
+            metaDataListItems.push({
+                label: I18n.t(`organisationMembership.status.name`),
+                values: [this.getMembershipStatus(collaboration, user)]
+            })
+        }
         return <UnitHeader obj={collaboration}
                            actions={collaborationJoinRequest ? [] : this.getActions(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}
                            name={collaboration.name}
+                           displayDescription={true}
                            customAction={customAction}>
-            <div className="org-attributes-container-grid">
-                <section className="unit-info">
-                    <ul>
-                        <li>
-                            <Tooltip children={<MemberIcon/>} standalone={true} tip={I18n.t("tooltips.members")}/>
-                            <span>{I18n.t("models.collaboration.memberHeader", {
-                                nbrMember: collaboration.collaboration_memberships.length,
-                                nbrGroups: collaboration.groups.length
-                            })}</span></li>
-                        {!collaborationJoinRequest && <li>
-                            <Tooltip children={<AdminIcon/>} standalone={true} tip={I18n.t("tooltips.admins")}/>
-                            <span
-                                dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(this.getAdminHeader(collaboration))}}/>
-                        </li>}
-                        {collaboration.website_url &&
-                        <li className="collaboration-url">
-                            <Tooltip standalone={true} children={<GlobeIcon/>} anchorId={"collaboration-icon"}
-                                     tip={I18n.t("tooltips.collaborationUrl")}/>
-                            <span>
-                            <a href={collaboration.website_url} rel="noopener noreferrer"
-                               target="_blank">{collaboration.website_url}</a>
-                        </span>
-                        </li>}
-                    </ul>
-                </section>
-                <section className="collaboration-inactive">
-                    {!collaborationJoinRequest && this.getCollaborationStatus(collaboration)}
-                    {!collaborationJoinRequest && this.getMembershipStatus(collaboration, user)}
-                </section>
-            </div>
+            {metaDataListItems.length > 0 && <MetaDataList items={metaDataListItems}/>}
         </UnitHeader>;
     }
 
@@ -749,14 +753,10 @@ class CollaborationDetail extends React.Component {
             status = "active";
         }
         return (
-            <div className="org-attributes">
-                <span>{I18n.t(`organisationMembership.status.name`)}</span>
-                <span className={className}>
+            <span className={className}>
                     {I18n.t(`organisationMembership.status.${status}`, {date: expiryDate})}
-                    <Tooltip tip={I18n.t(`organisationMembership.status.${status}Tooltip`, {date: expiryDate})}/>
+                <Tooltip tip={I18n.t(`organisationMembership.status.${status}Tooltip`, {date: expiryDate})}/>
                 </span>
-
-            </div>
         );
     }
 
@@ -771,10 +771,17 @@ class CollaborationDetail extends React.Component {
             values: [
                 collaboration.disable_join_requests ? I18n.t("collaboration.noJoinRequests") :
                     <span className="contains-copy">
-                        {I18n.t("collaboration.enabled")}
-                        <ClipBoardCopy transparentBackground={true}
-                                       txt={`${joinRequestUrl}`}/>
-                        </span>
+                        <CopyToClipboard text={joinRequestUrl}>
+                            <span className={"copy-link"} onClick={e => {
+                    const me = e.target;
+                    me.classList.add("copied");
+                    setTimeout(() => me.classList.remove("copied"), 1250);
+                }}>
+                                {I18n.t("collaboration.enabled")}
+                            </span>
+                        </CopyToClipboard>
+                        <ClipBoardCopy transparentBackground={true} txt={joinRequestUrl}/>
+                    </span>
             ]
         }, {
             label: I18n.t("collaboration.memberList"),
@@ -787,8 +794,8 @@ class CollaborationDetail extends React.Component {
                             auditLogPath={`collaborations/${collaboration.id}`}
                             breadcrumbName={I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
                             name={collaboration.name}
+                            displayDescription={true}
                             actions={this.getActions(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}>
-            <p>{collaboration.description}</p>
             {metaDataListItems.length > 0 && <MetaDataList items={metaDataListItems}/>}
         </UnitHeader>);
     }

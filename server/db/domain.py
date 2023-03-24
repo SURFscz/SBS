@@ -474,6 +474,7 @@ class Service(Base, db.Model, LogoMixin):
     service_tokens = db.relationship("ServiceToken", back_populates="service",
                                      cascade="delete, delete-orphan",
                                      passive_deletes=True)
+    ldap_enabled = db.Column("ldap_enabled", db.Boolean(), nullable=True, default=True)
     scim_enabled = db.Column("scim_enabled", db.Boolean(), nullable=True, default=False)
     scim_client_enabled = db.Column("scim_client_enabled", db.Boolean(), nullable=True, default=False)
     scim_url = db.Column("scim_url", db.String(length=255), nullable=True)

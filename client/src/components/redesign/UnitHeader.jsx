@@ -47,7 +47,8 @@ class UnitHeader extends React.Component {
 
     render() {
         const {
-            obj, history, auditLogPath, name, breadcrumbName, svgClick, firstTime, actions, children, customAction
+            obj, history, auditLogPath, name, breadcrumbName, svgClick, firstTime, actions, children, customAction,
+            displayDescription
         } = this.props;
         const {showDropDown} = this.state;
         const queryParam = `name=${encodeURIComponent(breadcrumbName || name)}&back=${encodeURIComponent(window.location.pathname)}`;
@@ -65,9 +66,8 @@ class UnitHeader extends React.Component {
                     <div className="obj-name">
                         {obj.name && <h1>{obj.name}</h1>}
                         {obj.organisation && <span className="name">{obj.organisation.name}</span>}
-                        <div className="children">
-                            {children}
-                        </div>
+                        {(obj.description && displayDescription) && <span className={"description"}>{obj.description}</span>}
+                        {children}
                     </div>
                     {!isEmpty(actions) &&
                     <div className="action-menu-container">
