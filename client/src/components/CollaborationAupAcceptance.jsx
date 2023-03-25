@@ -34,14 +34,16 @@ export default function CollaborationAupAcceptance({
                                 <div className="policies">
                                     <div className="border-right">
                                         {service.accepted_user_policy ?
-                                            <a href={service.accepted_user_policy} rel="noopener noreferrer"
+                                            <a href={service.accepted_user_policy}
+                                               rel="noopener noreferrer"
                                                target="_blank">{I18n.t("service.accepted_user_policy")}</a> :
                                             <span className="no-link">{I18n.t("aup.service.noAup")}</span>
                                         }
                                     </div>
                                     <div className="border-right">
                                         {service.privacy_policy ?
-                                            <a href={service.privacy_policy} rel="noopener noreferrer"
+                                            <a href={service.privacy_policy}
+                                               rel="noopener noreferrer"
                                                target="_blank">{I18n.t("service.privacy_policy")}</a> :
                                             <span className="no-link">{I18n.t("aup.service.noPrivacyPolicy")}</span>
                                         }
