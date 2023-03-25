@@ -700,6 +700,7 @@ class ServiceOverview extends React.Component {
                     <section className="actions">
                         <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancelSideScreen}/>
                         <Button txt={I18n.t("forms.submit")}
+                                disabled={!initial && isEmpty(description)}
                                 onClick={this.saveServiceToken}/>
                     </section>
                 </div>
