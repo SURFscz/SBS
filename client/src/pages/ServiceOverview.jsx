@@ -688,15 +688,15 @@ class ServiceOverview extends React.Component {
                                 name={I18n.t("serviceDetails.description")}
                                 toolTip={I18n.t("serviceDetails.descriptionTooltip")}
                     />
+                    {(!initial && isEmpty(description)) && <ErrorIndicator
+                        msg={I18n.t("models.userTokens.required", {
+                            attribute: I18n.t("serviceDetails.description").toLowerCase()
+                        })}/>}
                     <InputField value={tokenType.toUpperCase()}
                                 name={I18n.t("serviceDetails.tokenType")}
                                 disabled={true}
                                 toolTip={I18n.t("serviceDetails.tokenTypeTooltip", {tokenType: tokenType})}
                     />
-                    {(!initial && isEmpty(description)) && <ErrorIndicator
-                        msg={I18n.t("models.userTokens.required", {
-                            attribute: I18n.t("serviceDetails.description").toLowerCase()
-                        })}/>}
                     <section className="actions">
                         <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancelSideScreen}/>
                         <Button txt={I18n.t("forms.submit")}
