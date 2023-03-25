@@ -996,7 +996,7 @@ I18n.translations.en = {
             basednTooltip: "The base DN of the platform LDAP server",
             ldapClient: "LDAP client",
             ldapEnabledTooltip: "Allow this service to query the SRAM LDAP server?",
-            ldapDisclaimer: "To see the LDAP settings tou have to enable LDAP",
+            ldapDisclaimer: "To see the LDAP settings you have to enable LDAP",
         },
         aup: {
             title: "Reset AUP",
