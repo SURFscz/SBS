@@ -280,7 +280,7 @@ class ServiceDetail extends React.Component {
 
     getServiceGroupsTab = (service) => {
         return (<div key="groups" name="groups"
-                     label={I18n.t("home.tabs.groups", {count: service.service_groups.length})}
+                     label={I18n.t("home.tabs.groups", {count: (service.service_groups || []).length})}
                      icon={<GroupsIcon/>}>
             {<ServiceGroups {...this.props} service={service}
                             refresh={this.refresh}/>}
