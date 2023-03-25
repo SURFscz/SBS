@@ -541,7 +541,7 @@ class CollaborationDetail extends React.Component {
         if (collaboration.website_url) {
             metaDataListItems.push({
                 label: I18n.t("collaborations.moreInformation"),
-                values: [<a href={collaboration.website_url} target={"_blank"}>
+                values: [<a href={collaboration.website_url} target={"_blank"} rel="noopener noreferrer">
                     {I18n.t("collaborations.website")}
                 </a>]
             });
