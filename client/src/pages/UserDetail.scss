@@ -94,7 +94,10 @@
         }
 
         div.actions {
+            margin-top: 20px;
+            display: flex;
             grid-column: span 2;
+            gap: 25px;
         }
     }
 }

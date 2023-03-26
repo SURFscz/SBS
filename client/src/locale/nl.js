@@ -608,7 +608,10 @@ I18n.translations.nl = {
         deleteConfirmation: "Weet je zeker dat je je profiel voorgoed wil verwijderen?",
         deleteConfirmationWarning: "Al je lidmaatschappen worden verwijderd. Dit kan niet worden teruggedraaid.",
         deleteConfirmationCheck: "Als je toch wil doorgaan, typ dan ter bevestiging je volledige naam in.",
-        deleteOtherConfirmation: "Are you sure you want to delete the user {{name}} for all eternity?",
+        deleteOtherConfirmation: "Weet je zeker dat je je gebruiker {{name}} wilt verwijderen?",
+        unsuspend: "Ontschors",
+        deleteOther: "Verwijder",
+        unsuspendOtherConfirmation: "Weet je zeker dat je je gebruiker {{name}} wilt ontschorsen?",
     },
     impersonate: {
         title: "Wie wil je zijn?",
