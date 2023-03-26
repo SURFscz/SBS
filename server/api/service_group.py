@@ -118,8 +118,8 @@ def update_service_group():
 
     emit_socket(f"service_{service_id}")
 
-    if service_group.groups:
-        emit_socket(f"collaboration_{service_group.groups[0].collaboration_id}")
+    for co_id in {g.collaboration_id for g in service_group.groups}:
+        emit_socket(f"collaboration_{co_id}")
 
     return res
 
@@ -133,4 +133,6 @@ def delete_service_group(service_group_id):
 
     emit_socket(f"service_{service_group.service_id}")
 
+    for co_id in {g.collaboration_id for g in service_group.groups}:
+        emit_socket(f"collaboration_{co_id}")
     return delete(ServiceGroup, service_group_id)
