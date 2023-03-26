@@ -1,5 +1,12 @@
 import React from "react";
-import {auditLogsUser, deleteOtherUser, findUserById, ipNetworks, organisationNameById} from "../api";
+import {
+    activateUserForCollaboration,
+    auditLogsUser,
+    deleteOtherUser,
+    findUserById,
+    ipNetworks,
+    organisationNameById
+} from "../api";
 import I18n from "i18n-js";
 import "./UserDetail.scss";
 
@@ -98,10 +105,27 @@ class UserDetail extends React.Component {
                 confirmationQuestion: I18n.t("user.deleteOtherConfirmation", {name: user.name})
             });
         } else {
-            deleteOtherUser(user.id)
-                .then(() => this.props.history.push("/home/users"));
+            deleteOtherUser(user.id).then(() => this.props.history.push("/home/users"));
         }
     }
+
+    unsuspendUser = showConfirmation => {
+        const {user} = this.state;
+        if (showConfirmation) {
+            this.setState({
+                confirmationDialogOpen: true,
+                confirmationDialogAction: () => this.unsuspendUser(false),
+                cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+                confirmationQuestion: I18n.t("user.unsuspendOtherConfirmation", {name: user.name})
+            });
+        } else {
+            activateUserForCollaboration(null, user.id).then(() => {
+                this.setState({confirmationDialogOpen: false});
+                this.componentDidMount();
+            })
+        }
+    }
+
     getDetailsTab = (user, currentUser) => {
         const attributes = ["name", "email", "username", "uid", "affiliation", "entitlement", "schac_home_organisation", "eduperson_principal_name"];
         return (<div key="details" name="details" label={I18n.t("home.details")}
@@ -198,7 +222,12 @@ class UserDetail extends React.Component {
                     </ul>}
                 </div>}
                 {currentUser.admin && <div className={"actions"}>
-                    <Button warningButton={true} onClick={() => this.deleteUser(true)}/>
+                    <Button warningButton={true}
+                            txt={I18n.t("user.deleteOther")}
+                            onClick={() => this.deleteUser(true)}/>
+                    {user.suspended && <Button warningButton={true}
+                                               txt={I18n.t("user.unsuspend")}
+                                               onClick={() => this.unsuspendUser(true)}/>}
                 </div>}
             </div>
         </div>)
