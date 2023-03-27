@@ -129,6 +129,7 @@ I18n.translations.en = {
         today: "Today",
         manage: "Configure",
         invalidInput: "Invalid input for {{name}}",
+        attributes: {"email": "email", "uri": "uri"},
         back: "Back",
         reset: "Reset",
         yes: "Yes",
@@ -340,7 +341,7 @@ I18n.translations.en = {
             options: {
                 header: "Connections from collaborations",
                 DISALLOW: "Disallow",
-                ON_REQUEST:  "On request",
+                ON_REQUEST: "On request",
                 ALWAYS: "Always"
             }
         },
@@ -1785,7 +1786,7 @@ I18n.translations.en = {
         },
         scim: {
             info: "If enabled there is a mock remote SCIM client available to test the SCIM messages." +
-                "Configure a Service with the following SCIM URL to start testing the SCIM functionality" ,
+                "Configure a Service with the following SCIM URL to start testing the SCIM functionality",
             services: "SCIM enabled Services",
             stats: "All API calls and state updates send to the mock SCIM endpoints are stored in an in-memory database.",
             retrieveStats: "Fetch stats",

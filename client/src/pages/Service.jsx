@@ -429,7 +429,7 @@ class Service extends React.Component {
                     attribute: I18n.t("service.privacy_policy").toLowerCase()
                 })}/>}
                 {invalidInputs["privacy_policy"] &&
-                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
+                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
 
 
                 <InputField value={description}
@@ -451,7 +451,7 @@ class Service extends React.Component {
                             onBlur={this.validateURI("uri_info")}
                             disabled={!isAdmin && !isServiceAdmin}/>
                 {invalidInputs["uri_info"] &&
-                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
+                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
 
                 <InputField value={uri}
                             name={I18n.t("service.uri")}
@@ -465,7 +465,7 @@ class Service extends React.Component {
                             onBlur={this.validateURI("uri")}
                             disabled={!isAdmin && !isServiceAdmin}/>
                 {invalidInputs["uri"] &&
-                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
+                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
 
 
                 <CheckBox name="automatic_connection_allowed" value={automatic_connection_allowed}
@@ -504,7 +504,7 @@ class Service extends React.Component {
                             onBlur={this.validateURI("accepted_user_policy")}
                             disabled={!isAdmin && !isServiceAdmin}/>
                 {invalidInputs["accepted_user_policy"] &&
-                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
+                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
 
                 {this.renderIpNetworks(ip_networks, isAdmin, isServiceAdmin)}
                 <div className="contacts">
@@ -524,7 +524,7 @@ class Service extends React.Component {
                                 error={invalidInputs["email"] || (!initial && contactEmailRequired)}
                                 onBlur={this.validateEmail("email")}
                                 disabled={!isAdmin && !isServiceAdmin}/>
-                    {invalidInputs["email"] && <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "email"})}/>}
+                    {invalidInputs["email"] && <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
                     {(!initial && contactEmailRequired) &&
                     <ErrorIndicator msg={I18n.t("service.contactEmailRequired")}/>}
 
@@ -544,7 +544,7 @@ class Service extends React.Component {
                                 disabled={!isAdmin && !isServiceAdmin}/>
 
                     {invalidInputs["security_email"] &&
-                    <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "email"})}/>}
+                    <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
 
                     {(!initial && isEmpty(security_email)) &&
                     <ErrorIndicator msg={I18n.t("service.securityEmailRequired")}/>}
@@ -564,7 +564,7 @@ class Service extends React.Component {
                                 onBlur={this.validateEmail("support_email")}
                                 disabled={!isAdmin && !isServiceAdmin}/>
                     {invalidInputs["support_email"] &&
-                    <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "email"})}/>}
+                    <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
 
                 </div>
                 <div className="ldap">
