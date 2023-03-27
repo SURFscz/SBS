@@ -129,6 +129,7 @@ I18n.translations.nl = {
         today: "Vandaag",
         manage: "Beheren",
         invalidInput: "Ongeldige waarde voor {{name}}",
+        attributes: {"email": "e-mail", "uri": "uri"},
         back: "Terug",
         reset: "Herstel",
         yes: "Ja",

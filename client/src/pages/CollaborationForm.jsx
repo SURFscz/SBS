@@ -580,7 +580,7 @@ class CollaborationForm extends React.Component {
                                 name={I18n.t("collaboration.websiteUrl")}
                                 onBlur={this.validateURI("website_url")}/>
                     {invalidInputs["website_url"] &&
-                    <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
+                    <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
 
                     {!isCollaborationRequest && <DateField value={expiry_date}
                                                            onChange={e => this.setState({expiry_date: e})}

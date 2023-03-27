@@ -607,7 +607,7 @@ class ServiceOverview extends React.Component {
                             onBlur={this.validateURI("scim_url")}
                             disabled={!isAdmin || showServiceAdminView || !service.scim_enabled}/>
                 {invalidInputs.scim_url &&
-                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
+                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
                 {(!initial && isEmpty(service.scim_url) && service.scim_enabled) &&
                 <ErrorIndicator msg={I18n.t("models.userTokens.required", {
                     attribute: I18n.t("scim.scimURL")
@@ -901,7 +901,7 @@ class ServiceOverview extends React.Component {
                     attribute: I18n.t("service.privacy_policy").toLowerCase()
                 })}/>}
                 {invalidInputs.privacy_policy &&
-                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
+                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
 
                 <InputField value={service.accepted_user_policy}
                             name={I18n.t("service.accepted_user_policy")}
@@ -914,7 +914,7 @@ class ServiceOverview extends React.Component {
                             onBlur={this.validateURI("accepted_user_policy")}
                             disabled={!isAdmin && !isServiceAdmin}/>
                 {invalidInputs.accepted_user_policy &&
-                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
+                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
 
                 <RadioButton label={I18n.t("service.sirtfiCompliant")}
                              name={"sirtfi_compliant"}
@@ -962,7 +962,7 @@ class ServiceOverview extends React.Component {
                             error={invalidInputs["email"] || contactEmailRequired}
                             onBlur={this.validateEmail("email")}
                             disabled={!isAdmin && !isServiceAdmin}/>
-                {invalidInputs["email"] && <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "email"})}/>}
+                {invalidInputs["email"] && <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
                 {contactEmailRequired &&
                 <ErrorIndicator msg={I18n.t("service.contactEmailRequired")}/>}
 
@@ -977,7 +977,7 @@ class ServiceOverview extends React.Component {
                             disabled={!isAdmin && !isServiceAdmin}/>
 
                 {invalidInputs["security_email"] &&
-                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "email"})}/>}
+                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
 
                 {isEmpty(service.security_email) &&
                 <ErrorIndicator msg={I18n.t("service.securityEmailRequired")}/>}
@@ -992,7 +992,7 @@ class ServiceOverview extends React.Component {
                             onBlur={this.validateEmail("support_email")}
                             disabled={!isAdmin && !isServiceAdmin}/>
                 {invalidInputs["support_email"] &&
-                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "email"})}/>}
+                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
             </div>)
     }
 
@@ -1058,7 +1058,7 @@ class ServiceOverview extends React.Component {
                         onBlur={this.validateURI("uri_info")}
                         disabled={!isAdmin && !isServiceAdmin}/>
             {invalidInputs.uri_info &&
-            <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
+            <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
 
             <InputField value={service.uri}
                         name={I18n.t("service.uri")}
@@ -1071,7 +1071,7 @@ class ServiceOverview extends React.Component {
                         onBlur={this.validateURI("uri", true)}
                         disabled={!isAdmin && !isServiceAdmin}/>
             {invalidInputs.uri &&
-            <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
+            <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
 
             <InputField value={service.entity_id}
                         onChange={this.changeServiceProperty("entity_id", false, {
