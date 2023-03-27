@@ -123,7 +123,7 @@ export default function EmailField({
                           placeholder={emails.length === 0 ? I18n.t("invitation.inviteesPlaceholder") : ""} cols={3}/>
             </div>
             {(!isEmpty(emailErrors) && value === "") && <p className="error">
-                {I18n.t("invitation.invalidEmails", {emails: emailErrors.join(", ")})}
+                {I18n.t("invitation.invalidEmails", {emails: Array.from(new Set(emailErrors)).join(", ")})}
             </p>}
         </div>
     );
