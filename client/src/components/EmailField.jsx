@@ -26,6 +26,25 @@ export default function EmailField({
         setValue(e.target.state);
     }
 
+    const displayEmail = email => {
+        const indexOf = email.indexOf("<");
+        if (indexOf > -1) {
+            return <Tooltip tip={email.substring(indexOf + 1, email.length - 1)}
+                            standalone={true}
+                            children={<span>{email.substring(0, indexOf).trim()}</span>}/>;
+        }
+        return <span>{email}</span>;
+    }
+
+    const validateEmail = (part, invalidEmails) => {
+        const hasLength = part.trim().length > 0;
+        const valid = hasLength && validEmailRegExp.test(part);
+        if (!valid && hasLength) {
+            invalidEmails.push(part.trim());
+        }
+        return valid;
+    }
+
     const internalAddEmail = e => {
         if (isEmpty(e.key) && isEmpty(e.target.value)) {
             return;
@@ -34,18 +53,19 @@ export default function EmailField({
         const invalidEmails = [];
         const delimiters = [",", " ", ";", "\n", "\t"];
         let emails;
-        if (!isEmpty(email) && delimiters.some(delimiter => email.indexOf(delimiter) > -1)) {
+        if (!isEmpty(email) && email.indexOf("<") > -1) {
+            emails = email.split(/[,\n\t;]/)
+                .map(e => e.trim())
+                .filter(part => {
+                    const indexOf = part.indexOf("<");
+                    part = indexOf > -1 ? part.substring(indexOf + 1, part.length - 1) : part;
+                    return validateEmail(part, invalidEmails);
+                });
+        } else if (!isEmpty(email) && delimiters.some(delimiter => email.indexOf(delimiter) > -1)) {
             const replacedEmails = email.replace(/[;\s]/g, ",");
             const splitEmails = replacedEmails.split(",");
             emails = splitEmails
-                .filter(part => {
-                    const hasLength = part.trim().length > 0;
-                    const valid = hasLength && validEmailRegExp.test(part);
-                    if (!valid && hasLength) {
-                        invalidEmails.push(part.trim());
-                    }
-                    return valid;
-                });
+                .filter(part => validateEmail(part, invalidEmails));
         } else if (!isEmpty(email)) {
             const valid = validEmailRegExp.test(email.trim());
             if (valid) {
@@ -74,12 +94,12 @@ export default function EmailField({
                     tip={`${I18n.t("invitation.inviteesMessagesTooltip")}${isAdmin ? I18n.t("invitation.appendAdminNote") : ""}`}/>
             </label>
             <div className={`inner-email-field ${error ? "error" : ""}`}>
-                {emails.map(mail =>
-                    <div key={mail} className="email-tag">
-                        <span>{mail}</span>
+                {emails.map((mail, index) =>
+                    <div key={index} className="email-tag">
+                        {displayEmail(mail)}
                         {pinnedEmails.includes(mail) ?
-                            <span className="disabled"><FontAwesomeIcon icon="envelope"/></span> :
-                            <span onClick={internalRemoveMail(mail)}>
+                            <span className="disabled icon"><FontAwesomeIcon icon="envelope"/></span> :
+                            <span className="icon" onClick={internalRemoveMail(mail)}>
                                 <FontAwesomeIcon icon="times"/>
                             </span>}
 

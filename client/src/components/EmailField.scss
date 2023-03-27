@@ -14,17 +14,6 @@ div.email-field {
         font-weight: 600;
     }
 
-    span.tool-tip-section {
-        font-size: 14px;
-        color: $lighter-grey;
-        cursor: pointer;
-        padding: 0 4px;
-
-        &:hover {
-            color: darken($light-blue, 20%);
-        }
-    }
-
     .inner-email-field {
         display: flex;
         flex-wrap: wrap;
@@ -74,7 +63,7 @@ div.email-field {
                 word-break: break-all;
             }
 
-            &:last-child {
+            &.icon {
                 padding: 8px 14px;
                 cursor: pointer;
                 font-size: 14px;
