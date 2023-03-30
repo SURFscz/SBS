@@ -1000,7 +1000,7 @@ I18n.translations.nl = {
             basednTooltip: "De base DN van de LDAP-server van het platform",
             ldapClient: "LDAP client",
             ldapEnabledTooltip: "Mag deze dienst de SRAM LDAP server bevragen?",
-            ldapDisclaimer: "Om de LDAP-configuratie te zien moet je LDAP aanzetten",
+            ldapDisclaimer: "LDAP is uitgeschakeld",
         },
         aup: {
             title: "Reset AUP",
