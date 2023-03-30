@@ -112,7 +112,7 @@ class App extends React.Component {
     };
 
     componentDidMount() {
-        const subscriptionId = (crypto.randomUUID && crypto.randomUUID()) || new Date().getTime();
+        const subscriptionId = pseudoGuid();
         sessionStorage.setItem(subscriptionIdCookieName, subscriptionId);
         emitter.addListener("impersonation", this.impersonate);
         Promise.all([config(), aupLinks()]).then(res => {
