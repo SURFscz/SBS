@@ -348,7 +348,18 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                       research_scholarship_compliant=True, code_of_conduct_compliant=True,
                       )
 
-    persist_instance(db, mail, wireless, cloud, storage, wiki, network, service_ssh_uva, uuc_scheduler, demo_sp)
+    demo_rp = Service(entity_id="APP-18DE6298-7BDD-4CFA-9399-E1CC62E8DE05",
+                      name="SRAM Demo RP", abbreviation="sram_demorp", description="Generic SRAM demo rp",
+                      logo=read_image("test.png"), uri=("https://demo-sp.sram.surf.nl/"),
+                      privacy_policy="https://wiki.surfnet.nl/display/SRAM/Privacy+Policy",
+                      contact_email="sram-beheer@surf.nl", security_email="sram-beheer@surf.nl",
+                      public_visible=True, automatic_connection_allowed=True, allow_restricted_orgs=True,
+                      access_allowed_for_all=True,
+                      sirtfi_compliant=True,
+                      research_scholarship_compliant=True, code_of_conduct_compliant=True,
+                      )
+
+    persist_instance(db, mail, wireless, cloud, storage, wiki, network, service_ssh_uva, uuc_scheduler, demo_sp, demo_rp)
 
     service_group_mail = ServiceGroup(name=service_group_mail_name,
                                       short_name="mail",
