@@ -340,8 +340,8 @@ I18n.translations.nl = {
             },
             options: {
                 header: "Koppelingen met samenwerkingen",
-                DISALLOW: "Niet toestaan",
-                ON_REQUEST:  "Op verzoek",
+                DISALLOW: "Niet",
+                ON_REQUEST: "Op verzoek",
                 ALWAYS: "Altijd"
             }
         },
