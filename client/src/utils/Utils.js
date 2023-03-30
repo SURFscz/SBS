@@ -75,7 +75,7 @@ export function valueForSort(attribute, obj) {
 }
 
 export function pseudoGuid() {
-    return crypto.randomUUID()
+    return (crypto.randomUUID && crypto.randomUUID()) || Math.round((new Date().getTime() * Math.random() * 1000)).toString()
 }
 
 export function escapeDeep(obj) {
