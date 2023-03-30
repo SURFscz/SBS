@@ -1052,7 +1052,7 @@ I18n.translations.en = {
         schacHomeOrganisation: "Organisation domain names",
         schacHomeOrganisationPlaceholder: "The domain name of the organisation",
         schacHomeOrganisationTooltip: "The domain name of a person based on the domain name of the institution (i.e. institution.nl). SAML2: urn:mace:terena.org:attribute-def:schacHomeOrganization",
-        collaborationCreationAllowed: "Automatically approve collaboration creation requests?",
+        collaborationCreationAllowed: "Automatically approve collaboration creation requests",
         collaborationCreationAllowedTooltip: "Any person can create collaborations for their home institution. This requires a domain name",
         collaborationCreationLabel: "Users from these domains",
         collaborationCreationIsAllowed: "Can create collaborations",

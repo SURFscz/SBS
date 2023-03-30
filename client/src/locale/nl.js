@@ -1052,7 +1052,7 @@ I18n.translations.nl = {
         schacHomeOrganisation: "Organisatiedomeinnamen",
         schacHomeOrganisationPlaceholder: "De domeinnaam van de organisatie",
         schacHomeOrganisationTooltip: "De domeinnaam van een identiteit gebaseerd op de domeinnaam van de instelling (bijvoorbeeld instelling.nl). SAML2: urn:mace:terena.org:attribute-def:schacHomeOrganization",
-        collaborationCreationAllowed: "Aanvragen voor nieuwe samenwerking automatisch goedkeuren?",
+        collaborationCreationAllowed: "Aanvragen voor nieuwe samenwerking automatisch goedkeuren",
         collaborationCreationAllowedTooltip: "Iedereen kan samenwerkingen voor de eigen instelling aanmaken. Hiervoor is een domeinnaam vereist.",
         collaborationCreationLabel: "Gebruikers van deze domeinen",
         collaborationCreationIsAllowed: "Kunnen samenwerkingen aanmaken",
