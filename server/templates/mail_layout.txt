@@ -1,4 +1,5 @@
 {% block title %}Your template must define a 'title' block{% endblock %}
 {% block content %}Your template must define a 'content' block.{% endblock %}
 
-SURF | Research Access Management
+SURF Research Access Management
+https://surf.nl/en/sram
