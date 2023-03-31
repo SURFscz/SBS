@@ -978,7 +978,7 @@ export function clearMockScimStatistics() {
 
 //SCIM
 export function sweep(service) {
-    return postPutJson(`/api/scim/v2/sweep?service_id=${service.id}`, {}, "PUT")
+    return postPutJson(`/api/scim/v2/sweep?service_id=${service.id}`, {}, "PUT", false);
 }
 
 

@@ -142,7 +142,10 @@ def sweep():
     except Unauthorized:
         confirm_write_access()
         service = Service.query.get(query_param("service_id"))
-    return perform_sweep(service), 201
+    try:
+        return perform_sweep(service), 201
+    except Exception as error:
+        return {"error": str(error)}, 400
 
 
 @scim_api.route("/scim-services", methods=["GET"], strict_slashes=False)
