@@ -62,8 +62,8 @@ def _do_send_mail(subject, recipients, template, context, preview, working_outsi
         map(lambda x: x.strip(), recipients.split(",")))
 
     mail_ctx = current_app.app_config.mail
-    environment = mail_ctx.environment
-    if environment != "sram.surf.nl":
+    environment = current_app.app_config.environment_disclaimer
+    if environment:
         subject = f"{subject} ({environment})"
     msg = Message(subject=subject,
                   sender=(mail_ctx.get("sender_name", "SURF"), mail_ctx.get("sender_email", "no-reply@surf.nl")),
