@@ -56,3 +56,12 @@ class TestUserSuspending(AbstractTest):
         user_names_history = UserNameHistory.query.all()
         self.assertEqual(1, len(user_names_history))
         self.assertEqual("user_gets_deleted", user_names_history[0].username)
+
+        # now run suspend crpn job again; nothing should change!
+        with mail.record_messages() as outbox:
+            results = suspend_users(self.app)
+            self.assertListEqual([], results["warning_suspend_notifications"])
+            self.assertListEqual([], results["suspended_notifications"])
+            self.assertListEqual([], results["warning_deleted_notifications"])
+            self.assertListEqual([], results["deleted_notifications"])
+            self.assertListEqual([], outbox)
