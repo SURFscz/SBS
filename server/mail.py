@@ -365,19 +365,18 @@ def mail_account_deletion(user):
     )
 
 
-def mail_suspended_account_deletion(user):
+def mail_suspended_account_deletion(uids: list[str]):
     mail_cfg = current_app.app_config.mail
     recipients = [mail_cfg.eduteams_email]
     if mail_cfg.account_deletion_notifications_enabled:
         recipients.append(mail_cfg.beheer_email)
     _do_send_mail(
-        subject=f"User {user.email} suspended account is deleted in environment {mail_cfg.environment}",
+        subject=f"User accounts deleted in environment {mail_cfg.environment}",
         recipients=recipients,
         template="admin_suspended_user_account_deleted",
         context={"environment": mail_cfg.environment,
                  "date": datetime.datetime.now(),
-                 "attributes": _user_attributes(user),
-                 "user": user},
+                 "uids": uids},
         preview=False,
         working_outside_of_request_context=True
     )

@@ -83,6 +83,7 @@ def _do_suspend_users(app):
         warning_date = deletion_date + datetime.timedelta(days=retention.reminder_expiry_period_days)
         suspended_users = User.query \
             .filter(User.last_login_date < warning_date, User.suspended == True, ).all()  # noqa: E712
+        deleted_user_uids = []
         for user in suspended_users:
             suspend_notifications = user.suspend_notifications
             if not any([not sp.is_suspension and sp.is_warning for sp in suspend_notifications]):
@@ -91,16 +92,19 @@ def _do_suspend_users(app):
             elif user.last_login_date < deletion_date:
                 # don't send mail to user; they have already received 3 emails, and this one is not actionable.
                 results["deleted_notifications"].append(user.email)
+                deleted_user_uids.append(user.uid)
                 if user.username:
                     history_not_exists = UserNameHistory.query.filter(
                         UserNameHistory.username == user.username).count() == 0
                     if history_not_exists:
                         user_name_history = UserNameHistory(username=user.username)
                         db.session.merge(user_name_history)
-                mail_suspended_account_deletion(user)
                 db.session.delete(user)
 
         db.session.commit()
+
+        if deleted_user_uids:
+            mail_suspended_account_deletion(deleted_user_uids)
 
         end = int(time.time() * 1000.0)
         logger.info(f"Finished running suspend_users job in {end - start} ms")

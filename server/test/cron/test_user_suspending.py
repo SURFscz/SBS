@@ -27,7 +27,7 @@ class TestUserSuspending(AbstractTest):
             self.assertListEqual(["user_gets_suspended@example.org"], results["suspended_notifications"])
             self.assertListEqual(["user_deletion_warning@example.org"], results["warning_deleted_notifications"])
             self.assertListEqual(["user_gets_deleted@example.org"], results["deleted_notifications"])
-            self.assertEqual(5, len(outbox))
+            self.assertEqual(4, len(outbox))
 
         user_suspend_warning = self.find_entity_by_name(User, "user_suspend_warning")
         self.assertEqual(False, user_suspend_warning.suspended)
