@@ -21,9 +21,15 @@ export default class DateField extends React.Component {
 
     toggle = () => this.component.setOpen(true);
 
+    invalidValue = (onChange) => {
+        setTimeout(() => onChange(moment().add(16, "days").toDate()), 250);
+    }
+
     validateOnBlur = e => {
-        const {onChange, maxDate = null, minDate = null, allowNull = false, performValidateOnBlur = true,
-        pastDatesAllowed = false} = this.props;
+        const {
+            onChange, maxDate = null, minDate = null, allowNull = false, performValidateOnBlur = true,
+            pastDatesAllowed = false
+        } = this.props;
         if (!performValidateOnBlur) {
             stopEvent(e);
             return;
@@ -31,19 +37,16 @@ export default class DateField extends React.Component {
 
         if (e && e.target) {
             const minimalDate = minDate || moment().add(1, "day").toDate();
-            const maximalDate = maxDate || moment().add(31, "day").toDate();
+            minimalDate.setHours(0,0,0,0);
             const value = e.target.value;
             if (value) {
-                const m = moment(value, "dd/MM/yyyy");
+                const m = moment(value, "DD/MM/YYYY");
                 const d = m.toDate();
-                if (!pastDatesAllowed && (!m.isValid() || d > maximalDate || d < minimalDate)) {
-                    setTimeout(() => onChange(moment().add(16, "days").toDate()), 250);
+                if (!m.isValid() || (!pastDatesAllowed && d < minimalDate) || (maxDate && d > maxDate)) {
+                    this.invalidValue(onChange);
                 }
-            } else {
-                if (!allowNull) {
-                    setTimeout(() => onChange(moment().add(16, "days").toDate()), 250);
-                }
-
+            } else if (!allowNull) {
+                this.invalidValue(onChange);
             }
         }
     }
@@ -58,7 +61,7 @@ export default class DateField extends React.Component {
         return (
             <div className="date-field">
                 {name && <label className="date-field-label" htmlFor={name}>{name}
-                    {toolTip && <Tooltip tip={toolTip} />}
+                    {toolTip && <Tooltip tip={toolTip}/>}
                 </label>}
                 <label className={"date-picker-container"} htmlFor={name}>
                     <DatePicker
