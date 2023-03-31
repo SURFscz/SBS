@@ -11,6 +11,7 @@ from sqlalchemy.orm import aliased, load_only, selectinload
 from werkzeug.exceptions import BadRequest, Forbidden, MethodNotAllowed
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars, emit_socket
+from server.api.exceptions import APIBadRequest
 from server.api.service_group import create_service_groups
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_collaboration_member, \
@@ -501,7 +502,7 @@ def save_collaboration_api():
 
     missing = [req for req in required if req not in data]
     if missing:
-        raise BadRequest(f"Missing required attributes: {missing}")
+        raise APIBadRequest(f"Missing required attributes: {missing}")
     # The do_save_collaboration strips out all non-collaboration keys
     tags = data.get("tags", None)
     # Ensure to skip current_user is CO admin check
@@ -575,7 +576,7 @@ def _validate_collaboration(data, organisation, new_collaboration=True):
         past_dates_allowed = current_app.app_config.feature.past_dates_allowed
         dt = datetime.utcfromtimestamp(int(expiry_date)) + timedelta(hours=4)
         if not past_dates_allowed and dt < datetime.now():
-            raise BadRequest(f"It is not allowed to set the expiry date ({dt}) in the past")
+            raise APIBadRequest(f"It is not allowed to set the expiry date ({dt}) in the past")
         data["expiry_date"] = datetime(year=dt.year, month=dt.month, day=dt.day, hour=0, minute=0, second=0)
     else:
         data["expiry_date"] = None
@@ -591,12 +592,12 @@ def _validate_collaboration(data, organisation, new_collaboration=True):
 
     if _do_name_exists(data["name"], organisation.id,
                        existing_collaboration="" if new_collaboration else data["name"]):
-        raise BadRequest(f"Collaboration with name '{data['name']}' already exists within "
-                         f"organisation '{organisation.name}'.")
+        raise APIBadRequest(f"Collaboration with name '{data['name']}' already exists within "
+                            f"organisation '{organisation.name}'.")
     if _do_short_name_exists(data["short_name"], organisation.id,
                              existing_collaboration="" if new_collaboration else data["short_name"]):
-        raise BadRequest(f"Collaboration with short_name '{data['short_name']}' already exists within "
-                         f"organisation '{organisation.name}'.")
+        raise APIBadRequest(f"Collaboration with short_name '{data['short_name']}' already exists within "
+                            f"organisation '{organisation.name}'.")
     _assign_global_urn(data["organisation_id"], data)
     data["last_activity_date"] = datetime.now()
 
