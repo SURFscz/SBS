@@ -14,6 +14,7 @@ from jsonschema import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest, Forbidden
 
+from server.api.exceptions import APIBadRequest
 from server.auth.security import current_user_id, CSRF_TOKEN
 from server.auth.tokens import get_authorization_header
 from server.auth.urls import noauth_listing, mfa_listing, external_api_listing
@@ -178,6 +179,8 @@ def json_endpoint(f):
                 e.description = f"Forbidden 403: {current_request.url}. IP: {_remote_address()}"
             elif isinstance(e, Unauthorized) and "The server could not verify" in e.description:
                 e.description = f"Unauthorized 401: {current_request.url}. IP: {_remote_address()}"
+            elif isinstance(e, APIBadRequest):
+                skip_email = True
             elif hasattr(e, "description"):
                 e.description = f"{e.__class__.__name__}: {current_request.url}." \
                                 f" IP: {_remote_address()}. " + e.description
