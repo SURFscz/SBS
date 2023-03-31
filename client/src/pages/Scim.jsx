@@ -61,6 +61,17 @@ class Scim extends React.Component {
                 sweepTime: new Date().getMilliseconds() - now.getMilliseconds(),
                 loading: false
             });
+        }).catch(e => {
+            if (e.response && e.response.json) {
+                e.response.json().then(res => {
+                    this.setState({
+                        sweepResults: res,
+                        sweepService: service,
+                        sweepTime: new Date().getMilliseconds() - now.getMilliseconds(),
+                        loading: false
+                    });
+                })
+            }
         })
     }
 
