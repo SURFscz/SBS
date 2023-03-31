@@ -173,19 +173,22 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     retention = app_config.retention
     current_time = datetime.datetime.utcnow()
     retention_date = current_time - datetime.timedelta(days=retention.allowed_inactive_period_days + 1)
+    retention_warning_date = retention_date + datetime.timedelta(days=retention.reminder_suspend_period_days)
 
     user_suspend_warning = User(uid="urn:user_suspend_warning", name="user_suspend_warning",
                                 email="user_suspend_warning@example.org", username="user_suspend_warning",
-                                last_login_date=retention_date, last_accessed_date=retention_date,
+                                last_login_date=retention_warning_date, last_accessed_date=retention_warning_date,
                                 schac_home_organisation="not.exists")
     user_gets_suspended = User(uid="urn:user_gets_suspended", name="user_gets_suspended",
                                email="user_gets_suspended@example.org", username="1suspend",
                                last_login_date=retention_date, last_accessed_date=retention_date)
 
-    deletion_date = current_time - datetime.timedelta(days=retention.remove_suspended_users_period_days + 30)
+    deletion_date = retention_date - datetime.timedelta(days=retention.remove_suspended_users_period_days)
+    deletion_warning_date = deletion_date + datetime.timedelta(days=retention.reminder_expiry_period_days)
+
     user_deletion_warning = User(uid="urn:user_deletion_warning", name="user_deletion_warning",
                                  email="user_deletion_warning@example.org", username="user_deletion_warning",
-                                 suspended=True, last_login_date=deletion_date, last_accessed_date=deletion_date)
+                                 suspended=True, last_login_date=deletion_warning_date, last_accessed_date=deletion_warning_date)
 
     user_gets_deleted = User(uid="urn:user_gets_deleted", name="user_gets_deleted",
                              email="user_gets_deleted@example.org", username="user_gets_deleted",
