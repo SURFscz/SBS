@@ -10,6 +10,7 @@ div.service-about-mod {
 
      @media (max-width: $tablet-max) {
         flex-direction: column;
+         padding: 32px 15px;
     }
 
     span.role {
