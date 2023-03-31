@@ -188,7 +188,8 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
 
     user_deletion_warning = User(uid="urn:user_deletion_warning", name="user_deletion_warning",
                                  email="user_deletion_warning@example.org", username="user_deletion_warning",
-                                 suspended=True, last_login_date=deletion_warning_date, last_accessed_date=deletion_warning_date)
+                                 suspended=True, last_login_date=deletion_warning_date,
+                                 last_accessed_date=deletion_warning_date)
 
     user_gets_deleted = User(uid="urn:user_gets_deleted", name="user_gets_deleted",
                              email="user_gets_deleted@example.org", username="user_gets_deleted",
