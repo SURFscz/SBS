@@ -6,7 +6,7 @@ from server.db.audit_mixin import AuditLog
 from server.db.domain import Collaboration, User
 from server.mail import mail_collaboration_join_request
 from server.test.abstract_test import AbstractTest
-from server.test.seed import collaboration_uva_researcher_uuid, uuc_secret, uuc_name
+from server.test.seed import collaboration_uva_researcher_uuid, uuc_secret
 
 
 class TestMail(AbstractTest):
@@ -60,7 +60,7 @@ class TestMail(AbstractTest):
             os.environ["TESTING"] = "1"
             self.app.app_config.mail.send_exceptions = False
 
-    def test_send_error_mail_in_api(self):
+    def test_no_error_mail_for_api(self):
         try:
             del os.environ["TESTING"]
             self.app.app_config.mail.send_exceptions = True
@@ -70,9 +70,7 @@ class TestMail(AbstractTest):
                                  headers={"Authorization": f"Bearer {uuc_secret}"},
                                  data=json.dumps({}),
                                  content_type="application/json")
-                self.assertEqual(1, len(outbox))
-                html = outbox[0].html
-                self.assertTrue(f"Organisation API call {uuc_name}" in html)
+                self.assertEqual(0, len(outbox))
         finally:
             os.environ["TESTING"] = "1"
             self.app.app_config.mail.send_exceptions = False
