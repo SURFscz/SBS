@@ -497,6 +497,17 @@ def save_collaboration_api():
             if len(logo_bytes) < max_logo_bytes:
                 data["logo"] = base64.encodebytes(logo_bytes).decode("utf-8")
                 valid_logo = True
+            else:
+                valid_logo = False
+                logo = None
+
+    elif logo:
+        # Ensure it is valid base64
+        try:
+            base64.decodebytes(logo.encode())
+        except Exception:
+            valid_logo = False
+            logo = None
     if not valid_logo and not logo:
         data["logo"] = next(db.engine.execute(text(f"SELECT logo FROM organisations where id = {organisation.id}")))[0]
 
@@ -564,7 +575,7 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True, sav
     for service in services:
         create_service_groups(service, res[0])
 
-    emit_socket(f"organisation_{organisation.id}")
+    emit_socket(f"organisation_{collaboration.organisation_id}")
 
     return res
 
