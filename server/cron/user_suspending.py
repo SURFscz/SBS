@@ -89,7 +89,7 @@ def _do_suspend_users(app):
                 create_suspend_notification(user, retention, app, True, False)
                 results["warning_deleted_notifications"].append(user.email)
             elif user.last_login_date < deletion_date:
-                create_suspend_notification(user, retention, app, False, False)
+                # don't send mail to user; they have already received 3 emails, and this one is not actionable.
                 results["deleted_notifications"].append(user.email)
                 if user.username:
                     history_not_exists = UserNameHistory.query.filter(

@@ -274,10 +274,14 @@ def mail_accepted_declined_service_connection_request(context, service_name, col
 
 def mail_suspend_notification(context, recipients, is_warning, is_suspension):
     _store_mail(context["user"], SUSPEND_NOTIFICATION_MAIL, recipients)
-    if is_warning:
-        template = "suspend_suspend_warning_notification" if is_suspension else "suspend_delete_warning_notification"
+    if is_suspension and is_warning:
+        template = "suspend_suspend_warning_notification"
+    elif is_suspension and not is_warning:
+        template = "suspend_suspend_notification"
+    elif not is_suspension and is_warning:
+        template = "suspend_delete_warning_notification"
     else:
-        template = "suspend_suspend_notification" if is_suspension else "suspend_delete_notification"
+        raise Exception("We don't send mails on account deletion")
     return _do_send_mail(
         subject="SURF SRAM: suspend notification",
         recipients=recipients,
