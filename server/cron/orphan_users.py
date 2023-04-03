@@ -38,7 +38,8 @@ def _do_orphan_users(app):
 
         if users:
             mail_membership_orphan_users_deleted(users)
-            query_filter.delete(synchronize_session="fetch")
+            for user in users:
+                db.session.delete(user)
 
         db.session.commit()
 
