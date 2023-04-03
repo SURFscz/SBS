@@ -599,7 +599,7 @@ I18n.translations.nl = {
         sshKeyError: "Deze SSH cipher wordt niet herkend. In de <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://edu.nl/87btm\">documentatie</a> staan de ondersteunde formaten.",
         sshConvertInfo: "Je publieke SSH-sleutel wordt geconverteerd naar het bestandsformaat <code>OpenSSH-key</code> bij het opslaan van het profiel",
         update: "Opslaan",
-        download: "Download",
+        download: "Download profiel",
         flash: {
             updated: "Je profiel is bijgewerkt"
         },
