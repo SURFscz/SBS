@@ -25,7 +25,18 @@ from server.mail_types.mail_types import COLLABORATION_REQUEST_MAIL, \
 
 def _send_async_email(ctx, msg, mail):
     with ctx:
-        mail.send(msg)
+        attempts = 1
+        try:
+            mail.send(msg)
+        except Exception as e:
+            logger = logging.getLogger("mail")
+            logger.error("Error in sending mail", exc_info=1)
+            attempts = attempts + 1
+            if attempts < 5:
+                _send_async_email(ctx, msg, mail)
+            else:
+                logger.info(f"After attempts mailing {msg.body} failed")
+                raise e
 
 
 def _open_mail_in_browser(msg):
@@ -65,6 +76,9 @@ def _do_send_mail(subject, recipients, template, context, preview, working_outsi
     environment = current_app.app_config.environment_disclaimer
     if environment:
         subject = f"{subject} ({environment})"
+    context = {**context, **{"environment": environment}}
+    msg_html = render_template(f"{template}.html", **context)
+    msg_body = render_template(f"{template}.txt", **context)
     msg = Message(subject=subject,
                   sender=(mail_ctx.get("sender_name", "SURF"), mail_ctx.get("sender_email", "no-reply@surf.nl")),
                   recipients=recipients,
@@ -74,9 +88,8 @@ def _do_send_mail(subject, recipients, template, context, preview, working_outsi
                       "X-Auto-Response-Suppress": "yes",
                       "Precedence": "bulk"
                   })
-    context = {**context, **{"environment": environment}}
-    msg.html = render_template(f"{template}.html", **context)
-    msg.body = render_template(f"{template}.txt", **context)
+    msg.html = msg_html
+    msg.body = msg_body
     msg.msgId = f"<{str(uuid.uuid4())}@{os.uname()[1]}.internal.sram.surf.nl>".replace("-", ".")
 
     logger = logging.getLogger("mail") if working_outside_of_request_context else ctx_logger("user")
@@ -456,7 +469,7 @@ def mail_membership_expires_notification(membership, is_warning):
     )
 
 
-def mail_membership_orphan_users_deleted(users):
+def mail_membership_orphan_users_deleted(user_uids):
     mail_cfg = current_app.app_config.mail
     _do_send_mail(
         subject="Account SRAM deleted",
@@ -464,7 +477,7 @@ def mail_membership_orphan_users_deleted(users):
         cc=[mail_cfg.beheer_email],
         template="orphan_user_delete",
         context={"environment": mail_cfg.environment,
-                 "users": users,
+                 "user_uids": user_uids,
                  "base_url": current_app.app_config.base_url},
         preview=False,
         working_outside_of_request_context=True
