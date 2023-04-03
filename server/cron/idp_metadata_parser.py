@@ -23,7 +23,9 @@ def parse_idp_metadata(app):
         if "}" in element.tag:
             element.tag = element.tag.split("}", 1)[1]
         if event == "start" and element.tag == "Scope":
-            scopes.append(element.text)
+            scope = element.text
+            if scope is not None and len(scope.strip()) > 0:
+                scopes.append(scope)
 
         elif event == "start" and element.tag == "DisplayName":
             stripped_attribs = {k.split("}", 1)[1]: v for k, v in element.attrib.items() if "}" in k}
@@ -31,7 +33,7 @@ def parse_idp_metadata(app):
             lang = {**stripped_attribs, **element.attrib}.get("lang", "en")
             if lang == "nl":
                 display_name_nl = element.text
-            else:
+            elif lang == "en":
                 display_name_en = element.text
 
         elif event == "end" and element.tag == "EntityDescriptor" and (display_name_nl or display_name_en):
@@ -48,8 +50,8 @@ def parse_idp_metadata(app):
     idp_metadata = results
 
 
-def idp_display_name(schac_home_organization, lang="en"):
+def idp_display_name(schac_home_organization, lang="en", use_default=True):
     if not idp_metadata:
         parse_idp_metadata(current_app)
-    names = idp_metadata.get(schac_home_organization, {"en": schac_home_organization})
+    names = idp_metadata.get(schac_home_organization, {"en": schac_home_organization if use_default else None})
     return names.get(lang, names["en"])

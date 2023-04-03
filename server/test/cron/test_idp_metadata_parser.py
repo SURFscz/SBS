@@ -18,5 +18,8 @@ class TestIdpMetadataParser(AbstractTest):
         display_none = idp_display_name("nope")
         self.assertEqual("nope", display_none)
 
+        display_none = idp_display_name("nope", lang="en", use_default=False)
+        self.assertIsNone(display_none)
+
         from server.cron.idp_metadata_parser import idp_metadata
         self.assertTrue(len(idp_metadata) > 300)
