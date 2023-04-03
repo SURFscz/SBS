@@ -46,8 +46,9 @@ def _do_service_connection_request(hash_value, approved):
                "service": service,
                "collaboration": collaboration,
                "user": requester}
+    emails = [requester.email] if requester.email else [current_app.app_config.mail.beheer_email]
     mail_accepted_declined_service_connection_request(context, service.name, collaboration.name, approved,
-                                                      [requester.email])
+                                                      emails)
     db.session.delete(service_connection_request)
 
     emit_socket(f"service_{service.id}", include_current_user_id=True)
