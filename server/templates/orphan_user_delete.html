@@ -6,8 +6,8 @@
     <p>The following orphaned users have been removed from SRAM in environment {{ environment }}.
         Please delete them from the MMS.</p>
     <ul>
-        {% for user in users %}
-            <li>{{ user.uid }}</li>
+        {% for uid in user_uids %}
+            <li>{{ uid }}</li>
         {% endfor %}
     </ul>
     <p>This email is automatically sent and can be suppressed by changing the <i>orphan_users.enabled</i> section

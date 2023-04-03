@@ -6,8 +6,8 @@ Hi,
 The following users have been removed from SRAM in environment {{ environment }}.
 Please delete them from the MMS.
 
-    {% for user in users %}
-        {{ user.uid }}
+    {% for uid in user_uids %}
+        {{ uid }}
     {% endfor %}
 
 This email is automatically sent and can be suppressed by changing the orphan_users.enabled section
