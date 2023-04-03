@@ -275,7 +275,7 @@ class UsedServices extends React.Component {
                     <h3>{I18n.t("models.serviceConnectionRequests.details",
                         {
                             date: moment(serviceConnectionRequest.created_at * 1000).format("LL"),
-                            name: serviceConnectionRequest.requester.name,
+                            name: serviceConnectionRequest.requester.name || serviceConnectionRequest.requester.uid,
                             collaborationName: collaboration.name
                         })}</h3>
                     <Logo src={serviceConnectionRequest.service.logo}/>

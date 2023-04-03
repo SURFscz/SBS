@@ -122,7 +122,7 @@ class ServiceConnectionRequests extends React.Component {
                     <h2>{I18n.t("models.serviceConnectionRequests.details",
                         {
                             date: moment(serviceConnectionRequest.created_at * 1000).format("LL"),
-                            name: serviceConnectionRequest.requester.name,
+                            name: serviceConnectionRequest.requester.name || serviceConnectionRequest.requester.uid,
                             collaborationName: serviceConnectionRequest.collaboration.name
                         })}</h2>
 
