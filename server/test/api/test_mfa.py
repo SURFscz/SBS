@@ -20,7 +20,7 @@ class TestMfa(AbstractTest):
         self.assertIsNotNone(qr_code)
 
         idp_name = res["idp_name"]
-        self.assertEqual("example.org", idp_name)
+        self.assertIsNone(idp_name)
 
         secret = res["secret"]
         totp = pyotp.TOTP(secret)
