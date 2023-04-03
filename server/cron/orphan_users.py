@@ -33,13 +33,16 @@ def _do_orphan_users(app):
             .filter(AuditLog.user_id == User.id) \
             .filter(AuditLog.target_type.not_in(["aups", "users"])) \
             .exists()
-        query_filter = User.query.filter(audit_log_subquery).filter(User.created_at < delete_date_threshold)
-        users = query_filter.all()
+        users = User.query.filter(audit_log_subquery) \
+            .filter(User.created_at < delete_date_threshold).all()
 
+        user_uids = []
         if users:
-            mail_membership_orphan_users_deleted(users)
             for user in users:
+                logger.info(f"Deleting orphan user {user.uid} {user.email}")
+                user_uids.append(user.uid)
                 db.session.delete(user)
+            mail_membership_orphan_users_deleted(user_uids)
 
         db.session.commit()
 
