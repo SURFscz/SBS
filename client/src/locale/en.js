@@ -599,7 +599,7 @@ I18n.translations.en = {
         sshKeyError: "This SSH cipher isn't recognized. Please refer to the <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://edu.nl/87btm\">documentation</a> for supported formats.",
         sshConvertInfo: "Public key will be converted to the <code>OpenSSH</code> format when saving the profile",
         update: "Update",
-        download: "Download",
+        download: "Download profile",
         flash: {
             updated: "Your profile has been updated"
         },
