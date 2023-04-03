@@ -134,6 +134,18 @@ class TestServiceConnectionRequest(AbstractTest):
             self.assertEqual("Service SSH UvA connection request for collaboration UVA UCC research "
                              "has been accepted (local)", mail_msg.subject)
 
+    def test_approve_service_connection_request_with_no_email_requester(self):
+        request = ServiceConnectionRequest.query \
+            .filter(ServiceConnectionRequest.hash == ssh_service_connection_request_hash).one()
+        request.requester.email = None
+        self.save_entity(request.requester)
+
+        with self.app.mail.record_messages() as outbox:
+            self.put(f"/api/service_connection_requests/approve/{ssh_service_connection_request_hash}")
+
+            mail_msg = outbox[0]
+            self.assertListEqual(["sram-beheer@surf.nl"], mail_msg.recipients)
+
     def test_deny_service_connection_request(self):
         pre_services_count = len(self.find_entity_by_name(Collaboration, uva_research_name).services)
 
