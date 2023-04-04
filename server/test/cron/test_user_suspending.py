@@ -1,9 +1,13 @@
+from datetime import datetime, timedelta
+
 from sqlalchemy import text
 
 from server.cron.user_suspending import suspend_users, suspend_users_lock_name
 from server.db.db import db
 from server.db.domain import User, UserNameHistory
 from server.test.abstract_test import AbstractTest
+
+from freezegun import freeze_time
 
 
 class TestUserSuspending(AbstractTest):
@@ -68,3 +72,15 @@ class TestUserSuspending(AbstractTest):
             self.assertListEqual([], results["warning_deleted_notifications"])
             self.assertListEqual([], results["deleted_notifications"])
             self.assertListEqual([], outbox)
+
+        # now fast-forward time
+        retention = self.app.app_config.retention
+        newdate = datetime.utcnow() + timedelta(retention.reminder_suspend_period_days) + timedelta(retention.remove_suspended_users_period_days)
+        with freeze_time(newdate):
+            with mail.record_messages() as outbox:
+                results = suspend_users(self.app)
+                self.assertListEqual([],                                    results["warning_suspend_notifications"])
+                self.assertListEqual(["user_suspend_warning@example.org"],  results["suspended_notifications"])
+                self.assertListEqual(["user_gets_suspended@example.org"],   results["warning_deleted_notifications"])
+                self.assertListEqual(["user_deletion_warning@example.org"], results["deleted_notifications"])
+                self.assertEqual(3, len(outbox))
