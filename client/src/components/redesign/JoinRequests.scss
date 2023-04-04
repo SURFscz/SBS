@@ -1,7 +1,6 @@
 @import "../../stylesheets/vars";
 @import "../../stylesheets/forms";
 @import "../../stylesheets/unit_header";
-@import "../../stylesheets/entity_status";
 
 table.joinRequests {
 
@@ -91,9 +90,13 @@ table.joinRequests {
         }
 
         .join-request-header {
-            display: flex;
+                            display: flex;
+                align-items: center;
 
-            @include entity-status;
+            button.sds--chips {
+                margin-left: 25px;
+                max-height: 34px;
+            }
         }
 
         display: flex;

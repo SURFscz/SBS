@@ -14,11 +14,10 @@ import {joinRequestAccept, joinRequestDecline, joinRequestDelete} from "../../ap
 import UserColumn from "./UserColumn";
 import moment from "moment";
 import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
-import {Tooltip} from "@surfnet/sds";
+import {Chip, Tooltip} from "@surfnet/sds";
 import Select from "react-select";
 import InstituteColumn from "./InstituteColumn";
 import {chipTypeForStatus} from "../../utils/UserRole";
-import {Chip} from "@surfnet/sds";
 
 const allValue = "all";
 
@@ -204,9 +203,8 @@ class JoinRequests extends React.Component {
                                 date: moment(joinRequest.created_at * 1000).format("LL"),
                                 name: joinRequest.user.name
                             })}</h2>
-                        {<span className={`status ${joinRequest.status}`}>
-                            {I18n.t(`collaborationRequest.statuses.${joinRequest.status}`)}
-                        </span>}
+                        {<Chip label={I18n.t(`collaborationRequest.statuses.${joinRequest.status}`)}
+                               type={chipTypeForStatus(joinRequest)}/>}
                     </div>
                     {joinRequest.reference && <InputField name={I18n.t("joinRequest.reference")}
                                                           value={joinRequest.reference}
@@ -281,7 +279,7 @@ class JoinRequests extends React.Component {
                 key: "status",
                 header: I18n.t("collaborationRequest.status"),
                 mapper: entity => <Chip type={chipTypeForStatus(entity)}
-                label={I18n.t(`collaborationRequest.statuses.${entity.status}`)} />
+                                        label={I18n.t(`collaborationRequest.statuses.${entity.status}`)}/>
             },
         ]
         const filteredJoinRequests = filterValue.value === allValue ? collaboration.join_requests :
