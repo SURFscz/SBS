@@ -32,7 +32,8 @@ class TestUserSuspending(AbstractTest):
         user_suspend_warning = self.find_entity_by_name(User, "user_suspend_warning")
         self.assertEqual(False, user_suspend_warning.suspended)
         notifications = user_suspend_warning.suspend_notifications
-        self.assertEqual(1, len(notifications))
+        self.assertEqual(2, len(notifications))
+        notifications.sort(key=lambda n: n.sent_at, reverse=True)
         self.assertTrue(notifications[0].is_warning)
         self.assertTrue(notifications[0].is_suspension)
 
@@ -45,8 +46,10 @@ class TestUserSuspending(AbstractTest):
         self.assertTrue(notifications[0].is_suspension)
 
         user_deletion_warning = self.find_entity_by_name(User, "user_deletion_warning")
+        self.assertEqual(True, user_deletion_warning.suspended)
         notifications = user_deletion_warning.suspend_notifications
-        self.assertEqual(1, len(notifications))
+        self.assertEqual(2, len(notifications))
+        notifications.sort(key=lambda n: n.sent_at, reverse=True)
         self.assertTrue(notifications[0].is_warning)
         self.assertFalse(notifications[0].is_suspension)
 
@@ -57,7 +60,7 @@ class TestUserSuspending(AbstractTest):
         self.assertEqual(1, len(user_names_history))
         self.assertEqual("user_gets_deleted", user_names_history[0].username)
 
-        # now run suspend crpn job again; nothing should change!
+        # now run suspend cron job again; nothing should change!
         with mail.record_messages() as outbox:
             results = suspend_users(self.app)
             self.assertListEqual([], results["warning_suspend_notifications"])

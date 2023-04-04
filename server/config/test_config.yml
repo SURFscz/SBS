@@ -112,11 +112,11 @@ feature:
 
 # The retention config determines how long users may be inactive, how long the reminder magic link is valid and when do we resent the magic link
 retention:
-  allowed_inactive_period_days: 90
-  reminder_suspend_period_days: 14
+  allowed_inactive_period_days: 365
+  reminder_suspend_period_days: 7
+  remove_suspended_users_period_days: 90
   reminder_expiry_period_days: 7
   cron_hour_of_day: 7
-  remove_suspended_users_period_days: 540
 
 metadata:
   idp_url: https://metadata.surfconext.nl/idps-metadata.xml
