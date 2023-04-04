@@ -1,6 +1,5 @@
 @import "../../stylesheets/vars";
 @import "../../stylesheets/unit_header";
-@import "../../stylesheets/entity_status";
 
 table.memberJoinRequests, table.systemJoinRequests, table.deletedJoinRequests {
 
@@ -14,6 +13,7 @@ table.memberJoinRequests, table.systemJoinRequests, table.deletedJoinRequests {
             &.user__name {
                 width: 35%;
             }
+
             &.user__schac_home_organisation {
                 width: 20%;
             }
@@ -94,12 +94,6 @@ table.memberJoinRequests, table.systemJoinRequests, table.deletedJoinRequests {
         @media (max-width: $compact-medium) {
             width: 100%;
             padding: 15px 15px 0 15px;
-        }
-
-        .join-request-header {
-            display: flex;
-
-            @include entity-status;
         }
 
         display: flex;

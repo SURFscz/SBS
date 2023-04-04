@@ -19,6 +19,8 @@ import {AppStore} from "../stores/AppStore";
 import CroppedImageField from "../components/redesign/CroppedImageField";
 import SpinnerField from "../components/redesign/SpinnerField";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
+import {chipTypeForStatus} from "../utils/UserRole";
+import {Chip} from "@surfnet/sds";
 
 class CollaborationRequest extends React.Component {
 
@@ -241,8 +243,9 @@ class CollaborationRequest extends React.Component {
                                 {isOpen && <Button disabled={disabledSubmit}
                                                    txt={I18n.t("collaborationRequest.approve")}
                                                    onClick={this.submit(true)}/>}
-                                {!isOpen && <span
-                                    className={`status ${collaborationRequest.status}`}>{I18n.t(`collaborationRequest.statuses.${collaborationRequest.status}`)}</span>}
+                                {!isOpen &&
+                                <Chip label={I18n.t(`collaborationRequest.statuses.${collaborationRequest.status}`)}
+                                      type={chipTypeForStatus(collaborationRequest)}/>}
                             </div>
                         </section>
                     </div>
@@ -317,7 +320,8 @@ class CollaborationRequest extends React.Component {
                                     placeholder={I18n.t("collaboration.descriptionPlaceholder")}
                                     disabled={!isOpen}
                                     name={I18n.t("collaboration.description")}/>
-                        {(!initial && isEmpty(collaborationRequest.description)) && <ErrorIndicator msg={I18n.t("collaboration.required", {
+                        {(!initial && isEmpty(collaborationRequest.description)) &&
+                        <ErrorIndicator msg={I18n.t("collaboration.required", {
                             attribute: I18n.t("collaboration.description").toLowerCase()
                         })}/>}
 
