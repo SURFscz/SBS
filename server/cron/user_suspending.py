@@ -142,10 +142,11 @@ def _do_suspend_users(app):
 
             if last_suspend_notification is not None and \
                last_suspend_notification.sent_at < suspension_timeout and \
-               (last_delete_warning is None or last_suspend_notification.sent_at < suspension_date):
+               (last_delete_warning is None or last_delete_warning.sent_at < suspension_date):
                 create_suspend_notification(user, retention, app, True, False)
                 results["warning_deleted_notifications"].append(user.email)
-            elif user.last_login_date < deletion_date and last_delete_warning.sent_at < warning_timeout:
+            elif user.last_login_date < deletion_date and \
+                 last_delete_warning is not None and last_delete_warning.sent_at < warning_timeout:
                 # don't send mail to user; they have already received 3 emails, and this one is not actionable.
                 results["deleted_notifications"].append(user.email)
                 deleted_user_uids.append(user.uid)
