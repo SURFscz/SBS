@@ -1376,6 +1376,7 @@ I18n.translations.en = {
         noServices: "This organisation has no services connected.",
         searchServices: "Search, select and add services to the available services within organisation {{name}}.",
         deleteServiceTooltip: "Make this service unavailable in the organisation {{name}}. <strong>Note</strong>: the service itself is NOT deleted. It is only not available anymore for the members of the collaborations on this organisation",
+        accessForNonMembersOrganisation: "This service cannot be enabled for all collaborations, because all users of the platform can access this service, regardless of any collaboration membership.",
         notAllowedOrganisation: "This service cannot be enabled for all collaborations, because it does not allow automatic connections. Connections can still be requested by individual collaborations in your organisation.",
         notEnabledOrganisation: "This service cannot be enabled for all collaborations, because the service does not allow access for this organisation.",
         serviceRestrictedOrganisation: "This service cannot be made mandatory for all collaborations, because this organisation can only link SURF services.",

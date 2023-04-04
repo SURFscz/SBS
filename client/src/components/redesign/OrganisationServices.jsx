@@ -112,7 +112,7 @@ class OrganisationServices extends React.Component {
     serviceSortProperty = (service, organisation) => {
         const tooltip = this.deductTooltip(service, organisation);
         const connected = organisation.services.some(s => s.id === service.id);
-        return (connected && !tooltip) ? 0 : tooltip ? 2 :  1;
+        return (connected && !tooltip) ? 0 : tooltip ? 2 : 1;
     }
 
     deductTooltip = (service, organisation) => {
@@ -121,10 +121,14 @@ class OrganisationServices extends React.Component {
         const allowed_org = service.allowed_organisations.some(org => org.id === organisation.id) || trusted_org;
         if (!service.allow_restricted_orgs && organisation.services_restricted) {
             tooltip = I18n.t("organisationServices.serviceRestrictedOrganisation");
-        } else if (!service.access_allowed_for_all && !allowed_org) {
-            tooltip = I18n.t("organisationServices.notEnabledOrganisation");
-        } else if (!service.automatic_connection_allowed && !trusted_org) {
+        } else if (service.non_member_users_access_allowed) {
+            tooltip = I18n.t("organisationServices.accessForNonMembersOrganisation");
+        } else if (service.access_allowed_for_all && !service.automatic_connection_allowed
+            && !trusted_org && !service.non_member_users_access_allowed) {
             tooltip = I18n.t("organisationServices.notAllowedOrganisation");
+        } else if (!service.access_allowed_for_all && !service.automatic_connection_allowed
+            && !allowed_org && !service.non_member_users_access_allowed) {
+            tooltip = I18n.t("organisationServices.notEnabledOrganisation");
         }
         return tooltip;
     }
