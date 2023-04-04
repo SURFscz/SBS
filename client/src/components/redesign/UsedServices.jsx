@@ -77,6 +77,8 @@ class UsedServices extends React.Component {
                     .filter(service => {
                         return (service.allowed_organisations.some(org => org.id === collaboration.organisation_id)
                                 || service.access_allowed_for_all
+                                || service.automatic_connection_allowed
+                                || service.non_member_users_access_allowed
                                 || service.automatic_connection_allowed_organisations.some(org => org.id === collaboration.organisation_id))
                             && servicesInUse.indexOf(service.id) === -1
                             && (service.allow_restricted_orgs || !collaboration.organisation.services_restricted);

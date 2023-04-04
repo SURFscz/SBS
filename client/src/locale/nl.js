@@ -1376,6 +1376,7 @@ I18n.translations.nl = {
         noServices: "Deze organisatie heeft geen gekoppelde diensten.",
         searchServices: "Zoek, kies en voeg diensten toe aan organisatie {{name}}",
         deleteServiceTooltip: "Maak deze dienst ontoegankelijk voor samenwerking {{name}}. <strong>Let op</strong>: de dienst wordt niet verwijderd, alleen onbeschikbaar voor de samenwerkingen van deze organisatie.",
+        accessForNonMembersOrganisation: "Deze dienst kan niet worden verplicht voor alle samenwerkingen omdat alle gebruikers van het platform hebben toegang tot deze dienst, ongeacht lidmaatschap van en koppelingen met samenwerkingen\n",
         notAllowedOrganisation: "Deze dienst kan niet worden verplicht voor alle samenwerkingen omdat deze dienst automatische verbindingen niet toestaat. Aansluitingen kunnen nog steeds worden aangevraagd door individuele samenwerkingen in je organisatie.",
         notEnabledOrganisation: "Deze dienst kan niet worden verplicht voor alle samenwerkingen omdat deze dienst toegang voor deze organisatie niet toestaat.",
         serviceRestrictedOrganisation: "Deze dienst kan niet worden verplicht voor alle samenwerkingen omdat deze organisatie alleen SURF-diensten mag koppelen.",

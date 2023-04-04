@@ -29,10 +29,6 @@ class TestOrganisationsServices(AbstractTest):
         res = self._do_add_organisations_services(uuc_name, service_ssh_uva_name, response_status_code=400)
         self.assertTrue("not_allowed_organisation" in res["message"])
 
-    def test_add_organisations_services_no_automatic_connection_allowed(self):
-        res = self._do_add_organisations_services(uuc_name, service_wiki_name, response_status_code=400)
-        self.assertTrue("automatic_connection_not_allowed" in res["message"])
-
     def test_add_organisations_services_automatic_connection_allowed_organisations(self):
         self.login("urn:john")
         organisation = self.find_entity_by_name(Organisation, uuc_name)
