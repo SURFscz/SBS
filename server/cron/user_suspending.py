@@ -25,8 +25,11 @@ def create_suspend_notification(user, retention, app, is_warning, is_suspension)
                 f"user {user.email} because last_login_date is {user.last_login_date}")
     current_time = datetime.datetime.utcnow()
     suspension_date = current_time + datetime.timedelta(days=retention.reminder_suspend_period_days)
-    deletion_days = retention.remove_suspended_users_period_days + retention.reminder_suspend_period_days \
-                    + retention.reminder_expiry_period_days
+    deletion_days = (
+        retention.remove_suspended_users_period_days
+        + retention.reminder_suspend_period_days
+        + retention.reminder_expiry_period_days
+    )
     if is_warning and not is_suspension:
         deletion_days -= retention.reminder_suspend_period_days
         deletion_days -= retention.remove_suspended_users_period_days
