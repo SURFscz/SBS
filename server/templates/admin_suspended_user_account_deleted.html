@@ -1,18 +1,20 @@
 {% extends "mail_layout.html" %}
-{% block title %}SURF platform account deletion notification {% endblock %}
+{% block title %}SRAM account deletion notification for {{ environment }}{% endblock %}
 {% block content %}
 
     <p>Hi,</p>
-    <p>User {{ user.name }} ({{ user.uid }}) is deleted on environment {{ environment }}
-    at {{ date }}, because of inactivity by the suspended users cron job</p>
+    <p>The following users have been removed from SRAM in environment {{ environment }}
+        because of inactivity by the suspended users cron job.</p>
 
-    <p>Please remove this user from Perun.</p>
+    <p>Please delete them from the MMS.</p>
 
-    {% for key, value in attributes.items() %}
-        <p>{{ key }}: {{ value }}</p>
+    <ul>
+    {% for uid in uids  %}
+        <li>{{ uid }}</li>
     {% endfor %}
+    </ul>
 
-    <p>This email is automatically sent and can be suppressed by changing the <i>account_deletion_notifications_enabled</i> section
-        of the configuration for environment {{ environment }}</p>
+
+    <p>This email is automatically sent for environment {{ environment }}.</p>
 
 {% endblock %}

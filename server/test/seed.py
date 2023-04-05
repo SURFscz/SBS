@@ -173,19 +173,23 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     retention = app_config.retention
     current_time = datetime.datetime.utcnow()
     retention_date = current_time - datetime.timedelta(days=retention.allowed_inactive_period_days + 1)
+    retention_warning_date = retention_date + datetime.timedelta(days=retention.reminder_suspend_period_days)
 
     user_suspend_warning = User(uid="urn:user_suspend_warning", name="user_suspend_warning",
                                 email="user_suspend_warning@example.org", username="user_suspend_warning",
-                                last_login_date=retention_date, last_accessed_date=retention_date,
+                                last_login_date=retention_warning_date, last_accessed_date=retention_warning_date,
                                 schac_home_organisation="not.exists")
     user_gets_suspended = User(uid="urn:user_gets_suspended", name="user_gets_suspended",
                                email="user_gets_suspended@example.org", username="1suspend",
                                last_login_date=retention_date, last_accessed_date=retention_date)
 
-    deletion_date = current_time - datetime.timedelta(days=retention.remove_suspended_users_period_days + 30)
+    deletion_date = retention_date - datetime.timedelta(days=retention.remove_suspended_users_period_days)
+    deletion_warning_date = deletion_date + datetime.timedelta(days=retention.reminder_expiry_period_days)
+
     user_deletion_warning = User(uid="urn:user_deletion_warning", name="user_deletion_warning",
                                  email="user_deletion_warning@example.org", username="user_deletion_warning",
-                                 suspended=True, last_login_date=deletion_date, last_accessed_date=deletion_date)
+                                 suspended=True, last_login_date=deletion_warning_date,
+                                 last_accessed_date=deletion_warning_date)
 
     user_gets_deleted = User(uid="urn:user_gets_deleted", name="user_gets_deleted",
                              email="user_gets_deleted@example.org", username="user_gets_deleted",
@@ -195,6 +199,27 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     persist_instance(db, john, mary, peter, admin, roger, harry, james, sarah, betty, jane,
                      user_suspend_warning, user_gets_suspended, user_deletion_warning, user_gets_deleted,
                      paul, service_admin)
+
+    # old suspension warning, should not affect new suspension warnings
+    warning_date_old = current_time - datetime.timedelta(retention.allowed_inactive_period_days + 1)
+    notification_gets_suspended_old = SuspendNotification(user=user_suspend_warning, sent_at=warning_date_old,
+                                                          is_suspension=True, is_warning=True)
+
+    warning_date = datetime.datetime.utcnow() - datetime.timedelta(days=retention.reminder_suspend_period_days, hours=1)
+    notification_gets_suspended = SuspendNotification(user=user_gets_suspended, sent_at=warning_date,
+                                                      is_suspension=True, is_warning=True)
+
+    warning_date = datetime.datetime.utcnow() - datetime.timedelta(days=retention.remove_suspended_users_period_days) \
+                 + datetime.timedelta(days=retention.reminder_expiry_period_days)
+    notification_suspension_warning = SuspendNotification(user=user_deletion_warning, sent_at=warning_date,
+                                                          is_suspension=True, is_warning=False)
+
+    deletion_date = current_time - datetime.timedelta(retention.remove_suspended_users_period_days + 1)
+    notification_gets_deleted = SuspendNotification(user=user_gets_deleted, sent_at=deletion_date,
+                                                    is_suspension=False, is_warning=True)
+
+    persist_instance(db, notification_gets_suspended_old, notification_gets_suspended,
+                     notification_suspension_warning, notification_gets_deleted)
 
     ssh_key_john = SshKey(user=john, ssh_value="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
                                                "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
@@ -216,14 +241,6 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     sarah_user_ip_network = UserIpNetwork(network_value="255.0.0.1/32", user=sarah)
     sarah_other_user_ip_network = UserIpNetwork(network_value="255.0.0.9/24", user=sarah)
     persist_instance(db, sarah_user_ip_network, sarah_other_user_ip_network)
-
-    suspension_date = current_time - datetime.timedelta(retention.allowed_inactive_period_days + 1)
-    user_gets_suspended_notification = SuspendNotification(user=user_gets_suspended, sent_at=suspension_date,
-                                                           is_warning=True, is_suspension=True)
-    deletion_date = current_time - datetime.timedelta(retention.remove_suspended_users_period_days + 1)
-    user_gets_deleted_notification = SuspendNotification(user=user_gets_deleted, sent_at=deletion_date,
-                                                         is_warning=True, is_suspension=False)
-    persist_instance(db, user_gets_suspended_notification, user_gets_deleted_notification)
 
     uuc = Organisation(name=uuc_name, short_name="uuc", identifier=str(uuid.uuid4()),
                        description="Unincorporated Urban Community", logo=read_image("uuc.jpeg"),
