@@ -1,9 +1,17 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SURF inactive notification{% endblock %}
+{% block title %}SRAM account deletion notification for {{ environment }}{% endblock %}
 {% block content %}
 
 Hi,
-User {{ user.name }} ({{ user.uid }}) is deleted on environment {{ environment }}
-at {{ date }}, because of inactivity by the suspended users cron job.
+The following users have been removed from SRAM in environment {{ environment }}
+because of inactivity by the suspended users cron job.
+
+Please delete them from the MMS.
+
+    {% for uid in uids %}
+        {{ uid }}
+    {% endfor %}
+
+This email is automatically sent for environment {{ environment }}.
 
 {% endblock %}
