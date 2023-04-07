@@ -51,10 +51,9 @@ class UsedServices extends React.Component {
 
     componentWillUnmount = () => {
         const {collaboration} = this.props;
-        [`collaboration_${collaboration.id}`, "service"].forEach(topic => {
+        [`collaboration_${collaboration.id}`, "service", `organisation_${collaboration.organisation_id}`].forEach(topic => {
             socket.then(s => s.off(topic));
         });
-
     }
 
     componentDidMount = () => {
@@ -86,12 +85,12 @@ class UsedServices extends React.Component {
                 this.setState({services: filteredServices, loading: false});
                 const {socketSubscribed} = this.state;
                 if (!socketSubscribed) {
-                    [`collaboration_${collaboration.id}`, "service"].forEach(topic => {
+                    [`collaboration_${collaboration.id}`, "service", `organisation_${collaboration.organisation_id}`].forEach(topic => {
                         socket.then(s => s.on(topic, data => {
                             const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
                             if (subscriptionIdSessionStorage !== data.subscription_id) {
                                 //Ensure we don't get race conditions with the refresh in CollaborationDetail
-                                setTimeout(this.componentDidMount, 1000);
+                                setTimeout(this.componentDidMount, 1500);
                             }
                         }));
                     })
