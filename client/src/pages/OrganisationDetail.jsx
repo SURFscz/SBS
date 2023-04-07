@@ -63,7 +63,6 @@ class OrganisationDetail extends React.Component {
             [`organisation_${organisation_id}`, "service"].forEach(topic => {
                 socket.then(s => s.off(topic));
             });
-
         }
     }
 

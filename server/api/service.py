@@ -420,8 +420,10 @@ def toggle_access_property(service_id):
         service.automatic_connection_allowed = False
         service.access_allowed_for_all = False
     db.session.merge(service)
+
     emit_socket(f"service_{service_id}")
     emit_socket("service")
+
     return None, 201
 
 
