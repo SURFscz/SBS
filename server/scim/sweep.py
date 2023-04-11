@@ -2,6 +2,7 @@ import base64
 from typing import List, Union
 
 import requests
+from werkzeug.exceptions import BadRequest
 
 from server.api.base import application_base_url
 from server.db.domain import Service, Group, User, Collaboration
@@ -90,7 +91,7 @@ def _all_remote_scim_objects(service: Service, scim_type, scim_resources=[], sta
     url = f"{service.scim_url}/{scim_type}?startIndex={start_index}"
     response = requests.get(url, headers=scim_headers(service), timeout=10)
     if not validate_response(response, service, outside_user_context=True):
-        return []
+        raise BadRequest()
     scim_json = response.json()
     scim_resources = scim_resources + scim_json["Resources"]
     if scim_json["totalResults"] != len(scim_resources):
@@ -129,9 +130,12 @@ def perform_sweep(service: Service):
 
     groups_by_identifier = {group.identifier: group for group in all_groups}
     users_by_external_id = {user.external_id: user for user in all_users}
-
-    remote_scim_groups = _all_remote_scim_objects(service, SCIM_GROUPS)
-    remote_scim_users = _all_remote_scim_objects(service, SCIM_USERS)
+    try:
+        remote_scim_groups = _all_remote_scim_objects(service, SCIM_GROUPS)
+        remote_scim_users = _all_remote_scim_objects(service, SCIM_USERS)
+    except BadRequest:
+        # We abort, see https://github.com/SURFscz/SBS/issues/601
+        return sync_results
 
     # First delete all remote users and groups that are incorrectly in the remote SCIM database
     for remote_group in remote_scim_groups:

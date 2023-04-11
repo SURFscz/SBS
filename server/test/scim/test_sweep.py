@@ -1,6 +1,7 @@
 import json
 
 import responses
+from werkzeug.exceptions import BadRequest
 
 from server.api.base import application_base_url
 from server.db.domain import Service, Group, User, Collaboration
@@ -112,12 +113,13 @@ class TestSweep(AbstractTest):
 
     @responses.activate
     def test_error_scim_results(self):
-        service = self.find_entity_by_name(Service, service_network_name)
-        with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
-            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json={"error": True},
-                     status=400)
-            scim_objects = _all_remote_scim_objects(service, SCIM_GROUPS)
-            self.assertEqual(0, len(scim_objects))
+        def all_remote():
+            service = self.find_entity_by_name(Service, service_network_name)
+            with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
+                rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json={"error": True},
+                         status=400)
+                _all_remote_scim_objects(service, SCIM_GROUPS)
+            self.assertRaises(BadRequest, all_remote)
 
     @staticmethod
     def _construct_group_changed_parameters(group):
