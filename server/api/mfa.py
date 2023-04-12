@@ -168,7 +168,7 @@ def pre_update2fa():
 @json_endpoint
 def update2fa():
     user = User.query.filter(User.id == current_user_id()).one()
-    validated_current_totp = session.pop("validated_current_totp", False)
+    validated_current_totp = session.get("validated_current_totp")
     if not validated_current_totp:
         return {"current_totp": False}, 400
     new_secret = session["second_factor_auth"]
@@ -181,6 +181,7 @@ def update2fa():
     user.second_factor_auth = new_secret
     db.session.merge(user)
     db.session.commit()
+    session.pop("validated_current_totp")
     return {}, 201
 
 
