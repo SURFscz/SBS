@@ -71,7 +71,8 @@ def confirm_allow_impersonation(confirm_feature_impersonation_allowed=True):
 
 
 def confirm_external_api_call():
-    if "external_api_organisation" not in request_context and not hasattr(request_context, "external_api_organisation"):
+    organisation = request_context.get("external_api_organisation", None)
+    if not organisation:
         raise Forbidden("Not a valid external API call")
 
 
