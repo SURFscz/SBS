@@ -92,6 +92,7 @@ jobs:
 
       - name: Run flake8
         run: |
+          cd ./server
           flake8 .
 
       - name: Run tests with coverage
