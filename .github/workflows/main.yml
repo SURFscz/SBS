@@ -94,16 +94,11 @@ jobs:
         run: |
           flake8 .
 
-      - name: Run tests with coverage
+      - name: Run tests without coverage
         run: |
           cd ./server
-          pytest --cov=server test
+          pytest test
         timeout-minutes: 15
-
-      - name: Upload coverage
-        run: codecov --token=${{ secrets.CODECOV_TOKEN }}
-        if: success()
-
 
   Client_build:
     name: Client build
