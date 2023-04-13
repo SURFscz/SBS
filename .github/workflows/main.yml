@@ -84,7 +84,7 @@ jobs:
           python -m pip install pip setuptools wheel
           pip install --upgrade pip
           pip install -r ./server/requirements/test.txt
-          pip install codecov flake8
+          pip install flake8
 
       # Setup tmate session
       #- name: Setup tmate session
@@ -100,8 +100,10 @@ jobs:
           pytest --cov=server test
         timeout-minutes: 15
 
-      - name: Upload coverage
-        run: codecov --token=${{ secrets.CODECOV_TOKEN }}
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+#      - name: Upload coverage
+#        run: codecov --token=${{ secrets.CODECOV_TOKEN }}
         if: success()
 
 
