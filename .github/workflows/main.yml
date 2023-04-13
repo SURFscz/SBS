@@ -97,7 +97,7 @@ jobs:
       - name: Run tests with coverage
         run: |
           cd ./server
-          coverage run -m pytest
+          coverage run -m pytest .
           coverage json
         timeout-minutes: 20
 
