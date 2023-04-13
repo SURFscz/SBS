@@ -97,13 +97,12 @@ jobs:
       - name: Run tests with coverage
         run: |
           cd ./server
-          pytest --cov=server test
-        timeout-minutes: 15
+          coverage run -m pytest
+          coverage json
+        timeout-minutes: 20
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
-#      - name: Upload coverage
-#        run: codecov --token=${{ secrets.CODECOV_TOKEN }}
         if: success()
 
 
