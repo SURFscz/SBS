@@ -215,8 +215,8 @@ export function tokenResetRequest(admin, message, second_fa_uuid) {
     return postPutJson("/api/mfa/token_reset_request", body, "POST", false);
 }
 
-export function reset2fa(token) {
-    return postPutJson("/api/mfa/reset2fa", {token}, "POST", false);
+export function reset2fa(token, second_fa_uuid) {
+    return postPutJson("/api/mfa/reset2fa", {token: token, second_fa_uuid: second_fa_uuid}, "POST", false);
 }
 
 //Services
