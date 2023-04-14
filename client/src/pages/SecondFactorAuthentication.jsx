@@ -186,13 +186,19 @@ class SecondFactorAuthentication extends React.Component {
 
     submitResetCode = () => {
         this.setState({loading: true});
-        const {resetCode} = this.state;
-        reset2fa(resetCode)
+        const {resetCode, secondFaUuid} = this.state;
+        reset2fa(resetCode, secondFaUuid)
             .then(() => {
+                if (secondFaUuid) {
+                    this.setState({resetCode: false, showEnterToken: false});
+                    this.componentDidMount();
+                } else {
                 this.props.refreshUser(() => {
                     this.setState({resetCode: false, showEnterToken: false});
                     this.componentDidMount();
                 })
+
+                }
             }).catch(() => {
             this.setState({resetCodeError: true, loading: false});
         });

@@ -188,8 +188,12 @@ def update2fa():
 @mfa_api.route("/reset2fa", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def reset2fa():
-    user = User.query.filter(User.id == current_user_id()).one()
     data = current_request.get_json()
+    second_fa_uuid = data.get("second_fa_uuid", None)
+    if second_fa_uuid:
+        user = _get_user_by_second_fa_uuid(second_fa_uuid)
+    else:
+        user = User.query.filter(User.id == current_user_id()).one()
     token = data["token"]
     if not token or token != user.mfa_reset_token:
         raise Forbidden()
