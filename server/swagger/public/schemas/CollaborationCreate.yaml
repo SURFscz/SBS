@@ -38,6 +38,10 @@ properties:
     type: string
     description: "Message included in the invitation email"
     example: "Please join the Cumulus research group collaboration page."
+  administrator:
+    type: string
+    description: "Uid of the user who will become administrator of this collaboration (without an invite). Must be known in SRAM"
+    example: "e84a37938bf633d1e08377ab36024398308a8e22@acc.sram.eduteams.org"
   administrators:
     type: array
     description: "Email addresses of the administrators who receive an invitation email"
