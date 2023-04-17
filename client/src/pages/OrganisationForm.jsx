@@ -49,6 +49,7 @@ class OrganisationForm extends React.Component {
             logo: "",
             services_restricted: false,
             on_boarding_msg: "",
+            on_boarding_changed: false,
             categoryOptions: categoryOptions,
             category: category,
             administrators: [],
@@ -293,7 +294,7 @@ class OrganisationForm extends React.Component {
         const {
             name, description, initial, alreadyExists, administrators, message,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, short_name,
-            schac_home_organisations, collaboration_creation_allowed, services_restricted, logo, on_boarding_msg,
+            schac_home_organisations, collaboration_creation_allowed, services_restricted, logo, on_boarding_msg, on_boarding_changed,
             category, categoryOptions, schac_home_organisation, isNew, organisation, warning, loading, invalid_schac_home_organisation
         } = this.state;
         if (loading) {
@@ -373,8 +374,8 @@ class OrganisationForm extends React.Component {
                                     name={I18n.t("organisation.description")}/>
 
                         <OrganisationOnBoarding
-                            on_boarding_msg={(isEmpty(on_boarding_msg) && isNew) ? I18n.t("organisation.onBoarding.template") : on_boarding_msg}
-                            saveOnBoarding={val => this.setState({on_boarding_msg: val})}/>
+                            on_boarding_msg={(isEmpty(on_boarding_msg) && isNew && !on_boarding_changed) ? I18n.t("organisation.onBoarding.template") : on_boarding_msg}
+                            saveOnBoarding={val => this.setState({on_boarding_msg: val, on_boarding_changed: true})}/>
 
                         <CreatableField onChange={e => this.setState({
                             schac_home_organisation: e.target.value,
