@@ -539,6 +539,7 @@ class TestCollaboration(AbstractTest):
                                         "description": "new_collaboration",
                                         "accepted_user_policy": "https://aup.org",
                                         "administrators": ["the@ex.org", "that@ex.org"],
+                                        "administrator": "urn:sarah",
                                         "short_name": "new_short_name",
                                         "disable_join_requests": True,
                                         "disclose_member_information": True,
@@ -550,7 +551,8 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(201, response.status_code)
 
         collaboration = self.find_entity_by_name(Collaboration, "new_collaboration")
-        self.assertEqual(0, len(collaboration.collaboration_memberships))
+        self.assertEqual(1, len(collaboration.collaboration_memberships))
+        self.assertEqual("urn:sarah", collaboration.collaboration_memberships[0].user.uid)
         self.assertIsNone(collaboration.accepted_user_policy)
         self.assertIsNotNone(collaboration.logo)
         self.assertEqual(2, len(collaboration.tags))
