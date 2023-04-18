@@ -125,8 +125,7 @@ class UsedServices extends React.Component {
         } else if (service.usedService) {
             service.status = service.connectionRequest ? I18n.t("models.services.awaitingApproval") : ""
         } else {
-            const allowedToConnect = service.automatic_connection_allowed ||
-                service.automatic_connection_allowed_organisations.filter(org => org.id === collaboration.organisation.id).length > 0;
+            const allowedToConnect = this.serviceAllowedToConnect(service, collaboration);
             service.status = allowedToConnect ? I18n.t("models.services.automaticConnectionAllowed") : "";
         }
         return service.status;
@@ -297,6 +296,12 @@ class UsedServices extends React.Component {
 
     }
 
+    serviceAllowedToConnect = (service, collaboration) => {
+        return service.automatic_connection_allowed ||
+            (service.automatic_connection_allowed_organisations.filter(org => org.id === collaboration.organisation.id).length > 0 &&
+            !service.access_allowed_for_all);
+    }
+
     getServiceAction = service => {
         const {collaboration} = this.props;
         if (service.usedService && !service.connectionRequest &&
@@ -326,8 +331,7 @@ class UsedServices extends React.Component {
                            onClick={() => this.unlinkService(service, collaboration)}
                            txt={I18n.t("models.services.removeFromCO")}/>
         }
-        const allowedToConnect = service.automatic_connection_allowed ||
-            service.automatic_connection_allowed_organisations.filter(org => org.id === collaboration.organisation.id).length > 0;
+        const allowedToConnect = this.serviceAllowedToConnect(service, collaboration);
 
         if (!service.usedService && allowedToConnect) {
             return <Button cancelButton={true}
