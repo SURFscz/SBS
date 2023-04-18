@@ -205,12 +205,12 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     notification_gets_suspended_old = SuspendNotification(user=user_suspend_warning, sent_at=warning_date_old,
                                                           is_suspension=True, is_warning=True)
 
-    warning_date = datetime.datetime.utcnow() - datetime.timedelta(days=retention.reminder_suspend_period_days, hours=1)
+    warning_date = datetime.datetime.utcnow() - datetime.timedelta(days=retention.reminder_suspend_period_days + 1)
     notification_gets_suspended = SuspendNotification(user=user_gets_suspended, sent_at=warning_date,
                                                       is_suspension=True, is_warning=True)
 
     warning_date = datetime.datetime.utcnow() - datetime.timedelta(days=retention.remove_suspended_users_period_days) \
-                 + datetime.timedelta(days=retention.reminder_expiry_period_days)
+                 + datetime.timedelta(days=retention.reminder_expiry_period_days - 1)
     notification_suspension_warning = SuspendNotification(user=user_deletion_warning, sent_at=warning_date,
                                                           is_suspension=True, is_warning=False)
 
