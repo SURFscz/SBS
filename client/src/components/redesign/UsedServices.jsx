@@ -210,7 +210,7 @@ class UsedServices extends React.Component {
         const serviceConnectionRequest = this.getSelectedServiceConnectionRequest();
         this.confirm(() => {
             this.refreshAndFlash(denyServiceConnectionRequestByHash(serviceConnectionRequest.hash),
-                I18n.t("serviceConnectionRequest.flash.denied", {
+                I18n.t("serviceConnectionRequest.flash.declined", {
                     name: serviceConnectionRequest.service.name
                 }), () => this.componentDidMount())
         }, I18n.t("serviceConnectionRequest.declineConfirmation"), true);
