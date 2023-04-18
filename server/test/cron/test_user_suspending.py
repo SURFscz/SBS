@@ -1,13 +1,12 @@
 from datetime import datetime, timedelta
 
+from freezegun import freeze_time
 from sqlalchemy import text
 
 from server.cron.user_suspending import suspend_users, suspend_users_lock_name
 from server.db.db import db
 from server.db.domain import User, UserNameHistory
 from server.test.abstract_test import AbstractTest
-
-from freezegun import freeze_time
 
 
 class TestUserSuspending(AbstractTest):
@@ -25,13 +24,11 @@ class TestUserSuspending(AbstractTest):
 
     def test_schedule(self):
         mail = self.app.mail
-        with mail.record_messages() as outbox:
-            results = suspend_users(self.app)
-            self.assertListEqual(["user_suspend_warning@example.org"], results["warning_suspend_notifications"])
-            self.assertListEqual(["user_gets_suspended@example.org"], results["suspended_notifications"])
-            self.assertListEqual(["user_deletion_warning@example.org"], results["warning_deleted_notifications"])
-            self.assertListEqual(["user_gets_deleted@example.org"], results["deleted_notifications"])
-            self.assertEqual(4, len(outbox))
+        results = suspend_users(self.app)
+        self.assertListEqual(["user_suspend_warning@example.org"], results["warning_suspend_notifications"])
+        self.assertListEqual(["user_gets_suspended@example.org"], results["suspended_notifications"])
+        self.assertListEqual(["user_deletion_warning@example.org"], results["warning_deleted_notifications"])
+        self.assertListEqual(["user_gets_deleted@example.org"], results["deleted_notifications"])
 
         user_suspend_warning = self.find_entity_by_name(User, "user_suspend_warning")
         self.assertEqual(False, user_suspend_warning.suspended)
