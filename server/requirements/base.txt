@@ -21,7 +21,7 @@ websockets==10.3
 redis==4.5.4
 pyotp==2.6.0
 qrcode==7.4.2
-Pillow==9.3.0
+Pillow==9.5.0
 PyJWT==2.4.0
 Authlib==1.0.1
 passlib==1.7.4
