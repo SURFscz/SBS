@@ -19,7 +19,7 @@ uWSGI==2.0.21
 urllib3==1.26.11
 websockets==10.3
 redis==4.5.4
-pyotp==2.6.0
+pyotp==2.8.0
 qrcode==7.4.2
 Pillow==9.3.0
 PyJWT==2.4.0
