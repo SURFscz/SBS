@@ -12,11 +12,11 @@ updates:
     directory: "/client"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 0
+    open-pull-requests-limit: 10
 
   # Maintain dependencies for server
   - package-ecosystem: "pip"
     directory: "/server"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 0
+    open-pull-requests-limit: 10
