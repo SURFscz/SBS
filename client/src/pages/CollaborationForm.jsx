@@ -72,6 +72,7 @@ class CollaborationForm extends React.Component {
             autoCreateCollaborationRequest: false,
             current_user_admin: false,
             useOrganisationLogo: false,
+            generateLogo: false,
             loading: true
         };
     }
@@ -409,6 +410,38 @@ class CollaborationForm extends React.Component {
         )
     };
 
+    regenerateLogo = e => {
+        const checked = e.target.checked;
+        if (checked) {
+            const {name} = this.state;
+            const abbreviation = name.split(" ").map(p => p.substring(0, 1).toUpperCase()).join("").substring(0,10);
+            const canvas = document.createElement("canvas");
+            canvas.width = 480;
+            canvas.height = 348;
+            const ctx = canvas.getContext("2d");
+            ctx.fillStyle = "rgb(105,105,105)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "rgb(0,255,68)";
+            const fontSize = 128 + ((11 - abbreviation.length) * 20);
+            ctx.font = `${fontSize}px sans-serif`;
+            ctx.textBaseline = "middle";
+            ctx.textAlign = "center";
+            ctx.fillText(abbreviation, canvas.width / 2, canvas.height / 2, canvas.width - 20);
+            const dataURL = canvas.toDataURL("image/jpeg")
+            this.setState({
+                generateLogo: true,
+                useOrganisationLogo: false,
+                logo: dataURL.substring(dataURL.indexOf(",") + 1)
+            });
+        } else {
+            this.setState({
+                generateLogo: false,
+                logo: ""
+            });
+        }
+
+    }
+
     render() {
         const {
             name,
@@ -440,6 +473,7 @@ class CollaborationForm extends React.Component {
             loading,
             autoCreateCollaborationRequest,
             useOrganisationLogo,
+            generateLogo,
             tags,
             tagsSelected,
             invalidInputs,
@@ -496,9 +530,13 @@ class CollaborationForm extends React.Component {
                         attribute: I18n.t("collaboration.name").toLowerCase()
                     })}/>}
                     <div className="cropped-image-container">
-                        <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
-                                           isNew={isNew} title={I18n.t("collaboration.logo")} value={logo}
-                                           initial={initial} secondRow={true}/>
+                        <CroppedImageField name="logo"
+                                           onChange={s => this.setState({logo: s})}
+                                           isNew={isNew}
+                                           title={I18n.t("collaboration.logo")}
+                                           value={logo}
+                                           initial={initial}
+                                           secondRow={true}/>
                         {isNew && <CheckBox name="use-org-logo" value={useOrganisationLogo}
                                             onChange={e => {
                                                 const checked = e.target.checked;
@@ -509,6 +547,7 @@ class CollaborationForm extends React.Component {
                                                             reader.onload = ({target: {result}}) => {
                                                                 this.setState({
                                                                     useOrganisationLogo: !useOrganisationLogo,
+                                                                    generateLogo: false,
                                                                     logo: result.substring(result.indexOf(",") + 1)
                                                                 });
                                                             };
@@ -523,6 +562,12 @@ class CollaborationForm extends React.Component {
                                                 }
                                             }}
                                             info={I18n.t("collaboration.useOrganisationLogo")}/>}
+                        {isNew&& <CheckBox name="generate-logo"
+                                            value={generateLogo}
+                                            onChange={this.regenerateLogo}
+                                            tooltip={I18n.t("collaboration.generateLogoTooltip")}
+                                            readOnly={isEmpty(name)}
+                                            info={I18n.t("collaboration.generateLogo")}/>}
                     </div>
                     <InputField value={short_name} onChange={e => {
                         this.setState({
