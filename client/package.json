@@ -12,7 +12,7 @@
         "es6-promise": "^4.2.8",
         "events": "^3.2.0",
         "i18n-js": "^3.7.1",
-        "immer": "^9.0.6",
+        "immer": "^10.0.1",
         "js-cookie": "^3.0.1",
         "jsondiffpatch": "^0.4.1",
         "lodash.clonedeep": "^4.5.0",
