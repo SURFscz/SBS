@@ -831,6 +831,10 @@ export function feedback(message) {
     return postPutJson("/api/system/feedback", {message}, "POST");
 }
 
+export function sweepAllServices() {
+    return fetchJson("/api/system/sweep");
+}
+
 export function plscSync() {
     return fetchJson("/api/plsc/syncing");
 }

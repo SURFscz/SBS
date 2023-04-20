@@ -24,6 +24,7 @@ import {
     scheduledJobs,
     suspendCollaborations,
     suspendUsers,
+    sweepAllServices,
     userLoginsSummary,
     validations
 } from "../api";
@@ -74,6 +75,7 @@ class System extends React.Component {
             databaseStats: [],
             userLoginStats: [],
             cronJobs: [],
+            sweepResults: null,
             seedResult: null,
             confirmationDialogOpen: false,
             confirmationDialogQuestion: undefined,
@@ -122,6 +124,7 @@ class System extends React.Component {
             cleanedRequests: {},
             databaseStats: [],
             cronJobs: [],
+            sweepResults: null,
             seedResult: null,
             demoSeedResult: null,
             query: "",
@@ -137,7 +140,7 @@ class System extends React.Component {
     }
 
     getCronTab = (suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations, suspendedCollaborations,
-                  expiredMemberships, deletedUsers, cronJobs) => {
+                  expiredMemberships, deletedUsers, sweepResults, cronJobs) => {
         return (<div key="cron" name="cron" label={I18n.t("home.tabs.cron")}
                      icon={<FontAwesomeIcon icon="clock"/>}>
             <div className="mod-system">
@@ -156,6 +159,8 @@ class System extends React.Component {
                     {this.renderOutstandingRequestsResults(outstandingRequests)}
                     {this.renderCleanedRequests()}
                     {this.renderCleanedRequestsResults(cleanedRequests)}
+                    {this.renderSweep()}
+                    {this.renderSweepResults(sweepResults)}
                     {this.renderCronJobs()}
                     {this.renderCronJobsResults(cronJobs)}
                 </section>
@@ -496,6 +501,13 @@ class System extends React.Component {
         });
     }
 
+    doRunSweep = () => {
+        this.setState({busy: true})
+        sweepAllServices().then(res => {
+            this.setState({sweepResults: res, busy: false});
+        });
+    }
+
     doCronJobs = () => {
         this.setState({busy: true})
         scheduledJobs().then(res => {
@@ -674,6 +686,23 @@ class System extends React.Component {
                 </div>
             </div>
         );
+    }
+
+    renderSweep = () => {
+        const {sweepResults} = this.state;
+        return (
+            <div className="info-block">
+                <p>{I18n.t("system.runSweepResults")}</p>
+                <div className="actions">
+                    {isEmpty(sweepResults) && <Button txt={I18n.t("system.runSweep")}
+                                                      onClick={this.doRunSweep}/>}
+                    {!isEmpty(sweepResults) && <Button txt={I18n.t("system.clear")}
+                                                       onClick={this.clear}
+                                                       cancelButton={true}/>}
+                </div>
+            </div>
+        );
+
     }
 
     renderCronJobs = () => {
@@ -914,6 +943,20 @@ class System extends React.Component {
         )
     }
 
+    renderSweepResults = sweepResults => {
+       const jsonStyle = {
+            propertyStyle: {color: "black"},
+            stringStyle: {color: "green"},
+            numberStyle: {color: 'darkorange'}
+        }
+        const sweepJson = JSON.stringify(sweepResults);
+        return (
+            <div>
+                {!isEmpty(sweepResults) &&
+                <JsonFormatter json={sweepJson} tabWith={4} jsonStyle={jsonStyle}/>}
+            </div>
+        );
+    }
     renderCronJobsResults = cronJobs => {
         return (
             <div className="results">
@@ -1062,6 +1105,7 @@ class System extends React.Component {
             expiredCollaborations,
             suspendedCollaborations,
             expiredMemberships,
+            sweepResults,
             cronJobs,
             validationData,
             showOrganisationsWithoutAdmin,
@@ -1084,7 +1128,7 @@ class System extends React.Component {
         const tabs = [
             this.getValidationTab(validationData, showOrganisationsWithoutAdmin, showServicesWithoutAdmin),
             this.getCronTab(suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations,
-                suspendedCollaborations, expiredMemberships, deletedUsers, cronJobs),
+                suspendedCollaborations, expiredMemberships, deletedUsers, sweepResults, cronJobs),
             config.seed_allowed ? this.getSeedTab(seedResult, demoSeedResult, humanTestingSeedResult) : null,
             this.getDatabaseTab(databaseStats, config),
             this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables, serverQuery),
