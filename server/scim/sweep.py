@@ -133,9 +133,9 @@ def perform_sweep(service: Service):
     try:
         remote_scim_groups = _all_remote_scim_objects(service, SCIM_GROUPS)
         remote_scim_users = _all_remote_scim_objects(service, SCIM_USERS)
-    except BadRequest:
+    except BadRequest as e:
         # We abort, see https://github.com/SURFscz/SBS/issues/601
-        return sync_results
+        return str(e)
 
     # First delete all remote users and groups that are incorrectly in the remote SCIM database
     for remote_group in remote_scim_groups:
