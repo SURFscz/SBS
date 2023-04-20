@@ -332,7 +332,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                       description="Network enabling service SSH access", address="Some address",
                       uri="https://uri.net", identity_type="SSH KEY", accepted_user_policy="https://aup.org",
                       contact_email="help@network.com", logo=read_image("network.jpeg"),
-                      public_visible=False, automatic_connection_allowed=True, abbreviation="network",
+                      public_visible=False, automatic_connection_allowed=False, abbreviation="network",
                       allowed_organisations=[uuc], privacy_policy="https://privacy.org",
                       token_enabled=True, token_validity_days=365, security_email="sec@org.nl",
                       scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret",
