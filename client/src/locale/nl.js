@@ -1739,6 +1739,8 @@ I18n.translations.nl = {
         runOutdatedRequests: "Run",
         runCleanedRequestsInfo: "Voer de cron-taak uit om alle verouderde goedgekeurde / geweigerde aanmeldingsverzoeken en samenwerkingsverzoeken voor de geconfigureerde drempel te verwijderen",
         runCleanedRequests: "Verwijder",
+        runSweepResults: "Voer de cron-taak uit om alle SCIM services te sweepen",
+        runSweep: "Run",
         action: "Action",
         results: "Results",
         warning_suspend_notifications: "Waarschuwings e-mail met schorsingsmelding verzonden",

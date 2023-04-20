@@ -1739,6 +1739,8 @@ I18n.translations.en = {
         runOutdatedRequests: "Run",
         runCleanedRequestsInfo: "Run the cron job to delete all outdated approved / denied join requests and collaboration requests for the configured threshold",
         runCleanedRequests: "Delete",
+        runSweepResults: "Run the cron job to sweep all SCIM enabled services",
+        runSweep: "Run",
         action: "Action",
         results: "Results",
         warning_suspend_notifications: "Warning suspension notification email sent",
