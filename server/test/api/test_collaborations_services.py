@@ -143,8 +143,8 @@ class TestCollaborationsServices(AbstractTest):
     #  (4) add a Service set to allow service requests from this Org only (fail with "automatic_connection_not_allowed")
     def test_add_collaborations_no_automatic_connection_allowed(self):
         self.login("urn:john")
-        collaboration_id = self.find_entity_by_name(Collaboration, uu_disabled_join_request_name).id
-        service_id = self.find_entity_by_name(Service, service_ssh_uva_name).id
+        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        service_id = self.find_entity_by_name(Service, service_network_name).id
 
         res = self.put("/api/collaborations_services/", body={
             "collaboration_id": collaboration_id,
