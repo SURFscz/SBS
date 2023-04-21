@@ -68,6 +68,65 @@ class TestCollaborationsServices(AbstractTest):
         collaboration = self.get(f"/api/collaborations/{collaboration_id}")
         self.assertEqual(3, len(collaboration["services"]))
 
+    #  (4) add a Service set to allow service requests from this Org only (fail with "automatic_connection_not_allowed")
+    def test_add_collaborations_no_automatic_connection_allowed(self):
+        self.login("urn:john")
+        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        service_id = self.find_entity_by_name(Service, service_network_name).id
+
+        res = self.put("/api/collaborations_services/", body={
+            "collaboration_id": collaboration_id,
+            "service_id": service_id
+        }, response_status_code=400)
+
+        self.assertTrue(res["error"])
+        self.assertTrue("automatic_connection_not_allowed" in res["message"])
+
+    #  (4) add a Service set to allow service requests from this Org only (fail with "automatic_connection_not_allowed")
+    def test_add_collaborations_automatic_connection_allowed_organisations(self):
+        self.login("urn:john")
+        collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
+        service = self.find_entity_by_name(Service, service_wiki_name)
+
+        self.put("/api/collaborations_services/", body={
+            "collaboration_id": collaboration.id,
+            "service_id": service.id
+        })
+
+    #  (5) add a Service set to disallow this organisation (fail with "not_allowed_organisation)
+    def test_add_collaborations_not_correct_organisation_services(self):
+        self.login("urn:john")
+        collaboration_id = self.find_entity_by_name(Collaboration, uva_research_name).id
+        service_id = self.find_entity_by_name(Service, service_network_name).id
+
+        res = self.put("/api/collaborations_services/", body={
+            "collaboration_id": collaboration_id,
+            "service_id": service_id
+        }, response_status_code=400)
+
+        self.assertTrue(res["error"])
+        self.assertTrue("not_allowed_organisation" in res["message"])
+
+
+    #  (b) connecting service to restricted organisation (fail with "Organisation {collaboration.organisation.name} can
+    #      only be linked to SURF services")
+    def test_add_collaborations_services_forbidden(self):
+        self.login("urn:admin")
+        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        self.mark_collaboration_service_restricted(collaboration_id)
+        service_cloud_id = self.find_entity_by_name(Service, service_cloud_name).id
+
+        res = self.put("/api/collaborations_services/", body={
+            "collaboration_id": collaboration_id,
+            "service_id": service_cloud_id
+        }, with_basic_auth=False, response_status_code=400)
+        self.assertTrue("Organisation UUC can only be linked to SURF services" in res["message"])
+
+
+    ###################################################################
+    ### Service groups
+    ###################################################################
+
     def test_add_collaborations_services_with_service_groups(self):
         self.login("urn:john")
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
@@ -94,6 +153,10 @@ class TestCollaborationsServices(AbstractTest):
         groups = list(filter(lambda item: item.name == service_group_wiki_name2, collaboration.groups))
         self.assertEqual(1, len(groups))
 
+    ###################################################################
+    ### Organisation API tests
+    ###################################################################
+
     # Org API
     def test_add_collaborations_services_with_automatic_connection_allowed_organisations(self):
         collaboration = self.find_entity_by_name(Collaboration, uu_disabled_join_request_name)
@@ -111,65 +174,6 @@ class TestCollaborationsServices(AbstractTest):
         collaboration = self.find_entity_by_name(Collaboration, uu_disabled_join_request_name)
         service_wiki = self.find_entity_by_name(Service, service_wiki_name)
         self.assertEqual(service_wiki.entity_id, collaboration.services[0].entity_id)
-
-    #  (b) connecting service to restricted organisation (fail with "Organisation {collaboration.organisation.name} can
-    #      only be linked to SURF services")
-    def test_add_collaborations_services_forbidden(self):
-        self.login("urn:admin")
-        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
-        self.mark_collaboration_service_restricted(collaboration_id)
-        service_cloud_id = self.find_entity_by_name(Service, service_cloud_name).id
-
-        res = self.put("/api/collaborations_services/", body={
-            "collaboration_id": collaboration_id,
-            "service_id": service_cloud_id
-        }, with_basic_auth=False, response_status_code=400)
-        self.assertTrue("Organisation UUC can only be linked to SURF services" in res["message"])
-
-    #  (5) add a Service set to disallow this organisation (fail with "not_allowed_organisation)
-    def test_add_collaborations_not_correct_organisation_services(self):
-        self.login("urn:john")
-        collaboration_id = self.find_entity_by_name(Collaboration, uva_research_name).id
-        service_id = self.find_entity_by_name(Service, service_network_name).id
-
-        res = self.put("/api/collaborations_services/", body={
-            "collaboration_id": collaboration_id,
-            "service_id": service_id
-        }, response_status_code=400)
-
-        self.assertTrue(res["error"])
-        self.assertTrue("not_allowed_organisation" in res["message"])
-
-    #  (4) add a Service set to allow service requests from this Org only (fail with "automatic_connection_not_allowed")
-    def test_add_collaborations_no_automatic_connection_allowed(self):
-        self.login("urn:john")
-        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
-        service_id = self.find_entity_by_name(Service, service_network_name).id
-
-        res = self.put("/api/collaborations_services/", body={
-            "collaboration_id": collaboration_id,
-            "service_id": service_id
-        }, response_status_code=400)
-
-        self.assertTrue(res["error"])
-        self.assertTrue("automatic_connection_not_allowed" in res["message"])
-
-    #  (4) add a Service set to allow service requests from this Org only (fail with "automatic_connection_not_allowed")
-    def test_add_collaborations_automatic_connection_allowed_organisations(self):
-        self.login("urn:john")
-        collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
-        service = self.find_entity_by_name(Service, service_wiki_name)
-
-        self.put("/api/collaborations_services/", body={
-            "collaboration_id": collaboration.id,
-            "service_id": service.id
-        })
-
-    ###################################################################
-    ### Organisation API tests
-    ###################################################################
-
-
 
     # org api
     def test_connect_collaboration_service(self):
