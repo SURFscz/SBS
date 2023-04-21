@@ -181,7 +181,7 @@ class App extends React.Component {
             loading, errorDialogAction, errorDialogOpen, currentUser, impersonator, config, reloading, aupConfig
         } = this.state;
         if (loading) {
-            return null; // render null when app is not ready yet
+            return <SpinnerField/>
         }
         return (
             <Router>

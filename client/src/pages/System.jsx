@@ -547,8 +547,11 @@ class System extends React.Component {
             dbSeed().then(() => {
                 this.setState({
                     busy: false,
-                    seedResult: I18n.t("system.seedResult", {ms: new Date().getMilliseconds() - d.getMilliseconds()})
-                });
+                    seedResult: I18n.t("system.seedResult", {
+                        seed: "Test",
+                        ms: new Date().getMilliseconds() - d.getMilliseconds()
+                    })
+                }, () => window.location.reload());
             });
         }
     }
@@ -562,8 +565,11 @@ class System extends React.Component {
             dbDemoSeed().then(() => {
                 this.setState({
                     busy: false,
-                    demoSeedResult: I18n.t("system.seedResult", {ms: new Date().getMilliseconds() - d.getMilliseconds()})
-                });
+                    demoSeedResult: I18n.t("system.seedResult", {
+                        seed: "Demo",
+                        ms: new Date().getMilliseconds() - d.getMilliseconds()
+                    })
+                },() => window.location.reload());
             });
         }
     }
@@ -577,8 +583,11 @@ class System extends React.Component {
             dbHumanTestingSeed().then(() => {
                 this.setState({
                     busy: false,
-                    humanTestingSeedResult: I18n.t("system.seedResult", {ms: (new Date().getMilliseconds() - d.getMilliseconds())})
-                });
+                    humanTestingSeedResult: I18n.t("system.seedResult", {
+                        seed: "Human",
+                        ms: (new Date().getMilliseconds() - d.getMilliseconds())
+                    })
+                }, () => window.location.reload());
             });
         }
     }
@@ -944,7 +953,7 @@ class System extends React.Component {
     }
 
     renderSweepResults = sweepResults => {
-       const jsonStyle = {
+        const jsonStyle = {
             propertyStyle: {color: "black"},
             stringStyle: {color: "green"},
             numberStyle: {color: 'darkorange'}
