@@ -659,7 +659,7 @@ I18n.translations.nl = {
         scoped_affiliation: "Scoped affiliations",
         entitlement: "Entitlements",
         nick_name: "Roepnaam",
-        schac_home_organisation: "Organisatiedomeinnaam",
+        schac_home_organisation: "Organisatienaam",
         edu_members: "EDU lidmaatschap",
         eduperson_principal_name: "EPPN",
         created_at: "Profiel gemaakt op",
