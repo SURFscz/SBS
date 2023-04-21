@@ -659,7 +659,7 @@ I18n.translations.en = {
         scoped_affiliation: "Scoped affiliations",
         entitlement: "Entitlements",
         nick_name: "Nick name",
-        schac_home_organisation: "Organisation domain name",
+        schac_home_organisation: "Organisation name",
         edu_members: "EDU memberships",
         eduperson_principal_name: "EPPN",
         created_at: "Profile created",
