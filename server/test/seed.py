@@ -85,7 +85,7 @@ service_wireless_name = "Wireless"
 service_cloud_name = "Cloud"
 service_wiki_name = "Wiki"
 service_ssh_uva_name = "SSH UvA"
-uuc_scheduler_name = "uuc_scheduler_name"
+service_uuc_scheduler_name = "uuc_scheduler_name"
 
 service_group_mail_name = "service_group_mail_name"
 service_group_wiki_name1 = "service_group_wiki_name_1"
@@ -347,7 +347,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                               code_of_conduct_compliant=True, sirtfi_compliant=True,
                               privacy_policy="https://privacy.org", security_email="sec@org.nl")
 
-    uuc_scheduler = Service(entity_id=uuc_scheduler_entity_id, name=uuc_scheduler_name,
+    uuc_scheduler = Service(entity_id=uuc_scheduler_entity_id, name=service_uuc_scheduler_name,
                             accepted_user_policy="https://google.nl", abbreviation="uuc_scheduler",
                             description="UUC Scheduler Service", logo=read_image("scheduler_uuc.jpeg"),
                             automatic_connection_allowed_organisations=[uva],
