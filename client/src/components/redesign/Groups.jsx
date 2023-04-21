@@ -187,7 +187,7 @@ class Groups extends React.Component {
         const checked = e.target.checked;
         const identifier = memberShip.id;
         selectedMembers[identifier].selected = checked;
-        this.setState({selectedMembers: {...selectedMembers}, allSelected: checked ? allSelected : false});
+        this.setState({selectedMembers: {...selectedMembers}, allSelected: (checked ? allSelected : false)});
     }
 
     allSelected = e => {
