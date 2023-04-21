@@ -8,11 +8,27 @@ from server.test.seed import service_mail_name, ai_computing_name, service_cloud
     uu_disabled_join_request_name, uva_secret, service_ssh_uva_name
 
 
+# there are a number of cases to test here:
+#  (1) add a Service set to automatically connect from all Orgs (ok)
+#  (2) add a Service set to allow service requests from all Orgs (fail with "automatic_connection_not_allowed")
+#  (3) add a Service set to allow connection from this Org only (ok)
+#  (4) add a Service set to allow service requests from this Org only (fail with "automatic_connection_not_allowed")
+#  (5) add a Service set to disallow this organisation (fail with "not_allowed_organisation)
+
+# and also:
+#  (a) connecting service to restricted organisation (ok)
+#  (b) connecting service to restricted organisation (fail with "Organisation {collaboration.organisation.name} can
+#      only be linked to SURF services")
+
 class TestCollaborationsServices(AbstractTest):
 
     def _find_service_by_name(self, name=service_mail_name):
         service = Service.query.filter(Service.name == name).one()
         return self.get(f"api/services/{service.id}")
+
+    ###################################################################
+    ### Regular API tests
+    ###################################################################
 
     def test_delete_collaborations_services(self):
         self.login("urn:john")
@@ -35,6 +51,8 @@ class TestCollaborationsServices(AbstractTest):
                                       content_type="application/json")
         self.assertEqual(204, response.status_code)
 
+
+    # (1) add a Service set to automatically connect from all Orgs (ok)
     def test_add_collaborations_services(self):
         self.login("urn:john")
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
@@ -76,6 +94,7 @@ class TestCollaborationsServices(AbstractTest):
         groups = list(filter(lambda item: item.name == service_group_wiki_name2, collaboration.groups))
         self.assertEqual(1, len(groups))
 
+    # Org API
     def test_add_collaborations_services_with_automatic_connection_allowed_organisations(self):
         collaboration = self.find_entity_by_name(Collaboration, uu_disabled_join_request_name)
         self.assertEqual(0, len(collaboration.services))
@@ -93,6 +112,8 @@ class TestCollaborationsServices(AbstractTest):
         service_wiki = self.find_entity_by_name(Service, service_wiki_name)
         self.assertEqual(service_wiki.entity_id, collaboration.services[0].entity_id)
 
+    #  (b) connecting service to restricted organisation (fail with "Organisation {collaboration.organisation.name} can
+    #      only be linked to SURF services")
     def test_add_collaborations_services_forbidden(self):
         self.login("urn:admin")
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
@@ -105,6 +126,7 @@ class TestCollaborationsServices(AbstractTest):
         }, with_basic_auth=False, response_status_code=400)
         self.assertTrue("Organisation UUC can only be linked to SURF services" in res["message"])
 
+    #  (5) add a Service set to disallow this organisation (fail with "not_allowed_organisation)
     def test_add_collaborations_not_correct_organisation_services(self):
         self.login("urn:john")
         collaboration_id = self.find_entity_by_name(Collaboration, uva_research_name).id
@@ -118,6 +140,7 @@ class TestCollaborationsServices(AbstractTest):
         self.assertTrue(res["error"])
         self.assertTrue("not_allowed_organisation" in res["message"])
 
+    #  (4) add a Service set to allow service requests from this Org only (fail with "automatic_connection_not_allowed")
     def test_add_collaborations_no_automatic_connection_allowed(self):
         self.login("urn:john")
         collaboration_id = self.find_entity_by_name(Collaboration, uu_disabled_join_request_name).id
@@ -131,6 +154,7 @@ class TestCollaborationsServices(AbstractTest):
         self.assertTrue(res["error"])
         self.assertTrue("automatic_connection_not_allowed" in res["message"])
 
+    #  (4) add a Service set to allow service requests from this Org only (fail with "automatic_connection_not_allowed")
     def test_add_collaborations_automatic_connection_allowed_organisations(self):
         self.login("urn:john")
         collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
@@ -141,6 +165,13 @@ class TestCollaborationsServices(AbstractTest):
             "service_id": service.id
         })
 
+    ###################################################################
+    ### Organisation API tests
+    ###################################################################
+
+
+
+    # org api
     def test_connect_collaboration_service(self):
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
         collaboration = self.get(f"/api/collaborations/{collaboration_id}")
@@ -158,6 +189,7 @@ class TestCollaborationsServices(AbstractTest):
         collaboration = self.get(f"/api/collaborations/{collaboration_id}")
         self.assertEqual(3, len(collaboration["services"]))
 
+    # org api
     def test_connect_collaboration_service_forbidden(self):
         self.login("urn:admin")
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
@@ -174,6 +206,7 @@ class TestCollaborationsServices(AbstractTest):
                  }),
                  response_status_code=403)
 
+    # org api
     def test_connect_collaboration_service_collaboration_not_in_organisation(self):
         collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
         service_cloud = self.find_entity_by_name(Service, service_cloud_name)
@@ -188,10 +221,12 @@ class TestCollaborationsServices(AbstractTest):
         error_dict = res.json
         self.assertTrue("is not part of organisation" in error_dict["message"])
 
+    # org api
     def test_connect_collaboration_service_collaboration_no_external_api_call(self):
         res = self.put("/api/collaborations_services/v1/connect_collaboration_service", response_status_code=403)
         self.assertTrue("Not a valid external API call" in res["message"])
 
+    # org api
     def test_connect_collaboration_service_no_automatic_connection(self):
         service_cloud = self.find_entity_by_name(Service, service_cloud_name)
         service_entity_id = service_cloud.entity_id
@@ -211,6 +246,7 @@ class TestCollaborationsServices(AbstractTest):
                               }), content_type="application/json")
         self.assertEqual("pending", res.json["status"])
 
+    # org api
     def test_connect_collaboration_service_no_automatic_connection_no_admins(self):
         service_cloud = self.find_entity_by_name(Service, service_cloud_name)
         service_entity_id = service_cloud.entity_id
