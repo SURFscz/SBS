@@ -411,7 +411,8 @@ I18n.translations.en = {
             autoProvisioning: "Auto provisioning",
             on: "On",
             off: "Off",
-            deleteMemberConfirmation: "Are you sure you want to remove {{name}} from this group?"
+            deleteMemberConfirmation: "Are you sure you want to remove {{name}} from this group?",
+            deleteMembersConfirmation: "Are you sure you want to remove the selected memberships from this group?",
         },
         groupMembers: {
             title: "Members",
@@ -1458,6 +1459,7 @@ I18n.translations.en = {
             addedMember: "Added user {{member}} as a member of group {{name}}",
             addedMembers: "Added all users and invitations as (future ) members of group {{name}}",
             deletedMember: "Deleted user {{member}} from group {{name}}",
+            deletedMembers: "Deleted memberships from group {{name}}",
             addedInvitation: "Added user {{member}} as a member of group {{name}}",
             deletedInvitation: "Deleted invitee {{invitation}} from group {{name}}",
         },
@@ -1773,7 +1775,7 @@ I18n.translations.en = {
         runCleanSlate: "Are you absolutely sure you want to delete all data?",
         clear: "Clear",
         reload: "Reload",
-        seedResult: "Test data is inserted in {{ms}} ms. Perform a hard-reload of the page to invalidate the cache.",
+        seedResult: "{{seed}} data is inserted in {{ms}} ms.",
         toggleJson: "Toggle view",
         suspendedUsers: {
             title: "The following users have been suspended.",

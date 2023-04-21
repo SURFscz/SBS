@@ -568,12 +568,6 @@ class CollaborationAdmins extends React.Component {
         this.setState({resultAfterSearch: resultAfterSearch});
     }
 
-    isExpiredInvitation = invitation => {
-        const today = moment();
-        const inp = moment(invitation.expiry_date * 1000);
-        return today.isAfter(inp);
-    }
-
     renderSelectRole = (entity, isAdminOfCollaboration) => {
         if (entity.invite || !isAdminOfCollaboration) {
             return <Chip label={I18n.t(`organisation.${entity.invite ? entity.intended_role : entity.role}`)}

@@ -411,7 +411,8 @@ I18n.translations.nl = {
             autoProvisioning: "Iedereen automatisch lid",
             on: "Aan",
             off: "Uit",
-            deleteMemberConfirmation: "Weet je zeker dat je {{name}} wil verwijderen uit deze groep?"
+            deleteMemberConfirmation: "Weet je zeker dat je {{name}} wil verwijderen uit deze groep?",
+            deleteMembersConfirmation: "Weet je zeker dat je de geselecteerde leden wil verwijderen uit deze groep?",
         },
         groupMembers: {
             title: "Leden",
@@ -1458,6 +1459,7 @@ I18n.translations.nl = {
             addedMember: "Gebruiker {{member}} lid gemaakt van groep {{name}}.",
             addedMembers: "Alle gebruikers lid gemaakt van groep {{name}}.",
             deletedMember: "Gebruiker {{member}} als lid verwijderd uit groep {{name}}.",
+            deletedMembers: "Gebruikers als lid verwijderd uit groep {{name}}.",
             addedInvitation: "Gebruiker {{member}} is toegevoegd als lid van groep {{name}}.",
             deletedInvitation: "Genodigde {{invitation}} is verwijderd van de groep {{name}}.",
         },
@@ -1773,7 +1775,7 @@ I18n.translations.nl = {
         runCleanSlate: "Weet je zeker dat je alle gegevens wil verwijderen?",
         clear: "Clear",
         reload: "Reload",
-        seedResult: "Testgegevens toegevoegd in {{ms}} ms. Ververs deze pagina met een hard-reload om de cache te invalideren.",
+        seedResult: "Testgegevens toegevoegd in {{ms}} ms.",
         toggleJson: "Toggle view",
         suspendedUsers: {
             title: "De onderstaande gebruikers zijn geschorst.",

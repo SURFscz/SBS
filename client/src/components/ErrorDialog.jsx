@@ -7,7 +7,7 @@ export default function ErrorDialog({isOpen = false, close}) {
     const content = () => {
         return (
             <section className="dialog-content">
-                <h4>{I18n.t("error_dialog.body")}</h4>
+                <p>{I18n.t("error_dialog.body")}</p>
             </section>
 
         );
