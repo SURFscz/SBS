@@ -342,8 +342,9 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                               description="Uva SSH access",
                               uri="https://uri.com/ssh", identity_type="SSH KEY", accepted_user_policy="https://ssh",
                               contact_email="help@ssh.com", logo=read_image("ssh_uva.png"),
-                              public_visible=False, automatic_connection_allowed=False, abbreviation="service_ssh",
-                              allowed_organisations=[uva], research_scholarship_compliant=True,
+                              public_visible=False, automatic_connection_allowed=False,
+                              access_allowed_for_all=True, abbreviation="service_ssh",
+                              research_scholarship_compliant=True,
                               code_of_conduct_compliant=True, sirtfi_compliant=True,
                               privacy_policy="https://privacy.org", security_email="sec@org.nl")
 
