@@ -27,7 +27,7 @@ class TestCollaborationsServices(AbstractTest):
         return self.get(f"api/services/{service.id}")
 
     ###################################################################
-    ### Regular API tests
+    # Regular API tests
     ###################################################################
 
     def test_delete_collaborations_services(self):
@@ -50,7 +50,6 @@ class TestCollaborationsServices(AbstractTest):
                                       headers=BASIC_AUTH_HEADER,
                                       content_type="application/json")
         self.assertEqual(204, response.status_code)
-
 
     # (1) add a Service set to automatically connect from all Orgs (ok)
     def test_add_collaborations_services(self):
@@ -147,9 +146,8 @@ class TestCollaborationsServices(AbstractTest):
         }, with_basic_auth=False, response_status_code=400)
         self.assertTrue("Organisation UUC can only be linked to SURF services" in res["message"])
 
-
     ###################################################################
-    ### Service groups
+    # Service groups
     ###################################################################
 
     def test_add_collaborations_services_with_service_groups(self):
@@ -179,7 +177,7 @@ class TestCollaborationsServices(AbstractTest):
         self.assertEqual(1, len(groups))
 
     ###################################################################
-    ### Organisation API tests
+    # Organisation API tests
     ###################################################################
 
     # Org API
