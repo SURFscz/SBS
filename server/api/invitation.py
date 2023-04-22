@@ -181,8 +181,6 @@ def invitations_accept():
         db.session.merge(group)
 
     db.session.commit()
-    for group in unique_groups:
-        broadcast_group_changed(group.id)
 
     add_user_aups(collaboration, user_id)
 
