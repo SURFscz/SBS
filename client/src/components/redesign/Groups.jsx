@@ -72,8 +72,12 @@ class Groups extends React.Component {
                 return acc;
             }, {});
         }
-
-        this.setState({loading: false, selectedMembers: selectedMembers}, callback);
+        this.setState({
+            loading: false,
+            selectedMembers: selectedMembers,
+            allSelected: false,
+            resultAfterSearch: false
+        }, callback);
     }
 
     refreshAndFlash = (promise, flashMsg, callback) => {
@@ -190,12 +194,12 @@ class Groups extends React.Component {
         this.setState({selectedMembers: {...selectedMembers}, allSelected: (checked ? allSelected : false)});
     }
 
-    allSelected = e => {
+    allChecksSelected = e => {
         const {selectedMembers, resultAfterSearch} = this.state;
         const val = e.target.checked;
         let identifiers = Object.keys(selectedMembers);
         if (resultAfterSearch !== false) {
-            const afterSearchIdentifiers = resultAfterSearch.map(entity => entity.id);
+            const afterSearchIdentifiers = resultAfterSearch.map(entity => entity.id.toString());
             identifiers = identifiers.filter(id => afterSearchIdentifiers.includes(id));
         }
         identifiers.forEach(id => selectedMembers[id].selected = val);
@@ -230,13 +234,15 @@ class Groups extends React.Component {
     getSelectedMembersWithFilteredSearch = selectedMembers => {
         const {resultAfterSearch} = this.state;
         if (resultAfterSearch !== false) {
-            debugger; // eslint-disable-line no-debugger
-            const afterSearchIdentifiers = resultAfterSearch.map(entity => entity.id);
-            const visibleIdentifiers = Object.keys(selectedMembers).filter(id => afterSearchIdentifiers.includes(id));
-            return visibleIdentifiers.reduce((acc, id) => {
-                acc[id] = selectedMembers[id];
+            const afterSearchIdentifiers = resultAfterSearch.map(entity => entity.id.toString());
+            const filteredSelectedMembers = afterSearchIdentifiers.reduce((acc, id) => {
+                //The resultAfterSearch may contain deleted memberships
+                if (selectedMembers[id]) {
+                    acc[id] = selectedMembers[id];
+                }
                 return acc;
             }, {});
+            return filteredSelectedMembers;
         }
         return selectedMembers;
     }
@@ -300,7 +306,7 @@ class Groups extends React.Component {
                 nonSortable: true,
                 key: "check",
                 header: <CheckBox value={allSelected} name={"allSelected"}
-                                  onChange={this.allSelected}/>,
+                                  onChange={this.allChecksSelected}/>,
                 mapper: entity => <div className="check">
                     <CheckBox name={"" + ++i} onChange={this.onCheck(entity)}
                               value={(selectedMembers[entity.id] || {}).selected || false}/>
@@ -361,10 +367,8 @@ class Groups extends React.Component {
                         </CopyToClipboard>
                         <ClipBoardCopy transparentBackground={true} txt={selectedGroup.global_urn}/>
                     </span>
-
             ]
         }];
-
         const membersNotInGroup = isEmpty(selectedGroup.collaboration_memberships) ? collaboration.collaboration_memberships :
             collaboration.collaboration_memberships.filter(m => selectedGroup.collaboration_memberships.every(c => c.id !== m.id));
         const actions = this.groupActionButtons(collaboration, mayCreateGroups, membersNotInGroup, selectedMembers, selectedGroup);
@@ -620,9 +624,7 @@ class Groups extends React.Component {
                 acc[entity.id] = {selected: false, ref: entity};
                 return acc;
             }, {});
-            this.setState({
-                selectedMembers: selectedMembers,
-            })
+            this.setState({selectedMembers: selectedMembers, allSelected: false});
         });
         AppStore.update(s => {
             const {collaboration} = this.props;
