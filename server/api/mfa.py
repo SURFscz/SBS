@@ -225,6 +225,7 @@ def reset2fa_other():
     db.session.commit()
     return {}, 201
 
+
 @mfa_api.route("/ssid_start/<second_fa_uuid>", strict_slashes=False)
 def do_ssid_redirect(second_fa_uuid):
     logger = ctx_logger("2fa")
