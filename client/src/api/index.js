@@ -219,6 +219,10 @@ export function reset2fa(token, second_fa_uuid) {
     return postPutJson("/api/mfa/reset2fa", {token: token, second_fa_uuid: second_fa_uuid}, "POST", false);
 }
 
+export function reset2faOther(userId) {
+    return postPutJson("/api/mfa/reset2fa_other", {user_id: userId}, "PUT", false);
+}
+
 //Services
 export function serviceNameExists(name, existingService = null) {
     return fetchJson(`/api/services/name_exists?name=${encodeURIComponent(name)}&existing_service=${encodeURIComponent(existingService)}`);

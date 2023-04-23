@@ -613,7 +613,9 @@ I18n.translations.nl = {
         deleteOtherConfirmation: "Weet je zeker dat je je gebruiker {{name}} wilt verwijderen?",
         unsuspend: "Ontschors",
         deleteOther: "Verwijder",
-        unsuspendOtherConfirmation: "Weet je zeker dat je je gebruiker {{name}} wilt ontschorsen?",
+        unsuspendOtherConfirmation: "Weet je zeker dat je de gebruiker {{name}} wilt ontschorsen?",
+        reset2fa: "Reset TOTP",
+        reset2faConfirmation: "Weet je zeker dat je de TOTP van gebruiker {{name}} wilt resetten?",
     },
     impersonate: {
         title: "Wie wil je zijn?",

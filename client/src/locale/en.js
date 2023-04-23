@@ -614,6 +614,8 @@ I18n.translations.en = {
         unsuspend: "Unsuspend",
         deleteOther: "Delete",
         unsuspendOtherConfirmation: "Are you sure you want to unsuspend the user {{name}}?",
+        reset2fa: "Reset TOTP",
+        reset2faConfirmation: "Are you sure you want to reset the TOTP for the {{name}}?",
     },
     impersonate: {
         title: "Who do you want to be?",
