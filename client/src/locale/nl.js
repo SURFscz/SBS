@@ -54,7 +54,7 @@ const nl = {
     },
     login: {
         title: "Research Access Management",
-        subTitle: "Login...",
+        subTitle: "Inloggen...",
         suspended: "Je profiel is geschorst. Neem contact op sram-support@surf.nl om dit op te lossen",
         rateLimited: "Je hebt de TOTP-verificatie te vaak geprobeerd en daarom ben je uitgelogd en is je profiel geschorst. Neem contact op met uw beheerder om dit op te lossen",
         successfullyActivated: "Gelukt: je profiel is geheractiveerd",
@@ -63,7 +63,7 @@ const nl = {
     },
     home: {
         sram: "SURF Research Access Management",
-        edit: "Wijzig",
+        edit: "Wijzigen",
         history: "Geschiedenis",
         unsuspend: "Schorsing ongedaan maken",
         resetLastActivity: "Reset activiteit",
@@ -110,7 +110,7 @@ const nl = {
             userlogins: "Logins",
             details: "Details",
             orgUsers: "Gebruikers",
-            scim: "Scim"
+            scim: "SCIM"
         }
     },
     forms: {
@@ -123,7 +123,7 @@ const nl = {
         showMore: "Meer",
         hideSome: "Minder",
         open: "Open",
-        update: "Bijwerken",
+        update: "Wijzigen",
         today: "Vandaag",
         manage: "Beheren",
         invalidInput: "Ongeldig{{name}}",
@@ -132,7 +132,7 @@ const nl = {
         reset: "Herstel",
         yes: "Ja",
         upload: "Upload afbeelding",
-        uploadSSH: "Voeg SSH key toe",
+        uploadSSH: "Voeg SSH-sleutel toe",
         add: "Voeg een afbeelding toe",
         change: "Wijzig afbeelding",
         image: "Afbeelding moet tenminste 300x120 pixels en kleiner dan 2MB zijn",
@@ -273,7 +273,7 @@ const nl = {
             title: "Diensten",
             noEntities: "Er zijn nog geen diensten...",
             searchPlaceHolder: "Zoek diensten...",
-            new: "Nieuwe dienst",
+            new: "Voeg dienst toe",
             name: "Naam",
             status: "Status",
             connectionRequestCount: "Koppelverzoeken",
@@ -309,7 +309,7 @@ const nl = {
             title: "Samenwerkingen",
             titleForOrgAdmin: "Samenwerkingen gemanaged door je organisatie",
             searchPlaceHolder: "Zoek samenwerkingen...",
-            new: "Nieuwe samenwerking",
+            new: "Voeg samenwerking toe",
             noEntities: "Geen samenwerkingen gevonden",
             newCollaborationRequest: "Nieuw verzoek voor samenwerking",
             name: "Naam",
@@ -398,8 +398,8 @@ const nl = {
             title: "Groepen",
             searchPlaceHolder: "Zoek groepen...",
             noEntities: "Geen groepen gevonden",
-            new: "Nieuwe groep",
-            edit: "Wijzig",
+            new: "Voeg groep toe",
+            edit: "Wijzigen",
             name: "Naam",
             urn: "Platform identifier",
             description: "Omschrijving",
@@ -446,7 +446,7 @@ const nl = {
         },
         apiKeys: {
             title: "API-sleutels",
-            new: "Nieuwe API-sleutel",
+            new: "Voeg API-sleutel toe",
             searchPlaceHolder: "Zoek API-sleutels...",
             noEntities: "Geen API-sleutels",
             backToApiKeys: "Terug naar alle API-sleutels"
@@ -543,7 +543,7 @@ const nl = {
             searchPlaceHolder: "Zoek dienstgroepen...",
             noEntities: "Geen dienstgroepen gevonden",
             new: "Nieuwe dienstgroep",
-            edit: "Wijzig",
+            edit: "Wijzigen",
             name: "Naam",
             description: "Omschrijving",
             autoProvisioning: "Iedereen automatisch lid",
@@ -560,8 +560,8 @@ const nl = {
             title: "Tokens",
             searchPlaceHolder: "Zoek naar tokens...",
             noEntities: "Geen tokens gevonden",
-            new: "Nieuw token",
-            edit: "Wijzig",
+            new: "Maak token aan",
+            edit: "Wijzigen",
             name: "Naam",
             namePlaceholder: "De naam van deze token",
             description: "Omschrijving",
@@ -596,8 +596,8 @@ const nl = {
         ssh_keyPlaceholder: "Je publieke SSH-sleutel om in te loggen op de dienst",
         ssh_keyTooltip: "Je publieke SSH-sleutel zal worden uitgewisseld met de diensten waar je toegang toe hebt. Je kunt je publieke SSH-sleutel ook uploaden.",
         sshKeyError: "Deze SSH cipher wordt niet herkend. In de <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://edu.nl/87btm\">documentatie</a> staan de ondersteunde formaten.",
-        sshConvertInfo: "Je publieke SSH-sleutel wordt geconverteerd naar het bestandsformaat <code>OpenSSH-key</code> bij het opslaan van het profiel",
-        update: "Opslaan",
+        sshConvertInfo: "Je publieke SSH-sleutel wordt geconverteerd naar het bestandsformaat <code>OpenSSH-key</code> bij het wijzigen van het profiel",
+        update: "Wijzigen",
         download: "Download profiel",
         flash: {
             updated: "Je profiel is bijgewerkt"
@@ -609,9 +609,9 @@ const nl = {
         deleteConfirmationWarning: "Al je lidmaatschappen worden verwijderd. Dit kan niet worden teruggedraaid.",
         deleteConfirmationCheck: "Als je toch wil doorgaan, typ dan ter bevestiging je volledige naam in.",
         deleteOtherConfirmation: "Weet je zeker dat je je gebruiker {{name}} wilt verwijderen?",
-        unsuspend: "Ontschors",
+        unsuspend: "Schorsing doorhalen",
         deleteOther: "Verwijder",
-        unsuspendOtherConfirmation: "Weet je zeker dat je de gebruiker {{name}} wilt ontschorsen?",
+        unsuspendOtherConfirmation: "Weet je zeker dat je de schorsing van gebruiker {{name}} wilt doorhalen?",
         reset2fa: "Reset TOTP",
         reset2faConfirmation: "Weet je zeker dat je de TOTP van gebruiker {{name}} wilt resetten?",
     },
@@ -641,7 +641,7 @@ const nl = {
     },
     registration: {
         joinRequest: "Vraag lidmaatschap voor {{name}}",
-        explanation: "Om je aanmeldingsverzoek in te dienen, dien je je motivatie om lid te worden van samenwerking <strong>{{name}}</strong> in te voeren.",
+        explanation: "Schrijf je motivatie om lid te worden van samenwerking <strong>{{name}}</strong>.",
         title: "Verzoek tot lidmaatschap van {{name}}",
         alreadyMember: "Je bent reeds lid van {{name}}",
         motivation: "Motivatie om lid te worden van {{name}}?",
@@ -884,7 +884,7 @@ const nl = {
         none: "Nooit",
         contact: "Dienstcontactpersoon",
         titleNew: "Dienst toevoegen",
-        titleUpdate: "Dienst {{name}} bijwerken",
+        titleUpdate: "Dienst {{name}} wijzigen",
         titleReadOnly: "Dienst {{name}}",
         backToServices: "Terug naar diensten",
         name: "Naam",
@@ -974,8 +974,8 @@ const nl = {
         alreadyExists: "Een dienst met {{attribute}} {{value}} bestaat al.",
         required: "De dienst heeft een {{attribute}} nodig.",
         deleteConfirmation: "Weet je zeker dat je dienst {{name}} wil verwijderen? Dit kan niet teruggedraaid worden.",
-        add: "Aanmaken",
-        update: "Opslaan",
+        add: "Opslaan",
+        update: "Wijzigen",
         delete: "Verwijderen",
         cancel: "Annuleren",
         flash: {
@@ -1024,7 +1024,7 @@ const nl = {
         access: "Toegang",
         policies: "Beleid",
         policyCompliance: "Toegangsbeleid",
-        login: "Login",
+        login: "Inloggen",
         support: "Support voor de eindgebruiker",
         admins: "Administratieve email-adressen",
         noSupport: "Dienst {{name}} biedt geen support voor eindgebruikers en heeft geen administrators"
@@ -1342,10 +1342,10 @@ const nl = {
         automaticConnectionNotAllowed: "Dienst '{{service}}' kan niet automatisch worden toegevoegd aan de samenwerking '{{collaboration}}'. De dienst is zo geconfigureerd dat er eerst een dienstkoppelverzoek moet worden gedaan. Schrijf je motivatie voor de koppeling hieronder en verstuur het formulier.",
         motivation: "Motivatie",
         motivationPlaceholder: "Je motivatie om deze dienst te gebruiken",
-        send: "Send",
+        send: "Verzenden",
         flash: {
             added: "{{service}} is toegevoegd aan samenwerking {{name}}.",
-            deleted: "{{service}} is onbeschikbaar gemaakt voor samenwerking {{name}}.",
+            deleted: "{{service}} is verwijderd van samenwerking {{name}}.",
             send: "Dienstkoppelverzoek voor {{service}} is verzonden.",
         },
         service: {
@@ -1516,8 +1516,8 @@ const nl = {
             noPrivacyPolicy: "Geen aanvullend privacybeleid verstrekt",
             noAup: "Geen aanvullend acceptable use policy verstrekt",
             agreeWithTerms: "Ik verklaar dat ik deze voorwaarden heb gelezen en accepteer",
-            firstLogin: "Login. Daarna kom je hier terug om de voorwaarden van {{name}} te bekijken.",
-            login: "Login",
+            firstLogin: "Inloggen. Daarna kom je hier terug om de voorwaarden van {{name}} te bekijken.",
+            login: "Inloggen",
             proceed: "Ga naar {{name}}",
             multipleCollaborations: "Deze dienst wordt gebruikt binnen meerdere samenwerkingen waarvan je lid bent.",
             purposeOf: "Doel van <strong>{{name}}</strong>",
@@ -1693,7 +1693,7 @@ const nl = {
         title: "Bevestiging",
         subTitle: "Deze actie vereist een bevestiging",
         confirm: "Bevestig",
-        ok: "Ok",
+        ok: "OK",
         cancel: "Annuleer",
         leavePage: "Weet je zeker dat je deze pagina wil verlaten?",
         leavePageSub: "Wijzigingen die niet zijn opgeslagen worden niet bewaard.",
@@ -1716,7 +1716,7 @@ const nl = {
     not_found: {
         title: "404",
         description_html: "Deze pagina kan niet worden gevonden.",
-        loginLink: "Login"
+        loginLink: "Inloggen"
     },
     footer: {
         terms: "Terms of Use",
@@ -1959,7 +1959,7 @@ const nl = {
             currentCodeInfo: "Voer de 6-cijferige authenticatiecode van je huidige authenticator-app in.",
             scanInfo: "Open je nieuwe authenticator-app en:",
             verificationCodeInfo: "Zodra de QR-code hierboven is gescand, voer je de 6-cijferige authenticatiecode van je nieuwe authenticator-app in.",
-            verify: "Verifiëren en opslaan",
+            verify: "Verifiëren en wijzigen",
             flash: "Je tweefactorauthenticatie is aangepast voor je nieuwe authenticator-app",
             preValidatedFlash: "Correct!"
         },
@@ -1994,7 +1994,7 @@ const nl = {
             select: "Selecteer een collega die de reset-token zal ontvangen:",
             respondent: "De e-mail wordt verzonden naar:",
             message: "Bericht voor de beheerder",
-            sendMail: "E-mail verzenden",
+            sendMail: "Verzend e-mail",
             flash: "Je verzoek om je authenticatie te resetten is verzonden"
         },
         reset: {
@@ -2115,7 +2115,7 @@ const nl = {
     pamWebSSO: {
         title: "Log in op {{service}}",
         info: "Log in voor de verificatiecode die gevraagd wordt op de command line interface.",
-        proceed: "Login",
+        proceed: "Inloggen",
         enterPin: "Je verificatiecode",
         enterPinInfo: "Voer de code in op de command line interface van {{service}}.",
         afterPin: "Na het invoeren van de code kun je dit scherm sluiten.",
@@ -2149,7 +2149,7 @@ const nl = {
         descriptionPlaceHolder: "Omschrijving voor dit token",
         descriptionTooltip: "Een optionele omschrijving van het doel van dit token",
         backToApiKeys: "Terug naar tokens",
-        addToken: "Nieuw token",
+        addToken: "Voeg token toe",
         toc: {
             general: "Algemeen",
             contacts: "Contactpersonen",
