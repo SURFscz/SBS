@@ -775,6 +775,10 @@ export function getSuspendedUsers() {
     return fetchJson("/api/users/suspended");
 }
 
+export function getResetTOTPRequestedUsers() {
+    return fetchJson("/api/users/reset_totp_requested");
+}
+
 export function suspendCollaborations() {
     return postPutJson("/api/system/suspend_collaborations", {}, "PUT");
 }

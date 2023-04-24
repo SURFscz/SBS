@@ -108,7 +108,7 @@ I18n.translations.nl = {
             validation: "Acties",
             plsc: "LDAP",
             composition: "Config",
-            suspendedUsers: "Suspensions",
+            suspendedUsers: "Users",
             userlogins: "Logins",
             details: "Details",
             orgUsers: "Gebruikers",
@@ -1786,6 +1786,11 @@ I18n.translations.nl = {
             name: "Naam",
             lastLogin: "Laatste login",
             activate: "Activeer"
+        },
+        resetTOTPRequestedUsers: {
+            title: "De onderstaande gebruikers hebben een verzoek gedaan om hun TOTP te resetten.",
+            titleZeroState: "Er zijn geen gebruikers die een verzoek hebben gedaan.",
+            reset: "Reset"
         },
         userlogins: {
             loginType: "Type",

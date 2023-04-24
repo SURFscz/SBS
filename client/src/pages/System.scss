@@ -22,6 +22,10 @@
 
             p {
                 margin: 5px 0 20px 0;
+
+                &.title {
+                    font-weight: bolder;
+                }
             }
 
             @media (max-width: $tablet-max) {
@@ -277,9 +281,28 @@
     }
 
     table.suspended-users {
+
+        margin-bottom: 25px;
+
+        thead {
+            th {
+                &.name {
+                    width: 25%;
+                }
+                &.email {
+                    width: 25%;
+                }
+                &.lastLogin {
+                    width: 25%;
+                }
+                &.actions {
+                    width: 25%;
+                }
+            }
+        }
         tbody {
             td {
-                padding: 2px 2px;
+                vertical-align: middle;
             }
         }
     }

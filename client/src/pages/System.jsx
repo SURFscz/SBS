@@ -16,11 +16,11 @@ import {
     dbStats,
     deleteOrphanUsers,
     expireCollaborationMemberships,
-    expireCollaborations,
+    expireCollaborations, getResetTOTPRequestedUsers,
     getSuspendedUsers,
     health,
     outstandingRequests,
-    plscSync,
+    plscSync, reset2faOther,
     scheduledJobs,
     suspendCollaborations,
     suspendUsers,
@@ -94,7 +94,8 @@ class System extends React.Component {
             plscData: {},
             plscView: false,
             compositionData: {},
-            currentlySuspendedUsers: []
+            currentlySuspendedUsers: [],
+            resetTOTPRequestedUsers: [],
         }
     }
 
@@ -389,22 +390,29 @@ class System extends React.Component {
         })
     }
 
-    getSuspendedUsersTab = currentlySuspendedUsers => {
+    resetUser = user => {
+        this.setState({busy: true});
+        reset2faOther(user.id).then(() => {
+            getResetTOTPRequestedUsers().then(res => this.setState({resetTOTPRequestedUsers: res, busy: false}))
+        })
+    }
+    getSuspendedUsersTab = (currentlySuspendedUsers, resetTOTPRequestedUsers) => {
         const zeroState = currentlySuspendedUsers.length === 0;
         return (<div key="suspended-users"
                      name="suspended-users"
                      label={I18n.t("home.tabs.suspendedUsers")}
                      icon={<FontAwesomeIcon icon="user-lock"/>}>
-            <div className="mod-system">
+            <div className="mod-system  sds--table">
                 <section className={"info-block-container"}>
-                    <p>{I18n.t(`system.suspendedUsers.${zeroState ? "titleZeroState" : "title"}`)}</p>
-                    {!zeroState && <table className={"suspended-users"}>
+                    <p className={"title"}>{I18n.t(`system.suspendedUsers.${zeroState ? "titleZeroState" : "title"}`)}</p>
+                    {!zeroState &&
+                    <table className={"suspended-users"}>
                         <thead>
                         <tr>
-                            <th>{I18n.t("system.suspendedUsers.name")}</th>
-                            <th>{I18n.t("system.suspendedUsers.email")}</th>
-                            <th>{I18n.t("system.suspendedUsers.lastLogin")}</th>
-                            <th></th>
+                            <th className={"name"}>{I18n.t("system.suspendedUsers.name")}</th>
+                            <th className={"email"}>{I18n.t("system.suspendedUsers.email")}</th>
+                            <th className={"lastLogin"}>{I18n.t("system.suspendedUsers.lastLogin")}</th>
+                            <th className={"actions"}></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -415,6 +423,31 @@ class System extends React.Component {
                             <td>
                                 {<Button txt={I18n.t("system.suspendedUsers.activate")}
                                          onClick={() => this.activateUser(user)}/>}
+                            </td>
+                        </tr>)}
+                        </tbody>
+                    </table>}
+                </section>
+                <section className={"info-block-container"}>
+                    <p className={"title"}>{I18n.t(`system.resetTOTPRequestedUsers.${resetTOTPRequestedUsers.length === 0 ? "titleZeroState" : "title"}`)}</p>
+                    {resetTOTPRequestedUsers.length !== 0 &&
+                    <table className={"suspended-users"}>
+                        <thead>
+                        <tr>
+                            <th className={"name"}>{I18n.t("system.suspendedUsers.name")}</th>
+                            <th className={"email"}>{I18n.t("system.suspendedUsers.email")}</th>
+                            <th className={"lastLogin"}>{I18n.t("system.suspendedUsers.lastLogin")}</th>
+                            <th className={"actions"}></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {resetTOTPRequestedUsers.map(user => <tr key={user.id}>
+                            <td>{user.name}</td>
+                            <td>{user.email}</td>
+                            <td>{user.last_login_date ? dateFromEpoch(user.last_login_date) : "-"}</td>
+                            <td>
+                                {<Button txt={I18n.t("system.resetTOTPRequestedUsers.reset")}
+                                         onClick={() => this.resetUser(user)}/>}
                             </td>
                         </tr>)}
                         </tbody>
@@ -1082,7 +1115,8 @@ class System extends React.Component {
         } else if (name === "composition") {
             composition().then(res => this.setState({compositionData: res, busy: false}));
         } else if (name === "suspended-users") {
-            getSuspendedUsers().then(res => this.setState({currentlySuspendedUsers: res, busy: false}));
+            Promise.all([getSuspendedUsers(), getResetTOTPRequestedUsers()])
+                .then(res => this.setState({currentlySuspendedUsers: res[0], resetTOTPRequestedUsers: res[1], busy: false}));
         } else if (name === "userlogins") {
             userLoginsSummary().then(res => this.setState({userLoginStats: res, busy: false}))
         } else {
@@ -1122,6 +1156,7 @@ class System extends React.Component {
             plscData,
             compositionData,
             currentlySuspendedUsers,
+            resetTOTPRequestedUsers,
             userLoginStats,
             deletedUsers,
             serverQuery,
@@ -1143,7 +1178,7 @@ class System extends React.Component {
             this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables, serverQuery),
             this.getPlscTab(plscData, plscView),
             config.seed_allowed ? this.getCompositionTab(compositionData) : null,
-            this.getSuspendedUsersTab(currentlySuspendedUsers),
+            this.getSuspendedUsersTab(currentlySuspendedUsers, resetTOTPRequestedUsers),
             this.getUserLoginTab(userLoginStats),
             this.getScimTab()
         ]

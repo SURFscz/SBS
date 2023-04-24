@@ -108,7 +108,7 @@ I18n.translations.en = {
             validation: "Actions",
             plsc: "LDAP",
             composition: "Config",
-            suspendedUsers: "Suspensions",
+            suspendedUsers: "Users",
             userlogins: "Logins",
             details: "Details",
             orgUsers: "Users",
@@ -1786,6 +1786,11 @@ I18n.translations.en = {
             name: "Name",
             lastLogin: "Last login",
             activate: "Activate"
+        },
+        resetTOTPRequestedUsers: {
+            title: "The following users have requested a reset of their TOTP.",
+            titleZeroState: "There are no users who have requested a TOTP reset.",
+            reset: "Reset"
         },
         userlogins: {
             loginType: "Type",
