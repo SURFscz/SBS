@@ -55,7 +55,7 @@
     "scripts": {
         "start": "DANGEROUSLY_DISABLE_HOST_CHECK=true GENERATE_SOURCEMAP=false HOST=localhost react-scripts start",
         "build": "DANGEROUSLY_DISABLE_HOST_CHECK=true GENERATE_SOURCEMAP=false react-scripts build",
-        "test": "DANGEROUSLY_DISABLE_HOST_CHECK=true GENERATE_SOURCEMAP=false react-scripts test",
+        "test": "DANGEROUSLY_DISABLE_HOST_CHECK=true GENERATE_SOURCEMAP=false react-scripts test --transformIgnorePatterns 'node_modules/(?!i18n-js)/'",
         "analyze": "source-map-explorer build/static/js/main.*"
     },
     "proxy": "http://127.0.0.1:8080/",
