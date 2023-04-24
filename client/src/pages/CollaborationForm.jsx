@@ -645,11 +645,15 @@ class CollaborationForm extends React.Component {
                                                           value={disclose_member_information}
                                                           info={I18n.t("collaboration.discloseMemberInformation")}
                                                           tooltip={I18n.t("collaboration.discloseMemberInformationTooltip")}
-                                                          onChange={() => this.setState({disclose_member_information: !disclose_member_information})}/>}
+                                                          onChange={() => this.setState({
+                                                              disclose_member_information: !disclose_member_information,
+                                                              disclose_email_information: disclose_email_information && !disclose_member_information
+                                                          })}/>}
 
                     {!isCollaborationRequest && <CheckBox name="disclose_email_information"
-                                                          value={disclose_email_information}
+                                                          value={disclose_member_information && disclose_email_information}
                                                           info={I18n.t("collaboration.discloseEmailInformation")}
+                                                          readOnly={!disclose_member_information}
                                                           tooltip={I18n.t("collaboration.discloseEmailInformationTooltip")}
                                                           onChange={() => this.setState({disclose_email_information: !disclose_email_information})}/>}
                     {!isCollaborationRequest && <SelectField value={tagsSelected}

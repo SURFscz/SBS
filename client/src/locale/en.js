@@ -108,7 +108,7 @@ I18n.translations.en = {
             validation: "Actions",
             plsc: "LDAP",
             composition: "Config",
-            suspendedUsers: "Suspensions",
+            suspendedUsers: "Users",
             userlogins: "Logins",
             details: "Details",
             orgUsers: "Users",
@@ -411,7 +411,8 @@ I18n.translations.en = {
             autoProvisioning: "Auto provisioning",
             on: "On",
             off: "Off",
-            deleteMemberConfirmation: "Are you sure you want to remove {{name}} from this group?"
+            deleteMemberConfirmation: "Are you sure you want to remove {{name}} from this group?",
+            deleteMembersConfirmation: "Are you sure you want to remove the selected memberships from this group?",
         },
         groupMembers: {
             title: "Members",
@@ -613,6 +614,8 @@ I18n.translations.en = {
         unsuspend: "Unsuspend",
         deleteOther: "Delete",
         unsuspendOtherConfirmation: "Are you sure you want to unsuspend the user {{name}}?",
+        reset2fa: "Reset TOTP",
+        reset2faConfirmation: "Are you sure you want to reset the TOTP for the {{name}}?",
     },
     impersonate: {
         title: "Who do you want to be?",
@@ -659,7 +662,7 @@ I18n.translations.en = {
         scoped_affiliation: "Scoped affiliations",
         entitlement: "Entitlements",
         nick_name: "Nick name",
-        schac_home_organisation: "Organisation domain name",
+        schac_home_organisation: "Organisation name",
         edu_members: "EDU memberships",
         eduperson_principal_name: "EPPN",
         created_at: "Profile created",
@@ -1458,6 +1461,7 @@ I18n.translations.en = {
             addedMember: "Added user {{member}} as a member of group {{name}}",
             addedMembers: "Added all users and invitations as (future ) members of group {{name}}",
             deletedMember: "Deleted user {{member}} from group {{name}}",
+            deletedMembers: "Deleted memberships from group {{name}}",
             addedInvitation: "Added user {{member}} as a member of group {{name}}",
             deletedInvitation: "Deleted invitee {{invitation}} from group {{name}}",
         },
@@ -1739,6 +1743,8 @@ I18n.translations.en = {
         runOutdatedRequests: "Run",
         runCleanedRequestsInfo: "Run the cron job to delete all outdated approved / denied join requests and collaboration requests for the configured threshold",
         runCleanedRequests: "Delete",
+        runSweepResults: "Run the cron job to sweep all SCIM enabled services",
+        runSweep: "Run",
         action: "Action",
         results: "Results",
         warning_suspend_notifications: "Warning suspension notification email sent",
@@ -1771,7 +1777,7 @@ I18n.translations.en = {
         runCleanSlate: "Are you absolutely sure you want to delete all data?",
         clear: "Clear",
         reload: "Reload",
-        seedResult: "Test data is inserted in {{ms}} ms. Perform a hard-reload of the page to invalidate the cache.",
+        seedResult: "{{seed}} data is inserted in {{ms}} ms.",
         toggleJson: "Toggle view",
         suspendedUsers: {
             title: "The following users have been suspended.",
@@ -1780,6 +1786,11 @@ I18n.translations.en = {
             name: "Name",
             lastLogin: "Last login",
             activate: "Activate"
+        },
+        resetTOTPRequestedUsers: {
+            title: "The following users have requested a reset of their TOTP.",
+            titleZeroState: "There are no users who have requested a TOTP reset.",
+            reset: "Reset"
         },
         userlogins: {
             loginType: "Type",

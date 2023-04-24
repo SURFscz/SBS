@@ -391,13 +391,15 @@ class OrganisationAdmins extends React.Component {
                         {displayCheckbox && <CheckBox name={"" + ++i} onChange={this.onCheck(entity)}
                                                       value={(selectedMembers[this.getIdentifier(entity)] || {}).selected || false}/>}
                         {!displayCheckbox &&
-                        <div className={"tooltip-table-cell"}>
-
-                            <CheckBox name={"" + ++i}
-                                      value={false}
-                                      tooltip={I18n.t("tooltips.oneAdminWarning")}
-                                      readOnly={true}
-                            /></div>}
+                            <Tooltip tip={I18n.t("tooltips.oneAdminWarning")}
+                                     standalone={true}
+                                     children={<div>
+                                         <CheckBox name={"" + ++i}
+                                                         value={false}
+                                                         readOnly={true}
+                                     />
+                                     </div>}
+                            />}
                     </div>
                 }
             },

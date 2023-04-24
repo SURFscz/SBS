@@ -266,3 +266,23 @@ class TestMfa(AbstractTest):
         res = self.get("/api/mfa/get2fa_proxy_authz", query_data={"second_fa_uuid": sarah.second_fa_uuid},
                        with_basic_auth=False)
         self.assertFalse("qr_code_base64" in res)
+
+    def test_reset2fa_other(self):
+        betty = self.find_entity_by_name(User, "betty")
+        self.assertIsNotNone(betty.mfa_reset_token)
+
+        self.login("urn:mary")
+        self.put("/api/mfa/reset2fa_other",
+                 body={"user_id": betty.id},
+                 with_basic_auth=False)
+        betty = self.find_entity_by_name(User, "betty")
+        self.assertIsNone(betty.mfa_reset_token)
+        self.assertIsNone(betty.second_factor_auth)
+
+    def test_reset2fa_other_manager_not_allowed(self):
+        betty = self.find_entity_by_name(User, "betty")
+        self.login("urn:harry")
+        self.put("/api/mfa/reset2fa_other",
+                 body={"user_id": betty.id},
+                 with_basic_auth=False,
+                 response_status_code=403)

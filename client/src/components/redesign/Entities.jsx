@@ -139,9 +139,9 @@ class Entities extends React.Component {
                         <thead>
                         <tr>
                             {columns.map((column, i) => {
-                                const hide = !actions || i < 2 || column.showHeader;
+                                const showHeader = !actions || i < 2 || column.showHeader;
                                 return <th key={`th_${column.key}_${i}`}
-                                           className={`${column.key} ${column.class || ""} ${column.nonSortable ? "" : "sortable"} ${hide ? "" : "hide"}`}
+                                           className={`${column.key} ${column.class || ""} ${column.nonSortable ? "" : "sortable"} ${showHeader ? "" : "hide"}`}
                                            onClick={this.setSorted(column.key)}>
                                     {column.header}
                                     {headerIcon(column, sorted, reverse)}

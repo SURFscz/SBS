@@ -506,6 +506,13 @@ def suspended():
     return User.query.filter(User.suspended == True).all(), 200  # noqa: E712
 
 
+@user_api.route("/reset_totp_requested", strict_slashes=False)
+@json_endpoint
+def reset_totp_requested():
+    confirm_write_access()
+    return User.query.filter(User.mfa_reset_token != None).all(), 200  # noqa: E711
+
+
 @user_api.route("/activate", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def activate():

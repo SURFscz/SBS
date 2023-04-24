@@ -72,6 +72,11 @@ class TestUser(AbstractTest):
         users = self.get("/api/users/suspended", with_basic_auth=False)
         self.assertEqual(2, len(users))
 
+    def test_reset_totp_requested(self):
+        self.login("urn:john")
+        users = self.get("/api/users/reset_totp_requested", with_basic_auth=False)
+        self.assertEqual(1, len(users))
+
     def test_activate_by_organisation_admin(self):
         organisation_id = Organisation.query.filter(Organisation.name == uuc_name).one().id
         self.do_test_activate("urn:mary", {"organisation_id": organisation_id})
