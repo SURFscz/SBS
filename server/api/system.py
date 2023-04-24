@@ -1,4 +1,4 @@
-from flask import current_app, Blueprint, request as current_request
+from flask import current_app, Blueprint, request as current_request, session
 from sqlalchemy import text
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import BadRequest
@@ -115,6 +115,7 @@ def run_seed():
     check_seed_allowed("seed")
 
     seed(db, current_app.app_config, skip_seed=False, perf_test=False)
+    session.clear()
 
     return {}, 201
 
@@ -128,6 +129,7 @@ def run_demo_seed():
 
     from server.test.demo_seed import demo_seed
     demo_seed(db)
+    session.clear()
 
     return {}, 201
 
@@ -141,6 +143,7 @@ def run_human_testing_seed():
 
     from server.test.human_testing_seed import human_testing_seed
     human_testing_seed(db)
+    session.clear()
 
     return {}, 201
 
