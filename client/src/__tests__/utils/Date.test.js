@@ -1,13 +1,12 @@
 import {
     dateFromEpoch,
     displayExpiryDate,
-    displayLastActivityDate, displayMembershipExpiryDate,
+    displayLastActivityDate,
+    displayMembershipExpiryDate,
     formatDate,
     shortDateFromEpoch
 } from "../../utils/Date";
-import I18n from "i18n-js";
-import en from "../../locale/en";
-import nl from "../../locale/nl";
+import I18n from "../../locale/I18n";
 
 const relativeHour = 60 * 60;
 
@@ -25,10 +24,6 @@ test("dateFromEpoch", () => {
 });
 
 test("displayExpiryDate", () => {
-    //We need to use them, otherwise organize imports removes the imports
-    expect(en).toBeTruthy();
-    expect(nl).toBeTruthy();
-
     I18n.locale = "en";
     const todayEpoch = new Date().getTime() / 1000;
     let res = displayExpiryDate(todayEpoch - (relativeHour * 8));
@@ -59,9 +54,6 @@ test("displayMembershipExpiryDate", () => {
 });
 
 test("displayLastActivityDate", () => {
-    expect(en).toBeTruthy();
-    expect(en).toBeTruthy();
-
     I18n.locale = "nl";
     const todayEpoch = new Date().getTime() / 1000;
     let res = displayLastActivityDate(todayEpoch - (relativeHour * 8));
