@@ -31,7 +31,7 @@
         "react-json-view": "^1.21.3",
         "react-md-spinner": "^1.0.0",
         "react-mde": "^11.0.0",
-        "react-router-dom": "^5.2.0",
+        "react-router-dom": "^6.10.0",
         "react-select": "^5.7.2",
         "react-tooltip": "^5.11.1",
         "scroll-into-view": "^1.15.0",
