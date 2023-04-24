@@ -1,11 +1,11 @@
-
-from flask import current_app, Blueprint, request as current_request
+from flask import current_app, Blueprint, request as current_request, session
 from sqlalchemy import text
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint
 from server.auth.security import confirm_write_access, current_user_id
+from server.cron.scim_sweep_services import scim_sweep_services
 from server.db.audit_mixin import metadata
 from server.db.db import db
 from server.db.domain import Service, ServiceMembership, User, Organisation, OrganisationMembership, \
@@ -115,6 +115,7 @@ def run_seed():
     check_seed_allowed("seed")
 
     seed(db, current_app.app_config, skip_seed=False, perf_test=False)
+    session.clear()
 
     return {}, 201
 
@@ -128,6 +129,7 @@ def run_demo_seed():
 
     from server.test.demo_seed import demo_seed
     demo_seed(db)
+    session.clear()
 
     return {}, 201
 
@@ -141,6 +143,7 @@ def run_human_testing_seed():
 
     from server.test.human_testing_seed import human_testing_seed
     human_testing_seed(db)
+    session.clear()
 
     return {}, 201
 
@@ -229,7 +232,24 @@ def validations():
         .all()
 
     return {
-        "organisations": organisations_without_admins,
-        "organisation_invitations": organisation_invitations,
-        "services": services_without_admins
-    }, 200
+               "organisations": organisations_without_admins,
+               "organisation_invitations": organisation_invitations,
+               "services": services_without_admins
+           }, 200
+
+
+@system_api.route("/sweep", strict_slashes=False, methods=["GET"])
+@json_endpoint
+def sweep():
+    confirm_write_access()
+
+    services = Service.query \
+        .filter(Service.scim_enabled == True) \
+        .filter(Service.sweep_scim_enabled == True) \
+        .all()  # noqa: E712
+    for service in services:
+        service.sweep_scim_last_run = None
+        db.session.merge(service)
+    db.session.commit()
+
+    return scim_sweep_services(current_app), 200

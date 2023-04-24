@@ -81,7 +81,10 @@ class ServiceOverview extends React.Component {
     componentDidMount = nextProps => {
         const {service, serviceAdmin} = nextProps ? nextProps : this.props;
         const {params} = this.props.match;
-        const tab = params.subTab || this.state.currentTab;
+        let tab = params.subTab || this.state.currentTab;
+        if (!toc.includes(tab)) {
+            tab = this.state.currentTab;
+        }
         this.validateService(service, () => {
             service.ip_networks = service.ip_networks.filter(ipNetwork => !isEmpty(ipNetwork.network_value));
             this.setState({

@@ -59,15 +59,13 @@ export const UserMenu = ({currentUser, organisation, config, provideFeedback}) =
     const collMenuItemRequired = lessThenOrgManager && !isEmpty(organisation) && organisation.has_members
     const collCreateAllowed = !isEmpty(organisation)
         && (organisation.collaboration_creation_allowed_entitlement || organisation.collaboration_creation_allowed);
-    const organisationPart = organisation ? organisation.name : "";
-    const organisationName = objectRole || organisationPart;
     return (
         <div className="user-menu"
              tabIndex={1}
              onBlur={() => setTimeout(() => setDropDownActive(false), 250)}>
             <UserInfo isOpen={dropDownActive}
                       children={renderMenu(adminLinks, collCreateAllowed, provideFeedback, collMenuItemRequired, config)}
-                      organisationName={organisationName}
+                      organisationName={objectRole || ""}
                       userName={currentUser.name}
                       toggle={() => setDropDownActive(!dropDownActive)}
             />

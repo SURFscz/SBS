@@ -16,14 +16,15 @@ import {
     dbStats,
     deleteOrphanUsers,
     expireCollaborationMemberships,
-    expireCollaborations,
+    expireCollaborations, getResetTOTPRequestedUsers,
     getSuspendedUsers,
     health,
     outstandingRequests,
-    plscSync,
+    plscSync, reset2faOther,
     scheduledJobs,
     suspendCollaborations,
     suspendUsers,
+    sweepAllServices,
     userLoginsSummary,
     validations
 } from "../api";
@@ -74,6 +75,7 @@ class System extends React.Component {
             databaseStats: [],
             userLoginStats: [],
             cronJobs: [],
+            sweepResults: null,
             seedResult: null,
             confirmationDialogOpen: false,
             confirmationDialogQuestion: undefined,
@@ -92,7 +94,8 @@ class System extends React.Component {
             plscData: {},
             plscView: false,
             compositionData: {},
-            currentlySuspendedUsers: []
+            currentlySuspendedUsers: [],
+            resetTOTPRequestedUsers: [],
         }
     }
 
@@ -122,6 +125,7 @@ class System extends React.Component {
             cleanedRequests: {},
             databaseStats: [],
             cronJobs: [],
+            sweepResults: null,
             seedResult: null,
             demoSeedResult: null,
             query: "",
@@ -137,7 +141,7 @@ class System extends React.Component {
     }
 
     getCronTab = (suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations, suspendedCollaborations,
-                  expiredMemberships, deletedUsers, cronJobs) => {
+                  expiredMemberships, deletedUsers, sweepResults, cronJobs) => {
         return (<div key="cron" name="cron" label={I18n.t("home.tabs.cron")}
                      icon={<FontAwesomeIcon icon="clock"/>}>
             <div className="mod-system">
@@ -156,6 +160,8 @@ class System extends React.Component {
                     {this.renderOutstandingRequestsResults(outstandingRequests)}
                     {this.renderCleanedRequests()}
                     {this.renderCleanedRequestsResults(cleanedRequests)}
+                    {this.renderSweep()}
+                    {this.renderSweepResults(sweepResults)}
                     {this.renderCronJobs()}
                     {this.renderCronJobsResults(cronJobs)}
                 </section>
@@ -384,22 +390,29 @@ class System extends React.Component {
         })
     }
 
-    getSuspendedUsersTab = currentlySuspendedUsers => {
+    resetUser = user => {
+        this.setState({busy: true});
+        reset2faOther(user.id).then(() => {
+            getResetTOTPRequestedUsers().then(res => this.setState({resetTOTPRequestedUsers: res, busy: false}))
+        })
+    }
+    getSuspendedUsersTab = (currentlySuspendedUsers, resetTOTPRequestedUsers) => {
         const zeroState = currentlySuspendedUsers.length === 0;
         return (<div key="suspended-users"
                      name="suspended-users"
                      label={I18n.t("home.tabs.suspendedUsers")}
                      icon={<FontAwesomeIcon icon="user-lock"/>}>
-            <div className="mod-system">
+            <div className="mod-system  sds--table">
                 <section className={"info-block-container"}>
-                    <p>{I18n.t(`system.suspendedUsers.${zeroState ? "titleZeroState" : "title"}`)}</p>
-                    {!zeroState && <table className={"suspended-users"}>
+                    <p className={"title"}>{I18n.t(`system.suspendedUsers.${zeroState ? "titleZeroState" : "title"}`)}</p>
+                    {!zeroState &&
+                    <table className={"suspended-users"}>
                         <thead>
                         <tr>
-                            <th>{I18n.t("system.suspendedUsers.name")}</th>
-                            <th>{I18n.t("system.suspendedUsers.email")}</th>
-                            <th>{I18n.t("system.suspendedUsers.lastLogin")}</th>
-                            <th></th>
+                            <th className={"name"}>{I18n.t("system.suspendedUsers.name")}</th>
+                            <th className={"email"}>{I18n.t("system.suspendedUsers.email")}</th>
+                            <th className={"lastLogin"}>{I18n.t("system.suspendedUsers.lastLogin")}</th>
+                            <th className={"actions"}></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -410,6 +423,31 @@ class System extends React.Component {
                             <td>
                                 {<Button txt={I18n.t("system.suspendedUsers.activate")}
                                          onClick={() => this.activateUser(user)}/>}
+                            </td>
+                        </tr>)}
+                        </tbody>
+                    </table>}
+                </section>
+                <section className={"info-block-container"}>
+                    <p className={"title"}>{I18n.t(`system.resetTOTPRequestedUsers.${resetTOTPRequestedUsers.length === 0 ? "titleZeroState" : "title"}`)}</p>
+                    {resetTOTPRequestedUsers.length !== 0 &&
+                    <table className={"suspended-users"}>
+                        <thead>
+                        <tr>
+                            <th className={"name"}>{I18n.t("system.suspendedUsers.name")}</th>
+                            <th className={"email"}>{I18n.t("system.suspendedUsers.email")}</th>
+                            <th className={"lastLogin"}>{I18n.t("system.suspendedUsers.lastLogin")}</th>
+                            <th className={"actions"}></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {resetTOTPRequestedUsers.map(user => <tr key={user.id}>
+                            <td>{user.name}</td>
+                            <td>{user.email}</td>
+                            <td>{user.last_login_date ? dateFromEpoch(user.last_login_date) : "-"}</td>
+                            <td>
+                                {<Button txt={I18n.t("system.resetTOTPRequestedUsers.reset")}
+                                         onClick={() => this.resetUser(user)}/>}
                             </td>
                         </tr>)}
                         </tbody>
@@ -496,6 +534,13 @@ class System extends React.Component {
         });
     }
 
+    doRunSweep = () => {
+        this.setState({busy: true})
+        sweepAllServices().then(res => {
+            this.setState({sweepResults: res, busy: false});
+        });
+    }
+
     doCronJobs = () => {
         this.setState({busy: true})
         scheduledJobs().then(res => {
@@ -535,8 +580,11 @@ class System extends React.Component {
             dbSeed().then(() => {
                 this.setState({
                     busy: false,
-                    seedResult: I18n.t("system.seedResult", {ms: new Date().getMilliseconds() - d.getMilliseconds()})
-                });
+                    seedResult: I18n.t("system.seedResult", {
+                        seed: "Test",
+                        ms: new Date().getMilliseconds() - d.getMilliseconds()
+                    })
+                }, () => window.location.reload());
             });
         }
     }
@@ -550,8 +598,11 @@ class System extends React.Component {
             dbDemoSeed().then(() => {
                 this.setState({
                     busy: false,
-                    demoSeedResult: I18n.t("system.seedResult", {ms: new Date().getMilliseconds() - d.getMilliseconds()})
-                });
+                    demoSeedResult: I18n.t("system.seedResult", {
+                        seed: "Demo",
+                        ms: new Date().getMilliseconds() - d.getMilliseconds()
+                    })
+                },() => window.location.reload());
             });
         }
     }
@@ -565,8 +616,11 @@ class System extends React.Component {
             dbHumanTestingSeed().then(() => {
                 this.setState({
                     busy: false,
-                    humanTestingSeedResult: I18n.t("system.seedResult", {ms: (new Date().getMilliseconds() - d.getMilliseconds())})
-                });
+                    humanTestingSeedResult: I18n.t("system.seedResult", {
+                        seed: "Human",
+                        ms: (new Date().getMilliseconds() - d.getMilliseconds())
+                    })
+                }, () => window.location.reload());
             });
         }
     }
@@ -674,6 +728,23 @@ class System extends React.Component {
                 </div>
             </div>
         );
+    }
+
+    renderSweep = () => {
+        const {sweepResults} = this.state;
+        return (
+            <div className="info-block">
+                <p>{I18n.t("system.runSweepResults")}</p>
+                <div className="actions">
+                    {isEmpty(sweepResults) && <Button txt={I18n.t("system.runSweep")}
+                                                      onClick={this.doRunSweep}/>}
+                    {!isEmpty(sweepResults) && <Button txt={I18n.t("system.clear")}
+                                                       onClick={this.clear}
+                                                       cancelButton={true}/>}
+                </div>
+            </div>
+        );
+
     }
 
     renderCronJobs = () => {
@@ -914,6 +985,20 @@ class System extends React.Component {
         )
     }
 
+    renderSweepResults = sweepResults => {
+        const jsonStyle = {
+            propertyStyle: {color: "black"},
+            stringStyle: {color: "green"},
+            numberStyle: {color: 'darkorange'}
+        }
+        const sweepJson = JSON.stringify(sweepResults);
+        return (
+            <div>
+                {!isEmpty(sweepResults) &&
+                <JsonFormatter json={sweepJson} tabWith={4} jsonStyle={jsonStyle}/>}
+            </div>
+        );
+    }
     renderCronJobsResults = cronJobs => {
         return (
             <div className="results">
@@ -1030,7 +1115,8 @@ class System extends React.Component {
         } else if (name === "composition") {
             composition().then(res => this.setState({compositionData: res, busy: false}));
         } else if (name === "suspended-users") {
-            getSuspendedUsers().then(res => this.setState({currentlySuspendedUsers: res, busy: false}));
+            Promise.all([getSuspendedUsers(), getResetTOTPRequestedUsers()])
+                .then(res => this.setState({currentlySuspendedUsers: res[0], resetTOTPRequestedUsers: res[1], busy: false}));
         } else if (name === "userlogins") {
             userLoginsSummary().then(res => this.setState({userLoginStats: res, busy: false}))
         } else {
@@ -1062,6 +1148,7 @@ class System extends React.Component {
             expiredCollaborations,
             suspendedCollaborations,
             expiredMemberships,
+            sweepResults,
             cronJobs,
             validationData,
             showOrganisationsWithoutAdmin,
@@ -1069,6 +1156,7 @@ class System extends React.Component {
             plscData,
             compositionData,
             currentlySuspendedUsers,
+            resetTOTPRequestedUsers,
             userLoginStats,
             deletedUsers,
             serverQuery,
@@ -1084,13 +1172,13 @@ class System extends React.Component {
         const tabs = [
             this.getValidationTab(validationData, showOrganisationsWithoutAdmin, showServicesWithoutAdmin),
             this.getCronTab(suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations,
-                suspendedCollaborations, expiredMemberships, deletedUsers, cronJobs),
+                suspendedCollaborations, expiredMemberships, deletedUsers, sweepResults, cronJobs),
             config.seed_allowed ? this.getSeedTab(seedResult, demoSeedResult, humanTestingSeedResult) : null,
             this.getDatabaseTab(databaseStats, config),
             this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables, serverQuery),
             this.getPlscTab(plscData, plscView),
             config.seed_allowed ? this.getCompositionTab(compositionData) : null,
-            this.getSuspendedUsersTab(currentlySuspendedUsers),
+            this.getSuspendedUsersTab(currentlySuspendedUsers, resetTOTPRequestedUsers),
             this.getUserLoginTab(userLoginStats),
             this.getScimTab()
         ]

@@ -108,7 +108,7 @@ I18n.translations.nl = {
             validation: "Acties",
             plsc: "LDAP",
             composition: "Config",
-            suspendedUsers: "Suspensions",
+            suspendedUsers: "Users",
             userlogins: "Logins",
             details: "Details",
             orgUsers: "Gebruikers",
@@ -411,7 +411,8 @@ I18n.translations.nl = {
             autoProvisioning: "Iedereen automatisch lid",
             on: "Aan",
             off: "Uit",
-            deleteMemberConfirmation: "Weet je zeker dat je {{name}} wil verwijderen uit deze groep?"
+            deleteMemberConfirmation: "Weet je zeker dat je {{name}} wil verwijderen uit deze groep?",
+            deleteMembersConfirmation: "Weet je zeker dat je de geselecteerde leden wil verwijderen uit deze groep?",
         },
         groupMembers: {
             title: "Leden",
@@ -612,7 +613,9 @@ I18n.translations.nl = {
         deleteOtherConfirmation: "Weet je zeker dat je je gebruiker {{name}} wilt verwijderen?",
         unsuspend: "Ontschors",
         deleteOther: "Verwijder",
-        unsuspendOtherConfirmation: "Weet je zeker dat je je gebruiker {{name}} wilt ontschorsen?",
+        unsuspendOtherConfirmation: "Weet je zeker dat je de gebruiker {{name}} wilt ontschorsen?",
+        reset2fa: "Reset TOTP",
+        reset2faConfirmation: "Weet je zeker dat je de TOTP van gebruiker {{name}} wilt resetten?",
     },
     impersonate: {
         title: "Wie wil je zijn?",
@@ -659,7 +662,7 @@ I18n.translations.nl = {
         scoped_affiliation: "Scoped affiliations",
         entitlement: "Entitlements",
         nick_name: "Roepnaam",
-        schac_home_organisation: "Organisatiedomeinnaam",
+        schac_home_organisation: "Organisatienaam",
         edu_members: "EDU lidmaatschap",
         eduperson_principal_name: "EPPN",
         created_at: "Profiel gemaakt op",
@@ -1458,6 +1461,7 @@ I18n.translations.nl = {
             addedMember: "Gebruiker {{member}} lid gemaakt van groep {{name}}.",
             addedMembers: "Alle gebruikers lid gemaakt van groep {{name}}.",
             deletedMember: "Gebruiker {{member}} als lid verwijderd uit groep {{name}}.",
+            deletedMembers: "Gebruikers als lid verwijderd uit groep {{name}}.",
             addedInvitation: "Gebruiker {{member}} is toegevoegd als lid van groep {{name}}.",
             deletedInvitation: "Genodigde {{invitation}} is verwijderd van de groep {{name}}.",
         },
@@ -1739,6 +1743,8 @@ I18n.translations.nl = {
         runOutdatedRequests: "Run",
         runCleanedRequestsInfo: "Voer de cron-taak uit om alle verouderde goedgekeurde / geweigerde aanmeldingsverzoeken en samenwerkingsverzoeken voor de geconfigureerde drempel te verwijderen",
         runCleanedRequests: "Verwijder",
+        runSweepResults: "Voer de cron-taak uit om alle SCIM services te sweepen",
+        runSweep: "Run",
         action: "Action",
         results: "Results",
         warning_suspend_notifications: "Waarschuwings e-mail met schorsingsmelding verzonden",
@@ -1771,7 +1777,7 @@ I18n.translations.nl = {
         runCleanSlate: "Weet je zeker dat je alle gegevens wil verwijderen?",
         clear: "Clear",
         reload: "Reload",
-        seedResult: "Testgegevens toegevoegd in {{ms}} ms. Ververs deze pagina met een hard-reload om de cache te invalideren.",
+        seedResult: "Testgegevens toegevoegd in {{ms}} ms.",
         toggleJson: "Toggle view",
         suspendedUsers: {
             title: "De onderstaande gebruikers zijn geschorst.",
@@ -1780,6 +1786,11 @@ I18n.translations.nl = {
             name: "Naam",
             lastLogin: "Laatste login",
             activate: "Activeer"
+        },
+        resetTOTPRequestedUsers: {
+            title: "De onderstaande gebruikers hebben een verzoek gedaan om hun TOTP te resetten.",
+            titleZeroState: "Er zijn geen gebruikers die een verzoek hebben gedaan.",
+            reset: "Reset"
         },
         userlogins: {
             loginType: "Type",

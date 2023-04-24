@@ -162,7 +162,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     sarah = User(uid="urn:sarah", name=sarah_name, email="sarah@uva.org", application_uid="sarah_application_uid",
                  username="sarah", external_id="8297d8a5-a2a4-4208-9fb6-100a5865f022")
     betty = User(uid="urn:betty", name="betty", email="betty@uuc.org", username="betty",
-                 external_id="bbd8123c-b0f9-4e3d-b3ff-288aa1c1edd6")
+                 external_id="bbd8123c-b0f9-4e3d-b3ff-288aa1c1edd6", mfa_reset_token="1234567890")
     jane = User(uid="urn:jane", name=jane_name, email="jane@ucc.org", username="jane",
                 entitlement="urn:mace:surf.nl:sram:allow-create-co", external_id="502e861e-f548-4335-89d8-f1764f803964")
     paul = User(uid="urn:paul", name="Paul Doe", email="paul@ucc.org", username="paul",
