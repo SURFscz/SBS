@@ -3,7 +3,7 @@ import {ReactComponent as TreeSwing} from "../../images/tree_swing.svg";
 
 import "./Collaborations.scss";
 import {isEmpty, stopEvent} from "../../utils/Utils";
-import I18n from "i18n-js";
+import I18n from "../../locale/I18n";
 import Entities from "./Entities";
 import Button from "../Button";
 import {allCollaborations, collaborationAdmins, mayRequestCollaboration, myCollaborations} from "../../api";

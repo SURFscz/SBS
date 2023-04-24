@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Tooltip} from "@surfnet/sds";
 import "./EmailField.scss";
 import {isEmpty, stopEvent} from "../utils/Utils";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import {validEmailRegExp} from "../validations/regExps";
 
 export default function EmailField({

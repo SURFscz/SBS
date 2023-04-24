@@ -1,6 +1,6 @@
 import React from "react";
 import "./RadioButton.scss";
-import I18n from "i18n-js";
+import I18n from "../../locale/I18n";
 import {RadioOptions} from "@surfnet/sds";
 
 export default function RadioButton({label, name, value, onChange, tooltip, disabled = false}) {

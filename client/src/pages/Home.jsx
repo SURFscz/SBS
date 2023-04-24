@@ -1,7 +1,7 @@
 import React from "react";
 import "./Home.scss";
 import goat from "./goat.wav";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import {ReactComponent as Logo} from "../icons/ram.svg";
 import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {ReactComponent as MembersIcon} from "../icons/single-neutral.svg";

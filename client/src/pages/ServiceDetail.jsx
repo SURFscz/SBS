@@ -11,7 +11,7 @@ import {
     userTokensOfUser
 } from "../api";
 import "./ServiceDetail.scss";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import Tabs from "../components/Tabs";
 import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {ReactComponent as DetailsIcon} from "../icons/services.svg";

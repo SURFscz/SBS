@@ -1,6 +1,6 @@
 import React from "react";
 import DOMPurify from "dompurify";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import CreateLogo from "../icons/landing/sketch.svg";
 import InviteLogo from "../icons/landing/mail.svg";
 import JoinLogo from "../icons/landing/screen.svg";

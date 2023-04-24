@@ -1,5 +1,5 @@
 import React from "react";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import "./Footer.scss"
 import LanguageSelector from "./LanguageSelector";
 import {Logo, LogoType} from "@surfnet/sds";

@@ -1,6 +1,6 @@
 import {isEmpty} from "../utils/Utils";
 import {emitter} from "../utils/Events";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import {getCsrfToken} from "../stores/AppStore";
 import Cookies from "js-cookie";
 

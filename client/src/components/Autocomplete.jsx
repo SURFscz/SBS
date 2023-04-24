@@ -1,5 +1,5 @@
 import React from "react";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import scrollIntoView from "scroll-into-view";
 import {isEmpty} from "../utils/Utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";

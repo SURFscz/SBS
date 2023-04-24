@@ -13,7 +13,7 @@ import {
     tagsByOrganisation,
     updateCollaboration
 } from "../api";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
 import {isEmpty, stopEvent} from "../utils/Utils";

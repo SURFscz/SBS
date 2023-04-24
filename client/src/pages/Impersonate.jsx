@@ -1,7 +1,7 @@
 import React from "react";
 import "./Impersonate.scss";
 import {searchCollaborations, searchOrganisations, searchUsers} from "../api";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import debounce from "lodash.debounce";
 import SelectField from "../components/SelectField";

@@ -1,6 +1,6 @@
 import React from "react";
 import {withRouter} from "react-router-dom";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import "./ServiceAup.scss";
 import Button from "../components/Button";
 import {serviceAupCreate, serviceByUuid4} from "../api";

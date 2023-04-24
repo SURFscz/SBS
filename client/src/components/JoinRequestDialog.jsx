@@ -1,6 +1,6 @@
 import React from "react";
 
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import "./JoinRequestDialog.scss";
 import Button from "./Button";
 import InputField from "./InputField";
