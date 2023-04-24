@@ -3,7 +3,7 @@ import {addOrganisationServices, allServices, deleteOrganisationServices} from "
 
 import "./OrganisationServices.scss";
 import {stopEvent} from "../../utils/Utils";
-import I18n from "i18n-js";
+import I18n from "../../locale/I18n";
 import Entities from "./Entities";
 
 import {setFlash} from "../../utils/Flash";

@@ -1,5 +1,5 @@
 import React from "react";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import Cookies from "js-cookie";
 import {replaceQueryParameter} from "../utils/QueryParameters";
 import {stopEvent} from "../utils/Utils";
@@ -20,7 +20,7 @@ export default class LanguageSelector extends React.PureComponent {
 
     renderLocaleChooser(locale) {
         return (
-            <a href={"locale"} className={`${I18n.currentLocale() === locale ? "is-active" : ""}`}
+            <a href={"locale"} className={`${I18n.locale === locale ? "is-active" : ""}`}
                title={I18n.t("select_locale", {locale: locale})}
                onClick={this.handleChooseLocale(locale)}>
                 {I18n.t("code", {locale: locale})}

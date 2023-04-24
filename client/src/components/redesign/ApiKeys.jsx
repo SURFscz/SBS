@@ -3,7 +3,7 @@ import {apiKeyValue, createApiKey, deleteApiKey} from "../../api";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
 
 import "./ApiKeys.scss";
-import I18n from "i18n-js";
+import I18n from "../../locale/I18n";
 import Button from "../Button";
 import {setFlash} from "../../utils/Flash";
 import Entities from "./Entities";

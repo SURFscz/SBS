@@ -15,7 +15,7 @@ import {
     userTokensOfUser
 } from "../api";
 import "./CollaborationDetail.scss";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import {collaborationRoles} from "../forms/constants";
 import {AppStore} from "../stores/AppStore";
 import UnitHeader from "../components/redesign/UnitHeader";

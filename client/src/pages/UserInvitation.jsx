@@ -1,6 +1,6 @@
 import React from "react";
 import {invitationByHash, organisationInvitationByHash} from "../api";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import "./UserInvitation.scss";
 import Button from "../components/Button";
 import moment from "moment";

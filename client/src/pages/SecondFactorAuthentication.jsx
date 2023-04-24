@@ -13,7 +13,7 @@ import {
     verify2faProxyAuthz
 } from "../api";
 import SpinnerField from "../components/redesign/SpinnerField";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import Button from "../components/Button";
 import InputField from "../components/InputField";
 import {setFlash} from "../utils/Flash";

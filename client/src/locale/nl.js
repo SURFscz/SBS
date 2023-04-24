@@ -1,6 +1,4 @@
-import I18n from "i18n-js";
-
-I18n.translations.nl = {
+const nl = {
     code: "NL",
     name: "Nederlands",
     select_locale: "Kies Nederlands als taal",
@@ -2219,4 +2217,4 @@ I18n.translations.nl = {
     },
 };
 
-export default I18n.translations.nl;
+export default nl;

@@ -7,7 +7,7 @@ import {
     ipNetworks,
     organisationNameById, reset2faOther
 } from "../api";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import "./UserDetail.scss";
 
 import {AppStore} from "../stores/AppStore";

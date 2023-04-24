@@ -1,6 +1,6 @@
 import React from "react";
 import "./Organisations.scss";
-import I18n from "i18n-js";
+import I18n from "../../locale/I18n";
 import {ReactComponent as SearchIcon} from "@surfnet/sds/icons/functional-icons/search.svg";
 import Button from "../Button";
 import PropTypes from "prop-types";

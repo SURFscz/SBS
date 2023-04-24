@@ -10,7 +10,7 @@ import {
     updateService
 } from "../api";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import InputField from "../components/InputField";
 import "./Service.scss";
 import Button from "../components/Button";

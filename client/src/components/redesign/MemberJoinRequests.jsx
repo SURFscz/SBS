@@ -1,7 +1,7 @@
 import React from "react";
 
 import "./MemberJoinRequests.scss";
-import I18n from "i18n-js";
+import I18n from "../../locale/I18n";
 import Entities from "./Entities";
 import SpinnerField from "./SpinnerField";
 import UserColumn from "./UserColumn";

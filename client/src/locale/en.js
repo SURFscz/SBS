@@ -1,6 +1,4 @@
-import I18n from "i18n-js";
-
-I18n.translations.en = {
+const en = {
     code: "EN",
     name: "English",
     select_locale: "Change language to English",
@@ -2219,4 +2217,4 @@ I18n.translations.en = {
     },
 };
 
-export default I18n.translations.en;
+export default en;

@@ -2,7 +2,7 @@ import React from "react";
 import "./NotFound.scss";
 import {Player} from '@lottiefiles/react-lottie-player';
 import notFound from "../lotties/not_found.json"
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import DOMPurify from "dompurify";
 
 export default function NotFound({config}) {
