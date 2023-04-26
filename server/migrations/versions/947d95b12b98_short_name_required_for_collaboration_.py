@@ -28,9 +28,9 @@ def upgrade():
 
     # collaboration_requests short_name is not null constraint
     result = conn.execute(text("SELECT cr.id AS id, org.short_name AS org_short_name "
-                          "FROM "
-                          "collaboration_requests cr INNER JOIN organisations org ON org.id = cr.organisation_id "
-                          "WHERE cr.short_name IS NULL"))
+                               "FROM "
+                               "collaboration_requests cr INNER JOIN organisations org ON org.id = cr.organisation_id "
+                               "WHERE cr.short_name IS NULL"))
     for row in result:
         id = row.id
         org_short_name = row.org_short_name
