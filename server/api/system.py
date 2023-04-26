@@ -1,3 +1,5 @@
+import os
+
 from flask import current_app, Blueprint, request as current_request, session
 from sqlalchemy import text
 from sqlalchemy.orm import joinedload
@@ -113,9 +115,12 @@ def run_seed():
     confirm_write_access()
 
     check_seed_allowed("seed")
-
-    seed(db, current_app.app_config, skip_seed=False, perf_test=False)
-    session.clear()
+    try:
+        os.environ["SEEDING"] = "1"
+        seed(db, current_app.app_config, skip_seed=False, perf_test=False)
+        session.clear()
+    finally:
+        del os.environ["SEEDING"]
 
     return {}, 201
 
@@ -126,10 +131,14 @@ def run_demo_seed():
     confirm_write_access()
 
     check_seed_allowed("demo-seed")
+    try:
+        os.environ["SEEDING"] = "1"
 
-    from server.test.demo_seed import demo_seed
-    demo_seed(db)
-    session.clear()
+        from server.test.demo_seed import demo_seed
+        demo_seed(db)
+        session.clear()
+    finally:
+        del os.environ["SEEDING"]
 
     return {}, 201
 
@@ -141,9 +150,13 @@ def run_human_testing_seed():
 
     check_seed_allowed("human-testing-seed")
 
-    from server.test.human_testing_seed import human_testing_seed
-    human_testing_seed(db)
-    session.clear()
+    try:
+        os.environ["SEEDING"] = "1"
+        from server.test.human_testing_seed import human_testing_seed
+        human_testing_seed(db)
+        session.clear()
+    finally:
+        del os.environ["SEEDING"]
 
     return {}, 201
 
@@ -204,7 +217,7 @@ def feedback():
     data = current_request.get_json()
     message = data["message"]
     mail_conf = cfg.mail
-    user = User.query.get(current_user_id())
+    user = db.session.get(User, current_user_id())
     mail_feedback(mail_conf.environment, message, user, [mail_conf.info_email])
     return {}, 201
 

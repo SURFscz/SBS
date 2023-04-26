@@ -135,7 +135,7 @@ def send_error_mail(tb):
     mail_conf = current_app.app_config.mail
     if mail_conf.send_exceptions and not os.environ.get("TESTING"):
         if "user" in session and "id" in session["user"]:
-            user_id = User.query.get(current_user_id()).email
+            user_id = db.session.get(User, current_user_id()).email
         elif request_context.get("is_authorized_api_call"):
             user_id = request_context.api_user.name
         elif request_context.get("external_api_organisation"):

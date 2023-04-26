@@ -1,4 +1,7 @@
+import os
+
 from flask import current_app
+from sqlalchemy import text
 
 from server.api.base import STATUS_DENIED, STATUS_APPROVED
 from server.cron.schedule import start_scheduling
@@ -49,8 +52,10 @@ class TestSystem(AbstractTest):
 
     def test_outstanding_requests(self):
         past_date = "2018-03-20 14:51:40"
-        db.engine.execute(f"update join_requests set created_at = '{past_date}'")
-        db.engine.execute(f"update collaboration_requests set created_at = '{past_date}'")
+        with db.engine.connect() as conn:
+            with conn.begin():
+                conn.execute(text(f"update join_requests set created_at = '{past_date}'"))
+                conn.execute(text(f"update collaboration_requests set created_at = '{past_date}'"))
         res = self.get("/api/system/outstanding_requests")
 
         self.assertTrue(len(res["collaboration_requests"]) > 0)
@@ -58,8 +63,12 @@ class TestSystem(AbstractTest):
 
     def test_cleanup_non_open_requests(self):
         past_date = "2018-03-20 14:51:40"
-        db.engine.execute(f"update join_requests set created_at = '{past_date}', status = '{STATUS_DENIED}'")
-        db.engine.execute(f"update collaboration_requests set created_at = '{past_date}', status = '{STATUS_APPROVED}'")
+        with db.engine.connect() as conn:
+            with conn.begin():
+                conn.execute(text(f"update join_requests set created_at = '{past_date}', status = '{STATUS_DENIED}'"))
+                conn.execute(text(f"update collaboration_requests set created_at = '{past_date}'"
+                                  f", status = '{STATUS_APPROVED}'"))
+            db.session.commit()
         res = self.put("/api/system/cleanup_non_open_requests")
 
         self.assertTrue(len(res["collaboration_requests"]) > 0)

@@ -21,7 +21,7 @@ def _sanitize_and_verify(data, hash_token=True):
         data = hash_secret_key(data, "hashed_token")
 
     service_id = data["service_id"]
-    service = Service.query.get(service_id)
+    service = db.session.get(Service, service_id)
 
     if not user_service(service_id, False):
         raise Forbidden(f"User has no access to {service.name}")
@@ -34,7 +34,7 @@ def _sanitize_and_verify(data, hash_token=True):
 @user_token_api.route("/", strict_slashes=False)
 @json_endpoint
 def user_tokens():
-    user = User.query.get(current_user_id())
+    user = db.session.get(User, current_user_id())
     tokens = user.user_tokens
     service_id = query_param("service_id", False)
     if service_id:
@@ -73,9 +73,9 @@ def save_token():
 @json_endpoint
 def update_token():
     data = _sanitize_and_verify(current_request.get_json(), hash_token=False)
-    user_token = UserToken.query.get(data["id"])
+    user_token = db.session.get(UserToken, data["id"])
     service_id = data["service_id"]
-    user_token.service = Service.query.get(service_id)
+    user_token.service = db.session.get(Service, service_id)
     user_token.name = data.get("name")
     user_token.description = data.get("description")
     db.session.merge(user_token)
@@ -89,7 +89,7 @@ def update_token():
 @json_endpoint
 def renew_lease():
     data = _sanitize_and_verify(current_request.get_json(), hash_token=False)
-    user_token = UserToken.query.get(data["id"])
+    user_token = db.session.get(UserToken, data["id"])
     user_token.created_at = datetime.datetime.utcnow()
     db.session.merge(user_token)
     return {}, 201
@@ -98,7 +98,7 @@ def renew_lease():
 @user_token_api.route("/<user_token_id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_api_key(user_token_id):
-    user_token = UserToken.query.get(user_token_id)
+    user_token = db.session.get(UserToken, user_token_id)
     if current_user_id() != user_token.user_id:
         raise Forbidden("Can not delete user_token from someone else")
 
