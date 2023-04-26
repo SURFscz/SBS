@@ -32,10 +32,10 @@ def upgrade():
     conn = op.get_bind()
     conn.execute(text("UPDATE users SET `ssh_key` = NULL where `ssh_key` = ''"))
 
-    result = conn.execute("SELECT `ssh_key`, `id` FROM `users` WHERE `ssh_key` IS NOT NULL")
+    result = conn.execute(text("SELECT `ssh_key`, `id` FROM `users` WHERE `ssh_key` IS NOT NULL"))
     for row in result:
-        ssh_key = row["ssh_key"]
-        conn.execute(f"INSERT INTO `ssh_keys` (`ssh_value`, `user_id`) VALUES ('{ssh_key}', {row['id']})")
+        ssh_key = row[0]
+        conn.execute(text(f"INSERT INTO `ssh_keys` (`ssh_value`, `user_id`) VALUES ('{ssh_key}', {row[1]})"))
 
     conn.execute(text("ALTER TABLE users DROP COLUMN ssh_key"))
 
