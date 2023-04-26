@@ -17,10 +17,10 @@ depends_on = None
 
 def upgrade():
     conn = op.get_bind()
-    result = conn.execute("SELECT VERSION() AS version")
+    result = conn.execute(text("SELECT VERSION() AS version"))
     supports_regexp_replace = False
     for row in result:
-        version = row["version"]
+        version = row[0]
         if version.startswith("8"):
             supports_regexp_replace = True
     if supports_regexp_replace:

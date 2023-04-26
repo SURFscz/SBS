@@ -268,7 +268,7 @@ class TestCollaboration(AbstractTest):
         rows = db.session.execute(text(f"SELECT logo FROM collaborations WHERE id = {collaboration_id}"))
         self.assertEqual(1, rows.rowcount)
         for row in rows:
-            self.assertFalse(row["logo"].startswith("http"))
+            self.assertFalse(row[0].startswith("http"))
 
     def test_collaboration_update_short_name(self):
         collaboration_id = self._find_by_identifier()["id"]

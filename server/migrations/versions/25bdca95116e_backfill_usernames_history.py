@@ -18,10 +18,10 @@ depends_on = None
 def upgrade():
     conn = op.get_bind()
     conn.execute(text("ALTER TABLE user_names_history ADD UNIQUE INDEX user_names_history_username(username)"))
-    result = conn.execute("SELECT username FROM `users` WHERE `username` IS NOT NULL")
+    result = conn.execute(text("SELECT username FROM `users` WHERE `username` IS NOT NULL"))
     for row in result:
-        username = row["username"]
-        conn.execute(f"INSERT INTO `user_names_history` (`username`) VALUES ('{username}')")
+        username = row[0]
+        conn.execute(text(f"INSERT INTO `user_names_history` (`username`) VALUES ('{username}')"))
 
 
 def downgrade():

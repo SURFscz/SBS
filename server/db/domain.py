@@ -189,8 +189,9 @@ automatic_connection_allowed_organisations_services_association = db.Table(
     "automatic_connection_allowed_organisations_services",
     metadata,
     db.Column("organisation_id", db.Integer(), db.ForeignKey("organisations.id", ondelete="CASCADE"),
-              primary_key=True),
-    db.Column("service_id", db.Integer(), db.ForeignKey("services.id", ondelete="CASCADE"), primary_key=True),
+              primary_key=True, use_alter=True),
+    db.Column("service_id", db.Integer(), db.ForeignKey("services.id", ondelete="CASCADE"), primary_key=True,
+              use_alter=True),
 )
 
 
@@ -280,11 +281,11 @@ class Collaboration(Base, db.Model, LogoMixin):
     disclose_member_information = db.Column("disclose_member_information", db.Boolean(), nullable=True, default=False)
     disclose_email_information = db.Column("disclose_email_information", db.Boolean(), nullable=True, default=False)
     website_url = db.Column("website_url", db.String(length=512), nullable=True)
-    invitations_count = column_property(select([func.count(Invitation.id)])
+    invitations_count = column_property(select(func.count(Invitation.id))
                                         .where(Invitation.collaboration_id == id)
                                         .correlate_except(Invitation)
                                         .scalar_subquery())
-    collaboration_memberships_count = column_property(select([func.count(CollaborationMembership.id)])
+    collaboration_memberships_count = column_property(select(func.count(CollaborationMembership.id))
                                                       .where(CollaborationMembership.collaboration_id == id)
                                                       .correlate_except(CollaborationMembership)
                                                       .scalar_subquery())
@@ -373,11 +374,11 @@ class Organisation(Base, db.Model, LogoMixin):
     api_keys = db.relationship("ApiKey", back_populates="organisation",
                                cascade="delete, delete-orphan",
                                passive_deletes=True)
-    collaborations_count = column_property(select([func.count(Collaboration.id)])
+    collaborations_count = column_property(select(func.count(Collaboration.id))
                                            .where(Collaboration.organisation_id == id)
                                            .correlate_except(Collaboration)
                                            .scalar_subquery())
-    organisation_memberships_count = column_property(select([func.count(OrganisationMembership.id)])
+    organisation_memberships_count = column_property(select(func.count(OrganisationMembership.id))
                                                      .where(OrganisationMembership.organisation_id == id)
                                                      .correlate_except(OrganisationMembership)
                                                      .scalar_subquery())

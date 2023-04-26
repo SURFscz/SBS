@@ -22,9 +22,9 @@ def upgrade():
 
     for table in ["organisations", "services", "collaborations", "collaboration_requests"]:
         conn.execute(text(f"ALTER TABLE {table} ADD COLUMN uuid4 varchar(255)"))
-        result = conn.execute(f"SELECT id FROM {table}")
+        result = conn.execute(text(f"SELECT id FROM {table}"))
         for row in result:
-            conn.execute(f"UPDATE {table} set uuid4 = '{str(uuid.uuid4())}' where id = {row['id']}")
+            conn.execute(text(f"UPDATE {table} set uuid4 = '{str(uuid.uuid4())}' where id = {row[0]}"))
 
         conn.execute(text(f"ALTER TABLE {table} MODIFY uuid4 varchar(255) NOT NULL"))
         conn.execute(text(f"ALTER TABLE {table} ADD UNIQUE INDEX {table}_uuid4(uuid4)"))
