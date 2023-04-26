@@ -98,7 +98,7 @@ jobs:
       - name: Run tests with coverage
         run: |
           cd ./server
-          coverage run -m pytest test --cov-report xml --cov=server
+          SQLALCHEMY_WARN_20=1 coverage run -m pytest test --cov-report xml --cov=server
         timeout-minutes: 20
 
       - name: Upload coverage to Codecov
