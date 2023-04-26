@@ -16,8 +16,8 @@ collaborations_services_api = Blueprint("collaborations_services_api", __name__,
 
 def connect_service_collaboration(service_id, collaboration_id, force=False):
     # Ensure that the connection is allowed
-    service = Service.query.get(service_id)
-    organisation = Collaboration.query.get(collaboration_id).organisation
+    service = db.session.get(Service, service_id)
+    organisation = db.session.get(Collaboration, collaboration_id).organisation
     org_allowed = organisation in service.allowed_organisations
     org_automatic_allowed = organisation in service.automatic_connection_allowed_organisations
 
@@ -29,7 +29,7 @@ def connect_service_collaboration(service_id, collaboration_id, force=False):
     if not force and not allowed_to_connect:
         raise BadRequest("automatic_connection_not_allowed")
 
-    collaboration = Collaboration.query.get(collaboration_id)
+    collaboration = db.session.get(Collaboration, collaboration_id)
     if collaboration.organisation.services_restricted and not service.allow_restricted_orgs:
         raise BadRequest(f"Organisation {collaboration.organisation.name} can only be linked to SURF services")
 
@@ -115,9 +115,9 @@ def delete_collaborations_services(collaboration_id, service_id):
     except Forbidden:
         confirm_service_admin(service_id)
 
-    collaboration = Collaboration.query.get(collaboration_id)
+    collaboration = db.session.get(Collaboration, collaboration_id)
 
-    service = Service.query.get(service_id)
+    service = db.session.get(Service, service_id)
     collaboration.services.remove(service)
     db.session.merge(collaboration)
     db.session.commit()

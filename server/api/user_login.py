@@ -1,5 +1,5 @@
-
 from flask import Blueprint
+from sqlalchemy import text
 
 from server.api.base import json_endpoint
 from server.auth.security import confirm_write_access
@@ -13,10 +13,10 @@ user_login_api = Blueprint("user_login_api", __name__, url_prefix="/api/user_log
 @json_endpoint
 def summary():
     confirm_write_access()
-
-    rs = db.engine.execute("SELECT login_type, COUNT(*), SUM(succeeded=1), SUM(succeeded=0) "
-                           "FROM user_logins GROUP BY login_type")
-    res = [{"login_type": row[0], "count": row[1], "succeeded": int(row[2]), "failed": int(row[3])} for row in rs]
+    with db.engine.connect() as conn:
+        rs = conn.execute(text("SELECT login_type, COUNT(*), SUM(succeeded=1), SUM(succeeded=0) "
+                                "FROM user_logins GROUP BY login_type"))
+        res = [{"login_type": row[0], "count": row[1], "succeeded": int(row[2]), "failed": int(row[3])} for row in rs]
 
     def add_missing_login_type(login_type):
         if not [r for r in res if r["login_type"] == login_type]:

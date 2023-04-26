@@ -213,7 +213,7 @@ def reset2fa_other():
     user = User.query.filter(User.id == user_id).one()
 
     if not is_application_admin():
-        curr_user = User.query.get(current_user_id())
+        curr_user = db.session.get(User, current_user_id())
         curr_user_orgs = [om.organisation_id for om in curr_user.organisation_memberships if om.role == "admin"]
         user_orgs = [cm.collaboration.organisation_id for cm in user.collaboration_memberships]
         if not any([i in curr_user_orgs for i in user_orgs]):

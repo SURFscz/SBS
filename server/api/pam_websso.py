@@ -63,7 +63,7 @@ def find_by_session_id(service_shortname, session_id):
     res = {"service": pam_sso_session.service}
     if "user" in session and not session["user"]["guest"]:
         if not pam_sso_session.user:
-            pam_sso_session.user = User.query.get(current_user_id())
+            pam_sso_session.user = db.session.get(User, current_user_id())
             db.session.add(pam_sso_session)
         res["validation"] = _validate_pam_sso_session(pam_sso_session, None, False, True)
         res["pin"] = pam_sso_session.pin

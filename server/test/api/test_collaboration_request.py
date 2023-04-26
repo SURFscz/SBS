@@ -1,3 +1,4 @@
+from server.db.db import db
 from server.db.domain import Organisation, CollaborationRequest, CollaborationMembership, Collaboration
 from server.test.abstract_test import AbstractTest
 from server.test.seed import schac_home_organisation, amsterdam_uva_name, collaboration_request_name, uuc_name, \
@@ -24,7 +25,7 @@ class TestCollaborationRequest(AbstractTest):
         }
         with self.app.mail.record_messages() as outbox:
             res = self.post("/api/collaboration_requests", body=data, with_basic_auth=False)
-            collaboration_request = CollaborationRequest.query.get(res["id"])
+            collaboration_request = db.session.get(CollaborationRequest, res["id"])
             self.assertEqual("urn:roger", collaboration_request.requester.uid)
             mail_msg = outbox[0]
             self.assertEqual("Request for new collaboration New Collaboration (local)", mail_msg.subject)

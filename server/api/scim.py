@@ -10,6 +10,7 @@ from werkzeug.exceptions import Unauthorized
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_write_access
 from server.auth.tokens import validate_service_token
+from server.db.db import db
 from server.db.defaults import SERVICE_TOKEN_SCIM
 from server.db.domain import User, Collaboration, Group, Service
 from server.scim import SCIM_URL_PREFIX, EXTERNAL_ID_POST_FIX
@@ -141,7 +142,7 @@ def sweep():
         service = validate_service_token("scim_enabled", SERVICE_TOKEN_SCIM)
     except Unauthorized:
         confirm_write_access()
-        service = Service.query.get(query_param("service_id"))
+        service = db.session.get(Service, query_param("service_id"))
     try:
         return perform_sweep(service), 201
     except Exception as error:

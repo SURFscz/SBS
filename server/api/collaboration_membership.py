@@ -98,7 +98,7 @@ def update_collaboration_membership_role():
 def create_collaboration_membership_role():
     client_data = current_request.get_json()
     collaboration_id = client_data["collaborationId"]
-    collaboration = Collaboration.query.get(collaboration_id)
+    collaboration = db.session.get(Collaboration, collaboration_id)
 
     confirm_organisation_admin_or_manager(collaboration.organisation_id)
 

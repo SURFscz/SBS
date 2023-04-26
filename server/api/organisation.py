@@ -34,7 +34,7 @@ def name_exists():
 
     name = query_param("name")
     existing_organisation = query_param("existing_organisation", required=False, default="")
-    org = Organisation.query.options(load_only("id")) \
+    org = Organisation.query.options(load_only(Organisation.id)) \
         .filter(func.lower(Organisation.name) == func.lower(name)) \
         .filter(func.lower(Organisation.name) != func.lower(existing_organisation)) \
         .first()
@@ -48,7 +48,7 @@ def short_name_exists():
 
     short_name = query_param("short_name")
     existing_organisation = query_param("existing_organisation", required=False, default="")
-    org = Organisation.query.options(load_only("id")) \
+    org = Organisation.query.options(load_only(Organisation.id)) \
         .filter(func.lower(Organisation.short_name) == func.lower(short_name)) \
         .filter(func.lower(Organisation.short_name) != func.lower(existing_organisation)) \
         .first()
@@ -105,7 +105,8 @@ def organisation_search():
         sql = text(base_query if not_wild_card else base_query + " ORDER BY NAME")
         if not_wild_card:
             sql = sql.bindparams(bindparam("q", type_=String))
-        result_set = db.engine.execute(sql, {"q": f"{q}*"}) if not_wild_card else db.engine.execute(sql)
+        with db.engine.connect() as conn:
+            result_set = conn.execute(sql, {"q": f"{q}*"}) if not_wild_card else conn.execute(sql)
 
         res = [{"id": row[0], "name": row[1], "description": row[2], "category": row[3], "logo": row[4],
                 "short_name": row[5], "services_restricted": row[6]} for row in result_set]
@@ -130,7 +131,7 @@ def my_organisations_lite():
 @json_endpoint
 def organisation_name_by_id(organisation_id):
     confirm_organisation_admin_or_manager(organisation_id)
-    res = Organisation.query.options(load_only("name")).filter(Organisation.id == organisation_id).one()
+    res = Organisation.query.options(load_only(Organisation.name)).filter(Organisation.id == organisation_id).one()
     return {"name": res.name}, 200
 
 
@@ -229,10 +230,10 @@ def organisation_invites_preview():
     message = data.get("message", None)
     intended_role = data.get("intended_role", "manager")
 
-    organisation = Organisation.query.get(data["organisation_id"])
+    organisation = db.session.get(Organisation, data["organisation_id"])
     confirm_organisation_admin(organisation.id)
 
-    user = User.query.get(current_user_id())
+    user = db.session.get(User, current_user_id())
     invitation = munchify({
         "user": user,
         "organisation": organisation,
@@ -263,8 +264,8 @@ def organisation_invites():
 
     message = data.get("message", None)
 
-    organisation = Organisation.query.get(organisation_id)
-    user = User.query.get(current_user_id())
+    organisation = db.session.get(Organisation, organisation_id)
+    user = db.session.get(User, current_user_id())
 
     for administrator in administrators:
         invitation = OrganisationInvitation(hash=generate_token(), intended_role=intended_role,
@@ -302,7 +303,7 @@ def save_organisation():
     message = data.get("message", None)
 
     res = save(Organisation, custom_json=data)
-    user = User.query.get(current_user_id())
+    user = db.session.get(User, current_user_id())
     organisation = res[0]
     for administrator in administrators:
         invitation = OrganisationInvitation(hash=generate_token(), message=message, invitee_email=administrator,
@@ -348,7 +349,7 @@ def update_organisation():
     _clear_api_keys(data)
     cleanse_short_name(data)
 
-    organisation = Organisation.query.get(data["id"])
+    organisation = db.session.get(Organisation, data["id"])
     if organisation.short_name != data["short_name"]:
         for collaboration in organisation.collaborations:
             collaboration.global_urn = f"{data['short_name']}:{collaboration.short_name}"

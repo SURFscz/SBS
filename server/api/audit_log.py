@@ -100,7 +100,7 @@ def _add_references(audit_logs):
         parent_name = audit_log.parent_name
         if parent_name in table_names_cls_mapping and not _contains_id(result, parent_name, audit_log.parent_id):
             cls = table_names_cls_mapping[parent_name]
-            parents = cls.query.options(load_only("id", "name")).filter(cls.id == audit_log.parent_id).all()
+            parents = cls.query.options(load_only(cls.id, cls.name)).filter(cls.id == audit_log.parent_id).all()
             result[parent_name] = result.get(parent_name, []) + parents
 
         if audit_log.user_id or audit_log.subject_id:
