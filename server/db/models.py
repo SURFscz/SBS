@@ -97,7 +97,7 @@ def update(cls, custom_json=None, allow_child_cascades=True, allowed_child_colle
 
 
 def delete(cls, primary_key):
-    instance = cls.query.get(primary_key)
+    instance = db.session.get(cls, primary_key)
     db.session.delete(instance)
     db.session.commit()
     return instance, 204

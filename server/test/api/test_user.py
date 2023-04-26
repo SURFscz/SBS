@@ -346,7 +346,7 @@ class TestUser(AbstractTest):
                 "email": "bogus"}
         self.put("/api/users", body, with_basic_auth=False)
 
-        roger = User.query.get(roger_id)
+        roger = db.session.get(User, roger_id)
         now = now.date()
         self.assertEqual(roger.last_accessed_date.date(), now)
         self.assertEqual(roger.last_login_date.date(), now)

@@ -174,7 +174,7 @@ def deny_join_request():
 @join_request_api.route("/<join_request_id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_join_request(join_request_id):
-    join_request = JoinRequest.query.get(join_request_id)
+    join_request = db.session.get(JoinRequest, join_request_id)
     confirm_collaboration_admin(join_request.collaboration_id)
     if join_request.status == STATUS_OPEN:
         raise BadRequest("Join request with status 'open' can not be deleted")

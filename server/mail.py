@@ -328,7 +328,7 @@ def mail_feedback(environment, message, current_user, recipients):
 def mail_platform_admins(obj):
     mail_cfg = current_app.app_config.mail
     if mail_cfg.audit_trail_notifications_enabled:
-        current_user = User.query.get(current_user_id())
+        current_user = db.session.get(User, current_user_id())
         _do_send_mail(
             subject=f"New {type(obj).__name__} ({obj.name}) created by {current_user.name}"
                     f" in environment {mail_cfg.environment}",

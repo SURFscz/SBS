@@ -144,6 +144,14 @@ cd server
 pip-upgrade requirements/test.txt --dry-run
 ```
 
+### [SQLAlchemy 2.0](#sqlalchemy)
+```bash
+source .venv/bin/activate
+cd server
+SQLALCHEMY_WARN_20=1 pytest ./test/
+```
+
+
 ### [Swagger](#swagger)
 
 See http://localhost:8080/apidocs/ and https://test.sram.surf.nl/apidocs/
