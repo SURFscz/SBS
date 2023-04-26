@@ -475,7 +475,7 @@ def update_service():
 
     if not is_application_admin():
         forbidden = ["allow_restricted_orgs", "non_member_users_access_allowed", "entity_id", "abbreviation",
-                     "scim_enabled", "scim_url", "scim_bearer_token"]
+                     "scim_enabled", "scim_client_enabled"]
         for attr in [fb for fb in forbidden if fb in data]:
             data[attr] = getattr(service, attr)
 
