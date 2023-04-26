@@ -40,7 +40,7 @@ def collaboration_request_by_id(collaboration_request_id):
 @json_endpoint
 def request_collaboration():
     data = current_request.get_json()
-    user = User.query.get(current_user_id())
+    user = db.session.get(User, current_user_id())
     organisation = Organisation.query \
         .join(Organisation.schac_home_organisations) \
         .filter(SchacHomeOrganisation.name == user.schac_home_organisation) \
@@ -90,7 +90,7 @@ def request_collaboration():
 @collaboration_request_api.route("/<collaboration_request_id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_request_collaboration(collaboration_request_id):
-    collaboration_request = CollaborationRequest.query.get(collaboration_request_id)
+    collaboration_request = db.session.get(CollaborationRequest, collaboration_request_id)
     confirm_organisation_admin_or_manager(collaboration_request.organisation_id)
     if collaboration_request.status == STATUS_OPEN:
         raise BadRequest("Collaboration request with status 'open' can not be deleted")
@@ -104,7 +104,7 @@ def delete_request_collaboration(collaboration_request_id):
 @collaboration_request_api.route("/approve/<collaboration_request_id>", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def approve_request(collaboration_request_id):
-    collaboration_request = CollaborationRequest.query.get(collaboration_request_id)
+    collaboration_request = db.session.get(CollaborationRequest, collaboration_request_id)
     confirm_organisation_admin_or_manager(collaboration_request.organisation_id)
     client_data = current_request.get_json()
     attributes = ["name", "short_name", "description", "organisation_id", "accepted_user_policy", "logo",
@@ -157,7 +157,7 @@ def approve_request(collaboration_request_id):
 @collaboration_request_api.route("/deny/<collaboration_request_id>", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def deny_request(collaboration_request_id):
-    collaboration_request = CollaborationRequest.query.get(collaboration_request_id)
+    collaboration_request = db.session.get(CollaborationRequest, collaboration_request_id)
     confirm_organisation_admin_or_manager(collaboration_request.organisation_id)
 
     rejection_reason = current_request.get_json()["rejection_reason"]

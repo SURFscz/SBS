@@ -17,10 +17,10 @@ def do_add_group_members(data, assert_collaboration_admin):
     if assert_collaboration_admin and "skip_collaboration_admin_confirmation" not in request_context:
         confirm_collaboration_admin(collaboration_id)
 
-    group = Group.query.get(group_id)
+    group = db.session.get(Group, group_id)
     members_ids = data["members_ids"]
     for members_id in members_ids:
-        group.collaboration_memberships.append(CollaborationMembership.query.get(int(members_id)))
+        group.collaboration_memberships.append(db.session.get(CollaborationMembership, int(members_id)))
 
     db.session.merge(group)
     db.session.commit()
@@ -47,8 +47,8 @@ def add_group_members():
 def delete_group_members(group_id, collaboration_membership_id, collaboration_id):
     confirm_collaboration_admin(collaboration_id)
 
-    group = Group.query.get(group_id)
-    group.collaboration_memberships.remove(CollaborationMembership.query.get(collaboration_membership_id))
+    group = db.session.get(Group, group_id)
+    group.collaboration_memberships.remove(db.session.get(CollaborationMembership, collaboration_membership_id))
     db.session.merge(group)
     db.session.commit()
 

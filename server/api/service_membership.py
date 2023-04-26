@@ -32,7 +32,7 @@ def create_service_membership_role():
     confirm_write_access()
 
     service_id = current_request.get_json()["serviceId"]
-    service = Service.query.get(service_id)
+    service = db.session.get(Service, service_id)
 
     service_membership = ServiceMembership(user_id=current_user_id(),
                                            service_id=service.id,

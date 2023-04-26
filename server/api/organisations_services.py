@@ -24,8 +24,8 @@ def add_collaborations_services():
 
     confirm_organisation_admin_or_manager(organisation_id)
     # Ensure that the connection is allowed
-    service = Service.query.get(service_id)
-    organisation = Organisation.query.get(organisation_id)
+    service = db.session.get(Service, service_id)
+    organisation = db.session.get(Organisation, organisation_id)
 
     not_allowed_org = organisation not in service.allowed_organisations and not service.automatic_connection_allowed
     not_auto_allowed_org = organisation not in service.automatic_connection_allowed_organisations
@@ -54,9 +54,9 @@ def add_collaborations_services():
 def delete_organisations_services(organisation_id, service_id):
     confirm_organisation_admin_or_manager(organisation_id)
 
-    organisation = Organisation.query.get(organisation_id)
+    organisation = db.session.get(Organisation, organisation_id)
 
-    service = Service.query.get(service_id)
+    service = db.session.get(Service, service_id)
     organisation.services.remove(service)
     db.session.merge(organisation)
     db.session.commit()

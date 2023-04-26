@@ -87,7 +87,7 @@ def _do_mail_request(collaboration, service, service_connection_request, is_admi
 @json_endpoint
 def service_request_connections_by_service(service_id):
     # Avoid security risk, only return id
-    return ServiceConnectionRequest.query.options(load_only("collaboration_id")) \
+    return ServiceConnectionRequest.query.options(load_only(ServiceConnectionRequest.collaboration_id)) \
                                          .filter(ServiceConnectionRequest.service_id == service_id) \
                                          .all(), 200
 
@@ -95,7 +95,7 @@ def service_request_connections_by_service(service_id):
 @service_connection_request_api.route("/<service_connection_request_id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_service_request_connection(service_connection_request_id):
-    service_connection_request = ServiceConnectionRequest.query.get(service_connection_request_id)
+    service_connection_request = db.session.get(ServiceConnectionRequest, service_connection_request_id)
 
     confirm_collaboration_admin(service_connection_request.collaboration_id)
 
@@ -111,12 +111,12 @@ def delete_service_request_connection(service_connection_request_id):
 @json_endpoint
 def request_service_connection():
     data = current_request.get_json()
-    service = Service.query.get(int(data["service_id"]))
-    collaboration = Collaboration.query.get(int(data["collaboration_id"]))
+    service = db.session.get(Service, int(data["service_id"]))
+    collaboration = db.session.get(Collaboration, int(data["collaboration_id"]))
 
     confirm_collaboration_member(collaboration.id)
 
-    user = User.query.get(current_user_id())
+    user = db.session.get(User, current_user_id())
     is_admin = collaboration.is_admin(user.id)
 
     request_new_service_connection(collaboration, data.get("message"), is_admin, service, user)
@@ -171,13 +171,13 @@ def deny_service_connection_request(hash_value):
 @service_connection_request_api.route("/resend/<service_connection_request_id>", strict_slashes=False)
 @json_endpoint
 def resend_service_connection_request(service_connection_request_id):
-    service_connection_request = ServiceConnectionRequest.query.get(service_connection_request_id)
+    service_connection_request = db.session.get(ServiceConnectionRequest, service_connection_request_id)
     service = service_connection_request.service
     collaboration = service_connection_request.collaboration
 
     confirm_collaboration_admin(collaboration.id)
 
-    user = User.query.get(current_user_id())
+    user = db.session.get(User, current_user_id())
     _do_mail_request(collaboration, service, service_connection_request, True, user)
     return {}, 200
 

@@ -29,7 +29,7 @@ def save_service_token():
     if not hashed_token or hashed_token != data["hashed_token"]:
         raise Forbidden("Tampering with generated hashed_token is not allowed")
     data = hash_secret_key(data, "hashed_token")
-    service = Service.query.get(data["service_id"])
+    service = db.session.get(Service, data["service_id"])
     token_type = data.get("token_type")
     if token_type not in list(service_token_options.values()):
         raise Forbidden(f"Invalid token_type {token_type}")
@@ -49,7 +49,7 @@ def save_service_token():
 @service_token_api.route("/<service_token_id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_service_token(service_token_id):
-    service_id = ServiceToken.query.get(service_token_id).service_id
+    service_id = db.session.get(ServiceToken, service_token_id).service_id
     confirm_service_admin(service_id)
 
     emit_socket(f"service_{service_id}")

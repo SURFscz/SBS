@@ -166,7 +166,7 @@ class TestCollaboration(AbstractTest):
         # normal, add a tag
         body["tags"] = [tag_existing, tag_just_valid]
         res = self.post("/api/collaborations", body=body, with_basic_auth=False)
-        collaboration = Collaboration.query.get(res["id"])
+        collaboration = db.session.get(Collaboration, res["id"])
         self.assertEqual(2, len(collaboration.tags))
 
         # tag too long
@@ -174,7 +174,7 @@ class TestCollaboration(AbstractTest):
         body["name"] += "_"
         body["short_name"] += "_"
         res = self.post("/api/collaborations", body=body, with_basic_auth=False)
-        collaboration = Collaboration.query.get(res["id"])
+        collaboration = db.session.get(Collaboration, res["id"])
         self.assertEqual(2, len(collaboration.tags))
 
         # tag too long
@@ -182,7 +182,7 @@ class TestCollaboration(AbstractTest):
         body["name"] += "_"
         body["short_name"] += "_"
         res = self.post("/api/collaborations", body=body, with_basic_auth=False)
-        collaboration = Collaboration.query.get(res["id"])
+        collaboration = db.session.get(Collaboration, res["id"])
         self.assertEqual(2, len(collaboration.tags))
 
         # tag start with invalid char
@@ -190,7 +190,7 @@ class TestCollaboration(AbstractTest):
         body["name"] += "_"
         body["short_name"] += "_"
         res = self.post("/api/collaborations", body=body, with_basic_auth=False)
-        collaboration = Collaboration.query.get(res["id"])
+        collaboration = db.session.get(Collaboration, res["id"])
         self.assertEqual(2, len(collaboration.tags))
 
         # normal, add a tag
@@ -198,7 +198,7 @@ class TestCollaboration(AbstractTest):
         body["name"] += "_"
         body["short_name"] += "_"
         res = self.post("/api/collaborations", body=body, with_basic_auth=False)
-        collaboration = Collaboration.query.get(res["id"])
+        collaboration = db.session.get(Collaboration, res["id"])
         self.assertEqual(3, len(collaboration.tags))
 
     @staticmethod
@@ -244,7 +244,7 @@ class TestCollaboration(AbstractTest):
         collaboration = self.put("/api/collaborations", body=collaboration)
         self.assertEqual("changed", collaboration["name"])
 
-        collaboration = Collaboration.query.get(collaboration["id"])
+        collaboration = db.session.get(Collaboration, collaboration["id"])
         self.assertEqual(2, len(collaboration.tags))
 
     def test_collaboration_update_orphan_tag(self):

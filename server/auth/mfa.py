@@ -8,6 +8,7 @@ from jwt import algorithms
 
 from server.auth.secrets import generate_token
 from server.auth.security import is_admin_user, CSRF_TOKEN
+from server.db.db import db
 from server.db.domain import Organisation, SchacHomeOrganisation
 from server.logger.context_logger import ctx_logger
 
@@ -80,7 +81,7 @@ def eligible_users_to_reset_token(user):
     if not user_information and user.schac_home_organisation:
         organisations = SchacHomeOrganisation.organisations_by_user_schac_home(user)
         if organisations:
-            org = Organisation.query.get(organisations[0].id)
+            org = db.session.get(Organisation, organisations[0].id)
             for membership in org.organisation_memberships:
                 if membership.user != user:
                     user_information.append(membership.user)
