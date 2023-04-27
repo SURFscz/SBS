@@ -134,7 +134,7 @@ def _do_get_services(restrict_for_current_user=False, include_counts=False):
         query += f" where s.id in ({','.join([str(s.id) for s in services])})"
 
     with db.engine.connect() as conn:
-        result_set = conn.engine.execute(text(query))
+        result_set = conn.execute(text(query))
     services_json = jsonify(services).json
     services_json_dict = {s["id"]: s for s in services_json}
     for row in result_set:

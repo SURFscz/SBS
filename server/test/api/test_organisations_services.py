@@ -22,7 +22,7 @@ class TestOrganisationsServices(AbstractTest):
         self.assertEqual(3, len(organisation.services))
 
     def test_add_organisations_services_restricted(self):
-        self.mark_organisation_service_restricted(self.find_entity_by_name(Organisation, uuc_name).id)
+        self.mark_organisation_service_restricted(uuc_name)
         self._do_add_organisations_services(uuc_name, service_wireless_name, response_status_code=400, user="urn:mary")
 
     def test_add_organisations_services_not_allowed_organisation(self):

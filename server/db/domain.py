@@ -18,6 +18,7 @@ def gen_uuid4():
 
 class User(Base, db.Model):
     __tablename__ = "users"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     uid = db.Column("uid", db.String(length=512), nullable=False)
     external_id = db.Column("external_id", db.String(length=255), nullable=False)
@@ -139,6 +140,7 @@ class CollaborationMembership(Base, db.Model):
     __table_args__ = (
         db.UniqueConstraint("user_id", "collaboration_id", name="unique_members"),
     )
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     role = db.Column("role", db.String(length=255), nullable=False)
     status = db.Column("status", db.String(length=255), nullable=False, default=STATUS_ACTIVE)
@@ -197,6 +199,7 @@ automatic_connection_allowed_organisations_services_association = db.Table(
 
 class Invitation(Base, db.Model):
     __tablename__ = "invitations"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     hash = db.Column("hash", db.String(length=512), nullable=False)
     message = db.Column("message", db.Text(), nullable=True)
@@ -233,6 +236,7 @@ services_collaborations_association = db.Table(
 
 class Tag(Base, db.Model):
     __tablename__ = "tags"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     tag_value = db.Column("tag_value", db.Text(), nullable=False)
     collaborations = db.relationship("Collaboration", secondary=collaboration_tags_association, lazy="select",
@@ -242,6 +246,7 @@ class Tag(Base, db.Model):
 
 class Collaboration(Base, db.Model, LogoMixin):
     __tablename__ = "collaborations"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     identifier = db.Column("identifier", db.String(length=255), nullable=False)
     name = db.Column("name", db.String(length=255), nullable=False)
@@ -318,6 +323,7 @@ class OrganisationMembership(Base, db.Model):
     __table_args__ = (
         db.UniqueConstraint("user_id", "organisation_id", name="unique_members"),
     )
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     role = db.Column("role", db.String(length=255), nullable=False)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"), primary_key=True)
@@ -341,6 +347,7 @@ class OrganisationMembership(Base, db.Model):
 
 class Organisation(Base, db.Model, LogoMixin):
     __tablename__ = "organisations"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     name = db.Column("name", db.String(length=255), nullable=False)
     identifier = db.Column("identifier", db.String(length=255), nullable=False)
@@ -392,6 +399,7 @@ class ServiceMembership(Base, db.Model):
     __table_args__ = (
         db.UniqueConstraint("user_id", "service_id", name="unique_members"),
     )
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     role = db.Column("role", db.String(length=255), nullable=False)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"), primary_key=True)
@@ -406,6 +414,7 @@ class ServiceMembership(Base, db.Model):
 
 class ServiceToken(Base, db.Model, SecretMixin):
     __tablename__ = "service_tokens"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     hashed_token = db.Column("hashed_token", db.String(length=512), nullable=False)
     description = db.Column("description", db.Text(), nullable=True)
@@ -420,6 +429,7 @@ class ServiceToken(Base, db.Model, SecretMixin):
 
 class Service(Base, db.Model, LogoMixin):
     __tablename__ = "services"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     entity_id = db.Column("entity_id", db.String(length=255), nullable=False)
     name = db.Column("name", db.String(length=255), nullable=False)
@@ -496,6 +506,7 @@ class Service(Base, db.Model, LogoMixin):
 
 class ServiceInvitation(Base, db.Model):
     __tablename__ = "service_invitations"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     hash = db.Column("hash", db.String(length=512), nullable=False)
     message = db.Column("message", db.Text(), nullable=True)
@@ -513,6 +524,7 @@ class ServiceInvitation(Base, db.Model):
 
 class Group(Base, db.Model):
     __tablename__ = "groups"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     name = db.Column("name", db.String(length=255), nullable=False)
     identifier = db.Column("identifier", db.String(length=255), nullable=False)
@@ -543,6 +555,7 @@ class Group(Base, db.Model):
 
 class JoinRequest(Base, db.Model):
     __tablename__ = "join_requests"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     message = db.Column("message", db.Text(), nullable=True)
     reference = db.Column("reference", db.Text(), nullable=True)
@@ -559,6 +572,7 @@ class JoinRequest(Base, db.Model):
 
 class OrganisationInvitation(Base, db.Model):
     __tablename__ = "organisation_invitations"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     hash = db.Column("hash", db.String(length=512), nullable=False)
     message = db.Column("message", db.Text(), nullable=True)
@@ -581,6 +595,7 @@ class OrganisationInvitation(Base, db.Model):
 
 class ApiKey(Base, db.Model, SecretMixin):
     __tablename__ = "api_keys"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     hashed_secret = db.Column("hashed_secret", db.String(length=512), nullable=False)
     description = db.Column("description", db.Text(), nullable=True)
@@ -594,6 +609,7 @@ class ApiKey(Base, db.Model, SecretMixin):
 
 class Aup(Base, db.Model):
     __tablename__ = "aups"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     au_version = db.Column("au_version", db.String(length=255), nullable=False)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
@@ -604,6 +620,7 @@ class Aup(Base, db.Model):
 
 class SuspendNotification(Base, db.Model):
     __tablename__ = "suspend_notifications"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User", back_populates="suspend_notifications")
@@ -615,6 +632,7 @@ class SuspendNotification(Base, db.Model):
 
 class CollaborationRequest(Base, db.Model, LogoMixin):
     __tablename__ = "collaboration_requests"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     name = db.Column("name", db.String(length=255), nullable=False)
     short_name = db.Column("short_name", db.String(length=255), nullable=True)
@@ -638,6 +656,7 @@ class CollaborationRequest(Base, db.Model, LogoMixin):
 
 class ServiceConnectionRequest(Base, db.Model):
     __tablename__ = "service_connection_requests"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     message = db.Column("message", db.Text(), nullable=True)
     hash = db.Column("hash", db.String(length=512), nullable=False)
@@ -656,6 +675,7 @@ class ServiceConnectionRequest(Base, db.Model):
 
 class IpNetwork(Base, db.Model):
     __tablename__ = "ip_networks"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     network_value = db.Column("network_value", db.Text(), nullable=False)
     service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
@@ -668,6 +688,7 @@ class IpNetwork(Base, db.Model):
 
 class SchacHomeOrganisation(Base, db.Model):
     __tablename__ = "schac_home_organisations"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     name = db.Column("name", db.String(length=255), nullable=False)
     organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"))
@@ -691,6 +712,7 @@ class SchacHomeOrganisation(Base, db.Model):
 
 class SshKey(Base, db.Model):
     __tablename__ = "ssh_keys"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     ssh_value = db.Column("ssh_value", db.Text(), nullable=False)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
@@ -701,6 +723,7 @@ class SshKey(Base, db.Model):
 
 class UserNameHistory(Base, db.Model):
     __tablename__ = "user_names_history"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     username = db.Column("username", db.String(length=255), nullable=True)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
@@ -709,6 +732,7 @@ class UserNameHistory(Base, db.Model):
 
 class UserMail(Base, db.Model):
     __tablename__ = "user_mails"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     name = db.Column("name", db.String(length=255), nullable=True)
     recipient = db.Column("recipient", db.String(length=255), nullable=True)
@@ -720,6 +744,7 @@ class UserMail(Base, db.Model):
 
 class ServiceGroup(Base, db.Model):
     __tablename__ = "service_groups"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     name = db.Column("name", db.String(length=255), nullable=False)
     short_name = db.Column("short_name", db.String(length=255), nullable=True)
@@ -737,6 +762,7 @@ class ServiceGroup(Base, db.Model):
 
 class ServiceAup(Base, db.Model):
     __tablename__ = "service_aups"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     aup_url = db.Column("aup_url", db.String(length=255), nullable=False)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
@@ -749,6 +775,7 @@ class ServiceAup(Base, db.Model):
 
 class UserToken(Base, db.Model, SecretMixin):
     __tablename__ = "user_tokens"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     name = db.Column("name", db.String(length=255), nullable=False)
     description = db.Column("description", db.Text(), nullable=True)
@@ -764,6 +791,7 @@ class UserToken(Base, db.Model, SecretMixin):
 
 class UserIpNetwork(Base, db.Model):
     __tablename__ = "user_ip_networks"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     network_value = db.Column("network_value", db.Text(), nullable=False)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
@@ -776,6 +804,7 @@ class UserIpNetwork(Base, db.Model):
 
 class PamSSOSession(Base, db.Model):
     __tablename__ = "pam_sso_sessions"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     session_id = db.Column("session_id", db.String(length=255), nullable=True)
     attribute = db.Column("attribute", db.String(length=255), nullable=True)
@@ -792,6 +821,7 @@ class PamSSOSession(Base, db.Model):
 
 class UserLogin(Base, db.Model):
     __tablename__ = "user_logins"
+    metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     login_type = db.Column("login_type", db.String(length=255), nullable=False)
     succeeded = db.Column("succeeded", db.Boolean(), nullable=False, default=True)

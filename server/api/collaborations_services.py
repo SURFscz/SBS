@@ -6,7 +6,7 @@ from server.api.base import json_endpoint, emit_socket
 from server.api.service_group import create_service_groups
 from server.auth.security import confirm_collaboration_admin, confirm_external_api_call, confirm_service_admin
 from server.db.db import db
-from server.db.domain import Service, Collaboration
+from server.db.domain import Service, Collaboration, Organisation
 from server.schemas import json_schema_validator
 from server.scim.events import broadcast_service_added, broadcast_service_deleted
 
@@ -17,7 +17,8 @@ collaborations_services_api = Blueprint("collaborations_services_api", __name__,
 def connect_service_collaboration(service_id, collaboration_id, force=False):
     # Ensure that the connection is allowed
     service = db.session.get(Service, service_id)
-    organisation = db.session.get(Collaboration, collaboration_id).organisation
+    collaboration = db.session.get(Collaboration, collaboration_id)
+    organisation = Organisation.query.filter(Organisation.id == collaboration.organisation_id).one()
     org_allowed = organisation in service.allowed_organisations
     org_automatic_allowed = organisation in service.automatic_connection_allowed_organisations
 
@@ -29,8 +30,7 @@ def connect_service_collaboration(service_id, collaboration_id, force=False):
     if not force and not allowed_to_connect:
         raise BadRequest("automatic_connection_not_allowed")
 
-    collaboration = db.session.get(Collaboration, collaboration_id)
-    if collaboration.organisation.services_restricted and not service.allow_restricted_orgs:
+    if organisation.services_restricted and not service.allow_restricted_orgs:
         raise BadRequest(f"Organisation {collaboration.organisation.name} can only be linked to SURF services")
 
     collaboration.services.append(service)

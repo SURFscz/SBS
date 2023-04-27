@@ -55,7 +55,7 @@ class AuditLog(JsonSerializableBase, db.Model):
         self.state_after = state_after
 
     def save(self, connection):
-        connection.begin()
+        # connection.begin()
         connection.execute(
             self.__table__.insert(),
             dict(user_id=self.user_id,
@@ -217,4 +217,4 @@ class AuditMixin(JsonSerializableBase):
 
 
 metadata = MetaData()
-Base = declarative_base(cls=(AuditMixin,), metadata=metadata)
+Base = declarative_base(cls=AuditMixin, metadata=metadata)

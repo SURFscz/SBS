@@ -5,7 +5,8 @@ from server.db.domain import Service, Collaboration
 from server.test.abstract_test import AbstractTest, BASIC_AUTH_HEADER
 from server.test.seed import service_mail_name, ai_computing_name, service_cloud_name, uva_research_name, \
     service_network_name, service_wiki_name, uuc_secret, service_group_wiki_name1, service_group_wiki_name2, \
-    uu_disabled_join_request_name, uva_secret, service_ssh_uva_name, service_storage_name, service_uuc_scheduler_name
+    uu_disabled_join_request_name, uva_secret, service_ssh_uva_name, service_storage_name, service_uuc_scheduler_name, \
+    uuc_name
 
 
 # there are a number of cases to test here:
@@ -122,9 +123,9 @@ class TestCollaborationsServices(AbstractTest):
 
     #  (a) connecting service to restricted organisation (ok)
     def test_add_collaborations_services_allowed(self):
+        self.mark_organisation_service_restricted(uuc_name)
         self.login("urn:admin")
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
-        self.mark_collaboration_service_restricted(collaboration_id)
         service_cloud_id = self.find_entity_by_name(Service, service_storage_name).id
 
         self.put("/api/collaborations_services/", body={
@@ -135,9 +136,10 @@ class TestCollaborationsServices(AbstractTest):
     #  (b) connecting service to restricted organisation (fail with "Organisation {collaboration.organisation.name} can
     #      only be linked to SURF services")
     def test_add_collaborations_services_forbidden(self):
+        self.mark_organisation_service_restricted(uuc_name)
         self.login("urn:admin")
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
-        self.mark_collaboration_service_restricted(collaboration_id)
+        # organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
         service_cloud_id = self.find_entity_by_name(Service, service_cloud_name).id
 
         res = self.put("/api/collaborations_services/", body={
@@ -218,11 +220,10 @@ class TestCollaborationsServices(AbstractTest):
 
     # org api
     def test_connect_collaboration_service_forbidden(self):
+        self.mark_organisation_service_restricted(uuc_name)
         self.login("urn:admin")
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
         short_name = collaboration.short_name
-
-        self.mark_collaboration_service_restricted(collaboration.id)
 
         service_cloud = self.find_entity_by_name(Service, service_cloud_name)
         self.put("/api/collaborations_services/v1/connect_collaboration_service",
