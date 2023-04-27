@@ -42,8 +42,8 @@ def internal_sync():
         for service in services:
             if not service["contact_email"]:
                 rs = conn.execute(text(f"select u.email from users u where id in "
-                                            f"(select user_id from service_memberships "
-                                            f"where service_id = {service['id']}) limit 1"))
+                                       f"(select user_id from service_memberships "
+                                       f"where service_id = {service['id']}) limit 1"))
                 for row in rs:
                     service["contact_email"] = row[0]
         rs = conn.execute(text("SELECT service_id, organisation_id FROM services_organisations"))
@@ -53,28 +53,28 @@ def internal_sync():
         rs = conn.execute(text("SELECT role, user_id, organisation_id FROM organisation_memberships"))
         organisation_memberships = [{"role": row[0], "user_id": row[1], "organisation_id": row[2]} for row in rs]
         rs = conn.execute(text("SELECT cm.id, cm.role, cm.user_id, collaboration_id, cm.status FROM "
-                                    "collaboration_memberships cm "
-                                    "INNER JOIN users u ON u.id = cm.user_id where u.suspended = 0"))
+                               "collaboration_memberships cm "
+                               "INNER JOIN users u ON u.id = cm.user_id where u.suspended = 0"))
         collaboration_memberships = [
             {"id": row[0], "role": row[1], "user_id": row[2], "collaboration_id": row[3], "status": row[4]} for row
             in rs]
         rs = conn.execute(text("SELECT collaboration_membership_id, group_id FROM collaboration_memberships_groups"))
         collaboration_memberships_groups = [{"collaboration_membership_id": row[0], "group_id": row[1]} for row in rs]
         rs = conn.execute(
-            "SELECT id, identifier, name, short_name, global_urn, organisation_id, status, description, "
-            "uuid4, website_url from collaborations")
+            text("SELECT id, identifier, name, short_name, global_urn, organisation_id, status, description, "
+                 "uuid4, website_url from collaborations"))
         collaborations = [
             {"id": row[0], "identifier": row[1], "name": row[2], "short_name": row[3], "global_urn": row[4],
              'organisation_id': row[5], "status": row[6], "description": row[7],
              "logo": logo_url("collaborations", row[8]), "website_url": row[9]} for row in rs]
         rs = conn.execute(
-            "SELECT id, name, short_name, global_urn, identifier, collaboration_id, description FROM `groups`")
+            text("SELECT id, name, short_name, global_urn, identifier, collaboration_id, description FROM `groups`"))
         groups = [
             {"id": row[0], "name": row[1], "short_name": row[2], "global_urn": row[3], "identifier": row[4],
              "collaboration_id": row[5], "description": row[6]}
             for row in rs]
         rs = conn.execute(text("SELECT ct.collaboration_id, t.tag_value FROM collaboration_tags ct "
-                                    "INNER JOIN tags t ON t.id = ct.tag_id"))
+                               "INNER JOIN tags t ON t.id = ct.tag_id"))
         tags = [{"collaboration_id": row[0], "tag_value": row[1]} for row in rs]
         for coll in collaborations:
             collaboration_id = coll["id"]
@@ -107,17 +107,18 @@ def internal_sync():
             })
         result["services"] = services
         rs = conn.execute(text("SELECT id, uid, name, given_name, family_name, email, scoped_affiliation, "
-                                    "eduperson_principal_name, username, last_login_date FROM users"))
+                               "eduperson_principal_name, username, last_login_date FROM users"))
         for row in rs:
             user_row = {"id": row[0], "uid": row[1], "name": row[2], "given_name": row[3], "family_name": row[4],
                         "email": row[5], "scoped_affiliation": row[6], "eduperson_principal_name": row[7],
                         "username": row[8], "last_login_date": str(row[9])}
-            rs_ssh_keys = conn.execute(f"SELECT ssh_value FROM ssh_keys WHERE user_id = {row[0]}")
+            rs_ssh_keys = conn.execute(text(f"SELECT ssh_value FROM ssh_keys WHERE user_id = {row[0]}"))
             user_row["ssh_keys"] = [r[0] for r in rs_ssh_keys]
-            user_ip_networks = conn.execute(f"SELECT network_value FROM user_ip_networks WHERE user_id = {row[0]}")
+            user_ip_networks = conn.execute(text(f"SELECT network_value FROM user_ip_networks "
+                                                 f"WHERE user_id = {row[0]}"))
             user_row["user_ip_networks"] = [r[0] for r in user_ip_networks]
-            service_aups = conn.execute(f"SELECT aup_url, service_id, agreed_at FROM service_aups "
-                                             f"WHERE user_id = {row[0]}")
+            service_aups = conn.execute(text(f"SELECT aup_url, service_id, agreed_at FROM service_aups "
+                                             f"WHERE user_id = {row[0]}"))
             user_row["accepted_aups"] = [{"url": r[0], "service_id": r[1], "agreed_at": str(r[2])} for r in
                                          service_aups]
             result["users"].append(user_row)

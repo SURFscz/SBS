@@ -4,7 +4,7 @@ import uuid
 
 from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app, g as request_context, jsonify
-from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict, Forbidden
 
 from server.api.base import json_endpoint, query_param, emit_socket
@@ -12,7 +12,7 @@ from server.api.service_aups import add_user_aups
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call
 from server.db.defaults import default_expiry_date
-from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, Organisation, JoinRequest
+from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, JoinRequest
 from server.db.models import delete
 from server.mail import mail_collaboration_invitation
 from server.scim.events import broadcast_collaboration_changed
@@ -61,15 +61,18 @@ def invitations_by_hash():
     hash_value = query_param("hash")
     invitation_query = _invitation_query()
     invitation = invitation_query \
-        .options(selectinload(Invitation.groups)) \
-        .options(selectinload(Invitation.collaboration).selectinload(Collaboration.collaboration_memberships)
-                 .selectinload(CollaborationMembership.user)) \
-        .options(selectinload(Invitation.collaboration).selectinload(Collaboration.groups)) \
-        .options(selectinload(Invitation.collaboration).selectinload(Collaboration.services)) \
-        .options(selectinload(Invitation.collaboration).selectinload(Collaboration.organisation)
-                 .selectinload(Organisation.services)) \
         .filter(Invitation.hash == hash_value) \
         .one()
+    # To avoid conflict: Loader strategies for ORM Path[Mapper
+    # [Invitation(invitations)] -> Invitation.groups -> Mapper[Group(groups)]] conflict
+    invitation.groups
+    invitation.collaboration.groups
+    invitation.collaboration.services
+    invitation.collaboration.organisation
+    invitation.collaboration.organisation.services
+    for member in invitation.collaboration.collaboration_memberships:
+        member.user
+
     if not query_param("expand", required=False):
         return invitation, 200
 

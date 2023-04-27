@@ -14,12 +14,14 @@ import responses
 from flask import current_app
 from flask_testing import TestCase
 from onelogin.saml2.utils import OneLogin_Saml2_Utils
+from sqlalchemy import text
+from sqlalchemy.orm import sessionmaker
 
 from server.auth.mfa import ACR_VALUES
 from server.auth.secrets import secure_hash
 from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED, STATUS_SUSPENDED
-from server.db.domain import Collaboration, User, Organisation, Service, ServiceAup, UserToken, Invitation, \
+from server.db.domain import Collaboration, User, Service, ServiceAup, UserToken, Invitation, \
     PamSSOSession, Group, CollaborationMembership
 from server.test.seed import seed, sarah_name
 from server.tools import read_file
@@ -146,21 +148,12 @@ class AbstractTest(TestCase):
                                           content_type="application/json")
             self.assertEqual(response_status_code, response.status_code)
 
-    def mark_collaboration_service_restricted(self, collaboration_id):
-        db = self.app.db
+    def mark_organisation_service_restricted(self, organisation_name):
         with self.app.app_context():
-            collaboration = db.session.query(Collaboration).get(collaboration_id)
-            collaboration.organisation.services_restricted = True
-            db.session.add(collaboration.organisation)
-            db.session.commit()
-
-    def mark_organisation_service_restricted(self, organisation_id):
-        db = self.app.db
-        with self.app.app_context():
-            organisation = db.session.query(Organisation).get(organisation_id)
-            organisation.services_restricted = True
-            db.session.add(organisation)
-            db.session.commit()
+            session = sessionmaker(self.app.db.engine)
+            with session.begin() as s:
+                sql = f"UPDATE organisations SET services_restricted = 1 where NAME = '{organisation_name}'"
+                s.execute(text(sql))
 
     def mark_user_suspended(self, user_name):
         user = self.find_entity_by_name(User, user_name)

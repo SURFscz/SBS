@@ -27,7 +27,7 @@ def logo_from_cache(object_type, sid):
 
         from server.db.db import db
         with db.engine.connect() as conn:
-            result_set = conn.execute(sql, sid=(sid))
+            result_set = conn.execute(sql, dict(sid=sid))
         try:
             value = next(result_set)[0]
         except StopIteration:

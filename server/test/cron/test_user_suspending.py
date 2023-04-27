@@ -2,9 +2,9 @@ from datetime import datetime, timedelta
 
 from freezegun import freeze_time
 from sqlalchemy import text
+from sqlalchemy.orm import sessionmaker
 
 from server.cron.user_suspending import suspend_users, suspend_users_lock_name
-from server.db.db import db
 from server.db.domain import User, UserNameHistory
 from server.test.abstract_test import AbstractTest
 
@@ -12,15 +12,15 @@ from server.test.abstract_test import AbstractTest
 class TestUserSuspending(AbstractTest):
 
     def test_schedule_lock(self):
-        session = db.create_session(options={})()
-        try:
-            session.execute(text(f"SELECT GET_LOCK('{suspend_users_lock_name}', 1)"))
-            mail = self.app.mail
-            with mail.record_messages() as outbox:
-                suspend_users(self.app)
-                self.assertEqual(0, len(outbox))
-        finally:
-            session.execute(text(f"SELECT RELEASE_LOCK('{suspend_users_lock_name}')"))
+        with sessionmaker(self.app.db.engine).begin() as session:
+            try:
+                session.execute(text(f"SELECT GET_LOCK('{suspend_users_lock_name}', 1)"))
+                mail = self.app.mail
+                with mail.record_messages() as outbox:
+                    suspend_users(self.app)
+                    self.assertEqual(0, len(outbox))
+            finally:
+                session.execute(text(f"SELECT RELEASE_LOCK('{suspend_users_lock_name}')"))
 
     def test_schedule(self):
         mail = self.app.mail
