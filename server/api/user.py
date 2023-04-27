@@ -62,7 +62,10 @@ def _add_service_aups(user: dict, user_from_db: User):
 
     service_emails = {}
     for s in unique_missing_services:
-        service_emails[s.id] = [s.contact_email] if s.contact_email else [m.user.email for m in s.service_memberships]
+        if s.contact_email:
+            service_emails[s.id] = [s.contact_email]
+        else:
+            service_emails[s.id] = [m.user.email for m in s.service_memberships]
 
     # Avoid ValueError: Circular reference detected
     user["services_without_aup"] = [
