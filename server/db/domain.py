@@ -191,9 +191,8 @@ automatic_connection_allowed_organisations_services_association = db.Table(
     "automatic_connection_allowed_organisations_services",
     metadata,
     db.Column("organisation_id", db.Integer(), db.ForeignKey("organisations.id", ondelete="CASCADE"),
-              primary_key=True, use_alter=True),
-    db.Column("service_id", db.Integer(), db.ForeignKey("services.id", ondelete="CASCADE"), primary_key=True,
-              use_alter=True),
+              primary_key=True),
+    db.Column("service_id", db.Integer(), db.ForeignKey("services.id", ondelete="CASCADE"), primary_key=True),
 )
 
 
