@@ -6,6 +6,7 @@ import eventlet
 eventlet.monkey_patch()
 
 import logging
+from sqlalchemy.orm import sessionmaker
 import os
 import sys
 import time
@@ -181,21 +182,23 @@ result = None
 with app.app_context():
     while result is None:
         try:
-            result = db.engine.execute(text("SELECT 1"))
+            with db.engine.connect() as conn:
+                result = conn.execute(text("SELECT 1"))
         except OperationalError:
             logger.info("Waiting for the database...")
             time.sleep(1)
 
 with app.app_context():
-    session = db.create_session(options={})()
+    Session = sessionmaker(db.engine)
     lock_name = "db_migration"
-    try:
-        result = session.execute(text(f"SELECT GET_LOCK('{lock_name}', 0)"))
-        lock_obtained = next(result, (0,))[0]
-        if lock_obtained:
-            db_migrations(config.database.uri)
-    finally:
-        session.execute(text(f"SELECT RELEASE_LOCK('{lock_name}')"))
+    with Session.begin() as session:
+        try:
+            result = session.execute(text(f"SELECT GET_LOCK('{lock_name}', 0)"))
+            lock_obtained = next(result, (0,))[0]
+            if lock_obtained:
+                db_migrations(config.database.uri)
+        finally:
+            session.execute(text(f"SELECT RELEASE_LOCK('{lock_name}')"))
 
 from server.auth.user_claims import generate_unique_username  # noqa: E402
 from server.db.domain import User  # noqa: E402
