@@ -1024,7 +1024,7 @@ const nl = {
         addMe: "Maak me dienstbeheerder",
         access: "Toegang",
         policies: "Beleid",
-        policyCompliance: "Toegangsbeleid",
+        policyCompliance: "Beleid voldoet aan",
         login: "Inloggen",
         support: "Support voor de eindgebruiker",
         admins: "Administratieve email-adressen",
@@ -1930,11 +1930,10 @@ const nl = {
     },
     notFound: {
         invitationNotFound: "Deze uitnodiging bestaat niet (meer). Waarschijnlijk is de uitnodiging al eerder gebruikt. Vraag aan de uitnodiger of je een nieuwe uitnodiging kunt krijgen.",
-        invalidSecondFactorUUID: "De redirect vanuit eduTeams is verlopen. Ga terug naar de service die je probeerde te bereiken en probeer het opnieuw.",
+        invalidSecondFactorUUID: "De koppeling is verlopen. Ga terug naar de dienst die je probeerde te bereiken en probeer het opnieuw.",
         invalidPamWebSSO: "Je sessie is verlopen. Ga terug naar de service waar je probeert in te loggen en probeer het opnieuw.",
-        msg: "Mmmm, het lijkt erop dat je op de een of andere manier een link hebt gekregen waar we je niet mee kunnen helpen. Sorry daarvoor. </br></br>" +
-            "Je zou kunnen proberen de <a href='{{base_url}}'>startpagina</a> te bezoeken. Als je daar niet iets vindt waar je mee geholpen bent, " +
-            "neem dan contact op met de persoon die je heeft uitgenodigd, of volg de help-link waar ook staat hoe je contact kunt opnemen met het team van SURF Research Access Management."
+        msg: "Het spijt ons, deze pagina kunnen we niet vinden.</br></br>" +
+        "Probeer opnieuw vanaf de <a href='{{base_url}}'>thuispagina</a> of neem contact met ons op via <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
     },
     mfa: {
         register: {

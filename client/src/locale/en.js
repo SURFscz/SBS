@@ -1024,7 +1024,7 @@ const en = {
         addMe: "Make me service admin",
         access: "Access",
         policies: "Policies",
-        policyCompliance: "Policy compliance",
+        policyCompliance: "Compliant policies",
         login: "Login",
         support: "Support for end user",
         admins: "Administrative email address",
@@ -1929,11 +1929,10 @@ const en = {
     },
     notFound: {
         invitationNotFound: "This invitation does not exist (anymore). The invitation has probably already been used. Ask the person who invited you to send you a new one.",
-        invalidSecondFactorUUID: "The redirect from eduTeams is expired. Please go back to the service where you we're trying to login and try again.",
+        invalidSecondFactorUUID: "The link has expired. Please go back to the service where you we're trying to login and try again.",
         invalidPamWebSSO: "Your session has expired. Please go back to the service you were trying to login to and try again.",
-        msg: "Mmmm, seems you somehow ended up with a link that we can't help you with. Sorry for that. </br></br>" +
-            "You could try visiting the <a href='{{base_url}}'>homepage</a>. If that does not offer you an option you were looking for, " +
-            "contact the person that invited you, or follow the help link which includes how to contact the SURF Research Access Management team."
+        msg: "We can't seem to find that page. Sorry for that.</br></br>" +
+            "Start over on the <a href='{{base_url}}'>homepage</a> or contact us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
     },
     mfa: {
         register: {
