@@ -110,7 +110,8 @@ const en = {
             userlogins: "Logins",
             details: "Details",
             orgUsers: "Users",
-            scim: "SCIM"
+            scim: "SCIM",
+            stats: "Stats"
         }
     },
     forms: {
@@ -1812,6 +1813,9 @@ const en = {
                 sweepScimEnabled: "Sweep enabled",
                 sweep: "Sweep",
             }
+        },
+        stats: {
+            loading: "Loading, please wait..."
         }
     },
     access: {

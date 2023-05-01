@@ -1,3 +1,5 @@
+import json
+
 from flask import current_app
 from sqlalchemy import text
 
@@ -142,3 +144,7 @@ class TestSystem(AbstractTest):
         self.app.app_config.feature.seed_allowed = 0
         self.get("/api/system/composition", response_status_code=400)
         self.app.app_config.feature.seed_allowed = 1
+
+    def test_statistics(self):
+        res = self.get("/api/system/statistics")
+        self.assertEqual(8, len(res))

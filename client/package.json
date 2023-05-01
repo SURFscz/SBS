@@ -7,6 +7,7 @@
         "@fortawesome/free-solid-svg-icons": "^6.1.2",
         "@fortawesome/react-fontawesome": "^0.2.0",
         "@lottiefiles/react-lottie-player": "^3.4.7",
+        "@surfnet/sds": "^0.0.64",
         "core-js": "^3.19.1",
         "dompurify": "^3.0.2",
         "es6-promise": "^4.2.8",
@@ -34,20 +35,20 @@
         "react-router-dom": "^5.2.0",
         "react-select": "^5.7.2",
         "react-tooltip": "^5.11.1",
+        "recharts": "^2.5.0",
         "scroll-into-view": "^1.15.0",
         "serialize-javascript": "^6.0.1",
         "showdown": "^2.1.0",
         "socket.io-client": "^4.5.1",
         "source-map-explorer": "^2.5.0",
-        "timeago.js": "^4.0.2",
-        "@surfnet/sds": "^0.0.63"
+        "timeago.js": "^4.0.2"
     },
     "devDependencies": {
         "dot-prop": "^8.0.0",
         "eslint-plugin-risxss": "^2.1.0",
         "http-proxy-middleware": "^2.0.6",
         "react-scripts": "^5.0.1",
-        "sass": "^1.62.0"
+        "sass": "^1.62.1"
     },
     "resolutions": {
         "minimatch": "^9.0.0"

@@ -993,4 +993,8 @@ export function sweep(service) {
     return postPutJson(`/api/scim/v2/sweep?service_id=${service.id}`, {}, "PUT", false);
 }
 
+//Stats
+export function allStats() {
+    return fetchJson("/api/system/statistics")
+}
 

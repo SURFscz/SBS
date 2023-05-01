@@ -1,7 +1,7 @@
 import os
 
 from flask import current_app, Blueprint, request as current_request, session
-from sqlalchemy import text
+from sqlalchemy import text, func, extract
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import BadRequest
 
@@ -11,7 +11,7 @@ from server.cron.scim_sweep_services import scim_sweep_services
 from server.db.audit_mixin import metadata
 from server.db.db import db
 from server.db.domain import Service, ServiceMembership, User, Organisation, OrganisationMembership, \
-    OrganisationInvitation
+    OrganisationInvitation, Collaboration, CollaborationMembership, Group
 from server.mail import mail_feedback
 from server.test.seed import seed
 
@@ -266,3 +266,29 @@ def sweep():
     db.session.commit()
 
     return scim_sweep_services(current_app), 200
+
+
+@system_api.route("/statistics", strict_slashes=False, methods=["GET"])
+@json_endpoint
+def statistics():
+    confirm_write_access()
+
+    def group_by_month(cls):
+        month = extract("month", cls.created_at)
+        year = extract("year", cls.created_at)
+        rows = db.session.query(func.count(cls.id).label("count"), month.label("month"), year.label("year")) \
+            .group_by(year, month) \
+            .order_by(year.desc(), month.desc()) \
+            .all()
+        return [dict(row._mapping) for row in rows]
+
+    return {
+               "organisations": group_by_month(Organisation),
+               "organisation_memberships": group_by_month(OrganisationMembership),
+               "collaborations": group_by_month(Collaboration),
+               "collaboration_memberships": group_by_month(CollaborationMembership),
+               "services": group_by_month(Service),
+               "service_memberships": group_by_month(ServiceMembership),
+               "groups": group_by_month(Group),
+               "users": group_by_month(User)
+           }, 200
