@@ -16,11 +16,13 @@ import {
     dbStats,
     deleteOrphanUsers,
     expireCollaborationMemberships,
-    expireCollaborations, getResetTOTPRequestedUsers,
+    expireCollaborations,
+    getResetTOTPRequestedUsers,
     getSuspendedUsers,
     health,
     outstandingRequests,
-    plscSync, reset2faOther,
+    plscSync,
+    reset2faOther,
     scheduledJobs,
     suspendCollaborations,
     suspendUsers,
@@ -53,7 +55,6 @@ import DOMPurify from "dompurify";
 import Scim from "./Scim";
 import CheckBox from "../components/CheckBox";
 import ClipBoardCopy from "../components/redesign/ClipBoardCopy";
-import {faParachuteBox} from "@fortawesome/free-solid-svg-icons";
 import Stats from "./Stats";
 
 const options = [25, 50, 100, 150, 200, 250, 500].map(nbr => ({value: nbr, label: nbr}));
@@ -615,7 +616,7 @@ class System extends React.Component {
                         seed: "Demo",
                         ms: new Date().getMilliseconds() - d.getMilliseconds()
                     })
-                },() => window.location.reload());
+                }, () => window.location.reload());
             });
         }
     }
@@ -1129,7 +1130,11 @@ class System extends React.Component {
             composition().then(res => this.setState({compositionData: res, busy: false}));
         } else if (name === "suspended-users") {
             Promise.all([getSuspendedUsers(), getResetTOTPRequestedUsers()])
-                .then(res => this.setState({currentlySuspendedUsers: res[0], resetTOTPRequestedUsers: res[1], busy: false}));
+                .then(res => this.setState({
+                    currentlySuspendedUsers: res[0],
+                    resetTOTPRequestedUsers: res[1],
+                    busy: false
+                }));
         } else if (name === "userlogins") {
             userLoginsSummary().then(res => this.setState({userLoginStats: res, busy: false}))
         } else {
