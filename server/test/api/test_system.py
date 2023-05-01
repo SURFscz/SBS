@@ -1,5 +1,3 @@
-import json
-
 from flask import current_app
 from sqlalchemy import text
 
