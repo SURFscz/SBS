@@ -53,6 +53,8 @@ import DOMPurify from "dompurify";
 import Scim from "./Scim";
 import CheckBox from "../components/CheckBox";
 import ClipBoardCopy from "../components/redesign/ClipBoardCopy";
+import {faParachuteBox} from "@fortawesome/free-solid-svg-icons";
+import Stats from "./Stats";
 
 const options = [25, 50, 100, 150, 200, 250, 500].map(nbr => ({value: nbr, label: nbr}));
 
@@ -378,6 +380,17 @@ class System extends React.Component {
             <div className="mod-system">
                 <section className={"info-block-container"}>
                     <Scim {...this.props}/>
+                </section>
+            </div>
+        </div>)
+    }
+
+    getStatsTab = () => {
+        return (<div key="stats" name="stats" label={I18n.t("home.tabs.stats")}
+                     icon={<FontAwesomeIcon icon="parachute-box"/>}>
+            <div className="mod-system">
+                <section className={"info-block-container"}>
+                    <Stats {...this.props}/>
                 </section>
             </div>
         </div>)
@@ -1180,7 +1193,8 @@ class System extends React.Component {
             config.seed_allowed ? this.getCompositionTab(compositionData) : null,
             this.getSuspendedUsersTab(currentlySuspendedUsers, resetTOTPRequestedUsers),
             this.getUserLoginTab(userLoginStats),
-            this.getScimTab()
+            this.getScimTab(),
+            this.getStatsTab()
         ]
 
         return (

@@ -110,7 +110,8 @@ const nl = {
             userlogins: "Logins",
             details: "Details",
             orgUsers: "Gebruikers",
-            scim: "SCIM"
+            scim: "SCIM",
+            stats: "Stats"
         }
     },
     forms: {
@@ -1812,7 +1813,11 @@ const nl = {
                 sweepScimEnabled: "Sweep enabled",
                 sweep: "Sweep",
             }
+        },
+        stats: {
+            loading: "Loading, please wait..."
         }
+
     },
     access: {
         full: "Volledige",

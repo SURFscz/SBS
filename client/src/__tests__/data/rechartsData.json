@@ -1,0 +1,123 @@
+[
+    {
+        "name": "8-2022",
+        "collaboration_memberships": 0,
+        "collaborations": 0,
+        "groups": 0,
+        "organisation_memberships": 0,
+        "organisations": 0,
+        "service_memberships": 0,
+        "services": 0,
+        "users": 22
+    },
+    {
+        "name": "9-2022",
+        "collaboration_memberships": 0,
+        "collaborations": 0,
+        "groups": 0,
+        "organisation_memberships": 0,
+        "organisations": 0,
+        "service_memberships": 0,
+        "services": 0,
+        "users": 67
+    },
+    {
+        "name": "10-2022",
+        "collaboration_memberships": 0,
+        "collaborations": 0,
+        "groups": 0,
+        "organisation_memberships": 0,
+        "organisations": 0,
+        "service_memberships": 0,
+        "services": 0,
+        "users": 67
+    },
+    {
+        "name": "11-2022",
+        "collaboration_memberships": 0,
+        "collaborations": 0,
+        "groups": 0,
+        "organisation_memberships": 0,
+        "organisations": 0,
+        "service_memberships": 0,
+        "services": 0,
+        "users": 136
+    },
+    {
+        "name": "12-2022",
+        "collaboration_memberships": 0,
+        "collaborations": 0,
+        "groups": 0,
+        "organisation_memberships": 0,
+        "organisations": 0,
+        "service_memberships": 0,
+        "services": 0,
+        "users": 136
+    },
+    {
+        "name": "1-2023",
+        "collaboration_memberships": 2,
+        "collaborations": 1,
+        "groups": 0,
+        "organisation_memberships": 1,
+        "organisations": 0,
+        "service_memberships": 0,
+        "services": 2,
+        "users": 140
+    },
+    {
+        "name": "2-2023",
+        "collaboration_memberships": 6,
+        "collaborations": 2,
+        "groups": 3,
+        "organisation_memberships": 1,
+        "organisations": 0,
+        "service_memberships": 0,
+        "services": 2,
+        "users": 1251
+    },
+    {
+        "name": "3-2023",
+        "collaboration_memberships": 12,
+        "collaborations": 4,
+        "groups": 6,
+        "organisation_memberships": 4,
+        "organisations": 0,
+        "service_memberships": 2,
+        "services": 4,
+        "users": 1252
+    },
+    {
+        "name": "4-2023",
+        "collaboration_memberships": 20,
+        "collaborations": 7,
+        "groups": 7,
+        "organisation_memberships": 6,
+        "organisations": 3,
+        "service_memberships": 2,
+        "services": 5,
+        "users": 1254
+    },
+    {
+        "name": "5-2023",
+        "collaboration_memberships": 20,
+        "collaborations": 7,
+        "groups": 7,
+        "organisation_memberships": 6,
+        "organisations": 3,
+        "service_memberships": 2,
+        "services": 5,
+        "users": 1254
+    },
+    {
+        "name": "6-2023",
+        "collaboration_memberships": 20,
+        "collaborations": 7,
+        "groups": 7,
+        "organisation_memberships": 6,
+        "organisations": 3,
+        "service_memberships": 2,
+        "services": 5,
+        "users": 1257
+    }
+]
