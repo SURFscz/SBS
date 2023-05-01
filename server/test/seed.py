@@ -318,9 +318,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                       accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org",
                       scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret")
     wiki = Service(entity_id=service_wiki_entity_id, name=service_wiki_name, description="No more wiki's please",
-                   uri="https://wiki.surfnet.nl/display/SCZ/Collaboration+Management+System+%28Dutch%3A+"
-                       "SamenwerkingBeheerSysteem%29+-+SBS#CollaborationManagementSystem"
-                       "(Dutch:SamenwerkingBeheerSysteem)-SBS-DevelopmentofnewopensourceCollaborationManagementSystem",
+                   uri="https://servicedesk.surf.nl/wiki/",
                    public_visible=True, automatic_connection_allowed=False, logo=read_image("wiki.jpeg"),
                    allowed_organisations=[uuc, uva], contact_email="help@wiki.com", abbreviation="wiki",
                    accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org",
@@ -359,7 +357,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     demo_sp = Service(entity_id="https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/test",
                       name="SRAM Demo SP", abbreviation="sram_demosp", description="Generic SRAM demo sp",
                       logo=read_image("test.png"), uri=("https://demo-sp.sram.surf.nl/"),
-                      privacy_policy="https://wiki.surfnet.nl/display/SRAM/Privacy+Policy",
+                      privacy_policy="https://edu.nl/fcgbd",
                       contact_email="sram-beheer@surf.nl", security_email="sram-beheer@surf.nl",
                       public_visible=True, automatic_connection_allowed=True, allow_restricted_orgs=True,
                       access_allowed_for_all=True,
@@ -370,7 +368,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     demo_rp = Service(entity_id="APP-18DE6298-7BDD-4CFA-9399-E1CC62E8DE05",
                       name="SRAM Demo RP", abbreviation="sram_demorp", description="Generic SRAM demo rp",
                       logo=read_image("test.png"), uri=("https://demo-sp.sram.surf.nl/"),
-                      privacy_policy="https://wiki.surfnet.nl/display/SRAM/Privacy+Policy",
+                      privacy_policy="https://edu.nl/fcgbd",
                       contact_email="sram-beheer@surf.nl", security_email="sram-beheer@surf.nl",
                       public_visible=True, automatic_connection_allowed=True, allow_restricted_orgs=True,
                       access_allowed_for_all=True,
