@@ -2218,6 +2218,10 @@ const en = {
             years: "in %s years"
         }
     },
+    error: {
+        message: "We seem to have run into an unknown error. Sorry for that.</br></br>" +
+            "Start over on the <a href='/'>homepage</a> or contact us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
+    }
 };
 
 export default en;
