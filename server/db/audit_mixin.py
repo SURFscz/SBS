@@ -9,7 +9,7 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm.attributes import get_history
 
 from server.db.db import db
-from server.db.formatting import JsonSerializableBase
+from server.db.json_serialize_base import JsonSerializableBase
 
 ACTION_CREATE = 1
 ACTION_UPDATE = 2
