@@ -1,6 +1,7 @@
 import ipaddress
 
-from flask import Blueprint, escape
+from flask import Blueprint
+from markupsafe import escape
 
 from server.api.base import json_endpoint, query_param
 from server.db.ipaddress import validate_ipv4, validate_ipv6

@@ -82,6 +82,7 @@ yarn analyze
 ### [API](#api)
 
 See the [Swagger](https://test.sram.surf.nl/apidocs/) for the API documentation and data model.
+Or for local development http://localhost:8080/apidocs/
 
 To see all routes:
 
@@ -143,18 +144,6 @@ pip install pip-upgrader
 cd server
 pip-upgrade requirements/test.txt --dry-run
 ```
-
-### [SQLAlchemy 2.0](#sqlalchemy)
-```bash
-source .venv/bin/activate
-cd server
-SQLALCHEMY_WARN_20=1 pytest ./test/
-```
-
-
-### [Swagger](#swagger)
-
-See http://localhost:8080/apidocs/ and https://test.sram.surf.nl/apidocs/
 
 ### [SURFSecureID](#surfsecureid)
 
