@@ -1725,7 +1725,7 @@ const nl = {
         privacy: "Privacy policy",
         privacyLink: "https://edu.nl/fcgbd",
         surfLink: "https://surf.nl",
-   },
+    },
     system: {
         title: "Systeemonderhoud",
         runDailyJobsInfo: "Voer de dagelijkse cron-taak uit om notificatie-e-mails te verzenden en mogelijk gebruikers op te schorten die zich gedurende de geconfigureerde periode niet hebben aangemeld",
@@ -1933,7 +1933,7 @@ const nl = {
         invalidSecondFactorUUID: "De koppeling is verlopen. Ga terug naar de dienst die je probeerde te bereiken en probeer het opnieuw.",
         invalidPamWebSSO: "Je sessie is verlopen. Ga terug naar de service waar je probeert in te loggen en probeer het opnieuw.",
         msg: "Het spijt ons, deze pagina kunnen we niet vinden.</br></br>" +
-        "Probeer opnieuw vanaf de <a href='{{base_url}}'>thuispagina</a> of neem contact met ons op via <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
+            "Probeer opnieuw vanaf de <a href='{{base_url}}'>thuispagina</a> of neem contact met ons op via <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
     },
     mfa: {
         register: {
@@ -2219,6 +2219,11 @@ const nl = {
             years: "over %s jaar"
         }
     },
+    error: {
+        message: "Het spijt ons, we zijn tegen een onbekende fout aangelopen.</br></br>" +
+            "Probeer opnieuw vanaf de <a href='/'>thuispagina</a> of neem contact met ons op via <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
+    }
+
 };
 
 export default nl;
