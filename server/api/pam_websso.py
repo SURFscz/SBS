@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import qrcode
 from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app, session
-from werkzeug.exceptions import NotFound, Forbidden, BadRequest
+from werkzeug.exceptions import NotFound, Forbidden, HTTPException
 
 from server.api.base import json_endpoint
 from server.api.service import user_service
@@ -148,7 +148,7 @@ def check_pin():
     logger = ctx_logger("pam_weblogin")
     try:
         data = current_request.get_json()
-    except BadRequest:
+    except HTTPException:
         logger.error("BadRequest in /api.pam/check-pin", exc_info=1)
         return {"result": "FAIL", "info": "Invalid JSON"}, 201
 
