@@ -503,7 +503,7 @@ class Groups extends React.Component {
                             name={I18n.t("organisation.created")}/>}
 
                 <section className="actions">
-                    {(adminOfCollaboration && !createNewGroup && isEmpty(selectedGroup?.service_group_id)) &&
+                    {(adminOfCollaboration && !createNewGroup && this.mayRemoveGroup(selectedGroup, collaboration)) &&
                     <Button warningButton={true}
                             onClick={this.delete}/>}
                     <Button cancelButton={true} txt={I18n.t("forms.cancel")}
@@ -548,6 +548,16 @@ class Groups extends React.Component {
             }), this.closeConfirmationDialog);
         this.confirm(action, I18n.t("models.groups.deleteMembersConfirmation"));
     };
+
+    mayRemoveGroup = (group, collaboration) => {
+        if (isEmpty(group) || isEmpty(group.service_group_id)) {
+            return true;
+        }
+        //If the service is no longer connected, then the group may be removed
+        const connected = collaboration.services.some(service => group.service_group?.service_id === service.id);
+        const connectedThroughOrg = collaboration.organisation.services.some(service => group.service_group?.service_id === service.id);
+        return !connected && !connectedThroughOrg;
+    }
 
     delete = () => {
         const selectedGroup = this.getSelectedGroup();
