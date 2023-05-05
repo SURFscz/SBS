@@ -86,8 +86,12 @@ def _do_suspend_users(app):
         # - if the user has not yet gotten a notification (or very long ago), send a warning
         # - otherwise, suspend the user only if the user hasn't logged in since suspension_date and
         #   the warning was sent at least reminder_suspend_period_days days ago
+        excluded_user_accounts = [user.uid for user in app.app_config.excluded_user_accounts]
+
         users = User.query \
-            .filter(User.last_login_date < warning_date, User.suspended == False).all()  # noqa: E712
+            .filter(User.last_login_date < warning_date, User.suspended == False) \
+            .filter(User.uid.not_in(excluded_user_accounts)) \
+            .all()  # noqa: E712
         for user in users:
             last_suspend_notification = SuspendNotification.query.filter(
                 SuspendNotification.user == user,
@@ -129,7 +133,9 @@ def _do_suspend_users(app):
         )
         warning_timeout = current_time - datetime.timedelta(days=retention.reminder_expiry_period_days)
         suspended_users = User.query \
-            .filter(User.last_login_date < warning_date, User.suspended == True).all()  # noqa: E712
+            .filter(User.last_login_date < warning_date, User.suspended == True) \
+            .filter(User.uid.not_in(excluded_user_accounts)) \
+            .all()  # noqa: E712
         deleted_user_uids = []
         for user in suspended_users:
             last_suspend_notification = SuspendNotification.query.filter(
