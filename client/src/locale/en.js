@@ -136,7 +136,7 @@ const en = {
         uploadSSH: "Add SSH key",
         add: "Add an image",
         change: "Change image",
-        image: "Image must at least be 300x120 pixels and smaller then 2MB.",
+        image: "Image must be smaller then 2MB.",
         dragImage: "Drag and resize the crop area until you're happy with the result. Then hit apply.",
         imageToLarge: "Image is larger then 2MB.",
         imageDeleteConfirmation: "Are you sure you want to delete this image? This cannot be reverted, and you'll have to select a new image.",
