@@ -1529,7 +1529,11 @@ const en = {
             missing: {
                 info: "The service acceptable use policy (AUP) has changed. Please read it and indicate below whether you accept.",
                 infoMultiple: "These service acceptable use policies (AUPs) have changed. Please read them and indicate below whether you accept."
-            }
+            },
+            singleInfo: "A service used by this collaboration requires that you agree to their acceptable use policy.",
+            multipleInfo: "Services used by this collaboration require that you agree to their acceptable use policies.",
+            singleCheck: "I agree to the service's acceptable use policy",
+            multipleCheck: "I agree to the services acceptable use policies"
         }
     },
     collaborationRequest: {

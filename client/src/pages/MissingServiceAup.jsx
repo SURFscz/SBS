@@ -61,8 +61,11 @@ class MissingServiceAup extends React.Component {
                                             serviceEmails={user.service_emails}
                                             setDisabled={() => this.setState({agreed: !agreed})}/>
                 <div className="actions">
-                    <Button className="proceed" onClick={this.agreeWith} centralize={true}
-                            txt={I18n.t("aup.onward")} disabled={!agreed}/>
+                    <Button className="proceed"
+                            onClick={this.agreeWith}
+                            centralize={true}
+                            txt={I18n.t("aup.onward")}
+                            disabled={!agreed}/>
                 </div>
             </div>
         )

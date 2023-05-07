@@ -52,6 +52,7 @@ div.mod-aup-services {
                 div.contact {
                     display: flex;
                     align-content: center;
+
                     svg {
                         margin-right: 10px;
                     }
@@ -63,11 +64,17 @@ div.mod-aup-services {
         span.no-link {
             color: $darker-grey;
             font-style: italic;
+            max-width: 220px;
+            display: inline-block;
         }
     }
 
     div.terms {
         margin: 40px 0 0 0;
+
+        p.aup-info {
+            margin-bottom: 15px;
+        }
     }
 
 
