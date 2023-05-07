@@ -17,7 +17,7 @@ export default function CollaborationAupAcceptance({
                                                    }) {
     const renderServiceAup = service => {
         const hasEmails = !isEmpty(serviceEmails) && !isEmpty(serviceEmails[service.id]);
-        const mails = hasEmails ? encodeURI(serviceEmails[service.id].join(",")) : "delme@ex.com";
+        const mails = hasEmails ? encodeURI(serviceEmails[service.id].join(",")) : null;
 
         return (
             <div className="service-section" key={service.id}>
@@ -63,6 +63,8 @@ export default function CollaborationAupAcceptance({
             </div>
         );
     }
+    const servicesWithAups = services.filter(service => !isEmpty(service.accepted_user_policy));
+    const singleServiceWithAup = servicesWithAups.length === 1;
     return (
         <div className="mod-aup-services">
             {children}
@@ -72,10 +74,16 @@ export default function CollaborationAupAcceptance({
             {services.length === 0 && <div className="services">
                 <span>{I18n.t("welcomeDialog.noServices")}</span>
             </div>}
+            {servicesWithAups.length > 0 &&
             <div className="terms">
-                <CheckBox name="aup" value={!disabled} info={I18n.t("aup.collaboration.agreeWithTerms")}
+                <p className="aup-info">
+                    {I18n.t(`aup.service.${singleServiceWithAup ? "singleInfo" : "multipleInfo"}`)}
+                </p>
+                <CheckBox name="aup"
+                          value={!disabled}
+                          info={I18n.t(`aup.service.${singleServiceWithAup ? "singleCheck" : "multipleCheck"}`)}
                           onChange={() => setDisabled(!disabled)}/>
-            </div>
+            </div>}
         </div>);
 
 }

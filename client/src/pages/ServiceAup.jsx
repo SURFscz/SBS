@@ -7,6 +7,7 @@ import {serviceAupCreate, serviceByUuid4} from "../api";
 import SpinnerField from "../components/redesign/SpinnerField";
 import CollaborationAupAcceptance from "../components/CollaborationAupAcceptance";
 import DOMPurify from "dompurify";
+import {isEmpty} from "../utils/Utils";
 
 
 class ServiceAup extends React.Component {
@@ -41,7 +42,8 @@ class ServiceAup extends React.Component {
                 continueUrl: continueUrl,
                 service: res["service"],
                 collaborations: res["collaborations"],
-                serviceEmails: res["service_emails"]
+                serviceEmails: res["service_emails"],
+                agreed: isEmpty(res["service"].accepted_user_policy)
             });
         })
     }
