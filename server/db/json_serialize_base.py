@@ -11,7 +11,7 @@ class JsonSerializableBase(object):
         unloaded = inspection.unloaded
         expired = inspection.expired_attributes
 
-        keys = columns | relationships
+        keys = columns.union(relationships)
         if not inspection.transient:
             keys.difference_update(unloaded)
 
