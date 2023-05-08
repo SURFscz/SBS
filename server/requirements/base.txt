@@ -27,7 +27,7 @@ passlib==1.7.4
 werkzeug==2.3.3
 Flask-Executor==1.0.0
 eventlet==0.33.3
-Flask-SocketIO==5.3.3
+Flask-SocketIO==5.3.4
 Flask-Cors==3.0.10
 dnspython==2.3.0
 python3-saml==1.15.0
