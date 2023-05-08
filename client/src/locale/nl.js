@@ -661,7 +661,7 @@ const nl = {
         scoped_affiliation: "Scoped affiliations",
         entitlement: "Entitlements",
         nick_name: "Roepnaam",
-        schac_home_organisation: "Organisatienaam",
+        schac_home_organisation: "Organisatiedomein",
         edu_members: "EDU lidmaatschap",
         eduperson_principal_name: "EPPN",
         created_at: "Profiel gemaakt op",
@@ -2175,7 +2175,7 @@ const nl = {
         expired: "Verlopen {{relativeTime}}",
         never: "Verloopt nooit",
         activity: {
-            now: "Net nu",
+            now: "Zojuist",
             seconds: "Vandaag",
             minute: "Vandaag",
             minutes: "Vandaag",
@@ -2191,7 +2191,7 @@ const nl = {
             years: "%s jaar geleden"
         },
         ago: {
-            now: "net nu",
+            now: "zojuist",
             seconds: "%s seconden geleden",
             minute: "1 minuut geleden",
             minutes: "%s minuten geleden",
@@ -2207,7 +2207,7 @@ const nl = {
             years: "%s jaar geleden"
         },
         in: {
-            now: "net nu",
+            now: "nu",
             seconds: "over %s seconden",
             minute: "over 1 minuut",
             minutes: "over %s minuten",
@@ -2224,7 +2224,7 @@ const nl = {
         }
     },
     error: {
-        message: "Het spijt ons, we zijn tegen een onbekende fout aangelopen.</br></br>" +
+        message: "Het spijt ons, we zijn tegen een onbekende fout aangelopen.</br>" +
             "Probeer opnieuw vanaf de <a href='/'>thuispagina</a> of neem contact met ons op via <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
     }
 
