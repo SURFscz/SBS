@@ -614,7 +614,7 @@ const en = {
         deleteOther: "Delete",
         unsuspendOtherConfirmation: "Are you sure you want to undo the suspension the user {{name}}?",
         reset2fa: "Reset TOTP",
-        reset2faConfirmation: "Are you sure you want to reset the TOTP for the {{name}}?",
+        reset2faConfirmation: "Are you sure you want to reset the TOTP for user {{name}}?",
     },
     impersonate: {
         title: "Who do you want to be?",
@@ -661,7 +661,7 @@ const en = {
         scoped_affiliation: "Scoped affiliations",
         entitlement: "Entitlements",
         nick_name: "Nick name",
-        schac_home_organisation: "Organisation name",
+        schac_home_organisation: "Organisation domain",
         edu_members: "EDU memberships",
         eduperson_principal_name: "EPPN",
         created_at: "Profile created",
@@ -2223,7 +2223,7 @@ const en = {
         }
     },
     error: {
-        message: "We seem to have run into an unknown error. Sorry for that.</br></br>" +
+        message: "We seem to have run into an unknown error. Sorry for that.</br>" +
             "Start over on the <a href='/'>homepage</a> or contact us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
     }
 };
