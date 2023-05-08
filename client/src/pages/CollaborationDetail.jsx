@@ -703,7 +703,6 @@ class CollaborationDetail extends React.Component {
             return null;
         }
         const expiryDate = moment(collaboration.expiry_date * 1000).format("LL");
-        // const lastActivityDate = moment(collaboration.last_activity_date * 1000).format("LL");
         const className = collaboration.status !== "active" ? "warning" : "";
         const status = (collaboration.status === "active" && collaboration.expiry_date) ? "activeWithExpiryDate" : collaboration.status;
         return (
