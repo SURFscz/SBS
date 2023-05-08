@@ -3,8 +3,7 @@ import I18n from "../../locale/I18n";
 import "./CroppedImageDialog.scss";
 import {ReactComponent as NotFoundIcon} from "../../icons/image-not-found.svg";
 import {isEmpty} from "../../utils/Utils";
-import ReactCrop ,{centerCrop, makeAspectCrop,} from "react-image-crop";
-import ErrorIndicator from "./ErrorIndicator";
+import ReactCrop, {centerCrop, makeAspectCrop,} from "react-image-crop";
 import CheckBox from "../CheckBox";
 import {sanitizeHtml} from "../../utils/Markdown";
 import {srcUrl} from "../../utils/Image";
@@ -73,7 +72,7 @@ export default class CroppedImageDialog extends React.PureComponent {
     onImageLoaded = event => {
         const image = event.target;
         this.imageRef = image;
-        const { width, height } = image;
+        const {width, height} = image;
         const {ratio} = this.state;
         const crop = this.centerAspectCrop(width, height, ratio);
         this.setState({crop: crop});
@@ -135,7 +134,7 @@ export default class CroppedImageDialog extends React.PureComponent {
         const val = e.target.checked;
 
         if (!val) {
-            this.setState({addWhiteSpace: val, source: copy || value, result:copy || value, isSvg: initialSvg});
+            this.setState({addWhiteSpace: val, source: copy || value, result: copy || value, isSvg: initialSvg});
         } else {
             this.setState({busy: true});
             const image = new Image();
@@ -209,24 +208,25 @@ export default class CroppedImageDialog extends React.PureComponent {
                              onLoad={this.onImageLoaded}/>
                     </ReactCrop>
                 </div>}
-                {<label className="file-upload-label sds--btn sds--btn--primary"
-                        htmlFor={`fileUpload_${name}`}>
-                    {I18n.t("forms.upload")}
-                </label>}
-                {<input type="file"
-                        id={`fileUpload_${name}`}
-                        name={`fileUpload_${name}`}
-                        accept="image/png, image/jpeg, image/jpg, image/svg+xml, image/webp"
-                        style={{display: "none"}}
-                        onChange={this.internalOnChange}/>}
-                {!src && <span className="disclaimer">{I18n.t("forms.image")}</span>}
-                {src && <span className="disclaimer">{I18n.t("forms.dragImage")}</span>}
+                <div className={`sds--file-upload ${error ? "sds--file-upload--status-error" : ""}`}>
+                    {<input type="file"
+                            id={`fileUpload_${name}`}
+                            name={`fileUpload_${name}`}
+                            accept="image/png, image/jpeg, image/jpg, image/svg+xml, image/webp"
+                            onChange={this.internalOnChange}/>}
+                    {(isEmpty(error) && !src) && <p className="sds--file-upload--message sds--text--body--small">
+                        {I18n.t("forms.image")}
+                    </p>}
+                    {(isEmpty(error) && src) && <p className="sds--file-upload--message sds--text--body--small">
+                        {I18n.t("forms.dragImage")}
+                    </p>}
+                    {!isEmpty(error) && <p className="sds--file-upload--message">{error}</p>}
+                </div>
                 {src && <CheckBox name={"add-white-space"}
                                   value={addWhiteSpace}
                                   onChange={this.onWhiteSpace}
                                   info={I18n.t("forms.whiteSpace")}/>
                 }
-                {!isEmpty(error) && <ErrorIndicator msg={error}/>}
             </div>
         );
     }

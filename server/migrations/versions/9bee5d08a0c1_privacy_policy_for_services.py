@@ -18,7 +18,7 @@ depends_on = None
 def upgrade():
     conn = op.get_bind()
     conn.execute(text("ALTER TABLE services ADD COLUMN privacy_policy VARCHAR(255)"))
-    conn.execute(text("UPDATE services SET privacy_policy = 'https://wiki.surfnet.nl/display/SRAM/Privacy+Policy'"))
+    conn.execute(text("UPDATE services SET privacy_policy = 'https://edu.nl/fcgbd'"))
     conn.execute(text("ALTER TABLE services CHANGE privacy_policy privacy_policy VARCHAR(255) NOT NULL"))
 
 

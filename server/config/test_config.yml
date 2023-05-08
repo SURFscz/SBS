@@ -84,8 +84,8 @@ mail:
 
 aup:
   version: 1
-  url_aup_en: https://wiki.surfnet.nl/display/SRAM/Acceptable+Use+Policy
-  url_aup_nl: https://wiki.surfnet.nl/display/SRAM/Acceptable+Use+Policy
+  url_aup_en: https://edu.nl/6wb63
+  url_aup_nl: https://edu.nl/6wb63
 
 base_url: http://localhost:3000
 base_server_url: http://localhost:8080
@@ -225,3 +225,8 @@ pam_web_sso:
   session_timeout_seconds: 300
 
 rate_limit_totp_guesses_per_30_seconds: 10
+
+# The uid's of user that will never be suspended or deleted
+excluded_user_accounts:
+  - uid: "urn:paul"
+  - uid: "urn:peter"

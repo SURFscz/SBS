@@ -1,12 +1,11 @@
 APScheduler==3.10.1
 mysqlclient==2.1.1
 PyYAML==6.0
-SQLAlchemy==2.0.11
+SQLAlchemy==2.0.12
 cryptography==40.0.2
 flask-jsonschema-validator==0.0.4
 flask-mail==0.9.1
-flask==2.2.3
-git+https://github.com/oharsta/py-flask-jsontools@master#egg=flask_jsontools
+flask==2.3.2
 flask_migrate==4.0.4
 Flask-SQLAlchemy==3.0.3
 jinja2==3.1.2
@@ -25,8 +24,7 @@ Pillow==9.5.0
 PyJWT==2.6.0
 Authlib==1.2.0
 passlib==1.7.4
-flasgger==0.9.5
-werkzeug==2.2.3
+werkzeug==2.3.3
 Flask-Executor==1.0.0
 eventlet==0.33.3
 Flask-SocketIO==5.3.3
@@ -34,3 +32,4 @@ Flask-Cors==3.0.10
 dnspython==2.3.0
 python3-saml==1.15.0
 git+https://github.com/benoitc/gunicorn.git@6a8ebb4844b2f28596ffe7421eb9f7d08c8dc4d8
+git+https://github.com/SURFscz/flasgger@master#egg=flasgger

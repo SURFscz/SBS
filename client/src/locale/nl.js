@@ -136,9 +136,9 @@ const nl = {
         uploadSSH: "Voeg SSH-sleutel toe",
         add: "Voeg een afbeelding toe",
         change: "Wijzig afbeelding",
-        image: "Afbeelding moet tenminste 300x120 pixels en kleiner dan 2MB zijn",
+        image: "Afbeelding moet kleiner zijn dan 2MB.",
         dragImage: "Versleep de rechthoek en pas de grootte aan totdat je tevreden bent met het resultaat. Kies vervolgens voor toepassen",
-        imageToLarge: "Afbeelding is groter 2MB",
+        imageToLarge: "Afbeelding is groter dan 2MB",
         imageDeleteConfirmation: "Ben je zeker dat je deze afbeelding wil verwijderen? Dit kan niet worden teruggedraaid. Hierna zul je een nieuwe afbeelding moeten toevoegen.",
         imageRequired: "Afbeelding is verplicht",
         whiteSpace: "Afbeelding passend maken",
@@ -1024,7 +1024,7 @@ const nl = {
         addMe: "Maak me dienstbeheerder",
         access: "Toegang",
         policies: "Beleid",
-        policyCompliance: "Toegangsbeleid",
+        policyCompliance: "Beleid voldoet aan",
         login: "Inloggen",
         support: "Support voor de eindgebruiker",
         admins: "Administratieve email-adressen",
@@ -1529,7 +1529,11 @@ const nl = {
             missing: {
                 info: "De acceptable use policy (AUP) van deze dienst is gewijzigd. Lees de AUP en geef aan of je akkoord gaat.",
                 infoMultiple: "De acceptable use policies (AUPs) van deze diensten zijn gewijzigd. Lees de AUPs en geef aan of je akkoord gaat."
-            }
+            },
+            singleInfo: "Een dienst gebruikt binnen deze samenwerking vereist dat je akkoord gaat met een acceptable use policy.",
+            multipleInfo: "Diensten gebruikt binnen deze samenwerking vereisen dat je akkoord gaat met de acceptable use policies.",
+            singleCheck: "Ik ga akkoord met de hierboven genoemde acceptable use policy",
+            multipleCheck: "Ik ga akkoord met de hierboven genoemde acceptable use policies"
         }
     },
     collaborationRequest: {
@@ -1725,7 +1729,7 @@ const nl = {
         privacy: "Privacy policy",
         privacyLink: "https://edu.nl/fcgbd",
         surfLink: "https://surf.nl",
-   },
+    },
     system: {
         title: "Systeemonderhoud",
         runDailyJobsInfo: "Voer de dagelijkse cron-taak uit om notificatie-e-mails te verzenden en mogelijk gebruikers op te schorten die zich gedurende de geconfigureerde periode niet hebben aangemeld",
@@ -1854,8 +1858,8 @@ const nl = {
         collaboration: "samenwerking",
         service: "dienst",
         toggleRole: "Wissel van rol",
-        infoMember: "Om lid te worden van deze samenwerking moet je de acceptable use policy (AUP) en het privacybeleid van de dienst(en) accepteren.",
-        infoAdmin: "Om beheerder te worden van deze samenwerking moet je de acceptable use policy (AUP) en het privacybeleid van de dienst(en) accepteren.",
+        infoMember: "Houd er rekening mee dat wanneer je lid wordt van deze samenwerking, je persoonlijke gegevens gedeeld kunnen worden met de volgende diensten. Neem even de tijd om de door de dienst opgegeven beleidsdocumenten door te nemen.",
+        infoAdmin: "Houd er rekening mee dat wanneer je beheerder wordt van deze samenwerking, je persoonlijke gegevens gedeeld kunnen worden met de volgende diensten. Neem even de tijd om de door de dienst opgegeven beleidsdocumenten door te nemen.",
         infoJoinRequest: "Bijna zover! Voordat je kunt verzoeken lid te worden van deze samenwerking moet je de acceptable use policy (AUP) en het privacybeleid van de dienst lezen. Geef hieronder aan of je deze accepteert.",
         purpose: "Doel van deze samenwerking",
         noServices: "Nog geen diensten gekoppeld.",
@@ -1930,11 +1934,10 @@ const nl = {
     },
     notFound: {
         invitationNotFound: "Deze uitnodiging bestaat niet (meer). Waarschijnlijk is de uitnodiging al eerder gebruikt. Vraag aan de uitnodiger of je een nieuwe uitnodiging kunt krijgen.",
-        invalidSecondFactorUUID: "De redirect vanuit eduTeams is verlopen. Ga terug naar de service die je probeerde te bereiken en probeer het opnieuw.",
+        invalidSecondFactorUUID: "De koppeling is verlopen. Ga terug naar de dienst die je probeerde te bereiken en probeer het opnieuw.",
         invalidPamWebSSO: "Je sessie is verlopen. Ga terug naar de service waar je probeert in te loggen en probeer het opnieuw.",
-        msg: "Mmmm, het lijkt erop dat je op de een of andere manier een link hebt gekregen waar we je niet mee kunnen helpen. Sorry daarvoor. </br></br>" +
-            "Je zou kunnen proberen de <a href='{{base_url}}'>startpagina</a> te bezoeken. Als je daar niet iets vindt waar je mee geholpen bent, " +
-            "neem dan contact op met de persoon die je heeft uitgenodigd, of volg de help-link waar ook staat hoe je contact kunt opnemen met het team van SURF Research Access Management."
+        msg: "Het spijt ons, deze pagina kunnen we niet vinden.</br></br>" +
+            "Probeer opnieuw vanaf de <a href='{{base_url}}'>thuispagina</a> of neem contact met ons op via <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
     },
     mfa: {
         register: {
@@ -2220,6 +2223,11 @@ const nl = {
             years: "over %s jaar"
         }
     },
+    error: {
+        message: "Het spijt ons, we zijn tegen een onbekende fout aangelopen.</br></br>" +
+            "Probeer opnieuw vanaf de <a href='/'>thuispagina</a> of neem contact met ons op via <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
+    }
+
 };
 
 export default nl;

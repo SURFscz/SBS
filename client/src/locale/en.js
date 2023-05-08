@@ -136,7 +136,7 @@ const en = {
         uploadSSH: "Add SSH key",
         add: "Add an image",
         change: "Change image",
-        image: "Image must at least be 300x120 pixels and smaller then 2MB.",
+        image: "Image must be smaller then 2MB.",
         dragImage: "Drag and resize the crop area until you're happy with the result. Then hit apply.",
         imageToLarge: "Image is larger then 2MB.",
         imageDeleteConfirmation: "Are you sure you want to delete this image? This cannot be reverted, and you'll have to select a new image.",
@@ -1024,7 +1024,7 @@ const en = {
         addMe: "Make me service admin",
         access: "Access",
         policies: "Policies",
-        policyCompliance: "Policy compliance",
+        policyCompliance: "Compliant policies",
         login: "Login",
         support: "Support for end user",
         admins: "Administrative email address",
@@ -1529,7 +1529,11 @@ const en = {
             missing: {
                 info: "The service acceptable use policy (AUP) has changed. Please read it and indicate below whether you accept.",
                 infoMultiple: "These service acceptable use policies (AUPs) have changed. Please read them and indicate below whether you accept."
-            }
+            },
+            singleInfo: "A service used by this collaboration requires that you agree to their acceptable use policy.",
+            multipleInfo: "Services used by this collaboration require that you agree to their acceptable use policies.",
+            singleCheck: "I agree to the service's acceptable use policy",
+            multipleCheck: "I agree to the services acceptable use policies"
         }
     },
     collaborationRequest: {
@@ -1853,8 +1857,8 @@ const en = {
         collaboration: "collaboration",
         service: "service",
         toggleRole: "Toggle role",
-        infoMember: "Before joining this collaboration, you must review the acceptable use policy (AUP) and privacy policy of the service and accept them.",
-        infoAdmin: "Before you can become an admin of this collaboration, you must review the acceptable use policy (AUP) and privacy policy of the service and accept them.",
+        infoMember: "Please be aware that on joining this collaboration, your personal data may be shared with the following services. Take a moment to review any policy documents provided by the service.",
+        infoAdmin: "Please be aware that on becoming and admin of this collaboration, your personal data may be shared with the following services. Take a moment to review any policy documents provided by the service.",
         infoJoinRequest: " Before you can request to join this collaboration, you must review the acceptable use policy (AUP) and privacy policy of the service. Indicate below whether you accept them.",
         purpose: "Purpose of the collaboration",
         noServices: "No services connected yet.",
@@ -1929,11 +1933,10 @@ const en = {
     },
     notFound: {
         invitationNotFound: "This invitation does not exist (anymore). The invitation has probably already been used. Ask the person who invited you to send you a new one.",
-        invalidSecondFactorUUID: "The redirect from eduTeams is expired. Please go back to the service where you we're trying to login and try again.",
+        invalidSecondFactorUUID: "The link has expired. Please go back to the service where you we're trying to login and try again.",
         invalidPamWebSSO: "Your session has expired. Please go back to the service you were trying to login to and try again.",
-        msg: "Mmmm, seems you somehow ended up with a link that we can't help you with. Sorry for that. </br></br>" +
-            "You could try visiting the <a href='{{base_url}}'>homepage</a>. If that does not offer you an option you were looking for, " +
-            "contact the person that invited you, or follow the help link which includes how to contact the SURF Research Access Management team."
+        msg: "We can't seem to find that page. Sorry for that.</br></br>" +
+            "Start over on the <a href='{{base_url}}'>homepage</a> or contact us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
     },
     mfa: {
         register: {
@@ -2219,6 +2222,10 @@ const en = {
             years: "in %s years"
         }
     },
+    error: {
+        message: "We seem to have run into an unknown error. Sorry for that.</br></br>" +
+            "Start over on the <a href='/'>homepage</a> or contact us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
+    }
 };
 
 export default en;
