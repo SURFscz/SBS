@@ -43,16 +43,18 @@ def apply_change(f):
     return wrapper
 
 
-def _log_scim_error(response, service, outside_user_context):
+def _log_scim_error(response, service, outside_user_context, extra_logging):
     logger = ctx_logger("scim") if not outside_user_context else logging.getLogger("scim")
     is_json = response and "json" in response.headers.get("Content-Type", "").lower()
     scim_json = response.json() if is_json else {}
-    logger.error(f"Scim endpoint {service.scim_url} returned an error: {scim_json}")
+    if extra_logging:
+        extra_log_msg = f" ({extra_logging})"
+    logger.error(f"Scim endpoint {service.scim_url}{extra_log_msg} returned error {response.status_code}: {scim_json}")
 
 
-def validate_response(response, service, outside_user_context=False):
+def validate_response(response, service, outside_user_context=False, extra_logging=None):
     if not response or response.status_code > 204:
-        _log_scim_error(response, service, outside_user_context)
+        _log_scim_error(response, service, outside_user_context, extra_logging)
         return False
     return True
 
@@ -115,7 +117,8 @@ def membership_user_scim_objects(service: Service, group: Union[Group, Collabora
         if not scim_object:
             # We need to provision this user first as it is unknown in the remote SCIM DB
             response = _provision_user(scim_object, service, user)
-            if validate_response(response, service):
+            if validate_response(response, service, extra_logging=f"membership {user.short_name} of"
+                                                                  f" {group.global_urn}"):
                 scim_object = response.json()
         if scim_object:
             result.append(scim_member_object(base_url, member, scim_object))
@@ -127,7 +130,7 @@ def _lookup_scim_object(service: Service, scim_type: str, external_id: str):
     query_filter = f"externalId eq \"{external_id}{EXTERNAL_ID_POST_FIX}\""
     url = f"{service.scim_url}/{scim_type}?filter={urllib.parse.quote(query_filter)}"
     response = requests.get(url, headers=scim_headers(service), timeout=10)
-    if not validate_response(response, service):
+    if not validate_response(response, service, extra_logging=f"lookup {scim_type} {external_id}"):
         return None
     scim_json = response.json()
     return None if scim_json["totalResults"] == 0 else scim_json["Resources"][0]
@@ -151,7 +154,7 @@ def _do_apply_user_change(user: User, service: Union[None, Service], deletion: b
         else:
             response = _provision_user(scim_object, service, user)
         if response:
-            validate_response(response, service)
+            validate_response(response, service, extra_logging=f"user={user.short_name}, delete={deletion}")
     return scim_services
 
 
@@ -181,7 +184,7 @@ def _do_apply_group_collaboration_change(group: Union[Group, Collaboration], ser
         else:
             response = _provision_group(scim_object, service, group)
         if response:
-            validate_response(response, service)
+            validate_response(response, service, extra_logging=f"group={group.global_urn} delele={deletion}")
     return bool(scim_services)
 
 
@@ -206,7 +209,7 @@ def apply_user_deletion(app, external_id, collaboration_identifiers: List[int], 
             if scim_object:
                 url = f"{service.scim_url}{scim_object['meta']['location']}"
                 response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10)
-                validate_response(response, service)
+                validate_response(response, service, extra_logging=f"user={external_id}, delete=True")
         for co in collaborations:
             services = _all_unique_scim_services_of_collaborations([co])
             _do_apply_group_collaboration_change(co, services, deletion=False)
