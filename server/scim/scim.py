@@ -47,6 +47,8 @@ def _log_scim_error(response, service, outside_user_context, extra_logging):
     logger = ctx_logger("scim") if not outside_user_context else logging.getLogger("scim")
     is_json = response and "json" in response.headers.get("Content-Type", "").lower()
     scim_json = response.json() if is_json else {}
+
+    extra_log_msg = ""
     if extra_logging:
         extra_log_msg = f" ({extra_logging})"
     logger.error(f"Scim endpoint {service.scim_url}{extra_log_msg} returned error {response.status_code}: {scim_json}")
