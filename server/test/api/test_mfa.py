@@ -3,6 +3,7 @@ import uuid
 import pyotp
 from flask import current_app
 
+from server.auth.secrets import generate_token
 from server.auth.ssid import saml_auth
 from server.db.db import db
 from server.db.domain import User
@@ -36,9 +37,9 @@ class TestMfa(AbstractTest):
 
     def test_ssid_scenario(self):
         # initiate proxy_authz call to initialize 2fa
-        res = self.post("/api/users/proxy_authz", response_status_code=200,
-                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
-                              "uid": "sarah", "homeorganization": "ssid.org"})
+        self.post("/api/users/proxy_authz", response_status_code=200,
+                  body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
+                        "uid": "sarah", "homeorganization": "ssid.org"})
         sarah = self.find_entity_by_name(User, sarah_name)
 
         # start the ssid
@@ -143,6 +144,19 @@ class TestMfa(AbstractTest):
                   with_basic_auth=False)
         mary = User.query.filter(User.uid == "urn:mary").one()
         self.post("/api/mfa/reset2fa", body={"token": mary.mfa_reset_token})
+        mary = User.query.filter(User.uid == "urn:mary").one()
+        self.assertIsNone(mary.mfa_reset_token)
+        self.assertIsNone(mary.second_factor_auth)
+
+    def test_reset2fa_anonymous(self):
+        mary = self.add_second_fa_uuid_to_user("urn:mary")
+        mary.mfa_reset_token = generate_token()
+        AbstractTest._merge_user(mary)
+
+        self.post("/api/mfa/reset2fa",
+                  body={"second_fa_uuid": mary.second_fa_uuid,
+                        "token": mary.mfa_reset_token},
+                  with_basic_auth=False)
         mary = User.query.filter(User.uid == "urn:mary").one()
         self.assertIsNone(mary.mfa_reset_token)
         self.assertIsNone(mary.second_factor_auth)
@@ -252,3 +266,23 @@ class TestMfa(AbstractTest):
         res = self.get("/api/mfa/get2fa_proxy_authz", query_data={"second_fa_uuid": sarah.second_fa_uuid},
                        with_basic_auth=False)
         self.assertFalse("qr_code_base64" in res)
+
+    def test_reset2fa_other(self):
+        betty = self.find_entity_by_name(User, "betty")
+        self.assertIsNotNone(betty.mfa_reset_token)
+
+        self.login("urn:mary")
+        self.put("/api/mfa/reset2fa_other",
+                 body={"user_id": betty.id},
+                 with_basic_auth=False)
+        betty = self.find_entity_by_name(User, "betty")
+        self.assertIsNone(betty.mfa_reset_token)
+        self.assertIsNone(betty.second_factor_auth)
+
+    def test_reset2fa_other_manager_not_allowed(self):
+        betty = self.find_entity_by_name(User, "betty")
+        self.login("urn:harry")
+        self.put("/api/mfa/reset2fa_other",
+                 body={"user_id": betty.id},
+                 with_basic_auth=False,
+                 response_status_code=403)

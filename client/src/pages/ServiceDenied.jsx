@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import "./ServiceDenied.scss";
 import {Player} from "@lottiefiles/react-lottie-player";
 import service_denied from "../lotties/service-denied.json";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import escape from "lodash.escape";
 import DOMPurify from "dompurify";
 

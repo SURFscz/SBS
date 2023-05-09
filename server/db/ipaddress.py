@@ -12,6 +12,7 @@ def _read_lines(file_name):
 
 
 def validate_ipv4(ipv4_network: IPv4Network):
+    global special_ipv4_addresses
     if not special_ipv4_addresses:
         ipv4_csv_lines = _read_lines("ipaddress/iana-ipv4-special-registry.csv")
         for ipv4_line in ipv4_csv_lines[1:]:
@@ -20,6 +21,7 @@ def validate_ipv4(ipv4_network: IPv4Network):
 
 
 def validate_ipv6(ipv6_network: IPv6Network):
+    global special_ipv6_addresses
     if not special_ipv6_addresses:
         ipv6_csv_lines = _read_lines("ipaddress/iana-ipv6-special-registry.csv")
         for ipv6_line in ipv6_csv_lines[1:]:

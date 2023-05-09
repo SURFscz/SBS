@@ -13,7 +13,7 @@ import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
 
 import "./UsedServices.scss";
 import {isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
-import I18n from "i18n-js";
+import I18n from "../../locale/I18n";
 import Entities from "./Entities";
 import Button from "../Button";
 import {clearFlash, setFlash} from "../../utils/Flash";
@@ -51,10 +51,9 @@ class UsedServices extends React.Component {
 
     componentWillUnmount = () => {
         const {collaboration} = this.props;
-        [`collaboration_${collaboration.id}`, "service"].forEach(topic => {
+        [`collaboration_${collaboration.id}`, "service", `organisation_${collaboration.organisation_id}`].forEach(topic => {
             socket.then(s => s.off(topic));
         });
-
     }
 
     componentDidMount = () => {
@@ -77,6 +76,8 @@ class UsedServices extends React.Component {
                     .filter(service => {
                         return (service.allowed_organisations.some(org => org.id === collaboration.organisation_id)
                                 || service.access_allowed_for_all
+                                || service.automatic_connection_allowed
+                                || service.non_member_users_access_allowed
                                 || service.automatic_connection_allowed_organisations.some(org => org.id === collaboration.organisation_id))
                             && servicesInUse.indexOf(service.id) === -1
                             && (service.allow_restricted_orgs || !collaboration.organisation.services_restricted);
@@ -84,12 +85,12 @@ class UsedServices extends React.Component {
                 this.setState({services: filteredServices, loading: false});
                 const {socketSubscribed} = this.state;
                 if (!socketSubscribed) {
-                    [`collaboration_${collaboration.id}`, "service"].forEach(topic => {
+                    [`collaboration_${collaboration.id}`, "service", `organisation_${collaboration.organisation_id}`].forEach(topic => {
                         socket.then(s => s.on(topic, data => {
                             const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
                             if (subscriptionIdSessionStorage !== data.subscription_id) {
                                 //Ensure we don't get race conditions with the refresh in CollaborationDetail
-                                setTimeout(this.componentDidMount, 1000);
+                                setTimeout(this.componentDidMount, 1500);
                             }
                         }));
                     })
@@ -124,8 +125,7 @@ class UsedServices extends React.Component {
         } else if (service.usedService) {
             service.status = service.connectionRequest ? I18n.t("models.services.awaitingApproval") : ""
         } else {
-            const allowedToConnect = service.automatic_connection_allowed ||
-                service.automatic_connection_allowed_organisations.filter(org => org.id === collaboration.organisation.id).length > 0;
+            const allowedToConnect = this.serviceAllowedToConnect(service, collaboration);
             service.status = allowedToConnect ? I18n.t("models.services.automaticConnectionAllowed") : "";
         }
         return service.status;
@@ -210,7 +210,7 @@ class UsedServices extends React.Component {
         const serviceConnectionRequest = this.getSelectedServiceConnectionRequest();
         this.confirm(() => {
             this.refreshAndFlash(denyServiceConnectionRequestByHash(serviceConnectionRequest.hash),
-                I18n.t("serviceConnectionRequest.flash.denied", {
+                I18n.t("serviceConnectionRequest.flash.declined", {
                     name: serviceConnectionRequest.service.name
                 }), () => this.componentDidMount())
         }, I18n.t("serviceConnectionRequest.declineConfirmation"), true);
@@ -296,6 +296,12 @@ class UsedServices extends React.Component {
 
     }
 
+    serviceAllowedToConnect = (service, collaboration) => {
+        return service.automatic_connection_allowed ||
+            (service.automatic_connection_allowed_organisations.filter(org => org.id === collaboration.organisation.id).length > 0 &&
+            !service.access_allowed_for_all);
+    }
+
     getServiceAction = service => {
         const {collaboration} = this.props;
         if (service.usedService && !service.connectionRequest &&
@@ -325,8 +331,7 @@ class UsedServices extends React.Component {
                            onClick={() => this.unlinkService(service, collaboration)}
                            txt={I18n.t("models.services.removeFromCO")}/>
         }
-        const allowedToConnect = service.automatic_connection_allowed ||
-            service.automatic_connection_allowed_organisations.filter(org => org.id === collaboration.organisation.id).length > 0;
+        const allowedToConnect = this.serviceAllowedToConnect(service, collaboration);
 
         if (!service.usedService && allowedToConnect) {
             return <Button cancelButton={true}

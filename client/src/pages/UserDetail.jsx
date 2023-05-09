@@ -5,9 +5,9 @@ import {
     deleteOtherUser,
     findUserById,
     ipNetworks,
-    organisationNameById
+    organisationNameById, reset2faOther
 } from "../api";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import "./UserDetail.scss";
 
 import {AppStore} from "../stores/AppStore";
@@ -26,6 +26,7 @@ import UserDetailSshDialog from "./UserDetailSshDialog";
 import {Link} from "react-router-dom";
 import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
+import {isUserAllowed, ROLES} from "../utils/UserRole";
 
 class UserDetail extends React.Component {
 
@@ -120,6 +121,23 @@ class UserDetail extends React.Component {
             });
         } else {
             activateUserForCollaboration(null, user.id).then(() => {
+                this.setState({confirmationDialogOpen: false});
+                this.componentDidMount();
+            })
+        }
+    }
+
+    reset2fa = showConfirmation => {
+        const {user} = this.state;
+        if (showConfirmation) {
+            this.setState({
+                confirmationDialogOpen: true,
+                confirmationDialogAction: () => this.reset2fa(false),
+                cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+                confirmationQuestion: I18n.t("user.reset2faConfirmation", {name: user.name})
+            });
+        } else {
+            reset2faOther(user.id).then(() => {
                 this.setState({confirmationDialogOpen: false});
                 this.componentDidMount();
             })
@@ -221,14 +239,20 @@ class UserDetail extends React.Component {
                             </li>)}
                     </ul>}
                 </div>}
-                {currentUser.admin && <div className={"actions"}>
+                <div className={"actions"}>
+                    {currentUser.admin &&
                     <Button warningButton={true}
                             txt={I18n.t("user.deleteOther")}
-                            onClick={() => this.deleteUser(true)}/>
-                    {user.suspended && <Button warningButton={true}
-                                               txt={I18n.t("user.unsuspend")}
-                                               onClick={() => this.unsuspendUser(true)}/>}
-                </div>}
+                            onClick={() => this.deleteUser(true)}/>}
+                    {(user.suspended && currentUser.admin) &&
+                    <Button warningButton={true}
+                            txt={I18n.t("user.unsuspend")}
+                            onClick={() => this.unsuspendUser(true)}/>}
+                    {(isUserAllowed(ROLES.ORG_ADMIN, currentUser) && user.mfa_reset_token) &&
+                    <Button warningButton={true}
+                            txt={I18n.t("user.reset2fa")}
+                            onClick={() => this.reset2fa(true)}/>}
+                </div>
             </div>
         </div>)
     }

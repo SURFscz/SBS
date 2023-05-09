@@ -1,6 +1,6 @@
 import React from "react";
 import "./Organisations.scss";
-import I18n from "i18n-js";
+import I18n from "../../locale/I18n";
 import "./Entities.scss";
 import {Tooltip} from "@surfnet/sds";
 import Entities from "./Entities";

@@ -12,7 +12,7 @@ SURF Research Access Management (SRAM) Platform
 -   Redis v6.x
 -   Yarn 1.x
 -   node
--   libxmlsec1
+-   libxmlsec1 (pre-1.3.0 see https://github.com/xmlsec/python-xmlsec/issues/254)
 
 ### [Getting started](#getting-started)
 
@@ -82,6 +82,7 @@ yarn analyze
 ### [API](#api)
 
 See the [Swagger](https://test.sram.surf.nl/apidocs/) for the API documentation and data model.
+Or for local development http://localhost:8080/apidocs/
 
 To see all routes:
 
@@ -143,10 +144,6 @@ pip install pip-upgrader
 cd server
 pip-upgrade requirements/test.txt --dry-run
 ```
-
-### [Swagger](#swagger)
-
-See http://localhost:8080/apidocs/ and https://test.sram.surf.nl/apidocs/
 
 ### [SURFSecureID](#surfsecureid)
 

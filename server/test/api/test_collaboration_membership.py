@@ -1,5 +1,6 @@
 import time
 
+from server.db.db import db
 from server.db.domain import CollaborationMembership, User, Collaboration
 from server.test.abstract_test import AbstractTest
 from server.test.seed import ai_computing_name, sarah_name, uva_research_name, uuc_teachers_name
@@ -97,9 +98,9 @@ class TestCollaborationMembership(AbstractTest):
         self.put("/api/collaboration_memberships/expiry",
                  body={"collaboration_id": collaboration_id, "membership_id": membership_id,
                        "expiry_date": int(time.time())}, with_basic_auth=False)
-        self.assertIsNotNone(CollaborationMembership.query.get(membership_id).expiry_date)
+        self.assertIsNotNone(db.session.get(CollaborationMembership, membership_id).expiry_date)
 
         self.put("/api/collaboration_memberships/expiry",
                  body={"collaboration_id": collaboration_id, "membership_id": membership_id,
                        "expiry_date": None}, with_basic_auth=False)
-        self.assertIsNone(CollaborationMembership.query.get(membership_id).expiry_date)
+        self.assertIsNone(db.session.get(CollaborationMembership, membership_id).expiry_date)

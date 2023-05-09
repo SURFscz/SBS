@@ -1,6 +1,6 @@
 import {isEmpty} from "../utils/Utils";
 import {emitter} from "../utils/Events";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import {getCsrfToken} from "../stores/AppStore";
 import Cookies from "js-cookie";
 
@@ -215,8 +215,12 @@ export function tokenResetRequest(admin, message, second_fa_uuid) {
     return postPutJson("/api/mfa/token_reset_request", body, "POST", false);
 }
 
-export function reset2fa(token) {
-    return postPutJson("/api/mfa/reset2fa", {token}, "POST", false);
+export function reset2fa(token, second_fa_uuid) {
+    return postPutJson("/api/mfa/reset2fa", {token: token, second_fa_uuid: second_fa_uuid}, "POST", false);
+}
+
+export function reset2faOther(userId) {
+    return postPutJson("/api/mfa/reset2fa_other", {user_id: userId}, "PUT", false);
 }
 
 //Services
@@ -771,6 +775,10 @@ export function getSuspendedUsers() {
     return fetchJson("/api/users/suspended");
 }
 
+export function getResetTOTPRequestedUsers() {
+    return fetchJson("/api/users/reset_totp_requested");
+}
+
 export function suspendCollaborations() {
     return postPutJson("/api/system/suspend_collaborations", {}, "PUT");
 }
@@ -829,6 +837,10 @@ export function validations() {
 
 export function feedback(message) {
     return postPutJson("/api/system/feedback", {message}, "POST");
+}
+
+export function sweepAllServices() {
+    return fetchJson("/api/system/sweep");
 }
 
 export function plscSync() {
@@ -981,4 +993,8 @@ export function sweep(service) {
     return postPutJson(`/api/scim/v2/sweep?service_id=${service.id}`, {}, "PUT", false);
 }
 
+//Stats
+export function allStats() {
+    return fetchJson("/api/system/statistics")
+}
 

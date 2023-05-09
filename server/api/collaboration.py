@@ -58,12 +58,12 @@ def _reconcile_tags(collaboration: Collaboration, tags, is_external_api=False):
         added_existing_tags = [tag_id for tag_id in tag_identifiers if tag_id not in current_tag_ids]
 
         for tag_id in removed_tags:
-            tag = Tag.query.get(tag_id)
+            tag = db.session.get(Tag, tag_id)
             collaboration.tags.remove(tag)
             if not tag.collaborations:
                 db.session.delete(tag)
         for tag_id in added_existing_tags:
-            collaboration.tags.append(Tag.query.get(tag_id))
+            collaboration.tags.append(db.session.get(Tag, tag_id))
         for tag_value in new_tags:
             collaboration.tags.append(Tag(tag_value=tag_value))
 
@@ -72,7 +72,7 @@ def _reconcile_tags(collaboration: Collaboration, tags, is_external_api=False):
 @json_endpoint
 def collaboration_admins(service_id):
     confirm_service_admin(service_id)
-    service = Service.query.get(service_id)
+    service = db.session.get(Service, service_id)
     collaborations = service.collaborations + flatten([o.collaborations for o in service.organisations])
     return {c.name: c.admin_emails() for c in unique_model_objects(collaborations)}, 200
 
@@ -168,7 +168,7 @@ def name_exists():
 
 
 def _do_name_exists(name, organisation_id, existing_collaboration=""):
-    coll = Collaboration.query.options(load_only("id")) \
+    coll = Collaboration.query.options(load_only(Collaboration.id)) \
         .filter(func.lower(Collaboration.name) == func.lower(name)) \
         .filter(func.lower(Collaboration.organisation_id) == organisation_id) \
         .filter(func.lower(Collaboration.name) != func.lower(existing_collaboration)) \
@@ -188,7 +188,7 @@ def short_name_exists():
 
 
 def _do_short_name_exists(name, organisation_id, existing_collaboration=""):
-    coll = Collaboration.query.options(load_only("id")) \
+    coll = Collaboration.query.options(load_only(Collaboration.id)) \
         .filter(func.lower(Collaboration.short_name) == func.lower(name)) \
         .filter(func.lower(Collaboration.organisation_id) == organisation_id) \
         .filter(func.lower(Collaboration.short_name) != func.lower(existing_collaboration)) \
@@ -199,7 +199,7 @@ def _do_short_name_exists(name, organisation_id, existing_collaboration=""):
 @collaboration_api.route("/may_request_collaboration", strict_slashes=False)
 @json_endpoint
 def may_request_collaboration():
-    user = User.query.get(current_user_id())
+    user = db.session.get(User, current_user_id())
     sho = user.schac_home_organisation
     if not sho:
         return False, 200
@@ -236,8 +236,9 @@ def collaboration_search():
         sql = text(base_query if not_wild_card else base_query + " ORDER BY NAME")
         if not_wild_card:
             sql = sql.bindparams(bindparam("q", type_=String))
-        result_set = db.engine.execute(sql, {"q": f"{q}*"}) if not_wild_card else db.engine.execute(sql)
-        res = [{"id": row[0], "name": row[1], "description": row[2], "organisation_id": row[3]} for row in result_set]
+        with db.engine.connect() as conn:
+            result_set = conn.execute(sql, {"q": f"{q}*"}) if not_wild_card else conn.execute(sql)
+            res = [{"id": row[0], "name": row[1], "description": row[2], "organisation_id": row[3]} for row in result_set]
     return res, 200
 
 
@@ -252,7 +253,7 @@ def members():
     collaboration_membership = aliased(Collaboration)
 
     users = User.query \
-        .options(load_only("uid", "name")) \
+        .options(load_only(User.uid, User.name)) \
         .join(User.collaboration_memberships) \
         .join(collaboration_membership, CollaborationMembership.collaboration) \
         .join(CollaborationMembership.groups) \
@@ -366,8 +367,8 @@ def collaboration_invites():
         .filter(Group.id.in_(group_ids)) \
         .all()
 
-    collaboration = Collaboration.query.get(collaboration_id)
-    user = User.query.get(current_user_id())
+    collaboration = db.session.get(Collaboration, collaboration_id)
+    user = db.session.get(User, current_user_id())
 
     membership_expiry_date = data.get("membership_expiry_date")
     if membership_expiry_date:
@@ -399,7 +400,7 @@ def unsuspend():
     data = current_request.get_json()
     collaboration_id = data["collaboration_id"]
     confirm_collaboration_admin(collaboration_id)
-    collaboration = Collaboration.query.get(collaboration_id)
+    collaboration = db.session.get(Collaboration, collaboration_id)
     collaboration.last_activity_date = datetime.now()
     collaboration.status = STATUS_ACTIVE
     db.session.merge(collaboration)
@@ -413,7 +414,7 @@ def activate():
     data = current_request.get_json()
     collaboration_id = data["collaboration_id"]
     confirm_collaboration_admin(collaboration_id)
-    collaboration = Collaboration.query.get(collaboration_id)
+    collaboration = db.session.get(Collaboration, collaboration_id)
     collaboration.last_activity_date = datetime.now()
     collaboration.expiry_date = None
     collaboration.status = STATUS_ACTIVE
@@ -429,10 +430,10 @@ def collaboration_invites_preview():
     message = data.get("message", None)
     intended_role = data.get("intended_role", "member")
 
-    collaboration = Collaboration.query.get(int(data["collaboration_id"]))
+    collaboration = db.session.get(Collaboration, int(data["collaboration_id"]))
     confirm_collaboration_admin(collaboration.id)
 
-    user = User.query.get(current_user_id())
+    user = db.session.get(User, current_user_id())
     invitation = munchify({
         "user": user,
         "collaboration": collaboration,
@@ -457,8 +458,8 @@ def save_collaboration():
     data = current_request.get_json()
     if "organisation_id" in data:
         confirm_organisation_admin_or_manager(data["organisation_id"])
-        organisation = Organisation.query.get(data["organisation_id"])
-        user = User.query.get(current_user_id())
+        organisation = db.session.get(Organisation, data["organisation_id"])
+        user = db.session.get(User, current_user_id())
     else:
         raise BadRequest("No organisation_id in POST data")
     current_user_admin = data.get("current_user_admin", False)
@@ -509,18 +510,27 @@ def save_collaboration_api():
             valid_logo = False
             logo = None
     if not valid_logo and not logo:
-        data["logo"] = next(db.engine.execute(text(f"SELECT logo FROM organisations where id = {organisation.id}")))[0]
+        with db.engine.connect() as conn:
+            data["logo"] = next(conn.execute(text(f"SELECT logo FROM organisations where id = {organisation.id}")))[0]
 
     missing = [req for req in required if req not in data]
     if missing:
         raise APIBadRequest(f"Missing required attributes: {missing}")
     # The do_save_collaboration strips out all non-collaboration keys
     tags = data.get("tags", None)
+    administrator = data.get("administrator")
     # Ensure to skip current_user is CO admin check
     request_context.skip_collaboration_admin_confirmation = True
-
     res = do_save_collaboration(data, organisation, user, current_user_admin=False, save_tags=False)
     collaboration = res[0]
+
+    if administrator:
+        admin_user = User.query.filter(User.uid == administrator).one()
+        admin_collaboration_membership = CollaborationMembership(role="admin", user_id=admin_user.id,
+                                                                 collaboration_id=collaboration.id,
+                                                                 created_by=user.uid, updated_by=user.uid)
+        db.session.merge(admin_collaboration_membership)
+        db.session.commit()
     # Prevent ValueError: Circular reference detected cause of tags
     collaboration_json = jsonify(collaboration).json
     if tags:
@@ -595,7 +605,7 @@ def _validate_collaboration(data, organisation, new_collaboration=True):
     if new_collaboration or "status" not in data:
         data["status"] = STATUS_ACTIVE
     else:
-        collaboration = Collaboration.query.get(data["id"])
+        collaboration = db.session.get(Collaboration, data["id"])
         if collaboration.status == STATUS_EXPIRED and (not expiry_date or data["expiry_date"] > datetime.now()):
             data["status"] = STATUS_ACTIVE
         if collaboration.status == STATUS_SUSPENDED:
@@ -614,7 +624,7 @@ def _validate_collaboration(data, organisation, new_collaboration=True):
 
 
 def _assign_global_urn(organisation_id, data):
-    organisation = Organisation.query.get(organisation_id)
+    organisation = db.session.get(Organisation, organisation_id)
     assign_global_urn_to_collaboration(organisation, data)
 
 
@@ -628,10 +638,10 @@ def update_collaboration():
     data = current_request.get_json()
     confirm_collaboration_admin(data["id"])
 
-    organisation = Organisation.query.get(data["organisation_id"])
+    organisation = db.session.get(Organisation, data["organisation_id"])
     _validate_collaboration(data, organisation, new_collaboration=False)
 
-    collaboration = Collaboration.query.get(data["id"])
+    collaboration = db.session.get(Collaboration, data["id"])
     if collaboration.short_name != data["short_name"]:
         for group in collaboration.groups:
             group.global_urn = f"{organisation.short_name}:{data['short_name']}:{group.short_name}"

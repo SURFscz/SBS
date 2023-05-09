@@ -166,7 +166,7 @@ class TestCollaboration(AbstractTest):
         # normal, add a tag
         body["tags"] = [tag_existing, tag_just_valid]
         res = self.post("/api/collaborations", body=body, with_basic_auth=False)
-        collaboration = Collaboration.query.get(res["id"])
+        collaboration = db.session.get(Collaboration, res["id"])
         self.assertEqual(2, len(collaboration.tags))
 
         # tag too long
@@ -174,7 +174,7 @@ class TestCollaboration(AbstractTest):
         body["name"] += "_"
         body["short_name"] += "_"
         res = self.post("/api/collaborations", body=body, with_basic_auth=False)
-        collaboration = Collaboration.query.get(res["id"])
+        collaboration = db.session.get(Collaboration, res["id"])
         self.assertEqual(2, len(collaboration.tags))
 
         # tag too long
@@ -182,7 +182,7 @@ class TestCollaboration(AbstractTest):
         body["name"] += "_"
         body["short_name"] += "_"
         res = self.post("/api/collaborations", body=body, with_basic_auth=False)
-        collaboration = Collaboration.query.get(res["id"])
+        collaboration = db.session.get(Collaboration, res["id"])
         self.assertEqual(2, len(collaboration.tags))
 
         # tag start with invalid char
@@ -190,7 +190,7 @@ class TestCollaboration(AbstractTest):
         body["name"] += "_"
         body["short_name"] += "_"
         res = self.post("/api/collaborations", body=body, with_basic_auth=False)
-        collaboration = Collaboration.query.get(res["id"])
+        collaboration = db.session.get(Collaboration, res["id"])
         self.assertEqual(2, len(collaboration.tags))
 
         # normal, add a tag
@@ -198,7 +198,7 @@ class TestCollaboration(AbstractTest):
         body["name"] += "_"
         body["short_name"] += "_"
         res = self.post("/api/collaborations", body=body, with_basic_auth=False)
-        collaboration = Collaboration.query.get(res["id"])
+        collaboration = db.session.get(Collaboration, res["id"])
         self.assertEqual(3, len(collaboration.tags))
 
     @staticmethod
@@ -244,7 +244,7 @@ class TestCollaboration(AbstractTest):
         collaboration = self.put("/api/collaborations", body=collaboration)
         self.assertEqual("changed", collaboration["name"])
 
-        collaboration = Collaboration.query.get(collaboration["id"])
+        collaboration = db.session.get(Collaboration, collaboration["id"])
         self.assertEqual(2, len(collaboration.tags))
 
     def test_collaboration_update_orphan_tag(self):
@@ -268,7 +268,7 @@ class TestCollaboration(AbstractTest):
         rows = db.session.execute(text(f"SELECT logo FROM collaborations WHERE id = {collaboration_id}"))
         self.assertEqual(1, rows.rowcount)
         for row in rows:
-            self.assertFalse(row["logo"].startswith("http"))
+            self.assertFalse(row[0].startswith("http"))
 
     def test_collaboration_update_short_name(self):
         collaboration_id = self._find_by_identifier()["id"]
@@ -539,6 +539,7 @@ class TestCollaboration(AbstractTest):
                                         "description": "new_collaboration",
                                         "accepted_user_policy": "https://aup.org",
                                         "administrators": ["the@ex.org", "that@ex.org"],
+                                        "administrator": "urn:sarah",
                                         "short_name": "new_short_name",
                                         "disable_join_requests": True,
                                         "disclose_member_information": True,
@@ -550,7 +551,8 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(201, response.status_code)
 
         collaboration = self.find_entity_by_name(Collaboration, "new_collaboration")
-        self.assertEqual(0, len(collaboration.collaboration_memberships))
+        self.assertEqual(1, len(collaboration.collaboration_memberships))
+        self.assertEqual("urn:sarah", collaboration.collaboration_memberships[0].user.uid)
         self.assertIsNone(collaboration.accepted_user_policy)
         self.assertIsNotNone(collaboration.logo)
         self.assertEqual(2, len(collaboration.tags))

@@ -287,10 +287,14 @@ def mail_accepted_declined_service_connection_request(context, service_name, col
 
 def mail_suspend_notification(context, recipients, is_warning, is_suspension):
     _store_mail(context["user"], SUSPEND_NOTIFICATION_MAIL, recipients)
-    if is_warning:
-        template = "suspend_suspend_warning_notification" if is_suspension else "suspend_delete_warning_notification"
+    if is_suspension and is_warning:
+        template = "suspend_suspend_warning_notification"
+    elif is_suspension and not is_warning:
+        template = "suspend_suspend_notification"
+    elif not is_suspension and is_warning:
+        template = "suspend_delete_warning_notification"
     else:
-        template = "suspend_suspend_notification" if is_suspension else "suspend_delete_notification"
+        raise Exception("We don't send mails on account deletion")
     return _do_send_mail(
         subject="SURF SRAM: suspend notification",
         recipients=recipients,
@@ -324,7 +328,7 @@ def mail_feedback(environment, message, current_user, recipients):
 def mail_platform_admins(obj):
     mail_cfg = current_app.app_config.mail
     if mail_cfg.audit_trail_notifications_enabled:
-        current_user = User.query.get(current_user_id())
+        current_user = db.session.get(User, current_user_id())
         _do_send_mail(
             subject=f"New {type(obj).__name__} ({obj.name}) created by {current_user.name}"
                     f" in environment {mail_cfg.environment}",
@@ -374,19 +378,18 @@ def mail_account_deletion(user):
     )
 
 
-def mail_suspended_account_deletion(user):
+def mail_suspended_account_deletion(uids: list[str]):
     mail_cfg = current_app.app_config.mail
     recipients = [mail_cfg.eduteams_email]
     if mail_cfg.account_deletion_notifications_enabled:
         recipients.append(mail_cfg.beheer_email)
     _do_send_mail(
-        subject=f"User {user.email} suspended account is deleted in environment {mail_cfg.environment}",
+        subject=f"User accounts deleted in environment {mail_cfg.environment}",
         recipients=recipients,
         template="admin_suspended_user_account_deleted",
         context={"environment": mail_cfg.environment,
                  "date": datetime.datetime.now(),
-                 "attributes": _user_attributes(user),
-                 "user": user},
+                 "uids": uids},
         preview=False,
         working_outside_of_request_context=True
     )

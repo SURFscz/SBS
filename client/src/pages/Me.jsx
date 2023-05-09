@@ -1,6 +1,6 @@
 import React from "react";
 import {deleteUser, updateUser,} from "../api";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import InputField from "../components/InputField";
 import "./Me.scss";
 import Button from "../components/Button";
@@ -10,7 +10,6 @@ import {isEmpty, stopEvent} from "../utils/Utils";
 import {validateSSHKey,} from "../validations/regExps";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import {Tooltip} from "@surfnet/sds";
-import InstituteColumn from "../components/redesign/InstituteColumn";
 import moment from "moment";
 import DOMPurify from "dompurify";
 import {ReactComponent as EditIcon} from "@surfnet/sds/icons/functional-icons/edit.svg";
@@ -157,7 +156,7 @@ class Me extends React.Component {
         this.setState({ssh_keys: [...ssh_keys]});
     }
 
-    renderForm = (user, ssh_keys, user_ip_networks, disabledSubmit, config, organisation) => {
+    renderForm = (user, ssh_keys, user_ip_networks, disabledSubmit, config) => {
         const createdAt = user.created_at;
         const d = new Date(0);
         d.setUTCSeconds(createdAt);
@@ -195,10 +194,7 @@ class Me extends React.Component {
                             <tr>
                                 <td className="attribute-key">{I18n.t("profile.schac_home_organisation")}</td>
                                 <td className="attribute-value">
-                                    <InstituteColumn entity={{user: user}}
-                                                     currentUser={user}
-                                                     greyed={false}
-                                                     organisation={organisation}/>
+                                    {user.schac_home_organisation || "-"}
                                 </td>
                                 <td className="actions">
                                     {!isEmpty(user.schac_home_organisation) &&
@@ -303,7 +299,7 @@ class Me extends React.Component {
             confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, confirmationQuestion,
             initial, ssh_keys, user_ip_networks, nameConfirmation
         } = this.state;
-        const {user, config, organisation} = this.props;
+        const {user, config} = this.props;
         const disabledSubmit = !initial && !this.isValid();
         const disabledConfirm = user.name !== nameConfirmation && !isEmpty(user.name);
         return (
@@ -326,7 +322,7 @@ class Me extends React.Component {
                     </div>
                 </ConfirmationDialog>
 
-                {this.renderForm(user, ssh_keys, user_ip_networks, disabledSubmit, config, organisation)}
+                {this.renderForm(user, ssh_keys, user_ip_networks, disabledSubmit, config)}
             </div>
         );
     }

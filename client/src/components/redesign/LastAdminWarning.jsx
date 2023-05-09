@@ -1,6 +1,6 @@
 import React from "react";
 import "./LastAdminWarning.scss";
-import I18n from "i18n-js";
+import I18n from "../../locale/I18n";
 import DOMPurify from "dompurify";
 
 export default function LastAdminWarning({

@@ -1,8 +1,8 @@
-
 from flask import session, g as request_context, request as current_request, current_app
 from sqlalchemy.orm import load_only
 from werkzeug.exceptions import Forbidden
 
+from server.db.db import db
 from server.db.domain import (CollaborationMembership, OrganisationMembership, Collaboration, User,
                               ServiceMembership)
 
@@ -71,7 +71,8 @@ def confirm_allow_impersonation(confirm_feature_impersonation_allowed=True):
 
 
 def confirm_external_api_call():
-    if "external_api_organisation" not in request_context and not hasattr(request_context, "external_api_organisation"):
+    organisation = request_context.get("external_api_organisation", None)
+    if not organisation:
         raise Forbidden("Not a valid external API call")
 
 
@@ -102,13 +103,13 @@ def confirm_ipaddress_access(*args, override_func=None):
 
 
 def is_current_user_organisation_admin_or_manager(collaboration_id):
-    return is_organisation_admin_or_manager(Collaboration.query.get(collaboration_id).organisation_id)
+    return is_organisation_admin_or_manager(db.session.get(Collaboration, collaboration_id).organisation_id)
 
 
 def is_collaboration_admin(user_id=None, collaboration_id=None):
     user_id = user_id if user_id else current_user_id()
     query = CollaborationMembership.query \
-        .options(load_only("id")) \
+        .options(load_only(CollaborationMembership.id)) \
         .filter(CollaborationMembership.user_id == user_id) \
         .filter(CollaborationMembership.role == "admin")
     if collaboration_id:
@@ -128,7 +129,7 @@ def is_organisation_admin_or_manager(organisation_id=None):
 def _has_organisation_role(organisation_id, roles):
     user_id = current_user_id()
     query = OrganisationMembership.query \
-        .options(load_only("user_id")) \
+        .options(load_only(OrganisationMembership.user_id)) \
         .filter(OrganisationMembership.user_id == user_id) \
         .filter(OrganisationMembership.role.in_(roles))
     if organisation_id:
@@ -155,7 +156,7 @@ def confirm_collaboration_admin(collaboration_id, org_manager_allowed=True, read
         user_id = current_user_id()
         coll_admin = is_collaboration_admin(user_id, collaboration_id)
         if not coll_admin:
-            collaboration = Collaboration.query.get(collaboration_id)
+            collaboration = db.session.get(Collaboration, collaboration_id)
             if not collaboration:
                 return False
             org_id = collaboration.organisation_id
@@ -173,13 +174,13 @@ def confirm_collaboration_member(collaboration_id):
     def override_func():
         user_id = current_user_id()
         is_member = CollaborationMembership.query \
-                        .options(load_only("id")) \
+                        .options(load_only(CollaborationMembership.id)) \
                         .filter(CollaborationMembership.user_id == user_id) \
                         .filter(CollaborationMembership.collaboration_id == collaboration_id) \
                         .count() > 0
         if is_member:
             return True
-        collaboration = Collaboration.query.get(collaboration_id)
+        collaboration = db.session.get(Collaboration, collaboration_id)
         if not collaboration:
             return False
         return is_organisation_admin_or_manager(collaboration.organisation_id)
@@ -190,7 +191,7 @@ def confirm_collaboration_member(collaboration_id):
 def is_service_admin(service_id=None):
     user_id = current_user_id()
     query = ServiceMembership.query \
-        .options(load_only("user_id")) \
+        .options(load_only(ServiceMembership.user_id)) \
         .filter(ServiceMembership.user_id == user_id)
     if service_id:
         query = query.filter(ServiceMembership.service_id == service_id)

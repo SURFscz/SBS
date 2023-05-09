@@ -15,7 +15,7 @@ import {
     userTokensOfUser
 } from "../api";
 import "./CollaborationDetail.scss";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import {collaborationRoles} from "../forms/constants";
 import {AppStore} from "../stores/AppStore";
 import UnitHeader from "../components/redesign/UnitHeader";
@@ -90,8 +90,9 @@ class CollaborationDetail extends React.Component {
         });
         const params = this.props.match.params;
         if (params.id) {
-            const collaboration_id = parseInt(params.id, 10);
-            socket.then(s => s.off(`collaboration_${collaboration_id}`));
+            const {collaboration} = this.state;
+            [`collaboration_${collaboration.id}`, "service", `organisation_${collaboration.organisation_id}`]
+                .forEach(topic => socket.then(s => s.off(topic)));
         }
     }
 
@@ -122,16 +123,6 @@ class CollaborationDetail extends React.Component {
                     const adminOfCollaboration = json.access === "full";
                     const promises = adminOfCollaboration ? [collaborationById(collaboration_id), userTokensOfUser()] :
                         [collaborationLiteById(collaboration_id), organisationsByUserSchacHomeOrganisation(), userTokensOfUser()];
-                    const {socketSubscribed} = this.state;
-                    if (!socketSubscribed) {
-                        socket.then(s => s.on(`collaboration_${collaboration_id}`, data => {
-                            const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
-                            if (subscriptionIdSessionStorage !== data.subscription_id) {
-                                this.props.refreshUser(() => this.componentDidMount());
-                            }
-                        }));
-                        this.setState({socketSubscribed: true})
-                    }
                     Promise.all(promises)
                         .then(res => {
                             const {user, config} = this.props;
@@ -142,6 +133,7 @@ class CollaborationDetail extends React.Component {
                             const orgManager = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id, null);
                             const firstTime = getParameterByName("first", window.location.search) === "true";
                             this.showExpiryDateFlash(user, collaboration, config, true);
+
                             this.setState({
                                 collaboration: collaboration,
                                 userTokens: userTokens,
@@ -157,6 +149,19 @@ class CollaborationDetail extends React.Component {
                                 callback && callback();
                                 this.tabChanged(tab, collaboration.id);
                             });
+                            const {socketSubscribed} = this.state;
+                            if (!socketSubscribed) {
+                                [`collaboration_${collaboration.id}`, "service", `organisation_${collaboration.organisation_id}`]
+                                    .forEach(topic => {
+                                        socket.then(s => s.on(topic, data => {
+                                            const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
+                                            if (subscriptionIdSessionStorage !== data.subscription_id) {
+                                                this.props.refreshUser(() => this.componentDidMount());
+                                            }
+                                        }));
+                                    })
+                                this.setState({socketSubscribed: true})
+                            }
                         }).catch(() => {
                         this.props.history.push("/404")
                     });
@@ -698,7 +703,6 @@ class CollaborationDetail extends React.Component {
             return null;
         }
         const expiryDate = moment(collaboration.expiry_date * 1000).format("LL");
-        // const lastActivityDate = moment(collaboration.last_activity_date * 1000).format("LL");
         const className = collaboration.status !== "active" ? "warning" : "";
         const status = (collaboration.status === "active" && collaboration.expiry_date) ? "activeWithExpiryDate" : collaboration.status;
         return (
@@ -773,10 +777,10 @@ class CollaborationDetail extends React.Component {
                     <span className="contains-copy">
                         <CopyToClipboard text={joinRequestUrl}>
                             <span className={"copy-link"} onClick={e => {
-                    const me = e.target;
-                    me.classList.add("copied");
-                    setTimeout(() => me.classList.remove("copied"), 1250);
-                }}>
+                                const me = e.target;
+                                me.classList.add("copied");
+                                setTimeout(() => me.classList.remove("copied"), 1250);
+                            }}>
                                 {I18n.t("collaboration.enabled")}
                             </span>
                         </CopyToClipboard>

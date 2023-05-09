@@ -20,7 +20,8 @@ def _do_scim_sweep_services(app):
         logger = logging.getLogger("scheduler")
         logger.info("Start running scim_sweep_services job")
 
-        services = Service.query.filter(Service.scim_enabled == True) \
+        services = Service.query \
+            .filter(Service.scim_enabled == True) \
             .filter(Service.sweep_scim_enabled == True) \
             .all()  # noqa: E712
 
@@ -35,11 +36,17 @@ def _do_scim_sweep_services(app):
         services_sweeping = [service for service in services if service_needs_sweeping(service)]
         aggregated_results = _result_container()
         for service in services_sweeping:
-            sync_results = perform_sweep(service)
-            aggregated_results["services"].append({"name": service.name, "sync_results": sync_results})
-            service.sweep_scim_last_run = now
-            db.session.merge(service)
-            db.session.commit()
+            logger.info(f"Running scim_sweep for service {service.abbreviation} ({service.entity_id}")
+            try:
+                sync_results = perform_sweep(service)
+                aggregated_results["services"].append({"name": service.name, "sync_results": sync_results})
+                service.sweep_scim_last_run = now
+                db.session.merge(service)
+                db.session.commit()
+            except BaseException as e:
+                aggregated_results["services"].append({"name": service.name, "sync_results": str(e)})
+                # Ensure the sweep for the remaining services continues
+                pass
 
         end = int(time.time() * 1000.0)
         logger.info(f"Finished running scim_sweep_services job in {end - start} ms")

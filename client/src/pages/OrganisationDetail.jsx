@@ -6,7 +6,7 @@ import {
     organisationInvitationByHash
 } from "../api";
 import "./OrganisationDetail.scss";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import {isEmpty} from "../utils/Utils";
 import Tabs from "../components/Tabs";
 import {ReactComponent as PlatformAdminIcon} from "../icons/users.svg";
@@ -63,7 +63,6 @@ class OrganisationDetail extends React.Component {
             [`organisation_${organisation_id}`, "service"].forEach(topic => {
                 socket.then(s => s.off(topic));
             });
-
         }
     }
 

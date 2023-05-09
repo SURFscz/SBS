@@ -113,22 +113,15 @@ table.groups {
             }
         }
 
-        .org-attributes-container {
-            padding-bottom: 20px;
-            border-bottom: 3px solid $light-grey;
-
-            .right-divider {
-                margin-right: 40px;
-            }
-
-            .copy-to-clipboard {
-                margin-left: 15px;
-            }
+        .admin-actions {
+            display: flex;
+            min-height: 32px;
+            margin-bottom: 12px;
         }
 
         .group-detail-actions {
-            margin-bottom: 20px;
             max-width: 50%;
+            margin-bottom: 20px;
 
             div.actions__placeholder {
                 color: $blue;
@@ -139,6 +132,10 @@ table.groups {
     table.groupMembers {
         thead {
             th {
+                &.check {
+                    width: 15px;
+                }
+
                 &.icon {
                     width: 30px;
                 }
@@ -148,7 +145,7 @@ table.groups {
                 }
 
                 &.user__schac_home_organisation {
-                    width: 45%;
+                    width: 35%;
                 }
 
                 &.trash, &.trash_disabled {

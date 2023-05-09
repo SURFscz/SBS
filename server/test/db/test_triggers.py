@@ -12,7 +12,8 @@ class TestTriggers(AbstractTest):
     @staticmethod
     def _execute_statement(statement):
         sql = text(statement)
-        db.engine.execute(sql)
+        with db.engine.connect() as conn:
+            conn.execute(sql)
 
     def test_collaboration_memberships_groups_collaboration_id(self):
         try:

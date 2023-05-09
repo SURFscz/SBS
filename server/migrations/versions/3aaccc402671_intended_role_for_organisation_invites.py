@@ -18,7 +18,7 @@ depends_on = None
 def upgrade():
     conn = op.get_bind()
     conn.execute(text("ALTER TABLE organisation_invitations ADD COLUMN intended_role varchar(255)"))
-    conn.execute("UPDATE organisation_invitations SET intended_role = 'admin'")
+    conn.execute(text("UPDATE organisation_invitations SET intended_role = 'admin'"))
     conn.execute(text("ALTER TABLE organisation_invitations CHANGE intended_role intended_role VARCHAR(255) NOT NULL"))
 
 

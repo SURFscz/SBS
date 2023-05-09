@@ -4,7 +4,7 @@ import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
 import "./ServiceConnectionRequests.scss";
 import "./UserColumn.scss";
 import {stopEvent} from "../../utils/Utils";
-import I18n from "i18n-js";
+import I18n from "../../locale/I18n";
 import Button from "../Button";
 import {setFlash} from "../../utils/Flash";
 import ConfirmationDialog from "../ConfirmationDialog";
@@ -72,7 +72,7 @@ class ServiceConnectionRequests extends React.Component {
         const serviceConnectionRequest = this.getSelectedServiceConnectionRequest();
         this.confirm(() => {
             this.refreshAndFlash(denyServiceConnectionRequestByHash(serviceConnectionRequest.hash),
-                I18n.t("serviceConnectionRequest.flash.denied", {
+                I18n.t("serviceConnectionRequest.flash.declined", {
                     name: service.name
                 }), () => this.componentDidMount())
         }, I18n.t("serviceConnectionRequest.declineConfirmation"), true);

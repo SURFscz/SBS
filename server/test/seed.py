@@ -85,7 +85,7 @@ service_wireless_name = "Wireless"
 service_cloud_name = "Cloud"
 service_wiki_name = "Wiki"
 service_ssh_uva_name = "SSH UvA"
-uuc_scheduler_name = "uuc_scheduler_name"
+service_uuc_scheduler_name = "uuc_scheduler_name"
 
 service_group_mail_name = "service_group_mail_name"
 service_group_wiki_name1 = "service_group_wiki_name_1"
@@ -135,6 +135,7 @@ def persist_instance(db, *objs):
 
 def clean_db(db):
     tables = reversed(metadata.sorted_tables)
+    # tables = reversed(metadata.sort_tables_and_constraints)
     for table in tables:
         db.session.execute(table.delete())
     db.session.execute(text("DELETE FROM audit_logs"))
@@ -162,7 +163,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     sarah = User(uid="urn:sarah", name=sarah_name, email="sarah@uva.org", application_uid="sarah_application_uid",
                  username="sarah", external_id="8297d8a5-a2a4-4208-9fb6-100a5865f022")
     betty = User(uid="urn:betty", name="betty", email="betty@uuc.org", username="betty",
-                 external_id="bbd8123c-b0f9-4e3d-b3ff-288aa1c1edd6")
+                 external_id="bbd8123c-b0f9-4e3d-b3ff-288aa1c1edd6", mfa_reset_token="1234567890")
     jane = User(uid="urn:jane", name=jane_name, email="jane@ucc.org", username="jane",
                 entitlement="urn:mace:surf.nl:sram:allow-create-co", external_id="502e861e-f548-4335-89d8-f1764f803964")
     paul = User(uid="urn:paul", name="Paul Doe", email="paul@ucc.org", username="paul",
@@ -173,19 +174,23 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     retention = app_config.retention
     current_time = datetime.datetime.utcnow()
     retention_date = current_time - datetime.timedelta(days=retention.allowed_inactive_period_days + 1)
+    retention_warning_date = retention_date + datetime.timedelta(days=retention.reminder_suspend_period_days)
 
     user_suspend_warning = User(uid="urn:user_suspend_warning", name="user_suspend_warning",
                                 email="user_suspend_warning@example.org", username="user_suspend_warning",
-                                last_login_date=retention_date, last_accessed_date=retention_date,
+                                last_login_date=retention_warning_date, last_accessed_date=retention_warning_date,
                                 schac_home_organisation="not.exists")
     user_gets_suspended = User(uid="urn:user_gets_suspended", name="user_gets_suspended",
                                email="user_gets_suspended@example.org", username="1suspend",
                                last_login_date=retention_date, last_accessed_date=retention_date)
 
-    deletion_date = current_time - datetime.timedelta(days=retention.remove_suspended_users_period_days + 30)
+    deletion_date = retention_date - datetime.timedelta(days=retention.remove_suspended_users_period_days)
+    deletion_warning_date = deletion_date + datetime.timedelta(days=retention.reminder_expiry_period_days)
+
     user_deletion_warning = User(uid="urn:user_deletion_warning", name="user_deletion_warning",
                                  email="user_deletion_warning@example.org", username="user_deletion_warning",
-                                 suspended=True, last_login_date=deletion_date, last_accessed_date=deletion_date)
+                                 suspended=True, last_login_date=deletion_warning_date,
+                                 last_accessed_date=deletion_warning_date)
 
     user_gets_deleted = User(uid="urn:user_gets_deleted", name="user_gets_deleted",
                              email="user_gets_deleted@example.org", username="user_gets_deleted",
@@ -195,6 +200,27 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     persist_instance(db, john, mary, peter, admin, roger, harry, james, sarah, betty, jane,
                      user_suspend_warning, user_gets_suspended, user_deletion_warning, user_gets_deleted,
                      paul, service_admin)
+
+    # old suspension warning, should not affect new suspension warnings
+    warning_date_old = current_time - datetime.timedelta(retention.allowed_inactive_period_days + 1)
+    notification_gets_suspended_old = SuspendNotification(user=user_suspend_warning, sent_at=warning_date_old,
+                                                          is_suspension=True, is_warning=True)
+
+    warning_date = datetime.datetime.utcnow() - datetime.timedelta(days=retention.reminder_suspend_period_days + 1)
+    notification_gets_suspended = SuspendNotification(user=user_gets_suspended, sent_at=warning_date,
+                                                      is_suspension=True, is_warning=True)
+
+    warning_date = datetime.datetime.utcnow() - datetime.timedelta(days=retention.remove_suspended_users_period_days) \
+                 + datetime.timedelta(days=retention.reminder_expiry_period_days - 1)
+    notification_suspension_warning = SuspendNotification(user=user_deletion_warning, sent_at=warning_date,
+                                                          is_suspension=True, is_warning=False)
+
+    deletion_date = current_time - datetime.timedelta(retention.remove_suspended_users_period_days + 1)
+    notification_gets_deleted = SuspendNotification(user=user_gets_deleted, sent_at=deletion_date,
+                                                    is_suspension=False, is_warning=True)
+
+    persist_instance(db, notification_gets_suspended_old, notification_gets_suspended,
+                     notification_suspension_warning, notification_gets_deleted)
 
     ssh_key_john = SshKey(user=john, ssh_value="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
                                                "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
@@ -216,14 +242,6 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     sarah_user_ip_network = UserIpNetwork(network_value="255.0.0.1/32", user=sarah)
     sarah_other_user_ip_network = UserIpNetwork(network_value="255.0.0.9/24", user=sarah)
     persist_instance(db, sarah_user_ip_network, sarah_other_user_ip_network)
-
-    suspension_date = current_time - datetime.timedelta(retention.allowed_inactive_period_days + 1)
-    user_gets_suspended_notification = SuspendNotification(user=user_gets_suspended, sent_at=suspension_date,
-                                                           is_warning=True, is_suspension=True)
-    deletion_date = current_time - datetime.timedelta(retention.remove_suspended_users_period_days + 1)
-    user_gets_deleted_notification = SuspendNotification(user=user_gets_deleted, sent_at=deletion_date,
-                                                         is_warning=True, is_suspension=False)
-    persist_instance(db, user_gets_suspended_notification, user_gets_deleted_notification)
 
     uuc = Organisation(name=uuc_name, short_name="uuc", identifier=str(uuid.uuid4()),
                        description="Unincorporated Urban Community", logo=read_image("uuc.jpeg"),
@@ -300,9 +318,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                       accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org",
                       scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret")
     wiki = Service(entity_id=service_wiki_entity_id, name=service_wiki_name, description="No more wiki's please",
-                   uri="https://wiki.surfnet.nl/display/SCZ/Collaboration+Management+System+%28Dutch%3A+"
-                       "SamenwerkingBeheerSysteem%29+-+SBS#CollaborationManagementSystem"
-                       "(Dutch:SamenwerkingBeheerSysteem)-SBS-DevelopmentofnewopensourceCollaborationManagementSystem",
+                   uri="https://servicedesk.surf.nl/wiki/",
                    public_visible=True, automatic_connection_allowed=False, logo=read_image("wiki.jpeg"),
                    allowed_organisations=[uuc, uva], contact_email="help@wiki.com", abbreviation="wiki",
                    accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org",
@@ -315,7 +331,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                       description="Network enabling service SSH access", address="Some address",
                       uri="https://uri.net", identity_type="SSH KEY", accepted_user_policy="https://aup.org",
                       contact_email="help@network.com", logo=read_image("network.jpeg"),
-                      public_visible=False, automatic_connection_allowed=True, abbreviation="network",
+                      public_visible=False, automatic_connection_allowed=False, abbreviation="network",
                       allowed_organisations=[uuc], privacy_policy="https://privacy.org",
                       token_enabled=True, token_validity_days=365, security_email="sec@org.nl",
                       scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret",
@@ -325,12 +341,13 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                               description="Uva SSH access",
                               uri="https://uri.com/ssh", identity_type="SSH KEY", accepted_user_policy="https://ssh",
                               contact_email="help@ssh.com", logo=read_image("ssh_uva.png"),
-                              public_visible=False, automatic_connection_allowed=False, abbreviation="service_ssh",
-                              allowed_organisations=[uva], research_scholarship_compliant=True,
+                              public_visible=False, automatic_connection_allowed=False,
+                              access_allowed_for_all=True, abbreviation="service_ssh",
+                              research_scholarship_compliant=True,
                               code_of_conduct_compliant=True, sirtfi_compliant=True,
                               privacy_policy="https://privacy.org", security_email="sec@org.nl")
 
-    uuc_scheduler = Service(entity_id=uuc_scheduler_entity_id, name=uuc_scheduler_name,
+    uuc_scheduler = Service(entity_id=uuc_scheduler_entity_id, name=service_uuc_scheduler_name,
                             accepted_user_policy="https://google.nl", abbreviation="uuc_scheduler",
                             description="UUC Scheduler Service", logo=read_image("scheduler_uuc.jpeg"),
                             automatic_connection_allowed_organisations=[uva],
@@ -340,7 +357,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     demo_sp = Service(entity_id="https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/test",
                       name="SRAM Demo SP", abbreviation="sram_demosp", description="Generic SRAM demo sp",
                       logo=read_image("test.png"), uri=("https://demo-sp.sram.surf.nl/"),
-                      privacy_policy="https://wiki.surfnet.nl/display/SRAM/Privacy+Policy",
+                      privacy_policy="https://edu.nl/fcgbd",
                       contact_email="sram-beheer@surf.nl", security_email="sram-beheer@surf.nl",
                       public_visible=True, automatic_connection_allowed=True, allow_restricted_orgs=True,
                       access_allowed_for_all=True,
@@ -351,7 +368,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     demo_rp = Service(entity_id="APP-18DE6298-7BDD-4CFA-9399-E1CC62E8DE05",
                       name="SRAM Demo RP", abbreviation="sram_demorp", description="Generic SRAM demo rp",
                       logo=read_image("test.png"), uri=("https://demo-sp.sram.surf.nl/"),
-                      privacy_policy="https://wiki.surfnet.nl/display/SRAM/Privacy+Policy",
+                      privacy_policy="https://edu.nl/fcgbd",
                       contact_email="sram-beheer@surf.nl", security_email="sram-beheer@surf.nl",
                       public_visible=True, automatic_connection_allowed=True, allow_restricted_orgs=True,
                       access_allowed_for_all=True,

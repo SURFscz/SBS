@@ -12,7 +12,7 @@ import {
     serviceTokenValue,
     updateService
 } from "../api";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import InputField from "../components/InputField";
 import "./ServiceOverview.scss";
 import "../components/redesign/ApiKeys.scss";
@@ -81,7 +81,10 @@ class ServiceOverview extends React.Component {
     componentDidMount = nextProps => {
         const {service, serviceAdmin} = nextProps ? nextProps : this.props;
         const {params} = this.props.match;
-        const tab = params.subTab || this.state.currentTab;
+        let tab = params.subTab || this.state.currentTab;
+        if (!toc.includes(tab)) {
+            tab = this.state.currentTab;
+        }
         this.validateService(service, () => {
             service.ip_networks = service.ip_networks.filter(ipNetwork => !isEmpty(ipNetwork.network_value));
             this.setState({
@@ -605,7 +608,7 @@ class ServiceOverview extends React.Component {
                             toolTip={I18n.t("scim.scimURLTooltip")}
                             error={invalidInputs.scim_url || (!initial && isEmpty(service.scim_url) && service.scim_enabled)}
                             onBlur={this.validateURI("scim_url")}
-                            disabled={!isAdmin || showServiceAdminView || !service.scim_enabled}/>
+                            disabled={!service.scim_enabled}/>
                 {invalidInputs.scim_url &&
                 <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
                 {(!initial && isEmpty(service.scim_url) && service.scim_enabled) &&
@@ -617,13 +620,13 @@ class ServiceOverview extends React.Component {
                             name={I18n.t("scim.scimBearerToken")}
                             onChange={e => this.changeServiceProperty("scim_bearer_token")(e)}
                             toolTip={I18n.t("scim.scimBearerTokenTooltip")}
-                            disabled={!isAdmin || showServiceAdminView || !service.scim_enabled}/>
+                            disabled={!service.scim_enabled}/>
 
                 <CheckBox name={"sweep_scim_enabled"}
                           value={service.sweep_scim_enabled}
                           tooltip={I18n.t("scim.sweepScimEnabledTooltip")}
                           info={I18n.t("scim.sweepScimEnabled")}
-                          readOnly={!isAdmin || showServiceAdminView || !service.scim_enabled}
+                          readOnly={!service.scim_enabled}
                           onChange={e =>
                               this.setState({
                                   "service": {
@@ -654,7 +657,7 @@ class ServiceOverview extends React.Component {
                              }))}
                              name={I18n.t("scim.sweepScimDailyRate")}
                              toolTip={I18n.t("scim.sweepScimDailyRateTooltip")}
-                             disabled={!isAdmin || showServiceAdminView || !service.scim_enabled || !service.sweep_scim_enabled}
+                             disabled={!service.scim_enabled || !service.sweep_scim_enabled}
                              onChange={item => this.setState({
                                  "service": {
                                      ...service,

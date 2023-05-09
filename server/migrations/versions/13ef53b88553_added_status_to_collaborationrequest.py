@@ -18,7 +18,7 @@ depends_on = None
 def upgrade():
     conn = op.get_bind()
     conn.execute(text("ALTER TABLE collaboration_requests ADD COLUMN status varchar(255)"))
-    conn.execute("UPDATE collaboration_requests SET status = 'open'")
+    conn.execute(text("UPDATE collaboration_requests SET status = 'open'"))
     conn.execute(text("ALTER TABLE collaboration_requests CHANGE status status VARCHAR(255) NOT NULL"))
 
 

@@ -1,6 +1,4 @@
-import I18n from "i18n-js";
-
-I18n.translations.en = {
+const en = {
     code: "EN",
     name: "English",
     select_locale: "Change language to English",
@@ -91,7 +89,7 @@ I18n.translations.en = {
             coAdmins: "Admins ({{count}})",
             members: "Members ({{count}})",
             users: "Users ({{count}})",
-            serviceOrganisations: "Organizational access ({{count}})",
+            serviceOrganisations: "Organisational access ({{count}})",
             serviceCollaborations: "Collaboration access ({{count}})",
             userTokens: "Tokens ({{count}})",
             collaborationRequests: "Requests ({{count}})",
@@ -108,11 +106,12 @@ I18n.translations.en = {
             validation: "Actions",
             plsc: "LDAP",
             composition: "Config",
-            suspendedUsers: "Suspensions",
+            suspendedUsers: "Users",
             userlogins: "Logins",
             details: "Details",
             orgUsers: "Users",
-            scim: "Scim"
+            scim: "SCIM",
+            stats: "Stats"
         }
     },
     forms: {
@@ -137,7 +136,7 @@ I18n.translations.en = {
         uploadSSH: "Add SSH key",
         add: "Add an image",
         change: "Change image",
-        image: "Image must at least be 300x120 pixels and smaller then 2MB.",
+        image: "Image must be smaller then 2MB.",
         dragImage: "Drag and resize the crop area until you're happy with the result. Then hit apply.",
         imageToLarge: "Image is larger then 2MB.",
         imageDeleteConfirmation: "Are you sure you want to delete this image? This cannot be reverted, and you'll have to select a new image.",
@@ -275,7 +274,7 @@ I18n.translations.en = {
             title: "Services",
             noEntities: "There are no services yet...",
             searchPlaceHolder: "Search services...",
-            new: "New service",
+            new: "Add service",
             name: "Name",
             status: "Status",
             connectionRequestCount: "Connection requests",
@@ -311,7 +310,7 @@ I18n.translations.en = {
             title: "Collaborations",
             titleForOrgAdmin: "In collaborations managed by your organisation",
             searchPlaceHolder: "Search collaborations...",
-            new: "New collaboration",
+            new: "Add collaboration",
             noEntities: "No collaborations found",
             newCollaborationRequest: "New request for collaboration",
             name: "Name",
@@ -356,7 +355,7 @@ I18n.translations.en = {
             title: "Collaborations using this service",
             organisationName: "Organisation",
             noEntities: "There are no collaborations using this service",
-            organisationWarningTooltip: "This collaboration has access, because the organisation of this collaboration has granted access to all collaborations in this organization.</br></br>To disconnect this collaboration, disallow access to the organisation in the Organisation tab.",
+            organisationWarningTooltip: "This collaboration has access, because the organisation of this collaboration has granted access to all collaborations in this organisation.</br></br>To disconnect this collaboration, disallow access to the organisation in the Organisation tab.",
             origin: "Enabled by",
             fromOrganisation: "Organisation",
             fromCollaboration: "Collaboration",
@@ -400,7 +399,7 @@ I18n.translations.en = {
             title: "Groups",
             searchPlaceHolder: "Search for groups...",
             noEntities: "No groups were found",
-            new: "Create new group",
+            new: "Add group",
             edit: "Edit",
             name: "Name",
             urn: "Platform identifier",
@@ -411,7 +410,8 @@ I18n.translations.en = {
             autoProvisioning: "Auto provisioning",
             on: "On",
             off: "Off",
-            deleteMemberConfirmation: "Are you sure you want to remove {{name}} from this group?"
+            deleteMemberConfirmation: "Are you sure you want to remove {{name}} from this group?",
+            deleteMembersConfirmation: "Are you sure you want to remove the selected memberships from this group?",
         },
         groupMembers: {
             title: "Members",
@@ -447,7 +447,7 @@ I18n.translations.en = {
         },
         apiKeys: {
             title: "API Keys",
-            new: "New API Key",
+            new: "Add API Key",
             searchPlaceHolder: "Search for API keys...",
             noEntities: "No API keys",
             backToApiKeys: "Back to all API keys"
@@ -543,7 +543,7 @@ I18n.translations.en = {
             title: "Service groups",
             searchPlaceHolder: "Search for service groups...",
             noEntities: "No service groups were found",
-            new: "Create new service group",
+            new: "Add service group",
             edit: "Edit",
             name: "Name",
             description: "Description",
@@ -561,7 +561,7 @@ I18n.translations.en = {
             title: "Tokens",
             searchPlaceHolder: "Search for token...",
             noEntities: "No tokens were found",
-            new: "Create new token",
+            new: "Create token",
             edit: "Edit",
             name: "Name",
             namePlaceholder: "The name of this token",
@@ -605,14 +605,16 @@ I18n.translations.en = {
         },
         providedBy: "Provided by <strong>{{institution}}</strong>",
         generatedBy: "Generated by <strong>SRAM</strong>",
-        delete: "Delete your profile",
+        delete: "Delete my profile",
         deleteConfirmation: "Are you sure you want to delete your profile for all eternity?",
         deleteConfirmationWarning: "All your memberships will be deleted and there is no way to revert this afterwards.",
         deleteConfirmationCheck: "If you wish to proceed, please type in your full name for confirmation.",
         deleteOtherConfirmation: "Are you sure you want to delete the user {{name}} for all eternity?",
-        unsuspend: "Unsuspend",
+        unsuspend: "Undo suspension",
         deleteOther: "Delete",
-        unsuspendOtherConfirmation: "Are you sure you want to unsuspend the user {{name}}?",
+        unsuspendOtherConfirmation: "Are you sure you want to undo the suspension the user {{name}}?",
+        reset2fa: "Reset TOTP",
+        reset2faConfirmation: "Are you sure you want to reset the TOTP for user {{name}}?",
     },
     impersonate: {
         title: "Who do you want to be?",
@@ -639,8 +641,8 @@ I18n.translations.en = {
         impersonatorTooltip: "You are really <em>{{impersonator}}</em>, but you are impersonating <em>{{currentUser}}</em>. On the <strong>Impersonate</strong> page you can change identity or become you again."
     },
     registration: {
-        joinRequest: "Submit request to join {{name}}",
-        explanation: "In order to submit your join request, please fill in your motivation for joining collaboration <strong>{{name}}</strong>.",
+        joinRequest: "Request to join {{name}}",
+        explanation: "Please fill in your motivation for joining collaboration <strong>{{name}}</strong>.",
         title: "Request membership of {{name}}",
         alreadyMember: "You are already a member of {{name}}",
         motivation: "Your motivation",
@@ -659,7 +661,7 @@ I18n.translations.en = {
         scoped_affiliation: "Scoped affiliations",
         entitlement: "Entitlements",
         nick_name: "Nick name",
-        schac_home_organisation: "Organisation domain name",
+        schac_home_organisation: "Organisation domain",
         edu_members: "EDU memberships",
         eduperson_principal_name: "EPPN",
         created_at: "Profile created",
@@ -716,7 +718,9 @@ I18n.translations.en = {
         actions: "",
         name: "Name",
         logo: "Collaboration logo",
-        useOrganisationLogo: "Use the organization logo",
+        useOrganisationLogo: "Use the organisation logo",
+        generateLogo: "Generate logo",
+        generateLogoTooltip: "You first must enter a Collaboration name to enable logo generation",
         namePlaceHolder: "The unique name of a collaboration",
         shortName: "Short name",
         shortNamePlaceHolder: "Unique short name of the collaboration",
@@ -1020,7 +1024,7 @@ I18n.translations.en = {
         addMe: "Make me service admin",
         access: "Access",
         policies: "Policies",
-        policyCompliance: "Policy compliance",
+        policyCompliance: "Compliant policies",
         login: "Login",
         support: "Support for end user",
         admins: "Administrative email address",
@@ -1376,6 +1380,7 @@ I18n.translations.en = {
         noServices: "This organisation has no services connected.",
         searchServices: "Search, select and add services to the available services within organisation {{name}}.",
         deleteServiceTooltip: "Make this service unavailable in the organisation {{name}}. <strong>Note</strong>: the service itself is NOT deleted. It is only not available anymore for the members of the collaborations on this organisation",
+        accessForNonMembersOrganisation: "This service cannot be enabled for all collaborations, because all users of the platform can access this service, regardless of any collaboration membership.",
         notAllowedOrganisation: "This service cannot be enabled for all collaborations, because it does not allow automatic connections. Connections can still be requested by individual collaborations in your organisation.",
         notEnabledOrganisation: "This service cannot be enabled for all collaborations, because the service does not allow access for this organisation.",
         serviceRestrictedOrganisation: "This service cannot be made mandatory for all collaborations, because this organisation can only link SURF services.",
@@ -1455,6 +1460,7 @@ I18n.translations.en = {
             addedMember: "Added user {{member}} as a member of group {{name}}",
             addedMembers: "Added all users and invitations as (future ) members of group {{name}}",
             deletedMember: "Deleted user {{member}} from group {{name}}",
+            deletedMembers: "Deleted memberships from group {{name}}",
             addedInvitation: "Added user {{member}} as a member of group {{name}}",
             deletedInvitation: "Deleted invitee {{invitation}} from group {{name}}",
         },
@@ -1523,7 +1529,11 @@ I18n.translations.en = {
             missing: {
                 info: "The service acceptable use policy (AUP) has changed. Please read it and indicate below whether you accept.",
                 infoMultiple: "These service acceptable use policies (AUPs) have changed. Please read them and indicate below whether you accept."
-            }
+            },
+            singleInfo: "A service used by this collaboration requires that you agree to their acceptable use policy.",
+            multipleInfo: "Services used by this collaboration require that you agree to their acceptable use policies.",
+            singleCheck: "I agree to the service's acceptable use policy",
+            multipleCheck: "I agree to the services acceptable use policies"
         }
     },
     collaborationRequest: {
@@ -1688,7 +1698,7 @@ I18n.translations.en = {
         title: "Confirm",
         subTitle: "This action requires a confirmation",
         confirm: "Confirm",
-        ok: "Ok",
+        ok: "OK",
         cancel: "Cancel",
         leavePage: "Do you really want to leave this page?",
         leavePageSub: "Changes that you made will not be saved.",
@@ -1736,6 +1746,8 @@ I18n.translations.en = {
         runOutdatedRequests: "Run",
         runCleanedRequestsInfo: "Run the cron job to delete all outdated approved / denied join requests and collaboration requests for the configured threshold",
         runCleanedRequests: "Delete",
+        runSweepResults: "Run the cron job to sweep all SCIM enabled services",
+        runSweep: "Run",
         action: "Action",
         results: "Results",
         warning_suspend_notifications: "Warning suspension notification email sent",
@@ -1768,7 +1780,7 @@ I18n.translations.en = {
         runCleanSlate: "Are you absolutely sure you want to delete all data?",
         clear: "Clear",
         reload: "Reload",
-        seedResult: "Test data is inserted in {{ms}} ms. Perform a hard-reload of the page to invalidate the cache.",
+        seedResult: "{{seed}} data is inserted in {{ms}} ms.",
         toggleJson: "Toggle view",
         suspendedUsers: {
             title: "The following users have been suspended.",
@@ -1777,6 +1789,11 @@ I18n.translations.en = {
             name: "Name",
             lastLogin: "Last login",
             activate: "Activate"
+        },
+        resetTOTPRequestedUsers: {
+            title: "The following users have requested a reset of their TOTP.",
+            titleZeroState: "There are no users who have requested a TOTP reset.",
+            reset: "Reset"
         },
         userlogins: {
             loginType: "Type",
@@ -1800,6 +1817,9 @@ I18n.translations.en = {
                 sweepScimEnabled: "Sweep enabled",
                 sweep: "Sweep",
             }
+        },
+        stats: {
+            loading: "Loading, please wait..."
         }
     },
     access: {
@@ -1837,8 +1857,8 @@ I18n.translations.en = {
         collaboration: "collaboration",
         service: "service",
         toggleRole: "Toggle role",
-        infoMember: "Before joining this collaboration, you must review the acceptable use policy (AUP) and privacy policy of the service and accept them.",
-        infoAdmin: "Before you can become an admin of this collaboration, you must review the acceptable use policy (AUP) and privacy policy of the service and accept them.",
+        infoMember: "Please be aware that on joining this collaboration, your personal data may be shared with the following services. Take a moment to review any policy documents provided by the service.",
+        infoAdmin: "Please be aware that on becoming and admin of this collaboration, your personal data may be shared with the following services. Take a moment to review any policy documents provided by the service.",
         infoJoinRequest: " Before you can request to join this collaboration, you must review the acceptable use policy (AUP) and privacy policy of the service. Indicate below whether you accept them.",
         purpose: "Purpose of the collaboration",
         noServices: "No services connected yet.",
@@ -1850,7 +1870,7 @@ I18n.translations.en = {
         unknown: "an unknown institution",
         mysterious: "mysterious guest",
         institution: "Information in your profile was provided by <strong>{{name}}</strong>.",
-        institutionNotConnected: "The organization you have logged in with, cannot create or manage collaborations.",
+        institutionNotConnected: "The organisation you have logged in with, cannot create or manage collaborations.",
         noMember: "You are neither a member of a collaboration, nor an admin. If you have been invited, then please use the link from the invite email.",
         whatYouCanDo: "",
         instructions: "Instruction from <strong>{{name}}</strong>",
@@ -1881,7 +1901,7 @@ I18n.translations.en = {
         header: {
             title: "Easy and secure access to research services for research collaborations",
             login: "Login",
-            sup: "New to SURF Research Access Management? Login and see what you can do.",
+            sup: "New to SURF Research Access Management? Login and see your possibilities.",
         },
         works: "How does it work?",
         adminFunction: "admin function",
@@ -1913,11 +1933,10 @@ I18n.translations.en = {
     },
     notFound: {
         invitationNotFound: "This invitation does not exist (anymore). The invitation has probably already been used. Ask the person who invited you to send you a new one.",
-        invalidSecondFactorUUID: "The redirect from eduTeams is expired. Please go back to the service where you we're trying to login and try again.",
+        invalidSecondFactorUUID: "The link has expired. Please go back to the service where you we're trying to login and try again.",
         invalidPamWebSSO: "Your session has expired. Please go back to the service you were trying to login to and try again.",
-        msg: "Mmmm, seems you somehow ended up with a link that we can't help you with. Sorry for that. </br></br>" +
-            "You could try visiting the <a href='{{base_url}}'>homepage</a>. If that does not offer you an option you were looking for, " +
-            "contact the person that invited you, or follow the help link which includes how to contact the SURF Research Access Management team."
+        msg: "We can't seem to find that page. Sorry for that.</br></br>" +
+            "Start over on the <a href='{{base_url}}'>homepage</a> or contact us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
     },
     mfa: {
         register: {
@@ -2203,6 +2222,10 @@ I18n.translations.en = {
             years: "in %s years"
         }
     },
+    error: {
+        message: "We seem to have run into an unknown error. Sorry for that.</br>" +
+            "Start over on the <a href='/'>homepage</a> or contact us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
+    }
 };
 
-export default I18n.translations.en;
+export default en;

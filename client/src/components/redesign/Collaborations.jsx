@@ -3,7 +3,7 @@ import {ReactComponent as TreeSwing} from "../../images/tree_swing.svg";
 
 import "./Collaborations.scss";
 import {isEmpty, stopEvent} from "../../utils/Utils";
-import I18n from "i18n-js";
+import I18n from "../../locale/I18n";
 import Entities from "./Entities";
 import Button from "../Button";
 import {allCollaborations, collaborationAdmins, mayRequestCollaboration, myCollaborations} from "../../api";
@@ -11,7 +11,7 @@ import SpinnerField from "./SpinnerField";
 import {chipType, isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
 import CheckBox from "../CheckBox";
-import {Chip, Tooltip} from "@surfnet/sds";
+import {Chip, ChipType, Tooltip} from "@surfnet/sds";
 import ConfirmationDialog from "../ConfirmationDialog";
 
 import {ReactComponent as InformationCircle} from "@surfnet/sds/icons/functional-icons/info.svg";
@@ -253,13 +253,21 @@ export default class Collaborations extends React.PureComponent {
                         const expiryDate = collaboration.expiry_date * 1000;
                         const days = Math.max(1, Math.round((expiryDate - today) / (1000 * 60 * 60 * 24)));
                         const warning = days < 60;
-                        const className = collaboration.status === "expired" ? "expired" : warning ? "warning" : "";
-                        return <div>
-                            <Tooltip standalone={true} children={<span className={`expiry-date ${className}`}>
+                        let children;
+                        if (collaboration.status === "expired" || warning) {
+                            children = <Chip
+                                label={displayExpiryDate(collaboration.expiry_date)}
+                                type={collaboration.status === "expired" ? ChipType.Main_500 : ChipType.Main_300}/>
+                        } else {
+                            children = <span className={`expiry-date`}>
                                     {displayExpiryDate(collaboration.expiry_date)}
-                                </span>}
+                                </span>
+                        }
+                        return <div>
+                            <Tooltip standalone={true}
+                                     children={children}
                                      anchorId={`${collaboration.id}-expiry_date`}
-                                     tip={moment(expiryDate).format("LLLL")}>
+                                     tip={moment(expiryDate).format("LL")}>
                             </Tooltip>
                         </div>;
                     }

@@ -25,11 +25,11 @@ def do_add_group_invitations(data):
     if "skip_collaboration_admin_confirmation" not in request_context:
         confirm_collaboration_admin(collaboration_id)
 
-    group = Group.query.get(group_id)
+    group = db.session.get(Group, group_id)
 
     invitations_ids = data["invitations_ids"]
     for invitation_id in invitations_ids:
-        group.invitations.append(Invitation.query.get(invitation_id))
+        group.invitations.append(db.session.get(Invitation, invitation_id))
 
     db.session.merge(group)
     return len(invitations_ids)
@@ -46,7 +46,7 @@ def auto_provision_all_members_and_invites(group: Group):
             "members_ids": missing_members
         }, True)
         # Session is closed in do_add_group_members, but we are not ready yet, so re-fetch the Group
-        group = Group.query.get(group.id)
+        group = db.session.get(Group, group.id)
 
         ag_invitation_identifiers = [i.id for i in group.invitations]
         c_invitation_identifiers = [i.id for i in group.collaboration.invitations if i.status == "open"]
@@ -67,7 +67,7 @@ def name_exists():
     confirm_collaboration_admin(collaboration_id, True, True)
 
     existing_group = query_param("existing_group", required=False, default="")
-    group = Group.query.options(load_only("id")) \
+    group = Group.query.options(load_only(Group.id)) \
         .filter(func.lower(Group.name) == func.lower(name)) \
         .filter(func.lower(Group.name) != func.lower(existing_group)) \
         .filter(Group.collaboration_id == collaboration_id) \
@@ -84,7 +84,7 @@ def short_name_exists():
     confirm_collaboration_admin(collaboration_id, True, True)
 
     existing_group = query_param("existing_group", required=False, default="")
-    group = Group.query.options(load_only("id")) \
+    group = Group.query.options(load_only(Group.id)) \
         .filter(func.lower(Group.short_name) == func.lower(short_name)) \
         .filter(func.lower(Group.short_name) != func.lower(existing_group)) \
         .filter(Group.collaboration_id == collaboration_id) \
@@ -110,7 +110,7 @@ def create_group(collaboration_id, data, do_cleanse_short_name=True):
     if do_cleanse_short_name:
         cleanse_short_name(data)
     # Check uniqueness of name and short_name of group for the collaboration
-    collaboration = Collaboration.query.get(collaboration_id)
+    collaboration = db.session.get(Collaboration, collaboration_id)
 
     def is_duplicate(g: Group):
         short_name_dup = g.short_name == data["short_name"]
@@ -125,7 +125,7 @@ def create_group(collaboration_id, data, do_cleanse_short_name=True):
     res = save(Group, custom_json=data, allow_child_cascades=False)
 
     # Session is closed in save, but we are not ready yet, so re-fetch the Group
-    group = Group.query.get(res[0].id)
+    group = db.session.get(Group, res[0].id)
 
     auto_provision_all_members_and_invites(group)
 
@@ -146,10 +146,10 @@ def update_group():
 
     collaboration_id = int(data["collaboration_id"])
     confirm_collaboration_admin(collaboration_id)
-    collaboration = Collaboration.query.get(collaboration_id)
+    collaboration = db.session.get(Collaboration, collaboration_id)
     _assign_global_urn(collaboration, data)
     cleanse_short_name(data)
-    group = Group.query.get(data["id"])
+    group = db.session.get(Group, data["id"])
     if group.service_group:
         group.auto_provision_members = data.get("auto_provision_members", False)
         db.session.merge(group)

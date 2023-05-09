@@ -1,10 +1,10 @@
-
 from flask import Blueprint, request as current_request, session
 from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint
-from server.auth.security import confirm_organisation_admin
 from server.auth.secrets import generate_token, hash_secret_key
+from server.auth.security import confirm_organisation_admin
+from server.db.db import db
 from server.db.domain import ApiKey
 from server.db.models import save, delete
 
@@ -34,6 +34,6 @@ def save_api_key():
 @api_key_api.route("/<api_key_id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_api_key(api_key_id):
-    organisation_id = ApiKey.query.get(api_key_id).organisation_id
+    organisation_id = db.session.get(ApiKey, api_key_id).organisation_id
     confirm_organisation_admin(organisation_id)
     return delete(ApiKey, api_key_id)

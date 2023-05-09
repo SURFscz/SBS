@@ -62,7 +62,10 @@ def _add_service_aups(user: dict, user_from_db: User):
 
     service_emails = {}
     for s in unique_missing_services:
-        service_emails[s.id] = [s.contact_email] if s.contact_email else [m.user.email for m in s.service_memberships]
+        if s.contact_email:
+            service_emails[s.id] = [s.contact_email]
+        else:
+            service_emails[s.id] = [m.user.email for m in s.service_memberships]
 
     # Avoid ValueError: Circular reference detected
     user["services_without_aup"] = [
@@ -179,7 +182,8 @@ def user_search():
 
     if not_wild_card:
         sql = sql.bindparams(bindparam("q", type_=String))
-    result_set = db.engine.execute(sql, {"q": f"{q}*"}) if not_wild_card else db.engine.execute(sql)
+    with db.engine.connect() as conn:
+        result_set = conn.execute(sql, {"q": f"{q}*"}) if not_wild_card else conn.execute(sql)
     data = [{"id": row[0], "uid": row[1], "name": row[2], "email": row[3], "organisation_name": row[4],
              "organisation_role": row[5], "collaboration_name": row[6],
              "collaboration_role": row[7]} for row in result_set]
@@ -389,7 +393,7 @@ def redirect_to_client(cfg, second_factor_confirmed, user):
 
 
 def _do_delete_user(user_id, send_mail_account_deletion=True):
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     if send_mail_account_deletion:
         mail_account_deletion(user)
     if user.username:
@@ -506,6 +510,13 @@ def suspended():
     return User.query.filter(User.suspended == True).all(), 200  # noqa: E712
 
 
+@user_api.route("/reset_totp_requested", strict_slashes=False)
+@json_endpoint
+def reset_totp_requested():
+    confirm_write_access()
+    return User.query.filter(User.mfa_reset_token != None).all(), 200  # noqa: E711
+
+
 @user_api.route("/activate", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def activate():
@@ -517,7 +528,7 @@ def activate():
     else:
         confirm_write_access()
 
-    user = User.query.get(int(body["user_id"]))
+    user = db.session.get(User, int(body["user_id"]))
 
     user.suspended = False
     user.last_login_date = datetime.datetime.now()
@@ -536,7 +547,7 @@ def update_user():
     if impersonate_id:
         confirm_allow_impersonation()
 
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     user_json = current_request.get_json()
 
     validate_ip_networks(user_json, networks_name="user_ip_networks")
@@ -620,7 +631,7 @@ def find_by_id():
 
     if not is_application_admin():
         # Ensure the user has a collaboration membership in an organisation the current_user is admin or manager of
-        curr_user = User.query.get(current_user_id())
+        curr_user = db.session.get(User, current_user_id())
         current_user_organisation_identifiers = [om.organisation_id for om in curr_user.organisation_memberships]
         user_organisation_identifiers = [cm.collaboration.organisation_id for cm in user.collaboration_memberships]
         if not any([i in current_user_organisation_identifiers for i in user_organisation_identifiers]):

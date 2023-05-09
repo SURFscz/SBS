@@ -13,7 +13,7 @@ import {
     verify2faProxyAuthz
 } from "../api";
 import SpinnerField from "../components/redesign/SpinnerField";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import Button from "../components/Button";
 import InputField from "../components/InputField";
 import {setFlash} from "../utils/Flash";
@@ -74,8 +74,7 @@ class SecondFactorAuthentication extends React.Component {
                             qrCode: res.qr_code_base64,
                             idp_name: res.idp_name || I18n.t("mfa.register.unknownIdp"),
                             continueUrl: continueUrl
-                        });
-                        this.focusCode();
+                        }, this.focusCode);
                     }).catch(() => this.props.history.push(`/404?eo=${ErrorOrigins.invalidSecondFactorUUID}`))
             } else {
                 this.props.history.push("/landing");
@@ -86,16 +85,15 @@ class SecondFactorAuthentication extends React.Component {
                     qrCode: res.qr_code_base64,
                     idp_name: res.idp_name || I18n.t("mfa.register.unknownIdp"),
                     loading: false
-                });
-                this.focusCode();
+                }, this.focusCode);
+
             });
         } else {
             this.setState({
                 secondFaUuid: second_fa_uuid,
                 continueUrl: continueUrl,
                 loading: false
-            });
-            this.focusCode();
+            }, this.focusCode);
         }
     }
 
@@ -131,8 +129,7 @@ class SecondFactorAuthentication extends React.Component {
     focusCode = () => {
         setTimeout(() => {
             if (this.totpRefs && this.totpRefs[0] !== "") {
-                this.totpRefs[0].focus();
-                window.scrollTo(0, 0);
+                this.totpRefs[0].focus({preventScroll: true});
             }
         }, 350);
     }
@@ -189,13 +186,19 @@ class SecondFactorAuthentication extends React.Component {
 
     submitResetCode = () => {
         this.setState({loading: true});
-        const {resetCode} = this.state;
-        reset2fa(resetCode)
+        const {resetCode, secondFaUuid} = this.state;
+        reset2fa(resetCode, secondFaUuid)
             .then(() => {
+                if (secondFaUuid) {
+                    this.setState({resetCode: false, showEnterToken: false});
+                    this.componentDidMount();
+                } else {
                 this.props.refreshUser(() => {
                     this.setState({resetCode: false, showEnterToken: false});
                     this.componentDidMount();
                 })
+
+                }
             }).catch(() => {
             this.setState({resetCodeError: true, loading: false});
         });
@@ -221,10 +224,10 @@ class SecondFactorAuthentication extends React.Component {
                 this.props.history.push("/profile");
                 setFlash(I18n.t("mfa.update.flash"));
             }).catch(() => this.setState({
-                            busy: false,
-                            newError: true,
-                            newTotp: Array(6).fill("")
-                        }, () => this.totpNewRefs[0].focus()));
+                busy: false,
+                newError: true,
+                newTotp: Array(6).fill("")
+            }, () => this.totpNewRefs[0].focus()));
         } else if (secondFaUuid && continueUrl) {
             verify2faProxyAuthz(totp.join(""), secondFaUuid, continueUrl).then(r => {
                 window.location.href = r.location;
@@ -376,9 +379,7 @@ class SecondFactorAuthentication extends React.Component {
                            onChange={this.onChangeTotp(index, attributeName, refs, onLastEntryVerify)}
                            onKeyDown={this.onKeyDownTotp(index, refs)}
                            maxLength={1}
-                           ref={ref => {
-                               refs[index] = ref;
-                           }}
+                           ref={ref => refs[index] = ref}
                            className="totp-value"/>
                 )}
             </div>

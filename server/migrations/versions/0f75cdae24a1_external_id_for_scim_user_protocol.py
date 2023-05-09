@@ -21,10 +21,10 @@ def upgrade():
     conn = op.get_bind()
     conn.execute(text("ALTER TABLE `users` ADD COLUMN external_id VARCHAR(255)"))
 
-    result = conn.execute("SELECT id FROM `users`")
+    result = conn.execute(text("SELECT id FROM `users`"))
     for row in result:
-        id = row["id"]
-        conn.execute(f"UPDATE `users` SET `external_id` = '{str(uuid.uuid4())}' WHERE id = {id}")
+        id = row[0]
+        conn.execute(text(f"UPDATE `users` SET `external_id` = '{str(uuid.uuid4())}' WHERE id = {id}"))
 
     conn.execute(text("ALTER TABLE `users` CHANGE external_id external_id VARCHAR(255) NOT NULL"))
 
