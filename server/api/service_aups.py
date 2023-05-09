@@ -1,4 +1,3 @@
-
 from flask import Blueprint, request as current_request, session
 
 from server.api.base import json_endpoint
@@ -9,7 +8,7 @@ service_aups_api = Blueprint("service_aups_api", __name__, url_prefix="/api/serv
 
 
 def add_user_aups(collaboration, user_id):
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     services = collaboration.services + collaboration.organisation.services
     for service in services:
         if not has_agreed_with(user, service):
@@ -21,9 +20,9 @@ def has_agreed_with(user: User, service: Service):
 
 
 def do_create_service_aup(service_id):
-    service = Service.query.get(int(service_id))
+    service = db.session.get(Service, int(service_id))
     user_id = current_user_id()
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     if not has_agreed_with(user, service):
         db.session.merge(ServiceAup(aup_url=service.accepted_user_policy, user_id=user_id, service_id=service_id))
 

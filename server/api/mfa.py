@@ -11,7 +11,7 @@ from server.api.base import query_param, json_endpoint
 from server.auth.mfa import store_user_in_session, eligible_users_to_reset_token
 from server.auth.rate_limit import clear_rate_limit, check_rate_limit
 from server.auth.secrets import generate_token
-from server.auth.security import current_user_id, is_admin_user
+from server.auth.security import current_user_id, is_admin_user, is_application_admin
 from server.auth.ssid import redirect_to_surf_secure_id
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
@@ -181,17 +181,44 @@ def update2fa():
     user.second_factor_auth = new_secret
     db.session.merge(user)
     db.session.commit()
+    session.pop("validated_current_totp")
     return {}, 201
 
 
 @mfa_api.route("/reset2fa", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def reset2fa():
-    user = User.query.filter(User.id == current_user_id()).one()
     data = current_request.get_json()
+    second_fa_uuid = data.get("second_fa_uuid", None)
+    if second_fa_uuid:
+        user = _get_user_by_second_fa_uuid(second_fa_uuid)
+    else:
+        user = User.query.filter(User.id == current_user_id()).one()
     token = data["token"]
     if not token or token != user.mfa_reset_token:
         raise Forbidden()
+    user.second_factor_auth = None
+    user.mfa_reset_token = None
+    db.session.merge(user)
+    db.session.commit()
+    return {}, 201
+
+
+@mfa_api.route("/reset2fa_other", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def reset2fa_other():
+    data = current_request.get_json()
+    user_id = data.get("user_id", None)
+
+    user = User.query.filter(User.id == user_id).one()
+
+    if not is_application_admin():
+        curr_user = db.session.get(User, current_user_id())
+        curr_user_orgs = [om.organisation_id for om in curr_user.organisation_memberships if om.role == "admin"]
+        user_orgs = [cm.collaboration.organisation_id for cm in user.collaboration_memberships]
+        if not any([i in curr_user_orgs for i in user_orgs]):
+            raise Forbidden()
+
     user.second_factor_auth = None
     user.mfa_reset_token = None
     db.session.merge(user)

@@ -7,7 +7,7 @@ test("Replace query parameters", () => {
 
 test("Replace query parameters preserve existing", () => {
     const replaced = replaceQueryParameter("?test=bogus&name=x", "test", "value");
-    expect(replaced).toBe("?name=x&test=value");
+    expect(replaced).toBe("?test=value&name=x");
 });
 
 test("Replace query parameters", () => {

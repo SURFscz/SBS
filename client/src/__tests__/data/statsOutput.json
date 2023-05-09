@@ -1,0 +1,458 @@
+{
+    "collaboration_memberships": [
+        {
+            "count": 0,
+            "month": 8,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 9,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 10,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 11,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 12,
+            "year": 2022
+        },
+        {
+            "count": 2,
+            "month": 1,
+            "year": 2023
+        },
+        {
+            "count": 6,
+            "month": 2,
+            "year": 2023
+        },
+        {
+            "count": 12,
+            "month": 3,
+            "year": 2023
+        },
+        {
+            "count": 20,
+            "month": 4,
+            "year": 2023
+        },
+        {
+            "count": 20,
+            "month": 5,
+            "year": 2023
+        },
+        {
+            "count": 20,
+            "month": 6,
+            "year": 2023
+        }
+    ],
+    "collaborations": [
+        {
+            "count": 0,
+            "month": 8,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 9,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 10,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 11,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 12,
+            "year": 2022
+        },
+        {
+            "count": 1,
+            "month": 1,
+            "year": 2023
+        },
+        {
+            "count": 2,
+            "month": 2,
+            "year": 2023
+        },
+        {
+            "count": 4,
+            "month": 3,
+            "year": 2023
+        },
+        {
+            "count": 7,
+            "month": 4,
+            "year": 2023
+        },
+        {
+            "count": 7,
+            "month": 5,
+            "year": 2023
+        },
+        {
+            "count": 7,
+            "month": 6,
+            "year": 2023
+        }
+    ],
+    "groups": [
+        {
+            "count": 0,
+            "month": 8,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 9,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 10,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 11,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 12,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 1,
+            "year": 2023
+        },
+        {
+            "count": 3,
+            "month": 2,
+            "year": 2023
+        },
+        {
+            "count": 6,
+            "month": 3,
+            "year": 2023
+        },
+        {
+            "count": 7,
+            "month": 4,
+            "year": 2023
+        },
+        {
+            "count": 7,
+            "month": 5,
+            "year": 2023
+        },
+        {
+            "count": 7,
+            "month": 6,
+            "year": 2023
+        }
+    ],
+    "organisation_memberships": [
+        {
+            "count": 0,
+            "month": 8,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 9,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 10,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 11,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 12,
+            "year": 2022
+        },
+        {
+            "count": 1,
+            "month": 1,
+            "year": 2023
+        },
+        {
+            "count": 1,
+            "month": 2,
+            "year": 2023
+        },
+        {
+            "count": 4,
+            "month": 3,
+            "year": 2023
+        },
+        {
+            "count": 6,
+            "month": 4,
+            "year": 2023
+        },
+        {
+            "count": 6,
+            "month": 5,
+            "year": 2023
+        },
+        {
+            "count": 6,
+            "month": 6,
+            "year": 2023
+        }
+    ],
+    "organisations": [
+        {
+            "count": 0,
+            "month": 8,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 9,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 10,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 11,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 12,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 1,
+            "year": 2023
+        },
+        {
+            "count": 0,
+            "month": 2,
+            "year": 2023
+        },
+        {
+            "count": 0,
+            "month": 3,
+            "year": 2023
+        },
+        {
+            "count": 3,
+            "month": 4,
+            "year": 2023
+        },
+        {
+            "count": 3,
+            "month": 5,
+            "year": 2023
+        },
+        {
+            "count": 3,
+            "month": 6,
+            "year": 2023
+        }
+    ],
+    "service_memberships": [
+        {
+            "count": 0,
+            "month": 8,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 9,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 10,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 11,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 12,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 1,
+            "year": 2023
+        },
+        {
+            "count": 0,
+            "month": 2,
+            "year": 2023
+        },
+        {
+            "count": 2,
+            "month": 3,
+            "year": 2023
+        },
+        {
+            "count": 2,
+            "month": 4,
+            "year": 2023
+        },
+        {
+            "count": 2,
+            "month": 5,
+            "year": 2023
+        },
+        {
+            "count": 2,
+            "month": 6,
+            "year": 2023
+        }
+    ],
+    "services": [
+        {
+            "count": 0,
+            "month": 8,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 9,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 10,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 11,
+            "year": 2022
+        },
+        {
+            "count": 0,
+            "month": 12,
+            "year": 2022
+        },
+        {
+            "count": 2,
+            "month": 1,
+            "year": 2023
+        },
+        {
+            "count": 2,
+            "month": 2,
+            "year": 2023
+        },
+        {
+            "count": 4,
+            "month": 3,
+            "year": 2023
+        },
+        {
+            "count": 5,
+            "month": 4,
+            "year": 2023
+        },
+        {
+            "count": 5,
+            "month": 5,
+            "year": 2023
+        },
+        {
+            "count": 5,
+            "month": 6,
+            "year": 2023
+        }
+    ],
+    "users": [
+        {
+            "count": 22,
+            "month": 8,
+            "year": 2022
+        },
+        {
+            "count": 67,
+            "month": 9,
+            "year": 2022
+        },
+        {
+            "count": 67,
+            "month": 10,
+            "year": 2022
+        },
+        {
+            "count": 136,
+            "month": 11,
+            "year": 2022
+        },
+        {
+            "count": 136,
+            "month": 12,
+            "year": 2022
+        },
+        {
+            "count": 140,
+            "month": 1,
+            "year": 2023
+        },
+        {
+            "count": 1251,
+            "month": 2,
+            "year": 2023
+        },
+        {
+            "count": 1252,
+            "month": 3,
+            "year": 2023
+        },
+        {
+            "count": 1254,
+            "month": 4,
+            "year": 2023
+        },
+        {
+            "count": 1254,
+            "month": 5,
+            "year": 2023
+        },
+        {
+            "count": 1257,
+            "month": 6,
+            "year": 2023
+        }
+    ]
+}

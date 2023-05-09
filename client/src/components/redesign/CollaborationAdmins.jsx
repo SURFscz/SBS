@@ -1,5 +1,5 @@
 import React from "react";
-import I18n from "i18n-js";
+import I18n from "../../locale/I18n";
 import Entities from "./Entities";
 import {ReactComponent as UserIcon} from "../../icons/users.svg";
 import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
@@ -566,12 +566,6 @@ class CollaborationAdmins extends React.Component {
 
     searchCallback = resultAfterSearch => {
         this.setState({resultAfterSearch: resultAfterSearch});
-    }
-
-    isExpiredInvitation = invitation => {
-        const today = moment();
-        const inp = moment(invitation.expiry_date * 1000);
-        return today.isAfter(inp);
     }
 
     renderSelectRole = (entity, isAdminOfCollaboration) => {

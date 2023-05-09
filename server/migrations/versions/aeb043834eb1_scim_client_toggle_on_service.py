@@ -24,7 +24,7 @@ def upgrade():
             WHERE st.token_type = :token_type)
         AS s3 ON s3.id = s2.id SET s2.scim_client_enabled = 1;
     """)
-    conn.execute(query, token_type="scim")
+    conn.execute(query, dict(token_type="scim"))
 
 
 def downgrade():

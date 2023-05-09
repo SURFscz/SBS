@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.scss";
 import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import Header from "../components/Header";
 import NotFound from "../pages/NotFound";
 import ServerError from "../pages/ServerError";
@@ -181,7 +181,7 @@ class App extends React.Component {
             loading, errorDialogAction, errorDialogOpen, currentUser, impersonator, config, reloading, aupConfig
         } = this.state;
         if (loading) {
-            return null; // render null when app is not ready yet
+            return <SpinnerField/>
         }
         return (
             <Router>

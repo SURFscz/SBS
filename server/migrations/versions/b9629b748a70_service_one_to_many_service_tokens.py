@@ -32,15 +32,15 @@ def upgrade():
                     sa.Column("updated_by", sa.String(length=255), nullable=False),
                     )
     conn = op.get_bind()
-    result = conn.execute("SELECT `id`, `name`, `hashed_token` FROM `services` "
-                          "WHERE `hashed_token` IS NOT NULL")
+    result = conn.execute(text("SELECT `id`, `name`, `hashed_token` FROM `services` "
+                          "WHERE `hashed_token` IS NOT NULL"))
     for row in result:
-        hashed_token = row["hashed_token"]
-        name = row["name"]
-        service_id = row["id"]
+        service_id = row[0]
+        name = row[1]
+        hashed_token = row[2]
         sql = f"INSERT INTO service_tokens (hashed_token, description, service_id, created_by, " \
               f"updated_by) VALUES ('{hashed_token}', '{name} token', {service_id}, 'migration', 'migration')"
-        conn.execute(sql)
+        conn.execute(text(sql))
 
     conn.execute(text("ALTER TABLE services DROP COLUMN hashed_token"))
 

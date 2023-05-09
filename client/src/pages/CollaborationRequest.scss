@@ -1,6 +1,5 @@
 @import "../stylesheets/vars.scss";
 @import "../stylesheets/forms";
-@import "../stylesheets/entity_status";
 
 .mod-collaboration-request-container {
     width: 100%;
@@ -60,7 +59,10 @@
             }
 
             .request-header-actions {
-                @include entity-status;
+                button.sds--chips {
+                    margin-left: 25px;
+                    max-height: 34px;
+                }
 
                 display: flex;
                 align-items: center;

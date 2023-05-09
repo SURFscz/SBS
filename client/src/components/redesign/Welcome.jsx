@@ -1,6 +1,6 @@
 import React from "react";
 import "./Welcome.scss";
-import I18n from "i18n-js";
+import I18n from "../../locale/I18n";
 import {identityProviderDisplayName, organisationsByUserSchacHomeOrganisation} from "../../api";
 import {getSchacHomeOrg, isEmpty} from "../../utils/Utils";
 import {ReactComponent as InformationIcon} from "../../icons/informational.svg";

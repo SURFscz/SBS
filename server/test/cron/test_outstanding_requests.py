@@ -1,3 +1,4 @@
+from sqlalchemy import text
 
 from server.cron.outstanding_requests import outstanding_requests
 from server.db.db import db
@@ -9,8 +10,10 @@ class TestOutstandingRequests(AbstractTest):
     def test_outstanding_requests(self):
         # Ensure we have results
         past_date = "2018-03-20 14:51:40"
-        db.engine.execute(f"update join_requests set created_at = '{past_date}'")
-        db.engine.execute(f"update collaboration_requests set created_at = '{past_date}'")
+        with db.engine.connect() as conn:
+            with conn.begin():
+                conn.execute(text(f"update join_requests set created_at = '{past_date}'"))
+                conn.execute(text(f"update collaboration_requests set created_at = '{past_date}'"))
         mail = self.app.mail
         with mail.record_messages() as outbox:
             outstanding_requests(self.app)

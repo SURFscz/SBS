@@ -3,7 +3,7 @@ import {addOrganisationServices, allServices, deleteOrganisationServices} from "
 
 import "./OrganisationServices.scss";
 import {stopEvent} from "../../utils/Utils";
-import I18n from "i18n-js";
+import I18n from "../../locale/I18n";
 import Entities from "./Entities";
 
 import {setFlash} from "../../utils/Flash";
@@ -14,6 +14,7 @@ import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
 import ConfirmationDialog from "../ConfirmationDialog";
 import {Tooltip} from "@surfnet/sds";
+import {socket, subscriptionIdCookieName} from "../../utils/SocketIO";
 
 class OrganisationServices extends React.Component {
 
@@ -22,11 +23,19 @@ class OrganisationServices extends React.Component {
         this.state = {
             services: [],
             loading: true,
+            socketSubscribed: false,
             confirmationDialogOpen: false,
             confirmationDialogQuestion: undefined,
             confirmationDialogAction: () => true,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
         }
+    }
+
+    componentWillUnmount = () => {
+        const {organisation} = this.props;
+        ["service", `organisation_${organisation.id}`].forEach(topic => {
+            socket.then(s => s.off(topic));
+        });
     }
 
     componentDidMount = () => {
@@ -36,6 +45,19 @@ class OrganisationServices extends React.Component {
                 service.disabled = this.serviceSortProperty(service, organisation);
             });
             this.setState({services: services, loading: false});
+            const {socketSubscribed} = this.state;
+            if (!socketSubscribed) {
+                ["service", `organisation_${organisation.id}`].forEach(topic => {
+                    socket.then(s => s.on(topic, data => {
+                        const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
+                        if (subscriptionIdSessionStorage !== data.subscription_id) {
+                            //Ensure we don't get race conditions with the refresh in OrganisationDetail
+                            setTimeout(this.componentDidMount, 1500);
+                        }
+                    }));
+                })
+                this.setState({socketSubscribed: true})
+            }
         });
     }
 
@@ -112,7 +134,7 @@ class OrganisationServices extends React.Component {
     serviceSortProperty = (service, organisation) => {
         const tooltip = this.deductTooltip(service, organisation);
         const connected = organisation.services.some(s => s.id === service.id);
-        return (connected && !tooltip) ? 0 : tooltip ? 2 :  1;
+        return (connected && !tooltip) ? 0 : tooltip ? 2 : 1;
     }
 
     deductTooltip = (service, organisation) => {
@@ -121,10 +143,17 @@ class OrganisationServices extends React.Component {
         const allowed_org = service.allowed_organisations.some(org => org.id === organisation.id) || trusted_org;
         if (!service.allow_restricted_orgs && organisation.services_restricted) {
             tooltip = I18n.t("organisationServices.serviceRestrictedOrganisation");
-        } else if (!service.access_allowed_for_all && !allowed_org) {
-            tooltip = I18n.t("organisationServices.notEnabledOrganisation");
-        } else if (!service.automatic_connection_allowed && !trusted_org) {
+        } else if (service.non_member_users_access_allowed) {
+            tooltip = I18n.t("organisationServices.accessForNonMembersOrganisation");
+        } else if (service.access_allowed_for_all && !service.automatic_connection_allowed
+            && !service.non_member_users_access_allowed) {
             tooltip = I18n.t("organisationServices.notAllowedOrganisation");
+        } else if (!service.access_allowed_for_all && !service.automatic_connection_allowed
+            && allowed_org && !service.non_member_users_access_allowed && !trusted_org) {
+            tooltip = I18n.t("organisationServices.notAllowedOrganisation");
+        } else if (!service.access_allowed_for_all && !service.automatic_connection_allowed
+            && !allowed_org && !service.non_member_users_access_allowed && !trusted_org) {
+            tooltip = I18n.t("organisationServices.notEnabledOrganisation");
         }
         return tooltip;
     }

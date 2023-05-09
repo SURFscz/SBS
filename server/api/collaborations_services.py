@@ -6,7 +6,7 @@ from server.api.base import json_endpoint, emit_socket
 from server.api.service_group import create_service_groups
 from server.auth.security import confirm_collaboration_admin, confirm_external_api_call, confirm_service_admin
 from server.db.db import db
-from server.db.domain import Service, Collaboration
+from server.db.domain import Service, Collaboration, Organisation
 from server.schemas import json_schema_validator
 from server.scim.events import broadcast_service_added, broadcast_service_deleted
 
@@ -16,19 +16,21 @@ collaborations_services_api = Blueprint("collaborations_services_api", __name__,
 
 def connect_service_collaboration(service_id, collaboration_id, force=False):
     # Ensure that the connection is allowed
-    service = Service.query.get(service_id)
-    organisation = Collaboration.query.get(collaboration_id).organisation
+    service = db.session.get(Service, service_id)
+    collaboration = db.session.get(Collaboration, collaboration_id)
+    organisation = Organisation.query.filter(Organisation.id == collaboration.organisation_id).one()
     org_allowed = organisation in service.allowed_organisations
     org_automatic_allowed = organisation in service.automatic_connection_allowed_organisations
-    if not org_allowed and not org_automatic_allowed and not service.access_allowed_for_all:
+
+    if not org_allowed and not org_automatic_allowed \
+       and not service.automatic_connection_allowed and not service.access_allowed_for_all:
         raise BadRequest("not_allowed_organisation")
 
     allowed_to_connect = service.automatic_connection_allowed or org_automatic_allowed
     if not force and not allowed_to_connect:
         raise BadRequest("automatic_connection_not_allowed")
 
-    collaboration = Collaboration.query.get(collaboration_id)
-    if collaboration.organisation.services_restricted and not service.allow_restricted_orgs:
+    if organisation.services_restricted and not service.allow_restricted_orgs:
         raise BadRequest(f"Organisation {collaboration.organisation.name} can only be linked to SURF services")
 
     collaboration.services.append(service)
@@ -113,9 +115,9 @@ def delete_collaborations_services(collaboration_id, service_id):
     except Forbidden:
         confirm_service_admin(service_id)
 
-    collaboration = Collaboration.query.get(collaboration_id)
+    collaboration = db.session.get(Collaboration, collaboration_id)
 
-    service = Service.query.get(service_id)
+    service = db.session.get(Service, service_id)
     collaboration.services.remove(service)
     db.session.merge(collaboration)
     db.session.commit()
@@ -124,4 +126,4 @@ def delete_collaborations_services(collaboration_id, service_id):
     emit_socket(f"service_{service.id}")
     broadcast_service_deleted(collaboration.id, service.id)
 
-    return {'collaboration_id': collaboration.id, 'service_id': service.id}, 204
+    return {'collaboration_id': collaboration_id, 'service_id': service_id}, 204

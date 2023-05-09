@@ -106,6 +106,10 @@
                 top: -2px;
                 position: relative;
             }
+
+            &.adjust-top {
+                top: 65px;
+            }
         }
 
         .sds--pagination {
@@ -215,7 +219,7 @@
             }
 
             td {
-                word-break: break-all;
+                word-break: break-word;
                 vertical-align: middle;
 
                 &.center {
@@ -264,7 +268,9 @@
                     }
                 }
 
-
+                .sds--chips span {
+                    white-space: nowrap;
+                }
             }
         }
     }

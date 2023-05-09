@@ -1,6 +1,6 @@
 import React from "react";
 import {withRouter} from "react-router-dom";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import "./MissingServiceAup.scss";
 import Button from "../components/Button";
 import {serviceAupBulkCreate} from "../api";
@@ -61,8 +61,11 @@ class MissingServiceAup extends React.Component {
                                             serviceEmails={user.service_emails}
                                             setDisabled={() => this.setState({agreed: !agreed})}/>
                 <div className="actions">
-                    <Button className="proceed" onClick={this.agreeWith} centralize={true}
-                            txt={I18n.t("aup.onward")} disabled={!agreed}/>
+                    <Button className="proceed"
+                            onClick={this.agreeWith}
+                            centralize={true}
+                            txt={I18n.t("aup.onward")}
+                            disabled={!agreed}/>
                 </div>
             </div>
         )

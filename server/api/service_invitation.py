@@ -1,7 +1,7 @@
 import datetime
 
 from flask import Blueprint, request as current_request, current_app
-from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict
 
 from server.api.base import json_endpoint, query_param, emit_socket
@@ -45,10 +45,11 @@ def service_invitations_by_hash():
     hash_value = query_param("hash")
     invitation_query = _service_invitation_query()
     service_invitation = invitation_query \
-        .options(selectinload(ServiceInvitation.service).selectinload(Service.service_memberships)
-                 .selectinload(ServiceMembership.user)) \
         .filter(ServiceInvitation.hash == hash_value) \
         .one()
+    # To avoid conflict: Loader strategies for ORM Path[Mapper
+    for member in service_invitation.service.service_memberships:
+        member.user
     return service_invitation, 200
 
 

@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import qrcode
 from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app, session
-from werkzeug.exceptions import NotFound, Forbidden, BadRequest
+from werkzeug.exceptions import NotFound, Forbidden, HTTPException
 
 from server.api.base import json_endpoint
 from server.api.service import user_service
@@ -63,7 +63,7 @@ def find_by_session_id(service_shortname, session_id):
     res = {"service": pam_sso_session.service}
     if "user" in session and not session["user"]["guest"]:
         if not pam_sso_session.user:
-            pam_sso_session.user = User.query.get(current_user_id())
+            pam_sso_session.user = db.session.get(User, current_user_id())
             db.session.add(pam_sso_session)
         res["validation"] = _validate_pam_sso_session(pam_sso_session, None, False, True)
         res["pin"] = pam_sso_session.pin
@@ -148,7 +148,7 @@ def check_pin():
     logger = ctx_logger("pam_weblogin")
     try:
         data = current_request.get_json()
-    except BadRequest:
+    except HTTPException:
         logger.error("BadRequest in /api.pam/check-pin", exc_info=1)
         return {"result": "FAIL", "info": "Invalid JSON"}, 201
 

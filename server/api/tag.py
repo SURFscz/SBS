@@ -5,6 +5,7 @@ from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_organisation_admin_or_manager, confirm_write_access
+from server.db.db import db
 from server.db.domain import Tag, Collaboration
 from server.db.models import delete
 
@@ -36,7 +37,7 @@ def all_tags():
 @json_endpoint
 def delete_tag(organisation_id, id):
     confirm_organisation_admin_or_manager(organisation_id)
-    tag = Tag.query.get(id)
+    tag = db.session.get(Tag, id)
     for collaboration in tag.collaborations:
         if collaboration.organisation_id != int(organisation_id):
             raise Forbidden()

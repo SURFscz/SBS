@@ -10,7 +10,7 @@ import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
 import UserTokensExplanation from "../explanations/UserTokens";
 import "./UserTokens.scss";
 import {isEmpty, stopEvent} from "../../utils/Utils";
-import I18n from "i18n-js";
+import I18n from "../../locale/I18n";
 import Button from "../Button";
 import {setFlash} from "../../utils/Flash";
 import ConfirmationDialog from "../ConfirmationDialog";

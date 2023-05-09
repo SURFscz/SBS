@@ -39,7 +39,7 @@ def service_group_name_exists():
     name = query_param("name")
     service_id = query_param("service_id")
     existing_service_group = query_param("existing_service_group", required=False, default="")
-    service_group = ServiceGroup.query.options(load_only("id")) \
+    service_group = ServiceGroup.query.options(load_only(ServiceGroup.id)) \
         .filter(func.lower(ServiceGroup.name) == func.lower(name)) \
         .filter(func.lower(ServiceGroup.name) != func.lower(existing_service_group)) \
         .filter(ServiceGroup.service_id == service_id) \
@@ -55,7 +55,7 @@ def service_group_short_name_exists():
     short_name = query_param("short_name")
     service_id = query_param("service_id")
     existing_service_group = query_param("existing_service_group", required=False, default="")
-    service_group = ServiceGroup.query.options(load_only("id")) \
+    service_group = ServiceGroup.query.options(load_only(ServiceGroup.id)) \
         .filter(func.lower(ServiceGroup.short_name) == func.lower(short_name)) \
         .filter(func.lower(ServiceGroup.short_name) != func.lower(existing_service_group)) \
         .filter(ServiceGroup.service_id == service_id) \

@@ -1,6 +1,4 @@
-import I18n from "i18n-js";
-
-I18n.translations.nl = {
+const nl = {
     code: "NL",
     name: "Nederlands",
     select_locale: "Kies Nederlands als taal",
@@ -56,7 +54,7 @@ I18n.translations.nl = {
     },
     login: {
         title: "Research Access Management",
-        subTitle: "Login...",
+        subTitle: "Inloggen...",
         suspended: "Je profiel is geschorst. Neem contact op sram-support@surf.nl om dit op te lossen",
         rateLimited: "Je hebt de TOTP-verificatie te vaak geprobeerd en daarom ben je uitgelogd en is je profiel geschorst. Neem contact op met uw beheerder om dit op te lossen",
         successfullyActivated: "Gelukt: je profiel is geheractiveerd",
@@ -65,7 +63,7 @@ I18n.translations.nl = {
     },
     home: {
         sram: "SURF Research Access Management",
-        edit: "Wijzig",
+        edit: "Wijzigen",
         history: "Geschiedenis",
         unsuspend: "Schorsing ongedaan maken",
         resetLastActivity: "Reset activiteit",
@@ -75,7 +73,7 @@ I18n.translations.nl = {
         firstTime: "Onboarding",
         collaborationRequest: "Vraag een nieuwe samenwerking aan",
         noOrganisations: "Om een nieuwe samenwerking te kunnen aanvragen, moet de instelling '{{schac_home}}' waarmee je bent ingelogd dat mogen. Dat lijkt nog niet het geval. Neem contact op <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> voor meer informatie.",
-        noShacHome: "Om een nieuwe samenwerking aan te vragen of aan te maken, dient je instelling het attribuut schac_home vrij te geven. Dit lijkt niet het geval te zijn. Neem voor meer informatie contact op via <a href='mailto:sram-support@surf.nl'> sram-support@surf.nl </a>",
+        noShacHome: "Om een nieuwe samenwerking aan te vragen of aan te maken, dient je instelling het attribuut schacHomeOrganization vrij te geven. Dit lijkt niet het geval te zijn. Neem voor meer informatie contact op via <a href='mailto:sram-support@surf.nl'> sram-support@surf.nl </a>",
         noOrganisationsPlatformAdmin: "Om een nieuwe samenwerking te maken dien je eerst een nieuwe organisatie aan te maken.",
         tabs: {
             groups: "Groepen ({{count}})",
@@ -108,11 +106,12 @@ I18n.translations.nl = {
             validation: "Acties",
             plsc: "LDAP",
             composition: "Config",
-            suspendedUsers: "Suspensions",
+            suspendedUsers: "Users",
             userlogins: "Logins",
             details: "Details",
             orgUsers: "Gebruikers",
-            scim: "Scim"
+            scim: "SCIM",
+            stats: "Stats"
         }
     },
     forms: {
@@ -125,7 +124,7 @@ I18n.translations.nl = {
         showMore: "Meer",
         hideSome: "Minder",
         open: "Open",
-        update: "Bijwerken",
+        update: "Wijzigen",
         today: "Vandaag",
         manage: "Beheren",
         invalidInput: "Ongeldig{{name}}",
@@ -134,12 +133,12 @@ I18n.translations.nl = {
         reset: "Herstel",
         yes: "Ja",
         upload: "Upload afbeelding",
-        uploadSSH: "Voeg SSH key toe",
+        uploadSSH: "Voeg SSH-sleutel toe",
         add: "Voeg een afbeelding toe",
         change: "Wijzig afbeelding",
-        image: "Afbeelding moet tenminste 300x120 pixels en kleiner dan 2MB zijn",
+        image: "Afbeelding moet kleiner zijn dan 2MB.",
         dragImage: "Versleep de rechthoek en pas de grootte aan totdat je tevreden bent met het resultaat. Kies vervolgens voor toepassen",
-        imageToLarge: "Afbeelding is groter 2MB",
+        imageToLarge: "Afbeelding is groter dan 2MB",
         imageDeleteConfirmation: "Ben je zeker dat je deze afbeelding wil verwijderen? Dit kan niet worden teruggedraaid. Hierna zul je een nieuwe afbeelding moeten toevoegen.",
         imageRequired: "Afbeelding is verplicht",
         whiteSpace: "Afbeelding passend maken",
@@ -275,7 +274,7 @@ I18n.translations.nl = {
             title: "Diensten",
             noEntities: "Er zijn nog geen diensten...",
             searchPlaceHolder: "Zoek diensten...",
-            new: "Nieuwe dienst",
+            new: "Voeg dienst toe",
             name: "Naam",
             status: "Status",
             connectionRequestCount: "Koppelverzoeken",
@@ -311,7 +310,7 @@ I18n.translations.nl = {
             title: "Samenwerkingen",
             titleForOrgAdmin: "Samenwerkingen gemanaged door je organisatie",
             searchPlaceHolder: "Zoek samenwerkingen...",
-            new: "Nieuwe samenwerking",
+            new: "Voeg samenwerking toe",
             noEntities: "Geen samenwerkingen gevonden",
             newCollaborationRequest: "Nieuw verzoek voor samenwerking",
             name: "Naam",
@@ -400,8 +399,8 @@ I18n.translations.nl = {
             title: "Groepen",
             searchPlaceHolder: "Zoek groepen...",
             noEntities: "Geen groepen gevonden",
-            new: "Nieuwe groep",
-            edit: "Wijzig",
+            new: "Voeg groep toe",
+            edit: "Wijzigen",
             name: "Naam",
             urn: "Platform identifier",
             description: "Omschrijving",
@@ -411,7 +410,8 @@ I18n.translations.nl = {
             autoProvisioning: "Iedereen automatisch lid",
             on: "Aan",
             off: "Uit",
-            deleteMemberConfirmation: "Weet je zeker dat je {{name}} wil verwijderen uit deze groep?"
+            deleteMemberConfirmation: "Weet je zeker dat je {{name}} wil verwijderen uit deze groep?",
+            deleteMembersConfirmation: "Weet je zeker dat je de geselecteerde leden wil verwijderen uit deze groep?",
         },
         groupMembers: {
             title: "Leden",
@@ -447,7 +447,7 @@ I18n.translations.nl = {
         },
         apiKeys: {
             title: "API-sleutels",
-            new: "Nieuwe API-sleutel",
+            new: "Voeg API-sleutel toe",
             searchPlaceHolder: "Zoek API-sleutels...",
             noEntities: "Geen API-sleutels",
             backToApiKeys: "Terug naar alle API-sleutels"
@@ -544,7 +544,7 @@ I18n.translations.nl = {
             searchPlaceHolder: "Zoek dienstgroepen...",
             noEntities: "Geen dienstgroepen gevonden",
             new: "Nieuwe dienstgroep",
-            edit: "Wijzig",
+            edit: "Wijzigen",
             name: "Naam",
             description: "Omschrijving",
             autoProvisioning: "Iedereen automatisch lid",
@@ -561,8 +561,8 @@ I18n.translations.nl = {
             title: "Tokens",
             searchPlaceHolder: "Zoek naar tokens...",
             noEntities: "Geen tokens gevonden",
-            new: "Nieuw token",
-            edit: "Wijzig",
+            new: "Maak token aan",
+            edit: "Wijzigen",
             name: "Naam",
             namePlaceholder: "De naam van deze token",
             description: "Omschrijving",
@@ -597,8 +597,8 @@ I18n.translations.nl = {
         ssh_keyPlaceholder: "Je publieke SSH-sleutel om in te loggen op de dienst",
         ssh_keyTooltip: "Je publieke SSH-sleutel zal worden uitgewisseld met de diensten waar je toegang toe hebt. Je kunt je publieke SSH-sleutel ook uploaden.",
         sshKeyError: "Deze SSH cipher wordt niet herkend. In de <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://edu.nl/87btm\">documentatie</a> staan de ondersteunde formaten.",
-        sshConvertInfo: "Je publieke SSH-sleutel wordt geconverteerd naar het bestandsformaat <code>OpenSSH-key</code> bij het opslaan van het profiel",
-        update: "Opslaan",
+        sshConvertInfo: "Je publieke SSH-sleutel wordt geconverteerd naar het bestandsformaat <code>OpenSSH-key</code> bij het wijzigen van het profiel",
+        update: "Wijzigen",
         download: "Download profiel",
         flash: {
             updated: "Je profiel is bijgewerkt"
@@ -610,9 +610,11 @@ I18n.translations.nl = {
         deleteConfirmationWarning: "Al je lidmaatschappen worden verwijderd. Dit kan niet worden teruggedraaid.",
         deleteConfirmationCheck: "Als je toch wil doorgaan, typ dan ter bevestiging je volledige naam in.",
         deleteOtherConfirmation: "Weet je zeker dat je je gebruiker {{name}} wilt verwijderen?",
-        unsuspend: "Ontschors",
+        unsuspend: "Schorsing doorhalen",
         deleteOther: "Verwijder",
-        unsuspendOtherConfirmation: "Weet je zeker dat je je gebruiker {{name}} wilt ontschorsen?",
+        unsuspendOtherConfirmation: "Weet je zeker dat je de schorsing van gebruiker {{name}} wilt doorhalen?",
+        reset2fa: "Reset TOTP",
+        reset2faConfirmation: "Weet je zeker dat je de TOTP van gebruiker {{name}} wilt resetten?",
     },
     impersonate: {
         title: "Wie wil je zijn?",
@@ -640,7 +642,7 @@ I18n.translations.nl = {
     },
     registration: {
         joinRequest: "Vraag lidmaatschap voor {{name}}",
-        explanation: "Om je aanmeldingsverzoek in te dienen, dien je je motivatie om lid te worden van samenwerking <strong>{{name}}</strong> in te voeren.",
+        explanation: "Schrijf je motivatie om lid te worden van samenwerking <strong>{{name}}</strong>.",
         title: "Verzoek tot lidmaatschap van {{name}}",
         alreadyMember: "Je bent reeds lid van {{name}}",
         motivation: "Motivatie om lid te worden van {{name}}?",
@@ -659,7 +661,7 @@ I18n.translations.nl = {
         scoped_affiliation: "Scoped affiliations",
         entitlement: "Entitlements",
         nick_name: "Roepnaam",
-        schac_home_organisation: "Organisatiedomeinnaam",
+        schac_home_organisation: "Organisatiedomein",
         edu_members: "EDU lidmaatschap",
         eduperson_principal_name: "EPPN",
         created_at: "Profiel gemaakt op",
@@ -717,6 +719,8 @@ I18n.translations.nl = {
         name: "Naam",
         logo: "Logo samenwerking",
         useOrganisationLogo: "Gebruik het logo van de organisatie",
+        generateLogo: "Genereer logo",
+        generateLogoTooltip: "Je moet eerst de naam van de samenwerking invullen om een logo te kunnen genereren",
         namePlaceHolder: "De unieke naam van de samenwerking",
         shortName: "Korte naam",
         shortNamePlaceHolder: "Korte naam van de samenwerking",
@@ -881,7 +885,7 @@ I18n.translations.nl = {
         none: "Nooit",
         contact: "Dienstcontactpersoon",
         titleNew: "Dienst toevoegen",
-        titleUpdate: "Dienst {{name}} bijwerken",
+        titleUpdate: "Dienst {{name}} wijzigen",
         titleReadOnly: "Dienst {{name}}",
         backToServices: "Terug naar diensten",
         name: "Naam",
@@ -971,8 +975,8 @@ I18n.translations.nl = {
         alreadyExists: "Een dienst met {{attribute}} {{value}} bestaat al.",
         required: "De dienst heeft een {{attribute}} nodig.",
         deleteConfirmation: "Weet je zeker dat je dienst {{name}} wil verwijderen? Dit kan niet teruggedraaid worden.",
-        add: "Aanmaken",
-        update: "Opslaan",
+        add: "Opslaan",
+        update: "Wijzigen",
         delete: "Verwijderen",
         cancel: "Annuleren",
         flash: {
@@ -1020,8 +1024,8 @@ I18n.translations.nl = {
         addMe: "Maak me dienstbeheerder",
         access: "Toegang",
         policies: "Beleid",
-        policyCompliance: "Toegangsbeleid",
-        login: "Login",
+        policyCompliance: "Beleid voldoet aan",
+        login: "Inloggen",
         support: "Support voor de eindgebruiker",
         admins: "Administratieve email-adressen",
         noSupport: "Dienst {{name}} biedt geen support voor eindgebruikers en heeft geen administrators"
@@ -1339,10 +1343,10 @@ I18n.translations.nl = {
         automaticConnectionNotAllowed: "Dienst '{{service}}' kan niet automatisch worden toegevoegd aan de samenwerking '{{collaboration}}'. De dienst is zo geconfigureerd dat er eerst een dienstkoppelverzoek moet worden gedaan. Schrijf je motivatie voor de koppeling hieronder en verstuur het formulier.",
         motivation: "Motivatie",
         motivationPlaceholder: "Je motivatie om deze dienst te gebruiken",
-        send: "Send",
+        send: "Verzenden",
         flash: {
             added: "{{service}} is toegevoegd aan samenwerking {{name}}.",
-            deleted: "{{service}} is onbeschikbaar gemaakt voor samenwerking {{name}}.",
+            deleted: "{{service}} is verwijderd van samenwerking {{name}}.",
             send: "Dienstkoppelverzoek voor {{service}} is verzonden.",
         },
         service: {
@@ -1376,6 +1380,7 @@ I18n.translations.nl = {
         noServices: "Deze organisatie heeft geen gekoppelde diensten.",
         searchServices: "Zoek, kies en voeg diensten toe aan organisatie {{name}}",
         deleteServiceTooltip: "Maak deze dienst ontoegankelijk voor samenwerking {{name}}. <strong>Let op</strong>: de dienst wordt niet verwijderd, alleen onbeschikbaar voor de samenwerkingen van deze organisatie.",
+        accessForNonMembersOrganisation: "Deze dienst kan niet worden verplicht voor alle samenwerkingen omdat alle gebruikers van het platform hebben toegang tot deze dienst, ongeacht lidmaatschap van en koppelingen met samenwerkingen\n",
         notAllowedOrganisation: "Deze dienst kan niet worden verplicht voor alle samenwerkingen omdat deze dienst automatische verbindingen niet toestaat. Aansluitingen kunnen nog steeds worden aangevraagd door individuele samenwerkingen in je organisatie.",
         notEnabledOrganisation: "Deze dienst kan niet worden verplicht voor alle samenwerkingen omdat deze dienst toegang voor deze organisatie niet toestaat.",
         serviceRestrictedOrganisation: "Deze dienst kan niet worden verplicht voor alle samenwerkingen omdat deze organisatie alleen SURF-diensten mag koppelen.",
@@ -1455,6 +1460,7 @@ I18n.translations.nl = {
             addedMember: "Gebruiker {{member}} lid gemaakt van groep {{name}}.",
             addedMembers: "Alle gebruikers lid gemaakt van groep {{name}}.",
             deletedMember: "Gebruiker {{member}} als lid verwijderd uit groep {{name}}.",
+            deletedMembers: "Gebruikers als lid verwijderd uit groep {{name}}.",
             addedInvitation: "Gebruiker {{member}} is toegevoegd als lid van groep {{name}}.",
             deletedInvitation: "Genodigde {{invitation}} is verwijderd van de groep {{name}}.",
         },
@@ -1511,8 +1517,8 @@ I18n.translations.nl = {
             noPrivacyPolicy: "Geen aanvullend privacybeleid verstrekt",
             noAup: "Geen aanvullend acceptable use policy verstrekt",
             agreeWithTerms: "Ik verklaar dat ik deze voorwaarden heb gelezen en accepteer",
-            firstLogin: "Login. Daarna kom je hier terug om de voorwaarden van {{name}} te bekijken.",
-            login: "Login",
+            firstLogin: "Inloggen. Daarna kom je hier terug om de voorwaarden van {{name}} te bekijken.",
+            login: "Inloggen",
             proceed: "Ga naar {{name}}",
             multipleCollaborations: "Deze dienst wordt gebruikt binnen meerdere samenwerkingen waarvan je lid bent.",
             purposeOf: "Doel van <strong>{{name}}</strong>",
@@ -1523,7 +1529,11 @@ I18n.translations.nl = {
             missing: {
                 info: "De acceptable use policy (AUP) van deze dienst is gewijzigd. Lees de AUP en geef aan of je akkoord gaat.",
                 infoMultiple: "De acceptable use policies (AUPs) van deze diensten zijn gewijzigd. Lees de AUPs en geef aan of je akkoord gaat."
-            }
+            },
+            singleInfo: "Een dienst gebruikt binnen deze samenwerking vereist dat je akkoord gaat met een acceptable use policy.",
+            multipleInfo: "Diensten gebruikt binnen deze samenwerking vereisen dat je akkoord gaat met de acceptable use policies.",
+            singleCheck: "Ik ga akkoord met de hierboven genoemde acceptable use policy",
+            multipleCheck: "Ik ga akkoord met de hierboven genoemde acceptable use policies"
         }
     },
     collaborationRequest: {
@@ -1688,7 +1698,7 @@ I18n.translations.nl = {
         title: "Bevestiging",
         subTitle: "Deze actie vereist een bevestiging",
         confirm: "Bevestig",
-        ok: "Ok",
+        ok: "OK",
         cancel: "Annuleer",
         leavePage: "Weet je zeker dat je deze pagina wil verlaten?",
         leavePageSub: "Wijzigingen die niet zijn opgeslagen worden niet bewaard.",
@@ -1711,7 +1721,7 @@ I18n.translations.nl = {
     not_found: {
         title: "404",
         description_html: "Deze pagina kan niet worden gevonden.",
-        loginLink: "Login"
+        loginLink: "Inloggen"
     },
     footer: {
         terms: "Terms of Use",
@@ -1719,7 +1729,7 @@ I18n.translations.nl = {
         privacy: "Privacy policy",
         privacyLink: "https://edu.nl/fcgbd",
         surfLink: "https://surf.nl",
-   },
+    },
     system: {
         title: "Systeemonderhoud",
         runDailyJobsInfo: "Voer de dagelijkse cron-taak uit om notificatie-e-mails te verzenden en mogelijk gebruikers op te schorten die zich gedurende de geconfigureerde periode niet hebben aangemeld",
@@ -1736,6 +1746,8 @@ I18n.translations.nl = {
         runOutdatedRequests: "Run",
         runCleanedRequestsInfo: "Voer de cron-taak uit om alle verouderde goedgekeurde / geweigerde aanmeldingsverzoeken en samenwerkingsverzoeken voor de geconfigureerde drempel te verwijderen",
         runCleanedRequests: "Verwijder",
+        runSweepResults: "Voer de cron-taak uit om alle SCIM services te sweepen",
+        runSweep: "Run",
         action: "Action",
         results: "Results",
         warning_suspend_notifications: "Waarschuwings e-mail met schorsingsmelding verzonden",
@@ -1768,7 +1780,7 @@ I18n.translations.nl = {
         runCleanSlate: "Weet je zeker dat je alle gegevens wil verwijderen?",
         clear: "Clear",
         reload: "Reload",
-        seedResult: "Testgegevens toegevoegd in {{ms}} ms. Ververs deze pagina met een hard-reload om de cache te invalideren.",
+        seedResult: "Testgegevens toegevoegd in {{ms}} ms.",
         toggleJson: "Toggle view",
         suspendedUsers: {
             title: "De onderstaande gebruikers zijn geschorst.",
@@ -1777,6 +1789,11 @@ I18n.translations.nl = {
             name: "Naam",
             lastLogin: "Laatste login",
             activate: "Activeer"
+        },
+        resetTOTPRequestedUsers: {
+            title: "De onderstaande gebruikers hebben een verzoek gedaan om hun TOTP te resetten.",
+            titleZeroState: "Er zijn geen gebruikers die een verzoek hebben gedaan.",
+            reset: "Reset"
         },
         userlogins: {
             loginType: "Type",
@@ -1800,7 +1817,11 @@ I18n.translations.nl = {
                 sweepScimEnabled: "Sweep enabled",
                 sweep: "Sweep",
             }
+        },
+        stats: {
+            loading: "Loading, please wait..."
         }
+
     },
     access: {
         full: "Volledige",
@@ -1837,8 +1858,8 @@ I18n.translations.nl = {
         collaboration: "samenwerking",
         service: "dienst",
         toggleRole: "Wissel van rol",
-        infoMember: "Om lid te worden van deze samenwerking moet je de acceptable use policy (AUP) en het privacybeleid van de dienst(en) accepteren.",
-        infoAdmin: "Om beheerder te worden van deze samenwerking moet je de acceptable use policy (AUP) en het privacybeleid van de dienst(en) accepteren.",
+        infoMember: "Houd er rekening mee dat wanneer je lid wordt van deze samenwerking, je persoonlijke gegevens gedeeld kunnen worden met de volgende diensten. Neem even de tijd om de door de dienst opgegeven beleidsdocumenten door te nemen.",
+        infoAdmin: "Houd er rekening mee dat wanneer je beheerder wordt van deze samenwerking, je persoonlijke gegevens gedeeld kunnen worden met de volgende diensten. Neem even de tijd om de door de dienst opgegeven beleidsdocumenten door te nemen.",
         infoJoinRequest: "Bijna zover! Voordat je kunt verzoeken lid te worden van deze samenwerking moet je de acceptable use policy (AUP) en het privacybeleid van de dienst lezen. Geef hieronder aan of je deze accepteert.",
         purpose: "Doel van deze samenwerking",
         noServices: "Nog geen diensten gekoppeld.",
@@ -1913,11 +1934,10 @@ I18n.translations.nl = {
     },
     notFound: {
         invitationNotFound: "Deze uitnodiging bestaat niet (meer). Waarschijnlijk is de uitnodiging al eerder gebruikt. Vraag aan de uitnodiger of je een nieuwe uitnodiging kunt krijgen.",
-        invalidSecondFactorUUID: "De redirect vanuit eduTeams is verlopen. Ga terug naar de service die je probeerde te bereiken en probeer het opnieuw.",
+        invalidSecondFactorUUID: "De koppeling is verlopen. Ga terug naar de dienst die je probeerde te bereiken en probeer het opnieuw.",
         invalidPamWebSSO: "Je sessie is verlopen. Ga terug naar de service waar je probeert in te loggen en probeer het opnieuw.",
-        msg: "Mmmm, het lijkt erop dat je op de een of andere manier een link hebt gekregen waar we je niet mee kunnen helpen. Sorry daarvoor. </br></br>" +
-            "Je zou kunnen proberen de <a href='{{base_url}}'>startpagina</a> te bezoeken. Als je daar niet iets vindt waar je mee geholpen bent, " +
-            "neem dan contact op met de persoon die je heeft uitgenodigd, of volg de help-link waar ook staat hoe je contact kunt opnemen met het team van SURF Research Access Management."
+        msg: "Het spijt ons, deze pagina kunnen we niet vinden.</br></br>" +
+            "Probeer opnieuw vanaf de <a href='{{base_url}}'>thuispagina</a> of neem contact met ons op via <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
     },
     mfa: {
         register: {
@@ -1947,7 +1967,7 @@ I18n.translations.nl = {
             currentCodeInfo: "Voer de 6-cijferige authenticatiecode van je huidige authenticator-app in.",
             scanInfo: "Open je nieuwe authenticator-app en:",
             verificationCodeInfo: "Zodra de QR-code hierboven is gescand, voer je de 6-cijferige authenticatiecode van je nieuwe authenticator-app in.",
-            verify: "Verifiëren en opslaan",
+            verify: "Verifiëren en wijzigen",
             flash: "Je tweefactorauthenticatie is aangepast voor je nieuwe authenticator-app",
             preValidatedFlash: "Correct!"
         },
@@ -1982,7 +2002,7 @@ I18n.translations.nl = {
             select: "Selecteer een collega die de reset-token zal ontvangen:",
             respondent: "De e-mail wordt verzonden naar:",
             message: "Bericht voor de beheerder",
-            sendMail: "E-mail verzenden",
+            sendMail: "Verzend e-mail",
             flash: "Je verzoek om je authenticatie te resetten is verzonden"
         },
         reset: {
@@ -2103,7 +2123,7 @@ I18n.translations.nl = {
     pamWebSSO: {
         title: "Log in op {{service}}",
         info: "Log in voor de verificatiecode die gevraagd wordt op de command line interface.",
-        proceed: "Login",
+        proceed: "Inloggen",
         enterPin: "Je verificatiecode",
         enterPinInfo: "Voer de code in op de command line interface van {{service}}.",
         afterPin: "Na het invoeren van de code kun je dit scherm sluiten.",
@@ -2137,7 +2157,7 @@ I18n.translations.nl = {
         descriptionPlaceHolder: "Omschrijving voor dit token",
         descriptionTooltip: "Een optionele omschrijving van het doel van dit token",
         backToApiKeys: "Terug naar tokens",
-        addToken: "Nieuw token",
+        addToken: "Voeg token toe",
         toc: {
             general: "Algemeen",
             contacts: "Contactpersonen",
@@ -2155,7 +2175,7 @@ I18n.translations.nl = {
         expired: "Verlopen {{relativeTime}}",
         never: "Verloopt nooit",
         activity: {
-            now: "Net nu",
+            now: "Zojuist",
             seconds: "Vandaag",
             minute: "Vandaag",
             minutes: "Vandaag",
@@ -2171,7 +2191,7 @@ I18n.translations.nl = {
             years: "%s jaar geleden"
         },
         ago: {
-            now: "net nu",
+            now: "zojuist",
             seconds: "%s seconden geleden",
             minute: "1 minuut geleden",
             minutes: "%s minuten geleden",
@@ -2187,7 +2207,7 @@ I18n.translations.nl = {
             years: "%s jaar geleden"
         },
         in: {
-            now: "net nu",
+            now: "nu",
             seconds: "over %s seconden",
             minute: "over 1 minuut",
             minutes: "over %s minuten",
@@ -2203,6 +2223,11 @@ I18n.translations.nl = {
             years: "over %s jaar"
         }
     },
+    error: {
+        message: "Het spijt ons, we zijn tegen een onbekende fout aangelopen.</br>" +
+            "Probeer opnieuw vanaf de <a href='/'>thuispagina</a> of neem contact met ons op via <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
+    }
+
 };
 
-export default I18n.translations.nl;
+export default nl;

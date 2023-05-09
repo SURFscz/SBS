@@ -1,14 +1,15 @@
 import os
 
 from flask import session, current_app
-from flask_jsontools.formatting import JsonSerializableBase
+
 from sqlalchemy import MetaData
 from sqlalchemy import event, inspect
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import class_mapper
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm.attributes import get_history
 
 from server.db.db import db
+from server.db.json_serialize_base import JsonSerializableBase
 
 ACTION_CREATE = 1
 ACTION_UPDATE = 2
@@ -55,18 +56,19 @@ class AuditLog(JsonSerializableBase, db.Model):
         self.state_after = state_after
 
     def save(self, connection):
+        # connection.begin()
         connection.execute(
             self.__table__.insert(),
-            user_id=self.user_id,
-            subject_id=self.subject_id,
-            target_type=self.target_type,
-            target_id=self.target_id,
-            target_name=self.target_name,
-            parent_id=self.parent_id,
-            parent_name=self.parent_name,
-            action=self.action,
-            state_before=self.state_before,
-            state_after=self.state_after
+            dict(user_id=self.user_id,
+                 subject_id=self.subject_id,
+                 target_type=self.target_type,
+                 target_id=self.target_id,
+                 target_name=self.target_name,
+                 parent_id=self.parent_id,
+                 parent_name=self.parent_name,
+                 action=self.action,
+                 state_before=self.state_before,
+                 state_after=self.state_after)
         )
 
 
@@ -124,7 +126,6 @@ class AuditMixin(JsonSerializableBase):
                      **kwargs):
         if not os.environ.get("SEEDING"):
             from server.auth.security import current_user_id
-
             user_id = None
             if hasattr(target, "user_id"):
                 user_id = getattr(target, "user_id")
@@ -142,7 +143,10 @@ class AuditMixin(JsonSerializableBase):
                 kwargs.get("state_before"),
                 kwargs.get("state_after")
             )
-            audit.save(connection)
+            if connection is None:
+                db.session.merge(audit)
+            else:
+                audit.save(connection)
 
     @classmethod
     def __declare_last__(cls):
@@ -162,8 +166,7 @@ class AuditMixin(JsonSerializableBase):
         mapper = class_mapper(value.__class__)
         state_after = target_state(mapper, value)
         subject_id = find_subject(mapper, value)
-        connection = db.get_engine().connect()
-        target.create_audit(connection, subject_id, value, target.id, target.__tablename__, ACTION_CREATE,
+        target.create_audit(None, subject_id, value, target.id, target.__tablename__, ACTION_CREATE,
                             state_after=state_after)
 
     @staticmethod
@@ -171,8 +174,7 @@ class AuditMixin(JsonSerializableBase):
         mapper = class_mapper(value.__class__)
         state_before = target_state(mapper, value)
         subject_id = find_subject(mapper, value)
-        connection = db.get_engine().connect()
-        target.create_audit(connection, subject_id, value, target.id, target.__tablename__, ACTION_DELETE,
+        target.create_audit(None, subject_id, value, target.id, target.__tablename__, ACTION_DELETE,
                             state_before=state_before)
 
     @staticmethod
@@ -208,7 +210,6 @@ class AuditMixin(JsonSerializableBase):
         # connection, subject_id, target_type, target_id, parent_id, parent_name, action
         pi = parent_info(target)
         if state_before and state_after:
-
             before_response = current_app.json.response(state_before).data.decode("ascii", "ignore")
             after_response = current_app.json.response(state_after).data.decode("ascii", "ignore")
             target.create_audit(connection, find_subject(mapper, target), target, pi[0], pi[1], ACTION_UPDATE,
@@ -217,4 +218,4 @@ class AuditMixin(JsonSerializableBase):
 
 
 metadata = MetaData()
-Base = declarative_base(cls=(AuditMixin,), metadata=metadata)
+Base = declarative_base(cls=AuditMixin, metadata=metadata)

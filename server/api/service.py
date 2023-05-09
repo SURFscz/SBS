@@ -31,7 +31,7 @@ service_api = Blueprint("service_api", __name__, url_prefix="/api/services")
 def _is_org_member():
     user_id = current_user_id()
     return OrganisationMembership.query \
-               .options(load_only("id")) \
+               .options(load_only(OrganisationMembership.id)) \
                .filter(OrganisationMembership.user_id == user_id) \
                .count() > 0
 
@@ -133,7 +133,8 @@ def _do_get_services(restrict_for_current_user=False, include_counts=False):
     if restrict_for_current_user and len(services) > 0:
         query += f" where s.id in ({','.join([str(s.id) for s in services])})"
 
-    result_set = db.engine.execute(text(query))
+    with db.engine.connect() as conn:
+        result_set = conn.execute(text(query))
     services_json = jsonify(services).json
     services_json_dict = {s["id"]: s for s in services_json}
     for row in result_set:
@@ -151,8 +152,8 @@ def _token_validity_days(data):
 
 def _do_toggle_permission_organisation(service_id, organisation_id, action):
     confirm_service_admin(service_id)
-    organisation = Organisation.query.get(organisation_id)
-    service = Service.query.get(service_id)
+    organisation = db.session.get(Organisation, organisation_id)
+    service = db.session.get(Service, service_id)
 
     if action == ALWAYS:
         if organisation in service.allowed_organisations:
@@ -189,7 +190,7 @@ def name_exists():
 
     name = query_param("name")
     existing_service = query_param("existing_service", required=False, default="")
-    service = Service.query.options(load_only("id")) \
+    service = Service.query.options(load_only(Service.id)) \
         .filter(func.lower(Service.name) == func.lower(name)) \
         .filter(func.lower(Service.name) != func.lower(existing_service)) \
         .first()
@@ -204,7 +205,7 @@ def entity_id_exists():
 
     entity_id = query_param("entity_id")
     existing_service = query_param("existing_service", required=False, default="")
-    service = Service.query.options(load_only("id")) \
+    service = Service.query.options(load_only(Service.id)) \
         .filter(func.lower(Service.entity_id) == func.lower(entity_id)) \
         .filter(func.lower(Service.entity_id) != func.lower(existing_service)) \
         .first()
@@ -218,7 +219,7 @@ def abbreviation_exists():
 
     abbreviation = query_param("abbreviation")
     existing_service = query_param("existing_service", required=False, default="")
-    service = Service.query.options(load_only("id")) \
+    service = Service.query.options(load_only(Service.id)) \
         .filter(func.lower(Service.abbreviation) == func.lower(abbreviation)) \
         .filter(func.lower(Service.abbreviation) != func.lower(existing_service)) \
         .first()
@@ -239,7 +240,7 @@ def service_by_entity_id():
 @json_endpoint
 def service_by_uuid4():
     uuid4 = urllib.parse.unquote(query_param("uuid4"))
-    user = User.query.get(current_user_id())
+    user = db.session.get(User, current_user_id())
     service = Service.query.filter(Service.uuid4 == uuid4).one()
 
     if not is_application_admin() and not user_service(service.id):
@@ -334,7 +335,7 @@ def user_services(user_id):
     confirm_external_api_call()
     organisation = request_context.external_api_organisation
     count = CollaborationMembership.query \
-        .options(load_only("id")) \
+        .options(load_only(CollaborationMembership.id)) \
         .join(CollaborationMembership.collaboration) \
         .join(Collaboration.organisation) \
         .filter(CollaborationMembership.user_id == user_id) \
@@ -370,7 +371,7 @@ def save_service():
     res = save(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]
 
-    user = User.query.get(current_user_id())
+    user = db.session.get(User, current_user_id())
     for administrator in administrators:
         invitation = ServiceInvitation(hash=generate_token(), message=message, invitee_email=administrator,
                                        service_id=service.id, user=user, intended_role="admin",
@@ -402,7 +403,7 @@ def toggle_access_property(service_id):
         confirm_write_access()
     else:
         confirm_service_admin(service_id)
-    service = Service.query.get(service_id)
+    service = db.session.get(Service, service_id)
     enabled = json_dict.get(attribute)
     if attribute == "reset":
         service.automatic_connection_allowed = False
@@ -420,8 +421,10 @@ def toggle_access_property(service_id):
         service.automatic_connection_allowed = False
         service.access_allowed_for_all = False
     db.session.merge(service)
+
     emit_socket(f"service_{service_id}")
     emit_socket("service")
+
     return None, 201
 
 
@@ -436,8 +439,8 @@ def service_invites():
     message = data.get("message", None)
     intended_role = "admin"
 
-    service = Service.query.get(service_id)
-    user = User.query.get(current_user_id())
+    service = db.session.get(Service, service_id)
+    user = db.session.get(User, current_user_id())
 
     for administrator in administrators:
         invitation = ServiceInvitation(hash=generate_token(), message=message, invitee_email=administrator,
@@ -473,7 +476,7 @@ def update_service():
 
     if not is_application_admin():
         forbidden = ["allow_restricted_orgs", "non_member_users_access_allowed", "entity_id", "abbreviation",
-                     "scim_enabled", "scim_url", "scim_bearer_token"]
+                     "scim_enabled", "scim_client_enabled"]
         for attr in [fb for fb in forbidden if fb in data]:
             data[attr] = getattr(service, attr)
 
@@ -531,7 +534,7 @@ def delete_service(service_id):
 @json_endpoint
 def reset_ldap_password(service_id):
     confirm_service_admin(service_id)
-    service = Service.query.get(service_id)
+    service = db.session.get(Service, service_id)
     hashed, password = generate_ldap_password_with_hash()
     service.ldap_password = hashed
     db.session.merge(service)

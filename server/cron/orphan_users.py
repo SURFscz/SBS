@@ -28,13 +28,16 @@ def _do_orphan_users(app):
         logger.info("Start running orphan_users job")
 
         delete_date_threshold = now - datetime.timedelta(days=cfq.delete_days_threshold)
+        excluded_user_accounts = [user.uid for user in app.app_config.excluded_user_accounts]
 
         audit_log_subquery = ~AuditLog.query \
             .filter(AuditLog.user_id == User.id) \
             .filter(AuditLog.target_type.not_in(["aups", "users"])) \
             .exists()
         users = User.query.filter(audit_log_subquery) \
-            .filter(User.created_at < delete_date_threshold).all()
+            .filter(User.created_at < delete_date_threshold) \
+            .filter(User.uid.not_in(excluded_user_accounts)) \
+            .all()
 
         user_uids = []
         if users:

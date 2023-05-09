@@ -2,7 +2,7 @@ import React from "react";
 
 import "./ServiceCollaborations.scss";
 import {isEmpty, stopEvent} from "../../utils/Utils";
-import I18n from "i18n-js";
+import I18n from "../../locale/I18n";
 import Entities from "./Entities";
 import Button from "../Button";
 import {collaborationAdmins, deleteCollaborationServices, toggleNonMemberUsersAccessAllowed} from "../../api";
@@ -60,7 +60,9 @@ export default class ServiceCollaborations extends React.PureComponent {
                 .filter(l => l[1])
                 .map(e => parseInt(e[0], 10));
             const promises = collaborationIdentifiers.map(id => deleteCollaborationServices(id, service.id));
+
             Promise.all(promises).then(() => this.props.refresh(() => {
+                this.setState({confirmationDialogOpen: false});
                 this.componentDidMount();
                 setFlash(I18n.t("models.serviceCollaborations.flash.removed"));
             }));

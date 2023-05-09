@@ -1,5 +1,5 @@
 import React from "react";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import "./History.scss";
 import "jsondiffpatch/dist/formatters-styles/html.css";
 import {auditLogsInfo, auditLogsMe} from "../api";

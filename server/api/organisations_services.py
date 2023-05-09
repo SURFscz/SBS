@@ -24,17 +24,13 @@ def add_collaborations_services():
 
     confirm_organisation_admin_or_manager(organisation_id)
     # Ensure that the connection is allowed
-    service = Service.query.get(service_id)
-    organisation = Organisation.query.get(organisation_id)
+    service = db.session.get(Service, service_id)
+    organisation = db.session.get(Organisation, organisation_id)
 
-    allowed_org = organisation in service.allowed_organisations
-    automatic_allowed_org = organisation in service.automatic_connection_allowed_organisations
-    is_allowed = allowed_org or automatic_allowed_org or service.access_allowed_for_all
-    if not is_allowed:
+    not_allowed_org = organisation not in service.allowed_organisations and not service.automatic_connection_allowed
+    not_auto_allowed_org = organisation not in service.automatic_connection_allowed_organisations
+    if not_allowed_org and not_auto_allowed_org:
         raise BadRequest("not_allowed_organisation")
-
-    if not service.automatic_connection_allowed and not service.access_allowed_for_all and not automatic_allowed_org:
-        raise BadRequest("automatic_connection_not_allowed")
 
     if organisation.services_restricted and not service.allow_restricted_orgs:
         raise BadRequest("SURF organisations can only connect to SURF services")
@@ -58,9 +54,9 @@ def add_collaborations_services():
 def delete_organisations_services(organisation_id, service_id):
     confirm_organisation_admin_or_manager(organisation_id)
 
-    organisation = Organisation.query.get(organisation_id)
+    organisation = db.session.get(Organisation, organisation_id)
 
-    service = Service.query.get(service_id)
+    service = db.session.get(Service, service_id)
     organisation.services.remove(service)
     db.session.merge(organisation)
     db.session.commit()

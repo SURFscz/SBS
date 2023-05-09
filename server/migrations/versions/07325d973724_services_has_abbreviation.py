@@ -30,14 +30,14 @@ def upgrade():
     conn = op.get_bind()
     conn.execute(text("ALTER TABLE services ADD COLUMN abbreviation VARCHAR(255)"))
 
-    result = conn.execute("SELECT id, `name` FROM `services`")
+    result = conn.execute(text("SELECT id, `name` FROM `services`"))
     for row in result:
-        id = row["id"]
-        name = row["name"]
+        id = row[0]
+        name = row[1]
         data = {"abbreviation": name}
         cleanse_short_name(data)
         abbreviation = data["abbreviation"]
-        conn.execute(f"UPDATE `services` SET abbreviation = '{abbreviation}' WHERE id = {id}")
+        conn.execute(text(f"UPDATE `services` SET abbreviation = '{abbreviation}' WHERE id = {id}"))
 
     conn.execute(text("ALTER TABLE services CHANGE abbreviation abbreviation VARCHAR(255) NOT NULL"))
 

@@ -16,13 +16,16 @@ from server.scim import EXTERNAL_ID_POST_FIX, SCIM_USERS, SCIM_GROUPS
 from server.scim.group_template import update_group_template, create_group_template, scim_member_object
 from server.scim.user_template import create_user_template, update_user_template, replace_none_values
 
+SYNC_MODE = "SYNC_MODE"
+ASYNC_MODE = "ASYNC_MODE"
+
 
 def apply_change(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         try:
-            # We dont want to sleep in the sync_executor
-            if not os.environ.get("TESTING", False) and args[len(args) - 1] is not True:
+            # We dont want to sleep in the sync_executor or in the testing mode
+            if not os.environ.get("TESTING", False) and args[len(args) - 1] == SYNC_MODE:
                 sleep(1)
             res = f(*args, **kwargs)
             db.session.commit()
@@ -31,23 +34,29 @@ def apply_change(f):
             db.session.rollback()
             logger = logging.getLogger("scim")
             logger.error("Error in applying SCIM change", exc_info=1)
-            raise e
+            # We only want to raise the exception in async mode to get it logged
+            if args[len(args) - 1] != SYNC_MODE:
+                raise e
         finally:
             db.session.close()
 
     return wrapper
 
 
-def _log_scim_error(response, service, outside_user_context):
+def _log_scim_error(response, service, outside_user_context, extra_logging):
     logger = ctx_logger("scim") if not outside_user_context else logging.getLogger("scim")
     is_json = response and "json" in response.headers.get("Content-Type", "").lower()
     scim_json = response.json() if is_json else {}
-    logger.error(f"Scim endpoint {service.scim_url} returned an error: {scim_json}")
+
+    extra_log_msg = ""
+    if extra_logging:
+        extra_log_msg = f" ({extra_logging})"
+    logger.error(f"Scim endpoint {service.scim_url}{extra_log_msg} returned error {response.status_code}: {scim_json}")
 
 
-def validate_response(response, service, outside_user_context=False):
+def validate_response(response, service, outside_user_context=False, extra_logging=None):
     if not response or response.status_code > 204:
-        _log_scim_error(response, service, outside_user_context)
+        _log_scim_error(response, service, outside_user_context, extra_logging)
         return False
     return True
 
@@ -110,7 +119,8 @@ def membership_user_scim_objects(service: Service, group: Union[Group, Collabora
         if not scim_object:
             # We need to provision this user first as it is unknown in the remote SCIM DB
             response = _provision_user(scim_object, service, user)
-            if validate_response(response, service):
+            if validate_response(response, service, extra_logging=f"membership {user.username} of"
+                                                                  f" {group.global_urn}"):
                 scim_object = response.json()
         if scim_object:
             result.append(scim_member_object(base_url, member, scim_object))
@@ -122,7 +132,7 @@ def _lookup_scim_object(service: Service, scim_type: str, external_id: str):
     query_filter = f"externalId eq \"{external_id}{EXTERNAL_ID_POST_FIX}\""
     url = f"{service.scim_url}/{scim_type}?filter={urllib.parse.quote(query_filter)}"
     response = requests.get(url, headers=scim_headers(service), timeout=10)
-    if not validate_response(response, service):
+    if not validate_response(response, service, extra_logging=f"lookup {scim_type} {external_id}"):
         return None
     scim_json = response.json()
     return None if scim_json["totalResults"] == 0 else scim_json["Resources"][0]
@@ -146,7 +156,7 @@ def _do_apply_user_change(user: User, service: Union[None, Service], deletion: b
         else:
             response = _provision_user(scim_object, service, user)
         if response:
-            validate_response(response, service)
+            validate_response(response, service, extra_logging=f"user={user.username}, delete={deletion}")
     return scim_services
 
 
@@ -176,13 +186,13 @@ def _do_apply_group_collaboration_change(group: Union[Group, Collaboration], ser
         else:
             response = _provision_group(scim_object, service, group)
         if response:
-            validate_response(response, service)
+            validate_response(response, service, extra_logging=f"group={group.global_urn} delelte={deletion}")
     return bool(scim_services)
 
 
 # User has been updated. Propagate the changes to the remote SCIM DB to all connected SCIM services
 @apply_change
-def apply_user_change(app, user_id):
+def apply_user_change(app, user_id, executor_mode):
     with app.app_context():
         user = User.query.filter(User.id == user_id).one()
         scim_services = _do_apply_user_change(user, service=None, deletion=False)
@@ -191,7 +201,7 @@ def apply_user_change(app, user_id):
 
 # User has been deleted. Propagate the changes to the remote SCIM DB to all connected SCIM services
 @apply_change
-def apply_user_deletion(app, external_id, collaboration_identifiers: List[int]):
+def apply_user_deletion(app, external_id, collaboration_identifiers: List[int], executor_mode):
     with app.app_context():
         collaborations = Collaboration.query.filter(Collaboration.id.in_(collaboration_identifiers)).all()
         scim_services = _all_unique_scim_services_of_collaborations(collaborations)
@@ -201,7 +211,7 @@ def apply_user_deletion(app, external_id, collaboration_identifiers: List[int]):
             if scim_object:
                 url = f"{service.scim_url}{scim_object['meta']['location']}"
                 response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10)
-                validate_response(response, service)
+                validate_response(response, service, extra_logging=f"user={external_id}, delete=True")
         for co in collaborations:
             services = _all_unique_scim_services_of_collaborations([co])
             _do_apply_group_collaboration_change(co, services, deletion=False)
@@ -212,7 +222,7 @@ def apply_user_deletion(app, external_id, collaboration_identifiers: List[int]):
 
 # Collaboration has been created, updated or deleted. Propagate the changes to the remote SCIM DB's
 @apply_change
-def apply_collaboration_change(app, collaboration_id: int, deletion=False):
+def apply_collaboration_change(app, collaboration_id: int, deletion, executor_mode):
     with app.app_context():
         collaboration = Collaboration.query.filter(Collaboration.id == collaboration_id).one()
         services = collaboration.services + collaboration.organisation.services
@@ -223,7 +233,7 @@ def apply_collaboration_change(app, collaboration_id: int, deletion=False):
 
 # Group has been created, updated or deleted. Propagate the changes to the remote SCIM DB's
 @apply_change
-def apply_group_change(app, group_id: int, deletion=False):
+def apply_group_change(app, group_id: int, deletion, executor_mode):
     with app.app_context():
         group = Group.query.filter(Group.id == group_id).one()
         services = group.collaboration.services + group.collaboration.organisation.services
@@ -232,7 +242,7 @@ def apply_group_change(app, group_id: int, deletion=False):
 
 # Service has been added to collaboration or removed from collaboration
 @apply_change
-def apply_service_changed(app, collaboration_id, service_id, deletion=False):
+def apply_service_changed(app, collaboration_id, service_id, deletion, executor_mode):
     with app.app_context():
         collaboration = Collaboration.query.filter(Collaboration.id == collaboration_id).one()
         services = [Service.query.filter(Service.id == service_id).one()]
@@ -243,7 +253,7 @@ def apply_service_changed(app, collaboration_id, service_id, deletion=False):
 
 # Organisation has a new service or a service is deleted from an organisation
 @apply_change
-def apply_organisation_change(app, organisation_id: int, service_id: int, deletion=False):
+def apply_organisation_change(app, organisation_id: int, service_id: int, deletion, executor_mode):
     with app.app_context():
         results = []
         organisation = Organisation.query.filter(Organisation.id == organisation_id).one()

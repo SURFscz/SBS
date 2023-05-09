@@ -1,6 +1,6 @@
 import React from "react";
 import {serviceInvitationByHash} from "../api";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import "./ServiceAdminInvitation.scss";
 import Button from "../components/Button";
 import moment from "moment";

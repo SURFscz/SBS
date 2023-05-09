@@ -26,10 +26,10 @@
         .mod-login {
             @media (max-width: $compact-medium) {
                 flex-direction: column;
-                width: 100%;
             }
             margin: 60px auto 0;
-            max-width: $compact-medium;
+            max-width: 768px;
+            width: 100%;
             display: flex;
             padding-bottom: 35px;
 

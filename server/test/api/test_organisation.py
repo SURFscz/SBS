@@ -135,11 +135,11 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(3, Organisation.query.count())
 
     def test_organisation_update_short_name(self):
+        self.mark_organisation_service_restricted(uuc_name)
         self.login("urn:mary")
         organisation_uuc = self.find_entity_by_name(Organisation, uuc_name)
         organisation_id = organisation_uuc.id
 
-        self.mark_organisation_service_restricted(organisation_uuc.id)
         organisation = self.get(f"/api/organisations/{organisation_id}", with_basic_auth=False)
         organisation["short_name"] = "changed!!!!"
         organisation["services_restricted"] = False

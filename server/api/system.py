@@ -1,15 +1,17 @@
+import os
 
-from flask import current_app, Blueprint, request as current_request
-from sqlalchemy import text
+from flask import current_app, Blueprint, request as current_request, session
+from sqlalchemy import text, func, extract
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint
 from server.auth.security import confirm_write_access, current_user_id
+from server.cron.scim_sweep_services import scim_sweep_services
 from server.db.audit_mixin import metadata
 from server.db.db import db
 from server.db.domain import Service, ServiceMembership, User, Organisation, OrganisationMembership, \
-    OrganisationInvitation
+    OrganisationInvitation, Collaboration, CollaborationMembership, Group
 from server.mail import mail_feedback
 from server.test.seed import seed
 
@@ -113,8 +115,12 @@ def run_seed():
     confirm_write_access()
 
     check_seed_allowed("seed")
-
-    seed(db, current_app.app_config, skip_seed=False, perf_test=False)
+    try:
+        os.environ["SEEDING"] = "1"
+        seed(db, current_app.app_config, skip_seed=False, perf_test=False)
+        session.clear()
+    finally:
+        del os.environ["SEEDING"]
 
     return {}, 201
 
@@ -125,9 +131,14 @@ def run_demo_seed():
     confirm_write_access()
 
     check_seed_allowed("demo-seed")
+    try:
+        os.environ["SEEDING"] = "1"
 
-    from server.test.demo_seed import demo_seed
-    demo_seed(db)
+        from server.test.demo_seed import demo_seed
+        demo_seed(db)
+        session.clear()
+    finally:
+        del os.environ["SEEDING"]
 
     return {}, 201
 
@@ -139,8 +150,13 @@ def run_human_testing_seed():
 
     check_seed_allowed("human-testing-seed")
 
-    from server.test.human_testing_seed import human_testing_seed
-    human_testing_seed(db)
+    try:
+        os.environ["SEEDING"] = "1"
+        from server.test.human_testing_seed import human_testing_seed
+        human_testing_seed(db)
+        session.clear()
+    finally:
+        del os.environ["SEEDING"]
 
     return {}, 201
 
@@ -201,7 +217,7 @@ def feedback():
     data = current_request.get_json()
     message = data["message"]
     mail_conf = cfg.mail
-    user = User.query.get(current_user_id())
+    user = db.session.get(User, current_user_id())
     mail_feedback(mail_conf.environment, message, user, [mail_conf.info_email])
     return {}, 201
 
@@ -229,7 +245,50 @@ def validations():
         .all()
 
     return {
-        "organisations": organisations_without_admins,
-        "organisation_invitations": organisation_invitations,
-        "services": services_without_admins
-    }, 200
+               "organisations": organisations_without_admins,
+               "organisation_invitations": organisation_invitations,
+               "services": services_without_admins
+           }, 200
+
+
+@system_api.route("/sweep", strict_slashes=False, methods=["GET"])
+@json_endpoint
+def sweep():
+    confirm_write_access()
+
+    services = Service.query \
+        .filter(Service.scim_enabled == True) \
+        .filter(Service.sweep_scim_enabled == True) \
+        .all()  # noqa: E712
+    for service in services:
+        service.sweep_scim_last_run = None
+        db.session.merge(service)
+    db.session.commit()
+
+    return scim_sweep_services(current_app), 200
+
+
+@system_api.route("/statistics", strict_slashes=False, methods=["GET"])
+@json_endpoint
+def statistics():
+    confirm_write_access()
+
+    def group_by_month(cls):
+        month = extract("month", cls.created_at)
+        year = extract("year", cls.created_at)
+        rows = db.session.query(func.count(cls.id).label("count"), month.label("month"), year.label("year")) \
+            .group_by(year, month) \
+            .order_by(year.desc(), month.desc()) \
+            .all()
+        return [dict(row._mapping) for row in rows]
+
+    return {
+               "organisations": group_by_month(Organisation),
+               "organisation_memberships": group_by_month(OrganisationMembership),
+               "collaborations": group_by_month(Collaboration),
+               "collaboration_memberships": group_by_month(CollaborationMembership),
+               "services": group_by_month(Service),
+               "service_memberships": group_by_month(ServiceMembership),
+               "groups": group_by_month(Group),
+               "users": group_by_month(User)
+           }, 200

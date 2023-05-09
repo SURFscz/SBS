@@ -39,7 +39,7 @@
         width: 240px;
         height: auto;
         padding: 50px;
-        border: 3px dotted $lighter-grey;
+        border: .0625rem dashed var(--sds--color--gray--300);
         fill: $lighter-grey;
     }
 

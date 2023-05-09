@@ -94,7 +94,7 @@ class TestJoinRequest(AbstractTest):
             mail_msg = outbox[0]
             self.assertListEqual(["peter@example.org"], mail_msg.recipients)
             self.assertTrue("accepted" in mail_msg.html)
-            join_request = JoinRequest.query.get(join_request_id)
+            join_request = db.session.get(JoinRequest, join_request_id)
             self.assertEqual(STATUS_APPROVED, join_request.status)
 
     def test_accept_join_request_already_member(self):
@@ -118,7 +118,7 @@ class TestJoinRequest(AbstractTest):
             self.assertTrue("declined" in mail_msg.html)
             self.assertTrue(rejection_reason in mail_msg.html)
 
-            join_request = JoinRequest.query.get(join_request_id)
+            join_request = db.session.get(JoinRequest, join_request_id)
             self.assertEqual(STATUS_DENIED, join_request.status)
             self.assertEqual(rejection_reason, join_request.rejection_reason)
 

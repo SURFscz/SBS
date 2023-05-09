@@ -1,5 +1,5 @@
 import React from "react";
-import I18n from "i18n-js";
+import I18n from "../locale/I18n";
 import {AlertType, Modal} from "@surfnet/sds";
 
 export default function ErrorDialog({isOpen = false, close}) {
@@ -7,7 +7,7 @@ export default function ErrorDialog({isOpen = false, close}) {
     const content = () => {
         return (
             <section className="dialog-content">
-                <h4>{I18n.t("error_dialog.body")}</h4>
+                <p>{I18n.t("error_dialog.body")}</p>
             </section>
 
         );

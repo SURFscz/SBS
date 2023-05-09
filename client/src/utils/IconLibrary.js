@@ -40,6 +40,7 @@ import {
     faVoicemail,
     faPencilAlt,
     faPlaneDeparture,
+    faParachuteBox,
     faPlus,
     faPlusCircle,
     faQuestion,
@@ -102,6 +103,7 @@ export function addIcons() {
         faLockOpen,
         faMailBulk,
         faVoicemail,
+        faParachuteBox,
         faPencilAlt,
         faPlaneDeparture,
         faPlus,
@@ -112,6 +114,7 @@ export function addIcons() {
         faSearch,
         faSync,
         faSeedling,
+
         faTable,
         faTimes,
         faToolbox,
