@@ -270,6 +270,31 @@ class TestUserSaml(AbstractTest):
         attrs = res["attributes"]
         self.assertListEqual(["sarah"], attrs["uid"])
 
+    def test_proxy_authz_mfa_service_idp_config(self):
+        self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
+
+        # config entry with only entity_id
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:sarah",
+                              "service_id": service_mail_entity_id,
+                              "issuer_id": "https://only_entityid",
+                              "uid": "sarah",
+                              "homeorganization": "unknown_value.org"})
+        self.assertEqual(res["status"]["result"], "authorized")
+        attrs = res["attributes"]
+        self.assertListEqual(["sarah"], attrs["uid"])
+
+        # config entry with only schac_home_organisation
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:sarah",
+                              "service_id": service_mail_entity_id,
+                              "issuer_id": "https://unknown_value.org",
+                              "uid": "sarah",
+                              "homeorganization": "only_sho"})
+        self.assertEqual(res["status"]["result"], "authorized")
+        attrs = res["attributes"]
+        self.assertListEqual(["sarah"], attrs["uid"])
+
     def test_proxy_authz_mfa_faulty_config(self):
         res = self.post("/api/users/proxy_authz", response_status_code=500,
                         body={"user_id": "urn:sarah",
