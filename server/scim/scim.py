@@ -117,7 +117,7 @@ def membership_user_scim_objects(service: Service, group: Union[Group, Collabora
         if not scim_object:
             # We need to provision this user first as it is unknown in the remote SCIM DB
             response = _provision_user(scim_object, service, user)
-            if validate_response(response, service, extra_logging=f"membership {user.short_name} of"
+            if validate_response(response, service, extra_logging=f"membership {user.username} of"
                                                                   f" {group.global_urn}"):
                 scim_object = response.json()
         if scim_object:
@@ -154,7 +154,7 @@ def _do_apply_user_change(user: User, service: Union[None, Service], deletion: b
         else:
             response = _provision_user(scim_object, service, user)
         if response:
-            validate_response(response, service, extra_logging=f"user={user.short_name}, delete={deletion}")
+            validate_response(response, service, extra_logging=f"user={user.username}, delete={deletion}")
     return scim_services
 
 
@@ -184,7 +184,7 @@ def _do_apply_group_collaboration_change(group: Union[Group, Collaboration], ser
         else:
             response = _provision_group(scim_object, service, group)
         if response:
-            validate_response(response, service, extra_logging=f"group={group.global_urn} delele={deletion}")
+            validate_response(response, service, extra_logging=f"group={group.global_urn} delelte={deletion}")
     return bool(scim_services)
 
 
