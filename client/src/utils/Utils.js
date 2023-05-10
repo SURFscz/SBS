@@ -109,4 +109,12 @@ export const splitListSemantically = (arr, lastSeparator) => {
     return [arr.slice(0, -1).join(", "), arr.slice(-1)[0]].join(arr.length < 2 ? "" : ` ${lastSeparator} `);
 }
 
+export const shuffleArray = arr => {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return [...arr];
+}
+
 

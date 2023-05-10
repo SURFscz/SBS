@@ -2228,9 +2228,8 @@ const nl = {
             "Probeer opnieuw vanaf de <a href='/'>thuispagina</a> of neem contact met ons op via <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
     },
     gallery: {
-        select: "Of selecteer een logo",
-        more: "Bekijk meer",
-        less: "Bekijk minder"
+        upload: "Upload je eigen logo",
+        select: "Of selecteer een logo"
     }
 
 };

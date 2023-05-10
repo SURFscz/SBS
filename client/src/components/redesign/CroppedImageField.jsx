@@ -28,11 +28,14 @@ export default class CroppedImageField extends React.PureComponent {
         setTimeout(() => onChange(val), 425);
     }
 
-    closeDialog = () => this.setState({dialogOpen: false});
+    closeDialog = () => {
+        this.setState({dialogOpen: false});
+
+    }
 
     render() {
         const {dialogOpen, confirmationDialogOpen, confirmationDialogAction} = this.state;
-        const {title, name, value, isNew, secondRow = false, initial = false, disabled = false} = this.props;
+        const {title, name, value, isNew, secondRow = false, initial = false, disabled = false, includeLogoGallery = false} = this.props;
         const imageRequired = !initial && isEmpty(value);
         return (
             <div className={`cropped-image-field ${secondRow ? "second-row" : ""}`}>
@@ -47,6 +50,7 @@ export default class CroppedImageField extends React.PureComponent {
                                     isNew={isNew}
                                     name={name}
                                     value={value}
+                                    includeLogoGallery={includeLogoGallery}
                                     title={title}/>
                 <label className="info" htmlFor="">{title}</label>
                 <section className="file-upload">
