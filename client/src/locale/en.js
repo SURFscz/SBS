@@ -2225,6 +2225,10 @@ const en = {
     error: {
         message: "We seem to have run into an unknown error. Sorry for that.</br>" +
             "Start over on the <a href='/'>homepage</a> or contact us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
+    },
+    gallery: {
+        upload: "Upload your own image",
+        select: "Select from gallery"
     }
 };
 
