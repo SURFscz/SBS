@@ -414,7 +414,7 @@ class CollaborationForm extends React.Component {
         const checked = e.target.checked;
         if (checked) {
             const {name} = this.state;
-            const abbreviation = name.split(" ").map(p => p.substring(0, 1).toUpperCase()).join("").substring(0,10);
+            const abbreviation = name.split(" ").map(p => p.substring(0, 1).toUpperCase()).join("").substring(0, 10);
             const canvas = document.createElement("canvas");
             canvas.width = 480;
             canvas.height = 348;
@@ -529,40 +529,42 @@ class CollaborationForm extends React.Component {
                     {(!initial && isEmpty(name)) && <ErrorIndicator msg={I18n.t("collaboration.required", {
                         attribute: I18n.t("collaboration.name").toLowerCase()
                     })}/>}
-                    <div className="cropped-image-container">
+                    <div className="cropped-image-container large">
                         <CroppedImageField name="logo"
                                            onChange={s => this.setState({logo: s})}
                                            isNew={isNew}
                                            title={I18n.t("collaboration.logo")}
                                            value={logo}
                                            initial={initial}
+                                           includeLogoGallery={true}
                                            secondRow={true}/>
-                        {isNew && <CheckBox name="use-org-logo" value={useOrganisationLogo}
-                                            onChange={e => {
-                                                const checked = e.target.checked;
-                                                if (checked) {
-                                                    fetch(organisation.logo).then(res => {
-                                                        res.blob().then(content => {
-                                                            const reader = new FileReader();
-                                                            reader.onload = ({target: {result}}) => {
-                                                                this.setState({
-                                                                    useOrganisationLogo: !useOrganisationLogo,
-                                                                    generateLogo: false,
-                                                                    logo: result.substring(result.indexOf(",") + 1)
-                                                                });
-                                                            };
-                                                            reader.readAsDataURL(content);
-                                                        })
-                                                    });
-                                                } else {
-                                                    this.setState({
-                                                        useOrganisationLogo: !useOrganisationLogo,
-                                                        logo: ""
-                                                    });
-                                                }
-                                            }}
-                                            info={I18n.t("collaboration.useOrganisationLogo")}/>}
-                        {isNew&& <CheckBox name="generate-logo"
+                        {(isNew && 1 != 1) &&
+                        <CheckBox name="use-org-logo" value={useOrganisationLogo}
+                                  onChange={e => {
+                                      const checked = e.target.checked;
+                                      if (checked) {
+                                          fetch(organisation.logo).then(res => {
+                                              res.blob().then(content => {
+                                                  const reader = new FileReader();
+                                                  reader.onload = ({target: {result}}) => {
+                                                      this.setState({
+                                                          useOrganisationLogo: !useOrganisationLogo,
+                                                          generateLogo: false,
+                                                          logo: result.substring(result.indexOf(",") + 1)
+                                                      });
+                                                  };
+                                                  reader.readAsDataURL(content);
+                                              })
+                                          });
+                                      } else {
+                                          this.setState({
+                                              useOrganisationLogo: !useOrganisationLogo,
+                                              logo: ""
+                                          });
+                                      }
+                                  }}
+                                  info={I18n.t("collaboration.useOrganisationLogo")}/>}
+                        {isNew && <CheckBox name="generate-logo"
                                             value={generateLogo}
                                             onChange={this.regenerateLogo}
                                             tooltip={I18n.t("collaboration.generateLogoTooltip")}

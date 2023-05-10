@@ -2226,6 +2226,10 @@ const nl = {
     error: {
         message: "Het spijt ons, we zijn tegen een onbekende fout aangelopen.</br>" +
             "Probeer opnieuw vanaf de <a href='/'>thuispagina</a> of neem contact met ons op via <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
+    },
+    gallery: {
+        upload: "Upload je eigen logo",
+        select: "Of selecteer een logo"
     }
 
 };
