@@ -60,6 +60,12 @@
                 margin: 15px auto 0 auto;
             }
 
+            &.sds--btn--tertiary {
+                span.textual {
+                    font-size: 18px;
+                }
+            }
+
         }
     }
 
@@ -70,9 +76,10 @@
             overflow-y: auto;
 
             display: grid;
-            grid-template-columns: [first] 1fr [second] 1fr;
+            grid-template-columns: [first] 1fr [second] 1fr [third] 1fr;
             column-gap: 15px;
             row-gap: 15px;
+
             img {
                 padding: 15px;
                 border: .0625rem dashed var(--sds--color--gray--300);

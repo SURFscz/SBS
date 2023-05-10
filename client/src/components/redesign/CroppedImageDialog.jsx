@@ -52,7 +52,7 @@ export default class CroppedImageDialog extends React.PureComponent {
     constructor(props, context) {
         super(props, context);
         this.state = this.initialState(props);
-                const images = [
+        const images = [
             Undraw1,
             Undraw2,
             Undraw3,
@@ -320,8 +320,11 @@ export default class CroppedImageDialog extends React.PureComponent {
                 </div>
                 <div className={"button-container"}>
                     <Button txt={I18n.t("gallery.upload")}
-                            onClick={this.selectFromGallery}
-                            className={"gXhost"}
+                            onClick={e => {
+                                this.inputFile && setTimeout(() => this.inputFile.click(), 250) ;
+                                this.selectFromGallery(e);
+                            }}
+                            className={"tertiary"}
                     />
                 </div>
             </div>
@@ -350,11 +353,16 @@ export default class CroppedImageDialog extends React.PureComponent {
                         </ReactCrop>
                     </div>}
                     <div className={`sds--file-upload ${error ? "sds--file-upload--status-error" : ""}`}>
-                        {<input type="file"
-                                id={`fileUpload_${name}`}
-                                name={`fileUpload_${name}`}
-                                accept="image/png, image/jpeg, image/jpg, image/svg+xml, image/webp"
-                                onChange={this.internalOnChange}/>}
+                        <input id={`fileUpload_${name}`}
+                               type="file"
+                               ref={ref => {
+                                   if (!isEmpty(ref)) {
+                                       this.inputFile = ref;
+                                   }
+                               }}
+                               name={`fileUpload_${name}`}
+                               accept="image/png, image/jpeg, image/jpg, image/svg+xml, image/webp"
+                               onChange={this.internalOnChange}/>
                         {(isEmpty(error) && !src) && <p className="sds--file-upload--message sds--text--body--small">
                             {I18n.t("forms.image")}
                         </p>}
@@ -373,7 +381,7 @@ export default class CroppedImageDialog extends React.PureComponent {
                 <div className={"button-container"}>
                     <Button txt={I18n.t("gallery.select")}
                             onClick={this.selectFromGallery}
-                            className={"gXhost"}
+                            className={"tertiary"}
                     />
                 </div>}
             </div>
