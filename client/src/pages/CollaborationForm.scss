@@ -48,6 +48,27 @@
             grid-row-start: 2;
             grid-column-start: second;
             grid-row-end: 99;
+
+            .sds--modal--actions.sds--actions--outer {
+                @media (max-width: $compact-medium) {
+                    flex-direction: column;
+                }
+
+            }
+
+            &.large {
+                .sds--modal--container {
+                    min-width: 48rem;
+                    max-width: 48rem;
+
+                    @media (max-width: $compact-medium) {
+                        min-width: 90vw;
+                        max-width: 90vw;
+                    }
+                }
+            }
+
+
         }
 
     }

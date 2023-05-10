@@ -2227,9 +2227,8 @@ const en = {
             "Start over on the <a href='/'>homepage</a> or contact us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
     },
     gallery: {
-        select: "Or select a logo",
-        more: "View more",
-        less: "View less"
+        upload: "Upload your own image",
+        select: "Select from gallery"
     }
 };
 
