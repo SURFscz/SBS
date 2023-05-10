@@ -16,7 +16,8 @@ export default function Button({
         }
     }
     const buttonType = cancelButton ? ButtonType.Secondary : warningButton ?
-        txt ? ButtonType.DeleteSecondary : ButtonType.Delete : className.indexOf("ghost") > -1 ? ButtonType.GhostDark : ButtonType.Primary;
+        txt ? ButtonType.DeleteSecondary : ButtonType.Delete : className.indexOf("ghost") > -1 ? ButtonType.GhostDark :
+            className.indexOf("tertiary") > -1 ? ButtonType.Tertiary : ButtonType.Primary;
     const buttonSize = small ? ButtonSize.Small : centralize ? ButtonSize.Full : ButtonSize.Default;
     return <SDSButton txt={txt}
                       onClick={onClickInternal}
