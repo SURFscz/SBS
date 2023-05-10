@@ -60,9 +60,8 @@ custom_saml_mapping = {
 
 
 # See https://github.com/SURFscz/SBS/issues/152
-def _perform_sram_login(uid, service, service_entity_id, user_email, home_organisation_uid, schac_home_organisation, \
-    issuer_id,
-                        require_2fa=True):
+def _perform_sram_login(uid, service, service_entity_id, user_email, home_organisation_uid,
+                        schac_home_organisation, issuer_id, require_2fa=True):
     logger = ctx_logger("user_api")
 
     logger.debug("SBS login flow")
