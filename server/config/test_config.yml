@@ -210,6 +210,8 @@ mfa_idp_allowed:
     entity_id: "https://idp.test"
   - schac_home: "erroridp.example.edu"
     entity_id: "https://erroridp.example.edu"
+  - schac_home: "only_sho"
+  - entity_id: "https://only_entityid"
 
 # Lower case schachome organisations / entity ID's where SURFSecure ID is used for step-up
 # If this feature is no longer needed, just replace the value with an empty list []
