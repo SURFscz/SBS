@@ -60,7 +60,8 @@ custom_saml_mapping = {
 
 
 # See https://github.com/SURFscz/SBS/issues/152
-def _perform_sram_login(uid, service, service_entity_id, home_organisation_uid, schac_home_organisation, issuer_id,
+def _perform_sram_login(uid, service, service_entity_id, user_email, home_organisation_uid, schac_home_organisation, \
+    issuer_id,
                         require_2fa=True):
     logger = ctx_logger("user_api")
 
@@ -69,7 +70,7 @@ def _perform_sram_login(uid, service, service_entity_id, home_organisation_uid, 
     user = User.query.filter(User.uid == uid).first()
     if not user:
         logger.debug("Creating new user in sram_login")
-        user = User(uid=uid, external_id=str(uuid.uuid4()), created_by="system", updated_by="system")
+        user = User(uid=uid, email=user_email, external_id=str(uuid.uuid4()), created_by="system", updated_by="system")
 
     if home_organisation_uid:
         user.home_organisation_uid = home_organisation_uid
@@ -224,6 +225,7 @@ def proxy_authz():
     uid = json_dict["user_id"]
     service_entity_id = json_dict["service_id"]
     issuer_id = json_dict["issuer_id"]
+    user_email = json_dict.get("user_email", None)
     # These are optional; they are only used to check for logins that should do SSID-SFO
     # If the proxy doesn't send these, we can safely assume the user shouldn't be sent to SSID
     home_organisation_uid = json_dict.get("uid", None)
@@ -236,8 +238,8 @@ def proxy_authz():
     user = User.query.filter(User.uid == uid).first()
 
     if service_entity_id.lower() == current_app.app_config.oidc.sram_service_entity_id.lower():
-        return _perform_sram_login(uid, service, service_entity_id, home_organisation_uid, schac_home_organisation,
-                                   issuer_id)
+        return _perform_sram_login(uid, service, service_entity_id, user_email, home_organisation_uid,
+                                   schac_home_organisation, issuer_id)
 
     def not_authorized_func(service_name, status):
         base_url = current_app.app_config.base_url

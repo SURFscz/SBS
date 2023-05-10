@@ -137,12 +137,14 @@ class TestUserSaml(AbstractTest):
                               "service_id": self.app.app_config.oidc.sram_service_entity_id,
                               "issuer_id": "idp",
                               "uid": "sarah",
+                              "user_email": "sarah@example.com",
                               "homeorganization": "example.com"})
         self.assertEqual(res["status"]["result"], "interrupt")
 
         new_user = User.query.filter(User.uid == "urn:new_user").one()
         self.assertEqual("example.com", new_user.schac_home_organisation)
         self.assertEqual("sarah", new_user.home_organisation_uid)
+        self.assertEqual("sarah@example.com", new_user.email)
 
     def test_proxy_authz_mfa_sbs_totp_sso(self):
         self.login_user_2fa("urn:sarah")
