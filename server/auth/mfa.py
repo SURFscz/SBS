@@ -94,13 +94,17 @@ def eligible_users_to_reset_token(user):
 
 
 def _idp_configured(identity_providers, action, schac_home=None, entity_id=None):
-    entity_id_allowed = entity_id and [idp for idp in identity_providers if idp.entity_id == entity_id.lower()]
+    entity_id_allowed = entity_id and [
+        idp for idp in identity_providers if "entity_id" in idp and idp.entity_id == entity_id.lower()
+    ]
 
     def schac_match(configured_schac_home, schac_home):
         schac_home_lower = schac_home.lower()
         return configured_schac_home == schac_home_lower or schac_home_lower.endswith(f".{configured_schac_home}")
 
-    schac_home_allowed = schac_home and [idp for idp in identity_providers if schac_match(idp.schac_home, schac_home)]
+    schac_home_allowed = schac_home and [
+        idp for idp in identity_providers if "schac_home" in idp and schac_match(idp.schac_home, schac_home)
+    ]
 
     result = entity_id_allowed or schac_home_allowed
 
