@@ -11,7 +11,7 @@ group_members_api = Blueprint("group_members_api", __name__,
                               url_prefix="/api/group_members")
 
 
-def do_add_group_members(data, assert_collaboration_admin):
+def do_add_group_members(data, assert_collaboration_admin, broadcast_change):
     group_id = int(data["group_id"])
     collaboration_id = int(data["collaboration_id"])
     if assert_collaboration_admin and "skip_collaboration_admin_confirmation" not in request_context:
@@ -26,7 +26,8 @@ def do_add_group_members(data, assert_collaboration_admin):
     db.session.commit()
 
     emit_socket(f"collaboration_{collaboration_id}")
-    broadcast_group_changed(group.id)
+    if broadcast_change:
+        broadcast_group_changed(group.id)
 
     return len(members_ids)
 
@@ -36,7 +37,7 @@ def do_add_group_members(data, assert_collaboration_admin):
 @json_schema_validator.validate("models", "group_members")
 def add_group_members():
     data = current_request.get_json()
-    count = do_add_group_members(data, True)
+    count = do_add_group_members(data, True, True)
 
     return ({}, 201) if count > 0 else (None, 404)
 

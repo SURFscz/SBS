@@ -44,7 +44,7 @@ def auto_provision_all_members_and_invites(group: Group):
             "group_id": group.id,
             "collaboration_id": group.collaboration_id,
             "members_ids": missing_members
-        }, True)
+        }, True, False)
         # Session is closed in do_add_group_members, but we are not ready yet, so re-fetch the Group
         group = db.session.get(Group, group.id)
 
