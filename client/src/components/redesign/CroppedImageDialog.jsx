@@ -279,7 +279,6 @@ export default class CroppedImageDialog extends React.PureComponent {
         const {value} = this.props;
         const src = source || value;
         const val = e.target.checked;
-
         if (!val) {
             this.setState({addWhiteSpace: val, source: copy || value, result: copy || value, isSvg: initialSvg});
         } else {
@@ -344,7 +343,27 @@ export default class CroppedImageDialog extends React.PureComponent {
         this.setState({crop: percentCrop});
     }
 
-    renderGallery = (galleryIndex) => {
+    loadGalleryImage = (e, index) => {
+        fetch(e.target.src).then(res => {
+            res.blob().then(content => {
+                const reader = new FileReader();
+                reader.onload = ({target: {result}}) => {
+                    this.setState({
+                        galleryImage: result.substring(result.indexOf(",") + 1)
+                    }, () => {
+                        if (e.detail === 2) {
+                            this.onSaveInternal();
+                        }
+                    });
+
+                };
+                reader.readAsDataURL(content);
+            })
+        });
+        this.setState({galleryIndex: index});
+    }
+
+    renderGallery = galleryIndex => {
         return (
             <div className={"cropped-image-dialog-container"}>
                 <div className={"image-gallery-container"}>
@@ -353,25 +372,7 @@ export default class CroppedImageDialog extends React.PureComponent {
                             <img key={index}
                                  src={image}
                                  className={`${galleryIndex === index ? "selected" : ""}`}
-                                 onClick={e => {
-                                     fetch(e.target.src).then(res => {
-                                         res.blob().then(content => {
-                                             const reader = new FileReader();
-                                             reader.onload = ({target: {result}}) => {
-                                                 this.setState({
-                                                     galleryImage: result.substring(result.indexOf(",") + 1)
-                                                 }, () => {
-                                                     if (e.detail === 2) {
-                                                         this.onSaveInternal();
-                                                     }
-                                                 });
-
-                                             };
-                                             reader.readAsDataURL(content);
-                                         })
-                                     });
-                                     this.setState({galleryIndex: index});
-                                 }}
+                                 onClick={e => this.loadGalleryImage(e, index)}
                                  alt="Logo"/>)}
                     </div>
                 </div>
