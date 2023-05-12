@@ -561,7 +561,7 @@ class CollaborationDetail extends React.Component {
         if (!collaborationJoinRequest && membershipStatus) {
             metaDataListItems.push({
                 label: I18n.t(`organisationMembership.status.name`),
-                values: [this.getMembershipStatus(collaboration, user)]
+                values: [membershipStatus]
             })
         }
         return <UnitHeader obj={collaboration}
@@ -746,7 +746,8 @@ class CollaborationDetail extends React.Component {
         if (!membership) {
             return null;
         }
-        const expiryDate = membership.expiry_date ? moment(membership.expiry_date * 1000).format("LL") : I18n.t("service.none");
+        //expiryDate is only used for translation if actually set
+        const expiryDate = membership.expiry_date ? moment(membership.expiry_date * 1000).format("LL") : "";
         const className = membership.status !== "active" ? "warning" : "";
         let status;
         if (membership.expiry_date && membership.status === "expired") {
