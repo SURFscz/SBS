@@ -72,7 +72,10 @@ def auth_filter(app_config):
                 raise Unauthorized(description="Invalid CSRFToken")
         if "api/aup/agree" in url or "api/users/refresh" in url or "api/mfa/token_reset_request" in url:
             return
-        if not oidc_config.second_factor_authentication_required or session["user"].get("second_factor_confirmed"):
+        mfa_required = oidc_config.second_factor_authentication_required
+        mfa_confirmed = session["user"].get("second_factor_confirmed")
+        is_feedback = "api/system/feedback" in url
+        if not mfa_required or mfa_confirmed or is_feedback:
             request_context.is_authorized_api_call = False
             return
         elif url_path in mfa_listing:

@@ -8,13 +8,13 @@ import {setFlash} from "../utils/Flash";
 import DOMPurify from "dompurify";
 import {AlertType, Modal} from "@surfnet/sds";
 
-export default function FeedbackDialog({isOpen = false, close}) {
+export default function FeedbackDialog({isOpen = false, close, initialMessage = ""}) {
 
     if (!isOpen) {
         return null;
     }
 
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState(initialMessage);
 
     const inputRef = useRef(null);
 

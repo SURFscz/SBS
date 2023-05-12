@@ -1942,11 +1942,15 @@ const en = {
         register: {
             title: "Two factor authentication required",
             titleUpdate: "Add two factor authentication device",
-            info1: "You have signed in with a username and password at {{name}}. SURF Research Access Management requires two-factor authentication. This means an extra check to verify it's you.",
+            info1: "SURF Research Access Management now requires two-factor authentication. This means you have to set up an extra check to verify it's you.<br/><br/>" +
+                "Did you already use a second factor to sign in at {{name}}? Please ",
+            info11: " so we can fix that.",
+            contactUs: "contact us",
             info2: "To setup two factor authentication, take the following steps:",
             step: "Stap {{nbr}}",
             getApp: "1. Add SURF Research Access Management to your authenticator app",
-            unknownIdp: "an unknown organisation",
+            unknownIdp: "your institution",
+            unknownFeedbackIdp: "mine institution",
             getAppUpdate: "2. Add SURF Research Access Management to your authenticator app",
             new: "new ",
             getAppInfo: "Open or install the Google (<a href=\"https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en&gl=US\" target=\"_blank\">Android</a> of <a href=\"https://apps.apple.com/us/app/google-authenticator/id388497605\" target=\"_blank\">iOS</a>) of Microsoft (<a href=\"https://play.google.com/store/apps/details?id=com.azure.authenticator&hl=en&gl=US\" target=\"_blank\">Android</a> of <a href=\"https://apps.apple.com/us/app/microsoft-authenticator/id983156458\" target=\"_blank\">iOS</a>) Authenticator app on your {{new}}mobile device",
@@ -1957,7 +1961,9 @@ const en = {
             verificationCodeUpdate: "3. Enter verification code",
             verificationCodeInfo: "Enter the verification code you see in the app",
             verify: "Verify and activate",
-            next: "Next"
+            next: "Next",
+            feedback: "I had to setup two factor authentication with SURF Research Access Management, but I already used two factor authentication to sign in with {{name}}.\n\n" +
+                "Thanks for your feedback! Feel free to add anything else."
         },
         update: {
             info1: "To update your two-factor authentication, please follow the steps below.",

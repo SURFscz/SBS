@@ -1943,11 +1943,15 @@ const nl = {
         register: {
             title: "Tweefactorauthenticatie is vereist",
             titleUpdate: "Voeg een tweefactorauthenticatie-apparaat toe",
-            info1: "Je bent ingelogd met een gebruikersnaam en wachtwoord bij {{name}}. SURF Research Access Management vereist tweefactorauthenticatie. Dat betekent een extra controle dat jij het bent.",
+            info1: "SURF Research Access Management vereist sinds kort twee-factor-authenticatie. Dat betekent dat je een extra controle dat jij het bent moet configureren.<br/><br/>" +
+                "Heb je al een tweede factor gebruikt om je aan te melden bij {{name}}? Neem dan ",
+            info11: " zodat we dat kunnen oplossen.",
+            contactUs: "contact op",
             info2: "Voer de volgende stappen uit om tweefactorauthenticatie in te stellen:",
             step: "Stap {{nbr}}",
             getApp: "1. Voeg SURF Research Access Management toe aan je authenticator-app",
-            unknownIdp: "een onbekende organisatie",
+            unknownIdp: "je instelling",
+            unknownFeedbackIdp: "mijn instelling",
             getAppUpdate: "2. Voeg SURF Research Access Management toe aan je authenticator-app",
             new: "nieuw",
             getAppInfo: "Open of installeer de Google (<a href=\"https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=nl&gl=NL\" target=\"_blank\">Android</a> of <a href=\"https://apps.apple.com/nl/app/google-authenticator/id388497605\" target=\"_blank\">iOS</a>) of Microsoft (<a href=\"https://play.google.com/store/apps/details?id=com.azure.authenticator&hl=nl&gl=NL\" target=\"_blank\">Android</a> of <a href=\"https://apps.apple.com/us/app/microsoft-authenticator/id983156458\" target=\"_blank\">iOS</a>) authenticator-app op je {{new}}mobiele apparaat",
@@ -1958,7 +1962,9 @@ const nl = {
             verificationCodeUpdate: "3. Voer verificatiecode die de app weergeeft in",
             verificationCodeInfo: "Voer verificatiecode die de app weergeeft in",
             verify: "Verifiëren en activeren",
-            next: "Volgende"
+            next: "Volgende",
+            feedback: "Ik moest twee-factor-authenticatie configureren bij SURF Research Access Management, maar ik heb al een tweede factor gebruikt om aan te melden bij {{name}}.\n\n" +
+                "Bedankt voor je bericht! Je kunt informatie toevoegen, als je wil."
         },
         update: {
             info1: "Volg de onderstaande stappen om je tweefactorauthenticatie bij te werken.",
