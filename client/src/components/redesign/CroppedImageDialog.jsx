@@ -3,42 +3,69 @@ import I18n from "../../locale/I18n";
 import "./CroppedImageDialog.scss";
 import {ReactComponent as NotFoundIcon} from "../../icons/image-not-found.svg";
 
-import Undraw1 from "../../undraw/undraw_Code_typing_re_p8b9.png";
-import Undraw2 from "../../undraw/undraw_Collaborating_re_l43g.png";
-import Undraw3 from "../../undraw/undraw_Collaboration_re_vyau.png";
-import Undraw4 from "../../undraw/undraw_Collaborators_re_hont.png";
-import Undraw5 from "../../undraw/undraw_Data_re_80ws.png";
-import Undraw6 from "../../undraw/undraw_Design_feedback_re_8gtk.png";
-import Undraw7 from "../../undraw/undraw_Design_team_re_gh2d.png";
-import Undraw8 from "../../undraw/undraw_Designer_life_re_6ywf.png";
-import Undraw9 from "../../undraw/undraw_File_bundle_re_6q1e.png";
-import Undraw10 from "../../undraw/undraw_Good_team_re_hrvm.png";
-import Undraw11 from "../../undraw/undraw_Google_docs_re_evm3.png";
-import Undraw12 from "../../undraw/undraw_Live_collaboration_re_60ha.png";
-import Undraw13 from "../../undraw/undraw_Mobile_wireframe_re_jxui.png";
-import Undraw14 from "../../undraw/undraw_Online_collaboration_re_bkpm.png";
-import Undraw15 from "../../undraw/undraw_Our_solution_re_8yk6.png";
-import Undraw16 from "../../undraw/undraw_Redesign_feedback_re_jvm0.png";
-import Undraw17 from "../../undraw/undraw_Remote_design_team_re_urdx.png";
-import Undraw18 from "../../undraw/undraw_Remote_team_re_ck1y.png";
-import Undraw19 from "../../undraw/undraw_Scrum_board_re_wk7v.png";
-import Undraw20 from "../../undraw/undraw_Shared_goals_re_jvqd.png";
-import Undraw21 from "../../undraw/undraw_Sharing_articles_re_jnkp.png";
-import Undraw22 from "../../undraw/undraw_Team_chat_re_vbq1.png";
-import Undraw23 from "../../undraw/undraw_Team_collaboration_re_ow29.png";
-import Undraw24 from "../../undraw/undraw_Team_goals_re_4a3t.png";
-import Undraw25 from "../../undraw/undraw_Work_time_re_hdyv.png";
-import Undraw26 from "../../undraw/undraw_Work_together_re_5yhn.png";
-import Undraw27 from "../../undraw/undraw_add_friends_re_3xte.png";
-import Undraw28 from "../../undraw/undraw_collab_8oes.png";
-import Undraw29 from "../../undraw/undraw_completed_tasks_vs6q.png";
-import Undraw30 from "../../undraw/undraw_design_tools_42tf.png";
-import Undraw31 from "../../undraw/undraw_develop_app_re_bi4i.png";
-import Undraw32 from "../../undraw/undraw_icons_wdp4.png";
-import Undraw33 from "../../undraw/undraw_miro_qvwm.png";
-import Undraw34 from "../../undraw/undraw_real_time_collaboration_c62i.png";
-import Undraw35 from "../../undraw/undraw_teamwork_hpdk.png";
-import Undraw36 from "../../undraw/undraw_unDraw_1000_gty8.png";
+import Undraw1 from "../../undraw/undraw_Adventure_re_ncqp.png";
+import Undraw2 from "../../undraw/undraw_Aircraft_re_m05i.png";
+import Undraw3 from "../../undraw/undraw_Alien_science_re_0f8q.png";
+import Undraw4 from "../../undraw/undraw_Chat_bot_re_e2gj.png";
+import Undraw5 from "../../undraw/undraw_Code_typing_re_p8b9.png";
+import Undraw6 from "../../undraw/undraw_Collaboration_re_vyau.png";
+import Undraw7 from "../../undraw/undraw_Collaborators_re_hont.png";
+import Undraw8 from "../../undraw/undraw_Data_re_80ws.png";
+import Undraw9 from "../../undraw/undraw_Data_report_re_p4so.png";
+import Undraw10 from "../../undraw/undraw_Decide_re_ixfw.png";
+import Undraw11 from "../../undraw/undraw_Design_team_re_gh2d.png";
+import Undraw12 from "../../undraw/undraw_Doctors_p6aq.png";
+import Undraw13 from "../../undraw/undraw_Engineering_team_a7n2.png";
+import Undraw14 from "../../undraw/undraw_Envelope_re_f5j4.png";
+import Undraw15 from "../../undraw/undraw_Environmental_study_re_q4q8.png";
+import Undraw16 from "../../undraw/undraw_File_bundle_re_6q1e.png";
+import Undraw17 from "../../undraw/undraw_File_sync_re_0pcx.png";
+import Undraw18 from "../../undraw/undraw_Firmware_re_fgdy.png";
+import Undraw19 from "../../undraw/undraw_Good_team_re_hrvm.png";
+import Undraw20 from "../../undraw/undraw_Live_collaboration_re_60ha.png";
+import Undraw21 from "../../undraw/undraw_Location_search_re_ttoj.png";
+import Undraw22 from "../../undraw/undraw_My_universe_803e.png";
+import Undraw23 from "../../undraw/undraw_Not_found_re_bh2e.png";
+import Undraw24 from "../../undraw/undraw_Notebook_re_id0r.png";
+import Undraw25 from "../../undraw/undraw_Online_collaboration_re_bkpm.png";
+import Undraw26 from "../../undraw/undraw_People_search_re_5rre.png";
+import Undraw27 from "../../undraw/undraw_Project_feedback_re_cm3l.png";
+import Undraw28 from "../../undraw/undraw_Remote_design_team_re_urdx.png";
+import Undraw29 from "../../undraw/undraw_Remote_team_re_ck1y.png";
+import Undraw30 from "../../undraw/undraw_Science_re_mnnr.png";
+import Undraw31 from "../../undraw/undraw_Scientist_ft0o.png";
+import Undraw32 from "../../undraw/undraw_Scrum_board_re_wk7v.png";
+import Undraw33 from "../../undraw/undraw_Secure_server_re_8wsq.png";
+import Undraw34 from "../../undraw/undraw_Server_status_re_n8ln.png";
+import Undraw35 from "../../undraw/undraw_Share_link_re_54rx.png";
+import Undraw36 from "../../undraw/undraw_Shared_goals_re_jvqd.png";
+import Undraw37 from "../../undraw/undraw_Shared_workspace_re_3gsu.png";
+import Undraw38 from "../../undraw/undraw_Sharing_articles_re_jnkp.png";
+import Undraw39 from "../../undraw/undraw_Speech_to_text_re_8mtf.png";
+import Undraw40 from "../../undraw/undraw_Taken_re_yn20.png";
+import Undraw41 from "../../undraw/undraw_Teaching_re_g7e3.png";
+import Undraw42 from "../../undraw/undraw_Team_chat_re_vbq1.png";
+import Undraw43 from "../../undraw/undraw_Team_collaboration_re_ow29.png";
+import Undraw44 from "../../undraw/undraw_Team_goals_re_4a3t.png";
+import Undraw45 from "../../undraw/undraw_Team_re_0bfe.png";
+import Undraw46 from "../../undraw/undraw_Web_search_re_efla.png";
+import Undraw47 from "../../undraw/undraw_World_re_768g.png";
+import Undraw48 from "../../undraw/undraw_completed_tasks_vs6q.png";
+import Undraw49 from "../../undraw/undraw_connected_world_wuay.png";
+import Undraw50 from "../../undraw/undraw_creative_experiment_8dk3.png";
+import Undraw51 from "../../undraw/undraw_data_processing_yrrv.png";
+import Undraw52 from "../../undraw/undraw_environment_iaus.png";
+import Undraw53 from "../../undraw/undraw_medical_research_qg4d.png";
+import Undraw54 from "../../undraw/undraw_nature_m5ll.png";
+import Undraw55 from "../../undraw/undraw_real_time_collaboration_c62i.png";
+import Undraw56 from "../../undraw/undraw_server_cluster_jwwq.png";
+import Undraw57 from "../../undraw/undraw_sharing_knowledge_03vp.png";
+import Undraw58 from "../../undraw/undraw_stars_re_6je7.png";
+import Undraw59 from "../../undraw/undraw_teamwork_hpdk.png";
+import Undraw60 from "../../undraw/undraw_two_factor_authentication_namy.png";
+import Undraw61 from "../../undraw/undraw_video_upload_3d4u.png";
+import Undraw62 from "../../undraw/undraw_visual_data_re_mxxo.png";
+
 import {isEmpty, shuffleArray, stopEvent} from "../../utils/Utils";
 import ReactCrop, {centerCrop, makeAspectCrop,} from "react-image-crop";
 import CheckBox from "../CheckBox";
@@ -88,8 +115,33 @@ export default class CroppedImageDialog extends React.PureComponent {
             Undraw33,
             Undraw34,
             Undraw35,
-            Undraw36
-        ];
+            Undraw36,
+            Undraw37,
+            Undraw38,
+            Undraw39,
+            Undraw40,
+            Undraw41,
+            Undraw42,
+            Undraw43,
+            Undraw44,
+            Undraw45,
+            Undraw46,
+            Undraw47,
+            Undraw48,
+            Undraw49,
+            Undraw50,
+            Undraw51,
+            Undraw52,
+            Undraw53,
+            Undraw54,
+            Undraw55,
+            Undraw56,
+            Undraw57,
+            Undraw58,
+            Undraw59,
+            Undraw60,
+            Undraw61,
+            Undraw62,];
         this.shuffledImages = shuffleArray(images);
     }
 
@@ -321,7 +373,7 @@ export default class CroppedImageDialog extends React.PureComponent {
                 <div className={"button-container"}>
                     <Button txt={I18n.t("gallery.upload")}
                             onClick={e => {
-                                this.inputFile && setTimeout(() => this.inputFile.click(), 250) ;
+                                this.inputFile && setTimeout(() => this.inputFile.click(), 250);
                                 this.selectFromGallery(e);
                             }}
                             className={"tertiary"}
