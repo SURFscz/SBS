@@ -21,6 +21,7 @@ import CheckBox from "../components/CheckBox";
 import {ErrorOrigins, isEmpty, stopEvent} from "../utils/Utils";
 import DOMPurify from "dompurify";
 import {Toaster, ToasterType} from "@surfnet/sds";
+import FeedbackDialog from "../components/Feedback";
 
 const TOTP_ATTRIBUTE_NAME = "totp";
 const NEW_TOTP_ATTRIBUTE_NAME = "newTotp";
@@ -45,7 +46,8 @@ class SecondFactorAuthentication extends React.Component {
             resetCode: "",
             resetCodeError: null,
             continueUrl: null,
-            secondFaUuid: null
+            secondFaUuid: null,
+            showFeedBack: false
         };
         this.totpRefs = Array(6).fill("");
         this.totpNewRefs = Array(6).fill("");
@@ -193,10 +195,10 @@ class SecondFactorAuthentication extends React.Component {
                     this.setState({resetCode: false, showEnterToken: false});
                     this.componentDidMount();
                 } else {
-                this.props.refreshUser(() => {
-                    this.setState({resetCode: false, showEnterToken: false});
-                    this.componentDidMount();
-                })
+                    this.props.refreshUser(() => {
+                        this.setState({resetCode: false, showEnterToken: false});
+                        this.componentDidMount();
+                    })
 
                 }
             }).catch(() => {
@@ -305,6 +307,11 @@ class SecondFactorAuthentication extends React.Component {
 
     }
 
+    mfaFeedback = e => {
+        stopEvent(e);
+        this.setState({showFeedBack: true});
+    }
+
     renderVerificationCode = (totp, busy, showExplanation, error) => {
         const verifyDisabled = isEmpty(totp[5]) || busy;
         return (
@@ -395,8 +402,21 @@ class SecondFactorAuthentication extends React.Component {
             <div>
                 <section className="register-header">
                     <h1>{I18n.t(`mfa.register.${update ? "titleUpdate" : "title"}`)}</h1>
-                    <Toaster message={I18n.t(`mfa.${action}.info1`, {name: idp_name})}
-                             toasterType={ToasterType.Info}/>
+                    {action === "update" &&
+                    <Toaster message={I18n.t("mfa.update.info1", {name: idp_name})}
+                             toasterType={ToasterType.Info}/>}
+                    {action === "register" &&
+                    <Toaster toasterType={ToasterType.Info}>
+                        <p>
+                            <span dangerouslySetInnerHTML={{
+                                __html: DOMPurify.sanitize(`${I18n.t("mfa.register.info1", {name: idp_name})}`)
+                            }}/>
+                            <a href="#" onClick={this.mfaFeedback}>{I18n.t("mfa.register.contactUs")}</a>
+                            <span dangerouslySetInnerHTML={{
+                                __html: DOMPurify.sanitize(`${I18n.t("mfa.register.info11")}`)
+                            }}/>
+                        </p>
+                    </Toaster>}
                     <p>{I18n.t(`mfa.${action}.info2`)}</p>
                 </section>
                 {!update && <div className="step">
@@ -474,13 +494,18 @@ class SecondFactorAuthentication extends React.Component {
         const {update} = this.props;
         const {
             loading, totp, qrCode, idp_name, busy, showExplanation, error, respondents, message,
-            newTotp, newError, showEnterToken, resetCode, resetCodeError
+            newTotp, newError, showEnterToken, resetCode, resetCodeError, showFeedBack
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
         }
+        const idpFeedbackName = idp_name === I18n.t("mfa.register.unknownIdp") ?
+            I18n.t("mfa.register.unknownFeedbackIdp") : idp_name
         return (
             <div className={`mod-mfa ${qrCode ? '' : 'verify'}`}>
+                <FeedbackDialog isOpen={showFeedBack}
+                                close={() => this.setState({showFeedBack: false})}
+                                initialMessage={I18n.t("mfa.register.feedback", {name: idpFeedbackName})}/>
                 {(qrCode && !showExplanation && !showEnterToken) && this.renderRegistration(qrCode, totp, newTotp, idp_name, busy, error, newError, update)}
                 {(!qrCode && !showExplanation && !showEnterToken) && this.renderVerificationCode(totp, busy, showExplanation, error, showEnterToken)}
                 {(showExplanation && !showEnterToken) && this.renderLostCode(respondents, message)}

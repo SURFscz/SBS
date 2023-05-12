@@ -32,7 +32,7 @@ export default function ServiceWelcomeDialog({
             subTitle={I18n.t("welcomeDialog.roleServiceAdmin")}
             children={content()}
             title={I18n.t("welcomeDialog.title", {name: name})}
-            confirmationButtonLabel={I18n.t("welcomeDialog.ok", {type: I18n.t("welcomeDialog.organisation")})}
+            confirmationButtonLabel={I18n.t("welcomeDialog.ok", {type: I18n.t("welcomeDialog.service")})}
             className={"welcome-dialog"}
         />
     );
