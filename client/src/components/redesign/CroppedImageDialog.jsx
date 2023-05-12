@@ -360,7 +360,12 @@ export default class CroppedImageDialog extends React.PureComponent {
                                              reader.onload = ({target: {result}}) => {
                                                  this.setState({
                                                      galleryImage: result.substring(result.indexOf(",") + 1)
+                                                 }, () => {
+                                                     if (e.detail === 2) {
+                                                         this.onSaveInternal();
+                                                     }
                                                  });
+
                                              };
                                              reader.readAsDataURL(content);
                                          })
