@@ -43,7 +43,7 @@ import JoinRequestDialog from "../components/JoinRequestDialog";
 import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import moment from "moment";
 import {ButtonType, MetaDataList, Tooltip} from "@surfnet/sds";
-import {ErrorOrigins, getSchacHomeOrg, isEmpty, removeDuplicates} from "../utils/Utils";
+import {ErrorOrigins, getSchacHomeOrg, isEmpty, removeDuplicates, stopEvent} from "../utils/Utils";
 import UserTokens from "../components/redesign/UserTokens";
 import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
 import ClipBoardCopy from "../components/redesign/ClipBoardCopy";
@@ -777,13 +777,14 @@ class CollaborationDetail extends React.Component {
                 collaboration.disable_join_requests ? I18n.t("collaboration.noJoinRequests") :
                     <span className="contains-copy">
                         <CopyToClipboard text={joinRequestUrl}>
-                            <span className={"copy-link"} onClick={e => {
+                            <a href={joinRequestUrl} className={"copy-link"} onClick={e => {
                                 const me = e.target;
+                                stopEvent(e);
                                 me.classList.add("copied");
                                 setTimeout(() => me.classList.remove("copied"), 1250);
                             }}>
                                 {I18n.t("collaboration.enabled")}
-                            </span>
+                            </a>
                         </CopyToClipboard>
                         <ClipBoardCopy transparentBackground={true} txt={joinRequestUrl}/>
                     </span>
