@@ -1,5 +1,4 @@
 #!/opt/sbs/sbs-env/bin/python
-import uuid
 
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
     CollaborationMembership, Group, SchacHomeOrganisation, SshKey, ServiceGroup, \
@@ -21,7 +20,8 @@ def demo_seed(db):
             "description": "Organisation for online research",
             "logo": "org_01.jpg",
             "category": "Research",
-            "shac_home_organisation": shac_home_organisation_00
+            "shac_home_organisation": shac_home_organisation_00,
+            "identifier": "f4585521-07f0-413c-9f70-ec9f7013b2a6"
         },
         {
             "name": "School 4 US",
@@ -29,7 +29,8 @@ def demo_seed(db):
             "description": "A school for everybody",
             "logo": "org_02.jpg",
             "category": "University",
-            "shac_home_organisation": shac_home_organisation_01
+            "shac_home_organisation": shac_home_organisation_01,
+            "identifier": "fef3f1a3-f981-44f1-b31c-6b352e9d6826"
         }
     ]
 
@@ -38,7 +39,7 @@ def demo_seed(db):
         new_org = Organisation(
             name=org['name'],
             description=org['description'],
-            identifier=str(uuid.uuid4()),
+            identifier=org['identifier'],
             created_by="urn:admin",
             updated_by="urn:admin",
             short_name=org['short_name'],
@@ -215,7 +216,8 @@ def demo_seed(db):
             "organisation": org_list[0],
             "services": [service_list[0], service_list[1]],
             "tags": [tag_list[0]],
-            "users": [user_list[0], user_list[1]]
+            "users": [user_list[0], user_list[1]],
+            "identifier": "e7f654c1-5ea8-4766-9d00-63cb029805bc"
         },
         {
             "name": "Genomics Group",
@@ -225,14 +227,15 @@ def demo_seed(db):
             "organisation": org_list[1],
             "services": [service_list[0], service_list[1]],
             "tags": [tag_list[1]],
-            "users": user_list
+            "users": user_list,
+            "identifier": "57b7e3bc-954f-4975-8748-89922aa3386a"
         },
     ]
 
     for collab in collaborations:
         new_collab = Collaboration(
             name=collab['name'],
-            identifier=str(uuid.uuid4()),
+            identifier=collab['identifier'],
             global_urn=f"ucc:{collab['short_name']}",
             description=collab['description'],
             logo=read_image(collab['logo'], directory="demo_images"),
@@ -266,11 +269,13 @@ def demo_seed(db):
                 "name": "Student",
                 "short_name": "students",
                 "auto_provision": True,
+                "identifier": "f38d0cb4-ca37-4f40-9c05-4c8427397965"
             },
             {
                 "name": "Teacher",
                 "short_name": "teacher",
                 "auto_provision": False,
+                "identifier": "1d8c60be-7467-405f-9dfe-2e32b850cbe9"
             },
         ]
 
@@ -279,7 +284,7 @@ def demo_seed(db):
                 name=group['name'],
                 short_name=group['short_name'],
                 global_urn=f"uuc:{collab['short_name']}:{group['short_name']}",
-                identifier=str(uuid.uuid4()),
+                identifier=group['identifier'],
                 auto_provision_members=group['auto_provision'],
                 description=f"{group['name']} users group",
                 collaboration=new_collab,
