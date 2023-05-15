@@ -51,11 +51,16 @@
 span.contains-copy {
     display: flex;
 
-    span.copy-link {
+    a.copy-link {
         cursor: pointer;
+        color: black;
+        font-weight: normal;
+        margin-right: 3px;
+        display: inline-block;
 
         &:hover {
             color: $medium-blue;
+            text-decoration: none;
         }
 
         &.copied {
