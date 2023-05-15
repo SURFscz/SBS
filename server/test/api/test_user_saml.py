@@ -81,7 +81,7 @@ class TestUserSaml(AbstractTest):
 
     def test_proxy_authz_no_aup(self):
         network_service = Service.query.filter(Service.entity_id == service_network_entity_id).one()
-        network_service.non_member_users_access_allowed
+        network_service.non_member_users_access_allowed = True
         self.save_entity(network_service)
 
         self.login_user_2fa("urn:jane")
