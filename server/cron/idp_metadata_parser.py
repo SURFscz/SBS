@@ -1,4 +1,3 @@
-
 import logging
 import time
 import xml.etree.ElementTree as ET
@@ -16,13 +15,18 @@ def parse_idp_metadata(app):
 
     metadata = app.app_config.metadata
     pre = request.urlopen(metadata.idp_url)
-    results = {}
+    results_by_scope = {}
+    results_by_entity_id = {}
     display_name_nl = display_name_en = None
     scopes = []
     for event, element in ET.iterparse(pre, events=("start", "end")):
         if "}" in element.tag:
             element.tag = element.tag.split("}", 1)[1]
-        if event == "start" and element.tag == "Scope":
+        if event == "start" and element.tag == "EntityDescriptor":
+            stripped_attribs = {k.split("}", 1)[1]: v for k, v in element.attrib.items() if "}" in k}
+            # better safe then sorry - namespaces can change
+            entity_id = {**stripped_attribs, **element.attrib}.get("entityID")
+        elif event == "start" and element.tag == "Scope":
             scope = element.text
             if scope is not None and len(scope.strip()) > 0:
                 scopes.append(scope)
@@ -38,8 +42,9 @@ def parse_idp_metadata(app):
 
         elif event == "end" and element.tag == "EntityDescriptor" and (display_name_nl or display_name_en):
             for scope in scopes:
-                results[scope] = {"nl": display_name_nl or display_name_en,
-                                  "en": display_name_en or display_name_nl}
+                results_by_scope[scope] = {"nl": display_name_nl or display_name_en,
+                                           "en": display_name_en or display_name_nl}
+            results_by_entity_id[entity_id] = scopes
             display_name_nl = display_name_en = None
             scopes = []
 
@@ -47,11 +52,19 @@ def parse_idp_metadata(app):
     logger.info(f"Finished running parse_idp_metadata job in {end - start} ms")
 
     global idp_metadata
-    idp_metadata = results
+    idp_metadata = {"schac_home_organizations": results_by_scope, "entity_ids": results_by_entity_id}
 
 
 def idp_display_name(schac_home_organization, lang="en", use_default=True):
     if not idp_metadata:
         parse_idp_metadata(current_app)
-    names = idp_metadata.get(schac_home_organization, {"en": schac_home_organization if use_default else None})
+    names = idp_metadata["schac_home_organizations"].get(schac_home_organization,
+                                                         {"en": schac_home_organization if use_default else None})
     return names.get(lang, names["en"])
+
+
+def idp_schac_home_by_entity_id(entity_id):
+    if not idp_metadata:
+        parse_idp_metadata(current_app)
+    scopes = idp_metadata["entity_ids"].get(entity_id, [entity_id])
+    return scopes[0]

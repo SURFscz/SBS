@@ -1,5 +1,5 @@
 
-from server.cron.idp_metadata_parser import idp_display_name
+from server.cron.idp_metadata_parser import idp_display_name, idp_schac_home_by_entity_id
 from server.test.abstract_test import AbstractTest
 
 
@@ -21,5 +21,15 @@ class TestIdpMetadataParser(AbstractTest):
         display_none = idp_display_name("nope", lang="en", use_default=False)
         self.assertIsNone(display_none)
 
+        schac_home = idp_schac_home_by_entity_id("https://signon.rug.nl/nidp/saml2/metadata")
+        self.assertEqual("rug.nl", schac_home)
+
+        schac_home = idp_schac_home_by_entity_id("nope")
+        self.assertEqual("nope", schac_home)
+
+        schac_home = idp_schac_home_by_entity_id(None)
+        self.assertIsNone(schac_home)
+
         from server.cron.idp_metadata_parser import idp_metadata
-        self.assertTrue(len(idp_metadata) > 300)
+        self.assertTrue(len(idp_metadata["schac_home_organizations"]) > 300)
+        self.assertTrue(len(idp_metadata["entity_ids"]) > 200)
