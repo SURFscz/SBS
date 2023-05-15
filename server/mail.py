@@ -90,7 +90,7 @@ def _do_send_mail(subject, recipients, template, context, preview, working_outsi
                       "X-Auto-Response-Suppress": "yes",
                       "Precedence": "bulk"
                   })
-    if attachment_url:
+    if attachment_url and not os.environ.get("TESTING"):
         image = attachment_url[attachment_url.rindex('/') + 1:]
         file_name = f"{image}.jpeg"
         data = requests.get(attachment_url).content
