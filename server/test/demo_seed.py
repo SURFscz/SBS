@@ -1,4 +1,5 @@
 #!/opt/sbs/sbs-env/bin/python
+import uuid
 
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
     CollaborationMembership, Group, SchacHomeOrganisation, SshKey, ServiceGroup, \
@@ -269,13 +270,13 @@ def demo_seed(db):
                 "name": "Student",
                 "short_name": "students",
                 "auto_provision": True,
-                "identifier": "f38d0cb4-ca37-4f40-9c05-4c8427397965"
+                "identifier": str(uuid.uuid4())
             },
             {
                 "name": "Teacher",
                 "short_name": "teacher",
                 "auto_provision": False,
-                "identifier": "1d8c60be-7467-405f-9dfe-2e32b850cbe9"
+                "identifier": str(uuid.uuid4())
             },
         ]
 
