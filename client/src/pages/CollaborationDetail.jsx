@@ -4,6 +4,7 @@ import {
     collaborationAccessAllowed,
     collaborationById,
     collaborationByIdentifier,
+    collaborationIdByIdentifier,
     collaborationLiteById,
     createCollaborationMembershipRole,
     deleteCollaborationMembership,
@@ -48,6 +49,7 @@ import UserTokens from "../components/redesign/UserTokens";
 import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
 import ClipBoardCopy from "../components/redesign/ClipBoardCopy";
 import {CopyToClipboard} from "react-copy-to-clipboard";
+import {isUuid4} from "../validations/regExps";
 
 class CollaborationDetail extends React.Component {
 
@@ -89,8 +91,8 @@ class CollaborationDetail extends React.Component {
             s.actions = [];
         });
         const params = this.props.match.params;
-        if (params.id) {
-            const {collaboration} = this.state;
+        const {collaboration} = this.state;
+        if (params.id && collaboration) {
             [`collaboration_${collaboration.id}`, "service", `organisation_${collaboration.organisation_id}`]
                 .forEach(topic => socket.then(s => s.off(topic)));
         }
@@ -117,6 +119,13 @@ class CollaborationDetail extends React.Component {
                 });
             }).catch(() => this.props.history.push(`/404?eo=${ErrorOrigins.invitationNotFound}`));
         } else if (params.id) {
+            if (isUuid4(params.id)) {
+                collaborationIdByIdentifier(params.id).then(res => {
+                    const path = encodeURIComponent(`/collaborations/${res.id}`);
+                    this.props.history.push(`/refresh-route/${path}`);
+                });
+                return;
+            }
             const collaboration_id = parseInt(params.id, 10);
             collaborationAccessAllowed(collaboration_id)
                 .then(json => {

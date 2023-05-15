@@ -40,3 +40,9 @@ export const sanitizeTagName = tagName => {
 
 export const CO_SHORT_NAME = "{co_short_name}";
 export const SRAM_USERNAME = "{username}";
+
+const uuid4RegExp = /[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}/
+
+export const isUuid4 = value => {
+    return value && uuid4RegExp.test(value);
+}
