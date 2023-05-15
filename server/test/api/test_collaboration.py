@@ -784,6 +784,11 @@ class TestCollaboration(AbstractTest):
         self.assertIsNone(coll.expiry_date)
         self.assertTrue(coll.last_activity_date > datetime.datetime.now() - datetime.timedelta(hours=1))
 
+    def test_id_by_identifier(self):
+        res = self.get("/api/collaborations/id_by_identifier",
+                       query_data={"identifier": collaboration_ai_computing_uuid})
+        self.assertIsNotNone(res["id"])
+
     def test_find_by_identifier_api(self):
         res = self.get(f"/api/collaborations/v1/{collaboration_ai_computing_uuid}",
                        headers={"Authorization": f"Bearer {uuc_secret}"},

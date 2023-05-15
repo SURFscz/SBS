@@ -319,6 +319,10 @@ export function collaborationByIdentifier(identifier) {
     return fetchJson(`/api/collaborations/find_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
 }
 
+export function collaborationIdByIdentifier(identifier) {
+    return fetchJson(`/api/collaborations/id_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
+}
+
 export function collaborationAccessAllowed(id) {
     return fetchJson(`/api/collaborations/access_allowed/${id}`, {}, {}, false);
 }

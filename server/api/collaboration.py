@@ -77,6 +77,18 @@ def collaboration_admins(service_id):
     return {c.name: c.admin_emails() for c in unique_model_objects(collaborations)}, 200
 
 
+@collaboration_api.route("/id_by_identifier", strict_slashes=False)
+@json_endpoint
+def id_by_identifier():
+    identifier = query_param("identifier")
+    coll = Collaboration.query \
+        .options(load_only(Collaboration.id)) \
+        .filter(Collaboration.identifier == identifier) \
+        .one()
+
+    return coll, 200
+
+
 @collaboration_api.route("/find_by_identifier", strict_slashes=False)
 @json_endpoint
 def collaboration_by_identifier():
@@ -238,7 +250,8 @@ def collaboration_search():
             sql = sql.bindparams(bindparam("q", type_=String))
         with db.engine.connect() as conn:
             result_set = conn.execute(sql, {"q": f"{q}*"}) if not_wild_card else conn.execute(sql)
-            res = [{"id": row[0], "name": row[1], "description": row[2], "organisation_id": row[3]} for row in result_set]
+            res = [{"id": row[0], "name": row[1], "description": row[2], "organisation_id": row[3]} for row in
+                   result_set]
     return res, 200
 
 
