@@ -10,6 +10,7 @@ from server.api.service_aups import has_agreed_with
 from server.auth.mfa import mfa_idp_allowed, surf_secure_id_required, has_valid_mfa
 from server.auth.security import confirm_read_access
 from server.auth.user_claims import user_memberships, collaboration_memberships_for_service, co_tags
+from server.cron.idp_metadata_parser import idp_schac_home_by_entity_id
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, PROXY_AUTHZ, PROXY_AUTHZ_SBS
 from server.db.domain import User, Service
@@ -228,7 +229,7 @@ def proxy_authz():
     # These are optional; they are only used to check for logins that should do SSID-SFO
     # If the proxy doesn't send these, we can safely assume the user shouldn't be sent to SSID
     home_organisation_uid = json_dict.get("uid", None)
-    schac_home_organisation = json_dict.get("homeorganization", None)
+    schac_home_organisation = json_dict.get("homeorganization", idp_schac_home_by_entity_id(issuer_id))
 
     logger = ctx_logger("user_api")
     logger.debug(f"proxy_authz called with {json_dict}")
