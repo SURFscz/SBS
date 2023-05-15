@@ -31,7 +31,7 @@ def _do_get2fa(schac_home_organisation, user_identifier):
     buffered = BytesIO()
     img.save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue()).decode()
-    idp_name = idp_display_name(schac_home_organisation, "en", use_default=False)
+    idp_name = idp_display_name(schac_home_organisation, "en", use_default=True)
     return {"qr_code_base64": img_str, "secret": secret, "idp_name": idp_name}, 200
 
 
