@@ -1950,7 +1950,7 @@ const en = {
             step: "Stap {{nbr}}",
             getApp: "1. Add SURF Research Access Management to your authenticator app",
             unknownIdp: "your institution",
-            unknownFeedbackIdp: "mine institution",
+            unknownFeedbackIdp: "my institution",
             getAppUpdate: "2. Add SURF Research Access Management to your authenticator app",
             new: "new ",
             getAppInfo: "Open or install the Google (<a href=\"https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en&gl=US\" target=\"_blank\">Android</a> of <a href=\"https://apps.apple.com/us/app/google-authenticator/id388497605\" target=\"_blank\">iOS</a>) of Microsoft (<a href=\"https://play.google.com/store/apps/details?id=com.azure.authenticator&hl=en&gl=US\" target=\"_blank\">Android</a> of <a href=\"https://apps.apple.com/us/app/microsoft-authenticator/id983156458\" target=\"_blank\">iOS</a>) Authenticator app on your {{new}}mobile device",

@@ -1821,7 +1821,6 @@ const nl = {
         stats: {
             loading: "Loading, please wait..."
         }
-
     },
     access: {
         full: "Volledige",
@@ -2237,7 +2236,6 @@ const nl = {
         upload: "Upload je eigen logo",
         select: "Of selecteer een logo"
     }
-
 };
 
 export default nl;
