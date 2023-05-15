@@ -4,6 +4,7 @@ import os
 import uuid
 from threading import Thread
 
+import requests
 from flask import current_app, render_template
 from flask_mail import Message
 
@@ -68,7 +69,8 @@ def _user_attributes(user: User):
     }
 
 
-def _do_send_mail(subject, recipients, template, context, preview, working_outside_of_request_context=False, cc=None):
+def _do_send_mail(subject, recipients, template, context, preview, working_outside_of_request_context=False, cc=None,
+                  attachment_url=None):
     recipients = recipients if isinstance(recipients, list) else list(
         map(lambda x: x.strip(), recipients.split(",")))
 
@@ -88,6 +90,11 @@ def _do_send_mail(subject, recipients, template, context, preview, working_outsi
                       "X-Auto-Response-Suppress": "yes",
                       "Precedence": "bulk"
                   })
+    if attachment_url:
+        image = attachment_url[attachment_url.rindex('/') + 1:]
+        file_name = f"{image}.jpeg"
+        data = requests.get(attachment_url).content
+        msg.attach(file_name, "image/jpeg", data, "inline", headers=[["Content-ID", "<logo>"], ])
     msg.html = msg_html
     msg.body = msg_body
     msg.msgId = f"<{str(uuid.uuid4())}@{os.uname()[1]}.internal.sram.surf.nl>".replace("-", ".")
@@ -193,18 +200,19 @@ def mail_collaboration_invitation(context, collaboration, recipients, preview=Fa
     if not preview:
         _store_mail(None, COLLABORATION_INVITATION_MAIL, recipients)
     invitation = context["invitation"]
-    # TODO https://stackoverflow.com/questions/55271348/sending-email-with-inline-images-flask-mail
     message = invitation.message.replace("\n", "<br/>") if invitation.message else None
     context = {**context, "expiry_period": calculate_expiry_period(invitation),
-               "collaboration": collaboration, "organisation_img_link": collaboration.organisation.logo,
-               "message": message}
+               "collaboration": collaboration, "message": message}
 
     return _do_send_mail(
         subject=f"Invitation to join collaboration {collaboration.name}",
         recipients=recipients,
         template="collaboration_invitation",
         context=context,
-        preview=preview
+        preview=preview,
+        working_outside_of_request_context=False,
+        cc=None,
+        attachment_url=collaboration.organisation.logo
     )
 
 
