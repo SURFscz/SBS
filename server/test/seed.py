@@ -243,7 +243,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     sarah_other_user_ip_network = UserIpNetwork(network_value="255.0.0.9/24", user=sarah)
     persist_instance(db, sarah_user_ip_network, sarah_other_user_ip_network)
 
-    uuc = Organisation(name=uuc_name, short_name="uuc", identifier=str(uuid.uuid4()),
+    uuc = Organisation(name=uuc_name, short_name="uuc", identifier="95306a5f-0a16-4461-b358-8442e09dab20",
                        description="Unincorporated Urban Community", logo=read_image("uuc.jpeg"),
                        created_by="urn:admin", updated_by="urnadmin", category="Research",
                        on_boarding_msg="We are using **SRAM** to provide access to the following research tools:"
@@ -251,10 +251,12 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                        "collaborations, please send a mail to [support@uuc.nl](mailto:support@uuc.nl)."
                                        "\n<br/><br/>\nHappy researching,\n\n*UUC support*",
                        collaboration_creation_allowed=True)
-    uva = Organisation(name=amsterdam_uva_name, description="University of Amsterdam", identifier=str(uuid.uuid4()),
+    uva = Organisation(name=amsterdam_uva_name, description="University of Amsterdam",
+                       identifier="7c60a022-ab09-438c-8603-c361bc1a088d",
                        created_by="urn:admin", updated_by="urn:admin", short_name="uva", logo=read_image("uva.jpg"),
                        category="University")
-    tue = Organisation(name=tue_name, description="University of Eindhoven", identifier=str(uuid.uuid4()),
+    tue = Organisation(name=tue_name, description="University of Eindhoven",
+                       identifier="65fadfcb-71fd-4962-8428-0ecd15970f8d",
                        created_by="urn:admin", updated_by="urn:admin", short_name="tue", logo=read_image("tue.jpeg"),
                        category="University")
     persist_instance(db, uuc, uva, tue)
@@ -485,7 +487,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                  join_requests=[], invitations=[],
                                  disclose_member_information=True)
     uuc_teachers = Collaboration(name=uuc_teachers_name,
-                                 identifier=str(uuid.uuid4()),
+                                 identifier="033cbc91-45ed-4020-bf86-3cc323e1f1cf",
                                  global_urn=f"ucc:{uuc_teachers_name}",
                                  website_url="https://www.google.nl",
                                  description="UUC Teachers",
@@ -500,7 +502,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                              global_urn="uva:uu_short",
                                              website_url="https://www.google.nl",
                                              logo=read_image("uu.png"),
-                                             identifier=str(uuid.uuid4()),
+                                             identifier="568eed02-0e46-48ab-83fe-116d2a8a58c5",
                                              description="UU",
                                              disable_join_requests=True,
                                              organisation=uva,
@@ -550,7 +552,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     group_science = Group(name=group_science_name,
                           short_name="science",
                           global_urn="uva:research:science",
-                          identifier=str(uuid.uuid4()),
+                          identifier="e46e388c-9362-4aaa-b23f-a855bf559598",
                           auto_provision_members=True,
                           description="Science",
                           collaboration=uva_research,
@@ -559,7 +561,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     group_service_mail = Group(name=service_group_mail_name,
                                short_name="mail-mail",
                                global_urn="uuc:ai_computing:mail-mail",
-                               identifier=str(uuid.uuid4()),
+                               identifier="9946ca40-2a53-40a8-bc63-fb0758e716e3",
                                auto_provision_members=False,
                                description="Provisioned by service Mail Services - Mail group",
                                collaboration=uva_research,
