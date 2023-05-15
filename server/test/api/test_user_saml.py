@@ -80,6 +80,10 @@ class TestUserSaml(AbstractTest):
                          + "&entity_id=https%3A%2F%2Fmail&issuer_id=issuer.com&user_id=urn%3Asarah")
 
     def test_proxy_authz_no_aup(self):
+        network_service = Service.query.filter(Service.entity_id == service_network_entity_id).one()
+        network_service.non_member_users_access_allowed
+        self.save_entity(network_service)
+
         self.login_user_2fa("urn:jane")
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:jane", "service_id": service_network_entity_id,
