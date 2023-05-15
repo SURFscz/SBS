@@ -882,7 +882,7 @@ const nl = {
         compliancy: "Dienst compliancy",
         compliancyShort: "Compliancy",
         compliancySeparator: "en",
-        none: "Nooit",
+        none: "Geen",
         contact: "Dienstcontactpersoon",
         titleNew: "Dienst toevoegen",
         titleUpdate: "Dienst {{name}} wijzigen",
