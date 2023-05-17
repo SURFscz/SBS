@@ -3,6 +3,7 @@ import {
     allServiceConnectionRequests,
     createServiceMembershipRole,
     deleteServiceMembership,
+    hasMemberAccessToService,
     health,
     searchOrganisations,
     serviceById,
@@ -64,6 +65,7 @@ class ServiceDetail extends React.Component {
             confirmationHeader: null,
             isWarning: false,
             showServiceAdminView: false,
+            memberAccessToService: false,
             socketSubscribed: false
         };
     }
@@ -139,6 +141,12 @@ class ServiceDetail extends React.Component {
             userTokens: userTokens,
             tab: tab,
             loading: false
+        }, () => {
+            if (service.token_enabled) {
+                hasMemberAccessToService(service).then(res => {
+                    this.setState({memberAccessToService: res});
+                })
+            }
         });
     }
 
@@ -310,8 +318,8 @@ class ServiceDetail extends React.Component {
     getAboutTab = service => {
         return (<div key="about" name="about" label={I18n.t("home.tabs.about")} icon={<AboutIcon/>}>
             <AboutService service={service}
-                                tabChanged={this.tabChanged}
-                                {...this.props} />
+                          tabChanged={this.tabChanged}
+                          {...this.props} />
         </div>);
     }
 
@@ -449,7 +457,7 @@ class ServiceDetail extends React.Component {
     render() {
         const {
             service, loading, tab, firstTime, showServiceAdminView, serviceConnectionRequests,
-            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, organisations,
+            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, organisations, memberAccessToService,
             confirmationDialogQuestion, confirmationTxt, confirmationHeader, isWarning, lastAdminWarning, userTokens
         } = this.state;
         if (loading) {
@@ -476,7 +484,7 @@ class ServiceDetail extends React.Component {
         if (!userServiceAdmin) {
             tabs.push(this.getAboutTab(service));
         }
-        if (service.token_enabled) {
+        if (service.token_enabled && memberAccessToService) {
             tabs.push(this.getUserTokensTab(userTokens, service));
         }
         const serviceAccessLinks = [];

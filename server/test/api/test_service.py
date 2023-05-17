@@ -451,7 +451,19 @@ class TestService(AbstractTest):
         self.assertEqual("help@wiki.com", res["service_emails"][str(wiki_id)][0])
 
     def test_service_by_uuid4_forbidden(self):
-        cloud = self.find_entity_by_name(Service, service_ssh_uva_name)
+        service_ssh_uva = self.find_entity_by_name(Service, service_ssh_uva_name)
         self.login("urn:peter")
-        self.get("/api/services/find_by_uuid4", query_data={"uuid4": cloud.uuid4}, with_basic_auth=False,
+        self.get("/api/services/find_by_uuid4", query_data={"uuid4": service_ssh_uva.uuid4}, with_basic_auth=False,
                  response_status_code=403)
+
+    def test_has_no_member_access_to_service(self):
+        cloud = self.find_entity_by_name(Service, service_cloud_name)
+        self.login("urn:james")
+        has_access = self.get(f"/api/services/member_access_to_service/{cloud.id}", with_basic_auth=False)
+        self.assertFalse(has_access)
+
+    def test_has_member_access_to_service(self):
+        service_network = self.find_entity_by_name(Service, service_network_name)
+        self.login("urn:jane")
+        has_access = self.get(f"/api/services/member_access_to_service/{service_network.id}", with_basic_auth=False)
+        self.assertTrue(has_access)
