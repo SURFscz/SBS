@@ -25,7 +25,7 @@ class TestIdpMetadataParser(AbstractTest):
         self.assertEqual("rug.nl", schac_home)
 
         schac_home = idp_schac_home_by_entity_id("nope")
-        self.assertEqual("nope", schac_home)
+        self.assertIsNone(schac_home)
 
         schac_home = idp_schac_home_by_entity_id(None)
         self.assertIsNone(schac_home)

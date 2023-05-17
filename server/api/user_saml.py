@@ -282,7 +282,7 @@ def proxy_authz():
         eppn_scope = current_app.app_config.eppn_scope.strip()
         if home_organisation_uid:
             authorized_user.home_organisation_uid = home_organisation_uid
-        if schac_home_organisation:
+        if schac_home_organisation and not authorized_user.schac_home_organisation:
             authorized_user.schac_home_organisation = schac_home_organisation
         db.session.merge(authorized_user)
         db.session.commit()
