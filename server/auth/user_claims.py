@@ -61,13 +61,14 @@ def add_user_claims(user_info_json, uid, user, replace_none_values=True):
     if not user.name:
         name = " ".join(list(filter(lambda x: x, [user.given_name, user.family_name]))).strip()
         user.name = name if name else uid
-    if "voperson_external_id" in user_info_json and user_info_json["voperson_external_id"]:
-        voperson_external_id = user_info_json["voperson_external_id"]
-        val = voperson_external_id[0] if isinstance(voperson_external_id, list) else voperson_external_id
-        if "@" in val:
-            schac_home = re.split("@", val)[-1]
-            if schac_home:
-                user.schac_home_organisation = schac_home
+    for attr in ["voperson_external_id", "voperson_external_affiliation"]:
+        if attr in user_info_json and user_info_json[attr]:
+            attr_value = user_info_json[attr]
+            val = attr_value[0] if isinstance(attr_value, list) else attr_value
+            if "@" in val:
+                schac_home = re.split("@", val)[-1]
+                if schac_home:
+                    user.schac_home_organisation = schac_home
     if not user.username:
         user.username = generate_unique_username(user)
     if not user.external_id:
