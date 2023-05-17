@@ -76,6 +76,21 @@ def services_from_organisation_memberships(user_id, service_id=None, count_only=
     return _services_from_query(count_only, query, service_id)
 
 
+def member_access_to_service(service_id):
+    user_id = current_user_id()
+    count = services_from_collaboration_memberships(user_id, service_id, True)
+    if count > 0:
+        return True
+    count = services_from_organisation_collaboration_memberships(user_id, service_id, True)
+    if count > 0:
+        return True
+    count = services_from_organisation_memberships(user_id, service_id, True)
+    if count > 0:
+        return True
+    service = Service.query.filter(Service.id == service_id).one()
+    return service.non_member_users_access_allowed
+
+
 def user_service(service_id, view_only=True):
     # Every service may be seen by organisation admin, service admin, manager or coll admin
     if is_service_admin(service_id) or is_application_admin():
@@ -84,21 +99,7 @@ def user_service(service_id, view_only=True):
     if view_only and (is_collaboration_admin() or is_organisation_admin_or_manager()):
         return True
 
-    user_id = current_user_id()
-    count = services_from_collaboration_memberships(user_id, service_id, True)
-    if count > 0:
-        return True
-
-    count = services_from_organisation_collaboration_memberships(user_id, service_id, True)
-    if count > 0:
-        return True
-
-    count = services_from_organisation_memberships(user_id, service_id, True)
-    if count > 0:
-        return True
-
-    service = Service.query.filter(Service.id == service_id).one()
-    return service.non_member_users_access_allowed
+    return member_access_to_service(service_id)
 
 
 def _do_get_services(restrict_for_current_user=False, include_counts=False):
@@ -258,6 +259,13 @@ def service_by_uuid4():
             collaborations.append(cm.collaboration)
 
     return {"service": service, "collaborations": collaborations, "service_emails": service_emails}, 200
+
+
+@service_api.route("/member_access_to_service/<service_id>", strict_slashes=False)
+@json_endpoint
+def has_member_access_to_service(service_id):
+    has_access = member_access_to_service(int(service_id))
+    return has_access, 200
 
 
 @service_api.route("/<service_id>", strict_slashes=False)
