@@ -50,6 +50,11 @@ class TestUserClaims(AbstractTest):
         add_user_claims(user_info_json, "urn:new_user", user)
         self.assertEqual("rug", user.schac_home_organisation)
 
+    def test_add_user_claims_external_affiliation(self):
+        user = User()
+        add_user_claims({"voperson_external_affiliation": "teacher@university"}, "urn:johny", user)
+        self.assertEqual("university", user.schac_home_organisation)
+
     def test_add_user_claims_empty_entitlements(self):
         user = User()
         add_user_claims({"eduperson_entitlement": []}, "urn:johny", user)
