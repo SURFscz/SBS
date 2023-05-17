@@ -40,7 +40,7 @@ class TestUserSaml(AbstractTest):
 
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:jane", "service_id": service_network_entity_id,
-                              "issuer_id": "issuer.com", "uid": "sarah"})
+                              "issuer_id": "https://signon.rug.nl/nidp/saml2/metadata", "uid": "sarah"})
         attrs = res["attributes"]
         entitlements = attrs["eduPersonEntitlement"]
         self.assertListEqual(["urn:example:sbs:group:uuc",
@@ -53,13 +53,13 @@ class TestUserSaml(AbstractTest):
         self.assertEqual(0, len(attrs["sshkey"]))
 
         jane = self.find_entity_by_name(User, jane_name)
-        self.assertEqual("issuer.com", jane.schac_home_organisation)
+        self.assertEqual("rug.nl", jane.schac_home_organisation)
         second_fa_uuid = str(uuid.uuid4())
         jane.second_fa_uuid = second_fa_uuid
         self.save_entity(jane)
 
         res = self.get("/api/mfa/get2fa_proxy_authz", query_data={"second_fa_uuid": second_fa_uuid})
-        self.assertEqual("issuer.com", res["idp_name"])
+        self.assertEqual("University of Groningen", res["idp_name"])
 
     def test_proxy_authz_suspended(self):
         self.mark_user_suspended(john_name)
