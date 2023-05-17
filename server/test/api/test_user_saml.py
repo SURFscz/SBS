@@ -1,3 +1,4 @@
+import uuid
 from urllib.parse import urlencode
 
 from server.api.user_saml import SERVICE_UNKNOWN, USER_UNKNOWN, SERVICE_NOT_CONNECTED, SECOND_FA_REQUIRED, \
@@ -7,7 +8,7 @@ from server.db.defaults import STATUS_EXPIRED
 from server.db.domain import Collaboration, Service, User, UserLogin
 from server.test.abstract_test import AbstractTest
 from server.test.seed import john_name, service_network_entity_id, service_mail_entity_id, \
-    ai_computing_name, sarah_name, service_mail_name
+    ai_computing_name, sarah_name, service_mail_name, jane_name
 
 
 class TestUserSaml(AbstractTest):
@@ -39,7 +40,7 @@ class TestUserSaml(AbstractTest):
 
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:jane", "service_id": service_network_entity_id,
-                              "issuer_id": "issuer.com", "uid": "sarah", "homeorganization": "example.com"})
+                              "issuer_id": "https://signon.rug.nl/nidp/saml2/metadata", "uid": "sarah"})
         attrs = res["attributes"]
         entitlements = attrs["eduPersonEntitlement"]
         self.assertListEqual(["urn:example:sbs:group:uuc",
@@ -50,6 +51,15 @@ class TestUserSaml(AbstractTest):
         self.assertListEqual(["jane@test.sram.surf.nl"], attrs["eduPersonPrincipalName"])
         self.assertListEqual(["jane"], attrs["uid"])
         self.assertEqual(0, len(attrs["sshkey"]))
+
+        jane = self.find_entity_by_name(User, jane_name)
+        self.assertEqual("rug.nl", jane.schac_home_organisation)
+        second_fa_uuid = str(uuid.uuid4())
+        jane.second_fa_uuid = second_fa_uuid
+        self.save_entity(jane)
+
+        res = self.get("/api/mfa/get2fa_proxy_authz", query_data={"second_fa_uuid": second_fa_uuid})
+        self.assertEqual("University of Groningen", res["idp_name"])
 
     def test_proxy_authz_suspended(self):
         self.mark_user_suspended(john_name)
@@ -80,6 +90,10 @@ class TestUserSaml(AbstractTest):
                          + "&entity_id=https%3A%2F%2Fmail&issuer_id=issuer.com&user_id=urn%3Asarah")
 
     def test_proxy_authz_no_aup(self):
+        network_service = Service.query.filter(Service.entity_id == service_network_entity_id).one()
+        network_service.non_member_users_access_allowed = True
+        self.save_entity(network_service)
+
         self.login_user_2fa("urn:jane")
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:jane", "service_id": service_network_entity_id,
