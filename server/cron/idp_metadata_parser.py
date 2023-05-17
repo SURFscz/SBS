@@ -66,5 +66,5 @@ def idp_display_name(schac_home_organization, lang="en", use_default=True):
 def idp_schac_home_by_entity_id(entity_id):
     if not idp_metadata:
         parse_idp_metadata(current_app)
-    scopes = idp_metadata["entity_ids"].get(entity_id, [entity_id])
-    return scopes[0] if scopes else entity_id
+    scopes = idp_metadata["entity_ids"].get(entity_id, [None])
+    return scopes[0] if scopes else None
