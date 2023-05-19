@@ -27,14 +27,14 @@ export const UserMenu = ({currentUser, organisation, config, provideFeedback}) =
                     {currentUser.admin && adminLinks.map(l => <li key={l}>
                         <Link onClick={toggleUserMenu} to={`/${l}`}>{I18n.t(`header.links.${l}`)}</Link>
                     </li>)}
+                    <li>
+                        <Link onClick={toggleUserMenu} to={`/profile`}>{I18n.t(`header.links.profile`)}</Link>
+                    </li>
                     {collMenuItemRequired && <li>
                         <Link onClick={toggleUserMenu} to={`/new-collaboration`}>
                             {I18n.t(`header.links.${collCreateAllowed ? "createCollaboration" : "requestCollaboration"}`)}
                         </Link>
                     </li>}
-                    <li>
-                        <Link onClick={toggleUserMenu} to={`/profile`}>{I18n.t(`header.links.profile`)}</Link>
-                    </li>
                     {config.feedback_enabled && <li>
                         <a href="/feedback" onClick={provideFeedback}>{I18n.t(`header.links.feedback`)}</a>
                     </li>}
