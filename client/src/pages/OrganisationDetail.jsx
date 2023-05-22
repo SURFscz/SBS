@@ -192,7 +192,7 @@ class OrganisationDetail extends React.Component {
     }
 
     getAPIKeysTab = (organisation, user) => {
-        return (<div key="apikeys" name="apikeys"
+        return (<div key="keys" name="keys"
                      label={I18n.t("home.tabs.apikeys", {count: (organisation.api_keys || []).length})}
                      icon={<ApiKeysIcon/>}>
             <ApiKeys {...this.props} organisation={organisation} user={user}
