@@ -50,9 +50,6 @@ class UserInvitation extends React.Component {
         return (
             <section className="step-container">
                 <div className="step">
-                    <div className="circle two-quarters">
-                        <span>{I18n.t("models.invitation.steps.progress", {now: "1", total: "2"})}</span>
-                    </div>
                     <div className="step-actions">
                         <h1>{I18n.t("models.invitation.steps.login")}</h1>
                         <span>{I18n.t("models.invitation.steps.next", {step: nextStep})}</span>
