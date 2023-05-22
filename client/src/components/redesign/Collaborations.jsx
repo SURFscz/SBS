@@ -282,19 +282,20 @@ export default class Collaborations extends React.PureComponent {
                     const lastActivityDate = collaboration.last_activity_date * 1000;
                     const days = Math.round((today - lastActivityDate) / (1000 * 60 * 60 * 24));
                     const warning = days > 275;
-                    const className = collaboration.status === "suspended" ? "suspended" : warning ? "warning" : "";
-                    return <div>
-                        <Tooltip children={<span className={`last-activity-date ${className}`}>
-                                    {displayLastActivityDate(collaboration.last_activity_date)}
-                                </span>}
+                    return (
+                        <Tooltip tip={moment(lastActivityDate).format("LLLL")}
+                                 children={
+                                     collaboration.status === "suspended" ? <div>
+                                         <Chip label={I18n.t("collaboration.lastActivitySuspended")}
+                                               type={ChipType.Status_error}/>
+                                     </div> : <span className={`${warning ? "warning" : ""}`}>
+                                             {displayLastActivityDate(collaboration.last_activity_date)}
+                                         </span>
+                                 }
                                  standalone={true}
-                                 anchorId={`${collaboration.id}-last_activity_date`}
-                                 tip={moment(lastActivityDate).format("LLLL")}>
-                        </Tooltip>
-                        {collaboration.status === "suspended" && <span className="suspended">
-                            {I18n.t("collaboration.lastActivitySuspended")}
-                        </span>}
-                    </div>;
+                                 anchorId={`${collaboration.id}-last_activity_date`}/>
+
+                    );
                 }
             }, {
                 key: "collaboration_memberships_count",
