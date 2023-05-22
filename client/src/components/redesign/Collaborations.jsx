@@ -281,7 +281,7 @@ export default class Collaborations extends React.PureComponent {
                     const today = new Date().getTime();
                     const lastActivityDate = collaboration.last_activity_date * 1000;
                     const days = Math.round((today - lastActivityDate) / (1000 * 60 * 60 * 24));
-                    const warning = days > 60;
+                    const warning = days > 275;
                     const className = collaboration.status === "suspended" ? "suspended" : warning ? "warning" : "";
                     return <div>
                         <Tooltip children={<span className={`last-activity-date ${className}`}>
