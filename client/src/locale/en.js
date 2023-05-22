@@ -751,7 +751,7 @@ const en = {
         },
         expiryDateExpired: "Expired!",
         lastActivityDate: "Last activity",
-        lastActivitySuspended: "Suspended!",
+        lastActivitySuspended: "Suspended",
         expiryDateTooltip: "The expiration date of the collaboration, after which its members can no longer use its services",
         discloseMembers: "Member list visible for all members",
         discloseNoMembers: "Members cannot view the member list",
