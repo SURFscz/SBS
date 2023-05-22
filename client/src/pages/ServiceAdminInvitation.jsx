@@ -78,7 +78,7 @@ class ServiceAdminInvitation extends React.Component {
             <div className="mod-service-admin-invitation">
                 {!errorOccurred &&
                 <div className="invitation-container">
-                    {!isExpired && <h1>Hi,</h1>}
+                    {!isExpired && <h1>{I18n.t("welcomeDialog.hi")}</h1>}
                     {isExpired &&
                     <p className="expired"><ErrorIndicator msg={expiredMessage}/></p>}
                     {!isExpired && <>

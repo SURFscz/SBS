@@ -1846,6 +1846,7 @@ const en = {
     },
     welcomeDialog: {
         title: "Welcome to {{name}}",
+        hi: "Hi,",
         label: "",
         roleServiceAdmin: "You are invited to become a service <strong>admin</strong>",
         roleOrganisationAdmin: "You are invited to become an organisation <strong>admin</strong>",
