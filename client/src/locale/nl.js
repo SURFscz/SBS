@@ -1846,6 +1846,7 @@ const nl = {
     },
     welcomeDialog: {
         title: "Welkom bij {{name}}",
+        hi: "Hi,",
         label: "",
         roleServiceAdmin: "Je bent uitgenodigd om <strong>dienstbeheerder</strong> te worden",
         roleOrganisationAdmin: "Je bent uitgenodigd om <strong>beheerder</strong> te worden",
