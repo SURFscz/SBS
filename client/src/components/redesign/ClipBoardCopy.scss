@@ -8,6 +8,7 @@ section.copy-to-clipboard {
     color: $medium-blue;
     display: flex;
     background-color: white;
+    cursor: pointer;
 
     &.transparent {
         background-color: transparent;
@@ -23,7 +24,6 @@ section.copy-to-clipboard {
 
     svg {
         margin: auto;
-        cursor: pointer;
         width: 32px;
         height: auto;
 
@@ -32,7 +32,7 @@ section.copy-to-clipboard {
         }
     }
 
-    svg.copied {
+    &.copied svg {
         animation: pulse .6s;
         animation-iteration-count: 1;
 
