@@ -90,16 +90,7 @@ class TestServiceConnectionRequest(AbstractTest):
             "service_id": service_id,
             "message": "Pretty please"
         }
-        with self.app.mail.record_messages() as outbox:
-            pre_count = ServiceConnectionRequest.query.count()
-            self.post("/api/service_connection_requests", body=data, with_basic_auth=False)
-            post_count = ServiceConnectionRequest.query.count()
-            self.assertEqual(pre_count + 1, post_count)
-
-            mail_msg = outbox[0]
-            self.assertTrue("You received this email because you are an admin of this collaboration" in mail_msg.html)
-            req = ServiceConnectionRequest.query.filter(ServiceConnectionRequest.service_id == service_id).first()
-            self.assertEqual(True, req.is_member_request)
+        self.post("/api/service_connection_requests", body=data, with_basic_auth=False, response_status_code=403)
 
     def test_existing_service_connection_request(self):
         collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
@@ -179,7 +170,7 @@ class TestServiceConnectionRequest(AbstractTest):
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
         wiki_service = self.find_entity_by_name(Service, service_wiki_name)
 
-        self.login("urn:jane", user_info={"email": "jdoe@ex.com"})
+        self.login("urn:admin", user_info={"email": "jdoe@ex.com"})
         message = str(uuid.uuid4())
         self.post("/api/service_connection_requests",
                   body={"collaboration_id": collaboration.id,

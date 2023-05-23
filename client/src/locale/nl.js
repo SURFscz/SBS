@@ -288,7 +288,7 @@ const nl = {
             awaitingApproval: "Koppeling in afwachting van goedkeuring",
             automaticConnectionAllowed: "Samenwerkingen mogen koppelen zonder toestemming",
             requiredByOrganisation: "Ingeschakeld door organisatie",
-            memberServiceRequest: "Koppelingsverzoek van lid",
+            memberServiceRequest: "Koppelingsverzoek van beheerder",
             removeFromCO: "Ontkoppel van samenwerking",
             deleteConnectionRequest: "Verwijder koppelingsverzoek",
             resendConnectionRequest: "Vernieuw koppelingsverzoek",

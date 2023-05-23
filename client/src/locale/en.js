@@ -288,7 +288,7 @@ const en = {
             awaitingApproval: "Connection awaiting approval",
             automaticConnectionAllowed: "Collaborations can connect without approval",
             requiredByOrganisation: "Enabled by organisation",
-            memberServiceRequest: "Service connection request by a member",
+            memberServiceRequest: "Service connection request by an admin",
             removeFromCO: "Disconnect from collaboration",
             deleteConnectionRequest: "Delete connection request",
             resendConnectionRequest: "Resend connection request",

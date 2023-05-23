@@ -659,7 +659,6 @@ class ServiceConnectionRequest(Base, db.Model):
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     message = db.Column("message", db.Text(), nullable=True)
     hash = db.Column("hash", db.String(length=512), nullable=False)
-    is_member_request = db.Column("is_member_request", db.Boolean(), nullable=True, default=False)
     requester_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     requester = db.relationship("User")
     service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
