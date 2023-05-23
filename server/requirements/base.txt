@@ -13,7 +13,7 @@ munch==3.0.0
 paho-mqtt==1.6.1
 python2-secrets==1.0.5
 pytz==2023.3
-requests==2.30.0
+requests==2.31.0
 uWSGI==2.0.21
 urllib3==2.0.2
 websockets==11.0.3
