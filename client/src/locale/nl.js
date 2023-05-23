@@ -2230,7 +2230,12 @@ const nl = {
     },
     error: {
         message: "Het spijt ons, we zijn tegen een onbekende fout aangelopen.</br>" +
-            "Probeer opnieuw vanaf de <a href='/'>thuispagina</a> of neem contact met ons op via <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
+            "Probeer opnieuw vanaf de <a href='/'>thuispagina</a> of neem contact met ons op via <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>.",
+        ssid_failed: "SURF Research Access Management vereist twee-factor-authenticatie, een extra controle dat jij het bent.</br>" +
+            "Helaas is deze authenticatie door SURF secure ID zojuist mislukt.</br></br>" +
+            "Kopieer en plak de volgende informatie en neem contact op met SRAM support op <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> voor hulp.",
+        defaultCode: "urn:oasis:names:tc:SAML:2.0:status:Responder",
+        defaultMessage: ""
     },
     gallery: {
         upload: "Upload je eigen logo",
