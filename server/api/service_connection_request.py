@@ -1,13 +1,12 @@
-
 from flask import Blueprint, request as current_request, current_app, g as request_context
 from sqlalchemy.orm import contains_eager, load_only
 from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint, emit_socket
 from server.api.collaborations_services import connect_service_collaboration
-from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_write_access, \
-    confirm_collaboration_member, is_service_admin
 from server.auth.secrets import generate_token
+from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_write_access, \
+    is_service_admin
 from server.db.domain import ServiceConnectionRequest, Service, Collaboration, db, User
 from server.db.models import delete
 from server.mail import mail_service_connection_request, mail_accepted_declined_service_connection_request
@@ -88,8 +87,8 @@ def _do_mail_request(collaboration, service, service_connection_request, is_admi
 def service_request_connections_by_service(service_id):
     # Avoid security risk, only return id
     return ServiceConnectionRequest.query.options(load_only(ServiceConnectionRequest.collaboration_id)) \
-                                         .filter(ServiceConnectionRequest.service_id == service_id) \
-                                         .all(), 200
+               .filter(ServiceConnectionRequest.service_id == service_id) \
+               .all(), 200
 
 
 @service_connection_request_api.route("/<service_connection_request_id>", methods=["DELETE"], strict_slashes=False)
