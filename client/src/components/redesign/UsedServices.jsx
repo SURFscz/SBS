@@ -62,15 +62,10 @@ class UsedServices extends React.Component {
             .then(json => {
                 const services = json;
                 const requestedServices = collaboration.service_connection_requests
-                    .filter(r => !r.is_member_request)
-                    .map(r => r.service);
-                const memberRequestedServices = collaboration.service_connection_requests
-                    .filter(r => r.is_member_request)
                     .map(r => r.service);
                 const servicesInUse = collaboration.services
                     .concat(collaboration.organisation.services)
                     .concat(requestedServices)
-                    .concat(memberRequestedServices)
                     .map(e => e.id);
                 const filteredServices = services
                     .filter(service => {
@@ -120,7 +115,7 @@ class UsedServices extends React.Component {
         if (service.usedService && !service.connectionRequest &&
             collaboration.organisation.services.some(s => s.id === service.id)) {
             service.status = I18n.t("models.services.requiredByOrganisation");
-        } else if (service.connectionRequest && service.isMemberRequest) {
+        } else if (service.connectionRequest) {
             service.status = I18n.t("models.services.memberServiceRequest");
         } else if (service.usedService) {
             service.status = service.connectionRequest ? I18n.t("models.services.awaitingApproval") : ""
@@ -308,7 +303,7 @@ class UsedServices extends React.Component {
             collaboration.organisation.services.some(s => s.id === service.id)) {
             return null;
         }
-        if (service.connectionRequest && service.isMemberRequest) {
+        if (service.connectionRequest) {
             return <Button cancelButton={true}
                            onClick={this.openServiceConnectionRequest(service)}
                            txt={I18n.t("forms.open")}/>
@@ -427,24 +422,13 @@ class UsedServices extends React.Component {
         const {collaboration} = this.props;
         let usedServices = collaboration.services.concat(collaboration.organisation.services);
         usedServices = removeDuplicates(usedServices, "id");
-        const serviceConnectionRequests = collaboration.service_connection_requests.filter(r => !r.is_member_request);
+        const serviceConnectionRequests = collaboration.service_connection_requests;
         serviceConnectionRequests.forEach(req => {
             req.connectionRequest = true;
-            req.isMemberRequest = false;
             req.name = req.service.name;
         });
         usedServices = usedServices.concat(serviceConnectionRequests);
         usedServices.forEach(s => s.usedService = true);
-
-        const requestedServices = collaboration.service_connection_requests
-            .filter(r => r.is_member_request)
-            .map(req => {
-                req.connectionRequest = true;
-                req.isMemberRequest = true;
-                req.name = req.service.name;
-                req.logo = req.service.logo;
-                return req;
-            });
 
         const columns = [
             {
@@ -472,7 +456,6 @@ class UsedServices extends React.Component {
                 mapper: this.getServiceAction
             }]
         const titleUsed = I18n.t("models.services.titleUsedColl", {count: usedServices.length});
-        const titleRequested = I18n.t("models.services.titleRequestedColl", {count: requestedServices.length});
         const titleAvailable = I18n.t("models.services.titleAvailableColl", {count: services.length});
         return (
             <div>
@@ -493,14 +476,6 @@ class UsedServices extends React.Component {
                           loading={loading}
                           title={titleUsed}
                           {...this.props}/>
-                {!isEmpty(requestedServices) && <Entities entities={requestedServices}
-                                                          modelName="servicesRequested"
-                                                          searchAttributes={["name"]}
-                                                          defaultSort="name"
-                                                          columns={columns}
-                                                          loading={loading}
-                                                          title={titleRequested}
-                                                          {...this.props}/>}
                 <Entities entities={services}
                           modelName="servicesAvailable"
                           searchAttributes={["name"]}

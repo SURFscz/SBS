@@ -114,17 +114,15 @@ def request_service_connection():
     service = db.session.get(Service, int(data["service_id"]))
     collaboration = db.session.get(Collaboration, int(data["collaboration_id"]))
 
-    confirm_collaboration_member(collaboration.id)
+    confirm_collaboration_admin(collaboration.id)
 
     user = db.session.get(User, current_user_id())
-    is_admin = collaboration.is_admin(user.id)
-
-    request_new_service_connection(collaboration, data.get("message"), is_admin, service, user)
+    request_new_service_connection(collaboration, data.get("message"), service, user)
 
     return {}, 201
 
 
-def request_new_service_connection(collaboration, message, is_admin, service, user):
+def request_new_service_connection(collaboration, message, service, user):
     existing_request = ServiceConnectionRequest.query \
         .filter(ServiceConnectionRequest.collaboration_id == collaboration.id) \
         .filter(ServiceConnectionRequest.service_id == service.id) \
@@ -136,7 +134,6 @@ def request_new_service_connection(collaboration, message, is_admin, service, us
                                                           requester_id=user.id,
                                                           service_id=service.id,
                                                           collaboration_id=collaboration.id,
-                                                          is_member_request=not is_admin,
                                                           created_by=user.uid,
                                                           updated_by=user.uid)
     db.session.merge(service_connection_request)
@@ -145,7 +142,7 @@ def request_new_service_connection(collaboration, message, is_admin, service, us
     emit_socket(f"service_{service.id}")
     emit_socket(f"collaboration_{collaboration.id}")
 
-    _do_mail_request(collaboration, service, service_connection_request, is_admin, user)
+    _do_mail_request(collaboration, service, service_connection_request, True, user)
 
 
 @service_connection_request_api.route("/find_by_hash/<hash_value>", strict_slashes=False)

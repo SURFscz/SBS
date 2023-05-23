@@ -96,7 +96,7 @@ def connect_collaboration_service_api():
         admins = [cm.user for cm in collaboration.collaboration_memberships if cm.role == "admin"]
         if not admins:
             raise BadRequest(f"Collaboration {collaboration.short_name} has no administrator")
-        request_new_service_connection(collaboration, None, True, service, admins[0])
+        request_new_service_connection(collaboration, None, service, admins[0])
         status = "pending"
 
     return {"status": status,

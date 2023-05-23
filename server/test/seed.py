@@ -614,12 +614,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                                                hash=ssh_service_connection_request_hash,
                                                                requester=sarah, collaboration=uva_research,
                                                                service=service_ssh_uva)
-    service_connection_request_wireless = ServiceConnectionRequest(message="AI computing needs wireless",
-                                                                   hash=wireless_service_connection_request_hash,
-                                                                   requester=jane, collaboration=ai_computing,
-                                                                   service=wireless, is_member_request=True)
-    persist_instance(db, service_connection_request_network, service_connection_request_wiki,
-                     service_connection_request_wireless)
+    persist_instance(db, service_connection_request_network, service_connection_request_wiki)
 
     user_token_sarah = UserToken(name="token", description="some", hashed_token=secure_hash(sarah_user_token),
                                  user=sarah, service=network)
