@@ -14,7 +14,11 @@
         padding: 15px;
         p {
             font-size: 18px;
-
+            &.status {
+                font-family: "Courier New", serif;
+                margin: 15px 0;
+                font-weight: bold;
+            }
         }
     }
 }
