@@ -498,8 +498,7 @@ class ServiceOverview extends React.Component {
 
 
     renderButtons = (isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView, createNewServiceToken) => {
-        const {accepted_user_policy, pam_web_sso_enabled, token_enabled, scim_client_enabled, ldap_enabled} = this.state.service;
-        const validAcceptedUserPolicy = validUrlRegExp.test(accepted_user_policy);
+        const {pam_web_sso_enabled, token_enabled, scim_client_enabled, ldap_enabled} = this.state.service;
         const invalidTabsMsg = this.getInvalidTabs();
         return <>
             {((isAdmin || isServiceAdmin) && !createNewServiceToken) &&
@@ -509,10 +508,6 @@ class ServiceOverview extends React.Component {
                     {(isAdmin && currentTab === "general" && !showServiceAdminView) &&
                     <Button warningButton={true}
                             onClick={this.delete}/>}
-                    {currentTab === "policy" &&
-                    <Button txt={I18n.t("service.aup.title")}
-                            disabled={!validAcceptedUserPolicy}
-                            onClick={() => this.resetAups(true)}/>}
                     {(currentTab === "tokens") &&
                     <Button txt={I18n.t("serviceDetails.addToken")}
                             disabled={!token_enabled}
@@ -888,6 +883,7 @@ class ServiceOverview extends React.Component {
     }
 
     renderPolicy = (service, isAdmin, isServiceAdmin, invalidInputs, alreadyExists) => {
+        const validAcceptedUserPolicy = validUrlRegExp.test(service.accepted_user_policy);
         return (
             <div className={"policy"}>
                 <InputField value={service.privacy_policy}
@@ -914,6 +910,9 @@ class ServiceOverview extends React.Component {
                             toolTip={I18n.t("service.accepted_user_policyTooltip")}
                             error={invalidInputs.accepted_user_policy}
                             externalLink={true}
+                            button={<Button txt={I18n.t("service.aup.title")}
+                                            disabled={!validAcceptedUserPolicy}
+                                            onClick={() => this.resetAups(true)}/>}
                             onBlur={this.validateURI("accepted_user_policy")}
                             disabled={!isAdmin && !isServiceAdmin}/>
                 {invalidInputs.accepted_user_policy &&

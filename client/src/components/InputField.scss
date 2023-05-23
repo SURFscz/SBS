@@ -7,6 +7,7 @@
     display: flex;
     position: relative;
     flex-direction: column;
+
     em.file-name {
         margin-bottom: 3px;
         color: $blue;
@@ -73,6 +74,11 @@
 
     div.inner-input-field {
         display: flex;
+
+        button.sds--btn {
+            min-width: 120px;
+            margin-left: 10px;
+        }
     }
 
     section.file-upload-container {
