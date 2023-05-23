@@ -528,7 +528,8 @@ class TestUser(AbstractTest):
                                content_type="application/x-www-form-urlencoded")
 
         self.assertEqual(302, res.status_code)
-        self.assertEqual(self.app.app_config.base_url + "/error", res.location)
+        path = "/error?reason=ssid_failed&code=urn:oasis:names:tc:SAML:2.0:status:Success&msg="
+        self.assertEqual(self.app.app_config.base_url + path, res.location)
 
     def test_acs_error_saml_error(self):
         self.mark_user_ssid_required(name=sarah_name, home_organisation_uid="admin", schac_home_organisation="ssid.org")
@@ -542,4 +543,6 @@ class TestUser(AbstractTest):
                                content_type="application/x-www-form-urlencoded")
 
         self.assertEqual(302, res.status_code)
-        self.assertEqual("http://localhost:3000/error", res.location)
+        path = "/error?reason=ssid_failed&code=urn:oasis:names:tc:SAML:2.0:status:Responder&" \
+               "msg=urn:oasis:names:tc:SAML:2.0:status:NoAuthnContext"
+        self.assertEqual(self.app.app_config.base_url + path, res.location)
