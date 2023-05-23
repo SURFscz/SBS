@@ -33,7 +33,8 @@ export default function InputField({
                                        cols = 5,
                                        maxLength = 255,
                                        onRef = null,
-                                       displayLabel = true
+                                       displayLabel = true,
+                                       button=null
                                    }) {
     placeholder = disabled ? "" : placeholder;
     let className = "sds--text-field--input";
@@ -75,7 +76,7 @@ export default function InputField({
                               }
                           }}
                           placeholder={placeholder} cols={cols}/>}
-
+                {button && button}
                 {copyClipBoard && <ClipBoardCopy txt={value} right={true}/>}
                 {(link && history) && <div className="input-field-link"><FontAwesomeIcon icon="arrow-right"
                                                                                          onClick={() => history.push(link)}/>
