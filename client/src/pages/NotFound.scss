@@ -6,8 +6,12 @@
     width: 100%;
     margin: 40px auto;
 
+    @media (max-width: $tablet-max) {
+        margin: 40px 20px;
+    }
+
     div#lottie {
-        max-width: 600px!important;
+        max-width: 600px !important;
     }
 
     p.not-found-msg {
