@@ -94,7 +94,7 @@ def _do_send_mail(subject, recipients, template, context, preview, working_outsi
         image = attachment_url[attachment_url.rindex('/') + 1:]
         file_name = f"{image}.jpeg"
         data = requests.get(attachment_url).content
-        msg.attach(file_name, "image/jpeg", data, "inline", headers=[["Content-ID", "<logo>"], ])
+        msg.attach(file_name, "image/jpeg", data, "attachment", headers=[["Content-ID", "<logo>"], ])
     msg.html = msg_html
     msg.body = msg_body
     msg.msgId = f"<{str(uuid.uuid4())}@{os.uname()[1]}.internal.sram.surf.nl>".replace("-", ".")
