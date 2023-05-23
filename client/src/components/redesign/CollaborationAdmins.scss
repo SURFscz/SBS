@@ -4,7 +4,6 @@
 .mod-entities {
     div.impersonation {
         display: flex;
-        margin-left: auto;
     }
 
     .admin-actions {
@@ -135,6 +134,7 @@
 
                 &.impersonate {
                     text-align: right;
+                    padding: 0;
                 }
 
                 &.expiry_date {
