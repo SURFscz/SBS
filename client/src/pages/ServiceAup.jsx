@@ -49,7 +49,7 @@ class ServiceAup extends React.Component {
     }
 
     agreeWith = () => {
-        // coninueUrl is checked in componentDidMount().  CodeQL gives a false positive here.
+        // continueUrl is checked in componentDidMount().  CodeQL gives a false positive here.
         const {service, continueUrl} = this.state;
         serviceAupCreate(service).then(() => {
             window.location.href = continueUrl;
