@@ -369,6 +369,16 @@ def redirect_to_client(cfg, second_factor_confirmed, user):
     db.session.commit()
     user_accepted_aup = user.has_agreed_with_aup()
     store_user_in_session(user, second_factor_confirmed, user_accepted_aup)
+
+    status, location = get_redirect(cfg, user_accepted_aup, second_factor_confirmed)
+    logger.debug(f"Redirecting user {user.uid} to {location}")
+
+    log_user_login(SBS_LOGIN, True, user, user.uid, None, None, status=status)
+
+    return redirect(location)
+
+
+def get_redirect(cfg, user_accepted_aup, second_factor_confirmed):
     if not user_accepted_aup:
         location = f"{cfg.base_url}/aup"
         status = "AUP_NOT_AGREED"
@@ -385,11 +395,7 @@ def redirect_to_client(cfg, second_factor_confirmed, user):
         location = cfg.base_url
         status = "BASE_URL"
 
-    logger.debug(f"Redirecting user {user.uid} to {location}")
-
-    log_user_login(SBS_LOGIN, True, user, user.uid, None, None, status=status)
-
-    return redirect(location)
+    return status, location
 
 
 def _do_delete_user(user_id, send_mail_account_deletion=True):
