@@ -283,7 +283,7 @@ class OrganisationAdmins extends React.Component {
                     anchorId={"resend-org-invites"}
                     children={<Button onClick={this.resend(true)}
                                       anchorId={"resend-org-invites"}
-                                      txt={I18n.t("models.orgMembers.remove")}
+                                      txt={I18n.t("models.orgMembers.resend")}
                                       small={true}
 
                                       icon={<FontAwesomeIcon icon="trash"/>}/>}

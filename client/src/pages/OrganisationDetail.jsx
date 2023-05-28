@@ -24,7 +24,7 @@ import ApiKeys from "../components/redesign/ApiKeys";
 import OrganisationServices from "../components/redesign/OrganisationServices";
 import CollaborationRequests from "../components/redesign/CollaborationRequests";
 import OrganisationWelcomeDialog from "../components/OrganisationWelcomeDialog";
-import {actionMenuUserRole, ROLES} from "../utils/UserRole";
+import {actionMenuUserRole, isUserAllowed, ROLES} from "../utils/UserRole";
 import {getParameterByName} from "../utils/QueryParameters";
 import {setFlash} from "../utils/Flash";
 import ConfirmationDialog from "../components/ConfirmationDialog";
@@ -153,7 +153,7 @@ class OrganisationDetail extends React.Component {
         ] : [
             this.getCollaborationsTab(organisation),
             this.getCollaborationRequestsTab(organisation),
-            this.getOrganisationAdminsTab(organisation),
+            this.getOrganisationAdminsTab(organisation, user),
             this.getServicesTab(organisation),
             config.api_keys_enabled ? this.getAPIKeysTab(organisation, user) : null,
             this.getUsersTab(organisation)
@@ -171,12 +171,13 @@ class OrganisationDetail extends React.Component {
         </div>)
     }
 
-    getOrganisationAdminsTab = organisation => {
+    getOrganisationAdminsTab = (organisation, user) => {
         const openInvitations = (organisation.organisation_invitations || []).length;
+        const isOrgAdmin = isUserAllowed(ROLES.ORG_ADMIN,user, organisation.id);
         return (<div key="admins" name="admins"
                      label={I18n.t("home.tabs.orgAdmins", {count: organisation.organisation_memberships.length})}
                      icon={<PlatformAdminIcon/>}
-                     notifier={openInvitations > 0 ? openInvitations : null}>
+                     notifier={(openInvitations > 0 && isOrgAdmin)? openInvitations : null}>
             <OrganisationAdmins {...this.props} organisation={organisation}
                                 refresh={callback => this.componentDidMount(callback)}/>
         </div>)
