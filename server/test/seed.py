@@ -313,8 +313,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                     allowed_organisations=[uuc, uva], abbreviation="cloud", privacy_policy="https://privacy.org",
                     token_enabled=True, token_validity_days=1, security_email="sec@org.nl", scim_client_enabled=True,
                     scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret",
-                    ldap_password="$6$rounds=656000$C7wjC1/EcEGz1DFv$ouYWXyzdirP1ToXQCtR7ZyS4Fe1vGp.1rF6WWA3wKdb"
-                                  "fuqVpBngV1xjMWmpwSZh8DRVO.9WxhT.StwNMRqCwe0")
+                    ldap_password="$2b$12$GLjC5hK59aeDcEe.tHHJMO.SQQjFgIIpZ7VaKTIsBn05z/gE7JQny", ldap_enabled=True)
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, uva],
                       description="SURF Storage Service", logo=read_image("storage.jpeg"), abbreviation="storage",
                       public_visible=True, automatic_connection_allowed=True, allow_restricted_orgs=True,
@@ -328,8 +327,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                    allowed_organisations=[uuc, uva], contact_email="help@wiki.com", abbreviation="wiki",
                    accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org",
                    automatic_connection_allowed_organisations=[uva],
-                   ldap_password="$6$rounds=100000$bFyBZD0Fim7BCAqt$BSq4u2IqhyT2khkCMILpaEceMnvYIKvxyxttA8."
-                                 "IddqWdPB.AEH2MBb1sggk8pDlrW/Xb00f8xa67cC0nfkuX.",
+                   ldap_password="$2b$12$GLjC5hK59aeDcEe.tHHJMO.SQQjFgIIpZ7VaKTIsBn05z/gE7JQny",
                    token_enabled=True, scim_client_enabled=True, token_validity_days=365, security_email="sec@org.nl")
     sweep_scim_last_run = current_time - datetime.timedelta(days=1)
     network = Service(entity_id=service_network_entity_id, name=service_network_name,

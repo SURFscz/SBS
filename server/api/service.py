@@ -494,6 +494,9 @@ def update_service():
     if "ldap_password" in data:
         del data["ldap_password"]
 
+    if "ldap_enabled" in data and not data["ldap_enabled"]:
+        data["ldap_password"] = None
+
     for enabled, token_type in service_token_options.items():
         if not data.get(enabled):
             ServiceToken.query \
