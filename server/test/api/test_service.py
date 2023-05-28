@@ -426,7 +426,7 @@ class TestService(AbstractTest):
             with conn.begin():
                 rs = conn.execute(text(f"SELECT ldap_password FROM services WHERE id = {service['id']}"))
         ldap_password = next(rs, (0,))[0]
-        self.assertTrue(ldap_password.startswith("$6$rounds=100000$"))
+        self.assertTrue(ldap_password.startswith("$2b$12$"))
         service = self._find_by_name()
         self.assertIsNone(service.get("ldap_password"))
 
