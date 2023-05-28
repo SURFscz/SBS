@@ -121,14 +121,18 @@ class TestService(AbstractTest):
             self.assertIsNotNone(invitation.expiry_date)
 
     def test_service_update(self):
-        service = self._find_by_name()
+        service = self._find_by_name(service_cloud_name)
         service["name"] = "changed"
         service["ip_networks"] = [{"network_value": "82.217.86.55/24"}]
+        service["ldap_enabled"] = False
 
         self.login("urn:john")
         service = self.put("/api/services", body=service, with_basic_auth=False)
         self.assertEqual("changed", service["name"])
         self.assertEqual(1, len(service["ip_networks"]))
+        rows = db.session.execute(text(f"SELECT ldap_password FROM services where id = {service['id']}"))
+        row = next(rows)
+        self.assertIsNone(row[0])
 
     def test_service_update_delete_service_tokens(self):
         service = self.find_entity_by_name(Service, service_network_name)

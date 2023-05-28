@@ -100,7 +100,7 @@ To run all Python tests and validate syntax / formatting:
 source .venv/bin/activate
 cd server
 pytest test
-flake8 ./server/
+flake8 ./
 ```
 
 To generate coverage reports:
