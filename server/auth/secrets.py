@@ -2,7 +2,7 @@ import hashlib
 import string
 from secrets import token_urlsafe, SystemRandom
 
-from passlib.handlers.sha2_crypt import sha512_crypt
+import bcrypt
 from werkzeug.exceptions import SecurityError
 
 SYSTEM_RANDOM = SystemRandom()
@@ -28,5 +28,5 @@ def hash_secret_key(data, attr_name="hashed_secret"):
 
 def generate_ldap_password_with_hash():
     password = "".join(SYSTEM_RANDOM.sample(population=string.ascii_lowercase + string.digits + "_,./~=+@*-", k=32))
-    hashed = sha512_crypt.using(rounds=100_000).hash(password)
-    return hashed, password
+    hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+    return hashed.decode("utf-8"), password
