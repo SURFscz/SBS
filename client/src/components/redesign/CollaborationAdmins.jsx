@@ -477,6 +477,7 @@ class CollaborationAdmins extends React.Component {
                         anchorId={"resend-invites"}
                         children={<Button onClick={this.resend(true)}
                                           anchorId={"resend-invites"}
+                                          small={true}
                                           txt={I18n.t("models.orgMembers.resend")}
                                           icon={<FontAwesomeIcon icon="voicemail"/>}/>}/>
                 </div>}
