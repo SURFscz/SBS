@@ -66,7 +66,7 @@ class TestMfa(AbstractTest):
                               "user_email": "new_user@example.edu"})
         # check that result is interrupt
         self.assertEqual(res["status"]["result"], "interrupt")
-        self.assertIn('/api/mfa/ssid_start/', res["status"]["redirect_url"])
+        self.assertIn(self.app.app_config.base_server_url + '/api/mfa/ssid_start/', res["status"]["redirect_url"])
 
         # check provisioning of new user
         new_user = User.query.filter(User.uid == "urn:new_user").first()
