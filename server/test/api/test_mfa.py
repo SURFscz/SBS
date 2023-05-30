@@ -58,7 +58,7 @@ class TestMfa(AbstractTest):
         self.assertEqual(302, res.status_code)
         self.assertEqual("https://foo.bar", res.location)
 
-    def test_ssid_new_user(self):
+    def test_ssid_scenario_new_user(self):
         # initiate proxy_authz call to provision user and initialize 2fa
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:new_user", "service_id": self.app.app_config.oidc.sram_service_entity_id,
@@ -88,7 +88,7 @@ class TestMfa(AbstractTest):
                                content_type="application/x-www-form-urlencoded")
 
         self.assertEqual(302, res.status_code)
-        self.assertEqual(self.app.app_config.base_url+"/aup", res.location)
+        self.assertEqual(self.app.app_config.base_url + "/aup", res.location)
 
         res = self.post("/api/aup/agree", with_basic_auth=False)
         self.assertEqual("https://foo.bar", res["location"])
