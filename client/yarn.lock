@@ -8026,10 +8026,10 @@ react-fast-compare@^3.0.1:
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-3.2.1.tgz#53933d9e14f364281d6cba24bfed7a4afb808b5f"
   integrity sha512-xTYf9zFim2pEif/Fw16dBiXpe0hoy5PxcD8+OwBnTtNLfIm3g6WxhKNurY+6OmdH1u6Ta/W/Vl6vjbYP1MFnDg==
 
-react-image-crop@^10.0.11:
-  version "10.0.11"
-  resolved "https://registry.yarnpkg.com/react-image-crop/-/react-image-crop-10.0.11.tgz#196f06b263a628421b70cffcd3ed759a3add3b01"
-  integrity sha512-uwhlDYZttn5jKTWfvV5WZrhSMxfdCklW5mHF5DZw9tlea/3bwpws07EZczo6pSbjh9/dHfdrHPSzaOAeLgB6sw==
+react-image-crop@^10.1.4:
+  version "10.1.4"
+  resolved "https://registry.yarnpkg.com/react-image-crop/-/react-image-crop-10.1.4.tgz#b625326ba55979669b08b8c3d0e3b3fd3808e5f6"
+  integrity sha512-bEc/SfJRPU06ApivtzuNmofEH3rqf1WsKgWNwloiZ4ttCB37DEETwR4KsQb+KkW87srvRtWpCbOhPs0a4TVAKw==
   dependencies:
     clsx "^1.2.1"
 
