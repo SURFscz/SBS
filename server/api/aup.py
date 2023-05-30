@@ -30,7 +30,7 @@ def agreed_aup():
         save(Aup, custom_json=jsonify(aup).json, allow_child_cascades=False)
     session["user"] = {**session["user"], **{"user_accepted_aup": True}}
 
-    location = get_redirect(current_app.app_config, user_accepted_aup=True,
+    _, location = get_redirect(current_app.app_config, user_accepted_aup=True,
                             second_factor_confirmed=session["user"]["second_factor_confirmed"])
 
     ctx_logger("redirect").debug(f"Redirecting user {user_id} to {location}")
