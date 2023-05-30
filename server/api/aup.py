@@ -31,7 +31,7 @@ def agreed_aup():
     session["user"] = {**session["user"], **{"user_accepted_aup": True}}
 
     _, location = get_redirect(current_app.app_config, user_accepted_aup=True,
-                            second_factor_confirmed=session["user"]["second_factor_confirmed"])
+                               second_factor_confirmed=session["user"]["second_factor_confirmed"])
 
     ctx_logger("redirect").debug(f"Redirecting user {user_id} to {location}")
 
