@@ -61,7 +61,7 @@ class Aup extends React.Component {
                     <CheckBox name="aup" value={agreed} info={I18n.t("aup.agreeWithTerms")}
                               onChange={() => this.setState({agreed: !agreed})}/>
                 </div>
-                <Button className="proceed" onClick={this.agreeWith(config)}
+                <Button className="proceed" onClick={() => this.agreeWith(config)}
                         txt={I18n.t("aup.onward")} disabled={!agreed}/>
 
             </div>
