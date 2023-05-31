@@ -238,7 +238,8 @@ class App extends React.Component {
                                                                 refreshUser={this.refreshUserMemberships}
                                                                 Component={SecondFactorAuthentication} {...props}/>}/>
                         <Route path="/aup"
-                               render={props => <Aup currentUser={currentUser}
+                               render={props => <Aup config={config}
+                                                     currentUser={currentUser}
                                                      refreshUser={this.refreshUserMemberships}
                                                      aupConfig={aupConfig}
                                                      {...props}/>}/>
