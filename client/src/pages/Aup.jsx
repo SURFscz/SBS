@@ -29,8 +29,17 @@ class Aup extends React.Component {
 
     agreeWith = () => agreeAup().then(res => {
         this.props.refreshUser(() => {
+            const {config} = this.props;
             const url = new URL(res.location);
-            this.props.history.push(url.pathname + url.search);
+
+             /* if the location is a trusted url, redirect to that url,
+              * otherwise only use the local part of the url */
+            const urlTrusted = config.continue_eduteams_redirect_uri;
+            if (res.location.toLowerCase().startsWith(urlTrusted.toLowerCase())) {
+               this.props.history.push(url.href);
+            } else {
+                this.props.history.push(url.pathname + url.search);
+            }
         });
     });
 
