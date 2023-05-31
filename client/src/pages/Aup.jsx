@@ -35,7 +35,7 @@ class Aup extends React.Component {
               * otherwise only use the local part of the url */
             const urlTrusted = config.continue_eduteams_redirect_uri;
             if (res.location.toLowerCase().startsWith(urlTrusted.toLowerCase())) {
-               this.props.history.push(url.href);
+               window.location.href = res.location;
             } else {
                 this.props.history.push(url.pathname + url.search);
             }
