@@ -1179,7 +1179,7 @@ const en = {
         update: "Update",
         delete: "Delete",
         deleteMemberConfirmation: "Are you sure you want to delete these organisation admins and managers?",
-        deleteSingleMemberConfirmation: "Are you sure you want to delete this member?",
+        deleteSingleMemberConfirmation: "Are you sure you want to delete this admin?",
         deleteSingleInvitationConfirmation: "Are you sure you want to delete this invitation?",
         deleteYourselfMemberConfirmation: "Are you sure you want to leave this organisation? You won't be able to revert this.",
         deleteApiKeyConfirmation: "Are you sure you want to delete this API key?",
