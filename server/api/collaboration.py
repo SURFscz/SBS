@@ -125,9 +125,10 @@ def delete_collaboration_api(co_identifier):
 
     if not organisation or organisation.id != collaboration.organisation_id:
         raise Forbidden()
+    collaboration_id = collaboration.id
 
-    broadcast_collaboration_deleted(collaboration.id)
-    return delete(Collaboration, collaboration.id)
+    broadcast_collaboration_deleted(collaboration_id)
+    return delete(Collaboration, collaboration_id)
 
 
 @collaboration_api.route("/v1/<co_identifier>/members/<user_uid>", methods=["DELETE"], strict_slashes=False)
