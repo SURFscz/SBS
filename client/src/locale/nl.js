@@ -262,7 +262,7 @@ const nl = {
             title: "Organisaties",
             noEntities: "Er zijn nog geen organisaties...",
             searchPlaceHolder: "Zoek organisaties...",
-            new: "Nieuwe organisatie",
+            new: "Voeg organisatie toe",
             name: "Naam",
             memberCount: "Beheerders",
             collaborationCount: "Samenwerkingen",
