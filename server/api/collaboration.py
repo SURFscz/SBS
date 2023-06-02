@@ -541,12 +541,13 @@ def save_collaboration_api():
     collaboration = res[0]
 
     if administrator:
-        admin_user = User.query.filter(User.uid == administrator).one()
-        admin_collaboration_membership = CollaborationMembership(role="admin", user_id=admin_user.id,
-                                                                 collaboration_id=collaboration.id,
-                                                                 created_by=user.uid, updated_by=user.uid)
-        db.session.merge(admin_collaboration_membership)
-        db.session.commit()
+        admin_user = User.query.filter(User.uid == administrator).first()
+        if admin_user:
+            admin_collaboration_membership = CollaborationMembership(role="admin", user_id=admin_user.id,
+                                                                     collaboration_id=collaboration.id,
+                                                                     created_by=user.uid, updated_by=user.uid)
+            db.session.merge(admin_collaboration_membership)
+            db.session.commit()
     # Prevent ValueError: Circular reference detected cause of tags
     collaboration_json = jsonify(collaboration).json
     if tags:
