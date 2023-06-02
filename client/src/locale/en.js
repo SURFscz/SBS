@@ -262,7 +262,7 @@ const en = {
             title: "Organisations",
             noEntities: "There are no organisations yet...",
             searchPlaceHolder: "Search organisations...",
-            new: "New organisation",
+            new: "Add organisation",
             name: "Name",
             memberCount: "Admins",
             collaborationCount: "Collaborations",
