@@ -68,7 +68,6 @@ def _reconcile_tags(collaboration: Collaboration, tags, is_external_api=False):
         for tag_value in new_tags:
             new_tag = save(Tag, {"tag_value": tag_value}, allow_child_cascades=False)[0]
             new_tag.collaborations.append(collaboration)
-            # collaboration.tags.append(new_tag)
 
 
 @collaboration_api.route("/admins/<service_id>", strict_slashes=False)

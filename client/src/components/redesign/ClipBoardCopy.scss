@@ -32,7 +32,7 @@ section.copy-to-clipboard {
         }
     }
 
-    &.copied svg {
+    &.copied svg, svg.copied {
         animation: pulse .6s;
         animation-iteration-count: 1;
 
