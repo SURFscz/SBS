@@ -411,7 +411,7 @@ const en = {
             on: "On",
             off: "Off",
             deleteMemberConfirmation: "Are you sure you want to remove {{name}} from this group?",
-            deleteMembersConfirmation: "Are you sure you want to remove the selected memberships from this group?",
+            deleteMembersConfirmation: "Are you sure you want to remove the selected members from this group?",
         },
         groupMembers: {
             title: "Members",
@@ -1460,7 +1460,7 @@ const en = {
             addedMember: "Added user {{member}} as a member of group {{name}}",
             addedMembers: "Added all users and invitations as (future ) members of group {{name}}",
             deletedMember: "Deleted user {{member}} from group {{name}}",
-            deletedMembers: "Deleted memberships from group {{name}}",
+            deletedMembers: "Deleted members from group {{name}}",
             addedInvitation: "Added user {{member}} as a member of group {{name}}",
             deletedInvitation: "Deleted invitee {{invitation}} from group {{name}}",
         },
