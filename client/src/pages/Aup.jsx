@@ -27,16 +27,24 @@ class Aup extends React.Component {
         }
     }
 
-    agreeWith = () => agreeAup().then(res => {
+    agreeWith = (config) => agreeAup().then(res => {
         this.props.refreshUser(() => {
             const url = new URL(res.location);
-            this.props.history.push(url.pathname + url.search);
+
+             /* if the location is a trusted url, redirect to that url,
+              * otherwise only use the local part of the url */
+            const urlTrusted = config.continue_eduteams_redirect_uri;
+            if (res.location.toLowerCase().startsWith(urlTrusted.toLowerCase())) {
+               window.location.href = res.location;
+            } else {
+                this.props.history.push(url.pathname + url.search);
+            }
         });
     });
 
     render() {
         const {agreed, loading} = this.state;
-        const {currentUser, aupConfig} = this.props;
+        const {config, currentUser, aupConfig} = this.props;
         const url = I18n.locale === "en" ? aupConfig.url_aup_en : aupConfig.url_aup_nl;
         if (loading) {
             return <SpinnerField/>;
@@ -53,7 +61,7 @@ class Aup extends React.Component {
                     <CheckBox name="aup" value={agreed} info={I18n.t("aup.agreeWithTerms")}
                               onChange={() => this.setState({agreed: !agreed})}/>
                 </div>
-                <Button className="proceed" onClick={this.agreeWith}
+                <Button className="proceed" onClick={() => this.agreeWith(config)}
                         txt={I18n.t("aup.onward")} disabled={!agreed}/>
 
             </div>
