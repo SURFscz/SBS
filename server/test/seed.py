@@ -312,8 +312,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                     public_visible=True, automatic_connection_allowed=True, logo=read_image("cloud.jpg"),
                     allowed_organisations=[uuc, uva], abbreviation="cloud", privacy_policy="https://privacy.org",
                     token_enabled=True, token_validity_days=1, security_email="sec@org.nl", scim_client_enabled=True,
-                    scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret",
-                    ldap_password="$2b$12$GLjC5hK59aeDcEe.tHHJMO.SQQjFgIIpZ7VaKTIsBn05z/gE7JQny", ldap_enabled=True)
+                    scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret")
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, uva],
                       description="SURF Storage Service", logo=read_image("storage.jpeg"), abbreviation="storage",
                       public_visible=True, automatic_connection_allowed=True, allow_restricted_orgs=True,
@@ -379,7 +378,17 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                       research_scholarship_compliant=True, code_of_conduct_compliant=True,
                       )
 
-    persist_instance(db, mail, wireless, cloud, storage, wiki, network, service_ssh_uva, uuc_scheduler, demo_sp, demo_rp)
+    service_monitor = Service(entity_id="https://ldap-monitor.example.org", name="LDAP Monitor Service",
+                              description="Used for monitoring LDAP.  NIET AANKOMEN.",
+                              public_visible=True, automatic_connection_allowed=True, logo=read_image("ldap.jpg"),
+                              allowed_organisations=[uuc, uva], abbreviation="ldap_mon",
+                              privacy_policy="https://privacy.org",
+                              security_email="sec@example.nl",
+                              ldap_password="$2b$12$GLjC5hK59aeDcEe.tHHJMO.SQQjFgIIpZ7VaKTIsBn05z/gE7JQny",
+                              ldap_enabled=True)
+
+    persist_instance(db, mail, wireless, cloud, storage, wiki, network, service_ssh_uva, uuc_scheduler, demo_sp,
+                     demo_rp, service_monitor)
 
     service_group_mail = ServiceGroup(name=service_group_mail_name,
                                       short_name="mail",
@@ -481,7 +490,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                  website_url="https://www.google.nl",
                                  description="University of Amsterdam Research - Urban Crowd Control",
                                  logo=read_image("research.jpeg"),
-                                 organisation=uva, services=[cloud, storage, wiki],
+                                 organisation=uva, services=[cloud, storage, wiki, service_monitor],
                                  join_requests=[], invitations=[],
                                  disclose_member_information=True)
     uuc_teachers = Collaboration(name=uuc_teachers_name,
@@ -490,7 +499,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                  website_url="https://www.google.nl",
                                  description="UUC Teachers",
                                  logo=read_image("teachers.jpeg"),
-                                 organisation=uuc, services=[],
+                                 organisation=uuc, services=[service_monitor],
                                  join_requests=[], invitations=[],
                                  short_name="uuc_teachers_short_name",
                                  accepted_user_policy="https://www.uuc.nl/teachers")
