@@ -22,7 +22,7 @@ class TestSystem(AbstractTest):
     def test_db_stats(self):
         res = self.get("/api/system/db_stats")
         self.assertDictEqual({"count": 16, "name": "users"}, res[0])
-        self.assertDictEqual({"count": 12, "name": "organisations_services"}, res[2])
+        self.assertDictEqual({"count": 14, "name": "organisations_services"}, res[2])
 
     def test_db_seed(self):
         self.get("/api/system/seed", response_status_code=201)
@@ -131,7 +131,7 @@ class TestSystem(AbstractTest):
     def test_validations(self):
         res = self.get("/api/system/validations", response_status_code=200)
         self.assertEqual(2, len(res["organisation_invitations"]))
-        self.assertEqual(5, len(res['services']))
+        self.assertEqual(6, len(res['services']))
         self.assertEqual(1, len(res["organisations"]))
 
     def test_composition(self):
