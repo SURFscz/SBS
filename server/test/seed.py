@@ -352,6 +352,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     uuc_scheduler = Service(entity_id=uuc_scheduler_entity_id, name=service_uuc_scheduler_name,
                             accepted_user_policy="https://google.nl", abbreviation="uuc_scheduler",
                             description="UUC Scheduler Service", logo=read_image("scheduler_uuc.jpeg"),
+                            contact_email="help@uuc_scheduler.example.com",
                             automatic_connection_allowed_organisations=[uva],
                             public_visible=True, automatic_connection_allowed=False, allowed_organisations=[uuc],
                             privacy_policy="https://privacy.org", security_email="sec@org.nl", ldap_enabled=False)
