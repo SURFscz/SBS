@@ -317,13 +317,15 @@ class Service extends React.Component {
                             <TrashIcon/>
                         </span>}
                     </div>
-                    {(network.error && !network.syntax) &&
+                    {(network.error && !network.syntax && !network.reserved) &&
                     <ErrorIndicator msg={I18n.t("service.networkError", network)}/>}
                     {network.syntax && <ErrorIndicator msg={I18n.t("service.networkSyntaxError")}/>}
-                    {network.higher && <span className="network-info">{I18n.t("service.networkInfo", network)}</span>}
+                    {network.reserved &&
+                    <ErrorIndicator msg={I18n.t("service.networkReservedError", network)}/>}
+                    {network.higher &&
+                    <span className="network-info">{I18n.t("service.networkInfo", network)}</span>}
                     {(network.higher && network.version === 6 && !network.global) &&
                     <ErrorIndicator msg={I18n.t("service.networkNotGlobal")}/>}
-
                 </div>
             )}
         </div>);
@@ -524,7 +526,8 @@ class Service extends React.Component {
                                 error={invalidInputs["email"] || (!initial && contactEmailRequired)}
                                 onBlur={this.validateEmail("email")}
                                 disabled={!isAdmin && !isServiceAdmin}/>
-                    {invalidInputs["email"] && <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
+                    {invalidInputs["email"] &&
+                    <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
                     {(!initial && contactEmailRequired) &&
                     <ErrorIndicator msg={I18n.t("service.contactEmailRequired")}/>}
 
