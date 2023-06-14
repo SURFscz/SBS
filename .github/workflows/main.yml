@@ -135,7 +135,8 @@ jobs:
       - name: Use Node.js 16
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 16.20
+          cache: "yarn"
 
       - name: Install dependencies
         shell: bash
@@ -145,10 +146,7 @@ jobs:
           curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.22.19
           export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
           yarn -v
-          nvm ls
-          nvm install 16
-          nvm ls
-          nvm use 16
+          nvm use
         env:
           VNM_DIR: ~/.nvm
 
