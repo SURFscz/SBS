@@ -146,8 +146,7 @@ jobs:
           curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.22.19
           export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
           yarn -v
-          nvm install v16.13.2
-          nvm use v16.13.2
+          nvm use 16
         env:
           VNM_DIR: ~/.nvm
 
