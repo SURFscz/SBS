@@ -12,7 +12,7 @@ SURF Research Access Management (SRAM) Platform
 -   Redis v6.x
 -   Yarn 1.x
 -   node
--   libxmlsec1 (pre-1.3.0 see https://github.com/xmlsec/python-xmlsec/issues/254)
+-   libxmlsec1 (pre-1.3.0 see https://github.com/xmlsec/python-xmlsec/issues/254 and see https://github.com/xmlsec/python-xmlsec/issues/254#issuecomment-1511135314 for a workaround)
 
 ### [Getting started](#getting-started)
 
