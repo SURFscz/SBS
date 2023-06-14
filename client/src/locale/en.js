@@ -2233,7 +2233,7 @@ const en = {
         message: "We seem to have run into an unknown error. Sorry for that.</br>" +
             "Start over on the <a href='/'>homepage</a> or contact us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>.",
         ssid_failed: "SURF Research Access Management requires two-factor authentication, an extra check to verify it's you.</br>"+
-            "Unfortunately, this authentication from SURF secure ID has just failed.</br></br>"+
+            "Unfortunately, this authentication from SURFsecureID has just failed.</br></br>"+
             "Please copy & paste the following information and contact SRAM support at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for help.",
         defaultCode: "urn:oasis:names:tc:SAML:2.0:status:Responder",
         defaultMessage: ""
