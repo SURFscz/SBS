@@ -146,6 +146,8 @@ jobs:
           export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
           yarn -v
           nvm ls
+          nvm install 16
+          nvm ls
           nvm use 16
         env:
           VNM_DIR: ~/.nvm
