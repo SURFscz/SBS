@@ -63,7 +63,7 @@ uva_hashed_secret = secure_hash(uva_secret)
 amsterdam_uva_name = "Amsterdam UVA"
 tue_name = "TUE"
 
-collaboration_uva_researcher_uuid = str(uuid.uuid4())
+collaboration_uva_researcher_uuid = "da706611-0afb-4a7a-819b-b0a9c63e9b67"
 
 uva_research_name = "UVA UCC research"
 
