@@ -157,7 +157,6 @@ jobs:
         shell: bash
         run: |
           cd client
-          nvm use
           yarn install
           yarn test
           yarn build
