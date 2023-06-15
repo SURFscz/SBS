@@ -55,6 +55,14 @@ class TestUserClaims(AbstractTest):
         add_user_claims({"voperson_external_affiliation": "teacher@university"}, "urn:johny", user)
         self.assertEqual("university", user.schac_home_organisation)
 
+    def test_add_user_claims_affiliations_voPEA_voPEI(self):
+        user = User()
+        add_user_claims({
+            "voperson_external_affiliation": "employee@otheruniversity.org",
+            "voperson_external_id": ["johny@university.org"]
+        }, "urn:johny", user)
+        self.assertEqual("university.org", user.schac_home_organisation)
+
     def test_add_user_claims_empty_entitlements(self):
         user = User()
         add_user_claims({"eduperson_entitlement": []}, "urn:johny", user)
