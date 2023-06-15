@@ -91,7 +91,7 @@ def _all_remote_scim_objects(service: Service, scim_type, scim_resources=[], sta
     url = f"{service.scim_url}/{scim_type}?startIndex={start_index}"
     response = requests.get(url, headers=scim_headers(service), timeout=10)
     if not validate_response(response, service, outside_user_context=True, extra_logging=f"SCIM {scim_type} list"):
-        raise BadRequest()
+        raise BadRequest(f"Invalid response from remote SCIM server (got HTTP status {response.status_code})")
     scim_json = response.json()
     scim_resources = scim_resources + scim_json["Resources"]
     if scim_json["totalResults"] != len(scim_resources):
@@ -134,8 +134,8 @@ def perform_sweep(service: Service):
         remote_scim_groups = _all_remote_scim_objects(service, SCIM_GROUPS)
         remote_scim_users = _all_remote_scim_objects(service, SCIM_USERS)
     except BadRequest as e:
-        # We abort, see https://github.com/SURFscz/SBS/issues/601
-        return str(e)
+        # We abort, see https://github.com/SURFscz/SBS/issues/601 and reraise the exception
+        raise e
 
     # First delete all remote users and groups that are incorrectly in the remote SCIM database
     for remote_group in remote_scim_groups:
