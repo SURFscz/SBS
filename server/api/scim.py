@@ -2,10 +2,11 @@ import re
 import urllib.parse
 from typing import Union
 
+import requests
 from flasgger import swag_from
 from flask import Blueprint, Response
 from sqlalchemy import func
-from werkzeug.exceptions import Unauthorized
+from werkzeug.exceptions import Unauthorized, BadRequest
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_write_access
@@ -145,8 +146,12 @@ def sweep():
         service = db.session.get(Service, query_param("service_id"))
     try:
         return perform_sweep(service), 201
-    except Exception as error:
-        return {"error": str(error)}, 400
+    except BadRequest as error:
+        return {"error": f"Error from remote scim server: {error.description}"}, 400
+    except requests.Timeout:
+        return {"error": "Could not connect to remote SCIM server"}, 400
+    except Exception:
+        return {"error": "Unknown error occurred"}, 500
 
 
 @scim_api.route("/scim-services", methods=["GET"], strict_slashes=False)
