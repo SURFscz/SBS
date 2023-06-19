@@ -148,10 +148,13 @@ def sweep():
         return perform_sweep(service), 201
     except BadRequest as error:
         return {"error": f"Error from remote scim server: {error.description}"}, 400
-    except requests.Timeout:
-        return {"error": "Could not connect to remote SCIM server"}, 400
+    except requests.RequestException as e:
+        return {
+            "error": f"Could not connect to remote SCIM server ({type(e).__name__})"
+                     f"{': ' + e.response.text if e.response else ''}"
+        }, 400
     except Exception:
-        return {"error": "Unknown error occurred"}, 500
+        return {"error": "Unknown error while connecting to remote SCIM server"}, 500
 
 
 @scim_api.route("/scim-services", methods=["GET"], strict_slashes=False)
