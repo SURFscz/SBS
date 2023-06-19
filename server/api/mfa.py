@@ -4,6 +4,7 @@ from io import BytesIO
 
 import pyotp
 import qrcode
+import urllib.parse
 from flask import Blueprint, current_app, session, request as current_request
 from werkzeug.exceptions import Forbidden, BadRequest
 
@@ -15,6 +16,7 @@ from server.auth.security import current_user_id, is_admin_user, is_application_
 from server.auth.ssid import redirect_to_surf_secure_id
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
+from server.db.defaults import uri_re
 from server.db.domain import User
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_reset_token
@@ -143,9 +145,13 @@ def verify2fa_proxy_authz():
     if valid_totp:
         clear_rate_limit(user)
         continue_url = data["continue_url"]
-        if not continue_url.lower().startswith(current_app.app_config.oidc.continue_eduteams_redirect_uri):
+        if not continue_url.lower().startswith(current_app.app_config.oidc.continue_eduteams_redirect_uri) \
+           or not bool(uri_re.match(continue_url)):
             raise Forbidden(f"Invalid continue_url: {continue_url}")
-        return {"location": continue_url}, 201
+
+        # continue_url should be trusted, but better safe than sorry
+        url = urllib.parse.quote(continue_url, safe='/:?=&')
+        return {"location": url}, 201
     else:
         return {"new_totp": False}, 400
 
