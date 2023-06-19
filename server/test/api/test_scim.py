@@ -1,7 +1,9 @@
 import json
 import urllib.parse
 
+import requests
 import responses
+import mock
 
 from server.db.domain import User, Collaboration, Group, Service
 from server.scim import EXTERNAL_ID_POST_FIX
@@ -120,6 +122,31 @@ class TestScim(AbstractTest):
             sweep_result = self.put(f"/api/scim/v2/sweep?service_id={service.id}", with_basic_auth=True)
             self.assertEqual(0, len(sweep_result["groups"]["created"]))
             self.assertEqual(0, len(sweep_result["users"]["created"]))
+
+    @responses.activate
+    def test_sweep_error(self):
+        # test error response from remote SCIM server
+        with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json={"error": True},
+                     status=400)
+            res = self.put("/api/scim/v2/sweep", headers={"Authorization": f"bearer {service_network_token}"},
+                                    with_basic_auth=False, response_status_code=400)
+            self.assertTrue("error" in res)
+            self.assertTrue("Invalid response from remote SCIM server (got HTTP status 400)" in res["error"])
+
+        # test HTTP error from remote SCIM server
+        with mock.patch("requests.get", side_effect=requests.Timeout('Connection timed out')):
+            res = self.put("/api/scim/v2/sweep", headers={"Authorization": f"bearer {service_network_token}"},
+                                    with_basic_auth=False, response_status_code=400)
+            self.assertTrue("error" in res)
+            self.assertEqual(res["error"], "Could not connect to remote SCIM server (Timeout)")
+
+        # test other errors during SCIM sweep
+        with mock.patch("requests.get", side_effect=Exception("Weird error")):
+            res = self.put("/api/scim/v2/sweep", headers={"Authorization": f"bearer {service_network_token}"},
+                                    with_basic_auth=False, response_status_code=500)
+            self.assertTrue("error" in res)
+            self.assertEqual(res["error"], "Unknown error while connecting to remote SCIM server")
 
     def test_scim_services(self):
         self.login("urn:john")
