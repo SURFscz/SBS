@@ -1,6 +1,5 @@
 import base64
 import datetime
-import json
 from io import BytesIO
 
 import pyotp
@@ -146,7 +145,7 @@ def verify2fa_proxy_authz():
         continue_url = data["continue_url"]
         if not continue_url.lower().startswith(current_app.app_config.oidc.continue_eduteams_redirect_uri):
             raise Forbidden(f"Invalid continue_url: {continue_url}")
-        return json.dumps({"location": continue_url}), 201
+        return {"location": continue_url}, 201
     else:
         return {"new_totp": False}, 400
 
