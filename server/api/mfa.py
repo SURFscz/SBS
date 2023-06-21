@@ -1,6 +1,8 @@
 import base64
 import datetime
+import re
 from io import BytesIO
+from typing import Optional
 
 import pyotp
 import qrcode
@@ -132,6 +134,33 @@ def verify2fa():
         return {"new_totp": False}, 400
 
 
+# verify continue url and compare it to the configured allowed continue url
+def _construct_continue_url(base_url: str, to_check: str) -> Optional[str]:
+    if not bool(uri_re.match(to_check)) or not bool(uri_re.match(base_url)):
+        return None
+
+    base = urllib.parse.urlparse(base_url)
+    url = urllib.parse.urlparse(to_check)
+
+    if base.scheme != url.scheme or base.netloc != url.netloc:
+        return None
+
+    # check if there are any other chars than A-Za-z0-9=_- in url.path
+    if re.match(r"[^a-zA-Z0-9_=/-]", url.path):
+        return None
+
+    base_path = base.path.split('/') if base.path else []
+    url_path = url.path.split('/') if url.path else []
+
+    if len(url_path) != len(base_path) + 1:
+        return None
+    for a, b in zip(base_path, url_path):
+        if a != b:
+            return None
+
+    return urllib.parse.urlunparse([base.scheme, base.netloc, url.path, url.query, "", ""])
+
+
 @mfa_api.route("/verify2fa_proxy_authz", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def verify2fa_proxy_authz():
@@ -144,14 +173,12 @@ def verify2fa_proxy_authz():
     valid_totp = _do_verify_2fa(user, secret)
     if valid_totp:
         clear_rate_limit(user)
-        continue_url = data["continue_url"]
-        if not continue_url.lower().startswith(current_app.app_config.oidc.continue_eduteams_redirect_uri) \
-           or not bool(uri_re.match(continue_url)):
-            raise Forbidden(f"Invalid continue_url: {continue_url}")
+        base_uri = current_app.app_config.oidc.continue_eduteams_redirect_uri
+        continue_url = _construct_continue_url(base_uri, data["continue_url"])
+        if not continue_url:
+            raise Forbidden("Invalid continue_url")
 
-        # continue_url should be trusted, but better safe than sorry
-        url = urllib.parse.quote(continue_url, safe='/:?=&')
-        return {"location": url}, 201
+        return {"location": continue_url}, 201
     else:
         return {"new_totp": False}, 400
 

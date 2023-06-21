@@ -236,7 +236,7 @@ class TestMfa(AbstractTest):
     def test_verify2fa_proxy_authz(self):
         sarah = self.add_totp_to_user("urn:sarah")
 
-        continue_url = current_app.app_config.oidc.continue_eduteams_redirect_uri
+        continue_url = current_app.app_config.oidc.continue_eduteams_redirect_uri + '/abcdef'
         totp = pyotp.TOTP(sarah.second_factor_auth)
         body = {"totp": totp.now(), "second_fa_uuid": sarah.second_fa_uuid, "continue_url": continue_url}
 
@@ -269,7 +269,7 @@ class TestMfa(AbstractTest):
         config.rate_limit_totp_guesses_per_30_seconds = 10
 
     def test_verify2fa_proxy_authz_invalid_continue(self):
-        continue_url = current_app.app_config.oidc.continue_eduteams_redirect_uri
+        continue_url = current_app.app_config.oidc.continue_eduteams_redirect_uri + '/abcdef'
 
         sarah = self.add_totp_to_user("urn:sarah")
         totp = pyotp.TOTP(sarah.second_factor_auth)
