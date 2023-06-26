@@ -719,8 +719,6 @@ const nl = {
         name: "Naam",
         logo: "Logo samenwerking",
         useOrganisationLogo: "Gebruik het logo van de organisatie",
-        generateLogo: "Genereer logo",
-        generateLogoTooltip: "Je moet eerst de naam van de samenwerking invullen om een logo te kunnen genereren",
         namePlaceHolder: "De unieke naam van de samenwerking",
         shortName: "Korte naam",
         shortNamePlaceHolder: "Korte naam van de samenwerking",
