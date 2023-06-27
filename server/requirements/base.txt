@@ -22,7 +22,7 @@ pyotp==2.8.0
 qrcode==7.4.2
 Pillow==9.5.0
 PyJWT==2.7.0
-Authlib==1.2.0
+Authlib==1.2.1
 passlib==1.7.4
 werkzeug==2.3.6
 Flask-Executor==1.0.0
