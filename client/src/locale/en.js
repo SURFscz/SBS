@@ -50,7 +50,7 @@ const en = {
         invite: "Invite members",
         invitation: "Invitation",
         users: "Users",
-        userToken: "Token '{{name}}'"
+        userToken: "Service token '{{name}}'"
     },
     login: {
         title: "Research Access Management",
@@ -91,13 +91,13 @@ const en = {
             users: "Users ({{count}})",
             serviceOrganisations: "Organisational access ({{count}})",
             serviceCollaborations: "Collaboration access ({{count}})",
-            userTokens: "Tokens ({{count}})",
+            userTokens: "Service tokens ({{count}})",
             collaborationRequests: "Requests ({{count}})",
             joinRequests: "Join requests ({{count}})",
             serviceConnectionRequests: "Connection requests ({{count}})",
             me: "Your details",
             about: "About",
-            apikeys: "API Keys ({{count}})",
+            apikeys: "API tokens ({{count}})",
             welcome: "Welcome",
             cron: "Cron",
             seed: "Seed",
@@ -149,8 +149,8 @@ const en = {
         impersonate: "Impersonate",
         services: "Services",
         serviceRequest: "Service request",
-        apiKeys: "API keys",
-        tokens: "Tokens",
+        apiKeys: "Organisation API tokens",
+        tokens: "Service tokens",
         serviceGroups: "Service groups"
     },
     models: {
@@ -446,11 +446,11 @@ const en = {
             leave: "Leave collaboration"
         },
         apiKeys: {
-            title: "API Keys",
-            new: "Add API Key",
-            searchPlaceHolder: "Search for API keys...",
-            noEntities: "No API keys",
-            backToApiKeys: "Back to all API keys"
+            title: "Organisation API tokens",
+            new: "Add organisation API token",
+            searchPlaceHolder: "Search for organisation API tokens...",
+            noEntities: "No organisation API tokens",
+            backToApiKeys: "Back to all organisation API tokens"
         },
         collaboration_requests: {
             title: "Requests for collaborations",
@@ -557,49 +557,49 @@ const en = {
             new: "Invite admin(s)",
         },
         userTokens: {
-            backToUserTokens: "Back to all tokens",
-            title: "Tokens",
-            searchPlaceHolder: "Search for token...",
-            noEntities: "No tokens were found",
-            new: "Create token",
+            backToUserTokens: "Back to all service tokens",
+            title: "Service tokens",
+            searchPlaceHolder: "Search for service token...",
+            noEntities: "No service tokens were found",
+            new: "Create service token",
             edit: "Edit",
             name: "Name",
-            namePlaceholder: "The name of this token",
+            namePlaceholder: "The name of this service token",
             description: "Description",
-            descriptionPlaceholder: "The description of this token",
+            descriptionPlaceholder: "The description of this service token",
             deleteConfirmation: "Are you sure you want to delete {{name}}?",
             expiryDate: "Expiry date",
-            expiredInfo: "This token has expired. You can reactivate this token below",
+            expiredInfo: "This service token has expired. You can reactivate it below",
             reactivate: "Reactivate",
             createdAt: "Created at",
-            expiryDateTooltip: "After this date you cannot use this token anymore",
+            expiryDateTooltip: "After this date you cannot use this service token anymore",
             service: "Service",
             lastUsedDate: "Last used",
             serviceTooltip: "The service linked to this token. You can only access the API of this service with the token",
-            hashedToken: "Token",
-            hashedTokenTooltip: "The token to use in the authorization header",
-            tokenDisclaimer: "Copy the token and store it somewhere safe. You can view this token only once. After pressing <i>Save</i> you won't be able to see it again.",
-            required: "The {{attribute}} is required for a token",
+            hashedToken: "Service token",
+            hashedTokenTooltip: "The service token to use in the authorization header",
+            tokenDisclaimer: "Copy the service token and store it somewhere safe. You can view this token only once. After pressing <i>Save</i> you won't be able to see it again.",
+            required: "The {{attribute}} is required for a service token",
             flash: {
-                created: "Created token {{name}}",
-                updated: "Updated token {{name}}",
-                reactivated: "Reactivated token {{name}}",
+                created: "Created service token {{name}}",
+                updated: "Updated service token {{name}}",
+                reactivated: "Reactivated service token {{name}}",
             }
         },
         scimServices: {
-            searchPlaceHolder: "Search for scim services..",
-            noEntities: "There are no service configured with the mock scim endpoint",
+            searchPlaceHolder: "Search for SCIM services..",
+            noEntities: "There are no service configured with the mock SCIM endpoint",
         }
     },
     user: {
-        titleUpdate: "Update your user profile keys",
+        titleUpdate: "Update your user profile SSH keys",
         ssh_key: "SSH public keys",
         ssh_keyPlaceholder: "Your public SSH keys to login on services",
         ssh_keyTooltip: "Your public SSH keys will be provisioned to the services you have access to. You can also upload your public SSH key.",
         sshKeyError: "This SSH cipher isn't recognized. Please refer to the <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://edu.nl/87btm\">documentation</a> for supported formats.",
         sshConvertInfo: "Public key will be converted to the <code>OpenSSH</code> format when saving the profile",
         update: "Update",
-        download: "Download profile",
+        download: "Download my data",
         flash: {
             updated: "Your profile has been updated"
         },
@@ -676,8 +676,8 @@ const en = {
         sbs: "Application",
         collaborations: "Collaborations",
         network: "IP ranges",
-        addSSHKey: "Upload new SSH Key",
-        addSSHKeyManually: "Add SSH Key manually",
+        addSSHKey: "Upload new SSH key",
+        addSSHKeyManually: "Add SSH key manually",
         networkTooltip: "Configure your IP ranges for this service. You can add IPv4 and IPv6 network ranges. " +
             "For example: <ul>" +
             "<li>Single IPv4 address 198.51.100.12 where a /32 is implied</li>" +
@@ -1123,7 +1123,7 @@ const en = {
         collaborationRequests: "Requests for collaborations for {{name}}",
         searchPlaceHolder: "Search for members",
         invite: "Invite new members",
-        newApiKey: "Add new API key",
+        newApiKey: "Add organisation API token",
         noInvitations: "No pending invitations",
         noCollaborationRequests: "No pending collaboration requests",
         member: {
@@ -1168,7 +1168,7 @@ const en = {
             description: "Description",
             actions: "",
         },
-        apiKeys: "API Keys of {{name}}",
+        apiKeys: "Organisation API tokens of {{name}}",
         collaborations: "Collaborations of {{name}}",
         noCollaborations: "This organisation has no collaborations.",
         newCollaboration: "Create new collaboration",
@@ -1182,7 +1182,7 @@ const en = {
         deleteSingleMemberConfirmation: "Are you sure you want to delete this admin?",
         deleteSingleInvitationConfirmation: "Are you sure you want to delete this invitation?",
         deleteYourselfMemberConfirmation: "Are you sure you want to leave this organisation? You won't be able to revert this.",
-        deleteApiKeyConfirmation: "Are you sure you want to delete this API key?",
+        deleteApiKeyConfirmation: "Are you sure you want to delete this organisation API token?",
         deleteCollaborationConfirmation: "Are you sure you want to delete collaboration {{name}}? This cannot be undone.",
         activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send them an email with an activation link.",
         flash: {
@@ -1190,7 +1190,7 @@ const en = {
             deleted: "Organisation {{name}} was deleted.",
             entitiesDeleted: "Membership / invitations are deleted.",
             memberDeleted: "Membership of {{name}} was deleted.",
-            apiKeyDeleted: "API key was deleted.",
+            apiKeyDeleted: "Organisation API token was deleted.",
             collaborationDeleted: "collaboration {{name}} was deleted.",
             memberActivated: "Member {{name}} has been sent an email with an activation link.",
             memberUpdated: "The role of membership of {{name}} was updated to {{role}}.",
@@ -1264,18 +1264,18 @@ const en = {
         },
     },
     apiKeys: {
-        title: "Create API key for {{organisation}}",
-        info: "An API key is required to use the <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{base_url}}/apidocs/\"'>Application Programmer Interface (API)</a>.",
+        title: "Create an organisation API token for {{organisation}}",
+        info: "An organisation API token is required to use the <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{base_url}}/apidocs/\"'>Application Programmer Interface (API)</a>.",
         backToOrganisationDetail: "Back to my organisation {{name}}",
-        secretDisclaimer: "You can view this API key only once. Copy it and store it somewhere safe.<br><br>If the API key is lost, delete it and create a new API key.",
-        secret: "API key",
+        secretDisclaimer: "You can view this organisation API token only once. Copy it and store it somewhere safe.<br><br>If the token is lost, delete it and create a new one.",
+        secret: "Organisation API token",
         secretValue: "One-way hashed secret",
         secretTooltip: "The secret to use in the authorization header",
         description: "Description",
-        descriptionPlaceHolder: "Description for this API key",
-        descriptionTooltip: "An optional description explaining the use of this API key",
+        descriptionPlaceHolder: "Description for this organisation API token",
+        descriptionTooltip: "An optional description explaining the use of this organisation API token",
         flash: {
-            created: "API key for organisation {{name}} created.",
+            created: "Organisation API token for {{name}} created.",
         },
         submit: "Submit"
     },
@@ -1615,7 +1615,7 @@ const en = {
             submit: "Fetch"
         },
         tables: {
-            "api_keys": "API key",
+            "api_keys": "Organisation API tokens",
             "aups": "Acceptable User Policy",
             "collaboration_memberships": "Collaboration membership",
             "collaboration_memberships_groups": "Group membership",
@@ -1646,7 +1646,7 @@ const en = {
             "service_invitations": "Service invitation",
             "service_memberships": "Service membership",
             "tags": "Label",
-            "service_tokens": "Service tokens"
+            "service_tokens": "Service tokens (any)"
         }
     },
     serviceRequest: {
@@ -2088,8 +2088,8 @@ const en = {
         scimURL: "SCIM endpoint base URL",
         scimURLPlaceHolder: "https://service.com.scim",
         scimURLTooltip: "The SCIM endpoint's base URL to send SCIM events to",
-        scimBearerToken: "Server token",
-        scimBearerTokenTooltip: "The external token needed to authorize the SRAM calls to the SCIM endpoints using the bearer authorization",
+        scimBearerToken: "SCIM token",
+        scimBearerTokenTooltip: "The external SCIM token needed to authorize the SRAM calls to the SCIM endpoints using the bearer authorization",
         sweepScimEnabled: "SCIM sweeping",
         sweepScimEnabledTooltip: "A periodic check, and update if necessary, to keep the service's data in sync.",
         scimSweepDeleteOrphans: "Sweep deletes orphaned users, and empty collaborations and groups",
@@ -2098,7 +2098,6 @@ const en = {
         sweepScimDailyRateTooltip: "The number of times within 24 hours remote SCIM data is sweeped"
     },
     userTokens: {
-        actionTitle: "New API token",
         tokens: "Tokens",
         tokenEnabled: "User token introspection",
         tokenEnabledTooltip: "Allow this service to call the introspection endpoint to receive user information?",
@@ -2106,9 +2105,9 @@ const en = {
         pamWebSSOEnabledTooltip: "Allow this service to call the PAM web login endpoints to login an user on a terminal-based app (e.g., an SSH client)?",
         tokenValue: "One-way hashed token",
         tokenValidityDays: "User token validity (days)",
-        tokenValidityDaysTooltip: "The number of days the user tokens are valid validity",
+        tokenValidityDaysTooltip: "The number of days the user tokens are valid",
         introspectionEndpoint: "Introspection endpoint URL",
-        introspectionEndpointToken: "Introspection endpoint bearer token",
+        introspectionEndpointToken: "Introspection endpoint token",
         tokenDisclaimer: "Copy the token and store it somewhere safe. You can view this token only once here.<br><br>After pressing 'Add' you won't be able to see it again, except by deleting it and recreating a new token.",
         delete: "Remove token",
         deleteConfirmation: "Are you sure you want to delete this token? This action cannot be undone.",
@@ -2139,11 +2138,11 @@ const en = {
     },
     serviceDetails: {
         details: "Service details",
-        tokens: "Service tokens",
+        tokens: "Tokens",
         tokensTooltips: {
-            scim: "A SCIM service token enables the service to call the SCIM endpoints of SRAM",
-            pam: "A PAM service tokens enables the service to use the PAM web login module",
-            introspection: "An introspect service token enables the service to introspect users"
+            scim: "A SCIM token enables the service to call the SCIM endpoints of SRAM",
+            pam: "A PAM web login token enables the service to use the PAM web login module",
+            introspection: "A user introspection token enables the service to introspect users"
         },
         hashedToken: "Hashed token",
         tokenValue: "**** **** ****",
@@ -2169,7 +2168,7 @@ const en = {
             contacts: "Contacts",
             policy: "Policy & compliance",
             ldap: "LDAP",
-            tokens: "User tokens",
+            tokens: "User introspection tokens",
             pamWebLogin: "PAM web login",
             SCIMServer: "SCIM server",
             SCIMClient: "SCIM client"
