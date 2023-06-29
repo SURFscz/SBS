@@ -2098,6 +2098,7 @@ const en = {
         sweepScimDailyRateTooltip: "The number of times within 24 hours remote SCIM data is sweeped"
     },
     userTokens: {
+        actionTitle: "New organisation API token",
         tokens: "Tokens",
         tokenEnabled: "User token introspection",
         tokenEnabledTooltip: "Allow this service to call the introspection endpoint to receive user information?",
