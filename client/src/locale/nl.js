@@ -50,7 +50,7 @@ const nl = {
         invite: "Leden toevoegen",
         invitation: "Uitnodiging",
         users: "Gebruikers",
-        userToken: "Token '{{name}}'"
+        userToken: "Diensttoken '{{name}}'"
     },
     login: {
         title: "Research Access Management",
@@ -91,13 +91,13 @@ const nl = {
             users: "Gebruikers ({{count}})",
             serviceOrganisations: "Organisatietoegang ({{count}})",
             serviceCollaborations: "Samenwerkingentoegang ({{count}})",
-            userTokens: "Tokens ({{count}})",
+            userTokens: "Diensttokens ({{count}})",
             collaborationRequests: "Verzoeken ({{count}})",
             joinRequests: "Lidmaatschapsverzoeken ({{count}})",
             serviceConnectionRequests: "Koppelverzoeken ({{count}})",
             me: "Je details",
             about: "Over",
-            apikeys: "API-sleutels ({{count}})",
+            apikeys: "API-tokens ({{count}})",
             welcome: "Welkom",
             cron: "Cron",
             seed: "Seed",
@@ -149,9 +149,9 @@ const nl = {
         impersonate: "Imitatie",
         services: "Diensten",
         serviceRequest: "Dienstverzoek",
-        apiKeys: "API-sleutels",
-        serviceGroups: "Dienstgroepen",
-        tokens: "Tokens"
+        apiKeys: "Organisatie-API-tokens",
+        tokens: "Diensttokens",
+        serviceGroups: "Dienstgroepen"
     },
     models: {
         users: {
@@ -446,11 +446,11 @@ const nl = {
             leave: "Lidmaatschap opzeggen"
         },
         apiKeys: {
-            title: "API-sleutels",
-            new: "Voeg API-sleutel toe",
-            searchPlaceHolder: "Zoek API-sleutels...",
-            noEntities: "Geen API-sleutels",
-            backToApiKeys: "Terug naar alle API-sleutels"
+            title: "Organisatie-API-tokens",
+            new: "Voeg organisatie-API-token toe",
+            searchPlaceHolder: "Zoek organisatie-API-tokens...",
+            noEntities: "Geen organisatie-API-tokens",
+            backToApiKeys: "Terug naar alle organisatie-API-tokens"
         },
         collaboration_requests: {
             title: "Aanvragen voor samenwerkingen",
@@ -557,49 +557,49 @@ const nl = {
             new: "Nodig beheerder(s) uit",
         },
         userTokens: {
-            backToUserTokens: "Terug naar alle tokens",
-            title: "Tokens",
-            searchPlaceHolder: "Zoek naar tokens...",
-            noEntities: "Geen tokens gevonden",
-            new: "Maak token aan",
+            backToUserTokens: "Terug naar alle diensttokens",
+            title: "Diensttokens",
+            searchPlaceHolder: "Zoek naar diensttokens...",
+            noEntities: "Geen diensttokens gevonden",
+            new: "Maak diensttoken aan",
             edit: "Wijzigen",
             name: "Naam",
-            namePlaceholder: "De naam van deze token",
+            namePlaceholder: "De naam van dit diensttoken",
             description: "Omschrijving",
-            descriptionPlaceholder: "De omschrijving van deze token",
+            descriptionPlaceholder: "De omschrijving van dit diensttoken",
             deleteConfirmation: "Weet je zeker dat je {{name}} wil verwijderen?",
             expiryDate: "Vervaldatum",
-            expiredInfo: "Deze token is verlopen. Je kan deze token hieronder heractiveren",
+            expiredInfo: "Dit diensttoken is verlopen. Je kan het hieronder heractiveren",
             reactivate: "Heractiveren",
             createdAt: "Aangemaakt op",
-            expiryDateTooltip: "Na deze datum kan je deze token niet meer gebruiken",
+            expiryDateTooltip: "Na deze datum kan je dit diensttoken niet meer gebruiken",
             service: "Dienst",
             lastUsedDate: "Laatst gebruikt",
-            serviceTooltip: "De dienst gekoppeld aan deze token. Je hebt alleen toegang tot de API van deze dienst met deze token",
+            serviceTooltip: "De dienst gekoppeld aan dit token. Je hebt alleen toegang tot de API van deze dienst met dit token",
             hashedToken: "Token",
             hashedTokenTooltip: "De token om te gebruiken in de authorization header",
-            tokenDisclaimer: "Kopieer de token en sla het veilige op. Je kunt deze token maar één keer bekijken. Nadat je op <i>Opslaan</i> hebt gedrukt, kun je het niet meer zien.",
-            required: "Dit {{attribute}} is verplicht voor een token",
+            tokenDisclaimer: "Kopieer het token en sla het veilig op. Je kunt dit token maar één keer zien. Nadat je op <i>Opslaan</i> hebt gedrukt, kun je het niet meer zien.",
+            required: "Dit {{attribute}} is verplicht voor een diensttoken",
             flash: {
-                created: "Token {{name}} aangemaakt",
-                updated: "Token {{name}} bijgewerkt",
-                reactivated: "Token {{name}} geheractiveerd",
+                created: "Diensttoken {{name}} aangemaakt",
+                updated: "Diensttoken {{name}} bijgewerkt",
+                reactivated: "Diensttoken {{name}} geheractiveerd",
             }
         },
         scimServices: {
-            searchPlaceHolder: "Search for scim services..",
-            noEntities: "There are no service configured with the mock scim endpoint",
+            searchPlaceHolder: "Search for SCIM services..",
+            noEntities: "There are no service configured with the mock SCIM endpoint",
         }
     },
     user: {
-        titleUpdate: "Werk de sleutels in je gebruikersprofiel bij",
+        titleUpdate: "Werk de SSH-sleutels in je gebruikersprofiel bij",
         ssh_key: "Publieke SSH-sleutel",
         ssh_keyPlaceholder: "Je publieke SSH-sleutel om in te loggen op de dienst",
         ssh_keyTooltip: "Je publieke SSH-sleutel zal worden uitgewisseld met de diensten waar je toegang toe hebt. Je kunt je publieke SSH-sleutel ook uploaden.",
         sshKeyError: "Deze SSH cipher wordt niet herkend. In de <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://edu.nl/87btm\">documentatie</a> staan de ondersteunde formaten.",
         sshConvertInfo: "Je publieke SSH-sleutel wordt geconverteerd naar het bestandsformaat <code>OpenSSH-key</code> bij het wijzigen van het profiel",
         update: "Wijzigen",
-        download: "Download profiel",
+        download: "Download mijn gegevens",
         flash: {
             updated: "Je profiel is bijgewerkt"
         },
@@ -1123,7 +1123,7 @@ const nl = {
         collaborationRequests: "Aanvragen voor samenwerkingen voor {{name}}",
         searchPlaceHolder: "Zoek leden",
         invite: "Nodig nieuwe leden uit",
-        newApiKey: "Voeg een nieuwe API-sleutel toe",
+        newApiKey: "Voeg een organisatie-API-token toe",
         noInvitations: "Geen openstaande uitnodigingen",
         noCollaborationRequests: "Geen openstaande samenwerkingsaanvragen",
         member: {
@@ -1168,7 +1168,7 @@ const nl = {
             description: "Omschrijving",
             actions: "",
         },
-        apiKeys: "API-sleutels van {{name}}",
+        apiKeys: "Organisatie-API-tokens van {{name}}",
         collaborations: "Samenwerkingen van {{name}}",
         noCollaborations: "Deze samenwerking heeft geen samenwerkingen.",
         newCollaboration: "Nieuwe samenwerking",
@@ -1182,7 +1182,7 @@ const nl = {
         deleteSingleMemberConfirmation: "Weet je zeker dat je deze beheerder wil verwijderen?",
         deleteSingleInvitationConfirmation: "Weet je zeker dat je deze uitnodiging wil verwijderen?",
         deleteYourselfMemberConfirmation: "Weet je zeker dat je deze organisatie wil verlaten? Je kan dit niet terugdraaien.",
-        deleteApiKeyConfirmation: "Weet je zeker dat je deze API-sleutel wil verwijderen?",
+        deleteApiKeyConfirmation: "Weet je zeker dat je dit organisatie-API-token wil verwijderen?",
         deleteCollaborationConfirmation: "Weet je zeker dat je samenwerking {{name}} wil verwijderen? Dit kan niet teruggedraaid worden.",
         activateMemberConfirmation: "Weet je zeker dat je gebruiker {{name}} wil her-activeren? We zullen de gebruiker een e-mail sturen met activatie-link.",
         flash: {
@@ -1190,7 +1190,7 @@ const nl = {
             deleted: "Organisatie {{name}} is verwijderd.",
             entitiesDeleted: "Lidmaatschap(pen) / uitnodigingen zijn verwijderd",
             memberDeleted: "Lidmaatschap van {{name}} is verwijderd.",
-            apiKeyDeleted: "API-sleutel is verwijderd.",
+            apiKeyDeleted: "Organisatie-API-token verwijderd.",
             collaborationDeleted: "Samenwerking {{name}} is verwijderd.",
             memberActivated: "Aan lid {{name}} is per e-mail een activatie-link verstuurd.",
             memberUpdated: "De rol of lidmaatschap van {{name}} is bijgewerkt naar {{role}}.",
@@ -1264,18 +1264,18 @@ const nl = {
         },
     },
     apiKeys: {
-        title: "Nieuwe API-sleutel voor {{organisation}}",
-        info: "Met een API-sleutel kan de <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{base_url}}/apidocs/\"'>Application Programmer Interface (API)</a> worden gebruikt.",
+        title: "Nieuw API-token voor {{organisation}}",
+        info: "Met een organisatie-API-token kan de <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{base_url}}/apidocs/\"'>Application Programmer Interface (API)</a> worden gebruikt.",
         backToOrganisationDetail: "Terug naar mijn organisatie {{name}}",
-        secretDisclaimer: "De sleutel wordt slechts eenmaal getoond. Sla de sleutel op en bewaar deze veilig.<br><br>Bij verlies zal je de sleutel moeten verwijderen en een nieuwe moeten aanmaken.",
-        secret: "Sleutel",
-        secretValue: "One-way hashed secret",
-        secretTooltip: "De sleutel voor in de authorization header",
+        secretDisclaimer: "Het token wordt slechts eenmaal getoond. Sla het token op en bewaar het veilig.<br><br>Bij verlies zal je het token moeten verwijderen en een nieuwe moeten aanmaken.",
+        secret: "Organisatie-API-token",
+        secretValue: "One-way hashed token",
+        secretTooltip: "Het token voor in de authorization header",
         description: "Omschrijving",
-        descriptionPlaceHolder: "Omschrijving voor deze API-sleutel",
-        descriptionTooltip: "Een optionele omschrijving van het doel van deze API-sleutel",
+        descriptionPlaceHolder: "Omschrijving voor dit organisatie-API-token",
+        descriptionTooltip: "Een optionele omschrijving van het doel van dit organisatie-API-token",
         flash: {
-            created: "API-sleutel voor organisatie {{name}} aangemaakt.",
+            created: "Organisatie-API-token voor organisatie {{name}} aangemaakt.",
         },
         submit: "Opslaan"
     },
@@ -1615,7 +1615,7 @@ const nl = {
             submit: "Haal op"
         },
         tables: {
-            "api_keys": "API-sleutel",
+            "api_keys": "Organisatie-API-tokens",
             "aups": "Acceptable User Policy",
             "collaboration_memberships": "Lidmaatschap",
             "collaboration_memberships_groups": "Groepslidmaatschap",
@@ -1646,7 +1646,7 @@ const nl = {
             "service_invitations": "Dienstuitnodiging",
             "service_memberships": "Dienstlidmaatschap",
             "tags": "Label",
-            "service_tokens": "Service tokens"
+            "service_tokens": "Diensttokens (allemaal)"
         }
     },
     serviceRequest: {
@@ -2088,8 +2088,8 @@ const nl = {
         scimURL: "SCIM-endpoints base URL",
         scimURLPlaceHolder: "https://service.com.scim",
         scimURLTooltip: "De base URL van het SCIM endpoint waarnaar alle SCIM event worden verzonden.",
-        scimBearerToken: "Server token",
-        scimBearerTokenTooltip: "Het externe token om de SRAM calls naar de SCIM endpoints te autoriseren door bearer autorisatie",
+        scimBearerToken: "SCIM token",
+        scimBearerTokenTooltip: "Het externe SCIM token om de SRAM calls naar de SCIM endpoints te autoriseren door bearer autorisatie",
         sweepScimEnabled: "SCIM sweeping",
         sweepScimEnabledTooltip: "Een periodieke controle en, indien nodig, aanpassing om de data bij de dienst actueel te houden.",
         scimSweepDeleteOrphans: "Sweep verwijdert weesgebruikers en lege samenwerkingen en groepen",
@@ -2108,7 +2108,7 @@ const nl = {
         tokenValidityDays: "Geldigheidsduur gebruikertoken (dagen)",
         tokenValidityDaysTooltip: "Het aantal dagen dat de gebruikerstokens geldig zijn",
         introspectionEndpoint: "Introspection endpoint URL",
-        introspectionEndpointToken: "Introspection endpoint bearer token",
+        introspectionEndpointToken: "Introspection endpoint token",
         tokenDisclaimer: "Kopieer de token en sla het veilig op. Je kunt deze token hier maar één keer bekijken.<br><br>Nadat je op 'Toevoegen' hebt gedrukt, kun je het niet meer zien, anders dan door het te verwijderen en opnieuw een nieuw token aan te maken.",
         delete: "Verwijder token",
         deleteConfirmation: "Weet je zeker dat je dit token wil verwijderen? Dit kan niet teruggedraaid worden.",
@@ -2139,11 +2139,11 @@ const nl = {
     },
     serviceDetails: {
         details: "Dienstgegevens",
-        tokens: "Diensttokens",
+        tokens: "Tokens",
         tokensTooltips: {
-            scim: "Een SCIM diensttoken stelt de dienst in staat om de SCIM endpoints van SRAM aan te roepen",
-            pam: "Een PAM diensttoken stelt de dienst in staat om de PAM web login-functionaliteit van SRAM te gebruiken",
-            introspection: "Een introspect diensttoken stelt de dienst in staat om tokens van gebruikers te introspecten"
+            scim: "Een SCIM token stelt de dienst in staat om de SCIM endpoints van SRAM aan te roepen",
+            pam: "Een PAM web login token stelt de dienst in staat om de PAM web login-functionaliteit van SRAM te gebruiken",
+            introspection: "Een user introspection token stelt de dienst in staat om tokens van gebruikers te introspecten"
         },
         hashedToken: "Hashed token",
         tokenValue: "**** **** ****",
@@ -2169,7 +2169,7 @@ const nl = {
             contacts: "Contactpersonen",
             policy: "Policy & compliance",
             ldap: "LDAP",
-            tokens: "User tokens",
+            tokens: "User introspection tokens",
             pamWebLogin: "PAM web login",
             SCIMServer: "SCIM server",
             SCIMClient: "SCIM client"
