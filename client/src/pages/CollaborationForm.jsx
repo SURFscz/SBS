@@ -473,7 +473,6 @@ class CollaborationForm extends React.Component {
             loading,
             autoCreateCollaborationRequest,
             useOrganisationLogo,
-            generateLogo,
             tags,
             tagsSelected,
             invalidInputs,
@@ -564,12 +563,6 @@ class CollaborationForm extends React.Component {
                                       }
                                   }}
                                   info={I18n.t("collaboration.useOrganisationLogo")}/>}
-                        {isNew && <CheckBox name="generate-logo"
-                                            value={generateLogo}
-                                            onChange={this.regenerateLogo}
-                                            tooltip={I18n.t("collaboration.generateLogoTooltip")}
-                                            readOnly={isEmpty(name)}
-                                            info={I18n.t("collaboration.generateLogo")}/>}
                     </div>
                     <InputField value={short_name} onChange={e => {
                         this.setState({
