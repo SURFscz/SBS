@@ -719,6 +719,8 @@ const en = {
         name: "Name",
         logo: "Collaboration logo",
         useOrganisationLogo: "Use the organisation logo",
+        generateLogo: "Generate logo",
+        generateLogoTooltip: "You first must enter a Collaboration name to enable logo generation",
         namePlaceHolder: "The unique name of a collaboration",
         shortName: "Short name",
         shortNamePlaceHolder: "Unique short name of the collaboration",
