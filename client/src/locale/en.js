@@ -1970,22 +1970,22 @@ const en = {
             info1: "To update your two-factor authentication, please follow the steps below.",
             info2: "You will need to have access to the authenticator app that you are currently using to sign in to SURF Research Access Management, as well as to the new authenticator app that you wish to use for future logins.",
             currentCode: "1. Enter current verification code",
-            currentCodeInfo: "Enter the 6-digit authentication code from your current authenticator app.",
+            currentCodeInfo: "Enter the 6-digit verification code from your current authenticator app.",
             scanInfo: "Open your new authenticator app and:",
-            verificationCodeInfo: "Once the QR-code above is scanned, enter the 6-digit authentication code from your new authenticator app.",
+            verificationCodeInfo: "Once the QR-code above is scanned, enter the 6-digit verification code from your new authenticator app.",
             verify: "Verify and update",
             flash: "Your two-factor authentication has been updated to use your new authenticator app",
             preValidatedFlash: "Correct!"
         },
         verify: {
-            title: "Enter your authentication code",
-            info1: "Use your two-factor authenticator app on your device to view your authentication code for <strong>SURF Research Access Management</strong> and verify your identity.",
+            title: "Enter your verification code",
+            info1: "Enter the verificatie code from your authenticator app for <strong>SURF Research Access Management</strong> to verify your identity.",
             explanation: "Two-factor authentication",
             signIn: "Verify",
-            problems: "Problems with your authenticator app?",
-            invalid: "Invalid authentication code",
-            resetRequest: "Request a reset of your authentication code",
-            resetToken: "Enter a received authentication reset token"
+            problems: "Problems with your verification code?",
+            invalid: "Invalid verification code",
+            resetRequest: "Request a reset",
+            resetToken: "Use a received reset code"
         },
         profile: {
             name: "Two-factor authentication",
@@ -1997,24 +1997,18 @@ const en = {
             edit: "Edit"
         },
         lost: {
-            title: "Reset your authentication code",
-            info: "In case you have:",
-            reasons: [
-                "lost access to your phone",
-                "reset your authentication code",
-                "or are experiencing other difficulties"
-            ],
-            request: "You can request an admin for an authentication reset token. You will be required to setup your second-authentication on your next login.",
-            select: "Select a colleague who will receive the reset-token:",
-            respondent: "The email will be send to:",
-            message: "Message for the admin",
-            sendMail: "Send email",
-            flash: "Your request to reset your authentication has been sent"
+            title: "Reset your verification code",
+            request: "You can request an admin to reset your verification code. You will recieve a reset token to reconfigure two factor authentication.",
+            select: "Select who to ask for a reset token:",
+            respondent: "Your request will be sent to:",
+            message: "Message for the reader",
+            sendMail: "Request a reset",
+            flash: "Your request for a reset token has been sent"
         },
         reset: {
-            title: "Reset your authentication code",
-            info1: "Enter the reset token you have received from your admin",
-            submit: "Submit",
+            title: "Reset your verification code",
+            info1: "Enter your received reset token",
+            submit: "Reset",
             resetCodePlaceholder: "Reset token",
             invalid: "Invalid reset token",
         }

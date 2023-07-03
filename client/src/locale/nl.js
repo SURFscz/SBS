@@ -1969,23 +1969,23 @@ const nl = {
         update: {
             info1: "Volg de onderstaande stappen om je tweefactorauthenticatie bij te werken.",
             info2: "Je moet toegang hebben tot de authenticator-app die je momenteel gebruikt om in te loggen bij SURF Research Access Management, evenals tot de nieuwe authenticator-app die je wil gebruiken voor toekomstige logins.",
-            currentCode: "Voer de huidige authenticatiecode in",
-            currentCodeInfo: "Voer de 6-cijferige authenticatiecode van je huidige authenticator-app in.",
+            currentCode: "Voer de huidige verificatiecode in",
+            currentCodeInfo: "Voer de 6-cijferige verificatiecode van je huidige authenticator-app in.",
             scanInfo: "Open je nieuwe authenticator-app en:",
-            verificationCodeInfo: "Zodra de QR-code hierboven is gescand, voer je de 6-cijferige authenticatiecode van je nieuwe authenticator-app in.",
+            verificationCodeInfo: "Zodra de QR-code hierboven is gescand, voer je de 6-cijferige verificatiecode van je nieuwe authenticator-app in.",
             verify: "Verifiëren en wijzigen",
             flash: "Je tweefactorauthenticatie is aangepast voor je nieuwe authenticator-app",
             preValidatedFlash: "Correct!"
         },
         verify: {
-            title: "Vul je authenticatiecode in",
-            info1: "Gebruik je tweefactor-authenticator op je app om de authenticatiecode voor <strong>SURF Research Access Management</strong> te bekijken en je identiteit te verifiëren.",
-            explanation: "Two-factor authenticatie",
+            title: "Vul je verificatiecode in",
+            info1: "Vul de verificatiecode uit je authenticator-app voor <strong>SURF Research Access Management</strong> in om je identiteit te verifiëren.",
+            explanation: "Tweefactor-authenticatie",
             signIn: "Verifiëren",
-            problems: "Problemen met je authenticator-app?",
-            invalid: "Foutieve authenticatiecode",
-            resetRequest: "Vraag een reset aan van je authenticatiecode",
-            resetToken: "Voer een ontvangen authenticatie-reset-token in"
+            problems: "Problemen met je verificatiecode?",
+            invalid: "Foutieve verificatiecode",
+            resetRequest: "Vraag een reset aan",
+            resetToken: "Gebruik een ontvangen resetcode"
         },
         profile: {
             name: "Tweefactorauthenticatie",
@@ -1997,26 +1997,20 @@ const nl = {
             edit: "Aanpassen"
         },
         lost: {
-            title: "Reset je authenticatiecode",
-            info: "In het geval je:",
-            reasons: [
-                "toegang tot je telefoon verloren bent",
-                "de authenticatiecode hebt gereset",
-                "andere problemen hebben"
-            ],
-            request: "Je kan de beheerder van je samenwerking vragen voor een authenticatie-resettoken. Je moet je tweede authenticatie instellen bij de volgende login.",
-            select: "Selecteer een collega die de reset-token zal ontvangen:",
-            respondent: "De e-mail wordt verzonden naar:",
-            message: "Bericht voor de beheerder",
-            sendMail: "Verzend e-mail",
-            flash: "Je verzoek om je authenticatie te resetten is verzonden"
+            title: "Reset je verificatiecode",
+            request: "Je kunt een beheerder vragen je verificatiecode te resetten. Je krijgt dan een resettoken en kunt daarmee je tweefactorauthenticatie opnieuw instellen.",
+            select: "Selecteer aan wie de reset te vragen:",
+            respondent: "Je verzoek wordt verzonden naar:",
+            message: "Bericht voor de ontvanger",
+            sendMail: "Vraag reset aan",
+            flash: "Je verzoek om een reset is verzonden"
         },
         reset: {
-            title: "Reset je authenticatiecode",
-            info1: "Voer het reset token in dat je beheerder je heeft gegeven",
-            submit: "Verzend",
-            resetCodePlaceholder: "Reset token",
-            invalid: "Foutief reset token",
+            title: "Reset je verificatiecode",
+            info1: "Voer je ontvangen resettoken in",
+            submit: "Reset",
+            resetCodePlaceholder: "Resettoken",
+            invalid: "Ongeldig resettoken",
         }
     },
     sfo: {

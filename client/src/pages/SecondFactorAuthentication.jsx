@@ -263,11 +263,6 @@ class SecondFactorAuthentication extends React.Component {
         return (<div className="authenticator-problems">
 
             <h1>{I18n.t("mfa.lost.title")}</h1>
-            <p>{I18n.t("mfa.lost.info")}</p>
-            <ul>
-                {I18n.translations[I18n.locale].mfa.lost.reasons.map((option, i) =>
-                    <li key={i} dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(option)}}/>)}
-            </ul>
             <p>{I18n.t("mfa.lost.request")}</p>
             {respondents.length > 1 && <div className="select-respondents">
                 <p>{I18n.t("mfa.lost.select")}</p>
@@ -333,7 +328,7 @@ class SecondFactorAuthentication extends React.Component {
                         txt={I18n.t("mfa.verify.signIn")}
                         centralize={true}/>
                 <div className="explain">
-                    <span>{I18n.t("mfa.verify.problems")}</span>
+                    <h3>{I18n.t("mfa.verify.problems")}</h3>
                     <a href="/reset-token" onClick={this.openResetRequest}>{I18n.t("mfa.verify.resetRequest")}</a>
                     <a href="/enter-reset" onClick={this.enterResetToken}>{I18n.t("mfa.verify.resetToken")}</a>
                 </div>
