@@ -1011,7 +1011,7 @@ const nl = {
             confirmation: "Resetten zorgt ervoor dat alle gebruikers van deze dienst '{{name}}' de AUP opnieuw moeten accepteren. Wil je dat?",
             flash: "De acceptatie van de AUP voor dienst {{name}} is gereset voor alle gebruikers"
         },
-        contacts: "Contactpersonen",
+        contacts: "Contact",
         leave: "Verlaat dienst",
         confirmation: {
             leave: "Weet je zeker dat je niet meer de admin van deze dienst wil zijn? Je kan dit niet ongedaan maken.",
@@ -2166,7 +2166,7 @@ const nl = {
         addToken: "Voeg token toe",
         toc: {
             general: "Algemeen",
-            contacts: "Contactpersonen",
+            contacts: "Contact",
             policy: "Policy & compliance",
             ldap: "LDAP",
             tokens: "User introspection tokens",
