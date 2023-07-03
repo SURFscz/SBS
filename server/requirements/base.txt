@@ -9,7 +9,7 @@ flask==2.3.2
 flask_migrate==4.0.4
 Flask-SQLAlchemy==3.0.5
 jinja2==3.1.2
-munch==3.0.0
+munch==4.0.0
 paho-mqtt==1.6.1
 python2-secrets==1.0.5
 pytz==2023.3
