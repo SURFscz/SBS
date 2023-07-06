@@ -782,7 +782,7 @@ const en = {
         role: "Role",
         newTitle: "Create new collaboration",
         subTitle: "Enter / edit the collaboration details. You will become an admin of the new collaboration.",
-        alreadyExists: "A collaboration with {{attribute}} {{value}} already exists in organisation {{organisation}}.",
+        alreadyExists: "A collaboration with {{attribute}} {{value}} already exists",
         required: "The {{attribute}} is required for a collaboration",
         administrators: "Admins",
         administratorsPlaceholder: "Invite admins by email",

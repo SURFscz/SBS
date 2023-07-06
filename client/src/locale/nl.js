@@ -782,7 +782,7 @@ const nl = {
         role: "Rol",
         newTitle: "Voeg nieuwe samenwerking toe",
         subTitle: "Beschrijf de samenwerking. Je wordt beheerder van de nieuwe samenwerking.",
-        alreadyExists: "Een samenwerking met {{attribute}} {{value}} bestaat al in organisatie {{organisation}}.",
+        alreadyExists: "Er bestaat al een samenwerking met {{attribute}} {{value}}.",
         required: "{{attribute}} moet worden ingevuld voor een samenwerking.",
         administrators: "Beheerders",
         administratorsPlaceholder: "Nodig beheerders uit per e-mail",
