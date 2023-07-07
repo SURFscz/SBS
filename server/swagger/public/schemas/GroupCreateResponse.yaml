@@ -1,0 +1,19 @@
+---
+type: object
+properties:
+  name:
+    type: string
+    example: "AI researchers"
+  description:
+    type: string
+    example: "AI researchers"
+  short_name:
+    type: string
+    example: "ai_researchers"
+  auto_provision_members:
+    type: boolean
+    description: "If true then make every member member of this group"
+    example: true
+  identifier:
+    type: string
+    example: "a71a2b01-4642-4e1a-b3ac-0a06b2bf66f2"

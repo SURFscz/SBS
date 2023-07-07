@@ -10,7 +10,8 @@ from werkzeug.exceptions import Conflict, Forbidden
 from server.api.base import json_endpoint, query_param, emit_socket, STATUS_OPEN
 from server.api.service_aups import add_user_aups
 from server.auth.secrets import generate_token
-from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call
+from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call, \
+    confirm_organisation_api_collaboration
 from server.db.activity import update_last_activity_date
 from server.db.defaults import default_expiry_date
 from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, JoinRequest
@@ -295,12 +296,7 @@ def external_invitation(external_identifier):
 @swag_from("../swagger/public/paths/get_open_invitations.yml")
 @json_endpoint
 def get_open_invitations(co_identifier):
-    confirm_external_api_call()
-    organisation = request_context.external_api_organisation
-    collaboration = Collaboration.query.filter(Collaboration.identifier == co_identifier).one()
-
-    if not organisation or organisation.id != collaboration.organisation_id:
-        raise Forbidden()
+    collaboration = confirm_organisation_api_collaboration(co_identifier)
 
     invitations = Invitation.query \
         .filter(Invitation.collaboration == collaboration) \

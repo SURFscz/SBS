@@ -3,7 +3,8 @@ from flask import jsonify
 from server.db.domain import Collaboration, Group, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import ai_researchers_group, ai_computing_name, ai_researchers_group_short_name, \
-    service_group_mail_name, ai_dev_identifier, uuc_secret, john_name, uva_secret, collaboration_ai_computing_uuid
+    service_group_mail_name, ai_dev_identifier, uuc_secret, john_name, uva_secret, collaboration_ai_computing_uuid, \
+    uva_research_name
 
 
 class TestGroup(AbstractTest):
@@ -186,3 +187,42 @@ class TestGroup(AbstractTest):
                     headers={"Authorization": f"Bearer {uva_secret}"},
                     response_status_code=403,
                     with_basic_auth=False)
+
+    def test_create_group_api(self):
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+
+        res = self.post("/api/groups/v1",
+                        body={
+                            "name": "some name",
+                            "short_name": "!@#$%  QWERTY *&^%$#@",
+                            "description": "optional",
+                            "auto_provision_members": False,
+                            "collaboration_identifier": collaboration.identifier
+                        },
+                        headers={"Authorization": f"Bearer {uuc_secret}"},
+                        with_basic_auth=False)
+
+        self.assertIsNotNone(res["identifier"])
+        self.assertEqual("qwerty", res["short_name"])
+
+    def test_create_group_not_allowed_api(self):
+        collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
+
+        self.post("/api/groups/v1",
+                  body={
+                      "name": "some name",
+                      "short_name": "!@#$%  qwerty *&^%$#@",
+                      "description": "optional",
+                      "auto_provision_members": False,
+                      "collaboration_identifier": collaboration.identifier
+                  },
+                  headers={"Authorization": f"Bearer {uuc_secret}"},
+                  with_basic_auth=False,
+                  response_status_code=403)
+
+    def test_delete_group_api(self):
+        group = self.find_entity_by_name(Group, ai_researchers_group)
+        self.delete("/api/groups/v1", primary_key=group.identifier,
+                    headers={"Authorization": f"Bearer {uuc_secret}"},
+                    with_basic_auth=False)
+        self.assertIsNone(self.find_entity_by_name(Group, ai_researchers_group))
