@@ -7,6 +7,7 @@ from server.api.collaborations_services import connect_service_collaboration
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_write_access, \
     is_service_admin
+from server.db.activity import update_last_activity_date
 from server.db.domain import ServiceConnectionRequest, Service, Collaboration, db, User
 from server.db.models import delete
 from server.mail import mail_service_connection_request, mail_accepted_declined_service_connection_request
@@ -117,6 +118,8 @@ def request_service_connection():
 
     user = db.session.get(User, current_user_id())
     request_new_service_connection(collaboration, data.get("message"), service, user)
+
+    update_last_activity_date(collaboration.id)
 
     return {}, 201
 

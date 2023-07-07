@@ -3,6 +3,7 @@ from flask import Blueprint, request as current_request, g as request_context
 from server.api.base import json_endpoint, emit_socket
 from server.auth.security import confirm_collaboration_admin
 from server.db.db import db
+from server.db.activity import update_last_activity_date
 from server.db.domain import Group, CollaborationMembership
 from server.schemas import json_schema_validator
 from server.scim.events import broadcast_group_changed
@@ -39,6 +40,9 @@ def add_group_members():
     data = current_request.get_json()
     count = do_add_group_members(data, True, True)
 
+    collaboration_id = int(data["collaboration_id"])
+    update_last_activity_date(collaboration_id)
+
     return ({}, 201) if count > 0 else (None, 404)
 
 
@@ -51,6 +55,9 @@ def delete_group_members(group_id, collaboration_membership_id, collaboration_id
     group = db.session.get(Group, group_id)
     group.collaboration_memberships.remove(db.session.get(CollaborationMembership, collaboration_membership_id))
     db.session.merge(group)
+
+    update_last_activity_date(collaboration_id)
+
     db.session.commit()
 
     emit_socket(f"collaboration_{collaboration_id}", include_current_user_id=True)

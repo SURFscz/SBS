@@ -6,6 +6,7 @@ from server.api.base import json_endpoint, emit_socket
 from server.auth.security import confirm_collaboration_admin, current_user_uid, \
     current_user_id, confirm_organisation_admin_or_manager
 from server.db.defaults import STATUS_ACTIVE
+from server.db.activity import update_last_activity_date
 from server.db.domain import CollaborationMembership, db, Collaboration
 from server.logger.context_logger import ctx_logger
 from server.scim.events import broadcast_collaboration_changed, broadcast_group_changed
@@ -32,6 +33,8 @@ def delete_collaboration_membership(collaboration_id, user_id):
     if memberships:
         for membership in memberships:
             db.session.delete(membership)
+
+        update_last_activity_date(collaboration_id)
 
         user = memberships[0].user
 
@@ -65,6 +68,8 @@ def update_collaboration_membership_expiry_date():
     collaboration_membership.expiry_date = membership_expiry_date
     collaboration_membership.status = STATUS_ACTIVE
 
+    update_last_activity_date(collaboration_id)
+
     emit_socket(f"collaboration_{collaboration_id}", include_current_user_id=True)
 
     db.session.merge(collaboration_membership)
@@ -86,6 +91,8 @@ def update_collaboration_membership_role():
         .filter(CollaborationMembership.user_id == user_id) \
         .one()
     collaboration_membership.role = role
+
+    update_last_activity_date(collaboration_id)
 
     emit_socket(f"collaboration_{collaboration_id}", include_current_user_id=True)
 
