@@ -1,0 +1,44 @@
+summary: "Post a new group."
+description: "Save a new group."
+
+tags:
+  - "Organisations"
+
+consumes:
+  - "application/json"
+
+produces:
+  - "application/json"
+
+security:
+  - APIKeyHeader: [ 'Authorization' ]
+
+parameters:
+  - name: Authorization
+    in: header
+    description: Bearer API key
+    required: true
+    schema:
+      type: string
+      example: Bearer Am4Hp7GBO2lMseskWHRmEtE3DWD-VxZZ3qwMkNPv6qZ8
+  - name: group
+    in: body
+    description: The group attributes
+    required: true
+    schema:
+      $ref: '/swagger/schemas/GroupCreate.yaml'
+
+responses:
+  201:
+    description: Created collaboration
+    schema:
+      $ref: '/swagger/schemas/GroupCreateResponse.yaml'
+  401:
+    schema:
+      $ref: '/swagger/components/responses/Unauthorized.yaml'
+  403:
+    schema:
+      $ref: '/swagger/components/responses/Forbidden.yaml'
+  404:
+    schema:
+      $ref: '/swagger/components/responses/NotFound.yaml'
