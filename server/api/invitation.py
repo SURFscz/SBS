@@ -7,12 +7,12 @@ from flask import Blueprint, request as current_request, current_app, g as reque
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict, Forbidden
 
-from server.api.base import json_endpoint, query_param, emit_socket
+from server.api.base import json_endpoint, query_param, emit_socket, STATUS_OPEN
 from server.api.service_aups import add_user_aups
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call
-from server.db.defaults import default_expiry_date
 from server.db.activity import update_last_activity_date
+from server.db.defaults import default_expiry_date
 from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, JoinRequest
 from server.db.models import delete
 from server.mail import mail_collaboration_invitation
@@ -54,6 +54,19 @@ def do_resend(invitation_id):
 def parse_date(val, default_date=None):
     return datetime.datetime.fromtimestamp(val / 1e3) if val and (
         isinstance(val, float) or isinstance(val, int)) else default_date
+
+
+def invitation_to_dict(invitation, include_expiry_date=False):
+    res = {
+        "status": invitation.status,
+        "invitation": {
+            "identifier": invitation.external_identifier,
+            "email": invitation.invitee_email
+        }
+    }
+    if include_expiry_date:
+        res["invitation"]["expiry_date"] = invitation.expiry_date
+    return res
 
 
 @invitations_api.route("/find_by_hash", strict_slashes=False)
@@ -263,13 +276,7 @@ def delete_invitation(invitation_id):
 def external_invitation(external_identifier):
     confirm_external_api_call()
     invitation = Invitation.query.filter(Invitation.external_identifier == external_identifier).one()
-    res = {
-        "status": invitation.status,
-        "invitation": {
-            "identifier": invitation.external_identifier,
-            "email": invitation.invitee_email
-        }
-    }
+    res = invitation_to_dict(invitation)
     if invitation.status == "accepted":
         cm = CollaborationMembership.query.filter(CollaborationMembership.invitation_id == invitation.id).one()
         res["user"] = {
@@ -282,3 +289,21 @@ def external_invitation(external_identifier):
     else:
         res["invitation"]["expiry_date"] = invitation.expiry_date
     return res, 200
+
+
+@invitations_api.route("/v1/invitations/<co_identifier>", strict_slashes=False)
+@swag_from("../swagger/public/paths/get_open_invitations.yml")
+@json_endpoint
+def get_open_invitations(co_identifier):
+    confirm_external_api_call()
+    organisation = request_context.external_api_organisation
+    collaboration = Collaboration.query.filter(Collaboration.identifier == co_identifier).one()
+
+    if not organisation or organisation.id != collaboration.organisation_id:
+        raise Forbidden()
+
+    invitations = Invitation.query \
+        .filter(Invitation.collaboration == collaboration) \
+        .filter(Invitation.status == STATUS_OPEN) \
+        .all()
+    return [invitation_to_dict(invitation, True) for invitation in invitations], 200

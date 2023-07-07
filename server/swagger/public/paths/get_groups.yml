@@ -24,7 +24,7 @@ parameters:
 
 responses:
   200:
-    description: All users
+    description: All groups
     schema:
       $ref: '/swagger/schemas/ScimGroupListResult.yaml'
   401:
