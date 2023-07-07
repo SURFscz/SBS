@@ -327,7 +327,7 @@ export default class Collaborations extends React.PureComponent {
                           filters={this.filters(filterOptions, filterValue)}
                           actionHeader={"collaboration-services"}
                           actions={serviceModule ? this.actionButtons(selectedCollaborations, collaborationAdminEmails, collaborations) : null}
-                          showNew={true}
+                          showNew={mayCreateCollaborations}
                           newEntityPath={`/new-collaboration${organisationQueryParam}`}
                           loading={loading}
                           {...this.props}/>
