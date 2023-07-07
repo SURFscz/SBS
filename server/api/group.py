@@ -11,6 +11,7 @@ from server.api.group_members import do_add_group_members
 from server.auth.security import confirm_collaboration_admin, confirm_external_api_call
 from server.db.db import db
 from server.db.defaults import cleanse_short_name
+from server.db.activity import update_last_activity_date
 from server.db.domain import Group, Collaboration, Invitation, User, CollaborationMembership
 from server.db.models import update, save, delete
 from server.schemas import json_schema_validator
@@ -102,6 +103,7 @@ def save_group():
     confirm_collaboration_admin(collaboration_id)
 
     res = create_group(collaboration_id, data)
+    update_last_activity_date(collaboration_id)
 
     return res
 
@@ -159,6 +161,8 @@ def update_group():
 
     auto_provision_all_members_and_invites(group)
 
+    update_last_activity_date(group.collaboration_id)
+
     emit_socket(f"collaboration_{collaboration.id}")
     broadcast_group_changed(group.id)
 
@@ -174,6 +178,8 @@ def delete_group(group_id):
 
     emit_socket(f"collaboration_{group.collaboration_id}")
     broadcast_group_deleted(group_id)
+
+    update_last_activity_date(group.collaboration_id)
 
     return delete(Group, group_id)
 

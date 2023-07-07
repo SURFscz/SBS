@@ -22,6 +22,7 @@ from server.db.db import db
 from server.db.defaults import (default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name,
                                 STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED, valid_uri_attributes, valid_tag_label,
                                 uri_re, max_logo_bytes)
+from server.db.activity import update_last_activity_date
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
     Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag, ServiceGroup
 from server.db.models import update, save, delete, flatten, unique_model_objects
@@ -404,6 +405,8 @@ def collaboration_invites():
             "wiki_link": current_app.app_config.wiki_link,
             "recipient": administrator
         }, collaboration, [administrator])
+
+    update_last_activity_date(collaboration_id)
 
     emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
 

@@ -12,6 +12,7 @@ from server.api.service_aups import add_user_aups
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call
 from server.db.defaults import default_expiry_date
+from server.db.activity import update_last_activity_date
 from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, JoinRequest
 from server.db.models import delete
 from server.mail import mail_collaboration_invitation
@@ -104,6 +105,8 @@ def collaboration_invites_api():
         user = organisation.organisation_memberships[0].user
     else:
         user = User.query.filter(User.uid == current_app.app_config.admin_users[0].uid).one()
+
+    update_last_activity_date(collaboration.id)
 
     message = data.get("message")
     intended_role = data.get("intended_role", "member")

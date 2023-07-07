@@ -6,6 +6,7 @@ from server.api.base import json_endpoint, emit_socket
 from server.api.service_group import create_service_groups
 from server.auth.security import confirm_collaboration_admin, confirm_external_api_call, confirm_service_admin
 from server.db.db import db
+from server.db.activity import update_last_activity_date
 from server.db.domain import Service, Collaboration, Organisation
 from server.schemas import json_schema_validator
 from server.scim.events import broadcast_service_added, broadcast_service_deleted
@@ -61,6 +62,8 @@ def add_collaborations_services():
 
     count = connect_service_collaboration(service_id, collaboration_id)
     res = {'collaboration_id': collaboration_id, 'service_id': service_id}
+
+    update_last_activity_date(collaboration_id)
 
     return (res, 201) if count > 0 else (None, 404)
 
@@ -119,6 +122,9 @@ def delete_collaborations_services(collaboration_id, service_id):
 
     service = db.session.get(Service, service_id)
     collaboration.services.remove(service)
+
+    update_last_activity_date(collaboration_id)
+
     db.session.merge(collaboration)
     db.session.commit()
 

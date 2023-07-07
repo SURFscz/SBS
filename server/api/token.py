@@ -8,6 +8,7 @@ from server.auth.tokens import validate_service_token
 from server.auth.user_claims import user_memberships, collaboration_memberships_for_service
 from server.db.db import db
 from server.db.defaults import USER_TOKEN_INTROSPECT, SERVICE_TOKEN_INTROSPECTION
+from server.db.activity import update_last_activity_date
 from server.db.domain import UserToken
 from server.db.models import log_user_login
 
@@ -44,6 +45,9 @@ def introspect():
         log_user_login(USER_TOKEN_INTROSPECT, False, user, user.uid if user else None, service, service.entity_id,
                        status=res["status"])
         return res, 200
+
+    for collaboration in connected_collaborations:
+        update_last_activity_date(collaboration.id)
 
     user_token.last_used_date = current_time
     db.session.merge(user_token)
