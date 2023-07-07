@@ -353,7 +353,7 @@ class Groups extends React.Component {
             label: I18n.t("models.groups.autoProvisioning"),
             values: [I18n.t(`models.groups.${selectedGroup.auto_provision_members ? "on" : "off"}`)]
         }, {
-            label: I18n.t("collaboration.joinRequestsHeader"),
+            label: I18n.t("collaboration.shortName"),
             values: [
                 <span className="contains-copy">
                         <CopyToClipboard text={selectedGroup.global_urn}>
