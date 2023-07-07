@@ -195,7 +195,7 @@ def reset2fa():
     else:
         user = User.query.filter(User.id == current_user_id()).one()
     token = data["token"]
-    if not token or token != user.mfa_reset_token:
+    if not token or token.strip() != user.mfa_reset_token:
         raise Forbidden()
     user.second_factor_auth = None
     user.mfa_reset_token = None
