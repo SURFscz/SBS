@@ -590,7 +590,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
 
     invitation = Invitation(hash=invitation_hash_curious, invitee_email="curious@ex.org", collaboration=ai_computing,
                             expiry_date=default_expiry_date(), user=admin, message="Please join...",
-                            intended_role="admin", status="open", external_identifier="external_identifier")
+                            intended_role="admin", status="open")
     invitation_accepted = Invitation(hash=generate_token(), invitee_email="some@ex.org", collaboration=ai_computing,
                                      expiry_date=default_expiry_date(), user=admin, message="Please join...",
                                      status="accepted", intended_role="admin")
