@@ -1,0 +1,24 @@
+---
+type: object
+properties:
+  name:
+    type: string
+    example: "AI researchers"
+  description:
+    type: string
+    example: "AI researchers"
+  short_name:
+    type: string
+    example: "ai_researchers"
+  auto_provision_members:
+    type: boolean
+    description: "If true then make every member member of this group"
+    example: true
+  collaboration_id:
+    type: number
+    readOnly: true
+    example: 999
+  collaboration_memberships:
+    type: array
+    items:
+      $ref: '/swagger/schemas/CollaborationMembership.yaml'

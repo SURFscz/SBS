@@ -18,21 +18,3 @@ properties:
         type: number
         description: "The expiry date of the invitation in epoch seconds"
         example: 1644015600
-  user:
-    type: object
-    properties:
-      name:
-        type: string
-        example: "Researcher Doe"
-      mail:
-        type: string
-        example: "rdoe@uniharderwijk.nl"
-      username:
-        type: string
-        example: "rdoe2"
-      platform_id:
-        type: string
-        example: "9bf251bf6cfa9eb8c75f15a90075fa7074eb3d48@sram.eduteams.org"
-      status:
-        type: string
-        example: "active"

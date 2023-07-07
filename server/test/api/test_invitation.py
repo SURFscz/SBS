@@ -2,6 +2,7 @@ import datetime
 import time
 import uuid
 
+from server.api.base import STATUS_OPEN
 from server.db.db import db
 from server.db.domain import Invitation, CollaborationMembership, User, Collaboration, Organisation, ServiceAup, \
     JoinRequest
@@ -227,3 +228,11 @@ class TestInvitation(AbstractTest):
         self.login("urn:peter")
         self.put("/api/invitations/accept", body={"hash": invitation_hash_curious}, with_basic_auth=False)
         self.assertEqual(0, JoinRequest.query.filter(JoinRequest.hash == join_request_peter_hash).count())
+
+    def test_open_invites_api(self):
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        res = self.get(f"/api/invitations/v1/invitations/{collaboration.identifier}",
+                       headers={"Authorization": f"Bearer {uuc_secret}"},
+                       with_basic_auth=False)
+        self.assertEqual(1, len(res))
+        self.assertEqual(STATUS_OPEN, res[0]["status"])
