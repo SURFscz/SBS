@@ -17,12 +17,13 @@ from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_collaboration_member, \
     confirm_authorized_api_call, \
     confirm_allow_impersonation, confirm_organisation_admin_or_manager, confirm_external_api_call, \
-    is_organisation_admin_or_manager, is_application_admin, confirm_service_admin
+    is_organisation_admin_or_manager, is_application_admin, confirm_service_admin, \
+    confirm_organisation_api_collaboration
+from server.db.activity import update_last_activity_date
 from server.db.db import db
 from server.db.defaults import (default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name,
                                 STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED, valid_uri_attributes, valid_tag_label,
                                 uri_re, max_logo_bytes)
-from server.db.activity import update_last_activity_date
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
     Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag, ServiceGroup
 from server.db.models import update, save, delete, flatten, unique_model_objects
@@ -110,7 +111,6 @@ def collaboration_by_identifier():
 @swag_from("../swagger/public/paths/get_collaboration_by_identifier.yml")
 @json_endpoint
 def api_collaboration_by_identifier(co_identifier):
-    confirm_external_api_call()
     collaboration = Collaboration.query \
         .outerjoin(Collaboration.collaboration_memberships) \
         .outerjoin(CollaborationMembership.user) \
@@ -122,10 +122,7 @@ def api_collaboration_by_identifier(co_identifier):
         .filter(Collaboration.identifier == co_identifier) \
         .one()
 
-    organisation = request_context.external_api_organisation
-    if not organisation or organisation.id != collaboration.organisation_id:
-        raise Forbidden()
-
+    confirm_organisation_api_collaboration(co_identifier, collaboration)
     return collaboration, 200
 
 
@@ -133,13 +130,7 @@ def api_collaboration_by_identifier(co_identifier):
 @swag_from("../swagger/public/paths/delete_collaboration.yml")
 @json_endpoint
 def delete_collaboration_api(co_identifier):
-    confirm_external_api_call()
-
-    organisation = request_context.external_api_organisation
-    collaboration = Collaboration.query.filter(Collaboration.identifier == co_identifier).one()
-
-    if not organisation or organisation.id != collaboration.organisation_id:
-        raise Forbidden()
+    collaboration = confirm_organisation_api_collaboration(co_identifier)
     collaboration_id = collaboration.id
 
     broadcast_collaboration_deleted(collaboration_id)

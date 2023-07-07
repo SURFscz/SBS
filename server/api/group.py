@@ -8,7 +8,8 @@ from werkzeug.exceptions import Forbidden, Conflict
 
 from server.api.base import json_endpoint, query_param, emit_socket
 from server.api.group_members import do_add_group_members
-from server.auth.security import confirm_collaboration_admin, confirm_external_api_call
+from server.auth.security import confirm_collaboration_admin, confirm_external_api_call, \
+    confirm_organisation_api_collaboration
 from server.db.activity import update_last_activity_date
 from server.db.db import db
 from server.db.defaults import cleanse_short_name
@@ -108,26 +109,36 @@ def save_group():
     return res
 
 
-@group_api.route("/", methods=["POST"], strict_slashes=False)
+@group_api.route("/v1", methods=["POST"], strict_slashes=False)
 @json_endpoint
-@swag_from("../swagger/public/paths/add_group_membership.yml")
+@swag_from("../swagger/public/paths/post_new_group.yml")
 def create_group_api():
     confirm_external_api_call()
 
     data = current_request.get_json()
     collaboration_identifier = data["collaboration_identifier"]
+    collaboration = confirm_organisation_api_collaboration(collaboration_identifier)
 
-    organisation = request_context.external_api_organisation
-
-    collaboration = Collaboration.query.filter(Collaboration.identifier == collaboration_identifier).one()
-
-    if not organisation or organisation.id != collaboration.organisation_id:
-        raise Forbidden()
-
+    data["collaboration_id"] = collaboration.id
     res = create_group(collaboration.id, data)
     update_last_activity_date(collaboration.id)
 
     return res
+
+
+@group_api.route("/v1/<group_identifier>", methods=["DELETE"], strict_slashes=False)
+@json_endpoint
+@swag_from("../swagger/public/paths/delete_group.yml")
+def delete_group_api(group_identifier):
+    group = Group.query.filter(Group.identifier == group_identifier).one()
+
+    confirm_organisation_api_collaboration(None, group.collaboration)
+
+    broadcast_group_deleted(group.id)
+
+    update_last_activity_date(group.collaboration_id)
+
+    return delete(Group, group.id)
 
 
 def create_group(collaboration_id, data, do_cleanse_short_name=True):

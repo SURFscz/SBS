@@ -76,6 +76,16 @@ def confirm_external_api_call():
         raise Forbidden("Not a valid external API call")
 
 
+def confirm_organisation_api_collaboration(collaboration_identifier, collaboration=None):
+    confirm_external_api_call()
+    organisation = request_context.external_api_organisation
+    if collaboration is None:
+        collaboration = Collaboration.query.filter(Collaboration.identifier == collaboration_identifier).one()
+    if not organisation or organisation.id != collaboration.organisation_id:
+        raise Forbidden()
+    return collaboration
+
+
 def confirm_authorized_api_call():
     if not request_context.is_authorized_api_call and not is_application_admin():
         raise Forbidden()
