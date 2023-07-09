@@ -71,6 +71,10 @@ table.collaborations, table.memberCollaborations {
                 width: 22%;
             }
 
+            &.tagValues {
+                width: 22%;
+            }
+
             &.expiry_date {
                 width: 18%;
             }
@@ -151,6 +155,11 @@ table.collaborations, table.memberCollaborations {
 
             &.invitations_count {
                 text-align: center;
+            }
+
+            &.tagValues span {
+                display: block;
+                word-break: keep-all;
             }
         }
     }

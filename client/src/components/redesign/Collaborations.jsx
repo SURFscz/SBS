@@ -64,6 +64,7 @@ export default class Collaborations extends React.PureComponent {
         } else {
             const allFilterOptions = this.allLabelFilterOptions(collaborations);
             this.addRoleInformation(user, collaborations);
+            this.addLabelInformation(collaborations);
             Promise.all(promises).then(res => {
                 this.setState({
                     showRequestCollaboration: res[0],
@@ -81,6 +82,12 @@ export default class Collaborations extends React.PureComponent {
             const membership = (user.collaboration_memberships || []).find(m => m.collaboration_id === co.id);
             co.role = membership ? membership.role : null;
         });
+    }
+
+    addLabelInformation = collaborations => {
+        collaborations.forEach(co => co.tagValues = co.tags
+            .sort((t1, t2) => t1.tag_value.localeCompare(t2.tag_value))
+            .join(""));
     }
 
     allLabelFilterOptions = (collaborations) => {
@@ -227,10 +234,12 @@ export default class Collaborations extends React.PureComponent {
                                             onClick={this.openCollaboration(collaboration)}>{collaboration.name}</a>
             },
             {
-                key: "organisation__name",
+                key: organisation ? "tagValues" : "organisation__name",
                 class: serviceKey,
-                header: I18n.t("models.serviceCollaborations.organisationName"),
-                mapper: collaboration => organisation ? organisation.name : collaboration.organisation.name
+                header: organisation ? I18n.t("collaboration.tags") : I18n.t("models.serviceCollaborations.organisationName"),
+                mapper: collaboration => organisation ? collaboration.tags
+                    .sort((t1, t2) => t1.tag_value.localeCompare(t2.tag_value))
+                    .map(tag => <span className={"collaboration_tag"}>{tag.tag_value}</span>) : collaboration.organisation.name
             },
             {
                 key: "role",
