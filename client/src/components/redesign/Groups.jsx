@@ -36,6 +36,7 @@ import {ReactComponent as ThrashIcon} from "../../icons/trash_new.svg";
 import {ReactComponent as EmailIcon} from "../../icons/email_new.svg";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 
+
 class Groups extends React.Component {
 
     constructor(props, context) {
@@ -45,6 +46,9 @@ class Groups extends React.Component {
             selectedMembers: {},
             allSelected: false,
             resultAfterSearch: false,
+            allGroupsSelected: false,
+            selectedGroups: {},
+            groupResultAfterSearch: false,
             alreadyExists: {},
             initial: true,
             createNewGroup: false,
@@ -57,6 +61,8 @@ class Groups extends React.Component {
             auto_provision_members: false,
             confirmationDialogOpen: false,
             confirmationDialogQuestion: undefined,
+            confirmationQuestion: undefined,
+            confirmationTxt: undefined,
             confirmationDialogAction: () => true,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             loading: true,
@@ -72,11 +78,22 @@ class Groups extends React.Component {
                 return acc;
             }, {});
         }
+        const {collaboration} = this.props;
+        const selectedGroups = collaboration.groups.reduce((acc, entity) => {
+            acc[entity.id] = {
+                selected: false,
+                ref: entity
+            };
+            return acc;
+        }, {});
         this.setState({
             loading: false,
             selectedMembers: selectedMembers,
+            selectedGroups: selectedGroups,
             allSelected: false,
-            resultAfterSearch: false
+            resultAfterSearch: false,
+            allGroupsSelected: false,
+            groupResultAfterSearch: false,
         }, callback);
     }
 
@@ -128,6 +145,35 @@ class Groups extends React.Component {
         });
     };
 
+    removeFromActionIcon = (entityId, showConfirmation) => {
+        const {collaboration} = this.props;
+        const group = collaboration.groups.find(inv => inv.id === entityId);
+        if (showConfirmation) {
+            this.confirm(() => this.removeFromActionIcon(entityId, false),
+                I18n.t("models.groups.deleteGroupConfirmation", {name: group.name}))
+        } else {
+            this.setState({confirmationDialogOpen: false, loading: true});
+            deleteGroup(group.id).then(() => {
+                this.props.refresh(this.componentDidMount);
+                setFlash(I18n.t("groups.flash.deleted", {name: group.name}));
+            }).catch(() => {
+                this.props.refresh(this.componentDidMount);
+            });
+        }
+    }
+
+    getActionIcons = entity => {
+        return (
+            <div className="admin-icons"
+                 onClick={() => this.removeFromActionIcon(entity.id, true)}>
+                <Tooltip anchorId={`delete-group-${entity.id}`}
+                         standalone={true}
+                         tip={I18n.t("models.groups.removeGroupTooltip")}
+                         children={<ThrashIcon/>}/>
+            </div>
+        );
+    }
+
     cancelSideScreen = e => {
         stopEvent(e);
         this.setState({selectedGroupId: null, createNewGroup: false, editGroup: false});
@@ -159,6 +205,10 @@ class Groups extends React.Component {
 
     searchCallback = resultAfterSearch => {
         this.setState({resultAfterSearch: resultAfterSearch});
+    }
+
+    groupSearchCallback = groupResultAfterSearch => {
+        this.setState({groupResultAfterSearch: groupResultAfterSearch});
     }
 
     actionIcons = (membership, collaboration, selectedGroup) => {
@@ -194,6 +244,14 @@ class Groups extends React.Component {
         this.setState({selectedMembers: {...selectedMembers}, allSelected: (checked ? allSelected : false)});
     }
 
+    onGroupCheck = group => e => {
+        const {selectedGroups, allGroupsSelected} = this.state;
+        const checked = e.target.checked;
+        const identifier = group.id;
+        selectedGroups[identifier].selected = checked;
+        this.setState({selectedGroups: {...selectedGroups}, allGroupsSelected: (checked ? allGroupsSelected : false)});
+    }
+
     allChecksSelected = e => {
         const {selectedMembers, resultAfterSearch} = this.state;
         const val = e.target.checked;
@@ -207,12 +265,22 @@ class Groups extends React.Component {
         this.setState({allSelected: val, selectedMembers: newSelectedMembers});
     }
 
+    allGroupChecksSelected = e => {
+        const {selectedGroups, groupResultAfterSearch} = this.state;
+        const val = e.target.checked;
+        let identifiers = Object.keys(selectedGroups);
+        if (groupResultAfterSearch !== false) {
+            const afterSearchIdentifiers = groupResultAfterSearch.map(entity => entity.id.toString());
+            identifiers = identifiers.filter(id => afterSearchIdentifiers.includes(id));
+        }
+        identifiers.forEach(id => selectedGroups[id].selected = val);
+        const newSelectedGroups = {...selectedGroups};
+        this.setState({allGroupsSelected: val, selectedGroups: newSelectedGroups});
+    }
+
     renderGroupContainer = children => {
         const {
-            confirmationDialogOpen,
-            cancelDialogAction,
-            confirmationDialogAction,
-            confirmationDialogQuestion
+            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationDialogQuestion
         } = this.state;
         return (
             <div className="group-details-container">
@@ -247,7 +315,23 @@ class Groups extends React.Component {
         return selectedMembers;
     }
 
-    groupActionButtons = (collaboration, mayCreateGroups, membersNotInGroup, selectedMembers, selectedGroup) => {
+    getSelectedGroupsWithFilteredSearch = selectedGroups => {
+        const {groupResultAfterSearch} = this.state;
+        if (groupResultAfterSearch !== false) {
+            const afterSearchIdentifiers = groupResultAfterSearch.map(entity => entity.id.toString());
+            const filteredSelectedGroups = afterSearchIdentifiers.reduce((acc, id) => {
+                //The resultAfterSearch may contain deleted memberships
+                if (selectedGroups[id]) {
+                    acc[id] = selectedGroups[id];
+                }
+                return acc;
+            }, {});
+            return filteredSelectedGroups;
+        }
+        return selectedGroups;
+    }
+
+    memberActionButtons = (collaboration, mayCreateGroups, membersNotInGroup, selectedMembers, selectedGroup) => {
         const filteredSelectedMembers = this.getSelectedMembersWithFilteredSearch(selectedMembers);
         const selected = Object.values(filteredSelectedMembers).filter(v => v.selected);
         const hrefValue = encodeURI(selected.map(v => v.ref.user.email).join(","));
@@ -267,36 +351,73 @@ class Groups extends React.Component {
                 />
             </div>}
             {(selected.length > 0 && (selectedGroup.collaboration_memberships || []).length > 0) &&
-            <div className={`actions-header admin-actions ${memberCanBeAdded ? "adjust-top" : ""}`}>
+                <div className={`actions-header admin-actions ${memberCanBeAdded ? "adjust-top" : ""}`}>
 
-                {!selectedGroup.auto_provision_members && <div>
-                    <Tooltip standalone={true}
-                             anchorId={"remove-members"}
-                             tip={disabled ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}
-                             children={<Button onClick={() => this.removeMembers(selectedGroup)}
-                                               small={true}
-                                               anchorId={"remove-members"}
-                                               txt={I18n.t("models.orgMembers.remove")}
-                                               icon={<ThrashIcon/>}/>}/>
+                    {!selectedGroup.auto_provision_members && <div>
+                        <Tooltip standalone={true}
+                                 anchorId={"remove-members"}
+                                 tip={disabled ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}
+                                 children={<Button onClick={() => this.removeMembers(selectedGroup)}
+                                                   small={true}
+                                                   anchorId={"remove-members"}
+                                                   txt={I18n.t("models.orgMembers.remove")}
+                                                   icon={<ThrashIcon/>}/>}/>
+                    </div>}
+                    <div>
+                        <Tooltip standalone={true}
+                                 tip={disabled ? I18n.t("models.orgMembers.mailTooltipDisabled") : I18n.t("models.orgMembers.mailTooltip")}
+                                 children={<a href={`${disabled ? "" : "mailto:"}${bcc}${hrefValue}`}
+                                              className="sds--btn sds--btn--primary sds--btn--small"
+                                              style={{border: "none", cursor: "default"}}
+                                              rel="noopener noreferrer" onClick={e => {
+                                     if (disabled) {
+                                         stopEvent(e);
+                                     } else {
+                                         return true;
+                                     }
+                                 }}>
+                                     {I18n.t("models.orgMembers.mail")}<EmailIcon/>
+                                 </a>}/>
+                    </div>
                 </div>}
+        </>)
+    }
+
+    removeGroups = showConfirmation => {
+        if (showConfirmation) {
+            this.confirm(() => this.removeGroups(false), I18n.t("models.groups.deleteGroupsConfirmation"));
+        } else {
+            const {selectedGroups} = this.state;
+            const selectedGroupIdentifiers = Object.values(this.getSelectedGroupsWithFilteredSearch(selectedGroups))
+                .filter(val => val.selected)
+                .map(val => parseInt(val.ref.id));
+            this.refreshAndFlash(
+                selectedGroupIdentifiers.map(id => deleteGroup(id)),
+                I18n.t("groups.flash.deletedGroups"))
+
+        }
+    }
+
+    groupActionButtons = (collaboration, mayCreateGroups, selectedGroups) => {
+        const filteredSelectedGroups = this.getSelectedGroupsWithFilteredSearch(selectedGroups);
+        const selected = Object.values(filteredSelectedGroups).filter(v => v.selected);
+        if (selected.length === 0) {
+            return null;
+        }
+        return (
+            <div className="admin-actions">
                 <div>
                     <Tooltip standalone={true}
-                             tip={disabled ? I18n.t("models.orgMembers.mailTooltipDisabled") : I18n.t("models.orgMembers.mailTooltip")}
-                             children={<a href={`${disabled ? "" : "mailto:"}${bcc}${hrefValue}`}
-                                          className="sds--btn sds--btn--primary sds--btn--small"
-                                          style={{border: "none", cursor: "default"}}
-                                          rel="noopener noreferrer" onClick={e => {
-                                 if (disabled) {
-                                     stopEvent(e);
-                                 } else {
-                                     return true;
-                                 }
-                             }}>
-                                 {I18n.t("models.orgMembers.mail")}<EmailIcon/>
-                             </a>}/>
+                             anchorId={"remove-groups"}
+                             tip={I18n.t("models.groups.removeTooltip")}
+                             children={<Button onClick={() => this.removeGroups(true)}
+                                               small={true}
+                                               anchorId={"remove-groups"}
+                                               txt={I18n.t("models.orgMembers.remove")}
+                                               icon={<ThrashIcon/>}/>}/>
                 </div>
-            </div>}
-        </>)
+            </div>
+        )
     }
 
     renderGroupDetails = (selectedGroup, collaboration, currentUser, mayCreateGroups, showMemberView, selectedMembers, allSelected) => {
@@ -318,9 +439,9 @@ class Groups extends React.Component {
                 header: "",
                 mapper: membership => <div className="member-icon">
                     {(membership.role === "admin") &&
-                    <Tooltip standalone={true} children={<UserIcon/>} tip={I18n.t("tooltips.admin")}/>}
+                        <Tooltip standalone={true} children={<UserIcon/>} tip={I18n.t("tooltips.admin")}/>}
                     {(membership.role !== "admin") &&
-                    <Tooltip standalone={true} children={<MembersIcon/>} tip={I18n.t("tooltips.user")}/>}
+                        <Tooltip standalone={true} children={<MembersIcon/>} tip={I18n.t("tooltips.user")}/>}
                 </div>
             },
             {
@@ -371,25 +492,25 @@ class Groups extends React.Component {
         }];
         const membersNotInGroup = isEmpty(selectedGroup.collaboration_memberships) ? collaboration.collaboration_memberships :
             collaboration.collaboration_memberships.filter(m => selectedGroup.collaboration_memberships.every(c => c.id !== m.id));
-        const actions = this.groupActionButtons(collaboration, mayCreateGroups, membersNotInGroup, selectedMembers, selectedGroup);
+        const actions = this.memberActionButtons(collaboration, mayCreateGroups, membersNotInGroup, selectedMembers, selectedGroup);
         const queryParam = `name=${encodeURIComponent(I18n.t("breadcrumb.group", {name: selectedGroup.name}))}&back=${encodeURIComponent(window.location.pathname)}`;
         const children = (
             <div className={"group-details"}>
                 <section className="header">
                     <h1>{selectedGroup.name}</h1>
                     {mayCreateGroups &&
-                    <div className="header-actions">
-                        <Button onClick={() => this.setState(this.newGroupState(selectedGroup))}
-                                small={true}
-                                txt={I18n.t("models.groups.edit")}/>
-                        {currentUser.admin && <span className="history"
-                                                    onClick={() => {
-                                                        clearFlash();
-                                                        this.props.history.push(`/audit-logs/groups/${selectedGroup.id}?${queryParam}`)
-                                                    }}>
+                        <div className="header-actions">
+                            <Button onClick={() => this.setState(this.newGroupState(selectedGroup))}
+                                    small={true}
+                                    txt={I18n.t("models.groups.edit")}/>
+                            {currentUser.admin && <span className="history"
+                                                        onClick={() => {
+                                                            clearFlash();
+                                                            this.props.history.push(`/audit-logs/groups/${selectedGroup.id}?${queryParam}`)
+                                                        }}>
                             <FontAwesomeIcon icon="history"/>{I18n.t("home.history")}
                         </span>}
-                    </div>}
+                        </div>}
 
                 </section>
                 <p className={`description ${mayCreateGroups ? "" : "no-header-actions"}`}>{selectedGroup.description}</p>
@@ -498,14 +619,14 @@ class Groups extends React.Component {
                           readOnly={!adminOfCollaboration}/>
 
                 {(!adminOfCollaboration && !createNewGroup) &&
-                <InputField value={moment(selectedGroup.created_at * 1000).format("LLLL")}
-                            disabled={true}
-                            name={I18n.t("organisation.created")}/>}
+                    <InputField value={moment(selectedGroup.created_at * 1000).format("LLLL")}
+                                disabled={true}
+                                name={I18n.t("organisation.created")}/>}
 
                 <section className="actions">
                     {(adminOfCollaboration && !createNewGroup && this.mayRemoveGroup(selectedGroup, collaboration)) &&
-                    <Button warningButton={true}
-                            onClick={this.delete}/>}
+                        <Button warningButton={true}
+                                onClick={this.delete}/>}
                     <Button cancelButton={true} txt={I18n.t("forms.cancel")}
                             onClick={this.cancelSideScreen}/>
                     <Button disabled={disabledSubmit}
@@ -561,12 +682,16 @@ class Groups extends React.Component {
 
     delete = () => {
         const selectedGroup = this.getSelectedGroup();
-        const action = () => this.refreshAndFlash(deleteGroup(selectedGroup.id),
-            I18n.t("groups.flash.deleted", {name: selectedGroup.name}),
-            () => this.setState({
-                confirmationDialogOpen: false, selectedGroup: null, editGroup: false,
-                createNewGroup: false
-            }));
+        const action = () => {
+            this.refreshAndFlash(deleteGroup(selectedGroup.id),
+                I18n.t("groups.flash.deleted", {name: selectedGroup.name}),
+                () => this.setState({
+                    confirmationDialogOpen: false,
+                    selectedGroup: null,
+                    editGroup: false,
+                    createNewGroup: false
+                }));
+        }
         this.confirm(action, I18n.t("groups.deleteConfirmation", {name: selectedGroup.name}));
     };
 
@@ -659,10 +784,11 @@ class Groups extends React.Component {
 
     render() {
         const {
-            loading, createNewGroup, editGroup, selectedMembers, allSelected
+            loading, createNewGroup, editGroup, selectedMembers, allSelected, allGroupsSelected, selectedGroups,
+            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationDialogQuestion
         } = this.state;
         if (loading) {
-            return <SpinnerField/>;
+            return <div className="loader-container"><SpinnerField/></div>;
         }
         const {collaboration, user: currentUser} = this.props;
         const {showMemberView} = this.props;
@@ -678,10 +804,27 @@ class Groups extends React.Component {
         groups.forEach(group => {
             group.memberCount = group.collaboration_memberships.length;
         })
-
-        const columns = [
+        const columns = [];
+        if (mayCreateGroups) {
+            let i = 0;
+            columns.push({
+                    nonSortable: true,
+                    key: "check",
+                    header: <CheckBox value={allGroupsSelected}
+                                      name={"allGroupsSelected"}
+                                      onChange={this.allGroupChecksSelected}/>,
+                    mapper: entity => <div className="check">
+                        <CheckBox name={"" + ++i}
+                                  onChange={this.onGroupCheck(entity)}
+                                  value={(selectedGroups[entity.id] || {}).selected || false}/>
+                    </div>
+                },
+            )
+        }
+        const sharedColumns = [
             {
                 key: "name",
+                hideHeader: true,
                 header: I18n.t("models.groups.name"),
                 mapper: group => <a href={`${group.name}`}
                                     className={"neutral-appearance"}
@@ -714,22 +857,44 @@ class Groups extends React.Component {
                 header: I18n.t("models.groups.memberCount")
             },
         ]
+
         if (mayCreateGroups) {
-            columns.push({
+            sharedColumns.push({
                 key: "auto_provision_members",
                 header: I18n.t("models.groups.autoProvisioning"),
                 mapper: group => I18n.t(`models.groups.${group.auto_provision_members ? "on" : "off"}`)
             });
+            if (mayCreateGroups) {
+                sharedColumns.push({
+                    nonSortable: true,
+                    key: "trash",
+                    hasLink: true,
+                    header: "",
+                    mapper: group => this.getActionIcons(group)
+                });
+            }
+
         }
+        const groupActions = this.groupActionButtons(collaboration, mayCreateGroups, selectedGroups);
         return (
             <div>
+                <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                    cancel={cancelDialogAction}
+                                    confirm={confirmationDialogAction}
+                                    isWarning={true}
+                                    question={confirmationDialogQuestion}/>
                 <Entities entities={groups}
                           modelName="groups"
                           searchAttributes={["name", "description"]}
                           defaultSort="name"
                           rowLinkMapper={() => this.gotoGroup}
-                          columns={columns}
+                          columns={columns.concat(sharedColumns)}
+                          searchCallback={this.groupSearchCallback}
+                          actionHeader={"groups"}
                           hideTitle={true}
+                          onHover={true}
+                          actions={groupActions}
+                          showActionsAlways={false}
                           loading={loading}
                           showNew={mayCreateGroups}
                           newEntityFunc={this.newGroup}

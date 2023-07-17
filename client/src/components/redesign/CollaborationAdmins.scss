@@ -6,21 +6,6 @@
         display: flex;
     }
 
-    .admin-actions {
-        display: flex;
-        min-height: 32px;
-        margin-bottom: 12px;
-
-        div:not(:first-child) {
-            margin-left: 25px;
-        }
-
-        button.right {
-            margin-left: auto;
-        }
-
-    }
-
     .members-search-filters {
         margin: 0 auto;
     }

@@ -6,6 +6,10 @@ table.groups {
 
     thead {
         th {
+            &.check {
+                width: 15px;
+            }
+
             &.name {
                 width: 20%;
                 padding-left: 15px;
@@ -32,6 +36,10 @@ table.groups {
                 width: 14%;
                 text-align: center;
             }
+
+            &.trash {
+                width: 15px;
+            }
         }
     }
 
@@ -48,6 +56,21 @@ table.groups {
             &.auto_provision_members {
                 text-align: center;
             }
+
+            &.trash {
+                text-align: right;
+                padding-left: 0;
+            }
+        }
+    }
+}
+
+.loader-container {
+    margin-top: 40px;
+
+    .sds--loading-container {
+        .sds--loading {
+            position: unset;
         }
     }
 }
@@ -113,12 +136,6 @@ table.groups {
             }
         }
 
-        .admin-actions {
-            display: flex;
-            min-height: 32px;
-            margin-bottom: 12px;
-        }
-
         .group-detail-actions {
             max-width: 50%;
             margin-bottom: 20px;
@@ -127,6 +144,10 @@ table.groups {
                 color: $blue;
             }
         }
+    }
+
+    .mod-entities table.groupMembers tbody td.icon div.member-icon {
+        padding-left: 25px;
     }
 
     table.groupMembers {

@@ -412,6 +412,10 @@ const nl = {
             off: "Uit",
             deleteMemberConfirmation: "Weet je zeker dat je {{name}} wil verwijderen uit deze groep?",
             deleteMembersConfirmation: "Weet je zeker dat je de geselecteerde leden wil verwijderen uit deze groep?",
+            deleteGroupConfirmation: "Weet je zeker dat je de group {{name}} wilt verwijderen?",
+            deleteGroupsConfirmation: "Weet je zeker dat je de geselecteerde groepen wilt verwijderen?",
+            removeGroupTooltip: "Verwijder groep",
+            removeTooltip: "Verwijder alle geselecteerde groepen",
         },
         groupMembers: {
             title: "Leden",
@@ -1454,6 +1458,7 @@ const nl = {
             created: "Groep {{name}} is aangemaakt.",
             updated: "Groep {{name}} is bijgewerkt.",
             deleted: "Groep {{name}} is verwijderd.",
+            deletedGroups: "Groepen verwijderd",
             addedService: "Dienst {{service}} toegevoegd aan groep {{name}}.",
             deletedService: "Dienst {{service}} ontkoppeld van groep {{name}}.",
             addedServices: "Alle diensten toegevoegd aan groep {{name}}.",
