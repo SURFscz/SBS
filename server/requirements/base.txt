@@ -29,7 +29,7 @@ Flask-Executor==1.0.0
 eventlet==0.33.3
 Flask-SocketIO==5.3.4
 Flask-Cors==4.0.0
-dnspython==2.3.0
+dnspython==2.4.0
 python3-saml==1.15.0
 bcrypt==4.0.1
 git+https://github.com/SURFscz/flasgger@surf/main#egg=flasgger
