@@ -96,8 +96,27 @@
             left: 76px;
             top: 2px;
 
+            .admin-actions {
+                display: flex;
+                min-height: 32px;
+                margin-bottom: 12px;
+
+                div:not(:first-child) {
+                    margin-left: 25px;
+                }
+
+                button.right {
+                    margin-left: auto;
+                }
+
+            }
+
             &.collaboration-services {
                 left: 32px;
+            }
+
+            &.groups {
+                left: 48px;
             }
 
             &.collaboration-groups {

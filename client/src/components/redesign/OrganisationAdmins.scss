@@ -2,75 +2,68 @@
 @import "../../stylesheets/select_role";
 
 .mod-entities {
-    .admin-actions {
-        display: flex;
-        min-height: 32px;
-        margin-bottom: 12px;
-    }
 
-    table.orgMembers {
-
-        thead {
-            th {
-                &.check {
-                    width: 15px;
-                }
-
-                &.name {
-                    width: 35%;
-                }
-
-                &.user__schac_home_organisation {
-                    width: 20%;
-                }
-
-                &.role {
-                    width: 15%;
-                }
-
-                &.status {
-                    width: 20%;
-                    text-align: center;
-                }
-
-                &.impersonate {
-                    width: 100px;
-                }
+    thead {
+        th {
+            &.check {
+                width: 15px;
             }
-        }
 
-        tbody {
-            td {
-                &.check svg.information-circle {
-                    width: 20px;
-                    height: 20px;
-                }
-
-                &.status {
-                    text-align: center;
-                }
-
-                &.not-allowed {
-                    cursor: not-allowed;
-                }
-
-                &.impersonate {
-                    text-align: right;
-                    padding: 0;
-                }
-
+            &.name {
+                width: 35%;
             }
-        }
 
-        .tooltip-table-cell {
-            position: relative;
+            &.user__schac_home_organisation {
+                width: 20%;
+            }
 
-            .sds--tooltip-container {
-                position: absolute;
-                top: -18px;
-                left: 5px;
+            &.role {
+                width: 15%;
+            }
+
+            &.status {
+                width: 20%;
+                text-align: center;
+            }
+
+            &.impersonate {
+                width: 100px;
             }
         }
     }
 
+    tbody {
+        td {
+            &.check svg.information-circle {
+                width: 20px;
+                height: 20px;
+            }
+
+            &.status {
+                text-align: center;
+            }
+
+            &.not-allowed {
+                cursor: not-allowed;
+            }
+
+            &.impersonate {
+                text-align: right;
+                padding: 0;
+            }
+
+        }
+    }
+
+    .tooltip-table-cell {
+        position: relative;
+
+        .sds--tooltip-container {
+            position: absolute;
+            top: -18px;
+            left: 5px;
+        }
+    }
 }
+
+

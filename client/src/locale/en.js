@@ -412,6 +412,10 @@ const en = {
             off: "Off",
             deleteMemberConfirmation: "Are you sure you want to remove {{name}} from this group?",
             deleteMembersConfirmation: "Are you sure you want to remove the selected members from this group?",
+            deleteGroupConfirmation: "Are you sure you want to delete the group {{name}}?",
+            deleteGroupsConfirmation: "Are you sure you want to delete the selected groups?",
+            removeGroupTooltip: "Delete group",
+            removeTooltip: "Delete all selected groups",
         },
         groupMembers: {
             title: "Members",
@@ -1454,6 +1458,7 @@ const en = {
             created: "Group {{name}} was created",
             updated: "Group {{name}} was updated",
             deleted: "Deleted group {{name}}",
+            deletedGroups: "Deleted groups",
             addedService: "Added service {{service}} to group {{name}}",
             deletedService: "Deleted service {{service}} from group {{name}}",
             addedServices: "Added all services to group {{name}}",

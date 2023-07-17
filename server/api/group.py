@@ -134,11 +134,14 @@ def delete_group_api(group_identifier):
 
     confirm_organisation_api_collaboration(None, group.collaboration)
 
-    broadcast_group_deleted(group.id)
+    collaboration_id = group.collaboration_id
+    group_id = group.id
 
-    update_last_activity_date(group.collaboration_id)
+    broadcast_group_deleted(group_id)
 
-    return delete(Group, group.id)
+    update_last_activity_date(collaboration_id)
+
+    return delete(Group, group_id)
 
 
 def create_group(collaboration_id, data, do_cleanse_short_name=True):
@@ -206,13 +209,14 @@ def update_group():
 @json_endpoint
 def delete_group(group_id):
     group = Group.query.filter(Group.id == group_id).one()
+    collaboration_id = group.collaboration_id
 
-    confirm_collaboration_admin(group.collaboration_id)
+    confirm_collaboration_admin(collaboration_id)
 
-    emit_socket(f"collaboration_{group.collaboration_id}")
+    emit_socket(f"collaboration_{collaboration_id}")
     broadcast_group_deleted(group_id)
 
-    update_last_activity_date(group.collaboration_id)
+    update_last_activity_date(collaboration_id)
 
     return delete(Group, group_id)
 
