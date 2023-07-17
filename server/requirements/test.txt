@@ -10,4 +10,4 @@ responses==0.23.1
 alembic==1.11.1
 freezegun==1.2.2
 coverage==7.2.7
-mock==5.0.2
+mock==5.1.0
