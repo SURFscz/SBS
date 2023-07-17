@@ -283,7 +283,7 @@ class Me extends React.Component {
                                 onClick={this.submit}/>
                     </section>
                     <section className={"delete-profile"}>
-                        <h3>{I18n.t("profile.deleteHeader")}</h3>
+                        <h2>{I18n.t("profile.deleteHeader")}</h2>
                         <p>{I18n.t("profile.deleteDisclaimer")}</p>
                         <Button warningButton={true}
                                 txt={I18n.t("user.delete")}
