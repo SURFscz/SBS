@@ -813,8 +813,8 @@ const nl = {
             askForReactivation: "Verzoek lidmaatschap activatie",
             askForExtensionSubject: "Verzoek lidmaatschap verlenging voor gebruiker {{email}}",
             askForReactivationSubject: "Verzoek lidmaatschap activatie voor gebruiker {{email}}",
-
-            activeWithExpiryDateTooltip: "Deze samenwerking verloopt op {{expiryDate}}. "
+            activeWithExpiryDateTooltip: "Deze samenwerking verloopt op {{expiryDate}}. ",
+            activeWithExpiryDateAction: "Collaboration settings",
         },
         flash: {
             created: "Samenwerking {{name}} is aangemaakt.",
