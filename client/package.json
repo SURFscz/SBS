@@ -8,7 +8,7 @@
         "@fortawesome/react-fontawesome": "^0.2.0",
         "@lottiefiles/react-lottie-player": "^3.4.7",
         "@surfnet/sds": "^0.0.73",
-        "core-js": "^3.31.0",
+        "core-js": "^3.31.1",
         "dompurify": "^3.0.5",
         "es6-promise": "^4.2.8",
         "events": "^3.2.0",
