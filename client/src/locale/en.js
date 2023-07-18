@@ -971,7 +971,7 @@ const en = {
         security_emailTooltip: "The security email address will be contacted if there are security questions. Ideally this is a functional email address, like service_A_security@sp.org.",
         securityEmailRequired: "Security email is required",
         support_email: "Support for end user",
-        support_emailPlaceholder: "The email address of the support department for this service",
+        support_emailPlaceholder: "The email address or the website of the support department for this service",
         support_emailTooltip: "The support email address can be contacted if users have questions about the service. Ideally this is a functional email address, like service_A_support@sp.org.",
         invitations: "Invite service admins",
         status: {

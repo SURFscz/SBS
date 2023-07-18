@@ -111,7 +111,7 @@ class ServiceOverview extends React.Component {
     validateService = (service, callback) => {
         const invalidInputs = {};
         ["security_email", "support_email", "email"].forEach(name => {
-            invalidInputs[name] = !isEmpty(service[name]) && !validEmailRegExp.test(service[name]);
+            invalidInputs[name] = !(isEmpty(service[name]) || validEmailRegExp.test(service[name]) || (name === "support_email" && validUrlRegExp.test(service[name])));
         });
         ["accepted_user_policy", "uri_info", "privacy_policy", "uri", "scim_url"].forEach(name => {
             let serviceElement = service[name];
@@ -239,11 +239,11 @@ class ServiceOverview extends React.Component {
             this.setState({alreadyExists: {...this.state.alreadyExists, abbreviation: json}});
         });
 
-    validateEmail = name => e => {
+    validateEmail = (name, allowWebsite = false) => e => {
         const email = e.target.value;
         const {invalidInputs} = this.state;
-        const inValid = !isEmpty(email) && !validEmailRegExp.test(email);
-        this.setState({invalidInputs: {...invalidInputs, [name]: inValid}});
+        const valid = isEmpty(email) || validEmailRegExp.test(email) || (allowWebsite && validUrlRegExp.test(email));
+        this.setState({invalidInputs: {...invalidInputs, [name]: !valid}});
     };
 
     validateURI = (name, acceptPlaceholders = false) => e => {
@@ -991,7 +991,7 @@ class ServiceOverview extends React.Component {
                                 {...invalidInputs, support_email: false})(e)}
                             toolTip={I18n.t("service.support_emailTooltip")}
                             error={invalidInputs["support_email"]}
-                            onBlur={this.validateEmail("support_email")}
+                            onBlur={this.validateEmail("support_email", true)}
                             disabled={!isAdmin && !isServiceAdmin}/>
                 {invalidInputs["support_email"] &&
                 <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
