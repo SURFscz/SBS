@@ -809,6 +809,10 @@ const en = {
             revertAlmostSuspended: " You can prevent the suspension from the right drop-down menu.",
             expiredTooltip: "This collaboration has reached its expiration date of {{expiryDate}}.",
             activate: "Revert expiration",
+            askForExtension: "Request membership extension",
+            askForReactivation: "Request membership reactivation",
+            askForExtensionSubject: "Request membership extension for user {{email}}",
+            askForReactivationSubject: "Request membership reactivation for user {{email}}",
             activeWithExpiryDateTooltip: "This collaboration will expire at {{expiryDate}}. "
         },
         flash: {
@@ -2059,7 +2063,8 @@ const en = {
             expired: "Expired",
             activeWithExpiryDate: "Expires on {{date}}",
             activeTooltip: "Your membership has no expiration date.",
-            expiredTooltip: "Your membership has expired on {{date}}. Please contact the admins of this collaboration for help. ",
+            expiredTooltip: "Your membership has expired on {{date}}.",
+            expiredTooltipMember: "Your membership has expired on {{date}}. Please contact the admins of this collaboration for help. ",
             activeWithExpiryDateTooltip: "Your membership is active, however, it will expire at {{date}}. "
         }
     },

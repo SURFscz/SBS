@@ -225,18 +225,42 @@ class CollaborationDetail extends React.Component {
         return days < 60;
     }
 
+    mailToAdmins = (collaboration, title) => {
+        const a = document.createElement('a');
+
+        const mails = collaboration.collaboration_memberships
+            .filter(membership => membership.role === "admin")
+            .map(membership => membership.user.email)
+            .join(",");
+        a.href = `mailto:${mails}?subject=${encodeURIComponent(title)}`;
+        a.click();
+    }
+
+    hasCollaborationAdmin = collaboration => {
+        return collaboration.collaboration_memberships
+            .some(membership => membership.role === "admin");
+    }
+
     showExpiryDateFlash = (user, collaboration, config, showMemberView) => {
         let msg = "";
         let action = null;
         let actionLabel = null;
         const membership = collaboration.collaboration_memberships.find(m => m.user_id === user.id);
-
+        const isMember = !isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id);
         if (membership && membership.expiry_date) {
             const formattedMembershipExpiryDate = moment(membership.expiry_date * 1000).format("LL");
             if (membership.status === "expired") {
-                msg += I18n.t("organisationMembership.status.expiredTooltip", {date: formattedMembershipExpiryDate});
+                msg += I18n.t(`organisationMembership.status.expiredTooltip${isMember ? "Member" : ""}`, {date: formattedMembershipExpiryDate});
+                if (isMember && showMemberView && this.hasCollaborationAdmin(collaboration)) {
+                    action = () => this.mailToAdmins(collaboration, I18n.t("collaboration.status.askForReactivationSubject", {email: membership.user.email}));
+                    actionLabel = I18n.t("collaboration.status.askForReactivation");
+                }
             } else if (this.isExpiryDateWarning(membership.expiry_date)) {
                 msg += I18n.t("organisationMembership.status.activeWithExpiryDateTooltip", {date: formattedMembershipExpiryDate});
+                if (isMember && showMemberView && this.hasCollaborationAdmin(collaboration)) {
+                    action = () => this.mailToAdmins(collaboration, I18n.t("collaboration.status.askForExtensionSubject", {email: membership.user.email}));
+                    actionLabel = I18n.t("collaboration.status.askForExtension");
+                }
             }
         }
         if (collaboration && collaboration.expiry_date) {
@@ -388,9 +412,9 @@ class CollaborationDetail extends React.Component {
                      readOnly={isJoinRequest}
                      notifier={(openInvitations > 0 && !showMemberView) ? openInvitations : null}>
             {!isJoinRequest &&
-            <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={false}
-                                 showMemberView={showMemberView}
-                                 refresh={callback => this.componentDidMount(callback)}/>}
+                <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={false}
+                                     showMemberView={showMemberView}
+                                     refresh={callback => this.componentDidMount(callback)}/>}
         </div>)
     }
 
@@ -835,10 +859,10 @@ class CollaborationDetail extends React.Component {
         return (
             <>
                 {(adminOfCollaboration && showMemberView) &&
-                this.getUnitHeader(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}
+                    this.getUnitHeader(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}
                 {(!showMemberView || !adminOfCollaboration) &&
-                this.getUnitHeaderForMemberNew(user, config, collaboration, allowedToEdit, showMemberView,
-                    collaborationJoinRequest, alreadyMember, adminOfCollaboration)}
+                    this.getUnitHeaderForMemberNew(user, config, collaboration, allowedToEdit, showMemberView,
+                        collaborationJoinRequest, alreadyMember, adminOfCollaboration)}
 
                 {!collaborationJoinRequest && <CollaborationWelcomeDialog name={collaboration.name}
                                                                           isOpen={firstTime}
@@ -861,8 +885,8 @@ class CollaborationDetail extends React.Component {
                                     isWarning={isWarning}
                                     question={confirmationQuestion}>
                     {lastAdminWarning &&
-                    <LastAdminWarning organisation={collaboration.organisation} currentUserDeleted={true}
-                    />}
+                        <LastAdminWarning organisation={collaboration.organisation} currentUserDeleted={true}
+                        />}
                 </ConfirmationDialog>
                 <Tabs activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}

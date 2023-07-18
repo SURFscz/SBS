@@ -809,6 +809,11 @@ const nl = {
             revertAlmostSuspended: " Je kan de schorsing voorkomen vanuit het rechter drop-down menu.",
             expiredTooltip: "Deze samenwerking is verlopen op {{expiryDate}}. ",
             activate: "Heractiveer",
+            askForExtension: "Verzoek lidmaatschap verlenging",
+            askForReactivation: "Verzoek lidmaatschap activatie",
+            askForExtensionSubject: "Verzoek lidmaatschap verlenging voor gebruiker {{email}}",
+            askForReactivationSubject: "Verzoek lidmaatschap activatie voor gebruiker {{email}}",
+
             activeWithExpiryDateTooltip: "Deze samenwerking verloopt op {{expiryDate}}. "
         },
         flash: {
@@ -2059,7 +2064,8 @@ const nl = {
             expired: "Verlopen",
             activeWithExpiryDate: "Verloopt op {{date}}",
             activeTooltip: "Je lidmaatschap heeft geen einddatum.",
-            expiredTooltip: "Je lidmaatschap is verlopen op {{date}}. Neem contact op met de beheerders van deze samenwerking om dit te verhelpen. ",
+            expiredTooltip: "Je lidmaatschap is verlopen op {{date}}. ",
+            expiredTooltipMember: "Je lidmaatschap is verlopen op {{date}}. Neem contact op met de beheerders van deze samenwerking om dit te verhelpen. ",
             activeWithExpiryDateTooltip: "je lidmaatschap is actief, maar verloopt op {{date}}. "
         }
     },
