@@ -3,15 +3,15 @@ import I18n from "../locale/I18n";
 import "./Activity.scss";
 import {DiffPatcher} from "jsondiffpatch";
 import "jsondiffpatch/dist/formatters-styles/html.css";
-import moment from "moment";
 import {escapeDeep, isEmpty} from "../utils/Utils";
+import {pseudoIso} from "../utils/Date";
+import {Pagination} from "@surfnet/sds";
 
+const pageCount = 15;
 const ignoreInDiff = ["created_by", "updated_by", "created_at", "updated_at"];
 const epochAttributes = ["agreed_at", "sent_at", "last_accessed_date", "last_login_date", "expiry_date"]
 const collectionMapping = {
-    organisation_id: "organisations",
-    collaboration_id: "collaborations",
-    user_id: "users"
+    organisation_id: "organisations", collaboration_id: "collaborations", user_id: "users"
 };
 
 
@@ -21,6 +21,7 @@ export default class Activity extends React.PureComponent {
         super(props, context);
         this.state = {
             selected: {},
+            page: 1
         };
         this.differ = new DiffPatcher();
     }
@@ -80,26 +81,44 @@ export default class Activity extends React.PureComponent {
         return !user ? "Unknown" : `${user.email} (${user.username})`
     }
 
-    renderAuditLogs = (auditLogs, selected) => {
+    renderAuditLogs = (auditLogs, selected, page) => {
+        const minimalPage = Math.min(page, Math.ceil(auditLogs.length / pageCount));
+        const total = auditLogs.length;
+        auditLogs = auditLogs.slice((minimalPage - 1) * pageCount, minimalPage * pageCount);
         if (isEmpty(auditLogs)) {
             return <p className="none">{I18n.t("history.none")}</p>
         }
         return (
-            <ul className="logs">
-                {auditLogs.map(log =>
-                    <li key={log.id} onClick={() => this.setState({selected: log})}
-                        className={`${selected && log.id === selected.id ? "selected" : ""}`}>
-                        {I18n.t("history.overview", {
-                            action: I18n.t(`history.actions.${log.action}`),
-                            name: log.target_name ? ` ${log.target_name}` : " ",
-                            collection: I18n.t(`history.tables.${log.target_type}`),
-                            date: moment(log.created_at * 1000).format("LLL"),
-                            user: this.userLabel(log.user)
-                        })}
-                        {}
-                    </li>)}
-            </ul>
-        );
+            <div className="sds--table">
+                <table className="logs">
+                    <thead>
+                    <tr>
+                        <th className={"date"}>{I18n.t("system.activityTable.date")}</th>
+                        <th className={"user"}>{I18n.t("system.activityTable.user")}</th>
+                        <th className={"action"}>{I18n.t("system.activityTable.action")}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {auditLogs.map(log =>
+                        <tr key={log.id} onClick={() => this.setState({selected: log})}
+                            className={`${selected && log.id === selected.id ? "selected" : ""}`}>
+                            <td>{pseudoIso(log.created_at)}</td>
+                            <td>{this.userLabel(log.user)}</td>
+                            <td>
+                                {I18n.t("history.overview", {
+                                    action: I18n.t(`history.actions.${log.action}`),
+                                    name: log.target_name ? ` ${log.target_name}` : " ",
+                                    collection: I18n.t(`history.tables.${log.target_type}`)
+                                })}
+                            </td>
+                        </tr>)}
+                    </tbody>
+                </table>
+                <Pagination currentPage={page}
+                            onChange={nbr => this.setState({page: nbr})}
+                            total={total}
+                            pageCount={pageCount}/>
+            </div>);
     };
 
     auditLogReference = (value, key, auditLogs) => {
@@ -148,51 +167,49 @@ export default class Activity extends React.PureComponent {
         return (
             <div className="details">
                 {(auditLog.parent_name && [1, 3].includes(auditLog.action)) &&
-                <p className="info">{I18n.t(auditLog.action === 1 ? "history.parentNew" : "history.parentDeleted", {
-                    collection: I18n.t(`history.tables.${auditLog.target_type}`),
-                    parent: I18n.t(`history.tables.${auditLog.parent_name}`)
-                })}{parentName && <span className="parent"> {parentName}</span>}</p>}
+                    <p className="info">{I18n.t(auditLog.action === 1 ? "history.parentNew" : "history.parentDeleted", {
+                        collection: I18n.t(`history.tables.${auditLog.target_type}`),
+                        parent: I18n.t(`history.tables.${auditLog.parent_name}`)
+                    })}{parentName && <span className="parent"> {parentName}</span>}</p>}
                 {(auditLog.parent_name && auditLog.action === 2) &&
-                <p className="info">{I18n.t("history.parentUpdated", {
-                    collection: I18n.t(`history.tables.${auditLog.target_type}`),
-                    parent: I18n.t(`history.tables.${auditLog.parent_name}`)
-                })}{parentName && <span className="parent"> {parentName}</span>}</p>}
-
-                <table className="changes" cellSpacing="0">
-                    <thead>
-                    <tr>
-                        <th className="key">{I18n.t("history.key")}</th>
-                        {auditLog.action !== 1 && <th className="old-value">{I18n.t("history.oldValue")}</th>}
-                        {auditLog.action !== 3 && <th className="new-value">{I18n.t("history.newValue")}</th>}
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {Object.keys(delta).map(key => <tr key={key}>
-                        <td>{key}</td>
-                        {auditLog.action !== 1 &&
-                        <td>{this.getAuditLogValue(auditLog, delta[key], true, key, auditLogs)}</td>}
-                        {auditLog.action !== 3 &&
-                        <td>{this.getAuditLogValue(auditLog, delta[key], false, key, auditLogs)}</td>}
-                    </tr>)}
-                    </tbody>
-                </table>
-
-            </div>
-        );
+                    <p className="info">{I18n.t("history.parentUpdated", {
+                        collection: I18n.t(`history.tables.${auditLog.target_type}`),
+                        parent: I18n.t(`history.tables.${auditLog.parent_name}`)
+                    })}{parentName && <span className="parent"> {parentName}</span>}</p>}
+                <div className="sds--table">
+                    <table className="changes" cellSpacing="0">
+                        <thead>
+                        <tr>
+                            <th className="key">{I18n.t("history.key")}</th>
+                            {auditLog.action !== 1 && <th className="old-value">{I18n.t("history.oldValue")}</th>}
+                            {auditLog.action !== 3 && <th className="new-value">{I18n.t("history.newValue")}</th>}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {Object.keys(delta).map(key =>
+                            <tr key={key}>
+                                <td>{key.replaceAll("_", " ")}</td>
+                                {auditLog.action !== 1 &&
+                                    <td>{this.getAuditLogValue(auditLog, delta[key], true, key, auditLogs)}</td>}
+                                {auditLog.action !== 3 &&
+                                    <td>{this.getAuditLogValue(auditLog, delta[key], false, key, auditLogs)}</td>}
+                            </tr>)}
+                        </tbody>
+                    </table>
+                </div>
+            </div>);
     };
 
     render() {
         const {auditLogs} = this.props;
-        const {selected} = this.state;
+        const {selected, page} = this.state;
         const auditLogEntries = this.convertReferences(auditLogs);
-        return (
-            <div className={`activity-container`}>
-                <div className={`activity`}>
-                    {this.renderAuditLogs(auditLogEntries, selected)}
-                    {this.renderDetail(selected, auditLogs)}
-                </div>
+        return (<div className={`activity-container`}>
+            <div className={`activity`}>
+                {this.renderAuditLogs(auditLogEntries, selected, page)}
+                {this.renderDetail(selected, auditLogs)}
             </div>
-        );
+        </div>);
     }
 
 }

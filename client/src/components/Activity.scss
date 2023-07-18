@@ -18,22 +18,31 @@
 
         width: 100%;
 
-        ul.logs {
-            width: 50%;
-            list-style: none;
+        .sds--table {
+            overflow-y: scroll;
+            max-height: 75vh;
+        }
 
-            @media (max-width: $compact-medium) {
-                width: 100%;
+        table.logs {
+
+            th {
+                &.date {
+                    width: 25%
+                }
+
+                &.user {
+                    width: 35%
+                }
+
+                &.action {
+                    width: 40%
+                }
             }
 
-            li {
-                display: block;
-                padding: 15px;
-                border-bottom: 2px solid $light-grey;
-
+            tbody tr {
                 &.selected {
                     background-color: $background;
-                    font-weight: bold;
+                    font-weight: 600;
                 }
 
                 &:not(.selected):hover {
@@ -47,7 +56,7 @@
 
         .details {
             width: 50%;
-            padding: 15px;
+            padding: 0 15px;
 
             @media (max-width: $compact-medium) {
                 width: 100%;
@@ -71,10 +80,6 @@
             width: 100%;
 
             th {
-                text-align: left;
-                padding: 10px;
-                border-bottom: 1px solid $lighter-grey;
-
                 &.key {
                     width: 30%;
                 }
@@ -89,20 +94,22 @@
             }
 
             tbody {
-                tr {
-                    &:nth-child(odd) {
-                        background-color: $lightest-grey;
-                    }
-                }
-
                 td {
                     word-break: break-word;
-                    padding: 10px;
                 }
             }
         }
 
     }
+
+    .sds--pagination {
+        margin-top: 25px;
+
+        a {
+            font-weight: normal;
+        }
+    }
+
 }
 
 

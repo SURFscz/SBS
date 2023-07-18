@@ -1610,7 +1610,7 @@ const nl = {
             "2": "Gewijzigd",
             "3": "Verwijderd"
         },
-        overview: "{{action}} {{collection}}{{name}} op {{date}} door {{user}}.",
+        overview: "{{action}} {{collection}}{{name}}",
         none: "Geen historie",
         key: "Attribuut",
         oldValue: "Oude waarde",
@@ -1830,6 +1830,11 @@ const nl = {
         },
         stats: {
             loading: "Loading, please wait..."
+        },
+        activityTable: {
+            date: "Date",
+            user: "User",
+            action: "Action"
         }
     },
     access: {

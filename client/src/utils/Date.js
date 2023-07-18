@@ -15,6 +15,11 @@ export const dateFromEpoch = epoch => {
     return dateTimeFormat.format(new Date(epoch * 1000));
 }
 
+export const pseudoIso = epoch => {
+    const date = new Date(epoch * 1000);
+    return `${date.getFullYear()}‐${date.getMonth()+1}‐${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+}
+
 export const formatDate = date => {
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
