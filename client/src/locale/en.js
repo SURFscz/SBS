@@ -1610,7 +1610,7 @@ const en = {
             "2": "Updated",
             "3": "Deleted"
         },
-        overview: "{{action}} {{collection}}{{name}} at {{date}} by {{user}}.",
+        overview: "{{action}} {{collection}}{{name}}",
         none: "No history",
         key: "Attribute",
         oldValue: "Old value",
@@ -1830,6 +1830,11 @@ const en = {
         },
         stats: {
             loading: "Loading, please wait..."
+        },
+        activityTable: {
+            date: "Date",
+            user: "User",
+            action: "Action"
         }
     },
     access: {
