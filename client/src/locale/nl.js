@@ -972,7 +972,7 @@ const nl = {
         security_emailTooltip: "Het security e-mailadres wordt gecontacteerd als er security-vragen zijn. Idealiter is dit een functioneel e-mailadres, zoals dienst_A_security@sp.org.",
         securityEmailRequired: "Security e-mailadres is verplicht",
         support_email: "Helpdesk voor eindgebruikers",
-        support_emailPlaceholder: "Het e-mailadres van de helpdesk voor deze dienst",
+        support_emailPlaceholder: "Het e-mailadres of de website van de helpdesk voor deze dienst",
         support_emailTooltip: "Het support e-mailadres wordt gecontacteerd als er functionale vragen zijn over deze dienst. Idealiter is dit een functioneel e-mailadres, zoals dienst_A_support@sp.org.",
         invitations: "Nodig dienstbeheerders uit",
         status: {
