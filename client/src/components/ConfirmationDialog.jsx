@@ -1,7 +1,6 @@
 import React from "react";
-import {AlertType, Modal,} from "@surfnet/sds";
+import {Modal,} from "@surfnet/sds";
 import I18n from "../locale/I18n";
-
 
 
 export default function ConfirmationDialog({
@@ -10,8 +9,6 @@ export default function ConfirmationDialog({
                                                confirm,
                                                question = "",
                                                leavePage = false,
-                                               isError = false,
-                                               isWarning = false,
                                                disabledConfirm = false,
                                                children = null,
                                                confirmationTxt = I18n.t("confirmationDialog.confirm"),
@@ -25,14 +22,14 @@ export default function ConfirmationDialog({
         <Modal
             confirm={confirm}
             cancel={cancel}
-            alertType={isError ? AlertType.Error : isWarning ? AlertType.Warning : AlertType.Info}
+            // alertType={isError ? AlertType.Error : isWarning ? AlertType.Warning : AlertType.Info}
             question={leavePage ? I18n.t("confirmationDialog.leavePage") : question}
             children={children}
             title={confirmationHeader || I18n.t("confirmationDialog.title")}
             cancelButtonLabel={leavePage ? I18n.t("confirmationDialog.leave") : I18n.t("confirmationDialog.cancel")}
             confirmationButtonLabel={leavePage ? I18n.t("confirmationDialog.stay") : confirmationTxt}
             confirmDisabled={disabledConfirm}
-            subTitle={leavePage ? I18n.t("confirmationDialog.leavePage") :  I18n.t("confirmationDialog.subTitle")}
+            subTitle={leavePage ? I18n.t("confirmationDialog.leavePage") : I18n.t("confirmationDialog.subTitle")}
             full={largeWidth}/>
     );
 

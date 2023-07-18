@@ -361,6 +361,7 @@ def user_services(user_id):
 @service_api.route("/", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def save_service():
+    confirm_write_access()
     data = current_request.get_json()
 
     validate_ip_networks(data)
