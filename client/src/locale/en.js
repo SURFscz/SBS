@@ -813,7 +813,8 @@ const en = {
             askForReactivation: "Request membership reactivation",
             askForExtensionSubject: "Request membership extension for user {{email}}",
             askForReactivationSubject: "Request membership reactivation for user {{email}}",
-            activeWithExpiryDateTooltip: "This collaboration will expire at {{expiryDate}}. "
+            activeWithExpiryDateTooltip: "This collaboration will expire at {{expiryDate}}. ",
+            activeWithExpiryDateAction: "Collaboration settings",
         },
         flash: {
             created: "Collaboration {{name}} was created",

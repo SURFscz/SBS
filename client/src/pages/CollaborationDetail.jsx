@@ -273,6 +273,8 @@ class CollaborationDetail extends React.Component {
                 }
             } else if (this.isExpiryDateWarning(collaboration.expiry_date)) {
                 msg += I18n.t("collaboration.status.activeWithExpiryDateTooltip", {expiryDate: formattedCollaborationExpiryDate});
+                action = () => this.props.history.push(`/edit-collaboration/${collaboration.id}`)
+                actionLabel = I18n.t("collaboration.status.activeWithExpiryDateAction");
             }
         }
         if (collaboration && collaboration.status === "suspended") {
