@@ -52,6 +52,8 @@ class User(Base, db.Model):
                                                 cascade="all, delete, delete-orphan", passive_deletes=True)
     collaboration_requests = db.relationship("CollaborationRequest", back_populates="requester",
                                              cascade="all, delete, delete-orphan", passive_deletes=True)
+    service_requests = db.relationship("ServiceRequest", back_populates="requester",
+                                       cascade="all, delete, delete-orphan", passive_deletes=True)
     service_memberships = db.relationship("ServiceMembership", back_populates="user",
                                           cascade="all, delete, delete-orphan", passive_deletes=True)
     join_requests = db.relationship("JoinRequest", back_populates="user",
@@ -501,6 +503,38 @@ class Service(Base, db.Model, LogoMixin):
 
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.service_memberships))) > 0
+
+
+class ServiceRequest(Base, db.Model, LogoMixin):
+    __tablename__ = "service_requests"
+    metadata = metadata
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    name = db.Column("name", db.String(length=255), nullable=False)
+    short_name = db.Column("short_name", db.String(length=255), nullable=False)
+    description = db.Column("description", db.Text(), nullable=True)
+    logo = db.Column("logo", db.Text(), nullable=True)
+    providing_organisation = db.Column("providing_organisation", db.String(length=255), nullable=False)
+    login_uri = db.Column("login_uri", db.String(length=255), nullable=True)
+    website_uri = db.Column("info_uri", db.String(length=255), nullable=True)
+    contact_email = db.Column("contact_email", db.String(length=255), nullable=True)
+    support_email = db.Column("support_email", db.String(length=255), nullable=True)
+    security_email = db.Column("security_email", db.String(length=255), nullable=True)
+    privacy_policy = db.Column("privacy_policy", db.String(length=255), nullable=False)
+    accepted_user_policy_uri = db.Column("accepted_user_policy_uri", db.String(length=255), nullable=True)
+    code_of_conduct_compliant = db.Column("code_of_conduct_compliant", db.Boolean(), nullable=True, default=False)
+    sirtfi_compliant = db.Column("sirtfi_compliant", db.Boolean(), nullable=True, default=False)
+    research_scholarship_compliant = db.Column("research_scholarship_compliant", db.Boolean(),
+                                               nullable=True,
+                                               default=False)
+    comments = db.Column("comments", db.Text(), nullable=True)
+    connection_type = db.Column("connection_type", db.String(length=255), nullable=True)
+    redirect_urls = db.Column("redirect_urls", db.Text(), nullable=True)
+    saml_metadata = db.Column("saml_metadata", db.Text(), nullable=True)
+    saml_metadata_url = db.Column("saml_metadata_url", db.String(length=255), nullable=True)
+    requester_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    requester = db.relationship("User", back_populates="service_requests")
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
 
 
 class ServiceInvitation(Base, db.Model):
