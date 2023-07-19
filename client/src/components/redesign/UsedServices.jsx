@@ -6,15 +6,13 @@ import {
     deleteCollaborationServices,
     deleteServiceConnectionRequest,
     denyServiceConnectionRequestByHash,
-    requestServiceConnection,
-    resendServiceConnectionRequests
+    requestServiceConnection
 } from "../../api";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
 
 import "./UsedServices.scss";
 import {isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
 import I18n from "../../locale/I18n";
-import Entities from "./Entities";
 import Button from "../Button";
 import {clearFlash, setFlash} from "../../utils/Flash";
 import InputField from "../InputField";
@@ -25,6 +23,11 @@ import CheckBox from "../CheckBox";
 import MissingServices from "../MissingServices";
 import moment from "moment";
 import {socket, subscriptionIdCookieName} from "../../utils/SocketIO";
+import ServiceCard from "../ServiceCard";
+
+const CONNECTIONS = "connections";
+
+const AVAILABLE = "available";
 
 class UsedServices extends React.Component {
 
@@ -32,6 +35,7 @@ class UsedServices extends React.Component {
         super(props, context);
         this.state = {
             services: [],
+            currentTab: CONNECTIONS,
             requestConnectionService: null,
             selectedServiceConnectionRequestId: null,
             message: "",
@@ -94,23 +98,29 @@ class UsedServices extends React.Component {
             }).catch(() => this.props.history.push("/"));
     }
 
-    openService = service => e => {
-        if (e.metaKey || e.ctrlKey) {
-            return;
-        }
-        stopEvent(e);
+    openService = service => {
+        const ref = service.connectionRequest ? service.service : service;
         clearFlash();
-        this.props.history.push(`/services/${service.id}`);
+        this.props.history.push(`/services/${ref.id}`);
     };
 
-    getServiceLink = entity => {
-        const ref = entity.connectionRequest ? entity.service : entity;
-        return <a href={`/services/${ref.id}`}
-                  className={"neutral-appearance"}
-                  onClick={this.openService(ref)}>{ref.name}</a>
+    getServiceStatus = service => {
+        const {collaboration} = this.props;
+        if (service.usedService && !service.connectionRequest &&
+            collaboration.organisation.services.some(s => s.id === service.id)) {
+            service.status = I18n.t("models.services.statuses.active");
+        } else if (service.connectionRequest) {
+            service.status = I18n.t("models.services.statuses.pending");
+        } else if (service.usedService) {
+            service.status = service.connectionRequest ? I18n.t("models.services.statuses.active") : ""
+        } else {
+            service.status = null;
+        }
+        return service.status;
+
     }
 
-    getServiceStatus = service => {
+    getServiceMessage = service => {
         const {collaboration} = this.props;
         if (service.usedService && !service.connectionRequest &&
             collaboration.organisation.services.some(s => s.id === service.id)) {
@@ -118,10 +128,10 @@ class UsedServices extends React.Component {
         } else if (service.connectionRequest) {
             service.status = I18n.t("models.services.memberServiceRequest");
         } else if (service.usedService) {
-            service.status = service.connectionRequest ? I18n.t("models.services.awaitingApproval") : ""
+            service.status = service.connectionRequest ? I18n.t("models.services.awaitingApproval") : " "
         } else {
             const allowedToConnect = this.serviceAllowedToConnect(service, collaboration);
-            service.status = allowedToConnect ? I18n.t("models.services.automaticConnectionAllowed") : "";
+            service.status = allowedToConnect ? I18n.t("models.services.automaticConnectionAllowed") : " ";
         }
         return service.status;
 
@@ -220,15 +230,6 @@ class UsedServices extends React.Component {
         this.confirm(action, I18n.t("collaborationServices.serviceConnectionRequestDeleteConfirmation"), true);
     };
 
-    resendServiceConnectionRequest = (service, collaboration) => {
-        const action = () => this.refreshAndFlash(resendServiceConnectionRequests(service.id),
-            I18n.t("collaborationServices.serviceConnectionRequestResend", {
-                service: service.name,
-                collaboration: collaboration.name
-            }), this.closeConfirmationDialog);
-        this.confirm(action, I18n.t("collaborationServices.serviceConnectionRequestResendConfirmation"), false);
-    };
-
     openServiceConnectionRequest = serviceConnectionRequest => e => {
         stopEvent(e);
         this.setState({selectedServiceConnectionRequestId: serviceConnectionRequest.id});
@@ -255,7 +256,7 @@ class UsedServices extends React.Component {
         } = this.state;
         const {collaboration} = this.props;
         return (
-            <div className="request-connection-service">
+            <div className="used-services-mod">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     isWarning={warning}
@@ -294,7 +295,7 @@ class UsedServices extends React.Component {
     serviceAllowedToConnect = (service, collaboration) => {
         return service.automatic_connection_allowed ||
             (service.automatic_connection_allowed_organisations.filter(org => org.id === collaboration.organisation.id).length > 0 &&
-            !service.access_allowed_for_all);
+                !service.access_allowed_for_all);
     }
 
     getServiceAction = service => {
@@ -310,10 +311,6 @@ class UsedServices extends React.Component {
         }
         if (service.usedService && service.connectionRequest) {
             return <div className="actions">
-                <Button cancelButton={true}
-                        centralize={true}
-                        onClick={() => this.resendServiceConnectionRequest(service, collaboration)}
-                        txt={I18n.t("models.services.resendConnectionRequest")}/>
                 <Button cancelButton={true}
                         centralize={true}
                         onClick={() => this.removeServiceConnectionRequest(service, collaboration)}
@@ -356,9 +353,10 @@ class UsedServices extends React.Component {
     renderRequestConnectionService = (requestConnectionService, message, confirmedAupConnectionRequest) => {
         const needToAcceptUserPolicy = !isEmpty(requestConnectionService.accepted_user_policy);
         return (
-            <div className="request-connection-service">
+            <div className={"used-services-mod"}>
                 <div>
-                    <a href="/services" className={"back-to-services"} onClick={this.cancelRequestConnectionService}>
+                    <a href="/services" className={"back-to-services"}
+                       onClick={this.cancelRequestConnectionService}>
                         <ChevronLeft/>{I18n.t("models.services.backToServices")}
                     </a>
                 </div>
@@ -387,7 +385,7 @@ class UsedServices extends React.Component {
                             onClick={this.serviceConnectionRequest}/>
                     </section>
                 </div>
-            </div>);
+            </div>)
     }
 
     renderConfirmationChildren = (service, disabledConfirm) => {
@@ -402,11 +400,88 @@ class UsedServices extends React.Component {
         </div>
     }
 
+    renderConnectedServices = usedServices => {
+        return (
+            <div>
+                {usedServices.map(service =>
+                    <ServiceCard service={service}
+                                 key={service.id}
+                                 nameLinkAction={() => this.openService(service)}
+                                 status={this.getServiceStatus(service)}
+                                 message={this.getServiceMessage(service)}
+                                 ActionButton={this.getServiceAction(service)}
+                                 showAboutInformation={true}
+                    />)}
+            </div>
+        );
+    }
+
+    renderAvailableServices = usedServices => {
+        return (
+            <div>
+                {usedServices.map(service =>
+                    <ServiceCard service={service}
+                                 nameLinkAction={() => this.openService(service)}
+                                 status={this.getServiceStatus(service)}
+                                 message={this.getServiceStatus(service)}
+                                 ActionButton={this.getServiceAction(service)}
+                                 showAboutInformation={true}
+                    />)}
+            </div>
+        );
+    }
+
+    changeTab = tab => e => {
+        stopEvent(e);
+        this.setState({
+            currentTab: tab,
+            selectedService: null,
+            requestConnectionService: null,
+            selectedServiceConnectionRequestId: null,
+        });
+    }
+
+    renderCurrentTab = (currentTab, usedServices, availableServices) => {
+        switch (currentTab) {
+            case CONNECTIONS:
+                return this.renderConnectedServices(usedServices);
+            case AVAILABLE:
+                return this.renderAvailableServices(availableServices);
+            default:
+                throw new Error(`unknown-tab: ${currentTab}`);
+        }
+    }
+
+
+    sidebar = (currentTab, usedServices, availableServices) => {
+        return (
+            <div className={"side-bar"}>
+                <h3>{I18n.t("services.title")}</h3>
+                <ul>
+                    <li>
+                        <a href={`/connections`}
+                           className={CONNECTIONS === currentTab ? "active" : ""}
+                           onClick={this.changeTab(CONNECTIONS)}>
+                            {I18n.t("services.toc.connections", {count: usedServices.length})}
+                        </a>
+                    </li>
+                    <li>
+                        <a href={`/available`}
+                           className={AVAILABLE === currentTab ? "active" : ""}
+                           onClick={this.changeTab(AVAILABLE)}>
+                            {I18n.t("services.toc.available", {count: availableServices.length})}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        );
+    }
+
     render() {
         const {
             services, loading, requestConnectionService, message, confirmationChildren, disabledConfirm, warning,
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationDialogQuestion,
-            selectedService, confirmedAupConnectionRequest
+            selectedService, confirmedAupConnectionRequest, currentTab
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -430,62 +505,26 @@ class UsedServices extends React.Component {
         usedServices = usedServices.concat(serviceConnectionRequests);
         usedServices.forEach(s => s.usedService = true);
 
-        const columns = [
-            {
-                nonSortable: true,
-                key: "logo",
-                header: "",
-                mapper: entity => <Logo
-                    src={entity.logo ? entity.logo : entity.connectionRequest ? entity.service.logo : null}/>
-            },
-            {
-                key: "name",
-                header: I18n.t("models.services.name"),
-                mapper: this.getServiceLink,
-            },
-            {
-                nonSortable: true,
-                key: "status",
-                header: "",//I18n.t("models.services.status"),
-                mapper: this.getServiceStatus
-            },
-            {
-                nonSortable: true,
-                key: "action",
-                header: "",
-                mapper: this.getServiceAction
-            }]
-        const titleUsed = I18n.t("models.services.titleUsedColl", {count: usedServices.length});
-        const titleAvailable = I18n.t("models.services.titleAvailableColl", {count: services.length});
         return (
-            <div>
-                <ConfirmationDialog isOpen={confirmationDialogOpen}
-                                    cancel={cancelDialogAction}
-                                    isWarning={warning}
-                                    disabledConfirm={disabledConfirm}
-                                    confirm={confirmationDialogAction}
-                                    question={confirmationDialogQuestion}
-                                    children={confirmationChildren ?
-                                        this.renderConfirmationChildren(selectedService, disabledConfirm) : null}/>
-                <Entities entities={usedServices}
-                          className="first"
-                          modelName="servicesUsed"
-                          searchAttributes={["name"]}
-                          defaultSort="name"
-                          columns={columns}
-                          loading={loading}
-                          title={titleUsed}
-                          {...this.props}/>
-                <Entities entities={services}
-                          modelName="servicesAvailable"
-                          searchAttributes={["name"]}
-                          defaultSort="name"
-                          columns={columns}
-                          loading={loading}
-                          title={titleAvailable}
-                          {...this.props}/>
+            <>
+                <div className={"used-services-mod"}>
+                    <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                        cancel={cancelDialogAction}
+                                        isWarning={warning}
+                                        disabledConfirm={disabledConfirm}
+                                        confirm={confirmationDialogAction}
+                                        question={confirmationDialogQuestion}
+                                        children={confirmationChildren ?
+                                            this.renderConfirmationChildren(selectedService, disabledConfirm) : null}/>
+                    {this.sidebar(currentTab, usedServices, services)}
+                    <div className={"used-service-main"}>
+                        <h2 className="section-separator">{I18n.t(`services.toc.${currentTab}`)}</h2>
+                        {this.renderCurrentTab(currentTab, usedServices, services)}
+                    </div>
+
+                </div>
                 <MissingServices nbrServices={usedServices.length + services.length}/>
-            </div>
+            </>
         )
     }
 }

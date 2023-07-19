@@ -289,10 +289,10 @@ const en = {
             automaticConnectionAllowed: "Collaborations can connect without approval",
             requiredByOrganisation: "Enabled by organisation",
             memberServiceRequest: "Service connection request by an admin",
-            removeFromCO: "Disconnect from collaboration",
+            removeFromCO: "Disconnect",
             deleteConnectionRequest: "Delete connection request",
             resendConnectionRequest: "Resend connection request",
-            addToCO: "Connect to collaboration",
+            addToCO: "Connect",
             removeFromOrg: "Remove from organisation",
             addToOrg: "Add to organisation",
             mandatory: "Mandatory for all collaborations",
@@ -303,6 +303,10 @@ const en = {
                 add: "Are you sure you want to make {{service}} available for all members of {{name}}?",
                 remove: "Are you sure you want to remove {{service}} from {{name}}?",
                 check: "I know about the <a target=\"_blank\" href=\"{{aup}}\">AUP</a> of {{name}}"
+            },
+            statuses: {
+                active: "Active",
+                pending: "Pending",
             },
             missingServices: "<a href=\"mailto:sram-support@surf.nl\">Send us your request</a> if you think a specific service is missing and should be listed."
         },
@@ -883,10 +887,15 @@ const en = {
     services: {
         title: "Services",
         add: "Create new service",
-        searchPlaceHolder: "Search for all services"
+        searchPlaceHolder: "Search for all services",
+        toc: {
+            connections: "Connections",
+            available: "Available services",
+        }
     },
     service: {
         about: "About the service",
+        aboutShort: "About",
         logo: "Service logo",
         accessAllowed: "Access allowed",
         compliancy: "Service compliancy",
@@ -2254,8 +2263,8 @@ const en = {
     error: {
         message: "We seem to have run into an unknown error. Sorry for that.</br>" +
             "Start over on the <a href='/'>homepage</a> or contact us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>.",
-        ssid_failed: "SURF Research Access Management requires two-factor authentication, an extra check to verify it's you.</br>"+
-            "Unfortunately, this authentication from SURFsecureID has just failed.</br></br>"+
+        ssid_failed: "SURF Research Access Management requires two-factor authentication, an extra check to verify it's you.</br>" +
+            "Unfortunately, this authentication from SURFsecureID has just failed.</br></br>" +
             "Please copy & paste the following information and contact SRAM support at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for help.",
         defaultCode: "urn:oasis:names:tc:SAML:2.0:status:Responder",
         defaultMessage: ""
