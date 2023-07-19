@@ -1,82 +1,64 @@
 @import "../../stylesheets/vars";
 @import "../../stylesheets/forms";
 
-table.servicesUsed, table.servicesAvailable, table.servicesRequested {
-
-    thead {
-        th {
-            &.name {
-                width: 20%;
-                padding-left: 15px;
-            }
-
-            &.status {
-                width: 30%;
-            }
-
-            &.action {
-                width: 45%;
-                text-align: right;
-            }
-        }
-    }
-
-    tbody {
-        td {
-            &.name {
-                padding-left: 15px;
-            }
-
-            &.status {
-                color: $dark-grey;
-            }
-
-            &.action {
-                text-align: right;
-            }
-
-            div.actions {
-                word-break: keep-all;
-                display: flex;
-
-                button {
-                    &:first-child {
-                        margin-left: auto;
-                    }
-
-                    &:last-child {
-                        margin-left: 15px;
-                    }
-
-                }
-
-                @media (max-width: $medium) {
-                    flex-direction: column;
-                    a:last-child {
-                        margin-left: auto;
-                        margin-top: 15px;
-                    }
-                }
-            }
-        }
-    }
-}
-
-.request-connection-service {
-    display: flex;
+.used-services-mod {
     max-width: $medium;
-    width: 100%;
     margin: 40px auto 25px auto;
+    width: 100%;
+    display: flex;
+
 
     @media (max-width: $compact-medium) {
         flex-direction: column;
         margin: 40px 15px 25px 15px;
     }
 
+    div.side-bar {
+        margin-right: 80px;
+        @media (max-width: $tablet-max) {
+            margin-left: 15px;
+        }
+
+        h3 {
+            font-weight: bold;
+            margin-bottom: 20px;
+            white-space: nowrap;
+        }
+
+        ul {
+            list-style: none;
+
+
+            li {
+                margin-bottom: 8px;
+
+                a {
+                    white-space: nowrap;
+
+                    &.active {
+                        font-weight: bold;
+                    }
+
+                }
+            }
+        }
+    }
+
+    .section-separator {
+        margin-bottom: 25px;
+    }
+
+    .used-service-main {
+        width: 100%;
+    }
+
+    .sds--content-card {
+        margin-bottom: 25px;
+    }
 
     a.back-to-services {
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         color: $blue;
         text-decoration: underline;
 
@@ -110,8 +92,9 @@ table.servicesUsed, table.servicesAvailable, table.servicesRequested {
             margin-top: 25px;
         }
     }
-}
 
-.service-confirmation {
-    margin-left: 15px;
+    .service-confirmation {
+        margin-left: 15px;
+    }
+
 }

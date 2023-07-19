@@ -5,6 +5,7 @@ import {isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
 import {CO_SHORT_NAME, SRAM_USERNAME} from "../../validations/regExps";
 import ServiceCard from "../ServiceCard";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import Button from "../Button";
 
 
 class AboutCollaboration extends React.Component {
@@ -50,23 +51,26 @@ class AboutCollaboration extends React.Component {
                 <div className={"about"}>
                     <p className="description">{collaboration.description}</p>
                     {services.length > 0 && <div className="services">
-                        <h4>{I18n.t("models.collaboration.services", {nbr: services.length})}</h4>
+                        <h4 className={"margin"}>{I18n.t("models.collaboration.services", {nbr: services.length})}</h4>
 
                         {services.sort((a, b) => a.name.localeCompare(b.name))
                             .map(service =>
                                 <ServiceCard service={service}
+                                             key={service.id}
                                              collaboration={collaboration}
-                                             action={!isEmpty(service.uri) && this.openServiceUri(service, collaboration, user)}
+                                             ActionButton={!isEmpty(service.uri) &&
+                                                 <Button txt={I18n.t("service.launch")}
+                                                         onClick={this.openServiceUri(service, collaboration, user)}/>}
                                              tokenAction={enabledServiceToken && this.openTokens}
-                                             actionLabel={I18n.t("service.launch")}/>
+                                />
                             )}
 
                     </div>}
                     {services.length === 0 &&
                         <div className="services">
                             {(services.length === 0 && !isJoinRequest) &&
-                                <h2>{I18n.t("models.collaboration.noServices")}</h2>}
-                            {isJoinRequest && <h2>{I18n.t("models.collaboration.noServicesJoinRequest")}</h2>}
+                                <h4 className={"margin"}>{I18n.t("models.collaboration.noServices")}</h4>}
+                            {isJoinRequest && <h4 className={"margin"}>{I18n.t("models.collaboration.noServicesJoinRequest")}</h4>}
                         </div>}
                 </div>
                 {!isJoinRequest &&
