@@ -1,17 +1,11 @@
 import React from "react";
 import I18n from "../../locale/I18n";
 import "./AboutCollaboration.scss";
-import {ReactComponent as ServicesIcon} from "../../icons/services.svg";
-import {ReactComponent as TerminalIcon} from "../../icons/terminal.svg";
-import {ReactComponent as IllustrationCO} from "../../icons/illustration-CO.svg";
-import {removeDuplicates, stopEvent} from "../../utils/Utils";
-import Logo from "./Logo";
-import {isUserAllowed, ROLES} from "../../utils/UserRole";
-import {Tooltip} from "@surfnet/sds";
+import {isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
 import {CO_SHORT_NAME, SRAM_USERNAME} from "../../validations/regExps";
-import {clearFlash} from "../../utils/Flash";
+import ServiceCard from "../ServiceCard";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-const memberCutOff = 10;
 
 class AboutCollaboration extends React.Component {
 
@@ -22,16 +16,10 @@ class AboutCollaboration extends React.Component {
         };
     }
 
-    openMembersDetails = e => {
+    openTokens = e => {
         stopEvent(e);
         const {tabChanged} = this.props;
-        tabChanged("members");
-    }
-
-    openService = service => e => {
-        stopEvent(e);
-        clearFlash();
-        this.props.history.push(`/services/${service.id}`);
+        tabChanged("tokens");
     }
 
     formatServiceUri = (serviceUri, collaboration, user) => {
@@ -48,108 +36,72 @@ class AboutCollaboration extends React.Component {
         service.uri && window.open(this.formatServiceUri(service.uri, collaboration, user), "_blank");
     }
 
-    toggleShowMore = e => {
-        stopEvent(e);
-        this.setState({showAll: !this.state.showAll})
-    }
-
     render() {
-        const {showAll} = this.state;
-        const {collaboration, user, showMemberView, isJoinRequest} = this.props;
-        const isAllowedToSeeMembers = !isJoinRequest &&
-            isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id) && !showMemberView;
+        const {collaboration, user, isJoinRequest} = this.props;
         const services = isJoinRequest ? [] : removeDuplicates(collaboration.services.concat(collaboration.organisation.services), "id");
         const {collaboration_memberships} = collaboration
-        const showMembers = !isJoinRequest && (collaboration.disclose_member_information || isAllowedToSeeMembers);
+        const showMembers = !isJoinRequest;
         let memberships = isJoinRequest ? [] : collaboration_memberships
-            .filter(m => m.role === "admin" || showMembers)
+            .filter(m => m.role === "admin")
             .sort((m1, m2) => m1.role.localeCompare(m2.role));
-        const membershipCount = memberships.length;
-         memberships =   memberships.slice(0, showAll ? collaboration_memberships.length : memberCutOff);
+        const enabledServiceToken = services.filter(service => service.token_enabled).length > 0 && !isJoinRequest;
         return (
             <div className="collaboration-about-mod">
-                <div className="about">
-                    <h2>{I18n.t("models.collaboration.about")}</h2>
-                    <p>{collaboration.description}</p>
-                </div>
-                <div className="details">
+                <div className={"about"}>
+                    <p className="description">{collaboration.description}</p>
                     {services.length > 0 && <div className="services">
-                        <h2>{I18n.t("models.collaboration.services", {nbr: services.length})}</h2>
-                        {!isJoinRequest && <span className="info">
-                        {I18n.t("models.collaboration.servicesStart")}
-                        </span>}
-                        <ul className="services">
-                            {services.sort((a, b) => a.name.localeCompare(b.name)).map(service =>
-                                <div className="service-button" key={service.name}>
-                                    <li onClick={this.openServiceUri(service, collaboration, user)}
-                                        className={`${service.uri ? "uri" : ""}`}>
-                                        {service.logo && <Logo src={service.logo} alt={service.name}/>}
-                                        <span className="border-left">{service.name}</span>
-                                        {service.uri &&
-                                        <span className="border-left no-border open-service">
-                                        <Tooltip children={service.uri.startsWith("http") ? <ServicesIcon/> :
-                                            <TerminalIcon/>}
-                                                 standalone={true}
-                                                 tip={I18n.t("models.collaboration.servicesHoover",
-                                                     {uri: this.formatServiceUri(service.uri, collaboration, user)})}/>
-                                        </span>}
-                                    </li>
-                                    <div className="service-links">
-                                        {!isJoinRequest &&
-                                        <a href={`/services/${service.id}`}
-                                           onClick={this.openService(service)}>{I18n.t("models.collaboration.instructions")}</a>}
-                                        {service.accepted_user_policy &&
-                                        <a href={service.accepted_user_policy} rel="noopener noreferrer"
-                                           target="_blank">{I18n.t("service.accepted_user_policy")}</a>
-                                        }
-                                        {service.privacy_policy &&
-                                        <a href={service.privacy_policy} rel="noopener noreferrer"
-                                           target="_blank">{I18n.t("service.privacy_policy")}</a>
-                                        }
-                                    </div>
-                                </div>
+                        <h4>{I18n.t("models.collaboration.services", {nbr: services.length})}</h4>
+
+                        {services.sort((a, b) => a.name.localeCompare(b.name))
+                            .map(service =>
+                                <ServiceCard service={service}
+                                             collaboration={collaboration}
+                                             action={!isEmpty(service.uri) && this.openServiceUri(service, collaboration, user)}
+                                             tokenAction={enabledServiceToken && this.openTokens}
+                                             actionLabel={I18n.t("service.launch")}/>
                             )}
-                        </ul>
-                    </div>}
-                    {services.length === 0 &&
-                    <div className="services">
-                        {(services.length === 0 && !isJoinRequest) &&
-                        <h2>{I18n.t("models.collaboration.noServices")}</h2>}
-                        {isJoinRequest && <h2>{I18n.t("models.collaboration.noServicesJoinRequest")}</h2>}
-                    </div>}
-                    {!isJoinRequest &&
-                    <div className="members">
-                        <div className="members-header">
-                            <h2>{I18n.t("models.collaboration.members", {nbr: membershipCount})}</h2>
-                            {showMembers && <a href="/details"
-                                               onClick={this.openMembersDetails}>{I18n.t("models.collaboration.showMemberDetails")}</a>}
-                        </div>
-                        <ul>
-                            {memberships.map(m => <li key={m.id}>
-                                <span className="member">
-                                    <a href={`mailto:${m.user.email}`}>{m.user.name}</a>
-                                    {m.role === "admin" &&
-                                    <span className="role">{` (${I18n.t("models.collaboration.admin")})`}</span>}
-                                </span>
-                                </li>)}
-                            {!showMembers && <li className={"member-disclaimer"}>{I18n.t("models.collaboration.discloseNoMemberInformation")}</li>}
-                        </ul>
-                        {collaboration.collaboration_memberships.length > memberCutOff &&
-                        <a href={showAll ? "/more" : "/less"}
-                           onClick={this.toggleShowMore}>{I18n.t(`models.collaboration.${showAll ? "less" : "more"}`,
-                            {nbr: collaboration_memberships.length - memberCutOff})}</a>}
 
                     </div>}
-                    {!isJoinRequest && <div className="playing-svg">
-                        <IllustrationCO/>
-                    </div>}
-                    {isJoinRequest && <div className="members">
-                        <div className="members-header join-request">
-                            <h2>{I18n.t("models.collaboration.members", {nbr: memberships.length})}</h2>
-                            <p>{I18n.t("models.collaboration.discloseNoMemberInformationJoinRequest")}</p>
-                        </div>
-                    </div>}
+                    {services.length === 0 &&
+                        <div className="services">
+                            {(services.length === 0 && !isJoinRequest) &&
+                                <h2>{I18n.t("models.collaboration.noServices")}</h2>}
+                            {isJoinRequest && <h2>{I18n.t("models.collaboration.noServicesJoinRequest")}</h2>}
+                        </div>}
                 </div>
+                {!isJoinRequest &&
+                    <div className="members">
+                        <div className="members-header">
+                            <p>{I18n.t("models.collaboration.memberInformation")}</p>
+                        </div>
+                        <table className={"admins"}>
+                            <thead/>
+                            <tbody>
+                            {memberships
+                                .sort((m1, m2) => m1.user.name.localeCompare(m2.user.name))
+                                .map(m =>
+                                    <tr key={m.id}>
+                                        <td className={"name"}>
+                                            {m.user.name}</td>
+                                        <td className={"email"}><a href={`mailto:${m.user.email}`}>
+                                            <FontAwesomeIcon
+                                                icon="envelope"/></a>
+                                        </td>
+                                    </tr>)}
+                            {!showMembers &&
+                                <tr className={"member-disclaimer"}>
+                                    <td colSpan={2}>{I18n.t("models.collaboration.discloseNoMemberInformation")}</td>
+                                </tr>}
+                            </tbody>
+                        </table>
+                    </div>}
+
+                {isJoinRequest && <div className="members">
+                    <div className="members-header join-request">
+                        <p>{I18n.t("models.collaboration.members")}</p>
+                        <p>{I18n.t("models.collaboration.discloseNoMemberInformationJoinRequest")}</p>
+                    </div>
+                </div>}
             </div>
         );
     }

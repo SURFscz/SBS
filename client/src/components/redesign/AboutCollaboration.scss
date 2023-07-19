@@ -5,123 +5,68 @@ div.collaboration-about-mod {
     max-width: $medium;
     width: 100%;
     margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 
-    div.about {
+    @media (max-width: $tablet-max) {
+        padding: 32px 15px;
+
+        flex-direction: column;
+
+    }
+
+    p.description {
         margin-bottom: 40px;
     }
 
-    h2 {
-        margin-bottom: 10px;
+    h2, h3, h4 {
+        margin-bottom: 25px;
     }
 
     p {
         white-space: pre-line;
     }
 
-    span.info {
-        color: $dark-grey;
-        font-size: 14px;
-    }
-
-    div.details {
-        display: flex;
-        justify-content: space-between;
-    }
-
-    div.services {
+    div.about {
         width: 60%;
-
-        div.service-links {
-            display: flex;
-            flex-direction: column;
-            min-width: 190px;
-
-            font-size: 15px;
-
+        @media (max-width: $tablet-max) {
+            width: 100%;
         }
     }
 
     div.members {
         width: 30%;
     }
-    li.member-disclaimer {
-        margin-top: 15px;
-    }
 
-    @media (max-width: $tablet-max) {
-        padding: 32px 15px;
-
-        div.details {
-            flex-direction: column;
-        }
-        div.services {
-            width: 100%;
-        }
-
-        div.members {
-            margin: 20px 0 0 0;
-        }
-    }
-
-
-    ul.services li {
-        display: flex;
-        padding: 7px 10px;
-        border: 1px solid $lighter-grey;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-        align-items: center;
+    table.admins {
+        margin-top: 25px;
         width: 100%;
+        tr {
+            border-bottom: 1px solid $light-grey;
 
-        &.uri {
-            cursor: pointer;
-            padding: 4px 10px;
-
-            &:hover {
-                background-color: $light-blue;
-                border-left: 1px solid $light-blue;
+            &:first-child {
+                margin-top: 20px;
+                border-top: 1px solid $medium-grey;
             }
-        }
-
-        img {
-            width: 40px;
-            border-radius: 4px;
-        }
-
-        span.border-left {
-            display: inline-block;
-            margin-left: 15px;
-            padding: 2px 10px;
-            border-left: 1px solid $medium-grey;
-
-            &.no-border {
-                border-left: none;
-                padding: 2px 0;
-            }
-
-            &.open-service {
-                margin: auto 0 auto auto;
-
-                svg {
-                    width: 28px;
-                    fill: $lighter-blue;
-                    color: $lighter-blue;
+            td {
+            padding: 10px 0;
+                &.name {
+                    width: 80%;
+                }
+                &.email {
+                    width: 20%;
+                    text-align: center;
                 }
             }
+
+
         }
     }
 
-    div.service-button {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        margin-top: 15px;
-        max-width: 680px;
 
-        a {
-            text-decoration: none;
-            margin-left: 15px;
-        }
+    .sds--content-card {
+        margin-bottom: 25px;
     }
 
     .members {
@@ -139,18 +84,5 @@ div.collaboration-about-mod {
             }
         }
 
-        span.role {
-            color: $dark-grey;
-            font-size: 14px;
-        }
-    }
-
-    .playing-svg {
-        margin: auto 0px;
-
-        svg {
-            width: 280px;
-            height: auto;
-        }
     }
 }

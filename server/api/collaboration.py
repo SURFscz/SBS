@@ -25,7 +25,7 @@ from server.db.defaults import (default_expiry_date, full_text_search_autocomple
                                 STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED, valid_uri_attributes, valid_tag_label,
                                 uri_re, max_logo_bytes)
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
-    Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag, ServiceGroup
+    Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag, ServiceGroup, ServiceMembership
 from server.db.models import update, save, delete, flatten, unique_model_objects
 from server.mail import mail_collaboration_invitation
 from server.scim.events import broadcast_collaboration_changed, broadcast_collaboration_deleted
@@ -297,11 +297,18 @@ def collaboration_lite_by_id(collaboration_id):
     confirm_collaboration_member(collaboration_id)
 
     collaboration = Collaboration.query \
-        .options(selectinload(Collaboration.organisation).selectinload(Organisation.services)) \
-        .options(selectinload(Collaboration.collaboration_memberships).selectinload(CollaborationMembership.user)) \
-        .options(selectinload(Collaboration.groups).selectinload(Group.collaboration_memberships)
+        .options(selectinload(Collaboration.organisation)
+                 .selectinload(Organisation.services)
+                 .selectinload(Service.service_memberships)
+                 .selectinload(ServiceMembership.user)) \
+        .options(selectinload(Collaboration.collaboration_memberships)
                  .selectinload(CollaborationMembership.user)) \
-        .options(selectinload(Collaboration.services)) \
+        .options(selectinload(Collaboration.groups)
+                 .selectinload(Group.collaboration_memberships)
+                 .selectinload(CollaborationMembership.user)) \
+        .options(selectinload(Collaboration.services)
+                 .selectinload(Service.service_memberships)
+                 .selectinload(ServiceMembership.user)) \
         .filter(Collaboration.id == collaboration_id).one()
 
     if not collaboration.disclose_member_information or not collaboration.disclose_email_information:
@@ -332,7 +339,10 @@ def collaboration_by_id(collaboration_id):
     confirm_collaboration_admin(collaboration_id, read_only=True)
 
     collaboration = Collaboration.query \
-        .options(selectinload(Collaboration.organisation).selectinload(Organisation.services)) \
+        .options(selectinload(Collaboration.organisation)
+                 .selectinload(Organisation.services)
+                 .selectinload(Service.service_memberships)
+                 .selectinload(ServiceMembership.user)) \
         .options(selectinload(Collaboration.collaboration_memberships).selectinload(CollaborationMembership.user)) \
         .options(selectinload(Collaboration.groups).selectinload(Group.collaboration_memberships)
                  .selectinload(CollaborationMembership.user)) \
@@ -341,7 +351,9 @@ def collaboration_by_id(collaboration_id):
                  .selectinload(ServiceGroup.service)) \
         .options(selectinload(Collaboration.invitations).selectinload(Invitation.user)) \
         .options(selectinload(Collaboration.join_requests).selectinload(JoinRequest.user)) \
-        .options(selectinload(Collaboration.services)) \
+        .options(selectinload(Collaboration.services)
+                 .selectinload(Service.service_memberships)
+                 .selectinload(ServiceMembership.user)) \
         .options(selectinload(Collaboration.tags)) \
         .options(selectinload(Collaboration.service_connection_requests)
                  .selectinload(ServiceConnectionRequest.service)) \

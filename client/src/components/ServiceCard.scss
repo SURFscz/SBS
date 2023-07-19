@@ -1,0 +1,55 @@
+@import "../stylesheets/vars";
+
+.sds--content-card {
+    a.more-link {
+        display: flex;
+
+        svg {
+            width: 16px;
+            height: auto;
+            margin-left: 8px;
+        }
+    }
+
+    .sds--content-card--visual {
+        img {
+            width: 90px;
+            height: auto;
+        }
+    }
+
+    div.service-metadata {
+        display: flex;
+        margin-top: 20px;
+        gap: 120px;
+
+        @media (max-width: $tablet-max) {
+            flex-direction: column;
+            gap: 0;
+        }
+
+        a {
+            font-weight: 400 !important;
+            display: block;
+
+            &.soft-link {
+                display: inline;
+            }
+        }
+
+        dt {
+            margin-top: 20px;
+            font-weight: 600;
+        }
+
+        dd {
+            &.dd-seperator {
+                margin-top: 25px;
+            }
+        }
+
+        div.support {
+            max-width: 220px;
+        }
+    }
+}
