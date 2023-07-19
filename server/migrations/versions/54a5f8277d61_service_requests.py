@@ -38,9 +38,9 @@ def upgrade():
                     sa.Column("saml_metadata", sa.Text(), nullable=True),
                     sa.Column("saml_metadata_url", sa.String(length=255), nullable=True),
                     sa.Column("comments", sa.Text(), nullable=True),
-                    sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
+                    sa.Column("requester_id", sa.Integer(), sa.ForeignKey("users.id", ondelete="cascade"),
                               nullable=False),
-                    sa.Column("user_id", sa.Integer(), sa.ForeignKey("users.id", ondelete="cascade"),
+                    sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
                               nullable=False),
                     )
 
