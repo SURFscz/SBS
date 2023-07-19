@@ -289,10 +289,10 @@ const nl = {
             automaticConnectionAllowed: "Samenwerkingen mogen koppelen zonder toestemming",
             requiredByOrganisation: "Ingeschakeld door organisatie",
             memberServiceRequest: "Koppelingsverzoek van beheerder",
-            removeFromCO: "Ontkoppel van samenwerking",
+            removeFromCO: "Ontkoppel",
             deleteConnectionRequest: "Verwijder koppelingsverzoek",
             resendConnectionRequest: "Vernieuw koppelingsverzoek",
-            addToCO: "Koppel aan samenwerking",
+            addToCO: "Koppel",
             removeFromOrg: "Ontkoppel van organisatie",
             addToOrg: "Voeg toe aan organisatie",
             mandatory: "Verplicht voor alle samenwerkingen",
@@ -303,6 +303,10 @@ const nl = {
                 add: "Weet je zeker dat je {{service}} beschikbaar wil maken voor alle leden van {{name}}?",
                 remove: "Weet je zeker dat je {{service}} wil ontkoppelen van {{name}}?",
                 check: "Ik ben bekend met de <a target=\"_blank\" href=\"{{aup}}\">AUP</a> van {{name}}"
+            },
+            statuses: {
+                active: "Active",
+                pending: "Pending",
             },
             missingServices: "<a href=\"mailto:sram-support@surf.nl\">Stuur ons een verzoek</a> als je denkt dat een specifieke dienst ontbreekt en moet worden vermeld."
         },
@@ -883,10 +887,15 @@ const nl = {
     services: {
         title: "Diensten",
         add: "Nieuwe dienst",
-        searchPlaceHolder: "Doorzoek alle diensten"
+        searchPlaceHolder: "Doorzoek alle diensten",
+        toc: {
+            connections: "Koppelingen",
+            available: "Beschikbare diensten",
+        }
     },
     service: {
         about: "Over de dienst",
+        aboutShort: "Over",
         logo: "Dienstlogo",
         accessAllowed: "Toegang toegestaan",
         compliancy: "Dienst compliancy",
