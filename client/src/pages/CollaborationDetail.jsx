@@ -601,7 +601,7 @@ class CollaborationDetail extends React.Component {
         return <UnitHeader obj={collaboration}
                            actions={collaborationJoinRequest ? [] : this.getActions(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}
                            name={collaboration.name}
-                           displayDescription={true}
+                           displayDescription={false}
                            customAction={customAction}>
             {metaDataListItems.length > 0 && <MetaDataList items={metaDataListItems}/>}
         </UnitHeader>;
