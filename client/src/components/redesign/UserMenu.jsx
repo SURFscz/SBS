@@ -22,7 +22,8 @@ export const UserMenu = ({currentUser, organisation, config, provideFeedback}) =
     }
 
     const renderMenu = (adminLinks, collCreateAllowed, provideFeedback, collMenuItemRequired) => {
-        return (<>
+        return (
+            <>
                 <ul>
                     {currentUser.admin && adminLinks.map(l => <li key={l}>
                         <Link onClick={toggleUserMenu} to={`/${l}`}>{I18n.t(`header.links.${l}`)}</Link>

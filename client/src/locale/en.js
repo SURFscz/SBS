@@ -66,6 +66,7 @@ const en = {
         edit: "Edit",
         history: "History",
         unsuspend: "Revert suspension",
+        avoidSuspending: "Avoid suspension",
         resetLastActivity: "Reset activity",
         details: "Details",
         otherOptions: "Other options",

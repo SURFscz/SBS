@@ -267,21 +267,23 @@ class CollaborationDetail extends React.Component {
             const formattedCollaborationExpiryDate = moment(collaboration.expiry_date * 1000).format("LL");
             if (collaboration.status === "expired") {
                 msg += I18n.t("collaboration.status.expiredTooltip", {expiryDate: formattedCollaborationExpiryDate});
-                if (isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id) && showMemberView) {
+                if (!isMember) {
                     action = this.activate(true);
                     actionLabel = I18n.t("collaboration.status.activate");
                 }
             } else if (this.isExpiryDateWarning(collaboration.expiry_date)) {
                 msg += I18n.t("collaboration.status.activeWithExpiryDateTooltip", {expiryDate: formattedCollaborationExpiryDate});
-                action = () => this.props.history.push(`/edit-collaboration/${collaboration.id}`)
-                actionLabel = I18n.t("collaboration.status.activeWithExpiryDateAction");
+                if (!isMember) {
+                    action = () => this.props.history.push(`/edit-collaboration/${collaboration.id}`)
+                    actionLabel = I18n.t("collaboration.status.activeWithExpiryDateAction");
+                }
             }
         }
         if (collaboration && collaboration.status === "suspended") {
             msg += I18n.t("collaboration.status.suspendedTooltip", {
                 lastActivityDate: moment(collaboration.last_activity_date * 1000).format("LL")
             });
-            if (isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id) && showMemberView) {
+            if (!isMember && showMemberView) {
                 action = this.unsuspend(true);
                 actionLabel = I18n.t("home.unsuspend");
             }
@@ -292,8 +294,9 @@ class CollaborationDetail extends React.Component {
                 msg += I18n.t("collaboration.status.almostSuspended", {
                     days: almostSuspended
                 });
-                if (isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id)) {
-                    msg += I18n.t("collaboration.status.revertAlmostSuspended")
+                if (!isMember && showMemberView) {
+                    action = this.unsuspend(true);
+                    actionLabel = I18n.t("home.avoidSuspending");
                 }
             }
         }
