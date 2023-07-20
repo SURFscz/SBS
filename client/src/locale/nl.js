@@ -66,6 +66,7 @@ const nl = {
         edit: "Wijzigen",
         history: "Geschiedenis",
         unsuspend: "Schorsing ongedaan maken",
+        avoidSuspending: "Voorkom schorsing",
         resetLastActivity: "Reset activiteit",
         otherOptions: "Meer opties",
         details: "Details",
