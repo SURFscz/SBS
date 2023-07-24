@@ -15,7 +15,7 @@ python2-secrets==1.0.5
 pytz==2023.3
 requests==2.31.0
 uWSGI==2.0.21
-urllib3==2.0.3
+urllib3==2.0.4
 websockets==11.0.3
 redis==4.6.0
 pyotp==2.8.0
