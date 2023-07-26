@@ -1929,7 +1929,7 @@ const nl = {
         disclaimer: "We zullen deze informatie gebruiken om problemen op te lossen, ons product te verbeteren en je te helpen. " +
             "We kunnen contact met je opnemen over je feedback. " +
             "Zorg dat je feedback geen vertrouwelijke, gevoelige of persoonlijke informatie bevat. " +
-            "Raadpleeg voor meer informatie onze <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://edu.nl/93cdm\">Privacyverklaring</a>.",
+            "Raadpleeg voor meer informatie onze <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://edu.nl/fcgbd\">Privacyverklaring</a>.",
         help: "Hulp nodig?",
         helpInfo: "Neem bij vragen of problemen contact met ons op via <a href='mailto:sram-support@surf.nl'> sram-support@surf.nl </a>",
         send: "Feedback geven",
