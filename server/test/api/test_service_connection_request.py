@@ -122,7 +122,7 @@ class TestServiceConnectionRequest(AbstractTest):
                      response_status_code=403)
 
             # Service admin is allowed to approve
-            self.login("urn:jane")
+            self.login("urn:betty")
             self.put(f"/api/service_connection_requests/approve/{ssh_service_connection_request_hash}")
             post_services_count = len(self.find_entity_by_name(Collaboration, uva_research_name).services)
 
@@ -145,7 +145,7 @@ class TestServiceConnectionRequest(AbstractTest):
                      response_status_code=403)
 
             # Service admin is allowed to approve
-            self.login("urn:jane")
+            self.login("urn:betty")
             self.put(f"/api/service_connection_requests/approve/{ssh_service_connection_request_hash}")
 
             mail_msg = outbox[0]
@@ -161,7 +161,7 @@ class TestServiceConnectionRequest(AbstractTest):
                      response_status_code=403)
 
             # Service admin is allowed to deny
-            self.login("urn:jane")
+            self.login("urn:betty")
             self.put(f"/api/service_connection_requests/deny/{ssh_service_connection_request_hash}")
             post_services_count = len(self.find_entity_by_name(Collaboration, uva_research_name).services)
 
