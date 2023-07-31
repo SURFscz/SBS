@@ -43,7 +43,7 @@ def _get_impersonated_session():
 
 def is_application_admin():
     impersonated_session = _get_impersonated_session()
-    return impersonated_session["user"]["admin"]
+    return impersonated_session["user"].get("admin", False)
 
 
 def current_user():
