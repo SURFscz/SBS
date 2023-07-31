@@ -1,9 +1,10 @@
 from flask import Blueprint, request as current_request, current_app, g as request_context
 from sqlalchemy.orm import contains_eager, load_only
-from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import BadRequest, Forbidden
 
 from server.api.base import json_endpoint, emit_socket
 from server.api.collaborations_services import connect_service_collaboration
+from server.api.service import user_service
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_write_access, \
     is_service_admin
@@ -36,6 +37,9 @@ def _do_service_connection_request(hash_value, approved):
     service_connection_request = _service_connection_request_by_hash(hash_value)
     service = service_connection_request.service
     collaboration = service_connection_request.collaboration
+
+    if not user_service(service.id, view_only=False):
+        raise Forbidden("no_write_access")
 
     if approved:
         connect_service_collaboration(service.id, collaboration.id, force=True)
