@@ -71,8 +71,8 @@ from server.templates import invitation_role
 from server.tools import read_file
 
 
-def _init_logging(is_test):
-    if is_test:
+def _init_logging(log_to_stdout: bool):
+    if log_to_stdout:
         logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
     else:
         formatter = logging.Formatter("SBS: %(asctime)s %(name)s %(levelname)s %(message)s")
@@ -105,10 +105,11 @@ config.base_url = config.base_url[:-1] if config.base_url.endswith("/") else con
 test = os.environ.get("TESTING")
 profile = os.environ.get("PROFILE")
 
-is_local = profile is not None and profile == "local"
+is_local = profile is not None and "local" in profile
+is_stdout_log = profile is not None and "log_to_stdout" in profile
 is_test = test is not None and bool(int(test))
 
-_init_logging(is_test or is_local)
+_init_logging(is_test or is_local or is_stdout_log)
 
 
 def page_not_found(_):
