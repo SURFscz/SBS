@@ -39,7 +39,7 @@ def _do_service_connection_request(hash_value, approved):
     collaboration = service_connection_request.collaboration
 
     if not user_service(service.id, view_only=False):
-        raise Forbidden("no_write_access")
+        raise Forbidden(f"No access to service {service.entity_id}")
 
     if approved:
         connect_service_collaboration(service.id, collaboration.id, force=True)
