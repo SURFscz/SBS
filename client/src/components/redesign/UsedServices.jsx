@@ -280,13 +280,6 @@ class UsedServices extends React.Component {
                                 disabled={true}
                                 multiline={true}
                                 toolTip={I18n.t("serviceConnectionRequest.messageTooltip", {name: serviceConnectionRequest.requester.name})}/>
-
-                    <section className="actions">
-                        <Button cancelButton={true} txt={I18n.t("serviceConnectionRequest.decline")}
-                                onClick={this.denyServiceConnectionRequest}/>
-                        <Button txt={I18n.t("serviceConnectionRequest.accept")}
-                                onClick={this.approveServiceConnectionRequest}/>
-                    </section>
                 </div>
             </div>)
 
