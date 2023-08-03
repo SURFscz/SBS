@@ -109,7 +109,7 @@ const nl = {
             composition: "Config",
             suspendedUsers: "Users",
             userlogins: "Logins",
-            details: "Details",
+            details: "Details & configuratie",
             orgUsers: "Gebruikers",
             scim: "SCIM",
             stats: "Stats"
