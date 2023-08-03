@@ -109,7 +109,7 @@ const en = {
             composition: "Config",
             suspendedUsers: "Users",
             userlogins: "Logins",
-            details: "Details",
+            details: "Details & settings",
             orgUsers: "Users",
             scim: "SCIM",
             stats: "Stats"
