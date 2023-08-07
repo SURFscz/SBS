@@ -76,23 +76,3 @@ a {
     }
 }
 
-.sds--modal {
-    z-index: 9999;
-
-    .sds--backdrop {
-        background-color: hsla(0, 0%, 100%, .85);
-        padding: 0;
-    }
-}
-
-.sds--metadata-list {
-    .sds--metadata-list--item {
-        dd.max {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 350px;
-        }
-    }
-}
-
