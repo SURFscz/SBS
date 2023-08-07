@@ -34,9 +34,14 @@ parameters:
     description: Unique uid of the user
     required: true
     schema:
-      type: string
-      format: string
-      example: '7e28ebe36633f958e75a15a803aa6f4a7f0ab8ac@acc.sram.eduteams.org'
+      type: object
+      properties:
+        uid:
+          type: string
+          format: string
+          example: '7e28ebe36633f958e75a15a803aa6f4a7f0ab8ac@acc.sram.eduteams.org'
+      required:
+        - uid
 
 responses:
   201:
