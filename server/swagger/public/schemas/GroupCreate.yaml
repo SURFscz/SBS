@@ -16,7 +16,6 @@ properties:
     example: true
   collaboration_identifier:
     type: string
-    readOnly: true
     example: "a71a2b01-4642-4e1a-b3ac-0a06b2bf66f2"
 required:
   - name
