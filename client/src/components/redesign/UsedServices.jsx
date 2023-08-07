@@ -403,6 +403,7 @@ class UsedServices extends React.Component {
                                  status={this.getServiceStatus(service)}
                                  message={this.getServiceMessage(service)}
                                  ActionButton={this.getServiceAction(service)}
+                                 limitWidth={true}
                                  showAboutInformation={true}
                     />)}
             </div>
@@ -418,6 +419,7 @@ class UsedServices extends React.Component {
                                  status={this.getServiceStatus(service)}
                                  message={this.getServiceStatus(service)}
                                  ActionButton={this.getServiceAction(service)}
+                                 limitWidth={true}
                                  showAboutInformation={true}
                     />)}
             </div>

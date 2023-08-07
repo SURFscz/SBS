@@ -1,0 +1,36 @@
+.sds--modal {
+    z-index: 9999;
+
+    .sds--backdrop {
+        background-color: hsla(0, 0%, 100%, .85);
+        padding: 0;
+    }
+}
+
+.sds--metadata-list {
+    .sds--metadata-list--item {
+        dd.max {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 350px;
+        }
+    }
+}
+
+.sds--content-card {
+
+    border: 1px solid var(--sds--color--pitch-black--dimmed--25);
+
+    &.limit-width {
+        max-width: 60%;
+        @media (max-width: $medium) {
+            max-width: 90%;
+        }
+
+    }
+
+    .sds--content-card--actions button.sds--btn {
+        width: 140px;
+    }
+}
