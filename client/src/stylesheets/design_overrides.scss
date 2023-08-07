@@ -23,7 +23,7 @@
     border: 1px solid var(--sds--color--pitch-black--dimmed--25);
 
     &.limit-width {
-        max-width: 60%;
+        max-width: 65%;
         @media (max-width: $medium) {
             max-width: 90%;
         }
