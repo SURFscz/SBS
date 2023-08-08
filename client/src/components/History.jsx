@@ -8,6 +8,7 @@ import {getParameterByName} from "../utils/QueryParameters";
 import UnitHeader from "./redesign/UnitHeader";
 import SpinnerField from "./redesign/SpinnerField";
 import Activity from "./Activity";
+import {isEmpty} from "../utils/Utils";
 
 export default class History extends React.PureComponent {
 
@@ -23,6 +24,16 @@ export default class History extends React.PureComponent {
         const {collection, id} = this.props.match.params;
         const promise = collection === "me" ? auditLogsMe() : auditLogsInfo(id, collection);
         promise.then(res => {
+            const {user} = this.props;
+            if (!user.admin && collection === "collaborations") {
+                res.audit_logs = res.audit_logs.filter(log => {
+                    if (!isEmpty(log.state_after)) {
+                        const stateAfter = JSON.parse(log.state_after);
+                        return Object.keys(stateAfter).length === 1 && stateAfter.last_activity_date;
+                    }
+                    return true;
+                })
+            }
             this.setState({
                 auditLogs: res,
                 loading: false

@@ -20,7 +20,6 @@ export default function ServiceCard({
                                         showAboutInformation,
                                         limitWidth = false
                                     }) {
-// debugger; // eslint-disable-line no-debugger
     const [showPolicies, setShowPolicies] = useState(false);
     const [showAbout, setShowAbout] = useState(false);
 

@@ -173,11 +173,11 @@ class OrganisationDetail extends React.Component {
 
     getOrganisationAdminsTab = (organisation, user) => {
         const openInvitations = (organisation.organisation_invitations || []).length;
-        const isOrgAdmin = isUserAllowed(ROLES.ORG_ADMIN,user, organisation.id);
+        const isOrgAdmin = isUserAllowed(ROLES.ORG_ADMIN, user, organisation.id);
         return (<div key="admins" name="admins"
                      label={I18n.t("home.tabs.orgAdmins", {count: organisation.organisation_memberships.length})}
                      icon={<PlatformAdminIcon/>}
-                     notifier={(openInvitations > 0 && isOrgAdmin)? openInvitations : null}>
+                     notifier={(openInvitations > 0 && isOrgAdmin) ? openInvitations : null}>
             <OrganisationAdmins {...this.props} organisation={organisation}
                                 refresh={callback => this.componentDidMount(callback)}/>
         </div>)
@@ -301,6 +301,14 @@ class OrganisationDetail extends React.Component {
                 buttonType: ButtonType.Primary,
                 name: I18n.t("home.edit"),
                 perform: () => this.props.history.push("/edit-organisation/" + organisation.id)
+            });
+        }
+        if (!user.admin) {
+            const queryParam = `name=${encodeURIComponent(organisation.name)}&back=${encodeURIComponent(window.location.pathname)}`;
+            actions.push({
+                buttonType: ButtonType.Secondary,
+                name: I18n.t("home.history"),
+                perform: () => this.props.history.push(`/audit-logs/organisations/${organisation.id}?${queryParam}`)
             });
         }
         return actions;

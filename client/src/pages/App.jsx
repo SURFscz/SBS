@@ -280,8 +280,8 @@ class App extends React.Component {
                                    Component={OrganisationDetail} {...props}/>}/>
 
                         <Route exact path="/audit-logs/:collection/:id"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={History} {...props}/>}/>
+                               render={props => <ProtectedRoute currentUser={currentUser}
+                                                                Component={History} {...props}/>}/>
 
                         <Route exact path="/services/:id/:tab?/:subTab?"
                                render={props => <ProtectedRoute config={config}
