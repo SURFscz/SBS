@@ -5,6 +5,10 @@ properties:
     type: string
     description: "The short name of the collaboration"
     example: "cumulusgrp"
+  collaboration_identifier:
+    type: string
+    description: "The collaboration_identifier of the collaboration"
+    example: "033cbc91-45ed-4020-bf86-3cc323e1f1cf"
   message:
     type: string
     description: "The message included in the invitations"

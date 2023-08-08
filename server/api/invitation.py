@@ -5,7 +5,7 @@ import uuid
 from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app, g as request_context, jsonify
 from sqlalchemy.orm import joinedload
-from werkzeug.exceptions import Conflict, Forbidden
+from werkzeug.exceptions import Conflict, Forbidden, BadRequest
 
 from server.api.base import json_endpoint, query_param, emit_socket, STATUS_OPEN
 from server.api.service_aups import add_user_aups
@@ -104,11 +104,16 @@ def collaboration_invites_api():
     organisation = request_context.external_api_organisation
 
     data = current_request.get_json()
-    coll_short_name = data["short_name"]
+    coll_short_name = data.get("short_name")
+    coll_identifier = data.get("collaboration_identifier")
+    if not coll_short_name and not coll_identifier:
+        raise BadRequest("Either short_name or collaboration_identifier is required")
 
-    collaborations = list(filter(lambda coll: coll.short_name == coll_short_name, organisation.collaborations))
+    collaborations = list(filter(lambda coll: coll.short_name == coll_short_name or coll.identifier == coll_identifier,
+                                 organisation.collaborations))
     if not collaborations:
-        raise Forbidden(f"Collaboration {coll_short_name} is not part of organisation {organisation.name}")
+        raise Forbidden(f"Collaboration {coll_short_name} {coll_identifier} is not part of "
+                        f"organisation {organisation.name}")
 
     collaboration = collaborations[0]
     collaboration_admins = list(filter(lambda cm: cm.role == "admin", collaboration.collaboration_memberships))
