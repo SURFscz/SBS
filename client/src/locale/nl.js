@@ -1756,6 +1756,8 @@ const nl = {
         loginLink: "Inloggen"
     },
     footer: {
+        support: "Hulp",
+        supportLink: "https://edu.nl/6wb63",
         terms: "Terms of Use",
         termsLink: "https://edu.nl/6wb63",
         privacy: "Privacy policy",
