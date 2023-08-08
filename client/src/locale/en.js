@@ -1757,7 +1757,7 @@ const en = {
     },
     footer: {
         support: "Support",
-        supportLink: "https://edu.nl/6wb63",
+        supportLink: "https://edu.nl/vw3jx",
         terms: "Terms of Use",
         termsLink: "https://edu.nl/6wb63",
         privacy: "Privacy policy",
