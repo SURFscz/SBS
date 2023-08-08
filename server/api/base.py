@@ -195,7 +195,7 @@ def json_endpoint(f):
                 response.status_code = 404
             elif isinstance(e, HTTPException):
                 response.status_code = e.code
-            elif isinstance(e, ValidationError):
+            elif isinstance(e, ValidationError) or isinstance(e, BadRequest) or isinstance(e, APIBadRequest):
                 response.status_code = 400
             _add_custom_header(response)
             db.session.rollback()

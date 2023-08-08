@@ -514,23 +514,26 @@ def save_collaboration_api():
     logo = data.get("logo")
     valid_logo = False
     if logo and logo.startswith("http") and bool(uri_re.match(logo)):
-        res = urllib.request.urlopen(logo)
-        if res.status == 200:
-            logo_bytes = res.read()
-            if len(logo_bytes) < max_logo_bytes:
-                data["logo"] = base64.encodebytes(logo_bytes).decode("utf-8")
-                valid_logo = True
-            else:
-                valid_logo = False
-                logo = None
+        try:
+            res = urllib.request.urlopen(logo)
+            if res.status == 200:
+                logo_bytes = res.read()
+                if len(logo_bytes) < max_logo_bytes:
+                    data["logo"] = base64.encodebytes(logo_bytes).decode("utf-8")
+                    valid_logo = True
+                else:
+                    valid_logo = False
+                    logo = None
+        except Exception as e:
+            raise APIBadRequest(f"Invalid Logo: {str(e)}")
 
     elif logo:
         # Ensure it is valid base64
         try:
             base64.decodebytes(logo.encode())
-        except Exception:
-            valid_logo = False
-            logo = None
+        except Exception as e:
+            raise APIBadRequest(f"Invalid Logo: {str(e)}")
+
     if not valid_logo and not logo:
         with db.engine.connect() as conn:
             data["logo"] = next(conn.execute(text(f"SELECT logo FROM organisations where id = {organisation.id}")))[0]
