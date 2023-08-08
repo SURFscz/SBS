@@ -12,6 +12,10 @@ export default function Footer() {
                     <nav className="menu sds--text--body--small">
                         <ul>
                             <li>
+                                <a href={I18n.t("footer.supportLink")} target="_blank"
+                                   rel="noopener noreferrer"><span>{I18n.t("footer.support")}</span></a>
+                            </li>
+                            <li>
                                 <a href={I18n.t("footer.termsLink")} target="_blank"
                                    rel="noopener noreferrer"><span>{I18n.t("footer.terms")}</span></a>
                             </li>
