@@ -824,16 +824,19 @@ class CollaborationDetail extends React.Component {
             values: [I18n.t(`collaboration.${collaboration.disclose_member_information ? "visible" : "hidden"}`)]
         }];
 
-        return (<UnitHeader obj={collaboration}
-                            firstTime={user.admin ? this.onBoarding : undefined}
-                            history={(user.admin && allowedToEdit) && this.props.history}
-                            auditLogPath={`collaborations/${collaboration.id}`}
-                            breadcrumbName={I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
-                            name={collaboration.name}
-                            displayDescription={true}
-                            actions={this.getActions(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}>
-            {metaDataListItems.length > 0 && <MetaDataList items={metaDataListItems}/>}
-        </UnitHeader>);
+        return (
+            <UnitHeader obj={collaboration}
+                        firstTime={user.admin ? this.onBoarding : undefined}
+                        history={(user.admin && allowedToEdit) && this.props.history}
+                        auditLogPath={`collaborations/${collaboration.id}`}
+                        breadcrumbName={I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
+                        name={collaboration.name}
+                        labels={collaboration.tags.map(tag => tag.tag_value)}
+                        displayDescription={true}
+                        actions={this.getActions(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}>
+                {metaDataListItems.length > 0 && <MetaDataList items={metaDataListItems}/>}
+            </UnitHeader>
+        );
     }
 
     render() {

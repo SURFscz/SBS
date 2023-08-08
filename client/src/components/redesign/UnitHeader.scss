@@ -56,10 +56,12 @@
 
         .obj-name {
             margin-left: 26px;
-            flex-grow: 3;
             display: flex;
             flex-direction: column;
+            .meta-info-container {
+                display: flex;
 
+            }
             span.name {
                 color: black;
                 font-weight: bold;
@@ -70,13 +72,20 @@
             }
         }
 
+        .labels {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 0 auto 0 15px;
+        }
+
     }
 
     .action-menu-container {
         display: flex;
         flex-direction: column;
         gap: 20px;
-        margin-left: 25px;
+        margin-left: auto;
 
         button {
             width: 100%;
