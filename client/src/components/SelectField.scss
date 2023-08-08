@@ -45,6 +45,10 @@
             border: 1px solid $dark-grey !important;
         }
 
+        .select-inner__multi-value {
+            background-color: var(--sds--palette--main-color--100);
+        }
+
         &[disabled] {
             background-color: $background;
             cursor: not-allowed;
