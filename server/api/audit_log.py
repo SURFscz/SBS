@@ -3,7 +3,8 @@ from sqlalchemy import desc, or_, and_
 from sqlalchemy.orm import load_only
 
 from server.api.base import json_endpoint, query_param
-from server.auth.security import current_user_id, confirm_allow_impersonation, confirm_write_access
+from server.auth.security import current_user_id, confirm_allow_impersonation, confirm_write_access, \
+    is_organisation_admin_or_manager, is_collaboration_admin
 from server.db.audit_mixin import AuditLog
 from server.db.domain import User, Organisation, Collaboration, Service
 
@@ -29,7 +30,6 @@ def _user_activity(user_id):
 @audit_log_api.route("/me", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def me():
-    confirm_write_access()
     headers = current_request.headers
     user_id = current_user_id()
     impersonate_id = headers.get("X-IMPERSONATE-ID", default=None, type=int)
@@ -74,7 +74,15 @@ def activity():
 @audit_log_api.route("/info/<query_id>/<collection_name>", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def info(query_id, collection_name):
-    confirm_write_access()
+    def override_func():
+        user_id = current_user_id()
+        if collection_name == "organisations":
+            return is_organisation_admin_or_manager(query_id)
+        if collection_name == "collaborations":
+            return is_collaboration_admin(user_id=user_id, collaboration_id=query_id)
+        return False
+
+    confirm_write_access(override_func=override_func)
 
     audit_logs = AuditLog.query \
         .filter(or_(and_(AuditLog.parent_id == query_id, AuditLog.parent_name == collection_name),

@@ -698,19 +698,12 @@ class CollaborationDetail extends React.Component {
                 perform: () => this.toggleAdminMemberView()
             });
         }
-        // if (allowedToEdit && showMemberView && collaboration.status === "suspended") {
-        //     actions.push({
-        //         buttonType: ButtonType.Secondary,
-        //         name: I18n.t("home.unsuspend"),
-        //         perform: this.unsuspend(true)
-        //     });
-        // }
-        const almostSuspended = this.isCollaborationAlmostSuspended(user, collaboration, config);
-        if (almostSuspended && allowedToEdit && showMemberView) {
+        if (adminOfCollaboration && !user.admin && showMemberView) {
+            const queryParam = `name=${encodeURIComponent(collaboration.name)}&back=${encodeURIComponent(window.location.pathname)}`;
             actions.push({
                 buttonType: ButtonType.Secondary,
-                name: I18n.t("home.resetLastActivity"),
-                perform: this.resetLastActivityDate(true)
+                name: I18n.t("home.history"),
+                perform: () => this.props.history.push(`/audit-logs/collaborations/${collaboration.id}?${queryParam}`)
             });
         }
         const isMember = collaboration.collaboration_memberships.some(m => m.user_id === user.id);
