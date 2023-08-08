@@ -853,7 +853,7 @@ class System extends React.Component {
                                 <td className="action">{I18n.t(`system.${key}`)}</td>
                                 <td>
                                     {!isEmpty(expiredCollaborations[key]) && <ul>
-                                        {expiredCollaborations[key].map(coll => <li>{coll.name}</li>)}
+                                        {expiredCollaborations[key].map((coll, index) => <li key={index}>{coll.name}</li>)}
                                     </ul>}
                                     {isEmpty(expiredCollaborations[key]) && <span>None</span>}
                                 </td>
