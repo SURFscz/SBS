@@ -1,6 +1,6 @@
 import React from "react";
 import "./Home.scss";
-import goat from "./goat.wav";
+import sheep from "./sram_sheep.ogg";
 import I18n from "../locale/I18n";
 import {ReactComponent as Logo} from "../icons/ram.svg";
 import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
@@ -205,7 +205,7 @@ class Home extends React.Component {
         return (
             <div className="mod-home-container">
                 {(user.admin || noMemberships) && <UnitHeader obj={({name: I18n.t("home.sram"), svg: Logo})}
-                                                              svgClick={() => new Audio(goat).play()}/>}
+                                                              svgClick={() => new Audio(sheep).play()}/>}
                 <Tabs standAlone={!user.admin} activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}
                 </Tabs>
