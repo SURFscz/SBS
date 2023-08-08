@@ -8,7 +8,8 @@ from server.db.domain import Invitation, CollaborationMembership, User, Collabor
     JoinRequest
 from server.test.abstract_test import AbstractTest
 from server.test.seed import invitation_hash_no_way, ai_computing_name, invitation_hash_curious, invitation_hash_uva, \
-    uva_research_name, uuc_secret, uuc_name, ai_computing_short_name, join_request_peter_hash
+    uva_research_name, uuc_secret, uuc_name, ai_computing_short_name, join_request_peter_hash, \
+    collaboration_ai_computing_uuid
 
 
 class TestInvitation(AbstractTest):
@@ -140,6 +141,28 @@ class TestInvitation(AbstractTest):
         db.session.merge(collaboration)
         db.session.commit()
 
+    def test_collaboration_invites_api_identifier(self):
+        mail = self.app.mail
+        with mail.record_messages() as outbox:
+            res = self.put("/api/invitations/v1/collaboration_invites",
+                           body={
+                               "collaboration_identifier": collaboration_ai_computing_uuid,
+                               "invites": ["q@demo.com"]
+                           },
+                           headers={"Authorization": f"Bearer {uuc_secret}"},
+                           with_basic_auth=False)
+            self.assertEqual(1, len(outbox))
+            self.assertListEqual(["q@demo.com"], [inv["email"] for inv in res])
+
+    def test_collaboration_invites_api_bad_request(self):
+        self.put("/api/invitations/v1/collaboration_invites",
+                 body={
+                     "invites": ["q@demo.com"]
+                 },
+                 headers={"Authorization": f"Bearer {uuc_secret}"},
+                 response_status_code=400,
+                 with_basic_auth=False)
+
     def _do_test_collaboration_invites_api(self):
         mail = self.app.mail
         with mail.record_messages() as outbox:
@@ -174,12 +197,13 @@ class TestInvitation(AbstractTest):
         res = self.put("/api/invitations/v1/collaboration_invites",
                        body={
                            "short_name": "nope",
+                           "collaboration_identifier": "123456",
                            "invites": ["q@demo.com", "x@demo.com", "invalid_email"]
                        },
                        headers={"Authorization": f"Bearer {uuc_secret}"},
                        response_status_code=403,
                        with_basic_auth=False)
-        self.assertTrue("Collaboration nope is not part of organisation UUC" in res["message"])
+        self.assertTrue("Collaboration nope 123456 is not part of organisation UUC" in res["message"])
 
     def test_collaboration_external_identifier(self):
         invitation = self._get_invitation_curious()
