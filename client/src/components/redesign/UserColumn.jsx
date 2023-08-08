@@ -13,7 +13,7 @@ export default function UserColumn({entity, currentUser, gotoInvitation, hideEma
             <Tooltip tip={entity.invite ?
                 I18n.t("models.users.inviteTooltip", {
                     email: entity.invitee_email,
-                    name: entity.user.name,
+                    name: entity.user ? entity.user.name : entity.created_by,
                     date: dateFromEpoch(entity.created_at)
                 }) :
                 entity.user && entity.created_at ? I18n.t("models.users.userTooltip", {
