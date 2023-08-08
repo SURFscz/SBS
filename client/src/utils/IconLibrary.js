@@ -58,6 +58,7 @@ import {
     faUserFriends,
     faUserLock,
     faUsers,
+    faUserAlt,
     faUserSecret,
     faWindowClose,
 } from '@fortawesome/free-solid-svg-icons'
@@ -114,7 +115,7 @@ export function addIcons() {
         faSearch,
         faSync,
         faSeedling,
-
+        faUserAlt,
         faTable,
         faTimes,
         faToolbox,
