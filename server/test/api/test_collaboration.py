@@ -577,13 +577,7 @@ class TestCollaboration(AbstractTest):
                                         "logo": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAk...."
                                     }),
                                     content_type="application/json")
-        self.assertEqual(201, response.status_code)
-
-        collaboration = self.find_entity_by_name(Collaboration, "new_collaboration")
-        logo = collaboration.logo
-        self.assertIsNotNone(logo)
-        # The logo we send is invalid, but the fallback is the organisation logo
-        self.get(logo, with_basic_auth=False, response_status_code=200)
+        self.assertEqual("Invalid Logo: Incorrect padding", response.json["message"])
 
     def test_api_call_invalid_json(self):
         response = self.client.post("/api/collaborations/v1",
