@@ -17,13 +17,11 @@ table_names_cls_mapping = {
 
 
 def _user_activity(user_id):
-    limit = int(query_param("limit", False, 1000))
     filter_params = ((AuditLog.target_id == user_id) & (AuditLog.target_type == User.__tablename__)) | (
-            AuditLog.subject_id == user_id)  # noqa: E126
+        AuditLog.subject_id == user_id)  # noqa: E126
     audit_logs = AuditLog.query \
         .filter(filter_params) \
         .order_by(desc(AuditLog.created_at)) \
-        .limit(limit) \
         .all()
     return _add_references(audit_logs), 200
 
@@ -82,7 +80,6 @@ def info(query_id, collection_name):
         .filter(or_(and_(AuditLog.parent_id == query_id, AuditLog.parent_name == collection_name),
                     and_(AuditLog.target_id == query_id, AuditLog.target_type == collection_name))) \
         .order_by(desc(AuditLog.created_at)) \
-        .limit(150) \
         .all()
 
     res = _add_references(audit_logs)
