@@ -5,15 +5,17 @@ import {isEmpty, stopEvent} from "../utils/Utils";
 
 export const MoreLessText = ({txt}) => {
 
-    const [showMore, setShowMore] = useState(txt && txt.length > 190
-        && txt.substring(190).indexOf(" ") > 0);
+    const cutoffNumber = 190;
+    
+    const [showMore, setShowMore] = useState(txt && txt.length > cutoffNumber
+        && txt.substring(cutoffNumber).indexOf(" ") > 0);
 
     const toggleShowMore = e => {
         stopEvent(e);
         setShowMore(!showMore);
     }
 
-    const txtToDisplay = isEmpty(txt) ? null : txt.substring(0, 190 + txt.substring(190).indexOf(" "));
+    const txtToDisplay = isEmpty(txt) ? null : txt.substring(0, cutoffNumber + txt.substring(cutoffNumber).indexOf(" "));
     return (
         <span className={"more-less-txt description"}>
             {showMore ? txtToDisplay : txt}
