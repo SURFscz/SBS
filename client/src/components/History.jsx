@@ -29,7 +29,7 @@ export default class History extends React.PureComponent {
                 res.audit_logs = res.audit_logs.filter(log => {
                     if (!isEmpty(log.state_after)) {
                         const stateAfter = JSON.parse(log.state_after);
-                        return Object.keys(stateAfter).length === 1 && stateAfter.last_activity_date;
+                        return !(Object.keys(stateAfter).length === 1 && stateAfter.last_activity_date);
                     }
                     return true;
                 })
