@@ -159,6 +159,20 @@ cd server
 CONFIG='config/test_config.yml' FLASK_APP='__main__.py' flask shell
 ```
 
+### [PyCharm](#pycharm)
+Because of eventlet the debugger in PyCharm sometimes crashes. Use the following environment properties to resolve this:
+
+```
+ALLOW_MOCK_USER_API=1;
+CONFIG=config/acc_config.yml;
+EVENTLET_HUB=poll;
+OPEN_MAIL_IN_BROWSER=1;
+PROFILE=local;
+PYDEVD_USE_CYTHON=NO;
+PYDEVD_USE_FRAME_EVAL=NO;
+PYTHONUNBUFFERED=1
+```
+
 ### [docker](#docker)
 
 For localhost deployment you can make use of **docker**. You can take existing **docker-compose.yml** as your starting point. The docker-compose file makes use of environment variables that you can adjust via a local **.env** file. To create your own **.env** file, copy the provided **.env.example** file:
