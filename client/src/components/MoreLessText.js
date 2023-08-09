@@ -6,7 +6,7 @@ import {isEmpty, stopEvent} from "../utils/Utils";
 export const MoreLessText = ({txt}) => {
 
     const cutoffNumber = 190;
-    
+
     const [showMore, setShowMore] = useState(txt && txt.length > cutoffNumber
         && txt.substring(cutoffNumber).indexOf(" ") > 0);
 
