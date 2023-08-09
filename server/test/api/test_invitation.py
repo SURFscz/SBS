@@ -163,6 +163,17 @@ class TestInvitation(AbstractTest):
                  response_status_code=400,
                  with_basic_auth=False)
 
+    def test_collaboration_invites_api_bad_request_2(self):
+        self.put("/api/invitations/v1/collaboration_invites",
+                 body={
+                     "collaboration_identifier": collaboration_ai_computing_uuid,
+                     "short_name": ai_computing_short_name,
+                     "invites": ["q@demo.com"]
+                 },
+                 headers={"Authorization": f"Bearer {uuc_secret}"},
+                 response_status_code=400,
+                 with_basic_auth=False)
+
     def _do_test_collaboration_invites_api(self):
         mail = self.app.mail
         with mail.record_messages() as outbox:
@@ -196,14 +207,13 @@ class TestInvitation(AbstractTest):
     def test_collaboration_invite_wrong_collaboration(self):
         res = self.put("/api/invitations/v1/collaboration_invites",
                        body={
-                           "short_name": "nope",
                            "collaboration_identifier": "123456",
                            "invites": ["q@demo.com", "x@demo.com", "invalid_email"]
                        },
                        headers={"Authorization": f"Bearer {uuc_secret}"},
                        response_status_code=403,
                        with_basic_auth=False)
-        self.assertTrue("Collaboration nope 123456 is not part of organisation UUC" in res["message"])
+        self.assertTrue("Collaboration 123456 is not part of organisation UUC" in res["message"])
 
     def test_collaboration_external_identifier(self):
         invitation = self._get_invitation_curious()

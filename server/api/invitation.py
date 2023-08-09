@@ -1,6 +1,7 @@
 import datetime
 import re
 import uuid
+from operator import xor
 
 from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app, g as request_context, jsonify
@@ -106,13 +107,13 @@ def collaboration_invites_api():
     data = current_request.get_json()
     coll_short_name = data.get("short_name")
     coll_identifier = data.get("collaboration_identifier")
-    if not coll_short_name and not coll_identifier:
-        raise BadRequest("Either short_name or collaboration_identifier is required")
+    if not xor(bool(coll_short_name), bool(coll_identifier)):
+        raise BadRequest("Exactly one of short_name and collaboration_identifier is required")
 
     collaborations = list(filter(lambda coll: coll.short_name == coll_short_name or coll.identifier == coll_identifier,
                                  organisation.collaborations))
     if not collaborations:
-        raise Forbidden(f"Collaboration {coll_short_name} {coll_identifier} is not part of "
+        raise Forbidden(f"Collaboration {coll_short_name or coll_identifier} is not part of "
                         f"organisation {organisation.name}")
 
     collaboration = collaborations[0]
