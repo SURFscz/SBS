@@ -137,6 +137,7 @@ def delete_group_api(group_identifier):
     collaboration_id = group.collaboration_id
     group_id = group.id
 
+    emit_socket(f"collaboration_{collaboration_id}")
     broadcast_group_deleted(group_id)
 
     update_last_activity_date(collaboration_id)
