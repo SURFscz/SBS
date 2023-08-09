@@ -1758,9 +1758,9 @@ const nl = {
     footer: {
         support: "Hulp",
         supportLink: "https://edu.nl/vw3jx",
-        terms: "Terms of Use",
+        terms: "Gebruiksvoorwaarden",
         termsLink: "https://edu.nl/6wb63",
-        privacy: "Privacy policy",
+        privacy: "Privacyverklaring",
         privacyLink: "https://edu.nl/fcgbd",
         surfLink: "https://surf.nl",
     },
