@@ -17,7 +17,9 @@ export const dateFromEpoch = epoch => {
 
 export const pseudoIso = epoch => {
     const date = new Date(epoch * 1000);
-    return `${date.getFullYear()}‐${date.getMonth()+1}‐${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+    let minutes = date.getMinutes();
+    minutes = minutes < 10 ? `0${minutes}` : minutes;
+    return `${date.getFullYear()}‐${date.getMonth()+1}‐${date.getDate()} ${date.getHours()}:${minutes}`;
 }
 
 export const formatDate = date => {

@@ -7,7 +7,7 @@ import {escapeDeep, isEmpty} from "../utils/Utils";
 import {pseudoIso} from "../utils/Date";
 import {Pagination} from "@surfnet/sds";
 
-const pageCount = 15;
+const pageCount = 50;
 const ignoreInDiff = ["created_by", "updated_by", "created_at", "updated_at"];
 const epochAttributes = ["agreed_at", "sent_at", "last_accessed_date", "last_login_date", "expiry_date"]
 const collectionMapping = {
