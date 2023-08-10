@@ -53,6 +53,7 @@ export default function ServiceCard({
         const admin = !isEmpty(service.contact_email) ? service.contact_email : !isEmpty(admins) ? admins[0].email : null;
         const adminName = !isEmpty(service.contact_email) ? service.contact_email : !isEmpty(admins) ? admins[0].name : null;
         const compliance = service.sirtfi_compliant || service.code_of_conduct_compliant || service.research_scholarship_compliant;
+        const supportEmail = service.support_email
         return (<div className={"service-metadata"}>
             <div className={"policies"}>
                 <dt>{I18n.t("service.policies")}</dt>
@@ -75,10 +76,10 @@ export default function ServiceCard({
             </div>
             <div className={"support"}>
                 <dt>{I18n.t("service.supportShort")}</dt>
-                {admin && <dd>{I18n.t('service.supportContactPre')}
-                    <a href={`mailto:${admin}`}
+                {supportEmail && <dd>{I18n.t('service.supportContactPre')}
+                    <a href={`mailto:${supportEmail}`}
                        className={"soft-link"}>
-                        {adminName}
+                        {supportEmail}
                     </a>
                     {service.uri_info && <span>{I18n.t("service.or")}
                         <a href={service.uri_info}
@@ -86,9 +87,14 @@ export default function ServiceCard({
                            className={"soft-link"}
                            rel="noopener noreferrer">{I18n.t("service.visitWebsite")}</a></span>}
                 </dd>}
-                {!admin && <dd>{I18n.t("service.noSupport", {name: service.name})}</dd>}
-                {!isEmpty(admins) && <dd className={"dd-seperator"}>{I18n.t("service.adminContact")}</dd>}
-                {!isEmpty(admins) && <dd><a href={`mailto:${admins[0].email}`}>{admins[0].name}</a></dd>}
+                {(!supportEmail && service.uri_info) && <dd>{<span>{I18n.t("service.supportThroughWebsitePre")}
+                        <a href={service.uri_info}
+                           target="_blank"
+                           className={"soft-link"}
+                           rel="noopener noreferrer">{I18n.t("service.supportThroughWebsiteLink")}</a></span>}</dd>}
+                {(!supportEmail && !service.uri_info) && <dd>{I18n.t("service.noSupport", {name: service.name})}</dd>}
+                {!isEmpty(admin) && <dd className={"dd-seperator"}>{I18n.t("service.adminContact")}</dd>}
+                {!isEmpty(admin) && <dd><a href={`mailto:${admin}`}>{adminName}</a></dd>}
             </div>
         </div>);
     }

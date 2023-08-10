@@ -1056,9 +1056,11 @@ const en = {
         supportContactPre: "For support please contact ",
         or: " or ",
         visitWebsite: "visit the website",
+        supportThroughWebsitePre: "For support ",
+        supportThroughWebsiteLink: "visit the website.",
         admins: "Administrative email address",
         adminContact: "Administrative contact",
-        noSupport: "Service {{name}} does not provide support for end users and does not have any administrators",
+        noSupport: "Service {{name}} does not provide support for end users.",
         launch: "Launch"
     },
     organisation: {
