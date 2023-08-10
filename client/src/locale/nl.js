@@ -2280,6 +2280,10 @@ const nl = {
     gallery: {
         upload: "Upload je eigen logo",
         select: "Of selecteer een logo"
+    },
+    missingAttributes: {
+        info: "Je gebruiker gegevens lijken incompleet. Probeer nogmaals in te loggen (mogelijk met een nieuw of incognito browser session).",
+        contact: "Als het probleem zich nogmaals voordoet neem dan contact op met <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> voor hulp"
     }
 };
 

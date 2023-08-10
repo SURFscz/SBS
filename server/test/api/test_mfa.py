@@ -39,7 +39,8 @@ class TestMfa(AbstractTest):
         # initiate proxy_authz call to initialize 2fa
         self.post("/api/users/proxy_authz", response_status_code=200,
                   body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
-                        "uid": "sarah", "homeorganization": "ssid.org"})
+                        "uid": "sarah", "homeorganization": "ssid.org", "user_email": "sarah@ex.com",
+                        "user_name": "sarah p"})
         sarah = self.find_entity_by_name(User, sarah_name)
 
         # start the ssid
@@ -63,7 +64,7 @@ class TestMfa(AbstractTest):
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:new_user", "service_id": self.app.app_config.oidc.sram_service_entity_id,
                               "issuer_id": "issuer.com", "uid": "new_user", "homeorganization": "ssid.org",
-                              "user_email": "new_user@example.edu"})
+                              "user_email": "new_user@example.edu", "user_name": "sarah p"})
         # check that result is interrupt
         self.assertEqual(res["status"]["result"], "interrupt")
         self.assertIn(self.app.app_config.base_server_url + '/api/mfa/ssid_start/', res["status"]["redirect_url"])

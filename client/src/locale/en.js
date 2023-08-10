@@ -2280,6 +2280,10 @@ const en = {
     gallery: {
         upload: "Upload your own image",
         select: "Select from gallery"
+    },
+    missingAttributes: {
+        info: "Your user record seems to be incomplete. Please try logging in again (possibly with a fresh or incognito browser session).",
+        contact: "If the problem reoccurs, please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for help"
     }
 };
 

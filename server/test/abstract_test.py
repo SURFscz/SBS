@@ -115,7 +115,7 @@ class AbstractTest(TestCase):
         responses.add(responses.GET, current_app.app_config.oidc.jwks_endpoint,
                       read_file("test/data/public.json"), status=200)
         with requests.Session():
-            self.client.get("/api/users/resume-session?code=123456")
+            return self.client.get("/api/users/resume-session?code=123456")
 
     def get(self, url, query_data={}, response_status_code=200, with_basic_auth=True, headers={}, expected_headers={}):
         with requests.Session():

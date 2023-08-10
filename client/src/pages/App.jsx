@@ -53,6 +53,7 @@ import PamWebSSO from "./PamWebSSO";
 
 import {isUserAllowed, ROLES} from "../utils/UserRole";
 import {subscriptionIdCookieName} from "../utils/SocketIO";
+import MissingAttributes from "./MissingAttributes";
 
 addIcons();
 
@@ -431,6 +432,9 @@ class App extends React.Component {
                         <Route path="/service-denied" render={props => <ServiceDenied {...props}/>}/>
 
                         <Route path="/error" render={props => <ServerError {...props}/>}/>
+
+                        <Route path="/missing-attributes"
+                               render={props => <MissingAttributes config={config} currentUser={currentUser} {...props}/>}/>
 
                         <Route render={props => <NotFound config={config} currentUser={currentUser} {...props}/>}/>
                     </Switch>}

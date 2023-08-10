@@ -9,7 +9,8 @@ from server.api.base import json_endpoint, send_error_mail
 from server.api.service_aups import has_agreed_with
 from server.auth.mfa import mfa_idp_allowed, surf_secure_id_required, has_valid_mfa
 from server.auth.security import confirm_read_access
-from server.auth.user_claims import user_memberships, collaboration_memberships_for_service, co_tags
+from server.auth.user_claims import user_memberships, collaboration_memberships_for_service, co_tags, \
+    valid_user_attributes
 from server.cron.idp_metadata_parser import idp_schac_home_by_entity_id
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, PROXY_AUTHZ, PROXY_AUTHZ_SBS
@@ -24,6 +25,7 @@ USER_IS_SUSPENDED = 2
 SERVICE_UNKNOWN = 3
 SERVICE_NOT_CONNECTED = 4
 COLLABORATION_NOT_ACTIVE = 5
+MISSING_ATTRIBUTES = 98
 AUP_NOT_AGREED = 99
 SECOND_FA_REQUIRED = 100
 
@@ -61,7 +63,7 @@ custom_saml_mapping = {
 
 
 # See https://github.com/SURFscz/SBS/issues/152
-def _perform_sram_login(uid, service, service_entity_id, user_email, home_organisation_uid,
+def _perform_sram_login(uid, service, service_entity_id, user_email, user_name, home_organisation_uid,
                         schac_home_organisation, issuer_id, require_2fa=True):
     logger = ctx_logger("user_api")
 
@@ -70,6 +72,15 @@ def _perform_sram_login(uid, service, service_entity_id, user_email, home_organi
     user = User.query.filter(User.uid == uid).first()
     if not user:
         logger.debug("Creating new user in sram_login")
+        if not valid_user_attributes({"sub": uid, "name": user_name, "email": user_email}):
+            return {
+                "status": {
+                    "result": "interrupt",
+                    "redirect_url": f"{current_app.app_config.base_url}/missing-attributes",
+                    "error_status": MISSING_ATTRIBUTES
+                }
+            }, 200
+
         user = User(uid=uid, email=user_email, external_id=str(uuid.uuid4()), created_by="system", updated_by="system")
 
     if home_organisation_uid:
@@ -225,6 +236,8 @@ def proxy_authz():
     uid = json_dict["user_id"]
     service_entity_id = json_dict["service_id"]
     issuer_id = json_dict["issuer_id"]
+    # We need these two to validate the completeness of the user when provisioning in _perform_sram_login
+    user_name = json_dict.get("user_name", None)
     user_email = json_dict.get("user_email", None)
     # These are optional; they are only used to check for logins that should do SSID-SFO
     # If the proxy doesn't send these, we can safely assume the user shouldn't be sent to SSID
@@ -238,7 +251,7 @@ def proxy_authz():
     user = User.query.filter(User.uid == uid).first()
 
     if service_entity_id.lower() == current_app.app_config.oidc.sram_service_entity_id.lower():
-        return _perform_sram_login(uid, service, service_entity_id, user_email, home_organisation_uid,
+        return _perform_sram_login(uid, service, service_entity_id, user_email, user_name, home_organisation_uid,
                                    schac_home_organisation, issuer_id)
 
     def not_authorized_func(service_name, status):
