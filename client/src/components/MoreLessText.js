@@ -15,7 +15,7 @@ export const MoreLessText = ({txt}) => {
         setShowMore(!showMore);
     }
 
-    const txtToDisplay = isEmpty(txt) ? null : txt.substring(0, cutoffNumber + txt.substring(cutoffNumber).indexOf(" "));
+    const txtToDisplay = isEmpty(txt) ? txt : txt.substring(0, cutoffNumber + txt.substring(cutoffNumber).indexOf(" "));
     return (
         <span className={"more-less-txt description"}>
             {showMore ? txtToDisplay : txt}
