@@ -1777,6 +1777,8 @@ const nl = {
         runDailyJobs: "Trigger",
         showDailyJobs: "Show",
         showDailyJobsInfo: "Toon alle ingeplande Cron jobs",
+        parseMetaData: "Parse",
+        showParsedMetaDataInfo: "Parse the IdP MetaData",
         jobName: "Naam",
         jobNextRun: "Geplande run-time",
         runOutdatedRequestsInfo: "Voer de cron-taak uit om alle verouderde open join-verzoeken en nieuwe samenwerkingsverzoeken voor de geconfigureerde drempel te rapporteren",

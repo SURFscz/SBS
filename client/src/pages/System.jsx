@@ -10,6 +10,7 @@ import {
     cleanupNonOpenRequests,
     clearAuditLogs,
     composition,
+    parseMetaData,
     dbDemoSeed,
     dbHumanTestingSeed,
     dbSeed,
@@ -59,6 +60,12 @@ import Stats from "./Stats";
 
 const options = [25, 50, 100, 150, 200, 250, 500].map(nbr => ({value: nbr, label: nbr}));
 
+const jsonStyle = {
+    propertyStyle: {color: "black"},
+    stringStyle: {color: "green"},
+    numberStyle: {color: 'darkorange'}
+}
+
 class System extends React.Component {
 
     constructor(props, context) {
@@ -74,6 +81,8 @@ class System extends React.Component {
             deletedUsers: {},
             expiredMemberships: {},
             outstandingRequests: {},
+            parsedMetaData: {},
+            parsedMetaDataView: false,
             cleanedRequests: {},
             databaseStats: [],
             userLoginStats: [],
@@ -125,6 +134,7 @@ class System extends React.Component {
             deletedUsers: {},
             expiredMemberships: {},
             outstandingRequests: {},
+            parsedMetaData: {},
             cleanedRequests: {},
             databaseStats: [],
             cronJobs: [],
@@ -144,7 +154,7 @@ class System extends React.Component {
     }
 
     getCronTab = (suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations, suspendedCollaborations,
-                  expiredMemberships, deletedUsers, sweepResults, cronJobs) => {
+                  expiredMemberships, deletedUsers, sweepResults, cronJobs, parsedMetaData, parsedMetaDataView) => {
         return (<div key="cron" name="cron" label={I18n.t("home.tabs.cron")}
                      icon={<FontAwesomeIcon icon="clock"/>}>
             <div className="mod-system">
@@ -163,6 +173,8 @@ class System extends React.Component {
                     {this.renderOutstandingRequestsResults(outstandingRequests)}
                     {this.renderCleanedRequests()}
                     {this.renderCleanedRequestsResults(cleanedRequests)}
+                    {this.renderParsedMetaData()}
+                    {this.renderParsedMetaDataResults(parsedMetaData, parsedMetaDataView)}
                     {this.renderSweep()}
                     {this.renderSweepResults(sweepResults)}
                     {this.renderCronJobs()}
@@ -217,7 +229,7 @@ class System extends React.Component {
                         <section className="search-activity">
                             <span>{I18n.t("system.activity", {count: filteredAuditLogs.audit_logs.length})}</span>
                             {config.seed_allowed &&
-                            <Button warningButton={true} onClick={() => this.doClearAuditLogs(true)}/>}
+                                <Button warningButton={true} onClick={() => this.doClearAuditLogs(true)}/>}
                             <div className={`search ${config.seed_allowed ? "" : "no-clear-logs"}`}>
                                 <input type="text"
                                        onChange={this.onChangeQuery}
@@ -276,11 +288,6 @@ class System extends React.Component {
     }
 
     getPlscTab = (plscData, plscView) => {
-        const jsonStyle = {
-            propertyStyle: {color: "black"},
-            stringStyle: {color: "green"},
-            numberStyle: {color: 'darkorange'}
-        }
         const plscJson = JSON.stringify(plscData);
         return (<div key="plsc" name="plsc" label={I18n.t("home.tabs.plsc")}
                      icon={<FontAwesomeIcon icon="table"/>}>
@@ -294,9 +301,9 @@ class System extends React.Component {
                         <ClipBoardCopy txt={plscJson}/>
                     </div>
                     {plscView &&
-                    <ReactJson src={plscData} collapsed={1}/>}
+                        <ReactJson src={plscData} collapsed={1}/>}
                     {!plscView &&
-                    <JsonFormatter json={plscJson} tabWith={4} jsonStyle={jsonStyle}/>}
+                        <JsonFormatter json={plscJson} tabWith={4} jsonStyle={jsonStyle}/>}
 
                 </section>
             </div>
@@ -334,13 +341,13 @@ class System extends React.Component {
                                              refresh={callback => this.componentDidMount(callback)}/>
                 </section>
                 {showOrganisationsWithoutAdmin &&
-                <section className="info-block-container">
-                    <OrganisationsWithoutAdmin organisations={organisations} {...this.props}/>
-                </section>}
+                    <section className="info-block-container">
+                        <OrganisationsWithoutAdmin organisations={organisations} {...this.props}/>
+                    </section>}
                 {showServicesWithoutAdmin &&
-                <section className="info-block-container">
-                    <ServicesWithoutAdmin services={services} {...this.props}/>
-                </section>}
+                    <section className="info-block-container">
+                        <ServicesWithoutAdmin services={services} {...this.props}/>
+                    </section>}
             </div>
         </div>)
 
@@ -420,52 +427,52 @@ class System extends React.Component {
                 <section className={"info-block-container"}>
                     <p className={"title"}>{I18n.t(`system.suspendedUsers.${zeroState ? "titleZeroState" : "title"}`)}</p>
                     {!zeroState &&
-                    <table className={"suspended-users"}>
-                        <thead>
-                        <tr>
-                            <th className={"name"}>{I18n.t("system.suspendedUsers.name")}</th>
-                            <th className={"email"}>{I18n.t("system.suspendedUsers.email")}</th>
-                            <th className={"lastLogin"}>{I18n.t("system.suspendedUsers.lastLogin")}</th>
-                            <th className={"actions"}></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {currentlySuspendedUsers.map(user => <tr key={user.id}>
-                            <td>{user.name}</td>
-                            <td>{user.email}</td>
-                            <td>{user.last_login_date ? dateFromEpoch(user.last_login_date) : "-"}</td>
-                            <td>
-                                {<Button txt={I18n.t("system.suspendedUsers.activate")}
-                                         onClick={() => this.activateUser(user)}/>}
-                            </td>
-                        </tr>)}
-                        </tbody>
-                    </table>}
+                        <table className={"suspended-users"}>
+                            <thead>
+                            <tr>
+                                <th className={"name"}>{I18n.t("system.suspendedUsers.name")}</th>
+                                <th className={"email"}>{I18n.t("system.suspendedUsers.email")}</th>
+                                <th className={"lastLogin"}>{I18n.t("system.suspendedUsers.lastLogin")}</th>
+                                <th className={"actions"}></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {currentlySuspendedUsers.map(user => <tr key={user.id}>
+                                <td>{user.name}</td>
+                                <td>{user.email}</td>
+                                <td>{user.last_login_date ? dateFromEpoch(user.last_login_date) : "-"}</td>
+                                <td>
+                                    {<Button txt={I18n.t("system.suspendedUsers.activate")}
+                                             onClick={() => this.activateUser(user)}/>}
+                                </td>
+                            </tr>)}
+                            </tbody>
+                        </table>}
                 </section>
                 <section className={"info-block-container"}>
                     <p className={"title"}>{I18n.t(`system.resetTOTPRequestedUsers.${resetTOTPRequestedUsers.length === 0 ? "titleZeroState" : "title"}`)}</p>
                     {resetTOTPRequestedUsers.length !== 0 &&
-                    <table className={"suspended-users"}>
-                        <thead>
-                        <tr>
-                            <th className={"name"}>{I18n.t("system.suspendedUsers.name")}</th>
-                            <th className={"email"}>{I18n.t("system.suspendedUsers.email")}</th>
-                            <th className={"lastLogin"}>{I18n.t("system.suspendedUsers.lastLogin")}</th>
-                            <th className={"actions"}></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {resetTOTPRequestedUsers.map(user => <tr key={user.id}>
-                            <td>{user.name}</td>
-                            <td>{user.email}</td>
-                            <td>{user.last_login_date ? dateFromEpoch(user.last_login_date) : "-"}</td>
-                            <td>
-                                {<Button txt={I18n.t("system.resetTOTPRequestedUsers.reset")}
-                                         onClick={() => this.resetUser(user)}/>}
-                            </td>
-                        </tr>)}
-                        </tbody>
-                    </table>}
+                        <table className={"suspended-users"}>
+                            <thead>
+                            <tr>
+                                <th className={"name"}>{I18n.t("system.suspendedUsers.name")}</th>
+                                <th className={"email"}>{I18n.t("system.suspendedUsers.email")}</th>
+                                <th className={"lastLogin"}>{I18n.t("system.suspendedUsers.lastLogin")}</th>
+                                <th className={"actions"}></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {resetTOTPRequestedUsers.map(user => <tr key={user.id}>
+                                <td>{user.name}</td>
+                                <td>{user.email}</td>
+                                <td>{user.last_login_date ? dateFromEpoch(user.last_login_date) : "-"}</td>
+                                <td>
+                                    {<Button txt={I18n.t("system.resetTOTPRequestedUsers.reset")}
+                                             onClick={() => this.resetUser(user)}/>}
+                                </td>
+                            </tr>)}
+                            </tbody>
+                        </table>}
                 </section>
             </div>
         </div>)
@@ -545,6 +552,13 @@ class System extends React.Component {
         this.setState({busy: true})
         cleanupNonOpenRequests().then(res => {
             this.setState({cleanedRequests: res, busy: false});
+        });
+    }
+
+    doParseMetaData = () => {
+        this.setState({busy: true})
+        parseMetaData().then(res => {
+            this.setState({parsedMetaData: res, busy: false});
         });
     }
 
@@ -776,6 +790,22 @@ class System extends React.Component {
         );
     }
 
+    renderParsedMetaData = () => {
+        const {parsedMetaData} = this.state;
+        return (
+            <div className="info-block">
+                <p>{I18n.t("system.showParsedMetaDataInfo")}</p>
+                <div className="actions">
+                    {isEmpty(parsedMetaData) && <Button txt={I18n.t("system.parseMetaData")}
+                                                        onClick={this.doParseMetaData}/>}
+                    {!isEmpty(parsedMetaData) && <Button txt={I18n.t("system.clear")}
+                                                         onClick={this.clear}
+                                                         cancelButton={true}/>}
+                </div>
+            </div>
+        );
+    }
+
     renderDbStats = () => {
         return (
             <div className="info-block">
@@ -853,7 +883,8 @@ class System extends React.Component {
                                 <td className="action">{I18n.t(`system.${key}`)}</td>
                                 <td>
                                     {!isEmpty(expiredCollaborations[key]) && <ul>
-                                        {expiredCollaborations[key].map((coll, index) => <li key={index}>{coll.name}</li>)}
+                                        {expiredCollaborations[key].map((coll, index) => <li
+                                            key={index}>{coll.name}</li>)}
                                     </ul>}
                                     {isEmpty(expiredCollaborations[key]) && <span>None</span>}
                                 </td>
@@ -1000,19 +1031,37 @@ class System extends React.Component {
     }
 
     renderSweepResults = sweepResults => {
-        const jsonStyle = {
-            propertyStyle: {color: "black"},
-            stringStyle: {color: "green"},
-            numberStyle: {color: 'darkorange'}
-        }
         const sweepJson = JSON.stringify(sweepResults);
         return (
             <div>
                 {!isEmpty(sweepResults) &&
-                <JsonFormatter json={sweepJson} tabWith={4} jsonStyle={jsonStyle}/>}
+                    <JsonFormatter json={sweepJson} tabWith={4} jsonStyle={jsonStyle}/>}
             </div>
         );
     }
+
+    renderParsedMetaDataResults = (parsedMetaData, parsedMetaDataView) => {
+        if (isEmpty(parsedMetaData)) {
+            return null;
+        }
+        const parsedMetaDataJson = JSON.stringify(parsedMetaData);
+        return (
+            <div className="results">
+                <div className={"toggle-json"}>
+                    <CheckBox name={"toggle-json"}
+                              value={parsedMetaDataView}
+                              info={I18n.t("system.toggleJson")}
+                              onChange={() => this.setState({parsedMetaDataView: !parsedMetaDataView})}/>
+                    <ClipBoardCopy txt={parsedMetaDataJson}/>
+                </div>
+                {parsedMetaDataView &&
+                    <ReactJson src={parsedMetaData} collapsed={1}/>}
+                {!parsedMetaDataView &&
+                    <JsonFormatter json={parsedMetaDataJson} tabWith={4} jsonStyle={jsonStyle}/>}
+            </div>
+        );
+    }
+
     renderCronJobsResults = cronJobs => {
         return (
             <div className="results">
@@ -1168,6 +1217,8 @@ class System extends React.Component {
             expiredMemberships,
             sweepResults,
             cronJobs,
+            parsedMetaData,
+            parsedMetaDataView,
             validationData,
             showOrganisationsWithoutAdmin,
             showServicesWithoutAdmin,
@@ -1190,7 +1241,7 @@ class System extends React.Component {
         const tabs = [
             this.getValidationTab(validationData, showOrganisationsWithoutAdmin, showServicesWithoutAdmin),
             this.getCronTab(suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations,
-                suspendedCollaborations, expiredMemberships, deletedUsers, sweepResults, cronJobs),
+                suspendedCollaborations, expiredMemberships, deletedUsers, sweepResults, cronJobs, parsedMetaData, parsedMetaDataView),
             config.seed_allowed ? this.getSeedTab(seedResult, demoSeedResult, humanTestingSeedResult) : null,
             this.getDatabaseTab(databaseStats, config),
             this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables, serverQuery),

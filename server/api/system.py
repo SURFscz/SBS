@@ -73,6 +73,16 @@ def do_suspend_users():
     return suspend_users(current_app), 201
 
 
+@system_api.route("/parse_metadata", strict_slashes=False, methods=["GET"])
+@json_endpoint
+def do_parse_metadata():
+    confirm_write_access()
+
+    from server.cron.idp_metadata_parser import parse_idp_metadata
+
+    return parse_idp_metadata(current_app), 200
+
+
 @system_api.route("/outstanding_requests", strict_slashes=False, methods=["GET"])
 @json_endpoint
 def do_outstanding_requests():
@@ -245,10 +255,10 @@ def validations():
         .all()
 
     return {
-               "organisations": organisations_without_admins,
-               "organisation_invitations": organisation_invitations,
-               "services": services_without_admins
-           }, 200
+        "organisations": organisations_without_admins,
+        "organisation_invitations": organisation_invitations,
+        "services": services_without_admins
+    }, 200
 
 
 @system_api.route("/sweep", strict_slashes=False, methods=["GET"])
@@ -283,12 +293,12 @@ def statistics():
         return [dict(row._mapping) for row in rows]
 
     return {
-               "organisations": group_by_month(Organisation),
-               "organisation_memberships": group_by_month(OrganisationMembership),
-               "collaborations": group_by_month(Collaboration),
-               "collaboration_memberships": group_by_month(CollaborationMembership),
-               "services": group_by_month(Service),
-               "service_memberships": group_by_month(ServiceMembership),
-               "groups": group_by_month(Group),
-               "users": group_by_month(User)
-           }, 200
+        "organisations": group_by_month(Organisation),
+        "organisation_memberships": group_by_month(OrganisationMembership),
+        "collaborations": group_by_month(Collaboration),
+        "collaboration_memberships": group_by_month(CollaborationMembership),
+        "services": group_by_month(Service),
+        "service_memberships": group_by_month(ServiceMembership),
+        "groups": group_by_month(Group),
+        "users": group_by_month(User)
+    }, 200

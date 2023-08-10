@@ -580,6 +580,10 @@ export function expireCollaborationMemberships() {
     return postPutJson("/api/system/expire_memberships", {}, "PUT");
 }
 
+export function parseMetaData() {
+    return fetchJson("/api/system/parse_metadata");
+}
+
 export function deleteOrphanUsers() {
     return postPutJson("/api/system/orphan_users", {}, "PUT");
 }

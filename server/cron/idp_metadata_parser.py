@@ -24,7 +24,7 @@ def parse_idp_metadata(app):
             element.tag = element.tag.split("}", 1)[1]
         if event == "start" and element.tag == "EntityDescriptor":
             stripped_attribs = {k.split("}", 1)[1]: v for k, v in element.attrib.items() if "}" in k}
-            # better safe then sorry - namespaces can change
+            # better safe than sorry - namespaces can change
             entity_id = {**stripped_attribs, **element.attrib}.get("entityID")
         elif event == "start" and element.tag == "Scope":
             scope = element.text
@@ -33,7 +33,7 @@ def parse_idp_metadata(app):
 
         elif event == "start" and element.tag == "DisplayName":
             stripped_attribs = {k.split("}", 1)[1]: v for k, v in element.attrib.items() if "}" in k}
-            # better safe then sorry - namespaces can change
+            # better safe than sorry - namespaces can change
             lang = {**stripped_attribs, **element.attrib}.get("lang", "en")
             if lang == "nl":
                 display_name_nl = element.text
@@ -53,6 +53,7 @@ def parse_idp_metadata(app):
 
     global idp_metadata
     idp_metadata = {"schac_home_organizations": results_by_scope, "entity_ids": results_by_entity_id}
+    return idp_metadata
 
 
 def idp_display_name(schac_home_organization, lang="en", use_default=True):
