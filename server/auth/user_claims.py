@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime
+import os
 import random
 import re
 import string
@@ -12,6 +13,8 @@ from flask import current_app
 
 from server.db.defaults import STATUS_SUSPENDED
 from server.db.domain import User, UserNameHistory, Collaboration
+from server.logger.context_logger import ctx_logger
+from server.mail import mail_error
 
 claim_attribute_mapping_value = [
     {"sub": "uid"},
@@ -140,3 +143,20 @@ def collaboration_memberships_for_service(user, service):
                 if connected or list(filter(lambda s: s.id == service.id, cm.collaboration.organisation.services)):
                     memberships.append(cm)
     return memberships
+
+
+def valid_user_attributes(attributes):
+    missing_attributes = []
+    if "name" not in attributes and "given_name" in attributes and "family_name" in attributes:
+        attributes["name"] = f"{attributes.get('given_name').strip()} {attributes.get('family_name').strip()}"
+    for attr in ["sub", "email", "name"]:
+        if attr not in attributes or not attributes.get(attr):
+            missing_attributes.append(attr)
+    if missing_attributes:
+        msg = f"Missing attributes for user {attributes}"
+        ctx_logger("base").exception(msg)
+        mail_conf = current_app.app_config.mail
+        if not os.environ.get("TESTING"):
+            user_id = attributes.get("email") or attributes.get("name") or attributes.get("sub") or attributes
+            mail_error(mail_conf.environment, user_id, mail_conf.send_exceptions_recipients, msg)
+    return not bool(missing_attributes)

@@ -24,7 +24,7 @@ class TestUser(AbstractTest):
         self.assertEqual(user["admin"], False)
 
     def test_provision_me_generated_user_name(self):
-        self.login("uid:new", user_info={"given_name": "mary", "family_name": "poppins"})
+        self.login("uid:new", user_info={"given_name": "mary", "family_name": "poppins", "email": "mp@ex.com"})
         user = self.client.get("/api/users/me").json
 
         self.assertEqual(user["username"], "mpoppins")
@@ -546,3 +546,34 @@ class TestUser(AbstractTest):
         path = "/error?reason=ssid_failed&code=urn:oasis:names:tc:SAML:2.0:status:Responder&" \
                "msg=urn:oasis:names:tc:SAML:2.0:status:NoAuthnContext"
         self.assertEqual(self.app.app_config.base_url + path, res.location)
+
+    def test_invalid_user_login(self):
+        try:
+            os.environ["TESTING"] = ""
+            mail = self.app.mail
+            with mail.record_messages() as outbox:
+                res = self.login("uid:new", user_info={"sub": "subby"})
+                self.assertEqual("http://localhost:3000/missing-attributes", res.headers.get('Location'))
+                self.assertEqual(1, len(outbox))
+                mail_msg = outbox[0]
+                self.assertListEqual(["sram-support@surf.nl"], mail_msg.recipients)
+                self.assertTrue("subby" in mail_msg.html)
+
+        finally:
+            os.environ["TESTING"] = "1"
+
+    def test_invalid_user_login_name(self):
+        try:
+            os.environ["TESTING"] = ""
+            mail = self.app.mail
+            with mail.record_messages() as outbox:
+                res = self.login("uid:new", user_info={"sub": "subby", "name": "jdoe"})
+                self.assertEqual("http://localhost:3000/missing-attributes", res.headers.get('Location'))
+                self.assertEqual(1, len(outbox))
+                mail_msg = outbox[0]
+                self.assertListEqual(["sram-support@surf.nl"], mail_msg.recipients)
+                self.assertTrue("subby" in mail_msg.html)
+                self.assertTrue("jdoe" in mail_msg.html)
+
+        finally:
+            os.environ["TESTING"] = "1"

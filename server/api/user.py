@@ -26,7 +26,7 @@ from server.auth.security import confirm_allow_impersonation, is_admin_user, cur
     confirm_collaboration_admin, confirm_organisation_admin, current_user, confirm_write_access, \
     confirm_organisation_admin_or_manager, is_application_admin, CSRF_TOKEN
 from server.auth.ssid import AUTHN_REQUEST_ID, saml_auth, redirect_to_surf_secure_id, USER_UID
-from server.auth.user_claims import add_user_claims
+from server.auth.user_claims import add_user_claims, valid_user_attributes
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit, SBS_LOGIN
 from server.db.domain import User, OrganisationMembership, CollaborationMembership, JoinRequest, CollaborationRequest, \
@@ -285,6 +285,10 @@ def resume_session():
     user = User.query.filter(User.uid == uid).first()
 
     if not user:
+        # Ensure we don't provisioning users who have not the mandatory attributes
+        if not valid_user_attributes(user_info_json):
+            return redirect(f"{cfg.base_url}/missing-attributes")
+
         user = User(uid=uid, external_id=str(uuid.uuid4()), created_by="system", updated_by="system")
         add_user_claims(user_info_json, uid, user)
 
