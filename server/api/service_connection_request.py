@@ -2,7 +2,7 @@ from flask import Blueprint, request as current_request, current_app, g as reque
 from sqlalchemy.orm import contains_eager, load_only
 from werkzeug.exceptions import BadRequest, Forbidden
 
-from server.api.base import json_endpoint, emit_socket
+from server.api.base import json_endpoint, emit_socket, query_param
 from server.api.collaborations_services import connect_service_collaboration
 from server.api.service import user_service
 from server.auth.secrets import generate_token
@@ -92,8 +92,8 @@ def _do_mail_request(collaboration, service, service_connection_request, is_admi
 def service_request_connections_by_service(service_id):
     # Avoid security risk, only return id
     return ServiceConnectionRequest.query.options(load_only(ServiceConnectionRequest.collaboration_id)) \
-               .filter(ServiceConnectionRequest.service_id == service_id) \
-               .all(), 200
+        .filter(ServiceConnectionRequest.service_id == service_id) \
+        .all(), 200
 
 
 @service_connection_request_api.route("/<service_connection_request_id>", methods=["DELETE"], strict_slashes=False)
@@ -151,23 +151,26 @@ def request_new_service_connection(collaboration, message, service, user):
     _do_mail_request(collaboration, service, service_connection_request, True, user)
 
 
-@service_connection_request_api.route("/find_by_hash/<hash_value>", strict_slashes=False)
+@service_connection_request_api.route("/find_by_hash", strict_slashes=False)
 @json_endpoint
-def service_connection_request_by_hash(hash_value):
+def service_connection_request_by_hash():
+    hash_value = query_param("hash")
     return _service_connection_request_by_hash(hash_value), 200
 
 
-@service_connection_request_api.route("/approve/<hash_value>", methods=["PUT"], strict_slashes=False)
+@service_connection_request_api.route("/approve", methods=["PUT"], strict_slashes=False)
 @json_endpoint
-def approve_service_connection_request(hash_value):
+def approve_service_connection_request():
     # Ensure to skip current_user is CO admin check
+    hash_value = query_param("hash")
     request_context.skip_collaboration_admin_confirmation = True
     return _do_service_connection_request(hash_value, True)
 
 
-@service_connection_request_api.route("/deny/<hash_value>", methods=["PUT"], strict_slashes=False)
+@service_connection_request_api.route("/deny", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def deny_service_connection_request(hash_value):
+    hash_value = query_param("hash")
     return _do_service_connection_request(hash_value, False)
 
 
@@ -190,9 +193,9 @@ def resend_service_connection_request(service_connection_request_id):
 def all_service_request_connections_by_service(service_id):
     confirm_write_access(service_id, override_func=is_service_admin)
     return ServiceConnectionRequest.query \
-               .join(ServiceConnectionRequest.collaboration) \
-               .join(ServiceConnectionRequest.requester) \
-               .options(contains_eager(ServiceConnectionRequest.collaboration)) \
-               .options(contains_eager(ServiceConnectionRequest.requester)) \
-               .filter(ServiceConnectionRequest.service_id == service_id) \
-               .all(), 200
+        .join(ServiceConnectionRequest.collaboration) \
+        .join(ServiceConnectionRequest.requester) \
+        .options(contains_eager(ServiceConnectionRequest.collaboration)) \
+        .options(contains_eager(ServiceConnectionRequest.requester)) \
+        .filter(ServiceConnectionRequest.service_id == service_id) \
+        .all(), 200

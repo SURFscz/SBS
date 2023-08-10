@@ -108,7 +108,7 @@ class ServiceConnectionRequest extends React.Component {
         return (
             <div className="service-connection-request-container">
                 {serviceConnectionRequestFound &&
-                <UnitHeader obj={({name: title, logo: serviceConnectionRequest.service.logo})}>
+                    <UnitHeader obj={({name: title, logo: serviceConnectionRequest.service.logo})}>
                     <span className="subTitle">
                         {I18n.t("serviceConnectionRequest.subTitle", {
                             collaboration: serviceConnectionRequest.collaboration.name,
@@ -116,7 +116,7 @@ class ServiceConnectionRequest extends React.Component {
                             service: serviceConnectionRequest.service.name
                         })}
                     </span>
-                </UnitHeader>}
+                    </UnitHeader>}
 
                 <div className="mod-service-connection-request">
                     <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -140,13 +140,13 @@ class ServiceConnectionRequest extends React.Component {
                         <InputField name={I18n.t("serviceConnectionRequest.requester")}
                                     value={serviceConnectionRequest.requester.name} disabled={true}/>
                         {serviceConnectionRequestFound &&
-                        <section className="actions">
-                            <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-                            <Button cancelButton={true} txt={I18n.t("serviceConnectionRequest.decline")}
-                                    onClick={this.decline}/>
-                            <Button txt={I18n.t("serviceConnectionRequest.accept")}
-                                    onClick={this.accept}/>
-                        </section>}
+                            <section className="actions">
+                                <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+                                <Button cancelButton={true} txt={I18n.t("serviceConnectionRequest.decline")}
+                                        onClick={this.decline}/>
+                                <Button txt={I18n.t("serviceConnectionRequest.accept")}
+                                        onClick={this.accept}/>
+                            </section>}
 
                     </div>
                 </div>
