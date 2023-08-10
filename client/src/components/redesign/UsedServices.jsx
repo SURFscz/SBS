@@ -370,9 +370,9 @@ class UsedServices extends React.Component {
     renderCurrentTab = (currentTab, usedServices, availableServices) => {
         switch (currentTab) {
             case CONNECTIONS:
-                return this.renderConnectedServices(usedServices);
+                return this.renderConnectedServices(usedServices.sort((s1, s2) => s1.name.localeCompare(s2.name)));
             case AVAILABLE:
-                return this.renderAvailableServices(availableServices);
+                return this.renderAvailableServices(availableServices.sort((s1, s2) => s1.name.localeCompare(s2.name)));
             default:
                 throw new Error(`unknown-tab: ${currentTab}`);
         }
