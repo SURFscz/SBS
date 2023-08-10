@@ -12,6 +12,6 @@ The motivation for this request:
 {{ service_connection_request.message }}
 
 Click on this link to process this request:
-{{ base_url }}/service-connection-requests/{{ service_connection_request.hash }}
+{{ base_url }}/service-connection-requests?hash={{ service_connection_request.hash }}
 
 {% endblock %}

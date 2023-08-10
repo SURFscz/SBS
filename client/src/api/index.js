@@ -727,15 +727,15 @@ export function requestServiceConnection(body, showErrorDialog = true) {
 }
 
 export function serviceConnectionRequestByHash(hash) {
-    return fetchJson(`/api/service_connection_requests/find_by_hash/${hash}`);
+    return fetchJson(`/api/service_connection_requests/find_by_hash?hash=${hash}`, {}, {}, false);
 }
 
 export function approveServiceConnectionRequestByHash(hash) {
-    return postPutJson(`/api/service_connection_requests/approve/${hash}`, {}, "put");
+    return postPutJson(`/api/service_connection_requests/approve?hash=${hash}`, {}, "put");
 }
 
 export function denyServiceConnectionRequestByHash(hash) {
-    return postPutJson(`/api/service_connection_requests/deny/${hash}`, {}, "put");
+    return postPutJson(`/api/service_connection_requests/deny?hash=${hash}`, {}, "put");
 }
 
 export function resendServiceConnectionRequests(serviceConnectionRequestId) {
