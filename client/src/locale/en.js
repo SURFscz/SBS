@@ -1777,6 +1777,8 @@ const en = {
         runDailyJobs: "Trigger",
         showDailyJobs: "Show",
         showDailyJobsInfo: "Show all the scheduled Cron jobs",
+        parseMetaData: "Parse",
+        showParsedMetaDataInfo: "Parse the IdP MetaData",
         jobName: "Name",
         jobNextRun: "Next scheduled run-time",
         runOutdatedRequestsInfo: "Run the cron job to report all open outdated join requests and new collaboration requests for the configured threshold",

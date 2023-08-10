@@ -82,6 +82,11 @@
             span {
                 display: inline-block;
                 margin: 10px 0;
+
+                &.sds--checkbox--visual {
+                    display: flex;
+                    margin: 0;
+                }
             }
 
             table {
@@ -289,17 +294,21 @@
                 &.name {
                     width: 25%;
                 }
+
                 &.email {
                     width: 25%;
                 }
+
                 &.lastLogin {
                     width: 25%;
                 }
+
                 &.actions {
                     width: 25%;
                 }
             }
         }
+
         tbody {
             td {
                 vertical-align: middle;
