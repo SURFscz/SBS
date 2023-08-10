@@ -1056,9 +1056,11 @@ const nl = {
         supportContactPre: "Voor support neem contact op met ",
         or: " of ",
         visitWebsite: "bezoek de website",
+        supportThroughWebsitePre: "Voor support ",
+        supportThroughWebsiteLink: "bezoek de website.",
         admins: "Administratieve email-adressen",
         adminContact: "Administrative contact",
-        noSupport: "Dienst {{name}} biedt geen support voor eindgebruikers en heeft geen administrators",
+        noSupport: "Dienst {{name}} biedt geen support voor eindgebruikers.",
         launch: "Launch"
     },
     organisation: {
