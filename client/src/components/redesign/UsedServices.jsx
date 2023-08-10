@@ -2,10 +2,8 @@ import React from "react";
 import {
     addCollaborationServices,
     allServices,
-    approveServiceConnectionRequestByHash,
     deleteCollaborationServices,
     deleteServiceConnectionRequest,
-    denyServiceConnectionRequestByHash,
     requestServiceConnection
 } from "../../api";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
@@ -37,7 +35,6 @@ class UsedServices extends React.Component {
             services: [],
             currentTab: CONNECTIONS,
             requestConnectionService: null,
-            selectedServiceConnectionRequestId: null,
             message: "",
             confirmedAupConnectionRequest: false,
             loading: true,
@@ -126,7 +123,12 @@ class UsedServices extends React.Component {
             collaboration.organisation.services.some(s => s.id === service.id)) {
             service.status = I18n.t("models.services.requiredByOrganisation");
         } else if (service.connectionRequest) {
-            service.status = I18n.t("models.services.memberServiceRequest");
+            service.status = I18n.t("models.serviceConnectionRequests.details",
+                {
+                    date: moment(service.created_at * 1000).format("LL"),
+                    name: service.requester.name || service.requester.uid,
+                    collaborationName: collaboration.name
+                })
         } else if (service.usedService) {
             service.status = service.connectionRequest ? I18n.t("models.services.awaitingApproval") : " "
         } else {
@@ -194,33 +196,6 @@ class UsedServices extends React.Component {
 
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
 
-    getSelectedServiceConnectionRequest = () => {
-        const {selectedServiceConnectionRequestId} = this.state;
-        const {collaboration} = this.props;
-        return collaboration.service_connection_requests.find(r => r.id === selectedServiceConnectionRequestId);
-    }
-
-    approveServiceConnectionRequest = () => {
-        const serviceConnectionRequest = this.getSelectedServiceConnectionRequest();
-        this.confirm(() => {
-            this.refreshAndFlash(approveServiceConnectionRequestByHash(serviceConnectionRequest.hash),
-                I18n.t("serviceConnectionRequest.flash.accepted", {
-                    name: serviceConnectionRequest.service.name
-                }), () => this.componentDidMount())
-        }, I18n.t("serviceConnectionRequest.approveConfirmation"), false);
-
-    };
-
-    denyServiceConnectionRequest = () => {
-        const serviceConnectionRequest = this.getSelectedServiceConnectionRequest();
-        this.confirm(() => {
-            this.refreshAndFlash(denyServiceConnectionRequestByHash(serviceConnectionRequest.hash),
-                I18n.t("serviceConnectionRequest.flash.declined", {
-                    name: serviceConnectionRequest.service.name
-                }), () => this.componentDidMount())
-        }, I18n.t("serviceConnectionRequest.declineConfirmation"), true);
-    };
-
     removeServiceConnectionRequest = (service, collaboration) => {
         const action = () => this.refreshAndFlash(deleteServiceConnectionRequest(service.id),
             I18n.t("collaborationServices.serviceConnectionRequestDeleted", {
@@ -228,11 +203,6 @@ class UsedServices extends React.Component {
                 collaboration: collaboration.name
             }), this.closeConfirmationDialog);
         this.confirm(action, I18n.t("collaborationServices.serviceConnectionRequestDeleteConfirmation"), true);
-    };
-
-    openServiceConnectionRequest = serviceConnectionRequest => e => {
-        stopEvent(e);
-        this.setState({selectedServiceConnectionRequestId: serviceConnectionRequest.id});
     };
 
     confirm = (action, question, warning = false, confirmationChildren = false, disabledConfirm = false) => {
@@ -245,45 +215,6 @@ class UsedServices extends React.Component {
             disabledConfirm: disabledConfirm
         });
     };
-
-    renderServiceConnectionRequest = serviceConnectionRequest => {
-        const {
-            confirmationDialogOpen,
-            cancelDialogAction,
-            confirmationDialogAction,
-            confirmationDialogQuestion,
-            warning
-        } = this.state;
-        const {collaboration} = this.props;
-        return (
-            <div className="used-services-mod">
-                <ConfirmationDialog isOpen={confirmationDialogOpen}
-                                    cancel={cancelDialogAction}
-                                    isWarning={warning}
-                                    confirm={confirmationDialogAction}
-                                    question={confirmationDialogQuestion}/>
-                <div>
-                    <a href="/services" className={"back-to-services"} onClick={this.cancelRequestConnectionService}>
-                        <ChevronLeft/>{I18n.t("models.services.backToServices")}
-                    </a>
-                </div>
-                <div className={"request-connection-service-form"}>
-                    <h3>{I18n.t("models.serviceConnectionRequests.details",
-                        {
-                            date: moment(serviceConnectionRequest.created_at * 1000).format("LL"),
-                            name: serviceConnectionRequest.requester.name || serviceConnectionRequest.requester.uid,
-                            collaborationName: collaboration.name
-                        })}</h3>
-                    <Logo src={serviceConnectionRequest.service.logo}/>
-                    <InputField name={I18n.t("serviceConnectionRequest.message")}
-                                value={serviceConnectionRequest.message}
-                                disabled={true}
-                                multiline={true}
-                                toolTip={I18n.t("serviceConnectionRequest.messageTooltip", {name: serviceConnectionRequest.requester.name})}/>
-                </div>
-            </div>)
-
-    }
 
     serviceAllowedToConnect = (service, collaboration) => {
         return service.automatic_connection_allowed ||
@@ -299,8 +230,8 @@ class UsedServices extends React.Component {
         }
         if (service.connectionRequest) {
             return <Button cancelButton={true}
-                           onClick={this.openServiceConnectionRequest(service)}
-                           txt={I18n.t("forms.open")}/>
+                           onClick={() => this.removeServiceConnectionRequest(service, collaboration)}
+                           txt={I18n.t("serviceConnectionRequest.retract")}/>
         }
         if (service.usedService && service.connectionRequest) {
             return <div className="actions">
@@ -393,7 +324,7 @@ class UsedServices extends React.Component {
         </div>
     }
 
-    renderConnectedServices = usedServices => {
+    renderConnectedServices = (usedServices) => {
         return (
             <div>
                 {usedServices.map(service =>
@@ -484,11 +415,6 @@ class UsedServices extends React.Component {
         if (requestConnectionService) {
             return this.renderRequestConnectionService(requestConnectionService, message, confirmedAupConnectionRequest);
         }
-        const selectedServiceConnectionRequest = this.getSelectedServiceConnectionRequest();
-        if (selectedServiceConnectionRequest) {
-            return this.renderServiceConnectionRequest(selectedServiceConnectionRequest);
-        }
-
         const {collaboration} = this.props;
         let usedServices = collaboration.services.concat(collaboration.organisation.services);
         usedServices = removeDuplicates(usedServices, "id");

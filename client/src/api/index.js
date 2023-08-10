@@ -520,10 +520,6 @@ export function organisationInvitationAccept(organisationInvitation) {
     }, {}, false);
 }
 
-export function organisationInvitationDecline(organisationInvitation) {
-    return postPutJson("/api/organisation_invitations/decline", organisationInvitation, "put");
-}
-
 export function organisationInvitationResend(organisationInvitation, showErrorDialog = true) {
     return postPutJson("/api/organisation_invitations/resend", organisationInvitation, "put", showErrorDialog);
 }
@@ -726,20 +722,12 @@ export function requestServiceConnection(body, showErrorDialog = true) {
     return postPutJson("/api/service_connection_requests", body, "post", showErrorDialog);
 }
 
-export function serviceConnectionRequestByHash(hash) {
-    return fetchJson(`/api/service_connection_requests/find_by_hash?hash=${hash}`, {}, {}, false);
+export function approveServiceConnectionRequest(serviceConnectionRequest) {
+    return postPutJson(`/api/service_connection_requests/approve`, {id: serviceConnectionRequest.id}, "put");
 }
 
-export function approveServiceConnectionRequestByHash(hash) {
-    return postPutJson(`/api/service_connection_requests/approve?hash=${hash}`, {}, "put");
-}
-
-export function denyServiceConnectionRequestByHash(hash) {
-    return postPutJson(`/api/service_connection_requests/deny?hash=${hash}`, {}, "put");
-}
-
-export function resendServiceConnectionRequests(serviceConnectionRequestId) {
-    return fetchJson(`/api/service_connection_requests/resend/${serviceConnectionRequestId}`);
+export function denyServiceConnectionRequest(serviceConnectionRequest) {
+    return postPutJson(`/api/service_connection_requests/deny`, {id: serviceConnectionRequest.id}, "put");
 }
 
 export function allServiceConnectionRequests(serviceId) {
@@ -902,14 +890,6 @@ export function serviceInvitationAccept(serviceInvitation) {
         method: "put",
         body: JSON.stringify(serviceInvitation)
     }, {}, false);
-}
-
-export function serviceInvitationDecline(serviceInvitation) {
-    return postPutJson("/api/service_invitations/decline", serviceInvitation, "put");
-}
-
-export function serviceInvitationResend(serviceInvitation, showErrorDialog = true) {
-    return postPutJson("/api/service_invitations/resend", serviceInvitation, "put", showErrorDialog);
 }
 
 export function serviceInvitationBulkResend(serviceInvitations, showErrorDialog = true) {

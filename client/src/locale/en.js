@@ -1404,7 +1404,7 @@ const en = {
         serviceConnectionRequestResend: "Resent request to connect service {{service}} to collaboration {{collaboration}}.",
         serviceRestrictedInfo: "This collaboration is service restricted. Only the platform admin can configure services to be used by this collaboration.",
         serviceDeleteConfirmation: "Are you sure you want to remove this service from collaboration {{collaboration}}?",
-        serviceConnectionRequestDeleteConfirmation: "Are you sure you want to delete this service connection request?",
+        serviceConnectionRequestDeleteConfirmation: "Are you sure you want to retract this service connection request?",
         serviceConnectionRequestResendConfirmation: "Are you sure you want to resend this service connection request?",
     },
     organisationServices: {
@@ -1607,6 +1607,7 @@ const en = {
         requester: "Requester",
         decline: "Decline",
         accept: "Accept",
+        retract: "Retract",
         approveConfirmation: "Are you sure you want to approve this request?",
         declineConfirmation: "Are you sure you want to decline this request?",
         flash: {

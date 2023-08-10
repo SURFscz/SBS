@@ -7,11 +7,11 @@
 The user {{ requester }} has requested access to the service {{ service.name }} for the collaboration
 {{ collaboration.name }}.
 
-You received this email, because you are listed as the contact person for this service.
+You received this email, because you are an administrator of this service.
 The motivation for this request:
 {{ service_connection_request.message }}
 
 Click on this link to process this request:
-{{ base_url }}/service-connection-requests?hash={{ service_connection_request.hash }}
+{{base_url}}/services/{{service.id}}/serviceConnectionRequests
 
 {% endblock %}

@@ -40,12 +40,14 @@ export default function ServiceCard({
     }
 
     const renderAbout = () => {
-        return (<div className={"service-metadata"}>
-            <div className={"policies"}>
-                <dt>{I18n.t("service.description")}</dt>
-                <dd>{service.description}</dd>
+        return (
+            <div className={"service-metadata"}>
+                <div className={"policies"}>
+                    <dt>{I18n.t("service.description")}</dt>
+                    <dd>{service.description}</dd>
+                </div>
             </div>
-        </div>);
+        );
     }
 
     const renderPolicies = () => {
@@ -54,49 +56,53 @@ export default function ServiceCard({
         const adminName = !isEmpty(service.contact_email) ? service.contact_email : !isEmpty(admins) ? admins[0].name : null;
         const compliance = service.sirtfi_compliant || service.code_of_conduct_compliant || service.research_scholarship_compliant;
         const supportEmail = service.support_email
-        return (<div className={"service-metadata"}>
-            <div className={"policies"}>
-                <dt>{I18n.t("service.policies")}</dt>
-                {service.privacy_policy && <a href={service.privacy_policy} target="_blank" rel="noopener noreferrer">
-                    {I18n.t("footer.privacy")}
-                </a>}
-                {service.accepted_user_policy &&
-                    <a href={service.accepted_user_policy} target="_blank" rel="noopener noreferrer">
-                        {I18n.t("service.accepted_user_policy")}
-                    </a>}
-                <dt>{I18n.t("service.compliancyShort")}</dt>
-                {!compliance && <dd>{I18n.t("service.none")}</dd>}
-                {service.code_of_conduct_compliant && <dd>{I18n.t("service.codeOfConductCompliantShort")}<Tooltip
-                    tip={I18n.t("service.codeOfConductCompliantTooltip")}/></dd>}
-                {service.sirtfi_compliant && <dd>{I18n.t("service.sirtfiCompliantShort")}<Tooltip
-                    tip={I18n.t("service.sirtfiCompliantTooltip")}/></dd>}
-                {service.research_scholarship_compliant &&
-                    <dd>{I18n.t("service.researchScholarshipCompliantShort")}<Tooltip
-                        tip={I18n.t("service.researchScholarshipCompliantTooltip")}/></dd>}
-            </div>
-            <div className={"support"}>
-                <dt>{I18n.t("service.supportShort")}</dt>
-                {supportEmail && <dd>{I18n.t('service.supportContactPre')}
-                    <a href={`mailto:${supportEmail}`}
-                       className={"soft-link"}>
-                        {supportEmail}
-                    </a>
-                    {service.uri_info && <span>{I18n.t("service.or")}
-                        <a href={service.uri_info}
-                           target="_blank"
-                           className={"soft-link"}
-                           rel="noopener noreferrer">{I18n.t("service.visitWebsite")}</a></span>}
-                </dd>}
-                {(!supportEmail && service.uri_info) && <dd>{<span>{I18n.t("service.supportThroughWebsitePre")}
+        return (
+            <div className={"service-metadata"}>
+                <div className={"policies"}>
+                    <dt>{I18n.t("service.policies")}</dt>
+                    {service.privacy_policy &&
+                        <a href={service.privacy_policy} target="_blank" rel="noopener noreferrer">
+                            {I18n.t("footer.privacy")}
+                        </a>}
+                    {service.accepted_user_policy &&
+                        <a href={service.accepted_user_policy} target="_blank" rel="noopener noreferrer">
+                            {I18n.t("service.accepted_user_policy")}
+                        </a>}
+                    <dt>{I18n.t("service.compliancyShort")}</dt>
+                    {!compliance && <dd>{I18n.t("service.none")}</dd>}
+                    {service.code_of_conduct_compliant && <dd>{I18n.t("service.codeOfConductCompliantShort")}<Tooltip
+                        tip={I18n.t("service.codeOfConductCompliantTooltip")}/></dd>}
+                    {service.sirtfi_compliant && <dd>{I18n.t("service.sirtfiCompliantShort")}<Tooltip
+                        tip={I18n.t("service.sirtfiCompliantTooltip")}/></dd>}
+                    {service.research_scholarship_compliant &&
+                        <dd>{I18n.t("service.researchScholarshipCompliantShort")}<Tooltip
+                            tip={I18n.t("service.researchScholarshipCompliantTooltip")}/></dd>}
+                </div>
+                <div className={"support"}>
+                    <dt>{I18n.t("service.supportShort")}</dt>
+                    {supportEmail && <dd>{I18n.t('service.supportContactPre')}
+                        <a href={`mailto:${supportEmail}`}
+                           className={"soft-link"}>
+                            {supportEmail}
+                        </a>
+                        {service.uri_info && <span>{I18n.t("service.or")}
+                            <a href={service.uri_info}
+                               target="_blank"
+                               className={"soft-link"}
+                               rel="noopener noreferrer">{I18n.t("service.visitWebsite")}</a></span>}
+                    </dd>}
+                    {(!supportEmail && service.uri_info) && <dd>{<span>{I18n.t("service.supportThroughWebsitePre")}
                         <a href={service.uri_info}
                            target="_blank"
                            className={"soft-link"}
                            rel="noopener noreferrer">{I18n.t("service.supportThroughWebsiteLink")}</a></span>}</dd>}
-                {(!supportEmail && !service.uri_info) && <dd>{I18n.t("service.noSupport", {name: service.name})}</dd>}
-                {!isEmpty(admin) && <dd className={"dd-seperator"}>{I18n.t("service.adminContact")}</dd>}
-                {!isEmpty(admin) && <dd><a href={`mailto:${admin}`}>{adminName}</a></dd>}
+                    {(!supportEmail && !service.uri_info) &&
+                        <dd>{I18n.t("service.noSupport", {name: service.name})}</dd>}
+                    {!isEmpty(admin) && <dd className={"dd-seperator"}>{I18n.t("service.adminContact")}</dd>}
+                    {!isEmpty(admin) && <dd><a href={`mailto:${admin}`}>{adminName}</a></dd>}
+                </div>
             </div>
-        </div>);
+        );
     }
 
     return (<div className={`sds--content-card ${limitWidth ? "limit-width" : ""}`}>
@@ -128,7 +134,7 @@ export default function ServiceCard({
         <div className="sds--content-card--bottom">
             <nav>
                 <ul>
-                    {showAboutInformation && <li>
+                    {(showAboutInformation && !isEmpty(service.description)) && <li>
                         <a className={"more-link"} href="/about"
                            onClick={toggleShowAbout}>{I18n.t("service.aboutShort")}{showAbout ? <ArrowUp/> :
                             <ArrowDown/>}</a>
@@ -143,7 +149,7 @@ export default function ServiceCard({
                     </li>}
                 </ul>
                 {showPolicies && renderPolicies()}
-                {showAbout && renderAbout()}
+                {(showAbout && !isEmpty(service.description)) && renderAbout()}
             </nav>
         </div>
     </div>)
