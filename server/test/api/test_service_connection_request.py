@@ -3,7 +3,7 @@ import uuid
 from server.db.db import db
 from server.db.domain import Collaboration, Service, ServiceConnectionRequest
 from server.test.abstract_test import AbstractTest
-from server.test.seed import ssh_service_connection_request_hash, sarah_name, uva_research_name, service_wiki_name, \
+from server.test.seed import ssh_service_connection_request_hash, uva_research_name, service_wiki_name, \
     ai_computing_name, service_ssh_uva_name, service_storage_name, service_cloud_name
 
 
@@ -18,10 +18,13 @@ class TestServiceConnectionRequest(AbstractTest):
 
     def test_delete_service_request_connection(self):
         self.login("urn:sarah")
-        req = self.get(f"/api/service_connection_requests/find_by_hash/{ssh_service_connection_request_hash}")
-        self.delete("/api/service_connection_requests", req["id"], with_basic_auth=False)
-        self.get(f"/api/service_connection_requests/find_by_hash/{ssh_service_connection_request_hash}",
-                 response_status_code=404)
+        request = ServiceConnectionRequest.query \
+            .filter(ServiceConnectionRequest.hash == ssh_service_connection_request_hash).one()
+
+        self.delete("/api/service_connection_requests", request.id, with_basic_auth=False)
+        count = ServiceConnectionRequest.query \
+            .filter(ServiceConnectionRequest.hash == ssh_service_connection_request_hash).count()
+        self.assertEqual(0, count)
 
     def test_service_connection_request(self):
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
@@ -43,7 +46,6 @@ class TestServiceConnectionRequest(AbstractTest):
             self.assertEqual("Request for new service Wiki connection to collaboration AI computing (local)",
                              mail_msg.subject)
             self.assertEqual(["service_admin@ucc.org"], mail_msg.recipients)
-            self.assertEqual(["help@wiki.com"], mail_msg.cc)
 
     def test_service_connection_request_with_no_admins(self):
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
@@ -105,25 +107,21 @@ class TestServiceConnectionRequest(AbstractTest):
         res = self.post("/api/service_connection_requests", body=data, with_basic_auth=False, response_status_code=400)
         self.assertTrue("outstanding_service_connection_request" in res["message"])
 
-    def test_service_connection_request_by_hash(self):
-        res = self.get(f"/api/service_connection_requests/find_by_hash/{ssh_service_connection_request_hash}")
-
-        self.assertEqual(sarah_name, res["requester"]["name"])
-        self.assertEqual(uva_research_name, res["collaboration"]["name"])
-        self.assertEqual(service_ssh_uva_name, res["service"]["name"])
-
     def test_approve_service_connection_request(self):
         pre_services_count = len(self.find_entity_by_name(Collaboration, uva_research_name).services)
+        request_id = ServiceConnectionRequest.query \
+            .filter(ServiceConnectionRequest.hash == ssh_service_connection_request_hash).one().id
+        # CO admin not allowed to approve
+        self.login("urn:sarah")
+        self.put("/api/service_connection_requests/approve/",
+                 body={"id": request_id},
+                 response_status_code=403)
 
         with self.app.mail.record_messages() as outbox:
-            # CO admin not allowed to approve
-            self.login("urn:sarah")
-            self.put(f"/api/service_connection_requests/approve/{ssh_service_connection_request_hash}",
-                     response_status_code=403)
-
             # Service admin is allowed to approve
             self.login("urn:betty")
-            self.put(f"/api/service_connection_requests/approve/{ssh_service_connection_request_hash}")
+            self.put("/api/service_connection_requests/approve/",
+                     body={"id": request_id})
             post_services_count = len(self.find_entity_by_name(Collaboration, uva_research_name).services)
 
             self.assertEqual(pre_services_count + 1, post_services_count)
@@ -135,34 +133,31 @@ class TestServiceConnectionRequest(AbstractTest):
     def test_approve_service_connection_request_with_no_email_requester(self):
         request = ServiceConnectionRequest.query \
             .filter(ServiceConnectionRequest.hash == ssh_service_connection_request_hash).one()
+        request_id = request.id
         request.requester.email = None
         self.save_entity(request.requester)
-
         with self.app.mail.record_messages() as outbox:
-            # CO admin not allowed to approve
-            self.login("urn:sarah")
-            self.put(f"/api/service_connection_requests/approve/{ssh_service_connection_request_hash}",
-                     response_status_code=403)
-
             # Service admin is allowed to approve
             self.login("urn:betty")
-            self.put(f"/api/service_connection_requests/approve/{ssh_service_connection_request_hash}")
+            self.put("/api/service_connection_requests/approve", body={"id": request_id})
 
             mail_msg = outbox[0]
             self.assertListEqual(["sram-beheer@surf.nl"], mail_msg.recipients)
 
     def test_deny_service_connection_request(self):
         pre_services_count = len(self.find_entity_by_name(Collaboration, uva_research_name).services)
-
+        request_id = ServiceConnectionRequest.query.filter(
+            ServiceConnectionRequest.hash == ssh_service_connection_request_hash).one().id
         with self.app.mail.record_messages() as outbox:
             # CO admin not allowed to deny
             self.login("urn:sarah")
-            self.put(f"/api/service_connection_requests/deny/{ssh_service_connection_request_hash}",
+            self.put("/api/service_connection_requests/deny",
+                     body={"id": request_id},
                      response_status_code=403)
 
             # Service admin is allowed to deny
             self.login("urn:betty")
-            self.put(f"/api/service_connection_requests/deny/{ssh_service_connection_request_hash}")
+            self.put("/api/service_connection_requests/deny", body={"id": request_id})
             post_services_count = len(self.find_entity_by_name(Collaboration, uva_research_name).services)
 
             self.assertEqual(pre_services_count, post_services_count)
@@ -170,16 +165,6 @@ class TestServiceConnectionRequest(AbstractTest):
             mail_msg = outbox[0]
             self.assertEqual("Service SSH UvA connection request for collaboration UVA UCC research "
                              "has been declined (local)", mail_msg.subject)
-
-    def test_resend_service_connection_request(self):
-        res = self.get(f"/api/service_connection_requests/find_by_hash/{ssh_service_connection_request_hash}")
-
-        with self.app.mail.record_messages() as outbox:
-            self.login("urn:john")
-            self.get(f"/api/service_connection_requests/resend/{res['id']}")
-            mail_msg = outbox[0]
-            self.assertEqual("Request for new service SSH UvA connection to collaboration UVA UCC research (local)",
-                             mail_msg.subject)
 
     def test_all_service_request_connections_by_service(self):
         storage_id = self.find_entity_by_name(Service, service_storage_name).id
@@ -202,7 +187,8 @@ class TestServiceConnectionRequest(AbstractTest):
             ServiceConnectionRequest.message == message).one()
 
         self.login("urn:service_admin")
-        self.put(f"/api/service_connection_requests/approve/{service_connection_request.hash}")
+        self.put("/api/service_connection_requests/approve",
+                 body={"id": service_connection_request.id})
 
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
 

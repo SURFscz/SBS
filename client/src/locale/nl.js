@@ -1607,6 +1607,7 @@ const nl = {
         requester: "Aanvrager",
         decline: "Afwijzen",
         accept: "Accepteren",
+        retract: "Intrekken",
         approveConfirmation: "Weet je zeker dat je dit verzoek wil goedkeuren?",
         declineConfirmation: "Weet je zeker dat je dit verzoek wil afwijzen?",
         flash: {

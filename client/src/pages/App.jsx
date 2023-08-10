@@ -32,7 +32,6 @@ import Login from "./Login";
 import {ProtectedRoute} from "./ProtectedRoute";
 import Profile from "./Profile";
 import CollaborationRequest from "./CollaborationRequest";
-import ServiceConnectionRequest from "./ServiceConnectionRequest";
 import {setFlash} from "../utils/Flash";
 import System from "./System";
 import {BreadCrumb} from "../components/BreadCrumb";
@@ -294,9 +293,6 @@ class App extends React.Component {
                                                                 currentUser={currentUser}
                                                                 isNew={true}
                                                                 Component={Service} {...props}/>}/>
-
-                        <Route path="/service-connection-requests/:hash"
-                               render={props => <ServiceConnectionRequest {...props}/>}/>
 
                         <Route exact path="/new-organisation-invite/:organisation_id"
                                render={props => <ProtectedRoute currentUser={currentUser}

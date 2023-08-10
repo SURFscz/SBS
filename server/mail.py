@@ -262,19 +262,14 @@ def mail_accepted_declined_collaboration_request(context, collaboration_name, or
     )
 
 
-def mail_service_connection_request(context, service_name, collaboration_name, recipients, is_admin, cc=None,
-                                    preview=False):
-    if not preview:
-        _store_mail(context["user"], SERVICE_CONNECTION_REQUEST_MAIL, recipients)
-    template = "service_connection_request" if is_admin else "service_connection_request_collaboration_admin"
+def mail_service_connection_request(context, service_name, collaboration_name, recipients):
+    _store_mail(context["user"], SERVICE_CONNECTION_REQUEST_MAIL, recipients)
     return _do_send_mail(
         subject=f"Request for new service {service_name} connection to collaboration {collaboration_name}",
         recipients=recipients,
-        cc=cc,
-        template=template,
+        template="service_connection_request",
         context=context,
-        preview=preview
-    )
+        preview=False)
 
 
 def mail_accepted_declined_service_connection_request(context, service_name, collaboration_name, accepted, recipients,

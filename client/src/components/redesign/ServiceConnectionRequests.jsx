@@ -11,7 +11,7 @@ import ConfirmationDialog from "../ConfirmationDialog";
 import Entities from "./Entities";
 import SpinnerField from "./SpinnerField";
 import InputField from "../InputField";
-import {approveServiceConnectionRequestByHash, denyServiceConnectionRequestByHash} from "../../api";
+import {approveServiceConnectionRequest, denyServiceConnectionRequest} from "../../api";
 import moment from "moment";
 import Logo from "./Logo";
 import InstituteColumn from "./InstituteColumn";
@@ -59,7 +59,7 @@ class ServiceConnectionRequests extends React.Component {
         const {service} = this.props;
         const serviceConnectionRequest = this.getSelectedServiceConnectionRequest();
         this.confirm(() => {
-            this.refreshAndFlash(approveServiceConnectionRequestByHash(serviceConnectionRequest.hash),
+            this.refreshAndFlash(approveServiceConnectionRequest(serviceConnectionRequest),
                 I18n.t("serviceConnectionRequest.flash.accepted", {
                     name: service.name
                 }), () => this.componentDidMount())
@@ -71,7 +71,7 @@ class ServiceConnectionRequests extends React.Component {
         const {service} = this.props;
         const serviceConnectionRequest = this.getSelectedServiceConnectionRequest();
         this.confirm(() => {
-            this.refreshAndFlash(denyServiceConnectionRequestByHash(serviceConnectionRequest.hash),
+            this.refreshAndFlash(denyServiceConnectionRequest(serviceConnectionRequest),
                 I18n.t("serviceConnectionRequest.flash.declined", {
                     name: service.name
                 }), () => this.componentDidMount())

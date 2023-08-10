@@ -2,12 +2,11 @@ from flask import Blueprint, request as current_request, current_app, g as reque
 from sqlalchemy.orm import contains_eager, load_only
 from werkzeug.exceptions import BadRequest, Forbidden
 
-from server.api.base import json_endpoint, emit_socket, query_param
+from server.api.base import json_endpoint, emit_socket
 from server.api.collaborations_services import connect_service_collaboration
-from server.api.service import user_service
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_write_access, \
-    is_service_admin
+    is_service_admin, is_application_admin
 from server.db.activity import update_last_activity_date
 from server.db.domain import ServiceConnectionRequest, Service, Collaboration, db, User
 from server.db.models import delete
@@ -33,13 +32,14 @@ def _service_connection_request_by_hash(hash_value):
         .one()
 
 
-def _do_service_connection_request(hash_value, approved):
-    service_connection_request = _service_connection_request_by_hash(hash_value)
+def _do_service_connection_request(approved):
+    id = int(current_request.get_json().get("id"))
+    service_connection_request = ServiceConnectionRequest.query.filter(ServiceConnectionRequest.id == id).one()
     service = service_connection_request.service
     collaboration = service_connection_request.collaboration
 
-    if not user_service(service.id, view_only=False):
-        raise Forbidden(f"No access to service {service.entity_id}")
+    if not is_service_admin(service.id) or is_application_admin():
+        raise Forbidden(f"Not allowed to approve / decline service_connection_request for service {service.entity_id}")
 
     if approved:
         connect_service_collaboration(service.id, collaboration.id, force=True)
@@ -61,30 +61,23 @@ def _do_service_connection_request(hash_value, approved):
     return {}, 201
 
 
-def _do_mail_request(collaboration, service, service_connection_request, is_admin, user):
-    recipients = []
-    cc = None
-    if is_admin:
-        recipients += [service_membership.user.email for service_membership in service.service_memberships]
-        if recipients:
-            cc = [service.contact_email] if service.contact_email else None
-        elif service.contact_email:
-            recipients.append(service.contact_email)
-        else:
-            recipients.append(User.query.filter(User.uid == current_app.app_config.admin_users[0].uid).one().email)
+def _do_mail_request(collaboration, service, service_connection_request, user):
+    recipients = [service_membership.user.email for service_membership in service.service_memberships]
+    if recipients:
+        recipient = "Service admin"
     else:
-        for membership in collaboration.collaboration_memberships:
-            if membership.role == "admin":
-                recipients.append(membership.user.email)
-    if len(recipients) > 0:
-        context = {"salutation": f"Dear {service.contact_email}",
-                   "base_url": current_app.app_config.base_url,
-                   "requester": user.name,
-                   "service_connection_request": service_connection_request,
-                   "service": service,
-                   "collaboration": collaboration,
-                   "user": user}
-        mail_service_connection_request(context, service.name, collaboration.name, recipients, is_admin, cc)
+        admin = User.query.filter(User.uid == current_app.app_config.admin_users[0].uid).one()
+        recipient = admin.name
+        recipients.append(admin.email)
+
+    context = {"salutation": f"Dear {recipient}",
+               "base_url": current_app.app_config.base_url,
+               "requester": user.name,
+               "service_connection_request": service_connection_request,
+               "service": service,
+               "collaboration": collaboration,
+               "user": user}
+    mail_service_connection_request(context, service.name, collaboration.name, recipients)
 
 
 @service_connection_request_api.route("/by_service/<service_id>", methods=["GET"], strict_slashes=False)
@@ -148,44 +141,21 @@ def request_new_service_connection(collaboration, message, service, user):
     emit_socket(f"service_{service.id}")
     emit_socket(f"collaboration_{collaboration.id}")
 
-    _do_mail_request(collaboration, service, service_connection_request, True, user)
-
-
-@service_connection_request_api.route("/find_by_hash", strict_slashes=False)
-@json_endpoint
-def service_connection_request_by_hash():
-    hash_value = query_param("hash")
-    return _service_connection_request_by_hash(hash_value), 200
+    _do_mail_request(collaboration, service, service_connection_request, user)
 
 
 @service_connection_request_api.route("/approve", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def approve_service_connection_request():
     # Ensure to skip current_user is CO admin check
-    hash_value = query_param("hash")
     request_context.skip_collaboration_admin_confirmation = True
-    return _do_service_connection_request(hash_value, True)
+    return _do_service_connection_request(True)
 
 
 @service_connection_request_api.route("/deny", methods=["PUT"], strict_slashes=False)
 @json_endpoint
-def deny_service_connection_request(hash_value):
-    hash_value = query_param("hash")
-    return _do_service_connection_request(hash_value, False)
-
-
-@service_connection_request_api.route("/resend/<service_connection_request_id>", strict_slashes=False)
-@json_endpoint
-def resend_service_connection_request(service_connection_request_id):
-    service_connection_request = db.session.get(ServiceConnectionRequest, service_connection_request_id)
-    service = service_connection_request.service
-    collaboration = service_connection_request.collaboration
-
-    confirm_collaboration_admin(collaboration.id)
-
-    user = db.session.get(User, current_user_id())
-    _do_mail_request(collaboration, service, service_connection_request, True, user)
-    return {}, 200
+def deny_service_connection_request():
+    return _do_service_connection_request(False)
 
 
 @service_connection_request_api.route("/all/<service_id>", methods=["GET"], strict_slashes=False)
