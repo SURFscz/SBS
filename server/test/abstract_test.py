@@ -103,11 +103,14 @@ class AbstractTest(TestCase):
         return AbstractTest.change_collaboration(user_name, do_change)
 
     @responses.activate
-    def login(self, uid="urn:john", schac_home_organisation=None, user_info={}):
+    def login(self, uid="urn:john", schac_home_organisation=None, user_info={}, add_default_attributes=True):
         responses.add(responses.POST, current_app.app_config.oidc.token_endpoint,
                       json={"access_token": "some_token", "id_token": self.sign_jwt()},
                       status=200)
         json_body = {"sub": uid}
+        if add_default_attributes:
+            json_body["name"] = "John Doe"
+            json_body["email"] = "jdoe@example"
         if schac_home_organisation:
             json_body["voperson_external_id"] = f"jdoe@{schac_home_organisation}"
         responses.add(responses.GET, current_app.app_config.oidc.userinfo_endpoint,

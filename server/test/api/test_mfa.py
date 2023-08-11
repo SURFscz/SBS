@@ -72,7 +72,7 @@ class TestMfa(AbstractTest):
         # check provisioning of new user
         new_user = User.query.filter(User.uid == "urn:new_user").first()
         self.assertIsNotNone(new_user)
-        self.assertIsNone(new_user.name)
+        self.assertIsNotNone(new_user.name)
         self.assertIsNotNone(new_user.email)
         self.assertIsNotNone(new_user.second_fa_uuid)
 

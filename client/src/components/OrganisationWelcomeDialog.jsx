@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import I18n from "../locale/I18n";
 import "./WelcomeDialog.scss";
-import "react-mde/lib/styles/css/react-mde-all.css";
 import OrganisationEn from "./welcome/OrganisationEn";
 import OrganisationNl from "./welcome/OrganisationNl";
 import {ROLES} from "../utils/UserRole";

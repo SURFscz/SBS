@@ -29,7 +29,7 @@ class TestInvitation(AbstractTest):
         self.assertEqual(4, len(invitation_result["service_emails"]))
 
     def test_accept(self):
-        self.login("urn:james")
+        self.login("urn:james", user_info={"name": "urn:james"})
         self.put("/api/invitations/accept", body={"hash": invitation_hash_curious}, with_basic_auth=False)
         collaboration_membership = CollaborationMembership.query \
             .join(CollaborationMembership.user) \

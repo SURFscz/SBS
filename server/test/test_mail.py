@@ -90,7 +90,7 @@ class TestMail(AbstractTest):
                           with_basic_auth=False)
                 self.assertEqual(1, len(outbox))
                 mail_msg = outbox[0]
-                self.assertTrue("<p>User urn:john has created a(n) Organisation"
+                self.assertTrue("<p>User John Doe has created a(n) Organisation"
                                 " on environment <strong>local</strong>" in mail_msg.html)
         finally:
             os.environ["TESTING"] = "1"

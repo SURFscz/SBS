@@ -81,7 +81,8 @@ def _perform_sram_login(uid, service, service_entity_id, user_email, user_name, 
                 }
             }, 200
 
-        user = User(uid=uid, email=user_email, external_id=str(uuid.uuid4()), created_by="system", updated_by="system")
+        user = User(uid=uid, name=user_name, email=user_email, external_id=str(uuid.uuid4()), created_by="system",
+                    updated_by="system")
 
     if home_organisation_uid:
         user.home_organisation_uid = home_organisation_uid

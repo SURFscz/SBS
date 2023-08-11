@@ -115,7 +115,7 @@ class ApiKeys extends React.Component {
                                 toolTip={I18n.t("apiKeys.descriptionTooltip")}
                     />
                     {(!initial && isEmpty(description)) && <ErrorIndicator
-                        msg={I18n.t("models.userTokens.required", {
+                        msg={I18n.t("apiKeys.required", {
                             attribute: I18n.t("apiKeys.description").toLowerCase()
                         })}/>}
 

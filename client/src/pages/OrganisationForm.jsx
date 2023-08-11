@@ -24,7 +24,6 @@ import CroppedImageField from "../components/redesign/CroppedImageField";
 import SelectField from "../components/SelectField";
 import SpinnerField from "../components/redesign/SpinnerField";
 
-import "react-mde/lib/styles/css/react-mde-all.css";
 import OrganisationOnBoarding from "../components/OrganisationOnBoarding";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import CreatableField from "../components/CreatableField";

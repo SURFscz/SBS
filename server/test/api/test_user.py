@@ -205,7 +205,7 @@ class TestUser(AbstractTest):
 
         roger = User.query.filter(User.uid == "urn:roger").one()
         self.assertEqual("ssh_key", roger.ssh_keys[0].ssh_value)
-        self.assertIsNone(roger.email)
+        self.assertEqual("jdoe@example", roger.email)
 
     def test_update_impersonation(self):
         self.login("urn:john")
@@ -403,7 +403,8 @@ class TestUser(AbstractTest):
                       json={"access_token": "some_token", "id_token": self.sign_jwt({"acr": "nope"})},
                       status=200)
         responses.add(responses.GET, current_app.app_config.oidc.userinfo_endpoint,
-                      json={"sub": "urn:john", "voperson_external_id": "test@ssid.org", "uid": "johnnie"},
+                      json={"sub": "urn:john", "voperson_external_id": "test@ssid.org", "uid": "johnnie",
+                            "name": "John Doe"},
                       status=200)
         responses.add(responses.GET, current_app.app_config.oidc.jwks_endpoint,
                       read_file("test/data/public.json"), status=200)
@@ -411,7 +412,7 @@ class TestUser(AbstractTest):
             res = self.client.get("/api/users/resume-session?code=123456")
             self.assertTrue(res.location.startswith(
                 "https://sa-gw.test.surfconext.nl/second-factor-only/single-sign-on?"))
-            john = self.find_entity_by_name(User, "urn:john")
+            john = self.find_entity_by_name(User, "John Doe")
             self.assertTrue(john.ssid_required)
 
     @responses.activate
@@ -552,7 +553,7 @@ class TestUser(AbstractTest):
             os.environ["TESTING"] = ""
             mail = self.app.mail
             with mail.record_messages() as outbox:
-                res = self.login("uid:new", user_info={"sub": "subby"})
+                res = self.login("uid:new", user_info={"sub": "subby"}, add_default_attributes=False)
                 self.assertEqual("http://localhost:3000/missing-attributes", res.headers.get('Location'))
                 self.assertEqual(1, len(outbox))
                 mail_msg = outbox[0]
@@ -567,7 +568,8 @@ class TestUser(AbstractTest):
             os.environ["TESTING"] = ""
             mail = self.app.mail
             with mail.record_messages() as outbox:
-                res = self.login("uid:new", user_info={"sub": "subby", "name": "jdoe"})
+                res = self.login("uid:new", user_info={"sub": "subby", "name": "jdoe"},
+                                 add_default_attributes=False)
                 self.assertEqual("http://localhost:3000/missing-attributes", res.headers.get('Location'))
                 self.assertEqual(1, len(outbox))
                 mail_msg = outbox[0]

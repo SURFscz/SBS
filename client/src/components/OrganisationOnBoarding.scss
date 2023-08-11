@@ -3,34 +3,47 @@
 @import "../stylesheets/mde_preview.scss";
 
 div.organisation-onboarding {
-    @include input-field;
-    @include mde-preview;
+  @include input-field;
+  @include mde-preview;
 
-    label.label {
-        min-width: 0;
-        font-weight: 600;
-    }
+  label.label {
+    min-width: 0;
+    font-weight: 600;
+  }
 
-    .react-mde {
-        border-radius: $br;
-        border-color: $dark-grey;
-
-    }
+  .react-mde {
+    border-radius: $br;
+    border-color: $dark-grey;
 
     .mde-header {
-        border-top-left-radius: $br;
-        border-top-right-radius: $br;
-        border-color: $dark-grey;
-        background-color: $background;
+      border-top-left-radius: $br;
+      border-top-right-radius: $br;
+      border-color: $dark-grey;
+      background-color: $background;
 
-    }
+      .mde-tabs button {
+        display: block;
+        padding: 2px 8px;
+        border-radius: 0.375rem;
+        background-color: transparent;
+        color: var(--sds--color--gray--500);
+        border: 1px solid var(--sds--color--gray--500);
 
-    .mde-textarea-wrapper {
-        textarea.mde-text {
-            font-size: 16px;
-            border-color: $dark-grey;
-            border-top: none;
+        &.selected {
+          background-color: var(--sds--color--blue--400);
+          color: white;
         }
+      }
     }
+  }
+
+
+  .mde-textarea-wrapper {
+    textarea.mde-text {
+      font-size: 16px;
+      border-color: $dark-grey;
+      border-top: none;
+    }
+  }
 
 }
