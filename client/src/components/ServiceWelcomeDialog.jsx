@@ -1,7 +1,6 @@
 import React from "react";
 import I18n from "../locale/I18n";
 import "./WelcomeDialog.scss";
-import "react-mde/lib/styles/css/react-mde-all.css";
 import ServiceEn from "./welcome/ServiceEn";
 import ServiceNl from "./welcome/ServiceNl";
 import {AlertType, Modal} from "@surfnet/sds";

@@ -27,7 +27,7 @@ def login_user():
     user = User.query.filter(User.uid == sub).first() or User(created_by="system", updated_by="system",
                                                               external_id=str(uuid.uuid4()))
     user.last_login_date = datetime.datetime.now()
-    add_user_claims(data, sub, user, replace_none_values=False)
+    add_user_claims(data, sub, user)
     db.session.merge(user)
 
     res = {"admin": is_admin_user(user), "guest": False}

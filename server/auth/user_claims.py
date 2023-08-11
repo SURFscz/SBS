@@ -53,13 +53,16 @@ def generate_unique_username(user: User, max_count=10000):
     return "".join(random.sample(string.ascii_lowercase, k=14))
 
 
-def add_user_claims(user_info_json, uid, user, replace_none_values=True):
+def add_user_claims(user_info_json, uid, user):
+    cleared_attributes = []
     for claim in claim_attribute_mapping_value:
         for key, attr in claim.items():
             val = user_info_json.get(key)
             if isinstance(val, list):
                 val = ", ".join(val) if val else None
-            if val or replace_none_values:
+            if (key not in user_info_json or val == "") and getattr(user, attr):
+                cleared_attributes.append(attr)
+            if val or (val is None and key in user_info_json and attr not in ["uid", "name", "email"]):
                 setattr(user, attr, val)
     if not user.name:
         name = " ".join(list(filter(lambda x: x, [user.given_name, user.family_name]))).strip()
@@ -77,6 +80,12 @@ def add_user_claims(user_info_json, uid, user, replace_none_values=True):
         user.username = generate_unique_username(user)
     if not user.external_id:
         user.external_id = str(uuid.uuid4())
+    if cleared_attributes:
+        msg = f"Previously set attributes {cleared_attributes} for user {uid} is cleared in user_info"
+        ctx_logger("base").exception(msg)
+        mail_conf = current_app.app_config.mail
+        if not os.environ.get("TESTING"):
+            mail_error(mail_conf.environment, uid, mail_conf.send_exceptions_recipients, msg)
 
 
 # return all active (non-expired/suspended) collaboration from the list

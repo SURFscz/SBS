@@ -1310,7 +1310,8 @@ const nl = {
         flash: {
             created: "Organisatie-API-token voor organisatie {{name}} aangemaakt.",
         },
-        submit: "Opslaan"
+        submit: "Opslaan",
+        required: "{{attribute}} is een verplicht veld voor een API token",
     },
     invitation: {
         title: "Uitnodiging om lid te worden van samenwerking {{collaboration}}",

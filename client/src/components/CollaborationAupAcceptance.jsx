@@ -2,7 +2,6 @@ import React from "react";
 import I18n from "../locale/I18n";
 import "./CollaborationAupAcceptance.scss";
 import "./welcome/welcome.scss";
-import "react-mde/lib/styles/css/react-mde-all.css";
 import CheckBox from "./CheckBox";
 import Logo from "./redesign/Logo";
 import {isEmpty} from "../utils/Utils";

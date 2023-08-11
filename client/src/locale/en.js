@@ -1310,7 +1310,8 @@ const en = {
         flash: {
             created: "Organisation API token for {{name}} created.",
         },
-        submit: "Submit"
+        submit: "Submit",
+        required: "The {{attribute}} is required for an API token",
     },
     invitation: {
         title: "Invitation to join collaboration {{collaboration}}",
