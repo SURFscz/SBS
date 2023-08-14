@@ -381,10 +381,10 @@ class TestUserSaml(AbstractTest):
 
     def test_proxy_authz_missing_attribute(self):
         res = self.post("/api/users/proxy_authz", response_status_code=200,
-                        body={"user_id": "urn:new_user",
-                              "service_id": self.app.app_config.oidc.sram_service_entity_id,
+                        body={"user_id": "urn:hannibal",
+                              "service_id": service_mail_entity_id,
                               "issuer_id": "idp",
-                              "uid": "subby",
+                              "uid": "bla",
                               "homeorganization": "example.com"
                               })
         status_ = res["status"]

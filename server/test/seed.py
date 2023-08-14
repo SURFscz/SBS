@@ -168,6 +168,8 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                 entitlement="urn:mace:surf.nl:sram:allow-create-co", external_id="502e861e-f548-4335-89d8-f1764f803964")
     paul = User(uid="urn:paul", name="Paul Doe", email="paul@ucc.org", username="paul",
                 schac_home_organisation="example.com")
+    hannibal = User(uid="urn:hannibal", name=None, email="hannibal@example.org", username="hlector",
+                    schac_home_organisation="example.org")
     service_admin = User(uid="urn:service_admin", name="Service Admin", email="service_admin@ucc.org",
                          username="service_admin", schac_home_organisation="service_admin.com")
     # User seed for suspend testing
@@ -199,7 +201,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
 
     persist_instance(db, john, mary, peter, admin, roger, harry, james, sarah, betty, jane,
                      user_suspend_warning, user_gets_suspended, user_deletion_warning, user_gets_deleted,
-                     paul, service_admin)
+                     paul, hannibal, service_admin)
 
     # old suspension warning, should not affect new suspension warnings
     warning_date_old = current_time - datetime.timedelta(retention.allowed_inactive_period_days + 1)
