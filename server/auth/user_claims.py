@@ -158,7 +158,8 @@ def valid_user_attributes(attributes):
     missing_attributes = []
     if "name" not in attributes and "given_name" in attributes and "family_name" in attributes:
         attributes["name"] = f"{attributes.get('given_name').strip()} {attributes.get('family_name').strip()}"
-    for attr in ["sub", "email", "name"]:
+    # TODO add name
+    for attr in ["sub", "email"]:
         if attr not in attributes or not attributes.get(attr):
             missing_attributes.append(attr)
     if missing_attributes:
