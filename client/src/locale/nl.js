@@ -1126,8 +1126,7 @@ const nl = {
             undefined: ""
         },
         yourself: "{{name}} (jijzelf dus)",
-        logo: "Organisation image",
-        anotherAdmin: "We raden aan meerdere beheerders uit te nodigen.",
+        logo: "Organisatielogo",
         deleteConfirmation: "Weet je zeker dat je deze organisatie wil verwijderen? Dit kan niet teruggedraaid worden.",
         flash: {
             created: "Organisatie {{name}} is aangemaakt."

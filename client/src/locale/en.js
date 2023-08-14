@@ -1126,8 +1126,7 @@ const en = {
             undefined: ""
         },
         yourself: "{{name}} (it's you)",
-        logo: "Organisation image",
-        anotherAdmin: "It is highly recommended to invite admins.",
+        logo: "Organisation logo",
         deleteConfirmation: "Are you sure you want to delete this organisation? This cannot be undone.",
         flash: {
             created: "Organisation {{name}} was created"
