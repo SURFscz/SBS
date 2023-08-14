@@ -443,10 +443,10 @@ class TestUser(AbstractTest):
         self.assertEqual("james@example.org", res[0]["email"])
 
         res = self.get("/api/users/query", query_data={"q": "@EX"})
-        self.assertEqual(11, len(res))
+        self.assertEqual(12, len(res))
 
         res = self.get("/api/users/query", query_data={"q": "@"})
-        self.assertEqual(16, len(res))
+        self.assertEqual(17, len(res))
 
     def test_aup_agreed(self):
         sarah = self.find_entity_by_name(User, sarah_name)

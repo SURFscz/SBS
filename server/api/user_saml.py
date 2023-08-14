@@ -247,9 +247,10 @@ def proxy_authz():
         return _perform_sram_login(uid, service, service_entity_id, user_email, user_name, home_organisation_uid,
                                    schac_home_organisation, issuer_id)
 
-    # users who log in to services should have a complete set of attributes (because they have looged in to SBS
+    # users who log in to services should have a complete set of attributes (because they have logged in to SBS
     # itself before)
-    if not valid_user_attributes({"sub": uid, "name": user_name, "email": user_email}):
+    # but users who are not provisioned at all are caught below (with an AUP_NOT_AGREED interrupt)
+    if user is not None and not valid_user_attributes({"sub": user.uid, "name": user.name, "email": user.email}):
         return {
             "status": {
                 "result": "interrupt",
