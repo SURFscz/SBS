@@ -2282,8 +2282,8 @@ const en = {
         select: "Select from gallery"
     },
     missingAttributes: {
-        info: "Your user record seems to be incomplete. Please try logging in again (possibly with a fresh or incognito browser session).",
-        contact: "If the problem reoccurs, please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for help"
+        info: "Something went wrong, we didn't receive all the required login information. Please try logging in again, if possible using a incognito browser window.",
+        contact: "If the problem reoccurs, please contact us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for help"
     }
 };
 
