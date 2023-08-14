@@ -72,15 +72,6 @@ def _perform_sram_login(uid, service, service_entity_id, user_email, user_name, 
     user = User.query.filter(User.uid == uid).first()
     if not user:
         logger.debug("Creating new user in sram_login")
-        if not valid_user_attributes({"sub": uid, "name": user_name, "email": user_email}):
-            return {
-                "status": {
-                    "result": "interrupt",
-                    "redirect_url": f"{current_app.app_config.base_url}/missing-attributes",
-                    "error_status": MISSING_ATTRIBUTES
-                }
-            }, 200
-
         user = User(uid=uid, name=user_name, email=user_email, external_id=str(uuid.uuid4()), created_by="system",
                     updated_by="system")
 
@@ -251,9 +242,21 @@ def proxy_authz():
     service = Service.query.filter(Service.entity_id == service_entity_id).first()
     user = User.query.filter(User.uid == uid).first()
 
+    # user who log in to SBS itself can continue here; their attributes are checked in user.py/resume_session()
     if service_entity_id.lower() == current_app.app_config.oidc.sram_service_entity_id.lower():
         return _perform_sram_login(uid, service, service_entity_id, user_email, user_name, home_organisation_uid,
                                    schac_home_organisation, issuer_id)
+
+    # users who log in to services should have a complete set of attributes (because they have looged in to SBS
+    # itself before)
+    if not valid_user_attributes({"sub": uid, "name": user_name, "email": user_email}):
+        return {
+            "status": {
+                "result": "interrupt",
+                "redirect_url": f"{current_app.app_config.base_url}/missing-attributes",
+                "error_status": MISSING_ATTRIBUTES
+            }
+        }, 200
 
     def not_authorized_func(service_name, status):
         base_url = current_app.app_config.base_url
