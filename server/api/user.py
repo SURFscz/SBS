@@ -285,7 +285,7 @@ def resume_session():
     user = User.query.filter(User.uid == uid).first()
 
     if not user:
-        # Ensure we don't provisioning users who have not the mandatory attributes
+        # Ensure we don't provision users who have not the mandatory attributes
         if not valid_user_attributes(user_info_json):
             return redirect(f"{cfg.base_url}/missing-attributes")
 
