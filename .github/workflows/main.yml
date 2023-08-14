@@ -163,6 +163,8 @@ jobs:
         env:
           CI: true
           VNM_DIR: ~/.nvm
+          INLINE_RUNTIME_CHUNK: False
+          IMAGE_INLINE_SIZE_LIMIT: 0
         timeout-minutes: 15
 
       #- name: Setup tmate session
