@@ -120,6 +120,9 @@ def create_group_api():
     collaboration = confirm_organisation_api_collaboration(collaboration_identifier)
 
     data["collaboration_id"] = collaboration.id
+    # Ensure to skip current_user is CO admin check
+    request_context.skip_collaboration_admin_confirmation = True
+
     res = create_group(collaboration.id, data)
     update_last_activity_date(collaboration.id)
 
