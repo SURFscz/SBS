@@ -307,7 +307,7 @@ const nl = {
             },
             statuses: {
                 active: "Active",
-                pending: "Pending",
+                pending: "Aangevraagd",
             },
             missingServices: "<a href=\"mailto:sram-support@surf.nl\">Stuur ons een verzoek</a> als je denkt dat een specifieke dienst ontbreekt en moet worden vermeld."
         },
