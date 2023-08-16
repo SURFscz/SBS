@@ -27,6 +27,8 @@ def hash_secret_key(data, attr_name="hashed_secret"):
 
 
 def generate_ldap_password_with_hash():
-    password = "".join(SYSTEM_RANDOM.sample(population=string.ascii_lowercase + string.digits + "_,./~=+@*-", k=32))
+    start = "".join(SYSTEM_RANDOM.sample(population=string.ascii_letters, k=1))
+    ldap_characters = string.ascii_letters + string.digits + "@%=+_-"
+    password = start + "".join(SYSTEM_RANDOM.sample(population=ldap_characters, k=31))
     hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
     return hashed.decode("utf-8"), password
