@@ -297,7 +297,7 @@ const nl = {
             removeFromOrg: "Ontkoppel van organisatie",
             addToOrg: "Voeg toe aan organisatie",
             mandatory: "Verplicht voor alle samenwerkingen",
-            requestConnection: "Vraag koppeling aan",
+            requestConnection: "Aanvragen",
             backToServices: "Terug naar diensten",
             connectionRequest: "Vraag koppeling aan met {{name}}",
             confirmations: {

@@ -297,7 +297,7 @@ const en = {
             removeFromOrg: "Remove from organisation",
             addToOrg: "Add to organisation",
             mandatory: "Mandatory for all collaborations",
-            requestConnection: "Request connection",
+            requestConnection: "Request",
             backToServices: "Back to services",
             connectionRequest: "Request connection to {{name}}",
             confirmations: {
