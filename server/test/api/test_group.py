@@ -191,12 +191,13 @@ class TestGroup(AbstractTest):
     def test_create_group_api(self):
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
 
+        name = "some name"
         res = self.post("/api/groups/v1",
                         body={
-                            "name": "some name",
+                            "name": name,
                             "short_name": "!@#$%  QWERTY *&^%$#@",
                             "description": "optional",
-                            "auto_provision_members": False,
+                            "auto_provision_members": True,
                             "collaboration_identifier": collaboration.identifier
                         },
                         headers={"Authorization": f"Bearer {uuc_secret}"},
@@ -204,6 +205,8 @@ class TestGroup(AbstractTest):
 
         self.assertIsNotNone(res["identifier"])
         self.assertEqual("qwerty", res["short_name"])
+        group = self.find_entity_by_name(Group, name)
+        self.assertEqual(5, len(group.collaboration_memberships))
 
     def test_create_group_not_allowed_api(self):
         collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
