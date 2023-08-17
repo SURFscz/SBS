@@ -2,99 +2,143 @@
 @import "../../stylesheets/forms";
 
 .used-services-mod {
-    max-width: $medium;
-    margin: 40px auto 25px auto;
-    width: 100%;
-    display: flex;
+  max-width: $medium;
+  margin: 40px auto 25px auto;
+  width: 100%;
+  display: flex;
 
+
+  @media (max-width: $compact-medium) {
+    flex-direction: column;
+    margin: 40px 15px 25px 15px;
+  }
+
+  div.side-bar {
+    margin-right: 80px;
+    @media (max-width: $tablet-max) {
+      margin-left: 15px;
+    }
+
+    h3 {
+      font-weight: bold;
+      margin-bottom: 20px;
+      white-space: nowrap;
+    }
+
+    ul {
+      list-style: none;
+
+
+      li {
+        margin-bottom: 8px;
+
+        a {
+          white-space: nowrap;
+
+          &.active {
+            font-weight: bold;
+          }
+
+        }
+      }
+    }
+  }
+
+  .used-service-main {
+    width: 100%;
+  }
+
+  .sds--content-card {
+    margin-bottom: 25px;
+  }
+
+  a.back-to-services {
+    display: flex;
+    align-items: center;
+    color: $blue;
+    text-decoration: underline;
+
+    svg {
+      margin-right: 5px;
+      fill: $blue;
+      height: 22px;
+    }
+  }
+
+  div.request-connection-service-form {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    margin-left: 60px;
 
     @media (max-width: $compact-medium) {
-        flex-direction: column;
-        margin: 40px 15px 25px 15px;
+      width: 100%
     }
 
-    div.side-bar {
-        margin-right: 80px;
-        @media (max-width: $tablet-max) {
-            margin-left: 15px;
-        }
-
-        h3 {
-            font-weight: bold;
-            margin-bottom: 20px;
-            white-space: nowrap;
-        }
-
-        ul {
-            list-style: none;
-
-
-            li {
-                margin-bottom: 8px;
-
-                a {
-                    white-space: nowrap;
-
-                    &.active {
-                        font-weight: bold;
-                    }
-
-                }
-            }
-        }
+    h2, h3 {
+      margin-bottom: 20px;
     }
 
-    .section-separator {
-        margin-bottom: 25px;
+    img {
+      width: 62px;
+      margin-bottom: 20px;
     }
 
-    .used-service-main {
-        width: 100%;
+    div.checkbox {
+      margin-top: 25px;
+    }
+  }
+
+  .service-confirmation {
+    margin-left: 15px;
+  }
+
+  .service-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 65%;
+    margin-bottom: 25px;
+
+    @media (max-width: $compact-medium) {
+      flex-direction: column;
+      align-items: normal;
     }
 
-    .sds--content-card {
-        margin-bottom: 25px;
+    h2 {
+      @media (max-width: $compact-medium) {
+        margin-bottom: 15px
+      }
+
     }
 
-    a.back-to-services {
-        display: flex;
-        align-items: center;
-        color: $blue;
-        text-decoration: underline;
+    .search {
+      position: relative;
+      display: flex;
 
-        svg {
-            margin-right: 5px;
-            fill: $blue;
-            height: 22px;
-        }
-    }
+      margin-left: auto;
 
-    div.request-connection-service-form {
-        width: 60%;
-        display: flex;
-        flex-direction: column;
-        margin-left: 60px;
+      @media (max-width: $compact-medium) {
+        margin-left: 0;
+      }
+
+      input[type=search] {
+        flex-grow: 2;
+        min-width: 360px;
 
         @media (max-width: $compact-medium) {
-            width: 100%
+          min-width: 0;
         }
+      }
 
-        h2, h3 {
-            margin-bottom: 20px;
-        }
+      .sds--text-field--icon svg {
+        width: calc(15em / 16);
+        height: calc(15em / 16)
+      }
 
-        img {
-            width: 62px;
-            margin-bottom: 20px;
-        }
-
-        div.checkbox {
-            margin-top: 25px;
-        }
     }
 
-    .service-confirmation {
-        margin-left: 15px;
-    }
+  }
+
 
 }
