@@ -192,6 +192,7 @@ class ApiKeys extends React.Component {
                           searchAttributes={["description"]}
                           defaultSort="description"
                           columns={columns}
+                          inputFocus={true}
                           loading={false}
                           showNew={isUserAllowed(ROLES.ORG_ADMIN, user, organisation.id)}
                           hideTitle={true}

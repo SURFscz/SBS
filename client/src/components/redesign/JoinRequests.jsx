@@ -291,6 +291,7 @@ class JoinRequests extends React.Component {
                           searchAttributes={["user__name", "user__email", "message", "status", "reference"]}
                           defaultSort="name"
                           rowLinkMapper={() => this.openJoinRequest}
+                          inputFocus={true}
                           columns={columns}
                           hideTitle={true}
                           filters={this.filter(filterOptions, filterValue)}

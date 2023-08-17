@@ -401,6 +401,7 @@ class UsedServices extends React.Component {
             requestConnectionService: null,
             selectedServiceConnectionRequestId: null,
         });
+        setTimeout(() => this.input && this.input.focus(), 150);
     }
 
     sortAndFilter = (services, query) => {

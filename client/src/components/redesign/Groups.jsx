@@ -891,6 +891,7 @@ class Groups extends React.Component {
                           modelName="groups"
                           searchAttributes={["name", "description"]}
                           defaultSort="name"
+                          inputFocus={true}
                           rowLinkMapper={() => this.gotoGroup}
                           columns={columns.concat(sharedColumns)}
                           searchCallback={this.groupSearchCallback}

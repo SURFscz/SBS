@@ -94,17 +94,17 @@ export default class CollaborationRequests extends React.PureComponent {
                 key: "status",
                 header: I18n.t("collaborationRequest.status"),
                 mapper: cr => <Chip type={chipTypeForStatus(cr)}
-                                    label={I18n.t(`collaborationRequest.statuses.${cr.status}`)} />
+                                    label={I18n.t(`collaborationRequest.statuses.${cr.status}`)}/>
             },
             {
                 key: "requester",
                 header: I18n.t("models.collaboration_requests.requester"),
-                mapper: cr => <UserColumn entity={{user:cr.requester}} currentUser={user}/>
+                mapper: cr => <UserColumn entity={{user: cr.requester}} currentUser={user}/>
             },
             {
                 key: "user__schac_home_organisation",
                 header: I18n.t("models.users.institute"),
-                mapper: cr => <InstituteColumn entity={{user:cr.requester}} currentUser={user}/>
+                mapper: cr => <InstituteColumn entity={{user: cr.requester}} currentUser={user}/>
             },
         ]
         const filteredCollaborationRequests = filterValue.value === allValue ? organisation.collaboration_requests :
@@ -114,6 +114,7 @@ export default class CollaborationRequests extends React.PureComponent {
             <Entities entities={filteredCollaborationRequests}
                       modelName={"collaboration_requests"}
                       searchAttributes={["name", "requester__name"]}
+                      inputFocus={true}
                       defaultSort="name"
                       rowLinkMapper={() => this.openCollaborationRequest}
                       columns={columns}

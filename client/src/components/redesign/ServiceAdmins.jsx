@@ -404,6 +404,7 @@ class ServiceAdmins extends React.Component {
                           modelName="serviceAdmins"
                           searchAttributes={["user__name", "user__email", "invitee_email"]}
                           defaultSort="name"
+                          inputFocus={true}
                           columns={columns}
                           loading={false}
                           hideTitle={true}

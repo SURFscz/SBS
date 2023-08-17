@@ -748,6 +748,7 @@ class CollaborationAdmins extends React.Component {
                           modelName={isAdminView ? "coAdmins" : "members"}
                           searchAttributes={["user__name", "user__email", "invitee_email"]}
                           defaultSort="name"
+                          inputFocus={true}
                           onHover={true}
                           searchCallback={this.searchCallback}
                           columns={(isAdminOfCollaboration || collaboration.disclose_email_information) ? columns : columns.slice(1)}
