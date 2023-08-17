@@ -283,14 +283,16 @@ class CollaborationForm extends React.Component {
             if (!isCollaborationRequest) {
                 body.tags = tagsSelected;
             }
-            promise(body).then(res => {
-                this.props.refreshUser(() => {
-                    const isCollCreated = res.identifier;
-                    const path = isCollaborationRequest ? "/home" : `/collaborations/${res.id}`;
-                    this.props.history.push(path);
-                    setFlash(I18n.t(isCollCreated ? "collaboration.flash.created" : "collaboration.flash.requested", {name: res.name}));
-                });
-            });
+            promise(body)
+                .then(res => {
+                    this.props.refreshUser(() => {
+                        const isCollCreated = res.identifier;
+                        const path = isCollaborationRequest ? "/home" : `/collaborations/${res.id}`;
+                        this.props.history.push(path);
+                        setFlash(I18n.t(isCollCreated ? "collaboration.flash.created" : "collaboration.flash.requested", {name: res.name}));
+                    })
+                })
+                .catch(() => this.setState({loading: false}));
         } else {
             window.scrollTo(0, 0);
         }
@@ -343,10 +345,12 @@ class CollaborationForm extends React.Component {
                 current_user_admin,
                 disclose_member_information,
                 disclose_email_information
-            }).then(() => {
-                this.props.history.goBack();
-                setFlash(I18n.t("collaborationDetail.flash.updated", {name: name}));
-            });
+            })
+                .then(() => {
+                    this.props.history.goBack();
+                    setFlash(I18n.t("collaborationDetail.flash.updated", {name: name}));
+                })
+                .catch(() => this.setState({loading: false}));
         } else {
             window.scrollTo(0, 0);
         }
@@ -458,7 +462,7 @@ class CollaborationForm extends React.Component {
         return (
             <div className="mod-new-collaboration-container">
                 {isNew &&
-                <UnitHeader obj={({name: unitHeaderName, svg: CollaborationsIcon})}/>}
+                    <UnitHeader obj={({name: unitHeaderName, svg: CollaborationsIcon})}/>}
                 {!isNew && <UnitHeader obj={collaboration}
                                        name={collaboration.name}
                                        history={user.admin && this.props.history}
@@ -530,18 +534,18 @@ class CollaborationForm extends React.Component {
                                 disabled={true}/>
 
                     {(!isCollaborationRequest && !isNew) &&
-                    <InputField value={joinRequestUrl}
-                                name={I18n.t("collaboration.joinRequests")}
-                                copyClipBoard={true}
-                                toolTip={I18n.t("collaboration.joinRequestUrlTooltip")}
-                                disabled={true}/>}
+                        <InputField value={joinRequestUrl}
+                                    name={I18n.t("collaboration.joinRequests")}
+                                    copyClipBoard={true}
+                                    toolTip={I18n.t("collaboration.joinRequestUrlTooltip")}
+                                    disabled={true}/>}
 
                     {(!isCollaborationRequest && !isNew) &&
-                    <InputField value={collaboration.identifier}
-                                name={I18n.t("collaboration.identifier")}
-                                copyClipBoard={true}
-                                toolTip={I18n.t("collaboration.identifierTooltip")}
-                                disabled={true}/>}
+                        <InputField value={collaboration.identifier}
+                                    name={I18n.t("collaboration.identifier")}
+                                    copyClipBoard={true}
+                                    toolTip={I18n.t("collaboration.identifierTooltip")}
+                                    disabled={true}/>}
 
                     <InputField value={description}
                                 onChange={e => this.setState({description: e.target.value})}
@@ -559,7 +563,7 @@ class CollaborationForm extends React.Component {
                                 name={I18n.t("collaboration.websiteUrl")}
                                 onBlur={this.validateURI("website_url")}/>
                     {invalidInputs["website_url"] &&
-                    <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
+                        <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
 
                     {!isCollaborationRequest && <DateField value={expiry_date}
                                                            onChange={e => this.setState({expiry_date: e})}
@@ -620,16 +624,16 @@ class CollaborationForm extends React.Component {
                         attribute: I18n.t("collaboration.organisation_name").toLowerCase()
                     })}/>}
                     {(!isCollaborationRequest && isNew) &&
-                    <div>
-                        <h2 className="section-separator">{I18n.t("collaboration.invitations")}</h2>
+                        <div>
+                            <h2 className="section-separator">{I18n.t("collaboration.invitations")}</h2>
 
-                        <EmailField addEmails={this.addEmails}
-                                    removeMail={this.removeMail}
-                                    name={I18n.t("invitation.invitees")}
-                                    pinnedEmails={current_user_admin ? [this.props.user.email] : []}
-                                    isAdmin={true}
-                                    emails={administrators}/>
-                    </div>}
+                            <EmailField addEmails={this.addEmails}
+                                        removeMail={this.removeMail}
+                                        name={I18n.t("invitation.invitees")}
+                                        pinnedEmails={current_user_admin ? [this.props.user.email] : []}
+                                        isAdmin={true}
+                                        emails={administrators}/>
+                        </div>}
 
                     {isNew && <CheckBox name={I18n.t("collaboration.currentUserAdmin")}
                                         value={current_user_admin}
@@ -645,13 +649,13 @@ class CollaborationForm extends React.Component {
                                           toolTip={isCollaborationRequest ? I18n.t("collaboration.motivationTooltip") : I18n.t("collaboration.messageTooltip")}
                                           multiline={true}/>}
                     {(!initial && isEmpty(message) && isCollaborationRequest) &&
-                    <ErrorIndicator msg={I18n.t("collaboration.required", {
-                        attribute: I18n.t("collaboration.motivation").toLowerCase()
-                    })}/>}
+                        <ErrorIndicator msg={I18n.t("collaboration.required", {
+                            attribute: I18n.t("collaboration.motivation").toLowerCase()
+                        })}/>}
                     <section className="actions">
                         {!isNew &&
-                        <Button warningButton={true}
-                                onClick={this.delete}/>}
+                            <Button warningButton={true}
+                                    onClick={this.delete}/>}
                         <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                         <Button disabled={disabledSubmit}
                                 txt={(isCollaborationRequest && !autoCreateCollaborationRequest) ? I18n.t("forms.request") : I18n.t("forms.save")}

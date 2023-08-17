@@ -9,6 +9,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 from uuid import uuid4
 
+import MySQLdb
 from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
 from jsonschema import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
@@ -183,6 +184,8 @@ def json_endpoint(f):
             elif isinstance(e, Unauthorized) and "The server could not verify" in e.description:
                 e.description = f"Unauthorized 401: {current_request.url}. IP: {_remote_address()}"
             elif isinstance(e, APIBadRequest):
+                skip_email = True
+            elif isinstance(e, MySQLdb.IntegrityError):
                 skip_email = True
             elif hasattr(e, "description"):
                 e.description = f"{e.__class__.__name__}: {current_request.url}." \
