@@ -98,10 +98,14 @@ class UsedServices extends React.Component {
             }).catch(() => this.props.history.push("/"));
     }
 
-    openService = service => {
+    openService = (service, e) => {
         const ref = service.connectionRequest ? service.service : service;
-        clearFlash();
-        this.props.history.push(`/services/${ref.id}`);
+        if (e.metaKey || e.ctrlKey) {
+            window.open(`/services/${ref.id}`, '_blank');
+        } else {
+            clearFlash();
+            this.props.history.push(`/services/${ref.id}`);
+        }
     };
 
     getServiceStatus = service => {
@@ -360,11 +364,12 @@ class UsedServices extends React.Component {
                 {usedServices.map(service =>
                     <ServiceCard service={service}
                                  key={service.id}
-                                 nameLinkAction={() => this.openService(service)}
+                                 nameLinkAction={e => this.openService(service, e)}
                                  status={this.getServiceStatus(service)}
                                  message={this.getServiceMessage(service)}
                                  ActionButton={this.getServiceAction(service)}
                                  limitWidth={true}
+                                 launchLink={true}
                                  showAboutInformation={true}
                     />)}
             </div>
@@ -376,11 +381,12 @@ class UsedServices extends React.Component {
             <div>
                 {usedServices.map(service =>
                     <ServiceCard service={service}
-                                 nameLinkAction={() => this.openService(service)}
+                                 nameLinkAction={e => this.openService(service, e)}
                                  status={this.getServiceStatus(service)}
                                  message={this.getServiceStatus(service)}
                                  ActionButton={this.getServiceAction(service)}
                                  limitWidth={true}
+                                 launchLink={true}
                                  showAboutInformation={true}
                     />)}
             </div>
