@@ -81,7 +81,9 @@ export default function ServiceCard({
                 <div className={"support"}>
                     <dt>{I18n.t("service.supportShort")}</dt>
                     {supportEmail && <dd>{I18n.t('service.supportContactPre')}
-                        <a href={`mailto:${supportEmail}`}
+                        <a href={supportEmail.startsWith("http") ? supportEmail : `mailto:${supportEmail}`}
+                           target="_blank"
+                           rel="noopener noreferrer"
                            className={"soft-link"}>
                             {supportEmail}
                         </a>
