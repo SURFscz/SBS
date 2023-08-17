@@ -7,6 +7,7 @@ import {
     requestServiceConnection
 } from "../../api";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
+import {ReactComponent as SearchIcon} from "@surfnet/sds/icons/functional-icons/search.svg";
 
 import "./UsedServices.scss";
 import {isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
@@ -46,7 +47,8 @@ class UsedServices extends React.Component {
             confirmationChildren: false,
             selectedService: null,
             warning: false,
-            socketSubscribed: false
+            socketSubscribed: false,
+            query: ""
         }
     }
 
@@ -79,6 +81,7 @@ class UsedServices extends React.Component {
                             && (service.allow_restricted_orgs || !collaboration.organisation.services_restricted);
                     });
                 this.setState({services: filteredServices, loading: false});
+                setTimeout(() => this.input && this.input.focus(), 150);
                 const {socketSubscribed} = this.state;
                 if (!socketSubscribed) {
                     [`collaboration_${collaboration.id}`, "service", `organisation_${collaboration.organisation_id}`].forEach(topic => {
@@ -323,8 +326,35 @@ class UsedServices extends React.Component {
                       })}/>
         </div>
     }
+    queryChanged = e => {
+        const query = e.target.value;
+        this.setState({query: query});
+    }
 
-    renderConnectedServices = (usedServices) => {
+    renderSearch = query => {
+        return (
+            <div className={`search`}>
+                <div className={"sds--text-field sds--text-field--has-icon"}>
+                    <div className="sds--text-field--shape">
+                        <div className="sds--text-field--input-and-icon">
+                            <input className={"sds--text-field--input"}
+                                   type="search"
+                                   onChange={this.queryChanged}
+                                   ref={ref => this.input = ref}
+                                   value={query}
+                                   placeholder={I18n.t(`models.services.searchPlaceHolder`)}/>
+                            <span className="sds--text-field--icon">
+                                    <SearchIcon/>
+                                </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        );
+    }
+
+    renderConnectedServices = usedServices => {
         return (
             <div>
                 {usedServices.map(service =>
@@ -367,12 +397,18 @@ class UsedServices extends React.Component {
         });
     }
 
-    renderCurrentTab = (currentTab, usedServices, availableServices) => {
+    sortAndFilter = (services, query) => {
+        return services
+            .sort((s1, s2) => s1.name.localeCompare(s2.name))
+            .filter(service => isEmpty(query) || service.name.toLowerCase().indexOf(query) > -1)
+    }
+
+    renderCurrentTab = (currentTab, usedServices, availableServices, query) => {
         switch (currentTab) {
             case CONNECTIONS:
-                return this.renderConnectedServices(usedServices.sort((s1, s2) => s1.name.localeCompare(s2.name)));
+                return this.renderConnectedServices(this.sortAndFilter(usedServices, query));
             case AVAILABLE:
-                return this.renderAvailableServices(availableServices.sort((s1, s2) => s1.name.localeCompare(s2.name)));
+                return this.renderAvailableServices(this.sortAndFilter(availableServices, query));
             default:
                 throw new Error(`unknown-tab: ${currentTab}`);
         }
@@ -407,7 +443,7 @@ class UsedServices extends React.Component {
         const {
             services, loading, requestConnectionService, message, confirmationChildren, disabledConfirm, warning,
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationDialogQuestion,
-            selectedService, confirmedAupConnectionRequest, currentTab
+            selectedService, confirmedAupConnectionRequest, currentTab, query
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -425,7 +461,6 @@ class UsedServices extends React.Component {
         });
         usedServices = usedServices.concat(serviceConnectionRequests);
         usedServices.forEach(s => s.usedService = true);
-
         return (
             <>
                 <div className={"used-services-mod"}>
@@ -439,8 +474,12 @@ class UsedServices extends React.Component {
                                             this.renderConfirmationChildren(selectedService, disabledConfirm) : null}/>
                     {this.sidebar(currentTab, usedServices, services)}
                     <div className={"used-service-main"}>
-                        <h2 className="section-separator">{I18n.t(`services.toc.${currentTab}`)}</h2>
-                        {this.renderCurrentTab(currentTab, usedServices, services)}
+                        <div className={"service-header"}>
+                            <h2 className="section-separator">{I18n.t(`services.toc.${currentTab}`)}</h2>
+                            {this.renderSearch(query)}
+                        </div>
+
+                        {this.renderCurrentTab(currentTab, usedServices, services, query)}
                     </div>
 
                 </div>
