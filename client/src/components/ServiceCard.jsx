@@ -18,6 +18,7 @@ export default function ServiceCard({
                                         tokenAction,
                                         message,
                                         showAboutInformation,
+                                        launchLink,
                                         limitWidth = false
                                     }) {
     const [showPolicies, setShowPolicies] = useState(false);
@@ -110,7 +111,7 @@ export default function ServiceCard({
     return (<div className={`sds--content-card ${limitWidth ? "limit-width" : ""}`}>
         <div className="sds--content-card--main">
             <div className="sds--content-card--visual">
-                <div onClick={() => nameLinkAction && nameLinkAction()}>
+                <div onClick={e => nameLinkAction && nameLinkAction(e)}>
                     <Logo src={service.logo || service.service.logo}/>
                 </div>
             </div>
@@ -122,6 +123,10 @@ export default function ServiceCard({
                         </h4>
                         {!showAboutInformation && <p><MoreLessText txt={service.description}/></p>}
                         {message && <p className={chipType ? chipType : ""}>{message}</p>}
+                        {(launchLink && service.uri) &&
+                            <a href={service.uri}
+                               target={"_blank"}
+                               rel="noopener noreferrer">{I18n.t("service.launch")}</a>}
                     </div>
                     <div className="sds--content-card--actions">
                         <div>
