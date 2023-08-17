@@ -9,5 +9,5 @@ pytest==7.4.0
 responses==0.23.3
 alembic==1.11.2
 freezegun==1.2.2
-coverage==7.2.7
+coverage==7.3.0
 mock==5.1.0
