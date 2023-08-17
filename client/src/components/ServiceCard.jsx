@@ -51,7 +51,7 @@ export default function ServiceCard({
     }
 
     const renderPolicies = () => {
-        const admins = service.service_memberships.map(member => member.user)
+        const admins = (service.service_memberships || []).map(member => member.user)
         const admin = !isEmpty(service.contact_email) ? service.contact_email : !isEmpty(admins) ? admins[0].email : null;
         const adminName = !isEmpty(service.contact_email) ? service.contact_email : !isEmpty(admins) ? admins[0].name : null;
         const compliance = service.sirtfi_compliant || service.code_of_conduct_compliant || service.research_scholarship_compliant;
