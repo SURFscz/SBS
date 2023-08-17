@@ -83,6 +83,7 @@ class Services extends React.Component {
                       searchAttributes={["name", "entity_id"]}
                       defaultSort="name"
                       columns={columns}
+                      inputFocus={true}
                       showNew={user.admin}
                       newEntityPath={"/new-service"}
                       loading={loading}

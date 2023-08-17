@@ -395,6 +395,7 @@ class ServiceGroups extends React.Component {
                           modelName="serviceGroups"
                           searchAttributes={["name", "description"]}
                           defaultSort="name"
+                          inputFocus={true}
                           rowLinkMapper={() => this.gotoGroup}
                           columns={columns}
                           loading={loading}

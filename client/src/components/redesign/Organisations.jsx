@@ -102,6 +102,7 @@ class Organisations extends React.Component {
                       modelName="organisations"
                       searchAttributes={["name", "schacHomes"]}
                       defaultSort="name"
+                      inputFocus={true}
                       columns={columns}
                       hideTitle={true}
                       rowLinkMapper={() => this.openOrganisation}

@@ -329,6 +329,7 @@ export default class Collaborations extends React.PureComponent {
                           modelName={mayCreateCollaborations ? modelName : showRequestCollaboration ? "memberCollaborations" : modelName}
                           searchAttributes={["name"]}
                           defaultSort="name"
+                          inputFocus={true}
                           hideTitle={true}
                           rowLinkMapper={() => this.openCollaboration}
                           columns={columns}
