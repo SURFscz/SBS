@@ -55,12 +55,14 @@ class ServiceGroups extends React.Component {
 
     refreshAndFlash = (promise, flashMsg, callback) => {
         this.setState({loading: true, confirmationDialogOpen: false});
-        promise.then(res => {
-            this.props.refresh(() => {
-                this.componentDidMount(() => callback && callback(res));
-                setFlash(flashMsg);
-            });
-        });
+        promise
+            .then(res => {
+                this.props.refresh(() => {
+                    this.componentDidMount(() => callback && callback(res));
+                    setFlash(flashMsg);
+                });
+            })
+            .catch(() => this.setState({loading: false}));
     }
 
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
@@ -85,7 +87,9 @@ class ServiceGroups extends React.Component {
         AppStore.update(s => {
             const paths = s.breadcrumb.paths.slice(0, s.breadcrumb.paths.length - 1);
             const lastPath = paths[paths.length - 1];
-            lastPath.path = null;
+            if (lastPath) {
+                lastPath.path = null;
+            }
             s.breadcrumb.paths = paths;
         });
     }
@@ -238,14 +242,14 @@ class ServiceGroups extends React.Component {
                           onChange={e => this.setState({auto_provision_members: e.target.checked})}/>
 
                 {!createNewGroup &&
-                <InputField value={moment(selectedGroup.created_at * 1000).format("LLLL")}
-                            disabled={true}
-                            name={I18n.t("organisation.created")}/>}
+                    <InputField value={moment(selectedGroup.created_at * 1000).format("LLLL")}
+                                disabled={true}
+                                name={I18n.t("organisation.created")}/>}
 
                 <section className="actions">
                     {!createNewGroup &&
-                    <Button warningButton={true}
-                            onClick={this.delete}/>}
+                        <Button warningButton={true}
+                                onClick={this.delete}/>}
                     <Button cancelButton={true} txt={I18n.t("forms.cancel")}
                             onClick={() => this.setState({editGroup: false, createNewGroup: false})}/>
                     <Button disabled={disabledSubmit} txt={I18n.t(`forms.save`)}
@@ -318,7 +322,7 @@ class ServiceGroups extends React.Component {
                         editGroup: false,
                         createNewGroup: false
                     }));
-                    this.cancelSideScreen();
+                this.cancelSideScreen();
             }
         } else {
             window.scrollTo(0, 0);

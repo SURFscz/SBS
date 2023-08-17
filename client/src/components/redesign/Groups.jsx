@@ -107,12 +107,14 @@ class Groups extends React.Component {
                 });
             });
         } else {
-            promise.then(res => {
-                this.props.refresh(() => {
-                    this.componentDidMount(() => callback && callback(res));
-                    setFlash(flashMsg);
-                });
-            });
+            promise
+                .then(res => {
+                    this.props.refresh(() => {
+                        this.componentDidMount(() => callback && callback(res));
+                        setFlash(flashMsg);
+                    });
+                })
+                .catch(() => this.setState({loading: false}));
         }
     }
 
@@ -180,7 +182,9 @@ class Groups extends React.Component {
         AppStore.update(s => {
             const paths = s.breadcrumb.paths.slice(0, s.breadcrumb.paths.length - 1);
             const lastPath = paths[paths.length - 1];
-            lastPath.path = null;
+            if (lastPath) {
+                lastPath.path = null;
+            }
             s.breadcrumb.paths = paths;
         });
     }

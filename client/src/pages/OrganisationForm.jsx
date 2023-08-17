@@ -151,7 +151,7 @@ class OrganisationForm extends React.Component {
             const invalid = !validSchacHomeRegExp.test(schac_home_organisation.trim());
             const duplicate = schac_home_organisations.find(sho => sho.name === schac_home_organisation.trim());
             if (invalid || duplicate) {
-                const invalid_schac_home_organisation = I18n.t(`organisation.${invalid ? "invalidSchacHome": "duplicateSchacHome"}`,
+                const invalid_schac_home_organisation = I18n.t(`organisation.${invalid ? "invalidSchacHome" : "duplicateSchacHome"}`,
                     {schac: schac_home_organisation.trim()});
                 this.setState({invalid_schac_home_organisation: invalid_schac_home_organisation});
             } else {
@@ -229,10 +229,12 @@ class OrganisationForm extends React.Component {
                 services_restricted,
                 logo,
                 on_boarding_msg
-            }).then(res => {
-                this.props.history.goBack();
-                setFlash(I18n.t("organisation.flash.created", {name: res.name}))
-            });
+            })
+                .then(res => {
+                    this.props.history.goBack();
+                    setFlash(I18n.t("organisation.flash.created", {name: res.name}))
+                })
+                .catch(() => this.setState({loading: false}));
         } else {
             window.scrollTo(0, 0);
         }
@@ -247,6 +249,15 @@ class OrganisationForm extends React.Component {
             action()
         }
     };
+
+    handleDuplicateSchacHome = e => {
+        if (e.response && e.response.json) {
+            e.response.json().then(res => {
+                console.log(res);
+                debugger; // eslint-disable-line no-debugger
+            })
+        }
+    }
 
     doUpdate = () => {
         if (this.isValid()) {
@@ -267,10 +278,12 @@ class OrganisationForm extends React.Component {
                 logo,
                 on_boarding_msg,
                 category: category !== null ? category.value : null
-            }).then(() => {
-                this.props.history.goBack();
-                setFlash(I18n.t("organisationDetail.flash.updated", {name: name}));
-            });
+            })
+                .then(() => {
+                    this.props.history.goBack();
+                    setFlash(I18n.t("organisationDetail.flash.updated", {name: name}));
+                })
+                .catch(() => this.setState({loading: false}));
         } else {
             window.scrollTo(0, 0);
         }
@@ -291,10 +304,31 @@ class OrganisationForm extends React.Component {
 
     render() {
         const {
-            name, description, initial, alreadyExists, administrators, message,
-            confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, short_name,
-            schac_home_organisations, collaboration_creation_allowed, services_restricted, logo, on_boarding_msg, on_boarding_changed,
-            category, categoryOptions, schac_home_organisation, isNew, organisation, warning, loading, invalid_schac_home_organisation
+            name,
+            description,
+            initial,
+            alreadyExists,
+            administrators,
+            message,
+            confirmationDialogOpen,
+            confirmationDialogAction,
+            cancelDialogAction,
+            leavePage,
+            short_name,
+            schac_home_organisations,
+            collaboration_creation_allowed,
+            services_restricted,
+            logo,
+            on_boarding_msg,
+            on_boarding_changed,
+            category,
+            categoryOptions,
+            schac_home_organisation,
+            isNew,
+            organisation,
+            warning,
+            loading,
+            invalid_schac_home_organisation
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -391,12 +425,12 @@ class OrganisationForm extends React.Component {
                                         error={alreadyExists.schac_home_organisations}/>
 
                         {alreadyExists.schac_home_organisations &&
-                        alreadyExists.schac_home_organisations.map(sho =>
-                            <ErrorIndicator key={sho} msg={I18n.t("organisation.alreadyExists", {
-                                attribute: I18n.t("organisation.schacHomeOrganisation").toLowerCase(),
-                                value: sho
-                            })}/>
-                        )}
+                            alreadyExists.schac_home_organisations.map(sho =>
+                                <ErrorIndicator key={sho} msg={I18n.t("organisation.alreadyExists", {
+                                    attribute: I18n.t("organisation.schacHomeOrganisation").toLowerCase(),
+                                    value: sho
+                                })}/>
+                            )}
                         {invalid_schac_home_organisation && <ErrorIndicator msg={invalid_schac_home_organisation}/>}
 
                         <CheckBox name={"collaboration_creation_allowed"}
@@ -416,20 +450,20 @@ class OrganisationForm extends React.Component {
                         />
 
                         {isNew &&
-                        <div>
-                            <h2 className="section-separator">{I18n.t("organisation.invitations")}</h2>
+                            <div>
+                                <h2 className="section-separator">{I18n.t("organisation.invitations")}</h2>
 
-                            <EmailField addEmails={this.addEmails}
-                                        removeMail={this.removeMail}
-                                        name={I18n.t("invitation.invitees")}
-                                        isAdmin={true}
-                                        error={!initial && isEmpty(administrators)}
-                                        emails={administrators}/>
-                        </div>}
+                                <EmailField addEmails={this.addEmails}
+                                            removeMail={this.removeMail}
+                                            name={I18n.t("invitation.invitees")}
+                                            isAdmin={true}
+                                            error={!initial && isEmpty(administrators)}
+                                            emails={administrators}/>
+                            </div>}
                         {(!initial && isEmpty(administrators) && isNew) &&
-                        <ErrorIndicator msg={I18n.t("organisation.required", {
-                            attribute: I18n.t("organisation.administrators").toLowerCase()
-                        })}/>}
+                            <ErrorIndicator msg={I18n.t("organisation.required", {
+                                attribute: I18n.t("organisation.administrators").toLowerCase()
+                            })}/>}
                         {isNew && <InputField value={message} onChange={e => this.setState({message: e.target.value})}
                                               placeholder={I18n.t("collaboration.messagePlaceholder")}
                                               name={I18n.t("collaboration.message")}
@@ -438,7 +472,7 @@ class OrganisationForm extends React.Component {
 
                         <section className="actions">
                             {(user.admin && !isNew) &&
-                            <Button warningButton={true} onClick={this.delete}/>}
+                                <Button warningButton={true} onClick={this.delete}/>}
                             <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                             <Button disabled={disabledSubmit} txt={I18n.t("forms.save")} onClick={this.submit}/>
                         </section>

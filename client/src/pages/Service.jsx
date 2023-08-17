@@ -276,9 +276,13 @@ class Service extends React.Component {
             });
             this.setState({ip_networks: strippedIpNetworks}, () => {
                 if (isNew) {
-                    createService(this.state).then(res => this.afterUpdate(name, "created", res));
+                    createService(this.state)
+                        .then(res => this.afterUpdate(name, "created", res))
+                        .catch(() => this.setState({loading: false}));
                 } else {
-                    updateService(this.state).then(res => this.afterUpdate(name, "updated", res));
+                    updateService(this.state)
+                        .then(res => this.afterUpdate(name, "updated", res))
+                        .catch(() => this.setState({loading: false}));
                 }
             });
         } else {
@@ -296,7 +300,8 @@ class Service extends React.Component {
             <label className="title" htmlFor={I18n.t("service.network")}>{I18n.t("service.network")}
                 <Tooltip tip={I18n.t("service.networkTooltip")}/>
                 {(isAdmin || isServiceAdmin) &&
-                <span className="add-network" onClick={() => this.addIpAddress()}><FontAwesomeIcon icon="plus"/></span>}
+                    <span className="add-network" onClick={() => this.addIpAddress()}><FontAwesomeIcon
+                        icon="plus"/></span>}
             </label>
             {ip_networks.map((network, i) =>
                 <div className="network-container" key={i}>
@@ -313,19 +318,19 @@ class Service extends React.Component {
                                     }}
                         />
                         {(isAdmin || isServiceAdmin) &&
-                        <span className="trash" onClick={() => this.deleteIpAddress(i)}>
+                            <span className="trash" onClick={() => this.deleteIpAddress(i)}>
                             <TrashIcon/>
                         </span>}
                     </div>
                     {(network.error && !network.syntax && !network.reserved) &&
-                    <ErrorIndicator msg={I18n.t("service.networkError", network)}/>}
+                        <ErrorIndicator msg={I18n.t("service.networkError", network)}/>}
                     {network.syntax && <ErrorIndicator msg={I18n.t("service.networkSyntaxError")}/>}
                     {network.reserved &&
-                    <ErrorIndicator msg={I18n.t("service.networkReservedError", network)}/>}
+                        <ErrorIndicator msg={I18n.t("service.networkReservedError", network)}/>}
                     {network.higher &&
-                    <span className="network-info">{I18n.t("service.networkInfo", network)}</span>}
+                        <span className="network-info">{I18n.t("service.networkInfo", network)}</span>}
                     {(network.higher && network.version === 6 && !network.global) &&
-                    <ErrorIndicator msg={I18n.t("service.networkNotGlobal")}/>}
+                        <ErrorIndicator msg={I18n.t("service.networkNotGlobal")}/>}
                 </div>
             )}
         </div>);
@@ -431,7 +436,7 @@ class Service extends React.Component {
                     attribute: I18n.t("service.privacy_policy").toLowerCase()
                 })}/>}
                 {invalidInputs["privacy_policy"] &&
-                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
+                    <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
 
 
                 <InputField value={description}
@@ -453,7 +458,7 @@ class Service extends React.Component {
                             onBlur={this.validateURI("uri_info")}
                             disabled={!isAdmin && !isServiceAdmin}/>
                 {invalidInputs["uri_info"] &&
-                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
+                    <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
 
                 <InputField value={uri}
                             name={I18n.t("service.uri")}
@@ -467,7 +472,7 @@ class Service extends React.Component {
                             onBlur={this.validateURI("uri")}
                             disabled={!isAdmin && !isServiceAdmin}/>
                 {invalidInputs["uri"] &&
-                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
+                    <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
 
 
                 <CheckBox name="automatic_connection_allowed" value={automatic_connection_allowed}
@@ -506,7 +511,7 @@ class Service extends React.Component {
                             onBlur={this.validateURI("accepted_user_policy")}
                             disabled={!isAdmin && !isServiceAdmin}/>
                 {invalidInputs["accepted_user_policy"] &&
-                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
+                    <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
 
                 {this.renderIpNetworks(ip_networks, isAdmin, isServiceAdmin)}
                 <div className="contacts">
@@ -527,9 +532,9 @@ class Service extends React.Component {
                                 onBlur={this.validateEmail("email")}
                                 disabled={!isAdmin && !isServiceAdmin}/>
                     {invalidInputs["email"] &&
-                    <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
+                        <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
                     {(!initial && contactEmailRequired) &&
-                    <ErrorIndicator msg={I18n.t("service.contactEmailRequired")}/>}
+                        <ErrorIndicator msg={I18n.t("service.contactEmailRequired")}/>}
 
                     <InputField value={security_email}
                                 name={I18n.t("service.security_email")}
@@ -547,10 +552,10 @@ class Service extends React.Component {
                                 disabled={!isAdmin && !isServiceAdmin}/>
 
                     {invalidInputs["security_email"] &&
-                    <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
+                        <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
 
                     {(!initial && isEmpty(security_email)) &&
-                    <ErrorIndicator msg={I18n.t("service.securityEmailRequired")}/>}
+                        <ErrorIndicator msg={I18n.t("service.securityEmailRequired")}/>}
 
                     <InputField value={support_email}
                                 name={I18n.t("service.support_email")}
@@ -567,7 +572,7 @@ class Service extends React.Component {
                                 onBlur={this.validateEmail("support_email")}
                                 disabled={!isAdmin && !isServiceAdmin}/>
                     {invalidInputs["support_email"] &&
-                    <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
+                        <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
 
                 </div>
                 <div className="ldap">
@@ -599,9 +604,9 @@ class Service extends React.Component {
                                  tooltip={I18n.t("service.sirtfiCompliantTooltip")}
                                  onChange={val => this.setState({sirtfi_compliant: val})}/>
                     {(!initial && isEmpty(sirtfi_compliant)) &&
-                    <ErrorIndicator msg={I18n.t("service.required", {
-                        attribute: I18n.t("service.sirtfiCompliant").toLowerCase()
-                    })}/>}
+                        <ErrorIndicator msg={I18n.t("service.required", {
+                            attribute: I18n.t("service.sirtfiCompliant").toLowerCase()
+                        })}/>}
                     <RadioButton label={I18n.t("service.codeOfConductCompliant")}
                                  name={"code_of_conduct_compliant"}
                                  value={code_of_conduct_compliant}
@@ -609,9 +614,9 @@ class Service extends React.Component {
                                  tooltip={I18n.t("service.codeOfConductCompliantTooltip")}
                                  onChange={val => this.setState({code_of_conduct_compliant: val})}/>
                     {(!initial && isEmpty(code_of_conduct_compliant)) &&
-                    <ErrorIndicator msg={I18n.t("service.required", {
-                        attribute: I18n.t("service.codeOfConductCompliant").toLowerCase()
-                    })}/>}
+                        <ErrorIndicator msg={I18n.t("service.required", {
+                            attribute: I18n.t("service.codeOfConductCompliant").toLowerCase()
+                        })}/>}
 
                     <RadioButton label={I18n.t("service.researchScholarshipCompliant")}
                                  name={"research_scholarship_compliant"}
@@ -620,9 +625,9 @@ class Service extends React.Component {
                                  tooltip={I18n.t("service.researchScholarshipCompliantTooltip")}
                                  onChange={val => this.setState({research_scholarship_compliant: val})}/>
                     {(!initial && isEmpty(research_scholarship_compliant)) &&
-                    <ErrorIndicator msg={I18n.t("service.required", {
-                        attribute: I18n.t("service.researchScholarshipCompliant").toLowerCase()
-                    })}/>}
+                        <ErrorIndicator msg={I18n.t("service.required", {
+                            attribute: I18n.t("service.researchScholarshipCompliant").toLowerCase()
+                        })}/>}
 
                 </div>
                 <div className="tokens">
@@ -664,15 +669,15 @@ class Service extends React.Component {
 
                 </div>
                 {isNew &&
-                <div className="email-invitations">
-                    <h2 className="section-separator first last">{I18n.t("service.invitations")}</h2>
+                    <div className="email-invitations">
+                        <h2 className="section-separator first last">{I18n.t("service.invitations")}</h2>
 
-                    <EmailField addEmails={this.addEmails}
-                                removeMail={this.removeMail}
-                                name={I18n.t("invitation.invitees")}
-                                isAdmin={true}
-                                emails={administrators}/>
-                </div>}
+                        <EmailField addEmails={this.addEmails}
+                                    removeMail={this.removeMail}
+                                    name={I18n.t("invitation.invitees")}
+                                    isAdmin={true}
+                                    emails={administrators}/>
+                    </div>}
                 {isNew && <InputField value={message} onChange={e => this.setState({message: e.target.value})}
                                       placeholder={I18n.t("collaboration.messagePlaceholder")}
                                       name={I18n.t("collaboration.message")}
@@ -680,19 +685,19 @@ class Service extends React.Component {
                                       multiline={true}/>}
 
                 {(isNew && isAdmin) &&
-                <section className="actions">
-                    <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-                    <Button disabled={disabledSubmit} txt={I18n.t("service.add")}
-                            onClick={this.submit}/>
-                </section>}
+                    <section className="actions">
+                        <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+                        <Button disabled={disabledSubmit} txt={I18n.t("service.add")}
+                                onClick={this.submit}/>
+                    </section>}
                 {(!isNew && (isAdmin || isServiceAdmin)) &&
-                <section className="actions">
-                    {!isServiceAdmin && <Button warningButton={true}
-                                                onClick={this.delete}/>}
-                    <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-                    <Button disabled={disabledSubmit} txt={I18n.t("service.update")}
-                            onClick={this.submit}/>
-                </section>}
+                    <section className="actions">
+                        {!isServiceAdmin && <Button warningButton={true}
+                                                    onClick={this.delete}/>}
+                        <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+                        <Button disabled={disabledSubmit} txt={I18n.t("service.update")}
+                                onClick={this.submit}/>
+                    </section>}
 
             </div>);
     }
