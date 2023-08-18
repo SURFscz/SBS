@@ -306,7 +306,7 @@ const nl = {
                 check: "Ik ben bekend met de <a target=\"_blank\" href=\"{{aup}}\">AUP</a> van {{name}}"
             },
             statuses: {
-                active: "Active",
+                active: "Gekoppeld",
                 pending: "Aangevraagd",
             },
             missingServices: "<a href=\"mailto:sram-support@surf.nl\">Stuur ons een verzoek</a> als je denkt dat een specifieke dienst ontbreekt en moet worden vermeld."
