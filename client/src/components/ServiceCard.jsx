@@ -130,7 +130,7 @@ export default function ServiceCard({
                     </div>
                     <div className="sds--content-card--actions">
                         <div>
-                            {status && <Chip label={status} type={chipType || ChipType.Main_300}/>}
+                            {status && <Chip label={status} type={chipType || ChipType.Main_400}/>}
                             {ActionButton}
                         </div>
 
