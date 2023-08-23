@@ -430,13 +430,13 @@ const en = {
         },
         collaboration: {
             memberHeader: "{{nbrMember}} members - {{nbrGroups}} groups",
-            memberInformation: "If you have any questions about this Collaboration, please contact one of the admins:",
+            memberInformation: "If you have any questions about this collaboration, please contact one of the admins:",
             noAdminsHeader: "No admins (yet)",
             adminsHeader: "Organised by <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong></a>",
             twoAdminsHeader: "Organised by <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong> and <strong>{{nbr}} other</strong></a>",
             multipleAdminsHeader: "Organised by <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong> and <strong>{{nbr}} others</strong></a>",
             about: "What our collaboration is about",
-            services: "Where we collaborate ({{nbr}} services)",
+            services: "We collaborate in {{nbr}} services",
             noServicesYet: "Where we collaborate",
             noServices: "There are no services available in this collaboration",
             noServicesJoinRequest: "Services are only visible for members",
@@ -1061,7 +1061,7 @@ const en = {
         admins: "Administrative email address",
         adminContact: "Administrative contact",
         noSupport: "Service {{name}} does not provide support for end users.",
-        launch: "Launch"
+        launch: "Open"
     },
     organisation: {
         title: "Create new organisation",
@@ -1548,8 +1548,8 @@ const en = {
         service: {
             title: "Review the information in order to continue",
             info: "You are about to login to <strong>{{name}}</strong>. Before you can continue you must review the acceptable use policy (AUP) and privacy policy of the service. Confirm below whether you accept them.",
-            noPrivacyPolicy: "No additional privacy policy provided",
-            noAup: "No additional acceptable use policy provided",
+            noPrivacyPolicy: "No privacy policy provided!",
+            noAup: "No AUP provided",
             agreeWithTerms: "I hereby certify that I have read these terms and that I accept them",
             firstLogin: "Proceed to login and afterwards you'll return here to view the policies of {{name}}",
             login: "Login",
@@ -1567,7 +1567,7 @@ const en = {
             singleInfo: "A service used by this collaboration requires that you agree to their acceptable use policy.",
             multipleInfo: "Services used by this collaboration require that you agree to their acceptable use policies.",
             singleCheck: "I agree to the service's acceptable use policy",
-            multipleCheck: "I agree to the services acceptable use policies"
+            multipleCheck: "I agree to the services' acceptable use policies"
         }
     },
     collaborationRequest: {

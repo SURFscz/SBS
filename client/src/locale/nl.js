@@ -430,13 +430,13 @@ const nl = {
         },
         collaboration: {
             memberHeader: "{{nbrMember}} leden - {{nbrGroups}} groepen",
-            memberInformation: "Als je vragen hebt over deze samenwerking, neem dan contact op met één van de administrators:",
+            memberInformation: "Neem bij vragen over deze samenwerking contact op met een van de beheerders:",
             noAdminsHeader: "(Nog) geen beheerders",
             adminsHeader: "Georganiseerd door <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong></a>",
             twoAdminsHeader: "Georganiseerd door <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong> en <strong>{{nbr}} ander</strong></a>",
             multipleAdminsHeader: "Georganiseerd door <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong> en <strong>{{nbr}} anderen</strong></a>",
             about: "Over onze samenwerking",
-            services: "Waar we samenwerken ({{nbr}} diensten)",
+            services: "We werken samen in {{nbr}} diensten",
             noServicesYet: "Waar we samenwerken",
             noServices: "Er zijn nog geen diensten gekoppeld aan deze samenwerking",
             noServicesJoinRequest: "Diensten zijn alleen zichtbaar voor leden",
@@ -1061,7 +1061,7 @@ const nl = {
         admins: "Administratieve email-adressen",
         adminContact: "Administrative contact",
         noSupport: "Dienst {{name}} biedt geen support voor eindgebruikers.",
-        launch: "Launch"
+        launch: "Open"
     },
     organisation: {
         title: "Nieuwe organisatie toevoegen",
@@ -1548,8 +1548,8 @@ const nl = {
         service: {
             title: "Bekijk de informatie om verder te gaan",
             info: "Je staat op het punt om in te loggen op <strong>{{name}}</strong>. Voordat je verder kunt gaan, moet je het beleid voor acceptabel gebruik (AUP) en het privacyverklaring van de service lezen. Bevestig hieronder of je ze accepteert.",
-            noPrivacyPolicy: "Geen aanvullend privacyverklaring verstrekt",
-            noAup: "Geen aanvullend acceptable use policy verstrekt",
+            noPrivacyPolicy: "Geen privacyverklaring verstrekt!",
+            noAup: "Geen AUP verstrekt",
             agreeWithTerms: "Ik verklaar dat ik deze voorwaarden heb gelezen en accepteer",
             firstLogin: "Inloggen. Daarna kom je hier terug om de voorwaarden van {{name}} te bekijken.",
             login: "Inloggen",
