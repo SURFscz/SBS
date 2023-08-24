@@ -1,13 +1,11 @@
 import React from "react";
 import {
-    createService,
+    createService, createServiceRequest,
     deleteService,
     ipNetworks,
     serviceAbbreviationExists,
-    serviceById,
     serviceEntityIdExists,
-    serviceNameExists,
-    updateService
+    serviceNameExists
 } from "../api";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
 import I18n from "../locale/I18n";
@@ -29,7 +27,6 @@ import CroppedImageField from "../components/redesign/CroppedImageField";
 import SpinnerField from "../components/redesign/SpinnerField";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import EmailField from "../components/EmailField";
-import {isUserServiceAdmin} from "../utils/UserRole";
 
 class Service extends React.Component {
 
@@ -94,7 +91,8 @@ class Service extends React.Component {
             AppStore.update(s => {
                 s.breadcrumb.paths = [
                     {path: "/", value: I18n.t("breadcrumb.home")},
-                    {value: I18n.t("breadcrumb.service", {name: I18n.t("breadcrumb.newService")})}
+                    {value: I18n.t("breadcrumb.service",
+                            {name: I18n.t(`breadcrumb.${isServiceRequest ? "requestService":"newService"}`)})}
                 ];
             });
         }
@@ -309,10 +307,11 @@ class Service extends React.Component {
 
     serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
                         access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired,
-                        accepted_user_policy, uri_info, privacy_policy, isNew, service, disabledSubmit, allow_restricted_orgs, sirtfi_compliant, token_enabled, pam_web_sso_enabled,
+                        accepted_user_policy, uri_info, privacy_policy, service, disabledSubmit, allow_restricted_orgs, sirtfi_compliant, token_enabled, pam_web_sso_enabled,
                         token_validity_days, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, administrators, message, logo, isServiceAdmin) => {
         const ldapBindAccount = config.ldap_bind_account;
+        const {isServiceRequest} = this.props;
         return (
             <div className="service">
 
@@ -336,7 +335,7 @@ class Service extends React.Component {
                 })}/>}
 
                 <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
-                                   isNew={isNew} title={I18n.t("service.logo")}
+                                   isNew={true} title={I18n.t("service.logo")}
                                    value={logo}
                                    initial={initial} secondRow={true}/>
 
@@ -626,7 +625,7 @@ class Service extends React.Component {
                     />
 
                 </div>
-                {isNew &&
+                {!isServiceRequest &&
                     <div className="email-invitations">
                         <h2 className="section-separator first last">{I18n.t("service.invitations")}</h2>
 
@@ -636,27 +635,19 @@ class Service extends React.Component {
                                     isAdmin={true}
                                     emails={administrators}/>
                     </div>}
-                {isNew && <InputField value={message} onChange={e => this.setState({message: e.target.value})}
-                                      placeholder={I18n.t("collaboration.messagePlaceholder")}
-                                      name={I18n.t("collaboration.message")}
-                                      toolTip={I18n.t("collaboration.messageTooltip")}
-                                      multiline={true}/>}
+                {isServiceRequest && <InputField value={message}
+                                                 onChange={e => this.setState({message: e.target.value})}
+                                                 placeholder={I18n.t("collaboration.messagePlaceholder")}
+                                                 name={I18n.t("collaboration.message")}
+                                                 toolTip={I18n.t("collaboration.messageTooltip")}
+                                                 multiline={true}/>}
 
-                {(isNew && isAdmin) &&
-                    <section className="actions">
-                        <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-                        <Button disabled={disabledSubmit} txt={I18n.t("service.add")}
-                                onClick={this.submit}/>
-                    </section>}
-                {(!isNew && (isAdmin || isServiceAdmin)) &&
-                    <section className="actions">
-                        {!isServiceAdmin && <Button warningButton={true}
-                                                    onClick={this.delete}/>}
-                        <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-                        <Button disabled={disabledSubmit} txt={I18n.t("service.update")}
-                                onClick={this.submit}/>
-                    </section>}
 
+                <section className="actions">
+                    <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+                    <Button disabled={disabledSubmit} txt={I18n.t("service.add")}
+                            onClick={this.submit}/>
+                </section>
             </div>);
     }
 
@@ -679,7 +670,6 @@ class Service extends React.Component {
             contact_email, support_email, security_email,
             confirmationDialogAction,
             leavePage,
-            isNew,
             invalidInputs,
             automatic_connection_allowed,
             access_allowed_for_all,
@@ -700,22 +690,21 @@ class Service extends React.Component {
             loading,
             hasAdministrators
         } = this.state;
+        const {isServiceRequest} = this.props;
         if (loading) {
             return <SpinnerField/>
         }
         const disabledSubmit = !initial && !this.isValid();
         const {user, config} = this.props;
         const isAdmin = user.admin;
-        const title = isAdmin ? (isNew ? I18n.t("service.titleNew") : I18n.t("service.titleUpdate", {name: service.name}))
-            : I18n.t("service.titleReadOnly", {name: service.name});
+        const title = isServiceRequest ? I18n.t("service.titleRequest") : I18n.t("service.titleNew");
         const contactEmailRequired = !hasAdministrators && isEmpty(contact_email);
         return (
             <>
-                {isNew && <UnitHeader obj={({name: I18n.t("models.services.new"), svg: ServicesIcon})}/>}
-                {!isNew && <UnitHeader obj={service}
-                                       name={service.name}
-                                       history={user.admin && this.props.history}
-                                       mayEdit={false}/>}
+                <UnitHeader obj={({
+                    name: I18n.t(`models.services.${isServiceRequest ? "request" : "new"}`),
+                    svg: ServicesIcon
+                })}/>
                 <div className="mod-service">
                     <ConfirmationDialog isOpen={confirmationDialogOpen}
                                         cancel={cancelDialogAction}
@@ -726,7 +715,7 @@ class Service extends React.Component {
 
                     {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
                         access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, uri_info, privacy_policy,
-                        isNew, service, disabledSubmit, allow_restricted_orgs, sirtfi_compliant, token_enabled, pam_web_sso_enabled, token_validity_days, code_of_conduct_compliant,
+                        service, disabledSubmit, allow_restricted_orgs, sirtfi_compliant, token_enabled, pam_web_sso_enabled, token_validity_days, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, administrators, message, logo, isServiceAdmin)}
                 </div>
             </>);
