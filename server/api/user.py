@@ -284,10 +284,16 @@ def resume_session():
     uid = user_info_json["sub"]
     user = User.query.filter(User.uid == uid).first()
 
+    encoded_id_token = token_json["id_token"]
+    id_token = decode_jwt_token(encoded_id_token)
+
     if not user:
         # Ensure we don't provision users who have not the mandatory attributes
         if not valid_user_attributes(user_info_json):
-            return redirect(f"{cfg.base_url}/missing-attributes")
+            args = urllib.parse.urlencode({"aud": id_token.get("aud", ""),
+                                           "iss": id_token.get("iss", ""),
+                                           "sub": id_token.get("sub", "")})
+            return redirect(f"{cfg.base_url}/missing-attributes?{args}")
 
         user = User(uid=uid, external_id=str(uuid.uuid4()), created_by="system", updated_by="system")
         add_user_claims(user_info_json, uid, user)
@@ -298,9 +304,6 @@ def resume_session():
     else:
         logger.info(f"Updating user {user.uid} with new claims / updated at")
         add_user_claims(user_info_json, uid, user)
-
-    encoded_id_token = token_json["id_token"]
-    id_token = decode_jwt_token(encoded_id_token)
 
     idp_mfa = id_token.get("acr") == ACR_VALUES
     if idp_mfa:

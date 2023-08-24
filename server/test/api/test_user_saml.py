@@ -390,4 +390,4 @@ class TestUserSaml(AbstractTest):
         status_ = res["status"]
         self.assertEqual("interrupt", status_["result"], )
         self.assertEqual(MISSING_ATTRIBUTES, status_["error_status"], MISSING_ATTRIBUTES)
-        self.assertEqual(status_["redirect_url"], f"{self.app.app_config.base_url}/missing-attributes")
+        self.assertTrue(f"{self.app.app_config.base_url}/missing-attributes" in status_["redirect_url"])
