@@ -262,7 +262,7 @@ export function createService(service) {
 }
 
 export function updateService(service) {
-    //We need to limit the size so we delete the relations-ships that are not used server-side
+    //We need to limit the size soo we delete the relations-ships that are not used server-side
     ["service_groups", "automatic_connection_allowed_organisations", "organisations", "allowed_organisations",
         "collaborations", "service_invitations", "service_memberships", "service_organisation_collaborations"]
         .forEach(relation => delete service[relation])
@@ -316,6 +316,11 @@ export function resetLdapPassword(service) {
 
 export function hasMemberAccessToService(service) {
     return fetchJson(`/api/services/member_access_to_service/${service.id}`);
+}
+//ServiceRequest
+export function createServiceRequest(serviceRequest) {
+        return postPutJson("/api/service_requests", serviceRequest, "post", false);
+
 }
 
 //Collaborations

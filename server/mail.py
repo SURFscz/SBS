@@ -21,7 +21,7 @@ from server.mail_types.mail_types import COLLABORATION_REQUEST_MAIL, \
     RESET_MFA_TOKEN_MAIL, COLLABORATION_EXPIRES_WARNING_MAIL, \
     COLLABORATION_EXPIRED_NOTIFICATION_MAIL, COLLABORATION_SUSPENDED_NOTIFICATION_MAIL, \
     COLLABORATION_SUSPENSION_WARNING_MAIL, MEMBERSHIP_EXPIRED_NOTIFICATION_MAIL, MEMBERSHIP_EXPIRES_WARNING_MAIL, \
-    SERVICE_INVITATION_MAIL
+    SERVICE_INVITATION_MAIL, ACCEPTED_SERVICE_REQUEST_MAIL, DENIED_SERVICE_REQUEST_MAIL
 
 
 def _send_async_email(ctx, msg, mail):
@@ -262,6 +262,20 @@ def mail_accepted_declined_collaboration_request(context, collaboration_name, or
     )
 
 
+def mail_accepted_declined_service_request(context, service_request_name, accepted, recipients):
+    _store_mail(context["user"],
+                ACCEPTED_SERVICE_REQUEST_MAIL if accepted else DENIED_SERVICE_REQUEST_MAIL,
+                recipients)
+    part = "accepted" if accepted else "declined"
+    return _do_send_mail(
+        subject=f"Service request for service {service_request_name} has been {part}",
+        recipients=recipients,
+        template=f"service_request_{part}",
+        context={**context},
+        preview=False
+    )
+
+
 def mail_service_connection_request(context, service_name, collaboration_name, recipients):
     _store_mail(context["user"], SERVICE_CONNECTION_REQUEST_MAIL, recipients)
     return _do_send_mail(
@@ -326,6 +340,17 @@ def mail_feedback(environment, message, current_user, recipients):
         context={"environment": environment, "message": message, "date": datetime.datetime.now(),
                  "current_user": current_user},
         preview=False)
+
+
+def mail_service_request(service_request, context):
+    mail_cfg = current_app.app_config.mail
+    return _do_send_mail(
+        subject=f"Request for new service {service_request.name}",
+        recipients=[mail_cfg.beheer_email],
+        template="service_request",
+        context={context},
+        preview=False
+    )
 
 
 def mail_platform_admins(obj):

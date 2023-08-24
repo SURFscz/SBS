@@ -20,6 +20,10 @@ DENIED_COLLABORATION_REQUEST_MAIL = "denied_collaboration_request_mail"
 
 ACCEPTED_COLLABORATION_REQUEST_MAIL = "accepted_collaboration_request_mail"
 
+DENIED_SERVICE_REQUEST_MAIL = "denied_service_request_mail"
+
+ACCEPTED_SERVICE_REQUEST_MAIL = "accepted_service_request_mail"
+
 SERVICE_CONNECTION_REQUEST_MAIL = "service_connection_request_mail"
 
 DENIED_SERVICE_CONNECTTION_REQUEST_MAIL = "denied_service_connecttion_request_mail"
