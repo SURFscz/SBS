@@ -17,6 +17,7 @@ from server.db.defaults import STATUS_ACTIVE, PROXY_AUTHZ, PROXY_AUTHZ_SBS
 from server.db.domain import User, Service
 from server.db.models import log_user_login
 from server.logger.context_logger import ctx_logger
+import urllib.parse
 
 user_saml_api = Blueprint("user_saml_api", __name__, url_prefix="/api/users")
 
@@ -251,10 +252,13 @@ def proxy_authz():
     # itself before)
     # but users who are not provisioned at all are caught below (with an AUP_NOT_AGREED interrupt)
     if user is not None and not valid_user_attributes({"sub": user.uid, "name": user.name, "email": user.email}):
+        args = urllib.parse.urlencode({"aud": service_entity_id,
+                                       "iss": issuer_id,
+                                       "sub": user.uid})
         return {
             "status": {
                 "result": "interrupt",
-                "redirect_url": f"{current_app.app_config.base_url}/missing-attributes",
+                "redirect_url": f"{current_app.app_config.base_url}/missing-attributes?{args}",
                 "error_status": MISSING_ATTRIBUTES
             }
         }, 200

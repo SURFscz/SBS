@@ -554,7 +554,7 @@ class TestUser(AbstractTest):
             mail = self.app.mail
             with mail.record_messages() as outbox:
                 res = self.login("uid:new", user_info={"sub": "subby"}, add_default_attributes=False)
-                self.assertEqual("http://localhost:3000/missing-attributes", res.headers.get('Location'))
+                self.assertTrue("http://localhost:3000/missing-attributes" in res.headers.get('Location'))
                 self.assertEqual(1, len(outbox))
                 mail_msg = outbox[0]
                 self.assertListEqual(["sram-support@surf.nl"], mail_msg.recipients)
@@ -570,7 +570,7 @@ class TestUser(AbstractTest):
             with mail.record_messages() as outbox:
                 res = self.login("uid:new", user_info={"sub": "subby", "name": "jdoe"},
                                  add_default_attributes=False)
-                self.assertEqual("http://localhost:3000/missing-attributes", res.headers.get('Location'))
+                self.assertTrue("http://localhost:3000/missing-attributes" in res.headers.get('Location'))
                 self.assertEqual(1, len(outbox))
                 mail_msg = outbox[0]
                 self.assertListEqual(["sram-support@surf.nl"], mail_msg.recipients)

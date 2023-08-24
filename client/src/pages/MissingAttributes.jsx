@@ -1,10 +1,21 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import "./MissingAttributes.scss";
 import I18n from "../locale/I18n";
 import DOMPurify from "dompurify";
 import noAccess from "../undraw/undraw_access_denied_re_awnf.svg";
 
 export default function MissingAttributes() {
+
+    const [entityId, setEntityId] = useState("");
+    const [issuerId, setIssuerId] = useState("");
+    const [userId, setUserId] = useState("");
+
+    useEffect(() => {
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        setEntityId(urlSearchParams.get("aud"));
+        setIssuerId(urlSearchParams.get("iss"));
+        setUserId(urlSearchParams.get("sub"));
+    }, [])
 
     return (
         <div className="mod-missing-attributes">
@@ -16,6 +27,19 @@ export default function MissingAttributes() {
                          alt="No Access"/>
                 </div>
                 <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("missingAttributes.contact"))}}/>
+                {(entityId || issuerId || userId) &&
+                    <div className={"ticket"}>
+                        <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("sfo.ticket"))}}/>
+                        {entityId && <span>{I18n.t("sfo.entityId")}</span>}
+                        {entityId && <span className={"value"}>{entityId}</span>}
+                        {issuerId && <span>{I18n.t("sfo.issuerId")}</span>}
+                        {issuerId && <span className={"value"}>{issuerId}</span>}
+                        {userId && <span>{I18n.t("sfo.userId")}</span>}
+                        {userId && <span className={"value"}>{userId}</span>}
+                        <span>{I18n.t("sfo.timestamp")}</span>
+                        <span className={"value"}>{new Date().toUTCString()}</span>
+                    </div>}
+
             </div>
         </div>
     );
