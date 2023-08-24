@@ -154,7 +154,7 @@ class OrganisationDetail extends React.Component {
             this.getCollaborationsTab(organisation),
             this.getCollaborationRequestsTab(organisation),
             this.getOrganisationAdminsTab(organisation, user),
-            this.getServicesTab(organisation),
+            user.admin ? this.getServicesTab(organisation) : null,
             config.api_keys_enabled ? this.getAPIKeysTab(organisation, user) : null,
             this.getUsersTab(organisation)
         ];
