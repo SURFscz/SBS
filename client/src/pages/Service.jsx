@@ -64,6 +64,7 @@ class Service extends React.Component {
         contact_email: "",
         support_email: "",
         security_email: "",
+        motivation: "",
         ip_networks: [],
         administrators: [],
         message: "",
@@ -71,7 +72,6 @@ class Service extends React.Component {
             "research_scholarship_compliant", "code_of_conduct_compliant", "sirtfi_compliant"],
         alreadyExists: {},
         initial: true,
-        isNew: true,
         invalidInputs: {},
         confirmationDialogOpen: false,
         leavePage: false,
@@ -83,78 +83,35 @@ class Service extends React.Component {
         hasAdministrators: false
     });
 
-    UNSAFE_componentWillReceiveProps = nextProps => {
-        if (nextProps.isNew) {
-            this.setState(this.initialState(), () => this.componentDidMount(true))
-        }
-    };
-
-    componentDidMount = forceNew => {
-        const params = this.props.match.params;
-        const {isNew} = this.props;
-        if (params.id || isNew) {
-            if (isNew || forceNew) {
-                const {user} = this.props;
-                if (!user.admin) {
-                    this.props.history.push("/404");
-                } else {
-                    this.addIpAddress();
-                    this.setState({loading: false});
-                    AppStore.update(s => {
-                        s.breadcrumb.paths = [
-                            {path: "/", value: I18n.t("breadcrumb.home")},
-                            {value: I18n.t("breadcrumb.service", {name: I18n.t("breadcrumb.newService")})}
-                        ];
-                    });
-                }
-            } else {
-                serviceById(params.id)
-                    .then(res => {
-                        const {user} = this.props;
-                        this.setState({
-                            ...res,
-                            service: res,
-                            isNew: false,
-                            hasAdministrators: res.service_memberships.length > 0,
-                            isServiceAdmin: isUserServiceAdmin(user, res),
-                            loading: false
-                        }, () => {
-                            const {ip_networks} = this.state.service;
-                            if (isEmpty(ip_networks)) {
-                                this.addIpAddress();
-                            } else {
-                                Promise.all(ip_networks.map(n => ipNetworks(n.network_value, n.id)))
-                                    .then(res => {
-                                        this.setState({"ip_networks": res});
-                                    });
-                            }
-                        });
-                        AppStore.update(s => {
-                            s.breadcrumb.paths = [
-                                {path: "/", value: I18n.t("breadcrumb.home")},
-                                {path: `/services/${res.id}`, value: I18n.t("breadcrumb.service", {name: res.name})},
-                                {value: I18n.t("home.edit")}
-                            ];
-                        });
-                    });
-            }
-        } else {
+    componentDidMount = () => {
+        const {isServiceRequest} = this.props;
+        const {user} = this.props;
+        if (!isServiceRequest && !user.admin) {
             this.props.history.push("/404");
+        } else {
+            this.addIpAddress();
+            this.setState({loading: false});
+            AppStore.update(s => {
+                s.breadcrumb.paths = [
+                    {path: "/", value: I18n.t("breadcrumb.home")},
+                    {value: I18n.t("breadcrumb.service", {name: I18n.t("breadcrumb.newService")})}
+                ];
+            });
         }
     };
 
     validateServiceName = e =>
-        serviceNameExists(e.target.value, this.state.isNew ? null : this.state.service.name).then(json => {
+        serviceNameExists(e.target.value, null).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
         });
 
     validateServiceEntityId = e =>
-        serviceEntityIdExists(e.target.value, this.state.isNew ? null : this.state.service.entity_id).then(json => {
+        serviceEntityIdExists(e.target.value, null).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, entity_id: json}});
         });
 
     validateServiceAbbreviation = e =>
-        serviceAbbreviationExists(sanitizeShortName(e.target.value), this.state.isNew ? null : this.state.service.abbreviation).then(json => {
+        serviceAbbreviationExists(sanitizeShortName(e.target.value), null).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, abbreviation: json}});
         });
 
@@ -262,7 +219,8 @@ class Service extends React.Component {
     doSubmit = () => {
         if (this.isValid()) {
             this.setState({loading: true});
-            const {name, isNew, ip_networks} = this.state;
+            const {name, ip_networks} = this.state;
+            const {isServiceRequest} = this.props;
             const strippedIpNetworks = ip_networks
                 .filter(network => network.network_value && network.network_value.trim())
                 .map(network => ({network_value: network.network_value, id: network.id}));
@@ -275,13 +233,13 @@ class Service extends React.Component {
                 }
             });
             this.setState({ip_networks: strippedIpNetworks}, () => {
-                if (isNew) {
+                if (isServiceRequest) {
                     createService(this.state)
-                        .then(res => this.afterUpdate(name, "created", res))
+                        .then(res => this.afterUpdate(name, res, isServiceRequest))
                         .catch(() => this.setState({loading: false}));
                 } else {
-                    updateService(this.state)
-                        .then(res => this.afterUpdate(name, "updated", res))
+                    createServiceRequest(this.state)
+                        .then(res => this.afterUpdate(name, res, isServiceRequest))
                         .catch(() => this.setState({loading: false}));
                 }
             });
