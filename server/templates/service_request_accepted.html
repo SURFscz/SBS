@@ -2,26 +2,33 @@
 {% block title %}SURF new service request accepted{% endblock %}
 {% block content %}
 
-<div class="mail-head" style="background-color: #f5f5f5;padding: 30px 0 20px 60px;">
-    <p class="title" style="font-weight: 600;font-size: 38px;line-height: 38px; margin: 0;">
-        Accepted service request
-    </p>
-    <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
-        Your request for service {{ service.name }} is accepted.</p>
-    <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
-        Click the button below to view this service.</p>
-    <a class="button" href="{{ base_url }}/services/{{ service.id }}"
-       style="border-radius: 4px;color: white;background-color: #0077c8;text-decoration: none;display: inline-block;margin: 15px 0;cursor:pointer;padding: 14px 26px;font-size: 18px;">
-        Login</a>
-</div>
-<div class="mail-end" style="padding: 30px 0 0 60px;">
-    <p>{{ salutation }},</p>
-    <p>Your request to create service
-        <a href="" style="color:#0088CC;">
-            {{ service.name }}</a> has been accepted by the
-        administrator of the SRAM platform.</p>
-
-</div>
+    <div class="mail-head" style="background-color: #f5f5f5;padding: 30px 0 20px 60px;">
+        <p class="title" style="font-weight: 600;font-size: 38px;line-height: 38px; margin: 0;">
+            Approved service request
+        </p>
+        <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
+            Your request for service {{ service.name }} is approved.</p>
+        <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
+            Click the button below to view this service.</p>
+        <a class="button" href="{{ base_url }}/services/{{ service.id }}"
+           style="border-radius: 4px;color: white;background-color: #0077c8;text-decoration: none;display: inline-block;margin: 15px 0;cursor:pointer;padding: 14px 26px;font-size: 18px;">
+            Manage my service</a>
+    </div>
+    <div class="mail-end" style="padding: 30px 0 0 60px;">
+        <p>{{ salutation }},</p>
+        <p>Your request to create service
+            <a href="" style="color:#0088CC;">
+                {{ service.name }}</a> was approved, you are invited as service admin in SURF Research Access
+            Management.</p>
+        <p>You can now:</p>
+        <ul>
+            <li>Select from which organisation collaborations can connect to your service</li>
+            <li>Try to login to your service, if you use SAML or OIDC (requires membership of a collaboration)</li>
+            <li>Connect the service via LDAP, SCIM, PAM web login or a user token</li>
+            <li>Invite additional service admins</li>
+            <li>Create service groups, that will be provisioned to connected collaborations</li>
+        </ul>
+    </div>
 
 {% endblock %}
 
