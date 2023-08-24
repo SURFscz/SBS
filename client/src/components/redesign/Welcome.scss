@@ -5,7 +5,7 @@
     @include mde-preview;
 
     max-width: 768px;
-    margin: 0 auto;
+    margin: 0 auto 30px auto;
     width: 100%;
 
     @media (max-width: $compact-medium) {
@@ -17,55 +17,21 @@
             margin: 25px 0;
         }
 
-        div.institution {
-            display: flex;
-            align-items: center;
-            background-color: $information-blue;
-            padding: 15px;
-            margin-top: 20px;
-            border-radius: $br;
-
-            &.warning {
-                background-color: $warning-red;
-            }
-
-            svg {
-                margin-right: 20px;
-            }
-        }
-
-        h3.step {
-            font-size: 20px;
-            margin-bottom: 15px;
-
-            &.orphan {
-                margin-top: 20px;
-            }
-
-            span:first-child {
-                display: inline-block;
-                margin-right: 8px;
-                font-weight: bold;
-            }
-        }
-
-        div.welcome-unknown {
-            margin-bottom: 25px;
-            p {
-                margin-bottom: 15px;
-            }
-        }
-
-        div.instructions {
-            margin-bottom: 25px;
-            padding: 15px;
-            border-radius: $br;
-            background-color: #fdfdfd;
-            border: 1px solid $lighter-grey;
+        h2 {
+            margin-top: 25px;
         }
 
         button {
             margin: 25px 0 50px 0;
         }
     }
+
+    div.instructions {
+        margin-bottom: 25px;
+        padding: 15px;
+        border-radius: $br;
+        background-color: #fdfdfd;
+        border: 1px solid $lighter-grey;
+    }
+
 }
