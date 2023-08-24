@@ -19,7 +19,6 @@ import SpinnerField from "./SpinnerField";
 import ConfirmationDialog from "../ConfirmationDialog";
 import Logo from "./Logo";
 import CheckBox from "../CheckBox";
-import MissingServices from "../MissingServices";
 import moment from "moment";
 import {socket, subscriptionIdCookieName} from "../../utils/SocketIO";
 import ServiceCard from "../ServiceCard";
@@ -490,7 +489,6 @@ class UsedServices extends React.Component {
                     </div>
 
                 </div>
-                <MissingServices nbrServices={usedServices.length + services.length}/>
             </>
         )
     }
