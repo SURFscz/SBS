@@ -3,7 +3,6 @@ import "./Welcome.scss";
 import I18n from "../../locale/I18n";
 import {identityProviderDisplayName, organisationsByUserSchacHomeOrganisation} from "../../api";
 import {getSchacHomeOrg, isEmpty} from "../../utils/Utils";
-import {ReactComponent as InformationIcon} from "../../icons/informational.svg";
 import SpinnerField from "./SpinnerField";
 import "react-mde/lib/styles/css/react-mde-all.css";
 import Button from "../Button";
@@ -46,53 +45,41 @@ class Welcome extends React.Component {
             });
     }
 
-    knownOrganisation = organisation => {
+    knownOrganisation = (idpDisplayName, organisation) => {
         const hasOnBoardingMsg = !isEmpty(organisation.on_boarding_msg);
         const canCreate = organisation.collaboration_creation_allowed_entitlement || organisation.collaboration_creation_allowed;
-        const hasOrgMembers = organisation.has_members;
         return (
             <div>
-                {hasOrgMembers && <div>
-                    <h3 className={`step ${hasOnBoardingMsg ? "" : "orphan"}`}>
-                        {I18n.t(`welcome.${canCreate ? "createColl" : "createCollRequest"}`, {name: organisation.name})}
-                    </h3>
-                    <p>
-                        {I18n.t(`welcome.${canCreate ? "startCreateColl" : "startCreateCollRequest"}`, {name: organisation.name})}
-                    </p>
-                </div>}
-                {hasOnBoardingMsg && <div>
-                    <h1>{I18n.t("welcome.whatYouCanDo")}</h1>
-                    <h3 className="step">
-                        <span dangerouslySetInnerHTML={{
+                <h2>{I18n.t("welcome.creating")}</h2>
+                <p dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(I18n.t(`welcome.${canCreate ? "startCreateColl" : "startRequestColl"}`,
+                        {name: idpDisplayName}))
+                }}/>
+                {hasOnBoardingMsg &&
+                    <div>
+                        <h2 dangerouslySetInnerHTML={{
                             __html: DOMPurify.sanitize(I18n.t("welcome.instructions", {name: organisation.name}))
                         }}/>
-                    </h3>
-                    <div className="instructions mde-preview">
-                        <div className="mde-preview-content">
-                            <p dangerouslySetInnerHTML={{
-                                __html: DOMPurify.sanitize(convertToHtml(organisation.on_boarding_msg))
-                            }}/>
+                        <div className="instructions mde-preview">
+                            <div className="mde-preview-content">
+                                <p dangerouslySetInnerHTML={{
+                                    __html: DOMPurify.sanitize(convertToHtml(organisation.on_boarding_msg))
+                                }}/>
+                            </div>
                         </div>
-                    </div>
-                </div>}
-                {hasOrgMembers && <div>
-                    <Button onClick={() => this.props.history.push("/new-collaboration")}
-                            txt={I18n.t(`welcome.${canCreate ? "createCollTxt" : "createCollRequestTxt"}`)}/>
-                </div>}
+                    </div>}
+                <Button onClick={() => this.props.history.push("/new-collaboration")}
+                        txt={I18n.t(`welcome.${canCreate ? "createCollTxt" : "createCollRequestTxt"}`)}/>
+
             </div>
         );
     }
 
-    unknownOrganisation = () => {
+    unknownOrganisation = idpDisplayName => {
         return (
             <div>
-                <h3 className="step">
-                    <span>{I18n.t("welcome.contact")}</span>
-                </h3>
-                <div className="welcome-unknown">
-                    <p>{I18n.t("welcome.noMember")}</p>
-                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcome.contactInfo"))}}/>
-                </div>
+                <h2>{I18n.t("welcome.creating")}</h2>
+                <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcome.institutionCollNotAllowed", {name: idpDisplayName}))}}/>
             </div>
         );
     }
@@ -110,14 +97,12 @@ class Welcome extends React.Component {
             <>
                 <div className="mod-welcome-container">
                     <div className="mod-welcome">
-                        <h1>{I18n.t("welcome.title", {name: user.given_name || user.name || I18n.t("welcome.mysterious")})}</h1>
-                        <p>{I18n.t("welcome.subTitle")}</p>
-                        <div className="institution">
-                            <InformationIcon/>
-                            <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcome.institution", {name: idpDisplayName}))}}/>
-                        </div>
-                        {orphanUser && this.unknownOrganisation()}
-                        {!orphanUser && this.knownOrganisation(organisation)}
+                        <h1 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcome.title", {name: user.given_name || user.name || I18n.t("welcome.mysterious")}))}}/>
+                        <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcome.subTitle"))}}/>
+                        <h2>{I18n.t("welcome.joining")}</h2>
+                        <p>{I18n.t("welcome.invited")}</p>
+                        {orphanUser && this.unknownOrganisation(idpDisplayName)}
+                        {!orphanUser && this.knownOrganisation(idpDisplayName, organisation)}
                     </div>
                 </div>
                 <LandingInfo/>
