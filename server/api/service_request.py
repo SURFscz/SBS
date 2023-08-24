@@ -9,7 +9,7 @@ from werkzeug.exceptions import BadRequest
 from server.api.base import json_endpoint, STATUS_OPEN, STATUS_APPROVED, STATUS_DENIED, emit_socket
 from server.api.service import URI_ATTRIBUTES
 from server.auth.security import current_user_id, current_user_name, \
-    confirm_organisation_admin_or_manager, confirm_write_access
+    confirm_write_access
 from server.db.defaults import cleanse_short_name, STATUS_ACTIVE, valid_uri_attributes
 from server.db.domain import User, Service, ServiceMembership, db, \
     ServiceRequest
@@ -51,7 +51,7 @@ def request_service():
     service_request = res[0]
 
     emit_socket("service_request")
-    context = {"salutation": f"Dear platform admin,",
+    context = {"salutation": "Dear platform admin,",
                "base_url": current_app.app_config.base_url,
                "service_request": service_request,
                "user": user}
@@ -64,12 +64,11 @@ def request_service():
 @json_endpoint
 def delete_request_service(service_request_id):
     service_request = db.session.get(ServiceRequest, service_request_id)
-    confirm_organisation_admin_or_manager(service_request.organisation_id)
+    confirm_write_access()
     if service_request.status == STATUS_OPEN:
         raise BadRequest("Service request with status 'open' can not be deleted")
 
-    organisation = service_request.organisation
-    emit_socket(f"organisation_{organisation.id}", include_current_user_id=True)
+    emit_socket("service_request")
 
     return delete(ServiceRequest, service_request_id)
 
@@ -78,7 +77,7 @@ def delete_request_service(service_request_id):
 @json_endpoint
 def approve_request(service_request_id):
     service_request = db.session.get(ServiceRequest, service_request_id)
-    confirm_organisation_admin_or_manager(service_request.organisation_id)
+    confirm_write_access()
     client_data = current_request.get_json()
     attributes = ["name", "short_name", "description", "organisation_id", "accepted_user_policy", "logo",
                   "website_url", "logo"]
@@ -93,9 +92,6 @@ def approve_request(service_request_id):
         groups = re.search(r".*api/images/(.*)/(.*)", logo).groups()
         data["logo"] = logo_from_cache(groups[0], groups[1])
 
-    assign_global_urn_to_service(service_request.organisation, data)
-
-    data["status"] = STATUS_ACTIVE
     res = save(Service, custom_json=data)
     service = res[0]
 
@@ -103,26 +99,23 @@ def approve_request(service_request_id):
     admin_service_membership = ServiceMembership(role="admin", user_id=user.id,
                                                  service_id=service.id,
                                                  created_by=user.uid, updated_by=user.uid)
-    service_id = service.id
     db.session.merge(admin_service_membership)
     db.session.commit()
 
-    broadcast_service_changed(service_id)
-
-    mail_accepted_declined_service_request({"salutation": f"Dear {user.name}",
-                                            "base_url": current_app.app_config.base_url,
-                                            "administrator": current_user_name(),
-                                            "service": service,
-                                            "organisation": service_request.organisation,
-                                            "user": user},
+    context = {"salutation": f"Dear {user.name}",
+               "base_url": current_app.app_config.base_url,
+               "administrator": current_user_name(),
+               "service": service,
+               "organisation": service_request.organisation,
+               "user": user}
+    mail_accepted_declined_service_request(context,
                                            service.name,
-                                           service_request.organisation,
                                            True,
                                            [user.email])
     service_request.status = STATUS_APPROVED
     db.session.merge(service_request)
 
-    emit_socket(f"organisation_{service_id}", include_current_user_id=True)
+    emit_socket("service_request")
 
     return res
 
@@ -131,28 +124,26 @@ def approve_request(service_request_id):
 @json_endpoint
 def deny_request(service_request_id):
     service_request = db.session.get(ServiceRequest, service_request_id)
-    confirm_organisation_admin_or_manager(service_request.organisation_id)
+    confirm_write_access()
 
     rejection_reason = current_request.get_json()["rejection_reason"]
 
     user = service_request.requester
-    mail_accepted_declined_service_request({"salutation": f"Dear {user.name}",
-                                            "base_url": current_app.app_config.base_url,
-                                            "administrator": current_user_name(),
-                                            "rejection_reason": rejection_reason,
-                                            "service": {"name": service_request.name},
-                                            "organisation": service_request.organisation,
-                                            "user": user},
+    context = {"salutation": f"Dear {user.name}",
+               "base_url": current_app.app_config.base_url,
+               "administrator": current_user_name(),
+               "rejection_reason": rejection_reason,
+               "service": {"name": service_request.name},
+               "organisation": service_request.organisation,
+               "user": user}
+    mail_accepted_declined_service_request(context,
                                            service_request.name,
-                                           service_request.organisation,
                                            False,
                                            [user.email])
     service_request.status = STATUS_DENIED
     service_request.rejection_reason = rejection_reason
     db.session.merge(service_request)
 
-    organisation = service_request.organisation
-
-    emit_socket(f"organisation_{organisation.id}", include_current_user_id=True)
+    emit_socket("service_request", include_current_user_id=True)
 
     return None, 201

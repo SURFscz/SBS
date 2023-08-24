@@ -526,6 +526,7 @@ class ServiceRequest(Base, db.Model, LogoMixin):
     research_scholarship_compliant = db.Column("research_scholarship_compliant", db.Boolean(),
                                                nullable=True,
                                                default=False)
+    status = db.Column("status", db.String(length=255), nullable=False)
     comments = db.Column("comments", db.Text(), nullable=True)
     connection_type = db.Column("connection_type", db.String(length=255), nullable=True)
     redirect_urls = db.Column("redirect_urls", db.Text(), nullable=True)
