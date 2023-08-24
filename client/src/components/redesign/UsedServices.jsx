@@ -127,7 +127,7 @@ class UsedServices extends React.Component {
         const {collaboration} = this.props;
         if (service.usedService && !service.connectionRequest &&
             collaboration.organisation.services.some(s => s.id === service.id)) {
-            service.status = I18n.t("models.services.requiredByOrganisation");
+            service.status = "";
         } else if (service.connectionRequest) {
             service.status = I18n.t("models.serviceConnectionRequests.details",
                 {
