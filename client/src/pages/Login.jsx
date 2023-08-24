@@ -18,6 +18,7 @@ class Login extends React.Component {
             confirmationDialogOpen: false,
             confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationQuestion: "",
+            spin: false
         };
     }
 
@@ -28,8 +29,13 @@ class Login extends React.Component {
         }
     });
 
-    render() {
-        const {confirmationDialogOpen, confirmationDialogAction, confirmationQuestion} = this.state;
+toggleSpin = () => {
+        this.setState({spin: true})
+        setTimeout(() => this.setState({spin: false}), 725);
+    }
+
+render() {
+        const {confirmationDialogOpen, confirmationDialogAction, confirmationQuestion, spin} = this.state;
         const {user} = this.props;
         return (
             <div className="top-container">
@@ -48,7 +54,7 @@ class Login extends React.Component {
                                dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("landing.header.sup"))}}/>
                         </div>
                         <div className="header-right">
-                            <img src={HappyLogo} alt="logo"/>
+                            <img className={spin ? "spin" : ""} onClick={() => this.toggleSpin()} src={HappyLogo} alt="logo"/>
                         </div>
                     </div>
                 </div>

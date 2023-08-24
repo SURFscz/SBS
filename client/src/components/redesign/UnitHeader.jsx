@@ -72,7 +72,7 @@ class UnitHeader extends React.Component {
                             </div>
                             {!isEmpty(labels) &&
                                 <div className="labels">
-                                    {labels.map(label => <span><Chip label={label}/></span>)}
+                                    {labels.map((label, index) => <span key={index}><Chip label={label}/></span>)}
 
                                 </div>}
                         </div>

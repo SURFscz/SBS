@@ -167,7 +167,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     jane = User(uid="urn:jane", name=jane_name, email="jane@ucc.org", username="jane",
                 entitlement="urn:mace:surf.nl:sram:allow-create-co", external_id="502e861e-f548-4335-89d8-f1764f803964")
     paul = User(uid="urn:paul", name="Paul Doe", email="paul@ucc.org", username="paul",
-                schac_home_organisation="example.com")
+                schac_home_organisation="example.org")
     hannibal = User(uid="urn:hannibal", name=None, email="hannibal@example.org", username="hlector",
                     schac_home_organisation="example.org")
     service_admin = User(uid="urn:service_admin", name="Service Admin", email="service_admin@ucc.org",

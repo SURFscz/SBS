@@ -57,29 +57,29 @@ class Entities extends React.Component {
         return (
             <section className="entities-search">
                 {showNew &&
-                <Button onClick={this.newEntity}
-                        className={`${hideTitle && !filters ? "no-title" : ""}`}
-                        txt={newLabel || I18n.t(`models.${modelName}.new`)}/>
+                    <Button onClick={this.newEntity}
+                            className={`${hideTitle && !filters ? "no-title" : ""}`}
+                            txt={newLabel || I18n.t(`models.${modelName}.new`)}/>
                 }
                 {!hideTitle && <h2>{title || `${I18n.t(`models.${modelName}.title`)} (${entities.length})`}</h2>}
                 <div className={filterClassName}>{filters}</div>
                 <div className={`search ${showNew ? "" : "standalone"}`}>
                     {(!isEmpty(searchAttributes) || customSearch) &&
-                    <div className={"sds--text-field sds--text-field--has-icon"}>
-                        <div className="sds--text-field--shape">
-                            <div className="sds--text-field--input-and-icon">
-                                <input className={"sds--text-field--input"}
-                                       type="search"
-                                       onChange={this.queryChanged}
-                                       ref={ref => this.input = ref}
-                                       value={query}
-                                       placeholder={I18n.t(`models.${modelName}.searchPlaceHolder`)}/>
-                                <span className="sds--text-field--icon">
+                        <div className={"sds--text-field sds--text-field--has-icon"}>
+                            <div className="sds--text-field--shape">
+                                <div className="sds--text-field--input-and-icon">
+                                    <input className={"sds--text-field--input"}
+                                           type="search"
+                                           onChange={this.queryChanged}
+                                           ref={ref => this.input = ref}
+                                           value={query}
+                                           placeholder={I18n.t(`models.${modelName}.searchPlaceHolder`)}/>
+                                    <span className="sds--text-field--icon">
                                     <SearchIcon/>
                                 </span>
+                                </div>
                             </div>
-                        </div>
-                    </div>}
+                        </div>}
 
                 </div>
             </section>
@@ -134,39 +134,39 @@ class Entities extends React.Component {
                     {actions}
                 </div>}
                 {hasEntities &&
-                <div className={"sds--table"}>
-                    <table className={tableClassName || modelName}>
-                        <thead>
-                        <tr>
-                            {columns.map((column, i) => {
-                                const showHeader = !actions || (i < 2 && !column.hideHeader) || column.showHeader;
-                                return <th key={`th_${column.key}_${i}`}
-                                           className={`${column.key} ${column.class || ""} ${column.nonSortable ? "" : "sortable"} ${showHeader ? "" : "hide"}`}
-                                           onClick={this.setSorted(column.key)}>
-                                    {column.header}
-                                    {headerIcon(column, sorted, reverse)}
-                                </th>
-                            })}
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {entities.map((entity, index) =>
-                            <tr key={`tr_${entity.id}_${index}`}
-                                className={`${(typeof rowLinkMapper === "function" && rowLinkMapper(entity)) ? "clickable" : ""} ${onHover ? "hoverable" : ""}`}>
-                                {columns.map((column, i) =>
-                                    <td key={`td_${column.key}_${i}`}
-                                        onClick={(column.key !== "check" && column.key !== "role" && !column.hasLink) ?
-                                            this.onRowClick(rowLinkMapper, entity) : undefined}
-                                        className={`${column.key} ${column.nonSortable ? "" : "sortable"} ${column.className ? column.className : ""}`}>
-                                        {this.getEntityValue(entity, column)}
-                                    </td>)}
+                    <div className={"sds--table"}>
+                        <table className={tableClassName || modelName}>
+                            <thead>
+                            <tr>
+                                {columns.map((column, i) => {
+                                    const showHeader = !actions || (i < 2 && !column.hideHeader) || column.showHeader;
+                                    return <th key={`th_${column.key}_${i}`}
+                                               className={`${column.key} ${column.class || ""} ${column.nonSortable ? "" : "sortable"} ${showHeader ? "" : "hide"}`}
+                                               onClick={this.setSorted(column.key)}>
+                                        {column.header}
+                                        {headerIcon(column, sorted, reverse)}
+                                    </th>
+                                })}
                             </tr>
-                        )}
-                        </tbody>
-                    </table>
-                </div>}
+                            </thead>
+                            <tbody>
+                            {entities.map((entity, index) =>
+                                <tr key={`tr_${entity.id}_${index}`}
+                                    className={`${(typeof rowLinkMapper === "function" && rowLinkMapper(entity)) ? "clickable" : ""} ${onHover ? "hoverable" : ""}`}>
+                                    {columns.map((column, i) =>
+                                        <td key={`td_${column.key}_${index}_${i}`}
+                                            onClick={(column.key !== "check" && column.key !== "role" && !column.hasLink) ?
+                                                this.onRowClick(rowLinkMapper, entity) : undefined}
+                                            className={`${column.key} ${column.nonSortable ? "" : "sortable"} ${column.className ? column.className : ""}`}>
+                                            {this.getEntityValue(entity, column)}
+                                        </td>)}
+                                </tr>
+                            )}
+                            </tbody>
+                        </table>
+                    </div>}
                 {(!hasEntities && !children) &&
-                <p className="no-entities">{customNoEntities || I18n.t(`models.${modelName}.noEntities`)}</p>}
+                    <p className="no-entities">{customNoEntities || I18n.t(`models.${modelName}.noEntities`)}</p>}
                 {pagination && <Pagination currentPage={page}
                                            onChange={nbr => this.setState({page: nbr})}
                                            total={total}
