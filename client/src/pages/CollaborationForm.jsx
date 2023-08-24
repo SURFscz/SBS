@@ -108,11 +108,11 @@ class CollaborationForm extends React.Component {
                             this.updateBreadCrumb(null, null, false, false);
                             this.setState({noOrganisations: true, loading: false});
                         } else {
-                            this.updateTags(json.id);
                             const organisations = this.mapOrganisationsToOptions(json);
                             const organisationId = getParameterByName("organisationId", window.location.search);
-                            const organisation = organisations.find(org => org.value === parseInt(organisationId, 10));
-                            const autoCreateCollaborationRequest = json.collaboration_creation_allowed || json.collaboration_creation_allowed_entitlement;
+                            const organisation = organisations.find(org => org.value === parseInt(organisationId, 10)) || organisations[0];
+                            this.updateTags(organisation.id);
+                            const autoCreateCollaborationRequest = organisation.collaboration_creation_allowed || organisation.collaboration_creation_allowed_entitlement;
                             this.updateBreadCrumb(null, null, autoCreateCollaborationRequest, true);
                             this.setState({
                                 organisations: organisations,
@@ -121,7 +121,7 @@ class CollaborationForm extends React.Component {
                                 autoCreateCollaborationRequest: autoCreateCollaborationRequest,
                                 current_user_admin: true,
                                 loading: false,
-                                required: this.state.required.concat("message")
+                                required: autoCreateCollaborationRequest ? this.state.required : this.state.required.concat("message")
                             });
                         }
                     });
@@ -185,6 +185,7 @@ class CollaborationForm extends React.Component {
         value: org.id,
         short_name: org.short_name,
         collaboration_creation_allowed: org.collaboration_creation_allowed,
+        collaboration_creation_allowed_entitlement: org.collaboration_creation_allowed_entitlement,
         logo: org.logo
     }));
 
@@ -642,13 +643,15 @@ class CollaborationForm extends React.Component {
                                         info={I18n.t("collaboration.currentUserAdmin")}
                                         tooltip={I18n.t("collaboration.currentUserAdminTooltip")}/>}
 
-                    {isNew && <InputField value={message} onChange={e => this.setState({message: e.target.value})}
-                                          placeholder={isCollaborationRequest ? I18n.t("collaboration.motivationPlaceholder") : I18n.t("collaboration.messagePlaceholder")}
-                                          name={isCollaborationRequest ? I18n.t("collaboration.motivation") : I18n.t("collaboration.message")}
-                                          error={!initial && isEmpty(message) && isCollaborationRequest}
-                                          toolTip={isCollaborationRequest ? I18n.t("collaboration.motivationTooltip") : I18n.t("collaboration.messageTooltip")}
-                                          multiline={true}/>}
-                    {(!initial && isEmpty(message) && isCollaborationRequest) &&
+                    {(isNew && !autoCreateCollaborationRequest) &&
+                        <InputField value={message}
+                                    onChange={e => this.setState({message: e.target.value})}
+                                    placeholder={isCollaborationRequest ? I18n.t("collaboration.motivationPlaceholder") : I18n.t("collaboration.messagePlaceholder")}
+                                    name={isCollaborationRequest ? I18n.t("collaboration.motivation") : I18n.t("collaboration.message")}
+                                    error={!initial && isEmpty(message) && isCollaborationRequest}
+                                    toolTip={isCollaborationRequest ? I18n.t("collaboration.motivationTooltip") : I18n.t("collaboration.messageTooltip")}
+                                    multiline={true}/>}
+                    {(!initial && isEmpty(message) && isCollaborationRequest && !autoCreateCollaborationRequest) &&
                         <ErrorIndicator msg={I18n.t("collaboration.required", {
                             attribute: I18n.t("collaboration.motivation").toLowerCase()
                         })}/>}
