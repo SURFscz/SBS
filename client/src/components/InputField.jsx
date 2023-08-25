@@ -34,59 +34,63 @@ export default function InputField({
                                        maxLength = 255,
                                        onRef = null,
                                        displayLabel = true,
-                                       button=null
+                                       button = null,
+                                       classNamePostFix = null
                                    }) {
     placeholder = disabled ? "" : placeholder;
     let className = "sds--text-field--input";
     if (error) {
         className += "error ";
     }
+    if (classNamePostFix){
+        className += classNamePostFix;
+    }
     const validExternalLink = externalLink && !isEmpty(value) && validUrlRegExp.test(value);
     return (
-        <div className={`input-field sds--text-field ${error ? "sds--text-field--status-error" : ""}`}>
+        <div className={`input-field sds--text-field ${error ? "sds--text-field--status-error" : ""} ${classNamePostFix ? classNamePostFix : ""}`}>
             {(name && displayLabel) && <label htmlFor={name}>{name}
                 {toolTip && <Tooltip tip={toolTip}/>}
             </label>}
             {!isEmpty(fileName) && <em className="file-name">{fileName}</em>}
             <div className="inner-input-field">
                 {(!multiline && !noInput) &&
-                <input type="text"
-                       disabled={disabled}
-                       value={value || ""}
-                       onChange={onChange}
-                       onBlur={onBlur}
-                       maxLength={maxLength}
-                       ref={ref => onRef && onRef(ref)}
-                       placeholder={placeholder}
-                       className={`${className} sds--text-field--input`}
-                       onKeyDown={e => {
-                           if (onEnter && e.keyCode === 13) {//enter
-                               onEnter(e);
-                           }
-                       }}/>}
+                    <input type="text"
+                           disabled={disabled}
+                           value={value || ""}
+                           onChange={onChange}
+                           onBlur={onBlur}
+                           maxLength={maxLength}
+                           ref={ref => onRef && onRef(ref)}
+                           placeholder={placeholder}
+                           className={`${className} sds--text-field--input`}
+                           onKeyDown={e => {
+                               if (onEnter && e.keyCode === 13) {//enter
+                                   onEnter(e);
+                               }
+                           }}/>}
                 {(multiline && !noInput) &&
-                <textarea disabled={disabled}
-                          value={value}
-                          onChange={onChange}
-                          onBlur={onBlur}
-                          className={`${className} sds--text-area ${large ? "large" : ""} ${fileUpload ? "file-upload" : ""}`}
-                          onKeyDown={e => {
-                              if (onEnter && e.keyCode === 13) {//enter
-                                  onEnter(e);
-                              }
-                          }}
-                          placeholder={placeholder} cols={cols}/>}
+                    <textarea disabled={disabled}
+                              value={value}
+                              onChange={onChange}
+                              onBlur={onBlur}
+                              className={`${className} sds--text-area ${large ? "large" : ""} ${fileUpload ? "file-upload" : ""}`}
+                              onKeyDown={e => {
+                                  if (onEnter && e.keyCode === 13) {//enter
+                                      onEnter(e);
+                                  }
+                              }}
+                              placeholder={placeholder} cols={cols}/>}
                 {button && button}
                 {copyClipBoard && <ClipBoardCopy txt={value} right={true}/>}
                 {(link && history) && <div className="input-field-link"><FontAwesomeIcon icon="arrow-right"
                                                                                          onClick={() => history.push(link)}/>
                 </div>}
                 {validExternalLink &&
-                <div className={`input-field-link`}>
-                    <a href={value} rel="noopener noreferrer" target="_blank">
-                        <FontAwesomeIcon icon="arrow-right"/>
-                    </a>
-                </div>}
+                    <div className={`input-field-link`}>
+                        <a href={value} rel="noopener noreferrer" target="_blank">
+                            <FontAwesomeIcon icon="arrow-right"/>
+                        </a>
+                    </div>}
                 {noInput && <span className="no-input">{value}</span>}
                 {fileUpload && <div className="file-upload-button-container">
                     <section className="file-upload-container">
@@ -103,9 +107,9 @@ export default function InputField({
                                onChange={onFileUpload}/>
                     </section>
                     {onFileInitialRemoval &&
-                    <section className={"on-file-initial-removal"} onClick={onFileRemoval}>
-                        <span><FontAwesomeIcon icon="trash"/></span>
-                    </section>}
+                        <section className={"on-file-initial-removal"} onClick={onFileRemoval}>
+                            <span><FontAwesomeIcon icon="trash"/></span>
+                        </section>}
                 </div>}
             </div>
         </div>

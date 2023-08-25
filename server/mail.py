@@ -348,7 +348,7 @@ def mail_service_request(service_request, context):
         subject=f"Request for new service {service_request.name}",
         recipients=[mail_cfg.beheer_email],
         template="service_request",
-        context={context},
+        context=context,
         preview=False
     )
 

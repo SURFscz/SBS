@@ -23,6 +23,7 @@ import MemberJoinRequests from "../components/redesign/MemberJoinRequests";
 import {ReactComponent as CollaborationRequestsIcon} from "../icons/faculty.svg";
 import MemberCollaborationRequests from "../components/redesign/MemberCollaborationRequests";
 import Users from "../components/redesign/Users";
+import ServiceRequests from "../components/redesign/ServiceRequests";
 
 class Home extends React.Component {
 
@@ -45,7 +46,7 @@ class Home extends React.Component {
         const nbrOrganisations = user.organisation_memberships.length;
         const nbrCollaborations = user.collaboration_memberships.length;
         const nbrServices = user.service_memberships.length;
-        const canStayInHome = !isEmpty(user.collaboration_requests) || !isEmpty(user.join_requests) || nbrServices > 0;
+        const canStayInHome = !isEmpty(user.service_requests) || !isEmpty(user.collaboration_requests) || !isEmpty(user.join_requests) || nbrServices > 0;
         switch (role) {
             case ROLES.PLATFORM_ADMIN:
                 tabs.push(this.getOrganisationsTab(user.total_organisations));
@@ -123,6 +124,9 @@ class Home extends React.Component {
                 tab = "collaboration_requests"
             }
         }
+        if (!isEmpty(user.service_requests)) {
+            tabs.push(this.getServiceRequestsTab(user.service_requests, refreshUserHook));
+        }
         return tab;
     }
 
@@ -185,6 +189,19 @@ class Home extends React.Component {
                      icon={<CollaborationRequestsIcon/>}>
             <MemberCollaborationRequests {...this.props} refreshUserHook={refreshUserHook}
                                          collaboration_requests={collaboration_requests}/>
+        </div>)
+    }
+
+    getServiceRequestsTab = (service_requests, refreshUserHook) => {
+        const crl = (service_requests || []).filter(sr => sr.status === "open").length;
+        return (<div key="service_requests"
+                     name="service_requests"
+                     label={I18n.t("home.tabs.serviceRequests", {count: (service_requests || []).length})}
+                     notifier={crl > 0 ? crl : null}
+                     icon={<ServicesIcon/>}>
+            <ServiceRequests {...this.props} refreshUserHook={refreshUserHook}
+                             personal={true}
+                                         service_requests={service_requests}/>
         </div>)
     }
 

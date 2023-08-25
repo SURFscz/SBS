@@ -2,121 +2,140 @@
 @import "../stylesheets/forms";
 
 .mod-service {
-    max-width: $medium;
-    margin: 0 auto;
-    width: 100%;
+  max-width: $medium;
+  margin: 0 auto;
+  width: 100%;
 
-    .service {
-        display: grid;
-        grid-template-columns: [first] 1fr [second] 1fr;
-        column-gap: 50px;
+  .service {
+    display: grid;
+    grid-template-columns: [first] 1fr [second] 1fr;
+    column-gap: 50px;
 
-        @media (max-width: $tablet-max) {
-            padding: 0 15px;
-        }
-
-        @media (max-width: $compact-medium) {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .input-field, .radio-button-container, .actions, div.checkbox, .select-field, .ip-networks, span.error,
-        div.email-invitations, div.compliance, div.ldap, div.contacts, div.tokens {
-            grid-column-start: first;
-        }
-
-        .section-separator {
-            grid-column: 1/-1;
-            padding: 25px 0 5px 0;
-
-            &.first {
-                margin-bottom: 10px;
-
-                &.last {
-                    margin-top: 10px
-                }
-            }
-        }
-
-        div.input-field, div.select-field {
-            margin-top: 15px;
-        }
-
-        div.ip-networks {
-            margin-top: 15px;
-
-            label.title {
-                display: flex;
-                align-items: center;
-                margin: 12px 0 6px 0;
-                min-width: 210px;
-                color: black;
-                position: relative;
-                font-weight: bold;
-            }
-
-            span.tool-tip-section {
-                font-size: 14px;
-                color: $lighter-grey;
-                cursor: pointer;
-                padding: 0 4px;
-
-                &:hover {
-                    color: darken($light-blue, 20%);
-                }
-            }
-
-            span.add-network {
-                color: $blue;
-                cursor: pointer;
-                padding: 0 4px;
-                font-size: 22px;
-                display: inline-block;
-                margin-left: auto;
-                margin-right: 10px;
-
-                &:hover {
-                    color: darken($blue, 10%);
-                }
-            }
-
-            .network-container {
-                margin: 15px 0 15px 0;
-            }
-
-            .network {
-                position: relative;
-
-                span.trash {
-                    position: absolute;
-                    right: 10px;
-                    top: 10px;
-                    color: var(--sds--color--red--400);
-                    cursor: pointer;
-                    padding: 0 4px;
-                    font-size: 22px;
-                    display: inline-block;
-                    margin-left: 25px;
-                }
-            }
-
-            span.network-info {
-                font-style: italic;
-                font-size: 14px;
-                display: inline-block;
-                margin-top: 2px;
-            }
-        }
-
-        .required-marker {
-            color: var(--sds--color--red--400);
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        div.checkbox {
-            margin: 20px 0 10px 0;
-        }
-
+    @media (max-width: $tablet-max) {
+      padding: 0 15px;
     }
+
+    @media (max-width: $compact-medium) {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label.title {
+      display: flex;
+      align-items: center;
+      margin: 12px 0 6px 0;
+      min-width: 210px;
+      color: black;
+      position: relative;
+      font-weight: bold;
+    }
+
+    .saml-meta-data {
+      margin-top: 27px;
+
+      em {
+        margin-top: 5px;
+      }
+    }
+
+    .input-field, .radio-button-container, .actions, div.checkbox, .select-field, .ip-networks, span.error,
+    div.email-invitations, div.compliance, div.ldap, div.contacts, div.tokens, div.first-column {
+      grid-column-start: first;
+    }
+
+    .second-column {
+      grid-column-start: second;
+      @media (max-width: $tablet-max) {
+        grid-column-start: first;
+      }
+    }
+
+    .radio-button-group {
+      grid-column: 1/-1;
+    }
+
+    .section-separator {
+      grid-column: 1/-1;
+      padding: 25px 0 5px 0;
+
+      &.first {
+        margin-bottom: 10px;
+
+        &.last {
+          margin-top: 10px
+        }
+      }
+    }
+
+    div.input-field, div.select-field {
+      margin-top: 15px;
+    }
+
+    div.ip-networks {
+      margin-top: 15px;
+
+      span.tool-tip-section {
+        font-size: 14px;
+        color: $lighter-grey;
+        cursor: pointer;
+        padding: 0 4px;
+
+        &:hover {
+          color: darken($light-blue, 20%);
+        }
+      }
+
+      span.add-network {
+        color: $blue;
+        cursor: pointer;
+        padding: 0 4px;
+        font-size: 22px;
+        display: inline-block;
+        margin-left: auto;
+        margin-right: 10px;
+
+        &:hover {
+          color: darken($blue, 10%);
+        }
+      }
+
+      .network-container {
+        margin: 15px 0 15px 0;
+      }
+
+      .network {
+        position: relative;
+
+        span.trash {
+          position: absolute;
+          right: 10px;
+          top: 10px;
+          color: var(--sds--color--red--400);
+          cursor: pointer;
+          padding: 0 4px;
+          font-size: 22px;
+          display: inline-block;
+          margin-left: 25px;
+        }
+      }
+
+      span.network-info {
+        font-style: italic;
+        font-size: 14px;
+        display: inline-block;
+        margin-top: 2px;
+      }
+    }
+
+    .required-marker {
+      color: var(--sds--color--red--400);
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    div.checkbox {
+      margin: 20px 0 10px 0;
+    }
+
+  }
 }

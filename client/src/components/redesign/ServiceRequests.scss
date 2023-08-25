@@ -1,0 +1,67 @@
+@import "../../stylesheets/vars";
+
+table.service_requests{
+
+    thead {
+        th {
+            &.name {
+                width: 20%;
+                padding-left: 15px;
+            }
+
+            &.requester__name {
+                width: 26%;
+            }
+
+            &.description {
+                width: 20%;
+            }
+
+            &.created_at {
+                width: 17%;
+            }
+
+            &.status {
+                width: 17%;
+                text-align: center;
+            }
+        }
+    }
+
+    tbody {
+        td {
+            &.name {
+                padding-left: 15px;
+            }
+
+            &.status {
+                text-align: center;
+            }
+
+            &.open {
+                text-align: right;
+            }
+        }
+    }
+}
+
+.mod-entities {
+
+    .service-request-filter {
+        display: flex;
+        @media (max-width: $compact-medium) {
+            flex-direction: column;
+        }
+
+        .service-request-filter-select {
+            width: 290px;
+            margin: 0 25px 0 0;
+            @media (max-width: $compact-medium) {
+                margin: 15px 0;
+            }
+
+        }
+    }
+
+}
+
