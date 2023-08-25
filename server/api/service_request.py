@@ -10,7 +10,7 @@ from server.api.base import json_endpoint, STATUS_OPEN, STATUS_APPROVED, STATUS_
 from server.api.service import URI_ATTRIBUTES
 from server.auth.security import current_user_id, current_user_name, \
     confirm_write_access
-from server.db.defaults import cleanse_short_name, STATUS_ACTIVE, valid_uri_attributes
+from server.db.defaults import cleanse_short_name, valid_uri_attributes
 from server.db.domain import User, Service, ServiceMembership, db, \
     ServiceRequest
 from server.db.logo_mixin import logo_from_cache
@@ -19,6 +19,17 @@ from server.mail import mail_accepted_declined_service_request, \
     mail_service_request
 
 service_request_api = Blueprint("service_request_api", __name__, url_prefix="/api/service_requests")
+
+
+@service_request_api.route("/all", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def service_request_all():
+    confirm_write_access()
+    res = ServiceRequest.query \
+        .join(ServiceRequest.requester) \
+        .options(contains_eager(ServiceRequest.requester)) \
+        .all()
+    return res, 200
 
 
 @service_request_api.route("/<service_request_id>", methods=["GET"], strict_slashes=False)
@@ -44,13 +55,14 @@ def request_service():
 
     valid_uri_attributes(data, URI_ATTRIBUTES)
 
-    data["status"] = STATUS_ACTIVE
-    cleanse_short_name(data, "abbreviation")
+    data["status"] = STATUS_OPEN
+    cleanse_short_name(data, "short_name")
 
     res = save(ServiceRequest, custom_json=data, allow_child_cascades=False)
     service_request = res[0]
 
-    emit_socket("service_request")
+    emit_socket("service_requests", include_current_user_id=True)
+
     context = {"salutation": "Dear platform admin,",
                "base_url": current_app.app_config.base_url,
                "service_request": service_request,
@@ -68,7 +80,7 @@ def delete_request_service(service_request_id):
     if service_request.status == STATUS_OPEN:
         raise BadRequest("Service request with status 'open' can not be deleted")
 
-    emit_socket("service_request")
+    emit_socket("service_requests", include_current_user_id=True)
 
     return delete(ServiceRequest, service_request_id)
 
@@ -115,7 +127,7 @@ def approve_request(service_request_id):
     service_request.status = STATUS_APPROVED
     db.session.merge(service_request)
 
-    emit_socket("service_request")
+    emit_socket("service_requests", include_current_user_id=True)
 
     return res
 
@@ -144,6 +156,6 @@ def deny_request(service_request_id):
     service_request.rejection_reason = rejection_reason
     db.session.merge(service_request)
 
-    emit_socket("service_request", include_current_user_id=True)
+    emit_socket("service_requests", include_current_user_id=True)
 
     return None, 201

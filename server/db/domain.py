@@ -513,6 +513,7 @@ class ServiceRequest(Base, db.Model, LogoMixin):
     short_name = db.Column("short_name", db.String(length=255), nullable=False)
     description = db.Column("description", db.Text(), nullable=True)
     logo = db.Column("logo", db.Text(), nullable=True)
+    uuid4 = db.Column("uuid4", db.String(length=255), nullable=False, default=gen_uuid4)
     providing_organisation = db.Column("providing_organisation", db.String(length=255), nullable=False)
     login_uri = db.Column("login_uri", db.String(length=255), nullable=True)
     website_uri = db.Column("info_uri", db.String(length=255), nullable=True)
