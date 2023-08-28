@@ -30,6 +30,7 @@ const en = {
         collaborationRequest: "Collaboration request '{{name}}'",
         services: "Services",
         service: "{{name}}",
+        serviceRequest: "Service requests",
         group: "Group '{{name}}'",
         newGroup: "New group",
         profile: "Profile",
@@ -919,7 +920,6 @@ const en = {
         contact: "Service contact-person",
         titleNew: "Add service",
         titleRequest: "Request service",
-        titleUpdate: "Update service {{name}}",
         titleReadOnly: "Service {{name}}",
         backToServices: "Back to services",
         name: "Name",
@@ -1019,6 +1019,7 @@ const en = {
         cancel: "Cancel",
         flash: {
             created: "Service {{name}} was created",
+            createdServiceRequest: "Request for service {{name}} was created",
             updated: "Service {{name}} was updated",
             deleted: "Service {{name}} was deleted",
             tokenAdded: "New token for {{name}} was created",
@@ -1706,6 +1707,7 @@ const en = {
             "service_groups": "Service groups",
             "services": "Service",
             "services_collaborations": "Collaboration service",
+            "service_requests": "Service requests",
             "users": "User",
             "ip_networks": "IP network",
             "user_ip_networks": "User IP addresses",
@@ -1723,41 +1725,33 @@ const en = {
         }
     },
     serviceRequest: {
-        title: "Service {{name}} is not linked to any of your collaborations",
-        subTitle: "These are all the collaborations you are a member of. Choose one or more to link service <strong>{{name}}</strong> to in order for you to have access to this service.",
-        titleAlreadyLinked: "Service {{name}} is already linked to your collaboration {{collaboration}}",
-        subTitleAlreadyLinked: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations to this service. However you already have access to this service. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
-        titleLinkNotAllowed: "Service {{name}} cannot be linked to any of your collaborations",
-        subTitleLinkNotAllowed: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations. However none of your collaborations can be linked to this service. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
-        titleNoAutomaticConnection: "Service {{name}} cannot be linked to any of your collaborations",
-        subTitleNoAutomaticConnection: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations. However this service does not allow for automatic connections. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
-        titleRedirectMismatch: "Service {{name}} cannot be linked to any of your collaborations",
-        subTitleRedirectMismatch: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations. However the provided redirect URI is not valid. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
-        titleNoCollaborations: "Service {{name}} cannot be linked to any of your collaborations",
-        subTitleNoCollaborations: "You are not a member of any collaboration. To use service <strong>{{name}}</strong> you need to be a member of at least one collaboration. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
-        titleOutstandingServiceConnectionRequest: "Service {{name}} cannot be linked to any of your collaborations",
-        subTitleOutstandingServiceConnectionRequest: "There are already outstanding service connection request(s) for all of your collaborations: {{details}}. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
-        collaboration: {
-            name: "Collaboration",
-            role: "Role",
-            organisation: "Organisation",
-            actions: "Link",
-            tooltips: "",
-            linkNotAllowed: "You cannot link this service to this collaboration, because the organisation of this collaboration is not allowed to link this service",
-            alreadyLinked: "You cannot link this service to this collaboration, because the service is already available in this collaboration",
-            outstandingServiceConnectionRequest: "You cannot link this service to this collaboration, because there is already an outstanding request to connect the service to this collaboration"
+        title: {
+            open: "{{requester}} has requested to create a new service '{{name}}'.",
+            approved: "{{requester}} service request was approved.",
+            denied: "{{requester}} service request was denied."
         },
-        role: {
-            admin: "Admin",
-            member: "Member"
+        request: "Request {{id}}",
+        requester: "Requester",
+        approved: "Approved",
+        rejectionReason: "Denied reason",
+        denyConfirmation: "Are you sure you want to deny this service request?",
+        deleteConfirmation: "Are you sure you want to delete this service request?",
+        approve: "Approve",
+        deny: "Deny",
+        metaData: "The SAML metadata",
+        showMetaData: "Show the SAML metadata",
+        status: "Status",
+        statuses: {
+            all: "All ({{nbr}})",
+            open: "Open",
+            denied: "Denied",
+            approved: "Approved"
         },
-        backToService: "Back to service",
-        link: "Link collaboration(s)",
-        motivation: "Service {{serviceName}} redirected the user {{userName}} to connect a collaboration to this service",
-        result: {
-            completed: "The service {{serviceName}} is now accessible for you. Click the button below to go to this service.",
-            requested: "Access to service {{serviceName}} has been requested. Until the request is granted you cannot access this service.",
-        },
+        flash: {
+            approved: "Service {{name}} has been created",
+            denied: "Service request for {{name}} has been denied",
+            deleted: "Service request for {{name}} has been deleted",
+        }
     },
     confirmation: {
         title: "Upgrade to platform admin",

@@ -12,6 +12,7 @@ import {socket, subscriptionIdCookieName} from "../../utils/SocketIO";
 import {chipTypeForStatus} from "../../utils/UserRole";
 import {Chip} from "@surfnet/sds";
 import {findAllServiceRequests} from "../../api";
+import {stopEvent} from "../../utils/Utils";
 
 const allValue = "all";
 
@@ -34,13 +35,13 @@ export default class ServiceRequests extends React.PureComponent {
 
     componentDidMount = callback => {
         const {personal, user, service_requests} = this.props;
-        const filterOptions = [{
-            label: I18n.t("collaborationRequest.statuses.all", {nbr: service_requests.length}),
-            value: allValue
-        }];
         const promise = personal ? Promise.resolve(service_requests) : findAllServiceRequests();
         promise.then(res => {
-            const statusOptions = service_requests.reduce((acc, cr) => {
+            const filterOptions = [{
+                label: I18n.t("collaborationRequest.statuses.all", {nbr: res.length}),
+                value: allValue
+            }];
+            const statusOptions = res.reduce((acc, cr) => {
                 const option = acc.find(opt => opt.status === cr.status);
                 if (option) {
                     ++option.nbr;
@@ -59,7 +60,12 @@ export default class ServiceRequests extends React.PureComponent {
                     const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
                     const {refreshUserHook} = this.props;
                     if (subscriptionIdSessionStorage !== data.subscription_id && (!personal || user.id === data.current_user_id)) {
-                        refreshUserHook(() => this.componentDidMount());
+                        if (refreshUserHook) {
+                            refreshUserHook(() => this.componentDidMount());
+                        } else {
+                            this.componentDidMount();
+                        }
+
                     }
                 }));
                 this.setState({socketSubscribed: true})
@@ -72,6 +78,14 @@ export default class ServiceRequests extends React.PureComponent {
             }, callback);
         });
     }
+
+    openServiceRequest = serviceRequest => e => {
+        if (e.metaKey || e.ctrlKey) {
+            return;
+        }
+        stopEvent(e);
+        this.props.history.push(`/service-request/${serviceRequest.id}`)
+    };
 
 
     filter = (filterOptions, filterValue) => {
@@ -142,6 +156,7 @@ export default class ServiceRequests extends React.PureComponent {
                       showNew={false}
                       filters={this.filter(filterOptions, filterValue)}
                       loading={false}
+                      rowLinkMapper={personal ? null : () => this.openServiceRequest}
                       {...this.props}/>
         )
     }

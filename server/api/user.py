@@ -48,6 +48,7 @@ def _add_counts(user: dict):
         user["total_collaborations"] = Collaboration.query.count()
         user["total_services"] = Service.query.count()
         user["total_service_requests"] = ServiceRequest.query.count()
+        user["total_open_service_requests"] = ServiceRequest.query.filter(ServiceRequest.status == "open").count()
         user["total_users"] = User.query.count()
 
 

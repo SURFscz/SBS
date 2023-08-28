@@ -1,12 +1,15 @@
 import React from "react";
 import {
+    approveServiceRequest,
     createService,
     createServiceRequest,
-    deleteService,
+    deleteServiceRequest,
+    denyServiceRequest,
     ipNetworks,
     serviceAbbreviationExists,
     serviceEntityIdExists,
-    serviceNameExists
+    serviceNameExists,
+    serviceRequestById
 } from "../api";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
 import I18n from "../locale/I18n";
@@ -19,7 +22,7 @@ import {isEmpty, stopEvent} from "../utils/Utils";
 import {sanitizeShortName, validEmailRegExp, validUrlRegExp} from "../validations/regExps";
 import CheckBox from "../components/CheckBox";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {Tooltip} from "@surfnet/sds";
+import {Chip, Tooltip} from "@surfnet/sds";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {ReactComponent as TrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 import {AppStore} from "../stores/AppStore";
@@ -31,6 +34,8 @@ import EmailField from "../components/EmailField";
 import RadioButtonGroup from "../components/redesign/RadioButtonGroup";
 import SelectField from "../components/SelectField";
 import UploadButton from "../components/UploadButton";
+import {chipTypeForStatus} from "../utils/UserRole";
+import MetaDataDialog from "./MetaDataDialog";
 
 class Service extends React.Component {
 
@@ -41,6 +46,7 @@ class Service extends React.Component {
 
     initialState = () => ({
         service: {},
+        serviceRequest: {},
         name: "",
         abbreviation: "",
         logo: "",
@@ -88,23 +94,51 @@ class Service extends React.Component {
         saml_metadata_url: "",
         saml_metadata: "",
         samlMetaDataFile: "",
-        comments: ""
+        comments: "",
+        isServiceRequestDetails: false,
+        rejectionReason: null,
+        declineDialog: false,
+        showMetaData: false
     });
 
     componentDidMount = () => {
-        const {isServiceRequest} = this.props;
-        const {user} = this.props;
+        const {user, isServiceRequest, match} = this.props;
+        const isServiceRequestDetails = isServiceRequest && match && match.params && match.params.service_request_id;
+        if (isServiceRequest) {
+            const required = this.state.required
+                .filter(attr => attr !== "entity_id" || isServiceRequestDetails)
+                .concat("providing_organisation", "comments");
+            this.setState({required: required})
+        }
         if (!isServiceRequest && !user.admin) {
             this.props.history.push("/404");
+        } else if (isServiceRequest && match && match.params && match.params.service_request_id) {
+            serviceRequestById(match.params.service_request_id)
+                .then(res => {
+                    this.setState({
+                        ...res,
+                        service: res,
+                        serviceRequest: res,
+                        isNew: false,
+                        loading: false,
+                        isServiceRequestDetails: isServiceRequestDetails,
+                        redirect_urls: isEmpty(res.redirect_urls) ? [] : res.redirect_urls.split(",")
+                            .map(s => ({value: s.trim(), label: s.trim()}))
+                    });
+                    AppStore.update(s => {
+                        s.breadcrumb.paths = [
+                            {path: "/", value: I18n.t("breadcrumb.home")},
+                            {
+                                path: `/services-requests/${res.id}`,
+                                value: I18n.t("breadcrumb.serviceRequest", {name: res.name})
+                            },
+                            {value: I18n.t("home.edit")}
+                        ];
+                    });
+                });
         } else {
             this.addIpAddress();
             this.setState({loading: false});
-            if (isServiceRequest) {
-                const required = this.state.required
-                    .filter(attr => attr !== "entity_id")
-                    .concat("providing_organisation", "comments");
-                this.setState({required: required})
-            }
             AppStore.update(s => {
                 s.breadcrumb.paths = [
                     {path: "/", value: I18n.t("breadcrumb.home")},
@@ -189,7 +223,11 @@ class Service extends React.Component {
             this.setState({redirect_urls: newRedirectUrls});
         }
     }
-    closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
+    closeConfirmationDialog = () => this.setState({
+        declineDialog: false,
+        rejectionReason: "",
+        confirmationDialogOpen: false
+    });
 
     cancel = () => {
         this.setState({
@@ -202,24 +240,78 @@ class Service extends React.Component {
         });
     };
 
-    delete = () => {
+    deleteServiceRequest = () => {
+        this.setState({
+            confirmationDialogOpen: true,
+            question: I18n.t("serviceRequest.deleteConfirmation"),
+            leavePage: false,
+            warning: true,
+            cancelDialogAction: this.closeConfirmationDialog,
+            confirmationDialogAction: () => this.setState({confirmationDialogOpen: false, loading: true},
+                () => {
+                    deleteServiceRequest(this.state.serviceRequest.id).then(() => {
+                        this.props.history.push(`/home/service_requests?refresh=true`);
+                        setFlash(I18n.t("serviceRequest.flash.deleted", {name: this.state.serviceRequest.name}));
+                    });
+                })
+        });
+
+    }
+
+    getDeclineRejectionOptions = rejectionReason => {
+        return (
+            <div className="rejection-reason-container">
+                <label htmlFor="rejection-reason">{I18n.t("joinRequest.rejectionReason")}</label>
+                <InputField value={rejectionReason}
+                            multiline={true}
+                            onChange={e => this.setState({rejectionReason: e.target.value})}/>
+                <span className="rejection-reason-disclaimer">{I18n.t("joinRequest.rejectionReasonNote")}</span>
+            </div>
+        );
+    }
+
+    approve = () => {
+        const {initial} = this.state;
+        if (initial) {
+            this.setState({initial: false}, this.doApprove)
+        } else {
+            this.doApprove();
+        }
+    };
+
+    doApprove = () => {
+        if (this.isValid()) {
+            const {serviceRequest} = this.state;
+            this.setState({loading: true});
+            approveServiceRequest({...serviceRequest, ...this.state}).then(() => {
+                this.props.history.push(`/home/service_requests?refresh=true`);
+                setFlash(I18n.t("serviceRequest.flash.approved", {name: serviceRequest.name}));
+            });
+        } else {
+            window.scrollTo(0, 0);
+        }
+    }
+
+    deny = () => {
         this.setState({
             confirmationDialogOpen: true,
             leavePage: false,
             warning: true,
+            declineDialog: true,
             cancelDialogAction: this.closeConfirmationDialog,
-            confirmationDialogAction: this.doDelete
+            confirmationDialogAction: this.doDeny,
+            question: I18n.t("serviceRequest.denyConfirmation", {name: this.state.service.name})
         });
     };
 
-    doDelete = () => {
-        this.setState({loading: true});
-        const {service} = this.state;
-        deleteService(service.id).then(() => {
-            this.props.history.push("/home/services");
-            setFlash(I18n.t("service.flash.deleted", {name: service.name}));
+    doDeny = () => {
+        const {serviceRequest, rejectionReason} = this.state;
+        denyServiceRequest(serviceRequest.id, rejectionReason).then(() => {
+            this.props.history.push(`/home/service_requests?refresh=true`);
+            setFlash(I18n.t("serviceRequest.flash.denied", {name: serviceRequest.name}));
         });
-    };
+
+    }
 
     isValid = () => {
         const {required, alreadyExists, invalidInputs, contact_email, hasAdministrators, ip_networks}
@@ -259,11 +351,12 @@ class Service extends React.Component {
                     network.id = parseInt(network.id, 10)
                 }
             });
-            const joined_redirect_urls = isEmpty(redirect_urls) ? null : redirect_urls.join(",")
+            const joined_redirect_urls = isEmpty(redirect_urls) ? null : redirect_urls
+                .map(option => option.value)
+                .join(",")
             this.setState({
                 ip_networks: strippedIpNetworks,
                 redirect_urls: joined_redirect_urls,
-                short_name: abbreviation
             }, () => {
                 if (isServiceRequest) {
                     createServiceRequest(this.state)
@@ -281,9 +374,9 @@ class Service extends React.Component {
         }
     };
 
-    afterUpdate = (name, action, res) => {
-        setFlash(I18n.t(`service.flash.${action}`, {name: name}));
-        this.props.history.push("/services/" + res.id);
+    afterUpdate = (name, res, isServiceRequest) => {
+        setFlash(I18n.t(`service.flash.${isServiceRequest ? "createdServiceRequest" : "created"}`, {name: name}));
+        this.props.history.push(isServiceRequest ? "/home/service_requests?refresh=true" : "/services/" + res.id);
     };
 
     onFileUpload = e => {
@@ -340,6 +433,11 @@ class Service extends React.Component {
         </div>);
     }
 
+    toggleSamlMetadataModal = e => {
+        stopEvent(e);
+        this.setState({showMetaData: !this.state.showMetaData})
+    }
+
     removeMail = email => e => {
         stopEvent(e);
         const {administrators} = this.state;
@@ -358,7 +456,7 @@ class Service extends React.Component {
                         accepted_user_policy, uri_info, privacy_policy, service, disabledSubmit, allow_restricted_orgs, sirtfi_compliant, token_enabled, pam_web_sso_enabled,
                         token_validity_days, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, administrators, message, logo, isServiceAdmin,
-                        providing_organisation, connection_type, redirect_urls, saml_metadata_url, samlMetaDataFile, comments) => {
+                        providing_organisation, connection_type, redirect_urls, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails) => {
         const ldapBindAccount = config.ldap_bind_account;
         const {isServiceRequest} = this.props;
         return (
@@ -387,7 +485,7 @@ class Service extends React.Component {
                                    isNew={true} title={I18n.t("service.logo")}
                                    value={logo}
                                    initial={initial} secondRow={true}/>
-                {isAdmin && <div className="first-column">
+                {(!isServiceRequest || isServiceRequestDetails) && <div className="first-column">
 
                     <InputField value={entity_id} onChange={e => this.setState({
                         entity_id: e.target.value,
@@ -399,7 +497,7 @@ class Service extends React.Component {
                                 toolTip={I18n.t("service.entity_idTooltip")}
                                 error={alreadyExists.entity_id || (!initial && isEmpty(entity_id))}
                                 copyClipBoard={true}
-                                disabled={!isAdmin}/>
+                                disabled={isServiceRequest && !isServiceRequestDetails}/>
                     {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
                         attribute: I18n.t("service.entity_id").toLowerCase(),
                         value: entity_id
@@ -483,6 +581,7 @@ class Service extends React.Component {
                                  creatable={true}
                                  onInputChange={val => val}
                                  isMulti={true}
+                                 copyClipBoard={isServiceRequestDetails}
                                  name={I18n.t("service.openIDConnectRedirects")}
                                  placeholder={I18n.t("service.openIDConnectRedirectsPlaceholder")}
                                  toolTip={I18n.t("service.openIDConnectRedirectsTooltip")}
@@ -505,7 +604,7 @@ class Service extends React.Component {
                             <ErrorIndicator
                                 msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
                     </div>}
-                {(isServiceRequest && connection_type === "saml2File") &&
+                {(isServiceRequest && connection_type === "saml2File" && !isServiceRequestDetails) &&
                     <div className="saml-meta-data">
                         <UploadButton name={I18n.t("service.samlMetadataUpload")}
                                       txt={I18n.t("service.samlMetadataUpload")}
@@ -513,29 +612,39 @@ class Service extends React.Component {
                                       onFileUpload={this.onFileUpload}/>
                         {samlMetaDataFile && <em>{samlMetaDataFile}</em>}
                     </div>}
+                {(isServiceRequest && connection_type === "saml2File" && isServiceRequestDetails) &&
+                    <a href="/metadata"
+                       className="metadata-link"
+                       onClick={this.toggleSamlMetadataModal}>{I18n.t("serviceRequest.showMetaData")}</a>
+                }
+                {(isServiceRequest && connection_type === "saml2File" && isServiceRequestDetails && this.state.showMetaData) &&
+                    <MetaDataDialog samlMetadata={this.state.serviceRequest.saml_metadata}
+                                    toggle={this.toggleSamlMetadataModal}/>
+                }
                 {(isServiceRequest && connection_type === "none") &&
                     <label className="title">{I18n.t("service.noneInfo")}</label>
                 }
-                {isAdmin && <CheckBox name="automatic_connection_allowed" value={automatic_connection_allowed}
-                                      info={I18n.t("service.automaticConnectionAllowed")}
-                                      tooltip={I18n.t("service.automaticConnectionAllowedTooltip")}
-                                      onChange={e => this.setState({automatic_connection_allowed: e.target.checked})}/>}
+                {!isServiceRequest && <CheckBox name="automatic_connection_allowed" value={automatic_connection_allowed}
+                                                info={I18n.t("service.automaticConnectionAllowed")}
+                                                tooltip={I18n.t("service.automaticConnectionAllowedTooltip")}
+                                                onChange={e => this.setState({automatic_connection_allowed: e.target.checked})}/>}
 
-                {isAdmin && <CheckBox name="access_allowed_for_all" value={access_allowed_for_all}
-                                      info={I18n.t("service.accessAllowedForAll")}
-                                      tooltip={I18n.t("service.accessAllowedForAllTooltip")}
-                                      onChange={e => this.setState({access_allowed_for_all: e.target.checked})}/>}
+                {!isServiceRequest && <CheckBox name="access_allowed_for_all" value={access_allowed_for_all}
+                                                info={I18n.t("service.accessAllowedForAll")}
+                                                tooltip={I18n.t("service.accessAllowedForAllTooltip")}
+                                                onChange={e => this.setState({access_allowed_for_all: e.target.checked})}/>}
 
-                {isAdmin && <CheckBox name="non_member_users_access_allowed" value={non_member_users_access_allowed}
-                                      info={I18n.t("service.nonMemberUsersAccessAllowed")}
-                                      tooltip={I18n.t("service.nonMemberUsersAccessAllowedTooltip")}
-                                      onChange={e => this.setState({non_member_users_access_allowed: e.target.checked})}
-                />}
+                {!isServiceRequest &&
+                    <CheckBox name="non_member_users_access_allowed" value={non_member_users_access_allowed}
+                              info={I18n.t("service.nonMemberUsersAccessAllowed")}
+                              tooltip={I18n.t("service.nonMemberUsersAccessAllowedTooltip")}
+                              onChange={e => this.setState({non_member_users_access_allowed: e.target.checked})}
+                    />}
 
-                {isAdmin && <CheckBox name="allow_restricted_orgs" value={allow_restricted_orgs}
-                                      info={I18n.t("service.allowRestrictedOrgs")}
-                                      tooltip={I18n.t("service.allowRestrictedOrgsTooltip")}
-                                      onChange={e => this.setState({allow_restricted_orgs: e.target.checked})}
+                {!isServiceRequest && <CheckBox name="allow_restricted_orgs" value={allow_restricted_orgs}
+                                                info={I18n.t("service.allowRestrictedOrgs")}
+                                                tooltip={I18n.t("service.allowRestrictedOrgsTooltip")}
+                                                onChange={e => this.setState({allow_restricted_orgs: e.target.checked})}
                 />}
 
                 <h2 className="section-separator">{I18n.t("service.policies")}</h2>
@@ -705,11 +814,11 @@ class Service extends React.Component {
                             msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.contact")})}/>}
 
                 </div>
-                {isAdmin && <div className="ldap">
+                {!isServiceRequest && <div className="ldap">
                     <h2 className="section-separator first">{I18n.t("service.ldap.section")}</h2>
 
                     {
-                        this.renderIpNetworks(ip_networks, isAdmin, isServiceAdmin)
+                        this.renderIpNetworks(ip_networks, !isServiceRequest, isServiceAdmin)
                     }
 
                     <InputField value={config.ldap_url}
@@ -730,7 +839,7 @@ class Service extends React.Component {
                         disabled={true}/>
                 </div>}
 
-                {isAdmin && <div className="tokens">
+                {!isServiceRequest && <div className="tokens">
                     <h2 className="section-separator first">{I18n.t("userTokens.tokens")}</h2>
 
 
@@ -738,7 +847,7 @@ class Service extends React.Component {
                               value={token_enabled}
                               tooltip={I18n.t("userTokens.tokenEnabledTooltip")}
                               info={I18n.t("userTokens.tokenEnabled")}
-                              readOnly={!isAdmin}
+                              readOnly={isServiceRequest}
                               onChange={() => this.setState({
                                   token_enabled: !token_enabled,
                                   token_validity_days: token_enabled ? "" : 1
@@ -757,7 +866,6 @@ class Service extends React.Component {
                               value={pam_web_sso_enabled}
                               onChange={() => this.setState({pam_web_sso_enabled: !pam_web_sso_enabled})}
                               tooltip={I18n.t("userTokens.pamWebSSOEnabledTooltip")}
-                              readOnly={!isAdmin}
                               info={I18n.t("userTokens.pamWebSSOEnabled")}
                     />
 
@@ -769,7 +877,7 @@ class Service extends React.Component {
 
                 </div>}
                 {
-                    isAdmin &&
+                    !isServiceRequest &&
                     <div className="email-invitations">
                         <h2 className="section-separator first last">{I18n.t("service.invitations")}</h2>
 
@@ -781,12 +889,12 @@ class Service extends React.Component {
                     </div>
                 }
                 {
-                    isAdmin && <InputField value={message}
-                                           onChange={e => this.setState({message: e.target.value})}
-                                           placeholder={I18n.t("collaboration.messagePlaceholder")}
-                                           name={I18n.t("collaboration.message")}
-                                           toolTip={I18n.t("collaboration.messageTooltip")}
-                                           multiline={true}/>
+                    !isServiceRequest && <InputField value={message}
+                                                     onChange={e => this.setState({message: e.target.value})}
+                                                     placeholder={I18n.t("collaboration.messagePlaceholder")}
+                                                     name={I18n.t("collaboration.message")}
+                                                     toolTip={I18n.t("collaboration.messageTooltip")}
+                                                     multiline={true}/>
                 }
                 {isServiceRequest &&
                     <h2 className="section-separator first">{I18n.t("service.commentsHeader")}</h2>
@@ -806,15 +914,62 @@ class Service extends React.Component {
                     </div>}
 
                 <section className="actions">
-                    <Button cancelButton={true}
-                            txt={I18n.t("forms.cancel")}
-                            onClick={this.cancel}/>
-                    <Button disabled={disabledSubmit}
-                            txt={I18n.t(`service.${isAdmin ? "add" : "request"}`)}
-                            onClick={this.submit}/>
+                    {!isServiceRequestDetails && <Button cancelButton={true}
+                                                         txt={I18n.t("forms.cancel")}
+                                                         onClick={() => this.cancel()}/>}
+                    {!isServiceRequestDetails && <Button disabled={disabledSubmit}
+                                                         txt={I18n.t(`service.${!isServiceRequest ? "add" : "request"}`)}
+                                                         onClick={() => this.submit()}/>
+                    }
+                    {(isServiceRequestDetails && this.state.serviceRequest.status !== "open") &&
+                        <Button warningButton={true} onClick={this.deleteServiceRequest}/>}
                 </section>
             </div>)
-            ;
+    }
+
+    renderHeader = (serviceRequest, disabledSubmit) => {
+        const isOpen = serviceRequest.status === "open";
+        return (
+            <div className="service-request-header-container">
+                <div className="service-request-header">
+                    <div className="left">
+                        <h2>{I18n.t("serviceRequest.request", {id: serviceRequest.id})}</h2>
+                        <div className="header-attributes">
+                            <div className="header-keys">
+                                <span className="name">{I18n.t("serviceRequest.requester")}</span>
+                                <span className="name">{I18n.t("collaboration.motivation")}</span>
+                                {serviceRequest.status === "denied" &&
+                                    <span
+                                        className="name rejection-reason">{I18n.t("serviceRequest.rejectionReason")}</span>}
+                            </div>
+                            <div className="header-values">
+                                <span>{serviceRequest.requester.name}</span>
+                                <span className="email"><a
+                                    href={`mailto:${serviceRequest.requester.email}`}>{serviceRequest.requester.email}</a></span>
+                                <span>{serviceRequest.message}</span>
+                                {serviceRequest.status === "denied" &&
+                                    <span className="rejection-reason">{serviceRequest.rejection_reason}</span>}
+                            </div>
+                        </div>
+                    </div>
+
+                    <section className="service-request-header-actions">
+                        <div className="request-header-actions">
+                            {isOpen && <Button cancelButton={true}
+                                               txt={I18n.t("serviceRequest.deny")}
+                                               onClick={() => this.deny()}/>}
+                            {isOpen && <Button disabled={disabledSubmit}
+                                               txt={I18n.t("serviceRequest.approve")}
+                                               onClick={() => this.approve()}/>}
+                            {!isOpen &&
+                                <Chip label={I18n.t(`serviceRequest.statuses.${serviceRequest.status}`)}
+                                      type={chipTypeForStatus(serviceRequest)}/>}
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+        );
     }
 
     render() {
@@ -831,10 +986,12 @@ class Service extends React.Component {
             description,
             uri,
             uri_info,
+            isServiceRequestDetails,
             accepted_user_policy,
             privacy_policy,
             contact_email, support_email, security_email,
             confirmationDialogAction,
+            question,
             leavePage,
             invalidInputs,
             automatic_connection_allowed,
@@ -860,7 +1017,10 @@ class Service extends React.Component {
             redirect_urls,
             saml_metadata_url,
             samlMetaDataFile,
-            comments
+            comments,
+            serviceRequest,
+            declineDialog,
+            rejectionReason
         } = this.state;
         const {isServiceRequest} = this.props;
         if (loading) {
@@ -873,23 +1033,26 @@ class Service extends React.Component {
         const contactEmailRequired = !hasAdministrators && isEmpty(contact_email);
         return (
             <>
-                <UnitHeader obj={({
+                {!isServiceRequestDetails && <UnitHeader obj={({
                     name: I18n.t(`models.services.${isServiceRequest ? "request" : "new"}`),
                     svg: ServicesIcon
-                })}/>
+                })}/>}
+                {isServiceRequestDetails && this.renderHeader(serviceRequest, disabledSubmit)}
                 <div className="mod-service">
                     <ConfirmationDialog isOpen={confirmationDialogOpen}
                                         cancel={cancelDialogAction}
                                         confirm={confirmationDialogAction}
                                         leavePage={leavePage}
                                         isWarning={warning}
-                                        question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
-
+                                        disabledConfirm={declineDialog && isEmpty(rejectionReason)}
+                                        question={question}>
+                        {declineDialog && this.getDeclineRejectionOptions(rejectionReason)}
+                    </ConfirmationDialog>
                     {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
                         access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, uri_info, privacy_policy,
                         service, disabledSubmit, allow_restricted_orgs, sirtfi_compliant, token_enabled, pam_web_sso_enabled, token_validity_days, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, administrators, message, logo, isServiceAdmin, providing_organisation,
-                        connection_type, redirect_urls, saml_metadata_url, samlMetaDataFile, comments)}
+                        connection_type, redirect_urls, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails)}
                 </div>
             </>)
             ;
