@@ -300,6 +300,12 @@ class App extends React.Component {
                                                                 isServiceRequest={true}
                                                                 Component={Service} {...props}/>}/>
 
+                        <Route exact path="/service-request/:service_request_id"
+                               render={props => <ProtectedRoute config={config}
+                                                                currentUser={currentUser}
+                                                                isServiceRequest={true}
+                                                                Component={Service} {...props}/>}/>
+
                         <Route exact path="/new-organisation-invite/:organisation_id"
                                render={props => <ProtectedRoute currentUser={currentUser}
                                                                 config={config}

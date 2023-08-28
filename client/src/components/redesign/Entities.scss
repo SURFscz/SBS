@@ -250,6 +250,14 @@
                     text-align: right;
                 }
 
+                &.logo {
+                    text-align: center;
+                    svg.image-not-found {
+                        width: 48px;
+
+                    }
+                }
+
                 &.icon {
                     text-align: center;
                     padding-left: 0;

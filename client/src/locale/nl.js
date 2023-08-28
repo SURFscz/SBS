@@ -30,6 +30,7 @@ const nl = {
         collaborationRequest: "Samenwerkingsaanvraag '{{name}}'",
         services: "Diensten",
         service: "{{name}}",
+        serviceRequest: "Dienst verzoek",
         group: "Groep '{{name}}'",
         newGroup: "Nieuwe groep",
         profile: "Profiel",
@@ -131,7 +132,11 @@ const nl = {
         today: "Vandaag",
         manage: "Beheren",
         invalidInput: "Ongeldig{{name}}",
-        attributes: {"email": " e-mailadres", "uri": "e URL (begin met bijvoorbeeld 'https://')"},
+        attributes: {
+            email: " e-mailadres",
+            uri: "een URL (begin met bijvoorbeeld 'https://')",
+            contact: "contact (een e-mailadres of een URL)"
+        },
         back: "Terug",
         reset: "Herstel",
         yes: "Ja",
@@ -1008,11 +1013,13 @@ const nl = {
         required: "De dienst heeft een {{attribute}} nodig.",
         deleteConfirmation: "Weet je zeker dat je dienst {{name}} wil verwijderen? Dit kan niet teruggedraaid worden.",
         add: "Opslaan",
+        request: "Aanvragen",
         update: "Wijzigen",
         delete: "Verwijderen",
         cancel: "Annuleren",
         flash: {
             created: "Dienst {{name}} is aangemaakt.",
+            createdServiceRequest: "Verzoek voor dienst {{name}} is aangemaakt.",
             updated: "Dienst {{name}} is bijgewerkt.",
             deleted: "Dienst {{name}} is verwijderd.",
             tokenAdded: "Nieuw token voor {{name}} is aangemaakt",
@@ -1070,7 +1077,30 @@ const nl = {
         admins: "Administratieve email-adressen",
         adminContact: "Administrative contact",
         noSupport: "Dienst {{name}} biedt geen support voor eindgebruikers.",
-        launch: "Open"
+        launch: "Open",
+        connectionDetails: "Connectie details",
+        contactSupport: "Contact & Support",
+        providingOrganisation: "Aanbiedende organisatie",
+        providingOrganisationPlaceholder: "Naam van de aanbiedende organisatie",
+        protocol: "Web gebaseerd protocol",
+        protocols: {
+            openIDConnect: "OpenID Connect",
+            saml2URL: "SAML2 URL",
+            saml2File: "SAML2 bestand",
+            none: "Geen, de dienst heeft geen web interface"
+        },
+        openIDConnectRedirects: "OpenID Connect redirect URL(s)",
+        openIDConnectRedirectsPlaceholder: "https://service.com/redirect",
+        openIDConnectRedirectsTooltip: "De redirect URL nadat de user heeft ijgelogd. Moet een volledig overeenkomen.",
+        samlMetadata: "SAML metadata URL",
+        samlMetadataPlaceholder: "https://metadata",
+        samlMetadataUpload: "Upload SAML metadata",
+        noneInfo: "Andere protocollen kunnen later worden toegevoegd",
+        commentsTooltip: "Your additional comments will be visible for the administrators that evaluate your service request",
+        comments: "Je motivatie",
+        commentsPlaceholder: "Pretty please...",
+        commentsHeader: "Additional comments about this request",
+        commentsAttribute: "motivatie"
     },
     organisation: {
         title: "Nieuwe organisatie toevoegen",
@@ -1676,6 +1706,7 @@ const nl = {
             "service_connection_requests": "Koppelverzoek",
             "service_groups": "Dienstgroepen",
             "services": "Dienst",
+            "service_requests": "Dienst verzoeken",
             "services_collaborations": "Dienst",
             "users": "Gebruiker",
             "ip_networks": "IP-netwerk",
@@ -1694,40 +1725,32 @@ const nl = {
         }
     },
     serviceRequest: {
-        title: "Dienst {{name}} is niet gekoppeld aan een van je samenwerkingen",
-        subTitle: "Dit zijn alle samenwerkingen waarvan je lid bent. Kies er een of meer om dienst <strong>{{name}}</strong> aan te koppelen om toegang te krijgen tot deze dienst.",
-        titleAlreadyLinked: "Dienst {{name}} is al gekoppeld aan je samenwerking {{collaboration}}",
-        subTitleAlreadyLinked: "De dienst <strong>{{name}}</strong> heeft je naar deze pagina omgeleid om een van je samenwerkingen met deze dienst te koppelen. Je hebt echter al toegang tot deze dienst. Neem contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> om dit probleem op te lossen.",
-        titleLinkNotAllowed: "Dienst {{name}} kan niet worden gekoppeld aan je samenwerkingen",
-        subTitleLinkNotAllowed: "De dienst <strong>{{name}}</strong> heeft je naar deze pagina omgeleid om een van je samenwerkingen te koppelen. Geen van je samenwerkingen kan echter aan deze dienst worden gekoppeld. Neem contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> om dit probleem op te lossen.",
-        titleNoAutomaticConnection: "Dienst {{name}} kan niet worden gekoppeld aan je samenwerkingen",
-        subTitleNoAutomaticConnection: "De dienst <strong>{{name}}</strong> heeft je naar deze pagina omgeleid om een van je samenwerkingen te koppelen, maar deze dienst ondersteunt geen automatische koppelingen. Neem contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> om dit probleem op te lossen.",
-        titleRedirectMismatch: "Dienst {{name}} kan niet worden gekoppeld aan je samenwerkingen",
-        subTitleRedirectMismatch: "De dienst <strong>{{name}}</strong> heeft je naar deze pagina omgeleid om een van je samenwerkingen te koppelen, maar de redirect URI is niet valide. Neem contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> om dit probleem op te lossen.",
-        titleNoCollaborations: "Dienst {{name}} kan niet worden gekoppeld aan je samenwerkingen",
-        subTitleNoCollaborations: "Je bent geen lid van een samenwerking. Om dienst <strong>{{name}}</strong> te gebruiken, moet je lid zijn van ten minste één samenwerking. Neem contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> om dit probleem op te lossen.",
-        titleOutstandingServiceConnectionRequest: "Dienst {{name}} kan niet worden gekoppeld aan je samenwerkingen",
-        subTitleOutstandingServiceConnectionRequest: "Er zijn reeds openstaande verzoeken om deze dienst te koppelen aan al je samenwerkingen: {{details}}. Neem contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> om dit probleem op te lossen.",
-        collaboration: {
-            name: "Naam",
-            role: "Rol",
-            organisation: "Organisatie",
-            actions: "Koppel",
-            tooltips: "",
-            linkNotAllowed: "Je kan deze dienst niet koppelen aan deze samenwerking omdat de organisatie van deze samenwerking niet mag koppelen met deze dienst",
-            alreadyLinked: "Je kan deze dienst niet aan deze samenwerking koppelen omdat de dienst al beschikbaar is voor deze samenwerking",
-            outstandingServiceConnectionRequest: "Je kan deze dienst niet aan deze samenwerking koppelen omdat er daartoe al een aanvraag openstaat"
+        title: {
+            open: "{{requester}} heeft een verzoek gedaan om een nieuwe dienst '{{name}}' te maken .",
+            approved: "{{requester}} dienstaanvraag is goedgekeurd.",
+            denied: "{{requester}} dienstaanvraag is afgewezen."
         },
-        role: {
-            admin: "Beheerder",
-            member: "Lid"
+        request: "Verzoek {{id}}",
+        requester: "Aanvrager",
+        approved: "Goedgekeurd",
+        rejectionReason: "Reden voor afwijzing",
+        denyConfirmation: "Weet je zeker dat je dit verzoek wil afkeuren?",
+        deleteConfirmation: "Weet je zeker dat je dit verzoek wil verwijderen?",
+        approve: "Goedkeuren",
+        deny: "Afkeuren",
+        metaData: "De SAML metadata",
+        showMetaData: "Toon de SAML metadata",
+        status: "Status",
+        statuses: {
+            all: "Allemaal ({{nbr}})",
+            open: "Open",
+            denied: "Afgewezen",
+            approved: "Goedgekeurd"
         },
-        backToService: "Terug naar de dienst",
-        link: "Koppel samenwerking(en)",
-        motivation: "Dienst {{serviceName}} heeft gebruiker {{userName}} omgeleid om een samenwerking te koppelen aan deze dienst",
-        result: {
-            completed: "De dienst {{serviceName}} is nu beschikbaar voor je. Klik op de onderstaande link om naar deze dienst te gaan.",
-            requested: "Toegang tot de dienst {{serviceName}} is aangevraagd. Totdat het verzoek is geaccepteerd, heb je geen toegang tot deze dienst.",
+        flash: {
+            approved: "Dienst {{name}} is aangemaakt",
+            denied: "De dienstaanvraag is afgewezen",
+            deleted: "Verzoek voor dienstaanvraag {{name}} is verwijderd",
         }
     },
     confirmation: {

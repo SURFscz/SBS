@@ -91,20 +91,19 @@ def approve_request(service_request_id):
     service_request = db.session.get(ServiceRequest, service_request_id)
     confirm_write_access()
     client_data = current_request.get_json()
-    attributes = ["name", "short_name", "description", "organisation_id", "accepted_user_policy", "logo",
-                  "website_url", "logo"]
+    client_data["identifier"] = str(uuid.uuid4())
 
-    # take the data from client_data as it can be different
-    data = {"identifier": str(uuid.uuid4())}
-    for attr in attributes:
-        data[attr] = client_data.get(attr, None)
+    cleanse_short_name(client_data, "abbreviation")
+    hashed, _ = generate_ldap_password_with_hash()
+    data["ldap_password"] = hashed
+
     # bugfix for logo url instead of raw data in the POST from the client - only happens when the logo is unchanged
-    logo = data.get("logo")
+    logo = client_data.get("logo")
     if logo and logo.startswith("http"):
         groups = re.search(r".*api/images/(.*)/(.*)", logo).groups()
-        data["logo"] = logo_from_cache(groups[0], groups[1])
+        client_data["logo"] = logo_from_cache(groups[0], groups[1])
 
-    res = save(Service, custom_json=data)
+    res = save(Service, custom_json=client_data)
     service = res[0]
 
     user = service_request.requester
@@ -118,7 +117,6 @@ def approve_request(service_request_id):
                "base_url": current_app.app_config.base_url,
                "administrator": current_user_name(),
                "service": service,
-               "organisation": service_request.organisation,
                "user": user}
     mail_accepted_declined_service_request(context,
                                            service.name,
@@ -146,7 +144,6 @@ def deny_request(service_request_id):
                "administrator": current_user_name(),
                "rejection_reason": rejection_reason,
                "service": {"name": service_request.name},
-               "organisation": service_request.organisation,
                "user": user}
     mail_accepted_declined_service_request(context,
                                            service_request.name,
