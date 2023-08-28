@@ -38,7 +38,7 @@ def _do_service_connection_request(approved):
     service = service_connection_request.service
     collaboration = service_connection_request.collaboration
 
-    if not is_service_admin(service.id) or is_application_admin():
+    if not (is_service_admin(service.id) or is_application_admin()):
         raise Forbidden(f"Not allowed to approve / decline service_connection_request for service {service.entity_id}")
 
     if approved:
