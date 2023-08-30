@@ -17,7 +17,7 @@ depends_on = None
 
 def upgrade():
     conn = op.get_bind()
-    conn.execute(text("ALTER TABLE service_requests RENAME COLUMN short_name TO abbreviation"))
+    conn.execute(text("ALTER TABLE service_requests CHANGE short_name abbreviation varchar(255) NOT NULL"))
 
 
 def downgrade():
