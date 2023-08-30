@@ -357,7 +357,7 @@ class UsedServices extends React.Component {
         );
     }
 
-    renderConnectedServices = usedServices => {
+    renderConnectedServices = (user, usedServices) => {
         return (
             <div>
                 {usedServices.map(service =>
@@ -369,13 +369,14 @@ class UsedServices extends React.Component {
                                  ActionButton={this.getServiceAction(service)}
                                  limitWidth={true}
                                  launchLink={true}
+                                 user={user}
                                  showAboutInformation={true}
                     />)}
             </div>
         );
     }
 
-    renderAvailableServices = usedServices => {
+    renderAvailableServices = (user, usedServices) => {
         return (
             <div>
                 {usedServices.map(service =>
@@ -386,6 +387,7 @@ class UsedServices extends React.Component {
                                  ActionButton={this.getServiceAction(service)}
                                  limitWidth={true}
                                  launchLink={true}
+                                 user={user}
                                  showAboutInformation={true}
                     />)}
             </div>
@@ -409,12 +411,12 @@ class UsedServices extends React.Component {
             .filter(service => isEmpty(query) || service.name.toLowerCase().indexOf(query) > -1)
     }
 
-    renderCurrentTab = (currentTab, usedServices, availableServices, query) => {
+    renderCurrentTab = (currentTab, usedServices, availableServices, query, user) => {
         switch (currentTab) {
             case CONNECTIONS:
-                return this.renderConnectedServices(this.sortAndFilter(usedServices, query));
+                return this.renderConnectedServices(user, this.sortAndFilter(usedServices, query));
             case AVAILABLE:
-                return this.renderAvailableServices(this.sortAndFilter(availableServices, query));
+                return this.renderAvailableServices(user, this.sortAndFilter(availableServices, query));
             default:
                 throw new Error(`unknown-tab: ${currentTab}`);
         }
@@ -457,7 +459,7 @@ class UsedServices extends React.Component {
         if (requestConnectionService) {
             return this.renderRequestConnectionService(requestConnectionService, message, confirmedAupConnectionRequest);
         }
-        const {collaboration} = this.props;
+        const {collaboration, user} = this.props;
         let usedServices = collaboration.services.concat(collaboration.organisation.services);
         usedServices = removeDuplicates(usedServices, "id");
         const serviceConnectionRequests = collaboration.service_connection_requests;
@@ -485,7 +487,7 @@ class UsedServices extends React.Component {
                             {this.renderSearch(query)}
                         </div>
 
-                        {this.renderCurrentTab(currentTab, usedServices, services, query)}
+                        {this.renderCurrentTab(currentTab, usedServices, services, query, user)}
                     </div>
 
                 </div>

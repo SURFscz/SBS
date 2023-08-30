@@ -373,7 +373,7 @@ class CollaborationDetail extends React.Component {
                 this.getCollaborationAdminsTab(collaboration),
                 this.getMembersTab(collaboration, showMemberView),
                 this.getGroupsTab(collaboration, showMemberView),
-                this.getServicesTab(collaboration),
+                this.getServicesTab(collaboration, user),
                 this.getJoinRequestsTab(collaboration),
             ] : [
                 this.getAboutTab(collaboration, showMemberView, isJoinRequest),
@@ -461,7 +461,7 @@ class CollaborationDetail extends React.Component {
         </div>)
     }
 
-    getServicesTab = collaboration => {
+    getServicesTab = (collaboration, user) => {
         const usedServices = removeDuplicates(collaboration.services.concat(collaboration.organisation.services), "id");
         const openServiceConnectionRequests = (collaboration.service_connection_requests || []).length;
         return (<div key="services" name="services"
@@ -469,6 +469,7 @@ class CollaborationDetail extends React.Component {
                      icon={<ServicesIcon/>}
                      notifier={openServiceConnectionRequests > 0 ? openServiceConnectionRequests : null}>
             <UsedServices collaboration={collaboration}
+                          user={user}
                           refresh={callback => this.componentDidMount(callback)}
                           {...this.props} />
         </div>);

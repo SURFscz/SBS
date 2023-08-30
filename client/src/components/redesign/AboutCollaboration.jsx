@@ -57,6 +57,7 @@ class AboutCollaboration extends React.Component {
                             .map(service =>
                                 <ServiceCard service={service}
                                              key={service.id}
+                                             user={user}
                                              collaboration={collaboration}
                                              ActionButton={!isEmpty(service.uri) &&
                                                  <Button txt={I18n.t("service.launch")}
