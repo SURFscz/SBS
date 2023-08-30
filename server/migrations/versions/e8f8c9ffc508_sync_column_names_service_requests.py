@@ -17,9 +17,10 @@ depends_on = None
 
 def upgrade():
     conn = op.get_bind()
-    conn.execute(text("ALTER TABLE service_requests RENAME COLUMN accepted_user_policy_uri TO accepted_user_policy"))
-    conn.execute(text("ALTER TABLE service_requests RENAME COLUMN login_uri TO uri"))
-    conn.execute(text("ALTER TABLE service_requests RENAME COLUMN info_uri TO uri_info"))
+    conn.execute(text("ALTER TABLE service_requests CHANGE accepted_user_policy_uri "
+                      "accepted_user_policy varchar(255) DEFAULT NULL"))
+    conn.execute(text("ALTER TABLE service_requests CHANGE login_uri uri varchar(255) DEFAULT NULL"))
+    conn.execute(text("ALTER TABLE service_requests CHANGE info_uri uri_info varchar(255) DEFAULT NULL"))
 
 
 def downgrade():
