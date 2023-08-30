@@ -1,6 +1,7 @@
 import React from "react";
 import {apiKeyValue, createApiKey, deleteApiKey} from "../../api";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
+import {ReactComponent as TrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 
 import "./ApiKeys.scss";
 import I18n from "../../locale/I18n";
@@ -8,7 +9,6 @@ import Button from "../Button";
 import {setFlash} from "../../utils/Flash";
 import Entities from "./Entities";
 import InputField from "../InputField";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ConfirmationDialog from "../ConfirmationDialog";
 import ApiKeysExplanation from "../explanations/ApiKeys";
 import {isEmpty, stopEvent} from "../../utils/Utils";
@@ -176,7 +176,7 @@ class ApiKeys extends React.Component {
                 header: "",
                 mapper: apiKey => isUserAllowed(ROLES.ORG_ADMIN, user, organisation.id) ?
                     <span onClick={() => this.removeApiKey(apiKey)}>
-                    <FontAwesomeIcon icon="trash"/>
+                    <TrashIcon/>
                 </span> : null
             },
         ]

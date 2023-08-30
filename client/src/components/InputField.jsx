@@ -19,8 +19,6 @@ export default function InputField({
                                        fileUpload = false,
                                        fileName = null,
                                        onFileUpload = null,
-                                       onFileRemoval = null,
-                                       onFileInitialRemoval = null,
                                        acceptFileFormat = "text/csv",
                                        fileInputKey = null,
                                        copyClipBoard = false,
@@ -106,10 +104,6 @@ export default function InputField({
                                style={{display: "none"}}
                                onChange={onFileUpload}/>
                     </section>
-                    {onFileInitialRemoval &&
-                        <section className={"on-file-initial-removal"} onClick={onFileRemoval}>
-                            <span><FontAwesomeIcon icon="trash"/></span>
-                        </section>}
                 </div>}
             </div>
         </div>
