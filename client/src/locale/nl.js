@@ -1027,7 +1027,8 @@ const nl = {
             tokenDeleted: "Token van dienst {{name}} is verwijderd",
         },
         ldap: {
-            title: "Reset LDAP-wachtwoord",
+            preTitle: "Om veiligheidsredenen kan het huidige wachtwoord niet worden weergegeven. ",
+            title: "Reset LDAP-wachtwoord.",
             confirmation: "Weet je zeker dat je het LDAP-wachtwoord wil resetten voor {{name}}?",
             success: "LDAP wachtwoord is gereset.",
             info: "Sla het wachtwoord veilig op. Hierna is het wachtwoord niet meer te zien.",
@@ -2228,7 +2229,7 @@ const nl = {
         descriptionPlaceHolder: "Omschrijving voor dit token",
         descriptionTooltip: "Een optionele omschrijving van het doel van dit token",
         backToApiKeys: "Terug naar tokens",
-        addToken: "Voeg token toe",
+        addToken: "+ Voeg token toe",
         toc: {
             general: "Algemeen",
             contacts: "Contact",
