@@ -283,7 +283,7 @@ class Service extends React.Component {
         if (this.isValid()) {
             const {serviceRequest} = this.state;
             this.setState({loading: true});
-            approveServiceRequest({...serviceRequest, ...this.state}).then(() => {
+            approveServiceRequest({...serviceRequest, ...this.state, token_validity_days: null}).then(() => {
                 this.props.history.push(`/home/service_requests?refresh=true`);
                 setFlash(I18n.t("serviceRequest.flash.approved", {name: serviceRequest.name}));
             });
@@ -338,7 +338,7 @@ class Service extends React.Component {
     doSubmit = () => {
         if (this.isValid()) {
             this.setState({loading: true});
-            const {name, ip_networks, redirect_urls, abbreviation} = this.state;
+            const {name, ip_networks, redirect_urls} = this.state;
             const {isServiceRequest} = this.props;
             const strippedIpNetworks = ip_networks
                 .filter(network => network.network_value && network.network_value.trim())
@@ -946,7 +946,7 @@ class Service extends React.Component {
                                 <span>{serviceRequest.requester.name}</span>
                                 <span className="email"><a
                                     href={`mailto:${serviceRequest.requester.email}`}>{serviceRequest.requester.email}</a></span>
-                                <span>{serviceRequest.message}</span>
+                                <span>{serviceRequest.comments}</span>
                                 {serviceRequest.status === "denied" &&
                                     <span className="rejection-reason">{serviceRequest.rejection_reason}</span>}
                             </div>

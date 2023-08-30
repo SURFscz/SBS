@@ -510,7 +510,7 @@ class ServiceRequest(Base, db.Model, LogoMixin):
     metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     name = db.Column("name", db.String(length=255), nullable=False)
-    short_name = db.Column("short_name", db.String(length=255), nullable=False)
+    abbreviation = db.Column("abbreviation", db.String(length=255), nullable=False)
     description = db.Column("description", db.Text(), nullable=True)
     logo = db.Column("logo", db.Text(), nullable=True)
     uuid4 = db.Column("uuid4", db.String(length=255), nullable=False, default=gen_uuid4)
