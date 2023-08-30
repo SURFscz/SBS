@@ -1,0 +1,14 @@
+{% extends "mail_layout.txt" %}
+{% block title %}SURF service request{% endblock %}
+{% block content %}
+
+{{ salutation }},
+
+The user {{ user.name }} has requested to create a new service {{ service_request.name }}.
+The motivation for this request:
+{{ service_request.message }}
+
+Login to process this request:
+
+{{base_url}}/service-requests/{{service_request.id}}
+{% endblock %}

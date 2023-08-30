@@ -270,6 +270,7 @@ class Me extends React.Component {
                     <div className={"ssh-keys-actions"}>
                         <UploadButton name={I18n.t("profile.addSSHKey")}
                                       acceptFileFormat={".pub"}
+                                      txt={I18n.t("forms.uploadSSH")}
                                       onFileUpload={this.onFileUpload}/>
                         <a href="/" onClick={e => this.addSshKey(e)}>{I18n.t("profile.addSSHKeyManually")}</a>
                     </div>

@@ -30,7 +30,8 @@ from server.auth.user_claims import add_user_claims, valid_user_attributes
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit, SBS_LOGIN
 from server.db.domain import User, OrganisationMembership, CollaborationMembership, JoinRequest, CollaborationRequest, \
-    UserNameHistory, SshKey, Organisation, Collaboration, Service, ServiceMembership, ServiceAup, UserIpNetwork
+    UserNameHistory, SshKey, Organisation, Collaboration, Service, ServiceMembership, ServiceAup, UserIpNetwork, \
+    ServiceRequest
 from server.db.models import log_user_login
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error, mail_account_deletion
@@ -46,6 +47,8 @@ def _add_counts(user: dict):
         user["total_organisations"] = Organisation.query.count()
         user["total_collaborations"] = Collaboration.query.count()
         user["total_services"] = Service.query.count()
+        user["total_service_requests"] = ServiceRequest.query.count()
+        user["total_open_service_requests"] = ServiceRequest.query.filter(ServiceRequest.status == "open").count()
         user["total_users"] = User.query.count()
 
 
@@ -95,6 +98,7 @@ def _user_query():
         .options(joinedload(User.join_requests)
                  .subqueryload(JoinRequest.collaboration)) \
         .options(joinedload(User.aups)) \
+        .options(joinedload(User.service_requests)) \
         .options(joinedload(User.collaboration_requests)
                  .subqueryload(CollaborationRequest.organisation))
 

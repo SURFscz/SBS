@@ -12,7 +12,7 @@ from server.db.defaults import default_expiry_date, SERVICE_TOKEN_INTROSPECTION,
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
     CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey, CollaborationRequest, \
     ServiceConnectionRequest, SuspendNotification, Aup, SchacHomeOrganisation, SshKey, ServiceGroup, ServiceInvitation, \
-    ServiceMembership, ServiceAup, UserToken, UserIpNetwork, Tag, PamSSOSession, IpNetwork, ServiceToken
+    ServiceMembership, ServiceAup, UserToken, UserIpNetwork, Tag, PamSSOSession, IpNetwork, ServiceToken, ServiceRequest
 
 collaboration_request_name = "New Collaboration"
 
@@ -103,6 +103,8 @@ wireless_service_connection_request_hash = generate_token()
 
 pam_session_id = str(uuid.uuid4())
 invalid_service_pam_session_id = str(uuid.uuid4())
+
+service_request_gpt_name = "GPT"
 
 image_cache = {}
 
@@ -640,6 +642,20 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     pam_sso_session_james = PamSSOSession(session_id=invalid_service_pam_session_id, attribute="email", user=james,
                                           service=storage, pin="1234")
     persist_instance(db, pam_sso_session_peter, pam_sso_session_james)
+
+    service_request_gpt = ServiceRequest(name=service_request_gpt_name, short_name="gpt",
+                                         description="We need more AI", logo=read_image("computing.jpeg"),
+                                         uuid4=str(uuid.uuid4()), providing_organisation="Cloudy",
+                                         login_uri="https://login.org", website_uri="https://website.org",
+                                         contact_email="contact@gpt.org", support_email="support@gpt.org",
+                                         security_email="security@gpt.org", privacy_policy="https://privacy_policy.org",
+                                         accepted_user_policy_uri="https://accepted_user_policy.org",
+                                         code_of_conduct_compliant=True, sirtfi_compliant=True,
+                                         research_scholarship_compliant=True, status="open", comments="Please",
+                                         connection_type="openIDConnect",
+                                         redirect_urls="https://redirect.org, https://redirect.alternative.org",
+                                         requester=sarah)
+    persist_instance(db, service_request_gpt)
 
     if perf_test:
         users = []

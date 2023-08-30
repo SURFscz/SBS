@@ -103,7 +103,7 @@ export function me(config) {
     if (config.local && 1 == 1) {
         let sub = "urn:service_admin";
         sub = "urn:john";
-        // sub = "urn:sarah";
+        // sub = "urn:roger";
         const second_factor_confirmed = true;
         // sub = "urn:unknown";
         // Need to mock a login
@@ -262,7 +262,7 @@ export function createService(service) {
 }
 
 export function updateService(service) {
-    //We need to limit the size so we delete the relations-ships that are not used server-side
+    //We need to limit the size soo we delete the relations-ships that are not used server-side
     ["service_groups", "automatic_connection_allowed_organisations", "organisations", "allowed_organisations",
         "collaborations", "service_invitations", "service_memberships", "service_organisation_collaborations"]
         .forEach(relation => delete service[relation])
@@ -316,6 +316,31 @@ export function resetLdapPassword(service) {
 
 export function hasMemberAccessToService(service) {
     return fetchJson(`/api/services/member_access_to_service/${service.id}`);
+}
+
+//ServiceRequest
+export function createServiceRequest(serviceRequest) {
+    return postPutJson("/api/service_requests", serviceRequest, "post", false);
+}
+
+export function findAllServiceRequests() {
+    return fetchJson("/api/service_requests/all");
+}
+
+export function serviceRequestById(id) {
+    return fetchJson(`/api/service_requests/${id}`);
+}
+
+export function approveServiceRequest(body) {
+    return postPutJson(`/api/service_requests/approve/${body.id}`, body, "put");
+}
+
+export function denyServiceRequest(id, rejectionReason) {
+    return postPutJson(`/api/service_requests/deny/${id}`, {rejection_reason: rejectionReason}, "put");
+}
+
+export function deleteServiceRequest(id) {
+    return fetchDelete(`/api/service_requests/${id}`);
 }
 
 //Collaborations
