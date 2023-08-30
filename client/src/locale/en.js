@@ -1027,7 +1027,8 @@ const en = {
             tokenDeleted: "Token of {{name}} was deleted",
         },
         ldap: {
-            title: "Reset LDAP password",
+            preTitle: "For security reasons, the current password can not be displayed. ",
+            title: "Reset the LDAP password.",
             confirmation: "Are you sure you want to reset the LDAP password for {{name}}?",
             success: "LDAP password has been reset.",
             info: "Copy and store the password somewhere safe. You can not see this password afterwards.",
@@ -2228,7 +2229,7 @@ const en = {
         descriptionPlaceHolder: "Description for this token",
         descriptionTooltip: "An optional description explaining the use of this token",
         backToApiKeys: "Back to tokens",
-        addToken: "New token",
+        addToken: "+ Add token",
         toc: {
             general: "General",
             contacts: "Contacts",
