@@ -397,7 +397,8 @@ def collaboration_invites():
         invitation = Invitation(hash=generate_token(), message=message, invitee_email=administrator,
                                 collaboration=collaboration, user=user, status="open",
                                 intended_role=intended_role, expiry_date=default_expiry_date(json_dict=data),
-                                membership_expiry_date=membership_expiry_date, created_by=user.uid)
+                                membership_expiry_date=membership_expiry_date, created_by=user.uid,
+                                external_identifier=str(uuid.uuid4()))
         invitation = db.session.merge(invitation)
         invitation.groups.extend(groups)
         db.session.commit()
@@ -587,6 +588,7 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True, sav
     for administrator in administrators:
         invitation = Invitation(hash=generate_token(), message=message, invitee_email=administrator,
                                 collaboration_id=collaboration.id, user=user, intended_role="admin",
+                                external_identifier=str(uuid.uuid4()),
                                 expiry_date=default_expiry_date(), status="open", created_by=user.uid)
         invitation = db.session.merge(invitation)
         mail_collaboration_invitation({

@@ -20,6 +20,8 @@ from server.db.models import delete
 from server.mail import mail_collaboration_invitation
 from server.scim.events import broadcast_collaboration_changed
 
+CREATED_BY_SYSTEM = "system"
+
 invitations_api = Blueprint("invitations_api", __name__, url_prefix="/api/invitations")
 
 email_re = re.compile("^\\S+@\\S+$")
@@ -140,7 +142,7 @@ def collaboration_invites_api():
         invitation = Invitation(hash=generate_token(), message=message, invitee_email=email,
                                 collaboration_id=collaboration.id, user=user, intended_role=intended_role,
                                 expiry_date=expiry_date, membership_expiry_date=membership_expiry_date,
-                                created_by="system", external_identifier=str(uuid.uuid4()), status="open")
+                                created_by=CREATED_BY_SYSTEM, external_identifier=str(uuid.uuid4()), status="open")
         invitation = db.session.merge(invitation)
         invites_results.append({
             "email": email,
@@ -172,7 +174,7 @@ def invitations_accept():
         raise Conflict(f"The invitation has status {invitation.status}")
 
     if invitation.expiry_date and invitation.expiry_date < datetime.datetime.now():
-        if invitation.external_identifier:
+        if invitation.created_by == "system":
             invitation.status = "expired"
             db.session.merge(invitation)
             db.session.commit()
@@ -193,7 +195,7 @@ def invitations_accept():
                                                        expiry_date=invitation.membership_expiry_date,
                                                        created_by=invitation.user.uid,
                                                        updated_by=invitation.user.uid)
-    if invitation.external_identifier:
+    if invitation.created_by == "system":
         collaboration_membership.invitation_id = invitation.id
 
     collaboration_membership = db.session.merge(collaboration_membership)
@@ -221,7 +223,7 @@ def invitations_accept():
         .one()
     collaboration_id = invitation.collaboration.id
     # We need the persistent identifier of the collaboration_membership which will be generated after the delete-commit
-    if invitation.external_identifier:
+    if invitation.created_by == "system":
         invitation.status = "accepted"
         db.session.merge(invitation)
     else:
