@@ -1953,7 +1953,7 @@ const nl = {
         institutionCollNotAllowed: "Je bent ingelogd via <strong>{{name}}</strong> waardoor je geen samenwerking kunt aanmaken. Als je dat wel had verwacht, neem dan contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> voor hulp.",
         startCreateColl: "Je bent ingelogd via <strong>{{name}}</strong> waardoor je een samenwerking kunt aanmaken. Daarmee kun je diensten koppelen en onderzoekers uitnodigen.",
         startRequestColl: "Je bent ingelogd via <strong>{{name}}</strong>, en je kunt hen vragen een samenwerking voor je te maken. Nadat je verzoek is goedgekeurd, kun je diensten koppelen en onderzoekers uitnodigen.",
-        instructions: "Instructies van <strong>{{name}}</strong>",
+        instructions: "Bericht van <strong>{{name}}</strong>",
         createCollTxt: "Samenwerking aanmaken",
         createCollRequestTxt: "Vraag samenwerking aan",
     },
