@@ -17,6 +17,7 @@ export default function ServiceCard({
                                         ActionButton,
                                         tokenAction,
                                         message,
+                                        user,
                                         showAboutInformation,
                                         launchLink,
                                         limitWidth = false
@@ -111,7 +112,7 @@ export default function ServiceCard({
     return (<div className={`sds--content-card ${limitWidth ? "limit-width" : ""}`}>
         <div className="sds--content-card--main">
             <div className="sds--content-card--visual">
-                <div onClick={e => nameLinkAction && nameLinkAction(e)}>
+                <div onClick={e => (nameLinkAction && user.admin) && nameLinkAction(e)}>
                     <Logo src={service.logo || service.service.logo}/>
                 </div>
             </div>
