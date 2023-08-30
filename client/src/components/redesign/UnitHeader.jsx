@@ -69,11 +69,13 @@ class UnitHeader extends React.Component {
                             <div className="meta-info">
                                 {obj.name && <h1>{obj.name}</h1>}
                                 {obj.organisation && <span className="name">{obj.organisation.name}</span>}
-                            </div>
-                            {!isEmpty(labels) &&
+                                {!isEmpty(labels) &&
                                 <div className="labels">
-                                    {labels.map((label, index) => <span key={index}><Chip label={label}/></span>)}
+                                    {labels.sort().map((label, index) => <span key={index} className="chip-container">
+                                        <Chip label={label}/></span>)}
                                 </div>}
+                            </div>
+
                         </div>
 
                         {(obj.description && displayDescription) &&
