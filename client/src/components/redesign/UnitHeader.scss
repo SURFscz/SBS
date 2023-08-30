@@ -73,11 +73,12 @@
         }
 
         .labels {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin: 0 auto 0 15px;
-            padding-right: 15px;
+            margin: 10px auto 0 0;
+            padding-right: 55px;
+            span.chip-container {
+                display: inline-block;
+                margin: 0 10px 10px 0;
+            }
         }
 
     }
