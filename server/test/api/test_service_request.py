@@ -1,3 +1,5 @@
+import json
+
 from flask import jsonify
 
 from server.db.db import db
@@ -18,7 +20,7 @@ class TestServiceRequest(AbstractTest):
         self.login("urn:roger")
         data = {
             "name": "New Service",
-            "short_name": "new_service_short",
+            "abbreviation": "new_service_abbreviation",
             "comment": "pretty please",
             "providing_organisation": "cloudy",
             "privacy_policy": "https://privacy_policy.org"
@@ -33,10 +35,18 @@ class TestServiceRequest(AbstractTest):
     def test_request_service_approve(self):
         service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)
         service_request_requester_uid = service_request.requester.uid
+        body = {
+            "name": "New Service",
+            "abbreviation": "new_service_abbreviation",
+            "comment": "pretty please",
+            "providing_organisation": "cloudy",
+            "entity_id": "https://entity_id.com",
+            "privacy_policy": "https://privacy_policy.org"
+        }
         with self.app.mail.record_messages() as outbox:
-            self.login("urn:mary")
+            self.login("urn:john")
             res = self.put(f"/api/service_requests/approve/{service_request.id}",
-                           body=jsonify(service_request), with_basic_auth=False)
+                           body=body, with_basic_auth=False)
 
             members = ServiceMembership.query.filter(ServiceMembership.service_id == res["id"]).all()
             self.assertEqual(1, len(members))
@@ -52,17 +62,17 @@ class TestServiceRequest(AbstractTest):
     def test_request_service_approve_logo_url(self):
         service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)
         service_request_id = service_request.id
-        res = self.get(f"/api/service_requests/{service_request_id}")
-
+        body = {
+            "name": "New Service",
+            "abbreviation": "new_service_abbreviation",
+            "comment": "pretty please",
+            "providing_organisation": "cloudy",
+            "entity_id": "https://entity_id.com",
+            "privacy_policy": "https://privacy_policy.org"
+        }
         self.login("urn:john")
         self.put(f"/api/service_requests/approve/{service_request_id}",
-                 body={
-                     "name": res["name"],
-                     "logo": res["logo"],
-                     "description": "new_service",
-                     "short_name": res["short_name"],
-                     "organisation_id": res["organisation_id"]
-                 }, with_basic_auth=False)
+                 body=body, with_basic_auth=False)
         service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)
         raw_logo = service_request.raw_logo()
         self.assertFalse(raw_logo.startswith("http"))
@@ -71,20 +81,20 @@ class TestServiceRequest(AbstractTest):
         service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)
 
         with self.app.mail.record_messages() as outbox:
-            self.login("urn:mary")
+            self.login("urn:john")
             reason = "Prerogative of admins"
             self.put(f"/api/service_requests/deny/{service_request.id}",
                      body={"rejection_reason": reason},
                      with_basic_auth=False)
 
             mail_msg = outbox[0]
-            self.assertEqual("Service request for service New Service has been declined (local)",
+            self.assertEqual("Service request for service GPT has been declined (local)",
                              mail_msg.subject)
             self.assertTrue(reason in mail_msg.html)
 
     def test_delete(self):
         service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)
-        self.login("urn:harry")
+        self.login("urn:john")
         self.delete("/api/service_requests", primary_key=service_request.id, with_basic_auth=False,
                     response_status_code=400)
 
@@ -92,13 +102,16 @@ class TestServiceRequest(AbstractTest):
         pre_count = ServiceRequest.query.count()
         service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)
         service_request_id = service_request.id
-        self.login("urn:harry")
+        self.login("urn:john")
+        body = {
+            "name": "New Service",
+            "abbreviation": "new_service_abbreviation",
+            "comment": "pretty please",
+            "providing_organisation": "cloudy",
+            "entity_id": "https://entity_id.com",
+            "privacy_policy": "https://privacy_policy.org"
+        }
         self.put(f"/api/service_requests/approve/{service_request_id}",
-                 body={
-                     "name": service_request.name,
-                     "description": "new_service",
-                     "short_name": service_request.short_name,
-                     "organisation_id": service_request.organisation_id
-                 }, with_basic_auth=False)
+                 body=body, with_basic_auth=False)
         self.delete("/api/service_requests", primary_key=service_request_id, with_basic_auth=False)
         self.assertEqual(pre_count - 1, ServiceRequest.query.count())

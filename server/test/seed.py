@@ -643,13 +643,13 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                           service=storage, pin="1234")
     persist_instance(db, pam_sso_session_peter, pam_sso_session_james)
 
-    service_request_gpt = ServiceRequest(name=service_request_gpt_name, short_name="gpt",
+    service_request_gpt = ServiceRequest(name=service_request_gpt_name, abbreviation="gpt",
                                          description="We need more AI", logo=read_image("computing.jpeg"),
                                          uuid4=str(uuid.uuid4()), providing_organisation="Cloudy",
-                                         login_uri="https://login.org", website_uri="https://website.org",
+                                         uri_info="https://login.org", uri="https://website.org",
                                          contact_email="contact@gpt.org", support_email="support@gpt.org",
                                          security_email="security@gpt.org", privacy_policy="https://privacy_policy.org",
-                                         accepted_user_policy_uri="https://accepted_user_policy.org",
+                                         accepted_user_policy="https://accepted_user_policy.org",
                                          code_of_conduct_compliant=True, sirtfi_compliant=True,
                                          research_scholarship_compliant=True, status="open", comments="Please",
                                          connection_type="openIDConnect",
