@@ -1,7 +1,3 @@
-import json
-
-from flask import jsonify
-
 from server.db.db import db
 from server.db.domain import ServiceRequest, ServiceMembership
 from server.test.abstract_test import AbstractTest
@@ -13,8 +9,11 @@ class TestServiceRequest(AbstractTest):
     def test_service_request_by_id(self):
         service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)
         res = self.get(f"/api/service_requests/{service_request.id}")
-
         self.assertEqual("urn:sarah", res["requester"]["uid"])
+
+    def test_service_requests_all(self):
+        res = self.get("/api/service_requests/all")
+        self.assertEqual(1, len(res))
 
     def test_request_service(self):
         self.login("urn:roger")

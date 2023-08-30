@@ -3,20 +3,7 @@ import os
 from flask_migrate import command
 from flask_sqlalchemy import SQLAlchemy
 
-
-class SQLAlchemyPrePing(SQLAlchemy):
-
-    def create_engine(self, sa_url, engine_opts):
-        engine_opts["echo_pool"] = True
-        return super().create_engine(sa_url, engine_opts)
-
-    def apply_pool_defaults(self, app, options):
-        options["pool_pre_ping"] = True
-        options["echo"] = app.config["SQLALCHEMY_ECHO"]
-        return super().apply_pool_defaults(app, options)
-
-
-db = SQLAlchemyPrePing()
+db = SQLAlchemy()
 
 
 def db_migrations(sqlalchemy_database_uri):
