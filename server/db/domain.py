@@ -510,22 +510,24 @@ class ServiceRequest(Base, db.Model, LogoMixin):
     metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     name = db.Column("name", db.String(length=255), nullable=False)
-    short_name = db.Column("short_name", db.String(length=255), nullable=False)
+    abbreviation = db.Column("abbreviation", db.String(length=255), nullable=False)
     description = db.Column("description", db.Text(), nullable=True)
     logo = db.Column("logo", db.Text(), nullable=True)
+    uuid4 = db.Column("uuid4", db.String(length=255), nullable=False, default=gen_uuid4)
     providing_organisation = db.Column("providing_organisation", db.String(length=255), nullable=False)
-    login_uri = db.Column("login_uri", db.String(length=255), nullable=True)
-    website_uri = db.Column("info_uri", db.String(length=255), nullable=True)
+    uri = db.Column("uri", db.String(length=255), nullable=True)
+    uri_info = db.Column("uri_info", db.String(length=255), nullable=True)
     contact_email = db.Column("contact_email", db.String(length=255), nullable=True)
     support_email = db.Column("support_email", db.String(length=255), nullable=True)
     security_email = db.Column("security_email", db.String(length=255), nullable=True)
     privacy_policy = db.Column("privacy_policy", db.String(length=255), nullable=False)
-    accepted_user_policy_uri = db.Column("accepted_user_policy_uri", db.String(length=255), nullable=True)
+    accepted_user_policy = db.Column("accepted_user_policy", db.String(length=255), nullable=True)
     code_of_conduct_compliant = db.Column("code_of_conduct_compliant", db.Boolean(), nullable=True, default=False)
     sirtfi_compliant = db.Column("sirtfi_compliant", db.Boolean(), nullable=True, default=False)
     research_scholarship_compliant = db.Column("research_scholarship_compliant", db.Boolean(),
                                                nullable=True,
                                                default=False)
+    status = db.Column("status", db.String(length=255), nullable=False)
     comments = db.Column("comments", db.Text(), nullable=True)
     connection_type = db.Column("connection_type", db.String(length=255), nullable=True)
     redirect_urls = db.Column("redirect_urls", db.Text(), nullable=True)
@@ -533,6 +535,7 @@ class ServiceRequest(Base, db.Model, LogoMixin):
     saml_metadata_url = db.Column("saml_metadata_url", db.String(length=255), nullable=True)
     requester_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     requester = db.relationship("User", back_populates="service_requests")
+    rejection_reason = db.Column("rejection_reason", db.Text(), nullable=True)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 

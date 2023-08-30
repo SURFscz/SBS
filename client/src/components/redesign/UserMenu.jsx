@@ -36,6 +36,12 @@ export const UserMenu = ({currentUser, organisation, config, provideFeedback}) =
                             {I18n.t(`header.links.${collCreateAllowed ? "createCollaboration" : "requestCollaboration"}`)}
                         </Link>
                     </li>}
+                    {/*{!currentUser.admin && <li>*/}
+                    <li>
+                        <Link onClick={toggleUserMenu} to={`/new-service-request`}>
+                            {I18n.t("header.links.requestService")}
+                        </Link>
+                    </li>
                 </ul>
                 <ul>
                     {config.feedback_enabled && <li>

@@ -1,37 +1,27 @@
 @import "../../stylesheets/vars";
-@import "../../stylesheets/mde_preview.scss";
 
 .mod-welcome-container {
-    @include mde-preview;
 
-    max-width: 768px;
-    margin: 0 auto 30px auto;
-    width: 100%;
+  max-width: 768px;
+  margin: 0 auto 30px auto;
+  width: 100%;
 
-    @media (max-width: $compact-medium) {
-        padding: 0 15px;
+  @media (max-width: $compact-medium) {
+    padding: 0 15px;
+  }
+
+  .mod-welcome {
+    h1 {
+      margin: 25px 0;
     }
 
-    .mod-welcome {
-        h1 {
-            margin: 25px 0;
-        }
-
-        h2 {
-            margin-top: 25px;
-        }
-
-        button {
-            margin: 25px 0 50px 0;
-        }
+    h2 {
+      margin-top: 25px;
     }
 
-    div.instructions {
-        margin-bottom: 25px;
-        padding: 15px;
-        border-radius: $br;
-        background-color: #fdfdfd;
-        border: 1px solid $lighter-grey;
+    button {
+      margin: 25px 0 50px 0;
     }
+  }
 
 }

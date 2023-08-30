@@ -187,8 +187,6 @@ def _do_toggle_permission_organisation(service_id, organisation_id, action):
 @service_api.route("/name_exists", strict_slashes=False)
 @json_endpoint
 def name_exists():
-    confirm_service_admin()
-
     name = query_param("name")
     existing_service = query_param("existing_service", required=False, default="")
     service = Service.query.options(load_only(Service.id)) \
@@ -216,8 +214,6 @@ def entity_id_exists():
 @service_api.route("/abbreviation_exists", strict_slashes=False)
 @json_endpoint
 def abbreviation_exists():
-    confirm_service_admin()
-
     abbreviation = query_param("abbreviation")
     existing_service = query_param("existing_service", required=False, default="")
     service = Service.query.options(load_only(Service.id)) \

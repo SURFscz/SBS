@@ -7,10 +7,10 @@ import SpinnerField from "./SpinnerField";
 import "react-mde/lib/styles/css/react-mde-all.css";
 import Button from "../Button";
 import {AppStore} from "../../stores/AppStore";
-import {convertToHtml} from "../../utils/Markdown";
 import {rawGlobalUserRole, ROLES} from "../../utils/UserRole";
 import DOMPurify from "dompurify";
 import LandingInfo from "../LandingInfo";
+import OnBoardingMessage from "./OnBoardingMessage";
 
 class Welcome extends React.Component {
 
@@ -56,21 +56,9 @@ class Welcome extends React.Component {
                         {name: idpDisplayName}))
                 }}/>
                 {hasOnBoardingMsg &&
-                    <div>
-                        <h2 dangerouslySetInnerHTML={{
-                            __html: DOMPurify.sanitize(I18n.t("welcome.instructions", {name: organisation.name}))
-                        }}/>
-                        <div className="instructions mde-preview">
-                            <div className="mde-preview-content">
-                                <p dangerouslySetInnerHTML={{
-                                    __html: DOMPurify.sanitize(convertToHtml(organisation.on_boarding_msg))
-                                }}/>
-                            </div>
-                        </div>
-                    </div>}
+                    <OnBoardingMessage organisation={organisation}/>}
                 <Button onClick={() => this.props.history.push("/new-collaboration")}
                         txt={I18n.t(`welcome.${canCreate ? "createCollTxt" : "createCollRequestTxt"}`)}/>
-
             </div>
         );
     }

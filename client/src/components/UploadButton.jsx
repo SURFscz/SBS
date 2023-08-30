@@ -1,11 +1,11 @@
 import React from "react";
 import "./InputField.scss";
 import Button from "./Button";
-import I18n from "../locale/I18n";
 
 export default function UploadButton({
                                          name,
                                          onFileUpload = null,
+                                         txt,
                                          acceptFileFormat = "text/csv"
                                      }) {
     let fileInput;
@@ -23,7 +23,7 @@ export default function UploadButton({
                    accept={acceptFileFormat}
                    style={{display: "none"}}
                    onChange={onFileUpload}/>
-            <Button txt={I18n.t("forms.uploadSSH")} onClick={onClick}/>
+            <Button txt={txt} onClick={onClick}/>
         </div>
     );
 

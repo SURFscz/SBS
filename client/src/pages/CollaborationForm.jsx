@@ -34,6 +34,7 @@ import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import DateField from "../components/DateField";
 import moment from "moment";
 import DOMPurify from "dompurify";
+import OnBoardingMessage from "../components/redesign/OnBoardingMessage";
 
 class CollaborationForm extends React.Component {
 
@@ -181,9 +182,12 @@ class CollaborationForm extends React.Component {
     }
 
     mapOrganisationsToOptions = organisations => organisations.map(org => ({
+        id: org.id,
         label: org.name,
+        name: org.name,
         value: org.id,
         short_name: org.short_name,
+        on_boarding_msg: org.on_boarding_msg,
         collaboration_creation_allowed: org.collaboration_creation_allowed,
         collaboration_creation_allowed_entitlement: org.collaboration_creation_allowed_entitlement,
         logo: org.logo
@@ -475,7 +479,8 @@ class CollaborationForm extends React.Component {
                                     question={leavePage ? undefined : confirmationQuestion}
                                     leavePage={leavePage}/>
 
-
+                {(isCollaborationRequest && !isEmpty(organisation.on_boarding_msg)) &&
+                    <OnBoardingMessage organisation={organisation}/>}
                 <div className="new-collaboration">
 
                     <h2 className="section-separator">{I18n.t("collaboration.about")}</h2>
