@@ -57,7 +57,7 @@ def request_service():
     valid_uri_attributes(data, URI_ATTRIBUTES)
 
     data["status"] = STATUS_OPEN
-    cleanse_short_name(data, "short_name")
+    cleanse_short_name(data, "abbreviation")
 
     res = save(ServiceRequest, custom_json=data, allow_child_cascades=False)
     service_request = res[0]
