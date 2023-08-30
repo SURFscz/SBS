@@ -143,12 +143,15 @@ section.dialog-content {
                     position: absolute;
                     right: 10px;
                     top: 14px;
-                    color: var(--sds--color--red--400);
                     cursor: pointer;
                     padding: 0 4px;
                     font-size: 22px;
                     display: inline-block;
                     margin-left: 25px;
+
+                    &:hover {
+                        color: var(--sds--color--red--400);
+                    }
                 }
             }
 

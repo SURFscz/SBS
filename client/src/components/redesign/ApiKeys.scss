@@ -28,8 +28,10 @@ table.apiKeys {
         td {
             &.trash {
                 text-align: right;
-                color: var(--sds--color--red--400);
                 cursor: pointer;
+                &:hover {
+                    color: var(--sds--color--red--400);
+                }
             }
         }
     }

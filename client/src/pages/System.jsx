@@ -2,7 +2,7 @@ import React from "react";
 import "./System.scss";
 import I18n from "../locale/I18n";
 import JsonFormatter from 'react-json-formatter'
-
+import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 import {
     activateUserForCollaboration,
     auditLogsActivity,
@@ -10,7 +10,6 @@ import {
     cleanupNonOpenRequests,
     clearAuditLogs,
     composition,
-    parseMetaData,
     dbDemoSeed,
     dbHumanTestingSeed,
     dbSeed,
@@ -22,6 +21,7 @@ import {
     getSuspendedUsers,
     health,
     outstandingRequests,
+    parseMetaData,
     plscSync,
     reset2faOther,
     scheduledJobs,
@@ -363,7 +363,7 @@ class System extends React.Component {
                 </section>
                 {config.seed_allowed && <div className={"delete-all"}>
                     <Button warningButton={true}
-                            icon={<FontAwesomeIcon icon="trash"/>}
+                            icon={<ThrashIcon/>}
                             onClick={() => this.doCleanSlate(true)}/>
                 </div>}
             </div>

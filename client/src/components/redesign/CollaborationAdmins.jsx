@@ -6,7 +6,7 @@ import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
 import {ReactComponent as InviteIcon} from "../../icons/single-neutral-question.svg";
 import {ReactComponent as HandIcon} from "../../icons/puppet_new.svg";
 import {ReactComponent as EmailIcon} from "../../icons/email_new.svg";
-import {ReactComponent as ThrashIcon} from "../../icons/trash_new.svg";
+import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 import CheckBox from "../CheckBox";
 import {
     deleteCollaborationMembership,
