@@ -1953,7 +1953,7 @@ const en = {
         institutionCollNotAllowed: "You have logged in via <strong>{{name}}</strong> which does not allow you to create a collaboration. If that is unexpected, please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> for help.",
         startCreateColl: "You have logged in via <strong>{{name}}</strong> which allows you to create a collaboration, to which you can connect services and invite researchers.",
         startRequestColl: "You have logged in via <strong>{{name}}</strong>, and you can request them to create a collaboration for you. After they approve your request, you can connect services and invite researchers.",
-        instructions: "Instructions from <strong>{{name}}</strong>",
+        instructions: "Message from <strong>{{name}}</strong>",
         createCollTxt: "Create collaboration",
         createCollRequestTxt: "Request collaboration",
     },
