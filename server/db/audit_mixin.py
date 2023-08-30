@@ -16,7 +16,7 @@ ACTION_UPDATE = 2
 ACTION_DELETE = 3
 
 ignore_attributes = ["logo", "created_by", "updated_by", "created_at", "updated_at", "last_login_date",
-                     "sweep_scim_last_run"]
+                     "sweep_scim_last_run", "last_activity_date"]
 
 relationship_configuration = {
     "groups": ["collaboration_memberships", "invitations"],
@@ -56,7 +56,6 @@ class AuditLog(JsonSerializableBase, db.Model):
         self.state_after = state_after
 
     def save(self, connection):
-        # connection.begin()
         connection.execute(
             self.__table__.insert(),
             dict(user_id=self.user_id,
