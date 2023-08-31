@@ -457,7 +457,10 @@ class ServiceGroups extends React.Component {
 
     gotoGroup = group => e => {
         stopEvent(e);
-        this.setState({selectedGroupId: group.id, createNewGroup: false, editGroup: false});
+        this.setState({
+            selectedGroupId: group.id,
+            createNewGroup: false,
+            editGroup: false});
         AppStore.update(s => {
             const {service} = this.props;
             const paths = s.breadcrumb.paths;
