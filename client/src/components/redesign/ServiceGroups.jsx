@@ -135,6 +135,7 @@ class ServiceGroups extends React.Component {
         stopEvent(e);
         this.setState({selectedGroupId: null, createNewGroup: false, editGroup: false});
         AppStore.update(s => {
+            debugger; // eslint-disable-line no-debugger
             const paths = s.breadcrumb.paths.slice(0, s.breadcrumb.paths.length - 1);
             const lastPath = paths[paths.length - 1];
             if (lastPath) {
@@ -455,6 +456,18 @@ class ServiceGroups extends React.Component {
         }
     }
 
+    newServiceGroup = () => {
+        AppStore.update(s => {
+            const {service} = this.props;
+            const paths = s.breadcrumb.paths;
+            const lastPath = paths[paths.length - 1];
+            lastPath.path = `/services/${service.id}`
+            paths.push({value: I18n.t("breadcrumb.newGroup")});
+            s.breadcrumb.paths = paths;
+        });
+        this.setState(this.newGroupState());
+    }
+
     gotoGroup = group => e => {
         stopEvent(e);
         this.setState({
@@ -563,7 +576,7 @@ class ServiceGroups extends React.Component {
                           onHover={true}
                           actions={groupActions}
                           showNew={mayCreateGroups}
-                          newEntityFunc={() => this.setState(this.newGroupState())}
+                          newEntityFunc={this.newServiceGroup}
                           explain={<ServiceGroupsExplanation/>}
                           explainTitle={I18n.t("explain.serviceGroups")}
                           showActionsAlways={false}
