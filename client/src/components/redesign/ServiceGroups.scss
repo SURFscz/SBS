@@ -152,3 +152,14 @@ table.serviceGroups {
     }
 
 }
+
+.loader-container {
+    margin-top: 40px;
+
+    .sds--loading-container {
+        .sds--loading {
+            position: unset;
+        }
+    }
+}
+

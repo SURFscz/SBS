@@ -434,7 +434,7 @@ class ServiceGroups extends React.Component {
                 this.refreshAndFlash(createServiceGroup({...this.state, service_id: service.id}),
                     I18n.t("groups.flash.created", {name: name}),
                     res => {
-                        this.gotoGroup({id: res.id, name: name})();
+                        this.gotoGroup({id: res[0].id, name: name})();
                     });
             } else {
                 const {selectedGroupId} = this.state;
@@ -476,7 +476,7 @@ class ServiceGroups extends React.Component {
             confirmationDialogQuestion, confirmationDialogAction, cancelDialogAction, confirmationDialogOpen
         } = this.state;
         if (loading) {
-            return <SpinnerField/>;
+            return <div className="loader-container"><SpinnerField/></div>;
         }
         const {service, user: currentUser} = this.props;
         const selectedGroup = this.getSelectedGroup();
