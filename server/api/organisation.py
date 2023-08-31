@@ -8,7 +8,7 @@ from sqlalchemy import text, func, bindparam, String
 from sqlalchemy.orm import load_only
 from sqlalchemy.orm import selectinload
 
-from server.api.base import emit_socket
+from server.api.base import emit_socket, organisation_by_user_schac_home
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_write_access, current_user_id, is_application_admin, \
@@ -192,22 +192,7 @@ def my_organisations():
 @organisation_api.route("/find_by_schac_home_organisation", strict_slashes=False)
 @json_endpoint
 def organisation_by_schac_home():
-    user = User.query.filter(User.id == current_user_id()).one()
-    organisations = SchacHomeOrganisation.organisations_by_user_schac_home(user)
-
-    entitlement = current_app.app_config.collaboration_creation_allowed_entitlement
-    auto_aff = bool(user.entitlement) and entitlement in user.entitlement
-    return [{"id": org.id,
-             "name": org.name,
-             "logo": org.logo,
-             "collaboration_creation_allowed": org.collaboration_creation_allowed,
-             "collaboration_creation_allowed_entitlement": auto_aff,
-             "required_entitlement": entitlement,
-             "user_entitlement": user.entitlement,
-             "has_members": len(org.organisation_memberships) > 0,
-             "on_boarding_msg": org.on_boarding_msg,
-             "schac_home_organisations": [sho.name for sho in org.schac_home_organisations],
-             "short_name": org.short_name} for org in organisations], 200
+    return organisation_by_user_schac_home(), 200
 
 
 @organisation_api.route("/identity_provider_display_name", strict_slashes=False)
@@ -408,8 +393,8 @@ def search_invites(organisation_id):
     confirm_organisation_admin_or_manager(organisation_id)
     wildcard = f"%{query_param('q')}%"
     return Invitation.query \
-               .join(Invitation.collaboration) \
-               .join(Collaboration.organisation) \
-               .filter(Organisation.id == organisation_id) \
-               .filter(Invitation.invitee_email.ilike(wildcard)) \
-               .all(), 200
+        .join(Invitation.collaboration) \
+        .join(Collaboration.organisation) \
+        .filter(Organisation.id == organisation_id) \
+        .filter(Invitation.invitee_email.ilike(wildcard)) \
+        .all(), 200

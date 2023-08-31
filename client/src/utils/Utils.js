@@ -101,10 +101,6 @@ export const ErrorOrigins = {
     invalidPamWebSSO: "invalidPamWebSSO"
 }
 
-export const getSchacHomeOrg = (currentUser, organisations) => {
-    return organisations.find(org => org.schac_home_organisations.some(sho => sho === currentUser.schac_home_organisation));
-}
-
 export const splitListSemantically = (arr, lastSeparator) => {
     return [arr.slice(0, -1).join(", "), arr.slice(-1)[0]].join(arr.length < 2 ? "" : ` ${lastSeparator} `);
 }

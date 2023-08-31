@@ -20,7 +20,7 @@ from server.auth.security import current_user_id, CSRF_TOKEN
 from server.auth.tokens import get_authorization_header
 from server.auth.urls import noauth_listing, mfa_listing, external_api_listing
 from server.db.db import db
-from server.db.domain import ApiKey, User
+from server.db.domain import ApiKey, User, SchacHomeOrganisation
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error
 
@@ -147,6 +147,25 @@ def send_error_mail(tb):
         else:
             user_id = "unknown"
         mail_error(mail_conf.environment, user_id, mail_conf.send_exceptions_recipients, tb)
+
+
+def organisation_by_user_schac_home(user_from_db=None):
+    user = user_from_db if user_from_db else User.query.filter(User.id == current_user_id()).one()
+    organisations = SchacHomeOrganisation.organisations_by_user_schac_home(user)
+
+    entitlement = current_app.app_config.collaboration_creation_allowed_entitlement
+    auto_aff = bool(user.entitlement) and entitlement in user.entitlement
+    return [{"id": org.id,
+             "name": org.name,
+             "logo": org.logo,
+             "collaboration_creation_allowed": org.collaboration_creation_allowed,
+             "collaboration_creation_allowed_entitlement": auto_aff,
+             "required_entitlement": entitlement,
+             "user_entitlement": user.entitlement,
+             "has_members": len(org.organisation_memberships) > 0,
+             "on_boarding_msg": org.on_boarding_msg,
+             "schac_home_organisations": [sho.name for sho in org.schac_home_organisations],
+             "short_name": org.short_name} for org in organisations]
 
 
 def application_base_url():

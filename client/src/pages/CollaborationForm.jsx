@@ -8,7 +8,6 @@ import {
     createCollaboration,
     deleteCollaboration,
     myOrganisationsLite,
-    organisationsByUserSchacHomeOrganisation,
     requestCollaboration,
     tagsByOrganisation,
     updateCollaboration
@@ -104,28 +103,27 @@ class CollaborationForm extends React.Component {
         } else {
             myOrganisationsLite().then(json => {
                 if (json.length === 0) {
-                    organisationsByUserSchacHomeOrganisation().then(json => {
-                        if (isEmpty(json)) {
-                            this.updateBreadCrumb(null, null, false, false);
-                            this.setState({noOrganisations: true, loading: false});
-                        } else {
-                            const organisations = this.mapOrganisationsToOptions(json);
-                            const organisationId = getParameterByName("organisationId", window.location.search);
-                            const organisation = organisations.find(org => org.value === parseInt(organisationId, 10)) || organisations[0];
-                            this.updateTags(organisation.id);
-                            const autoCreateCollaborationRequest = organisation.collaboration_creation_allowed || organisation.collaboration_creation_allowed_entitlement;
-                            this.updateBreadCrumb(null, null, autoCreateCollaborationRequest, true);
-                            this.setState({
-                                organisations: organisations,
-                                organisation: organisation || organisations[0],
-                                isCollaborationRequest: true,
-                                autoCreateCollaborationRequest: autoCreateCollaborationRequest,
-                                current_user_admin: true,
-                                loading: false,
-                                required: autoCreateCollaborationRequest ? this.state.required : this.state.required.concat("message")
-                            });
-                        }
-                    });
+                    const {user} = this.props;
+                    if (isEmpty(user.organisation_from_user_schac_home)) {
+                        this.updateBreadCrumb(null, null, false, false);
+                        this.setState({noOrganisations: true, loading: false});
+                    } else {
+                        const organisations = this.mapOrganisationsToOptions([user.organisation_from_user_schac_home]);
+                        const organisationId = getParameterByName("organisationId", window.location.search);
+                        const organisation = organisations.find(org => org.value === parseInt(organisationId, 10)) || organisations[0];
+                        this.updateTags(organisation.id);
+                        const autoCreateCollaborationRequest = organisation.collaboration_creation_allowed || organisation.collaboration_creation_allowed_entitlement;
+                        this.updateBreadCrumb(null, null, autoCreateCollaborationRequest, true);
+                        this.setState({
+                            organisations: organisations,
+                            organisation: organisation || organisations[0],
+                            isCollaborationRequest: true,
+                            autoCreateCollaborationRequest: autoCreateCollaborationRequest,
+                            current_user_admin: true,
+                            loading: false,
+                            required: autoCreateCollaborationRequest ? this.state.required : this.state.required.concat("message")
+                        });
+                    }
                 } else {
                     const organisationId = getParameterByName("organisationId", window.location.search);
                     const organisations = this.mapOrganisationsToOptions(json);

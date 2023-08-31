@@ -67,6 +67,11 @@ class TestUser(AbstractTest):
         user = self.client.get("/api/users/me").json
         self.assertEqual(user["guest"], True)
 
+    def test_schac_home_organisation(self):
+        self.login("urn:roger")
+        user = self.client.get("/api/users/me").json
+        self.assertIsNotNone(user["schac_home_organisation"])
+
     def test_suspended(self):
         self.login("urn:john")
         users = self.get("/api/users/suspended", with_basic_auth=False)

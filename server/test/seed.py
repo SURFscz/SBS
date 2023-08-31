@@ -173,7 +173,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     hannibal = User(uid="urn:hannibal", name=None, email="hannibal@example.org", username="hlector",
                     schac_home_organisation="example.org")
     service_admin = User(uid="urn:service_admin", name="Service Admin", email="service_admin@ucc.org",
-                         username="service_admin", schac_home_organisation="service_admin.com")
+                         username="service_admin", schac_home_organisation="service.admin.com")
     # User seed for suspend testing
     retention = app_config.retention
     current_time = datetime.datetime.utcnow()

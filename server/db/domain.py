@@ -735,13 +735,11 @@ class SchacHomeOrganisation(Base, db.Model):
 
     @staticmethod
     def organisations_by_user_schac_home(user: User):
-        schac_home_organisation = user.schac_home_organisation
-        if not schac_home_organisation:
+        schac = user.schac_home_organisation
+        if not schac:
             return []
         schac_homes = SchacHomeOrganisation.query.all()
-        hits = list(filter(
-            lambda schac_home: schac_home_organisation == schac_home.name or schac_home_organisation.endswith(
-                f".{schac_home.name}"), schac_homes))
+        hits = [sho for sho in schac_homes if sho.name == schac or schac.endswith(f".{sho.name}")]
         return [sho.organisation for sho in hits]
 
 

@@ -17,7 +17,7 @@ from sqlalchemy import text, or_, bindparam, String
 from sqlalchemy.orm import joinedload, selectinload
 from werkzeug.exceptions import InternalServerError, Forbidden
 
-from server.api.base import json_endpoint, query_param
+from server.api.base import json_endpoint, query_param, organisation_by_user_schac_home
 from server.api.base import replace_full_text_search_boolean_mode_chars
 from server.api.ipaddress import validate_ip_networks
 from server.auth.mfa import ACR_VALUES, store_user_in_session, mfa_idp_allowed, \
@@ -50,6 +50,11 @@ def _add_counts(user: dict):
         user["total_service_requests"] = ServiceRequest.query.count()
         user["total_open_service_requests"] = ServiceRequest.query.filter(ServiceRequest.status == "open").count()
         user["total_users"] = User.query.count()
+
+
+def _add_schac_home_organisations(user: dict, user_from_db: User):
+    organisations = organisation_by_user_schac_home(user_from_db)
+    user["organisation_from_user_schac_home"] = organisations[0] if organisations else None
 
 
 def _add_service_aups(user: dict, user_from_db: User):
@@ -112,6 +117,7 @@ def _user_json_response(user, auto_set_second_factor_confirmed):
     json_user = jsonify(user).json
     _add_counts(json_user)
     _add_service_aups(json_user, user)
+    _add_schac_home_organisations(json_user, user)
     return {**json_user, **is_admin}, 200
 
 
@@ -444,7 +450,8 @@ def acs():
     second_factor_confirmed = OneLogin_Saml2_Constants.STATUS_SUCCESS == status.get("code")
 
     if not user:
-        return redirect(location=f"{cfg.base_url}/error?reason=ssid_failed&code={status.get('code')}&msg={status.get('msg')}")
+        return redirect(
+            location=f"{cfg.base_url}/error?reason=ssid_failed&code={status.get('code')}&msg={status.get('msg')}")
 
     logger.debug(f"User {user_uid} got SSID response (status={status})")
 
@@ -452,7 +459,8 @@ def acs():
         user.ssid_required = False
         user.last_login_date = datetime.datetime.now()
     else:
-        return redirect(location=f"{cfg.base_url}/error?reason=ssid_failed&code={status.get('code')}&msg={status.get('msg')}")
+        return redirect(
+            location=f"{cfg.base_url}/error?reason=ssid_failed&code={status.get('code')}&msg={status.get('msg')}")
 
     return redirect_to_client(cfg, second_factor_confirmed, user)
 
@@ -493,6 +501,7 @@ def me():
             db.session.commit()
         _add_counts(user)
         _add_service_aups(user, user_from_db)
+        _add_schac_home_organisations(user, user_from_db)
         return user, 200
     else:
         return {"uid": "anonymous", "guest": True, "admin": False}, 200
