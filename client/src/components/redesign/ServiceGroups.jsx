@@ -7,7 +7,7 @@ import {
     updateServiceGroup
 } from "../../api";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
-
+import {ReactComponent as ThrashIcon} from "../../icons/trash_new.svg";
 import "./ServiceGroups.scss";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "../../locale/I18n";
@@ -25,6 +25,7 @@ import {AppStore} from "../../stores/AppStore";
 import ErrorIndicator from "./ErrorIndicator";
 import ServiceGroupsExplanation from "../explanations/ServicesGroups";
 import {isUserServiceAdmin} from "../../utils/UserRole";
+import {Tooltip} from "@surfnet/sds";
 
 class ServiceGroups extends React.Component {
 
@@ -33,6 +34,10 @@ class ServiceGroups extends React.Component {
         this.state = {
             required: ["name", "short_name"],
             alreadyExists: {},
+            allSelected: false,
+            allGroupsSelected: false,
+            selectedGroups: {},
+            groupResultAfterSearch: false,
             initial: true,
             createNewGroup: false,
             selectedGroupId: null,
@@ -50,12 +55,28 @@ class ServiceGroups extends React.Component {
     }
 
     componentDidMount = callback => {
-        this.setState({loading: false}, callback);
+        const {service} = this.props;
+        const selectedGroups = service.service_groups.reduce((acc, entity) => {
+            acc[entity.id] = {
+                selected: false,
+                ref: entity
+            };
+            return acc;
+        }, {});
+        this.setState({
+            loading: false,
+            selectedGroups: selectedGroups,
+            allSelected: false,
+            resultAfterSearch: false,
+            allGroupsSelected: false,
+            groupResultAfterSearch: false,
+        }, callback);
     }
 
     refreshAndFlash = (promise, flashMsg, callback) => {
         this.setState({loading: true, confirmationDialogOpen: false});
-        promise
+        const promises = Array.isArray(promise) ? promise : [promise];
+        Promise.all(promises)
             .then(res => {
                 this.props.refresh(() => {
                     this.componentDidMount(() => callback && callback(res));
@@ -80,6 +101,35 @@ class ServiceGroups extends React.Component {
             confirmationDialogAction: action
         });
     };
+
+    removeFromActionIcon = (entityId, showConfirmation) => {
+        const {service} = this.props;
+        const group = service.service_groups.find(inv => inv.id === entityId);
+        if (showConfirmation) {
+            this.confirm(() => this.removeFromActionIcon(entityId, false),
+                I18n.t("models.groups.deleteGroupConfirmation", {name: group.name}))
+        } else {
+            this.setState({confirmationDialogOpen: false, loading: true});
+            deleteServiceGroup(group.id).then(() => {
+                this.props.refresh(this.componentDidMount);
+                setFlash(I18n.t("groups.flash.deleted", {name: group.name}));
+            }).catch(() => {
+                this.props.refresh(this.componentDidMount);
+            });
+        }
+    }
+
+    getActionIcons = entity => {
+        return (
+            <div className="admin-icons"
+                 onClick={() => this.removeFromActionIcon(entity.id, true)}>
+                <Tooltip anchorId={`delete-group-${entity.id}`}
+                         standalone={true}
+                         tip={I18n.t("models.groups.removeGroupTooltip")}
+                         children={<ThrashIcon/>}/>
+            </div>
+        );
+    }
 
     cancelSideScreen = e => {
         stopEvent(e);
@@ -112,6 +162,32 @@ class ServiceGroups extends React.Component {
         });
     };
 
+    groupSearchCallback = groupResultAfterSearch => {
+        this.setState({groupResultAfterSearch: groupResultAfterSearch});
+    }
+
+    onGroupCheck = group => e => {
+        const {selectedGroups, allGroupsSelected} = this.state;
+        const checked = e.target.checked;
+        const identifier = group.id;
+        selectedGroups[identifier].selected = checked;
+        this.setState({selectedGroups: {...selectedGroups}, allGroupsSelected: (checked ? allGroupsSelected : false)});
+    }
+
+    allGroupChecksSelected = e => {
+        const {selectedGroups, groupResultAfterSearch} = this.state;
+        const val = e.target.checked;
+        let identifiers = Object.keys(selectedGroups);
+        if (groupResultAfterSearch !== false) {
+            const afterSearchIdentifiers = groupResultAfterSearch.map(entity => entity.id.toString());
+            identifiers = identifiers.filter(id => afterSearchIdentifiers.includes(id));
+        }
+        identifiers.forEach(id => selectedGroups[id].selected = val);
+        const newSelectedGroups = {...selectedGroups};
+        this.setState({allGroupsSelected: val, selectedGroups: newSelectedGroups});
+    }
+
+
     renderGroupContainer = children => {
         const {
             confirmationDialogOpen,
@@ -134,6 +210,60 @@ class ServiceGroups extends React.Component {
                 {children}
             </div>
         );
+    }
+
+    removeGroups = showConfirmation => {
+        if (showConfirmation) {
+            this.confirm(() => this.removeGroups(false), I18n.t("models.groups.deleteGroupsConfirmation"));
+        } else {
+            const {selectedGroups} = this.state;
+            const selectedGroupIdentifiers = Object.values(this.getSelectedGroupsWithFilteredSearch(selectedGroups))
+                .filter(val => val.selected)
+                .map(val => parseInt(val.ref.id));
+            this.refreshAndFlash(
+                selectedGroupIdentifiers.map(id => deleteServiceGroup(id)),
+                I18n.t("groups.flash.deletedGroups"))
+
+        }
+    }
+
+    getSelectedGroupsWithFilteredSearch = selectedGroups => {
+        const {groupResultAfterSearch} = this.state;
+        if (groupResultAfterSearch !== false) {
+            const afterSearchIdentifiers = groupResultAfterSearch.map(entity => entity.id.toString());
+            const filteredSelectedGroups = afterSearchIdentifiers.reduce((acc, id) => {
+                //The resultAfterSearch may contain deleted groups
+                if (selectedGroups[id]) {
+                    acc[id] = selectedGroups[id];
+                }
+                return acc;
+            }, {});
+            return filteredSelectedGroups;
+        }
+        return selectedGroups;
+    }
+
+
+    groupActionButtons = selectedGroups => {
+        const filteredSelectedGroups = this.getSelectedGroupsWithFilteredSearch(selectedGroups);
+        const selected = Object.values(filteredSelectedGroups).filter(v => v.selected);
+        if (selected.length === 0) {
+            return null;
+        }
+        return (
+            <div className="admin-actions">
+                <div>
+                    <Tooltip standalone={true}
+                             anchorId={"remove-groups"}
+                             tip={I18n.t("models.groups.removeTooltip")}
+                             children={<Button onClick={() => this.removeGroups(true)}
+                                               small={true}
+                                               anchorId={"remove-groups"}
+                                               txt={I18n.t("models.orgMembers.remove")}
+                                               icon={<ThrashIcon/>}/>}/>
+                </div>
+            </div>
+        )
     }
 
     renderGroupDetails = (selectedGroup) => {
@@ -304,11 +434,7 @@ class ServiceGroups extends React.Component {
                 this.refreshAndFlash(createServiceGroup({...this.state, service_id: service.id}),
                     I18n.t("groups.flash.created", {name: name}),
                     res => {
-                        this.setState({
-                            selectedGroupId: res.id,
-                            editGroup: false,
-                            createNewGroup: false
-                        })
+                        this.gotoGroup({id: res.id, name: name})();
                     });
             } else {
                 const {selectedGroupId} = this.state;
@@ -346,7 +472,8 @@ class ServiceGroups extends React.Component {
 
     render() {
         const {
-            loading, createNewGroup, editGroup
+            loading, createNewGroup, editGroup, allGroupsSelected, selectedGroups,
+            confirmationDialogQuestion, confirmationDialogAction, cancelDialogAction, confirmationDialogOpen
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -362,6 +489,18 @@ class ServiceGroups extends React.Component {
         }
         const groups = service.service_groups;
         const columns = [
+            {
+                nonSortable: true,
+                key: "check",
+                header: <CheckBox value={allGroupsSelected}
+                                  name={"allGroupsSelected"}
+                                  onChange={this.allGroupChecksSelected}/>,
+                mapper: entity => <div className="check">
+                    <CheckBox name={`${entity.id}`}
+                              onChange={this.onGroupCheck(entity)}
+                              value={(selectedGroups[entity.id] || {}).selected || false}/>
+                </div>
+            },
             {
                 key: "name",
                 header: I18n.t("models.serviceGroups.name"),
@@ -388,9 +527,25 @@ class ServiceGroups extends React.Component {
                 header: I18n.t("models.serviceGroups.autoProvisioning"),
                 mapper: group => I18n.t(`models.serviceGroups.${group.auto_provision_members ? "on" : "off"}`)
             });
+            columns.push({
+                nonSortable: true,
+                key: "trash",
+                hasLink: true,
+                header: "",
+                mapper: group => this.getActionIcons(group)
+            });
+
+
         }
+
+        const groupActions = this.groupActionButtons(selectedGroups);
         return (
             <div>
+                <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                    cancel={cancelDialogAction}
+                                    confirm={confirmationDialogAction}
+                                    isWarning={true}
+                                    question={confirmationDialogQuestion}/>
                 <Entities entities={groups}
                           modelName="serviceGroups"
                           searchAttributes={["name", "description"]}
@@ -398,13 +553,17 @@ class ServiceGroups extends React.Component {
                           inputFocus={true}
                           rowLinkMapper={() => this.gotoGroup}
                           columns={columns}
+                          searchCallback={this.groupSearchCallback}
+                          actionHeader={"groups"}
                           loading={loading}
                           hideTitle={true}
+                          onHover={true}
+                          actions={groupActions}
                           showNew={mayCreateGroups}
                           newEntityFunc={() => this.setState(this.newGroupState())}
                           explain={<ServiceGroupsExplanation/>}
                           explainTitle={I18n.t("explain.serviceGroups")}
-
+                          showActionsAlways={false}
                           {...this.props}/>
             </div>
         )
