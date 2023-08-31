@@ -99,23 +99,15 @@ class Groups extends React.Component {
 
     refreshAndFlash = (promise, flashMsg, callback) => {
         this.setState({loading: true, confirmationDialogOpen: false});
-        if (Array.isArray(promise)) {
-            Promise.all(promise).then(res => {
+        const promises = Array.isArray(promise) ? promise : [promise];
+        Promise.all(promises)
+            .then(res => {
                 this.props.refresh(() => {
                     this.componentDidMount(() => callback && callback(res));
                     setFlash(flashMsg);
                 });
-            });
-        } else {
-            promise
-                .then(res => {
-                    this.props.refresh(() => {
-                        this.componentDidMount(() => callback && callback(res));
-                        setFlash(flashMsg);
-                    });
-                })
-                .catch(() => this.setState({loading: false}));
-        }
+            })
+            .catch(() => this.setState({loading: false}));
     }
 
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
@@ -868,16 +860,13 @@ class Groups extends React.Component {
                 header: I18n.t("models.groups.autoProvisioning"),
                 mapper: group => I18n.t(`models.groups.${group.auto_provision_members ? "on" : "off"}`)
             });
-            if (mayCreateGroups) {
-                sharedColumns.push({
-                    nonSortable: true,
-                    key: "trash",
-                    hasLink: true,
-                    header: "",
-                    mapper: group => this.getActionIcons(group)
-                });
-            }
-
+            sharedColumns.push({
+                nonSortable: true,
+                key: "trash",
+                hasLink: true,
+                header: "",
+                mapper: group => this.getActionIcons(group)
+            });
         }
         const groupActions = this.groupActionButtons(collaboration, mayCreateGroups, selectedGroups);
         return (

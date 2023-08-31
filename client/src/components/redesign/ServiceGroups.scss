@@ -6,22 +6,31 @@ table.serviceGroups {
 
     thead {
         th {
+            &.check {
+                width: 15px;
+            }
+
+
             &.name {
-                width: 25%;
+                width: 30%;
                 padding-left: 15px;
             }
 
             &.short_name {
-                width: 15%;
+                width: 17%;
             }
 
             &.description {
-                width: 45%;
+                width: 35%;
             }
 
             &.auto_provision_members {
                 width: 15%;
                 text-align: center;
+            }
+
+            &.trash {
+                width: 15px;
             }
         }
     }
@@ -34,6 +43,11 @@ table.serviceGroups {
 
             &.auto_provision_members {
                 text-align: center;
+            }
+
+            &.trash {
+                text-align: right;
+                padding-left: 0;
             }
         }
     }
