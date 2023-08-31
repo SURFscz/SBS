@@ -714,7 +714,7 @@ class Groups extends React.Component {
                 this.refreshAndFlash(createGroup({...this.state, collaboration_id: collaboration.id}),
                     I18n.t("groups.flash.created", {name: name}),
                     res => {
-                        this.gotoGroup({id: res.id, name: name})();
+                        this.gotoGroup({id: res[0].id, name: name})();
                     });
             } else {
                 const {selectedGroupId} = this.state;
