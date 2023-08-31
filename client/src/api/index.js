@@ -103,7 +103,7 @@ export function me(config) {
     if (config.local && 1 == 1) {
         let sub = "urn:service_admin";
         sub = "urn:john";
-        // sub = "urn:roger";
+       // sub = "urn:roger";
         const second_factor_confirmed = true;
         // sub = "urn:unknown";
         // Need to mock a login
@@ -112,7 +112,7 @@ export function me(config) {
             "name": "John Doe",
             "email": "john@example.org",
             "second_factor_confirmed": second_factor_confirmed,
-            "voperson_external_id": "john@example.com"
+            // "voperson_external_id": "john@example.com"
         }, "PUT")
             .then(() => fetchJson("/api/users/me", {}, {}, false));
     } else {
@@ -411,10 +411,6 @@ export function deleteCollaboration(id) {
     return fetchDelete(`/api/collaborations/${id}`);
 }
 
-export function mayRequestCollaboration() {
-    return fetchJson("/api/collaborations/may_request_collaboration");
-}
-
 export function collaborationAdmins(service) {
     return service ? fetchJson(`/api/collaborations/admins/${service.id}`) : Promise.resolve([]);
 }
@@ -430,10 +426,6 @@ export function activateCollaboration(collaborationId) {
 //Organisations
 export function myOrganisationsLite() {
     return fetchJson(`/api/organisations/mine_lite`);
-}
-
-export function organisationsByUserSchacHomeOrganisation() {
-    return fetchJson(`/api/organisations/find_by_schac_home_organisation`);
 }
 
 export function identityProviderDisplayName() {

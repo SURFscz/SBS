@@ -24,6 +24,7 @@ import {ReactComponent as CollaborationRequestsIcon} from "../icons/faculty.svg"
 import MemberCollaborationRequests from "../components/redesign/MemberCollaborationRequests";
 import Users from "../components/redesign/Users";
 import ServiceRequests from "../components/redesign/ServiceRequests";
+import EmptyCollaborations from "../components/redesign/EmptyCollaborations";
 
 class Home extends React.Component {
 
@@ -40,6 +41,7 @@ class Home extends React.Component {
     componentDidMount = callback => {
         const urlSearchParams = new URLSearchParams(window.location.search);
         const refresh = urlSearchParams.get("refresh");
+        const redirect = urlSearchParams.get("redirect");
         if (refresh) {
             history.pushState(null, "", location.protocol + '//' + location.host + location.pathname);
             this.refreshUserHook();
@@ -52,7 +54,11 @@ class Home extends React.Component {
             const nbrOrganisations = user.organisation_memberships.length;
             const nbrCollaborations = user.collaboration_memberships.length;
             const nbrServices = user.service_memberships.length;
-            const canStayInHome = !isEmpty(user.service_requests) || !isEmpty(user.collaboration_requests) || !isEmpty(user.join_requests) || nbrServices > 0;
+            const canStayInHome = !isEmpty(user.service_requests) ||
+                !isEmpty(user.collaboration_requests) ||
+                !isEmpty(user.join_requests) ||
+                nbrServices > 0 ||
+                (user.organisation_from_user_schac_home && redirect);
             switch (role) {
                 case ROLES.PLATFORM_ADMIN:
                     tabs.push(this.getOrganisationsTab(user.total_organisations));
@@ -100,6 +106,9 @@ class Home extends React.Component {
                 tab = tabSuggestion;
             }
             if (isUserServiceAdmin(user) && !user.admin) {
+                if (!isEmpty(user.organisation_from_user_schac_home) && !tabs.some(t => t.key === "collaborations")) {
+                    tabs.push(this.getEmptyCollaborationsTab())
+                }
                 if (nbrServices === 1 && tabs.length === 0) {
                     setTimeout(() => this.props.history.push(`/services/${user.service_memberships[0].service_id}`), 50);
                 } else {
@@ -176,6 +185,14 @@ class Home extends React.Component {
                      label={I18n.t("home.tabs.collaborations", {count: count})}
                      icon={<CollaborationsIcon/>}>
             <Collaborations {...this.props}/>
+        </div>)
+    }
+
+    getEmptyCollaborationsTab = () => {
+        return (<div key="collaborations" name="collaborations"
+                     label={I18n.t("home.tabs.collaborations", {count: 0})}
+                     icon={<CollaborationsIcon/>}>
+            <EmptyCollaborations {...this.props}/>
         </div>)
     }
 

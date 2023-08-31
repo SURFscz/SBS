@@ -6,7 +6,7 @@ import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "../../locale/I18n";
 import Entities from "./Entities";
 import Button from "../Button";
-import {allCollaborations, collaborationAdmins, mayRequestCollaboration, myCollaborations} from "../../api";
+import {allCollaborations, collaborationAdmins, myCollaborations} from "../../api";
 import SpinnerField from "./SpinnerField";
 import {chipType, isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
@@ -29,7 +29,6 @@ export default class Collaborations extends React.PureComponent {
         this.state = {
             standalone: false,
             collaborations: [],
-            showRequestCollaboration: false,
             selectedCollaborations: {},
             filterOptions: [],
             filterValue: {},
@@ -45,16 +44,15 @@ export default class Collaborations extends React.PureComponent {
 
     componentDidMount = () => {
         const {collaborations, user, service} = this.props;
-        const promises = [mayRequestCollaboration(), collaborationAdmins(service)];
+        const promises = [collaborationAdmins(service)];
         if (collaborations === undefined) {
             Promise.all(promises.concat([user.admin ? allCollaborations() : myCollaborations()])).then(res => {
-                const allFilterOptions = this.allLabelFilterOptions(res[2]);
-                this.addRoleInformation(user, res[2]);
+                const allFilterOptions = this.allLabelFilterOptions(res[1]);
+                this.addRoleInformation(user, res[1]);
                 this.setState({
                     standalone: true,
-                    showRequestCollaboration: res[0],
-                    collaborationAdminEmails: res[1],
-                    collaborations: res[2],
+                    collaborationAdminEmails: res[0],
+                    collaborations: res[1],
                     filterOptions: allFilterOptions,
                     filterValue: allFilterOptions[0],
                     loading: false
@@ -67,8 +65,7 @@ export default class Collaborations extends React.PureComponent {
             this.addLabelInformation(collaborations);
             Promise.all(promises).then(res => {
                 this.setState({
-                    showRequestCollaboration: res[0],
-                    collaborationAdminEmails: res[1],
+                    collaborationAdminEmails: res[0],
                     filterOptions: allFilterOptions,
                     filterValue: allFilterOptions[0],
                     loading: false
@@ -113,15 +110,15 @@ export default class Collaborations extends React.PureComponent {
         return filterOptions.concat(tagOptions);
     }
 
-    noCollaborations = organisation => {
+    noCollaborations = (organisation, newLabel, newPath, mayCreateCollaborations) => {
+        const info = I18n.t(`models.collaborations.noCollaborations${mayCreateCollaborations ? "" : "Request"}`)
         return (
             <div className="no-collaborations">
                 <TreeSwing/>
-                <p>{I18n.t("models.collaborations.noCollaborations")}</p>
-                <Button txt={I18n.t("models.collaborations.new")}
+                <p>{info}</p>
+                <Button txt={newLabel}
                         onClick={() => {
-                            const organisationQueryParam = organisation ? `?organisationId=${organisation.id}` : "";
-                            this.props.history.push(`/new-collaboration${organisationQueryParam}`)
+                            this.props.history.push(newPath)
                         }}/>
 
             </div>
@@ -163,7 +160,6 @@ export default class Collaborations extends React.PureComponent {
         const {
             loading,
             standalone,
-            showRequestCollaboration,
             selectedCollaborations,
             filterOptions,
             filterValue,
@@ -180,12 +176,18 @@ export default class Collaborations extends React.PureComponent {
         const {collaborations} = standalone ? this.state : this.props;
         const {modelName = "collaborations", organisation} = this.props;
 
-        if (isEmpty(collaborations) && !loading && modelName === "collaborations") {
-            return this.noCollaborations(organisation);
-        }
         const {user} = this.props;
-        const mayCreateCollaborations = isUserAllowed(ROLES.ORG_MANAGER, user);
+        const isOrgManager = isUserAllowed(ROLES.ORG_MANAGER, user);
+        const organisationFromUserSchacHome = user.organisation_from_user_schac_home || {};
+        const mayCreateCollaborations = isOrgManager || organisationFromUserSchacHome.collaboration_creation_allowed ||
+            organisationFromUserSchacHome.collaboration_creation_allowed_entitlement
+        const mayRequestCollaboration = !isEmpty(organisationFromUserSchacHome);
         const organisationQueryParam = organisation ? `?organisationId=${organisation.id}` : "";
+        const newLabel = I18n.t(`models.${mayCreateCollaborations ? "collaborations" : "memberCollaborations"}.new`);
+
+        if (isEmpty(collaborations) && !loading && modelName === "collaborations") {
+            return this.noCollaborations(organisation, newLabel, `/new-collaboration${organisationQueryParam}`, mayCreateCollaborations);
+        }
 
         const columns = [];
         const serviceModule = modelName === "serviceCollaborations";
@@ -239,7 +241,8 @@ export default class Collaborations extends React.PureComponent {
                 header: organisation ? I18n.t("collaboration.tags") : I18n.t("models.serviceCollaborations.organisationName"),
                 mapper: collaboration => organisation ? collaboration.tags
                     .sort((t1, t2) => t1.tag_value.localeCompare(t2.tag_value))
-                    .map(tag => <span className={"collaboration_tag"}>{tag.tag_value}</span>) : collaboration.organisation.name
+                    .map(tag => <span
+                        className={"collaboration_tag"}>{tag.tag_value}</span>) : collaboration.organisation.name
             },
             {
                 key: "role",
@@ -326,7 +329,7 @@ export default class Collaborations extends React.PureComponent {
                                     confirmationTxt={confirmationTxt}
                                     question={confirmationQuestion}/>
                 <Entities entities={filteredCollaborations}
-                          modelName={mayCreateCollaborations ? modelName : showRequestCollaboration ? "memberCollaborations" : modelName}
+                          modelName={mayCreateCollaborations ? modelName : mayRequestCollaboration ? "memberCollaborations" : modelName}
                           searchAttributes={["name"]}
                           defaultSort="name"
                           inputFocus={true}
@@ -334,10 +337,11 @@ export default class Collaborations extends React.PureComponent {
                           rowLinkMapper={() => this.openCollaboration}
                           columns={columns}
                           onHover={true}
+                          newLabel={newLabel}
                           filters={this.filters(filterOptions, filterValue)}
                           actionHeader={"collaboration-services"}
                           actions={serviceModule ? this.actionButtons(selectedCollaborations, collaborationAdminEmails, collaborations) : null}
-                          showNew={mayCreateCollaborations}
+                          showNew={mayCreateCollaborations || mayRequestCollaboration}
                           newEntityPath={`/new-collaboration${organisationQueryParam}`}
                           loading={loading}
                           {...this.props}/>

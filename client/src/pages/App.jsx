@@ -205,7 +205,7 @@ class App extends React.Component {
                             }
                             const state = getParameterByName("state", window.location.search);
                             if (isEmpty(state)) {
-                                return <Redirect to="/home"/>;
+                                return <Redirect to="/home?redirect=false"/>;
                             }
                             return <Redirect to={decodeURIComponent(state)}/>
                         }}/>
@@ -221,7 +221,7 @@ class App extends React.Component {
                                    }
                                    const state = getParameterByName("state", window.location.search);
                                    if (isEmpty(state)) {
-                                       return <Redirect to="/home"/>;
+                                       return <Redirect to="/home?redirect=false"/>;
                                    }
                                    return <Redirect to={decodeURIComponent(state)}/>
                                }}/>

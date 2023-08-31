@@ -11,7 +11,6 @@ import {
     health,
     invitationAccept,
     invitationByHash,
-    organisationsByUserSchacHomeOrganisation,
     unsuspendCollaboration,
     userTokensOfUser
 } from "../api";
@@ -44,7 +43,7 @@ import JoinRequestDialog from "../components/JoinRequestDialog";
 import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import moment from "moment";
 import {ButtonType, MetaDataList, Tooltip} from "@surfnet/sds";
-import {ErrorOrigins, getSchacHomeOrg, isEmpty, removeDuplicates, stopEvent} from "../utils/Utils";
+import {ErrorOrigins, isEmpty, removeDuplicates, stopEvent} from "../utils/Utils";
 import UserTokens from "../components/redesign/UserTokens";
 import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
 import ClipBoardCopy from "../components/redesign/ClipBoardCopy";
@@ -131,14 +130,14 @@ class CollaborationDetail extends React.Component {
                 .then(json => {
                     const adminOfCollaboration = json.access === "full";
                     const promises = adminOfCollaboration ? [collaborationById(collaboration_id), userTokensOfUser()] :
-                        [collaborationLiteById(collaboration_id), organisationsByUserSchacHomeOrganisation(), userTokensOfUser()];
+                        [collaborationLiteById(collaboration_id), userTokensOfUser()];
                     Promise.all(promises)
                         .then(res => {
                             const {user, config} = this.props;
                             const tab = params.tab || (adminOfCollaboration ? this.state.tab : "about");
                             const collaboration = res[0];
-                            const userTokens = res[res.length - 1];
-                            const schacHomeOrganisation = adminOfCollaboration ? null : getSchacHomeOrg(user, res[1]);
+                            const userTokens = res[1];
+                            const schacHomeOrganisation = adminOfCollaboration ? null : user.organisation_from_user_schac_home;
                             const orgManager = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id, null);
                             const firstTime = getParameterByName("first", window.location.search) === "true";
                             this.showExpiryDateFlash(user, collaboration, config, true);
@@ -319,7 +318,7 @@ class CollaborationDetail extends React.Component {
     updateAppStore = (user, config, collaboration, adminOfCollaboration, orgManager) => {
         AppStore.update(s => {
             s.breadcrumb.paths = orgManager ? [
-                {path: "/", value: I18n.t("breadcrumb.home")},
+                {path: "/?redirect=false", value: I18n.t("breadcrumb.home")},
                 {
                     path: `/organisations/${collaboration.organisation_id}`,
                     value: I18n.t("breadcrumb.organisation", {name: collaboration.organisation.name})

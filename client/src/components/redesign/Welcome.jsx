@@ -1,8 +1,8 @@
 import React from "react";
 import "./Welcome.scss";
 import I18n from "../../locale/I18n";
-import {identityProviderDisplayName, organisationsByUserSchacHomeOrganisation} from "../../api";
-import {getSchacHomeOrg, isEmpty} from "../../utils/Utils";
+import {identityProviderDisplayName} from "../../api";
+import {isEmpty} from "../../utils/Utils";
 import SpinnerField from "./SpinnerField";
 import "react-mde/lib/styles/css/react-mde-all.css";
 import Button from "../Button";
@@ -30,11 +30,11 @@ class Welcome extends React.Component {
             this.props.history.push("/home");
             return;
         }
-        Promise.all([organisationsByUserSchacHomeOrganisation(), identityProviderDisplayName()])
+        identityProviderDisplayName()
             .then(res => {
                 this.setState({
-                    organisation: getSchacHomeOrg(user, res[0]),
-                    idpDisplayName: res[1] ? res[1].display_name : this.state.idpDisplayName,
+                    organisation: user.organisation_from_user_schac_home,
+                    idpDisplayName: res ? res.display_name : this.state.idpDisplayName,
                     loading: false
                 });
                 AppStore.update(s => {
