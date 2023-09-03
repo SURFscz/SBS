@@ -75,7 +75,7 @@ class TestAuditLog(AbstractTest):
         res = self.get(f"/api/audit_logs/info/{collaboration_id}/collaborations")
 
         self.assertEqual(2, len(res["audit_logs"]))
-        self.assertEqual(ACTION_DELETE, self.audit_log_by_target_type("invitations", res)[0]["action"])
+        self.assertEqual(ACTION_UPDATE, self.audit_log_by_target_type("invitations", res)[0]["action"])
         self.assertEqual(ACTION_CREATE, self.audit_log_by_target_type("collaboration_memberships", res)[0]["action"])
 
         self.assertEqual(1, len(res["collaborations"]))
