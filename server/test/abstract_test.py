@@ -202,6 +202,7 @@ class AbstractTest(TestCase):
     def expire_invitation(hash):
         invitation = Invitation.query.filter(Invitation.hash == hash).first()
         invitation.expiry_date = datetime.datetime.utcnow() - datetime.timedelta(days=500)
+        invitation.created_by = "not_system"
         db.session.merge(invitation)
         db.session.commit()
 
