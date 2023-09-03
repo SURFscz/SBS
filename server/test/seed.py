@@ -125,7 +125,7 @@ def persist_instance(db, *objs):
     required_attrs = ["created_by", "updated_by"]
     for obj in objs:
         for attr in required_attrs:
-            if hasattr(obj, attr):
+            if hasattr(obj, attr) and not getattr(obj, attr):
                 setattr(obj, attr, "urn:admin")
         if isinstance(obj, User):
             aup = Aup(au_version="1", user=obj)
@@ -596,7 +596,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
 
     invitation = Invitation(hash=invitation_hash_curious, invitee_email="curious@ex.org", collaboration=ai_computing,
                             expiry_date=default_expiry_date(), user=admin, message="Please join...",
-                            intended_role="admin", status="open")
+                            intended_role="admin", status="open", created_by="system")
     invitation_accepted = Invitation(hash=generate_token(), invitee_email="some@ex.org", collaboration=ai_computing,
                                      expiry_date=default_expiry_date(), user=admin, message="Please join...",
                                      status="accepted", intended_role="admin")
