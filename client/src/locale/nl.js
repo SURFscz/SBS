@@ -2312,7 +2312,19 @@ const nl = {
     missingAttributes: {
         info: "Er is iets misgegaan, niet alle inloginformatie is goed doorgekomen. Probeer nogmaals in te loggen, zo mogelijk via een incognito browser venster.",
         contact: "Als het probleem zich nogmaals voordoet, vraag ons dan om hulp via <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>"
+    },
+    coPageHeaders: {
+        membersGroups: "{{memberCount}} {{members}} & {{groupCount}} {{groups}}",
+        singleMember: " lid ",
+        multipleMembers: " leden ",
+        singleGroup: " groep ",
+        multipleGroups: " groepen ",
+        no: "Geen",
+        visit: "Bezoek website",
+        membership: "Lid sinds {{date}}",
+        expiresTooltip: "Lidmaatschap verloopt op {{date}}"
     }
+
 };
 
 export default nl;
