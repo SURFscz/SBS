@@ -18,6 +18,54 @@ properties:
         type: number
         description: "The expiry date of the invitation in epoch seconds"
         example: 1644015600
+  intended_role:
+    type: string
+    example: "admin"
+  collaboration:
+    type: object
+    properties:
+      id:
+        type: number
+        example: 123
+      name:
+        type: string
+        example: "AI researchers"
+      description:
+        type: string
+        example: "AI researchers are great"
+      short_name:
+        type: string
+        example: "ai_researchers"
+      identifier:
+        type: string
+        example: "12035254-E1F1-4190-9E60-EDAEE8DEE72A"
+      global_urn:
+        type: string
+        example: "uniharderwijk:cumulusgrp"
+  groups:
+    type: array
+    description: "All groups the user will be member of after accepting the invitation"
+    items:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 123
+        name:
+          type: string
+          example: "AI researchers"
+        description:
+          type: string
+          example: "AI researchers are great"
+        short_name:
+          type: string
+          example: "ai_researchers"
+        identifier:
+          type: string
+          example: "12035254-E1F1-4190-9E60-EDAEE8DEE72A"
+        global_urn:
+          type: string
+          example: "uniharderwijk:cumulusgrp:test_groep"
   user:
     type: object
     properties:

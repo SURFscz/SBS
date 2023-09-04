@@ -27,7 +27,13 @@ properties:
     example: 1743014227174
   invites:
     type: array
-    descriptiom: "All the email addresses of the invitees"
+    description: "All the email addresses of the invitees"
     items:
       type: string
       example: "rdoe@uniharderwijk.nl"
+  groups:
+    type: array
+    description: "All the group identifiers (or short_names) where the user will be a member of after accepting the invitation"
+    items:
+      type: string
+      example: "ia_researching"

@@ -9,7 +9,7 @@ from server.db.domain import Invitation, CollaborationMembership, User, Collabor
 from server.test.abstract_test import AbstractTest
 from server.test.seed import invitation_hash_no_way, ai_computing_name, invitation_hash_curious, invitation_hash_uva, \
     uva_research_name, uuc_secret, uuc_name, ai_computing_short_name, join_request_peter_hash, \
-    collaboration_ai_computing_uuid
+    collaboration_ai_computing_uuid, ai_researchers_group_short_name, ai_dev_identifier
 
 
 class TestInvitation(AbstractTest):
@@ -228,7 +228,8 @@ class TestInvitation(AbstractTest):
         invitation = self._get_invitation_curious()
         self.assertEqual("expired", invitation.status)
 
-    def _get_invitation_curious(self):
+    @staticmethod
+    def _get_invitation_curious():
         return Invitation.query.filter(Invitation.hash == invitation_hash_curious).first()
 
     def test_external_invitation(self):
@@ -237,15 +238,19 @@ class TestInvitation(AbstractTest):
                            "short_name": ai_computing_short_name,
                            "intended_role": "bogus",
                            "invitation_expiry_date": (int(time.time()) * 1000) + 60 * 60 * 25 * 15,
-                           "invites": ["joe@test.com"]
+                           "invites": ["joe@test.com"],
+                           "groups": [ai_researchers_group_short_name, ai_dev_identifier]
                        },
                        headers={"Authorization": f"Bearer {uuc_secret}"},
                        with_basic_auth=False)
         invitation_id = res[0]["invitation_id"]
         res = self.get(f"/api/invitations/v1/{invitation_id}", headers={"Authorization": f"Bearer {uuc_secret}"},
                        with_basic_auth=False)
+        self.assertEqual("member", res["intended_role"])
         self.assertEqual("open", res["status"])
         self.assertEqual("joe@test.com", res["invitation"]["email"])
+        self.assertEqual(2, len(res["groups"]))
+        self.assertEqual(ai_computing_short_name, res["collaboration"]["short_name"])
 
         invitation = Invitation.query.filter(Invitation.external_identifier == invitation_id).first()
         self.assertEqual("member", invitation.intended_role)
