@@ -23,8 +23,12 @@ import Tabs from "../components/Tabs";
 import {ReactComponent as CoAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
 import {ReactComponent as MemberIcon} from "../icons/groups.svg";
+import {ReactComponent as TimerIcon} from "../icons/streamline/timer2.svg";
 import {ReactComponent as GroupsIcon} from "../icons/ticket-group.svg";
+import {ReactComponent as WebsiteIcon} from "../icons/network-information.svg";
+import {ReactComponent as CopyIcon} from "../icons/duplicate.svg";
 import {ReactComponent as UserTokensIcon} from "../icons/connections.svg";
+import {ReactComponent as MemberStatusIcon} from "@surfnet/sds/icons/functional-icons/id-2.svg";
 import {ReactComponent as JoinRequestsIcon} from "../icons/single-neutral-question.svg";
 import {ReactComponent as AboutIcon} from "../icons/common-file-text-home.svg";
 import CollaborationAdmins from "../components/redesign/CollaborationAdmins";
@@ -42,12 +46,10 @@ import Button from "../components/Button";
 import JoinRequestDialog from "../components/JoinRequestDialog";
 import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import moment from "moment";
-import {ButtonType, MetaDataList, Tooltip} from "@surfnet/sds";
-import {ErrorOrigins, isEmpty, removeDuplicates, stopEvent} from "../utils/Utils";
+import {ButtonType, Tooltip} from "@surfnet/sds";
+import {ErrorOrigins, isEmpty, removeDuplicates} from "../utils/Utils";
 import UserTokens from "../components/redesign/UserTokens";
 import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
-import ClipBoardCopy from "../components/redesign/ClipBoardCopy";
-import {CopyToClipboard} from "react-copy-to-clipboard";
 import {isUuid4} from "../validations/regExps";
 
 class CollaborationDetail extends React.Component {
@@ -55,8 +57,7 @@ class CollaborationDetail extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.roleOptions = collaborationRoles.map(role => ({
-            value: role,
-            label: I18n.t(`profile.${role}`)
+            value: role, label: I18n.t(`profile.${role}`)
         }));
         this.state = {
             invitation: null,
@@ -129,8 +130,7 @@ class CollaborationDetail extends React.Component {
             collaborationAccessAllowed(collaboration_id)
                 .then(json => {
                     const adminOfCollaboration = json.access === "full";
-                    const promises = adminOfCollaboration ? [collaborationById(collaboration_id), userTokensOfUser()] :
-                        [collaborationLiteById(collaboration_id), userTokensOfUser()];
+                    const promises = adminOfCollaboration ? [collaborationById(collaboration_id), userTokensOfUser()] : [collaborationLiteById(collaboration_id), userTokensOfUser()];
                     Promise.all(promises)
                         .then(res => {
                             const {user, config} = this.props;
@@ -201,10 +201,10 @@ class CollaborationDetail extends React.Component {
                                 tab: "about",
                             }, () => {
                                 AppStore.update(s => {
-                                    s.breadcrumb.paths = [
-                                        {path: "/", value: I18n.t("breadcrumb.home")},
-                                        {value: I18n.t("breadcrumb.collaborationJoinRequest", {name: collaboration.name})}
-                                    ]
+                                    s.breadcrumb.paths = [{
+                                        path: "/",
+                                        value: I18n.t("breadcrumb.home")
+                                    }, {value: I18n.t("breadcrumb.collaborationJoinRequest", {name: collaboration.name})}]
                                     s.objectRole = actionMenuUserRole(user, collaboration.organisation, collaboration, null, true);
                                 });
                             })
@@ -215,7 +215,6 @@ class CollaborationDetail extends React.Component {
             }
         }
     }
-    ;
 
     isExpiryDateWarning = expiry_date => {
         const today = new Date().getTime();
@@ -266,13 +265,13 @@ class CollaborationDetail extends React.Component {
             const formattedCollaborationExpiryDate = moment(collaboration.expiry_date * 1000).format("LL");
             if (collaboration.status === "expired") {
                 msg += I18n.t("collaboration.status.expiredTooltip", {expiryDate: formattedCollaborationExpiryDate});
-                if (!isMember) {
+                if (!isMember && showMemberView) {
                     action = this.activate(true);
                     actionLabel = I18n.t("collaboration.status.activate");
                 }
             } else if (this.isExpiryDateWarning(collaboration.expiry_date)) {
                 msg += I18n.t("collaboration.status.activeWithExpiryDateTooltip", {expiryDate: formattedCollaborationExpiryDate});
-                if (!isMember) {
+                if (!isMember && showMemberView) {
                     action = () => this.props.history.push(`/edit-collaboration/${collaboration.id}`)
                     actionLabel = I18n.t("collaboration.status.activeWithExpiryDateAction");
                 }
@@ -317,17 +316,13 @@ class CollaborationDetail extends React.Component {
 
     updateAppStore = (user, config, collaboration, adminOfCollaboration, orgManager) => {
         AppStore.update(s => {
-            s.breadcrumb.paths = orgManager ? [
-                {path: "/?redirect=false", value: I18n.t("breadcrumb.home")},
-                {
-                    path: `/organisations/${collaboration.organisation_id}`,
-                    value: I18n.t("breadcrumb.organisation", {name: collaboration.organisation.name})
-                },
-                {value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
-            ] : [
-                {path: "/", value: I18n.t("breadcrumb.home")},
-                {value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
-            ];
+            s.breadcrumb.paths = orgManager ? [{path: "/?redirect=false", value: I18n.t("breadcrumb.home")}, {
+                path: `/organisations/${collaboration.organisation_id}`,
+                value: I18n.t("breadcrumb.organisation", {name: collaboration.organisation.name})
+            }, {value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})}] : [{
+                path: "/",
+                value: I18n.t("breadcrumb.home")
+            }, {value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})}];
             s.actions = this.getHeaderActions(user, config, collaboration);
             s.objectRole = actionMenuUserRole(user, collaboration.organisation, collaboration, null, true);
         });
@@ -361,29 +356,15 @@ class CollaborationDetail extends React.Component {
             .filter(s => s.token_enabled), "id");
         //Actually this collaboration is not for members to view
         if ((!adminOfCollaboration || showMemberView) && !collaboration.disclose_member_information) {
-            const minimalTabs = [
-                this.getAboutTab(collaboration, showMemberView, isJoinRequest),
-            ];
+            const minimalTabs = [this.getAboutTab(collaboration, showMemberView, isJoinRequest),];
             this.addUserTokenTab(userTokens, services, isJoinRequest, minimalTabs, collaboration);
             return minimalTabs;
         }
-        const tabs = (adminOfCollaboration && !showMemberView) ?
-            [
-                this.getCollaborationAdminsTab(collaboration),
-                this.getMembersTab(collaboration, showMemberView),
-                this.getGroupsTab(collaboration, showMemberView),
-                this.getServicesTab(collaboration, user),
-                this.getJoinRequestsTab(collaboration),
-            ] : [
-                this.getAboutTab(collaboration, showMemberView, isJoinRequest),
-                this.getMembersTab(collaboration, showMemberView, isJoinRequest),
-                this.getGroupsTab(collaboration, showMemberView, isJoinRequest),
-            ];
+        const tabs = (adminOfCollaboration && !showMemberView) ? [this.getCollaborationAdminsTab(collaboration), this.getMembersTab(collaboration, showMemberView), this.getGroupsTab(collaboration, showMemberView), this.getServicesTab(collaboration, user), this.getJoinRequestsTab(collaboration),] : [this.getAboutTab(collaboration, showMemberView, isJoinRequest), this.getMembersTab(collaboration, showMemberView, isJoinRequest), this.getGroupsTab(collaboration, showMemberView, isJoinRequest),];
         this.addUserTokenTab(userTokens, services, isJoinRequest, tabs, collaboration);
 
         return tabs.filter(tab => tab !== null);
     }
-
 
     addUserTokenTab(userTokens, services, isJoinRequest, tabs, collaboration) {
         if (userTokens) {
@@ -415,10 +396,9 @@ class CollaborationDetail extends React.Component {
                      icon={<MemberIcon/>}
                      readOnly={isJoinRequest}
                      notifier={(openInvitations > 0 && !showMemberView) ? openInvitations : null}>
-            {!isJoinRequest &&
-                <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={false}
-                                     showMemberView={showMemberView}
-                                     refresh={callback => this.componentDidMount(callback)}/>}
+            {!isJoinRequest && <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={false}
+                                                    showMemberView={showMemberView}
+                                                    refresh={callback => this.componentDidMount(callback)}/>}
         </div>)
     }
 
@@ -528,8 +508,7 @@ class CollaborationDetail extends React.Component {
         if (collaboration) {
             this.updateAppStore(user, config, collaboration, adminOfCollaboration, orgManager);
         }
-        this.setState({tab: name}, () =>
-            this.props.history.replace(`/collaborations/${collId}/${name}`));
+        this.setState({tab: name}, () => this.props.history.replace(`/collaborations/${collId}/${name}`));
     }
 
 
@@ -548,57 +527,59 @@ class CollaborationDetail extends React.Component {
         }
         const twoOrMore = admins.length === 2 ? "twoAdminsHeader" : "multipleAdminsHeader";
         return I18n.t(`models.collaboration.${twoOrMore}`, {
-            name: admins[0].name,
-            mails: mails,
-            bcc: bcc,
-            nbr: admins.length - 1
+            name: admins[0].name, mails: mails, bcc: bcc, nbr: admins.length - 1
         });
     }
 
     collaborationJoinRequestAction = (collaboration, alreadyMember) => {
+        return (<div className="join-request-action">
+            <Button txt={I18n.t("registration.joinRequest", {name: collaboration.name})}
+                    disabled={alreadyMember}
+                    onClick={() => this.setState({joinRequestDialogOpen: true})}/>
+        </div>);
+    }
+
+    getIconListItems = iconListItems => {
+        return (<div className={"icon-list-items"}>
+            {iconListItems.map((item, index) => <div className={"icon-list-item"} key={index}>
+                {item.Icon}
+                {item.value}
+            </div>)}
+        </div>);
+    }
+
+    getMemberIconListItem = collaboration => {
+        const memberCount = collaboration.collaboration_memberships.length;
+        const groupCount = collaboration.groups.length;
         return (
-            <div className="join-request-action">
-                <Button txt={I18n.t("registration.joinRequest", {name: collaboration.name})}
-                        disabled={alreadyMember}
-                        onClick={() => this.setState({joinRequestDialogOpen: true})}/>
-            </div>
+            {
+                Icon: <MemberIcon/>, value: <span>{I18n.t("coPageHeaders.membersGroups", {
+                    memberCount: memberCount === 0 ? I18n.t("coPageHeaders.no") : memberCount,
+                    members: memberCount === 1 ? I18n.t("coPageHeaders.singleMember") : I18n.t("coPageHeaders.multipleMembers"),
+                    groupCount: groupCount === 0 ? I18n.t("coPageHeaders.no").toLowerCase() : groupCount,
+                    groups: groupCount === 1 ? I18n.t("coPageHeaders.singleGroup") : I18n.t("coPageHeaders.multipleGroups"),
+
+                })}
+                </span>
+            }
         );
     }
 
     getUnitHeaderForMemberNew = (user, config, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember, adminOfCollaboration) => {
         const customAction = collaborationJoinRequest ? this.collaborationJoinRequestAction(collaboration, alreadyMember) : null;
-        const memberCount = collaboration.collaboration_memberships.length;
-        const groupCount = collaboration.groups.length;
-        const metaDataListItems = [{
-            label: I18n.t("models.members.title"),
-            values: [`${memberCount} ${memberCount > 1 ? I18n.t("models.members.title").toLowerCase() :
-                I18n.t("profile.member").toLowerCase()}`]
-        },
-            {
-                label: I18n.t("collaborations.groups"),
-                values: [`${groupCount} ${groupCount > 1 ? I18n.t("collaborations.groups").toLowerCase() :
-                    I18n.t("collaborations.group").toLowerCase()}`]
-            }
-        ];
+        const iconListItems = [this.getMemberIconListItem(collaboration)];
         if (collaboration.website_url) {
-            metaDataListItems.push({
-                label: I18n.t("collaborations.moreInformation"),
-                values: [<a href={collaboration.website_url} target={"_blank"} rel="noopener noreferrer">
-                    {I18n.t("collaborations.website")}
-                </a>]
-            });
-        }
-        if (collaboration.expiry_date) {
-            metaDataListItems.push({
-                label: I18n.t("models.orgMembers.expires"),
-                values: [moment(collaboration.expiry_date * 1000).format("LL")]
-            });
+            iconListItems.push({
+                Icon: <WebsiteIcon/>,
+                value: <a href={collaboration.website_url} target="_blank" rel="noopener noreferrer">
+                    {I18n.t("coPageHeaders.visit")}
+                </a>
+            })
         }
         const membershipStatus = this.getMembershipStatus(collaboration, user);
         if (!collaborationJoinRequest && membershipStatus) {
-            metaDataListItems.push({
-                label: I18n.t(`organisationMembership.status.name`),
-                values: [membershipStatus]
+            iconListItems.push({
+                Icon: <MemberStatusIcon/>, value: membershipStatus
             })
         }
         return <UnitHeader obj={collaboration}
@@ -606,7 +587,7 @@ class CollaborationDetail extends React.Component {
                            name={collaboration.name}
                            displayDescription={false}
                            customAction={customAction}>
-            {metaDataListItems.length > 0 && <MetaDataList items={metaDataListItems}/>}
+            {this.getIconListItems(iconListItems)}
         </UnitHeader>;
     }
 
@@ -672,8 +653,7 @@ class CollaborationDetail extends React.Component {
         const isMember = collaboration.collaboration_memberships.some(m => m.user_id === user.id);
         if (isMember) {
             actions.push({
-                name: I18n.t("models.collaboration.leave"),
-                perform: this.deleteMe
+                name: I18n.t("models.collaboration.leave"), perform: this.deleteMe
             });
         }
         return actions;
@@ -683,9 +663,7 @@ class CollaborationDetail extends React.Component {
         const actions = [];
         if (allowedToEdit && showMemberView) {
             actions.push({
-                buttonType: ButtonType.Primary,
-                name: I18n.t("home.edit"),
-                perform: () => {
+                buttonType: ButtonType.Primary, name: I18n.t("home.edit"), perform: () => {
                     clearFlash();
                     this.props.history.push("/edit-collaboration/" + collaboration.id)
                 }
@@ -709,9 +687,7 @@ class CollaborationDetail extends React.Component {
         const isMember = collaboration.collaboration_memberships.some(m => m.user_id === user.id);
         if (!isMember && user.admin && showMemberView) {
             actions.push({
-                buttonType: ButtonType.Chevron,
-                name: I18n.t("collaborationDetail.addMe"),
-                perform: this.addMe
+                buttonType: ButtonType.Chevron, name: I18n.t("collaborationDetail.addMe"), perform: this.addMe
             })
         }
         return actions;
@@ -733,14 +709,10 @@ class CollaborationDetail extends React.Component {
             return null;
         }
         const expiryDate = moment(collaboration.expiry_date * 1000).format("LL");
-        const className = collaboration.status !== "active" ? "warning" : "";
         const status = (collaboration.status === "active" && collaboration.expiry_date) ? "activeWithExpiryDate" : collaboration.status;
-        return (
-            <div className="org-attributes">
-                <span
-                    className={`${className} contains-tooltip`}>{I18n.t(`collaboration.status.${status}`, {expiryDate: expiryDate})}</span>
-            </div>
-        );
+        return (<span>
+                    {I18n.t(`collaboration.status.${status}`, {expiryDate: expiryDate})}
+                </span>);
     }
 
     doAcceptInvitation = () => {
@@ -755,8 +727,10 @@ class CollaborationDetail extends React.Component {
                 if (e.response && e.response.json) {
                     e.response.json().then(res => {
                         if (res.message && res.message.indexOf("already a member") > -1) {
-                            this.setState({errorOccurred: true, firstTime: false}, () =>
-                                setFlash(I18n.t("invitation.flash.alreadyMember", {"name": invitation.collaboration.name}), "error"));
+                            this.setState({
+                                errorOccurred: true,
+                                firstTime: false
+                            }, () => setFlash(I18n.t("invitation.flash.alreadyMember", {"name": invitation.collaboration.name}), "error"));
                         }
                     });
                 } else {
@@ -777,74 +751,67 @@ class CollaborationDetail extends React.Component {
             return null;
         }
         //expiryDate is only used for translation if actually set
-        const expiryDate = membership.expiry_date ? moment(membership.expiry_date * 1000).format("LL") : "";
-        const className = membership.status !== "active" ? "warning" : "";
-        let status;
-        if (membership.expiry_date && membership.status === "expired") {
-            status = "expired";
-        } else if (membership.expiry_date && membership.status === "active") {
-            status = "activeWithExpiryDate";
-        } else {
-            status = "active";
+        const expiryDate = membership.expiry_date ? moment(membership.expiry_date * 1000).format("LL") : null;
+        if (membership.status === "active") {
+            return (<span>
+                {I18n.t("coPageHeaders.membership", {date: moment(membership.created_at * 1000).format("LL")})}
+                {expiryDate && <Tooltip tip={I18n.t("coPageHeaders.expiresTooltip", {date: expiryDate})}/>}
+            </span>)
         }
-        return (
-            <span className={className}>
-                    {I18n.t(`organisationMembership.status.${status}`, {date: expiryDate})}
-                <Tooltip tip={I18n.t(`organisationMembership.status.${status}Tooltip`, {date: expiryDate})}/>
-                </span>
-        );
+        return <span>{I18n.t("collaboration.status.expired")}</span>
     }
 
     getUnitHeader = (user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration) => {
         const joinRequestUrl = `${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`;
-        const expiryDate = collaboration.expiry_date ? moment(collaboration.expiry_date * 1000).format("LL") : null;
-        const metaDataListItems = [{
-            label: I18n.t("models.orgMembers.expires"),
-            values: [expiryDate || I18n.t("expirations.never")]
-        }, {
-            label: I18n.t("collaboration.joinRequestsHeader"),
-            values: [
-                collaboration.disable_join_requests ? I18n.t("collaboration.noJoinRequests") :
-                    <span className="contains-copy">
-                        <CopyToClipboard text={joinRequestUrl}>
-                            <a href={joinRequestUrl} className={"copy-link"} onClick={e => {
-                                const me = e.target;
-                                stopEvent(e);
-                                me.classList.add("copied");
-                                setTimeout(() => me.classList.remove("copied"), 1250);
-                            }}>
-                                {I18n.t("collaboration.enabled")}
-                            </a>
-                        </CopyToClipboard>
-                        <ClipBoardCopy transparentBackground={true} txt={joinRequestUrl}/>
-                    </span>
-            ]
-        }, {
-            label: I18n.t("collaboration.memberList"),
-            values: [I18n.t(`collaboration.${collaboration.disclose_member_information ? "visible" : "hidden"}`)]
-        }];
-
-        return (
-            <UnitHeader obj={collaboration}
-                        firstTime={user.admin ? this.onBoarding : undefined}
-                        history={(user.admin && allowedToEdit) && this.props.history}
-                        auditLogPath={`collaborations/${collaboration.id}`}
-                        breadcrumbName={I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
-                        name={collaboration.name}
-                        labels={collaboration.tags.map(tag => tag.tag_value)}
-                        displayDescription={true}
-                        actions={this.getActions(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}>
-                {metaDataListItems.length > 0 && <MetaDataList items={metaDataListItems}/>}
-            </UnitHeader>
-        );
+        const iconListItems = [this.getMemberIconListItem(collaboration)];
+        if (!collaboration.disable_join_requests) {
+            iconListItems.push({
+                Icon: <CopyIcon/>,
+                value: <a href={joinRequestUrl} target="_blank" rel="noopener noreferrer">
+                    {I18n.t("collaboration.joinRequestsHeader")}
+                </a>
+            });
+            const collaborationStatus = this.getCollaborationStatus(collaboration);
+            if (collaborationStatus) {
+                iconListItems.push({
+                    Icon: <TimerIcon/>, value: collaborationStatus
+                })
+            }
+            return (<UnitHeader obj={collaboration}
+                                firstTime={user.admin ? this.onBoarding : undefined}
+                                history={(user.admin && allowedToEdit) && this.props.history}
+                                auditLogPath={`collaborations/${collaboration.id}`}
+                                breadcrumbName={I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
+                                name={collaboration.name}
+                                labels={collaboration.tags.map(tag => tag.tag_value)}
+                                displayDescription={true}
+                                actions={this.getActions(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}>
+                {this.getIconListItems(iconListItems)}
+            </UnitHeader>);
+        }
     }
 
     render() {
         const {
-            collaboration, loading, tabs, tab, adminOfCollaboration, showMemberView, firstTime,
-            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,
-            collaborationJoinRequest, joinRequestDialogOpen, alreadyMember, lastAdminWarning,
-            isWarning, isInvitation, invitation, serviceEmails
+            collaboration,
+            loading,
+            tabs,
+            tab,
+            adminOfCollaboration,
+            showMemberView,
+            firstTime,
+            confirmationDialogOpen,
+            cancelDialogAction,
+            confirmationDialogAction,
+            confirmationQuestion,
+            collaborationJoinRequest,
+            joinRequestDialogOpen,
+            alreadyMember,
+            lastAdminWarning,
+            isWarning,
+            isInvitation,
+            invitation,
+            serviceEmails
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -857,43 +824,39 @@ class CollaborationDetail extends React.Component {
         } else {
             role = adminOfCollaboration ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER;
         }
-        return (
-            <>
-                {(adminOfCollaboration && showMemberView) &&
-                    this.getUnitHeader(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}
-                {(!showMemberView || !adminOfCollaboration) &&
-                    this.getUnitHeaderForMemberNew(user, config, collaboration, allowedToEdit, showMemberView,
-                        collaborationJoinRequest, alreadyMember, adminOfCollaboration)}
+        return (<>
+            {(adminOfCollaboration && showMemberView) && this.getUnitHeader(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}
+            {(!showMemberView || !adminOfCollaboration) && this.getUnitHeaderForMemberNew(user, config, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember, adminOfCollaboration)}
 
-                {!collaborationJoinRequest && <CollaborationWelcomeDialog name={collaboration.name}
-                                                                          isOpen={firstTime}
-                                                                          role={role}
-                                                                          serviceEmails={serviceEmails}
-                                                                          collaboration={collaboration}
-                                                                          isAdmin={user.admin}
-                                                                          isInvitation={isInvitation}
-                                                                          close={this.doAcceptInvitation}/>}
+            {!collaborationJoinRequest && <CollaborationWelcomeDialog name={collaboration.name}
+                                                                      isOpen={firstTime}
+                                                                      role={role}
+                                                                      serviceEmails={serviceEmails}
+                                                                      collaboration={collaboration}
+                                                                      isAdmin={user.admin}
+                                                                      isInvitation={isInvitation}
+                                                                      close={this.doAcceptInvitation}/>}
 
-                <JoinRequestDialog collaboration={collaboration}
-                                   isOpen={joinRequestDialogOpen}
-                                   refresh={callback => refreshUser(callback)}
-                                   history={this.props.history}
-                                   close={() => this.setState({joinRequestDialogOpen: false})}/>
+            <JoinRequestDialog collaboration={collaboration}
+                               isOpen={joinRequestDialogOpen}
+                               refresh={callback => refreshUser(callback)}
+                               history={this.props.history}
+                               close={() => this.setState({joinRequestDialogOpen: false})}/>
 
-                <ConfirmationDialog isOpen={confirmationDialogOpen}
-                                    cancel={cancelDialogAction}
-                                    confirm={confirmationDialogAction}
-                                    isWarning={isWarning}
-                                    question={confirmationQuestion}>
-                    {lastAdminWarning &&
-                        <LastAdminWarning organisation={collaboration.organisation} currentUserDeleted={true}
-                        />}
-                </ConfirmationDialog>
-                <Tabs activeTab={tab} tabChanged={this.tabChanged}>
-                    {tabs}
-                </Tabs>
+            <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                cancel={cancelDialogAction}
+                                confirm={confirmationDialogAction}
+                                isWarning={isWarning}
+                                question={confirmationQuestion}>
+                {lastAdminWarning &&
+                    <LastAdminWarning organisation={collaboration.organisation} currentUserDeleted={true}
+                    />}
+            </ConfirmationDialog>
+            <Tabs activeTab={tab} tabChanged={this.tabChanged}>
+                {tabs}
+            </Tabs>
 
-            </>)
+        </>)
     }
 
 

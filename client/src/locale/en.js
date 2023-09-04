@@ -2312,6 +2312,18 @@ const en = {
     missingAttributes: {
         info: "Something went wrong, we didn't receive all the required login information. Please try logging in again, if possible using a incognito browser window.",
         contact: "If the problem reoccurs, please contact us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for help"
+    },
+    coPageHeaders: {
+        membersGroups: "{{memberCount}} {{members}} & {{groupCount}} {{groups}}",
+        singleMember: "member",
+        multipleMembers: "members",
+        singleGroup: "group",
+        multipleGroups: "groups",
+        no: "No",
+        visit: "Visit website",
+        membership: "Member since {{date}}",
+        expiresTooltip: "Membership expires {{date}}"
+
     }
 };
 
