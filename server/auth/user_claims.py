@@ -74,7 +74,7 @@ def add_user_claims(user_info_json, uid, user):
             if "@" in val:
                 schac_home = re.split("@", val)[-1]
                 if schac_home:
-                    user.schac_home_organisation = schac_home
+                    user.schac_home_organisation = schac_home.lower()
                     break
     if not user.username:
         user.username = generate_unique_username(user)

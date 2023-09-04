@@ -156,7 +156,7 @@ class OrganisationForm extends React.Component {
                 this.setState({invalid_schac_home_organisation: invalid_schac_home_organisation});
             } else {
                 const existingOrganisationId = isNew ? null : organisation.id;
-                schac_home_organisations.push({name: schac_home_organisation});
+                schac_home_organisations.push({name: schac_home_organisation.toLowerCase()});
                 organisationSchacHomeOrganisationExists(schac_home_organisation, existingOrganisationId).then(schacHomeOrganisationExists => {
                     let existingSchacHomes = alreadyExists.schac_home_organisations;
                     if (schacHomeOrganisationExists) {
