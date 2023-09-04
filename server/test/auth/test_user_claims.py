@@ -21,12 +21,12 @@ class TestUserClaims(AbstractTest):
 
     def test_add_user_claims_affiliation(self):
         user = User()
-        add_user_claims({"voperson_external_id": "teacher@university"}, "urn:johny", user)
+        add_user_claims({"voperson_external_id": "teacher@UNIVERSITY"}, "urn:johny", user)
         self.assertEqual("university", user.schac_home_organisation)
 
     def test_add_user_claims_affiliation_list(self):
         user = User()
-        add_user_claims({"voperson_external_id": ["teacher@sub.uni.org"]}, "urn:johny", user)
+        add_user_claims({"voperson_external_id": ["teacher@sub.UNI.org"]}, "urn:johny", user)
         self.assertEqual("sub.uni.org", user.schac_home_organisation)
 
     def test_add_user_claims_none(self):
