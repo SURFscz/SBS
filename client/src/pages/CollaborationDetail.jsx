@@ -771,24 +771,24 @@ class CollaborationDetail extends React.Component {
                     {I18n.t("collaboration.joinRequestsHeader")}
                 </a>
             });
-            const collaborationStatus = this.getCollaborationStatus(collaboration);
-            if (collaborationStatus) {
-                iconListItems.push({
-                    Icon: <TimerIcon/>, value: collaborationStatus
-                })
-            }
-            return (<UnitHeader obj={collaboration}
-                                firstTime={user.admin ? this.onBoarding : undefined}
-                                history={(user.admin && allowedToEdit) && this.props.history}
-                                auditLogPath={`collaborations/${collaboration.id}`}
-                                breadcrumbName={I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
-                                name={collaboration.name}
-                                labels={collaboration.tags.map(tag => tag.tag_value)}
-                                displayDescription={true}
-                                actions={this.getActions(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}>
-                {this.getIconListItems(iconListItems)}
-            </UnitHeader>);
         }
+        const collaborationStatus = this.getCollaborationStatus(collaboration);
+        if (collaborationStatus) {
+            iconListItems.push({
+                Icon: <TimerIcon/>, value: collaborationStatus
+            })
+        }
+        return (<UnitHeader obj={collaboration}
+                            firstTime={user.admin ? this.onBoarding : undefined}
+                            history={(user.admin && allowedToEdit) && this.props.history}
+                            auditLogPath={`collaborations/${collaboration.id}`}
+                            breadcrumbName={I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
+                            name={collaboration.name}
+                            labels={collaboration.tags.map(tag => tag.tag_value)}
+                            displayDescription={true}
+                            actions={this.getActions(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}>
+            {this.getIconListItems(iconListItems)}
+        </UnitHeader>);
     }
 
     render() {
