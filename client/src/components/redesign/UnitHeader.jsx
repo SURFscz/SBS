@@ -49,7 +49,7 @@ class UnitHeader extends React.Component {
     render() {
         const {
             obj, history, auditLogPath, name, breadcrumbName, svgClick, firstTime, actions, children, customAction,
-            displayDescription, labels
+            displayDescription, labels, displayShortName
         } = this.props;
         const {showDropDown} = this.state;
         const queryParam = `name=${encodeURIComponent(breadcrumbName || name)}&back=${encodeURIComponent(window.location.pathname)}`;
@@ -77,7 +77,9 @@ class UnitHeader extends React.Component {
                             </div>
 
                         </div>
-
+                        {(obj.short_name && displayShortName) &&
+                            <p className="short-name">{I18n.t("collaboration.shortName")}<span>{obj.short_name}</span></p>
+                        }
                         {(obj.description && displayDescription) &&
                             <MoreLessText txt={obj.description}/>
                         }

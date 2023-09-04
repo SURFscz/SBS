@@ -17,6 +17,7 @@ import Tabs from "../components/Tabs";
 import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {ReactComponent as DetailsIcon} from "../icons/services.svg";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
+import {ReactComponent as WebsiteIcon} from "../icons/network-information.svg";
 import {
     ReactComponent as UserTokensIcon,
     ReactComponent as ServiceConnectionRequestsIcon
@@ -25,9 +26,10 @@ import {ReactComponent as AboutIcon} from "../icons/common-file-text-home.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
 import {ReactComponent as UserAdminIcon} from "../icons/users.svg";
+import {ReactComponent as ConnectedIcon} from "../icons/groups.svg";
 import ServiceOrganisations from "../components/redesign/ServiceOrganisations";
 import SpinnerField from "../components/redesign/SpinnerField";
-import {removeDuplicates, splitListSemantically} from "../utils/Utils";
+import {isEmpty, removeDuplicates, splitListSemantically} from "../utils/Utils";
 import {actionMenuUserRole, isUserServiceAdmin} from "../utils/UserRole";
 import ServiceConnectionRequests from "../components/redesign/ServiceConnectionRequests";
 import {ReactComponent as GroupsIcon} from "../icons/ticket-group.svg";
@@ -41,8 +43,9 @@ import ServiceOverview from "./ServiceOverview";
 import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
 import UserTokens from "../components/redesign/UserTokens";
 import ServiceCollaborations from "../components/redesign/ServiceCollaborations";
-import {ButtonType, MetaDataList} from "@surfnet/sds";
+import {ButtonType} from "@surfnet/sds";
 import AboutService from "../components/redesign/AboutService";
+import DOMPurify from "dompurify";
 
 class ServiceDetail extends React.Component {
 
@@ -296,23 +299,28 @@ class ServiceDetail extends React.Component {
     }
 
     getCollaborationsTab = (service, showServiceAdminView) => {
+        const collaborations = this.allCollaborationsForService(service);
+        return (
+            <div key="collaborations" name="collaborations"
+                 label={I18n.t("home.tabs.serviceCollaborations", {count: collaborations.length})}
+                 icon={<CollaborationsIcon/>}>
+                <ServiceCollaborations
+                    service={service}
+                    showServiceAdminView={showServiceAdminView}
+                    collaborations={collaborations}
+                    refresh={this.refresh}
+                    modelName={"serviceCollaborations"}
+                    {...this.props} />
+            </div>);
+    }
+
+    allCollaborationsForService = service => {
         const collaborations = service.collaborations;
         collaborations.forEach(coll => coll.fromCollaboration = true);
         const collFromOrganisations = service.service_organisation_collaborations;
         collFromOrganisations.forEach(coll => coll.fromCollaboration = false);
         const colls = removeDuplicates(collaborations.concat(collFromOrganisations), "id");
-        return (
-            <div key="collaborations" name="collaborations"
-                 label={I18n.t("home.tabs.serviceCollaborations", {count: colls.length})}
-                 icon={<CollaborationsIcon/>}>
-                <ServiceCollaborations
-                    service={service}
-                    showServiceAdminView={showServiceAdminView}
-                    collaborations={colls}
-                    refresh={this.refresh}
-                    modelName={"serviceCollaborations"}
-                    {...this.props} />
-            </div>);
+        return colls;
     }
 
     getAboutTab = service => {
@@ -454,6 +462,62 @@ class ServiceDetail extends React.Component {
         })
     }
 
+    getCollaborationHeaderInfo = service => {
+        const accessibleService = service.automatic_connection_allowed || service.access_allowed_for_all || service.non_member_users_access_allowed;
+        const collaborations = this.allCollaborationsForService(service);
+        const notConnected = isEmpty(collaborations);
+        if (accessibleService) {
+            return (
+                <span
+                    dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("servicePageHeaders.allConnected"))}}/>
+            );
+        }
+        if (notConnected) {
+            return (
+                <span
+                    dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("servicePageHeaders.notConnected"))}}/>
+            );
+        }
+        return (
+            <span dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(
+                    I18n.t(`servicePageHeaders.${collaborations.length === 1 ? "connectedToSingle" : "connectedToMultiple"}`,
+                        {count: collaborations.length})
+                )
+            }}/>
+        );
+    }
+
+    getInstitutionsHeadersInfo = service => {
+        const accessibleService = service.automatic_connection_allowed || service.access_allowed_for_all || service.non_member_users_access_allowed;
+        const allowed = service.allowed_organisations.length;
+        const always = service.automatic_connection_allowed_organisations.length;
+        const notAvailable = !accessibleService && allowed === 0 && always === 0;
+        if (notAvailable) {
+            return (
+                <span dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("servicePageHeaders.notAvailable"))}}/>
+            );
+        }
+        const count = allowed + always;
+        return (
+            <span dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(
+                    I18n.t(`servicePageHeaders.${count === 1 ? "availableSingle" : "availableMultiple"}`,
+                        {count: count})
+                )
+            }}/>
+        );
+    }
+
+    getIconListItems = iconListItems => {
+        return (<div className={"icon-list-items"}>
+            {iconListItems.map((item, index) => <div className={"icon-list-item"} key={index}>
+                {item.Icon}
+                {item.value}
+            </div>)}
+        </div>);
+    }
+
     render() {
         const {
             service, loading, tab, firstTime, showServiceAdminView, serviceConnectionRequests,
@@ -505,23 +569,27 @@ class ServiceDetail extends React.Component {
             policies.push(<a href={service.accepted_user_policy} target="_blank" rel="noopener noreferrer">
                 {I18n.t("service.accepted_user_policy")}</a>)
         }
-        const metaDataListItems = [];
-        if (serviceAccessLinks.length > 0) {
-            metaDataListItems.push({
-                label: I18n.t("service.access"),
-                values: serviceAccessLinks
+        const iconListItems = [
+            {
+                Icon: <ConnectedIcon/>,
+                value:
+                    <span>{this.getCollaborationHeaderInfo(service)}{this.getInstitutionsHeadersInfo(service)}</span>
+            }
+        ];
+        if (service.uri_info || service.uri) {
+            iconListItems.push({
+                Icon: <WebsiteIcon/>,
+                value: <span>
+                    {service.uri_info && <a href={service.uri_info} target="_blank" rel="noopener noreferrer">
+                        {I18n.t("servicePageHeaders.launch")}
+                    </a>}
+                    {(service.uri_info && service.uri) && <span>{I18n.t("service.or")}</span>}
+                    {service.uri && <a href={service.uri} target="_blank" rel="noopener noreferrer">
+                        {I18n.t("servicePageHeaders.visit")}
+                    </a>}
+                </span>
             })
         }
-        if (policies.length > 0) {
-            metaDataListItems.push({
-                label: I18n.t("service.policies"),
-                values: policies
-            })
-        }
-        metaDataListItems.push({
-            label: I18n.t("service.policyCompliance"),
-            values: [this.compliancy(service)]
-        })
         return (
             <div className="mod-service-container">
                 <ServiceWelcomeDialog name={service.name}
@@ -541,7 +609,8 @@ class ServiceDetail extends React.Component {
                 </ConfirmationDialog>
 
                 <UnitHeader obj={service}
-                            displayDescription={true}
+                            displayDescription={false}
+                            displayShortName={true}
                             mayEdit={user.admin || isUserServiceAdmin(user, service)}
                             history={user.admin && !showServiceAdminView && this.props.history}
                             auditLogPath={`services/${service.id}`}
@@ -549,7 +618,7 @@ class ServiceDetail extends React.Component {
                             name={service.name}
                             firstTime={(user.admin && !showServiceAdminView) ? this.onBoarding : undefined}
                             actions={this.getActions(user, service, showServiceAdminView)}>
-                    {metaDataListItems.length > 0 && <MetaDataList items={metaDataListItems}/>}
+                    {this.getIconListItems(iconListItems)}
                 </UnitHeader>
                 <div className="mod-service-container">
                     <Tabs activeTab={tab} tabChanged={this.tabChanged}>

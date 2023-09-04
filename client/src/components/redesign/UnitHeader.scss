@@ -15,6 +15,36 @@
         margin-top: auto;
     }
 
+    p.short-name span {
+        font-weight: 600;
+    }
+
+
+    .icon-list-items {
+        .icon-list-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        span {
+            &.not-connected, &.not-available {
+                color: var(--sds--color--red--400)
+            }
+
+            &.all-connected {
+                font-weight: 600;
+            }
+
+        }
+
+        svg {
+            width: 24px;
+            height: auto;
+        }
+    }
+
     .unit-header {
         max-width: $medium;
         margin: 0 auto;
@@ -58,10 +88,12 @@
             margin-left: 26px;
             display: flex;
             flex-direction: column;
+
             .meta-info-container {
                 display: flex;
 
             }
+
             span.name {
                 color: black;
                 font-weight: bold;
@@ -75,6 +107,7 @@
         .labels {
             margin: 10px auto 0 0;
             padding-right: 55px;
+
             span.chip-container {
                 display: inline-block;
                 margin: 0 10px 10px 0;

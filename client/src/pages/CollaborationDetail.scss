@@ -38,18 +38,6 @@
 
 }
 
-.icon-list-items {
-    .icon-list-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-top: 15px;
-    }
-    svg {
-        width: 24px;
-        height: auto;
-    }
-}
 .collaboration-inactive {
     .org-attributes:last-child {
         margin-top: 10px;

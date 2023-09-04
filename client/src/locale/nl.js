@@ -2323,7 +2323,19 @@ const nl = {
         visit: "Bezoek website",
         membership: "Lid sinds {{date}}",
         expiresTooltip: "Lidmaatschap verloopt op {{date}}"
+    },
+    servicePageHeaders: {
+        notConnected: "<span class='not-connected'>Niet gekoppeld</span> aan CO's",
+        allConnected: "Gekoppeld aan <span class='all-connected'>alle</span> CO's",
+        connectedToSingle: "Gekoppeld aan {{count}} CO",
+        connectedToMultiple: "Gekoppeld aan {{count}} CO's",
+        notAvailable: " & <span class='not-available'>niet beschikbaar </span> voor instellingen",
+        availableSingle: " & beschikbaar voor <span class='all-connected'>{{count}} instelling</span>",
+        availableMultiple: " & beschikbaar voor <span class='all-connected'>{{count}} instellingen</span>",
+        launch: "Launch service",
+        visit: "visit public website"
     }
+
 
 };
 

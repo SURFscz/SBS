@@ -2323,7 +2323,17 @@ const en = {
         visit: "Visit website",
         membership: "Member since {{date}}",
         expiresTooltip: "Membership expires {{date}}"
-
+    },
+    servicePageHeaders: {
+        notConnected: "<span class='not-connected'>Not connected</span> to CO's",
+        allConnected: "Connected to <span class='all-connected'>all</span> CO's",
+        connectedToSingle: "Connected to {{count}} CO",
+        connectedToMultiple: "Connected to {{count}} CO's",
+        notAvailable: " & <span class='not-available'>not available</span> for institutions",
+        availableSingle: " & available for <span class='all-connected'>{{count}} institution</span>",
+        availableMultiple: " & available for <span class='all-connected'>{{count}} institutions</span>",
+        launch: "Launch service",
+        visit: "visit public website"
     }
 };
 
