@@ -5,6 +5,7 @@ from operator import xor
 
 from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app, g as request_context, jsonify
+from sqlalchemy import or_
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict, Forbidden, BadRequest
 
@@ -15,7 +16,7 @@ from server.auth.security import confirm_collaboration_admin, current_user_id, c
     confirm_organisation_api_collaboration
 from server.db.activity import update_last_activity_date
 from server.db.defaults import default_expiry_date
-from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, JoinRequest
+from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, JoinRequest, Group
 from server.db.models import delete
 from server.mail import mail_collaboration_invitation
 from server.scim.events import broadcast_collaboration_changed
@@ -57,16 +58,39 @@ def do_resend(invitation_id):
 
 def parse_date(val, default_date=None):
     return datetime.datetime.fromtimestamp(val / 1e3) if val and (
-        isinstance(val, float) or isinstance(val, int)) else default_date
+            isinstance(val, float) or isinstance(val, int)) else default_date
+
+
+def group_to_dict(group: Group):
+    return {
+        "id": group.id,
+        "short_name": group.short_name,
+        "global_urn": group.global_urn,
+        "identifier": group.identifier,
+        "name": group.name,
+        "description": group.description
+    }
 
 
 def invitation_to_dict(invitation, include_expiry_date=False):
+    collaboration = invitation.collaboration
     res = {
         "status": invitation.status,
         "invitation": {
             "identifier": invitation.external_identifier,
-            "email": invitation.invitee_email
-        }
+            "email": invitation.invitee_email,
+            "expiry_date": invitation.expiry_date
+        },
+        "collaboration": {
+            "id": collaboration.id,
+            "identifier": collaboration.identifier,
+            "name": collaboration.name,
+            "short_name": collaboration.short_name,
+            "description": collaboration.description,
+            "global_urn": collaboration.global_urn
+        },
+        "intended_role": invitation.intended_role,
+        "groups": [group_to_dict(group) for group in invitation.groups]
     }
     if include_expiry_date:
         res["invitation"]["expiry_date"] = invitation.expiry_date
@@ -138,11 +162,21 @@ def collaboration_invites_api():
     membership_expiry_date = parse_date(data.get("membership_expiry_date"))
     invites = list(filter(lambda recipient: bool(email_re.match(recipient)), data["invites"]))
     invites_results = []
+
+    group_ids = data.get("groups", [])
+    conditions = [Group.short_name.in_(group_ids), Group.identifier.in_(group_ids)]
+
+    groups = Group.query \
+        .filter(Group.collaboration_id == collaboration.id) \
+        .filter(or_(*conditions)) \
+        .all()
+
     for email in invites:
         invitation = Invitation(hash=generate_token(), message=message, invitee_email=email,
                                 collaboration_id=collaboration.id, user=user, intended_role=intended_role,
                                 expiry_date=expiry_date, membership_expiry_date=membership_expiry_date,
                                 created_by=CREATED_BY_SYSTEM, external_identifier=str(uuid.uuid4()), status="open")
+        invitation.groups.extend(groups)
         invitation = db.session.merge(invitation)
         invites_results.append({
             "email": email,
