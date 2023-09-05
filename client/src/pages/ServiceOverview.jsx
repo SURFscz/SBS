@@ -595,6 +595,7 @@ class ServiceOverview extends React.Component {
 
             <InputField value={service.scim_bearer_token}
                         name={I18n.t("scim.scimBearerToken")}
+                        multiline={true}
                         onChange={e => this.changeServiceProperty("scim_bearer_token")(e)}
                         toolTip={I18n.t("scim.scimBearerTokenTooltip")}
                         disabled={!service.scim_enabled}/>
