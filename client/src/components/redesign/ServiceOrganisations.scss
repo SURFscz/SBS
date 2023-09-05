@@ -18,6 +18,16 @@
         }
     }
 
+    .sds--block-switch-container {
+        margin: 25px 0 30px 24px;
+        max-width: 840px;
+        display: flex;
+
+        .sds--block-switch {
+            width: 260px;
+        }
+    }
+
     table.serviceOrganisations {
 
         thead {

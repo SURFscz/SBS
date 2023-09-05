@@ -1,12 +1,23 @@
 @import "../../stylesheets/vars";
 
 .mod-service-collaborations {
-    .options-container {
-        max-width: 1280px;
-        margin: 32px auto 0 auto;
+    .info-container {
+        //background-color: var(--sds--color--blue--200);
+        background-color: transparent;
+
+        .info {
+            max-width: 1280px;
+            margin: 24px auto 0 auto;
+            padding: 8px 0;
+
+            button {
+                margin-left: 60px;
+            }
+        }
 
     }
 }
+
 table.serviceCollaborations {
 
     thead {
