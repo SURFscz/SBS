@@ -414,14 +414,18 @@ def toggle_access_property(service_id):
         service.automatic_connection_allowed = False
         service.non_member_users_access_allowed = False
         service.access_allowed_for_all = False
+        service.allowed_organisations = []
+        service.automatic_connection_allowed_organisations = []
     else:
         setattr(service, attribute, enabled)
     if attribute == "access_allowed_for_all" and enabled:
-        service.automatic_connection_allowed = False
         service.non_member_users_access_allowed = False
-    if attribute == "automatic_connection_allowed" and enabled:
-        service.access_allowed_for_all = False
-        service.non_member_users_access_allowed = False
+    if attribute == "automatic_connection_allowed":
+        if enabled:
+            service.non_member_users_access_allowed = False
+        else:
+            service.allowed_organisations += service.automatic_connection_allowed_organisations
+            service.automatic_connection_allowed_organisations = []
     if attribute == "non_member_users_access_allowed" and enabled:
         service.automatic_connection_allowed = False
         service.access_allowed_for_all = False

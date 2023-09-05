@@ -1104,7 +1104,26 @@ const nl = {
         comments: "Je motivatie",
         commentsPlaceholder: "Pretty please...",
         commentsHeader: "Additional comments about this request",
-        commentsAttribute: "motivatie"
+        commentsAttribute: "motivatie",
+        connectionSettings: {
+            connectQuestion: "1. Wie mag koppelen met deze dienst?",
+            coMembers: "CO-leden",
+            institutionSelection: "Toegang op basis van organisatie",
+            noOne: "Geen",
+            later: "Ik ga dit later opzetten",
+            everyOne: "Iedereen",
+            everyOneText: "Geen CO lidmaatschap nodig",
+            whichInstitutionsQuestion: "2. COs van welke organisatie?",
+            allInstitutions: "Alle organisaties",
+            allCOWelcome: "Alle COs zijn welkom",
+            onlySome: "Maar een paar",
+            specificInstitutions: "COs van specifieke organisaties",
+            directlyConnectQuestion: "3. Kan een CO gelijk koppelenn?",
+            directConnect: "COs kunnen gelijk koppelen",
+            manuallyApprove: "I keur koppel-verzoeken handmatig goed",
+            depends: "Hangt er vanaf",
+            settingsPerInstitution: "Configureer per organisation"
+        }
     },
     organisation: {
         title: "Nieuwe organisatie toevoegen",
