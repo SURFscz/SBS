@@ -9,6 +9,7 @@ import {
     toggleAccessAllowedForAll,
     toggleAllowRestrictedOrgs,
     toggleAutomaticConnectionAllowed,
+    toggleNonMemberUsersAccessAllowed,
     toggleReset,
     trustOrganisation
 } from "../../api";
@@ -17,7 +18,7 @@ import {ReactComponent as NoConnectionIcon} from "@surfnet/sds/icons/functional-
 import {clearFlash, setFlash} from "../../utils/Flash";
 import Logo from "./Logo";
 import ConfirmationDialog from "../ConfirmationDialog";
-import {BlockSwitchChoice, Chip, RadioButton, SegmentedControl} from "@surfnet/sds";
+import {BlockSwitchChoice, Chip, SegmentedControl} from "@surfnet/sds";
 import {ALWAYS, DISALLOW, ON_REQUEST, PERMISSION_OPTIONS} from "../../utils/Permissions";
 import SpinnerField from "./SpinnerField";
 import {chipType} from "../../utils/UserRole";
@@ -52,7 +53,7 @@ class ServiceOrganisations extends React.Component {
         }
     }
 
-    componentDidMount = () => {
+    componentDidMount = callback => {
         const {service} = this.props;
         const connectionAllowedValue = connectionAllowed(service);
         const institutionAccessValue = institutionAccess(service);
@@ -61,7 +62,7 @@ class ServiceOrganisations extends React.Component {
             connectionAllowedValue: connectionAllowedValue,
             institutionAccessValue: institutionAccessValue,
             connectionSettingValue: connectionSettingValue
-        })
+        }, callback)
     }
 
     openOrganisation = organisation => e => {
@@ -73,22 +74,22 @@ class ServiceOrganisations extends React.Component {
         this.props.history.push(`/organisations/${organisation.id}`);
     };
 
-    doToggleAutomaticConnectionAllowed = service => {
+    doToggleAutomaticConnectionAllowed = (service, value, callback) => {
         this.setState({loading: true});
-        toggleAutomaticConnectionAllowed(service.id)
-            .then(() => this.refreshService());
+        toggleAutomaticConnectionAllowed(service.id, value)
+            .then(() => this.refreshService(callback));
     }
 
-    doToggleReset = service => {
+    doToggleReset = (service, callback) => {
         this.setState({loading: true});
         toggleReset(service.id)
-            .then(() => this.refreshService())
+            .then(() => this.refreshService(callback))
     }
 
-    doToggleAccessAllowedForAll = service => {
+    doToggleAccessAllowedForAll = (service, value, callback) => {
         this.setState({loading: true});
-        toggleAccessAllowedForAll(service.id)
-            .then(() => this.refreshService())
+        toggleAccessAllowedForAll(service.id, value)
+            .then(() => this.refreshService(callback))
     }
 
     doTogglesAllowRestrictedOrgs = service => {
@@ -112,20 +113,28 @@ class ServiceOrganisations extends React.Component {
         }
     }
 
-    permissionOptions = (organisation, service) => {
-        const disabled = service.automatic_connection_allowed || service.access_allowed_for_all || service.non_member_users_access_allowed;
+    permissionOptions = (organisation, service, connectionSettingValue) => {
         const allowed = service.allowed_organisations.some(org => org.id === organisation.id)
         const always = service.automatic_connection_allowed_organisations.some(org => org.id === organisation.id)
+            || (allowed && service.automatic_connection_allowed)
+        const options = PERMISSION_OPTIONS.filter(option => {
+            if (service.automatic_connection_allowed) {
+                return option !== ON_REQUEST;
+            } else if (connectionSettingValue === MANUALLY_APPROVE) {
+                return option !== ALWAYS;
+            }
+            return true;
+        });
         return (
             <SegmentedControl onClick={option => this.changePermission(organisation, option)}
-                              options={PERMISSION_OPTIONS}
+                              options={options}
                               optionLabelResolver={option => I18n.t(`models.serviceOrganisations.options.${option}`)}
-                              option={always ? PERMISSION_OPTIONS[2] : allowed ? PERMISSION_OPTIONS[1] : PERMISSION_OPTIONS[0]}
-                              disabled={disabled}/>
+                              option={always ? ALWAYS : allowed ? PERMISSION_OPTIONS[1] : PERMISSION_OPTIONS[0]}
+            />
         );
     }
 
-    doDisallow = (organisation, showConfirmation = true) => {
+    doDisallow = (organisation, showConfirmation = true, accessToNone = false) => {
         const {service} = this.props;
         const {collAffected, orgAffected} = this.getAffectedEntities(organisation, service);
         if (showConfirmation && (collAffected.length > 0 || orgAffected.length > 0)) {
@@ -133,13 +142,20 @@ class ServiceOrganisations extends React.Component {
                 confirmationDialogOpen: true,
                 confirmationDialogAction: () => {
                     this.setState({confirmationDialogOpen: false});
-                    this.doDisallow(organisation, false);
+                    this.doDisallow(organisation, false, accessToNone);
                 },
                 disallowedOrganisation: organisation
             });
         } else {
             this.setState({loading: true});
-            disallowOrganisation(service.id, organisation.id).then(() => this.refreshService());
+            const organisations = Array.isArray(organisation) ? organisation : [organisation];
+            const promises = organisations.map(org => disallowOrganisation(service.id, org.id));
+            if (accessToNone) {
+                promises.push(toggleReset(service.id));
+            }
+            Promise.all(promises)
+                .then(() => this.refreshService(accessToNone ? () => this.setState({connectionAllowedValue: NO_ONE_ALLOWED}) : null));
+
         }
     }
 
@@ -163,32 +179,66 @@ class ServiceOrganisations extends React.Component {
         );
     }
 
-    refreshService = () => {
+    refreshService = callback => {
         this.props.refresh(() => {
-            this.setState({loading: false});
+            this.setState({loading: false}, () => this.componentDidMount(callback));
             setFlash(I18n.t("service.flash.updated", {name: this.props.service.name}));
         });
     }
 
-    getAffectedEntities = (organisation, service) => {
-        const collAffected = service.collaborations.filter(coll => organisation.id === coll.organisation_id);
-        const orgAffected = service.organisations.filter(org => organisation.id === org.id);
+    getAffectedEntities = (organisations, service) => {
+        organisations = Array.isArray(organisations) ? organisations : [organisations];
+        const organisationIdentifiers = organisations.map(org => org.id);
+        const collAffected = service.collaborations.filter(coll => organisationIdentifiers.includes(coll.organisation_id));
+        const orgAffected = service.organisations.filter(org => organisationIdentifiers.includes(org.id));
         return {collAffected, orgAffected};
     }
 
     setConnectionAccessValue = value => {
-        //TODO
-        this.setState({connectionAllowedValue: value});
+        const {service, organisations} = this.props;
+        switch (value) {
+            case SELECTED_INSTITUTION: {
+                if (service.non_member_users_access_allowed) {
+                    toggleNonMemberUsersAccessAllowed(service.id, false)
+                        .then(() =>
+                            this.props.refresh(() => {
+                                this.componentDidMount(() => this.setState({connectionAllowedValue: value}));
+                                setFlash(I18n.t("service.flash.updated", {name: service.name}));
+                            })
+                        )
+                }
+                break;
+            }
+            case NO_ONE_ALLOWED: {
+                this.doDisallow(organisations, true, true);
+                break;
+            }
+            case ALL_ALLOWED: {
+                toggleNonMemberUsersAccessAllowed(service.id, true)
+                    .then(() =>
+                        this.props.refresh(() => {
+                            this.componentDidMount(() => this.setState({connectionAllowedValue: value}));
+                            setFlash(I18n.t("service.flash.updated", {name: service.name}));
+                        })
+                    );
+                break;
+            }
+            default:
+                throw new Error("Unknown connection access value")
+        }
     }
 
     setInstitutionAccessValue = value => {
-        //TODO
-        this.setState({institutionAccessValue: value});
+        const {service} = this.props;
+        this.doToggleAccessAllowedForAll(service, value === ALL_INSTITUTIONS,
+            () => this.setState({institutionAccessValue: value}));
     }
 
     setConnectionSettingValue = value => {
-        //TODO
-        this.setState({connectionSettingValue: value});
+        const {service} = this.props;
+        const automaticConnectionAllowed = DIRECT_CONNECTION === value;
+        this.doToggleAutomaticConnectionAllowed(service, automaticConnectionAllowed,
+            () => this.setState({connectionSettingValue: value}));
     }
 
     render() {
@@ -203,7 +253,7 @@ class ServiceOrganisations extends React.Component {
                 nonSortable: false,
                 key: "permissions",
                 header: I18n.t("models.serviceOrganisations.options.header"),
-                mapper: org => this.permissionOptions(org, service)
+                mapper: org => this.permissionOptions(org, service, connectionSettingValue)
             },
             {
                 key: "name",
@@ -294,8 +344,11 @@ class ServiceOrganisations extends React.Component {
                 text: I18n.t("service.connectionSettings.settingsPerInstitution"),
                 icon: null //<ConfigIcon/>
             }
-
         ]
+        const showEntities = !service.non_member_users_access_allowed
+            && connectionAllowedValue === SELECTED_INSTITUTION
+            && (institutionAccessValue === SOME_INSTITUTIONS || connectionSettingValue === IT_DEPENDS);
+
         return (<div>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
@@ -306,60 +359,40 @@ class ServiceOrganisations extends React.Component {
                     {confirmationDialogOpen && this.renderConfirmation(service, disallowedOrganisation)}
                 </ConfirmationDialog>
                 {loading && <SpinnerField absolute={true}/>}
-                <div className={"options-container"}>
-                    <div>
-                        <h4>{I18n.t("service.connectionSettings.connectQuestion")}</h4>
-                        <BlockSwitchChoice value={connectionAllowedValue} items={connectionAllowedChoices}
-                                           setValue={this.setConnectionAccessValue}/>
-                    </div>
-                    {connectionAllowedValue === SELECTED_INSTITUTION &&
+                {(!service.non_member_users_access_allowed || (userAdmin && !showServiceAdminView)) &&
+                    <div className={"options-container"}>
                         <div>
-                            <h4>{I18n.t("service.connectionSettings.whichInstitutionsQuestion")}</h4>
-                            <BlockSwitchChoice value={institutionAccessValue} items={institutionAccessChoices}
-                                               setValue={this.setInstitutionAccessValue}/>
+                            <h4>{I18n.t("service.connectionSettings.connectQuestion")}</h4>
+                            <BlockSwitchChoice value={connectionAllowedValue} items={connectionAllowedChoices}
+                                               setValue={this.setConnectionAccessValue}/>
                         </div>
-                    }
-                    {connectionAllowedValue === SELECTED_INSTITUTION &&
-                        <div>
-                            <h4>{I18n.t("service.connectionSettings.whichInstitutionsQuestion")}</h4>
-                            <BlockSwitchChoice value={connectionSettingValue} items={connectionSettingChoices}
-                                               setValue={this.setConnectionSettingValue}/>
-                        </div>}
-                </div>
-                <div className={"options-container"}>
-                    {!service.non_member_users_access_allowed &&
-                        <div className={"radio-button-container"}>
-                            <RadioButton label={I18n.t("models.serviceOrganisations.permissions.eachOrganisation")}
-                                         name={"permissions"}
-                                         value={!service.automatic_connection_allowed && !service.access_allowed_for_all}
-                                         checked={!service.automatic_connection_allowed && !service.access_allowed_for_all}
-                                         onChange={() => this.doToggleReset(service)}
-                            />
-                            <RadioButton label={I18n.t("models.serviceOrganisations.permissions.allowAllRequests")}
-                                         name={"permissions"}
-                                         value={service.access_allowed_for_all && !service.automatic_connection_allowed}
-                                         checked={service.access_allowed_for_all && !service.automatic_connection_allowed}
-                                         onChange={() => this.doToggleAccessAllowedForAll(service)}
-                            />
-                            <RadioButton label={I18n.t("models.serviceOrganisations.permissions.allowAll")}
-                                         name={"permissions"}
-                                         value={service.automatic_connection_allowed}
-                                         checked={service.automatic_connection_allowed}
-                                         onChange={() => this.doToggleAutomaticConnectionAllowed(service)}
-                            />
-                        </div>}
-                    {service.non_member_users_access_allowed && <div className={"radio-button-container"}>
-                        <span>{I18n.t("service.nonMemberUsersAccessAllowedTooltip")}</span>
+                        {connectionAllowedValue === SELECTED_INSTITUTION &&
+                            <div>
+                                <h4>{I18n.t("service.connectionSettings.whichInstitutionsQuestion")}</h4>
+                                <BlockSwitchChoice value={institutionAccessValue} items={institutionAccessChoices}
+                                                   setValue={this.setInstitutionAccessValue}/>
+                            </div>
+                        }
+                        {connectionAllowedValue === SELECTED_INSTITUTION &&
+                            <div>
+                                <h4>{I18n.t("service.connectionSettings.directlyConnectQuestion")}</h4>
+                                <BlockSwitchChoice value={connectionSettingValue} items={connectionSettingChoices}
+                                                   setValue={this.setConnectionSettingValue}/>
+                            </div>}
+                        {(service.non_member_users_access_allowed && (!userAdmin || showServiceAdminView)) &&
+                            <div className={"radio-button-container"}>
+                                <span>{I18n.t("service.nonMemberUsersAccessAllowedTooltip")}</span>
+                            </div>}
                     </div>}
-                </div>
-                <Entities entities={availableOrganisations}
-                          modelName="serviceOrganisations"
-                          searchAttributes={["name"]}
-                          defaultSort="name"
-                          hideTitle={true}
-                          columns={columns}
-                          loading={false}
-                          {...this.props}/>
+                {showEntities &&
+                    <Entities entities={availableOrganisations}
+                              modelName="serviceOrganisations"
+                              searchAttributes={["name"]}
+                              defaultSort="name"
+                              hideTitle={true}
+                              columns={columns}
+                              loading={false}
+                              {...this.props}/>}
             </div>
         )
     }

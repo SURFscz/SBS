@@ -273,8 +273,8 @@ export function toggleReset(serviceId) {
     return postPutJson(`/api/services/toggle_access_property/${serviceId}`, {reset: true}, "put")
 }
 
-export function toggleAccessAllowedForAll(serviceId) {
-    return postPutJson(`/api/services/toggle_access_property/${serviceId}`, {access_allowed_for_all: true}, "put")
+export function toggleAccessAllowedForAll(serviceId, value) {
+    return postPutJson(`/api/services/toggle_access_property/${serviceId}`, {access_allowed_for_all: value}, "put")
 }
 
 export function toggleAllowRestrictedOrgs(serviceId, allowRestrictedOrgs) {
@@ -286,9 +286,9 @@ export function toggleNonMemberUsersAccessAllowed(serviceId, nonMemberUsersAcces
         {non_member_users_access_allowed: nonMemberUsersAccessAllowed}, "put")
 }
 
-export function toggleAutomaticConnectionAllowed(serviceId) {
+export function toggleAutomaticConnectionAllowed(serviceId, value) {
     return postPutJson(`/api/services/toggle_access_property/${serviceId}`,
-        {automatic_connection_allowed: true}, "put")
+        {automatic_connection_allowed: value}, "put")
 }
 
 export function disallowOrganisation(serviceId, organisationId) {

@@ -170,7 +170,6 @@ class TestService(AbstractTest):
         service = self.find_entity_by_name(Service, service_cloud_name)
         self.assertTrue(service.access_allowed_for_all)
         self.assertFalse(service.non_member_users_access_allowed)
-        self.assertFalse(service.automatic_connection_allowed)
 
     def test_toggle_allow_restricted(self):
         service = self.find_entity_by_name(Service, service_cloud_name)

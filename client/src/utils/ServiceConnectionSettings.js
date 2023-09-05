@@ -1,9 +1,9 @@
 import {isEmpty} from "./Utils";
 
 //Question: Who can connect to this service?
-export const ALL_ALLOWED = "ALL_ALLOWED";
+export const SELECTED_INSTITUTION = "SELECTED_INSTITUTION";
 export const NO_ONE_ALLOWED = "NO_ONE_ALLOWED";
-    export const SELECTED_INSTITUTION = "SELECTED_INSTITUTION";
+export const ALL_ALLOWED = "ALL_ALLOWED";
 
 //Question: Who can connect to this service?
 export const ALL_INSTITUTIONS = "ALL_INSTITUTIONS";

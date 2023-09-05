@@ -1108,21 +1108,21 @@ const en = {
         connectionSettings: {
             connectQuestion: "1. Who can connect to this service?",
             coMembers: "CO-members",
-            institutionSelection: "Access by institution selection",
+            institutionSelection: "Access by organisation selection",
             noOne: "No one",
             later: "I'll set this up later",
             everyOne: "Everyone",
             everyOneText: "No CO membership required",
-            whichInstitutionsQuestion: "2. COs from which institution?",
-            allInstitutions: "All institutions",
+            whichInstitutionsQuestion: "2. COs from which organisation?",
+            allInstitutions: "All organisations",
             allCOWelcome: "All COs are welcome",
             onlySome: "Only some",
-            specificInstitutions: "COs from specific institutions",
+            specificInstitutions: "COs from specific organisation",
             directlyConnectQuestion: "3. Can a CO directly connect?",
             directConnect: "COs can connect directly",
             manuallyApprove: "I manually approve the requests",
             depends: "It depends",
-            settingsPerInstitution: "Manage settings per institution"
+            settingsPerInstitution: "Manage settings per organisation"
         }
     },
     organisation: {
