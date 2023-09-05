@@ -491,7 +491,7 @@ class Service(Base, db.Model, LogoMixin):
     scim_enabled = db.Column("scim_enabled", db.Boolean(), nullable=True, default=False)
     scim_client_enabled = db.Column("scim_client_enabled", db.Boolean(), nullable=True, default=False)
     scim_url = db.Column("scim_url", db.String(length=255), nullable=True)
-    scim_bearer_token = db.Column("scim_bearer_token", db.String(length=512), nullable=True)
+    scim_bearer_token = db.Column("scim_bearer_token", db.Text(), nullable=True)
     sweep_scim_enabled = db.Column("sweep_scim_enabled", db.Boolean(), nullable=True, default=False)
     sweep_remove_orphans = db.Column("sweep_remove_orphans", db.Boolean(), nullable=True, default=False)
     sweep_scim_daily_rate = db.Column("sweep_scim_daily_rate", db.Integer(), nullable=True, default=0)
