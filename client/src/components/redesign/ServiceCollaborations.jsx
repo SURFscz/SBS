@@ -5,7 +5,7 @@ import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "../../locale/I18n";
 import Entities from "./Entities";
 import Button from "../Button";
-import {collaborationAdmins, deleteCollaborationServices, toggleNonMemberUsersAccessAllowed} from "../../api";
+import {collaborationAdmins, deleteCollaborationServices} from "../../api";
 import SpinnerField from "./SpinnerField";
 import Logo from "./Logo";
 import CheckBox from "../CheckBox";
@@ -113,17 +113,17 @@ export default class ServiceCollaborations extends React.PureComponent {
                             tip={I18n.t("models.serviceCollaborations.disconnectTooltip")}
                     />}/>
                 {adminEmails.length > 0 &&
-                <div>
-                    <Tooltip standalone={true}
-                             tip={I18n.t("models.orgMembers.mailTooltip")}
-                             children={<a href={`mailto:?bcc=${hrefValue}`}
-                                          className="sds--btn sds--btn--primary sds--btn--small"
-                                          style={{border: "none", cursor: "default"}}
-                                          rel="noopener noreferrer">
-                                 {I18n.t("models.orgMembers.mail")}<EmailIcon/>
-                             </a>}/>
+                    <div>
+                        <Tooltip standalone={true}
+                                 tip={I18n.t("models.orgMembers.mailTooltip")}
+                                 children={<a href={`mailto:?bcc=${hrefValue}`}
+                                              className="sds--btn sds--btn--primary sds--btn--small"
+                                              style={{border: "none", cursor: "default"}}
+                                              rel="noopener noreferrer">
+                                     {I18n.t("models.orgMembers.mail")}<EmailIcon/>
+                                 </a>}/>
 
-                </div>}
+                    </div>}
 
             </div>);
     }
@@ -172,7 +172,7 @@ export default class ServiceCollaborations extends React.PureComponent {
             return <SpinnerField/>;
         }
 
-        const {collaborations, user, modelName, service, showServiceAdminView = false} = this.props;
+        const {collaborations, user, modelName, service, goToOrganisationsTab} = this.props;
         const serviceKey = " services";
         const columns = [
             {
@@ -263,25 +263,15 @@ export default class ServiceCollaborations extends React.PureComponent {
                                     isWarning={true}
                                     confirmationTxt={confirmationTxt}
                                     question={confirmationQuestion}/>
-                {((user.admin && !showServiceAdminView) || service.non_member_users_access_allowed) &&
-                <div className={"options-container"}>
-                    {(user.admin && !showServiceAdminView) &&
-                    <CheckBox name="non_member_users_access_allowed"
-                              value={service.non_member_users_access_allowed}
-                              info={I18n.t("service.nonMemberUsersAccessAllowed")}
-                              tooltip={I18n.t("service.nonMemberUsersAccessAllowedTooltip")}
-                              onChange={() => toggleNonMemberUsersAccessAllowed(service.id, !service.non_member_users_access_allowed)
-                                  .then(() =>
-                                      this.props.refresh(() => {
-                                          this.componentDidMount();
-                                          setFlash(I18n.t("service.flash.updated", {name: service.name}));
-                                      })
-                                  )}
-                    />}
-                    {service.non_member_users_access_allowed && <div className={"radio-button-container"}>
-                        <span>{I18n.t("service.nonMemberUsersAccessAllowedTooltip")}</span>
-                    </div>}
-                </div>}
+                <div className={"info-container"}>
+                    <div className={"info"}>
+                        <span>{I18n.t("service.connectCollaborationsInfo")}</span>
+                        <Button className="ghost"
+                                txt={I18n.t("service.viewSettings")}
+                                onClick={() => goToOrganisationsTab()}
+                        />
+                    </div>
+                </div>
                 {!service.non_member_users_access_allowed && <Entities entities={collaborations}
                                                                        modelName={modelName}
                                                                        searchAttributes={["name"]}

@@ -307,6 +307,7 @@ class ServiceDetail extends React.Component {
                 <ServiceCollaborations
                     service={service}
                     showServiceAdminView={showServiceAdminView}
+                    goToOrganisationsTab={() => this.tabChanged("organisations")}
                     collaborations={collaborations}
                     refresh={this.refresh}
                     modelName={"serviceCollaborations"}

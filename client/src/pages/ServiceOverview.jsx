@@ -854,11 +854,11 @@ class ServiceOverview extends React.Component {
                         {ldap_enabled &&
                             <div className="add-token-link">
                                 <span>{I18n.t("service.ldap.preTitle")}
-                                <a href="/token"
-                                   onClick={e => {
-                                       stopEvent(e);
-                                       this.ldapResetAction(true)
-                                   }}>{I18n.t("service.ldap.title")}</a>
+                                    <a href="/token"
+                                       onClick={e => {
+                                           stopEvent(e);
+                                           this.ldapResetAction(true)
+                                       }}>{I18n.t("service.ldap.title")}</a>
                                     </span>
                             </div>}
                     </div>
@@ -1035,6 +1035,13 @@ class ServiceOverview extends React.Component {
                         onChange={this.changeServiceProperty("description")}
                         multiline={true}
                         disabled={!isAdmin && !isServiceAdmin}/>
+
+            <CheckBox name="allow_restricted_orgs"
+                      value={service.allow_restricted_orgs}
+                      info={I18n.t("service.allowRestrictedOrgs")}
+                      readOnly={!isAdmin || showServiceAdminView}
+                      tooltip={I18n.t("service.allowRestrictedOrgsTooltip")}
+                      onChange={this.changeServiceProperty("allow_restricted_orgs", true)}/>
 
             <InputField value={service.uri_info}
                         name={I18n.t("service.infoUri")}

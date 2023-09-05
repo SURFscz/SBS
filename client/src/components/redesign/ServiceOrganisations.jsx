@@ -12,14 +12,28 @@ import {
     toggleReset,
     trustOrganisation
 } from "../../api";
+import {ReactComponent as ConnectionAllowedIcon} from "@surfnet/sds/icons/illustrative-icons/hr.svg";
+import {ReactComponent as NoConnectionIcon} from "@surfnet/sds/icons/functional-icons/allowance-no-talking.svg";
 import {clearFlash, setFlash} from "../../utils/Flash";
 import Logo from "./Logo";
 import ConfirmationDialog from "../ConfirmationDialog";
-import {Chip, RadioButton, SegmentedControl} from "@surfnet/sds";
-import CheckBox from "../CheckBox";
+import {BlockSwitchChoice, Chip, RadioButton, SegmentedControl} from "@surfnet/sds";
 import {ALWAYS, DISALLOW, ON_REQUEST, PERMISSION_OPTIONS} from "../../utils/Permissions";
 import SpinnerField from "./SpinnerField";
 import {chipType} from "../../utils/UserRole";
+import {
+    ALL_ALLOWED,
+    ALL_INSTITUTIONS,
+    connectionAllowed,
+    connectionSetting,
+    DIRECT_CONNECTION,
+    institutionAccess,
+    IT_DEPENDS,
+    MANUALLY_APPROVE,
+    NO_ONE_ALLOWED,
+    SELECTED_INSTITUTION,
+    SOME_INSTITUTIONS
+} from "../../utils/ServiceConnectionSettings";
 
 
 class ServiceOrganisations extends React.Component {
@@ -27,12 +41,27 @@ class ServiceOrganisations extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
+            connectionAllowedValue: "",
+            institutionAccessValue: "",
+            connectionSettingValue: "",
             confirmationDialogOpen: false,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationDialogAction: undefined,
             disallowedOrganisation: null,
             loading: false
         }
+    }
+
+    componentDidMount = () => {
+        const {service} = this.props;
+        const connectionAllowedValue = connectionAllowed(service);
+        const institutionAccessValue = institutionAccess(service);
+        const connectionSettingValue = connectionSetting(service);
+        this.setState({
+            connectionAllowedValue: connectionAllowedValue,
+            institutionAccessValue: institutionAccessValue,
+            connectionSettingValue: connectionSettingValue
+        })
     }
 
     openOrganisation = organisation => e => {
@@ -147,9 +176,25 @@ class ServiceOrganisations extends React.Component {
         return {collAffected, orgAffected};
     }
 
+    setConnectionAccessValue = value => {
+        //TODO
+        this.setState({connectionAllowedValue: value});
+    }
+
+    setInstitutionAccessValue = value => {
+        //TODO
+        this.setState({institutionAccessValue: value});
+    }
+
+    setConnectionSettingValue = value => {
+        //TODO
+        this.setState({connectionSettingValue: value});
+    }
+
     render() {
         const {
-            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, loading, disallowedOrganisation
+            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, loading, disallowedOrganisation,
+            connectionAllowedValue, institutionAccessValue, connectionSettingValue
         } = this.state;
         const {organisations, service, user, userAdmin, showServiceAdminView} = this.props;
         const availableOrganisations = service.allow_restricted_orgs ? organisations : organisations.filter(org => !org.services_restricted);
@@ -194,6 +239,63 @@ class ServiceOrganisations extends React.Component {
                 key: "category",
                 header: I18n.t("models.organisations.category")
             }]
+        const connectionAllowedChoices = [
+            {
+                value: SELECTED_INSTITUTION,
+                title: I18n.t("service.connectionSettings.coMembers"),
+                text: I18n.t("service.connectionSettings.institutionSelection"),
+                icon: <ConnectionAllowedIcon/>
+            },
+            {
+                value: NO_ONE_ALLOWED,
+                title: I18n.t("service.connectionSettings.noOne"),
+                text: I18n.t("service.connectionSettings.later"),
+                icon: <NoConnectionIcon/>
+            }
+        ]
+        if (userAdmin && !showServiceAdminView) {
+            connectionAllowedChoices.push({
+                value: ALL_ALLOWED,
+                title: I18n.t("service.connectionSettings.everyOne"),
+                text: I18n.t("service.connectionSettings.everyOneText"),
+                icon: null //<ConfigIcon/>
+            })
+        }
+        const institutionAccessChoices = [
+            {
+                value: ALL_INSTITUTIONS,
+                title: I18n.t("service.connectionSettings.allInstitutions"),
+                text: I18n.t("service.connectionSettings.allCOWelcome"),
+                icon: <ConnectionAllowedIcon/>
+            },
+            {
+                value: SOME_INSTITUTIONS,
+                title: I18n.t("service.connectionSettings.onlySome"),
+                text: I18n.t("service.connectionSettings.specificInstitutions"),
+                icon: <NoConnectionIcon/>
+            }
+        ]
+        const connectionSettingChoices = [
+            {
+                value: DIRECT_CONNECTION,
+                title: I18n.t("forms.yes"),
+                text: I18n.t("service.connectionSettings.directConnect"),
+                icon: <ConnectionAllowedIcon/>
+            },
+            {
+                value: MANUALLY_APPROVE,
+                title: I18n.t("forms.no"),
+                text: I18n.t("service.connectionSettings.manuallyApprove"),
+                icon: <NoConnectionIcon/>
+            },
+            {
+                value: IT_DEPENDS,
+                title: I18n.t("service.connectionSettings.depends"),
+                text: I18n.t("service.connectionSettings.settingsPerInstitution"),
+                icon: null //<ConfigIcon/>
+            }
+
+        ]
         return (<div>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
@@ -205,34 +307,47 @@ class ServiceOrganisations extends React.Component {
                 </ConfirmationDialog>
                 {loading && <SpinnerField absolute={true}/>}
                 <div className={"options-container"}>
-                    {(user.admin && !showServiceAdminView) && <div className={"service-container"}>
-                        <CheckBox name="allow_restricted_orgs"
-                                  value={service.allow_restricted_orgs}
-                                  info={I18n.t("service.allowRestrictedOrgs")}
-                                  tooltip={I18n.t("service.allowRestrictedOrgsTooltip")}
-                                  onChange={() => this.doTogglesAllowRestrictedOrgs(service)}/>
-                    </div>}
+                    <div>
+                        <h4>{I18n.t("service.connectionSettings.connectQuestion")}</h4>
+                        <BlockSwitchChoice value={connectionAllowedValue} items={connectionAllowedChoices}
+                                           setValue={this.setConnectionAccessValue}/>
+                    </div>
+                    {connectionAllowedValue === SELECTED_INSTITUTION &&
+                        <div>
+                            <h4>{I18n.t("service.connectionSettings.whichInstitutionsQuestion")}</h4>
+                            <BlockSwitchChoice value={institutionAccessValue} items={institutionAccessChoices}
+                                               setValue={this.setInstitutionAccessValue}/>
+                        </div>
+                    }
+                    {connectionAllowedValue === SELECTED_INSTITUTION &&
+                        <div>
+                            <h4>{I18n.t("service.connectionSettings.whichInstitutionsQuestion")}</h4>
+                            <BlockSwitchChoice value={connectionSettingValue} items={connectionSettingChoices}
+                                               setValue={this.setConnectionSettingValue}/>
+                        </div>}
+                </div>
+                <div className={"options-container"}>
                     {!service.non_member_users_access_allowed &&
-                    <div className={"radio-button-container"}>
-                        <RadioButton label={I18n.t("models.serviceOrganisations.permissions.eachOrganisation")}
-                                     name={"permissions"}
-                                     value={!service.automatic_connection_allowed && !service.access_allowed_for_all}
-                                     checked={!service.automatic_connection_allowed && !service.access_allowed_for_all}
-                                     onChange={() => this.doToggleReset(service)}
-                        />
-                        <RadioButton label={I18n.t("models.serviceOrganisations.permissions.allowAllRequests")}
-                                     name={"permissions"}
-                                     value={service.access_allowed_for_all && !service.automatic_connection_allowed}
-                                     checked={service.access_allowed_for_all && !service.automatic_connection_allowed}
-                                     onChange={() => this.doToggleAccessAllowedForAll(service)}
-                        />
-                        <RadioButton label={I18n.t("models.serviceOrganisations.permissions.allowAll")}
-                                     name={"permissions"}
-                                     value={service.automatic_connection_allowed}
-                                     checked={service.automatic_connection_allowed}
-                                     onChange={() => this.doToggleAutomaticConnectionAllowed(service)}
-                        />
-                    </div>}
+                        <div className={"radio-button-container"}>
+                            <RadioButton label={I18n.t("models.serviceOrganisations.permissions.eachOrganisation")}
+                                         name={"permissions"}
+                                         value={!service.automatic_connection_allowed && !service.access_allowed_for_all}
+                                         checked={!service.automatic_connection_allowed && !service.access_allowed_for_all}
+                                         onChange={() => this.doToggleReset(service)}
+                            />
+                            <RadioButton label={I18n.t("models.serviceOrganisations.permissions.allowAllRequests")}
+                                         name={"permissions"}
+                                         value={service.access_allowed_for_all && !service.automatic_connection_allowed}
+                                         checked={service.access_allowed_for_all && !service.automatic_connection_allowed}
+                                         onChange={() => this.doToggleAccessAllowedForAll(service)}
+                            />
+                            <RadioButton label={I18n.t("models.serviceOrganisations.permissions.allowAll")}
+                                         name={"permissions"}
+                                         value={service.automatic_connection_allowed}
+                                         checked={service.automatic_connection_allowed}
+                                         onChange={() => this.doToggleAutomaticConnectionAllowed(service)}
+                            />
+                        </div>}
                     {service.non_member_users_access_allowed && <div className={"radio-button-container"}>
                         <span>{I18n.t("service.nonMemberUsersAccessAllowedTooltip")}</span>
                     </div>}
