@@ -8,13 +8,13 @@ import Select from "react-select";
 import SpinnerField from "./SpinnerField";
 import UserColumn from "./UserColumn";
 import {dateFromEpoch} from "../../utils/Date";
-import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
+import {socket, SUBSCRIPTION_ID_COOKIE_NAME, COLLABORATION_REQUEST_TYPE, JOIN_REQUEST_TYPE, SERVICE_TYPE_REQUEST} from "../../utils/SocketIO";
 import {chipTypeForStatus} from "../../utils/UserRole";
 import {Chip} from "@surfnet/sds";
+import {schacHome} from "../../api";
 
 const allValue = "all";
-
-export default class MemberCollaborationRequests extends React.PureComponent {
+export default class MyRequests extends React.PureComponent {
 
     constructor(props, context) {
         super(props, context);
@@ -27,29 +27,39 @@ export default class MemberCollaborationRequests extends React.PureComponent {
     }
 
     componentWillUnmount = () => {
-        const {collaboration_requests} = this.props;
-        collaboration_requests.forEach(collaborationRequests => {
-            socket.then(s => s.off(`organisation_${collaborationRequests.organisation_id}`));
+        const {requests} = this.props;
+        socket.then(s => {
+            s.off(`service_requests`);
+            requests.forEach(request => {
+                switch (request.typeRequest) {
+                    case JOIN_REQUEST_TYPE: {
+                        s.off(`collaboration_${request.collaboration_id}`);
+                        break;
+                    }
+                    case COLLABORATION_REQUEST_TYPE: {
+                        s.off(`organisation_${request.organisation_id}`);
+                        break;
+                    }
+                }
+            });
         });
     }
 
-    componentDidMount = callback => {
-        const {collaboration_requests, user, isPersonal = true} = this.props;
-        if (isPersonal) {
-            collaboration_requests.forEach(cr => {
-                cr.user = user;
-            })
-        } else {
-            collaboration_requests.forEach(cr => {
-                cr.user = cr.requester;
-            })
+    onSocketMessage = data => {
+        const subscriptionIdSessionStorage = sessionStorage.getItem(SUBSCRIPTION_ID_COOKIE_NAME);
+        const {refreshUserHook} = this.props;
+        if (subscriptionIdSessionStorage !== data.subscription_id) {
+            refreshUserHook(() => this.componentDidMount());
         }
+    }
 
+    componentDidMount = callback => {
+        const {requests} = this.props;
         const filterOptions = [{
-            label: I18n.t("collaborationRequest.statuses.all", {nbr: collaboration_requests.length}),
+            label: I18n.t("collaborationRequest.statuses.all", {nbr: requests.length}),
             value: allValue
         }];
-        const statusOptions = collaboration_requests.reduce((acc, cr) => {
+        const statusOptions = requests.reduce((acc, cr) => {
             const option = acc.find(opt => opt.status === cr.status);
             if (option) {
                 ++option.nbr;
@@ -64,24 +74,34 @@ export default class MemberCollaborationRequests extends React.PureComponent {
 
         const {socketSubscribed} = this.state;
         if (!socketSubscribed) {
-            collaboration_requests.forEach(collaborationRequests => {
-                socket.then(s => s.on(`organisation_${collaborationRequests.organisation_id}`, data => {
-                    const subscriptionIdSessionStorage = sessionStorage.getItem(SUBSCRIPTION_ID_COOKIE_NAME);
-                    const {refreshUserHook} = this.props;
-                    if (subscriptionIdSessionStorage !== data.subscription_id) {
-                        refreshUserHook(() => this.componentDidMount());
+            socket.then(s => {
+                if (this.hasRequest(SERVICE_TYPE_REQUEST)) {
+                    s.on(`service_requests`, this.onSocketMessage);
+                }
+                requests.forEach(request => {
+                    if (request.requestType === COLLABORATION_REQUEST_TYPE) {
+                        s.on(`organisation_${request.organisation_id}`, this.onSocketMessage);
+                    } else if (request.requestType === JOIN_REQUEST_TYPE) {
+                        s.off(`collaboration_${request.collaboration_id}`)
                     }
-                }));
+                });
+                this.setState({socketSubscribed: true})
             })
-            this.setState({socketSubscribed: true})
         }
-        this.setState({
-            filterOptions: filterOptions.concat(statusOptions),
-            filterValue: filterOptions[0],
-            loading: false
-        }, callback);
+        requests.filter(request => request.requestType !== SERVICE_TYPE_REQUEST)
+        Promise.all(join_requests.map(jr => schacHome(jr.collaboration.organisation_id))).then(results => {
+            results.forEach((schacHome, index) => join_requests[index].schacHome = schacHome)
+            this.setState({
+                filterOptions: filterOptions.concat(statusOptions),
+                filterValue: filterOptions[0],
+                loading: false
+            }, callback);
+        })
     }
 
+    hasRequest = (requests, requestType) => {
+        return requests.some(request => request.requestType === requestType)
+    }
 
     filter = (filterOptions, filterValue) => {
         return (

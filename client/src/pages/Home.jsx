@@ -25,6 +25,8 @@ import MemberCollaborationRequests from "../components/redesign/MemberCollaborat
 import Users from "../components/redesign/Users";
 import ServiceRequests from "../components/redesign/ServiceRequests";
 import EmptyCollaborations from "../components/redesign/EmptyCollaborations";
+import MyRequests from "../components/redesign/MyRequests";
+import {COLLABORATION_REQUEST_TYPE, JOIN_REQUEST_TYPE, SERVICE_TYPE_REQUEST} from "../utils/SocketIO";
 
 class Home extends React.Component {
 
@@ -101,10 +103,6 @@ class Home extends React.Component {
                         return;
                     }
             }
-            const tabSuggestion = this.addRequestsTabs(user, this.refreshUserHook, tabs, tab);
-            if (role === ROLES.USER) {
-                tab = tabSuggestion;
-            }
             if (isUserServiceAdmin(user) && !user.admin) {
                 if (!isEmpty(user.organisation_from_user_schac_home) && !tabs.some(t => t.key === "collaborations")) {
                     tabs.push(this.getEmptyCollaborationsTab())
@@ -115,6 +113,10 @@ class Home extends React.Component {
                     tabs.push(this.getServicesTab(nbrServices));
                     tab = tabs[0].key;
                 }
+            }
+            const tabSuggestion = this.addRequestsTabs(user, this.refreshUserHook, tabs, tab);
+            if (role === ROLES.USER) {
+                tab = tabSuggestion;
             }
             AppStore.update(s => {
                 s.breadcrumb.paths = [
@@ -133,18 +135,22 @@ class Home extends React.Component {
     }
 
     addRequestsTabs = (user, refreshUserHook, tabs, tab) => {
+        const requests = [];
         if (!isEmpty(user.join_requests)) {
-            tabs.push(this.getMemberJoinRequestsTab(user.join_requests, refreshUserHook));
-            tab = (tab !== "collaboration_requests") ? "joinrequests" : tab;
+            user.join_requests.forEach(joinRequest => joinRequest.typeRequest = JOIN_REQUEST_TYPE);
+            requests.push(...user.join_requests);
         }
         if (!isEmpty(user.collaboration_requests)) {
-            tabs.push(this.getCollaborationRequestsTab(user.collaboration_requests, refreshUserHook));
-            if (isEmpty(user.join_requests)) {
-                tab = "collaboration_requests"
-            }
+            user.collaboration_requests.forEach(collaborationRequest => collaborationRequest.typeRequest = COLLABORATION_REQUEST_TYPE);
+            requests.push(...user.collaboration_requests);
         }
         if (!isEmpty(user.service_requests) && !user.admin) {
-            tabs.push(this.getServiceRequestsTab(true, user.service_requests, refreshUserHook));
+            user.service_requests.forEach(serviceRequest => serviceRequest.typeRequest = SERVICE_TYPE_REQUEST);
+            requests.push(...user.service_requests);
+        }
+        if (!isEmpty(requests)) {
+            tabs.push(this.getMyRequestsTab(requests, refreshUserHook));
+            return "my_requests";
         }
         return tab;
     }
@@ -196,8 +202,19 @@ class Home extends React.Component {
         </div>)
     }
 
+    getMyRequestsTab = (requests, refreshUserHook) => {
+        const openRequests = requests.filter(req => req.status === "open").length;
+        return (<div key="my_requests"
+                     name="my_requests"
+                     label={I18n.t("home.tabs.myRequests", {count: (openRequests || []).length})}
+                     icon={<JoinRequestsIcon/>}
+                     notifier={openRequests > 0 ? openRequests : null}>
+            <MyRequests requests={requests} refreshUserHook={refreshUserHook} {...this.props} />
+        </div>)
+}
+
     getMemberJoinRequestsTab = (join_requests, refreshUserHook) => {
-        const openJoinRequests = (join_requests || []).filter(jr => jr.status === "open").length;
+
         return (<div key="joinrequests"
                      name="joinrequests"
                      label={I18n.t("home.tabs.joinRequests", {count: (join_requests || []).length})}

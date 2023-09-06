@@ -8,7 +8,7 @@ import Select from "react-select";
 import SpinnerField from "./SpinnerField";
 import UserColumn from "./UserColumn";
 import {dateFromEpoch} from "../../utils/Date";
-import {socket, subscriptionIdCookieName} from "../../utils/SocketIO";
+import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
 import {chipTypeForStatus} from "../../utils/UserRole";
 import {Chip} from "@surfnet/sds";
 import {findAllServiceRequests} from "../../api";
@@ -57,7 +57,7 @@ export default class ServiceRequests extends React.PureComponent {
             const {socketSubscribed} = this.state;
             if (!socketSubscribed) {
                 socket.then(s => s.on(`service_requests`, data => {
-                    const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
+                    const subscriptionIdSessionStorage = sessionStorage.getItem(SUBSCRIPTION_ID_COOKIE_NAME);
                     const {refreshUserHook} = this.props;
                     if (subscriptionIdSessionStorage !== data.subscription_id && (!personal || user.id === data.current_user_id)) {
                         if (refreshUserHook) {

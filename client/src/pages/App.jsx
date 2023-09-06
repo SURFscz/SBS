@@ -52,7 +52,7 @@ import MissingServiceAup from "./MissingServiceAup";
 import PamWebSSO from "./PamWebSSO";
 
 import {isUserAllowed, ROLES} from "../utils/UserRole";
-import {subscriptionIdCookieName} from "../utils/SocketIO";
+import {SUBSCRIPTION_ID_COOKIE_NAME} from "../utils/SocketIO";
 import MissingAttributes from "./MissingAttributes";
 
 addIcons();
@@ -113,7 +113,7 @@ class App extends React.Component {
 
     componentDidMount() {
         const subscriptionId = pseudoGuid();
-        sessionStorage.setItem(subscriptionIdCookieName, subscriptionId);
+        sessionStorage.setItem(SUBSCRIPTION_ID_COOKIE_NAME, subscriptionId);
         emitter.addListener("impersonation", this.impersonate);
         Promise.all([config(), aupLinks()]).then(res => {
             this.setState({config: res[0], aupConfig: res[1]},

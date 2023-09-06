@@ -8,7 +8,7 @@ import UserColumn from "./UserColumn";
 import Select from "react-select";
 import Logo from "./Logo";
 import {dateFromEpoch} from "../../utils/Date";
-import {socket, subscriptionIdCookieName} from "../../utils/SocketIO";
+import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
 import InstituteColumn from "./InstituteColumn";
 import {schacHome} from "../../api";
 import {chipTypeForStatus} from "../../utils/UserRole";
@@ -65,7 +65,7 @@ class MemberJoinRequests extends React.Component {
             if (!socketSubscribed) {
                 join_requests.forEach(joinRequest => {
                     socket.then(s => s.on(`collaboration_${joinRequest.collaboration_id}`, data => {
-                        const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
+                        const subscriptionIdSessionStorage = sessionStorage.getItem(SUBSCRIPTION_ID_COOKIE_NAME);
                         const {refreshUserHook} = this.props;
                         if (subscriptionIdSessionStorage !== data.subscription_id) {
                             refreshUserHook(() => this.componentDidMount());

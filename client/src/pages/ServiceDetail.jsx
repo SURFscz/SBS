@@ -40,7 +40,7 @@ import ServiceWelcomeDialog from "../components/ServiceWelcomeDialog";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import ServiceOverview from "./ServiceOverview";
-import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
+import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../utils/SocketIO";
 import UserTokens from "../components/redesign/UserTokens";
 import ServiceCollaborations from "../components/redesign/ServiceCollaborations";
 import {ButtonType} from "@surfnet/sds";
@@ -129,7 +129,7 @@ class ServiceDetail extends React.Component {
         const {socketSubscribed} = this.state;
         if (!socketSubscribed) {
             socket.then(s => s.on(`service_${service.id}`, data => {
-                const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
+                const subscriptionIdSessionStorage = sessionStorage.getItem(SUBSCRIPTION_ID_COOKIE_NAME);
                 if (subscriptionIdSessionStorage !== data.subscription_id) {
                     this.props.refreshUser(() => this.componentDidMount());
                 }
@@ -464,15 +464,8 @@ class ServiceDetail extends React.Component {
     }
 
     getCollaborationHeaderInfo = service => {
-        const accessibleService = service.automatic_connection_allowed || service.access_allowed_for_all || service.non_member_users_access_allowed;
         const collaborations = this.allCollaborationsForService(service);
         const notConnected = isEmpty(collaborations);
-        if (accessibleService) {
-            return (
-                <span
-                    dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("servicePageHeaders.allConnected"))}}/>
-            );
-        }
         if (notConnected) {
             return (
                 <span
