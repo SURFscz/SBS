@@ -189,7 +189,6 @@ class TestService(AbstractTest):
         self.assertFalse(service.non_member_users_access_allowed)
         self.assertEqual(3, len(service.allowed_organisations))
 
-
     def test_toggle_allow_restricted(self):
         service = self.find_entity_by_name(Service, service_cloud_name)
         self.assertFalse(service.allow_restricted_orgs)
@@ -230,7 +229,7 @@ class TestService(AbstractTest):
         self.assertFalse(service.non_member_users_access_allowed)
         self.assertFalse(service.access_allowed_for_all)
 
-    def test_toggle_automatic_connection_allowed(self):
+    def test_toggle_automatic_connection_allowed_false(self):
         service = self.find_entity_by_name(Service, service_uuc_scheduler_name)
         self.assertEqual(1, len(service.automatic_connection_allowed_organisations))
         self.assertEqual(1, len(service.allowed_organisations))
