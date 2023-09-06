@@ -454,6 +454,7 @@ class Service(Base, db.Model, LogoMixin):
     allow_restricted_orgs = db.Column("allow_restricted_orgs", db.Boolean(), nullable=True, default=False)
     non_member_users_access_allowed = db.Column("non_member_users_access_allowed", db.Boolean(), nullable=True,
                                                 default=False)
+    connection_setting = db.Column("connection_setting", db.String(length=255), nullable=True)
     research_scholarship_compliant = db.Column("research_scholarship_compliant", db.Boolean(),
                                                nullable=True,
                                                default=False)

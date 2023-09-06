@@ -31,9 +31,9 @@ service_api = Blueprint("service_api", __name__, url_prefix="/api/services")
 def _is_org_member():
     user_id = current_user_id()
     return OrganisationMembership.query \
-               .options(load_only(OrganisationMembership.id)) \
-               .filter(OrganisationMembership.user_id == user_id) \
-               .count() > 0
+        .options(load_only(OrganisationMembership.id)) \
+        .filter(OrganisationMembership.user_id == user_id) \
+        .count() > 0
 
 
 def _services_from_query(count_only, query, service_id):
@@ -228,9 +228,9 @@ def abbreviation_exists():
 def service_by_entity_id():
     entity_id = urllib.parse.unquote(query_param("entity_id"))
     return Service.query \
-               .options(selectinload(Service.allowed_organisations)) \
-               .filter(Service.entity_id == entity_id) \
-               .one(), 200
+        .options(selectinload(Service.allowed_organisations)) \
+        .filter(Service.entity_id == entity_id) \
+        .one(), 200
 
 
 @service_api.route("/find_by_uuid4", strict_slashes=False)
@@ -372,7 +372,7 @@ def save_service():
     # Before the JSON is cleaned in the save method
     administrators = data.get("administrators", [])
     message = data.get("message", None)
-
+    data["connection_setting"] = "NO_ONE_ALLOWED"
     res = save(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]
 
@@ -402,7 +402,7 @@ def toggle_access_property(service_id):
     json_dict = current_request.get_json()
     attribute = list(json_dict.keys())[0]
     if attribute not in ["reset", "allow_restricted_orgs", "non_member_users_access_allowed", "access_allowed_for_all",
-                         "automatic_connection_allowed"]:
+                         "automatic_connection_allowed", "connection_setting"]:
         raise BadRequest(f"attribute {attribute} not allowed")
     if attribute in ["allow_restricted_orgs", "non_member_users_access_allowed"]:
         confirm_write_access()
@@ -414,21 +414,42 @@ def toggle_access_property(service_id):
         service.automatic_connection_allowed = False
         service.non_member_users_access_allowed = False
         service.access_allowed_for_all = False
-        service.allowed_organisations = []
-        service.automatic_connection_allowed_organisations = []
+        service.connection_setting = "NO_ONE_ALLOWED"
+        service.allowed_organisations.clear()
+        service.automatic_connection_allowed_organisations.clear()
     else:
         setattr(service, attribute, enabled)
     if attribute == "access_allowed_for_all" and enabled:
         service.non_member_users_access_allowed = False
+        # For all organisations that are not connected we need to make a connection
+        allowed_org_identifiers = [org.id for org in service.allowed_organisations]
+        automatic_allowed_org_identifiers = [org.id for org in service.automatic_connection_allowed_organisations]
+        query = Organisation.query \
+            .filter(Organisation.id.notin_(allowed_org_identifiers + automatic_allowed_org_identifiers))
+        if not service.allow_restricted_orgs:
+            query.filter(Organisation.services_restricted == False)  # noqa: E712
+        not_connected_organisations = query.all()
+        if service.automatic_connection_allowed:
+            service.automatic_connection_allowed_organisations += not_connected_organisations
+        else:
+            service.allowed_organisations += not_connected_organisations
     if attribute == "automatic_connection_allowed":
         if enabled:
+            service.connection_setting = None
             service.non_member_users_access_allowed = False
+            service.automatic_connection_allowed_organisations += service.allowed_organisations
+            service.allowed_organisations = []
         else:
-            service.allowed_organisations += service.automatic_connection_allowed_organisations
-            service.automatic_connection_allowed_organisations = []
-    if attribute == "non_member_users_access_allowed" and enabled:
-        service.automatic_connection_allowed = False
-        service.access_allowed_for_all = False
+            connection_setting = query_param("connection_setting", False, "MANUALLY_APPROVE")
+            service.connection_setting = connection_setting
+            if connection_setting == "MANUALLY_APPROVE":
+                service.allowed_organisations += service.automatic_connection_allowed_organisations
+                service.automatic_connection_allowed_organisations = []
+    if attribute == "non_member_users_access_allowed":
+        service.connection_setting = None
+        if enabled:
+            service.automatic_connection_allowed = False
+            service.access_allowed_for_all = False
     db.session.merge(service)
 
     emit_socket(f"service_{service_id}")

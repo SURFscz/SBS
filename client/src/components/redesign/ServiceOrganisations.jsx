@@ -74,24 +74,6 @@ class ServiceOrganisations extends React.Component {
         this.props.history.push(`/organisations/${organisation.id}`);
     };
 
-    doToggleAutomaticConnectionAllowed = (service, value, callback) => {
-        this.setState({loading: true});
-        toggleAutomaticConnectionAllowed(service.id, value)
-            .then(() => this.refreshService(callback));
-    }
-
-    doToggleReset = (service, callback) => {
-        this.setState({loading: true});
-        toggleReset(service.id)
-            .then(() => this.refreshService(callback))
-    }
-
-    doToggleAccessAllowedForAll = (service, value, callback) => {
-        this.setState({loading: true});
-        toggleAccessAllowedForAll(service.id, value)
-            .then(() => this.refreshService(callback))
-    }
-
     doTogglesAllowRestrictedOrgs = service => {
         this.setState({loading: true});
         toggleAllowRestrictedOrgs(service.id, !service.allow_restricted_orgs)
@@ -123,6 +105,9 @@ class ServiceOrganisations extends React.Component {
             } else if (connectionSettingValue === MANUALLY_APPROVE) {
                 return option !== ALWAYS;
             }
+            if (service.access_allowed_for_all) {
+                return option !== DISALLOW;
+            }
             return true;
         });
         return (
@@ -149,13 +134,10 @@ class ServiceOrganisations extends React.Component {
         } else {
             this.setState({loading: true});
             const organisations = Array.isArray(organisation) ? organisation : [organisation];
-            const promises = organisations.map(org => disallowOrganisation(service.id, org.id));
-            if (accessToNone) {
-                promises.push(toggleReset(service.id));
-            }
+            const promises = accessToNone ? [toggleReset(service.id)] :
+                organisations.map(org => disallowOrganisation(service.id, org.id));
             Promise.all(promises)
                 .then(() => this.refreshService(accessToNone ? () => this.setState({connectionAllowedValue: NO_ONE_ALLOWED}) : null));
-
         }
     }
 
@@ -198,15 +180,13 @@ class ServiceOrganisations extends React.Component {
         const {service, organisations} = this.props;
         switch (value) {
             case SELECTED_INSTITUTION: {
-                if (service.non_member_users_access_allowed) {
-                    toggleNonMemberUsersAccessAllowed(service.id, false)
-                        .then(() =>
-                            this.props.refresh(() => {
-                                this.componentDidMount(() => this.setState({connectionAllowedValue: value}));
-                                setFlash(I18n.t("service.flash.updated", {name: service.name}));
-                            })
-                        )
-                }
+                toggleNonMemberUsersAccessAllowed(service.id, false)
+                    .then(() =>
+                        this.props.refresh(() => {
+                            this.componentDidMount(() => this.setState({connectionAllowedValue: value}));
+                            setFlash(I18n.t("service.flash.updated", {name: service.name}));
+                        })
+                    )
                 break;
             }
             case NO_ONE_ALLOWED: {
@@ -230,15 +210,17 @@ class ServiceOrganisations extends React.Component {
 
     setInstitutionAccessValue = value => {
         const {service} = this.props;
-        this.doToggleAccessAllowedForAll(service, value === ALL_INSTITUTIONS,
-            () => this.setState({institutionAccessValue: value}));
+                this.setState({loading: true});
+        toggleAccessAllowedForAll(service.id, value === ALL_INSTITUTIONS)
+            .then(() => this.refreshService(() => this.setState({institutionAccessValue: value})))
     }
 
     setConnectionSettingValue = value => {
         const {service} = this.props;
         const automaticConnectionAllowed = DIRECT_CONNECTION === value;
-        this.doToggleAutomaticConnectionAllowed(service, automaticConnectionAllowed,
-            () => this.setState({connectionSettingValue: value}));
+        this.setState({loading: true});
+        toggleAutomaticConnectionAllowed(service.id, automaticConnectionAllowed, value)
+            .then(() => this.refreshService(() => this.setState({connectionSettingValue: value})));
     }
 
     render() {
@@ -360,7 +342,7 @@ class ServiceOrganisations extends React.Component {
                 </ConfirmationDialog>
                 {loading && <SpinnerField absolute={true}/>}
                 {(!service.non_member_users_access_allowed || (userAdmin && !showServiceAdminView)) &&
-                    <div className={"options-container"}>
+                    <div className={`options-container ${showEntities ? "" : "no-entities"}`}>
                         <div>
                             <h4>{I18n.t("service.connectionSettings.connectQuestion")}</h4>
                             <BlockSwitchChoice value={connectionAllowedValue} items={connectionAllowedChoices}
