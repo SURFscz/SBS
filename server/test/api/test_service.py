@@ -171,6 +171,25 @@ class TestService(AbstractTest):
         self.assertTrue(service.access_allowed_for_all)
         self.assertFalse(service.non_member_users_access_allowed)
 
+    def test_toggle_access_allowed_for_all_no_automatic_connection_allowed(self):
+        service = self.find_entity_by_name(Service, service_cloud_name)
+        self.assertFalse(service.access_allowed_for_all)
+        self.assertEqual(2, len(service.allowed_organisations))
+
+        service.automatic_connection_allowed = False
+        self.save_entity(service)
+
+        self.login("urn:james")
+        self.put(f"/api/services/toggle_access_property/{service.id}",
+                 body={"access_allowed_for_all": True},
+                 with_basic_auth=False)
+
+        service = self.find_entity_by_name(Service, service_cloud_name)
+        self.assertTrue(service.access_allowed_for_all)
+        self.assertFalse(service.non_member_users_access_allowed)
+        self.assertEqual(3, len(service.allowed_organisations))
+
+
     def test_toggle_allow_restricted(self):
         service = self.find_entity_by_name(Service, service_cloud_name)
         self.assertFalse(service.allow_restricted_orgs)
@@ -210,6 +229,39 @@ class TestService(AbstractTest):
         self.assertTrue(service.automatic_connection_allowed)
         self.assertFalse(service.non_member_users_access_allowed)
         self.assertFalse(service.access_allowed_for_all)
+
+    def test_toggle_automatic_connection_allowed(self):
+        service = self.find_entity_by_name(Service, service_uuc_scheduler_name)
+        self.assertEqual(1, len(service.automatic_connection_allowed_organisations))
+        self.assertEqual(1, len(service.allowed_organisations))
+
+        self.login("urn:john")
+        self.put(f"/api/services/toggle_access_property/{service.id}",
+                 body={"automatic_connection_allowed": False},
+                 with_basic_auth=False)
+
+        service = self.find_entity_by_name(Service, service_uuc_scheduler_name)
+        self.assertFalse(service.automatic_connection_allowed)
+        self.assertFalse(service.non_member_users_access_allowed)
+        self.assertEqual(0, len(service.automatic_connection_allowed_organisations))
+        self.assertEqual(2, len(service.allowed_organisations))
+
+    def test_toggle_automatic_connection_allowed_reverse(self):
+        service = self.find_entity_by_name(Service, service_uuc_scheduler_name)
+        self.assertEqual(1, len(service.automatic_connection_allowed_organisations))
+        self.assertEqual(1, len(service.allowed_organisations))
+
+        self.login("urn:john")
+        self.put(f"/api/services/toggle_access_property/{service.id}",
+                 body={"automatic_connection_allowed": True},
+                 with_basic_auth=False)
+
+        service = self.find_entity_by_name(Service, service_uuc_scheduler_name)
+        self.assertTrue(service.automatic_connection_allowed)
+        self.assertFalse(service.non_member_users_access_allowed)
+        self.assertFalse(service.access_allowed_for_all)
+        self.assertEqual(2, len(service.automatic_connection_allowed_organisations))
+        self.assertEqual(0, len(service.allowed_organisations))
 
     def test_toggle_reset(self):
         service = self.find_entity_by_name(Service, service_cloud_name)
