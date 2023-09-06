@@ -104,6 +104,7 @@ def approve_request(service_request_id):
         groups = re.search(r".*api/images/(.*)/(.*)", logo).groups()
         client_data["logo"] = logo_from_cache(groups[0], groups[1])
 
+    client_data["connection_setting"] = "NO_ONE_ALLOWED"
     res = save(Service, custom_json=client_data)
     service = res[0]
 

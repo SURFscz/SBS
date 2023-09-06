@@ -1120,7 +1120,7 @@ const nl = {
             specificInstitutions: "COs van specifieke organisaties",
             directlyConnectQuestion: "3. Kan een CO gelijk koppelenn?",
             directConnect: "COs kunnen gelijk koppelen",
-            manuallyApprove: "I keur koppel-verzoeken handmatig goed",
+            manuallyApprove: "Ik keur koppel-verzoeken handmatig goed",
             depends: "Hangt er vanaf",
             settingsPerInstitution: "Configureer per organisation"
         }
@@ -2354,7 +2354,8 @@ const nl = {
         availableSingle: " & beschikbaar voor <span class='all-connected'>{{count}} instelling</span>",
         availableMultiple: " & beschikbaar voor <span class='all-connected'>{{count}} instellingen</span>",
         launch: "Launch service",
-        visit: "visit public website"
+        visit: "visit public website",
+        all: "alle",
     }
 
 

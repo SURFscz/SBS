@@ -490,20 +490,22 @@ class ServiceDetail extends React.Component {
     }
 
     getInstitutionsHeadersInfo = service => {
-        const accessibleService = service.automatic_connection_allowed || service.access_allowed_for_all || service.non_member_users_access_allowed;
+        const allowedForAll = service.access_allowed_for_all || service.non_member_users_access_allowed;
+        const accessibleService = service.automatic_connection_allowed || allowedForAll;
         const allowed = service.allowed_organisations.length;
         const always = service.automatic_connection_allowed_organisations.length;
         const notAvailable = !accessibleService && allowed === 0 && always === 0;
         if (notAvailable) {
             return (
-                <span dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("servicePageHeaders.notAvailable"))}}/>
+                <span
+                    dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("servicePageHeaders.notAvailable"))}}/>
             );
         }
-        const count = allowed + always;
+        const count = allowedForAll ? I18n.t("servicePageHeaders.all") : (allowed + always);
         return (
             <span dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(
-                    I18n.t(`servicePageHeaders.${count === 1 ? "availableSingle" : "availableMultiple"}`,
+                    I18n.t(`servicePageHeaders.${(count === 1 && !allowedForAll) ? "availableSingle" : "availableMultiple"}`,
                         {count: count})
                 )
             }}/>

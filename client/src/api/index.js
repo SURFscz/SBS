@@ -286,8 +286,8 @@ export function toggleNonMemberUsersAccessAllowed(serviceId, nonMemberUsersAcces
         {non_member_users_access_allowed: nonMemberUsersAccessAllowed}, "put")
 }
 
-export function toggleAutomaticConnectionAllowed(serviceId, value) {
-    return postPutJson(`/api/services/toggle_access_property/${serviceId}`,
+export function toggleAutomaticConnectionAllowed(serviceId, value, connectionSetting) {
+    return postPutJson(`/api/services/toggle_access_property/${serviceId}?connection_setting=${connectionSetting}`,
         {automatic_connection_allowed: value}, "put")
 }
 

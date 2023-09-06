@@ -2353,6 +2353,7 @@ const en = {
         notAvailable: " & <span class='not-available'>not available</span> for institutions",
         availableSingle: " & available for <span class='all-connected'>{{count}} institution</span>",
         availableMultiple: " & available for <span class='all-connected'>{{count}} institutions</span>",
+        all: "all",
         launch: "Launch service",
         visit: "visit public website"
     }

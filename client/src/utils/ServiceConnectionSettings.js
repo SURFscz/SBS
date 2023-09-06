@@ -18,10 +18,10 @@ export const connectionAllowed = service => {
     if (service.non_member_users_access_allowed) {
         return ALL_ALLOWED;
     }
-    if (!service.automatic_connection_allowed && !service.access_allowed_for_all) {
-        if (isEmpty(service.allowed_organisations) && isEmpty(service.automatic_connection_allowed_organisations)) {
-            return NO_ONE_ALLOWED;
-        }
+    if (!service.automatic_connection_allowed && !service.access_allowed_for_all
+        && isEmpty(service.allowed_organisations) && isEmpty(service.automatic_connection_allowed_organisations
+            && service.connection_setting === "NO_ONE_ALLOWED")) {
+        return NO_ONE_ALLOWED;
     }
     return SELECTED_INSTITUTION;
 }
@@ -34,8 +34,8 @@ export const connectionSetting = service => {
     if (service.automatic_connection_allowed) {
         return DIRECT_CONNECTION;
     }
-    if (isEmpty(service.automatic_connection_allowed_organisations)) {
-        return MANUALLY_APPROVE;
+    if (!isEmpty(service.connection_setting)) {
+        return service.connection_setting;
     }
     return IT_DEPENDS;
 }

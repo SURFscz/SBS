@@ -6,6 +6,10 @@
         max-width: 1280px;
         margin: 32px auto 0 auto;
 
+        &.no-entities {
+            margin-bottom: 80px;
+        }
+
         @media (max-width: $tablet-max) {
             padding: 0 15px;
         }
@@ -20,11 +24,11 @@
 
     .sds--block-switch-container {
         margin: 25px 0 30px 24px;
-        max-width: 840px;
+        max-width: 910px;
         display: flex;
 
         .sds--block-switch {
-            width: 260px;
+            width: 290px;
         }
     }
 
