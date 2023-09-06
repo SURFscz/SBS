@@ -14,7 +14,7 @@ import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
 import ConfirmationDialog from "../ConfirmationDialog";
 import {Tooltip} from "@surfnet/sds";
-import {socket, subscriptionIdCookieName} from "../../utils/SocketIO";
+import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
 
 class OrganisationServices extends React.Component {
 
@@ -49,7 +49,7 @@ class OrganisationServices extends React.Component {
             if (!socketSubscribed) {
                 ["service", `organisation_${organisation.id}`].forEach(topic => {
                     socket.then(s => s.on(topic, data => {
-                        const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
+                        const subscriptionIdSessionStorage = sessionStorage.getItem(SUBSCRIPTION_ID_COOKIE_NAME);
                         if (subscriptionIdSessionStorage !== data.subscription_id) {
                             //Ensure we don't get race conditions with the refresh in OrganisationDetail
                             setTimeout(this.componentDidMount, 1500);

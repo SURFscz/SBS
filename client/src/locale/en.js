@@ -97,6 +97,7 @@ const en = {
             userTokens: "Service tokens ({{count}})",
             collaborationRequests: "Requests ({{count}})",
             joinRequests: "Join requests ({{count}})",
+            myRequests: "My requests ({{count}})",
             serviceRequests: "Service requests ({{count}})",
             serviceConnectionRequests: "Connection requests ({{count}})",
             me: "Your details",

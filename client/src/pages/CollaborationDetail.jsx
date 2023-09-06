@@ -49,7 +49,7 @@ import moment from "moment";
 import {ButtonType, Tooltip} from "@surfnet/sds";
 import {ErrorOrigins, isEmpty, removeDuplicates} from "../utils/Utils";
 import UserTokens from "../components/redesign/UserTokens";
-import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
+import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../utils/SocketIO";
 import {isUuid4} from "../validations/regExps";
 
 class CollaborationDetail extends React.Component {
@@ -162,7 +162,7 @@ class CollaborationDetail extends React.Component {
                                 [`collaboration_${collaboration.id}`, "service", `organisation_${collaboration.organisation_id}`]
                                     .forEach(topic => {
                                         socket.then(s => s.on(topic, data => {
-                                            const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
+                                            const subscriptionIdSessionStorage = sessionStorage.getItem(SUBSCRIPTION_ID_COOKIE_NAME);
                                             if (subscriptionIdSessionStorage !== data.subscription_id) {
                                                 this.props.refreshUser(() => this.componentDidMount());
                                             }

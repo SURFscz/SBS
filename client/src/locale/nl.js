@@ -97,6 +97,7 @@ const nl = {
             userTokens: "Diensttokens ({{count}})",
             collaborationRequests: "Verzoeken ({{count}})",
             joinRequests: "Lidmaatschapsverzoeken ({{count}})",
+            myRequests: "Mijn verzoeken ({{count}})",
             serviceRequests: "Dienstaanvragen ({{count}})",
             serviceConnectionRequests: "Koppelverzoeken ({{count}})",
             me: "Je details",

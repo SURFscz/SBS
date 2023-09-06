@@ -14,4 +14,8 @@ export const socket = initializedSocket ? Promise.resolve(initializedSocket) :
         return initializedSocket;
     });
 
-export const subscriptionIdCookieName = "subscription_id";
+export const SUBSCRIPTION_ID_COOKIE_NAME = "subscription_id";
+
+export const JOIN_REQUEST_TYPE = "joinRequest";
+export const COLLABORATION_REQUEST_TYPE = "collaborationRequest";
+export const SERVICE_TYPE_REQUEST = "serviceRequest";

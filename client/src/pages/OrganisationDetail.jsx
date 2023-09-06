@@ -28,7 +28,7 @@ import {actionMenuUserRole, isUserAllowed, ROLES} from "../utils/UserRole";
 import {getParameterByName} from "../utils/QueryParameters";
 import {setFlash} from "../utils/Flash";
 import ConfirmationDialog from "../components/ConfirmationDialog";
-import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
+import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../utils/SocketIO";
 import {ReactComponent as MembersIcon} from "../icons/single-neutral.svg";
 import Users from "../components/redesign/Users";
 import {ButtonType, MetaDataList} from "@surfnet/sds";
@@ -100,7 +100,7 @@ class OrganisationDetail extends React.Component {
                     if (!socketSubscribed) {
                         [`organisation_${organisation_id}`, "service"].forEach(topic => {
                             socket.then(s => s.on(topic, data => {
-                                const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
+                                const subscriptionIdSessionStorage = sessionStorage.getItem(SUBSCRIPTION_ID_COOKIE_NAME);
                                 if (subscriptionIdSessionStorage !== data.subscription_id) {
                                     this.props.refreshUser(() => this.componentDidMount());
                                 }

@@ -20,7 +20,7 @@ import ConfirmationDialog from "../ConfirmationDialog";
 import Logo from "./Logo";
 import CheckBox from "../CheckBox";
 import moment from "moment";
-import {socket, subscriptionIdCookieName} from "../../utils/SocketIO";
+import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
 import ServiceCard from "../ServiceCard";
 
 const CONNECTIONS = "connections";
@@ -84,7 +84,7 @@ class UsedServices extends React.Component {
                 if (!socketSubscribed) {
                     [`collaboration_${collaboration.id}`, "service", `organisation_${collaboration.organisation_id}`].forEach(topic => {
                         socket.then(s => s.on(topic, data => {
-                            const subscriptionIdSessionStorage = sessionStorage.getItem(subscriptionIdCookieName);
+                            const subscriptionIdSessionStorage = sessionStorage.getItem(SUBSCRIPTION_ID_COOKIE_NAME);
                             if (subscriptionIdSessionStorage !== data.subscription_id) {
                                 //Ensure we don't get race conditions with the refresh in CollaborationDetail
                                 setTimeout(this.componentDidMount, 1500);
