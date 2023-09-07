@@ -97,6 +97,7 @@ export default class MyRequests extends React.PureComponent {
         const joinRequests = requests.filter(request => request.requestType === JOIN_REQUEST_TYPE);
         schacHomes(joinRequests).then(res => {
             joinRequests.forEach(jr => jr.schacHomes = res[jr.id]);
+            requests.forEach(request => request.organisationName = this.organisationName(request));
             this.setState({
                 filterOptions: filterOptions.concat(statusOptions),
                 filterValue: filterOptions[0],
@@ -128,7 +129,8 @@ export default class MyRequests extends React.PureComponent {
     organisationName = request => {
         switch (request.requestType) {
             case JOIN_REQUEST_TYPE:
-                return (request.schacHomes || []).map((name, index) => <span key={index} className="schac_home">{name}</span>);
+                return (request.schacHomes || []).map((name, index) => <span key={index}
+                                                                             className="schac_home">{name}</span>);
             case COLLABORATION_REQUEST_TYPE:
                 return request.organisation.name;
             case SERVICE_TYPE_REQUEST:
@@ -161,14 +163,7 @@ export default class MyRequests extends React.PureComponent {
                 mapper: request => request.requestType === JOIN_REQUEST_TYPE ? request.collaboration.name : request.name,
             },
             {
-                nonSortable: true,
-                key: "description",
-                header: I18n.t("myRequests.description"),
-                mapper: request => request.requestType === JOIN_REQUEST_TYPE ? "-" : <span className="cut-of-lines">{request.description}</span>
-            },
-            {
-                nonSortable: true,
-                key: "organisation__name",
+                key: "organisationName",
                 header: I18n.t("myRequests.organisationName"),
                 mapper: request => this.organisationName(request),
             },
@@ -189,8 +184,8 @@ export default class MyRequests extends React.PureComponent {
 
         return (
             <Entities entities={filteredRequests}
-                      modelName={"member_collaboration_requests"}
-                      searchAttributes={["name", "description", "organisation__name", "name", "status"]}
+                      modelName={"my_requests"}
+                      searchAttributes={["name", "description", "organisationName", "status"]}
                       defaultSort="name"
                       columns={columns}
                       showNew={false}
