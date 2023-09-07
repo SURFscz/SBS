@@ -440,8 +440,19 @@ export function schacHome(organisationId) {
     return fetchJson(`/api/organisations/schac_home/${organisationId}`);
 }
 
+export function schacHomes(joinRequests) {
+    if (isEmpty(joinRequests)) {
+        return Promise.resolve({});
+    }
+    const body = joinRequests.map(joinRequest => ({
+        "join_request_id": joinRequest.id,
+        "organisation_id": joinRequest.collaboration.organisation_id
+    }))
+    return postPutJson("/api/organisations/schac_homes", body, "POST");
+}
+
 export function allOrganisations() {
-    return fetchJson(`/api/organisations/all`);
+    return fetchJson("/api/organisations/all");
 }
 
 export function organisationSchacHomeOrganisationExists(schacHome, existingOrganisationId = null) {

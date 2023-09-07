@@ -4,25 +4,29 @@ table.member_collaboration_requests, table.system_collaboration_requests, table.
 
     thead {
         th {
-            &.name {
-                width: 22%;
+            &.requestType {
+                width: 20%;
                 padding-left: 15px;
             }
 
-            &.user__name {
-                width: 22%;
+            &.name {
+                width: 15%;
+            }
+
+            &.description {
+                width: 20%;
             }
 
             &.organisation__name {
-                width: 22%;
+                width: 15%;
             }
 
             &.created_at {
-                width: 17%;
+                width: 15%;
             }
 
             &.status {
-                width: 17%;
+                width: 15%;
                 text-align: center;
             }
         }

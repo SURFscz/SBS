@@ -489,6 +489,11 @@ const en = {
             searchPlaceHolder: "Search for requests...",
             noEntities: "No requests for collaborations",
         },
+        my_requests: {
+            title: "My requests ",
+            searchPlaceHolder: "Search for requests...",
+            noEntities: "You have made no requests",
+        },
         system_collaboration_requests: {
             title: "Outdated open requests for collaborations",
             searchPlaceHolder: "Search for requests...",
@@ -2357,6 +2362,17 @@ const en = {
         all: "all",
         launch: "Launch service",
         visit: "visit public website"
+    },
+    myRequests: {
+        requestType: "Request type",
+        types: {
+            joinRequest: "Collaboration join request",
+            collaborationRequest: "New collaboration request",
+            serviceRequest: "Service request"
+        },
+        name: "Name",
+        description: "Description",
+        organisationName: "Organisation / institution"
     }
 };
 

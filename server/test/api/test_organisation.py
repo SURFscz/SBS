@@ -1,5 +1,5 @@
 from server.db.db import db
-from server.db.domain import Organisation, OrganisationInvitation, User
+from server.db.domain import Organisation, OrganisationInvitation, User, JoinRequest
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import uuc_name, amsterdam_uva_name, schac_home_organisation_uuc, schac_home_organisation, \
     read_image, uuc_secret, jane_name
@@ -97,6 +97,13 @@ class TestOrganisation(AbstractTest):
         organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
         name = self.get(f"/api/organisations/schac_home/{organisation_id}", with_basic_auth=False)
         self.assertEqual("rug.nl", name)
+
+    def test_schac_homes(self):
+        self.login("urn:betty")
+        body = [{"organisation_id": jr.collaboration.organisation_id, "join_request_id": jr.id} for jr in
+                JoinRequest.query.all()]
+        names = self.post("/api/organisations/schac_homes/", body=body, with_basic_auth=False)
+        self.assertEqual(4, len(names))
 
     def test_organisation_by_id(self):
         self.login()
