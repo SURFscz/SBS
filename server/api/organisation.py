@@ -80,6 +80,22 @@ def find_schac_home(organisation_id):
     return res.name if res else False, 200
 
 
+@organisation_api.route("/schac_homes", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def find_schac_homes():
+    data = current_request.get_json()
+    organisation_identifiers = [item["organisation_id"] for item in data]
+    schac_home_organisations = SchacHomeOrganisation.query \
+        .filter(SchacHomeOrganisation.organisation_id.in_(organisation_identifiers)) \
+        .all()
+
+    def schac_homes(organisation_id):
+        return [schac.name for schac in schac_home_organisations if schac.organisation_id == organisation_id]
+
+    res = {item["join_request_id"]: schac_homes(item["organisation_id"]) for item in data}
+    return res, 201
+
+
 @organisation_api.route("/all", strict_slashes=False)
 @json_endpoint
 def organisation_all():

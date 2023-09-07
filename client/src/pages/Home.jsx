@@ -19,9 +19,6 @@ import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg"
 import Collaborations from "../components/redesign/Collaborations";
 import {isEmpty} from "../utils/Utils";
 import {ReactComponent as JoinRequestsIcon} from "../icons/single-neutral-question.svg";
-import MemberJoinRequests from "../components/redesign/MemberJoinRequests";
-import {ReactComponent as CollaborationRequestsIcon} from "../icons/faculty.svg";
-import MemberCollaborationRequests from "../components/redesign/MemberCollaborationRequests";
 import Users from "../components/redesign/Users";
 import ServiceRequests from "../components/redesign/ServiceRequests";
 import EmptyCollaborations from "../components/redesign/EmptyCollaborations";
@@ -137,15 +134,15 @@ class Home extends React.Component {
     addRequestsTabs = (user, refreshUserHook, tabs, tab) => {
         const requests = [];
         if (!isEmpty(user.join_requests)) {
-            user.join_requests.forEach(joinRequest => joinRequest.typeRequest = JOIN_REQUEST_TYPE);
+            user.join_requests.forEach(joinRequest => joinRequest.requestType = JOIN_REQUEST_TYPE);
             requests.push(...user.join_requests);
         }
         if (!isEmpty(user.collaboration_requests)) {
-            user.collaboration_requests.forEach(collaborationRequest => collaborationRequest.typeRequest = COLLABORATION_REQUEST_TYPE);
+            user.collaboration_requests.forEach(collaborationRequest => collaborationRequest.requestType = COLLABORATION_REQUEST_TYPE);
             requests.push(...user.collaboration_requests);
         }
-        if (!isEmpty(user.service_requests) && !user.admin) {
-            user.service_requests.forEach(serviceRequest => serviceRequest.typeRequest = SERVICE_TYPE_REQUEST);
+        if (!isEmpty(user.service_requests)) {
+            user.service_requests.forEach(serviceRequest => serviceRequest.requestType = SERVICE_TYPE_REQUEST);
             requests.push(...user.service_requests);
         }
         if (!isEmpty(requests)) {
@@ -203,36 +200,11 @@ class Home extends React.Component {
     }
 
     getMyRequestsTab = (requests, refreshUserHook) => {
-        const openRequests = requests.filter(req => req.status === "open").length;
         return (<div key="my_requests"
                      name="my_requests"
-                     label={I18n.t("home.tabs.myRequests", {count: (openRequests || []).length})}
-                     icon={<JoinRequestsIcon/>}
-                     notifier={openRequests > 0 ? openRequests : null}>
+                     label={I18n.t("home.tabs.myRequests", {count: requests.length})}
+                     icon={<JoinRequestsIcon/>}>
             <MyRequests requests={requests} refreshUserHook={refreshUserHook} {...this.props} />
-        </div>)
-}
-
-    getMemberJoinRequestsTab = (join_requests, refreshUserHook) => {
-
-        return (<div key="joinrequests"
-                     name="joinrequests"
-                     label={I18n.t("home.tabs.joinRequests", {count: (join_requests || []).length})}
-                     icon={<JoinRequestsIcon/>}
-                     notifier={openJoinRequests > 0 ? openJoinRequests : null}>
-            <MemberJoinRequests join_requests={join_requests} refreshUserHook={refreshUserHook} {...this.props} />
-        </div>)
-    }
-
-    getCollaborationRequestsTab = (collaboration_requests, refreshUserHook) => {
-        const crl = (collaboration_requests || []).filter(cr => cr.status === "open").length;
-        return (<div key="collaboration_requests"
-                     name="collaboration_requests"
-                     label={I18n.t("home.tabs.collaborationRequests", {count: (collaboration_requests || []).length})}
-                     notifier={crl > 0 ? crl : null}
-                     icon={<CollaborationRequestsIcon/>}>
-            <MemberCollaborationRequests {...this.props} refreshUserHook={refreshUserHook}
-                                         collaboration_requests={collaboration_requests}/>
         </div>)
     }
 

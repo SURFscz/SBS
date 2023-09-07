@@ -489,6 +489,11 @@ const nl = {
             searchPlaceHolder: "Zoek samenwerkingsaanvragen...",
             noEntities: "Geen samenwerkingenaanvragen",
         },
+        my_requests: {
+            title: "Mijn aanvragen",
+            searchPlaceHolder: "Zoek naar aanvragen...",
+            noEntities: "Je hebt geen aanvragen gedaan",
+        },
         system_collaboration_requests: {
             title: "Verlopen aanvragen voor samenwerkingen",
             searchPlaceHolder: "Zoek samenwerkingsaanvragen...",
@@ -2357,6 +2362,17 @@ const nl = {
         launch: "Launch service",
         visit: "visit public website",
         all: "alle",
+    },
+    myRequests: {
+        requestType: "Aanvraag type",
+        types: {
+            joinRequest: "Lidmaatschapsverzoek",
+            collaborationRequest: "Nieuw samenwerkingsverzoek",
+            serviceRequest: "Dienstaanvraag"
+        },
+        name: "Naam",
+        description: "Omschrijving",
+        organisationName: "Organisatie / instelling"
     }
 
 
