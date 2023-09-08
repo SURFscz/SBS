@@ -149,7 +149,7 @@ class OrganisationForm extends React.Component {
         const {schac_home_organisations, isNew, organisation, alreadyExists} = this.state;
         if (!isEmpty(schac_home_organisation)) {
             const invalid = !validSchacHomeRegExp.test(schac_home_organisation.trim());
-            const duplicate = schac_home_organisations.find(sho => sho.name === schac_home_organisation.trim());
+            const duplicate = schac_home_organisations.find(sho => sho.name === schac_home_organisation.trim().toLowerCase());
             if (invalid || duplicate) {
                 const invalid_schac_home_organisation = I18n.t(`organisation.${invalid ? "invalidSchacHome" : "duplicateSchacHome"}`,
                     {schac: schac_home_organisation.trim()});
