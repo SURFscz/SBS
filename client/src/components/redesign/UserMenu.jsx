@@ -6,6 +6,7 @@ import {logout} from "../../utils/Login";
 import {clearFlash} from "../../utils/Flash";
 import {UserInfo} from "@surfnet/sds";
 import {AppStore} from "../../stores/AppStore";
+import {stopEvent} from "../../utils/Utils";
 
 
 export const UserMenu = ({currentUser, config, provideFeedback}) => {
@@ -17,6 +18,11 @@ export const UserMenu = ({currentUser, config, provideFeedback}) => {
     const toggleUserMenu = () => {
         setDropDownActive(false);
         clearFlash();
+    }
+
+    const savePerform = action => e => {
+        stopEvent(e);
+        action.perform();
     }
 
     const renderMenu = (adminLinks, provideFeedback) => {
@@ -40,7 +46,7 @@ export const UserMenu = ({currentUser, config, provideFeedback}) => {
                         <a href="/feedback" onClick={provideFeedback}>{I18n.t(`header.links.feedback`)}</a>
                     </li>}
                     {actions.map(action => <li key={action.name}>
-                        <a href={`/${action.name}`} onClick={action.perform}>{action.name}</a>
+                        <a href={`/${action.name}`} onClick={savePerform(action)}>{action.name}</a>
                     </li>)}
                     <li>
                         <a href="/logout" onClick={logout}>{I18n.t(`header.links.logout`)}</a>
