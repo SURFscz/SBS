@@ -47,7 +47,7 @@ import JoinRequestDialog from "../components/JoinRequestDialog";
 import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import moment from "moment";
 import {ButtonType, Tooltip} from "@surfnet/sds";
-import {ErrorOrigins, isEmpty, removeDuplicates} from "../utils/Utils";
+import {ErrorOrigins, isEmpty, removeDuplicates, stopEvent} from "../utils/Utils";
 import UserTokens from "../components/redesign/UserTokens";
 import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../utils/SocketIO";
 import {isUuid4} from "../validations/regExps";
@@ -482,7 +482,8 @@ class CollaborationDetail extends React.Component {
             });
     };
 
-    deleteMe = () => {
+    deleteMe = e => {
+        stopEvent(e);
         const {user} = this.props;
         const {collaboration} = this.state;
         const admins = collaboration.collaboration_memberships.filter(m => m.role === "admin");
@@ -653,7 +654,8 @@ class CollaborationDetail extends React.Component {
         const isMember = collaboration.collaboration_memberships.some(m => m.user_id === user.id);
         if (isMember) {
             actions.push({
-                name: I18n.t("models.collaboration.leave"), perform: this.deleteMe
+                name: I18n.t("models.collaboration.leave"),
+                perform: this.deleteMe
             });
         }
         return actions;
@@ -687,13 +689,15 @@ class CollaborationDetail extends React.Component {
         const isMember = collaboration.collaboration_memberships.some(m => m.user_id === user.id);
         if (!isMember && user.admin && showMemberView) {
             actions.push({
-                buttonType: ButtonType.Chevron, name: I18n.t("collaborationDetail.addMe"), perform: this.addMe
+                buttonType: ButtonType.Chevron, name: I18n.t("collaborationDetail.addMe"),
+                perform: this.addMe
             })
         }
         return actions;
     }
 
-    addMe = () => {
+    addMe = e => {
+        stopEvent(e);
         const {collaboration} = this.state;
         this.setState({loading: true});
         createCollaborationMembershipRole(collaboration.id).then(() => {

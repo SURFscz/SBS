@@ -7,7 +7,7 @@ import {
 } from "../api";
 import "./OrganisationDetail.scss";
 import I18n from "../locale/I18n";
-import {isEmpty} from "../utils/Utils";
+import {isEmpty, stopEvent} from "../utils/Utils";
 import Tabs from "../components/Tabs";
 import {ReactComponent as PlatformAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
@@ -272,7 +272,8 @@ class OrganisationDetail extends React.Component {
             });
     };
 
-    deleteMe = () => {
+    deleteMe = e => {
+        stopEvent(e);
         this.setState({
             confirmationDialogOpen: true,
             confirmationQuestion: I18n.t("organisationDetail.deleteYourselfMemberConfirmation"),
