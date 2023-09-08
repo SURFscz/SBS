@@ -29,7 +29,7 @@ import {ReactComponent as UserAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ConnectedIcon} from "../icons/groups.svg";
 import ServiceOrganisations from "../components/redesign/ServiceOrganisations";
 import SpinnerField from "../components/redesign/SpinnerField";
-import {isEmpty, removeDuplicates, splitListSemantically} from "../utils/Utils";
+import {isEmpty, removeDuplicates, splitListSemantically, stopEvent} from "../utils/Utils";
 import {actionMenuUserRole, isUserServiceAdmin} from "../utils/UserRole";
 import ServiceConnectionRequests from "../components/redesign/ServiceConnectionRequests";
 import {ReactComponent as GroupsIcon} from "../icons/ticket-group.svg";
@@ -404,7 +404,8 @@ class ServiceDetail extends React.Component {
             });
     };
 
-    deleteMe = () => {
+    deleteMe = e => {
+        stopEvent(e);
         const {user} = this.props;
         const {service} = this.state;
         const admins = service.service_memberships.filter(m => m.role === "admin");
@@ -452,7 +453,8 @@ class ServiceDetail extends React.Component {
         return actions;
     }
 
-    addMe = () => {
+    addMe = e => {
+        stopEvent(e);
         const {service} = this.state;
         this.setState({loading: true});
         createServiceMembershipRole(service.id).then(() => {
