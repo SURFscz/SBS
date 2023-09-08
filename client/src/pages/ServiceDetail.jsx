@@ -316,9 +316,9 @@ class ServiceDetail extends React.Component {
     }
 
     allCollaborationsForService = service => {
-        const collaborations = service.collaborations;
+        const collaborations = service.collaborations || [];
         collaborations.forEach(coll => coll.fromCollaboration = true);
-        const collFromOrganisations = service.service_organisation_collaborations;
+        const collFromOrganisations = service.service_organisation_collaborations || [];
         collFromOrganisations.forEach(coll => coll.fromCollaboration = false);
         const colls = removeDuplicates(collaborations.concat(collFromOrganisations), "id");
         return colls;
@@ -485,8 +485,8 @@ class ServiceDetail extends React.Component {
     getInstitutionsHeadersInfo = service => {
         const allowedForAll = service.access_allowed_for_all || service.non_member_users_access_allowed;
         const accessibleService = service.automatic_connection_allowed || allowedForAll;
-        const allowed = service.allowed_organisations.length;
-        const always = service.automatic_connection_allowed_organisations.length;
+        const allowed = (service.allowed_organisations || []).length;
+        const always = (service.automatic_connection_allowed_organisations || []).length;
         const notAvailable = !accessibleService && allowed === 0 && always === 0;
         if (notAvailable) {
             return (
@@ -523,7 +523,7 @@ class ServiceDetail extends React.Component {
         if (loading) {
             return <SpinnerField/>;
         }
-        const {user} = this.props;
+        const {user, invitation} = this.props;
         let tabs = [];
         const params = this.props.match.params;
         const userServiceAdmin = isUserServiceAdmin(user, {id: parseInt(params.id, 10)}) || user.admin;
@@ -614,7 +614,7 @@ class ServiceDetail extends React.Component {
                             name={service.name}
                             firstTime={(user.admin && !showServiceAdminView) ? this.onBoarding : undefined}
                             actions={this.getActions(user, service, showServiceAdminView)}>
-                    {this.getIconListItems(iconListItems)}
+                    {!invitation && this.getIconListItems(iconListItems)}
                 </UnitHeader>
                 <div className="mod-service-container">
                     <Tabs activeTab={tab} tabChanged={this.tabChanged}>

@@ -358,6 +358,7 @@ class App extends React.Component {
                                        currentUser={currentUser}
                                        refreshUser={this.refreshUserMemberships}
                                        config={config}
+                                       invitation={true}
                                        Component={ServiceDetail} {...props}/>
                                }/>
 
