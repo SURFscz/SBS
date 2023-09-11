@@ -335,6 +335,8 @@ const en = {
             hideInvites: "Hide invitations",
             noCollaborations: "There are no collaborations yet within your organisation. Why don't you create the first one?",
             noCollaborationsRequest: "There are no collaborations yet within your organisation. Why don't you request the first one?",
+            noCollaborationsUser: "There are no collaborations yet within your organisation. Why don't you create the first one?",
+            noCollaborationsRequestUser: "There are no collaborations yet within your organisation. Why don't you request the first one?",
             allLabels: "All labels",
         },
         serviceOrganisations: {
