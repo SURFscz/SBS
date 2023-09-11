@@ -103,7 +103,7 @@ class AboutCollaboration extends React.Component {
 
                 {isJoinRequest && <div className="members">
                     <div className="members-header join-request">
-                        <p>{I18n.t("models.collaboration.members")}</p>
+                        <p>{I18n.t("models.collaboration.members", {nbr: collaboration_memberships.length})}</p>
                         <p>{I18n.t("models.collaboration.discloseNoMemberInformationJoinRequest")}</p>
                     </div>
                 </div>}
