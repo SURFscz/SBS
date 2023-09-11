@@ -19,7 +19,8 @@ export default class EmptyCollaborations extends React.PureComponent {
         const organisationQueryParam = isEmpty(organisationFromUserSchacHome) ? "" : `?organisationId=${organisationFromUserSchacHome.id}`;
         const newLabel = I18n.t(`models.${mayCreateCollaborations ? "collaborations" : "memberCollaborations"}.new`);
         const newPath = `/new-collaboration${organisationQueryParam}`;
-        const info = I18n.t(`models.collaborations.noCollaborations${mayCreateCollaborations ? "" : "Request"}`)
+        const info = isOrgManager ? I18n.t("models.collaborations.noCollaborations"):
+            I18n.t(`models.collaborations.noCollaborations${mayCreateCollaborations ? "" : "Request"}User`);
         return (
             <div className="no-collaborations">
                 <TreeSwing/>
