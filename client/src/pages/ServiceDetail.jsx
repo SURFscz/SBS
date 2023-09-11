@@ -110,10 +110,7 @@ class ServiceDetail extends React.Component {
                         this.afterFetch(params, service, organisations, serviceConnectionRequests, res[3]);
                     }).catch(() => this.props.history.push("/"));
             } else {
-                Promise.all([serviceById(params.id), userTokensOfUser(params.id)])
-                    .then(res => {
-                        this.afterFetch(params, res[0], [], [], res[1]);
-                    }).catch(() => this.props.history.push("/"));
+                this.props.history.push("/404");
             }
         } else {
             this.props.history.push("/404");
