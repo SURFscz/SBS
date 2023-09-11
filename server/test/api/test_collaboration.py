@@ -1,3 +1,4 @@
+import base64
 import datetime
 import json
 import time
@@ -544,7 +545,7 @@ class TestCollaboration(AbstractTest):
                                         "disable_join_requests": True,
                                         "disclose_member_information": True,
                                         "disclose_email_information": True,
-                                        "logo": read_image("uuc.jpeg"),
+                                        "logo": read_image("uva.jpg"),
                                         "tags": ["label_1", "label_2", "!-INVALID"]
                                     }),
                                     content_type="application/json")
@@ -579,6 +580,24 @@ class TestCollaboration(AbstractTest):
                                     content_type="application/json")
         self.assertEqual("Invalid Logo: Incorrect padding", response.json["message"])
 
+    def test_api_call_invalid_logo_bytes(self):
+        logo = base64.encodebytes("Not a valid file".encode()).decode()
+        response = self.client.post("/api/collaborations/v1",
+                                    headers={"Authorization": f"Bearer {uuc_secret}"},
+                                    data=json.dumps({
+                                        "name": "new_collaboration",
+                                        "description": "new_collaboration",
+                                        "accepted_user_policy": "https://aup.org",
+                                        "short_name": "new_short_name",
+                                        "disable_join_requests": True,
+                                        "disclose_member_information": True,
+                                        "disclose_email_information": True,
+                                        "administrators": [],
+                                        "logo": logo
+                                    }),
+                                    content_type="application/json")
+        self.assertTrue("Invalid Logo" in response.json["message"])
+
     def test_api_call_invalid_json(self):
         response = self.client.post("/api/collaborations/v1",
                                     headers={"Authorization": f"Bearer {uuc_secret}"},
@@ -604,7 +623,6 @@ class TestCollaboration(AbstractTest):
 
         collaboration = self.find_entity_by_name(Collaboration, "new_collaboration")
         raw_logo = collaboration.raw_logo()
-        urllib.request.urlopen("https://static.surfconext.nl/media/idp/eduid.png")
         self.assertFalse(raw_logo.startswith("http"))
 
     def test_api_call_without_logo(self):

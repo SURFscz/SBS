@@ -6,7 +6,6 @@ from typing import Optional
 from werkzeug.exceptions import BadRequest
 
 full_text_search_autocomplete_limit = 16
-max_logo_bytes = 2 * 1024 * 1000
 
 STATUS_ACTIVE = "active"
 STATUS_EXPIRED = "expired"

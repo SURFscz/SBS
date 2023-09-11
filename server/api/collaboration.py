@@ -23,9 +23,10 @@ from server.db.activity import update_last_activity_date
 from server.db.db import db
 from server.db.defaults import (default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name,
                                 STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED, valid_uri_attributes, valid_tag_label,
-                                uri_re, max_logo_bytes)
+                                uri_re)
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
     Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag, ServiceGroup, ServiceMembership
+from server.db.image import transform_image
 from server.db.models import update, save, delete, flatten, unique_model_objects
 from server.mail import mail_collaboration_invitation
 from server.scim.events import broadcast_collaboration_changed, broadcast_collaboration_deleted
@@ -513,29 +514,20 @@ def save_collaboration_api():
         User.uid == current_app.app_config.admin_users[0].uid).one()
     data["organisation_id"] = organisation.id
     logo = data.get("logo")
-    valid_logo = False
     if logo and logo.startswith("http") and bool(uri_re.match(logo)):
         try:
             res = urllib.request.urlopen(logo)
             if res.status == 200:
-                logo_bytes = res.read()
-                if len(logo_bytes) < max_logo_bytes:
-                    data["logo"] = base64.encodebytes(logo_bytes).decode("utf-8")
-                    valid_logo = True
-                else:
-                    valid_logo = False
-                    logo = None
+                data["logo"] = transform_image(res.read())
         except Exception as e:
             raise APIBadRequest(f"Invalid Logo: {str(e)}")
-
     elif logo:
-        # Ensure it is valid base64
         try:
-            base64.decodebytes(logo.encode())
+            decoded_bytes = base64.decodebytes(logo.encode())
+            data["logo"] = transform_image(decoded_bytes)
         except Exception as e:
             raise APIBadRequest(f"Invalid Logo: {str(e)}")
-
-    if not valid_logo and not logo:
+    else:
         with db.engine.connect() as conn:
             data["logo"] = next(conn.execute(text(f"SELECT logo FROM organisations where id = {organisation.id}")))[0]
 
