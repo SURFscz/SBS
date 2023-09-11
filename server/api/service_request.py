@@ -95,8 +95,7 @@ def approve_request(service_request_id):
     client_data["identifier"] = str(uuid.uuid4())
 
     cleanse_short_name(client_data, "abbreviation")
-    hashed, _ = generate_ldap_password_with_hash()
-    client_data["ldap_password"] = hashed
+    client_data["ldap_enabled"] = False
 
     # bugfix for logo url instead of raw data in the POST from the client - only happens when the logo is unchanged
     logo = client_data.get("logo")

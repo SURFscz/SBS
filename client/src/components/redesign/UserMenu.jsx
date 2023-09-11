@@ -7,6 +7,7 @@ import {clearFlash} from "../../utils/Flash";
 import {UserInfo} from "@surfnet/sds";
 import {AppStore} from "../../stores/AppStore";
 import {stopEvent} from "../../utils/Utils";
+import {isUserServiceAdmin} from "../../utils/UserRole";
 
 
 export const UserMenu = ({currentUser, config, provideFeedback}) => {
@@ -26,6 +27,7 @@ export const UserMenu = ({currentUser, config, provideFeedback}) => {
     }
 
     const renderMenu = (adminLinks, provideFeedback) => {
+        const userServiceAdmin = isUserServiceAdmin(currentUser);
         return (
             <>
                 <ul>
@@ -35,7 +37,7 @@ export const UserMenu = ({currentUser, config, provideFeedback}) => {
                     <li>
                         <Link onClick={toggleUserMenu} to={`/profile`}>{I18n.t(`header.links.profile`)}</Link>
                     </li>
-                    {!currentUser.admin && <li>
+                    {(!currentUser.admin && !userServiceAdmin)&& <li>
                         <Link onClick={toggleUserMenu} to={`/new-service-request`}>
                             {I18n.t("header.links.requestService")}
                         </Link>

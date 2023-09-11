@@ -77,6 +77,7 @@ class Services extends React.Component {
                 key: "collaborations_count",
                 header: I18n.t("models.services.collaborationCount")
             }];
+        const userServiceAdmin = isUserServiceAdmin(user);
         return (
             <Entities entities={services}
                       modelName="services"
@@ -84,8 +85,9 @@ class Services extends React.Component {
                       defaultSort="name"
                       columns={columns}
                       inputFocus={true}
-                      showNew={user.admin}
-                      newEntityPath={"/new-service"}
+                      newLabel={user.admin ? I18n.t("models.services.new") : I18n.t("header.links.requestService")}
+                      showNew={user.admin || userServiceAdmin}
+                      newEntityPath={user.admin ? "/new-service": "/new-service-request"}
                       loading={loading}
                       hideTitle={true}
                       rowLinkMapper={() => this.openService}
