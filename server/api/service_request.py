@@ -8,7 +8,6 @@ from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint, STATUS_OPEN, STATUS_APPROVED, STATUS_DENIED, emit_socket
 from server.api.service import URI_ATTRIBUTES
-from server.auth.secrets import generate_ldap_password_with_hash
 from server.auth.security import current_user_id, current_user_name, \
     confirm_write_access
 from server.db.defaults import cleanse_short_name, valid_uri_attributes
