@@ -58,6 +58,7 @@ class Home extends React.Component {
                 !isEmpty(user.join_requests) ||
                 nbrServices > 0 ||
                 (user.organisation_from_user_schac_home && redirect);
+            let hasAnyRoles = true;
             switch (role) {
                 case ROLES.PLATFORM_ADMIN:
                     tabs.push(this.getOrganisationsTab(user.total_organisations));
@@ -95,10 +96,7 @@ class Home extends React.Component {
                     }
                     break;
                 default:
-                    if (!canStayInHome) {
-                        this.props.history.push("/welcome");
-                        return;
-                    }
+                    hasAnyRoles = false;
             }
             if (isUserServiceAdmin(user) && !user.admin) {
                 if (!isEmpty(user.organisation_from_user_schac_home) && !tabs.some(t => t.key === "collaborations")) {
@@ -114,6 +112,10 @@ class Home extends React.Component {
             const tabSuggestion = this.addRequestsTabs(user, this.refreshUserHook, tabs, tab);
             if (role === ROLES.USER) {
                 tab = tabSuggestion;
+            }
+            if (isEmpty(tabs) && !hasAnyRoles) {
+                this.props.history.push("/welcome");
+                return;
             }
             AppStore.update(s => {
                 s.breadcrumb.paths = [
