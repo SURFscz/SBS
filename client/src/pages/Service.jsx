@@ -107,7 +107,7 @@ class Service extends React.Component {
         if (isServiceRequest) {
             const required = this.state.required
                 .filter(attr => attr !== "entity_id" || isServiceRequestDetails)
-                .concat("providing_organisation", "comments");
+                .concat("providing_organisation");
             this.setState({required: required})
         }
         if (!isServiceRequest && !user.admin) {
@@ -129,7 +129,7 @@ class Service extends React.Component {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
                             {
-                                path: `/services-requests/${res.id}`,
+                                path: `/home/service_requests`,
                                 value: I18n.t("breadcrumb.serviceRequest", {name: res.name})
                             },
                             {value: I18n.t("home.edit")}
@@ -319,9 +319,9 @@ class Service extends React.Component {
         const inValid = Object.values(alreadyExists).some(val => val) ||
             required.some(attr => isEmpty(this.state[attr])) ||
             Object.keys(invalidInputs).some(key => invalidInputs[key]);
-        const {user} = this.props;
+        const {user, isServiceRequest} = this.props;
         const isAdmin = user.admin;
-        const contactEmailRequired = isAdmin && !hasAdministrators && isEmpty(contact_email);
+        const contactEmailRequired = (isAdmin && !hasAdministrators && isEmpty(contact_email)) || (isEmpty(contact_email) && isServiceRequest);
         const invalidIpNetworks = !isAdmin && ip_networks.some(ipNetwork => ipNetwork.error || (ipNetwork.version === 6 && !ipNetwork.global));
         return !inValid && !contactEmailRequired && !invalidIpNetworks;
     };
@@ -765,8 +765,10 @@ class Service extends React.Component {
                     {invalidInputs["email"] &&
                         <ErrorIndicator
                             msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
-                    {(!initial && contactEmailRequired) &&
+                    {(!initial && contactEmailRequired && !isServiceRequest) &&
                         <ErrorIndicator msg={I18n.t("service.contactEmailRequired")}/>}
+                    {(!initial && contactEmailRequired && isServiceRequest) &&
+                        <ErrorIndicator msg={I18n.t("service.required", {attribute: I18n.t("service.contact_email").toLowerCase()})}/>}
                 </div>
                 <div className="first-column">
 
@@ -907,10 +909,6 @@ class Service extends React.Component {
                                     name={I18n.t("service.comments")}
                                     toolTip={I18n.t("service.commentsTooltip")}
                                     multiline={true}/>
-                        {(!initial && isEmpty(comments)) &&
-                            <ErrorIndicator msg={I18n.t("service.required", {
-                                attribute: I18n.t("service.commentsAttribute")
-                            })}/>}
                     </div>}
 
                 <section className="actions">
