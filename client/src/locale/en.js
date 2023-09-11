@@ -277,7 +277,7 @@ const en = {
             collaborationCount: "Collaborations",
             schacHomeOrganisations: "Org domain(s)",
             category: "Category",
-            leave: "Leave ORG"
+            leave: "Leave organisation"
         },
         services: {
             title: "Services",
