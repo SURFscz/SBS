@@ -43,10 +43,22 @@ export default class Activity extends React.PureComponent {
         });
     }
 
+    parseJSON = state => {
+        if (isEmpty(state)) {
+            return {};
+        }
+        try {
+            return JSON.parse(state);
+        } catch (e) {
+            console.log("Error parsing JSON "+state)
+            return {};
+        }
+    }
+
     convertReference = (auditLogs, auditLog) => {
         if (auditLog) {
-            auditLog.stateBefore = JSON.parse(auditLog.state_before || "{}");
-            auditLog.stateAfter = JSON.parse(auditLog.state_after || "{}");
+            auditLog.stateBefore = this.parseJSON(auditLog.state_before);
+            auditLog.stateAfter = this.parseJSON(auditLog.state_after);
             [auditLog.stateBefore, auditLog.stateAfter].forEach(state => {
                 escapeDeep(state);
                 ignoreInDiff.forEach(ignore => delete state[ignore]);
