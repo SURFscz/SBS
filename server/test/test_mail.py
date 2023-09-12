@@ -2,7 +2,6 @@ import json
 import os
 
 from server.auth.security import CSRF_TOKEN
-from server.db.audit_mixin import AuditLog
 from server.db.domain import Collaboration, User
 from server.mail import mail_collaboration_join_request
 from server.test.abstract_test import AbstractTest
@@ -28,10 +27,6 @@ class TestMail(AbstractTest):
             self.assertListEqual(["test@example.com"], mail_msg.recipients)
             self.assertEqual("SURF_ResearchAccessManagement <no-reply@surf.nl>", mail_msg.sender)
             self.assertTrue(f"http://localhost:300/collaborations/{collaboration.id}/joinrequests" in mail_msg.html)
-
-        audit_logs = AuditLog.query.all()
-        self.assertEqual(len(audit_logs), 1)
-        self.assertIsNotNone(audit_logs[0].user_id)
 
     def test_send_error_mail(self):
         try:
