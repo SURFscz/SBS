@@ -39,13 +39,19 @@
         .search {
             margin-left: auto;
             display: flex;
+
             @media (max-width: $tablet-max) {
                 margin-left: 0;
+                flex-direction: column;
             }
 
             input[type=search] {
                 flex-grow: 2;
                 min-width: 360px;
+
+                @media (max-width: $tablet-max) {
+                    margin-top: 15px;
+                }
             }
 
             .sds--text-field--icon svg {
@@ -55,6 +61,11 @@
 
             button {
                 margin-left: 15px;
+
+                @media (max-width: $tablet-max) {
+                    margin-left: 0;
+                    margin-top: 15px;
+                }
             }
         }
     }
