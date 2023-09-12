@@ -16,7 +16,7 @@ ACTION_UPDATE = 2
 ACTION_DELETE = 3
 
 ignore_attributes = ["logo", "created_by", "updated_by", "created_at", "updated_at", "last_login_date",
-                     "sweep_scim_last_run", "last_activity_date", "saml_metadata"]
+                     "sweep_scim_last_run", "last_activity_date", "saml_metadata", "second_fa_uuid"]
 
 relationship_configuration = {
     "groups": ["collaboration_memberships", "invitations"],
