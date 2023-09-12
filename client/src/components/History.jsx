@@ -34,6 +34,22 @@ export default class History extends React.PureComponent {
                     return true;
                 })
             }
+            const includeMembersTargets = [
+                "collaboration_memberships",
+                "collaboration_memberships_groups",
+                "invitations",
+                "join_requests"]
+            const includeServicesTargets = ["services", "service_connection_requests"];
+            const includeCOPropertiesTargets = ["collaborations", "groups"];
+            if (collection === "collaborations") {
+                res.audit_logs.forEach(log => {
+                    if (log.target_type) {
+                        log.isService = includeServicesTargets.includes(log.target_type);
+                        log.isMember = includeMembersTargets.includes(log.target_type);
+                        log.isCOProperty = includeCOPropertiesTargets.includes(log.target_type);
+                    }
+                });
+            }
             this.setState({
                 auditLogs: res,
                 loading: false
@@ -49,18 +65,18 @@ export default class History extends React.PureComponent {
             });
 
         });
-
     }
 
     render() {
         const {auditLogs, loading} = this.state;
+        const {collection} = this.props.match.params;
         if (loading) {
             return <SpinnerField/>
         }
         return (
             <div className="history-container">
                 <UnitHeader obj={({name: I18n.t("home.history"), icon: "history"})}/>
-                <Activity auditLogs={auditLogs}/>
+                <Activity auditLogs={auditLogs} isCollaboration={collection === "collaborations"}/>
             </div>);
     }
 

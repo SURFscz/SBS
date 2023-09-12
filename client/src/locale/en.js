@@ -1720,6 +1720,11 @@ const en = {
             tablesPlaceHolder: "Select tables",
             submit: "Fetch"
         },
+        export: "Export to JSON",
+        searchPlaceholder: "Search... ",
+        includeServices: "Service changes",
+        includeMembers: "Member changes",
+        includeCOProperties: "Collaboration values",
         tables: {
             "api_keys": "Organisation API tokens",
             "aups": "Acceptable User Policy",

@@ -774,6 +774,7 @@ class UserMail(Base, db.Model):
     user = db.relationship("User", back_populates="user_mails")
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
+    audit_log_exclude = True
 
 
 class ServiceGroup(Base, db.Model):

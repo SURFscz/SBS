@@ -6,9 +6,13 @@ import "jsondiffpatch/dist/formatters-styles/html.css";
 import {escapeDeep, isEmpty} from "../utils/Utils";
 import {pseudoIso} from "../utils/Date";
 import {Pagination} from "@surfnet/sds";
+import Button from "./Button";
+import {filterAuditLogs} from "../utils/AuditLog";
+import {ReactComponent as SearchIcon} from "@surfnet/sds/icons/functional-icons/search.svg";
+import CheckBox from "./CheckBox";
 
 const pageCount = 50;
-const ignoreInDiff = ["created_by", "updated_by", "created_at", "updated_at"];
+const ignoreInDiff = ["created_by", "updated_by", "created_at", "updated_at", "last_activity_date"];
 const epochAttributes = ["agreed_at", "sent_at", "last_accessed_date", "last_login_date", "expiry_date"]
 const collectionMapping = {
     organisation_id: "organisations", collaboration_id: "collaborations", user_id: "users"
@@ -20,29 +24,23 @@ export default class Activity extends React.PureComponent {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            selected: {},
-            page: 1
+            selected: null,
+            page: 1,
+            query: "",
+            includeCOProperties: true,
+            includeMembers: true,
+            includeServices: true,
+
         };
         this.differ = new DiffPatcher();
     }
 
     componentDidMount = () => {
         const {auditLogs} = this.props;
-        const selected = this.convertReference(auditLogs, auditLogs.audit_logs[0]);
+        auditLogs.audit_logs = this.convertReferences(auditLogs);
         this.setState({
-            selected: selected,
+            selected: auditLogs.audit_logs[0],
         });
-    }
-
-    componentDidUpdate() {
-        const {selected} = this.state;
-        const {auditLogs} = this.props;
-        const filteredOut = !isEmpty(selected) && !auditLogs.audit_logs.some(log => log.id === selected.id);
-        if (filteredOut || isEmpty(selected)) {
-            this.setState({
-                selected: this.convertReference(auditLogs, auditLogs.audit_logs[0]),
-            });
-        }
     }
 
     convertReference = (auditLogs, auditLog) => {
@@ -100,7 +98,10 @@ export default class Activity extends React.PureComponent {
                     </thead>
                     <tbody>
                     {auditLogs.map(log =>
-                        <tr key={log.id} onClick={() => this.setState({selected: log})}
+                        <tr key={log.id}
+                            onClick={() =>
+                            this.setState({selected: log})
+                        }
                             className={`${selected && log.id === selected.id ? "selected" : ""}`}>
                             <td>{pseudoIso(log.created_at)}</td>
                             <td>{this.userLabel(log.user)}</td>
@@ -155,9 +156,6 @@ export default class Activity extends React.PureComponent {
     };
 
     renderDetail = (auditLog, auditLogs) => {
-        if (isEmpty(auditLog)) {
-            return null;
-        }
         const parent = (auditLogs[auditLog.parent_name] || []).find(parent => parent.id === auditLog.parent_id);
         const parentName = parent ? parent.name : null;
         const beforeState = auditLog.stateBefore;
@@ -200,16 +198,90 @@ export default class Activity extends React.PureComponent {
             </div>);
     };
 
+    exportData = auditLogEntries => {
+        const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
+            JSON.stringify(auditLogEntries)
+        )}`;
+        const link = document.createElement("a");
+        link.href = jsonString;
+        link.download = "history.json";
+        link.click();
+    };
+
+    excludeAuditLogs = (auditLogs, includeServices, includeMembers, includeCOProperties) => {
+        return auditLogs.filter(log =>
+            (includeServices || !log.isService) &&
+            (includeMembers || !log.isMember) &&
+            (includeCOProperties || !log.isCOProperty)
+        )
+    }
+
     render() {
-        const {auditLogs} = this.props;
-        const {selected, page} = this.state;
-        const auditLogEntries = this.convertReferences(auditLogs);
-        return (<div className={`activity-container`}>
-            <div className={`activity`}>
-                {this.renderAuditLogs(auditLogEntries, selected, page)}
-                {this.renderDetail(selected, auditLogs)}
-            </div>
-        </div>);
+        const {auditLogs, isCollaboration} = this.props;
+        const {selected, page, query, includeServices, includeMembers, includeCOProperties} = this.state;
+        const filteredAuditLogs = filterAuditLogs(auditLogs, query);
+        const auditLogEntries = this.excludeAuditLogs(filteredAuditLogs.audit_logs, includeServices, includeMembers, includeCOProperties);
+        return (
+            <div className="activity-container">
+                {isCollaboration &&
+                    <div className="action-container">
+                        <div className="filter-options">
+                            <CheckBox name="includeCOProperties"
+                                      value={includeCOProperties}
+                                      info={I18n.t("history.includeCOProperties")}
+                                      onChange={e => this.setState({
+                                          includeCOProperties: e.target.checked,
+                                          selected: null
+                                      })}
+                            />
+                            <CheckBox name="includeMembers"
+                                      value={includeMembers}
+                                      info={I18n.t("history.includeMembers")}
+                                      onChange={e => this.setState({
+                                          includeMembers: e.target.checked,
+                                          selected: null
+                                      })}
+                            />
+                            <CheckBox name="includeServices"
+                                      value={includeServices}
+                                      info={I18n.t("history.includeServices")}
+                                      onChange={e => this.setState({
+                                          includeServices: e.target.checked,
+                                          selected: null
+                                      })}
+                            />
+                        </div>
+                        <div className="search">
+                            <div className={"sds--text-field sds--text-field--has-icon"}>
+                                <div className="sds--text-field--shape">
+                                    <div className="sds--text-field--input-and-icon">
+                                        <input className={"sds--text-field--input"}
+                                               type="search"
+                                               onChange={e =>
+                                                   this.setState({
+                                                       query: e.target.value,
+                                                       selected: null
+                                                   })}
+                                               value={query}
+                                               placeholder={I18n.t("history.searchPlaceholder")}/>
+                                        <span className="sds--text-field--icon">
+                                    <SearchIcon/>
+                                </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <Button txt={I18n.t("history.export")}
+                                    onClick={() => this.exportData(auditLogEntries)}
+                            />
+                        </div>
+
+                    </div>}
+                <div className="activity">
+                    {this.renderAuditLogs(auditLogEntries, selected, page)}
+                    {(!isEmpty(auditLogEntries) && !isEmpty(selected)) &&
+                        this.renderDetail(selected, auditLogs)}
+                </div>
+            </div>);
     }
 
 }

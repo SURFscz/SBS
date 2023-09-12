@@ -1720,6 +1720,11 @@ const nl = {
             tablesPlaceHolder: "Selecteer tabellen",
             submit: "Haal op"
         },
+        export: "Exporteer naar JSON",
+        searchPlaceholder: "Zoek...",
+        includeServices: "Dienst veranderingen",
+        includeMembers: "leden veranderingen",
+        includeCOProperties: "Samenwerking veranderingen",
         tables: {
             "api_keys": "Organisatie-API-tokens",
             "aups": "Acceptable User Policy",
