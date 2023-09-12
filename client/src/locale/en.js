@@ -70,8 +70,8 @@ const en = {
         unsuspend: "Revert suspension",
         avoidSuspending: "Avoid suspension",
         resetLastActivity: "Reset activity",
-        details: "Details",
         otherOptions: "Other options",
+        details: "Details",
         backToHome: "Back to home",
         firstTime: "Onboarding",
         collaborationRequest: "Request for new collaboration",
@@ -548,8 +548,8 @@ const en = {
             searchPlaceHolder: "Search for requests...",
             noEntities: "No join requests were found",
             collaborationName: "Collaboration name",
-            organisationName: "Institution",
-            requested: "Requested at"
+            requested: "Requested at",
+            organisationName: "Institution"
         },
         systemJoinRequests: {
             title: "Outdated collaboration join requests",

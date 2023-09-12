@@ -12,15 +12,20 @@ expect.extend({
 });
 
 test("All translations exists in all bundles", () => {
-    const contains = (translation, translationToVerify) => {
+    const contains = (translation, translationToVerify, keyCollection) => {
         Object.keys(translation).forEach(key => {
             expect(translationToVerify).toContainKey(key);
             const value = translation[key];
+            keyCollection.push(key);
             if (typeof value === "object") {
-                contains(value, translationToVerify[key])
+                contains(value, translationToVerify[key], keyCollection)
             }
         });
     };
-    contains(en, nl);
-    contains(nl, en);
+    const keyCollectionEN = [];
+    contains(en, nl, keyCollectionEN);
+    const keyCollectionNL = [];
+    contains(nl, en, keyCollectionNL);
+    const positionalMismatches = keyCollectionEN.filter((item, index) => keyCollectionNL[index] !== item);
+    expect(positionalMismatches.length).toEqual(0)
 });
