@@ -1724,7 +1724,7 @@ const en = {
         searchPlaceholder: "Search... ",
         includeServices: "Service changes",
         includeMembers: "Member changes",
-        includeCOProperties: "Collaboration values",
+        includeCOProperties: "Collaboration changes",
         tables: {
             "api_keys": "Organisation API tokens",
             "aups": "Acceptable User Policy",
