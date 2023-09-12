@@ -40,7 +40,7 @@ export default class History extends React.PureComponent {
                 "invitations",
                 "join_requests"]
             const includeServicesTargets = ["services", "service_connection_requests"];
-            const includeCOPropertiesTargets = ["collaborations", "groups"];
+            const includeCOPropertiesTargets = ["collaborations", "groups", "tags"];
             if (collection === "collaborations") {
                 res.audit_logs.forEach(log => {
                     if (log.target_type) {
