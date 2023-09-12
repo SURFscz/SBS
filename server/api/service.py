@@ -404,12 +404,14 @@ def toggle_access_property(service_id):
     if attribute not in ["reset", "allow_restricted_orgs", "non_member_users_access_allowed", "access_allowed_for_all",
                          "automatic_connection_allowed", "connection_setting"]:
         raise BadRequest(f"attribute {attribute} not allowed")
-    if attribute in ["allow_restricted_orgs", "non_member_users_access_allowed"]:
+    enabled = json_dict.get(attribute)
+    if attribute in ["allow_restricted_orgs"] or (attribute in ["non_member_users_access_allowed"] and enabled):
         confirm_write_access()
+
     else:
         confirm_service_admin(service_id)
     service = db.session.get(Service, service_id)
-    enabled = json_dict.get(attribute)
+
     if attribute == "reset":
         service.automatic_connection_allowed = False
         service.non_member_users_access_allowed = False
@@ -417,6 +419,7 @@ def toggle_access_property(service_id):
         service.connection_setting = "NO_ONE_ALLOWED"
         service.allowed_organisations.clear()
         service.automatic_connection_allowed_organisations.clear()
+        service.collaborations.clear()
     else:
         setattr(service, attribute, enabled)
     if attribute == "access_allowed_for_all" and enabled:

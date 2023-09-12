@@ -75,7 +75,7 @@ class Service extends React.Component {
         ip_networks: [],
         administrators: [],
         message: "",
-        required: ["name", "entity_id", "abbreviation", "privacy_policy", "logo", "security_email",
+        required: ["name", "entity_id", "abbreviation", "logo", "security_email",
             "research_scholarship_compliant", "code_of_conduct_compliant", "sirtfi_compliant"],
         alreadyExists: {},
         initial: true,
@@ -657,16 +657,10 @@ class Service extends React.Component {
                                     privacy_policy: e.target.value,
                                     invalidInputs: {...invalidInputs, privacy_policy: false}
                                 })}
-                                error={!initial && isEmpty(privacy_policy)}
                                 toolTip={I18n.t("service.privacy_policyTooltip")}
                                 externalLink={true}
                                 onBlur={this.validateURI("privacy_policy")}
                     />
-                    {
-                        (!initial && isEmpty(privacy_policy)) && <ErrorIndicator msg={I18n.t("service.required", {
-                            attribute: I18n.t("service.privacy_policy").toLowerCase()
-                        })}/>
-                    }
                     {
                         invalidInputs["privacy_policy"] &&
                         <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>

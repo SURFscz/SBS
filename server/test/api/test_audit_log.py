@@ -1,7 +1,8 @@
+from datetime import datetime
 
 from flask import jsonify
 
-from server.db.audit_mixin import ACTION_DELETE, ACTION_CREATE, ACTION_UPDATE
+from server.db.audit_mixin import ACTION_DELETE, ACTION_CREATE, ACTION_UPDATE, AuditLog
 from server.db.domain import User, Collaboration, Service, Organisation, Group
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_cloud_name, ai_computing_name, \
@@ -135,3 +136,10 @@ class TestAuditLog(AbstractTest):
         self.assertEqual(2, len(res["audit_logs"]))
         self.assertEqual(1, len(res["organisations"]))
         self.assertEqual(2, len(res["users"]))
+
+    def test_no_last_activity_date_only_audit_logs(self):
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        collaboration.last_activity_date = datetime.now()
+        self.save_entity(collaboration)
+        audit_logs = AuditLog.query.all()
+        self.assertEqual(0, len(audit_logs))

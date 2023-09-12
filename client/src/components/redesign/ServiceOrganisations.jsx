@@ -210,7 +210,7 @@ class ServiceOrganisations extends React.Component {
 
     setInstitutionAccessValue = value => {
         const {service} = this.props;
-                this.setState({loading: true});
+        this.setState({loading: true});
         toggleAccessAllowedForAll(service.id, value === ALL_INSTITUTIONS)
             .then(() => this.refreshService(() => this.setState({institutionAccessValue: value})))
     }
@@ -345,7 +345,8 @@ class ServiceOrganisations extends React.Component {
                     <div className={`options-container ${showEntities ? "" : "no-entities"}`}>
                         <div>
                             <h4>{I18n.t("service.connectionSettings.connectQuestion")}</h4>
-                            <BlockSwitchChoice value={connectionAllowedValue} items={connectionAllowedChoices}
+                            <BlockSwitchChoice value={connectionAllowedValue}
+                                               items={connectionAllowedChoices}
                                                setValue={this.setConnectionAccessValue}/>
                         </div>
                         {connectionAllowedValue === SELECTED_INSTITUTION &&
@@ -361,10 +362,10 @@ class ServiceOrganisations extends React.Component {
                                 <BlockSwitchChoice value={connectionSettingValue} items={connectionSettingChoices}
                                                    setValue={this.setConnectionSettingValue}/>
                             </div>}
-                        {(service.non_member_users_access_allowed && (!userAdmin || showServiceAdminView)) &&
-                            <div className={"radio-button-container"}>
-                                <span>{I18n.t("service.nonMemberUsersAccessAllowedTooltip")}</span>
-                            </div>}
+                    </div>}
+                {(service.non_member_users_access_allowed && (!userAdmin || showServiceAdminView)) &&
+                    <div className={"options-container radio-button-container"}>
+                        <span>{I18n.t("service.nonMemberUsersAccessAllowedTooltip")}</span>
                     </div>}
                 {showEntities &&
                     <Entities entities={availableOrganisations}

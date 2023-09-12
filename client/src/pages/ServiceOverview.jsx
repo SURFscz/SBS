@@ -49,7 +49,7 @@ class ServiceOverview extends React.Component {
         super(props, context);
         this.state = {
             service: {ip_networks: []},
-            required: ["name", "entity_id", "abbreviation", "privacy_policy", "logo", "security_email"],
+            required: ["name", "entity_id", "abbreviation", "logo", "security_email"],
             alreadyExists: {},
             invalidInputs: {},
             confirmationDialogOpen: false,
@@ -117,7 +117,7 @@ class ServiceOverview extends React.Component {
         ["security_email", "support_email"].forEach(name => {
             invalidInputs[name] = !(isEmpty(service[name]) || validEmailRegExp.test(service[name]) || validUrlRegExp.test(service[name]));
         });
-        ["accepted_user_policy", "uri_info", "privacy_policy", "uri", "scim_url"].forEach(name => {
+        ["accepted_user_policy", "uri_info", "uri", "scim_url"].forEach(name => {
             let serviceElement = service[name];
             if (name === "uri" && !isEmpty(serviceElement)) {
                 serviceElement = serviceElement.toLowerCase().replaceAll(CO_SHORT_NAME, "").replaceAll(SRAM_USERNAME, "");
@@ -353,7 +353,7 @@ class ServiceOverview extends React.Component {
             case "contacts":
                 return !isEmpty(service.security_email) && !contactEmailRequired && !invalidInputs.email && !invalidInputs.security_email && !invalidInputs.support_email
             case "policy":
-                return !isEmpty(service.privacy_policy) && !invalidInputs.privacy_policy && !invalidInputs.accepted_user_policy;
+                return !invalidInputs.privacy_policy && !invalidInputs.accepted_user_policy;
             case "SCIMServer":
                 return !invalidInputs.scim_url && !(service.scim_enabled && isEmpty(service.scim_url) && !initial);
             case "SCIMClient":
@@ -880,14 +880,11 @@ class ServiceOverview extends React.Component {
                             ...invalidInputs,
                             privacy_policy: false
                         })(e)}
-                        error={isEmpty(service.privacy_policy) || invalidInputs.privacy_policy}
+                        error={invalidInputs.privacy_policy}
                         toolTip={I18n.t("service.privacy_policyTooltip")}
                         externalLink={true}
                         onBlur={this.validateURI("privacy_policy")}
                         disabled={!isAdmin && !isServiceAdmin}/>
-            {isEmpty(service.privacy_policy) && <ErrorIndicator msg={I18n.t("service.required", {
-                attribute: I18n.t("service.privacy_policy").toLowerCase()
-            })}/>}
             {invalidInputs.privacy_policy &&
                 <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
 
