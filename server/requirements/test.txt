@@ -7,7 +7,7 @@ hbmqtt2==0.9.7
 pytest-cov==4.1.0
 pytest==7.4.1
 responses==0.23.3
-alembic==1.11.3
+alembic==1.12.0
 freezegun==1.2.2
 coverage==7.3.0
 mock==5.1.0
