@@ -77,6 +77,10 @@ def save_service_group():
     service_group = res[0]
     service = service_group.service
     collaborations = list(set(flatten([org.collaborations for org in service.organisations]) + service.collaborations))
+
+    # Ensure to skip current_user is CO admin check
+    request_context.skip_collaboration_admin_confirmation = True
+
     for collaboration in collaborations:
         create_service_group(service, collaboration, service_group)
 
