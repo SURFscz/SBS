@@ -314,7 +314,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     # ldap_password is 'changethispassword'
     cloud = Service(entity_id=service_cloud_entity_id, name=service_cloud_name, description="SARA Cloud Service",
                     public_visible=True, automatic_connection_allowed=True, logo=read_image("cloud.jpg"),
-                    allowed_organisations=[uuc, uva], abbreviation="cloud", privacy_policy="https://privacy.org",
+                    allowed_organisations=[uuc, uva], abbreviation="cloud",
                     token_enabled=True, token_validity_days=1, security_email="sec@org.nl", scim_client_enabled=True,
                     scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret")
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, uva],

@@ -57,15 +57,17 @@ export default function ServiceCard({
         const admin = !isEmpty(service.contact_email) ? service.contact_email : !isEmpty(admins) ? admins[0].email : null;
         const adminName = !isEmpty(service.contact_email) ? service.contact_email : !isEmpty(admins) ? admins[0].name : null;
         const compliance = service.sirtfi_compliant || service.code_of_conduct_compliant || service.research_scholarship_compliant;
-        const supportEmail = service.support_email
+        const supportEmail = service.support_email;
+        const hasPrivacyPolicy = !isEmpty(service.privacy_policy);
         return (
             <div className={"service-metadata"}>
                 <div className={"policies"}>
                     <dt>{I18n.t("service.policies")}</dt>
-                    {service.privacy_policy &&
+                    {hasPrivacyPolicy &&
                         <a href={service.privacy_policy} target="_blank" rel="noopener noreferrer">
                             {I18n.t("footer.privacy")}
                         </a>}
+                    {!hasPrivacyPolicy && <p>{I18n.t("models.services.confirmations.noPolicy")}</p>}
                     {service.accepted_user_policy &&
                         <a href={service.accepted_user_policy} target="_blank" rel="noopener noreferrer">
                             {I18n.t("service.accepted_user_policy")}

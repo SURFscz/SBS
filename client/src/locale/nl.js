@@ -312,7 +312,8 @@ const nl = {
             confirmations: {
                 add: "Weet je zeker dat je {{service}} beschikbaar wil maken voor alle leden van {{name}}?",
                 remove: "Weet je zeker dat je {{service}} wil ontkoppelen van {{name}}?",
-                check: "Ik ben bekend met de <a target=\"_blank\" href=\"{{aup}}\">AUP</a> van {{name}}"
+                check: "Ik ben bekend met de <a target=\"_blank\" href=\"{{aup}}\">AUP</a> van {{name}}",
+                noPolicy: "Deze dienst heeft geen privacy policy opgegeven!"
             },
             statuses: {
                 active: "Ingeschakeld door organisatie",

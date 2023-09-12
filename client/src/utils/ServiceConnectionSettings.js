@@ -18,9 +18,10 @@ export const connectionAllowed = service => {
     if (service.non_member_users_access_allowed) {
         return ALL_ALLOWED;
     }
+    const hasOrganisations = isEmpty(service.allowed_organisations);
+    const hasAutomaticOrganisations = isEmpty(service.automatic_connection_allowed_organisations);
     if (!service.automatic_connection_allowed && !service.access_allowed_for_all
-        && isEmpty(service.allowed_organisations) && isEmpty(service.automatic_connection_allowed_organisations
-            && service.connection_setting === "NO_ONE_ALLOWED")) {
+        && hasOrganisations && hasAutomaticOrganisations && service.connection_setting === NO_ONE_ALLOWED) {
         return NO_ONE_ALLOWED;
     }
     return SELECTED_INSTITUTION;

@@ -312,7 +312,8 @@ const en = {
             confirmations: {
                 add: "Are you sure you want to make {{service}} available for all members of {{name}}?",
                 remove: "Are you sure you want to remove {{service}} from {{name}}?",
-                check: "I know about the <a target=\"_blank\" href=\"{{aup}}\">AUP</a> of {{name}}"
+                check: "I know about the <a target=\"_blank\" href=\"{{aup}}\">AUP</a> of {{name}}",
+                noPolicy: "This service did not provide a privacy policy!"
             },
             statuses: {
                 active: "Enabled by organisation",

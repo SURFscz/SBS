@@ -166,7 +166,7 @@ class UsedServices extends React.Component {
         this.confirm(action, I18n.t("models.services.confirmations.add", {
                 service: service.name,
                 name: collaboration.name
-            }), false, !isEmpty(service.accepted_user_policy),
+            }), false, !isEmpty(service.accepted_user_policy || isEmpty(service.privacy_policy)),
             !isEmpty(service.accepted_user_policy));
     };
 
@@ -281,6 +281,7 @@ class UsedServices extends React.Component {
 
     renderRequestConnectionService = (requestConnectionService, message, confirmedAupConnectionRequest) => {
         const needToAcceptUserPolicy = !isEmpty(requestConnectionService.accepted_user_policy);
+        const warnAboutPrivacyPolicy = isEmpty(requestConnectionService.privacy_policy);
         return (
             <div className={"used-services-mod"}>
                 <div>
@@ -298,6 +299,9 @@ class UsedServices extends React.Component {
                                 multiline={true}
                                 large={true}
                                 onChange={e => this.setState({message: e.target.value})}/>
+                    {warnAboutPrivacyPolicy && <p className="no-privacy-policy">
+                        {I18n.t("models.services.confirmations.noPolicy")}
+                    </p>}
                     {needToAcceptUserPolicy && <CheckBox name="disabledConfirm"
                                                          value={confirmedAupConnectionRequest}
                                                          onChange={() => this.setState({confirmedAupConnectionRequest: !this.state.confirmedAupConnectionRequest})}
@@ -318,14 +322,19 @@ class UsedServices extends React.Component {
     }
 
     renderConfirmationChildren = (service, disabledConfirm) => {
+        const warnAboutPrivacyPolicy = isEmpty(service.privacy_policy);
+        const includeAup = !isEmpty(service.accepted_user_policy)
         return <div className="service-confirmation">
-            <CheckBox name="disabledConfirm"
+            {warnAboutPrivacyPolicy && <p className="no-privacy-policy">
+                        {I18n.t("models.services.confirmations.noPolicy")}
+                    </p>}
+            {includeAup && <CheckBox name="disabledConfirm"
                       value={!disabledConfirm}
                       onChange={() => this.setState({disabledConfirm: !this.state.disabledConfirm})}
                       info={I18n.t("models.services.confirmations.check", {
                           aup: service.accepted_user_policy,
                           name: service.name
-                      })}/>
+                      })}/>}
         </div>
     }
     queryChanged = e => {
