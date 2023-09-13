@@ -6,7 +6,7 @@ const en = {
     header: {
         title: "Research Access Management",
         links: {
-            login: "Login",
+            login: "Log in",
             system: "System",
             impersonate: "Impersonate",
             createCollaboration: "Create collaboration",
@@ -56,7 +56,7 @@ const en = {
     },
     login: {
         title: "Research Access Management",
-        subTitle: "Please login...",
+        subTitle: "Please log in...",
         suspended: "Your profile has been suspended. Please contact sram-support@surf.nl to resolve this",
         rateLimited: "You have attempted the TOTP verification too many times, and therefore you are logged out and your profile has been suspended. Contact your admin to resolve this",
         successfullyActivated: "You have re-activated your profile",
@@ -510,19 +510,19 @@ const en = {
         invitation: {
             welcome: "Welcome to SURF Research Access Management. Here access to research services for research collaborations is managed.",
             invited: "You have been invited to join {{type}} <strong>'{{collaboration}}'</strong> by <a href=\"mailto:{{email}}\">{{inviter}}</a>",
-            followingSteps: "SURF Research Access Management gives members of research collaborations fast and secure access to research services.</br></br>You can login with your institution account or eduID.",
+            followingSteps: "SURF Research Access Management gives members of research collaborations fast and secure access to research services.</br></br>You can log in with your institution account or eduID.",
             steps: {
                 progress: "{{now}} of {{total}}",
-                login: "Login",
+                login: "Log in",
                 next: "Next: {{step}}",
                 invite: "Join the collaboration",
                 inviteOrg: "Join the organisation",
                 inviteService: "Manage your service",
                 collaborate: "Collaborate!"
             },
-            login: "Please login to identify yourself",
-            loginWithSub: "Login to accept the invite",
-            loginTip: "You can use your institution account to login, or use a guest account like eduID",
+            login: "Please log in to identify yourself",
+            loginWithSub: "Log in to accept the invite",
+            loginTip: "You can use your institution account to log in, or use a guest account like eduID",
             accept: "I accept these terms",
             noAccept: "No, I don't agree",
             acceptInvitation: "Yes, I accept the invitation",
@@ -628,7 +628,7 @@ const en = {
     user: {
         titleUpdate: "Update your user profile SSH keys",
         ssh_key: "SSH public keys",
-        ssh_keyPlaceholder: "Your public SSH keys to login on services",
+        ssh_keyPlaceholder: "Your public SSH keys to log in to services",
         ssh_keyTooltip: "Your public SSH keys will be provisioned to the services you have access to. You can also upload your public SSH key.",
         sshKeyError: "This SSH cipher isn't recognized. Please refer to the <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://edu.nl/87btm\">documentation</a> for supported formats.",
         sshConvertInfo: "Public key will be converted to the <code>OpenSSH</code> format when saving the profile",
@@ -868,7 +868,7 @@ const en = {
         activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send them an email with an activation link.",
         lastAdminWarning: "You are leaving this collaboration without admins. After this, management of the collaboration can only be carried out by the admins of organisation {{name}}",
         lastAdminWarningUser: "You are the last admin in this collaboration. After you leave, management of the collaboration can only be carried out by the admins of organisation {{name}}",
-        activateMemberTooltip: "Revert this user's suspension. Suspended users cannot login",
+        activateMemberTooltip: "Revert this user's suspension. Suspended users cannot log in",
         expiryDateChange: "Are you sure you want to change the expiry date for {{name}} to {{date}}",
         expiryDateReset: "Are you sure you want to remove the expiry date for {{name}}",
         flash: {
@@ -952,8 +952,8 @@ const en = {
         identity_typePlaceholder: "The identity type of the service",
         identity_typeTooltip: "The primary way of identification for this service",
         uri: "Login URL for users",
-        uriPlaceholder: "The URL where users login to the service",
-        uriTooltip: "URL where users can login to your service, displayed prominently to collaboration members.<br/><br/>" +
+        uriPlaceholder: "The URL where users log in to the service",
+        uriTooltip: "URL where users can log in to your service, displayed prominently to collaboration members.<br/><br/>" +
             "These variables will be replaced with the appropriate values: <em>{CO_short_name}</em> and <em>{username}</em>.",
         infoUri: "Website",
         infoUriPlaceholder: "The URL with information about this service",
@@ -1079,7 +1079,7 @@ const en = {
         policiesSupport: "Policies & Support",
         tokens: "My Tokens",
         policyCompliance: "Compliant policies",
-        login: "Login",
+        login: "Log in",
         support: "Support for end user",
         supportShort: "Support",
         supportContactPre: "For support please contact ",
@@ -1426,7 +1426,7 @@ const en = {
         expiryDate: "Invitation expires on",
         expiryDateTooltip: "The expiration date of the invitation, after which the invitation can no longer be accepted.",
         membershipExpiryDate: "Membership valid until",
-        membershipExpiryDateTooltip: "The expiration date of the membership, after which the user cannot login to services connected to this collaboration.",
+        membershipExpiryDateTooltip: "The expiration date of the membership, after which the user cannot log in to services connected to this collaboration.",
         flash: {
             inviteDeclined: "Invitation for collaboration {{name}} was declined.",
             inviteAccepted: "Invitation for collaboration {{name}} was accepted.",
@@ -1618,12 +1618,12 @@ const en = {
         },
         service: {
             title: "Review the information in order to continue",
-            info: "You are about to login to <strong>{{name}}</strong>. Before you can continue you must review the acceptable use policy (AUP) and privacy policy of the service. Confirm below whether you accept them.",
+            info: "You are about to log in to <strong>{{name}}</strong>. Before you can continue you must review the acceptable use policy (AUP) and privacy policy of the service. Confirm below whether you accept them.",
             noPrivacyPolicy: "No privacy policy provided!",
             noAup: "No AUP provided",
             agreeWithTerms: "I hereby certify that I have read these terms and that I accept them",
-            firstLogin: "Proceed to login and afterwards you'll return here to view the policies of {{name}}",
-            login: "Login",
+            firstLogin: "Proceed to log in and afterwards you'll return here to view the policies of {{name}}",
+            login: "Log in",
             proceed: "Proceed to {{name}}",
             multipleCollaborations: "This service is used within multiple collaborations you are a member of.",
             purposeOf: "Purpose of <strong>{{name}}</strong>",
@@ -1825,7 +1825,7 @@ const en = {
     not_found: {
         title: "404",
         description_html: "The requested page could not be found",
-        loginLink: "Login"
+        loginLink: "Log in"
     },
     footer: {
         support: "Support",
@@ -1980,12 +1980,12 @@ const en = {
     },
     welcome: {
         title: "Hi {{name}},",
-        subTitle: "With <strong>SURF Research Access Management</strong> you can login to research services and collaborate with other researchers.",
+        subTitle: "With <strong>SURF Research Access Management</strong> you can log in to research services and collaborate with other researchers.",
         unknown: "an unknown institution",
         mysterious: "mysterious guest",
-        joining: "Joining a collaboration",
-        invited: "Have you been invited to join a collaboration? Use the link from the invite email.",
-        creating: "Starting a collaboration",
+        joining: "Have been invited?",
+        invited: "Have you been invited to join a collaboration? Use the link in the invite email.",
+        creating: "Creating a new collaboration?",
         institutionCollNotAllowed: "You have logged in via <strong>{{name}}</strong> which does not allow you to create a collaboration. If that is unexpected, please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> for help.",
         startCreateColl: "You have logged in via <strong>{{name}}</strong> which allows you to create a collaboration, to which you can connect services and invite researchers.",
         startRequestColl: "You have logged in via <strong>{{name}}</strong>, and you can request them to create a collaboration for you. After they approve your request, you can connect services and invite researchers.",
@@ -2008,8 +2008,8 @@ const en = {
     landing: {
         header: {
             title: "Easy and secure access to research services for research collaborations",
-            login: "Login",
-            sup: "New to SURF Research Access Management? Login and see your possibilities.",
+            login: "Log in",
+            sup: "New to SURF Research Access Management? Log in and create a collaboration with your institution.",
         },
         works: "How does it work?",
         adminFunction: "admin function",
@@ -2041,8 +2041,8 @@ const en = {
     },
     notFound: {
         invitationNotFound: "This invitation does not exist (anymore). The invitation has probably already been used. Ask the person who invited you to send you a new one.",
-        invalidSecondFactorUUID: "The link has expired. Please go back to the service where you we're trying to login and try again.",
-        invalidPamWebSSO: "Your session has expired. Please go back to the service you were trying to login to and try again.",
+        invalidSecondFactorUUID: "The link has expired. Please go back to the service where you we're trying to log in and try again.",
+        invalidPamWebSSO: "Your session has expired. Please go back to the service you were trying to log in to and try again.",
         msg: "We can't seem to find that page. Sorry for that.</br></br>" +
             "Start over on the <a href='{{base_url}}'>homepage</a> or contact us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
     },
@@ -2205,7 +2205,7 @@ const en = {
         tokenEnabled: "User token introspection",
         tokenEnabledTooltip: "Allow this service to call the introspection endpoint to receive user information?",
         pamWebSSOEnabled: "PAM web login",
-        pamWebSSOEnabledTooltip: "Allow this service to call the PAM web login endpoints to login an user on a terminal-based app (e.g., an SSH client)?",
+        pamWebSSOEnabledTooltip: "Allow this service to call the PAM web login endpoints to log in an user on a terminal-based app (e.g., an SSH client)?",
         tokenValue: "One-way hashed token",
         tokenValidityDays: "User token validity (days)",
         tokenValidityDaysTooltip: "The number of days the user tokens are valid",
@@ -2229,9 +2229,9 @@ const en = {
         }
     },
     pamWebSSO: {
-        title: "Login to {{service}}",
-        info: "Login to get the verfication code required for the command line interface",
-        proceed: "Login",
+        title: "Log in to {{service}}",
+        info: "Log in to get the verfication code required for the command line interface",
+        proceed: "Log in",
         enterPin: "Your verification code",
         enterPinInfo: "Please enter this code in the command line interface of {{service}}.",
         afterPin: "After entering the code you can close this screen.",
