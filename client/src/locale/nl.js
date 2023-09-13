@@ -336,8 +336,8 @@ const nl = {
             hideInvites: "Verberg uitnodigingen",
             noCollaborations: "Er zijn nog geen samenwerkingen in deze organisatie. Zullen we er een aanmaken?",
             noCollaborationsRequest: "Er zijn nog geen samenwerkingen in deze organisatie. Zullen we er een aanvragen?",
-            noCollaborationsUser: "Er zijn nog geen samenwerkingen in deze organisatie. Zullen we er een aanmaken?",
-            noCollaborationsRequestUser: "Er zijn nog geen samenwerkingen in deze organisatie. Zullen we er een aanvragen?",
+            noCollaborationsUser: "Je bent nog niet lid van een samenwerking. Zullen we er een aanmaken?",
+            noCollaborationsRequestUser: "Je bent nog niet lid van een samenwerking. Zullen we er een aanvragen?",
             allLabels: "Alle labels",
         },
         serviceOrganisations: {
