@@ -987,7 +987,7 @@ const en = {
         accessAllowedForAllInfo: "All organisations are enabled by default for this service",
         nonMemberUsersAccessAllowed: "Accessible without membership of a collaboration",
         nonMemberUsersAccessAllowedTooltip: "All users of the platform can access this service, regardless of any collaboration membership.",
-        connectCollaborationsInfo: "CO's of some organisations can join & CO connection settings differ per institution",
+        connectCollaborationsInfo: "Collaborations of some organisations can join & connection settings differ per institution",
         viewSettings: "View settings",
         allowRestrictedOrgs: "SURF service",
         allowRestrictedOrgsTooltip: "Allow this service to be linked to collaborations of a SURF organisation.",
@@ -2360,13 +2360,13 @@ const en = {
         expiresTooltip: "Membership expires {{date}}"
     },
     servicePageHeaders: {
-        notConnected: "<span class='not-connected'>Not connected</span> to CO's",
-        allConnected: "Connected to <span class='all-connected'>all</span> CO's",
+        notConnected: "<span class='not-connected'>Not connected</span> to COs",
+        allConnected: "Connected to <span class='all-connected'>all</span> COs",
         connectedToSingle: "Connected to {{count}} CO",
-        connectedToMultiple: "Connected to {{count}} CO's",
-        notAvailable: " & <span class='not-available'>not available</span> for institutions",
-        availableSingle: " & available for <span class='all-connected'>{{count}} institution</span>",
-        availableMultiple: " & available for <span class='all-connected'>{{count}} institutions</span>",
+        connectedToMultiple: "Connected to {{count}} COs",
+        notAvailable: " & <span class='not-available'>not available</span> for any organisation",
+        availableSingle: " & available for <span class='all-connected'>{{count}} organisations</span>",
+        availableMultiple: " & available for <span class='all-connected'>{{count}} organisations</span>",
         all: "all",
         launch: "Launch service",
         visit: "visit public website"
