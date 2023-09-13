@@ -2158,7 +2158,7 @@ const nl = {
         status: {
             name: "Je lidmaatschap",
             active: "Actief",
-            expired: "Verlopen",
+            expired: "Lidmaatschap verlopen",
             activeWithExpiryDate: "Verloopt op {{date}}",
             activeTooltip: "Je lidmaatschap heeft geen einddatum.",
             expiredTooltip: "Je lidmaatschap is verlopen op {{date}}. ",
