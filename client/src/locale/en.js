@@ -451,7 +451,7 @@ const en = {
             about: "What our collaboration is about",
             services: "We collaborate in {{nbr}} services",
             noServicesYet: "Where we collaborate",
-            noServices: "There are no services available in this collaboration",
+            noServices: "No services are connected to this collaboration yet",
             noServicesJoinRequest: "Services are only visible for members",
             servicesStart: "Click the button to start the service, or read the instructions first.",
             instructions: "Instructions",
@@ -2158,12 +2158,12 @@ const en = {
         status: {
             name: "Your membership",
             active: "Active",
-            expired: "Expired",
+            expired: "Membership expired",
             activeWithExpiryDate: "Expires on {{date}}",
             activeTooltip: "Your membership has no expiration date.",
             expiredTooltip: "Your membership has expired on {{date}}.",
             expiredTooltipMember: "Your membership has expired on {{date}}. Please contact the admins of this collaboration for help. ",
-            activeWithExpiryDateTooltip: "Your membership is active, however, it will expire at {{date}}. "
+            activeWithExpiryDateTooltip: "Your membership is active, but it will expire at {{date}}. "
         }
     },
     serviceDetail: {
