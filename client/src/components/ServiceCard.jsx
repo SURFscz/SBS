@@ -154,7 +154,7 @@ export default function ServiceCard({
                            onClick={toggleShowPolicies}>{I18n.t("service.policiesSupport")}{showPolicies ? <ArrowUp/> :
                             <ArrowDown/>}</a>
                     </li>
-                    {tokenAction && <li>
+                    {(tokenAction && service.token_enabled) && <li>
                         <a href={`/tokens`} onClick={tokenAction}>{I18n.t("service.tokens")}</a>
                     </li>}
                 </ul>
