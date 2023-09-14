@@ -26,7 +26,7 @@ class Welcome extends React.Component {
     componentDidMount() {
         const {user} = this.props;
         const role = rawGlobalUserRole(user);
-        if (role !== ROLES.USER || !isEmpty(user.collaboration_requests) || !isEmpty(user.join_requests)) {
+        if (role !== ROLES.USER || !isEmpty(user.collaboration_requests) || !isEmpty(user.service_requests) || !isEmpty(user.join_requests)) {
             this.props.history.push("/home");
             return;
         }

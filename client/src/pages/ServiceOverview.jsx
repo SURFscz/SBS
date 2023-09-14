@@ -527,7 +527,7 @@ class ServiceOverview extends React.Component {
 
         return (<div className={"pamWebLogin"}>
             <CheckBox name={"pam_web_sso_enabled"}
-                      value={service.pam_web_sso_enabled}
+                      value={service.pam_web_sso_enabled || false}
                       onChange={e => this.setState({
                           "service": {
                               ...service, pam_web_sso_enabled: e.target.checked
@@ -546,7 +546,7 @@ class ServiceOverview extends React.Component {
         }
         return (<div className={"scim"}>
             <CheckBox name={"scim_client_enabled"}
-                      value={service.scim_client_enabled}
+                      value={service.scim_client_enabled || false}
                       tooltip={I18n.t("scim.scimClientEnabledTooltip")}
                       info={I18n.t("scim.scimClientEnabled")}
                       readOnly={!isAdmin || showServiceAdminView}
@@ -571,7 +571,7 @@ class ServiceOverview extends React.Component {
         }
         return (<div className={"scim"}>
             <CheckBox name={"scim_enabled"}
-                      value={service.scim_enabled}
+                      value={service.scim_enabled || false}
                       tooltip={I18n.t("scim.scimEnabledTooltip")}
                       info={I18n.t("scim.scimEnabled")}
                       readOnly={!isAdmin || showServiceAdminView}
@@ -604,7 +604,7 @@ class ServiceOverview extends React.Component {
                         disabled={!service.scim_enabled}/>
 
             <CheckBox name={"sweep_scim_enabled"}
-                      value={service.sweep_scim_enabled}
+                      value={service.sweep_scim_enabled || false}
                       tooltip={I18n.t("scim.sweepScimEnabledTooltip")}
                       info={I18n.t("scim.sweepScimEnabled")}
                       readOnly={!service.scim_enabled}
@@ -618,7 +618,7 @@ class ServiceOverview extends React.Component {
             />
 
             <CheckBox name={"sweep_remove_orphans"}
-                      value={service.sweep_remove_orphans && service.sweep_scim_enabled}
+                      value={(service.sweep_remove_orphans && service.sweep_scim_enabled) || false}
                       tooltip={I18n.t("scim.scimSweepDeleteOrphansTooltip")}
                       info={I18n.t("scim.scimSweepDeleteOrphans")}
                       readOnly={!service.scim_enabled || !service.sweep_scim_enabled}
@@ -694,7 +694,7 @@ class ServiceOverview extends React.Component {
 
         return (<div className={"tokens"}>
             <CheckBox name={"token_enabled"}
-                      value={service.token_enabled}
+                      value={service.token_enabled || false}
                       tooltip={I18n.t("userTokens.tokenEnabledTooltip")}
                       info={I18n.t("userTokens.tokenEnabled")}
                       onChange={e => this.setState({
@@ -787,7 +787,7 @@ class ServiceOverview extends React.Component {
         return (
             <div className={"ldap"}>
                 <CheckBox name={"ldap_enabled"}
-                          value={service.ldap_enabled}
+                          value={service.ldap_enabled || false}
                           tooltip={I18n.t("service.ldap.ldapEnabledTooltip")}
                           info={I18n.t("service.ldap.ldapClient")}
                           onChange={e => this.setState({
@@ -1038,7 +1038,7 @@ class ServiceOverview extends React.Component {
                         disabled={!isAdmin && !isServiceAdmin}/>
 
             <CheckBox name="allow_restricted_orgs"
-                      value={service.allow_restricted_orgs}
+                      value={service.allow_restricted_orgs || false}
                       info={I18n.t("service.allowRestrictedOrgs")}
                       readOnly={!isAdmin || showServiceAdminView}
                       tooltip={I18n.t("service.allowRestrictedOrgsTooltip")}
