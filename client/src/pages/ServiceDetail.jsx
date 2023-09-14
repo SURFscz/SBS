@@ -29,7 +29,7 @@ import {ReactComponent as UserAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ConnectedIcon} from "../icons/groups.svg";
 import ServiceOrganisations from "../components/redesign/ServiceOrganisations";
 import SpinnerField from "../components/redesign/SpinnerField";
-import {isEmpty, removeDuplicates, splitListSemantically, stopEvent} from "../utils/Utils";
+import {capitalize, isEmpty, removeDuplicates, splitListSemantically, stopEvent} from "../utils/Utils";
 import {actionMenuUserRole, isUserServiceAdmin} from "../utils/UserRole";
 import ServiceConnectionRequests from "../components/redesign/ServiceConnectionRequests";
 import {ReactComponent as GroupsIcon} from "../icons/ticket-group.svg";
@@ -505,12 +505,13 @@ class ServiceDetail extends React.Component {
     }
 
     getIconListItems = iconListItems => {
-        return (<div className={"icon-list-items"}>
-            {iconListItems.map((item, index) => <div className={"icon-list-item"} key={index}>
-                {item.Icon}
-                {item.value}
-            </div>)}
-        </div>);
+        return (
+            <div className={"icon-list-items"}>
+                {iconListItems.map((item, index) => <div className={"icon-list-item"} key={index}>
+                    {item.Icon}
+                    {item.value}
+                </div>)}
+            </div>);
     }
 
     render() {
@@ -575,12 +576,12 @@ class ServiceDetail extends React.Component {
             iconListItems.push({
                 Icon: <WebsiteIcon/>,
                 value: <span>
-                    {service.uri_info && <a href={service.uri_info} target="_blank" rel="noopener noreferrer">
+                    {service.uri && <a href={service.uri} target="_blank" rel="noopener noreferrer">
                         {I18n.t("servicePageHeaders.launch")}
                     </a>}
-                    {(service.uri_info && service.uri) && <span>{I18n.t("service.or")}</span>}
-                    {service.uri && <a href={service.uri} target="_blank" rel="noopener noreferrer">
-                        {I18n.t("servicePageHeaders.visit")}
+                    {(service.uri && service.uri_info) && <span>{I18n.t("service.or")}</span>}
+                    {service.uri_info && <a href={service.uri_info} target="_blank" rel="noopener noreferrer">
+                        {service.uri ? I18n.t("servicePageHeaders.visit") : capitalize(I18n.t("servicePageHeaders.visit"))}
                     </a>}
                 </span>
             })
