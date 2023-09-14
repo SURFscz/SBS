@@ -516,7 +516,7 @@ def save_collaboration_api():
     logo = data.get("logo")
     if logo and logo.startswith("http") and bool(uri_re.match(logo)):
         try:
-            res = urllib.request.urlopen(logo)
+            res = urllib.request.urlopen(logo, timeout=10)
             if res.status == 200:
                 data["logo"] = transform_image(res.read())
         except Exception as e:
