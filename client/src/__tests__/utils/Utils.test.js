@@ -1,4 +1,4 @@
-import {groupBy, removeDuplicates, sortObjects, splitListSemantically} from "../../utils/Utils";
+import {capitalize, groupBy, removeDuplicates, sortObjects, splitListSemantically} from "../../utils/Utils";
 
 test("GroupBy", () => {
     expect({
@@ -53,3 +53,11 @@ test("splitListSemantically", () => {
     expect(splitListSemantically(["1"], "and")).toEqual("1");
     expect(splitListSemantically([], "and")).toEqual("");
 });
+
+test("capitalize", () => {
+    expect(capitalize(undefined)).toEqual(undefined);
+    expect(capitalize(null)).toEqual(null);
+    expect(capitalize("")).toEqual("");
+    expect(capitalize(" ")).toEqual(" ");
+    expect(capitalize("test")).toEqual("Test");
+})

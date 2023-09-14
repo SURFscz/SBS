@@ -113,4 +113,7 @@ export const shuffleArray = arr => {
     return [...arr];
 }
 
+export const capitalize = str => {
+    return isEmpty(str) ? str : (str.charAt(0).toUpperCase() + str.slice(1));
+}
 
