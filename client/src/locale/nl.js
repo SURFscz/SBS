@@ -11,7 +11,7 @@ const nl = {
             impersonate: "Imiteer",
             createCollaboration: "Nieuwe samenwerking",
             requestCollaboration: "Samenwerking aanvragen",
-            requestService: "Dienst aanvragen",
+            requestService: "Dienst registreren",
             help: "Help",
             profile: "Profiel",
             logout: "Uitloggen",
@@ -39,7 +39,7 @@ const nl = {
         system: "Systeem",
         confirmation: "Bevestiging van een beheerder",
         newOrganisation: "Nieuwe organisatie",
-        requestService: "Dienst aanvragen",
+        requestService: "Dienst registreren",
         newService: "Nieuwe dienst",
         newCollaboration: "Nieuwe samenwerking",
         newCollaborationRequest: "Nieuw samenwerkingsverzoek",
@@ -98,7 +98,7 @@ const nl = {
             collaborationRequests: "Verzoeken ({{count}})",
             joinRequests: "Lidmaatschapsverzoeken ({{count}})",
             myRequests: "Mijn verzoeken ({{count}})",
-            serviceRequests: "Dienstaanvragen ({{count}})",
+            serviceRequests: "Dienstregistratie ({{count}})",
             serviceConnectionRequests: "Koppelverzoeken ({{count}})",
             me: "Je details",
             about: "Over",
@@ -284,7 +284,7 @@ const nl = {
             noEntities: "Er zijn nog geen diensten...",
             searchPlaceHolder: "Zoek diensten...",
             new: "Voeg dienst toe",
-            request: "Dienst aanvragen",
+            request: "Dienst registreren",
             name: "Naam",
             status: "Status",
             connectionRequestCount: "Koppelverzoeken",
@@ -482,10 +482,10 @@ const nl = {
             noEntities: "Geen aanvragen voor samenwerkingen",
         },
         service_requests: {
-            title: "Aangevraagde diensten",
+            title: "Dienstregistratie",
             requester: "Aanvrager",
-            searchPlaceHolder: "Zoek dienstaanvragen...",
-            noEntities: "Geen aanvragen voor diensten",
+            searchPlaceHolder: "Zoek dienstregistratie...",
+            noEntities: "Geen aanvragen voor registratie",
         },
         member_collaboration_requests: {
             title: "Mijn samenwerkingensaanvragen",
@@ -929,7 +929,7 @@ const nl = {
         none: "Geen",
         contact: "Dienstcontactpersoon",
         titleNew: "Dienst toevoegen",
-        titleRequest: "Dienst aanvragen",
+        titleRequest: "Dienst registreren",
         titleReadOnly: "Dienst {{name}}",
         backToServices: "Terug naar diensten",
         name: "Naam",
@@ -1025,13 +1025,13 @@ const nl = {
         required: "De dienst heeft een {{attribute}} nodig.",
         deleteConfirmation: "Weet je zeker dat je dienst {{name}} wil verwijderen? Dit kan niet teruggedraaid worden.",
         add: "Opslaan",
-        request: "Aanvragen",
+        request: "Registreer",
         update: "Wijzigen",
         delete: "Verwijderen",
         cancel: "Annuleren",
         flash: {
             created: "Dienst {{name}} is aangemaakt.",
-            createdServiceRequest: "Verzoek voor dienst {{name}} is aangemaakt.",
+            createdServiceRequest: "Verzoek voor dienstregistratie {{name}} aangemaakt.",
             updated: "Dienst {{name}} is bijgewerkt.",
             deleted: "Dienst {{name}} is verwijderd.",
             tokenAdded: "Nieuw token voor {{name}} is aangemaakt",
@@ -1744,7 +1744,7 @@ const nl = {
             "service_groups": "Dienstgroepen",
             "services": "Dienst",
             "services_collaborations": "Dienst",
-            "service_requests": "Dienst verzoeken",
+            "service_requests": "Dienstregistratie",
             "users": "Gebruiker",
             "ip_networks": "IP-netwerk",
             "user_ip_networks": "Gebruiker IP adressen",
@@ -1764,15 +1764,15 @@ const nl = {
     serviceRequest: {
         title: {
             open: "{{requester}} heeft een verzoek gedaan om een nieuwe dienst '{{name}}' te maken .",
-            approved: "{{requester}} dienstaanvraag is goedgekeurd.",
-            denied: "{{requester}} dienstaanvraag is afgewezen."
+            approved: "{{requester}} dienstregistratie is goedgekeurd.",
+            denied: "{{requester}} dienstregistratie is afgewezen."
         },
         request: "Verzoek {{id}}",
         requester: "Aanvrager",
         approved: "Goedgekeurd",
         rejectionReason: "Reden voor afwijzing",
-        denyConfirmation: "Weet je zeker dat je dit verzoek wil afkeuren?",
-        deleteConfirmation: "Weet je zeker dat je dit verzoek wil verwijderen?",
+        denyConfirmation: "Weet je zeker dat je deze registratie wil afkeuren?",
+        deleteConfirmation: "Weet je zeker dat je deze registratie wil verwijderen?",
         approve: "Goedkeuren",
         deny: "Afkeuren",
         metaData: "De SAML metadata",
@@ -1786,8 +1786,8 @@ const nl = {
         },
         flash: {
             approved: "Dienst {{name}} is aangemaakt",
-            denied: "De dienstaanvraag is afgewezen",
-            deleted: "Verzoek voor dienstaanvraag {{name}} is verwijderd",
+            denied: "De dienstregistratie is afgewezen",
+            deleted: "Aanvraag voor registratie van dienst {{name}} is verwijderd",
         }
     },
     confirmation: {
@@ -2009,7 +2009,7 @@ const nl = {
         header: {
             title: "Eenvoudige en veilige toegang tot onderzoeksdiensten voor onderzoekssamenwerkingen",
             login: "Inloggen",
-            sup: "Is SURF Research Access Management nieuw voor je? Log in en begin een samenwerking bij je instelling.",
+            sup: "Is SURF Research Access Management nieuw voor je? Log in en start een samenwerking via je instelling.",
         },
         works: "Hoe werkt het?",
         adminFunction: "beheerdersfunctie",
@@ -2376,7 +2376,7 @@ const nl = {
         types: {
             joinRequest: "Lidmaatschapsverzoek",
             collaborationRequest: "Nieuw samenwerkingsverzoek",
-            serviceRequest: "Dienstaanvraag"
+            serviceRequest: "Dienstregistratie"
         },
         name: "Naam",
         description: "Omschrijving",
