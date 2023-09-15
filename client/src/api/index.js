@@ -451,6 +451,17 @@ export function schacHomes(joinRequests) {
     return postPutJson("/api/organisations/schac_homes", body, "POST");
 }
 
+export function organisationNames(joinRequests) {
+    if (isEmpty(joinRequests)) {
+        return Promise.resolve({});
+    }
+    const body = joinRequests.map(joinRequest => ({
+        "join_request_id": joinRequest.id,
+        "organisation_id": joinRequest.collaboration.organisation_id
+    }))
+    return postPutJson("/api/organisations/names", body, "POST");
+}
+
 export function allOrganisations() {
     return fetchJson("/api/organisations/all");
 }

@@ -16,7 +16,7 @@ import {
 } from "../../utils/SocketIO";
 import {chipTypeForStatus} from "../../utils/UserRole";
 import {Chip} from "@surfnet/sds";
-import {schacHomes} from "../../api";
+import {organisationNames} from "../../api";
 
 
 const allValue = "all";
@@ -95,8 +95,8 @@ export default class MyRequests extends React.PureComponent {
             })
         }
         const joinRequests = requests.filter(request => request.requestType === JOIN_REQUEST_TYPE);
-        schacHomes(joinRequests).then(res => {
-            joinRequests.forEach(jr => jr.schacHomes = res[jr.id]);
+        organisationNames(joinRequests).then(res => {
+            joinRequests.forEach(jr => jr.organisationName = res[jr.id]);
             requests.forEach(request => request.organisationName = this.organisationName(request));
             this.setState({
                 filterOptions: filterOptions.concat(statusOptions),
@@ -129,8 +129,7 @@ export default class MyRequests extends React.PureComponent {
     organisationName = request => {
         switch (request.requestType) {
             case JOIN_REQUEST_TYPE:
-                return (request.schacHomes || []).map((name, index) => <span key={index}
-                                                                             className="schac_home">{name}</span>);
+                return request.organisationName;
             case COLLABORATION_REQUEST_TYPE:
                 return request.organisation.name;
             case SERVICE_TYPE_REQUEST:
@@ -165,7 +164,7 @@ export default class MyRequests extends React.PureComponent {
             {
                 key: "organisationName",
                 header: I18n.t("myRequests.organisationName"),
-                mapper: request => this.organisationName(request),
+                mapper: request => request.organisationName,
             },
             {
                 key: "created_at",
@@ -186,7 +185,7 @@ export default class MyRequests extends React.PureComponent {
             <Entities entities={filteredRequests}
                       modelName={"my_requests"}
                       searchAttributes={["name", "description", "organisationName", "status"]}
-                      defaultSort="name"
+                      defaultSort="requestType"
                       columns={columns}
                       showNew={false}
                       filters={this.filter(filterOptions, filterValue)}

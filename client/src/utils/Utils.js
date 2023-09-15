@@ -1,5 +1,6 @@
 import moment from "moment";
 import escape from "lodash.escape";
+import I18n from "../locale/I18n";
 
 export function stopEvent(e) {
     if (e !== undefined && e !== null) {
@@ -55,6 +56,9 @@ export function sortObjects(objects, attribute, reverse) {
 export function valueForSort(attribute, obj) {
     if (attribute.endsWith("_date")) {
         return obj[attribute] || Number.MAX_SAFE_INTEGER;
+    }
+    if (attribute === "requestType") {
+        return I18n.t(`myRequests.types.${obj.requestType}`)
     }
     const val = obj[attribute];
     if (moment.isMoment(val)) {
