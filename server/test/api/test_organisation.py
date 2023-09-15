@@ -105,6 +105,13 @@ class TestOrganisation(AbstractTest):
         names = self.post("/api/organisations/schac_homes/", body=body, with_basic_auth=False)
         self.assertEqual(4, len(names))
 
+    def test_names(self):
+        self.login("urn:betty")
+        body = [{"organisation_id": jr.collaboration.organisation_id, "join_request_id": jr.id} for jr in
+                JoinRequest.query.all()]
+        names = self.post("/api/organisations/names/", body=body, with_basic_auth=False)
+        self.assertEqual(4, len(names))
+
     def test_organisation_by_id(self):
         self.login()
         organisation_id = self.find_entity_by_name(Organisation, uuc_name).id

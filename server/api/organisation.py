@@ -96,6 +96,23 @@ def find_schac_homes():
     return res, 201
 
 
+@organisation_api.route("/names", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def find_org_names():
+    data = current_request.get_json()
+    organisation_identifiers = [item["organisation_id"] for item in data]
+    organisations = Organisation.query \
+        .options(load_only(Organisation.name)) \
+        .filter(Organisation.id.in_(organisation_identifiers)) \
+        .all()
+
+    def organisation_name(organisation_id):
+        return [org.name for org in organisations if org.id == organisation_id][0]
+
+    res = {item["join_request_id"]: organisation_name(item["organisation_id"]) for item in data}
+    return res, 201
+
+
 @organisation_api.route("/all", strict_slashes=False)
 @json_endpoint
 def organisation_all():
