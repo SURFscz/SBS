@@ -202,7 +202,7 @@ class CollaborationDetail extends React.Component {
                             }, () => {
                                 AppStore.update(s => {
                                     s.breadcrumb.paths = [{
-                                        path: "/",
+                                        path: "/home?redirect=false",
                                         value: I18n.t("breadcrumb.home")
                                     }, {value: I18n.t("breadcrumb.collaborationJoinRequest", {name: collaboration.name})}]
                                     s.objectRole = actionMenuUserRole(user, collaboration.organisation, collaboration, null, true);
@@ -316,11 +316,12 @@ class CollaborationDetail extends React.Component {
 
     updateAppStore = (user, config, collaboration, adminOfCollaboration, orgManager) => {
         AppStore.update(s => {
-            s.breadcrumb.paths = orgManager ? [{path: "/?redirect=false", value: I18n.t("breadcrumb.home")}, {
+            s.breadcrumb.paths = orgManager ? [{path: "/", value: I18n.t("breadcrumb.home")}, {
                 path: `/organisations/${collaboration.organisation_id}`,
                 value: I18n.t("breadcrumb.organisation", {name: collaboration.organisation.name})
-            }, {value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})}] : [{
-                path: "/",
+            }, {value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})}]
+                : [{
+                path: "/?redirect=false",
                 value: I18n.t("breadcrumb.home")
             }, {value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})}];
             s.actions = this.getHeaderActions(user, config, collaboration);
