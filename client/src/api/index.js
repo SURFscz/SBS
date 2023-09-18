@@ -103,7 +103,7 @@ export function me(config) {
     if (config.local && 1 == 1) {
         let sub = "urn:service_admin";
         sub = "urn:john";
-        // sub = "urn:admin";
+        sub = "urn:james";
         const second_factor_confirmed = true;
         // sub = "urn:unknown";
         // Need to mock a login
@@ -111,6 +111,7 @@ export function me(config) {
             sub,
             "name": "John Doe",
             "email": "john@example.org",
+            "given_name": "Doe",
             "second_factor_confirmed": second_factor_confirmed,
             // "voperson_external_id": "john@example.com"
         }, "PUT")
