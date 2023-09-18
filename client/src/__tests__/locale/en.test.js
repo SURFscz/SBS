@@ -12,20 +12,20 @@ expect.extend({
 });
 
 test("All translations exists in all bundles", () => {
-    const contains = (translation, translationToVerify, keyCollection) => {
+    const contains = (translation, translationToVerify, keyCollection, parents) => {
         Object.keys(translation).forEach(key => {
             expect(translationToVerify).toContainKey(key);
             const value = translation[key];
-            keyCollection.push(key);
+            keyCollection.push(parents+key);
             if (typeof value === "object") {
-                contains(value, translationToVerify[key], keyCollection)
+                contains(value, translationToVerify[key], keyCollection, parents+key+".")
             }
         });
     };
     const keyCollectionEN = [];
-    contains(en, nl, keyCollectionEN);
+    contains(en, nl, keyCollectionEN, '');
     const keyCollectionNL = [];
-    contains(nl, en, keyCollectionNL);
+    contains(nl, en, keyCollectionNL, '');
     const positionalMismatches = keyCollectionEN.filter((item, index) => keyCollectionNL[index] !== item);
-    expect(positionalMismatches.length).toEqual(0)
+    expect(positionalMismatches).toEqual([])
 });
