@@ -614,6 +614,10 @@ class ServiceDetail extends React.Component {
                             name={service.name}
                             firstTime={(user.admin && !showServiceAdminView) ? this.onBoarding : undefined}
                             actions={this.getActions(user, service, showServiceAdminView)}>
+                    <p>
+                        <span>{I18n.t("service.abbreviation")}:</span>
+                        <span className="abbreviation">{service.abbreviation}</span>
+                    </p>
                     {!invitation && this.getIconListItems(iconListItems)}
                 </UnitHeader>
                 <div className="mod-service-container">
