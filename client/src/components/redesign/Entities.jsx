@@ -56,11 +56,6 @@ class Entities extends React.Component {
         const filterClassName = !hideTitle && filters ? "filters-with-title" : `${modelName}-search-filters`;
         return (
             <section className="entities-search">
-                {showNew &&
-                    <Button onClick={this.newEntity}
-                            className={`${hideTitle && !filters ? "no-title" : ""}`}
-                            txt={newLabel || I18n.t(`models.${modelName}.new`)}/>
-                }
                 {!hideTitle && <h2>{title || `${I18n.t(`models.${modelName}.title`)} (${entities.length})`}</h2>}
                 <div className={filterClassName}>{filters}</div>
                 <div className={`search ${showNew ? "" : "standalone"}`}>
@@ -80,8 +75,14 @@ class Entities extends React.Component {
                                 </div>
                             </div>
                         </div>}
-
                 </div>
+                {showNew &&
+                    <div className={"new-button"}>
+                        <Button onClick={this.newEntity}
+                                className={`${hideTitle && !filters ? "no-title" : ""}`}
+                                txt={newLabel || I18n.t(`models.${modelName}.new`)}/>
+                    </div>
+                }
             </section>
         );
     };
