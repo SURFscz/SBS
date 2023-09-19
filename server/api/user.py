@@ -43,13 +43,8 @@ user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 def _add_counts(user: dict):
     if is_admin_user(user):
         platform_admins = User.query.filter(User.uid.in_([u.uid for u in current_app.app_config.admin_users])).count()
-        user["total_platform_admins"] = platform_admins
-        user["total_organisations"] = Organisation.query.count()
-        user["total_collaborations"] = Collaboration.query.count()
-        user["total_services"] = Service.query.count()
         user["total_service_requests"] = ServiceRequest.query.count()
         user["total_open_service_requests"] = ServiceRequest.query.filter(ServiceRequest.status == "open").count()
-        user["total_users"] = User.query.count()
 
 
 def _add_schac_home_organisations(user: dict, user_from_db: User):

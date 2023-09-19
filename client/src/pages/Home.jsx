@@ -61,11 +61,11 @@ class Home extends React.Component {
             let hasAnyRoles = true;
             switch (role) {
                 case ROLES.PLATFORM_ADMIN:
-                    tabs.push(this.getOrganisationsTab(user.total_organisations));
-                    tabs.push(this.getCollaborationsTab(true, user.total_collaborations));
-                    tabs.push(this.getPlatformAdminsTab(user.total_platform_admins));
-                    tabs.push(this.getServicesTab(user.total_services));
-                    tabs.push(this.getUsersTab(user.total_users));
+                    tabs.push(this.getOrganisationsTab());
+                    tabs.push(this.getCollaborationsTab(true));
+                    tabs.push(this.getPlatformAdminsTab());
+                    tabs.push(this.getServicesTab());
+                    tabs.push(this.getUsersTab());
                     if (user.total_service_requests > 0) {
                         tabs.push(this.getServiceRequestsTab(false, null, this.refreshUserHook, user.total_service_requests, user.total_open_service_requests));
                     }
@@ -76,9 +76,9 @@ class Home extends React.Component {
                         setTimeout(() => this.props.history.push(`/organisations/${user.organisation_memberships[0].organisation_id}`), 50);
                         return;
                     } else {
-                        tabs.push(this.getOrganisationsTab(nbrOrganisations));
+                        tabs.push(this.getOrganisationsTab());
                         if (nbrCollaborations > 0) {
-                            tabs.push(this.getCollaborationsTab(false, nbrCollaborations));
+                            tabs.push(this.getCollaborationsTab(false));
                         }
                     }
                     break;
@@ -88,10 +88,10 @@ class Home extends React.Component {
                         setTimeout(() => this.props.history.push(`/collaborations/${user.collaboration_memberships[0].collaboration_id}`), 50);
                         return;
                     } else {
-                        tabs.push(this.getCollaborationsTab(false, nbrCollaborations));
+                        tabs.push(this.getCollaborationsTab(false));
                         tab = "collaborations";
                         if (nbrOrganisations > 0) {
-                            tabs.push(this.getOrganisationsTab(nbrOrganisations));
+                            tabs.push(this.getOrganisationsTab());
                         }
                     }
                     break;
@@ -155,40 +155,40 @@ class Home extends React.Component {
         return tab;
     }
 
-    getOrganisationsTab = count =>
-        <div key="organisations" name="organisations" label={I18n.t("home.tabs.organisations", {count: count})}
+    getOrganisationsTab = () =>
+        <div key="organisations" name="organisations" label={I18n.t("home.tabs.organisations")}
              icon={<OrganisationsIcon/>}>
             <Organisations {...this.props}/>
         </div>
 
-    getPlatformAdminsTab = count => {
+    getPlatformAdminsTab = () => {
         return (<div key="platformAdmins" name="platformAdmins"
-                     label={I18n.t("home.tabs.platformAdmins", {count: count})}
+                     label={I18n.t("home.tabs.platformAdmins")}
                      icon={<PlatformAdminIcon/>}>
             <PlatformAdmins {...this.props}/>
         </div>)
     }
 
-    getUsersTab = count => {
+    getUsersTab = () => {
         return (<div key="users" name="users"
-                     label={I18n.t("home.tabs.users", {count: count})}
+                     label={I18n.t("home.tabs.users")}
                      icon={<MembersIcon/>}>
             <Users {...this.props}
                    adminSearch={true}/>
         </div>)
     }
 
-    getServicesTab = count => {
+    getServicesTab = () => {
         return (<div key="services" name="services"
-                     label={I18n.t("home.tabs.services", {count: count})}
+                     label={I18n.t("home.tabs.services")}
                      icon={<ServicesIcon/>}>
             <Services {...this.props}/>
         </div>)
     }
 
-    getCollaborationsTab = (platformAdmin, count) => {
+    getCollaborationsTab = () => {
         return (<div key="collaborations" name="collaborations"
-                     label={I18n.t("home.tabs.collaborations", {count: count})}
+                     label={I18n.t("home.tabs.collaborations")}
                      icon={<CollaborationsIcon/>}>
             <Collaborations {...this.props}/>
         </div>)
