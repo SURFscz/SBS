@@ -753,7 +753,7 @@ class CollaborationAdmins extends React.Component {
                           searchCallback={this.searchCallback}
                           columns={(isAdminOfCollaboration || collaboration.disclose_email_information) ? columns : columns.slice(1)}
                           loading={false}
-                          hideTitle={true}
+                          hideTitle={false}
                           showNew={isAdminOfCollaboration}
                           filters={isAdminView ? null : this.filter(filterOptions, filterValue, hideInvitees, isAdminOfCollaboration)}
                           actions={this.actionButtons(collaboration, isAdminOfCollaboration, selectedMembers, filteredEntities)}

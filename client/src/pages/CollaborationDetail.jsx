@@ -378,10 +378,9 @@ class CollaborationDetail extends React.Component {
 
     getCollaborationAdminsTab = collaboration => {
         const openInvitations = (collaboration.invitations || []).filter(inv => inv.intended_role === "admin").length;
-        const count = collaboration.collaboration_memberships.filter(m => m.role === "admin").length;
         return (<div key="admins"
                      name="admins"
-                     label={I18n.t("home.tabs.coAdmins", {count: count})}
+                     label={I18n.t("home.tabs.coAdmins")}
                      icon={<CoAdminIcon/>}
                      notifier={openInvitations > 0 ? openInvitations : null}>
             <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={true}
@@ -391,9 +390,8 @@ class CollaborationDetail extends React.Component {
 
     getMembersTab = (collaboration, showMemberView, isJoinRequest = false) => {
         const openInvitations = (collaboration.invitations || []).length;
-        const count = (collaboration.collaboration_memberships || []).length;
         return (<div key="members" name="members"
-                     label={I18n.t("home.tabs.members", {count: count})}
+                     label={I18n.t("home.tabs.members")}
                      icon={<MemberIcon/>}
                      readOnly={isJoinRequest}
                      notifier={(openInvitations > 0 && !showMemberView) ? openInvitations : null}>
