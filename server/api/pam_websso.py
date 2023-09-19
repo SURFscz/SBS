@@ -35,7 +35,7 @@ def _get_pam_sso_session(session_id):
 
 
 def _validate_pam_sso_session(pam_sso_session: PamSSOSession, pin, validate_pin, validate_user):
-    user = pam_sso_session.user
+    user: User = pam_sso_session.user
     service = pam_sso_session.service
 
     if validate_user and ("user" not in session or user.id != current_user_id()):
@@ -47,7 +47,10 @@ def _validate_pam_sso_session(pam_sso_session: PamSSOSession, pin, validate_pin,
     if validate_pin and pam_sso_session.pin != pin:
         return {"result": "FAIL", "info": "Incorrect pin"}
 
-    return {"result": "SUCCESS", "username": user.username, "info": f"User {user.uid} has authenticated successfully"}
+    return {"result": "SUCCESS",
+            "username": user.username,
+            "groups": {m.collaboration.short_name: m.collaboration.name for m in user.collaboration_memberships},
+            "info": f"User {user.uid} has authenticated successfully"}
 
 
 # This is the challenge URL
