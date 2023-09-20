@@ -104,7 +104,7 @@ export function me(config) {
         let sub = "urn:service_admin";
         sub = "urn:john";
         // sub = "urn:james";
-        const second_factor_confirmed = false;
+        const second_factor_confirmed = true;
         // sub = "urn:unknown";
         // Need to mock a login
         return postPutJson("/api/mock", {
