@@ -1116,8 +1116,8 @@ const nl = {
         commentsAttribute: "motivatie",
         connectionSettings: {
             connectQuestion: "1. Wie mag de dienst gebruiken?",
-            coMembers: "Leden van samenwerkingen",
-            institutionSelection: "Toegang op basis van de organisatie van de samenwerking",
+            coMembers: "Gekoppelde samenwerkingen",
+            institutionSelection: "Ik kies hieronder van welke organisaties",
             noOne: "Niemand",
             later: "Ik ga dit later instellen",
             everyOne: "Iedereen",

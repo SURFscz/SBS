@@ -1116,8 +1116,8 @@ const en = {
         commentsAttribute: "comments",
         connectionSettings: {
             connectQuestion: "1. Who may use the service?",
-            coMembers: "Collaboration members",
-            institutionSelection: "Access based on the collaboration's organisation",
+            coMembers: "Connected collaborations",
+            institutionSelection: "I'll choose which organisations below",
             noOne: "No one",
             later: "I'll set this up later",
             everyOne: "Everyone",
