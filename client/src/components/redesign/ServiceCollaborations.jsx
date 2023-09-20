@@ -83,6 +83,7 @@ export default class ServiceCollaborations extends React.PureComponent {
         collaborations.forEach(co => {
             const membership = (user.collaboration_memberships || []).find(m => m.collaboration_id === co.id);
             co.role = membership ? membership.role : null;
+            co.derived_short_name = `${co.organisation.short_name}:${co.short_name}`
         });
     }
 
@@ -225,10 +226,9 @@ export default class ServiceCollaborations extends React.PureComponent {
                 mapper: collaboration => collaboration.organisation.name
             },
             {
-                key: "short_name",
+                key: "derived_short_name",
                 header: I18n.t("organisation.shortName"),
-                mapper: collaboration =>
-                    <span>{`${collaboration.organisation.short_name}:${collaboration.short_name}`}</span>,
+                mapper: collaboration => collaboration.derived_short_name
             },
             {
                 key: "role",
