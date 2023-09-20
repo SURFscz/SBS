@@ -3,7 +3,6 @@ import {
     allServiceConnectionRequests,
     createServiceMembershipRole,
     deleteServiceMembership,
-    hasMemberAccessToService,
     health,
     searchOrganisations,
     serviceById,
@@ -18,10 +17,7 @@ import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {ReactComponent as DetailsIcon} from "../icons/services.svg";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
 import {ReactComponent as WebsiteIcon} from "../icons/network-information.svg";
-import {
-    ReactComponent as UserTokensIcon,
-    ReactComponent as ServiceConnectionRequestsIcon
-} from "../icons/connections.svg";
+import {ReactComponent as ServiceConnectionRequestsIcon} from "../icons/connections.svg";
 import {ReactComponent as AboutIcon} from "../icons/common-file-text-home.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
@@ -41,7 +37,6 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import ServiceOverview from "./ServiceOverview";
 import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../utils/SocketIO";
-import UserTokens from "../components/redesign/UserTokens";
 import ServiceCollaborations from "../components/redesign/ServiceCollaborations";
 import {ButtonType} from "@surfnet/sds";
 import AboutService from "../components/redesign/AboutService";
@@ -68,7 +63,6 @@ class ServiceDetail extends React.Component {
             confirmationHeader: null,
             isWarning: false,
             showServiceAdminView: false,
-            memberAccessToService: false,
             socketSubscribed: false
         };
     }
@@ -141,12 +135,6 @@ class ServiceDetail extends React.Component {
             userTokens: userTokens,
             tab: tab,
             loading: false
-        }, () => {
-            if (service.token_enabled) {
-                hasMemberAccessToService(service).then(res => {
-                    this.setState({memberAccessToService: res});
-                })
-            }
         });
     }
 
@@ -345,19 +333,6 @@ class ServiceDetail extends React.Component {
             </div>);
     }
 
-    getUserTokensTab = (userTokens, service) => {
-        return (<div key="tokens" name="tokens"
-                     label={I18n.t("home.tabs.userTokens", {count: (userTokens || []).length})}
-                     icon={<UserTokensIcon/>}>
-            {<UserTokens {...this.props}
-                         services={[service]}
-                         service={service}
-                         userTokens={userTokens}
-                         refresh={this.refresh}/>}
-        </div>)
-    }
-
-
     tabChanged = (name, service) => {
         const serviceId = service ? service.id : this.state.service.id;
         this.updateBreadCrumb(service);
@@ -517,7 +492,7 @@ class ServiceDetail extends React.Component {
     render() {
         const {
             service, loading, tab, firstTime, showServiceAdminView, serviceConnectionRequests,
-            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, organisations, memberAccessToService,
+            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, organisations,
             confirmationDialogQuestion, confirmationTxt, confirmationHeader, isWarning, lastAdminWarning, userTokens
         } = this.state;
         if (loading) {
@@ -543,9 +518,6 @@ class ServiceDetail extends React.Component {
         }
         if (!userServiceAdmin) {
             tabs.push(this.getAboutTab(service));
-        }
-        if (service.token_enabled && memberAccessToService) {
-            tabs.push(this.getUserTokensTab(userTokens, service));
         }
         const serviceAccessLinks = [];
         if (service.uri) {
