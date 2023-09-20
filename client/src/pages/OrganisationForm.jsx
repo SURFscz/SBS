@@ -250,15 +250,6 @@ class OrganisationForm extends React.Component {
         }
     };
 
-    handleDuplicateSchacHome = e => {
-        if (e.response && e.response.json) {
-            e.response.json().then(res => {
-                console.log(res);
-                debugger; // eslint-disable-line no-debugger
-            })
-        }
-    }
-
     doUpdate = () => {
         if (this.isValid()) {
             const {

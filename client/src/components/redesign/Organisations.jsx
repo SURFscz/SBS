@@ -6,7 +6,7 @@ import I18n from "../../locale/I18n";
 import Entities from "./Entities";
 import Logo from "./Logo";
 import SpinnerField from "./SpinnerField";
-import {Chip} from "@surfnet/sds";
+import {Chip, Tooltip} from "@surfnet/sds";
 import {chipType} from "../../utils/UserRole";
 
 
@@ -42,6 +42,18 @@ class Organisations extends React.Component {
         this.props.history.push(`/organisations/${organisation.id}`);
     };
 
+    renderSchacHome = (schacHome, index) => {
+        const splitUp = schacHome.replace(/(.{25})/g,"$1<br/>")
+        if (schacHome.length > 35) {
+            return <div className="schac_home_container" key={`${schacHome}_${index}`}>
+                <span className="schac_home">{schacHome}</span>
+                <Tooltip tip={splitUp}/>
+            </div>
+        } else {
+            return <span className="schac_home" key={`${schacHome}_${index}`}>{schacHome}</span>;
+        }
+    }
+
     render() {
         const {user: currentUser} = this.props;
         const {organisations, loading} = this.state;
@@ -72,8 +84,7 @@ class Organisations extends React.Component {
                 header: I18n.t("models.organisations.schacHomeOrganisations"),
                 mapper: org => isEmpty(org.schac_home_organisations) ? "-" :
                     <div className={"schac_home_organisations"}>
-                        {org.schac_home_organisations.map((sho, index) => <span
-                            key={`${sho.name}_${index}`}>{sho.name}</span>)}
+                        {org.schac_home_organisations.map((sho, index) => this.renderSchacHome(sho.name,index))}
                     </div>
             },
             {

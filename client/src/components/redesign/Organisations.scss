@@ -3,7 +3,7 @@ table.organisations {
     thead {
         th {
             &.name {
-                width: 35%;
+                width: 25%;
                 padding-left: 15px;
             }
 
@@ -12,7 +12,7 @@ table.organisations {
             }
 
             &.schacHomes {
-                width: 20%;
+                width: 30%;
             }
 
             &.role {
@@ -52,8 +52,25 @@ table.organisations {
             }
 
             div.schac_home_organisations {
-                span {
+
+                div.schac_home_container {
+                    position: relative;
+
+                    .sds--tooltip-container {
+                        position: absolute;
+                        top: -5px;
+                        right: -5px;
+                    }
+
+                }
+
+                span.schac_home {
                     display: block;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 1;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                    word-break: break-word;
                 }
             }
         }
