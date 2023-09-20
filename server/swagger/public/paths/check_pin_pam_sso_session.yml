@@ -56,6 +56,11 @@ responses:
           type: string
           description: "If the PIN validation was successful the username of the user who logged in"
           example: "jdoe5"
+        groups:
+          type: object
+          properties:
+            short_name: string
+            name: string
   403:
     schema:
       $ref: '/swagger/components/responses/Forbidden.yaml'

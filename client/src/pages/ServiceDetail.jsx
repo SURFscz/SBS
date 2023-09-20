@@ -164,7 +164,7 @@ class ServiceDetail extends React.Component {
             ];
             s.actions = this.getHeaderActions(user, currentService);
             s.objectRole = showServiceAdminView ? I18n.t("service.fakeServiceAdmin") :
-                actionMenuUserRole(user, null, null, service, true)
+                actionMenuUserRole(user, null, null, currentService, true)
         });
     }
 
@@ -175,7 +175,7 @@ class ServiceDetail extends React.Component {
             this.setState({
                 showServiceAdminView: !showServiceAdminView,
                 tab: newTab
-            });
+            }, this.updateBreadCrumb);
         });
     }
 

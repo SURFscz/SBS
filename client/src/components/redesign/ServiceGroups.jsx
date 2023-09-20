@@ -135,7 +135,6 @@ class ServiceGroups extends React.Component {
         stopEvent(e);
         this.setState({selectedGroupId: null, createNewGroup: false, editGroup: false});
         AppStore.update(s => {
-            debugger; // eslint-disable-line no-debugger
             const paths = s.breadcrumb.paths.slice(0, s.breadcrumb.paths.length - 1);
             const lastPath = paths[paths.length - 1];
             if (lastPath) {
