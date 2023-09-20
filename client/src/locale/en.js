@@ -1115,23 +1115,23 @@ const en = {
         commentsHeader: "Additional comments about this request",
         commentsAttribute: "comments",
         connectionSettings: {
-            connectQuestion: "1. Who can connect to this service?",
-            coMembers: "members",
-            institutionSelection: "Access by organisation selection",
+            connectQuestion: "1. Who may use the service?",
+            coMembers: "Collaboration members",
+            institutionSelection: "Access based on the collaboration's organisation",
             noOne: "No one",
             later: "I'll set this up later",
             everyOne: "Everyone",
             everyOneText: "No membership required",
-            whichInstitutionsQuestion: "2. Collaborations from which organisation?",
+            whichInstitutionsQuestion: "2. Collaborations from which organisations?",
             allInstitutions: "All organisations",
             allCOWelcome: "All collaborations are welcome",
             onlySome: "Only some",
-            specificInstitutions: "Collaborations from specific organisation",
-            directlyConnectQuestion: "3. Can a collaboration directly connect?",
-            directConnect: "Collaborations can connect directly",
-            manuallyApprove: "I manually approve the requests",
+            specificInstitutions: "I'll choose which organisations below",
+            directlyConnectQuestion: "3. Can a collaboration connect straight away?",
+            directConnect: "Collaborations can connect straight away",
+            manuallyApprove: "I want to approve the requests manually",
             depends: "It depends",
-            settingsPerInstitution: "Manage settings per organisation"
+            settingsPerInstitution: "I'll choose for each organisation below"
         }
     },
     organisation: {

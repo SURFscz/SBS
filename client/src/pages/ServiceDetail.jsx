@@ -3,13 +3,11 @@ import {
     allServiceConnectionRequests,
     createServiceMembershipRole,
     deleteServiceMembership,
-    hasMemberAccessToService,
     health,
     searchOrganisations,
     serviceById,
     serviceInvitationAccept,
-    serviceInvitationByHash,
-    userTokensOfUser
+    serviceInvitationByHash
 } from "../api";
 import "./ServiceDetail.scss";
 import I18n from "../locale/I18n";
@@ -18,10 +16,7 @@ import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {ReactComponent as DetailsIcon} from "../icons/services.svg";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
 import {ReactComponent as WebsiteIcon} from "../icons/network-information.svg";
-import {
-    ReactComponent as UserTokensIcon,
-    ReactComponent as ServiceConnectionRequestsIcon
-} from "../icons/connections.svg";
+import {ReactComponent as ServiceConnectionRequestsIcon} from "../icons/connections.svg";
 import {ReactComponent as AboutIcon} from "../icons/common-file-text-home.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
@@ -41,7 +36,6 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import ServiceOverview from "./ServiceOverview";
 import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../utils/SocketIO";
-import UserTokens from "../components/redesign/UserTokens";
 import ServiceCollaborations from "../components/redesign/ServiceCollaborations";
 import {ButtonType} from "@surfnet/sds";
 import AboutService from "../components/redesign/AboutService";
@@ -56,7 +50,6 @@ class ServiceDetail extends React.Component {
             invitation: null,
             isInvitation: false,
             organisations: [],
-            userTokens: [],
             serviceConnectionRequests: [],
             firstTime: false,
             loading: true,
@@ -68,7 +61,6 @@ class ServiceDetail extends React.Component {
             confirmationHeader: null,
             isWarning: false,
             showServiceAdminView: false,
-            memberAccessToService: false,
             socketSubscribed: false
         };
     }
@@ -102,12 +94,12 @@ class ServiceDetail extends React.Component {
             const userServiceAdmin = isUserServiceAdmin(user, {id: parseInt(params.id, 10)}) || user.admin;
             if (userServiceAdmin) {
                 Promise.all([serviceById(params.id), searchOrganisations("*"),
-                    allServiceConnectionRequests(params.id), userTokensOfUser(params.id)])
+                    allServiceConnectionRequests(params.id)])
                     .then(res => {
                         const service = res[0];
                         const organisations = res[1];
                         const serviceConnectionRequests = res[2];
-                        this.afterFetch(params, service, organisations, serviceConnectionRequests, res[3]);
+                        this.afterFetch(params, service, organisations, serviceConnectionRequests);
                     }).catch(() => this.props.history.push("/"));
             } else {
                 this.props.history.push("/404");
@@ -121,7 +113,7 @@ class ServiceDetail extends React.Component {
         this.setState({firstTime: true});
     }
 
-    afterFetch = (params, service, organisations, serviceConnectionRequests, userTokens) => {
+    afterFetch = (params, service, organisations, serviceConnectionRequests) => {
         const tab = params.tab || this.state.tab;
         const {socketSubscribed} = this.state;
         if (!socketSubscribed) {
@@ -138,15 +130,8 @@ class ServiceDetail extends React.Component {
             service: service,
             organisations: organisations,
             serviceConnectionRequests: serviceConnectionRequests,
-            userTokens: userTokens,
             tab: tab,
             loading: false
-        }, () => {
-            if (service.token_enabled) {
-                hasMemberAccessToService(service).then(res => {
-                    this.setState({memberAccessToService: res});
-                })
-            }
         });
     }
 
@@ -209,23 +194,21 @@ class ServiceDetail extends React.Component {
         const {user} = this.props;
         const userServiceAdmin = isUserServiceAdmin(user, {id: parseInt(params.id, 10)}) || user.admin;
         if (userServiceAdmin) {
-            Promise.all([serviceById(params.id), allServiceConnectionRequests(params.id), userTokensOfUser(params.id)])
+            Promise.all([serviceById(params.id), allServiceConnectionRequests(params.id)])
                 .then(res => {
                     this.setState({
                         service: res[0],
                         serviceConnectionRequests: res[1],
-                        userTokens: res[2],
                         loading: false
                     }, callback);
                 }).catch(() => {
                 this.props.history.push("/404")
             });
         } else {
-            Promise.all([serviceById(params.id), userTokensOfUser(params.id)])
+            Promise.all([serviceById(params.id)])
                 .then(res => {
                     this.setState({
                         service: res[0],
-                        userTokens: res[1],
                         loading: false
                     }, callback);
                 }).catch(() => {
@@ -344,19 +327,6 @@ class ServiceDetail extends React.Component {
                     {...this.props} />
             </div>);
     }
-
-    getUserTokensTab = (userTokens, service) => {
-        return (<div key="tokens" name="tokens"
-                     label={I18n.t("home.tabs.userTokens", {count: (userTokens || []).length})}
-                     icon={<UserTokensIcon/>}>
-            {<UserTokens {...this.props}
-                         services={[service]}
-                         service={service}
-                         userTokens={userTokens}
-                         refresh={this.refresh}/>}
-        </div>)
-    }
-
 
     tabChanged = (name, service) => {
         const serviceId = service ? service.id : this.state.service.id;
@@ -517,8 +487,8 @@ class ServiceDetail extends React.Component {
     render() {
         const {
             service, loading, tab, firstTime, showServiceAdminView, serviceConnectionRequests,
-            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, organisations, memberAccessToService,
-            confirmationDialogQuestion, confirmationTxt, confirmationHeader, isWarning, lastAdminWarning, userTokens
+            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, organisations,
+            confirmationDialogQuestion, confirmationTxt, confirmationHeader, isWarning, lastAdminWarning
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -543,27 +513,6 @@ class ServiceDetail extends React.Component {
         }
         if (!userServiceAdmin) {
             tabs.push(this.getAboutTab(service));
-        }
-        if (service.token_enabled && memberAccessToService) {
-            tabs.push(this.getUserTokensTab(userTokens, service));
-        }
-        const serviceAccessLinks = [];
-        if (service.uri) {
-            serviceAccessLinks.push(<a href={service.uri} target="_blank"
-                                       rel="noopener noreferrer">{I18n.t("service.login")}</a>)
-        }
-        if (service.uri_info) {
-            serviceAccessLinks.push(<a href={service.uri_info} target="_blank"
-                                       rel="noopener noreferrer">{I18n.t("service.infoUri")}</a>)
-        }
-        const policies = [];
-        if (service.privacy_policy) {
-            policies.push(<a href={service.privacy_policy} target="_blank" rel="noopener noreferrer">
-                {I18n.t("service.privacy_policy")}</a>)
-        }
-        if (service.accepted_user_policy) {
-            policies.push(<a href={service.accepted_user_policy} target="_blank" rel="noopener noreferrer">
-                {I18n.t("service.accepted_user_policy")}</a>)
         }
         const iconListItems = [
             {
