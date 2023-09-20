@@ -45,6 +45,7 @@ class SecondFactorAuthentication extends React.Component {
             message: "",
             resetCode: "",
             resetCodeError: null,
+            resetRequested: false,
             continueUrl: null,
             secondFaUuid: null,
             showFeedBack: false
@@ -55,7 +56,7 @@ class SecondFactorAuthentication extends React.Component {
 
     componentDidMount() {
         const {config, user, update, match} = this.props;
-
+        const {resetRequested} = this.state;
         const urlSearchParams = new URLSearchParams(window.location.search);
         const second_fa_uuid = match.params.second_fa_uuid;
 
@@ -64,14 +65,14 @@ class SecondFactorAuthentication extends React.Component {
         if (continueUrl && !continueUrl.toLowerCase().startsWith(continueUrlTrusted.toLowerCase())) {
             throw new Error(`Invalid continue url: '${continueUrl}'`)
         }
-
-        if (user.guest) {
+        if (user.guest || resetRequested) {
             if (second_fa_uuid && continueUrl) {
                 //We need to know if this is a new user. We use the second_fa_uuid for this
                 get2faProxyAuthz(second_fa_uuid)
                     .then(res => {
                         this.setState({
                             loading: false,
+                            resetRequested: false,
                             secondFaUuid: second_fa_uuid,
                             qrCode: res.qr_code_base64,
                             idp_name: res.idp_name || I18n.t("mfa.register.unknownIdp"),
@@ -86,14 +87,15 @@ class SecondFactorAuthentication extends React.Component {
                 this.setState({
                     qrCode: res.qr_code_base64,
                     idp_name: res.idp_name || I18n.t("mfa.register.unknownIdp"),
-                    loading: false
+                    loading: false,
+                    resetRequested: false,
                 }, this.focusCode);
-
             });
         } else {
             this.setState({
                 secondFaUuid: second_fa_uuid,
                 continueUrl: continueUrl,
+                resetRequested: false,
                 loading: false
             }, this.focusCode);
         }
@@ -192,14 +194,13 @@ class SecondFactorAuthentication extends React.Component {
         reset2fa(resetCode, secondFaUuid)
             .then(() => {
                 if (secondFaUuid) {
-                    this.setState({resetCode: false, showEnterToken: false});
-                    this.componentDidMount();
+                    this.setState({resetCode: false, showEnterToken: false, resetRequested: true},
+                        () => this.componentDidMount());
                 } else {
                     this.props.refreshUser(() => {
-                        this.setState({resetCode: false, showEnterToken: false});
-                        this.componentDidMount();
-                    })
-
+                        this.setState({resetCode: false, showEnterToken: false, resetRequested: true},
+                            () => this.componentDidMount());
+                    });
                 }
             }).catch(() => {
             this.setState({resetCodeError: true, loading: false});
