@@ -2255,7 +2255,7 @@ const nl = {
         disableTokenConfirmation: "Weet je zeker dat je de {{type}} functionaliteit voor deze dienst wilt uitzetten? {{count}} bestaande {{tokens}} zal worden verwijderd.",
         multipleTokens: "tokens",
         singleTokens: "token",
-        noTokens: "Er zijn geen tokens...",
+        noTokens: "Er zijn geen tokens",
         enableTokens: "Om tokens aan te maken, moet {{action}} worden aangezet",
         secretDisclaimer: "Het token wordt slechts eenmaal getoond. Sla de sleutel op en bewaar deze veilig.<br><br>Bij verlies zal je de sleutel moeten verwijderen en een nieuwe moeten aanmaken.",
         secret: "Token",
