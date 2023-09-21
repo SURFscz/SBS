@@ -1,0 +1,62 @@
+summary: "Update collaboration membership."
+description: "Update collaboration membership."
+
+tags:
+  - "Organisations"
+
+consumes:
+  - "application/json"
+
+produces:
+  - "application/json"
+
+security:
+  - APIKeyHeader: [ 'Authorization' ]
+
+parameters:
+  - name:
+    in: header
+    description: Bearer API key
+    required: true
+    schema:
+      type: string
+      example: Bearer Am4Hp7GBO2lMseskWHRmEtE3DWD-VxZZ3qwMkNPv6qZ8
+  - name: co_identifier
+    in: path
+    description: Unique identifier of the collaboration
+    required: true
+    schema:
+      type: string
+      format: uuid
+      example: 301ee8e6-b5d1-40b5-a27e-47611f803371
+  - name: membership
+    in: body
+    schema:
+      type: object
+      properties:
+        uid:
+          description: Unique uid of the user
+          type: string
+          format: string
+          example: '7e28ebe36633f958e75a15a803aa6f4a7f0ab8ac@acc.sram.eduteams.org'
+        role:
+          enum: ["admin", "member"]
+          description: New role for the user in the collaboration
+          format: string
+          example: 'admin'
+      required:
+        - uid
+        - role
+
+responses:
+  201:
+    description: Ok
+  401:
+    schema:
+      $ref: '/swagger/components/responses/Unauthorized.yaml'
+  403:
+    schema:
+      $ref: '/swagger/components/responses/Forbidden.yaml'
+  404:
+    schema:
+      $ref: '/swagger/components/responses/NotFound.yaml'
