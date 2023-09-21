@@ -856,6 +856,25 @@ class TestCollaboration(AbstractTest):
                     with_basic_auth=False,
                     response_status_code=403)
 
+    def test_update_membership_api(self):
+        membership = self.find_collaboration_membership(collaboration_ai_computing_uuid, 'urn:jane')
+        self.assertEqual("member", membership.role)
+
+        self.put(f"/api/collaborations/v1/{collaboration_ai_computing_uuid}/members",
+                 headers={"Authorization": f"Bearer {uuc_secret}"},
+                 body={"uid": "urn:jane", "role": "admin"},
+                 with_basic_auth=False)
+
+        membership = self.find_collaboration_membership(collaboration_ai_computing_uuid, 'urn:jane')
+        self.assertEqual("admin", membership.role)
+
+    def test_update_membership_wrong_role_api(self):
+        self.put(f"/api/collaborations/v1/{collaboration_ai_computing_uuid}/members",
+                 headers={"Authorization": f"Bearer {uuc_secret}"},
+                 body={"uid": "urn:jane", "role": "nope"},
+                 with_basic_auth=False,
+                 response_status_code=400)
+
     def test_delete_collaboration_api(self):
         self.delete(f"/api/collaborations/v1/{collaboration_ai_computing_uuid}",
                     headers={"Authorization": f"Bearer {uuc_secret}"},

@@ -73,6 +73,19 @@ def _reconcile_tags(collaboration: Collaboration, tags, is_external_api=False):
             new_tag.collaborations.append(collaboration)
 
 
+def _get_collaboration_membership(co_identifier, user_uid) -> CollaborationMembership:
+    organisation = request_context.external_api_organisation
+    membership = CollaborationMembership.query \
+        .join(CollaborationMembership.user) \
+        .join(CollaborationMembership.collaboration) \
+        .filter(Collaboration.identifier == co_identifier) \
+        .filter(User.uid == user_uid) \
+        .one()
+    if not organisation or organisation.id != membership.collaboration.organisation_id:
+        raise Forbidden()
+    return membership
+
+
 @collaboration_api.route("/admins/<service_id>", strict_slashes=False)
 @json_endpoint
 def collaboration_admins(service_id):
@@ -138,22 +151,37 @@ def delete_collaboration_api(co_identifier):
     return delete(Collaboration, collaboration_id)
 
 
+@collaboration_api.route("/v1/<co_identifier>/members", methods=["PUT"], strict_slashes=False)
+@swag_from("../swagger/public/paths/update_collaboration_membership.yml")
+@json_endpoint
+def api_update_user_from_collaboration(co_identifier):
+    confirm_external_api_call()
+
+    data = current_request.get_json()
+    user_uid = data["uid"]
+    user_role = data["role"]
+    if user_role not in ["member", "admin"]:
+        raise BadRequest(f"{user_role} is not a valid role")
+
+    membership = _get_collaboration_membership(co_identifier, user_uid)
+    membership.role = user_role
+
+    db.session.merge(membership)
+    db.session.commit()
+
+    emit_socket(f"collaboration_{membership.collaboration.id}")
+    broadcast_collaboration_changed(membership.collaboration.id)
+
+    return membership, 201
+
+
 @collaboration_api.route("/v1/<co_identifier>/members/<user_uid>", methods=["DELETE"], strict_slashes=False)
 @swag_from("../swagger/public/paths/delete_collaboration_membership.yml")
 @json_endpoint
 def api_delete_user_from_collaboration(co_identifier, user_uid):
     confirm_external_api_call()
 
-    organisation = request_context.external_api_organisation
-    membership = CollaborationMembership.query \
-        .join(CollaborationMembership.user) \
-        .join(CollaborationMembership.collaboration) \
-        .filter(Collaboration.identifier == co_identifier) \
-        .filter(User.uid == user_uid) \
-        .one()
-
-    if not organisation or organisation.id != membership.collaboration.organisation_id:
-        raise Forbidden()
+    membership = _get_collaboration_membership(co_identifier, user_uid)
 
     db.session.delete(membership)
     db.session.commit()
