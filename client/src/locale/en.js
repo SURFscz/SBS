@@ -1129,7 +1129,7 @@ const en = {
             specificInstitutions: "I'll choose which organisations below",
             directlyConnectQuestion: "3. Can a collaboration connect straight away?",
             directConnect: "Collaborations can connect straight away",
-            manuallyApprove: "I want to approve the requests manually",
+            manuallyApprove: "I want to approve requests manually",
             depends: "It depends",
             settingsPerInstitution: "I'll choose for each organisation below"
         }
@@ -2255,7 +2255,7 @@ const en = {
         disableTokenConfirmation: "Are you sure you want to disable {{type}} functionality for this service? The {{count}} existing {{tokens}} will be deleted.",
         multipleTokens: "tokens",
         singleTokens: "token",
-        noTokens: "There are no service tokens...",
+        noTokens: "There are no service tokens",
         enableTokens: "To create tokens you need to enable {{action}}",
         secretDisclaimer: "You can view this token only once. Copy it and store it somewhere safe.<br><br>If the token is lost, delete it and create a new token.",
         secret: "Token",
