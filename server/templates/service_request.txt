@@ -10,5 +10,5 @@ The motivation for this request:
 
 Login to process this request:
 
-{{base_url}}/service-requests/{{service_request.id}}
+{{base_url}}/service-request/{{service_request.id}}
 {% endblock %}
