@@ -504,8 +504,8 @@ class ServiceDetail extends React.Component {
                 this.getDetailsTab(service, user.admin, userServiceAdmin, showServiceAdminView),
                 this.getAdminsTab(service),
                 this.getServiceGroupsTab(service),
-                this.getOrganisationsTab(service, organisations, user.admin, userServiceAdmin, showServiceAdminView),
                 this.getCollaborationsTab(service, showServiceAdminView),
+                this.getOrganisationsTab(service, organisations, user.admin, userServiceAdmin, showServiceAdminView),
             ];
             if (serviceConnectionRequests.length > 0) {
                 tabs.push(this.getServiceConnectionRequestTab(service, serviceConnectionRequests));
