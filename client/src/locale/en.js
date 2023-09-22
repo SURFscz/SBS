@@ -92,7 +92,7 @@ const en = {
             coAdmins: "Admins ({{count}})",
             members: "Members ({{count}})",
             users: "Users ({{count}})",
-            serviceOrganisations: "Organisational access ({{count}})",
+            serviceOrganisations: "Access rules ({{count}})",
             serviceCollaborations: "Connected collaborations ({{count}})",
             userTokens: "Service tokens ({{count}})",
             collaborationRequests: "Requests ({{count}})",
