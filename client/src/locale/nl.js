@@ -1722,9 +1722,9 @@ const nl = {
         },
         export: "Exporteer naar JSON",
         searchPlaceholder: "Zoek...",
-        includeServices: "Dienst veranderingen",
-        includeMembers: "leden veranderingen",
-        includeCOProperties: "Samenwerking veranderingen",
+        includeServices: "Toon diensten",
+        includeMembers: "Toon leden",
+        includeCOProperties: "Toon eigenschappen",
         tables: {
             "api_keys": "Organisatie-API-tokens",
             "aups": "Acceptable User Policy",

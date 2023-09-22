@@ -1722,9 +1722,9 @@ const en = {
         },
         export: "Export to JSON",
         searchPlaceholder: "Search... ",
-        includeServices: "Service changes",
-        includeMembers: "Member changes",
-        includeCOProperties: "Collaboration changes",
+        includeServices: "Show services",
+        includeMembers: "Show members",
+        includeCOProperties: "Show properties",
         tables: {
             "api_keys": "Organisation API tokens",
             "aups": "Acceptable User Policy",
