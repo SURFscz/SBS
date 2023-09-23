@@ -1,8 +1,9 @@
 from flask import jsonify
 
-from server.db.domain import Service, ServiceGroup
+from server.db.domain import Service, ServiceGroup, Collaboration
 from server.test.abstract_test import AbstractTest
-from server.test.seed import service_mail_name, service_group_mail_name, service_cloud_name, service_group_wiki_name1
+from server.test.seed import service_mail_name, service_group_mail_name, service_cloud_name, service_group_wiki_name1, \
+    uva_research_name
 
 
 class TestServiceGroup(AbstractTest):
@@ -44,8 +45,9 @@ class TestServiceGroup(AbstractTest):
         self.assertEqual(False, res)
 
     def test_save_service_group(self):
-        self.login("urn:james")
-        service_id = self.find_entity_by_name(Service, service_cloud_name).id
+        self.login("urn:john")
+        service_cloud = self.find_entity_by_name(Service, service_cloud_name)
+        service_id = service_cloud.id
         service_group_name = "new_auth_service_group"
         self.post("/api/servicegroups/", body={
             "name": service_group_name,
@@ -58,6 +60,11 @@ class TestServiceGroup(AbstractTest):
         groups = service_group.groups
         self.assertEqual(1, len(groups))
         self.assertEqual("uva:research:cloud-new_auth_service", groups[0].global_urn)
+
+        collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
+        group = list(filter(lambda g: g.short_name == "cloud-new_auth_service", collaboration.groups))[0]
+        # Not allowed to delete group with connected service
+        self.delete("/api/groups", group.id, with_basic_auth=False, response_status_code=403)
 
     def test_update_service_group(self):
         self.login("urn:service_admin")

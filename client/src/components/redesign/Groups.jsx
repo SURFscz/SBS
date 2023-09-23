@@ -156,11 +156,14 @@ class Groups extends React.Component {
         }
     }
 
-    getActionIcons = entity => {
+    getActionIcons = (group, collaboration) => {
+        if (!this.mayRemoveGroup(group, collaboration)) {
+            return null;
+        }
         return (
             <div className="admin-icons"
-                 onClick={() => this.removeFromActionIcon(entity.id, true)}>
-                <Tooltip anchorId={`delete-group-${entity.id}`}
+                 onClick={() => this.removeFromActionIcon(group.id, true)}>
+                <Tooltip anchorId={`delete-group-${group.id}`}
                          standalone={true}
                          tip={I18n.t("models.groups.removeGroupTooltip")}
                          children={<ThrashIcon/>}/>
@@ -262,6 +265,8 @@ class Groups extends React.Component {
     }
 
     allGroupChecksSelected = e => {
+        const {collaboration} = this.props;
+        const allGroups = collaboration.groups;
         const {selectedGroups, groupResultAfterSearch} = this.state;
         const val = e.target.checked;
         let identifiers = Object.keys(selectedGroups);
@@ -269,7 +274,11 @@ class Groups extends React.Component {
             const afterSearchIdentifiers = groupResultAfterSearch.map(entity => entity.id.toString());
             identifiers = identifiers.filter(id => afterSearchIdentifiers.includes(id));
         }
-        identifiers.forEach(id => selectedGroups[id].selected = val);
+        identifiers.forEach(id => {
+            const group = allGroups.find(g => g.id === parseInt(id, 10));
+            const value = val && this.mayRemoveGroup(group, collaboration);
+            selectedGroups[id].selected = value;
+        });
         const newSelectedGroups = {...selectedGroups};
         this.setState({allGroupsSelected: val, selectedGroups: newSelectedGroups});
     }
@@ -801,18 +810,29 @@ class Groups extends React.Component {
             group.memberCount = group.collaboration_memberships.length;
         })
         const columns = [];
+        const displayCheckBoxHeader = groups.some(g => this.mayRemoveGroup(g, collaboration))
         if (mayCreateGroups) {
             let i = 0;
             columns.push({
                     nonSortable: true,
                     key: "check",
-                    header: <CheckBox value={allGroupsSelected}
+                    header: displayCheckBoxHeader &&  <CheckBox value={allGroupsSelected}
                                       name={"allGroupsSelected"}
                                       onChange={this.allGroupChecksSelected}/>,
                     mapper: entity => <div className="check">
+                        {this.mayRemoveGroup(entity, collaboration) ?
                         <CheckBox name={"" + ++i}
                                   onChange={this.onGroupCheck(entity)}
-                                  value={(selectedGroups[entity.id] || {}).selected || false}/>
+                                  value={(selectedGroups[entity.id] || {}).selected || false}/> :
+                        <Tooltip tip={I18n.t("tooltips.serviceGroupConnectedNotDeletable")}
+                                     standalone={true}
+                                     children={<div>
+                                         <CheckBox name={"" + ++i}
+                                                   value={false}
+                                                   readOnly={true}
+                                         />
+                                     </div>}
+                            />}
                     </div>
                 },
             )
@@ -865,7 +885,7 @@ class Groups extends React.Component {
                 key: "trash",
                 hasLink: true,
                 header: "",
-                mapper: group => this.getActionIcons(group)
+                mapper: group => this.getActionIcons(group, collaboration)
             });
         }
         const groupActions = this.groupActionButtons(collaboration, mayCreateGroups, selectedGroups);

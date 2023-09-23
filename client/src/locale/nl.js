@@ -2038,7 +2038,8 @@ const nl = {
         joinRequest: "Deelnameverzoek",
         manager: "Manager",
         platformAdmin: "Goddess divinity",
-        oneAdminWarning: "Een organisatie heeft ten minste 1 admin nodig."
+        oneAdminWarning: "Een organisatie heeft ten minste 1 admin nodig.",
+        serviceGroupConnectedNotDeletable: "Gekoppelde dienst gropp mag niet worden verwijderd"
     },
     notFound: {
         invitationNotFound: "Deze uitnodiging bestaat niet (meer). Waarschijnlijk is de uitnodiging al eerder gebruikt. Vraag aan de uitnodiger of je een nieuwe uitnodiging kunt krijgen.",
