@@ -255,6 +255,14 @@ export default class ServiceCollaborations extends React.PureComponent {
                 mapper: entity => this.getActionIcons(entity, collaborationAdminEmails)
             }
         ];
+        let infoMessage = I18n.t("service.connectCollaborationsInfo");
+        if (service.non_member_users_access_allowed) {
+            infoMessage = I18n.t("service.nonMemberUsersAccessAllowed");
+        } else if (!service.non_member_users_access_allowed && service.connection_setting === "NO_ONE_ALLOWED") {
+            infoMessage = I18n.t("service.noOneAllowed");
+        } else if (service.access_allowed_for_all) {
+            infoMessage = I18n.t("service.accessAllowedForAllInfo");
+        }
         return (
             <div className={"mod-service-collaborations"}>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -265,29 +273,27 @@ export default class ServiceCollaborations extends React.PureComponent {
                                     question={confirmationQuestion}/>
                 <div className={"info-container"}>
                     <div className={"info"}>
-                        <span>{I18n.t("service.connectCollaborationsInfo")}</span>
+                        <span>{infoMessage}</span>
+                        {(isEmpty(collaborations) && service.connection_setting !== "NO_ONE_ALLOWED") &&
+                            <span>{` ${I18n.t("models.serviceCollaborations.noEntities")}`}</span>}
                         <Button className="ghost"
                                 txt={I18n.t("service.viewSettings")}
                                 onClick={() => goToOrganisationsTab()}
                         />
                     </div>
-                    {service.non_member_users_access_allowed &&
-                    <div className={"info"}>
-                        <span>{I18n.t("service.nonMemberUsersAccessAllowedTooltip")}</span>
-                    </div>}
                 </div>
-
-                {!service.non_member_users_access_allowed && <Entities entities={collaborations}
-                                                                       modelName={modelName}
-                                                                       searchAttributes={["name"]}
-                                                                       defaultSort="name"
-                                                                       hideTitle={true}
-                                                                       columns={columns}
-                                                                       onHover={true}
-                                                                       actionHeader={"collaboration-services"}
-                                                                       actions={this.actionButtons(selectedCollaborations, collaborationAdminEmails, collaborations)}
-                                                                       loading={loading}
-                                                                       {...this.props}/>}
+                {!isEmpty(collaborations) &&
+                    <Entities entities={collaborations}
+                              modelName={modelName}
+                              searchAttributes={["name"]}
+                              defaultSort="name"
+                              hideTitle={true}
+                              columns={columns}
+                              onHover={true}
+                              actionHeader={"collaboration-services"}
+                              actions={this.actionButtons(selectedCollaborations, collaborationAdminEmails, collaborations)}
+                              loading={loading}
+                              {...this.props}/>}
             </div>)
     }
 
