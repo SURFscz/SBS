@@ -97,7 +97,8 @@ class CollaborationForm extends React.Component {
                     tagsSelected: tagOptions,
                     isNew: false,
                     loading: false,
-                    expiry_date: expiryDate
+                    expiry_date: expiryDate,
+                    allow_join_requests: !collaboration.disable_join_requests
                 }, () => this.updateTags(organisation.id));
             });
         } else {
