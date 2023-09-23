@@ -44,8 +44,8 @@ def do_resend(invitation_id):
         .filter(Invitation.id == invitation_id) \
         .one()
     confirm_collaboration_admin(invitation.collaboration_id)
-    invitation.expiry_date = default_expiry_date()
-    invitation.created_at = datetime.date.today(),
+    invitation.expiry_date = default_expiry_date() if invitation.is_expired() else invitation.expiry_date
+    invitation.created_at = datetime.date.today() if invitation.is_expired() else invitation.created_at
     db.session.merge(invitation)
     mail_collaboration_invitation({
         "salutation": "Dear",

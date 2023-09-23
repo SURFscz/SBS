@@ -391,7 +391,7 @@ class CollaborationAdmins extends React.Component {
 
     actionIcons = (entity, collaboration) => {
         const hrefValue = encodeURI(entity.invite ? entity.invitee_email : entity.user.email);
-        const showResendInvite = entity.invite === true && isInvitationExpired(entity);
+        const showResendInvite = entity.invite === true;
         const bcc = (collaboration.disclose_email_information && collaboration.disclose_member_information) ? "" : "?bcc=";
         return (
             <div className="admin-icons">
@@ -431,7 +431,7 @@ class CollaborationAdmins extends React.Component {
             .filter(v => filteredEntities.find(e => e.id === v.ref.id && e.invite === v.ref.invite));
         const hrefValue = encodeURI(selected.map(v => v.ref.invite ? v.ref.invitee_email : v.ref.user.email).join(","));
         const disabled = selected.length === 0;
-        const showResendInvite = selected.length > 0 && selected.every(s => s.invite === true && isInvitationExpired(s.ref));
+        const showResendInvite = selected.length > 0 && selected.every(s => s.invite === true);
         const bcc = (collaboration.disclose_email_information && collaboration.disclose_member_information) ? "" : "?bcc=";
         if (!(any && isAdminOfCollaboration && !disabled) && !(any && (isAdminOfCollaboration || collaboration.disclose_email_information) && !disabled)
             && !(any && isAdminOfCollaboration && showResendInvite)) {
