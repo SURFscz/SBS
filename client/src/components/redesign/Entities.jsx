@@ -100,7 +100,7 @@ class Entities extends React.Component {
 
     };
 
-    setSorted = key => () => {
+    setSorted = key => {
         const {sorted, reverse} = this.state;
         const reversed = (sorted === key ? !reverse : false);
         this.setState({sorted: key, reverse: reversed})
@@ -142,7 +142,7 @@ class Entities extends React.Component {
                                     const showHeader = !actions || (i < 2 && !column.hideHeader) || column.showHeader;
                                     return <th key={`th_${column.key}_${i}`}
                                                className={`${column.key} ${column.class || ""} ${column.nonSortable ? "" : "sortable"} ${showHeader ? "" : "hide"}`}
-                                               onClick={this.setSorted(column.key)}>
+                                               onClick={() => column.key !== "check" && this.setSorted(column.key)}>
                                         {column.header}
                                         {headerIcon(column, sorted, reverse)}
                                     </th>
@@ -155,8 +155,9 @@ class Entities extends React.Component {
                                     className={`${(typeof rowLinkMapper === "function" && rowLinkMapper(entity)) ? "clickable" : ""} ${onHover ? "hoverable" : ""}`}>
                                     {columns.map((column, i) =>
                                         <td key={`td_${column.key}_${index}_${i}`}
-                                            onClick={(column.key !== "check" && column.key !== "role" && !column.hasLink) ?
-                                                this.onRowClick(rowLinkMapper, entity) : undefined}
+                                            onClick={e =>
+                                                (column.key !== "check" && column.key !== "role" && !column.hasLink) ?
+                                                    this.onRowClick(rowLinkMapper, entity)(e) : undefined}
                                             className={`${column.key} ${column.nonSortable ? "" : "sortable"} ${column.className ? column.className : ""}`}>
                                             {this.getEntityValue(entity, column)}
                                         </td>)}

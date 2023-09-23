@@ -2039,6 +2039,7 @@ const en = {
         manager: "Manager",
         platformAdmin: "Goddess divinity",
         oneAdminWarning: "An organisation requires at least one admin.",
+        serviceGroupConnectedNotDeletable: "Connected service group may not be deleted"
     },
     notFound: {
         invitationNotFound: "This invitation does not exist (anymore). The invitation has probably already been used. Ask the person who invited you to send you a new one.",
