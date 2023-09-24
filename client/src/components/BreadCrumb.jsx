@@ -15,6 +15,8 @@ export const BreadCrumb = () => {
         return null;
     }
 
+    document.title = "SRAM - " + paths[paths.length - 1].value;
+
     return (
         <nav className="sds--breadcrumb sds--text--body--small" aria-label="breadcrumbs">
             <ol className="sds--breadcrumb--list">
