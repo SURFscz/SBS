@@ -562,6 +562,8 @@ def save_collaboration_api():
     missing = [req for req in required if req not in data]
     if missing:
         raise APIBadRequest(f"Missing required attributes: {missing}")
+    if not cleanse_short_name(data):
+        raise APIBadRequest(f"Invalid CO short_name: {data['short_name']}")
     # The do_save_collaboration strips out all non-collaboration keys
     tags = data.get("tags", None)
     administrator = data.get("administrator")

@@ -75,12 +75,15 @@ class TestDefaults(TestCase):
     def test_cleanse_short_name_reg(self):
         def _test_cleansing(short_name, expected):
             data = {"short_name": short_name}
-            cleanse_short_name(data)
+            res = cleanse_short_name(data)
+            self.assertEqual(expected == short_name, res)
             self.assertEqual(expected, data["short_name"])
 
         _test_cleansing("1QWERTY", "qwerty")
         _test_cleansing("123456789012345678X", "x")
         _test_cleansing("1ABC!D@E#F&G(HIJ)KLMNO-PQRSTUVWYZ", "abcdefghijklmnop")
+        _test_cleansing("check", "check")
+
 
     def test_valid_uri_attributes(self):
         self.assertTrue(valid_uri_attributes({"url": "https://sram.org"}, ["url"]))
