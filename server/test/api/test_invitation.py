@@ -262,6 +262,20 @@ class TestInvitation(AbstractTest):
                        with_basic_auth=False)
         self.assertEqual("accepted", res["status"])
 
+    def test_external_invitation_invalid_group(self):
+        res = self.put("/api/invitations/v1/collaboration_invites",
+                       body={
+                           "short_name": ai_computing_short_name,
+                           "intended_role": "bogus",
+                           "invitation_expiry_date": (int(time.time()) * 1000) + 60 * 60 * 25 * 15,
+                           "invites": ["joe@test.com"],
+                           "groups": ["nope"]
+                       },
+                       headers={"Authorization": f"Bearer {uuc_secret}"},
+                       with_basic_auth=False,
+                       response_status_code=400)
+        self.assertTrue("Invalid group identifier: nope" in res["message"])
+
     def test_accept_with_existing_join_request(self):
         self.assertEqual(1, JoinRequest.query.filter(JoinRequest.hash == join_request_peter_hash).count())
         self.login("urn:peter")
