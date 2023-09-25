@@ -115,7 +115,7 @@ class Organisations extends React.Component {
                       defaultSort="name"
                       inputFocus={true}
                       columns={columns}
-                      hideTitle={true}
+                      title={`${I18n.t("home.tabs.organisations")} (${organisations.length})`}
                       rowLinkMapper={() => this.openOrganisation}
                       showNew={currentUser.admin}
                       newEntityPath={"/new-organisation"}

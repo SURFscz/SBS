@@ -169,6 +169,10 @@ class Users extends React.Component {
                     plural: I18n.t(`models.allUsers.${countInvitations === 1 ? "singleInvitation" : "multipleInvitations"}`)
                 })
             }
+        } else if (!noResults) {
+            title = I18n.t(`models.allUsers.${noResults ? "noResults" : "noEntities"}${adminSearch ? "" : "Invitations"}`)
+        } else {
+            title = I18n.t(`models.allUsers.noResults${adminSearch ? "" : "Invitations"}`)
         }
         return (<div className="mod-users">
             {searching && <SpinnerField/>}
@@ -178,8 +182,7 @@ class Users extends React.Component {
                       filters={moreToShow && this.moreResultsAvailable()}
                       columns={columns}
                       title={title}
-                      hideTitle={!hasEntities || noResults}
-                      customNoEntities={I18n.t(`models.allUsers.${noResults ? "noResults" : "noEntities"}${adminSearch ? "" : "Invitations"}`)}
+                      customNoEntities={" "}
                       loading={false}
                       inputFocus={true}
                       customSearch={this.search}
