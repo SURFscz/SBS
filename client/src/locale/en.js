@@ -1144,11 +1144,11 @@ const en = {
         namePlaceHolder: "The unique name of an organisation",
         invitations: "Invite organisation admins",
         category: "Category",
-        categoryTooltip: "Categories are displayed when</br>services are linked to organisations",
+        categoryTooltip: "Type of institution",
         tenantPlaceHolder: "The unique tenant / organisation identifier linking the organisation to an institute",
         shortName: "Short name",
         shortNamePlaceHolder: "Short name of the organisation",
-        shortNameTooltip: "Assign short names to organisations so that these short names can be used in the LDAP services (like Linux directory names).<br/><br/>" +
+        shortNameTooltip: "The short name is be used in LDAP services (like Linux directory names).<br/><br/>" +
             "Only digits, alphanumeric characters and the underscore are allowed.",
         identifier: "Identifier",
         identifierTooltip: "Generated, unique and immutable identifier of a organisation which used as identifier for external systems",
@@ -1206,7 +1206,7 @@ const en = {
         onBoarding: {
             label: "Message for users requesting or creating a collaboration",
             invalid: "You must change the message to users",
-            tooltip: "This message is shown to users from you organisation when they request or create a collaboration (depending your the organisation's settings)",
+            tooltip: "This message is shown to users from you organisation when they request or create a collaboration",
             template: "Hi!,\n\n" +
                 "You can **request/create** a collaboration to get started. Please describe why you want to create this collaboration. We might contact you for further details.",
             tabs: {

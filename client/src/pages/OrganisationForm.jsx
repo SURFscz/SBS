@@ -382,6 +382,10 @@ class OrganisationForm extends React.Component {
                             attribute: I18n.t("organisation.shortName").toLowerCase()
                         })}/>}
 
+                        <InputField value={description} onChange={e => this.setState({description: e.target.value})}
+                                    placeholder={I18n.t("organisation.descriptionPlaceholder")} multiline={true}
+                                    name={I18n.t("organisation.description")}/>
+
                         <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
                                            isNew={isNew} title={I18n.t("organisation.logo")} value={logo}
                                            initial={initial} secondRow={true}/>
@@ -400,10 +404,6 @@ class OrganisationForm extends React.Component {
                                   info={I18n.t("organisation.servicesRestricted")}
                                   readOnly={!user.admin}
                         />
-
-                        <InputField value={description} onChange={e => this.setState({description: e.target.value})}
-                                    placeholder={I18n.t("organisation.descriptionPlaceholder")} multiline={true}
-                                    name={I18n.t("organisation.description")}/>
 
                         <CreatableField onChange={e => this.setState({
                             schac_home_organisation: e.target.value,
