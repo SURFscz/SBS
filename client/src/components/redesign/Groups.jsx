@@ -905,7 +905,6 @@ class Groups extends React.Component {
                           columns={columns.concat(sharedColumns)}
                           searchCallback={this.groupSearchCallback}
                           actionHeader={"groups"}
-                          hideTitle={true}
                           onHover={true}
                           actions={groupActions}
                           showActionsAlways={false}

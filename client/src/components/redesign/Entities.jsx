@@ -122,7 +122,7 @@ class Entities extends React.Component {
     }
 
     renderEntities = (entities, sorted, reverse, modelName, tableClassName, columns, children,
-                      rowLinkMapper, customNoEntities, onHover, actions, showActionsAlways, actionHeader, page, pagination) => {
+                      rowLinkMapper, customNoEntities, onHover, actions, showActionsAlways, actionHeader, page, pagination, query) => {
         const hasEntities = !isEmpty(entities);
         const total = entities.length;
         if (pagination) {
@@ -167,7 +167,7 @@ class Entities extends React.Component {
                             </tbody>
                         </table>
                     </div>}
-                {(!hasEntities && !children) &&
+                {(!hasEntities && !children && !isEmpty(query)) &&
                     <p className="no-entities">{customNoEntities || I18n.t(`models.${modelName}.noEntities`)}</p>}
                 {pagination && <Pagination currentPage={page}
                                            onChange={nbr => this.setState({page: nbr})}
@@ -220,7 +220,7 @@ class Entities extends React.Component {
                 </Explain>}
                 {displaySearch && this.renderSearch(modelName, title, entities, query, searchAttributes, showNew, newLabel, filters, explain, customSearch, hideTitle)}
                 {this.renderEntities(sortedEntities, sorted, reverse, modelName, tableClassName, columns, children,
-                    rowLinkMapper, customNoEntities, onHover, actions, showActionsAlways, actionHeader, page, pagination)}
+                    rowLinkMapper, customNoEntities, onHover, actions, showActionsAlways, actionHeader, page, pagination, query)}
                 <div>{this.props.children}</div>
             </div>);
     }

@@ -153,7 +153,6 @@ class MemberJoinRequests extends React.Component {
                           searchAttributes={["user__name", "user__email", "collaboration__name", "status"]}
                           defaultSort="name"
                           columns={columns}
-                          hideTitle={true}
                           filters={this.filter(filterOptions, filterValue)}
                           loading={loading}
                           {...this.props}/>

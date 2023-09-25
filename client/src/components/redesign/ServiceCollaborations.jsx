@@ -287,7 +287,6 @@ export default class ServiceCollaborations extends React.PureComponent {
                               modelName={modelName}
                               searchAttributes={["name"]}
                               defaultSort="name"
-                              hideTitle={true}
                               columns={columns}
                               onHover={true}
                               actionHeader={"collaboration-services"}

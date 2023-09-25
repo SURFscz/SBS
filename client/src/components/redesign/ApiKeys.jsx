@@ -195,7 +195,6 @@ class ApiKeys extends React.Component {
                           inputFocus={true}
                           loading={false}
                           showNew={isUserAllowed(ROLES.ORG_ADMIN, user, organisation.id)}
-                          hideTitle={true}
                           newEntityFunc={this.fetchNewApiValue}
                           explain={<ApiKeysExplanation/>}
                           explainTitle={I18n.t("explain.apiKeys")}

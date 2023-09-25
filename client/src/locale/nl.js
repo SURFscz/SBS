@@ -589,6 +589,7 @@ const nl = {
             searchPlaceHolder: "Zoek naar dienstbeheerders..",
             noEntities: "Er zijn geen dienstbeheerders",
             new: "Nodig beheerder(s) uit",
+            title: "Dienst beheerders"
         },
         userTokens: {
             backToUserTokens: "Terug naar alle diensttokens",

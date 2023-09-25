@@ -23,7 +23,7 @@
         justify-content: flex-end;
 
         .search-filters {
-            margin-right: auto;
+            margin: 0 40px 0 auto;
         }
 
         @media (max-width: $compact-medium) {
@@ -47,10 +47,6 @@
             border-color: var(--sds--color--gray--400);
         }
 
-        div.filters-with-title {
-            margin-left: auto;
-        }
-
         svg.help {
             color: $blue;
             font-size: 14px;
@@ -65,10 +61,6 @@
         .search {
             position: relative;
             display: flex;
-
-            &.standalone {
-                margin-left: auto;
-            }
 
             @media (max-width: $compact-medium) {
                 margin-left: 0;

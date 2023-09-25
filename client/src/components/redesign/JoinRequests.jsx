@@ -293,7 +293,6 @@ class JoinRequests extends React.Component {
                           rowLinkMapper={() => this.openJoinRequest}
                           inputFocus={true}
                           columns={columns}
-                          hideTitle={true}
                           filters={this.filter(filterOptions, filterValue)}
                           loading={loading}
                           {...this.props}/>

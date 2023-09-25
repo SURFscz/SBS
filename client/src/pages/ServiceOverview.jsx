@@ -755,7 +755,7 @@ class ServiceOverview extends React.Component {
         const customNoEntities = enabled ? I18n.t("serviceDetails.noTokens") : I18n.t("serviceDetails.enableTokens", {action: action});
         return <>
             <div className="input-field">
-                <label>{I18n.t("serviceDetails.tokens")}
+                <label className={"service-details-tokens"}>{I18n.t("serviceDetails.tokens")}
                     <Tooltip tip={I18n.t(`serviceDetails.tokensTooltips.${tokenType}`)}/>
                 </label>
                 <Entities
