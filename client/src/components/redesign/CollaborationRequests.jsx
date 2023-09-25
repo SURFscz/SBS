@@ -110,6 +110,7 @@ export default class CollaborationRequests extends React.PureComponent {
         const filteredCollaborationRequests = filterValue.value === allValue ? organisation.collaboration_requests :
             organisation.collaboration_requests.filter(cr => cr.status === filterValue.value);
 
+        const numberOfRequests = organisation.collaboration_requests.length;
         return (
             <Entities entities={filteredCollaborationRequests}
                       modelName={"collaboration_requests"}
@@ -119,7 +120,9 @@ export default class CollaborationRequests extends React.PureComponent {
                       rowLinkMapper={() => this.openCollaborationRequest}
                       columns={columns}
                       showNew={false}
-                      hideTitle={true}
+                      customNoEntities={" "}
+                      title={numberOfRequests === 0 ? I18n.t("models.collaboration_requests.noEntities"):
+                          `${I18n.t("models.collaboration_requests.title")} (${numberOfRequests})`}
                       filters={this.filter(filterOptions, filterValue)}
                       loading={false}
                       {...this.props}/>
