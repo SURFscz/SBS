@@ -1355,7 +1355,7 @@ const en = {
         declineInvitation: "Are you sure you want to decline this invitation?",
         deleteInvitation: "Are you sure you want to delete this invitation?",
         resendInvitation: "Are you sure you want to resend this invitation?",
-        resendInvitations: "Are you sure you want to resend all selected expired invitation?",
+        resendInvitations: "Are you sure you want to resend all selected invitation?",
         expired: "This invitation expired on {{expiry_date}} and cannot be accepted anymore.",
         expiredAdmin: "This invitation expired on {{expiry_date}}. Resend the invitation to reset the expiration date to 14 days.",
         flash: {
@@ -2173,7 +2173,7 @@ const en = {
     serviceDetail: {
         deleteMemberConfirmation: "Are you sure you want to delete the selected service admins and invitations?",
         deleteYourselfMemberConfirmation: "Are you sure you want to leave this service? You will have to be re-invited by an admin to rejoin.",
-        resendInvitations: "Are you sure you want to resend all selected expired invitation?",
+        resendInvitations: "Are you sure you want to resend all selected invitation?",
         flash: {
             entitiesDeleted: "Admins and invitations have been deleted",
             invitesResend: "Invitations for service {{name}} were resent.",
