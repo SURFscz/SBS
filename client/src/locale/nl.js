@@ -759,7 +759,7 @@ const nl = {
         shortName: "Korte naam",
         shortNamePlaceHolder: "Korte naam van de samenwerking",
         shortNameTooltip: "Ken korte namen toe aan de samenwerkingen zodat die namen bruikbaar zijn in de via ldap te koppelen diensten (zoals Linux groepsnamen).<br/><br/>" +
-            "Alleen getallen, alpha-numerieke karakers en de underscore zijn toegstaan.",
+            "Alleen getallen, alfanumerieke karakers en de lage streep zijn toegstaan.",
         globalUrn: "Globale urn",
         globalUrnTooltip: "Globale unieke en niet aanpasbare urn gebaseerd op de korte naam van de organisatie en deze samenwerking.",
         identifier: "Identifier",
@@ -940,7 +940,7 @@ const nl = {
         abbreviation: "Korte naam",
         abbreviationPlaceHolder: "De korte naam van de dienst",
         abbreviationTooltip: "De korte naam van een dienst wordt gebruikt als prefix voor groepen aangemaakt door de dienstgroepen van deze dienst.<br/><br/>" +
-            "Alleen getallen, alpha-numerieke karakers en de underscore zijn toegstaan.",
+            "Alleen getallen, alfanumerieke karakers en de lage streep zijn toegstaan.",
         service_request: "Link voor dienstverzoek",
         service_requestTooltip: "De URL om een koppeling met de dienst aan te vragen door een lid van samenwerking",
         service_requestError: "Vereist een valide URI en samenwerkingen moeten kunnen koppelen zonder toestemming",
@@ -1144,12 +1144,12 @@ const nl = {
         namePlaceHolder: "De unieke naam van de organisatie",
         invitations: "Organisatiebeheerders uitnodigen",
         category: "Categorie",
-        categoryTooltip: "Categorieën worden getoond als</br>diensten worden gekoppeld met organisaties",
+        categoryTooltip: "Type instelling",
         tenantPlaceHolder: "De unieke tenant-/organisatie-identifier die de organisatie verbindt met een instelling",
         shortName: "Korte naam",
         shortNamePlaceHolder: "Korte naam van de organisatie",
-        shortNameTooltip: "Ken korte namen toe aan organisaties zodat deze korte namen kunnen worden gebruikt in LDAP diensten (zoals Linux directory-namen).<br/><br/>" +
-            "Alleen getallen, alpha-numerieke karakers en de underscore zijn toegstaan.",
+        shortNameTooltip: "De korte name wordt gebruikt voor LDAP-diensten (zoals Linux directory-namen).<br/><br/>" +
+            "Alleen getallen, alfanumerieke karakers en de lage streep zijn toegstaan.",
         identifier: "Identifier",
         identifierTooltip: "Gegenereerde, unieke en niet aanpasbare identifier van een organisatie die wordt gebruikt als identifier voor externe systemen",
         description: "Omschrijving",
@@ -1159,10 +1159,10 @@ const nl = {
         schacHomeOrganisationShortName: "Organisatiedomein",
         schacHomeOrganisationShortNames: "Organisatiedomeinen",
         schacHomeOrganisation: "Organisatiedomeinnamen",
-        schacHomeOrganisationPlaceholder: "De domeinnaam van de organisatie",
-        schacHomeOrganisationTooltip: "De domeinnaam van een identiteit gebaseerd op de domeinnaam van de instelling (bijvoorbeeld instelling.nl). SAML2: urn:mace:terena.org:attribute-def:schacHomeOrganization",
-        collaborationCreationAllowed: "Aanvragen voor nieuwe samenwerking automatisch goedkeuren",
-        collaborationCreationAllowedTooltip: "Iedereen kan samenwerkingen voor de eigen instelling aanmaken. Hiervoor is een domeinnaam vereist.",
+        schacHomeOrganisationPlaceholder: "De domeinnamen van de organisatie",
+        schacHomeOrganisationTooltip: "De domeinnamen waarmee gebruikers van deze organisatie inloggen. Deze gebruikers kunnen samenwerkingen aanmaken of aanvragen bij je organisatie.",
+        collaborationCreationAllowed: "Gebruikers kunnen zonder goedkeuring een samenwerking aanmaken",
+        collaborationCreationAllowedTooltip: "Sta toe dat gebruikers van de organisatie samenwerkingen aanmaken zonder goedkeuring van de organisatiebeheerder of -manager",
         collaborationCreationLabel: "Gebruikers van deze domeinen",
         collaborationCreationIsAllowed: "Kunnen samenwerkingen aanmaken",
         collaborationCreationNotAllowed: "Kunnen samenwerkingen aanvragen",
@@ -1204,10 +1204,12 @@ const nl = {
             created: "Organisatie {{name}} is aangemaakt."
         },
         onBoarding: {
-            label: "On-boarding message",
-            invalid: "Je moet de de on-boarding aanpassen",
-            tooltip: "Wanneer een gebruiker zich bij SURF Research Access Management aanmeldt met een instellingsaccount maar zonder enige rol of uitnodiging, zullen we de gebruiker laten zien wat deze kan doen. De tekst die je hier invult zal ook getoond worden. Probeer te formuleren wat de gebruiker kan doen.",
-            template: "Als je niet weet wat je nu moet doen, kijk dan op ***URL naar een webpagina op het intranet van de instelling?*** Je kunt ook contact opnemen met ***de naam en het e-mailadres van de contactpersoon voor SURF Research Access Management binnen je instelling opgeven, of kan de gebruiker contact opnemen met research support, of een helpdesk binnen de instelling?***",
+            label: "Bericht voor gebruikers bij aanvragen of aanmaken van een samenwerking",
+            invalid: "Je moet het bericht aan gebruikers aanpassen",
+            tooltip: "Dit bericht wordt getoond aan gebruikers van de organisatie wanneer ze een samenewerking aanvragen of aanmaken",
+            template: "Hoi!,\n\n" +
+            "Je kunt een samenwerking **aanmaken/aanvragen**. Omschrijf waarom je deze samenwerking wilt gaan gebruiken. We kunnen contact met je opnemen over je aanvraag.",
+
             tabs: {
                 write: "Markdown",
                 preview: "Voorbeeld"
@@ -1522,7 +1524,7 @@ const nl = {
         short_name: "Korte naam",
         shortNamePlaceHolder: "Korte naam van de groep",
         shortNameTooltip: "De korte naam van een dienstgroep wordt gebruikt (1) voor groepen aangemaakt in samenwerkingen, voorafgegaan door de korte naam van de dienst, gescheiden door een koppelteken '-' en (2) in de challenge URL gebruikt door PAM web login.<br/><br/>" +
-            "Alleen getallen, alpha-numerieke karakers en de underscore zijn toegstaan.",
+            "Alleen getallen, alfanumerieke karakers en de lage streep zijn toegstaan.",
         identifier: "Identifier",
         identifierTooltip: "Gegenereerde, unieke en niet aanpasbare identifier van een groep die wordt gebruikt als identifier voor externe systemen",
         collaboration: "Samenwerking",
