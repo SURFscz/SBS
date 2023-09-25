@@ -1158,10 +1158,10 @@ const en = {
         schacHomeOrganisationShortName: "Organisation domain",
         schacHomeOrganisationShortNames: "Organisation domains",
         schacHomeOrganisation: "Organisation domain names",
-        schacHomeOrganisationPlaceholder: "The domain name of the organisation",
-        schacHomeOrganisationTooltip: "The domain name of a person based on the domain name of the institution (i.e. institution.nl). SAML2: urn:mace:terena.org:attribute-def:schacHomeOrganization",
-        collaborationCreationAllowed: "Automatically approve collaboration creation requests",
-        collaborationCreationAllowedTooltip: "Any person can create collaborations for their home institution. This requires a domain name",
+        schacHomeOrganisationPlaceholder: "The domain names of the organisation",
+        schacHomeOrganisationTooltip: "The domain names users of this organisation log in with. These users can request or create collaborations with your organisation.",
+        collaborationCreationAllowed: "Users can create collaborations straightaway",
+        collaborationCreationAllowedTooltip: "Allows users from your organisation to create a collaboration without requiring approval from an organisation admin or manager",
         collaborationCreationLabel: "Users from these domains",
         collaborationCreationIsAllowed: "Can create collaborations",
         collaborationCreationNotAllowed: "Can request collaborations",
@@ -1203,10 +1203,11 @@ const en = {
             created: "Organisation {{name}} was created"
         },
         onBoarding: {
-            label: "On-boarding instructions",
-            invalid: "You must change the on-boarding instructions",
-            tooltip: "When a user signs into SURF Research Access Management using their institutional account, but without any role or invite, we'll show them what they can do. The text you fill out here, will also be shown. Try to formulate something the user can do.",
-            template: "If you don't know what to do next, please check out ***URL to a webpage on the intranet of the institution?*** You can also contact ***maybe supply the name and email address of the contact for SURF Research Access Management within your institution, or can the user contact research support, or a helpdesk at the institution?***",
+            label: "Message for users requesting or creating a collaboration",
+            invalid: "You must change the message to users",
+            tooltip: "This message is shown to users from you organisation when they request or create a collaboration (depending your the organisation's settings)",
+            template: "Hi!,\n\n" +
+                "You can **request/create** a collaboration to get started. Please describe why you want to create this collaboration. We might contact you for further details.",
             tabs: {
                 write: "Markdown",
                 preview: "Preview"
