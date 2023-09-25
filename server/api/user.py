@@ -30,7 +30,7 @@ from server.auth.user_claims import add_user_claims, valid_user_attributes
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit, SBS_LOGIN
 from server.db.domain import User, OrganisationMembership, CollaborationMembership, JoinRequest, CollaborationRequest, \
-    UserNameHistory, SshKey, Organisation, Collaboration, Service, ServiceMembership, ServiceAup, UserIpNetwork, \
+    UserNameHistory, SshKey, ServiceMembership, ServiceAup, UserIpNetwork, \
     ServiceRequest
 from server.db.models import log_user_login
 from server.logger.context_logger import ctx_logger
@@ -42,7 +42,6 @@ user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 
 def _add_counts(user: dict):
     if is_admin_user(user):
-        platform_admins = User.query.filter(User.uid.in_([u.uid for u in current_app.app_config.admin_users])).count()
         user["total_service_requests"] = ServiceRequest.query.count()
         user["total_open_service_requests"] = ServiceRequest.query.filter(ServiceRequest.status == "open").count()
 
