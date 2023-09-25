@@ -333,7 +333,7 @@ export default class Collaborations extends React.PureComponent {
                           searchAttributes={["name"]}
                           defaultSort="name"
                           inputFocus={true}
-                          hideTitle={true}
+                          title={`${I18n.t("home.tabs.collaborations")} (${collaborations.length})`}
                           rowLinkMapper={() => this.openCollaboration}
                           columns={columns}
                           onHover={true}

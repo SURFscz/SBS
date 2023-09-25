@@ -70,7 +70,7 @@ class PlatformAdmins extends React.Component {
                       modelName="users"
                       searchAttributes={["name", "email"]}
                       defaultSort="name"
-                      hideTitle={true}
+                      title={`${I18n.t("home.tabs.platformAdmins")} (${admins.length})`}
                       rowLinkMapper={() => this.openPlatformAdmin}
                       columns={columns}
                       loading={loading}
