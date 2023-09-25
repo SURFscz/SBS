@@ -213,14 +213,16 @@ def update_group():
 @json_endpoint
 def delete_group(group_id):
     group = Group.query.filter(Group.id == group_id).one()
-    collaboration_id = group.collaboration_id
+    collaboration = group.collaboration
 
-    confirm_collaboration_admin(collaboration_id)
+    confirm_collaboration_admin(collaboration.id)
+    if group.service_group is not None and group.service_group.service in collaboration.services:
+        raise Forbidden("Connected service_group con not be deleted")
 
-    emit_socket(f"collaboration_{collaboration_id}")
+    emit_socket(f"collaboration_{collaboration.id}")
     broadcast_group_deleted(group_id)
 
-    update_last_activity_date(collaboration_id)
+    update_last_activity_date(collaboration.id)
 
     return delete(Group, group_id)
 
