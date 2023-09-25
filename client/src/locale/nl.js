@@ -1356,7 +1356,7 @@ const nl = {
         declineInvitation: "Weet je zeker dat je de uitnodiging wil afslaan?",
         deleteInvitation: "Weet je zeker dat je de uitnodiging wil verwijderen?",
         resendInvitation: "Weet je zeker dat je de uitnodiging opnieuw wil versturen?",
-        resendInvitations: "Weet je zeker dat je alle geselecteerde verlopen uitnodigingen opnieuw wil versturen?",
+        resendInvitations: "Weet je zeker dat je alle geselecteerde uitnodigingen opnieuw wil versturen?",
         expired: "Deze uitnodiging is verlopen op {{expiry_date}} en kan niet meer geaccepteerd worden.",
         expiredAdmin: "Deze uitnodiging is verlopen op {{expiry_date}}. Verstuur deze opnieuw om de verloopdatum 14 dagen vooruit te zetten.",
         flash: {
@@ -2174,7 +2174,7 @@ const nl = {
     serviceDetail: {
         deleteMemberConfirmation: "Weet je zeker dat je alle geselecteerde beheerders en uitnodigingen wil verwijderen?",
         deleteYourselfMemberConfirmation: "Weet je zeker dat je deze dienst wil verlaten? Je kan dit niet terugdraaien.",
-        resendInvitations: "Weet je zeker dat je alle geselecteerde verlopen uitnodigingen opnieuw wil versturen?",
+        resendInvitations: "Weet je zeker dat je alle geselecteerde uitnodigingen opnieuw wil versturen?",
         flash: {
             entitiesDeleted: "Beheerders en uitnodigingen zijn verwijderd",
             invitesResend: "Uitnodigingen voor organisatie {{name}} zijn opnieuw verzonden.",
