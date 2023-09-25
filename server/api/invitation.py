@@ -164,12 +164,15 @@ def collaboration_invites_api():
     invites_results = []
 
     group_ids = data.get("groups", [])
-    conditions = [Group.short_name.in_(group_ids), Group.identifier.in_(group_ids)]
-
-    groups = Group.query \
-        .filter(Group.collaboration_id == collaboration.id) \
-        .filter(or_(*conditions)) \
-        .all()
+    groups = []
+    for group_identifier in group_ids:
+        group = Group.query \
+            .filter(Group.collaboration_id == collaboration.id) \
+            .filter(or_(Group.short_name == group_identifier, Group.identifier == group_identifier)) \
+            .first()
+        if not group:
+            raise BadRequest(f"Invalid group identifier: {group_identifier}")
+        groups.append(group)
 
     for email in invites:
         invitation = Invitation(hash=generate_token(), message=message, invitee_email=email,
