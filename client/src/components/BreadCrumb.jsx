@@ -17,7 +17,7 @@ export const BreadCrumb = () => {
     }
     const value = paths[paths.length - 1].value
     let name = "";
-    if (value === I18n.t("home.edit")) {
+    if (value === I18n.t("home.edit") || value === I18n.t("breadcrumb.history")) {
         const namePart = paths[paths.length - 2];
         if (!isEmpty(namePart)) {
             name = namePart.value
