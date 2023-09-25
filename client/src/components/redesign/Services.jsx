@@ -89,7 +89,7 @@ class Services extends React.Component {
                       showNew={user.admin || userServiceAdmin}
                       newEntityPath={user.admin ? "/new-service": "/new-service-request"}
                       loading={loading}
-                      hideTitle={true}
+                      title={`${I18n.t("home.tabs.services")} (${services.length})`}
                       rowLinkMapper={() => this.openService}
                       {...this.props}/>
         )
