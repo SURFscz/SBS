@@ -382,6 +382,10 @@ class OrganisationForm extends React.Component {
                             attribute: I18n.t("organisation.shortName").toLowerCase()
                         })}/>}
 
+                        <InputField value={description} onChange={e => this.setState({description: e.target.value})}
+                                    placeholder={I18n.t("organisation.descriptionPlaceholder")} multiline={true}
+                                    name={I18n.t("organisation.description")}/>
+
                         <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
                                            isNew={isNew} title={I18n.t("organisation.logo")} value={logo}
                                            initial={initial} secondRow={true}/>
@@ -393,13 +397,13 @@ class OrganisationForm extends React.Component {
                                                     toolTip={I18n.t("organisation.categoryTooltip")}
                                                     onChange={e => this.setState({category: e})}/>}
 
-                        <InputField value={description} onChange={e => this.setState({description: e.target.value})}
-                                    placeholder={I18n.t("organisation.descriptionPlaceholder")} multiline={true}
-                                    name={I18n.t("organisation.description")}/>
-
-                        <OrganisationOnBoarding
-                            on_boarding_msg={(isEmpty(on_boarding_msg) && isNew && !on_boarding_changed) ? I18n.t("organisation.onBoarding.template") : on_boarding_msg}
-                            saveOnBoarding={val => this.setState({on_boarding_msg: val, on_boarding_changed: true})}/>
+                        <CheckBox name={"services_restricted"}
+                                  value={services_restricted}
+                                  tooltip={I18n.t("organisation.servicesRestrictedTooltip")}
+                                  onChange={() => this.setState({services_restricted: !services_restricted})}
+                                  info={I18n.t("organisation.servicesRestricted")}
+                                  readOnly={!user.admin}
+                        />
 
                         <CreatableField onChange={e => this.setState({
                             schac_home_organisation: e.target.value,
@@ -432,13 +436,9 @@ class OrganisationForm extends React.Component {
                                   readOnly={isEmpty(schac_home_organisations)}
                         />
 
-                        <CheckBox name={"services_restricted"}
-                                  value={services_restricted}
-                                  tooltip={I18n.t("organisation.servicesRestrictedTooltip")}
-                                  onChange={() => this.setState({services_restricted: !services_restricted})}
-                                  info={I18n.t("organisation.servicesRestricted")}
-                                  readOnly={!user.admin}
-                        />
+                        <OrganisationOnBoarding
+                            on_boarding_msg={(isEmpty(on_boarding_msg) && isNew && !on_boarding_changed) ? I18n.t("organisation.onBoarding.template") : on_boarding_msg}
+                            saveOnBoarding={val => this.setState({on_boarding_msg: val, on_boarding_changed: true})}/>
 
                         {isNew &&
                             <div>

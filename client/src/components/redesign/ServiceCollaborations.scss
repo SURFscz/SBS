@@ -2,7 +2,6 @@
 
 .mod-service-collaborations {
     .info-container {
-        //background-color: var(--sds--color--blue--200);
         background-color: transparent;
 
         .info {
@@ -10,8 +9,18 @@
             margin: 24px auto 0 auto;
             padding: 8px 0;
 
+            @media (max-width: $medium) {
+                padding: 8px 15px;
+
+            }
+
             button {
                 margin-left: 60px;
+                @media (max-width: $compact-medium) {
+                    margin-top: 15px;
+                    margin-left: 0;
+                    display: block;
+                }
             }
         }
 
