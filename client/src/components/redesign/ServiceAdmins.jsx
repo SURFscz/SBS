@@ -407,7 +407,6 @@ class ServiceAdmins extends React.Component {
                           inputFocus={true}
                           columns={columns}
                           loading={false}
-                          hideTitle={true}
                           onHover={true}
                           showNew={isAdmin}
                           actions={(isAdmin && entities.length > 0) ? this.actionButtons(selectedMembers) : null}

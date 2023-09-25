@@ -377,7 +377,6 @@ class UserTokens extends React.Component {
                           defaultSort="name"
                           rowLinkMapper={() => this.gotoUserToken}
                           columns={columns}
-                          hideTitle={true}
                           loading={loading}
                           explain={<UserTokensExplanation/>}
                           explainTitle={I18n.t("explain.tokens")}

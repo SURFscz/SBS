@@ -372,7 +372,6 @@ class ServiceOrganisations extends React.Component {
                               modelName="serviceOrganisations"
                               searchAttributes={["name"]}
                               defaultSort="name"
-                              hideTitle={true}
                               columns={columns}
                               loading={false}
                               {...this.props}/>}
