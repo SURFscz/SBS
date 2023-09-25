@@ -53,7 +53,7 @@ class Entities extends React.Component {
     }
 
     renderSearch = (modelName, title, entities, query, searchAttributes, showNew, newLabel, filters, explain, customSearch, hideTitle) => {
-        const filterClassName = !hideTitle && filters ? "filters-with-title" : `${modelName}-search-filters`;
+        const filterClassName = (!hideTitle && filters) ? "search-filters filters-with-title" : `search-filters ${modelName}-search-filters`;
         return (
             <section className="entities-search">
                 {!hideTitle && <h2>{title || `${I18n.t(`models.${modelName}.title`)} (${entities.length})`}</h2>}
