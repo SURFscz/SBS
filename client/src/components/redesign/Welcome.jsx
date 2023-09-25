@@ -10,7 +10,6 @@ import {AppStore} from "../../stores/AppStore";
 import {rawGlobalUserRole, ROLES} from "../../utils/UserRole";
 import DOMPurify from "dompurify";
 import LandingInfo from "../LandingInfo";
-import OnBoardingMessage from "./OnBoardingMessage";
 
 class Welcome extends React.Component {
 
@@ -46,7 +45,6 @@ class Welcome extends React.Component {
     }
 
     knownOrganisation = (idpDisplayName, organisation) => {
-        const hasOnBoardingMsg = !isEmpty(organisation.on_boarding_msg);
         const canCreate = organisation.collaboration_creation_allowed_entitlement || organisation.collaboration_creation_allowed;
         return (
             <div>
@@ -55,8 +53,6 @@ class Welcome extends React.Component {
                     __html: DOMPurify.sanitize(I18n.t(`welcome.${canCreate ? "startCreateColl" : "startRequestColl"}`,
                         {name: idpDisplayName}))
                 }}/>
-                {hasOnBoardingMsg &&
-                    <OnBoardingMessage organisation={organisation}/>}
                 <Button onClick={() => this.props.history.push("/new-collaboration")}
                         txt={I18n.t(`welcome.${canCreate ? "createCollTxt" : "createCollRequestTxt"}`)}/>
             </div>

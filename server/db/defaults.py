@@ -58,6 +58,7 @@ def cleanse_short_name(data, attr="short_name"):
         short_name = short_name[1:]
 
     data[attr] = re.sub(r"[^a-zA-Z_0-9]+", "", short_name).lower()[:16]
+    return data[attr] == short_name
 
 
 uri_re = re.compile("^https?://(?:www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}"

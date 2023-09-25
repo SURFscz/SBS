@@ -106,10 +106,6 @@
                         width: 180px;
                     }
 
-                    &:hover {
-                        filter: drop-shadow(0 0 12em var(--sds--palette--main-color--400));
-                    }
-
                     &.spin {
                         animation: logo-spin 1 0.5s linear;
                     }

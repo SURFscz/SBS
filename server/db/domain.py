@@ -225,6 +225,9 @@ class Invitation(Base, db.Model):
         if role not in ["admin", "member"]:
             raise ValueError(f"{role} is not valid. Valid roles are admin and member")
 
+    def is_expired(self):
+        return self.expiry_date and datetime.datetime.utcnow() > self.expiry_date
+
 
 services_collaborations_association = db.Table(
     "services_collaborations",

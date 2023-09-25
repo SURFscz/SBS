@@ -4,37 +4,32 @@ from flask import Blueprint, send_from_directory, current_app
 SWAGGER_TEMPLATE = {
     "info": {
         "title": "SRAM API",
-        "description": "Documentation for SRAM external API",
+        "description": "Documentation for the publc APIs of SURF Research Access Management",
         "version": "1.0",
     },
     "tags": [
         {
-            "name": "Organisations",
-            "description": "All endpoints for external Organisations using an API-Key"
+            "name": "Organisation",
+            "description": "All endpoints for organisations using an organisation API token"
         },
         {
-            "name": "SCIM Services",
-            "description": "All endpoints for external SCIM clients using a Service token"
+            "name": "SCIM client",
+            "description": "All endpoints for external SCIM clients using a SCIM token"
         },
         {
-            "name": "PAM Services",
-            "description": "All endpoints for external Services that support the PAM WebSSO flow"
+            "name": "PAM web login",
+            "description": "All endpoints for external services using the PAM web login"
         }
     ],
     "securityDefinitions": {
-        "APIKeyHeader": {
+        "Organisation": {
             "type": "apiKey", "name": "Authorization", "in": "header",
-            "description": "Authorization header using the Bearer scheme with an organisation API key. "
-                           "Example: \"Authorization: Bearer {api_key}\""
+            "description": "Authorization header using the bearer scheme with an organisation API token. "
+                           "Example: \"Authorization: Bearer {api_token}\""
         },
-        "APITokenHeader": {
+        "PAM web login / SCIM client": {
             "type": "apiKey", "name": "Authorization", "in": "header",
-            "description": "Authorization header using the Bearer scheme with a service token. "
-                           "Example: \"Authorization: Bearer {service_token}\""
-        },
-        "SCIMTokenHeader": {
-            "type": "apiKey", "name": "Authorization", "in": "header",
-            "description": "Authorization header using the Bearer scheme with a scim service token. "
+            "description": "Authorization header using the bearer scheme with PAM web login and SCIM client. "
                            "Example: \"Authorization: Bearer {scim_token}\""
         }
     }

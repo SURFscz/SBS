@@ -4,7 +4,7 @@ from sqlalchemy.orm import load_only
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import current_user_id, confirm_allow_impersonation, confirm_write_access, \
-    is_organisation_admin_or_manager, is_collaboration_admin
+    is_organisation_admin_or_manager, is_collaboration_admin, access_allowed_to_collaboration_as_org_member
 from server.db.audit_mixin import AuditLog
 from server.db.domain import User, Organisation, Collaboration, Service
 
@@ -19,7 +19,7 @@ table_names_cls_mapping = {
 
 def _user_activity(user_id):
     filter_params = ((AuditLog.target_id == user_id) & (AuditLog.target_type == User.__tablename__)) | (
-        AuditLog.subject_id == user_id)  # noqa: E126
+            AuditLog.subject_id == user_id)  # noqa: E126
     audit_logs = AuditLog.query \
         .filter(filter_params) \
         .order_by(desc(AuditLog.created_at)) \
@@ -79,7 +79,8 @@ def info(query_id, collection_name):
         if collection_name == "organisations":
             return is_organisation_admin_or_manager(query_id)
         if collection_name == "collaborations":
-            return is_collaboration_admin(user_id=user_id, collaboration_id=query_id)
+            co_admin = is_collaboration_admin(user_id=user_id, collaboration_id=query_id)
+            return co_admin or access_allowed_to_collaboration_as_org_member(query_id)
         return False
 
     confirm_write_access(override_func=override_func)
