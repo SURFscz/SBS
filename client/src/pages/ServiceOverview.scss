@@ -71,6 +71,10 @@ section.dialog-content {
             grid-column-start: first;
         }
 
+        label.service-details-tokens {
+            font-weight: 600;
+        }
+
         span.error {
             display: block;
             color: $error-red;

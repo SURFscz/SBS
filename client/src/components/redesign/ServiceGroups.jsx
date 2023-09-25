@@ -571,7 +571,6 @@ class ServiceGroups extends React.Component {
                           searchCallback={this.groupSearchCallback}
                           actionHeader={"groups"}
                           loading={loading}
-                          hideTitle={true}
                           onHover={true}
                           actions={groupActions}
                           showNew={mayCreateGroups}

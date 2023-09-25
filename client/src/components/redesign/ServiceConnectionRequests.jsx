@@ -186,7 +186,6 @@ class ServiceConnectionRequests extends React.Component {
                           rowLinkMapper={() => this.openServiceConnectionRequest}
                           columns={columns}
                           loading={loading}
-                          hideTitle={true}
                           {...this.props}/>
             </div>
         )

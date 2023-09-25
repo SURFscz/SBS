@@ -474,7 +474,6 @@ class OrganisationAdmins extends React.Component {
                           columns={isAdmin ? columns : columns.slice(1)}
                           rowLinkMapper={entity => (entity.invite && isAdmin) && this.gotoInvitation}
                           loading={false}
-                          hideTitle={true}
                           onHover={true}
                           showNew={isAdmin}
                           actions={(isAdmin && entities.length > 0) ? this.actionButtons(selectedMembers) : null}

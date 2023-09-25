@@ -202,7 +202,6 @@ class OrganisationServices extends React.Component {
                           columns={columns}
                           loading={loading}
                           title={titleUsed}
-                          hideTitle={true}
                           explain={<OrganisationServicesExplanation/>}
                           explainTitle={I18n.t("explain.services")}
                           {...this.props}/>

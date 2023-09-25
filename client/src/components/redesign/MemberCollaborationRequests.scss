@@ -55,7 +55,6 @@ table.member_collaboration_requests, table.system_collaboration_requests, table.
 
         .collaboration-request-filter-select {
             width: 290px;
-            margin: 0 25px 0 0;
             @media (max-width: $compact-medium) {
                 margin: 15px 0;
             }
