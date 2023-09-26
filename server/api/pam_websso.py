@@ -49,7 +49,8 @@ def _validate_pam_sso_session(pam_sso_session: PamSSOSession, pin, validate_pin,
 
     return {"result": "SUCCESS",
             "username": user.username,
-            "groups": {m.collaboration.short_name: m.collaboration.name for m in user.collaboration_memberships},
+            "groups": {m.collaboration.short_name: m.collaboration.name for m in user.collaboration_memberships
+                       if service in m.collaboration.services or service in m.collaboration.organisation.services},
             "info": f"User {user.uid} has authenticated successfully"}
 
 
