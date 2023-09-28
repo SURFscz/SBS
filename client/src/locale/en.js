@@ -218,7 +218,7 @@ const en = {
             }
         },
         orgMembers: {
-            title: "Organisation admin & managers",
+            title: "Organisation admins & managers",
             noEntities: "There are no admins or managers in this organisation yet...",
             searchPlaceHolder: "Search members...",
             status: "Status",
@@ -275,7 +275,7 @@ const en = {
             name: "Name",
             memberCount: "Admins",
             collaborationCount: "Collaborations",
-            schacHomeOrganisations: "Org domain(s)",
+            schacHomeOrganisations: "Org domains",
             category: "Category",
             leave: "Leave organisation"
         },
@@ -391,7 +391,7 @@ const en = {
         coAdmins: {
             searchPlaceHolder: "Search for admins...",
             title: "Admins",
-            new: "Add admin(s)",
+            new: "Add admins",
             noEntities: "There are no admins",
         },
         members: {
@@ -588,7 +588,7 @@ const en = {
         serviceAdmins: {
             searchPlaceHolder: "Search for service admins..",
             noEntities: "There are no service admins",
-            new: "Invite admin(s)",
+            new: "Invite admins",
             title: "Service admins"
         },
         userTokens: {
@@ -691,7 +691,7 @@ const en = {
         name: "Name",
         email: "Email",
         uid: "UID",
-        affiliation: "Affiliation(s)",
+        affiliation: "Affiliations",
         username: "SRAM internal username",
         scoped_affiliation: "Scoped affiliations",
         entitlement: "Entitlements",
@@ -1104,7 +1104,7 @@ const en = {
             saml2File: "SAML2 file",
             none: "None, this service has no web interface"
         },
-        openIDConnectRedirects: "OpenID Connect redirect URL(s)",
+        openIDConnectRedirects: "OpenID Connect redirect URLs",
         openIDConnectRedirectsPlaceholder: "https://service.com/redirect",
         openIDConnectRedirectsTooltip: "The redirect URL after the user authentication is successfully done. Must be a full match.",
         samlMetadata: "SAML metadata URL",
@@ -2031,7 +2031,7 @@ const en = {
     },
     tooltips: {
         members: "Composition of this collaboration",
-        admins: "Admin(s) of this collaboration",
+        admins: "Admins of this collaboration",
         collaborationUrl: "More information about this collaboration",
         aup: "Acceptable use policy for this collaboration. This is an addition to the SURF Research Access Management AUP, which applies to all collaborations.",
         user: "User",
@@ -2127,12 +2127,12 @@ const en = {
     sfo: {
         title: "You do not have access to <i>{{name}}</i>",
         info: "Bad luck...",
-        info1: "<p>Access to <i>{{name}}</i> requires membership of a collaboration in SURF Research Access Management.</p><p>Contact your admin(s) to invite you to a collaboration that grants access to this service.</p>",
-        info2: "<p>Your profile in SURF Research Access Management is suspended, and therefore you don't have access to <i>{{name}}</i>.<p>Contact your admin(s) to enable access to this service.</p>",
+        info1: "<p>Access to <i>{{name}}</i> requires membership of a collaboration in SURF Research Access Management.</p><p>Contact your admins to invite you to a collaboration that grants access to this service.</p>",
+        info2: "<p>Your profile in SURF Research Access Management is suspended, and therefore you don't have access to <i>{{name}}</i>.<p>Contact your admins to enable access to this service.</p>",
         info3: "You are logged in, but the service <i>{{name}}</i> is unknown to SURF Research Access Management.",
-        info4: "<p>You are logged into SURF Research Access Management, but none of the collaborations you are member of grant you access to <i>{{name}}</i>.</p><p>Contact your admin(s) to enable access to this service.</p>",
-        info5: "<p>You are logged into SURF Research Access Management, but you don't have access to <i>{{name}}</i>. The collaboration that is connected to service <i>{{name}}</i> is inactive.</p><p>Contact your admin(s) to enable access to this service.</p>",
-        info6: "<p>You are logged into SURF Research Access Management, but you don't have access to <i>{{name}}</i>. Your collaboration membership which grants you access to <i>{{name}}</i> is expired.</p><p>Contact your admin(s) to enable access to this service.</p>",
+        info4: "<p>You are logged into SURF Research Access Management, but none of the collaborations you are member of grant you access to <i>{{name}}</i>.</p><p>Contact your admins to enable access to this service.</p>",
+        info5: "<p>You are logged into SURF Research Access Management, but you don't have access to <i>{{name}}</i>. The collaboration that is connected to service <i>{{name}}</i> is inactive.</p><p>Contact your admins to enable access to this service.</p>",
+        info6: "<p>You are logged into SURF Research Access Management, but you don't have access to <i>{{name}}</i>. Your collaboration membership which grants you access to <i>{{name}}</i> is expired.</p><p>Contact your admins to enable access to this service.</p>",
         ticket: "Copy & paste the following information if you want to contact SRAM support at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for help.",
         entityId: "Entity ID",
         issuerId: "Issuer ID",
