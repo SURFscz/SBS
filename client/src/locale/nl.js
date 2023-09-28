@@ -218,8 +218,8 @@ const nl = {
             }
         },
         orgMembers: {
-            title: "Organisatiebeheerder & -managers",
-            noEntities: "Er zijn nog geen beheerders of managers in deze organisatie...",
+            title: "Organisatiebeheerders & -managers",
+            noEntities: "Er zijn nog geen beheerders en managers in deze organisatie...",
             searchPlaceHolder: "Zoek leden...",
             status: "Status",
             inviteSend: "Uitgenodigd op {{date}}",
@@ -275,7 +275,7 @@ const nl = {
             name: "Naam",
             memberCount: "Beheerders",
             collaborationCount: "Samenwerkingen",
-            schacHomeOrganisations: "Organisatiedomein(en)",
+            schacHomeOrganisations: "Organisatiedomeinen",
             category: "Categorie",
             leave: "Verlaat organisatie"
         },
@@ -391,7 +391,7 @@ const nl = {
         coAdmins: {
             searchPlaceHolder: "Zoek beheerders...",
             title: "Beheerders",
-            new: "Voeg beheerder(s) toe",
+            new: "Voeg beheerders toe",
             noEntities: "Er zijn geen beheerder",
         },
         members: {
@@ -588,7 +588,7 @@ const nl = {
         serviceAdmins: {
             searchPlaceHolder: "Zoek naar dienstbeheerders..",
             noEntities: "Er zijn geen dienstbeheerders",
-            new: "Nodig beheerder(s) uit",
+            new: "Nodig beheerders uit",
             title: "Dienst beheerders"
         },
         userTokens: {
@@ -1104,7 +1104,7 @@ const nl = {
             saml2File: "SAML2 bestand",
             none: "Geen, de dienst heeft geen web interface"
         },
-        openIDConnectRedirects: "OpenID Connect redirect URL(s)",
+        openIDConnectRedirects: "OpenID Connect redirect URLs",
         openIDConnectRedirectsPlaceholder: "https://service.com/redirect",
         openIDConnectRedirectsTooltip: "De redirect URL nadat de user heeft ijgelogd. Moet een volledig overeenkomen.",
         samlMetadata: "SAML metadata URL",
@@ -1157,7 +1157,7 @@ const nl = {
         descriptionPlaceholder: "De omschrijving van de organisatie is zichtbaar voor iedereen",
         servicesRestricted: "SURF-organisatie",
         servicesRestrictedTooltip: "Samenwerkingen van een SURF-organisatie kunnen alleen SURF-diensten koppelen.",
-        schacHomeOrganisationShortName: "Organisatiedomein",
+        shortName: "Organisatiedomein",
         schacHomeOrganisationShortNames: "Organisatiedomeinen",
         schacHomeOrganisation: "Organisatiedomeinnamen",
         schacHomeOrganisationPlaceholder: "De domeinnamen van de organisatie",
@@ -2032,7 +2032,7 @@ const nl = {
     },
     tooltips: {
         members: "Samenstelling van deze samenwerking",
-        admins: "Beheerder(s) van deze samenwerking",
+        admins: "Beheerders van deze samenwerking",
         collaborationUrl: "Meer informatie over deze samenwerking",
         aup: "Acceptabel gebruiksbeleid voor deze samenwerking",
         user: "Gebruiker",
@@ -2128,12 +2128,12 @@ const nl = {
     sfo: {
         title: "Je hebt geen toegang tot <i>{{name}}</i>",
         info: "Pech gehad...",
-        info1: "<p>Toegang tot <i>{{name}}</i> vereist lidmaatschap van een samenwerking in SURF Research Access Management.</p><p>Vraag de beheerder(s) om je uit te nodigen voor een samenwerking die toegang geeft tot deze dienst.</p>",
-        info2: "<p>Je profiel in SURF Research Access Management is geschorst. Daarom heb je geen toegang tot <i>{{name}}</i>.</p><p>Neem contact op met de beheerder(s) voor toegang tot deze dienst.</p>",
+        info1: "<p>Toegang tot <i>{{name}}</i> vereist lidmaatschap van een samenwerking in SURF Research Access Management.</p><p>Vraag de beheerders om je uit te nodigen voor een samenwerking die toegang geeft tot deze dienst.</p>",
+        info2: "<p>Je profiel in SURF Research Access Management is geschorst. Daarom heb je geen toegang tot <i>{{name}}</i>.</p><p>Neem contact op met de beheerders voor toegang tot deze dienst.</p>",
         info3: "Je bent ingelogd bij, maar de dienst <i>{{name}}</i> is onbekend bij SURF Research Access Management.",
-        info4: "<p>Je bent ingelogd via SURF Research Access Management, maar geen van de samenwerking(en) waar je lid van bent geven toegang tot <i>{{name}}</i>.</p><p>Neem contact op met de beheerder(s) voor toegang tot deze dienst.</p>",
-        info5: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i> omdat de samenwerking(en) waarvan je lid bent niet actief zijn.</p><p>Neem contact op met de beheerder(s) van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
-        info6: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. Je lidmaatschap van de samenwerking(en) waar je momenteel lid van bent zijn verlopen.</p><p>Neem contact op met de beheerder(s) van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
+        info4: "<p>Je bent ingelogd via SURF Research Access Management, maar geen van de samenwerking(en) waar je lid van bent geven toegang tot <i>{{name}}</i>.</p><p>Neem contact op met de beheerders voor toegang tot deze dienst.</p>",
+        info5: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i> omdat de samenwerking(en) waarvan je lid bent niet actief zijn.</p><p>Neem contact op met de beheerders van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
+        info6: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. Je lidmaatschap van de samenwerking(en) waar je momenteel lid van bent zijn verlopen.</p><p>Neem contact op met de beheerders van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
         ticket: "Kopieer en plak de volgende informatie als je contact wilt opnemen met SRAM support <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> voor hulp.",
         entityId: "Entity ID",
         issuerId: "Issuer ID",
