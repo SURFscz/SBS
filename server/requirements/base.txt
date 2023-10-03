@@ -5,7 +5,7 @@ SQLAlchemy==2.0.18
 cryptography==41.0.4
 flask-jsonschema-validator==0.0.4
 flask-mail==0.9.1
-flask==2.3.3
+flask==3.0.0
 flask_migrate==4.0.5
 Flask-SQLAlchemy==3.1.1
 jinja2==3.1.2
@@ -24,7 +24,7 @@ Pillow==10.0.1
 PyJWT==2.8.0
 Authlib==1.2.1
 passlib==1.7.4
-werkzeug==2.3.7
+werkzeug==3.0.0
 Flask-Executor==1.0.0
 eventlet==0.33.3
 Flask-SocketIO==5.3.6
