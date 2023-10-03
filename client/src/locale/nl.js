@@ -1157,7 +1157,7 @@ const nl = {
         descriptionPlaceholder: "De omschrijving van de organisatie is zichtbaar voor iedereen",
         servicesRestricted: "SURF-organisatie",
         servicesRestrictedTooltip: "Samenwerkingen van een SURF-organisatie kunnen alleen SURF-diensten koppelen.",
-        shortName: "Organisatiedomein",
+        schacHomeOrganisationShortName: "Organisatiedomein",
         schacHomeOrganisationShortNames: "Organisatiedomeinen",
         schacHomeOrganisation: "Organisatiedomeinnamen",
         schacHomeOrganisationPlaceholder: "De domeinnamen van de organisatie",
