@@ -13,7 +13,7 @@
         "es6-promise": "^4.2.8",
         "events": "^3.2.0",
         "i18n-js": "^4.3.2",
-        "immer": "^10.0.2",
+        "immer": "^10.0.3",
         "isomorphic-dompurify": "^1.9.0",
         "js-cookie": "^3.0.1",
         "jsondiffpatch": "^0.5.0",
