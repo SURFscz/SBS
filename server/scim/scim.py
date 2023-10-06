@@ -66,7 +66,7 @@ def scim_headers(service: Service, is_delete=False):
     headers = {"Authorization": f"Bearer {service.scim_bearer_token}",
                "X-Service": str(service.id)}
     if not is_delete:
-        headers["Accept"] = "application/json, application/json;charset=UTF-8"
+        headers["Accept"] = "application/scim+json"
         headers["Content-Type"] = "application/scim+json"
     return headers
 
