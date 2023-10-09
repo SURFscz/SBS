@@ -1207,7 +1207,7 @@ const en = {
         onBoarding: {
             label: "Message for users requesting or creating a collaboration",
             invalid: "You must change the message to users",
-            tooltip: "This message is shown to users from you organisation when they request or create a collaboration",
+            tooltip: "This message is shown to users from your organisation when they request or create a collaboration",
             template: "Hi!,\n\n" +
                 "You can **request/create** a collaboration to get started. Please describe why you want to create this collaboration. We might contact you for further details.",
             tabs: {
