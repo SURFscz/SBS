@@ -2,7 +2,7 @@ summary: "Get user by external ID."
 description: "Retrieve the details of a user by external ID."
 
 tags:
-  - "SCIM Services"
+  - "SCIM client"
 
 consumes:
   - "application/json"
@@ -11,7 +11,7 @@ produces:
   - "application/json"
 
 security:
-  - APITokenHeader: [ 'Authorization' ]
+  - Service: [ 'Authorization' ]
 
 parameters:
   - name: Authorization

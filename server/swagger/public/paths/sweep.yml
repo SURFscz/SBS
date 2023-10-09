@@ -2,7 +2,7 @@ summary: "Sync all remotes groups and users with the SRAM groups and users for a
 description: "Sweep all diffs between the remote SCIM and SRAM groups and users."
 
 tags:
-  - "SCIM Services"
+  - "SCIM client"
 
 consumes:
   - "application/json"
@@ -11,7 +11,7 @@ produces:
   - "application/json"
 
 security:
-  - APITokenHeader: [ 'Authorization' ]
+  - Service: [ 'Authorization' ]
 
 parameters:
   - name: Authorization

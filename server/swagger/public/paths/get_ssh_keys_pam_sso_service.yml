@@ -2,7 +2,7 @@ summary: "Get all SSH keys for all User who can connect to the PAM Service."
 description: "Returns all SSH keys."
 
 tags:
-  - "PAM Services"
+  - "PAM web login"
 
 consumes:
   - "application/json"
@@ -11,7 +11,7 @@ produces:
   - "application/json"
 
 security:
-  - APITokenHeader: [ 'Authorization' ]
+  - Service: [ 'Authorization' ]
 
 parameters:
   - name: Authorization

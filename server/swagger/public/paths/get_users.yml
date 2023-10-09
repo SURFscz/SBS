@@ -2,7 +2,7 @@ summary: "Get all users details."
 description: "Retrieves all users that can connect to the service."
 
 tags:
-  - "SCIM Services"
+  - "SCIM client"
 
 consumes:
   - "application/json"
@@ -11,7 +11,7 @@ produces:
   - "application/json"
 
 security:
-  - APITokenHeader: [ 'Authorization' ]
+  - Service: [ 'Authorization' ]
 
 parameters:
   - name: Authorization

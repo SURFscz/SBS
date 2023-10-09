@@ -2,7 +2,7 @@ summary: "Get PAM WebSSO session details."
 description: "Returns the PAM WebSSO session."
 
 tags:
-  - "PAM Services"
+  - "PAM web login"
 
 consumes:
   - "application/json"
@@ -11,7 +11,7 @@ produces:
   - "application/json"
 
 security:
-  - APITokenHeader: [ 'Authorization' ]
+  - Service: [ 'Authorization' ]
 
 parameters:
   - name: Authorization

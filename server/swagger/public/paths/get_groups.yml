@@ -2,7 +2,7 @@ summary: "Get all group details."
 description: "Retrieves all groups that are linked to the service."
 
 tags:
-  - "SCIM Services"
+  - "SCIM client"
 
 consumes:
   - "application/json"
@@ -11,7 +11,7 @@ produces:
   - "application/json"
 
 security:
-  - APITokenHeader: [ 'Authorization' ]
+  - Service: [ 'Authorization' ]
 
 parameters:
   - name: Authorization

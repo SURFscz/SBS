@@ -2,7 +2,7 @@ summary: "Start PAM WebSSO flow."
 description: "Start PAM WebSSO flow based on the service_token in the Authorization header."
 
 tags:
-  - "PAM Services"
+  - "PAM web login"
 
 consumes:
   - "application/json"
@@ -11,7 +11,7 @@ produces:
   - "application/json"
 
 security:
-  - APITokenHeader: [ 'Authorization' ]
+  - Service: [ 'Authorization' ]
 
 parameters:
   - name: Authorization
