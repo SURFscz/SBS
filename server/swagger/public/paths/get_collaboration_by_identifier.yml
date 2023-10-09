@@ -2,7 +2,7 @@ summary: "Get collaboration details."
 description: "Retrieves a single collection."
 
 tags:
-  - "Organisations"
+  - "Organisation"
 
 consumes:
   - "application/json"
@@ -11,7 +11,7 @@ produces:
   - "application/json"
 
 security:
-  - APIKeyHeader: [ 'Authorization' ]
+  - Organisation: [ 'Authorization' ]
 
 parameters:
   - name:

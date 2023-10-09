@@ -2,7 +2,7 @@ summary: "Get Resource Types."
 description: "Retrieves the SCIM Resource Types provided by SRAM."
 
 tags:
-  - "SCIM Services"
+  - "SCIM client"
 
 consumes:
   - "application/json"

@@ -4,7 +4,7 @@ from flask import Blueprint, send_from_directory, current_app
 SWAGGER_TEMPLATE = {
     "info": {
         "title": "SRAM API",
-        "description": "Documentation for the publc APIs of SURF Research Access Management",
+        "description": "Documentation for the public APIs of SURF Research Access Management",
         "version": "1.0",
     },
     "tags": [
@@ -27,7 +27,7 @@ SWAGGER_TEMPLATE = {
             "description": "Authorization header using the bearer scheme with an organisation API token. "
                            "Example: \"Authorization: Bearer {api_token}\""
         },
-        "PAM web login / SCIM client": {
+        "Service": {
             "type": "apiKey", "name": "Authorization", "in": "header",
             "description": "Authorization header using the bearer scheme with PAM web login and SCIM client. "
                            "Example: \"Authorization: Bearer {scim_token}\""

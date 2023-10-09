@@ -2,7 +2,7 @@ summary: "Check the PIN of a PAM WebSSO session."
 description: "Check the user input and finalize the User login."
 
 tags:
-  - "PAM Services"
+  - "PAM web login"
 
 consumes:
   - "application/json"
@@ -11,7 +11,7 @@ produces:
   - "application/json"
 
 security:
-  - APITokenHeader: [ 'Authorization' ]
+  - Service: [ 'Authorization' ]
 
 parameters:
   - name: Authorization

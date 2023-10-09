@@ -2,7 +2,7 @@ summary: "Get Schemas."
 description: "Retrieves the SCIM Schemas provided by SRAM."
 
 tags:
-    - "SCIM Services"
+    - "SCIM client"
 
 consumes:
     - "application/json"
