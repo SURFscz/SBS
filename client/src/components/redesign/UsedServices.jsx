@@ -223,8 +223,7 @@ class UsedServices extends React.Component {
 
     serviceAllowedToConnect = (service, collaboration) => {
         return service.automatic_connection_allowed ||
-            (service.automatic_connection_allowed_organisations.filter(org => org.id === collaboration.organisation.id).length > 0 &&
-                !service.access_allowed_for_all);
+            service.automatic_connection_allowed_organisations.some(org => org.id === collaboration.organisation.id);
     }
 
     getServiceAction = service => {

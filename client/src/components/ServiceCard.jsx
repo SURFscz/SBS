@@ -111,56 +111,58 @@ export default function ServiceCard({
         );
     }
 
-    return (<div className={`sds--content-card ${limitWidth ? "limit-width" : ""}`}>
-        <div className="sds--content-card--main">
-            <div className="sds--content-card--visual">
-                <div onClick={e => (nameLinkAction && user.admin) && nameLinkAction(e)}>
-                    <Logo src={service.logo || service.service.logo}/>
-                </div>
-            </div>
-            <div className="sds--content-card--textual">
-                <div className="sds--content-card--text-and-actions">
-                    <div>
-                        <h4 className="sds--space--bottom--1">
-                            {service.name}
-                        </h4>
-                        {!showAboutInformation && <p><MoreLessText txt={service.description}/></p>}
-                        {message && <p className={chipType ? chipType : ""}>{message}</p>}
-                        {(launchLink && service.uri) &&
-                            <a href={service.uri}
-                               target={"_blank"}
-                               rel="noopener noreferrer">{I18n.t("service.launch")}</a>}
+    return (
+        <div key={service.id} className={`sds--content-card ${limitWidth ? "limit-width" : ""}`}>
+            <div className="sds--content-card--main">
+                <div className="sds--content-card--visual">
+                    <div onClick={e => (nameLinkAction && user.admin) && nameLinkAction(e)}>
+                        <Logo src={service.logo || service.service.logo}/>
                     </div>
-                    <div className="sds--content-card--actions">
+                </div>
+                <div className="sds--content-card--textual">
+                    <div className="sds--content-card--text-and-actions">
                         <div>
-                            {status && <Chip label={status} type={chipType || ChipType.Main_400}/>}
-                            {ActionButton}
+                            <h4 className="sds--space--bottom--1">
+                                {service.name}
+                            </h4>
+                            {!showAboutInformation && <p><MoreLessText txt={service.description}/></p>}
+                            {message && <p className={chipType ? chipType : ""}>{message}</p>}
+                            {(launchLink && service.uri) &&
+                                <a href={service.uri}
+                                   target={"_blank"}
+                                   rel="noopener noreferrer">{I18n.t("service.launch")}</a>}
                         </div>
+                        <div className="sds--content-card--actions">
+                            <div>
+                                {status && <Chip label={status} type={chipType || ChipType.Main_400}/>}
+                                {ActionButton}
+                            </div>
 
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div className="sds--content-card--bottom">
-            <nav>
-                <ul>
-                    {(showAboutInformation && !isEmpty(service.description)) && <li>
-                        <a className={"more-link"} href="/about"
-                           onClick={toggleShowAbout}>{I18n.t("service.aboutShort")}{showAbout ? <ArrowUp/> :
-                            <ArrowDown/>}</a>
-                    </li>}
-                    <li>
-                        <a className={"more-link"} href="/policies"
-                           onClick={toggleShowPolicies}>{I18n.t("service.policiesSupport")}{showPolicies ? <ArrowUp/> :
-                            <ArrowDown/>}</a>
-                    </li>
-                    {(tokenAction && service.token_enabled) && <li>
-                        <a href={`/tokens`} onClick={tokenAction}>{I18n.t("service.tokens")}</a>
-                    </li>}
-                </ul>
-                {showPolicies && renderPolicies()}
-                {(showAbout && !isEmpty(service.description)) && renderAbout()}
-            </nav>
-        </div>
-    </div>)
+            <div className="sds--content-card--bottom">
+                <nav>
+                    <ul>
+                        {(showAboutInformation && !isEmpty(service.description)) && <li>
+                            <a className={"more-link"} href="/about"
+                               onClick={toggleShowAbout}>{I18n.t("service.aboutShort")}{showAbout ? <ArrowUp/> :
+                                <ArrowDown/>}</a>
+                        </li>}
+                        <li>
+                            <a className={"more-link"} href="/policies"
+                               onClick={toggleShowPolicies}>{I18n.t("service.policiesSupport")}{showPolicies ?
+                                <ArrowUp/> :
+                                <ArrowDown/>}</a>
+                        </li>
+                        {(tokenAction && service.token_enabled) && <li>
+                            <a href={`/tokens`} onClick={tokenAction}>{I18n.t("service.tokens")}</a>
+                        </li>}
+                    </ul>
+                    {showPolicies && renderPolicies()}
+                    {(showAbout && !isEmpty(service.description)) && renderAbout()}
+                </nav>
+            </div>
+        </div>)
 }

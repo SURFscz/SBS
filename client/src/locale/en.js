@@ -989,7 +989,7 @@ const en = {
         nonMemberUsersAccessAllowed: "Accessible without membership of a collaboration.",
         nonMemberUsersAccessAllowedTooltip: "All users can access this service, without collaboration membership.",
         connectCollaborationsInfo: "Collaborations of some organisations can join, and connection settings differ per organisation.",
-        noOneAllowed: "Noone is allowed to connect a collaboration to this service.",
+        noOneAllowed: "No one is allowed to connect a collaboration to this service.",
         viewSettings: "View settings",
         allowRestrictedOrgs: "SURF service",
         allowRestrictedOrgsTooltip: "Allow this service to be linked to collaborations of a SURF organisation.",
