@@ -214,15 +214,16 @@ def update_group():
 def delete_group(group_id):
     group = Group.query.filter(Group.id == group_id).one()
     collaboration = group.collaboration
+    collaboration_id = collaboration.id
 
-    confirm_collaboration_admin(collaboration.id)
+    confirm_collaboration_admin(collaboration_id)
     if group.service_group is not None and group.service_group.service in collaboration.services:
         raise Forbidden("Connected service_group con not be deleted")
 
-    emit_socket(f"collaboration_{collaboration.id}")
+    emit_socket(f"collaboration_{collaboration_id}")
     broadcast_group_deleted(group_id)
 
-    update_last_activity_date(collaboration.id)
+    update_last_activity_date(collaboration_id)
 
     return delete(Group, group_id)
 
