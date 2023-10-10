@@ -92,7 +92,7 @@ const nl = {
             coAdmins: "Beheerders",
             members: "Leden",
             users: "Gebruikers",
-            serviceOrganisations: "Organisatietoegang",
+            serviceOrganisations: "Toegangsregels",
             serviceCollaborations: "Gekoppelde samenwerkingen",
             userTokens: "Diensttokens",
             collaborationRequests: "Verzoeken",
