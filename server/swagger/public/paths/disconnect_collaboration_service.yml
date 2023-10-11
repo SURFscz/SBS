@@ -1,0 +1,44 @@
+summary: "Disconnect service from collaboration."
+description: "Disconnect a service from an existing collaboration."
+
+tags:
+  - "Organisation"
+
+consumes:
+  - "application/json"
+
+produces:
+  - "application/json"
+
+security:
+  - Organisation: [ 'Authorization' ]
+
+parameters:
+  - name: Authorization
+    in: header
+    description: Bearer API key
+    required: true
+    schema:
+      type: string
+      example: Bearer Am4Hp7GBO2lMseskWHRmEtE3DWD-VxZZ3qwMkNPv6qZ8
+  - name: service
+    in: body
+    description: The service and collaboration identifiers
+    required: true
+    schema:
+      $ref: '/swagger/schemas/CollaborationDisconnectServiceRequest.yaml'
+
+responses:
+  201:
+    description: Conection status
+    schema:
+      $ref: '/swagger/schemas/CollaborationDisconnectServiceResponse.yaml'
+  401:
+    schema:
+      $ref: '/swagger/components/responses/Unauthorized.yaml'
+  403:
+    schema:
+      $ref: '/swagger/components/responses/Forbidden.yaml'
+  404:
+    schema:
+      $ref: '/swagger/components/responses/NotFound.yaml'

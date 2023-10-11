@@ -295,3 +295,53 @@ class TestCollaborationsServices(AbstractTest):
                                   "service_entity_id": service_entity_id
                               }), content_type="application/json")
         self.assertTrue(f"Collaboration {short_name} has no administrator" in res.json["message"])
+
+    # Org API
+    def test_disconnect_collaborations_service(self):
+        collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
+        service = self.find_entity_by_name(Service, service_cloud_name)
+
+        self.assertTrue(service in collaboration.services)
+
+        res = self.client.put("/api/collaborations_services/v1/disconnect_collaboration_service",
+                              headers={"Authorization": f"Bearer {uva_secret}"},
+                              data=json.dumps({
+                                  "short_name": collaboration.short_name,
+                                  "service_entity_id": service.entity_id
+                              }), content_type="application/json")
+        self.assertEqual("disconnected", res.json["status"])
+        # Reload
+        collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
+        service = self.find_entity_by_name(Service, service_cloud_name)
+
+        self.assertFalse(service in collaboration.services)
+
+    def test_disconnect_collaboration_service_forbidden(self):
+        collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
+        service_cloud = self.find_entity_by_name(Service, service_cloud_name)
+
+        res = self.client.put("/api/collaborations_services/v1/disconnect_collaboration_service",
+                              headers={"Authorization": f"Bearer {uuc_secret}"},
+                              data=json.dumps({
+                                  "short_name": collaboration.short_name,
+                                  "service_entity_id": service_cloud.entity_id
+                              }), content_type="application/json")
+        self.assertEqual(res.status_code, 403)
+        error_dict = res.json
+        self.assertTrue("is not part of organisation" in error_dict["message"])
+
+    def test_disconnect_collaboration_service_not_connected(self):
+        collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
+        service = self.find_entity_by_name(Service, service_mail_name)
+
+        self.assertFalse(service in collaboration.services)
+
+        res = self.client.put("/api/collaborations_services/v1/disconnect_collaboration_service",
+                              headers={"Authorization": f"Bearer {uva_secret}"},
+                              data=json.dumps({
+                                  "short_name": collaboration.short_name,
+                                  "service_entity_id": service.entity_id
+                              }), content_type="application/json")
+        self.assertEqual(res.status_code, 400)
+        error_dict = res.json
+        self.assertTrue("is not connected to collaboration" in error_dict["message"])
