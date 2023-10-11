@@ -1880,7 +1880,7 @@ const nl = {
         name: "Tabelnaam",
         count: "Aantal records",
         activity: "Alle recente activiteit uit de audit-logs ({{count}})",
-        searchPlaceholder: "Zoek in de weergegeven audit-logs (e.g. client side)...",
+        searchPlaceholder: "Zoek in geschiedenis...",
         searchPlaceholderServer: "Zoek in tabel audit_logs (e.g. server side)...",
         runDbSeedConfirmation: "Weet je het zeker? Hiermee worden alle huidige gegevens verwijderd",
         runDbSeedInfo: "Verwijder alle gegevens en voeg de <strong>TEST</strong> gegevens toe",

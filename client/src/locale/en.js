@@ -1879,7 +1879,7 @@ const en = {
         name: "Table name",
         count: "Nbr of records",
         activity: "All recent activity from the audit logs ({{count}})",
-        searchPlaceholder: "Search in displayed audit logs (e.g. client side)...",
+        searchPlaceholder: "Search history...",
         searchPlaceholderServer: "Search in table audit logs (e.g. server side)...",
         runDbSeedConfirmation: "Are you absolutely sure? This will delete all current data",
         runDbSeedInfo: "Delete all data and insert the <strong>TEST</strong> seed",
