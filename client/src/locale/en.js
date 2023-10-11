@@ -692,7 +692,7 @@ const en = {
         email: "Email",
         uid: "UID",
         affiliation: "Affiliations",
-        username: "SRAM internal username",
+        username: "Username",
         scoped_affiliation: "Scoped affiliations",
         entitlement: "Entitlements",
         nick_name: "Nick name",
