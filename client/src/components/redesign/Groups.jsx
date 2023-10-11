@@ -352,7 +352,7 @@ class Groups extends React.Component {
                     value={null}
                     onChange={this.addMember}
                     isSearchable={true}
-                    options={membersNotInGroup.map(m => ({value: m.id, label: m.user.name}))}
+                    options={membersNotInGroup.map(m => ({value: m.id, label: `${m.user.name} - ${m.user.email}`}))}
                 />
             </div>}
             {(selected.length > 0 && (selectedGroup.collaboration_memberships || []).length > 0) &&
