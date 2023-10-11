@@ -1,0 +1,22 @@
+---
+type: object
+properties:
+  status:
+    type: string
+    example: "disconnected"
+  collaboration:
+    type: object
+    properties:
+      organisation_short_name:
+        type: string
+        example: "uniharderwijk"
+      short_name:
+        type: string
+        example: "cloud"
+  service:
+    type: object
+    properties:
+      entity_id:
+        type: string
+        format: uri
+        example: "https://service.cloud.example.com"

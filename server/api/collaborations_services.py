@@ -25,7 +25,7 @@ def connect_service_collaboration(service_id, collaboration_id, force=False):
 
     if not service.non_member_users_access_allowed:
         if not org_allowed and not org_automatic_allowed \
-           and not service.automatic_connection_allowed and not service.access_allowed_for_all:
+                and not service.automatic_connection_allowed and not service.access_allowed_for_all:
             raise BadRequest("not_allowed_organisation")
 
         allowed_to_connect = service.automatic_connection_allowed or org_automatic_allowed
@@ -104,6 +104,47 @@ def connect_collaboration_service_api():
         status = "pending"
 
     return {"status": status,
+            "collaboration": {
+                "organisation_short_name": organisation.short_name,
+                "short_name": collaboration.short_name
+            },
+            "service": {"entity_id": service.entity_id}}, 201
+
+
+@collaborations_services_api.route("/v1/disconnect_collaboration_service", methods=["PUT"], strict_slashes=False)
+@swag_from("../swagger/public/paths/disconnect_collaboration_service.yml")
+@json_endpoint
+def disconnect_collaboration_service_api():
+    confirm_external_api_call()
+    organisation = request_context.external_api_organisation
+
+    data = current_request.get_json()
+    coll_short_name = data["short_name"]
+
+    collaborations = list(filter(lambda coll: coll.short_name == coll_short_name, organisation.collaborations))
+    if not collaborations:
+        raise Forbidden(f"Collaboration {coll_short_name} is not part of organisation {organisation.name}")
+
+    collaboration = collaborations[0]
+    collaboration_id = collaboration.id
+    service_entity_id = data["service_entity_id"]
+    service = Service.query.filter(Service.entity_id == service_entity_id).one()
+    if service in collaboration.services:
+        collaboration.services.remove(service)
+    else:
+        raise BadRequest(f"Service {service_entity_id} is not connected to collaboration {collaboration.name}")
+
+    update_last_activity_date(collaboration_id)
+
+    db.session.merge(collaboration)
+    db.session.commit()
+
+    emit_socket(f"collaboration_{collaboration.id}")
+    emit_socket(f"service_{service.id}")
+
+    broadcast_service_deleted(collaboration.id, service.id)
+
+    return {"status": "disconnected",
             "collaboration": {
                 "organisation_short_name": organisation.short_name,
                 "short_name": collaboration.short_name
