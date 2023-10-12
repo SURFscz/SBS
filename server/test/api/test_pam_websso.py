@@ -115,6 +115,14 @@ class TestPamWebSSO(AbstractTest):
             res = response.json
             self.assertEqual("FAIL", res["result"])
 
+    def test_check_pin_no_challenge(self):
+        self.login("urn:peter", user_info={"name": "urn:peter"})
+        res = self.post("/pam-weblogin/check-pin",
+                        body={"nope": "nope"},
+                        with_basic_auth=False,
+                        headers={"Authorization": f"bearer {service_storage_token}"})
+        self.assertEqual("FAIL", res["result"])
+
     def test_check_pin_success(self):
         self.login("urn:peter", user_info={"name": "urn:peter"})
         res = self.post("/pam-weblogin/check-pin",
