@@ -168,6 +168,9 @@ def check_pin():
         return {"result": "TIMEOUT", "info": "Pam session not found or expired"}, 201
 
     user = pam_sso_session.user
+    if not user:
+        return {"result": "FAIL", "info": "No user is authenticated"}, 201
+
     validation = _validate_pam_sso_session(pam_sso_session, pin, True, False)
     success = validation["result"] == "SUCCESS"
     if success:
