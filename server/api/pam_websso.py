@@ -156,8 +156,8 @@ def check_pin():
         logger.error("BadRequest in /api.pam/check-pin", exc_info=1)
         return {"result": "FAIL", "info": "Invalid JSON"}, 201
 
-    session_id = data["session_id"]
-    pin = data["pin"]
+    session_id = data.get("session_id", None)
+    pin = data.get("pin", None)
     try:
         pam_sso_session = _get_pam_sso_session(session_id)
     except NotFound:
