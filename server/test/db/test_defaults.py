@@ -90,7 +90,7 @@ class TestDefaults(TestCase):
         def invalid_uri():
             valid_uri_attributes({"url": "nope"}, ["url"])
 
-        self.assertRaises(ValueError, invalid_uri)
+        self.assertRaises(BadRequest, invalid_uri)
 
     def test_uri_regexp(self):
         self.assertTrue(bool(uri_re.match("https://localhost/api/scim_mock")))
