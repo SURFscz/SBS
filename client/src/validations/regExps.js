@@ -4,7 +4,7 @@ export const validEmailRegExp = /^\S+@\S+$/;
 
 export const validSchacHomeRegExp = /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}$/;
 
-export const validUrlRegExp = /(https?|ssh|ftp):\/\/(.*)/i
+export const validUrlRegExp = /(https?|ssh|ftp):\/\/(.+)/i
 
 
 const validPrefixes = [

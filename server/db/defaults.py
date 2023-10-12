@@ -61,7 +61,7 @@ def cleanse_short_name(data, attr="short_name"):
     return data[attr] == short_name
 
 
-uri_re = re.compile("^(https?|ssh|ftp)://(.*)$")
+uri_re = re.compile("^(https?|ssh|ftp)://(.+)$")
 
 
 def valid_uri_attributes(data, uri_attributes):
