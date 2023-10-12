@@ -123,6 +123,18 @@ class TestPamWebSSO(AbstractTest):
                         headers={"Authorization": f"bearer {service_storage_token}"})
         self.assertEqual("FAIL", res["result"])
 
+    def test_check_pin_no_user(self):
+        pam_sso_session = PamSSOSession.query.filter(PamSSOSession.session_id == pam_session_id).one()
+        pam_sso_session.user = None
+        self.save_entity(pam_sso_session)
+
+        res = self.post("/pam-weblogin/check-pin",
+                        body={"session_id": pam_session_id,
+                              "pin": "1234"},
+                        with_basic_auth=False,
+                        headers={"Authorization": f"bearer {service_storage_token}"})
+        self.assertEqual("FAIL", res["result"])
+
     def test_check_pin_success(self):
         self.login("urn:peter", user_info={"name": "urn:peter"})
         res = self.post("/pam-weblogin/check-pin",
