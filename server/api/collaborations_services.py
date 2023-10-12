@@ -136,6 +136,11 @@ def disconnect_collaboration_service_api():
 
     update_last_activity_date(collaboration_id)
 
+    # Prevent 'is not bound to a Session'
+    organisation_short_name = organisation.short_name
+    collaboration_short_name = collaboration.short_name
+    service_entity_id = service.entity_id
+
     db.session.merge(collaboration)
     db.session.commit()
 
@@ -146,10 +151,10 @@ def disconnect_collaboration_service_api():
 
     return {"status": "disconnected",
             "collaboration": {
-                "organisation_short_name": organisation.short_name,
-                "short_name": collaboration.short_name
+                "organisation_short_name": organisation_short_name,
+                "short_name": collaboration_short_name
             },
-            "service": {"entity_id": service.entity_id}}, 201
+            "service": {"entity_id": service_entity_id}}, 201
 
 
 @collaborations_services_api.route("/<int:collaboration_id>/<int:service_id>", methods=["DELETE"], strict_slashes=False)
