@@ -73,7 +73,7 @@ def valid_uri_attributes(data, uri_attributes):
             if uri_attr == "uri":
                 uri = uri.replace("{co_short_name}", "").replace("{username}", "")
         if uri and not bool(uri_re.match(uri)):
-            raise ValueError(f"'{uri}' is not a valid uri")
+            raise BadRequest(f"'{uri}' is not a valid uri")
     return True
 
 
