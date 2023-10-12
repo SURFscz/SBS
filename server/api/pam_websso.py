@@ -158,6 +158,10 @@ def check_pin():
 
     session_id = data.get("session_id", None)
     pin = data.get("pin", None)
+
+    if not session_id or not pin:
+        return {"result": "FAIL", "info": "Invalid request. Both session_id and pin are required"}, 201
+
     try:
         pam_sso_session = _get_pam_sso_session(session_id)
     except NotFound:
