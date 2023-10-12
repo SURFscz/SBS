@@ -99,6 +99,8 @@ class TestDefaults(TestCase):
         self.assertTrue(bool(uri_re.match("https://google.nl")))
         self.assertTrue(bool(uri_re.match("https://google")))
         self.assertTrue(bool(uri_re.match("https://google")))
+        self.assertTrue(bool(uri_re.match("ssh://user;key=value;key=value@hostname.com:port")))
+        self.assertTrue(bool(uri_re.match("ftp://user;key=value;key=value@hostname.com:port")))
 
     def test_valid_uri_attributes_trim(self):
         data = {"uri": "https://auth.tudelft.nl "}
