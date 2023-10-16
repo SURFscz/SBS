@@ -231,7 +231,7 @@ const en = {
             expired: "Expired",
             expires: "Expires",
             suspended: "Suspended",
-            new: "Invite members",
+            new: "Invite admins",
             remove: "Delete",
             resend: "Resend invitations",
             mail: "Compose email",
@@ -391,7 +391,7 @@ const en = {
         coAdmins: {
             searchPlaceHolder: "Search for admins...",
             title: "Admins",
-            new: "Add admins",
+            new: "Invite admins",
             noEntities: "There are no admins",
         },
         members: {
