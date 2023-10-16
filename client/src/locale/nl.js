@@ -1117,9 +1117,11 @@ const nl = {
         commentsHeader: "Additional comments about this request",
         commentsAttribute: "motivatie",
         connectionSettings: {
-            connectQuestion: "1. Wie mag de dienst gebruiken?",
+            connectQuestion: "1. Wie mag inloggen op de dienst?",
             coMembers: "Gekoppelde samenwerkingen",
             institutionSelection: "Ik kies hieronder wie mag koppelen",
+            none: "None",
+            noneText: "Alle samenwerkingen moeten een koppeling aanvragen",
             noOne: "Niemand",
             later: "Ik ga dit later instellen",
             everyOne: "Iedereen",
