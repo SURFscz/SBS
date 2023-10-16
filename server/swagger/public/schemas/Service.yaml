@@ -49,9 +49,9 @@ properties:
     type: boolean
     description: "If true then non collaboration members can access this service"
     example: true
-  public_visible:
+  override_access_allowed_all_connections:
     type: boolean
-    description: "If true then this service is public visible"
+    description: "If true in combination access_allowed_for_all equals true then connections need to be requested"
     example: true
   research_scholarship_compliant:
     type: boolean

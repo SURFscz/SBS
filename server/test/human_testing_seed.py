@@ -152,7 +152,6 @@ def human_testing_seed(db):
             name=service['name'],
             logo=read_image(service['logo'], directory="demo_images"),
             contact_email=service['mail'],
-            public_visible=True,
             automatic_connection_allowed=True,
             allowed_organisations=service['allowed_organisations'],
             abbreviation=service['abbreviation'],
