@@ -1117,9 +1117,11 @@ const en = {
         commentsHeader: "Additional comments about this request",
         commentsAttribute: "comments",
         connectionSettings: {
-            connectQuestion: "1. Who may use the service?",
+            connectQuestion: "1. Who can log in to the service?",
             coMembers: "Connected collaborations",
             institutionSelection: "I'll select who may connect below",
+            none: "None",
+            noneText: "All collaborations must request a new connection",
             noOne: "No one",
             later: "I'll set this up later",
             everyOne: "Everyone",

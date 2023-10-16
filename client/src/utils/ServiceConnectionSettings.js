@@ -8,6 +8,7 @@ export const ALL_ALLOWED = "ALL_ALLOWED";
 //Question: Who can connect to this service?
 export const ALL_INSTITUTIONS = "ALL_INSTITUTIONS";
 export const SOME_INSTITUTIONS = "SOME_INSTITUTIONS";
+export const NONE_INSTITUTIONS = "NONE_INSTITUTIONS";
 
 //Question: Can a CO directly connect?
 export const DIRECT_CONNECTION = "DIRECT_CONNECTION";
@@ -28,6 +29,9 @@ export const connectionAllowed = service => {
 }
 
 export const institutionAccess = service => {
+    if (service.non_member_users_access_allowed && service.override_access_allowed_all_connections) {
+        return NONE_INSTITUTIONS;
+    }
     return service.access_allowed_for_all ? ALL_INSTITUTIONS : SOME_INSTITUTIONS;
 }
 

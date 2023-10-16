@@ -31,7 +31,7 @@ import {
     institutionAccess,
     IT_DEPENDS,
     MANUALLY_APPROVE,
-    NO_ONE_ALLOWED,
+    NO_ONE_ALLOWED, NONE_INSTITUTIONS,
     SELECTED_INSTITUTION,
     SOME_INSTITUTIONS
 } from "../../utils/ServiceConnectionSettings";
@@ -307,6 +307,15 @@ class ServiceOrganisations extends React.Component {
                 icon: <NoConnectionIcon/>
             }
         ]
+        if (userAdmin && !showServiceAdminView && service.non_member_users_access_allowed) {
+            institutionAccessChoices.push({
+                value: NONE_INSTITUTIONS,
+                title: I18n.t("service.connectionSettings.none"),
+                text: I18n.t("service.connectionSettings.noneText"),
+                icon: null //<ConfigIcon/>
+            })
+        }
+
         const connectionSettingChoices = [
             {
                 value: DIRECT_CONNECTION,
@@ -349,13 +358,11 @@ class ServiceOrganisations extends React.Component {
                                                items={connectionAllowedChoices}
                                                setValue={this.setConnectionAccessValue}/>
                         </div>
-                        {connectionAllowedValue === SELECTED_INSTITUTION &&
-                            <div>
-                                <h4>{I18n.t("service.connectionSettings.whichInstitutionsQuestion")}</h4>
-                                <BlockSwitchChoice value={institutionAccessValue} items={institutionAccessChoices}
-                                                   setValue={this.setInstitutionAccessValue}/>
-                            </div>
-                        }
+                        <div>
+                            <h4>{I18n.t("service.connectionSettings.whichInstitutionsQuestion")}</h4>
+                            <BlockSwitchChoice value={institutionAccessValue} items={institutionAccessChoices}
+                                               setValue={this.setInstitutionAccessValue}/>
+                        </div>
                         {connectionAllowedValue === SELECTED_INSTITUTION &&
                             <div>
                                 <h4>{I18n.t("service.connectionSettings.directlyConnectQuestion")}</h4>
