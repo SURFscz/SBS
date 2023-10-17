@@ -336,9 +336,8 @@ class ServiceOrganisations extends React.Component {
                 icon: null //<ConfigIcon/>
             }
         ]
-        const showEntities = !service.non_member_users_access_allowed
-            && connectionAllowedValue === SELECTED_INSTITUTION
-            && (institutionAccessValue === SOME_INSTITUTIONS || connectionSettingValue === IT_DEPENDS);
+        const showEntities = connectionAllowedValue !== NO_ONE_ALLOWED
+            && institutionAccessValue !== NONE_INSTITUTIONS;
 
         return (<div>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -350,7 +349,7 @@ class ServiceOrganisations extends React.Component {
                     {confirmationDialogOpen && this.renderConfirmation(service, disallowedOrganisation)}
                 </ConfirmationDialog>
                 {loading && <SpinnerField absolute={true}/>}
-                {(!service.non_member_users_access_allowed || (userAdmin && !showServiceAdminView)) &&
+                {(userAdmin && !showServiceAdminView) &&
                     <div className={`options-container ${showEntities ? "" : "no-entities"}`}>
                         <div>
                             <h4>{I18n.t("service.connectionSettings.connectQuestion")}</h4>
@@ -358,15 +357,17 @@ class ServiceOrganisations extends React.Component {
                                                items={connectionAllowedChoices}
                                                setValue={this.setConnectionAccessValue}/>
                         </div>
-                        <div>
+                        {connectionAllowedValue !== NO_ONE_ALLOWED && <div>
                             <h4>{I18n.t("service.connectionSettings.whichInstitutionsQuestion")}</h4>
-                            <BlockSwitchChoice value={institutionAccessValue} items={institutionAccessChoices}
+                            <BlockSwitchChoice value={institutionAccessValue}
+                                               items={institutionAccessChoices}
                                                setValue={this.setInstitutionAccessValue}/>
-                        </div>
-                        {connectionAllowedValue === SELECTED_INSTITUTION &&
+                        </div>}
+                        {(connectionAllowedValue !== NO_ONE_ALLOWED && institutionAccessValue !== NONE_INSTITUTIONS) &&
                             <div>
                                 <h4>{I18n.t("service.connectionSettings.directlyConnectQuestion")}</h4>
-                                <BlockSwitchChoice value={connectionSettingValue} items={connectionSettingChoices}
+                                <BlockSwitchChoice value={connectionSettingValue}
+                                                   items={connectionSettingChoices}
                                                    setValue={this.setConnectionSettingValue}/>
                             </div>}
                     </div>}
