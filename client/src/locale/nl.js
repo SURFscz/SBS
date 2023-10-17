@@ -231,7 +231,7 @@ const nl = {
             expired: "Verlopen",
             expires: "Verloopt",
             suspended: "Geschorst",
-            new: "Nodig leden uit",
+            new: "Nodig beheerders uit",
             remove: "Verwijder",
             resend: "Opnieuw uitnodigen",
             mail: "E-mail",
@@ -391,7 +391,7 @@ const nl = {
         coAdmins: {
             searchPlaceHolder: "Zoek beheerders...",
             title: "Beheerders",
-            new: "Voeg beheerders toe",
+            new: "Nodig beheerders uit",
             noEntities: "Er zijn geen beheerder",
         },
         members: {
