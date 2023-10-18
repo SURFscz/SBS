@@ -9,7 +9,7 @@ import {
     toggleAccessAllowedForAll,
     toggleAllowRestrictedOrgs,
     toggleAutomaticConnectionAllowed,
-    toggleNonMemberUsersAccessAllowed,
+    toggleNonMemberUsersAccessAllowed, toggleOverrideAccessAllowedAllConnections,
     toggleReset,
     trustOrganisation
 } from "../../api";
@@ -211,6 +211,21 @@ class ServiceOrganisations extends React.Component {
     setInstitutionAccessValue = value => {
         const {service} = this.props;
         this.setState({loading: true});
+        switch (value) {
+            case ALL_INSTITUTIONS:
+            case SOME_INSTITUTIONS: {
+                toggleAccessAllowedForAll(service.id, value === ALL_INSTITUTIONS)
+                    .then(() => this.refreshService(() => this.setState({institutionAccessValue: value})));
+                break;
+            }
+            case NONE_INSTITUTIONS: {
+                toggleOverrideAccessAllowedAllConnections(service.id, true)
+                    .then(() => this.refreshService(() => this.setState({institutionAccessValue: value})));
+                break;
+            }
+            default:
+                throw new Error("Unknown institution access value")
+        }
         toggleAccessAllowedForAll(service.id, value === ALL_INSTITUTIONS)
             .then(() => this.refreshService(() => this.setState({institutionAccessValue: value})))
     }
@@ -337,8 +352,8 @@ class ServiceOrganisations extends React.Component {
             }
         ]
         const showEntities = connectionAllowedValue !== NO_ONE_ALLOWED
-            && institutionAccessValue !== NONE_INSTITUTIONS;
-
+            && institutionAccessValue !== NONE_INSTITUTIONS
+            && (institutionAccessValue === SOME_INSTITUTIONS || connectionSettingValue === IT_DEPENDS);
         return (<div>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
@@ -349,6 +364,9 @@ class ServiceOrganisations extends React.Component {
                     {confirmationDialogOpen && this.renderConfirmation(service, disallowedOrganisation)}
                 </ConfirmationDialog>
                 {loading && <SpinnerField absolute={true}/>}
+                <p>connectionAllowedValue: {connectionAllowedValue}</p>
+                <p>institutionAccessValue: {institutionAccessValue}</p>
+                <p>connectionSettingValue: {connectionSettingValue}</p>
                 {(userAdmin && !showServiceAdminView) &&
                     <div className={`options-container ${showEntities ? "" : "no-entities"}`}>
                         <div>

@@ -402,58 +402,70 @@ def toggle_access_property(service_id):
     json_dict = current_request.get_json()
     attribute = list(json_dict.keys())[0]
     if attribute not in ["reset", "allow_restricted_orgs", "non_member_users_access_allowed", "access_allowed_for_all",
-                         "automatic_connection_allowed", "connection_setting"]:
+                         "automatic_connection_allowed", "connection_setting",
+                         "override_access_allowed_all_connections"]:
         raise BadRequest(f"attribute {attribute} not allowed")
     enabled = json_dict.get(attribute)
     if attribute in ["allow_restricted_orgs"] or (attribute in ["non_member_users_access_allowed"] and enabled):
         confirm_write_access()
-
     else:
         confirm_service_admin(service_id)
-    service = db.session.get(Service, service_id)
+    with db.session.no_autoflush:
+        service = db.session.get(Service, service_id)
 
-    if attribute == "reset":
-        service.automatic_connection_allowed = False
-        service.non_member_users_access_allowed = False
-        service.access_allowed_for_all = False
-        service.connection_setting = "NO_ONE_ALLOWED"
-        service.allowed_organisations.clear()
-        service.automatic_connection_allowed_organisations.clear()
-        service.collaborations.clear()
-    else:
-        setattr(service, attribute, enabled)
-    if attribute == "access_allowed_for_all" and enabled:
-        service.non_member_users_access_allowed = False
-        # For all organisations that are not connected we need to make a connection
-        allowed_org_identifiers = [org.id for org in service.allowed_organisations]
-        automatic_allowed_org_identifiers = [org.id for org in service.automatic_connection_allowed_organisations]
-        query = Organisation.query \
-            .filter(Organisation.id.notin_(allowed_org_identifiers + automatic_allowed_org_identifiers))
-        if not service.allow_restricted_orgs:
-            query.filter(Organisation.services_restricted == False)  # noqa: E712
-        not_connected_organisations = query.all()
-        if service.automatic_connection_allowed:
-            service.automatic_connection_allowed_organisations += not_connected_organisations
-        else:
-            service.allowed_organisations += not_connected_organisations
-    if attribute == "automatic_connection_allowed":
-        if enabled:
-            service.connection_setting = None
-            service.non_member_users_access_allowed = False
-            service.automatic_connection_allowed_organisations += service.allowed_organisations
-            service.allowed_organisations = []
-        else:
-            connection_setting = query_param("connection_setting", False, "MANUALLY_APPROVE")
-            service.connection_setting = connection_setting
-            if connection_setting == "MANUALLY_APPROVE":
-                service.allowed_organisations += service.automatic_connection_allowed_organisations
-                service.automatic_connection_allowed_organisations = []
-    if attribute == "non_member_users_access_allowed":
-        service.connection_setting = None
-        if enabled:
+        if attribute == "reset":
             service.automatic_connection_allowed = False
+            service.non_member_users_access_allowed = False
+            service.override_access_allowed_all_connections = False
             service.access_allowed_for_all = False
-    db.session.merge(service)
+            service.connection_setting = "NO_ONE_ALLOWED"
+            service.allowed_organisations.clear()
+            service.automatic_connection_allowed_organisations.clear()
+            service.collaborations.clear()
+        else:
+            setattr(service, attribute, enabled)
+
+        if attribute == "access_allowed_for_all":
+            service.override_access_allowed_all_connections = False
+            if enabled:
+                # For all organisations that are not connected we need to make a connection
+                allowed_org_identifiers = [org.id for org in service.allowed_organisations]
+                automatic_allowed_org_identifiers = [org.id for org in
+                                                     service.automatic_connection_allowed_organisations]
+                query = Organisation.query \
+                    .filter(Organisation.id.notin_(allowed_org_identifiers + automatic_allowed_org_identifiers))
+                if not service.allow_restricted_orgs:
+                    query.filter(Organisation.services_restricted == False)  # noqa: E712
+                not_connected_organisations = query.all()
+                if service.automatic_connection_allowed:
+                    filtered_organisations = [org for org in not_connected_organisations if
+                                              org not in service.automatic_connection_allowed_organisations]
+                    service.automatic_connection_allowed_organisations += filtered_organisations
+                else:
+                    filtered_organisations = [org for org in not_connected_organisations if
+                                              org not in service.allowed_organisations]
+                    service.allowed_organisations += filtered_organisations
+        if attribute == "override_access_allowed_all_connections":
+            service.access_allowed_for_all = False
+        if attribute == "automatic_connection_allowed":
+            if enabled:
+                service.connection_setting = None
+                service.non_member_users_access_allowed = False
+                filtered_organisations = [org for org in service.allowed_organisations if
+                                          org not in service.automatic_connection_allowed_organisations]
+                service.automatic_connection_allowed_organisations += filtered_organisations
+                service.allowed_organisations = []
+            else:
+                connection_setting = query_param("connection_setting", False, "MANUALLY_APPROVE")
+                service.connection_setting = connection_setting
+                if connection_setting == "MANUALLY_APPROVE":
+                    filtered_organisations = [org for org in service.automatic_connection_allowed_organisations if
+                                              org not in service.allowed_organisations]
+                    service.allowed_organisations += filtered_organisations
+                    service.automatic_connection_allowed_organisations = []
+        if attribute == "non_member_users_access_allowed":
+            service.connection_setting = None
+        db.session.merge(service)
 
     emit_socket(f"service_{service_id}")
     emit_socket("service")

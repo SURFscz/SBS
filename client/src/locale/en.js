@@ -1121,7 +1121,7 @@ const en = {
             coMembers: "Connected collaborations",
             institutionSelection: "I'll select who may connect below",
             none: "None",
-            noneText: "All collaborations must request a new connection",
+            noneText: "None of the collaborations can connect",
             noOne: "No one",
             later: "I'll set this up later",
             everyOne: "Everyone",
