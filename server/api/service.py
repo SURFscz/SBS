@@ -420,6 +420,7 @@ def toggle_access_property(service_id):
             service.access_allowed_for_all = False
             service.connection_setting = "NO_ONE_ALLOWED"
             service.allowed_organisations.clear()
+            service.organisations.clear()
             service.automatic_connection_allowed_organisations.clear()
             service.collaborations.clear()
         else:
@@ -447,10 +448,15 @@ def toggle_access_property(service_id):
                     service.allowed_organisations += filtered_organisations
         if attribute == "override_access_allowed_all_connections":
             service.access_allowed_for_all = False
+            if enabled:
+                service.automatic_connection_allowed = False
+                service.allowed_organisations.clear()
+                service.organisations.clear()
+                service.automatic_connection_allowed_organisations.clear()
+                service.collaborations.clear()
         if attribute == "automatic_connection_allowed":
             if enabled:
                 service.connection_setting = None
-                service.non_member_users_access_allowed = False
                 filtered_organisations = [org for org in service.allowed_organisations if
                                           org not in service.automatic_connection_allowed_organisations]
                 service.automatic_connection_allowed_organisations += filtered_organisations

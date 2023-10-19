@@ -7,9 +7,9 @@ import {
     disallowOrganisation,
     onRequestOrganisation,
     toggleAccessAllowedForAll,
-    toggleAllowRestrictedOrgs,
     toggleAutomaticConnectionAllowed,
-    toggleNonMemberUsersAccessAllowed, toggleOverrideAccessAllowedAllConnections,
+    toggleNonMemberUsersAccessAllowed,
+    toggleOverrideAccessAllowedAllConnections,
     toggleReset,
     trustOrganisation
 } from "../../api";
@@ -31,7 +31,8 @@ import {
     institutionAccess,
     IT_DEPENDS,
     MANUALLY_APPROVE,
-    NO_ONE_ALLOWED, NONE_INSTITUTIONS,
+    NO_ONE_ALLOWED,
+    NONE_INSTITUTIONS,
     SELECTED_INSTITUTION,
     SOME_INSTITUTIONS
 } from "../../utils/ServiceConnectionSettings";
@@ -73,12 +74,6 @@ class ServiceOrganisations extends React.Component {
         clearFlash();
         this.props.history.push(`/organisations/${organisation.id}`);
     };
-
-    doTogglesAllowRestrictedOrgs = service => {
-        this.setState({loading: true});
-        toggleAllowRestrictedOrgs(service.id, !service.allow_restricted_orgs)
-            .then(() => this.refreshService())
-    }
 
     changePermission = (organisation, option) => {
         const {service} = this.props;
@@ -219,15 +214,27 @@ class ServiceOrganisations extends React.Component {
                 break;
             }
             case NONE_INSTITUTIONS: {
-                toggleOverrideAccessAllowedAllConnections(service.id, true)
-                    .then(() => this.refreshService(() => this.setState({institutionAccessValue: value})));
+                const organisations = (service.automatic_connection_allowed_organisations || []).concat(service.allowed_organisations || []);
+                const {collAffected, orgAffected} = this.getAffectedEntities(organisations, service);
+                if (collAffected.length > 0 || orgAffected.length > 0) {
+                    this.setState({
+                        confirmationDialogOpen: true,
+                        confirmationDialogAction: () => {
+                            this.setState({confirmationDialogOpen: false});
+                            toggleOverrideAccessAllowedAllConnections(service.id, true)
+                                .then(() => this.refreshService(() => this.setState({institutionAccessValue: value})));
+                        },
+                        disallowedOrganisation: organisations
+                    });
+                } else {
+                    toggleOverrideAccessAllowedAllConnections(service.id, true)
+                        .then(() => this.refreshService(() => this.setState({institutionAccessValue: value})));
+                }
                 break;
             }
             default:
                 throw new Error("Unknown institution access value")
         }
-        toggleAccessAllowedForAll(service.id, value === ALL_INSTITUTIONS)
-            .then(() => this.refreshService(() => this.setState({institutionAccessValue: value})))
     }
 
     setConnectionSettingValue = value => {
@@ -364,9 +371,6 @@ class ServiceOrganisations extends React.Component {
                     {confirmationDialogOpen && this.renderConfirmation(service, disallowedOrganisation)}
                 </ConfirmationDialog>
                 {loading && <SpinnerField absolute={true}/>}
-                <p>connectionAllowedValue: {connectionAllowedValue}</p>
-                <p>institutionAccessValue: {institutionAccessValue}</p>
-                <p>connectionSettingValue: {connectionSettingValue}</p>
                 {(userAdmin && !showServiceAdminView) &&
                     <div className={`options-container ${showEntities ? "" : "no-entities"}`}>
                         <div>
