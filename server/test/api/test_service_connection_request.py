@@ -108,6 +108,10 @@ class TestServiceConnectionRequest(AbstractTest):
         self.assertTrue("outstanding_service_connection_request" in res["message"])
 
     def test_approve_service_connection_request(self):
+        service = self.find_entity_by_name(Service, service_ssh_uva_name)
+        service.override_access_allowed_all_connections = 0
+        self.save_entity(service)
+
         pre_services_count = len(self.find_entity_by_name(Collaboration, uva_research_name).services)
         request_id = ServiceConnectionRequest.query \
             .filter(ServiceConnectionRequest.hash == ssh_service_connection_request_hash).one().id
@@ -131,6 +135,10 @@ class TestServiceConnectionRequest(AbstractTest):
                              "has been accepted (local)", mail_msg.subject)
 
     def test_approve_service_connection_request_with_no_email_requester(self):
+        service = self.find_entity_by_name(Service, service_ssh_uva_name)
+        service.override_access_allowed_all_connections = 0
+        self.save_entity(service)
+
         request = ServiceConnectionRequest.query \
             .filter(ServiceConnectionRequest.hash == ssh_service_connection_request_hash).one()
         request_id = request.id
