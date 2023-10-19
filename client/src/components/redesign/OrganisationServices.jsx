@@ -143,8 +143,8 @@ class OrganisationServices extends React.Component {
         const allowed_org = service.allowed_organisations.some(org => org.id === organisation.id) || trusted_org;
         if (!service.allow_restricted_orgs && organisation.services_restricted) {
             tooltip = I18n.t("organisationServices.serviceRestrictedOrganisation");
-        } else if (service.non_member_users_access_allowed) {
-            tooltip = I18n.t("organisationServices.accessForNonMembersOrganisation");
+        } else if (service.override_access_allowed_all_connections) {
+            tooltip = I18n.t("organisationServices.noAccessAllowed");
         } else if (service.access_allowed_for_all && !service.automatic_connection_allowed
             && !service.non_member_users_access_allowed) {
             tooltip = I18n.t("organisationServices.notAllowedOrganisation");
