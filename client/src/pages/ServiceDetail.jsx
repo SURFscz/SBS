@@ -451,11 +451,12 @@ class ServiceDetail extends React.Component {
         );
     }
 
-    getInstitutionsHeadersInfo = service => {
-        const allowedForAll = service.access_allowed_for_all || service.non_member_users_access_allowed;
-        const accessibleService = service.automatic_connection_allowed || allowedForAll;
+    getInstitutionsHeadersInfo = (service, organisations) => {
         const allowed = (service.allowed_organisations || []).length;
         const always = (service.automatic_connection_allowed_organisations || []).length;
+        const allowedForAll = service.access_allowed_for_all ||
+            (service.non_member_users_access_allowed && !service.override_access_allowed_all_connections && organisations.length === (allowed + always));
+        const accessibleService = service.automatic_connection_allowed || allowedForAll;
         const notAvailable = !accessibleService && allowed === 0 && always === 0;
         if (notAvailable) {
             return (
@@ -518,7 +519,7 @@ class ServiceDetail extends React.Component {
             {
                 Icon: <ConnectedIcon/>,
                 value:
-                    <span>{this.getCollaborationHeaderInfo(service)}{this.getInstitutionsHeadersInfo(service)}</span>
+                    <span>{this.getCollaborationHeaderInfo(service)}{this.getInstitutionsHeadersInfo(service, organisations)}</span>
             }
         ];
         if (service.uri_info || service.uri) {

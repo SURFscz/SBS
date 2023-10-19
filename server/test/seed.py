@@ -86,6 +86,7 @@ service_cloud_name = "Cloud"
 service_wiki_name = "Wiki"
 service_ssh_uva_name = "SSH UvA"
 service_uuc_scheduler_name = "uuc_scheduler_name"
+service_sram_demo_sp = "SRAM Demo RP"
 
 service_group_mail_name = "service_group_mail_name"
 service_group_wiki_name1 = "service_group_wiki_name_1"
@@ -379,7 +380,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                       )
 
     demo_rp = Service(entity_id="APP-18DE6298-7BDD-4CFA-9399-E1CC62E8DE05",
-                      name="SRAM Demo RP", abbreviation="sram_demorp", description="Generic SRAM demo rp",
+                      name=service_sram_demo_sp, abbreviation="sram_demorp", description="Generic SRAM demo rp",
                       logo=read_image("test.png"), uri=("https://demo-sp.sram.surf.nl/"),
                       privacy_policy="https://edu.nl/fcgbd",
                       contact_email="sram-beheer@surf.nl", security_email="sram-beheer@surf.nl",
