@@ -80,7 +80,7 @@ class TestCollaborationsServices(AbstractTest):
         }, response_status_code=400)
 
         self.assertTrue(res["error"])
-        self.assertTrue("automatic_connection_not_allowed" in res["message"])
+        self.assertTrue("Connection not allowed" in res["message"])
 
     #  (3) add a Service set to allow connection from this Org only (ok)
     def test_add_collaborations_automatic_connection_allowed_organisations(self):
@@ -111,11 +111,13 @@ class TestCollaborationsServices(AbstractTest):
     def test_add_collaborations_not_correct_organisation_services(self):
         self.login("urn:john")
         collaboration_id = self.find_entity_by_name(Collaboration, uva_research_name).id
-        service_id = self.find_entity_by_name(Service, service_network_name).id
+        service = self.find_entity_by_name(Service, service_network_name)
+        service.override_access_allowed_all_connections = 0
+        self.save_entity(service)
 
         res = self.put("/api/collaborations_services/", body={
             "collaboration_id": collaboration_id,
-            "service_id": service_id
+            "service_id": service.id
         }, response_status_code=400)
 
         self.assertTrue(res["error"])

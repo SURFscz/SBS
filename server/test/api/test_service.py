@@ -10,7 +10,7 @@ from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_network_entity_id, uuc_name, \
     service_network_name, service_uuc_scheduler_name, service_wiki_name, service_storage_name, \
     service_cloud_name, service_storage_entity_id, service_ssh_uva_name, amsterdam_uva_name, uuc_secret, \
-    jane_name, roger_name
+    jane_name, roger_name, service_sram_demo_sp
 
 
 class TestService(AbstractTest):
@@ -212,8 +212,20 @@ class TestService(AbstractTest):
 
         service = self.find_entity_by_name(Service, service_cloud_name)
         self.assertTrue(service.non_member_users_access_allowed)
-        self.assertFalse(service.access_allowed_for_all)
+
+    def test_toggle_override_access_allowed_all_connections(self):
+        service = self.find_entity_by_name(Service, service_sram_demo_sp)
+        self.assertFalse(service.override_access_allowed_all_connections)
+
+        self.login("urn:john")
+        self.put(f"/api/services/toggle_access_property/{service.id}",
+                 body={"override_access_allowed_all_connections": True},
+                 with_basic_auth=False)
+
+        service = self.find_entity_by_name(Service, service_sram_demo_sp)
+        self.assertTrue(service.override_access_allowed_all_connections)
         self.assertFalse(service.automatic_connection_allowed)
+        self.assertFalse(service.access_allowed_for_all)
 
     def test_toggle_automatic_connection_allowed(self):
         service = self.find_entity_by_name(Service, service_wiki_name)
