@@ -128,12 +128,46 @@ groups_invitations_association = db.Table(
     db.Column("invitation_id", db.Integer(), db.ForeignKey("invitations.id", ondelete="CASCADE"), primary_key=True),
 )
 
+units_organisation_invitations_association = db.Table(
+    "units_organisation_invitations",
+    metadata,
+    db.Column("organisation_invitation_id", db.Integer(),
+              db.ForeignKey("organisation_invitations.id", ondelete="CASCADE"),
+              primary_key=True),
+    db.Column("unit_id", db.Integer(), db.ForeignKey("units.id", ondelete="CASCADE"), primary_key=True),
+)
+
 collaboration_tags_association = db.Table(
     "collaboration_tags",
     metadata,
     db.Column("collaboration_id", db.Integer(), db.ForeignKey("collaborations.id", ondelete="CASCADE"),
               primary_key=True),
     db.Column("tag_id", db.Integer(), db.ForeignKey("tags.id", ondelete="CASCADE"), primary_key=True),
+)
+
+collaboration_units_association = db.Table(
+    "collaboration_units",
+    metadata,
+    db.Column("collaboration_id", db.Integer(), db.ForeignKey("collaborations.id", ondelete="CASCADE"),
+              primary_key=True),
+    db.Column("unit_id", db.Integer(), db.ForeignKey("units.id", ondelete="CASCADE"), primary_key=True),
+)
+
+organisation_membership_units_association = db.Table(
+    "organisation_membership_units",
+    metadata,
+    db.Column("organisation_membership_id", db.Integer(),
+              db.ForeignKey("organisation_memberships.id", ondelete="CASCADE"),
+              primary_key=True),
+    db.Column("unit_id", db.Integer(), db.ForeignKey("units.id", ondelete="CASCADE"), primary_key=True),
+)
+
+collaboration_requests_units_association = db.Table(
+    "collaboration_requests_units",
+    metadata,
+    db.Column("collaboration_request_id", db.Integer(), db.ForeignKey("collaboration_requests.id", ondelete="CASCADE"),
+              primary_key=True),
+    db.Column("unit_id", db.Integer(), db.ForeignKey("units.id", ondelete="CASCADE"), primary_key=True),
 )
 
 
@@ -276,6 +310,8 @@ class Collaboration(Base, db.Model, LogoMixin):
                                back_populates="collaborations")
     tags = db.relationship("Tag", secondary=collaboration_tags_association, lazy="select",
                            back_populates="collaborations")
+    units = db.relationship("Unit", secondary=collaboration_units_association, lazy="select",
+                            back_populates="collaborations")
     collaboration_memberships = db.relationship("CollaborationMembership", back_populates="collaboration",
                                                 cascade="all, delete-orphan", passive_deletes=True)
     groups = db.relationship("Group", back_populates="collaboration",
@@ -334,6 +370,8 @@ class OrganisationMembership(Base, db.Model):
     user = db.relationship("User", back_populates="organisation_memberships")
     organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"), primary_key=True)
     organisation = db.relationship("Organisation", back_populates="organisation_memberships")
+    units = db.relationship("Unit", secondary=organisation_membership_units_association, lazy="select",
+                            back_populates="organisation_memberships")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
@@ -347,6 +385,28 @@ class OrganisationMembership(Base, db.Model):
                 "name": self.organisation.name
             }
         }
+
+
+class Unit(Base, db.Model):
+    __tablename__ = "units"
+    metadata = metadata
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    name = db.Column("name", db.String(length=255), nullable=False)
+    organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"))
+    organisation = db.relationship("Organisation", back_populates="units")
+    collaborations = db.relationship("Collaboration", secondary=collaboration_units_association, lazy="select",
+                                     back_populates="units")
+    organisation_invitations = db.relationship("OrganisationInvitation",
+                                               secondary=units_organisation_invitations_association, lazy="select",
+                                               back_populates="units")
+    organisation_memberships = db.relationship("OrganisationMembership",
+                                               secondary=organisation_membership_units_association, lazy="select",
+                                               back_populates="units")
+    collaboration_requests = db.relationship("CollaborationRequest",
+                                             secondary=collaboration_requests_units_association, lazy="select",
+                                             back_populates="units")
+
+    audit_log_exclude = True
 
 
 class Organisation(Base, db.Model, LogoMixin):
@@ -363,6 +423,7 @@ class Organisation(Base, db.Model, LogoMixin):
     on_boarding_msg = db.Column("on_boarding_msg", db.Text(), nullable=True)
     schac_home_organisations = db.relationship("SchacHomeOrganisation", cascade="all, delete-orphan",
                                                passive_deletes=True, lazy="selectin")
+    units = db.relationship("Unit", cascade="all, delete-orphan", passive_deletes=True, lazy="selectin")
     services_restricted = db.Column("services_restricted", db.Boolean(), nullable=True, default=False)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
@@ -622,6 +683,8 @@ class OrganisationInvitation(Base, db.Model):
     organisation = db.relationship("Organisation", back_populates="organisation_invitations")
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User")
+    units = db.relationship("Unit", secondary=units_organisation_invitations_association, lazy="select",
+                            back_populates="organisation_invitations")
     intended_role = db.Column("intended_role", db.String(length=255), nullable=True)
     expiry_date = db.Column("expiry_date", db.DateTime(timezone=True), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
@@ -689,6 +752,8 @@ class CollaborationRequest(Base, db.Model, LogoMixin):
     logo = db.Column("logo", db.Text(), nullable=True)
     uuid4 = db.Column("uuid4", db.String(length=255), nullable=False, default=gen_uuid4)
     website_url = db.Column("website_url", db.String(length=512), nullable=True)
+    units = db.relationship("Unit", secondary=collaboration_requests_units_association, lazy="select",
+                            back_populates="collaboration_requests")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
