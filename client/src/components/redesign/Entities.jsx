@@ -8,7 +8,6 @@ import {isEmpty, sortObjects, valueForSort} from "../../utils/Utils";
 import {headerIcon} from "../../forms/helpers";
 import "./Entities.scss";
 import SpinnerField from "./SpinnerField";
-import Explain from "../Explain";
 import {Pagination} from "@surfnet/sds";
 import {pageCount} from "../../utils/Pagination";
 
@@ -52,7 +51,7 @@ class Entities extends React.Component {
         }
     }
 
-    renderSearch = (modelName, title, entities, query, searchAttributes, showNew, newLabel, filters, explain, customSearch, hideTitle) => {
+    renderSearch = (modelName, title, entities, query, searchAttributes, showNew, newLabel, filters, customSearch, hideTitle) => {
         const filterClassName = (!hideTitle && filters) ? "search-filters filters-with-title" : `search-filters ${modelName}-search-filters`;
         return (
             <section className="entities-search">
@@ -191,10 +190,8 @@ class Entities extends React.Component {
             actions,
             title,
             filters,
-            explain,
             rowLinkMapper,
             tableClassName,
-            explainTitle,
             className = "",
             customNoEntities,
             hideTitle,
@@ -207,18 +204,12 @@ class Entities extends React.Component {
         if (loading) {
             return <SpinnerField/>;
         }
-        const {query, sorted, reverse, page, showExplanation} = this.state;
+        const {query, sorted, reverse, page} = this.state;
         const filteredEntities = this.filterEntities(entities, query, searchAttributes, customSearch);
         const sortedEntities = sortObjects(filteredEntities, sorted, reverse);
         return (
             <div className={`mod-entities ${className}`}>
-                {explain && <Explain
-                    close={this.closeExplanation}
-                    subject={explainTitle || I18n.t("explain.services")}
-                    isVisible={showExplanation}>
-                    {explain}
-                </Explain>}
-                {displaySearch && this.renderSearch(modelName, title, entities, query, searchAttributes, showNew, newLabel, filters, explain, customSearch, hideTitle)}
+                {displaySearch && this.renderSearch(modelName, title, entities, query, searchAttributes, showNew, newLabel, filters, customSearch, hideTitle)}
                 {this.renderEntities(sortedEntities, sorted, reverse, modelName, tableClassName, columns, children,
                     rowLinkMapper, customNoEntities, onHover, actions, showActionsAlways, actionHeader, page, pagination, query)}
                 <div>{this.props.children}</div>
@@ -248,7 +239,6 @@ Entities.propTypes = {
     actions: PropTypes.any,
     showActionsAlways: PropTypes.bool,
     filters: PropTypes.any,
-    explain: PropTypes.any,
     inputFocus: PropTypes.bool,
     hideTitle: PropTypes.bool
 };

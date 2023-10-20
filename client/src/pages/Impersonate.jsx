@@ -9,9 +9,6 @@ import Autocomplete from "../components/Autocomplete";
 import Button from "../components/Button";
 import InputField from "../components/InputField";
 import CheckBox from "../components/CheckBox";
-import Explain from "../components/Explain";
-import ImpersonateExplanation from "../components/explanations/Impersonate";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
 import {ReactComponent as HandIcon} from "../icons/puppet_new.svg";
@@ -37,7 +34,6 @@ class Impersonate extends React.Component {
             moreToShow: false,
             selectedUser: null,
             initial: true,
-            showExplanation: false,
             reloading: false
         };
     }
@@ -152,8 +148,6 @@ class Impersonate extends React.Component {
         query: `${selectedUser.name} - ${selectedUser.uid}`
     });
 
-    closeExplanation = () => this.setState({showExplanation: false});
-
     onBlurSearch = suggestions => () => {
         if (!isEmpty(suggestions)) {
             setTimeout(() => this.setState({suggestions: [], loadingAutoComplete: true}), 250);
@@ -175,7 +169,7 @@ class Impersonate extends React.Component {
         const {
             organisations, collaborations, suggestions, organisation, collaboration, query,
             loadingAutoComplete, selected, moreToShow, selectedUser, initial,
-            limitToCollaborationAdmins, limitToOrganisationAdmins, showExplanation, reloading
+            limitToCollaborationAdmins, limitToOrganisationAdmins, reloading
         } = this.state;
         const filteredCollaborations = organisation ? collaborations.filter(coll => coll.organisation_id === organisation.value) : collaborations;
         const filteredOrganisations = collaboration ? organisations.filter(org => org.value === collaboration.organisation_id) : organisations;
@@ -185,46 +179,37 @@ class Impersonate extends React.Component {
                 <UnitHeader obj={({name: I18n.t("impersonate.title"), svg: HandIcon})}/>
                 <div className="mod-impersonate-container">
                     <div className="mod-impersonate">
-                        <Explain
-                            close={this.closeExplanation}
-                            subject={I18n.t("explain.impersonate")}
-                            isVisible={showExplanation}>
-                            <ImpersonateExplanation/>
-                        </Explain>
-                        <FontAwesomeIcon className="help" icon="question-circle"
-                                         id="impersonate_close_explanation"
-                                         onClick={() => this.setState({showExplanation: true})}/>
                         {reloading && <SpinnerField/>}
                         {!reloading &&
-                        <div className="impersonate">
-                            <SelectField value={organisation}
-                                         options={filteredOrganisations}
-                                         name={I18n.t("impersonate.organisation")}
-                                         placeholder={I18n.t("impersonate.organisationPlaceholder")}
-                                         onChange={this.organisationSelected}
-                                         clearable={true}
-                                         searchable={true}/>
-                            <CheckBox name="organisationAdminsOnly"
-                                      value={limitToOrganisationAdmins}
-                                      info={I18n.t("impersonate.organisationAdminsOnly")}
-                                      onChange={() => this.setState({limitToOrganisationAdmins: !limitToOrganisationAdmins})}/>
-                            <SelectField value={collaboration}
-                                         options={filteredCollaborations}
-                                         name={I18n.t("impersonate.collaboration")}
-                                         placeholder={I18n.t("impersonate.collaborationPlaceholder")}
-                                         onChange={this.collaborationSelected}
-                                         clearable={true}
-                                         searchable={true}/>
-                            <CheckBox name="collaborationAdminsOnly"
-                                      value={limitToCollaborationAdmins}
-                                      info={I18n.t("impersonate.collaborationAdminsOnly")}
-                                      onChange={() => this.setState({limitToCollaborationAdmins: !limitToCollaborationAdmins})}/>
-                            <section className="user-search">
-                                <div className="search"
-                                     tabIndex="-1" onBlur={this.onBlurSearch(suggestions)}>
-                                    <label className="autocomplete-label"
-                                           htmlFor="user">{I18n.t("impersonate.user")}</label>
-                                    <span className="outer-search">
+                            <div className="impersonate">
+                                <SelectField value={organisation}
+                                             options={filteredOrganisations}
+                                             name={I18n.t("impersonate.organisation")}
+                                             placeholder={I18n.t("impersonate.organisationPlaceholder")}
+                                             onChange={this.organisationSelected}
+                                             clearable={true}
+                                             searchable={true}/>
+                                <CheckBox name="organisationAdminsOnly"
+                                          value={limitToOrganisationAdmins}
+                                          info={I18n.t("impersonate.organisationAdminsOnly")}
+                                          onChange={() => this.setState({limitToOrganisationAdmins: !limitToOrganisationAdmins})}/>
+                                <SelectField value={collaboration}
+                                             options={filteredCollaborations}
+                                             name={I18n.t("impersonate.collaboration")}
+                                             placeholder={I18n.t("impersonate.collaborationPlaceholder")}
+                                             onChange={this.collaborationSelected}
+                                             clearable={true}
+                                             searchable={true}/>
+                                <CheckBox name="collaborationAdminsOnly"
+                                          value={limitToCollaborationAdmins}
+                                          info={I18n.t("impersonate.collaborationAdminsOnly")}
+                                          onChange={() => this.setState({limitToCollaborationAdmins: !limitToCollaborationAdmins})}/>
+                                <section className="user-search">
+                                    <div className="search"
+                                         tabIndex="-1" onBlur={this.onBlurSearch(suggestions)}>
+                                        <label className="autocomplete-label"
+                                               htmlFor="user">{I18n.t("impersonate.user")}</label>
+                                        <span className="outer-search">
                             <input type="text"
                                    onChange={this.search}
                                    onFocus={this.search}
@@ -232,36 +217,36 @@ class Impersonate extends React.Component {
                                    className={(!initial && isEmpty(selectedUser)) ? "error" : ""}
                                    onKeyDown={this.onSearchKeyDown}
                                    placeholder={I18n.t("impersonate.userSearchPlaceHolder")}/>
-                                        {showAutoCompletes && <Autocomplete suggestions={suggestions}
-                                                                            query={query}
-                                                                            includeHeaders={true}
-                                                                            selected={selected}
-                                                                            itemSelected={this.itemSelected}
-                                                                            moreToShow={moreToShow}
-                                                                            ignoreAttributes={["description"]}
-                                                                            additionalAttributes={["email", "admin", "organisations", "collaborations"]}/>}
+                                            {showAutoCompletes && <Autocomplete suggestions={suggestions}
+                                                                                query={query}
+                                                                                includeHeaders={true}
+                                                                                selected={selected}
+                                                                                itemSelected={this.itemSelected}
+                                                                                moreToShow={moreToShow}
+                                                                                ignoreAttributes={["description"]}
+                                                                                additionalAttributes={["email", "admin", "organisations", "collaborations"]}/>}
                              </span>
-                                </div>
-                            </section>
-                            {(!initial && isEmpty(selectedUser)) &&
-                            <ErrorIndicator msg={I18n.t("impersonate.userRequired")}/>}
-                            <InputField disabled={true} name={I18n.t("impersonate.currentImpersonation")}
-                                        value={isEmpty(impersonator) ? I18n.t("impersonate.noImpersonation") :
-                                            I18n.t("impersonate.currentImpersonationValue", {
-                                                impersonator: impersonator.name,
-                                                currentUser: user.name
-                                            })}/>
+                                    </div>
+                                </section>
+                                {(!initial && isEmpty(selectedUser)) &&
+                                    <ErrorIndicator msg={I18n.t("impersonate.userRequired")}/>}
+                                <InputField disabled={true} name={I18n.t("impersonate.currentImpersonation")}
+                                            value={isEmpty(impersonator) ? I18n.t("impersonate.noImpersonation") :
+                                                I18n.t("impersonate.currentImpersonationValue", {
+                                                    impersonator: impersonator.name,
+                                                    currentUser: user.name
+                                                })}/>
 
-                            <section className="actions">
-                                <Button disabled={isEmpty(impersonator)} cancelButton={true}
-                                        txt={I18n.t("impersonate.clearImpersonation")}
-                                        onClick={this.clearImpersonation}/>
-                                <Button disabled={isEmpty(selectedUser) && !initial}
-                                        txt={I18n.t("impersonate.startImpersonation")}
-                                        onClick={this.startImpersonation}/>
-                            </section>
+                                <section className="actions">
+                                    <Button disabled={isEmpty(impersonator)} cancelButton={true}
+                                            txt={I18n.t("impersonate.clearImpersonation")}
+                                            onClick={this.clearImpersonation}/>
+                                    <Button disabled={isEmpty(selectedUser) && !initial}
+                                            txt={I18n.t("impersonate.startImpersonation")}
+                                            onClick={this.startImpersonation}/>
+                                </section>
 
-                        </div>}
+                            </div>}
                     </div>
                 </div>
             </>);

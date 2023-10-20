@@ -23,7 +23,6 @@ import moment from "moment";
 import {sanitizeShortName} from "../../validations/regExps";
 import {AppStore} from "../../stores/AppStore";
 import ErrorIndicator from "./ErrorIndicator";
-import ServiceGroupsExplanation from "../explanations/ServicesGroups";
 import {isUserServiceAdmin} from "../../utils/UserRole";
 import {Tooltip} from "@surfnet/sds";
 
@@ -472,7 +471,8 @@ class ServiceGroups extends React.Component {
         this.setState({
             selectedGroupId: group.id,
             createNewGroup: false,
-            editGroup: false});
+            editGroup: false
+        });
         AppStore.update(s => {
             const {service} = this.props;
             const paths = s.breadcrumb.paths;
@@ -575,8 +575,6 @@ class ServiceGroups extends React.Component {
                           actions={groupActions}
                           showNew={mayCreateGroups}
                           newEntityFunc={this.newServiceGroup}
-                          explain={<ServiceGroupsExplanation/>}
-                          explainTitle={I18n.t("explain.serviceGroups")}
                           showActionsAlways={false}
                           {...this.props}/>
             </div>

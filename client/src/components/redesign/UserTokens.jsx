@@ -7,7 +7,6 @@ import {
     userTokenGenerateValue
 } from "../../api";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
-import UserTokensExplanation from "../explanations/UserTokens";
 import "./UserTokens.scss";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "../../locale/I18n";
@@ -201,8 +200,8 @@ class UserTokens extends React.Component {
 
                 <section className="actions">
                     {!createNewUserToken &&
-                    <Button warningButton={true}
-                            onClick={this.delete}/>}
+                        <Button warningButton={true}
+                                onClick={this.delete}/>}
                     <Button cancelButton={true} txt={I18n.t("forms.cancel")}
                             onClick={this.cancelSideScreen}/>
                     {expired && <Button txt={I18n.t(`models.userTokens.reactivate`)}
@@ -378,8 +377,6 @@ class UserTokens extends React.Component {
                           rowLinkMapper={() => this.gotoUserToken}
                           columns={columns}
                           loading={loading}
-                          explain={<UserTokensExplanation/>}
-                          explainTitle={I18n.t("explain.tokens")}
                           showNew={true}
                           newEntityFunc={this.fetchNewTokenValue}
                           {...this.props}/>

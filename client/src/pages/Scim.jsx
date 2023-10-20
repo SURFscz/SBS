@@ -10,7 +10,6 @@ import Button from "../components/Button";
 import Logo from "../components/redesign/Logo";
 import Entities from "../components/redesign/Entities";
 import ReactJson from "react-json-view";
-import ScimExplanation from "../components/explanations/Scim";
 
 class Scim extends React.Component {
 
@@ -149,7 +148,6 @@ class Scim extends React.Component {
             <Entities entities={services}
                       title={I18n.t("system.scim.services")}
                       modelName="scimServices"
-                      explain={<ScimExplanation/>}
                       searchAttributes={["name"]}
                       defaultSort="name"
                       columns={columns}

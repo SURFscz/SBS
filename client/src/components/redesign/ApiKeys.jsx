@@ -10,7 +10,6 @@ import {setFlash} from "../../utils/Flash";
 import Entities from "./Entities";
 import InputField from "../InputField";
 import ConfirmationDialog from "../ConfirmationDialog";
-import ApiKeysExplanation from "../explanations/ApiKeys";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import SpinnerField from "./SpinnerField";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
@@ -196,8 +195,6 @@ class ApiKeys extends React.Component {
                           loading={false}
                           showNew={isUserAllowed(ROLES.ORG_ADMIN, user, organisation.id)}
                           newEntityFunc={this.fetchNewApiValue}
-                          explain={<ApiKeysExplanation/>}
-                          explainTitle={I18n.t("explain.apiKeys")}
                           {...this.props}/>
             </div>
         )
