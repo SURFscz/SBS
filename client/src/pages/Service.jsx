@@ -456,7 +456,7 @@ class Service extends React.Component {
                         accepted_user_policy, uri_info, privacy_policy, service, disabledSubmit, allow_restricted_orgs, sirtfi_compliant, token_enabled, pam_web_sso_enabled,
                         token_validity_days, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, administrators, message, logo, isServiceAdmin,
-                        providing_organisation, connection_type, redirect_urls, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails) => {
+                        providing_organisation, connection_type, redirect_urls, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails,disableEverything) => {
         const ldapBindAccount = config.ldap_bind_account;
         const {isServiceRequest} = this.props;
         return (
@@ -464,7 +464,8 @@ class Service extends React.Component {
 
                 <h2 className="section-separator">{I18n.t("service.about")}</h2>
                 <div className="first-column">
-                    <InputField value={name} onChange={e => this.setState({
+                    <InputField value={name}
+                                onChange={e => this.setState({
                         name: e.target.value,
                         alreadyExists: {...this.state.alreadyExists, name: false}
                     })}
@@ -472,6 +473,7 @@ class Service extends React.Component {
                                 onBlur={this.validateServiceName}
                                 error={alreadyExists.name || (!initial && isEmpty(name))}
                                 name={I18n.t("service.name")}
+                                disabled={disableEverything}
                     />
                     {alreadyExists.name && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
                         attribute: I18n.t("service.name").toLowerCase(),
@@ -481,13 +483,18 @@ class Service extends React.Component {
                         attribute: I18n.t("service.name").toLowerCase()
                     })}/>}
                 </div>
-                <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
-                                   isNew={true} title={I18n.t("service.logo")}
+                <CroppedImageField name="logo"
+                                   onChange={s => this.setState({logo: s})}
+                                   isNew={true}
+                                   title={I18n.t("service.logo")}
                                    value={logo}
-                                   initial={initial} secondRow={true}/>
-                {(!isServiceRequest || isServiceRequestDetails) && <div className="first-column">
+                                   disabled={disableEverything}
+                                   initial={initial}
+                                   secondRow={true}/>
+                {((!isServiceRequest || isServiceRequestDetails) && !disableEverything) && <div className="first-column">
 
-                    <InputField value={entity_id} onChange={e => this.setState({
+                    <InputField value={entity_id}
+                                onChange={e => this.setState({
                         entity_id: e.target.value,
                         alreadyExists: {...this.state.alreadyExists, entity_id: false}
                     })}
@@ -510,13 +517,15 @@ class Service extends React.Component {
                 }
                 <div className="first-column">
 
-                    <InputField value={abbreviation} onChange={e => this.setState({
+                    <InputField value={abbreviation}
+                                onChange={e => this.setState({
                         abbreviation: sanitizeShortName(e.target.value),
                         alreadyExists: {...this.state.alreadyExists, abbreviation: false}
                     })}
                                 placeholder={I18n.t("service.abbreviationPlaceHolder")}
                                 onBlur={this.validateServiceAbbreviation}
                                 name={I18n.t("service.abbreviation")}
+                                disabled={disableEverything}
                                 toolTip={I18n.t("service.abbreviationTooltip")}
                                 error={alreadyExists.abbreviation || (!initial && isEmpty(abbreviation))}
                                 copyClipBoard={false}
@@ -531,6 +540,7 @@ class Service extends React.Component {
                 </div>
                 <InputField value={description}
                             name={I18n.t("service.description")}
+                            disabled={disableEverything}
                             placeholder={I18n.t("service.descriptionPlaceholder")}
                             onChange={e => this.setState({description: e.target.value})}
                             multiline={true}
@@ -539,6 +549,7 @@ class Service extends React.Component {
                 {isServiceRequest && <div className="first-column">
                     <InputField value={providing_organisation}
                                 name={I18n.t("service.providingOrganisation")}
+                                disabled={disableEverything}
                                 placeholder={I18n.t("service.providingOrganisationPlaceholder")}
                                 onChange={e => this.setState({providing_organisation: e.target.value})}
                     />
@@ -558,6 +569,7 @@ class Service extends React.Component {
                                     uri: e.target.value,
                                     invalidInputs: {...invalidInputs, uri: false}
                                 })}
+                                disabled={disableEverything}
                                 toolTip={I18n.t("service.uriTooltip")}
                                 externalLink={true}
                                 onBlur={this.validateURI("uri")}
@@ -571,6 +583,7 @@ class Service extends React.Component {
                         <RadioButtonGroup name={"connection_type"}
                                           label={I18n.t("service.protocol")}
                                           value={connection_type}
+                                          disabled={disableEverything}
                                           values={["openIDConnect", "saml2URL", "saml2File", "none"]}
                                           onChange={value => this.setState({connection_type: value})}
                                           labelResolver={label => I18n.t(`service.protocols.${label}`)}/>
@@ -581,6 +594,7 @@ class Service extends React.Component {
                                  creatable={true}
                                  onInputChange={val => val}
                                  isMulti={true}
+                                 disabled={disableEverything}
                                  copyClipBoard={isServiceRequestDetails}
                                  name={I18n.t("service.openIDConnectRedirects")}
                                  placeholder={I18n.t("service.openIDConnectRedirectsPlaceholder")}
@@ -597,6 +611,7 @@ class Service extends React.Component {
                                         saml_metadata_url: e.target.value,
                                         invalidInputs: {...invalidInputs, saml_metadata_url: false}
                                     })}
+                                    disabled={disableEverything}
                                     externalLink={true}
                                     onBlur={this.validateURI("saml_metadata_url")}
                         />
@@ -604,7 +619,7 @@ class Service extends React.Component {
                             <ErrorIndicator
                                 msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
                     </div>}
-                {(isServiceRequest && connection_type === "saml2File" && !isServiceRequestDetails) &&
+                {(!disableEverything && isServiceRequest && connection_type === "saml2File" && !isServiceRequestDetails) &&
                     <div className="saml-meta-data">
                         <UploadButton name={I18n.t("service.samlMetadataUpload")}
                                       txt={I18n.t("service.samlMetadataUpload")}
@@ -658,6 +673,7 @@ class Service extends React.Component {
                                     invalidInputs: {...invalidInputs, privacy_policy: false}
                                 })}
                                 toolTip={I18n.t("service.privacy_policyTooltip")}
+                                disabled={disableEverything}
                                 externalLink={true}
                                 onBlur={this.validateURI("privacy_policy")}
                     />
@@ -676,6 +692,7 @@ class Service extends React.Component {
                                     invalidInputs: {...invalidInputs, accepted_user_policy: false}
                                 })}
                                 toolTip={I18n.t("service.accepted_user_policyTooltip")}
+                                disabled={disableEverything}
                                 externalLink={true}
                                 onBlur={this.validateURI("accepted_user_policy")}
                     />
@@ -689,6 +706,7 @@ class Service extends React.Component {
                                  name={"sirtfi_compliant"}
                                  value={sirtfi_compliant}
                                  checked={sirtfi_compliant}
+                                 disabled={disableEverything}
                                  tooltip={I18n.t("service.sirtfiCompliantTooltip")}
                                  onChange={val => this.setState({sirtfi_compliant: val})}/>
                     {(!initial && isEmpty(sirtfi_compliant)) &&
@@ -700,6 +718,7 @@ class Service extends React.Component {
                                  name={"code_of_conduct_compliant"}
                                  value={code_of_conduct_compliant}
                                  checked={code_of_conduct_compliant}
+                                 disabled={disableEverything}
                                  tooltip={I18n.t("service.codeOfConductCompliantTooltip")}
                                  onChange={val => this.setState({code_of_conduct_compliant: val})}/>
                     {(!initial && isEmpty(code_of_conduct_compliant)) &&
@@ -711,6 +730,7 @@ class Service extends React.Component {
                                  name={"research_scholarship_compliant"}
                                  value={research_scholarship_compliant}
                                  checked={research_scholarship_compliant}
+                                 disabled={disableEverything}
                                  tooltip={I18n.t("service.researchScholarshipCompliantTooltip")}
                                  onChange={val => this.setState({research_scholarship_compliant: val})}/>
                     {(!initial && isEmpty(research_scholarship_compliant)) &&
@@ -731,6 +751,7 @@ class Service extends React.Component {
                                     invalidInputs: {...invalidInputs, uri_info: false}
                                 })}
                                 toolTip={I18n.t("service.infoUriTooltip")}
+                                disabled={disableEverything}
                                 externalLink={true}
                                 onBlur={this.validateURI("uri_info")}
                     />
@@ -752,6 +773,7 @@ class Service extends React.Component {
                                     }
                                 })}
                                 toolTip={I18n.t("service.contact_emailTooltip")}
+                                disabled={disableEverything}
                                 error={invalidInputs["email"] || (!initial && contactEmailRequired)}
                                 onBlur={this.validateEmail("email")}
                                 classNamePostFix={"second-column"}
@@ -777,6 +799,7 @@ class Service extends React.Component {
                                     }
                                 })}
                                 toolTip={I18n.t("service.security_emailTooltip")}
+                                disabled={disableEverything}
                                 error={(!initial && isEmpty(security_email)) || invalidInputs["security_email"]}
                                 onBlur={this.validateEmail("security_email")}
                     />
@@ -801,6 +824,7 @@ class Service extends React.Component {
                                     }
                                 })}
                                 toolTip={I18n.t("service.support_emailTooltip")}
+                                disabled={disableEverything}
                                 error={invalidInputs["support_email"]}
                                 onBlur={this.validateEmail("support_email")}
                                 classNamePostFix={"second-column"}
@@ -902,6 +926,7 @@ class Service extends React.Component {
                                     placeholder={I18n.t("service.commentsPlaceholder")}
                                     name={I18n.t("service.comments")}
                                     toolTip={I18n.t("service.commentsTooltip")}
+                                    disabled={disableEverything}
                                     multiline={true}/>
                     </div>}
 
@@ -1023,6 +1048,7 @@ class Service extends React.Component {
         const isAdmin = user.admin;
         const title = isServiceRequest ? I18n.t("service.titleRequest") : I18n.t("service.titleNew");
         const contactEmailRequired = !hasAdministrators && isEmpty(contact_email);
+        const disableEverything = isServiceRequest && (serviceRequest.status === "approved" || serviceRequest.status === "denied");
         return (
             <>
                 {!isServiceRequestDetails && <UnitHeader obj={({
@@ -1044,7 +1070,7 @@ class Service extends React.Component {
                         access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, uri_info, privacy_policy,
                         service, disabledSubmit, allow_restricted_orgs, sirtfi_compliant, token_enabled, pam_web_sso_enabled, token_validity_days, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, administrators, message, logo, isServiceAdmin, providing_organisation,
-                        connection_type, redirect_urls, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails)}
+                        connection_type, redirect_urls, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails, disableEverything)}
                 </div>
             </>)
             ;
