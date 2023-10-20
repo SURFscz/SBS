@@ -8,7 +8,6 @@ import Entities from "./Entities";
 
 import {setFlash} from "../../utils/Flash";
 import SpinnerField from "./SpinnerField";
-import OrganisationServicesExplanation from "../explanations/OrganisationServices";
 import ToggleSwitch from "./ToggleSwitch";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
@@ -122,10 +121,10 @@ class OrganisationServices extends React.Component {
             <div className={"toggle-switch-container"}>
                 <div className={"toggle-switch-inner-container"}>
                     {(allowed && !tooltip) &&
-                    <ToggleSwitch onChange={this.onToggle(service, organisation)}
-                                  value={organisation.services.some(s => s.id === service.id)}/>}
+                        <ToggleSwitch onChange={this.onToggle(service, organisation)}
+                                      value={organisation.services.some(s => s.id === service.id)}/>}
                     {tooltip &&
-                    <Tooltip tip={tooltip} standalone={true}/>}
+                        <Tooltip tip={tooltip} standalone={true}/>}
                 </div>
             </div>
         )
@@ -202,8 +201,6 @@ class OrganisationServices extends React.Component {
                           columns={columns}
                           loading={loading}
                           title={titleUsed}
-                          explain={<OrganisationServicesExplanation/>}
-                          explainTitle={I18n.t("explain.services")}
                           {...this.props}/>
             </div>
         )
