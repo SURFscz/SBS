@@ -241,7 +241,7 @@ export default class Collaborations extends React.PureComponent {
                 header: organisation ? I18n.t("collaboration.tags") : I18n.t("models.serviceCollaborations.organisationName"),
                 mapper: collaboration => organisation ? collaboration.tags
                     .sort((t1, t2) => t1.tag_value.localeCompare(t2.tag_value))
-                    .map(tag => <span
+                    .map((tag, index) => <span key={index}
                         className={"collaboration_tag"}>{tag.tag_value}</span>) : collaboration.organisation.name
             },
             {
