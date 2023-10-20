@@ -1,29 +1,35 @@
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Tooltip} from "@surfnet/sds";
-import "./EmailField.scss";
+import "./OrganisationUnits.scss";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import I18n from "../locale/I18n";
 import {validEmailRegExp} from "../validations/regExps";
 
-export default function EmailField({
-                                       name,
-                                       emails,
-                                       addEmails,
-                                       removeMail,
-                                       isAdmin = false,
-                                       pinnedEmails = [],
-                                       error = false
-                                   }) {
+export const OrganisationUnits = ({units, setUnits, readOnly}) => {
 
-    const [emailErrors, setEmailErrors] = useState([]);
+    const [duplicate, setDuplicate] = useState(false);
     const [value, setValue] = useState("");
 
+    const inputRef = useRef(null);
+
+    useEffect(() => {
+        inputRef.current && inputRef.current.focus();
+    });
+
     const internalOnChange = e => {
-        if (!["Enter", "Spacebar", "Backspace", "Tab"].includes(e.key)) {
-            setEmailErrors([]);
+        const name = e.target.value;
+        if (e.key === "Enter" || e.key === "Tab") {
+            if (units.some(unit => unit.name.toLowerCase() === name.toLowerCase())) {
+                setDuplicate(true);
+                return stopEvent(e);
+            } else {
+
+            }
+        } else {
+            setValue(name);
         }
-        setValue(e.target.value);
+
     }
 
     const displayEmail = email => {
@@ -49,7 +55,6 @@ export default function EmailField({
         if (isEmpty(e.key) && isEmpty(e.target.value)) {
             return;
         }
-        debugger; // eslint-disable-line no-debugger
         const email = e.target.value;
         const invalidEmails = [];
         const delimiters = [",", " ", ";", "\n", "\t"];
