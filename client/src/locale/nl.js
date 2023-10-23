@@ -2388,9 +2388,21 @@ const nl = {
         name: "Naam",
         description: "Omschrijving",
         organisationName: "Organisatie / instelling"
+    },
+    units: {
+        label: "Units (e.g. afdeling of project)",
+        add: "Voeg een unit toe",
+        confirmation: "Weet je zeker dat je unit {{name}} wilt verwijderen?",
+        used: "Het wordt gebruikt door:",
+        collaboration: "Relevante units (e.g. afdeling of project)",
+        collaborationRequest: "Organisatie units (optioneel)",
+        filter: "Alle units",
+        invitationLabel: "Toegang tot de samenwerkingen",
+        all: "Alle samenwerkingen",
+        specify: "Kies samenwerkingen",
+        back: "Terug naar alle admins",
+        editRole: "Wijzig org manager details"
     }
-
-
 };
 
 export default nl;

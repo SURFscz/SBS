@@ -125,6 +125,13 @@ class TestOrganisation(AbstractTest):
         organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
         organisation = self.get(f"/api/organisations/{organisation_id}")
         self.assertTrue(len(organisation["organisation_memberships"]) > 0)
+        self.assertEqual(2, len(organisation["collaborations"]))
+
+    def test_organisation_by_id_manager_restricted_collaborations(self):
+        self.login("urn:paul")
+        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        organisation = self.get(f"/api/organisations/{organisation_id}")
+        self.assertEqual(1, len(organisation["collaborations"]))
 
     def test_organisation_by_id_404(self):
         self.login("urn:sarah")

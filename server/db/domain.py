@@ -310,7 +310,7 @@ class Collaboration(Base, db.Model, LogoMixin):
                                back_populates="collaborations")
     tags = db.relationship("Tag", secondary=collaboration_tags_association, lazy="select",
                            back_populates="collaborations")
-    units = db.relationship("Unit", secondary=collaboration_units_association, lazy="select",
+    units = db.relationship("Unit", secondary=collaboration_units_association, lazy="selectin",
                             back_populates="collaborations")
     collaboration_memberships = db.relationship("CollaborationMembership", back_populates="collaboration",
                                                 cascade="all, delete-orphan", passive_deletes=True)
@@ -356,6 +356,12 @@ class Collaboration(Base, db.Model, LogoMixin):
             else:
                 res[service.id] = [membership.user.email for membership in service.service_memberships]
         return res
+
+    def is_allowed_unit_organisation_membership(self, organisation_membership):
+        if not self.units:
+            return True
+        membership_units = set(organisation_membership.units)
+        return set(self.units).issubset(membership_units)
 
 
 class OrganisationMembership(Base, db.Model):

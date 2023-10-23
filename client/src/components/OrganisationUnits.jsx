@@ -2,14 +2,12 @@ import React, {useEffect, useRef, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Tooltip} from "@surfnet/sds";
 import "./OrganisationUnits.scss";
-import {isEmpty, stopEvent} from "../utils/Utils";
+import {isEmpty, removeDuplicates, stopEvent} from "../utils/Utils";
 import I18n from "../locale/I18n";
-import {validEmailRegExp} from "../validations/regExps";
 
 export const OrganisationUnits = ({units, setUnits, readOnly}) => {
 
-    const [duplicate, setDuplicate] = useState(false);
-    const [value, setValue] = useState("");
+    const [duplicate, setDuplicate] = useState(-1);
 
     const inputRef = useRef(null);
 
@@ -17,84 +15,52 @@ export const OrganisationUnits = ({units, setUnits, readOnly}) => {
         inputRef.current && inputRef.current.focus();
     });
 
-    const internalOnChange = e => {
+    const internalOnChange = index => e => {
         const name = e.target.value;
-        if (e.key === "Enter" || e.key === "Tab") {
-            if (units.some(unit => unit.name.toLowerCase() === name.toLowerCase())) {
-                setDuplicate(true);
-                return stopEvent(e);
-            } else {
-
-            }
+        if (units.filter(unit => unit.name.toLowerCase() === name.toLowerCase()).length > 1) {
+            setDuplicate(index);
+            return stopEvent(e);
         } else {
-            setValue(name);
+            setDuplicate(-1);
+            const unit = units[index];
+            unit.name = name;
+            units.splice(index, 1, unit);
+            setUnits([...units]);
         }
-
     }
 
-    const displayEmail = email => {
-        const indexOf = email.indexOf("<");
-        if (indexOf > -1) {
-            return <Tooltip tip={email.substring(indexOf + 1, email.length - 1)}
-                            standalone={true}
-                            children={<span>{email.substring(0, indexOf).trim()}</span>}/>;
-        }
-        return <span>{email}</span>;
+    const removeUnit = index => {
+        units.splice(index, 1);
+        setUnits(...units);
     }
 
-    const validateEmail = (part, invalidEmails) => {
-        const hasLength = part.trim().length > 0;
-        const valid = hasLength && validEmailRegExp.test(part);
-        if (!valid && hasLength) {
-            invalidEmails.push(part.trim());
-        }
-        return valid;
+    const addUnit = e => {
+        stopEvent(e);
+        setUnits(...units.concat({name: ""}));
     }
 
-    const internalAddEmail = e => {
-        if (isEmpty(e.key) && isEmpty(e.target.value)) {
-            return;
-        }
-        const email = e.target.value;
-        const invalidEmails = [];
-        const delimiters = [",", " ", ";", "\n", "\t"];
-        let emails;
-        if (!isEmpty(email) && email.indexOf("<") > -1) {
-            emails = email.split(/[,\n\t;]/)
-                .map(e => e.trim())
-                .filter(part => {
-                    const indexOf = part.indexOf("<");
-                    part = indexOf > -1 ? part.substring(indexOf + 1, part.length - 1) : part;
-                    return validateEmail(part, invalidEmails);
-                });
-        } else if (!isEmpty(email) && delimiters.some(delimiter => email.indexOf(delimiter) > -1)) {
-            const replacedEmails = email.replace(/[;\s]/g, ",");
-            const splitEmails = replacedEmails.split(",");
-            emails = splitEmails
-                .filter(part => validateEmail(part, invalidEmails));
-        } else if (!isEmpty(email)) {
-            const valid = validEmailRegExp.test(email.trim());
-            if (valid) {
-                emails = [email];
-            } else {
-                invalidEmails.push(email.trim());
-            }
-        }
-        setEmailErrors((!isEmpty(e.target.value) && !isEmpty(invalidEmails)) ? invalidEmails : []);
-        const uniqueEmails = [...new Set(emails)];
-        if (!isEmpty(uniqueEmails)) {
-            addEmails(uniqueEmails);
-        }
-        setValue("");
-    };
-
-    const internalRemoveMail = mail => e => {
-        setEmailErrors([]);
-        removeMail(mail)(e);
+ const       renderConfirmation = (service, disallowedOrganisation) => {
+        const {collAffected, orgAffected} = this.getAffectedEntities(disallowedOrganisation, service);
+        const collAffectedUnique = removeDuplicates(collAffected, "id");
+        return (
+            <div className="allowed-organisations-confirmation">
+                <p>{I18n.t("models.serviceOrganisations.disableAccessConsequences")}</p>
+                <ul>
+                    {collAffectedUnique.map(coll => <li key={coll.id}>{coll.name}
+                        <span>{` - ${I18n.t("models.serviceOrganisations.collaboration")}`}</span>
+                    </li>)
+                    }
+                    {orgAffected.map(org => <li key={org.id}>{org.name}
+                        <span>{`- ${I18n.t("models.serviceOrganisations.organisation")}`}</span>
+                    </li>)
+                    }
+                </ul>
+            </div>
+        );
     }
 
     return (
-        <div className={`email-field ${error ? "error" : ""}`}>
+        <div className="organisation-units">
             <label htmlFor={name}>{name}
                 <Tooltip
                     tip={`${I18n.t("invitation.inviteesMessagesTooltip")}${isAdmin ? I18n.t("invitation.appendAdminNote") : ""}`}/>

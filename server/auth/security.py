@@ -92,7 +92,7 @@ def confirm_authorized_api_call():
 
 
 def confirm_scope_access(*args, override_func=None, scope):
-    if request_context.is_authorized_api_call:
+    if request_context and request_context.is_authorized_api_call:
         if scope is None or scope not in request_context.api_user.scopes:
             raise Forbidden()
     elif not is_application_admin() and (not override_func or not override_func(*args)):
@@ -181,8 +181,18 @@ def confirm_collaboration_admin(collaboration_id, org_manager_allowed=True, read
             if not collaboration:
                 return False
             org_id = collaboration.organisation_id
-            allowed = is_organisation_admin_or_manager(org_id) if org_manager_allowed else is_organisation_admin(org_id)
-            return allowed
+            if org_manager_allowed:
+                is_organisation_member = is_organisation_admin_or_manager(org_id)
+                if not is_organisation_member:
+                    return False
+                unit_allowed = True
+                if collaboration.units:
+                    membership = list(
+                        filter(lambda m: m.user_id == user_id, collaboration.organisation.organisation_memberships))[0]
+                    unit_allowed = collaboration.is_allowed_unit_organisation_membership(membership)
+                return unit_allowed
+            else:
+                return is_organisation_admin(org_id)
         return True
 
     if read_only:

@@ -117,3 +117,13 @@ class TestSecurity(AbstractTest):
 
         self.assertRaises(Forbidden, do_test_impersonation_forbidden)
         self.app.app_config.feature.impersonation_allowed = True
+
+    def test_has_access_to_co_units(self):
+        with self.app.app_context() as context:
+            context.g.is_authorized_api_call = False
+            paul = self.find_entity_by_name(User, "Paul Doe")
+            collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+
+            session["user"] = {"uid": "urn:paul", "id": paul.id, "admin": False}
+
+            self.assertRaises(Forbidden, lambda: confirm_collaboration_admin(collaboration.id))
