@@ -140,9 +140,10 @@ class TestOrganisation(AbstractTest):
 
     def test_organisation_crud(self):
         self.login()
-        organisation = self.post("/api/organisations", body={"name": "new_organisation",
-                                                             "schac_home_organisations": [],
-                                                             "short_name": "https://ti1"},
+        organisation = self.post("/api/organisations",
+                                 body={"name": "new_organisation",
+                                       "schac_home_organisations": [],
+                                       "short_name": "https://ti1"},
                                  with_basic_auth=False)
         self.assertIsNotNone(organisation["id"])
         self.assertEqual("new_organisation", organisation["name"])
@@ -179,11 +180,16 @@ class TestOrganisation(AbstractTest):
         self.login()
         organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
         organisation = self.get(f"/api/organisations/{organisation_id}", with_basic_auth=False)
+        units = organisation["units"]
+        units[0]["name"] = "changed"
+        units.append({"name": "extra"})
+
         organisation["schac_home_organisations"] = [{"name": "rug.nl"}]
         self.put("/api/organisations", body=organisation)
 
         organisation = self.find_entity_by_name(Organisation, uuc_name)
         self.assertEqual(1, len(organisation.schac_home_organisations))
+        self.assertEqual(3, len(organisation.units))
         self.assertEqual("rug.nl", organisation.schac_home_organisations[0].name)
 
     def test_organisation_forbidden(self):
@@ -296,15 +302,19 @@ class TestOrganisation(AbstractTest):
 
     def test_organisation_invites_with_bogus_intended_role(self):
         self.login("urn:john")
-        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        units = [{"name": unit.name, "id": unit.id} for unit in organisation.units]
+        organisation_id = organisation.id
         self.put("/api/organisations/invites", body={
             "organisation_id": organisation_id,
+            "units": units,
             "administrators": ["new@example.org"],
             "intended_role": "bogus"
         })
         invitation = OrganisationInvitation.query \
             .filter(OrganisationInvitation.invitee_email == "new@example.org").first()
         self.assertEqual("manager", invitation.intended_role)
+        self.assertEqual(2, len(invitation.units))
 
     def test_organisation_save_with_invites(self):
         pre_count = OrganisationInvitation.query.count()
@@ -315,14 +325,16 @@ class TestOrganisation(AbstractTest):
                       body={"name": "new_organisation",
                             "administrators": ["new@example.org", "pop@example.org"],
                             "intended_role": "manager",
+                            "units": [{"name": "support"}, {"name": "research"}],
                             "short_name": "https://ti1"},
                       with_basic_auth=False)
             self.assertTrue(len(outbox) >= 2)
             post_count = OrganisationInvitation.query.count()
             self.assertEqual(pre_count + 2, post_count)
 
-        memberships = self.find_entity_by_name(Organisation, "new_organisation").organisation_memberships
-        self.assertEqual(0, len(memberships))
+        organisation = self.find_entity_by_name(Organisation, "new_organisation")
+        self.assertEqual(0, len(organisation.organisation_memberships))
+        self.assertEqual(2, len(organisation.units))
 
     def test_organisation_invites_preview(self):
         self.login("urn:john")

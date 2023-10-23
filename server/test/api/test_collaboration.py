@@ -61,7 +61,8 @@ class TestCollaboration(AbstractTest):
                  response_status_code=403, with_basic_auth=False)
 
     def test_collaboration_new(self):
-        organisation_id = Organisation.query.filter(Organisation.name == uuc_name).one().id
+        organisation = Organisation.query.filter(Organisation.name == uuc_name).one()
+        organisation_id = organisation.id
         self.login("urn:john")
         mail = self.app.mail
         with mail.record_messages() as outbox:
@@ -905,3 +906,45 @@ class TestCollaboration(AbstractTest):
                     headers={"Authorization": f"Bearer {uva_secret}"},
                     with_basic_auth=False,
                     response_status_code=403)
+
+    def test_collaboration_with_units(self):
+        organisation = Organisation.query.filter(Organisation.name == uuc_name).one()
+        units = [{"name": unit.name, "id": unit.id} for unit in organisation.units]
+        renamed_units = [{"name": "changed", "id": unit.id} for unit in organisation.units]
+        new_units = [{"name": "nice", "id": 99999}]
+
+        body = {
+            "name": "new_collaboration",
+            "description": "new_collaboration",
+            "organisation_id": organisation.id,
+            "administrators": [],
+            "short_name": "short__",
+            "current_user_admin": False
+        }
+        self.login("urn:john")
+
+        # normal, add existing units
+        body["units"] = units
+        res = self.post("/api/collaborations", body=body, with_basic_auth=False)
+        collaboration = db.session.get(Collaboration, res["id"])
+        self.assertEqual(2, len(collaboration.units))
+
+        # not allowed
+        body["units"] = renamed_units
+        body["name"] += "_"
+        body["short_name"] += "_"
+        self.post("/api/collaborations", body=body, with_basic_auth=False, response_status_code=400)
+
+        body["units"] = new_units
+        body["name"] += "_"
+        body["short_name"] += "_"
+        self.post("/api/collaborations", body=body, with_basic_auth=False, response_status_code=400)
+
+        # CO admin can't change units
+        co_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        collaboration = self.get(f"/api/collaborations/{co_id}")
+        self.login("urn:admin")
+        collaboration["units"] = units
+        res = self.put("/api/collaborations", body=collaboration, with_basic_auth=False)
+        collaboration = db.session.get(Collaboration, res["id"])
+        self.assertEqual(1, len(collaboration.units))

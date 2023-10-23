@@ -2,18 +2,32 @@ import React, {useEffect, useRef, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Tooltip} from "@surfnet/sds";
 import "./OrganisationUnits.scss";
-import {isEmpty, removeDuplicates, stopEvent} from "../utils/Utils";
+import {isEmpty, removeDuplicates, splitListSemantically, stopEvent} from "../utils/Utils";
 import I18n from "../locale/I18n";
+import {unitUsage} from "../api";
+import ConfirmationDialog from "./ConfirmationDialog";
+import {ReactComponent as TrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
+import {current} from "immer";
 
 export const OrganisationUnits = ({units, setUnits, readOnly}) => {
 
     const [duplicate, setDuplicate] = useState(-1);
+    const [references, setReferences] = useState({});
+    const [loading, setLoading] = useState(false);
+    const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
+    const [confirmationDialogAction, setConfirmationDialogAction] = useState(false);
 
     const inputRef = useRef(null);
+
 
     useEffect(() => {
         inputRef.current && inputRef.current.focus();
     });
+
+    const cancelRemoval = () => {
+        setReferences({});
+        setConfirmationDialogOpen(false);
+    }
 
     const internalOnChange = index => e => {
         const name = e.target.value;
@@ -29,9 +43,37 @@ export const OrganisationUnits = ({units, setUnits, readOnly}) => {
         }
     }
 
-    const removeUnit = index => {
+    const doRemoveUnit = index => {
         units.splice(index, 1);
         setUnits(...units);
+    }
+
+    const hasReferences = res => {
+        return !isEmpty(res.collaborations) || !isEmpty(res.invitations)
+            || !isEmpty(res.collaboration_requests);
+    }
+
+    const removeUnit = index => e => {
+        stopEvent(e);
+        const unit = units[index];
+        if (unit.organisation_id && unit.id) {
+            setLoading(true);
+            unitUsage(unit).then(res => {
+                setReferences(res);
+                if (hasReferences(res)) {
+                    setConfirmationDialogOpen(true);
+                    setConfirmationDialogAction(() => {
+                        doRemoveUnit(index);
+                        setReferences({});
+                        setConfirmationDialogOpen(false);
+                    });
+                }
+                setLoading(false);
+            })
+        } else {
+            setReferences({});
+            doRemoveUnit(index);
+        }
     }
 
     const addUnit = e => {
@@ -39,20 +81,20 @@ export const OrganisationUnits = ({units, setUnits, readOnly}) => {
         setUnits(...units.concat({name: ""}));
     }
 
- const       renderConfirmation = (service, disallowedOrganisation) => {
-        const {collAffected, orgAffected} = this.getAffectedEntities(disallowedOrganisation, service);
-        const collAffectedUnique = removeDuplicates(collAffected, "id");
+    const renderConfirmation = () => {
         return (
-            <div className="allowed-organisations-confirmation">
-                <p>{I18n.t("models.serviceOrganisations.disableAccessConsequences")}</p>
+            <div className="remove-unit-confirmation">
+                <p>{I18n.t("units.used")}</p>
                 <ul>
-                    {collAffectedUnique.map(coll => <li key={coll.id}>{coll.name}
-                        <span>{` - ${I18n.t("models.serviceOrganisations.collaboration")}`}</span>
-                    </li>)
-                    }
-                    {orgAffected.map(org => <li key={org.id}>{org.name}
-                        <span>{`- ${I18n.t("models.serviceOrganisations.organisation")}`}</span>
-                    </li>)
+                    {
+                        ["collaborations", "invitations", "collaboration_requests"]
+                            .filter(name => !isEmpty(references[name]))
+                            .map((name, index) =>
+                                <li key={index}>
+                                    {`${I18n.t("units.collaborations")} (${splitListSemantically(references.collaborations,
+                                        I18n.t("service.compliancySeparator"))})`}
+                                </li>
+                            )
                     }
                 </ul>
             </div>
@@ -61,42 +103,36 @@ export const OrganisationUnits = ({units, setUnits, readOnly}) => {
 
     return (
         <div className="organisation-units">
-            <label htmlFor={name}>{name}
-                <Tooltip
-                    tip={`${I18n.t("invitation.inviteesMessagesTooltip")}${isAdmin ? I18n.t("invitation.appendAdminNote") : ""}`}/>
-            </label>
-            <div className={`inner-email-field ${error ? "error" : ""}`}>
-                {emails.map((mail, index) =>
-                    <div key={index} className="email-tag">
-                        {displayEmail(mail)}
-                        {pinnedEmails.includes(mail) ?
-                            <span className="disabled icon"><FontAwesomeIcon icon="envelope"/></span> :
-                            <span className="icon" onClick={internalRemoveMail(mail)}>
-                                <FontAwesomeIcon icon="times"/>
-                            </span>}
+            <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                cancel={cancelRemoval}
+                                confirm={confirmationDialogAction}
+                                question={I18n.t("units.confirmation")}
+                                closeTimeoutMS={0}
+                                isWarning={true}>
+                {confirmationDialogOpen && renderConfirmation()}
+            </ConfirmationDialog>
+            <label>{I18n.t("units.label")}</label>
 
-                    </div>)}
-                <textarea id="email-field"
-                          value={value}
-                          onChange={internalOnChange}
-                          onBlur={internalAddEmail}
-                          onKeyDown={e => {
-                              if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
-                                  internalAddEmail(e);
-                                  setTimeout(() => document.getElementById("email-field").focus(), 50);
-                                  return stopEvent(e);
-                              } else if (e.key === "Backspace" && isEmpty(value) && emails.length > 0) {
-                                  const mail = emails[emails.length - 1];
-                                  if (!pinnedEmails.includes(mail)) {
-                                      internalRemoveMail(mail)();
-                                  }
-                              }
-                          }}
-                          placeholder={emails.length === 0 ? I18n.t("invitation.inviteesPlaceholder") : ""} cols={3}/>
-            </div>
-            {(!isEmpty(emailErrors) && value === "") && <p className="error">
-                {I18n.t("invitation.invalidEmails", {emails: Array.from(new Set(emailErrors)).join(", ")})}
-            </p>}
+            {units.map((unit, index) =>
+                <div className="inner-input-field" key={index}>
+                    <input type="text"
+                           value={unit.name}
+                           onChange={internalOnChange}
+                           onBlur={onBlur}
+                           ref={ref => (index + 1) === units.length ? inputRef : null}
+                           className={`sds--text-field--input`}
+                    />
+                    <div className={`input-field-link`}>
+                        <a href={"#"} onClick={removeUnit(index)}>
+                            <TrashIcon/>
+                        </a>
+                    </div>
+                </div>)
+            }
+            <a className={"add-unit"} href="#" onClick={addUnit}>
+                {I18n.t("units.add")}
+            </a>
+
         </div>
     );
 }

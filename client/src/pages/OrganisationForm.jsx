@@ -57,6 +57,7 @@ class OrganisationForm extends React.Component {
             alreadyExists: {},
             initial: true,
             isNew: true,
+            units: [],
             organisation: null,
             confirmationDialogOpen: false,
             warning: false,
@@ -215,12 +216,13 @@ class OrganisationForm extends React.Component {
         if (this.isValid()) {
             const {
                 name, short_name, administrators, message, schac_home_organisations, description, logo,
-                on_boarding_msg, category, services_restricted
+                on_boarding_msg, category, services_restricted, units
             } = this.state;
             this.setState({loading: true});
             createOrganisation({
                 name,
                 short_name,
+                units,
                 category: category !== null ? category.label : null,
                 schac_home_organisations,
                 administrators,
@@ -254,13 +256,14 @@ class OrganisationForm extends React.Component {
         if (this.isValid()) {
             const {
                 name, description, organisation, schac_home_organisations, collaboration_creation_allowed,
-                short_name, identifier, logo, on_boarding_msg, category, services_restricted
+                short_name, identifier, logo, on_boarding_msg, category, services_restricted, units
             } = this.state;
             this.setState({loading: true});
             updateOrganisation({
                 id: organisation.id,
                 name,
                 description,
+                units,
                 schac_home_organisations,
                 collaboration_creation_allowed,
                 services_restricted,
@@ -319,7 +322,8 @@ class OrganisationForm extends React.Component {
             organisation,
             warning,
             loading,
-            invalid_schac_home_organisation
+            invalid_schac_home_organisation,
+            units
         } = this.state;
         if (loading) {
             return <SpinnerField/>
