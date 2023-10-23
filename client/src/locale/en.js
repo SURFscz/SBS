@@ -762,7 +762,7 @@ const en = {
         shortNameTooltip: "Assign short names to collaborations so that these short names can be used in the LDAP services (like Linux group names).<br/><br/>" +
             "Only digits, alphanumeric characters and the underscore are allowed.",
         globalUrn: "Platform identifier",
-        globalUrnTooltip: "Platform broad unique and read-only identifier based on the short names of the organisation, and this collaboration.",
+        globalUrnTooltip: "Platform wide, unique, and read-only identifier based on the short name of the organisation and the collaboration.",
         identifier: "Identifier",
         identifierTooltip: "Generated, unique and immutable identifier of a collaboration which is used as identifier for external systems",
         joinRequestUrlTooltip: "URL for non-members to join this collaboration. You can for instance email this URL or publish it on a website etc.",
@@ -1533,7 +1533,7 @@ const en = {
         autoProvisionMembers: "Auto-provision collaboration members",
         autoProvisionMembersTooltip: "Check to automatically add all existing and future new collaboration members to this group",
         global_urn: "Platform identifier",
-        globalUrnTooltip: "Platform broad unique and read-only identifier based on the short names of the organisation, collaboration and this group.",
+        globalUrnTooltip: "Platform wide, unique, and read-only identifier based on the short name of the organisation, the collaboration and the group.",
         alreadyExists: "A group with {{attribute}} {{value}} already exists.",
         required: "{{attribute}} is a required field for a group",
         uri: "URI",
