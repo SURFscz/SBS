@@ -762,7 +762,7 @@ const nl = {
         shortNameTooltip: "Ken korte namen toe aan de samenwerkingen zodat die namen bruikbaar zijn in de via ldap te koppelen diensten (zoals Linux groepsnamen).<br/><br/>" +
             "Alleen getallen, alfanumerieke karakers en de lage streep zijn toegstaan.",
         globalUrn: "Globale urn",
-        globalUrnTooltip: "Globale unieke en niet aanpasbare urn gebaseerd op de korte naam van de organisatie en deze samenwerking.",
+        globalUrnTooltip: "Binnen het platform unieke en onaanpasbare urn, gebaseerd op de korte naam van de organisatie en de samenwerking.",
         identifier: "Identifier",
         identifierTooltip: "Gegenereerde, unieke en niet aanpasbare identifier van een samenwerking die wordt gebruikt als identifier voor externe systemen",
         joinRequestUrlTooltip: "URL voor niet-leden om zich aan te melden voor deze samenwerking. De URL kunt je bijvoorbeeld e-mailen of publiceren op een website.",
@@ -1534,7 +1534,7 @@ const nl = {
         autoProvisionMembers: "Maak leden van de samenwerking automatisch lid",
         autoProvisionMembersTooltip: "Vink aan om automatisch alle bestaande leden en nieuwe leden toe te voegen aan deze groep",
         global_urn: "Globale urn",
-        globalUrnTooltip: "Globale unieke en niet aanpasbare urn gebaseerd op de korte naam van de organisatie, samenwerking en deze groep.",
+        globalUrnTooltip: "Binnen het platform unieke en onaanpasbare urn, gebaseerd op de korte naam van de organisatie, de samenwerking en de groep.",
         alreadyExists: "Een groep met {{attribute}} {{value}} bestaat al.",
         required: "{{attribute}} is een verplicht veld voor een groep",
         uri: "URI",
