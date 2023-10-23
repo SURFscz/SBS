@@ -4,6 +4,7 @@
 import eventlet
 
 from server.api.service_request import service_request_api
+from server.api.unit import unit_api
 
 eventlet.monkey_patch()
 
@@ -131,7 +132,7 @@ blueprints = [
     service_connection_request_api, audit_log_api, ipaddress_api, system_api, organisations_services_api, mock_user_api,
     plsc_api, image_api, service_group_api, service_invitations_api, service_membership_api, service_aups_api,
     user_token_api, token_api, tag_api, swagger_specs, pam_websso_api, user_login_api, service_token_api, scim_api,
-    service_request_api
+    service_request_api, unit_api
 ]
 
 for api_blueprint in blueprints:

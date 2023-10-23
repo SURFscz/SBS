@@ -187,6 +187,7 @@ class CollaborationForm extends React.Component {
         value: org.id,
         short_name: org.short_name,
         on_boarding_msg: org.on_boarding_msg,
+        units: org.units,
         collaboration_creation_allowed: org.collaboration_creation_allowed,
         collaboration_creation_allowed_entitlement: org.collaboration_creation_allowed_entitlement,
         logo: org.logo

@@ -1012,6 +1012,11 @@ export function deleteServiceToken(id) {
     return fetchDelete(`/api/service_tokens/${id}`)
 }
 
+//Units
+export function unitUsage(organisation, unit) {
+    return fetchJson(`/api/units/usages/${organisation.id}/${unit.id}`)
+}
+
 //Mock-SCIM
 export function allMockScimServices() {
     return fetchJson("/api/scim/v2/scim-services")

@@ -1,19 +1,20 @@
 import uuid
 
 from flasgger import swag_from
-from flask import Blueprint, request as current_request, current_app, g as request_context
+from flask import Blueprint, request as current_request, current_app, g as request_context, jsonify
 from munch import munchify
 from sqlalchemy import or_
 from sqlalchemy import text, func, bindparam, String
 from sqlalchemy.orm import load_only
 from sqlalchemy.orm import selectinload
+from werkzeug.exceptions import Forbidden
 
 from server.api.base import emit_socket, organisation_by_user_schac_home
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_write_access, current_user_id, is_application_admin, \
     confirm_organisation_admin, is_service_admin, confirm_external_api_call, confirm_read_access, \
-    confirm_organisation_admin_or_manager
+    confirm_organisation_admin_or_manager, is_organisation_admin
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
 from server.db.defaults import default_expiry_date, cleanse_short_name
@@ -196,18 +197,36 @@ def organisation_by_id(organisation_id):
                  .selectinload(Collaboration.tags)) \
         .filter(Organisation.id == organisation_id)
 
-    if not request_context.is_authorized_api_call:
+    api_call = request_context.is_authorized_api_call
+    if not api_call:
         is_admin = is_application_admin()
-
         if not is_admin:
             user_id = current_user_id()
             query = query \
                 .join(Organisation.organisation_memberships) \
                 .join(OrganisationMembership.user) \
-                .filter(OrganisationMembership.role.in_(["admin", "manager"])) \
                 .filter(OrganisationMembership.user_id == user_id)
 
     organisation = query.one()
+    if not api_call and not is_application_admin() and organisation.units and not is_organisation_admin(
+            organisation_id):
+        user_id = current_user_id()
+        optional_managers = list(filter(lambda m: m.user_id == user_id, organisation.organisation_memberships))
+        if not optional_managers:
+            raise Forbidden()
+        manager_unit_identifiers = set([unit.id for unit in optional_managers[0].units])
+        organisation_json = jsonify(organisation).json
+
+        def collaboration_allowed(collaboration):
+            if "units" not in collaboration or not collaboration["units"]:
+                return True
+            co_units = set([unit["id"] for unit in collaboration["units"]])
+            return co_units.issubset(manager_unit_identifiers)
+
+        collaborations = [co for co in organisation_json["collaborations"] if collaboration_allowed(co)]
+        organisation_json["collaborations"] = collaborations
+        return organisation_json, 200
+
     return organisation, 200
 
 

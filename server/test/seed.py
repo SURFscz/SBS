@@ -12,7 +12,8 @@ from server.db.defaults import default_expiry_date, SERVICE_TOKEN_INTROSPECTION,
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
     CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey, CollaborationRequest, \
     ServiceConnectionRequest, SuspendNotification, Aup, SchacHomeOrganisation, SshKey, ServiceGroup, ServiceInvitation, \
-    ServiceMembership, ServiceAup, UserToken, UserIpNetwork, Tag, PamSSOSession, IpNetwork, ServiceToken, ServiceRequest
+    ServiceMembership, ServiceAup, UserToken, UserIpNetwork, Tag, PamSSOSession, IpNetwork, ServiceToken, \
+    ServiceRequest, Unit
 
 collaboration_request_name = "New Collaboration"
 
@@ -56,6 +57,8 @@ uuc_teachers_name = "UUC Teachers"
 uuc_name = "UUC"
 uuc_secret = generate_token()
 uuc_hashed_secret = secure_hash(uuc_secret)
+uuc_unit_research_name = "Research"
+uuc_unit_support_name = "Support"
 
 uva_secret = generate_token()
 uva_hashed_secret = secure_hash(uva_secret)
@@ -266,6 +269,10 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                        category="University")
     persist_instance(db, uuc, uva, tue)
 
+    uuc_unit_research = Unit(name=uuc_unit_research_name, organisation=uuc)
+    uuc_unit_support = Unit(name=uuc_unit_support_name, organisation=uuc)
+    persist_instance(db, uuc_unit_research, uuc_unit_support)
+
     shouuc = SchacHomeOrganisation(name=schac_home_organisation_uuc, organisation=uuc, created_by="urn:admin",
                                    updated_by="urn:admin")
     shouva = SchacHomeOrganisation(name=schac_home_organisation, organisation=uva, created_by="urn:admin",
@@ -282,6 +289,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                                            expiry_date=datetime.date.today() + datetime.timedelta(
                                                                days=14),
                                                            invitee_email="roger@example.org", organisation=uuc,
+                                                           units=[uuc_unit_research],
                                                            intended_role="admin",
                                                            user=john)
     organisation_invitation_pass = OrganisationInvitation(message="Let me please join as I "
@@ -296,9 +304,11 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
 
     organisation_membership_john = OrganisationMembership(role="admin", user=john, organisation=uuc)
     organisation_membership_mary = OrganisationMembership(role="admin", user=mary, organisation=uuc)
-    organisation_membership_harry = OrganisationMembership(role="manager", user=harry, organisation=uuc)
+    organisation_membership_harry = OrganisationMembership(role="manager", user=harry, organisation=uuc,
+                                                           units=[uuc_unit_support])
     organisation_membership_jane = OrganisationMembership(role="admin", user=jane, organisation=uva)
-    organisation_membership_paul_uuc = OrganisationMembership(role="manager", user=paul, organisation=uuc)
+    organisation_membership_paul_uuc = OrganisationMembership(role="manager", user=paul, organisation=uuc,
+                                                              units=[uuc_unit_research])
     organisation_membership_paul_uva = OrganisationMembership(role="manager", user=paul, organisation=uva)
     persist_instance(db, organisation_membership_john, organisation_membership_mary, organisation_membership_harry,
                      organisation_membership_jane, organisation_membership_paul_uuc, organisation_membership_paul_uva)
@@ -493,6 +503,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                  organisation=uuc, services=[mail, network],
                                  join_requests=[], invitations=[],
                                  tags=[tag_uuc],
+                                 units=[uuc_unit_support],
                                  short_name=ai_computing_short_name,
                                  website_url="https://www.google.nl",
                                  accepted_user_policy="https://www.google.nl",

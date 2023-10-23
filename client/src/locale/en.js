@@ -2387,6 +2387,20 @@ const en = {
         name: "Name",
         description: "Description",
         organisationName: "Organisation / institution"
+    },
+    units: {
+        label: "Units (e.g. department or project)",
+        add: "Add unit",
+        confirmation: "Are you sure you want to remove unit {{name}}?",
+        used: "It is being used by:",
+        collaboration: "Relevant units (e.g. department tor project)",
+        collaborationRequest: "Organisational units (optional)",
+        filter: "All units",
+        invitationLabel: "CO's to be managed",
+        all: "All CO's",
+        specify: "Specify CO's",
+        back: "Back to all admins",
+        editRole: "Edit org manager details"
     }
 };
 

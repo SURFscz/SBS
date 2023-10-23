@@ -752,7 +752,8 @@ class TestCollaboration(AbstractTest):
 
     def test_access_allowed_organisation_admin(self):
         data = self._access_allowed("urn:mary")
-        self.assertEqual("full", data["access"])
+        # Mary has no units in her organisation_membership
+        self.assertEqual("lite", data["access"])
 
     def test_access_allowed_collaboration_admin(self):
         data = self._access_allowed("urn:admin")
