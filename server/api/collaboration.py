@@ -13,12 +13,13 @@ from werkzeug.exceptions import BadRequest, Forbidden, MethodNotAllowed
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars, emit_socket
 from server.api.exceptions import APIBadRequest
 from server.api.service_group import create_service_groups
+from server.api.unit import validate_units
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_collaboration_member, \
     confirm_authorized_api_call, \
     confirm_allow_impersonation, confirm_organisation_admin_or_manager, confirm_external_api_call, \
     is_organisation_admin_or_manager, is_application_admin, confirm_service_admin, \
-    confirm_organisation_api_collaboration
+    confirm_organisation_api_collaboration, is_collaboration_admin
 from server.db.activity import update_last_activity_date
 from server.db.db import db
 from server.db.defaults import (default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name,
@@ -600,7 +601,7 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True, sav
     valid_uri_attributes(data, ["accepted_user_policy", "website_url"])
 
     data["identifier"] = str(uuid.uuid4())
-    res = save(Collaboration, custom_json=data, allow_child_cascades=False)
+    res = save(Collaboration, custom_json=data, allow_child_cascades=False, allowed_child_collections=["units"])
     collaboration = res[0]
 
     if tags and save_tags:
@@ -669,6 +670,9 @@ def _validate_collaboration(data, organisation, new_collaboration=True):
                              existing_collaboration="" if new_collaboration else data["short_name"]):
         raise APIBadRequest(f"Collaboration with short_name '{data['short_name']}' already exists within "
                             f"organisation '{organisation.name}'.")
+
+    validate_units(data, organisation)
+
     _assign_global_urn(data["organisation_id"], data)
     data["last_activity_date"] = datetime.now()
 
@@ -689,6 +693,9 @@ def update_collaboration():
     confirm_collaboration_admin(data["id"])
 
     organisation = db.session.get(Organisation, data["organisation_id"])
+    if is_collaboration_admin(current_user_id(), collaboration_id=data["id"]) and "units" in data:
+        del data["units"]
+
     _validate_collaboration(data, organisation, new_collaboration=False)
 
     collaboration = db.session.get(Collaboration, data["id"])
@@ -701,7 +708,7 @@ def update_collaboration():
         _reconcile_tags(collaboration, data["tags"])
 
     # For updating references like services, groups, memberships there are more fine-grained API methods
-    res = update(Collaboration, custom_json=data, allow_child_cascades=False)
+    res = update(Collaboration, custom_json=data, allow_child_cascades=False, allowed_child_collections=["units"])
 
     emit_socket(f"collaboration_{collaboration.id}")
     broadcast_collaboration_changed(collaboration.id)

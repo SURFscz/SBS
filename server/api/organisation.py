@@ -11,6 +11,7 @@ from werkzeug.exceptions import Forbidden
 
 from server.api.base import emit_socket, organisation_by_user_schac_home
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
+from server.api.unit import validate_units
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_write_access, current_user_id, is_application_admin, \
     confirm_organisation_admin, is_service_admin, confirm_external_api_call, confirm_read_access, \
@@ -304,10 +305,16 @@ def organisation_invites():
     organisation = db.session.get(Organisation, organisation_id)
     user = db.session.get(User, current_user_id())
 
+    valid_units = validate_units(data, organisation)
+
     for administrator in administrators:
-        invitation = OrganisationInvitation(hash=generate_token(), intended_role=intended_role,
-                                            message=message, invitee_email=administrator,
-                                            organisation=organisation, user=user,
+        invitation = OrganisationInvitation(hash=generate_token(),
+                                            intended_role=intended_role,
+                                            message=message,
+                                            units=valid_units,
+                                            invitee_email=administrator,
+                                            organisation=organisation,
+                                            user=user,
                                             expiry_date=default_expiry_date(json_dict=data),
                                             created_by=user.uid)
         invitation = db.session.merge(invitation)
@@ -339,12 +346,16 @@ def save_organisation():
 
     message = data.get("message", None)
 
-    res = save(Organisation, custom_json=data)
+    res = save(Organisation, custom_json=data, allow_child_cascades=False, allowed_child_collections=["units"])
     user = db.session.get(User, current_user_id())
     organisation = res[0]
+
     for administrator in administrators:
-        invitation = OrganisationInvitation(hash=generate_token(), message=message, invitee_email=administrator,
-                                            organisation_id=organisation.id, user_id=user.id,
+        invitation = OrganisationInvitation(hash=generate_token(),
+                                            message=message,
+                                            invitee_email=administrator,
+                                            organisation_id=organisation.id,
+                                            user_id=user.id,
                                             intended_role=intended_role,
                                             expiry_date=default_expiry_date(),
                                             created_by=user.uid)
@@ -399,16 +410,23 @@ def update_organisation():
         data["services_restricted"] = True
 
     # Corner case: user removed name and added the exact same name again, prevent duplicate entry
-    existing_names = [sho.name for sho in organisation.schac_home_organisations]
     if "schac_home_organisations" in data:
+        existing_names = [sho.name for sho in organisation.schac_home_organisations]
         if len([sho for sho in data["schac_home_organisations"] if
                 not sho.get("id") and sho["name"] in existing_names]) > 0:
             organisation.schac_home_organisations.clear()
 
+    # Corner case: user removed name and added the exact same name again, prevent duplicate entry
+    if "units" in data:
+        existing_names = [unit.name for unit in organisation.units]
+        if len([unit for unit in data["units"] if
+                not unit.get("id") and unit["name"] in existing_names]) > 0:
+            organisation.units.clear()
+
     emit_socket(f"organisation_{organisation.id}", include_current_user_id=True)
 
     return update(Organisation, custom_json=data, allow_child_cascades=False,
-                  allowed_child_collections=["schac_home_organisations"])
+                  allowed_child_collections=["schac_home_organisations", "units"])
 
 
 @organisation_api.route("/<organisation_id>", methods=["DELETE"], strict_slashes=False)

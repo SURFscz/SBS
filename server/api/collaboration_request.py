@@ -8,6 +8,7 @@ from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint, STATUS_OPEN, STATUS_APPROVED, STATUS_DENIED, emit_socket
 from server.api.collaboration import assign_global_urn_to_collaboration, do_save_collaboration
+from server.api.unit import validate_units
 from server.auth.security import current_user_id, current_user_name, \
     confirm_organisation_admin_or_manager
 from server.db.defaults import cleanse_short_name, STATUS_ACTIVE
@@ -75,7 +76,14 @@ def request_collaboration():
         return collaboration, 201
     else:
         data["status"] = STATUS_OPEN
-        collaboration_request = save(CollaborationRequest, custom_json=data)[0]
+
+        validate_units(data, organisation)
+
+        res = save(CollaborationRequest,
+                   custom_json=data,
+                   allow_child_cascades=False,
+                   allowed_child_collections=["units"])
+        collaboration_request = res[0]
 
         context = {"salutation": f"Dear {organisation.name} organisation admin,",
                    "base_url": current_app.app_config.base_url,

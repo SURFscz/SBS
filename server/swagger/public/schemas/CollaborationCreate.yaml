@@ -54,6 +54,17 @@ properties:
     items:
       type: string
       example: "label_1"
+  units:
+    type: array
+    description: "Units, existing units of the collaboration"
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "research"
+        id:
+          type: integer
 required:
   - name
   - short_name

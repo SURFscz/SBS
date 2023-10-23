@@ -2391,8 +2391,11 @@ const en = {
     units: {
         label: "Units (e.g. department or project)",
         add: "Add unit",
-        confirmation: "Are you sure you want to remove unit {{name}}?",
+        confirmation: "Are you sure you want to remove this unit?",
         used: "It is being used by:",
+        collaboration_requests: "collaboration requests",
+        invitations: "organisation invitations",
+        collaborations: "collaborations",
         collaboration: "Relevant units (e.g. department tor project)",
         collaborationRequest: "Organisational units (optional)",
         filter: "All units",

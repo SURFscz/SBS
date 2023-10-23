@@ -1013,8 +1013,8 @@ export function deleteServiceToken(id) {
 }
 
 //Units
-export function unitUsage(organisation, unit) {
-    return fetchJson(`/api/units/usages/${organisation.id}/${unit.id}`)
+export function unitUsage(unit) {
+    return fetchJson(`/api/units/usages/${unit.organisation_id}/${unit.id}`)
 }
 
 //Mock-SCIM
