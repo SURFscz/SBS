@@ -36,7 +36,7 @@ def _do_scim_sweep_services(app):
         services_sweeping = [service for service in services if service_needs_sweeping(service)]
         aggregated_results = _result_container()
         for service in services_sweeping:
-            logger.info(f"Running scim_sweep for service {service.abbreviation} ({service.entity_id}")
+            logger.info(f"Running scim_sweep for service {service.abbreviation} ({service.entity_id})")
             try:
                 sync_results = perform_sweep(service)
                 aggregated_results["services"].append({"name": service.name, "sync_results": sync_results})
