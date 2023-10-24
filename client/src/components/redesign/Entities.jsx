@@ -37,8 +37,6 @@ class Entities extends React.Component {
         }
     };
 
-    closeExplanation = () => this.setState({showExplanation: false});
-
     queryChanged = e => {
         const query = e.target.value;
         this.setState({query: query});

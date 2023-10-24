@@ -112,16 +112,16 @@ class NewInvitation extends React.Component {
     };
 
     isValid = () => {
-        const {administrators, fileEmails, intended_role} = this.state;
-        return (!isEmpty(administrators) || !isEmpty(fileEmails)) && !isEmpty(intended_role);
+        const {administrators, fileEmails, intended_role, expiry_date} = this.state;
+        return (!isEmpty(administrators) || !isEmpty(fileEmails)) && !isEmpty(intended_role) && !isEmpty(expiry_date);
     };
 
     doSubmit = () => {
+        const {
+            administrators, message, collaboration, expiry_date, fileEmails, intended_role,
+            selectedGroup, membership_expiry_date, isAdminView
+        } = this.state;
         if (this.isValid()) {
-            const {
-                administrators, message, collaboration, expiry_date, fileEmails, intended_role,
-                selectedGroup, membership_expiry_date, isAdminView
-            } = this.state;
             this.setState({loading: true});
             collaborationInvitations({
                 administrators: administrators.concat(fileEmails),
@@ -135,7 +135,7 @@ class NewInvitation extends React.Component {
                 this.props.history.push(`/collaborations/${collaboration.id}/${isAdminView ? "admins" : "members"}`);
                 setFlash(I18n.t("invitation.flash.created", {name: collaboration.name}))
             });
-        } else {
+        } else if (isEmpty(administrators)) {
             window.scrollTo(0, 0);
         }
     };
@@ -164,6 +164,9 @@ class NewInvitation extends React.Component {
 
     getMembershipExpiryDate = () => {
         const {expiry_date} = this.state;
+        if (isEmpty(expiry_date)) {
+            return null;
+        }
         const membershipExpiryDate = new Date(expiry_date.getTime());
         membershipExpiryDate.setDate(membershipExpiryDate.getDate() + 1);
         return membershipExpiryDate;
@@ -222,7 +225,7 @@ class NewInvitation extends React.Component {
                         emails={administrators}
                         error={!initial && isEmpty(administrators) && isEmpty(fileEmails)}/>
             {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) &&
-            <ErrorIndicator msg={I18n.t("invitation.requiredEmail")}/>}
+                <ErrorIndicator msg={I18n.t("invitation.requiredEmail")}/>}
 
             <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
                          options={this.intendedRolesOptions}
@@ -259,11 +262,13 @@ class NewInvitation extends React.Component {
 
             <DateField value={expiry_date}
                        onChange={this.setInvitationExpiryDate}
+                       allowNull={true}
                        pastDatesAllowed={this.props.config.past_dates_allowed}
                        maxDate={moment().add(31, "day").toDate()}
                        name={I18n.t("invitation.expiryDate")}
                        toolTip={I18n.t("invitation.expiryDateTooltip")}/>
-
+            {(!initial && isEmpty(expiry_date)) &&
+                <ErrorIndicator msg={I18n.t("invitation.requiredExpiryDate")}/>}
 
             {this.renderActions(disabledSubmit)}
         </div>;

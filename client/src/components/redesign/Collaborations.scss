@@ -21,6 +21,11 @@
 
 .mod-entities {
 
+    .collaboration-label-filter-container {
+        display: flex;
+        gap: 20px;
+    }
+
     .collaboration-label-filter {
         display: flex;
         @media (max-width: $compact-medium) {
@@ -28,7 +33,7 @@
         }
 
         .collaboration-label-filter-select {
-            width: 290px;
+            width: 180px;
             @media (max-width: $compact-medium) {
                 margin: 15px 0;
             }

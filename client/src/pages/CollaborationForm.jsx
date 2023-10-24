@@ -34,6 +34,7 @@ import DateField from "../components/DateField";
 import moment from "moment";
 import DOMPurify from "dompurify";
 import OnBoardingMessage from "../components/redesign/OnBoardingMessage";
+import {CollaborationUnits} from "../components/CollaborationUnits";
 
 class CollaborationForm extends React.Component {
 
@@ -58,6 +59,8 @@ class CollaborationForm extends React.Component {
             invalidInputs: {},
             tags: [],
             tagsSelected: [],
+            units: [],
+            allUnits: [],
             isNew: true,
             collaboration: null,
             confirmationQuestion: "",
@@ -88,6 +91,8 @@ class CollaborationForm extends React.Component {
                 this.updateBreadCrumb(orgOption, collaboration, false, false);
                 const expiryDate = collaboration.expiry_date ? moment(collaboration.expiry_date * 1000).toDate() : null;
                 const tagOptions = collaboration.tags.map(tag => ({label: tag.tag_value, value: tag.id}));
+                const units = collaboration.units.map(unit => ({...unit, label: unit.name, value: unit.id}));
+                const allUnits = organisation.units.map(unit => ({...unit, label: unit.name, value: unit.id}));
                 this.setState({
                     ...collaboration,
                     collaboration: collaboration,
@@ -95,6 +100,8 @@ class CollaborationForm extends React.Component {
                     organisations: [orgOption],
                     tags: tagOptions,
                     tagsSelected: tagOptions,
+                    units: units,
+                    allUnits: allUnits,
                     isNew: false,
                     loading: false,
                     expiry_date: expiryDate,
@@ -148,6 +155,14 @@ class CollaborationForm extends React.Component {
                 const tagOptions = existingTags.map(tag => ({label: tag.tag_value, value: tag.id}));
                 this.setState({tags: tagOptions});
             });
+        }
+    }
+
+    updateUnits = organisation => {
+        const {user} = this.props;
+        const accessAllowedToOrg = isUserAllowed(ROLES.ORG_MANAGER, user, organisation.id);
+        if (accessAllowedToOrg) {
+            //TODO change the allUnits and clear the units.
         }
     }
 
@@ -262,6 +277,7 @@ class CollaborationForm extends React.Component {
                 message,
                 expiry_date,
                 tagsSelected,
+                units,
                 organisation,
                 isCollaborationRequest,
                 allow_join_requests,
@@ -277,6 +293,7 @@ class CollaborationForm extends React.Component {
                 logo,
                 website_url,
                 administrators,
+                units,
                 message,
                 expiry_date: expiry_date ? expiry_date.getTime() / 1000 : null,
                 organisation_id: organisation.value,
@@ -325,6 +342,7 @@ class CollaborationForm extends React.Component {
                 collaboration,
                 administrators,
                 message,
+                units,
                 tagsSelected,
                 expiry_date,
                 organisation,
@@ -340,6 +358,7 @@ class CollaborationForm extends React.Component {
                 description,
                 website_url,
                 tags: tagsSelected,
+                units,
                 logo,
                 identifier: collaboration.identifier,
                 administrators,
@@ -450,6 +469,8 @@ class CollaborationForm extends React.Component {
             tags,
             tagsSelected,
             invalidInputs,
+            units,
+            allUnits
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -600,6 +621,12 @@ class CollaborationForm extends React.Component {
                                                           readOnly={!disclose_member_information}
                                                           tooltip={I18n.t("collaboration.discloseEmailInformationTooltip")}
                                                           onChange={() => this.setState({disclose_email_information: !disclose_email_information})}/>}
+
+                    {accessAllowedToOrg && <CollaborationUnits allUnits={allUnits}
+                                                               setUnits={units => this.setState({units: units})}
+                                                               label={I18n.t("units.collaboration")}
+                                                               selectedUnits={units}/>}
+
                     {!isCollaborationRequest && <SelectField value={tagsSelected}
                                                              disabled={!accessAllowedToOrg}
                                                              options={tags

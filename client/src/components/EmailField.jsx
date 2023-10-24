@@ -49,7 +49,6 @@ export default function EmailField({
         if (isEmpty(e.key) && isEmpty(e.target.value)) {
             return;
         }
-        debugger; // eslint-disable-line no-debugger
         const email = e.target.value;
         const invalidEmails = [];
         const delimiters = [",", " ", ";", "\n", "\t"];

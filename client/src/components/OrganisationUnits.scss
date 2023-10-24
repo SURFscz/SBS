@@ -4,4 +4,9 @@ div.organisation-units {
     display: flex;
     position: relative;
     flex-direction: column;
+    margin-top: 15px;
+
+    a.add-unit {
+        margin-top: 15px;
+    }
 }
