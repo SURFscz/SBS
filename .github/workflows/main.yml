@@ -131,7 +131,7 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - name: Use Node.js 16
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "16.20.0"
 #          node-version: "16.10.0"
