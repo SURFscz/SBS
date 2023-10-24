@@ -32,6 +32,8 @@ export default class Collaborations extends React.PureComponent {
             selectedCollaborations: {},
             filterOptions: [],
             filterValue: {},
+            unitFilterOptions: [],
+            unitFilterValue: {},
             collaborationAdminEmails: {},
             confirmationDialogOpen: false,
             confirmationTxt: I18n.t("confirmationDialog.confirm"),
@@ -48,6 +50,7 @@ export default class Collaborations extends React.PureComponent {
         if (collaborations === undefined) {
             Promise.all(promises.concat([user.admin ? allCollaborations() : myCollaborations()])).then(res => {
                 const allFilterOptions = this.allLabelFilterOptions(res[1]);
+                const allUnitFilterOptions = this.allUnitFilterOptions(res[1]);
                 this.addRoleInformation(user, res[1]);
                 this.setState({
                     standalone: true,
@@ -55,12 +58,15 @@ export default class Collaborations extends React.PureComponent {
                     collaborations: res[1],
                     filterOptions: allFilterOptions,
                     filterValue: allFilterOptions[0],
+                    unitFilterOptions: allUnitFilterOptions,
+                    unitFilterValue: allUnitFilterOptions[0],
                     loading: false
                 });
 
             })
         } else {
             const allFilterOptions = this.allLabelFilterOptions(collaborations);
+            const allUnitFilterOptions = this.allUnitFilterOptions(collaborations);
             this.addRoleInformation(user, collaborations);
             this.addLabelInformation(collaborations);
             Promise.all(promises).then(res => {
@@ -68,6 +74,8 @@ export default class Collaborations extends React.PureComponent {
                     collaborationAdminEmails: res[0],
                     filterOptions: allFilterOptions,
                     filterValue: allFilterOptions[0],
+                    unitFilterOptions: allUnitFilterOptions,
+                    unitFilterValue: allUnitFilterOptions[0],
                     loading: false
                 })
             })
@@ -110,6 +118,28 @@ export default class Collaborations extends React.PureComponent {
         return filterOptions.concat(tagOptions);
     }
 
+    allUnitFilterOptions = (collaborations) => {
+        const unitFilterOptions = [{
+            label: I18n.t("units.filter", {nbr: collaborations.length}),
+            value: allValue
+        }];
+        const unitOptions = collaborations.reduce((acc, coll) => {
+            coll.units.forEach(unit => {
+                const option = acc.find(opt => opt.value === unit.name);
+                if (option) {
+                    ++option.nbr;
+                } else {
+                    acc.push({val: unit.name, nbr: 1})
+                }
+            })
+            return acc;
+        }, []).map(option => ({
+            label: `${option.val} (${option.nbr})`,
+            value: option.val
+        })).sort((o1, o2) => o1.label.localeCompare(o2.label));
+        return unitFilterOptions.concat(unitOptions);
+    }
+
     noCollaborations = (organisation, newLabel, newPath, mayCreateCollaborations) => {
         const info = I18n.t(`models.collaborations.noCollaborations${mayCreateCollaborations ? "" : "Request"}`)
         return (
@@ -140,18 +170,31 @@ export default class Collaborations extends React.PureComponent {
         this.props.history.push(`/collaborations/${collaboration.id}`);
     };
 
-    filters = (filterOptions, filterValue) => {
+    filters = (filterOptions, filterValue, unitFilterOptions, unitFilterValue) => {
         return (
-            <div className="collaboration-label-filter">
-                <Select
-                    className={"collaboration-label-filter-select"}
-                    value={filterValue}
-                    classNamePrefix={"filter-select"}
-                    onChange={option => this.setState({filterValue: option})}
-                    options={filterOptions}
-                    isSearchable={false}
-                    isClearable={false}
-                />
+            <div className={"collaboration-label-filter-container"}>
+                <div className="collaboration-label-filter">
+                    <Select
+                        className={"collaboration-label-filter-select"}
+                        value={filterValue}
+                        classNamePrefix={"filter-select"}
+                        onChange={option => this.setState({filterValue: option})}
+                        options={filterOptions}
+                        isSearchable={false}
+                        isClearable={false}
+                    />
+                </div>
+                <div className="collaboration-label-filter">
+                    <Select
+                        className={"collaboration-label-filter-select"}
+                        value={unitFilterValue}
+                        classNamePrefix={"filter-select"}
+                        onChange={option => this.setState({unitFilterValue: option})}
+                        options={unitFilterOptions}
+                        isSearchable={false}
+                        isClearable={false}
+                    />
+                </div>
             </div>
         );
     }
@@ -163,6 +206,8 @@ export default class Collaborations extends React.PureComponent {
             selectedCollaborations,
             filterOptions,
             filterValue,
+            unitFilterOptions,
+            unitFilterValue,
             collaborationAdminEmails,
             confirmationDialogOpen,
             cancelDialogAction,
@@ -242,7 +287,7 @@ export default class Collaborations extends React.PureComponent {
                 mapper: collaboration => organisation ? collaboration.tags
                     .sort((t1, t2) => t1.tag_value.localeCompare(t2.tag_value))
                     .map((tag, index) => <span key={index}
-                        className={"collaboration_tag"}>{tag.tag_value}</span>) : collaboration.organisation.name
+                                               className={"collaboration_tag"}>{tag.tag_value}</span>) : collaboration.organisation.name
             },
             {
                 key: "role",
@@ -318,8 +363,10 @@ export default class Collaborations extends React.PureComponent {
                 header: I18n.t("models.collaborations.invitationsCount")
             }
         );
-        const filteredCollaborations = (filterValue.value === allValue) ? collaborations :
+        let filteredCollaborations = filterValue.value === allValue ? collaborations :
             collaborations.filter(coll => coll.tags.some(tag => tag.tag_value === filterValue.value));
+        filteredCollaborations = unitFilterValue.value === allValue ? filteredCollaborations :
+            filteredCollaborations.filter(coll => coll.units.some(unit => unit.name === unitFilterValue.value));
         return (
             <>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -338,7 +385,7 @@ export default class Collaborations extends React.PureComponent {
                           columns={columns}
                           onHover={true}
                           newLabel={newLabel}
-                          filters={this.filters(filterOptions, filterValue)}
+                          filters={this.filters(filterOptions, filterValue, unitFilterOptions, unitFilterValue)}
                           actionHeader={"collaboration-services"}
                           actions={serviceModule ? this.actionButtons(selectedCollaborations, collaborationAdminEmails, collaborations) : null}
                           showNew={mayCreateCollaborations || mayRequestCollaboration}

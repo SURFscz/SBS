@@ -1,56 +1,62 @@
-import React, {useEffect, useRef, useState} from "react";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {Tooltip} from "@surfnet/sds";
+import React, {useRef, useState} from "react";
 import "./OrganisationUnits.scss";
-import {isEmpty, removeDuplicates, splitListSemantically, stopEvent} from "../utils/Utils";
+import {isEmpty, splitListSemantically, stopEvent} from "../utils/Utils";
 import I18n from "../locale/I18n";
 import {unitUsage} from "../api";
 import ConfirmationDialog from "./ConfirmationDialog";
 import {ReactComponent as TrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
-import {current} from "immer";
+import ErrorIndicator from "./redesign/ErrorIndicator";
+import SpinnerField from "./redesign/SpinnerField";
 
-export const OrganisationUnits = ({units, setUnits, readOnly}) => {
+export const OrganisationUnits = ({units, setUnits}) => {
 
     const [duplicate, setDuplicate] = useState(-1);
     const [references, setReferences] = useState({});
     const [loading, setLoading] = useState(false);
     const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
-    const [confirmationDialogAction, setConfirmationDialogAction] = useState(false);
+    const [removalIndex, setRemovalIndex] = useState(-1);
 
     const inputRef = useRef(null);
 
-
-    useEffect(() => {
+    const focusAfterAdd = () => {
         inputRef.current && inputRef.current.focus();
-    });
+    }
 
     const cancelRemoval = () => {
         setReferences({});
         setConfirmationDialogOpen(false);
+        setRemovalIndex(-1);
     }
 
     const internalOnChange = index => e => {
-        const name = e.target.value;
-        if (units.filter(unit => unit.name.toLowerCase() === name.toLowerCase()).length > 1) {
+        const value = e.target.value;
+        if (units.filter(unit => unit.name.toLowerCase() === value.toLowerCase()).length > 1) {
             setDuplicate(index);
             return stopEvent(e);
         } else {
             setDuplicate(-1);
-            const unit = units[index];
-            unit.name = name;
-            units.splice(index, 1, unit);
-            setUnits([...units]);
+            const newUnits = [...units];
+            const unit = newUnits[index];
+            unit.name = value;
+            newUnits.splice(index, 1, unit);
+            setUnits(newUnits);
         }
     }
 
     const doRemoveUnit = index => {
         units.splice(index, 1);
-        setUnits(...units);
+        setUnits([...units]);
     }
 
     const hasReferences = res => {
         return !isEmpty(res.collaborations) || !isEmpty(res.invitations)
             || !isEmpty(res.collaboration_requests);
+    }
+
+    const removeAfterConfirmation = () => {
+        doRemoveUnit(removalIndex);
+        setConfirmationDialogOpen(false);
+        setReferences({});
     }
 
     const removeUnit = index => e => {
@@ -61,12 +67,8 @@ export const OrganisationUnits = ({units, setUnits, readOnly}) => {
             unitUsage(unit).then(res => {
                 setReferences(res);
                 if (hasReferences(res)) {
+                    setRemovalIndex(index);
                     setConfirmationDialogOpen(true);
-                    setConfirmationDialogAction(() => {
-                        doRemoveUnit(index);
-                        setReferences({});
-                        setConfirmationDialogOpen(false);
-                    });
                 }
                 setLoading(false);
             })
@@ -78,7 +80,8 @@ export const OrganisationUnits = ({units, setUnits, readOnly}) => {
 
     const addUnit = e => {
         stopEvent(e);
-        setUnits(...units.concat({name: ""}));
+        setUnits([...units.concat({name: ""})]);
+        setTimeout(() => focusAfterAdd(), 250);
     }
 
     const renderConfirmation = () => {
@@ -101,11 +104,15 @@ export const OrganisationUnits = ({units, setUnits, readOnly}) => {
         );
     }
 
+    if (loading) {
+        return <SpinnerField/>
+    }
+
     return (
-        <div className="organisation-units">
+        <div className="organisation-units sds--text-field ">
             <ConfirmationDialog isOpen={confirmationDialogOpen}
                                 cancel={cancelRemoval}
-                                confirm={confirmationDialogAction}
+                                confirm={() => removeAfterConfirmation()}
                                 question={I18n.t("units.confirmation")}
                                 closeTimeoutMS={0}
                                 isWarning={true}>
@@ -113,21 +120,28 @@ export const OrganisationUnits = ({units, setUnits, readOnly}) => {
             </ConfirmationDialog>
             <label>{I18n.t("units.label")}</label>
 
-            {units.map((unit, index) =>
-                <div className="inner-input-field" key={index}>
-                    <input type="text"
-                           value={unit.name}
-                           onChange={internalOnChange}
-                           onBlur={onBlur}
-                           ref={ref => (index + 1) === units.length ? inputRef : null}
-                           className={`sds--text-field--input`}
-                    />
-                    <div className={`input-field-link`}>
-                        <a href={"#"} onClick={removeUnit(index)}>
-                            <TrashIcon/>
-                        </a>
-                    </div>
-                </div>)
+            {units.map((unit, index) => {
+                const refProps = (index + 1) === units.length ? {ref: inputRef} : {};
+                return (
+                    <div className={`input-field ${index === 0 ? "first" : ""}`} key={index}>
+                        <div className="inner-input-field">
+                            <input type="text"
+                                   value={unit.name}
+                                   onChange={internalOnChange(index)}
+                                   className={`sds--text-field--input`}
+                                   {...refProps}
+                            />
+                            <div className={`input-field-link input-field-delete`}>
+                                <a href={"#"} onClick={removeUnit(index)}>
+                                    <TrashIcon/>
+                                </a>
+                            </div>
+                            {duplicate === index &&
+                                <ErrorIndicator msg={"error"} standalone={true}/>
+                            }
+                        </div>
+                    </div>)
+            })
             }
             <a className={"add-unit"} href="#" onClick={addUnit}>
                 {I18n.t("units.add")}

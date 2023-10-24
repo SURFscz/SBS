@@ -29,6 +29,7 @@ import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import CreatableField from "../components/CreatableField";
 import EmailField from "../components/EmailField";
 import CheckBox from "../components/CheckBox";
+import {OrganisationUnits} from "../components/OrganisationUnits";
 
 
 class OrganisationForm extends React.Component {
@@ -393,6 +394,8 @@ class OrganisationForm extends React.Component {
                         <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
                                            isNew={isNew} title={I18n.t("organisation.logo")} value={logo}
                                            initial={initial} secondRow={true}/>
+
+                        <OrganisationUnits units={units} setUnits={newUnits => this.setState({units: newUnits})}/>
 
                         {user.admin && <SelectField value={category}
                                                     small={true}

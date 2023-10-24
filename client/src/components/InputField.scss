@@ -133,7 +133,7 @@
 
     }
 
-    div.input-field-link {
+    div.input-field-link{
         margin-left: 10px;
         display: flex;
         border-radius: 4px;
@@ -160,6 +160,32 @@
                 color: $hover-blue;
             }
 
+        }
+    }
+
+    div.input-field-delete {
+        border: 1px solid var(--sds--color--gray--400);
+        font-size: 20px;
+        color: var(--sds--color--gray--400);
+        cursor: pointer;
+
+        &:hover {
+            background-color: var(--sds--color--gray--100);
+        }
+
+
+        a {
+            padding: 8px 12px;
+        }
+
+        svg {
+
+            color: var(--sds--color--gray--400);
+            cursor: pointer;
+
+            &:hover {
+                color: var(--sds--color--red--400);
+            }
         }
     }
 
