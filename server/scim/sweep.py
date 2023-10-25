@@ -87,17 +87,16 @@ def _group_changed(group: Union[Group, Collaboration], remote_group: dict, remot
     return False
 
 
-def _all_remote_scim_objects(service: Service, scim_type, scim_resources=[], start_index=1, ):
+def _all_remote_scim_objects(service: Service, scim_type, scim_resources, start_index):
     url = f"{service.scim_url}/{scim_type}?startIndex={start_index}"
     response = requests.get(url, headers=scim_headers(service), timeout=10)
     if not validate_response(response, service, outside_user_context=True, extra_logging=f"SCIM {scim_type} list"):
         raise BadRequest(f"Invalid response from remote SCIM server (got HTTP status {response.status_code})")
     scim_json = response.json()
-    scim_resources = scim_resources + scim_json["Resources"]
-    if scim_json["totalResults"] != len(scim_resources):
+    scim_resources += scim_json["Resources"]
+    if scim_json["totalResults"] > len(scim_resources):
         # Preferably the SCIM server does not paginate, as this is not stateful and can lead to inconsistent results
-        scim_resources = _all_remote_scim_objects(service, scim_type, scim_resources=scim_resources,
-                                                  start_index=start_index + 1)
+        scim_resources = _all_remote_scim_objects(service, scim_type, scim_resources, len(scim_resources) + 1)
     return scim_resources
 
 
@@ -131,8 +130,8 @@ def perform_sweep(service: Service):
     groups_by_identifier = {group.identifier: group for group in all_groups}
     users_by_external_id = {user.external_id: user for user in all_users}
     try:
-        remote_scim_groups = _all_remote_scim_objects(service, SCIM_GROUPS)
-        remote_scim_users = _all_remote_scim_objects(service, SCIM_USERS)
+        remote_scim_groups = _all_remote_scim_objects(service, SCIM_GROUPS, [], 1)
+        remote_scim_users = _all_remote_scim_objects(service, SCIM_USERS, [], 1)
     except BadRequest as e:
         # We abort, see https://github.com/SURFscz/SBS/issues/601 and reraise the exception
         raise e
@@ -189,7 +188,8 @@ def perform_sweep(service: Service):
                     url = f"{service.scim_url}{remote_user['meta']['location']}"
                     scim_dict_cleansed = replace_none_values(scim_dict)
                     response = requests.put(url, json=scim_dict_cleansed, headers=scim_headers(service), timeout=10)
-                    if validate_response(response, service, outside_user_context=True, extra_logging="SCIM user update"):
+                    if validate_response(response, service, outside_user_context=True,
+                                         extra_logging="SCIM user update"):
                         response_json = response.json()
                         sync_results["users"]["updated"].append(response_json)
 
@@ -218,7 +218,8 @@ def perform_sweep(service: Service):
                     url = f"{service.scim_url}{remote_group['meta']['location']}"
                     scim_dict_cleansed = replace_none_values(scim_dict)
                     response = requests.put(url, json=scim_dict_cleansed, headers=scim_headers(service), timeout=10)
-                    if validate_response(response, service, outside_user_context=True, extra_logging="SCIM group update"):
+                    if validate_response(response, service, outside_user_context=True,
+                                         extra_logging="SCIM group update"):
                         response_json = response.json()
                         sync_results["groups"]["updated"].append(response_json)
 
