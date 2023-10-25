@@ -2406,7 +2406,8 @@ const nl = {
         all: "Alle samenwerkingen",
         specify: "Kies samenwerkingen",
         back: "Terug naar alle admins",
-        editRole: "Wijzig org manager details"
+        editRole: "Wijzig org manager details",
+        duplicated: "Er is al een unit met de naam {{name}} voor deze organisatie"
     }
 };
 
