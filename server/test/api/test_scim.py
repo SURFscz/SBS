@@ -27,7 +27,7 @@ class TestScim(AbstractTest):
         self.assertFalse(wiki.scim_enabled)
 
         res = self.get("/api/scim/v2/Users", headers={"Authorization": f"bearer {service_wiki_token}"})
-        self.assertEqual(8, len(res["Resources"]))
+        self.assertEqual(9, len(res["Resources"]))
 
     def test_user_by_external_id(self):
         jane = self.find_entity_by_name(User, jane_name)
@@ -151,4 +151,4 @@ class TestScim(AbstractTest):
     def test_scim_services(self):
         self.login("urn:john")
         scim_services = self.get("/api/scim/v2/scim-services", with_basic_auth=False)
-        self.assertEqual(3, len(scim_services))
+        self.assertEqual(4, len(scim_services))
