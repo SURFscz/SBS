@@ -37,7 +37,7 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(3, len(organisations))
 
         organisation = organisations[0]
-        self.assertEqual(2, organisation["collaborations_count"])
+        self.assertEqual(3, organisation["collaborations_count"])
         self.assertEqual(4, organisation["organisation_memberships_count"])
 
     def test_identity_provider_display_name(self):
@@ -125,13 +125,13 @@ class TestOrganisation(AbstractTest):
         organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
         organisation = self.get(f"/api/organisations/{organisation_id}")
         self.assertTrue(len(organisation["organisation_memberships"]) > 0)
-        self.assertEqual(2, len(organisation["collaborations"]))
+        self.assertEqual(3, len(organisation["collaborations"]))
 
     def test_organisation_by_id_manager_restricted_collaborations(self):
         self.login("urn:paul")
         organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
         organisation = self.get(f"/api/organisations/{organisation_id}")
-        self.assertEqual(1, len(organisation["collaborations"]))
+        self.assertEqual(2, len(organisation["collaborations"]))
 
     def test_organisation_by_id_404(self):
         self.login("urn:sarah")
@@ -377,7 +377,7 @@ class TestOrganisation(AbstractTest):
         res = self.get("/api/organisations/v1",
                        headers={"Authorization": f"Bearer {uuc_secret}"},
                        with_basic_auth=False)
-        self.assertEqual(2, len(res["collaborations"]))
+        self.assertEqual(3, len(res["collaborations"]))
 
     def test_search_users(self):
         self.login("urn:harry")

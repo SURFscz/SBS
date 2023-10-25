@@ -310,7 +310,7 @@ class TestCollaboration(AbstractTest):
 
     def test_collaboration_all(self):
         collaborations = self.get("/api/collaborations/all")
-        self.assertEqual(4, len(collaborations))
+        self.assertEqual(6, len(collaborations))
 
     def test_collaboration_by_id(self):
         collaboration_id = self._find_by_identifier()["id"]
