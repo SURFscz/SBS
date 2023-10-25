@@ -118,9 +118,13 @@ def cleanse_json(json_dict, cls=None, allow_child_cascades=True, allowed_child_c
     for forbidden in forbidden_fields:
         if forbidden in json_dict:
             del json_dict[forbidden]
-        for rel in flatten(filter(lambda i: isinstance(i, list), json_dict.values())):
-            cleanse_json(rel, allow_child_cascades=allow_child_cascades,
-                         allowed_child_collections=[])
+
+    for k, v in json_dict.items():
+        if isinstance(v, list):
+            child_cls = deserialization_mapping[k] if k in deserialization_mapping else None
+            for item in v:
+                cleanse_json(item, cls=child_cls, allow_child_cascades=allow_child_cascades,
+                             allowed_child_collections=[])
 
 
 def parse_date_fields(json_dict):

@@ -909,7 +909,7 @@ class TestCollaboration(AbstractTest):
 
     def test_collaboration_with_units(self):
         organisation = Organisation.query.filter(Organisation.name == uuc_name).one()
-        units = [{"name": unit.name, "id": unit.id} for unit in organisation.units]
+        units = [{"name": unit.name, "id": unit.id, "label": unit.name} for unit in organisation.units]
         renamed_units = [{"name": "changed", "id": unit.id} for unit in organisation.units]
         new_units = [{"name": "nice", "id": 99999}]
 
