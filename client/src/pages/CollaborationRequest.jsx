@@ -21,6 +21,7 @@ import SpinnerField from "../components/redesign/SpinnerField";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import {chipTypeForStatus} from "../utils/UserRole";
 import {Chip} from "@surfnet/sds";
+import {CollaborationUnits} from "../components/CollaborationUnits";
 
 class CollaborationRequest extends React.Component {
 
@@ -36,6 +37,7 @@ class CollaborationRequest extends React.Component {
             leavePage: true,
             required: ["name", "short_name", "organisation", "logo"],
             collaborationRequest: {organisation: {}, requester: {}},
+            allUnits: [],
             approve: true,
             alreadyExists: {},
             warning: false,
@@ -59,9 +61,19 @@ class CollaborationRequest extends React.Component {
         collaborationRequestById(id)
             .then(res => {
                 const collaborationRequest = res;
+                const allUnits = collaborationRequest.organisation.units.map(unit => ({
+                    ...unit,
+                    label: unit.name,
+                    value: unit.id
+                }));
+                collaborationRequest.units.forEach(unit => {
+                    unit.label = unit.name;
+                    unit.value = unit.id;
+                })
                 this.setState({
                     collaborationRequest: collaborationRequest,
                     originalRequestedName: collaborationRequest.name,
+                    allUnits: allUnits,
                     loading: false
                 });
                 AppStore.update(s => {
@@ -101,7 +113,6 @@ class CollaborationRequest extends React.Component {
                     });
                 })
         });
-
     }
 
     cancel = () => {
@@ -172,6 +183,12 @@ class CollaborationRequest extends React.Component {
         this.setState({collaborationRequest: newState});
     };
 
+    setUnits = newUnits => {
+        const {collaborationRequest} = this.state;
+        const newState = {...collaborationRequest, units: newUnits};
+        this.setState({collaborationRequest: newState});
+    }
+
     updateState = attributeName => e => {
         const {collaborationRequest, alreadyExists} = this.state;
         const value = attributeName === "short_name" ? sanitizeShortName(e.target.value) : e.target.value;
@@ -204,8 +221,10 @@ class CollaborationRequest extends React.Component {
             loading,
             warning,
             declineDialog,
-            rejectionReason
+            rejectionReason,
+            allUnits
         } = this.state;
+        const {user} = this.props;
         if (loading) {
             return <SpinnerField/>
         }
@@ -222,8 +241,8 @@ class CollaborationRequest extends React.Component {
                                     <span className="name">{I18n.t("collaborationRequest.requester")}</span>
                                     <span className="name">{I18n.t("collaboration.motivation")}</span>
                                     {collaborationRequest.status === "denied" &&
-                                    <span
-                                        className="name rejection-reason">{I18n.t("collaborationRequest.rejectionReason")}</span>}
+                                        <span
+                                            className="name rejection-reason">{I18n.t("collaborationRequest.rejectionReason")}</span>}
                                 </div>
                                 <div className="header-values">
                                     <span>{collaborationRequest.requester.name}</span>
@@ -231,7 +250,8 @@ class CollaborationRequest extends React.Component {
                                         href={`mailto:${collaborationRequest.requester.email}`}>{collaborationRequest.requester.email}</a></span>
                                     <span>{collaborationRequest.message}</span>
                                     {collaborationRequest.status === "denied" &&
-                                    <span className="rejection-reason">{collaborationRequest.rejection_reason}</span>}
+                                        <span
+                                            className="rejection-reason">{collaborationRequest.rejection_reason}</span>}
                                 </div>
                             </div>
                         </div>
@@ -244,8 +264,8 @@ class CollaborationRequest extends React.Component {
                                                    txt={I18n.t("collaborationRequest.approve")}
                                                    onClick={this.submit(true)}/>}
                                 {!isOpen &&
-                                <Chip label={I18n.t(`collaborationRequest.statuses.${collaborationRequest.status}`)}
-                                      type={chipTypeForStatus(collaborationRequest)}/>}
+                                    <Chip label={I18n.t(`collaborationRequest.statuses.${collaborationRequest.status}`)}
+                                          type={chipTypeForStatus(collaborationRequest)}/>}
                             </div>
                         </section>
                     </div>
@@ -278,9 +298,9 @@ class CollaborationRequest extends React.Component {
                             organisation: collaborationRequest.organisation.name
                         })}/>}
                         {(!initial && isEmpty(collaborationRequest.name)) &&
-                        <ErrorIndicator msg={I18n.t("collaboration.required", {
-                            attribute: I18n.t("collaboration.name").toLowerCase()
-                        })}/>}
+                            <ErrorIndicator msg={I18n.t("collaboration.required", {
+                                attribute: I18n.t("collaboration.name").toLowerCase()
+                            })}/>}
                         <CroppedImageField name="logo"
                                            onChange={this.updateLogo}
                                            isNew={false}
@@ -304,9 +324,9 @@ class CollaborationRequest extends React.Component {
                             organisation: collaborationRequest.organisation.name
                         })}/>}
                         {(!initial && isEmpty(collaborationRequest.short_name)) &&
-                        <ErrorIndicator msg={I18n.t("collaboration.required", {
-                            attribute: I18n.t("collaboration.shortName").toLowerCase()
-                        })}/>}
+                            <ErrorIndicator msg={I18n.t("collaboration.required", {
+                                attribute: I18n.t("collaboration.shortName").toLowerCase()
+                            })}/>}
                         <InputField
                             value={`${collaborationRequest.organisation.short_name}:${collaborationRequest.short_name}`}
                             name={I18n.t("collaboration.globalUrn")}
@@ -321,10 +341,19 @@ class CollaborationRequest extends React.Component {
                                     disabled={!isOpen}
                                     name={I18n.t("collaboration.description")}/>
                         {(!initial && isEmpty(collaborationRequest.description)) &&
-                        <ErrorIndicator msg={I18n.t("collaboration.required", {
-                            attribute: I18n.t("collaboration.description").toLowerCase()
-                        })}/>}
+                            <ErrorIndicator msg={I18n.t("collaboration.required", {
+                                attribute: I18n.t("collaboration.description").toLowerCase()
+                            })}/>}
 
+                        {!isEmpty(allUnits) &&
+                            <CollaborationUnits selectedUnits={collaborationRequest.units}
+                                                allUnits={allUnits}
+                                                setUnits={this.setUnits}
+                                                user={user}
+                                                label={I18n.t("units.collaborationRequest")}
+                                                readOnly={!isOpen}
+                                                organisation={collaborationRequest.organisation}/>
+                        }
                         <InputField value={collaborationRequest.organisation.name}
                                     toolTip={I18n.t("collaboration.organisationTooltip")}
                                     disabled={true}
@@ -332,7 +361,7 @@ class CollaborationRequest extends React.Component {
 
                         <section className="actions">
                             {collaborationRequest.status !== "open" &&
-                            <Button warningButton={true} onClick={this.deleteCollaborationRequest}/>}
+                                <Button warningButton={true} onClick={this.deleteCollaborationRequest}/>}
                         </section>
                     </div>
                 </div>

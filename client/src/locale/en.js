@@ -2405,7 +2405,8 @@ const en = {
         all: "All CO's",
         specify: "Specify CO's",
         back: "Back to all admins",
-        editRole: "Edit org manager details"
+        editRole: "Edit org manager details",
+        duplicated: "There is already an unit with {{name}} for this organisation"
     }
 };
 

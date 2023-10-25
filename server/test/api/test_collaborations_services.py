@@ -344,6 +344,6 @@ class TestCollaborationsServices(AbstractTest):
                                   "short_name": collaboration.short_name,
                                   "service_entity_id": service.entity_id
                               }), content_type="application/json")
-        self.assertEqual(res.status_code, 400)
+        self.assertEqual(res.status_code, 409)
         error_dict = res.json
         self.assertTrue("is not connected to collaboration" in error_dict["message"])

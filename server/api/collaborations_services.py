@@ -1,6 +1,6 @@
 from flasgger import swag_from
 from flask import Blueprint, request as current_request, g as request_context
-from werkzeug.exceptions import BadRequest, Forbidden
+from werkzeug.exceptions import BadRequest, Forbidden, Conflict
 
 from server.api.base import json_endpoint, emit_socket
 from server.api.service_group import create_service_groups
@@ -134,7 +134,7 @@ def disconnect_collaboration_service_api():
     if service in collaboration.services:
         collaboration.services.remove(service)
     else:
-        raise BadRequest(f"Service {service_entity_id} is not connected to collaboration {collaboration.name}")
+        raise Conflict(f"Service {service_entity_id} is not connected to collaboration {collaboration.name}")
 
     update_last_activity_date(collaboration_id)
 

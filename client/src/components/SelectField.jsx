@@ -11,7 +11,7 @@ export default function SelectField({
                                         onChange, name, value, options, placeholder = "", disabled = false,
                                         toolTip = null, searchable = false, small = false,
                                         clearable = false, isMulti = false, creatable = false,
-                                        onInputChange = null, copyClipBoard = false,
+                                        onInputChange = null, copyClipBoard = false, isOptionDisabled= null
                                     }) {
     return (
         <div className="select-field">
@@ -44,6 +44,7 @@ export default function SelectField({
                 options={options}
                 isSearchable={searchable}
                 isClearable={clearable}
+                isOptionDisabled={isOptionDisabled}
             />}
             {copyClipBoard && <ClipBoardCopy
                 txt={isEmpty(value) ? "" : Array.isArray(value) ? value.map(v => v.label).join(", ") : value}

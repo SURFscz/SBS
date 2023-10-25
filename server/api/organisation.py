@@ -225,7 +225,9 @@ def organisation_by_id(organisation_id):
             return co_units.issubset(manager_unit_identifiers)
 
         collaborations = [co for co in organisation_json["collaborations"] if collaboration_allowed(co)]
+        collaboration_requests = [co for co in organisation_json["collaboration_requests"] if collaboration_allowed(co)]
         organisation_json["collaborations"] = collaborations
+        organisation_json["collaboration_requests"] = collaboration_requests
         return organisation_json, 200
 
     return organisation, 200
