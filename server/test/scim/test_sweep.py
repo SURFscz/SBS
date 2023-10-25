@@ -108,7 +108,7 @@ class TestSweep(AbstractTest):
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=remote_groups,
                      status=200)
-            scim_objects = _all_remote_scim_objects(service, SCIM_GROUPS)
+            scim_objects = _all_remote_scim_objects(service, SCIM_GROUPS, [], 1)
             self.assertEqual(3, len(scim_objects))
 
     @responses.activate
@@ -118,7 +118,7 @@ class TestSweep(AbstractTest):
             with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
                 rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json={"error": True},
                          status=400)
-                _all_remote_scim_objects(service, SCIM_GROUPS)
+                _all_remote_scim_objects(service, SCIM_GROUPS, [], 1)
             self.assertRaises(BadRequest, all_remote)
 
     @staticmethod
