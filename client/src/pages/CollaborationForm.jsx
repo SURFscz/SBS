@@ -83,30 +83,25 @@ class CollaborationForm extends React.Component {
         if (params.id) {
             collaborationById(params.id).then(collaboration => {
                 const organisation = collaboration.organisation;
-                const orgOption = {
-                    label: organisation.name,
-                    value: organisation.id,
-                    short_name: organisation.short_name
-                };
-                this.updateBreadCrumb(orgOption, collaboration, false, false);
+                const orgOptions = this.mapOrganisationsToOptions([organisation])
+                this.updateBreadCrumb(orgOptions[0], collaboration, false, false);
                 const expiryDate = collaboration.expiry_date ? moment(collaboration.expiry_date * 1000).toDate() : null;
                 const tagOptions = collaboration.tags.map(tag => ({label: tag.tag_value, value: tag.id}));
-                const units = collaboration.units.map(unit => ({...unit, label: unit.name, value: unit.id}));
-                const allUnits = organisation.units.map(unit => ({...unit, label: unit.name, value: unit.id}));
                 this.setState({
                     ...collaboration,
                     collaboration: collaboration,
-                    organisation: orgOption,
-                    organisations: [orgOption],
+                    organisation: orgOptions[0],
+                    organisations: orgOptions,
                     tags: tagOptions,
                     tagsSelected: tagOptions,
-                    units: units,
-                    allUnits: allUnits,
                     isNew: false,
                     loading: false,
                     expiry_date: expiryDate,
                     allow_join_requests: !collaboration.disable_join_requests
-                }, () => this.updateTags(organisation.id));
+                }, () => {
+                    this.updateUnits(organisation, collaboration);
+                    this.updateTags(organisation.id);
+                });
             });
         } else {
             myOrganisationsLite().then(json => {
@@ -119,8 +114,8 @@ class CollaborationForm extends React.Component {
                         const organisations = this.mapOrganisationsToOptions([user.organisation_from_user_schac_home]);
                         const organisationId = getParameterByName("organisationId", window.location.search);
                         const organisation = organisations.find(org => org.value === parseInt(organisationId, 10)) || organisations[0];
-                        this.updateTags(organisation.id);
                         const autoCreateCollaborationRequest = organisation.collaboration_creation_allowed || organisation.collaboration_creation_allowed_entitlement;
+                        this.updateTags(organisation.id);
                         this.updateBreadCrumb(null, null, autoCreateCollaborationRequest, true);
                         this.setState({
                             organisations: organisations,
@@ -130,6 +125,8 @@ class CollaborationForm extends React.Component {
                             current_user_admin: true,
                             loading: false,
                             required: autoCreateCollaborationRequest ? this.state.required : this.state.required.concat("message")
+                        }, () => {
+                            this.updateUnits(organisation, {units: []});
                         });
                     }
                 } else {
@@ -141,7 +138,10 @@ class CollaborationForm extends React.Component {
                         organisations: organisations,
                         organisation: organisation,
                         loading: false
-                    }, () => this.updateTags(organisation.value));
+                    }, () => {
+                        this.updateTags(organisation.value);
+                        this.updateUnits(organisation, {units: []});
+                    });
                 }
             });
         }
@@ -158,12 +158,10 @@ class CollaborationForm extends React.Component {
         }
     }
 
-    updateUnits = organisation => {
-        const {user} = this.props;
-        const accessAllowedToOrg = isUserAllowed(ROLES.ORG_MANAGER, user, organisation.id);
-        if (accessAllowedToOrg) {
-            //TODO change the allUnits and clear the units.
-        }
+    updateUnits = (organisation, collaboration) => {
+        const allUnits = organisation.units.map(unit => ({...unit, label: unit.name, value: unit.id}));
+        const units = collaboration.units.map(unit => ({...unit, label: unit.name, value: unit.id}));
+        this.setState({allUnits: allUnits, units: units});
     }
 
     updateBreadCrumb = (organisation, collaboration, autoCreateCollaborationRequest, isCollaborationRequest) => {
@@ -423,6 +421,10 @@ class CollaborationForm extends React.Component {
         this.setState({invalidInputs: {...invalidInputs, [name]: inValid}});
     };
 
+    setUnits = newUnits => {
+        this.setState({units: newUnits})
+    }
+
     renderNoOrganisations = user => {
         const msg = user.admin ? I18n.t("home.noOrganisationsPlatformAdmin") :
             user.schac_home_organisation ? I18n.t("home.noOrganisations", {schac_home: user.schac_home_organisation}) : I18n.t("home.noShacHome");
@@ -622,10 +624,15 @@ class CollaborationForm extends React.Component {
                                                           tooltip={I18n.t("collaboration.discloseEmailInformationTooltip")}
                                                           onChange={() => this.setState({disclose_email_information: !disclose_email_information})}/>}
 
-                    {accessAllowedToOrg && <CollaborationUnits allUnits={allUnits}
-                                                               setUnits={units => this.setState({units: units})}
-                                                               label={I18n.t("units.collaboration")}
-                                                               selectedUnits={units}/>}
+                    {!isEmpty(allUnits)  &&
+                        <CollaborationUnits selectedUnits={units}
+                                            allUnits={allUnits}
+                                            setUnits={this.setUnits}
+                                            user={user}
+                                            organisation={organisation}
+                                            readOnly={!accessAllowedToOrg && !isCollaborationRequest}
+                                            label={I18n.t("units.collaboration")}/>
+                    }
 
                     {!isCollaborationRequest && <SelectField value={tagsSelected}
                                                              disabled={!accessAllowedToOrg}
@@ -649,6 +656,7 @@ class CollaborationForm extends React.Component {
                                          this.validateCollaborationShortName({target: {value: this.state.short_name}});
                                          this.updateBreadCrumb(selectedOption, null, false, false);
                                          this.updateTags(selectedOption.value);
+                                         this.updateUnits(selectedOption, {units: []});
                                      })}
                                  searchable={false}
                                  disabled={organisations.length === 1}

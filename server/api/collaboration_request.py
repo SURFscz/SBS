@@ -116,7 +116,7 @@ def approve_request(collaboration_request_id):
     confirm_organisation_admin_or_manager(collaboration_request.organisation_id)
     client_data = current_request.get_json()
     attributes = ["name", "short_name", "description", "organisation_id", "accepted_user_policy", "logo",
-                  "website_url", "logo"]
+                  "website_url", "logo", "units"]
 
     # take the data from client_data as it can be different
     data = {"identifier": str(uuid.uuid4())}
@@ -131,7 +131,10 @@ def approve_request(collaboration_request_id):
     assign_global_urn_to_collaboration(collaboration_request.organisation, data)
 
     data["status"] = STATUS_ACTIVE
-    res = save(Collaboration, custom_json=data)
+
+    validate_units(data, collaboration_request.organisation)
+
+    res = save(Collaboration, custom_json=data, allow_child_cascades=False, allowed_child_collections=["units"])
     collaboration = res[0]
 
     user = collaboration_request.requester

@@ -376,7 +376,7 @@ class OrganisationMembership(Base, db.Model):
     user = db.relationship("User", back_populates="organisation_memberships")
     organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"), primary_key=True)
     organisation = db.relationship("Organisation", back_populates="organisation_memberships")
-    units = db.relationship("Unit", secondary=organisation_membership_units_association, lazy="select",
+    units = db.relationship("Unit", secondary=organisation_membership_units_association, lazy="selectin",
                             back_populates="organisation_memberships")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
@@ -758,7 +758,7 @@ class CollaborationRequest(Base, db.Model, LogoMixin):
     logo = db.Column("logo", db.Text(), nullable=True)
     uuid4 = db.Column("uuid4", db.String(length=255), nullable=False, default=gen_uuid4)
     website_url = db.Column("website_url", db.String(length=512), nullable=True)
-    units = db.relationship("Unit", secondary=collaboration_requests_units_association, lazy="select",
+    units = db.relationship("Unit", secondary=collaboration_requests_units_association, lazy="selectin",
                             back_populates="collaboration_requests")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)

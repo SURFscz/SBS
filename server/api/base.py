@@ -13,7 +13,7 @@ import MySQLdb
 from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
 from jsonschema import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
-from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest, Forbidden
+from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest, Forbidden, Conflict
 
 from server.api.exceptions import APIBadRequest
 from server.auth.security import current_user_id, CSRF_TOKEN
@@ -164,6 +164,7 @@ def organisation_by_user_schac_home(user_from_db=None):
              "user_entitlement": user.entitlement,
              "has_members": len(org.organisation_memberships) > 0,
              "on_boarding_msg": org.on_boarding_msg,
+             "units": org.units,
              "schac_home_organisations": [sho.name for sho in org.schac_home_organisations],
              "short_name": org.short_name} for org in organisations]
 
@@ -204,6 +205,8 @@ def json_endpoint(f):
                 e.description = f"Unauthorized 401: {current_request.url}. IP: {_remote_address()}"
             elif isinstance(e, APIBadRequest):
                 skip_email = True
+            elif isinstance(e, Conflict):
+                skip_email = True
             elif isinstance(e, MySQLdb.IntegrityError):
                 skip_email = True
             elif hasattr(e, "description"):
@@ -222,7 +225,10 @@ def json_endpoint(f):
             _add_custom_header(response)
             db.session.rollback()
             # We want to send emails if the exception is unexpected and validation errors should not happen server-side
-            ctx_logger("base").exception(response)
+            if isinstance(e, Conflict):
+                ctx_logger("base").info(response)
+            else:
+                ctx_logger("base").exception(response)
             if not skip_email and (response.status_code == 500 or response.status_code == 400):
                 send_error_mail(tb=traceback.format_exc())
             return response

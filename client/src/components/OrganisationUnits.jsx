@@ -8,9 +8,9 @@ import {ReactComponent as TrashIcon} from "@surfnet/sds/icons/functional-icons/b
 import ErrorIndicator from "./redesign/ErrorIndicator";
 import SpinnerField from "./redesign/SpinnerField";
 
-export const OrganisationUnits = ({units, setUnits}) => {
+export const OrganisationUnits = ({units, setUnits, setDuplicated}) => {
 
-    const [duplicate, setDuplicate] = useState(-1);
+    const [duplicateIndex, setDuplicateIndex] = useState(-1);
     const [references, setReferences] = useState({});
     const [loading, setLoading] = useState(false);
     const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
@@ -30,17 +30,18 @@ export const OrganisationUnits = ({units, setUnits}) => {
 
     const internalOnChange = index => e => {
         const value = e.target.value;
-        if (units.filter(unit => unit.name.toLowerCase() === value.toLowerCase()).length > 1) {
-            setDuplicate(index);
-            return stopEvent(e);
+        if (units.filter(unit => unit.name.toLowerCase() === value.toLowerCase()).length > 0) {
+            setDuplicateIndex(index);
+            setDuplicated(true);
         } else {
-            setDuplicate(-1);
-            const newUnits = [...units];
-            const unit = newUnits[index];
-            unit.name = value;
-            newUnits.splice(index, 1, unit);
-            setUnits(newUnits);
+            setDuplicateIndex(-1);
+            setDuplicated(false);
         }
+        const newUnits = [...units];
+        const unit = newUnits[index];
+        unit.name = value;
+        newUnits.splice(index, 1, unit);
+        setUnits(newUnits);
     }
 
     const doRemoveUnit = index => {
@@ -107,7 +108,8 @@ export const OrganisationUnits = ({units, setUnits}) => {
     if (loading) {
         return <SpinnerField/>
     }
-
+    //Default we show an empty unit
+    units = units.length > 0 ? units : [{name: ""}]
     return (
         <div className="organisation-units sds--text-field ">
             <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -136,10 +138,11 @@ export const OrganisationUnits = ({units, setUnits}) => {
                                     <TrashIcon/>
                                 </a>
                             </div>
-                            {duplicate === index &&
-                                <ErrorIndicator msg={"error"} standalone={true}/>
-                            }
                         </div>
+                        {duplicateIndex === index &&
+                            <ErrorIndicator msg={I18n.t("units.duplicated", {name: unit.name})}
+                                            standalone={true}/>
+                        }
                     </div>)
             })
             }

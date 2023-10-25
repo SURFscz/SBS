@@ -56,6 +56,7 @@ class OrganisationForm extends React.Component {
             message: "",
             required: ["name", "short_name", "logo"],
             alreadyExists: {},
+            duplicatedUnit: false,
             initial: true,
             isNew: true,
             units: [],
@@ -208,9 +209,9 @@ class OrganisationForm extends React.Component {
     };
 
     isValid = () => {
-        const {required, alreadyExists, administrators, isNew} = this.state;
-        const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(this.state[attr]));
-        return !inValid && (!isNew || !isEmpty(administrators));//&& !inValidOnBoarding;
+        const {required, alreadyExists, administrators, isNew, duplicatedUnit} = this.state;
+        const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(this.state[attr])) || duplicatedUnit;
+        return !inValid && (!isNew || !isEmpty(administrators));
     };
 
     doSubmit = () => {
@@ -223,7 +224,7 @@ class OrganisationForm extends React.Component {
             createOrganisation({
                 name,
                 short_name,
-                units,
+                units: units.filter(unit => !isEmpty(unit.name)),
                 category: category !== null ? category.label : null,
                 schac_home_organisations,
                 administrators,
@@ -264,7 +265,7 @@ class OrganisationForm extends React.Component {
                 id: organisation.id,
                 name,
                 description,
-                units,
+                units: units.filter(unit => !isEmpty(unit.name)),
                 schac_home_organisations,
                 collaboration_creation_allowed,
                 services_restricted,
@@ -395,7 +396,9 @@ class OrganisationForm extends React.Component {
                                            isNew={isNew} title={I18n.t("organisation.logo")} value={logo}
                                            initial={initial} secondRow={true}/>
 
-                        <OrganisationUnits units={units} setUnits={newUnits => this.setState({units: newUnits})}/>
+                        <OrganisationUnits units={units}
+                                           setUnits={newUnits => this.setState({units: newUnits})}
+                                           setDuplicated={duplicate => this.setState({duplicatedUnit: duplicate})}/>
 
                         {user.admin && <SelectField value={category}
                                                     small={true}

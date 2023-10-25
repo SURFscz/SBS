@@ -667,7 +667,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     collaboration_request_1 = CollaborationRequest(name=collaboration_request_name, short_name="new_collaboration",
                                                    website_url="https://google.com", logo=read_image("request.jpg"),
                                                    status=STATUS_OPEN, message="For research", organisation=uuc,
-                                                   requester=peter, description="please")
+                                                   requester=peter, description="please", units=[uuc_unit_research])
     collaboration_request_2 = CollaborationRequest(name="Polse", short_name="polse",
                                                    website_url="https://www.pols.me/", logo=read_image("pols.jpg"),
                                                    status=STATUS_OPEN, message="For research", organisation=uuc,
