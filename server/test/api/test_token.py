@@ -33,7 +33,8 @@ class TestToken(AbstractTest):
                                data={"token": betty_user_token_wiki}, content_type="application/x-www-form-urlencoded")
         self.assertEqual(200, res.status_code)
         user = res.json["user"]
-        self.assertListEqual(sorted(['urn:example:sbs:group:uuc:ai_computing', 'urn:example:sbs:group:uuc']),
+        self.assertListEqual(sorted(['urn:example:sbs:group:uuc:ai_computing', 'urn:example:sbs:group:uuc',
+                                     'urn:example:sbs:group:uuc:monitor1']),
                              sorted(user["eduperson_entitlement"]))
 
     def test_introspect_not_connected(self):

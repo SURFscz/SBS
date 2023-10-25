@@ -401,18 +401,23 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                       research_scholarship_compliant=True, code_of_conduct_compliant=True,
                       )
 
-    service_monitor = Service(entity_id="https://ldap-monitor.example.org", name="LDAP Monitor Service",
-                              description="Used for monitoring LDAP.  NIET AANKOMEN.",
+    service_monitor = Service(entity_id="https://ldap-monitor.example.org", name="LDAP/SCIM Monitor Service",
+                              description="Used for monitoring LDAP and SCIM.  NIET AANKOMEN.",
                               override_access_allowed_all_connections=False, automatic_connection_allowed=True,
                               logo=read_image("ldap.jpg"),
                               allowed_organisations=[uuc, uva], abbreviation="ldap_mon",
-                              privacy_policy="https://privacy.org",
-                              security_email="sec@example.nl",
+                              privacy_policy="https://privacy.org", accepted_user_policy="https://example.nl/aup",
+                              contact_email="admin@exmaple.nl", security_email="sec@example.nl",
                               ldap_password="$2b$12$GLjC5hK59aeDcEe.tHHJMO.SQQjFgIIpZ7VaKTIsBn05z/gE7JQny",
-                              ldap_enabled=True)
+                              ldap_enabled=True,
+                              scim_enabled=True, scim_url="https://scim-monitor.sram.surf.nl/scim/tst",
+                              scim_bearer_token="server_token", scim_client_enabled=True)
+
+    service_token_monitor_scim = ServiceToken(hashed_token=secure_hash("Axyz_geheim"), description="Monitor token",
+                                              service=service_monitor, token_type=SERVICE_TOKEN_SCIM)
 
     persist_instance(db, mail, wireless, cloud, storage, wiki, network, service_ssh_uva, uuc_scheduler, demo_sp,
-                     demo_rp, service_monitor)
+                     demo_rp, service_monitor, service_token_monitor_scim)
 
     service_group_mail = ServiceGroup(name=service_group_mail_name,
                                       short_name="mail",
@@ -517,7 +522,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                  website_url="https://www.google.nl",
                                  description="University of Amsterdam Research - Urban Crowd Control",
                                  logo=read_image("research.jpeg"),
-                                 organisation=uva, services=[cloud, storage, wiki, service_monitor],
+                                 organisation=uva, services=[cloud, storage, wiki],
                                  join_requests=[], invitations=[],
                                  disclose_member_information=True)
     uuc_teachers = Collaboration(name=uuc_teachers_name,
@@ -526,10 +531,31 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                  website_url="https://www.google.nl",
                                  description="UUC Teachers",
                                  logo=read_image("teachers.jpeg"),
-                                 organisation=uuc, services=[service_monitor],
+                                 organisation=uuc, services=[],
                                  join_requests=[], invitations=[],
                                  short_name="uuc_teachers_short_name",
                                  accepted_user_policy="https://www.uuc.nl/teachers")
+
+    monitoring_co_1 = Collaboration(name="Monitoring CO numero 1",
+                                    identifier="37d55167-23e4-4099-ae20-4f3d8d284b14",
+                                    global_urn="ucc:monitoring1",
+                                    website_url="https://www.google.nl",
+                                    description="CO voor monitoring.  NIET AANKOMEN.",
+                                    logo=read_image("monitor1.png"),
+                                    organisation=uuc, services=[service_monitor],
+                                    join_requests=[], invitations=[],
+                                    short_name="monitor1",
+                                    accepted_user_policy="https://www.uuc.nl/monitor")
+    monitoring_co_2 = Collaboration(name="Monitoring CO numero 2",
+                                    identifier="4c1095e5-ae60-4d6d-8bfe-f711d0f81942",
+                                    global_urn="tue:monitoring2",
+                                    website_url="https://www.google.nl",
+                                    description="CO voor monitoring.  NIET AANKOMEN.",
+                                    logo=read_image("monitor2.png"),
+                                    organisation=tue, services=[service_monitor],
+                                    join_requests=[], invitations=[],
+                                    short_name="monitor2",
+                                    accepted_user_policy="https://www.tue.example.nl/monitor")
 
     uu_disabled_join_request = Collaboration(name=uu_disabled_join_request_name,
                                              short_name="uu_short",
@@ -542,7 +568,8 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                              organisation=uva,
                                              services=[],
                                              join_requests=[], invitations=[])
-    persist_instance(db, ai_computing, uva_research, uu_disabled_join_request, uuc_teachers)
+    persist_instance(db, ai_computing, uva_research, uu_disabled_join_request, uuc_teachers,
+                     monitoring_co_1, monitoring_co_2)
 
     john_ai_computing = CollaborationMembership(role="member", user=john, collaboration=ai_computing)
     admin_ai_computing = CollaborationMembership(role="admin", user=admin, collaboration=ai_computing)
@@ -557,10 +584,17 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     sarah_uva_research = CollaborationMembership(role="admin", user=sarah, collaboration=uva_research)
     user_two_suspend_uva_research = CollaborationMembership(role="member", user=user_deletion_warning,
                                                             collaboration=uva_research)
+
+    paul_monitoring_co_1 = CollaborationMembership(role="member", user=paul, collaboration=monitoring_co_1)
+    betty_monitoring_co_1 = CollaborationMembership(role="member", user=betty, collaboration=monitoring_co_1)
+    betty_monitoring_co_2 = CollaborationMembership(role="member", user=betty, collaboration=monitoring_co_2)
+    harry_monitoring_co_2 = CollaborationMembership(role="member", user=harry, collaboration=monitoring_co_2)
+
     persist_instance(db, john_ai_computing, admin_ai_computing, roger_uva_research, peter_uva_research,
                      sarah_uva_research,
                      jane_ai_computing, sarah_ai_computing, user_two_suspend_uva_research, betty_uuc_teachers,
-                     betty_uuc_ai_computing)
+                     betty_uuc_ai_computing,
+                     paul_monitoring_co_1, betty_monitoring_co_1, betty_monitoring_co_2, harry_monitoring_co_2)
 
     admin_service_aups = [ServiceAup(user=admin, service=service, aup_url=service.accepted_user_policy) for service in
                           ai_computing.services]
