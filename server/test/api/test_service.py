@@ -54,7 +54,7 @@ class TestService(AbstractTest):
         self.login("urn:john")
         service = self.get(f"api/services/{service.id}", with_basic_auth=False)
         self.assertEqual(1, len(service["organisations"]))
-        self.assertEqual(2, len(service["service_organisation_collaborations"]))
+        self.assertEqual(3, len(service["service_organisation_collaborations"]))
 
         logo_data = self.client.get(service["logo"]).data
         self.assertEqual(logo, logo_data)
@@ -397,7 +397,7 @@ class TestService(AbstractTest):
 
         service_wiki = self.find_by_name(services, service_wiki_name)
         self.assertEqual(1, service_wiki["organisations_count"])
-        self.assertEqual(3, service_wiki["collaborations_count"])
+        self.assertEqual(4, service_wiki["collaborations_count"])
 
     def test_services_mine(self):
         self.login("urn:service_admin")
