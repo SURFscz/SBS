@@ -313,7 +313,7 @@ def organisation_invites():
         invitation = OrganisationInvitation(hash=generate_token(),
                                             intended_role=intended_role,
                                             message=message,
-                                            units=valid_units,
+                                            units=valid_units if intended_role == "manager" else [],
                                             invitee_email=administrator,
                                             organisation=organisation,
                                             user=user,

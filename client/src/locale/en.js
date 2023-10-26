@@ -2403,6 +2403,7 @@ const en = {
         collaborationRequest: "Organisational units (optional)",
         filter: "All units",
         invitationLabel: "CO's to be managed",
+        invitationTooltip: "Select organisation unit's to limit the responsibilities of the organisation manager",
         all: "All CO's",
         specify: "Specify CO's",
         back: "Back to all admins",

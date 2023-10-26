@@ -21,6 +21,7 @@ import {AppStore} from "../stores/AppStore";
 import SpinnerField from "../components/redesign/SpinnerField";
 import EmailField from "../components/EmailField";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
+import {InvitationsUnits} from "../components/InvitationsUnits";
 
 class NewOrganisationInvitation extends React.Component {
 
@@ -41,6 +42,7 @@ class NewOrganisationInvitation extends React.Component {
             fileInputKey: new Date().getMilliseconds(),
             intended_role: "manager",
             message: "",
+            units: [],
             expiry_date: moment().add(16, "days").toDate(),
             initial: true,
             confirmationDialogOpen: false,
@@ -87,12 +89,13 @@ class NewOrganisationInvitation extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            const {administrators, message, organisation, expiry_date, fileEmails, intended_role} = this.state;
+            const {administrators, message, organisation, expiry_date, fileEmails, intended_role, units} = this.state;
             this.setState({loading: true});
             organisationInvitations({
                 administrators: administrators.concat(fileEmails),
                 message,
                 intended_role,
+                units: units,
                 expiry_date: expiry_date.getTime() / 1000,
                 organisation_id: organisation.id
             }).then(() => {
@@ -153,7 +156,7 @@ class NewOrganisationInvitation extends React.Component {
 
 
     invitationForm = (organisation, message, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, expiry_date,
-                      disabledSubmit, intended_role) =>
+                      disabledSubmit, intended_role, units) =>
         <div className={"invitation-form"}>
             <EmailField addEmails={this.addEmails}
                         removeMail={this.removeMail}
@@ -171,6 +174,11 @@ class NewOrganisationInvitation extends React.Component {
                          toolTip={I18n.t("invitation.intendedRoleTooltipOrganisation")}
                          placeholder={I18n.t("collaboration.selectRole")}
                          onChange={selectedOption => this.setState({intended_role: selectedOption ? selectedOption.value : null})}/>
+
+            {(!isEmpty(organisation.units) && intended_role === "manager") &&
+                <InvitationsUnits allUnits={organisation.units}
+                                  selectedUnits={units}
+                                  setUnits={newUnits => this.setState({units: newUnits})}/>}
 
             <InputField value={message} onChange={e => this.setState({message: e.target.value})}
                         placeholder={I18n.t("organisation.messagePlaceholder")}
@@ -201,7 +209,7 @@ class NewOrganisationInvitation extends React.Component {
         const {
             initial, administrators, expiry_date, organisation,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, fileName,
-            fileTypeError, fileEmails, fileInputKey, intended_role, loading
+            fileTypeError, fileEmails, fileInputKey, intended_role, loading, units
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -219,7 +227,7 @@ class NewOrganisationInvitation extends React.Component {
                     <h2>{I18n.t("tabs.invitation_form")}</h2>
                     <div className="new-organisation-invitation">
                         {this.invitationForm(organisation, message, fileInputKey, fileName, fileTypeError, fileEmails, initial,
-                            administrators, expiry_date, disabledSubmit, intended_role)}
+                            administrators, expiry_date, disabledSubmit, intended_role, units)}
                     </div>
                 </div>
             </>);

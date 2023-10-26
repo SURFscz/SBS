@@ -790,7 +790,6 @@ class CollaborationDetail extends React.Component {
         const iconListItems = [
             this.getShortNameIconListItem(collaboration),
             this.getMemberIconListItem(collaboration)
-
         ];
         if (collaboration.website_url) {
             iconListItems.push({
