@@ -11,7 +11,7 @@ export default function SelectField({
                                         onChange, name, value, options, placeholder = "", disabled = false,
                                         toolTip = null, searchable = false, small = false,
                                         clearable = false, isMulti = false, creatable = false,
-                                        onInputChange = null, copyClipBoard = false, isOptionDisabled= null
+                                        onInputChange = null, copyClipBoard = false, isOptionDisabled= () => false
                                     }) {
     return (
         <div className="select-field">

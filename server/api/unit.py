@@ -10,10 +10,15 @@ unit_api = Blueprint("api_unit", __name__, url_prefix="/api/units")
 
 
 def validate_units(data, organisation: Organisation):
+    unit_attributes = ["id", "name", "organisation_id"]
     valid_units = []
     if "units" in data and data["units"]:
         units = data["units"]
         for unit in units:
+            # Remove data that is used on the client
+            for attr in unit.keys():
+                if attr not in unit_attributes:
+                    del unit[attr]
             unit_hits = list(filter(lambda u: u.id == unit["id"], organisation.units))
             if not unit_hits or unit_hits[0].name != unit["name"]:
                 raise APIBadRequest(f"Unit with name '{unit['name']}' is not a valid unit for "

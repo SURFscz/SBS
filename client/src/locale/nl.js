@@ -2404,6 +2404,7 @@ const nl = {
         collaborationRequest: "Organisatie units (optioneel)",
         filter: "Alle units",
         invitationLabel: "Toegang tot de samenwerkingen",
+        invitationTooltip: "Selecteer organisatie unit's om de verantwoordelijkheid van de organisatie manager te limiteren",
         all: "Alle samenwerkingen",
         specify: "Kies samenwerkingen",
         back: "Terug naar alle admins",
