@@ -116,12 +116,14 @@ def approve_request(collaboration_request_id):
     confirm_organisation_admin_or_manager(collaboration_request.organisation_id)
     client_data = current_request.get_json()
     attributes = ["name", "short_name", "description", "organisation_id", "accepted_user_policy", "logo",
-                  "website_url", "logo", "units"]
+                  "website_url", "logo"]
 
     # take the data from client_data as it can be different
     data = {"identifier": str(uuid.uuid4())}
     for attr in attributes:
         data[attr] = client_data.get(attr, None)
+    # only not None attribute
+    data["units"] = client_data.get("units", [])
     # bugfix for logo url instead of raw data in the POST from the client - only happens when the logo is unchanged
     logo = data.get("logo")
     if logo and logo.startswith("http"):
