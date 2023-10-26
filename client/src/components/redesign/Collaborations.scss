@@ -33,7 +33,7 @@
         }
 
         .collaboration-label-filter-select {
-            width: 180px;
+            width: 190px;
             @media (max-width: $compact-medium) {
                 margin: 15px 0;
             }
@@ -72,6 +72,10 @@ table.collaborations, table.memberCollaborations {
             }
 
             &.organisation__name {
+                width: 22%;
+            }
+
+            &.units {
                 width: 22%;
             }
 
@@ -132,6 +136,14 @@ table.collaborations, table.memberCollaborations {
                 padding-left: 15px;
             }
 
+            &.units {
+                .sds--chips {
+                    display: block;
+                    &:not(:first-child) {
+                        margin-top: 10px;
+                    }
+                }
+            }
             &.collaboration_memberships_count {
                 text-align: center;
             }

@@ -2390,6 +2390,7 @@ const en = {
         organisationName: "Organisation / institution"
     },
     units: {
+        column: "Units",
         label: "Units (e.g. department or project)",
         add: "+ Add unit",
         confirmation: "Are you sure you want to remove this unit?",

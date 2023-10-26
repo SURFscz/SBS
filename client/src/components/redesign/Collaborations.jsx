@@ -45,7 +45,7 @@ export default class Collaborations extends React.PureComponent {
     }
 
     componentDidMount = () => {
-        const {collaborations, user, service} = this.props;
+        const {collaborations, user, service, organisation} = this.props;
         const promises = [collaborationAdmins(service)];
         if (collaborations === undefined) {
             Promise.all(promises.concat([user.admin ? allCollaborations() : myCollaborations()])).then(res => {
@@ -66,7 +66,7 @@ export default class Collaborations extends React.PureComponent {
             })
         } else {
             const allFilterOptions = this.allLabelFilterOptions(collaborations);
-            const allUnitFilterOptions = this.allUnitFilterOptions(collaborations);
+            const allUnitFilterOptions = this.allUnitFilterOptions(collaborations, organisation);
             this.addRoleInformation(user, collaborations);
             this.addLabelInformation(collaborations);
             Promise.all(promises).then(res => {
@@ -118,22 +118,31 @@ export default class Collaborations extends React.PureComponent {
         return filterOptions.concat(tagOptions);
     }
 
-    allUnitFilterOptions = (collaborations) => {
+    allUnitFilterOptions = (collaborations, organisation) => {
         const unitFilterOptions = [{
             label: I18n.t("units.filter", {nbr: collaborations.length}),
             value: allValue
         }];
-        const unitOptions = collaborations.reduce((acc, coll) => {
-            coll.units.forEach(unit => {
-                const option = acc.find(opt => opt.value === unit.name);
-                if (option) {
-                    ++option.nbr;
-                } else {
-                    acc.push({val: unit.name, nbr: 1})
-                }
-            })
-            return acc;
-        }, []).map(option => ({
+        let unitOptions;
+        if (organisation) {
+            unitOptions = organisation.units
+                .map(unit => ({val: unit.name, nbr: collaborations
+                        .filter(coll => coll.units.some(u => u.id === unit.id)).length}));
+
+        } else {
+            unitOptions = collaborations.reduce((acc, coll) => {
+                coll.units.forEach(unit => {
+                    const option = acc.find(opt => opt.id === unit.id);
+                    if (option) {
+                        ++option.nbr;
+                    } else {
+                        acc.push({id: unit.id, val: unit.name, nbr: 1})
+                    }
+                })
+                return acc;
+            }, [])
+        }
+        unitOptions = unitOptions.map(option => ({
             label: `${option.val} (${option.nbr})`,
             value: option.val
         })).sort((o1, o2) => o1.label.localeCompare(o2.label));
@@ -176,10 +185,10 @@ export default class Collaborations extends React.PureComponent {
                 <div className="collaboration-label-filter">
                     <Select
                         className={"collaboration-label-filter-select"}
-                        value={filterValue}
+                        value={unitFilterValue}
                         classNamePrefix={"filter-select"}
-                        onChange={option => this.setState({filterValue: option})}
-                        options={filterOptions}
+                        onChange={option => this.setState({unitFilterValue: option})}
+                        options={unitFilterOptions}
                         isSearchable={false}
                         isClearable={false}
                     />
@@ -187,10 +196,10 @@ export default class Collaborations extends React.PureComponent {
                 <div className="collaboration-label-filter">
                     <Select
                         className={"collaboration-label-filter-select"}
-                        value={unitFilterValue}
+                        value={filterValue}
                         classNamePrefix={"filter-select"}
-                        onChange={option => this.setState({unitFilterValue: option})}
-                        options={unitFilterOptions}
+                        onChange={option => this.setState({filterValue: option})}
+                        options={filterOptions}
                         isSearchable={false}
                         isClearable={false}
                     />
@@ -281,6 +290,16 @@ export default class Collaborations extends React.PureComponent {
                                             onClick={this.openCollaboration(collaboration)}>{collaboration.name}</a>
             },
             {
+                key: "units",
+                class: "units",
+                header: I18n.t("units.column"),
+                mapper: collaboration => collaboration.units
+                    .sort((u1, u2) => u1.name.localeCompare(u2.name))
+                    .map((unit, index) => <Chip key={index}
+                                                type={ChipType.Status_default}
+                                                label={unit.name}/>)
+            },
+            {
                 key: organisation ? "tagValues" : "organisation__name",
                 class: serviceKey,
                 header: organisation ? I18n.t("collaboration.tags") : I18n.t("models.serviceCollaborations.organisationName"),
@@ -357,10 +376,6 @@ export default class Collaborations extends React.PureComponent {
             }, {
                 key: "collaboration_memberships_count",
                 header: I18n.t("models.collaborations.memberCount")
-            },
-            {
-                key: "invitations_count",
-                header: I18n.t("models.collaborations.invitationsCount")
             }
         );
         let filteredCollaborations = filterValue.value === allValue ? collaborations :

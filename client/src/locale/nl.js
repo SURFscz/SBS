@@ -1211,7 +1211,7 @@ const nl = {
             invalid: "Je moet het bericht aan gebruikers aanpassen",
             tooltip: "Dit bericht wordt getoond aan gebruikers van de organisatie wanneer ze een samenewerking aanvragen of aanmaken",
             template: "Hoi!,\n\n" +
-            "Je kunt een samenwerking **aanmaken/aanvragen**. Omschrijf waarom je deze samenwerking wilt gaan gebruiken. We kunnen contact met je opnemen over je aanvraag.",
+                "Je kunt een samenwerking **aanmaken/aanvragen**. Omschrijf waarom je deze samenwerking wilt gaan gebruiken. We kunnen contact met je opnemen over je aanvraag.",
 
             tabs: {
                 write: "Markdown",
@@ -1408,7 +1408,7 @@ const nl = {
         groups: "Groepslidmaatschap",
         requiredEmail: "Je dient minimaal één e-mailadres op te geven waar je de uitnodiging om lid te worden naartoe wil sturen.",
         requiredRole: "Je moet een rol kiezen voor het uit te nodigen lid.",
-        requiredExpiryDate:"De geldigheidsdatum van de uitnodiging is verplicht",
+        requiredExpiryDate: "De geldigheidsdatum van de uitnodiging is verplicht",
         message: "Bericht",
         messagePlaceholder: "Bericht aan de beheerders",
         messageTooltip: "De boodschap nemen we op in de e-mail waarmee beheerders worden uitgenodigd.",
@@ -2391,6 +2391,7 @@ const nl = {
         organisationName: "Organisatie / instelling"
     },
     units: {
+        column: "Units",
         label: "Units (e.g. afdeling of project)",
         add: "+ Voeg een unit toe",
         confirmation: "Weet je zeker dat je unit {{name}} wilt verwijderen?",
