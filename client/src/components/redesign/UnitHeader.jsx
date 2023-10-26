@@ -2,7 +2,7 @@ import React from "react";
 import "./UnitHeader.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Logo from "./Logo";
-import {isEmpty, stopEvent} from "../../utils/Utils";
+import {isEmpty, splitListSemantically, stopEvent} from "../../utils/Utils";
 import PropTypes from "prop-types";
 import Button from "../Button";
 import {ButtonType, Chip, MenuButton} from "@surfnet/sds";
@@ -68,17 +68,22 @@ class UnitHeader extends React.Component {
                         <div className="meta-info-container">
                             <div className="meta-info">
                                 {obj.name && <h1>{obj.name}</h1>}
-                                {obj.organisation && <span className="name">{obj.organisation.name}</span>}
+                                {obj.organisation &&
+                                    <span className="name">
+                                        {`${obj.organisation.name}${isEmpty(obj.units) ? "" : " - " + splitListSemantically(obj.units.map(unit => unit.name), I18n.t("service.compliancySeparator"))}`}
+                                    </span>}
                                 {!isEmpty(labels) &&
-                                <div className="labels">
-                                    {labels.sort().map((label, index) => <span key={index} className="chip-container">
+                                    <div className="labels">
+                                        {labels.sort().map((label, index) => <span key={index}
+                                                                                   className="chip-container">
                                         <Chip label={label}/></span>)}
-                                </div>}
+                                    </div>}
                             </div>
 
                         </div>
                         {(obj.short_name && displayShortName) &&
-                            <p className="short-name">{I18n.t("collaboration.shortName")}<span>{obj.short_name}</span></p>
+                            <p className="short-name">{I18n.t("collaboration.shortName")}<span>{obj.short_name}</span>
+                            </p>
                         }
                         {(obj.description && displayDescription) &&
                             <MoreLessText txt={obj.description}/>

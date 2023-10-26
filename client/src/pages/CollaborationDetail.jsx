@@ -22,6 +22,7 @@ import UnitHeader from "../components/redesign/UnitHeader";
 import Tabs from "../components/Tabs";
 import {ReactComponent as CoAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
+import {ReactComponent as ShortNameIcon} from "../icons/short-name.svg";
 import {ReactComponent as MemberIcon} from "../icons/groups.svg";
 import {ReactComponent as TimerIcon} from "../icons/streamline/timer2.svg";
 import {ReactComponent as GroupsIcon} from "../icons/ticket-group.svg";
@@ -72,7 +73,7 @@ class CollaborationDetail extends React.Component {
             loading: true,
             firstTime: false,
             isInvitation: false,
-            tab: "admins",
+            tab: "about",
             tabs: [],
             confirmationDialogOpen: false,
             confirmationDialogAction: () => true,
@@ -361,7 +362,16 @@ class CollaborationDetail extends React.Component {
             this.addUserTokenTab(userTokens, services, isJoinRequest, minimalTabs, collaboration);
             return minimalTabs;
         }
-        const tabs = (adminOfCollaboration && !showMemberView) ? [this.getCollaborationAdminsTab(collaboration), this.getMembersTab(collaboration, showMemberView), this.getGroupsTab(collaboration, showMemberView), this.getServicesTab(collaboration, user), this.getJoinRequestsTab(collaboration),] : [this.getAboutTab(collaboration, showMemberView, isJoinRequest), this.getMembersTab(collaboration, showMemberView, isJoinRequest), this.getGroupsTab(collaboration, showMemberView, isJoinRequest),];
+        const tabs = (adminOfCollaboration && !showMemberView) ? [
+            this.getAboutTab(collaboration, showMemberView, isJoinRequest),
+            this.getCollaborationAdminsTab(collaboration),
+            this.getMembersTab(collaboration, showMemberView),
+            this.getGroupsTab(collaboration, showMemberView),
+            this.getServicesTab(collaboration, user),
+            this.getJoinRequestsTab(collaboration),] :
+            [this.getAboutTab(collaboration, showMemberView, isJoinRequest),
+                this.getMembersTab(collaboration, showMemberView, isJoinRequest),
+                this.getGroupsTab(collaboration, showMemberView, isJoinRequest),];
         this.addUserTokenTab(userTokens, services, isJoinRequest, tabs, collaboration);
 
         return tabs.filter(tab => tab !== null);
@@ -548,6 +558,15 @@ class CollaborationDetail extends React.Component {
         </div>);
     }
 
+    getShortNameIconListItem = collaboration => {
+        return (
+            {
+                Icon: <ShortNameIcon/>,
+                value: <span>{collaboration.short_name}</span>
+            }
+        );
+    }
+
     getMemberIconListItem = collaboration => {
         const memberCount = collaboration.collaboration_memberships.length;
         const groupCount = collaboration.groups.length;
@@ -558,7 +577,6 @@ class CollaborationDetail extends React.Component {
                     members: memberCount === 1 ? I18n.t("coPageHeaders.singleMember") : I18n.t("coPageHeaders.multipleMembers"),
                     groupCount: groupCount === 0 ? I18n.t("coPageHeaders.no").toLowerCase() : groupCount,
                     groups: groupCount === 1 ? I18n.t("coPageHeaders.singleGroup") : I18n.t("coPageHeaders.multipleGroups"),
-
                 })}
                 </span>
             }
@@ -567,7 +585,10 @@ class CollaborationDetail extends React.Component {
 
     getUnitHeaderForMemberNew = (user, config, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember, adminOfCollaboration) => {
         const customAction = collaborationJoinRequest ? this.collaborationJoinRequestAction(collaboration, alreadyMember) : null;
-        const iconListItems = [this.getMemberIconListItem(collaboration)];
+        const iconListItems = [
+            this.getShortNameIconListItem(collaboration),
+            this.getMemberIconListItem(collaboration)
+        ];
         if (collaboration.website_url) {
             iconListItems.push({
                 Icon: <WebsiteIcon/>,
@@ -766,7 +787,20 @@ class CollaborationDetail extends React.Component {
 
     getUnitHeader = (user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration) => {
         const joinRequestUrl = `${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`;
-        const iconListItems = [this.getMemberIconListItem(collaboration)];
+        const iconListItems = [
+            this.getShortNameIconListItem(collaboration),
+            this.getMemberIconListItem(collaboration)
+
+        ];
+        if (collaboration.website_url) {
+            iconListItems.push({
+                Icon: <WebsiteIcon/>,
+                value: <a href={collaboration.website_url} target="_blank" rel="noopener noreferrer">
+                    {I18n.t("coPageHeaders.visit")}
+                </a>
+            })
+        }
+
         if (!collaboration.disable_join_requests) {
             iconListItems.push({
                 Icon: <CopyIcon/>,
@@ -788,7 +822,7 @@ class CollaborationDetail extends React.Component {
                             breadcrumbName={I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
                             name={collaboration.name}
                             labels={collaboration.tags.map(tag => tag.tag_value)}
-                            displayDescription={true}
+                            displayDescription={false}
                             actions={this.getActions(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}>
             {this.getIconListItems(iconListItems)}
         </UnitHeader>);
