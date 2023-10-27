@@ -1,6 +1,7 @@
 from flask import Blueprint, request as current_request
 
 from server.api.base import json_endpoint, emit_socket
+from server.api.unit import validate_units
 from server.auth.security import confirm_organisation_admin, current_user_id
 from server.db.db import db
 from server.db.domain import OrganisationMembership
@@ -34,6 +35,7 @@ def update_organisation_membership_role():
     organisation_id = client_data["organisationId"]
     user_id = client_data["userId"]
     role = client_data["role"]
+    units = client_data.get("units")
 
     confirm_organisation_admin(organisation_id)
 
@@ -42,6 +44,10 @@ def update_organisation_membership_role():
         .filter(OrganisationMembership.user_id == user_id) \
         .one()
     organisation_membership.role = role
+    if units is not None and role == "manager":
+        organisation_membership.units = validate_units(client_data, organisation_membership.organisation)
+    if organisation_membership.units and role == "admin":
+        organisation_membership.units.clear()
 
     emit_socket(f"organisation_{organisation_id}", include_current_user_id=True)
 

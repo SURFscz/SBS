@@ -38,14 +38,44 @@ class TestOrganisationMembership(AbstractTest):
         self.assertEqual(0, harry_members)
 
     def test_update_organisation_membership(self):
-        organisation_membership = OrganisationMembership.query.join(OrganisationMembership.user).filter(
-            User.uid == "urn:harry").one()
+        organisation_membership = OrganisationMembership.query \
+            .join(OrganisationMembership.user) \
+            .filter(User.uid == "urn:harry") \
+            .one()
+        self.assertEqual(1, len(organisation_membership.units))
         self.assertEqual("manager", organisation_membership.role)
 
         self.put("/api/organisation_memberships",
                  body={"organisationId": organisation_membership.organisation_id,
-                       "userId": organisation_membership.user_id, "role": "admin"})
+                       "userId": organisation_membership.user_id,
+                       "role": "admin"})
 
-        collaboration_membership = OrganisationMembership.query.join(OrganisationMembership.user).filter(
-            User.uid == "urn:harry").one()
-        self.assertEqual("admin", collaboration_membership.role)
+        organisation_membership = OrganisationMembership.query \
+            .join(OrganisationMembership.user) \
+            .filter(User.uid == "urn:harry") \
+            .one()
+        self.assertEqual("admin", organisation_membership.role)
+        self.assertEqual(0, len(organisation_membership.units))
+
+    def test_update_organisation_membership_with_units(self):
+        organisation_membership = OrganisationMembership.query \
+            .join(OrganisationMembership.user) \
+            .filter(User.uid == "urn:harry") \
+            .one()
+        self.assertEqual(1, len(organisation_membership.units))
+        self.assertEqual("manager", organisation_membership.role)
+
+        units = organisation_membership.organisation.units
+
+        self.put("/api/organisation_memberships",
+                 body={"organisationId": organisation_membership.organisation_id,
+                       "userId": organisation_membership.user_id,
+                       "role": "manager",
+                       "units": [{"id": u.id, "name": u.name} for u in units]})
+
+        organisation_membership = OrganisationMembership.query \
+            .join(OrganisationMembership.user) \
+            .filter(User.uid == "urn:harry") \
+            .one()
+        self.assertEqual(2, len(organisation_membership.units))
+        self.assertEqual("manager", organisation_membership.role)

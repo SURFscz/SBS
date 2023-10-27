@@ -126,8 +126,10 @@ export default class Collaborations extends React.PureComponent {
         let unitOptions;
         if (organisation) {
             unitOptions = organisation.units
-                .map(unit => ({val: unit.name, nbr: collaborations
-                        .filter(coll => coll.units.some(u => u.id === unit.id)).length}));
+                .map(unit => ({
+                    val: unit.name, nbr: collaborations
+                        .filter(coll => coll.units.some(u => u.id === unit.id)).length
+                }));
 
         } else {
             unitOptions = collaborations.reduce((acc, coll) => {
@@ -293,11 +295,14 @@ export default class Collaborations extends React.PureComponent {
                 key: "units",
                 class: "units",
                 header: I18n.t("units.column"),
-                mapper: collaboration => collaboration.units
-                    .sort((u1, u2) => u1.name.localeCompare(u2.name))
-                    .map((unit, index) => <Chip key={index}
-                                                type={ChipType.Status_default}
-                                                label={unit.name}/>)
+                mapper: collaboration => <div className="unit-container">
+                    {collaboration.units
+                        .sort((u1, u2) => u1.name.localeCompare(u2.name))
+                        .map((unit, index) => <span key={index} className="chip-container">
+                        <Chip
+                            type={ChipType.Status_default}
+                            label={unit.name}/></span>)}
+                </div>
             },
             {
                 key: organisation ? "tagValues" : "organisation__name",

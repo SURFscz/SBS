@@ -71,10 +71,12 @@ def organisation_invitations_accept():
         raise Conflict(f"User {user_id} is already a member of {organisation.name}")
 
     user_uid = organisation_invitation.user.uid
+    role = organisation_invitation.intended_role
+    units = organisation_invitation.units if role == "manager" else []
     organisation_membership = OrganisationMembership(user_id=user_id,
                                                      organisation_id=organisation.id,
-                                                     role=organisation_invitation.intended_role,
-                                                     units=organisation_invitation.units,
+                                                     role=role,
+                                                     units=units,
                                                      created_by=user_uid,
                                                      updated_by=user_uid)
 

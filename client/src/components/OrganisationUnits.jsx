@@ -11,6 +11,7 @@ import SpinnerField from "./redesign/SpinnerField";
 export const OrganisationUnits = ({units, setUnits, setDuplicated}) => {
 
     const [duplicateIndex, setDuplicateIndex] = useState(-1);
+    const [deletedAll, setDeletedAll] = useState(false);
     const [references, setReferences] = useState({});
     const [loading, setLoading] = useState(false);
     const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
@@ -47,6 +48,9 @@ export const OrganisationUnits = ({units, setUnits, setDuplicated}) => {
     const doRemoveUnit = index => {
         units.splice(index, 1);
         setUnits([...units]);
+        if (units.length === 0) {
+            setDeletedAll(true);
+        }
     }
 
     const hasReferences = res => {
@@ -70,6 +74,8 @@ export const OrganisationUnits = ({units, setUnits, setDuplicated}) => {
                 if (hasReferences(res)) {
                     setRemovalIndex(index);
                     setConfirmationDialogOpen(true);
+                } else {
+                    doRemoveUnit(index);
                 }
                 setLoading(false);
             })
@@ -91,11 +97,11 @@ export const OrganisationUnits = ({units, setUnits, setDuplicated}) => {
                 <p>{I18n.t("units.used")}</p>
                 <ul>
                     {
-                        ["collaborations", "invitations", "collaboration_requests"]
+                        ["collaborations", "invitations", "collaboration_requests", "organisation_memberships"]
                             .filter(name => !isEmpty(references[name]))
                             .map((name, index) =>
                                 <li key={index}>
-                                    {`${I18n.t("units.collaborations")} (${splitListSemantically(references.collaborations,
+                                    {`${I18n.t(`units.${name}`)} (${splitListSemantically(references[name],
                                         I18n.t("service.compliancySeparator"))})`}
                                 </li>
                             )
@@ -108,8 +114,12 @@ export const OrganisationUnits = ({units, setUnits, setDuplicated}) => {
     if (loading) {
         return <SpinnerField/>
     }
-    //Default we show an empty unit
-    units = units.length > 0 ? units : [{name: ""}]
+
+    if (!deletedAll) {
+        units = units.length > 0 ? units : [{name: ""}]
+    }
+
+
     return (
         <div className="organisation-units sds--text-field ">
             <ConfirmationDialog isOpen={confirmationDialogOpen}

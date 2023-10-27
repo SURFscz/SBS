@@ -66,4 +66,39 @@
     }
 }
 
+.member-details-container {
+    display: flex;
+    max-width: $medium;
+    width: 100%;
+    margin: 40px auto 25px auto;
+
+    @media (max-width: $compact-medium) {
+        flex-direction: column;
+        padding: 0 15px;
+    }
+
+    a.back-to-groups {
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+        color: $blue;
+        text-decoration: underline;
+        margin-right: 60px;
+
+        svg {
+            margin-right: 5px;
+            fill: $blue;
+            height: 22px;
+        }
+    }
+
+    .user-detail {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        padding: 15px;
+        margin-top: 20px;
+        background-color: $background;
+    }
+}
 

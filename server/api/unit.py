@@ -35,5 +35,6 @@ def usages(organisation_id, unit_id):
     return {
         "collaborations": [co.name for co in unit.collaborations],
         "invitations": [invite.organisation.name for invite in unit.organisation_invitations],
+        "organisation_memberships": [f"{m.user.name} - {m.organisation.name}" for m in unit.organisation_memberships],
         "collaboration_requests": [co_req.name for co_req in unit.collaboration_requests],
     }, 200

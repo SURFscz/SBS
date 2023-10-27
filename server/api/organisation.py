@@ -253,7 +253,8 @@ def organisation_by_schac_home():
 @organisation_api.route("/identity_provider_display_name", strict_slashes=False)
 @json_endpoint
 def identity_provider_display_name():
-    user = User.query.filter(User.id == current_user_id()).one()
+    user_id = query_param("user_id", required=False, default=current_user_id())
+    user = User.query.filter(User.id == user_id).one()
     schac_home_organisation = user.schac_home_organisation
     if not schac_home_organisation:
         return None, 200
