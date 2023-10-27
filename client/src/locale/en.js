@@ -1111,9 +1111,9 @@ const en = {
         samlMetadataPlaceholder: "https://metadata",
         samlMetadataUpload: "Upload SAML metadata",
         noneInfo: "Other protocols can be selected later",
-        commentsTooltip: "Your additional comments will be visible for the administrators that evaluate your service request",
+        commentsTooltip: "Your comments will be visible for the administrators that evaluate your service request",
         comments: "Your comments",
-        commentsPlaceholder: "Pretty please...",
+        commentsPlaceholder: "Comments about this request   ",
         commentsHeader: "Additional comments about this request",
         commentsAttribute: "comments",
         connectionSettings: {
