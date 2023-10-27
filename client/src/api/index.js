@@ -434,8 +434,9 @@ export function myOrganisationsLite() {
     return fetchJson(`/api/organisations/mine_lite`);
 }
 
-export function identityProviderDisplayName() {
-    return fetchJson(`/api/organisations/identity_provider_display_name?lang=${I18n.locale}`)
+export function identityProviderDisplayName(userId) {
+    const userIdPart = userId ? `&user_id=${userId}` : "";
+    return fetchJson(`/api/organisations/identity_provider_display_name?lang=${I18n.locale}${userIdPart}`)
 }
 
 export function myOrganisations() {
@@ -608,11 +609,12 @@ export function deleteOrganisationMembership(organisationId, userId, showErrorDi
     return fetchDelete(`/api/organisation_memberships/${organisationId}/${userId}`, showErrorDialog)
 }
 
-export function updateOrganisationMembershipRole(organisationId, userId, role, showErrorDialog = true) {
+export function updateOrganisationMembershipRole(organisationId, userId, role, units, showErrorDialog = true) {
     return postPutJson("/api/organisation_memberships", {
         organisationId: organisationId,
         userId: userId,
-        role: role
+        role: role,
+        units: units
     }, "put", showErrorDialog)
 }
 

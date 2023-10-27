@@ -7,8 +7,10 @@ import {ReactComponent as HandIcon} from "../../icons/puppet_new.svg";
 import {ReactComponent as ThrashIcon} from "../../icons/trash_new.svg";
 import CheckBox from "../CheckBox";
 import {ReactComponent as TrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
+import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
 import {
     deleteOrganisationMembership,
+    identityProviderDisplayName,
     organisationInvitationBulkResend,
     organisationInvitationDelete,
     updateOrganisationMembershipRole
@@ -26,8 +28,10 @@ import SpinnerField from "./SpinnerField";
 import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
 import {Chip, ChipType, Tooltip} from "@surfnet/sds";
 import InstituteColumn from "./InstituteColumn";
-import {isEmpty} from "../../utils/Utils";
+import {isEmpty, stopEvent} from "../../utils/Utils";
 import {emitImpersonation} from "../../utils/Impersonation";
+import SelectField from "../SelectField";
+import {InvitationsUnits} from "../InvitationsUnits";
 
 const INVITE_IDENTIFIER = "INVITE_IDENTIFIER";
 const MEMBER_IDENTIFIER = "MEMBER_IDENTIFIER";
@@ -36,6 +40,10 @@ class OrganisationAdmins extends React.Component {
 
     constructor(props, context) {
         super(props, context);
+        this.roles = [
+            {value: "admin", label: I18n.t(`organisation.organisationShortRoles.admin`)},
+            {value: "manager", label: I18n.t(`organisation.organisationShortRoles.manager`)}
+        ];
         this.state = {
             selectedMembers: {},
             message: "",
@@ -44,8 +52,13 @@ class OrganisationAdmins extends React.Component {
             confirmationDialogAction: () => true,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationQuestion: "",
+            selectedMemberId: null,
+            selectedUnits: [],
+            selectedRole: this.roles[1],
+            idpDisplayName: null,
             isWarning: false,
-            loading: false
+            loading: false,
+            unitOption: "all"
         }
     }
 
@@ -297,17 +310,14 @@ class OrganisationAdmins extends React.Component {
         if (entity.invite) {
             return <span className="member-role">{I18n.t(`organisation.${entity.intended_role}`)}</span>;
         }
-        const roles = [
-            {value: "admin", label: I18n.t(`organisation.organisationShortRoles.admin`)},
-            {value: "manager", label: I18n.t(`organisation.organisationShortRoles.manager`)}
-        ];
-        return <Select
-            value={roles.find(option => option.value === entity.role)}
-            options={roles}
-            classNamePrefix={`select-member-role`}
-            onChange={this.changeMemberRole(entity)}
-            isDisabled={!isAdmin || !(entity.invite || entity.role === "manager" || (!oneAdminLeft &&
-                (!noMoreAdminsToCheck || selectedMembers[this.getIdentifier(entity)].selected)))}/>
+        return (
+            <Select
+                value={this.roles.find(option => option.value === entity.role)}
+                options={this.roles}
+                classNamePrefix={`select-member-role`}
+                onChange={this.changeMemberRole(entity)}
+                isDisabled={!isAdmin || !(entity.invite || entity.role === "manager" || (!oneAdminLeft &&
+                    (!noMoreAdminsToCheck || selectedMembers[this.getIdentifier(entity)].selected)))}/>)
     }
 
     actionIcons = entity => {
@@ -342,6 +352,96 @@ class OrganisationAdmins extends React.Component {
             </div>);
     }
 
+    getSelectedMember = (selectedMemberId, organisation) => {
+        return organisation.organisation_memberships.find(m => m.id === selectedMemberId);
+    }
+
+    unitOptionCallback = unitOption => {
+        this.setState({unitOption: unitOption, selectedRole: unitOption === "all" ? this.state.selectedRole : this.roles[1]})
+    }
+
+    setSelectedRole = selectedOption => {
+        this.setState({selectedRole: selectedOption, selectedUnits: selectedOption.value === "admin" ? [] : this.state.selectedUnits});
+    }
+
+    cancelSideScreen = e => {
+        stopEvent(e);
+        this.setState({selectedMemberId: null, selectedUnits: [], selectedRole: this.roles[1], idpDisplayName: null, unitOption: "all"});
+    }
+
+    renderSelectedMember = (selectedMember, organisation) => {
+        const {idpDisplayName, selectedUnits, selectedRole, unitOption} = this.state;
+        return (
+            <div className="member-details-container">
+                <div>
+                    <a className={"back-to-groups"} onClick={this.cancelSideScreen} href={"/cancel"}>
+                        <ChevronLeft/>{I18n.t("units.back")}
+                    </a>
+                </div>
+                <div>
+                    <h1>{I18n.t("units.editRole")}</h1>
+                    <section className={"user-detail"}>
+                        <span>{selectedMember.user.name}</span>
+                        <a href={`mailto:${selectedMember.user.email}`}>{selectedMember.user.email}</a>
+                        <span>{idpDisplayName}</span>
+                    </section>
+                    <SelectField value={this.roles.find(option => option.value === selectedRole.value)}
+                                 options={this.roles}
+                                 disabled={unitOption !== "all"}
+                                 name={I18n.t("invitation.intendedRoleOrganisation")}
+                                 placeholder={I18n.t("collaboration.selectRole")}
+                                 onChange={this.setSelectedRole}/>
+
+                    {(!isEmpty(organisation.units)) &&
+                        <InvitationsUnits allUnits={organisation.units}
+                                          selectedUnits={selectedUnits}
+                                          unitOptionCallback={this.unitOptionCallback}
+                                          setUnits={newUnits => this.setState({selectedUnits: newUnits})}/>}
+                    <section className="actions">
+                        <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancelSideScreen}/>
+                        <Button txt={I18n.t("forms.save")}
+                                onClick={this.updateRoleAndUnits}/>
+                    </section>
+
+                </div>
+            </div>
+        )
+    }
+
+    updateRoleAndUnits = () => {
+        const {selectedUnits, selectedRole, selectedMemberId} = this.state;
+        const {organisation} = this.props;
+        const selectedMember = this.getSelectedMember(selectedMemberId, organisation);
+        this.setState({loading: true});
+        updateOrganisationMembershipRole(organisation.id, selectedMember.user.id, selectedRole.value, selectedUnits)
+            .then(() => {
+                this.cancelSideScreen();
+                this.props.refresh(this.componentDidMount);
+                setFlash(I18n.t("organisationDetail.flash.memberUpdated", {
+                    name: selectedMember.user.name,
+                    role: selectedRole.value
+                }));
+            }).catch(() => {
+            this.handle404("member");
+        });
+    }
+
+    gotoMember = membership => e => {
+        this.setState({
+            loading: true
+        });
+        stopEvent(e);
+        identityProviderDisplayName(membership.user_id)
+            .then(res => {
+                this.setState({
+                    idpDisplayName: res ? res.display_name : membership.user.schac_home_organisation,
+                    selectedMemberId: membership.id,
+                    selectedUnits: membership.units,
+                    loading: false
+                });
+            });
+    }
+
     getImpersonateMapper = (entity, currentUser, impersonation_allowed, isAdmin) => {
         const showImpersonation = currentUser.admin && !entity.invite && entity.user.id !== currentUser.id && impersonation_allowed;
         return (
@@ -359,10 +459,14 @@ class OrganisationAdmins extends React.Component {
         const {user: currentUser, organisation} = this.props;
         const {
             selectedMembers, confirmationDialogOpen, cancelDialogAction, isWarning,
-            confirmationDialogAction, confirmationQuestion, loading, confirmationTxt
+            confirmationDialogAction, confirmationQuestion, loading, confirmationTxt, selectedMemberId
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
+        }
+        const selectedMember = this.getSelectedMember(selectedMemberId, organisation);
+        if (selectedMember) {
+            return this.renderSelectedMember(selectedMember, organisation);
         }
         const admins = organisation.organisation_memberships;
         const invites = organisation.organisation_invitations;
@@ -423,8 +527,7 @@ class OrganisationAdmins extends React.Component {
                 nonSortable: true,
                 key: "name",
                 header: I18n.t("models.users.name_email"),
-                mapper: entity => <UserColumn entity={entity} currentUser={currentUser}
-                                              gotoInvitation={isAdmin ? this.gotoInvitation : null}/>
+                mapper: entity => <UserColumn entity={entity} currentUser={currentUser}/>
             },
             {
                 key: "user__schac_home_organisation",
@@ -472,7 +575,10 @@ class OrganisationAdmins extends React.Component {
                           searchAttributes={["user__name", "user__email", "invitee_email"]}
                           defaultSort="name"
                           columns={isAdmin ? columns : columns.slice(1)}
-                          rowLinkMapper={entity => (entity.invite && isAdmin) && this.gotoInvitation}
+                          rowLinkMapper={membership =>
+                              isUserAllowed(ROLES.ORG_ADMIN, currentUser, organisation) && !membership.invite && membership.role === "manager"
+                              && !isEmpty(organisation.units) && this.gotoMember
+                          }
                           loading={false}
                           onHover={true}
                           showNew={isAdmin}

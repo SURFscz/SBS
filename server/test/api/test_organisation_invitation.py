@@ -25,6 +25,21 @@ class TestOrganisationInvitation(AbstractTest):
             .filter(User.uid == "urn:james") \
             .one()
         self.assertEqual("admin", organisation_membership.role)
+        self.assertEqual(0, len(organisation_membership.units))
+
+    def test_accept_with_units(self):
+        self.login("urn:james")
+        organisation_invitation = OrganisationInvitation.query \
+            .filter(OrganisationInvitation.hash == organisation_invitation_hash) \
+            .one()
+        organisation_invitation.intended_role = "manager"
+        self.put("/api/organisation_invitations/accept", body={"hash": organisation_invitation_hash},
+                 with_basic_auth=False)
+        organisation_membership = OrganisationMembership.query \
+            .join(OrganisationMembership.user) \
+            .filter(User.uid == "urn:james") \
+            .one()
+        self.assertEqual(1, len(organisation_membership.units))
 
     def test_accept_already_member(self):
         self.login("urn:mary")

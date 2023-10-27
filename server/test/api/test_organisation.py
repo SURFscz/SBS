@@ -46,6 +46,14 @@ class TestOrganisation(AbstractTest):
                        with_basic_auth=False)
         self.assertEqual("University of Groningen", res["display_name"])
 
+    def test_identity_provider_display_name_other(self):
+        self.login("urn:john")
+        user = User.query.filter(User.uid == "urn:james").one()
+        res = self.get("/api/organisations/identity_provider_display_name",
+                       query_data={"user_id": user.id, "lang": "nl"},
+                       with_basic_auth=False)
+        self.assertEqual("Rijksuniversiteit Groningen", res["display_name"])
+
     def test_identity_provider_display_name_no_schac_home(self):
         self.login("urn:harry")
         res = self.get("/api/organisations/identity_provider_display_name",

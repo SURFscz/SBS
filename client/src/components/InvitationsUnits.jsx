@@ -3,10 +3,11 @@ import "./InvitationUnits.scss";
 import I18n from "../locale/I18n";
 import RadioButtonGroup from "./redesign/RadioButtonGroup";
 import CheckBox from "./CheckBox";
+import {isEmpty} from "../utils/Utils";
 
-export const InvitationsUnits = ({allUnits, selectedUnits, setUnits}) => {
+export const InvitationsUnits = ({allUnits, selectedUnits, setUnits, unitOptionCallback}) => {
 
-    const [unitOption, setUnitOption] = useState("all");
+    const [unitOption, setUnitOption] = useState(isEmpty(selectedUnits) ? "all" : "specify");
 
     const onChange = index => e => {
         const checked = e.target.checked;
@@ -22,6 +23,7 @@ export const InvitationsUnits = ({allUnits, selectedUnits, setUnits}) => {
     const changeUnitOption = option => {
         setUnitOption(option);
         setUnits([]);
+        unitOptionCallback && unitOptionCallback(option);
     }
 
     return (

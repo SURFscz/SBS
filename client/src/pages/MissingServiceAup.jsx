@@ -50,11 +50,11 @@ class MissingServiceAup extends React.Component {
             <div className="mod-missing-service-aup">
                 <h1>{I18n.t("aup.service.title")}</h1>
                 <p className="info">{I18n.t(`aup.service.missing.${info}`)}</p>
-                {user.service_collaborations.map((collaboration, index) => <div className="collaboration-detail"
-                                                                                key={index}>
-                    <h3 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("aup.service.purposeOf", {name: collaboration.name}))}}/>
-                    <p>{collaboration.description}</p>
-                </div>)}
+                {(user.service_collaborations || []).map((collaboration, index) =>
+                    <div className="collaboration-detail" key={index}>
+                        <h3 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("aup.service.purposeOf", {name: collaboration.name}))}}/>
+                        <p>{collaboration.description}</p>
+                    </div>)}
                 <h3>{I18n.t(`aup.service.${services}`)}</h3>
                 <CollaborationAupAcceptance services={user.services_without_aup}
                                             disabled={!agreed}
