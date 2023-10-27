@@ -16,7 +16,7 @@ def validate_units(data, organisation: Organisation):
         units = data["units"]
         for unit in units:
             # Remove data that is used on the client
-            for attr in unit.keys():
+            for attr in list(unit.keys()):
                 if attr not in unit_attributes:
                     del unit[attr]
             unit_hits = list(filter(lambda u: u.id == unit["id"], organisation.units))
