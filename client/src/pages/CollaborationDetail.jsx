@@ -52,6 +52,7 @@ import {ErrorOrigins, isEmpty, removeDuplicates, stopEvent} from "../utils/Utils
 import UserTokens from "../components/redesign/UserTokens";
 import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../utils/SocketIO";
 import {isUuid4} from "../validations/regExps";
+import {isInvitationExpired} from "../utils/Date";
 
 class CollaborationDetail extends React.Component {
 
@@ -318,13 +319,13 @@ class CollaborationDetail extends React.Component {
     updateAppStore = (user, config, collaboration, adminOfCollaboration, orgManager) => {
         AppStore.update(s => {
             s.breadcrumb.paths = orgManager ? [{path: "/", value: I18n.t("breadcrumb.home")}, {
-                path: `/organisations/${collaboration.organisation_id}`,
-                value: I18n.t("breadcrumb.organisation", {name: collaboration.organisation.name})
-            }, {value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})}]
+                    path: `/organisations/${collaboration.organisation_id}`,
+                    value: I18n.t("breadcrumb.organisation", {name: collaboration.organisation.name})
+                }, {value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})}]
                 : [{
-                path: "/?redirect=false",
-                value: I18n.t("breadcrumb.home")
-            }, {value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})}];
+                    path: "/?redirect=false",
+                    value: I18n.t("breadcrumb.home")
+                }, {value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})}];
             s.actions = this.getHeaderActions(user, config, collaboration);
             s.objectRole = actionMenuUserRole(user, collaboration.organisation, collaboration, null, true);
         });
@@ -363,12 +364,12 @@ class CollaborationDetail extends React.Component {
             return minimalTabs;
         }
         const tabs = (adminOfCollaboration && !showMemberView) ? [
-            this.getAboutTab(collaboration, showMemberView, isJoinRequest),
-            this.getCollaborationAdminsTab(collaboration),
-            this.getMembersTab(collaboration, showMemberView),
-            this.getGroupsTab(collaboration, showMemberView),
-            this.getServicesTab(collaboration, user),
-            this.getJoinRequestsTab(collaboration),] :
+                this.getAboutTab(collaboration, showMemberView, isJoinRequest),
+                this.getCollaborationAdminsTab(collaboration),
+                this.getMembersTab(collaboration, showMemberView),
+                this.getGroupsTab(collaboration, showMemberView),
+                this.getServicesTab(collaboration, user),
+                this.getJoinRequestsTab(collaboration),] :
             [this.getAboutTab(collaboration, showMemberView, isJoinRequest),
                 this.getMembersTab(collaboration, showMemberView, isJoinRequest),
                 this.getGroupsTab(collaboration, showMemberView, isJoinRequest),];
@@ -387,24 +388,24 @@ class CollaborationDetail extends React.Component {
     }
 
     getCollaborationAdminsTab = collaboration => {
-        const openInvitations = (collaboration.invitations || []).filter(inv => inv.intended_role === "admin").length;
+        const expiredInvitations = (collaboration.invitations || []).some(inv => isInvitationExpired(inv));
         return (<div key="admins"
                      name="admins"
                      label={I18n.t("home.tabs.coAdmins")}
                      icon={<CoAdminIcon/>}
-                     notifier={openInvitations > 0 ? openInvitations : null}>
+                     notifier={expiredInvitations}>
             <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={true}
                                  refresh={callback => this.componentDidMount(callback)}/>
         </div>)
     }
 
     getMembersTab = (collaboration, showMemberView, isJoinRequest = false) => {
-        const openInvitations = (collaboration.invitations || []).length;
+        const expiredInvitations = (collaboration.invitations || []).some(inv => isInvitationExpired(inv));
         return (<div key="members" name="members"
                      label={I18n.t("home.tabs.members")}
                      icon={<MemberIcon/>}
                      readOnly={isJoinRequest}
-                     notifier={(openInvitations > 0 && !showMemberView) ? openInvitations : null}>
+                     notifier={expiredInvitations && !showMemberView}>
             {!isJoinRequest && <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={false}
                                                     showMemberView={showMemberView}
                                                     refresh={callback => this.componentDidMount(callback)}/>}

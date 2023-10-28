@@ -32,6 +32,7 @@ import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../utils/SocketIO";
 import {ReactComponent as MembersIcon} from "../icons/single-neutral.svg";
 import Users from "../components/redesign/Users";
 import {ButtonType, MetaDataList} from "@surfnet/sds";
+import {isInvitationExpired} from "../utils/Date";
 
 class OrganisationDetail extends React.Component {
 
@@ -172,12 +173,12 @@ class OrganisationDetail extends React.Component {
     }
 
     getOrganisationAdminsTab = (organisation, user) => {
-        const openInvitations = (organisation.organisation_invitations || []).length;
+        const expiredInvitations = (organisation.organisation_invitations || []).some(inv => isInvitationExpired(inv));
         const isOrgAdmin = isUserAllowed(ROLES.ORG_ADMIN, user, organisation.id);
         return (<div key="admins" name="admins"
                      label={I18n.t("home.tabs.orgAdmins", {count: organisation.organisation_memberships.length})}
                      icon={<PlatformAdminIcon/>}
-                     notifier={(openInvitations > 0 && isOrgAdmin) ? openInvitations : null}>
+                     notifier={expiredInvitations && isOrgAdmin}>
             <OrganisationAdmins {...this.props} organisation={organisation}
                                 refresh={callback => this.componentDidMount(callback)}/>
         </div>)

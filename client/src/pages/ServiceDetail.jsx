@@ -40,6 +40,7 @@ import ServiceCollaborations from "../components/redesign/ServiceCollaborations"
 import {ButtonType} from "@surfnet/sds";
 import AboutService from "../components/redesign/AboutService";
 import DOMPurify from "dompurify";
+import {isInvitationExpired} from "../utils/Date";
 
 class ServiceDetail extends React.Component {
 
@@ -248,11 +249,11 @@ class ServiceDetail extends React.Component {
     }
 
     getAdminsTab = service => {
-        const openInvitations = (service.service_invitations || []).length;
+        const expiredInvitations = (service.service_invitations || []).some(inv => isInvitationExpired(inv));
         return (<div key="admins" name="admins"
                      label={I18n.t("home.tabs.serviceAdmins", {count: service.service_memberships.length})}
                      icon={<UserAdminIcon/>}
-                     notifier={openInvitations > 0 ? openInvitations : null}>
+                     notifier={expiredInvitations}>
             <ServiceAdmins {...this.props} service={service}
                            refresh={this.refresh}/>
         </div>)
