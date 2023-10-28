@@ -292,17 +292,29 @@ class ServiceOverview extends React.Component {
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
 
     delete = () => {
-        const {service} = this.state;
-        this.setState({
-            confirmationDialogOpen: true,
-            leavePage: false,
-            confirmationDialogQuestion: I18n.t("service.deleteConfirmation", {name: service.name}),
-            warning: true,
-            confirmationTxt: I18n.t("confirmationDialog.confirm"),
-            cancelDialogAction: this.closeConfirmationDialog,
-            confirmationHeader: I18n.t("confirmationDialog.title"),
-            confirmationDialogAction: this.doDelete
-        });
+        const {service, isServiceAdmin} = this.state;
+        if (!isEmpty(service.collaborations) && isServiceAdmin) {
+            this.setState({
+                confirmationDialogOpen: true,
+                leavePage: false,
+                confirmationDialogQuestion: I18n.t("service.deleteWarning"),
+                confirmationTxt: I18n.t("confirmationDialog.ok"),
+                cancelDialogAction: null,
+                confirmationHeader: I18n.t("confirmationDialog.title"),
+                confirmationDialogAction: this.closeConfirmationDialog
+            });
+        } else {
+            this.setState({
+                confirmationDialogOpen: true,
+                leavePage: false,
+                confirmationDialogQuestion: I18n.t("service.deleteConfirmation", {name: service.name}),
+                warning: true,
+                confirmationTxt: I18n.t("confirmationDialog.confirm"),
+                cancelDialogAction: this.closeConfirmationDialog,
+                confirmationHeader: I18n.t("confirmationDialog.title"),
+                confirmationDialogAction: this.doDelete
+            });
+        }
     };
 
     doDelete = () => {
@@ -511,8 +523,9 @@ class ServiceOverview extends React.Component {
             {((isAdmin || isServiceAdmin) && !createNewServiceToken) && <div className={"actions-container"}>
                 {invalidTabsMsg && <span className={"error"}>{invalidTabsMsg}</span>}
                 <section className="actions">
-                    {(isAdmin && currentTab === "general" && !showServiceAdminView) && <Button warningButton={true}
-                                                                                               onClick={this.delete}/>}
+                    {((isAdmin || isServiceAdmin) && currentTab === "general") &&
+                        <Button warningButton={true}
+                                onClick={this.delete}/>}
                     <Button disabled={disabledSubmit} txt={I18n.t("service.update")}
                             onClick={this.submit}/>
                 </section>

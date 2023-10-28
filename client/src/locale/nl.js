@@ -1026,6 +1026,7 @@ const nl = {
         alreadyExists: "Een dienst met {{attribute}} {{value}} bestaat al.",
         required: "De dienst heeft een {{attribute}} nodig.",
         deleteConfirmation: "Weet je zeker dat je dienst {{name}} wil verwijderen? Dit kan niet teruggedraaid worden.",
+        deleteWarning: "Je kan deze dienst niet verwijderen. Ontkoppel eerst de samenwerkingen op de 'Gekoppelde samenwerkingen' tab.",
         add: "Opslaan",
         request: "Registreer",
         update: "Wijzigen",
