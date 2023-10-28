@@ -179,6 +179,7 @@ def api_organisation_details():
     for collaboration in organisation.collaborations:
         collaboration.groups
         collaboration.tags
+        collaboration.services
     return organisation, 200
 
 
