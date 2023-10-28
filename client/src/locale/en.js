@@ -1026,6 +1026,7 @@ const en = {
         alreadyExists: "A service with {{attribute}} {{value}} already exists.",
         required: "The {{attribute}} is required for a service",
         deleteConfirmation: "Are you sure you want to delete service {{name}}? This cannot be undone.",
+        deleteWarning: "You can not delete this service. Disconnect the collaborations first at the 'connected collaborations' tab.",
         add: "Create",
         request: "Registration",
         update: "Update",

@@ -580,7 +580,7 @@ def trust_organisation(service_id, organisation_id):
 @service_api.route("/<service_id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_service(service_id):
-    confirm_write_access()
+    confirm_service_admin(service_id)
     return delete(Service, service_id)
 
 
