@@ -375,8 +375,6 @@ class ServiceOrganisations extends React.Component {
                     <div className={`options-container ${showEntities ? "" : "no-entities"}`}>
                         <div>
                             <h4>{I18n.t("service.connectionSettings.connectQuestion")}</h4>
-                            <span>{`connectionAllowedValue: ${connectionAllowedValue}`}</span>
-                            <span>{`userAdmin: ${userAdmin}`}</span>
                             <BlockSwitchChoice value={connectionAllowedValue}
                                                items={connectionAllowedChoices}
                                                disabled={connectionAllowedValue === ALL_ALLOWED && !userAdmin}
