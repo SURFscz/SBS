@@ -250,7 +250,7 @@ class ServiceOrganisations extends React.Component {
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, loading, disallowedOrganisation,
             connectionAllowedValue, institutionAccessValue, connectionSettingValue
         } = this.state;
-        const {organisations, service, user, userAdmin, showServiceAdminView} = this.props;
+        const {organisations, service, user, userAdmin, serviceAdmin, showServiceAdminView} = this.props;
         const availableOrganisations = service.allow_restricted_orgs ? organisations : organisations.filter(org => !org.services_restricted);
         const columns = [
             {
@@ -307,7 +307,7 @@ class ServiceOrganisations extends React.Component {
                 icon: <NoConnectionIcon/>
             }
         ]
-        if (userAdmin && !showServiceAdminView) {
+        if (userAdmin || connectionAllowedValue === ALL_ALLOWED) {
             connectionAllowedChoices.push({
                 value: ALL_ALLOWED,
                 title: I18n.t("service.connectionSettings.everyOne"),
@@ -329,7 +329,7 @@ class ServiceOrganisations extends React.Component {
                 icon: <NoConnectionIcon/>
             }
         ]
-        if (userAdmin && !showServiceAdminView && service.non_member_users_access_allowed) {
+        if (service.non_member_users_access_allowed) {
             institutionAccessChoices.push({
                 value: NONE_INSTITUTIONS,
                 title: I18n.t("service.connectionSettings.none"),
@@ -371,12 +371,15 @@ class ServiceOrganisations extends React.Component {
                     {confirmationDialogOpen && this.renderConfirmation(service, disallowedOrganisation)}
                 </ConfirmationDialog>
                 {loading && <SpinnerField absolute={true}/>}
-                {(userAdmin && !showServiceAdminView) &&
+                {serviceAdmin &&
                     <div className={`options-container ${showEntities ? "" : "no-entities"}`}>
                         <div>
                             <h4>{I18n.t("service.connectionSettings.connectQuestion")}</h4>
+                            <span>{`connectionAllowedValue: ${connectionAllowedValue}`}</span>
+                            <span>{`userAdmin: ${userAdmin}`}</span>
                             <BlockSwitchChoice value={connectionAllowedValue}
                                                items={connectionAllowedChoices}
+                                               disabled={connectionAllowedValue === ALL_ALLOWED && !userAdmin}
                                                setValue={this.setConnectionAccessValue}/>
                         </div>
                         {connectionAllowedValue !== NO_ONE_ALLOWED && <div>
