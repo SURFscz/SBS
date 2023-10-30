@@ -15,6 +15,7 @@ import DOMPurify from "dompurify";
 import {ReactComponent as EditIcon} from "@surfnet/sds/icons/functional-icons/edit.svg";
 import {ReactComponent as TrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 import UploadButton from "../components/UploadButton";
+import {dateFromEpoch} from "../utils/Date";
 
 class Me extends React.Component {
 
@@ -31,6 +32,7 @@ class Me extends React.Component {
             ssh_keys: [],
             user_ip_networks: [],
             invalidInputs: {},
+            updateVisible: false,
             initial: true,
             id: user.id,
             loading: true
@@ -106,14 +108,14 @@ class Me extends React.Component {
             ssh_value: "",
             manual: true
         });
-        this.setState({ssh_keys: [...ssh_keys]});
+        this.setState({ssh_keys: [...ssh_keys],  updateVisible: true});
     }
 
     onFileRemoval = index => e => {
         stopEvent(e);
         const {ssh_keys} = this.state;
         ssh_keys.splice(index, 1);
-        this.setState({ssh_keys: [...ssh_keys]});
+        this.setState({ssh_keys: [...ssh_keys], updateVisible: true});
     };
 
     onFileUpload = e => {
@@ -131,7 +133,7 @@ class Me extends React.Component {
                     ssh_value: validSsh ? sshValue : "",
                     fileName: file.name
                 });
-                this.setState({ssh_keys: [...ssh_keys]});
+                this.setState({ssh_keys: [...ssh_keys], updateVisible: true});
             };
             reader.readAsText(file);
         }
@@ -145,7 +147,7 @@ class Me extends React.Component {
     updateSshValue = (value, index) => {
         const {ssh_keys} = this.state;
         ssh_keys[index].ssh_value = value;
-        this.setState({ssh_keys: [...ssh_keys]});
+        this.setState({ssh_keys: [...ssh_keys], updateVisible: true});
     }
 
     validateSshValue = index => {
@@ -153,40 +155,38 @@ class Me extends React.Component {
         const sshKey = ssh_keys[index];
         const validSsh = validateSSHKey(sshKey.ssh_value);
         sshKey.fileTypeError = !validSsh;
-        this.setState({ssh_keys: [...ssh_keys]});
+        this.setState({ssh_keys: [...ssh_keys], updateVisible: true});
     }
 
-    renderForm = (user, ssh_keys, user_ip_networks, disabledSubmit, config) => {
+    renderForm = (user, ssh_keys, user_ip_networks, disabledSubmit, config, updateVisible) => {
         const createdAt = user.created_at;
         const d = new Date(0);
         d.setUTCSeconds(createdAt);
         const values = {"created_at": moment(d).format("LLLL")};
-        const firstAttributes = ["email", "name"];
-        const secondAttributes = ["scoped_affiliation", "affiliation", "username"];
+        const firstAttributes = ["name", "username", "email"];
+        const secondAttributes = ["scoped_affiliation"];
         const mfaValue = user.second_factor_auth ? I18n.t("mfa.profile.handledBySRAM") :
             I18n.t("mfa.profile.handledByIdp", {name: user.schac_home_organisation || I18n.t("mfa.profile.institution")});
         return (
             <div className="user-profile-tab-container">
                 <div className="user-profile-tab">
-                    <h2>{I18n.t("home.tabs.me")}</h2>
+                    <h2>{I18n.t("models.users.profile")}</h2>
+                    <p>{I18n.t("models.users.subProfile", {date: dateFromEpoch(user.created_at)})}</p>
                     <div className={"sds--table"}>
                         <table className={"my-attributes"}>
-                            <thead>
-                            <tr>
-                                <th className={"attribute-key"}/>
-                                <th className={"attribute-value"}/>
-                                <th className={"actions"}/>
-                            </tr>
-                            </thead>
                             <tbody>
                             {firstAttributes.map(attribute =>
                                 <tr key={attribute}>
                                     <td className="attribute-key">{I18n.t(`profile.${attribute}`)}</td>
                                     <td className="attribute-value">{values[attribute] || user[attribute] || "-"}</td>
                                     <td className="actions">
-                                        {!isEmpty(user.schac_home_organisation) &&
-                                        <span
-                                            dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.providedBy", {institution: user.schac_home_organisation}))}}/>
+                                        {(!isEmpty(user.schac_home_organisation) && attribute !== "username")&&
+                                            <span
+                                                dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.providedBy", {institution: user.schac_home_organisation}))}}/>
+                                        }
+                                        {(!isEmpty(user.schac_home_organisation) && attribute === "username")&&
+                                            <span
+                                                dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.generatedBy", {institution: user.schac_home_organisation}))}}/>
                                         }
                                     </td>
                                 </tr>)
@@ -198,8 +198,8 @@ class Me extends React.Component {
                                 </td>
                                 <td className="actions">
                                     {!isEmpty(user.schac_home_organisation) &&
-                                    <span
-                                        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.providedBy", {institution: user.schac_home_organisation}))}}/>
+                                        <span
+                                            dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.providedBy", {institution: user.schac_home_organisation}))}}/>
                                     }
                                 </td>
                             </tr>
@@ -208,20 +208,20 @@ class Me extends React.Component {
                                     <td className="attribute-key">{I18n.t(`profile.${attribute}`)}</td>
                                     <td className="attribute-value">{values[attribute] || user[attribute] || "-"}</td>
                                     {(attribute === "scoped_affiliation")
-                                    && <td className="actions">
-                                        {(!isEmpty(user.schac_home_organisation) && (values[attribute] || user[attribute])) &&
-                                        <span
-                                            dangerouslySetInnerHTML={{
-                                                __html: DOMPurify.sanitize(I18n.t("user.providedBy",
-                                                    {institution: user.schac_home_organisation}))
-                                            }}/>
-                                        }
-                                    </td>}
+                                        && <td className="actions">
+                                            {(!isEmpty(user.schac_home_organisation) && (values[attribute] || user[attribute])) &&
+                                                <span
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: DOMPurify.sanitize(I18n.t("user.providedBy",
+                                                            {institution: user.schac_home_organisation}))
+                                                    }}/>
+                                            }
+                                        </td>}
                                     {(attribute === "username" || attribute === "affiliation")
-                                    && <td className="actions">
+                                        && <td className="actions">
                                         <span
                                             dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.generatedBy"))}}/>
-                                    </td>}
+                                        </td>}
                                 </tr>)
                             }
                             {config.second_factor_authentication_required && <tr>
@@ -231,58 +231,75 @@ class Me extends React.Component {
                                     {user.second_factor_auth && <div className={"icon-container"}><EditIcon/></div>}
                                 </td>
                             </tr>}
-                            {!isEmpty(ssh_keys) && ssh_keys.map((ssh_key, index) =>
-                                <tr key={index}>
-                                    <td className="attribute-key">{index === 0 && <span>{I18n.t("user.ssh_key")}<Tooltip
-                                        tip={I18n.t("user.ssh_keyTooltip")}/></span>}</td>
-                                    {!ssh_key.manual && <td className="attribute-value">
-                                        {ssh_key.ssh_value}
-                                        {ssh_key.fileTypeError &&
-                                        <ErrorIndicator msg={I18n.t("user.sshKeyError")} decode={false}/>}
-                                        {this.showConvertSSHKey(ssh_key.ssh_value) &&
-                                        <span className="ssh-convert"
-                                              dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.sshConvertInfo"))}}/>}
-
-                                    </td>}
-                                    {ssh_key.manual && <td className="attribute-value">
-                                        <InputField displayLabel={false}
-                                                    name={`ssh_key_${index}`}
-                                                    value={ssh_key.ssh_value}
-                                                    multiline={true}
-                                                    error={ssh_key.fileTypeError}
-                                                    large={true}
-                                                    onBlur={() => this.validateSshValue(index)}
-                                                    onChange={e => this.updateSshValue(e.target.value, index)}/>
-                                        {ssh_key.fileTypeError &&
-                                        <ErrorIndicator msg={I18n.t("user.sshKeyError")} decode={false}/>}
-                                        {this.showConvertSSHKey(ssh_key.ssh_value) &&
-                                        <span className="ssh-convert"
-                                              dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.sshConvertInfo"))}}/>}
-
-                                    </td>}
-                                    <td className="actions" onClick={this.onFileRemoval(index)}>
-                                        <div className={"icon-container"}><TrashIcon/></div>
-                                    </td>
-                                </tr>)}
                             </tbody>
                         </table>
+                        <div className={"profile-actions"}>
+                            <a className="sds--btn sds--btn--secondary"
+                               href={`${window.location.protocol}//${window.location.host}/api/users/personal`.replaceAll("3000", "8080")}
+                               download={`${I18n.t("home.tabs.me")}.json`}>
+                                {I18n.t("user.download")}
+                            </a>
+                        </div>
                     </div>
+                    <h2>{I18n.t("user.ssh_key")}</h2>
+                    {isEmpty(ssh_keys) && <p className={"ssh-keys-zero-state"}>{I18n.t("user.ssh_keys_zero_state")}</p>}
+                    {!isEmpty(ssh_keys) &&
+                        <div className={"sds--table"}>
+                            <table className={"my-attributes"}>
+                                <tbody>
+                                {ssh_keys.map((ssh_key, index) =>
+                                    <tr key={index}>
+                                        <td className="attribute-key">{index === 0 &&
+                                            <span>{I18n.t("user.ssh_key")}<Tooltip
+                                                tip={I18n.t("user.ssh_keyTooltip")}/></span>}</td>
+                                        {!ssh_key.manual && <td className="attribute-value">
+                                            {ssh_key.ssh_value}
+                                            {ssh_key.fileTypeError &&
+                                                <ErrorIndicator msg={I18n.t("user.sshKeyError")} decode={false}/>}
+                                            {this.showConvertSSHKey(ssh_key.ssh_value) &&
+                                                <span className="ssh-convert"
+                                                      dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.sshConvertInfo"))}}/>}
+
+                                        </td>}
+                                        {ssh_key.manual && <td className="attribute-value">
+                                            <InputField displayLabel={false}
+                                                        name={`ssh_key_${index}`}
+                                                        value={ssh_key.ssh_value}
+                                                        multiline={true}
+                                                        error={ssh_key.fileTypeError}
+                                                        large={true}
+                                                        onBlur={() => this.validateSshValue(index)}
+                                                        onChange={e => this.updateSshValue(e.target.value, index)}/>
+                                            {ssh_key.fileTypeError &&
+                                                <ErrorIndicator msg={I18n.t("user.sshKeyError")} decode={false}/>}
+                                            {this.showConvertSSHKey(ssh_key.ssh_value) &&
+                                                <span className="ssh-convert"
+                                                      dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.sshConvertInfo"))}}/>}
+
+                                        </td>}
+                                        <td className="actions" onClick={this.onFileRemoval(index)}>
+                                            <div className={"icon-container"}><TrashIcon/></div>
+                                        </td>
+                                    </tr>)}
+                                </tbody>
+                            </table>
+                        </div>
+                    }
                     <div className={"ssh-keys-actions"}>
                         <UploadButton name={I18n.t("profile.addSSHKey")}
                                       acceptFileFormat={".pub"}
                                       txt={I18n.t("forms.uploadSSH")}
                                       onFileUpload={this.onFileUpload}/>
-                        <a href="/" onClick={e => this.addSshKey(e)}>{I18n.t("profile.addSSHKeyManually")}</a>
-                    </div>
-                    <section className="actions">
-                        <a className="sds--btn sds--btn--secondary"
-                           href={`${window.location.protocol}//${window.location.host}/api/users/personal`.replaceAll("3000", "8080")}
-                           download={`${I18n.t("home.tabs.me")}.json`}>
-                            {I18n.t("user.download")}
+                        <a href="/" onClick={e => this.addSshKey(e)}>
+                            {I18n.t("profile.addSSHKeyManually")}
                         </a>
-                        <Button disabled={disabledSubmit} txt={I18n.t("user.update")}
-                                onClick={this.submit}/>
-                    </section>
+                        {updateVisible && <section className="update-action">
+                            <Button disabled={disabledSubmit} txt={I18n.t("user.update")}
+                                    onClick={this.submit}/>
+                        </section>}
+                    </div>
+
+
                     <section className={"delete-profile"}>
                         <h2>{I18n.t("profile.deleteHeader")}</h2>
                         <p>{I18n.t("profile.deleteDisclaimer")}</p>
@@ -298,7 +315,7 @@ class Me extends React.Component {
     render() {
         const {
             confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, confirmationQuestion,
-            initial, ssh_keys, user_ip_networks, nameConfirmation
+            initial, ssh_keys, user_ip_networks, nameConfirmation, updateVisible
         } = this.state;
         const {user, config} = this.props;
         const disabledSubmit = !initial && !this.isValid();
@@ -323,7 +340,7 @@ class Me extends React.Component {
                     </div>
                 </ConfirmationDialog>
 
-                {this.renderForm(user, ssh_keys, user_ip_networks, disabledSubmit, config)}
+                {this.renderForm(user, ssh_keys, user_ip_networks, disabledSubmit, config, updateVisible)}
             </div>
         );
     }

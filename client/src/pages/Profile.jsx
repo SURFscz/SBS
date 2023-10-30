@@ -6,7 +6,6 @@ import {ReactComponent as PersonIcon} from "../icons/single-neutral-check.svg";
 
 import UnitHeader from "../components/redesign/UnitHeader";
 import Me from "./Me";
-import {dateFromEpoch} from "../utils/Date";
 import Tabs from "../components/Tabs";
 import {auditLogsMe} from "../api";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -73,12 +72,14 @@ class Profile extends React.Component {
     }
 
     getDetailsTab = meProps => {
-        return (<div key="details" name="details" label={I18n.t("home.details")}
-                     icon={<FontAwesomeIcon icon="user-alt"/>}>
-            <div className={"user-details"}>
-                <Me {...meProps}/>
+        return (
+            <div key="details" name="details" label={I18n.t("home.details")}
+                 icon={<FontAwesomeIcon icon="user-alt"/>}>
+                <div className={"user-details"}>
+                    <Me {...meProps}/>
+                </div>
             </div>
-        </div>)
+        )
     }
 
     tabChanged = name => {
@@ -90,16 +91,16 @@ class Profile extends React.Component {
         const {tab, filteredAuditLogs, query} = this.state;
         const {user} = this.props;
         const meProps = {...this.props}
-        const tabs = [this.getDetailsTab(meProps), this.getHistoryTab(filteredAuditLogs, query), ]
+        const tabs = [this.getDetailsTab(meProps), this.getHistoryTab(filteredAuditLogs, query),]
         return (
             <div className="mod-user-profile">
-                <UnitHeader obj={({name: I18n.t("models.users.profile", {name: user.name}), svg: PersonIcon})}
+                <UnitHeader obj={({name: user.name, svg: PersonIcon})}
                             mayEdit={false}
                             history={this.props.history}
                             auditLogPath={"me/me"}
                             svg={PersonIcon}
                             name={user.name}>
-                    <p>{I18n.t("models.users.subProfile", {date: dateFromEpoch(user.created_at)})}</p>
+                    <p>{I18n.t("models.users.username")}<span className={"username"}>{user.username}</span></p>
                 </UnitHeader>
                 <Tabs activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}

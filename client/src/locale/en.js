@@ -168,6 +168,7 @@ const en = {
             blank: "",
             icon: "",
             profile: "Your profile",
+            username: "Your username: ",
             subProfile: "Created on {{date}}",
             subOtherProfile: "The profile of {{name}} was created at {{date}}",
             institute: "Institution",
@@ -629,6 +630,7 @@ const en = {
     user: {
         titleUpdate: "Update your user profile SSH keys",
         ssh_key: "SSH public keys",
+        ssh_keys_zero_state: "There are no SSH keys associated with your profile",
         ssh_keyPlaceholder: "Your public SSH keys to log in to services",
         ssh_keyTooltip: "Your public SSH keys will be provisioned to the services you have access to. You can also upload your public SSH key.",
         sshKeyError: "This SSH cipher isn't recognized. Please refer to the <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://edu.nl/87btm\">documentation</a> for supported formats.",

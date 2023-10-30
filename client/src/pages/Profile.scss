@@ -2,6 +2,9 @@
 @import "../stylesheets/forms";
 
 .mod-user-profile {
+    span.username {
+        font-weight: 600;
+    }
 
     div.user-profile {
         margin-bottom: 25px;
