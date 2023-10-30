@@ -19,7 +19,7 @@ from server.auth.security import confirm_collaboration_admin, current_user_id, c
     confirm_authorized_api_call, \
     confirm_allow_impersonation, confirm_organisation_admin_or_manager, confirm_external_api_call, \
     is_organisation_admin_or_manager, is_application_admin, confirm_service_admin, \
-    confirm_organisation_api_collaboration, is_collaboration_admin
+    confirm_organisation_api_collaboration, is_collaboration_admin, confirm_write_access
 from server.db.activity import update_last_activity_date
 from server.db.db import db
 from server.db.defaults import (default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name,
@@ -692,14 +692,17 @@ def update_collaboration():
     data = current_request.get_json()
     confirm_collaboration_admin(data["id"])
 
-    organisation = db.session.get(Organisation, data["organisation_id"])
+    organisation = db.session.get(Organisation, int(data["organisation_id"]))
     if is_collaboration_admin(current_user_id(), collaboration_id=data["id"]) and "units" in data:
         del data["units"]
 
     _validate_collaboration(data, organisation, new_collaboration=False)
 
     collaboration = db.session.get(Collaboration, data["id"])
-    if collaboration.short_name != data["short_name"]:
+    if collaboration.organisation_id != organisation.id:
+        confirm_write_access()
+
+    if collaboration.short_name != data["short_name"] or collaboration.organisation_id != organisation.id:
         for group in collaboration.groups:
             group.global_urn = f"{organisation.short_name}:{data['short_name']}:{group.short_name}"
             db.session.merge(group)

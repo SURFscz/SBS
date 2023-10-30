@@ -2,6 +2,7 @@ import React from "react";
 import "./CollaborationForm.scss";
 
 import {
+    allOrganisations,
     collaborationById,
     collaborationNameExists,
     collaborationShortNameExists,
@@ -82,9 +83,16 @@ class CollaborationForm extends React.Component {
         const params = this.props.match.params;
         if (params.id) {
             collaborationById(params.id).then(collaboration => {
+                const {user} = this.props;
                 const organisation = collaboration.organisation;
                 const orgOptions = this.mapOrganisationsToOptions([organisation])
                 this.updateBreadCrumb(orgOptions[0], collaboration, false, false);
+                if (user.admin) {
+                    allOrganisations().then(res => {
+                        const orgOptions = this.mapOrganisationsToOptions(res);
+                        this.setState({organisations: orgOptions });
+                    });
+                }
                 const expiryDate = collaboration.expiry_date ? moment(collaboration.expiry_date * 1000).toDate() : null;
                 const tagOptions = collaboration.tags.map(tag => ({label: tag.tag_value, value: tag.id}));
                 this.setState({
@@ -654,7 +662,10 @@ class CollaborationForm extends React.Component {
                                      () => {
                                          this.validateCollaborationName({target: {value: this.state.name}});
                                          this.validateCollaborationShortName({target: {value: this.state.short_name}});
-                                         this.updateBreadCrumb(selectedOption, null, false, false);
+                                         this.updateBreadCrumb(selectedOption,
+                                             this.state.collaboration,
+                                             false,
+                                             false);
                                          this.updateTags(selectedOption.value);
                                          this.updateUnits(selectedOption, {units: []});
                                      })}
