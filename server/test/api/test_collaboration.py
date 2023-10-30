@@ -13,7 +13,7 @@ from server.db.models import flatten
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uva_research_name, john_name, \
     ai_computing_short_name, uuc_teachers_name, read_image, collaboration_uva_researcher_uuid, service_group_wiki_name1, \
-    service_storage_name, uva_secret
+    service_storage_name, uva_secret, amsterdam_uva_name
 from server.test.seed import uuc_secret, uuc_name
 
 
@@ -247,6 +247,30 @@ class TestCollaboration(AbstractTest):
 
         collaboration = db.session.get(Collaboration, collaboration["id"])
         self.assertEqual(2, len(collaboration.tags))
+
+    def test_collaboration_update_organisation(self):
+        collaboration = self._find_by_identifier()
+        pre_uuid4 = collaboration["uuid4"]
+
+        organisation_id = self.find_entity_by_name(Organisation, amsterdam_uva_name).id
+        self.login()
+        collaboration["units"] = []
+        collaboration["organisation_id"] = organisation_id
+        self.put("/api/collaborations", body=collaboration)
+
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        self.assertEqual("uva:ai_computing", collaboration.global_urn)
+        self.assertListEqual(["uva:ai_computing:ai_dev", "uva:ai_computing:ai_res"],
+                             sorted(group.global_urn for group in collaboration.groups))
+        self.assertEqual(pre_uuid4, collaboration.uuid4)
+
+    def test_collaboration_update_organisation_not_allowed(self):
+        collaboration = self._find_by_identifier()
+        organisation_id = self.find_entity_by_name(Organisation, amsterdam_uva_name).id
+        self.login("urn:admin")
+        collaboration["units"] = []
+        collaboration["organisation_id"] = organisation_id
+        self.put("/api/collaborations", body=collaboration, response_status_code=403)
 
     def test_collaboration_update_orphan_tag(self):
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
