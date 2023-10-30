@@ -49,7 +49,7 @@
         "eslint-plugin-risxss": "^2.1.0",
         "http-proxy-middleware": "^2.0.6",
         "react-scripts": "^5.0.1",
-        "sass": "^1.69.4"
+        "sass": "^1.69.5"
     },
     "resolutions": {
         "minimatch": "^9.0.0",
