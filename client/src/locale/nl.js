@@ -589,7 +589,7 @@ const nl = {
             searchPlaceHolder: "Zoek naar dienstbeheerders..",
             noEntities: "Er zijn geen dienstbeheerders",
             new: "Nodig beheerders uit",
-            title: "Dienst beheerders"
+            title: "Dienstbeheerders"
         },
         userTokens: {
             backToUserTokens: "Terug naar alle diensttokens",
@@ -1121,8 +1121,8 @@ const nl = {
             connectQuestion: "1. Wie mag inloggen op de dienst?",
             coMembers: "Gekoppelde samenwerkingen",
             institutionSelection: "Ik kies hieronder wie mag koppelen",
-            none: "None",
-            noneText: "Geen van de samenwerkingen mogen koppelen",
+            none: "Geen",
+            noneText: "Samenwerkingen mogen niet koppelen",
             noOne: "Niemand",
             later: "Ik ga dit later instellen",
             everyOne: "Iedereen",
