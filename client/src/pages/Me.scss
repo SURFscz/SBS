@@ -55,8 +55,12 @@ div.user-profile-tab-container {
 
                 th {
                     border-bottom: none;
+                }
 
+                td {
                     &.attribute-value {
+                        font-weight: 600;
+                        word-break: break-all;
                         width: 50%;
                     }
 
@@ -66,16 +70,6 @@ div.user-profile-tab-container {
 
                     &.actions {
                         width: 25px;
-                    }
-                }
-
-                td {
-                    &.attribute-value {
-                        font-weight: 600;
-                        word-break: break-all;
-                    }
-
-                    &.actions {
                         text-align: right;
 
                         .icon-container {
@@ -88,6 +82,15 @@ div.user-profile-tab-container {
                     }
 
                 }
+            }
+        }
+
+        .profile-actions {
+            display: flex;
+            margin-top: 20px;
+
+            a {
+                margin-left: auto;
             }
         }
 
@@ -257,16 +260,23 @@ div.user-profile-tab-container {
         .ssh-keys-actions {
             display: flex;
             align-items: center;
+            margin-bottom: 60px;
 
             a {
                 margin-left: 25px;
                 color: var(--sds--palette--support-color--500);
             }
+
+            .update-action {
+                margin-left: auto;
+            }
         }
     }
-    section.actions {
-        padding: 30px 0 15px 0;
+
+    .ssh-keys-zero-state {
+        margin: 20px 0;
     }
+
     .delete-profile {
         p {
             margin: 15px 0 25px 0;

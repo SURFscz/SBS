@@ -168,6 +168,7 @@ const nl = {
             blank: "",
             icon: "",
             profile: "Je profiel",
+            username: "Je gebruikersnaam: ",
             subProfile: "Aangemaakt op {{date}}",
             subOtherProfile: "Het profiel van {{name}} is aangemaakt op {{date}}",
             institute: "Instelling",
@@ -629,6 +630,7 @@ const nl = {
     user: {
         titleUpdate: "Werk de SSH-sleutels in je gebruikersprofiel bij",
         ssh_key: "Publieke SSH-sleutel",
+        ssh_keys_zero_state: "Er zijn geen SSH-sleutels geassociëerd bij je profiel",
         ssh_keyPlaceholder: "Je publieke SSH-sleutel om in te loggen op de dienst",
         ssh_keyTooltip: "Je publieke SSH-sleutel zal worden uitgewisseld met de diensten waar je toegang toe hebt. Je kunt je publieke SSH-sleutel ook uploaden.",
         sshKeyError: "Deze SSH cipher wordt niet herkend. In de <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://edu.nl/87btm\">documentatie</a> staan de ondersteunde formaten.",
