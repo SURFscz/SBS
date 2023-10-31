@@ -8,7 +8,7 @@ import {
 } from "../../api";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
 import {ReactComponent as SearchIcon} from "@surfnet/sds/icons/functional-icons/search.svg";
-
+import {ReactComponent as NoServicesIcon} from "../../icons/no_services.svg";
 import "./UsedServices.scss";
 import {isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
 import I18n from "../../locale/I18n";
@@ -60,6 +60,7 @@ class UsedServices extends React.Component {
 
     componentDidMount = () => {
         const {collaboration} = this.props;
+        const urlSearchParams = new URLSearchParams(window.location.search);
         allServices()
             .then(json => {
                 const services = json;
@@ -78,7 +79,8 @@ class UsedServices extends React.Component {
                             && !service.override_access_allowed_all_connections
                             && (service.allow_restricted_orgs || !collaboration.organisation.services_restricted);
                     });
-                this.setState({services: filteredServices, loading: false});
+                const currentTab = urlSearchParams.has("add") ? AVAILABLE : CONNECTIONS;
+                this.setState({services: filteredServices, currentTab: currentTab, loading: false});
                 setTimeout(() => this.input && this.input.focus(), 150);
                 const {socketSubscribed} = this.state;
                 if (!socketSubscribed) {
@@ -325,17 +327,23 @@ class UsedServices extends React.Component {
         const includeAup = !isEmpty(service.accepted_user_policy)
         return <div className="service-confirmation">
             {warnAboutPrivacyPolicy && <p className="no-privacy-policy">
-                        {I18n.t("models.services.confirmations.noPolicy")}
-                    </p>}
+                {I18n.t("models.services.confirmations.noPolicy")}
+            </p>}
             {includeAup && <CheckBox name="disabledConfirm"
-                      value={!disabledConfirm}
-                      onChange={() => this.setState({disabledConfirm: !this.state.disabledConfirm})}
-                      info={I18n.t("models.services.confirmations.check", {
-                          aup: service.accepted_user_policy,
-                          name: service.name
-                      })}/>}
+                                     value={!disabledConfirm}
+                                     onChange={() => this.setState({disabledConfirm: !this.state.disabledConfirm})}
+                                     info={I18n.t("models.services.confirmations.check", {
+                                         aup: service.accepted_user_policy,
+                                         name: service.name
+                                     })}/>}
         </div>
     }
+
+    gotoConnectService = e => {
+        stopEvent(e);
+        this.setState({currentTab: AVAILABLE});
+    }
+
     queryChanged = e => {
         const query = e.target.value;
         this.setState({query: query});
@@ -367,6 +375,14 @@ class UsedServices extends React.Component {
     renderConnectedServices = (user, usedServices) => {
         return (
             <div>
+                {isEmpty(usedServices) && <div className="no-services">
+                    <p className={"margin"}>{I18n.t("models.collaboration.noServices")}
+                    <a href={"/#"}
+                       onClick={this.gotoConnectService}>{I18n.t("models.collaboration.connectFirstService")}</a>
+                </p>
+                    <NoServicesIcon/>
+                </div>
+                }
                 {usedServices.map(service =>
                     <ServiceCard service={service}
                                  key={service.id}

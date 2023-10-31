@@ -538,12 +538,8 @@ export function joinRequestForCollaboration(clientData) {
     return postPutJson("/api/join_requests", clientData, "post", false);
 }
 
-export function joinRequestAlreadyMember(clientData) {
-    return postPutJson("/api/join_requests/already-member", clientData, "post", false);
-}
-
 export function joinRequestAccept(joinRequest) {
-    return postPutJson("/api/join_requests/accept", joinRequest, "put", false);
+    return postPutJson("/api/join_requests/accept", {hash: joinRequest.hash}, "put", false);
 }
 
 export function joinRequestDecline(joinRequest, rejectionReason) {
@@ -562,7 +558,7 @@ export function organisationInvitationByHash(hash) {
 export function organisationInvitationAccept(organisationInvitation) {
     return fetchJson("/api/organisation_invitations/accept", {
         method: "put",
-        body: JSON.stringify(organisationInvitation)
+        body: JSON.stringify({hash: organisationInvitation.hash})
     }, {}, false);
 }
 
@@ -585,7 +581,7 @@ export function invitationByHash(hash, expand = false) {
 
 export function invitationAccept(invitation) {
     return fetchJson("/api/invitations/accept",
-        {method: "put", body: JSON.stringify(invitation)}, {}, false);
+        {method: "put", body: JSON.stringify({hash: invitation.hash})}, {}, false);
 }
 
 export function invitationDecline(invitation) {
@@ -939,7 +935,7 @@ export function serviceInvitationByHash(hash) {
 export function serviceInvitationAccept(serviceInvitation) {
     return fetchJson("/api/service_invitations/accept", {
         method: "put",
-        body: JSON.stringify(serviceInvitation)
+        body: JSON.stringify({hash: serviceInvitation.hash})
     }, {}, false);
 }
 

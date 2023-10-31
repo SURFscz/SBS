@@ -52,6 +52,14 @@
         margin-bottom: 25px;
     }
 
+    .no-services {
+        svg {
+            width: 460px;
+            height: auto;
+            margin: 20px 0 0 20px;
+        }
+    }
+
     a.back-to-services {
         display: flex;
         align-items: center;
