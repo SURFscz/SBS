@@ -335,7 +335,7 @@ class CollaborationDetail extends React.Component {
         health().then(() => {
             const {showMemberView, collaboration, schacHomeOrganisation, userTokens, adminOfCollaboration} = this.state;
             const {config, user} = this.props;
-            const newTab = showMemberView ? "about" : "admins";
+            const newTab = "about";
             this.tabChanged(newTab, collaboration.id);
             this.showExpiryDateFlash(user, collaboration, config, !showMemberView);
             this.setState({
