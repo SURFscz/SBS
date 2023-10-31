@@ -136,7 +136,7 @@ class CollaborationDetail extends React.Component {
                     Promise.all(promises)
                         .then(res => {
                             const {user, config} = this.props;
-                            const tab = params.tab || (adminOfCollaboration ? this.state.tab : "members");
+                            const tab = params.tab || (adminOfCollaboration ? this.state.tab : "about");
                             const collaboration = res[0];
                             const userTokens = res[1];
                             const schacHomeOrganisation = adminOfCollaboration ? null : user.organisation_from_user_schac_home;
