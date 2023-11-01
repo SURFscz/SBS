@@ -540,5 +540,5 @@ class TestService(AbstractTest):
 
         mail = self.app.mail
         with mail.record_messages() as outbox:
-            service = self.delete("/api/services/request_delete", primary_key=service_id)
+            self.delete("/api/services/request_delete", primary_key=service_id)
             self.assertTrue(f"http://localhost:3000/services/{service_id}" in outbox[0].html)
