@@ -533,3 +533,12 @@ class TestService(AbstractTest):
         self.login("urn:jane")
         has_access = self.get(f"/api/services/member_access_to_service/{service_network.id}", with_basic_auth=False)
         self.assertTrue(has_access)
+
+    def test_service_delete_request(self):
+        self.login("urn:james")
+        service_id = self.find_entity_by_name(Service, service_cloud_name).id
+
+        mail = self.app.mail
+        with mail.record_messages() as outbox:
+            service = self.delete("/api/services/request_delete", primary_key=service_id)
+            self.assertTrue(f"http://localhost:3000/services/{service_id}" in outbox[0].html)

@@ -316,6 +316,10 @@ export function deleteService(id) {
     return fetchDelete(`/api/services/${id}`)
 }
 
+export function requestDeleteService(id) {
+    return fetchDelete(`/api/services/request_delete/${id}`)
+}
+
 export function resetLdapPassword(service) {
     return fetchJson(`/api/services/reset_ldap_password/${service.id}`);
 }

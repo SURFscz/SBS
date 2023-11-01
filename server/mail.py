@@ -69,6 +69,10 @@ def _user_attributes(user: User):
     }
 
 
+def _now_strf_time():
+    return datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+
+
 def _do_send_mail(subject, recipients, template, context, preview, working_outside_of_request_context=False, cc=None,
                   attachment_url=None):
     recipients = recipients if isinstance(recipients, list) else list(
@@ -117,7 +121,7 @@ def _do_send_mail(subject, recipients, template, context, preview, working_outsi
     if suppress_mail and not preview:
         logger.info(f"Sending mail {msg.html}")
 
-    if open_mail_in_browser and not preview:
+    if open_mail_in_browser and not preview and False:
         _open_mail_in_browser(msg)
     return msg.html
 
@@ -327,7 +331,7 @@ def mail_error(environment, current_user, recipients, tb):
         subject=f"Error on {environment}",
         recipients=recipients,
         template="error_notification",
-        context={"environment": environment, "tb": tb, "date": datetime.datetime.now(), "current_user": current_user},
+        context={"environment": environment, "tb": tb, "date": _now_strf_time(), "current_user": current_user},
         preview=False)
 
 
@@ -337,7 +341,7 @@ def mail_feedback(environment, message, current_user, recipients):
         subject=f"Feedback on {environment} from {current_user.name}",
         recipients=recipients,
         template="feedback",
-        context={"environment": environment, "message": message, "date": datetime.datetime.now(),
+        context={"environment": environment, "message": message, "date": _now_strf_time(),
                  "current_user": current_user},
         preview=False)
 
@@ -363,13 +367,31 @@ def mail_platform_admins(obj):
             recipients=[mail_cfg.beheer_email],
             template="platform_notification",
             context={"environment": mail_cfg.environment,
-                     "date": datetime.datetime.now(),
+                     "date": _now_strf_time(),
                      "object_type": type(obj).__name__,
                      "current_user": current_user,
                      "obj": obj},
             preview=False,
             working_outside_of_request_context=True
         )
+
+
+def mail_delete_service_request(service):
+    mail_cfg = current_app.app_config.mail
+    current_user = db.session.get(User, current_user_id())
+    _do_send_mail(
+        subject=f"Request to delete service {service.name}) by {current_user.name}"
+                f" in environment {mail_cfg.environment}",
+        recipients=[mail_cfg.beheer_email],
+        template="request_delete_service",
+        context={"environment": mail_cfg.environment,
+                 "date": _now_strf_time(),
+                 "service": service,
+                 "url": f"{current_app.app_config.base_url}/services/{service.id}",
+                 "current_user": current_user},
+        preview=False,
+        working_outside_of_request_context=False
+    )
 
 
 def mail_outstanding_requests(collaboration_requests, collaboration_join_requests):
@@ -399,7 +421,7 @@ def mail_account_deletion(user):
         recipients=recipients,
         template="user_account_deleted",
         context={"environment": mail_cfg.environment,
-                 "date": datetime.datetime.now(),
+                 "date": _now_strf_time(),
                  "attributes": _user_attributes(user),
                  "user": user},
         preview=False
@@ -416,7 +438,7 @@ def mail_suspended_account_deletion(uids: list[str]):
         recipients=recipients,
         template="admin_suspended_user_account_deleted",
         context={"environment": mail_cfg.environment,
-                 "date": datetime.datetime.now(),
+                 "date": _now_strf_time(),
                  "uids": uids},
         preview=False,
         working_outside_of_request_context=True
