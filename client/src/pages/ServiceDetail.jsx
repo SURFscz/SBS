@@ -219,15 +219,16 @@ class ServiceDetail extends React.Component {
         }
     };
 
-    getDetailsTab = (service, userAdmin, serviceAdmin, showServiceAdminView) => {
+    getDetailsTab = (service, user, serviceAdmin, showServiceAdminView) => {
         return (<div key="details" name="details"
                      label={I18n.t("home.tabs.details")}
                      icon={<DetailsIcon/>}>
             <ServiceOverview {...this.props}
                              refresh={this.refresh}
                              service={service}
+                             user={user}
                              showServiceAdminView={showServiceAdminView}
-                             userAdmin={userAdmin}
+                             userAdmin={user.admin}
                              serviceAdmin={serviceAdmin}/>
         </div>)
     }
@@ -503,7 +504,7 @@ class ServiceDetail extends React.Component {
             tabs = [this.getAdminsTab(service)];
         } else if (userServiceAdmin) {
             tabs = [
-                this.getDetailsTab(service, user.admin, userServiceAdmin, showServiceAdminView),
+                this.getDetailsTab(service, user, userServiceAdmin, showServiceAdminView),
                 this.getAdminsTab(service),
                 this.getServiceGroupsTab(service),
                 this.getCollaborationsTab(service, showServiceAdminView),

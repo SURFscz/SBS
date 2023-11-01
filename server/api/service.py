@@ -17,7 +17,7 @@ from server.db.defaults import STATUS_ACTIVE, cleanse_short_name, default_expiry
 from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, \
     User, ServiceInvitation, ServiceMembership, ServiceToken
 from server.db.models import update, save, delete, unique_model_objects
-from server.mail import mail_platform_admins, mail_service_invitation
+from server.mail import mail_platform_admins, mail_service_invitation, mail_delete_service_request
 
 URI_ATTRIBUTES = ["uri", "uri_info", "privacy_policy", "accepted_user_policy"]
 
@@ -577,10 +577,19 @@ def trust_organisation(service_id, organisation_id):
     return _do_toggle_permission_organisation(service_id, organisation_id, ALWAYS)
 
 
+@service_api.route("/request_delete/<service_id>", methods=["DELETE"], strict_slashes=False)
+@json_endpoint
+def request_delete_service(service_id):
+    confirm_service_admin(service_id)
+    service = Service.query.get(service_id)
+    mail_delete_service_request(service)
+    return {}, 204
+
+
 @service_api.route("/<service_id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_service(service_id):
-    confirm_service_admin(service_id)
+    confirm_write_access()
     return delete(Service, service_id)
 
 

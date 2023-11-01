@@ -3,7 +3,7 @@ import {
     createServiceToken,
     deleteService,
     deleteServiceToken,
-    ipNetworks,
+    ipNetworks, requestDeleteService,
     resetLdapPassword,
     serviceAbbreviationExists,
     serviceAupDelete,
@@ -40,6 +40,7 @@ import SpinnerField from "../components/redesign/SpinnerField";
 import CheckBox from "../components/CheckBox";
 import SelectField from "../components/SelectField";
 import {dateFromEpoch} from "../utils/Date";
+import {isUserServiceAdmin} from "../utils/UserRole";
 
 const toc = ["general", "contacts", "policy", "SCIMServer", "SCIMClient", "ldap", "pamWebLogin", "tokens"];
 
@@ -292,8 +293,10 @@ class ServiceOverview extends React.Component {
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
 
     delete = () => {
-        const {service, isServiceAdmin} = this.state;
-        if (!isEmpty(service.collaborations) && isServiceAdmin) {
+        const {service} = this.state;
+        const {user} = this.props;
+        const userServiceAdmin = isUserServiceAdmin(user, {id: service.id});
+        if (!isEmpty(service.collaborations) && userServiceAdmin) {
             this.setState({
                 confirmationDialogOpen: true,
                 leavePage: false,
@@ -307,12 +310,13 @@ class ServiceOverview extends React.Component {
             this.setState({
                 confirmationDialogOpen: true,
                 leavePage: false,
-                confirmationDialogQuestion: I18n.t("service.deleteConfirmation", {name: service.name}),
+                confirmationDialogQuestion: I18n.t(`service.${userServiceAdmin ? "requestDeleteConfirmation" : "deleteConfirmation"}`,
+                    {name: service.name}),
                 warning: true,
                 confirmationTxt: I18n.t("confirmationDialog.confirm"),
                 cancelDialogAction: this.closeConfirmationDialog,
                 confirmationHeader: I18n.t("confirmationDialog.title"),
-                confirmationDialogAction: this.doDelete
+                confirmationDialogAction: userServiceAdmin ? this.doRequestDelete : this.doDelete
             });
         }
     };
@@ -325,6 +329,15 @@ class ServiceOverview extends React.Component {
             this.props.history.push("/home");
         });
     };
+
+    doRequestDelete = () => {
+        this.setState({loading: true, confirmationDialogOpen: false});
+        const {service} = this.state;
+        requestDeleteService(service.id).then(() => {
+            this.setState({loading: false});
+            setFlash(I18n.t("service.flash.requestDeleted", {name: service.name}));
+        });
+    }
 
     doDeleteToken = serviceToken => {
         this.setState({loading: true});
