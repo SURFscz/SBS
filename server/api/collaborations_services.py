@@ -170,15 +170,16 @@ def delete_collaborations_services(collaboration_id, service_id):
     collaboration = db.session.get(Collaboration, collaboration_id)
 
     service = db.session.get(Service, service_id)
-    collaboration.services.remove(service)
+    if service in collaboration.services:
+        collaboration.services.remove(service)
 
     update_last_activity_date(collaboration_id)
 
     db.session.merge(collaboration)
     db.session.commit()
 
-    emit_socket(f"collaboration_{collaboration.id}")
-    emit_socket(f"service_{service.id}")
-    broadcast_service_deleted(collaboration.id, service.id)
+    emit_socket(f"collaboration_{collaboration_id}")
+    emit_socket(f"service_{service_id}")
+    broadcast_service_deleted(collaboration_id, service_id)
 
     return {'collaboration_id': collaboration_id, 'service_id': service_id}, 204
