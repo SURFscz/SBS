@@ -129,19 +129,20 @@ class AbstractTest(TestCase):
                 self.assertEqual(response.headers.get(key), value)
             return response if response_status_code == 302 else response.json if hasattr(response, "json") else None
 
-    def post(self, url, body={}, headers={}, response_status_code=201, with_basic_auth=True):
-        return self._do_call(body, self.client.post, headers, response_status_code, url, with_basic_auth)
+    def post(self, url, body={}, headers={}, response_status_code=201, with_basic_auth=True, result_to_json=False):
+        return self._do_call(body, self.client.post, headers, response_status_code, url, with_basic_auth,
+                             result_to_json)
 
-    def put(self, url, body={}, headers={}, response_status_code=201, with_basic_auth=True):
-        return self._do_call(body, self.client.put, headers, response_status_code, url, with_basic_auth)
+    def put(self, url, body={}, headers={}, response_status_code=201, with_basic_auth=True, result_to_json=False):
+        return self._do_call(body, self.client.put, headers, response_status_code, url, with_basic_auth, result_to_json)
 
-    def _do_call(self, body, call, headers, response_status_code, url, with_basic_auth):
+    def _do_call(self, body, call, headers, response_status_code, url, with_basic_auth, result_to_json):
         with requests.Session():
             response = call(url, headers={**BASIC_AUTH_HEADER, **headers} if with_basic_auth else headers,
                             data=json.dumps(body),
                             content_type="application/json")
             self.assertEqual(response_status_code, response.status_code, msg=str(response.json))
-            return response.json
+            return json.loads(response.json) if result_to_json else response.json
 
     def delete(self, url, primary_key=None, with_basic_auth=True, response_status_code=204, headers={}):
         primary_key_part = f"/{primary_key}" if primary_key else ""
