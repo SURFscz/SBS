@@ -543,6 +543,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
 
     monitoring_co_1 = Collaboration(name="Monitoring CO numero 1",
                                     identifier="37d55167-23e4-4099-ae20-4f3d8d284b14",
+                                    uuid4="b85e2ae6-05f3-4c27-9078-e11a420bdc08",
                                     global_urn="ucc:monitoring1",
                                     website_url="https://www.google.nl",
                                     description="CO voor monitoring.  NIET AANKOMEN.",
@@ -553,6 +554,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                     accepted_user_policy="https://www.uuc.nl/monitor")
     monitoring_co_2 = Collaboration(name="Monitoring CO numero 2",
                                     identifier="4c1095e5-ae60-4d6d-8bfe-f711d0f81942",
+                                    uuid4="716065e3-5154-4883-b1a6-06d6e32f11e9",
                                     global_urn="tue:monitoring2",
                                     website_url="https://www.google.nl",
                                     description="CO voor monitoring.  NIET AANKOMEN.",
