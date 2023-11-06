@@ -1,9 +1,10 @@
 import io
+import json
 import random
 import string
 import uuid
 from datetime import datetime, timedelta
-
+from collections import OrderedDict
 import qrcode
 from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app, session
@@ -47,10 +48,12 @@ def _validate_pam_sso_session(pam_sso_session: PamSSOSession, pin, validate_pin,
     if validate_pin and pam_sso_session.pin != pin:
         return {"result": "FAIL", "info": "Incorrect pin"}
 
+    groups = {m.collaboration.short_name: m.collaboration.name for m in user.collaboration_memberships if
+              service in m.collaboration.services or service in m.collaboration.organisation.services}
+    sorted_groups = OrderedDict(sorted(groups.items(), key=lambda x: x[1].casefold(), reverse=False))
     return {"result": "SUCCESS",
             "username": user.username,
-            "groups": {m.collaboration.short_name: m.collaboration.name for m in user.collaboration_memberships
-                       if service in m.collaboration.services or service in m.collaboration.organisation.services},
+            "groups": sorted_groups,
             "info": f"User {user.uid} has authenticated successfully"}
 
 
@@ -188,7 +191,9 @@ def check_pin():
     log_user_login(PAM_WEB_LOGIN, success, user, user.uid, service, service.entity_id, status=validation["result"])
 
     logger.debug(f"PamWebSSO check-pin for service {service.name} for user {user.uid} with result {validation}")
-    return validation, 201
+    # We need to preserve the ordering of the groups dict, soo we dump the validation here
+    json_res = json.dumps(validation)
+    return json_res, 201
 
 
 @pam_websso_api.route("/ssh_keys", methods=["GET"], strict_slashes=False)
