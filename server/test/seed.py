@@ -156,16 +156,20 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
 
     john = User(uid="urn:john", name=john_name, email="john@example.org", username="john",
                 address="Postal 1234AA", external_id="86eee601-770f-4df3-bd4c-181a2edcbb2f")
-    peter = User(uid="urn:peter", name="Peter Doe", email="peter@example.org", username="peter")
+    peter = User(uid="urn:peter", name="Peter Doe", email="peter@example.org", username="peter",
+                 external_id="b7fdbc01-5b5a-4028-b90a-5409f380e603")
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org", username="mdoe",
-                schac_home_organisation=schac_home_organisation)
+                schac_home_organisation=schac_home_organisation, external_id="bb3d4bd4-2848-4cf3-b30b-fd84186c0c52")
     admin = User(uid="urn:admin", name=the_boss_name, email="boss@example.org", username="admin",
                  external_id="e906cf88-cdb3-480d-8bb3-ce53bdcda4e7")
     roger = User(uid="urn:roger", name=roger_name, email="roger@example.org",
-                 schac_home_organisation=schac_home_organisation, username="roger")
-    harry = User(uid="urn:harry", name="Harry Doe", email="harry@example.org", username="harry")
+                 schac_home_organisation=schac_home_organisation, username="roger",
+                 external_id="c601d601-4a54-498a-9c45-f98882050733")
+    harry = User(uid="urn:harry", name="Harry Doe", email="harry@example.org", username="harry",
+                 external_id="91322eb8-1c26-4b85-90d0-39079ef4769")
     james = User(uid="urn:james", name=james_name, email="james@example.org", username="james",
-                 schac_home_organisation=schac_home_organisation_uuc, given_name="James")
+                 schac_home_organisation=schac_home_organisation_uuc, given_name="James",
+                 external_id="100ae6f1-930f-459c-bf1a-f28facfe5834")
     sarah = User(uid="urn:sarah", name=sarah_name, email="sarah@uva.org", application_uid="sarah_application_uid",
                  username="sarah", external_id="8297d8a5-a2a4-4208-9fb6-100a5865f022")
     betty = User(uid="urn:betty", name="betty", email="betty@uuc.org", username="betty",
@@ -173,11 +177,12 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     jane = User(uid="urn:jane", name=jane_name, email="jane@ucc.org", username="jane",
                 entitlement="urn:mace:surf.nl:sram:allow-create-co", external_id="502e861e-f548-4335-89d8-f1764f803964")
     paul = User(uid="urn:paul", name="Paul Doe", email="paul@ucc.org", username="paul",
-                schac_home_organisation="example.org")
+                schac_home_organisation="example.org", external_id="0cb73fdf-3fe1-4e99-afe1-597d6226d030")
     hannibal = User(uid="urn:hannibal", name=None, email="hannibal@example.org", username="hlector",
-                    schac_home_organisation="example.org")
+                    schac_home_organisation="example.org", external_id="9527f225-d8d1-4410-8c2e-ed2548db908d")
     service_admin = User(uid="urn:service_admin", name="Service Admin", email="service_admin@ucc.org",
-                         username="service_admin", schac_home_organisation="service.admin.com")
+                         username="service_admin", schac_home_organisation="service.admin.com",
+                         external_id="c5ed5e18-b6aa-48f2-8849-a68a8cfe39a8")
     # User seed for suspend testing
     retention = app_config.retention
     current_time = datetime.datetime.utcnow()
