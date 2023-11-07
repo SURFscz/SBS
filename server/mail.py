@@ -380,7 +380,7 @@ def mail_delete_service_request(service):
     mail_cfg = current_app.app_config.mail
     current_user = db.session.get(User, current_user_id())
     _do_send_mail(
-        subject=f"Request to delete service {service.name}) by {current_user.name}"
+        subject=f"Request to delete service {service.name} by {current_user.name}"
                 f" in environment {mail_cfg.environment}",
         recipients=[mail_cfg.beheer_email],
         template="request_delete_service",
