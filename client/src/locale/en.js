@@ -326,7 +326,7 @@ const en = {
             title: "Collaborations",
             titleForOrgAdmin: "In collaborations managed by your organisation",
             searchPlaceHolder: "Search collaborations...",
-            new: "Add CO",
+            new: "Add collaboration",
             noEntities: "No collaborations found",
             newCollaborationRequest: "New request for collaboration",
             name: "Name",
