@@ -13,6 +13,8 @@ import "./locale/en";
 import "./locale/nl";
 import {createRoot} from 'react-dom/client';
 import '@surfnet/sds/styles/sds.css';
+//Do not change the order of @surfnet.sds style imports
+import '@surfnet/sds/cjs/index.css'
 
 polyfill();
 
