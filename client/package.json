@@ -7,7 +7,7 @@
         "@fortawesome/free-solid-svg-icons": "^6.4.2",
         "@fortawesome/react-fontawesome": "^0.2.0",
         "@lottiefiles/react-lottie-player": "^3.5.3",
-        "@surfnet/sds": "^0.0.88",
+        "@surfnet/sds": "^0.0.89",
         "core-js": "^3.33.2",
         "dompurify": "^3.0.5",
         "es6-promise": "^4.2.8",
