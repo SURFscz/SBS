@@ -140,7 +140,6 @@ export default class ServiceCollaborations extends React.PureComponent {
                            rel="noopener noreferrer">
                             <Tooltip
                                 tip={I18n.t("models.orgMembers.mailAdminTooltip")}
-                                anchorId={`mail-member-${entity.id}`}
                                 standalone={true}
                                 children={<EmailIcon/>}/>
                         </a>

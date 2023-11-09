@@ -269,7 +269,6 @@ export default class Collaborations extends React.PureComponent {
                     } else {
                         return (
                             <Tooltip standalone={true} children={<InformationCircle/>}
-                                     anchorId={"collaboration-warning" + ++i}
                                      tip={I18n.t("models.serviceCollaborations.organisationWarningTooltip")}/>
                         )
                     }
@@ -347,7 +346,6 @@ export default class Collaborations extends React.PureComponent {
                         return <div>
                             <Tooltip standalone={true}
                                      children={children}
-                                     anchorId={`${collaboration.id}-expiry_date`}
                                      tip={moment(expiryDate).format("LL")}>
                             </Tooltip>
                         </div>;
@@ -373,8 +371,7 @@ export default class Collaborations extends React.PureComponent {
                                              {displayLastActivityDate(collaboration.last_activity_date)}
                                          </span>
                                  }
-                                 standalone={true}
-                                 anchorId={`${collaboration.id}-last_activity_date`}/>
+                                 standalone={true}/>
 
                     );
                 }

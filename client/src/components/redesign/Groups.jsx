@@ -163,8 +163,7 @@ class Groups extends React.Component {
         return (
             <div className="admin-icons"
                  onClick={() => this.removeFromActionIcon(group.id, true)}>
-                <Tooltip anchorId={`delete-group-${group.id}`}
-                         standalone={true}
+                <Tooltip standalone={true}
                          tip={I18n.t("models.groups.removeGroupTooltip")}
                          children={<ThrashIcon/>}/>
             </div>
@@ -217,8 +216,7 @@ class Groups extends React.Component {
             <div className="admin-icons">
                 {!selectedGroup.auto_provision_members && <div
                     onClick={() => this.removeMember(selectedGroup, membership)}>
-                    <Tooltip anchorId={`delete-member-${membership.id}`}
-                             standalone={true}
+                    <Tooltip standalone={true}
                              tip={I18n.t("models.orgMembers.removeMemberTooltip")}
                              children={<ThrashIcon/>}/>
                 </div>}
@@ -227,7 +225,6 @@ class Groups extends React.Component {
                        rel="noopener noreferrer">
                         <Tooltip
                             tip={I18n.t("models.orgMembers.mailMemberTooltip")}
-                            anchorId={`mail-member-${membership.id}`}
                             standalone={true}
                             children={<EmailIcon/>}/>
                     </a>
@@ -360,11 +357,9 @@ class Groups extends React.Component {
 
                     {!selectedGroup.auto_provision_members && <div>
                         <Tooltip standalone={true}
-                                 anchorId={"remove-members"}
                                  tip={disabled ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}
                                  children={<Button onClick={() => this.removeMembers(selectedGroup)}
                                                    small={true}
-                                                   anchorId={"remove-members"}
                                                    txt={I18n.t("models.orgMembers.remove")}
                                                    icon={<ThrashIcon/>}/>}/>
                     </div>}
@@ -413,11 +408,9 @@ class Groups extends React.Component {
             <div className="admin-actions">
                 <div>
                     <Tooltip standalone={true}
-                             anchorId={"remove-groups"}
                              tip={I18n.t("models.groups.removeTooltip")}
                              children={<Button onClick={() => this.removeGroups(true)}
                                                small={true}
-                                               anchorId={"remove-groups"}
                                                txt={I18n.t("models.orgMembers.remove")}
                                                icon={<ThrashIcon/>}/>}/>
                 </div>
