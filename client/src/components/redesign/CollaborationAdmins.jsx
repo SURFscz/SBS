@@ -396,8 +396,7 @@ class CollaborationAdmins extends React.Component {
         return (
             <div className="admin-icons">
                 <div onClick={() => this.removeFromActionIcon(entity.id, entity.invite, true)}>
-                    <Tooltip anchorId={`delete-member-${entity.id}`}
-                             standalone={true}
+                    <Tooltip standalone={true}
                              tip={entity.invite ? I18n.t("models.orgMembers.removeInvitationTooltip") :
                                  I18n.t("models.orgMembers.removeMemberTooltip")}
                              children={<ThrashIcon/>}/>
@@ -407,7 +406,6 @@ class CollaborationAdmins extends React.Component {
                        rel="noopener noreferrer">
                         <Tooltip
                             tip={entity.invite ? I18n.t("models.orgMembers.mailInvitationTooltip") : I18n.t("models.orgMembers.mailMemberTooltip")}
-                            anchorId={`mail-member-${entity.id}`}
                             standalone={true}
                             children={<EmailIcon/>}/>
                     </a>
@@ -415,7 +413,6 @@ class CollaborationAdmins extends React.Component {
                 {showResendInvite &&
                 <div onClick={this.resendFromActionMenu(entity.id, true)}>
                     <Tooltip tip={I18n.t("models.orgMembers.resendInvitationTooltip")}
-                             anchorId={`resend-invite-${entity.id}`}
                              standalone={true}
                              children={<FontAwesomeIcon icon="voicemail"/>}/>
                 </div>}
@@ -442,11 +439,9 @@ class CollaborationAdmins extends React.Component {
                 {(any && isAdminOfCollaboration && !disabled) &&
                 <div>
                     <Tooltip standalone={true}
-                             anchorId={"remove-members"}
                              tip={disabled ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}
                              children={<Button onClick={this.remove(true)}
                                                small={true}
-                                               anchorId={"remove-members"}
                                                txt={I18n.t("models.orgMembers.remove")}
                                                icon={<ThrashIcon/>}/>}/>
                 </div>}
@@ -474,9 +469,7 @@ class CollaborationAdmins extends React.Component {
                     <Tooltip
                         tip={disabled ? I18n.t("models.orgMembers.resendTooltipDisabled") : I18n.t("models.orgMembers.resendTooltip")}
                         standalone={true}
-                        anchorId={"resend-invites"}
                         children={<Button onClick={this.resend(true)}
-                                          anchorId={"resend-invites"}
                                           small={true}
                                           txt={I18n.t("models.orgMembers.resend")}
                                           icon={<FontAwesomeIcon icon="voicemail"/>}/>}/>

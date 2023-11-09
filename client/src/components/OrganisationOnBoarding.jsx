@@ -33,7 +33,7 @@ export default class OrganisationOnBoarding extends React.Component {
             <div className="organisation-onboarding">
                 <label className="label">{title || I18n.t("organisation.onBoarding.label")}</label>
                 <span className="tool-tip-section">
-                    <Tooltip anchorId="on-boarding" tip={I18n.t(tooltip || "organisation.onBoarding.tooltip")}/>
+                    <Tooltip tip={I18n.t(tooltip || "organisation.onBoarding.tooltip")}/>
                     </span>
                 <div className="container">
                     <ReactMde

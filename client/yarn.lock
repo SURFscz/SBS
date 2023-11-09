@@ -1851,10 +1851,10 @@
   resolved "https://registry.yarnpkg.com/@socket.io/component-emitter/-/component-emitter-3.1.0.tgz#96116f2a912e0c02817345b3c10751069920d553"
   integrity sha512-+9jVqKhRSpsc591z5vX+X5Yyw+he/HCB4iQ/RYxw35CEPaY1gnsNE43nf9n9AaYjAQrTiI/mOwKUKdUs9vf7Xg==
 
-"@surfnet/sds@^0.0.89":
-  version "0.0.89"
-  resolved "https://registry.yarnpkg.com/@surfnet/sds/-/sds-0.0.89.tgz#d59a866735994fc01dd5af657c26085abd9eed66"
-  integrity sha512-mzXj+h4lJBeX1983wAVox+PqEoRnVXIy0MpNjvHRLAoHa2rZdvN4sLAnupwK8gEbDf3cAHr/9a3phM9r1sAZUQ==
+"@surfnet/sds@^0.0.92":
+  version "0.0.92"
+  resolved "https://registry.yarnpkg.com/@surfnet/sds/-/sds-0.0.92.tgz#ad968d800c69e271df92b78f94206ea5d6ed598b"
+  integrity sha512-YANiNaI/C18wrXJItlqL02prWiSY14nFqWDNuVccN7klu6VCpE/11vBeWu69FBpENDWOmuRm8z9UQQBkmdKCXA==
 
 "@surma/rollup-plugin-off-main-thread@^2.2.3":
   version "2.2.3"
@@ -8300,10 +8300,10 @@ react-textarea-autosize@^8.3.2:
     use-composed-ref "^1.3.0"
     use-latest "^1.2.1"
 
-react-tooltip@^5.22.0:
-  version "5.22.0"
-  resolved "https://registry.yarnpkg.com/react-tooltip/-/react-tooltip-5.22.0.tgz#3082065b1efbd207813f484b617b1b75325f15d5"
-  integrity sha512-xbJBRY1LyHYd7j00UeBOqZR9SH/1S47Pe+m8vM1a+ZXglkeSNnBt5YYoPttU/amjC/VZJAPQ8+2B9x8Fl8U1qA==
+react-tooltip@5.21.7:
+  version "5.21.7"
+  resolved "https://registry.yarnpkg.com/react-tooltip/-/react-tooltip-5.21.7.tgz#37802a9e6395248c76a9b059c0dbdba297054dea"
+  integrity sha512-wixHG2I2umJIL4iHG1ewIkkiqyJuXTHJwZWry8jFKonkQQ9xhwPgqGXqE8NGyJGN7n0Did1HjBnaCW5NsGr7zA==
   dependencies:
     "@floating-ui/dom" "^1.0.0"
     classnames "^2.3.0"

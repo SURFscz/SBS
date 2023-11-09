@@ -241,11 +241,9 @@ class ServiceAdmins extends React.Component {
                 {anySelected && <div>
                     <Tooltip
                         tip={anySelected ? I18n.t("models.orgMembers.removeTooltip") : I18n.t("models.orgMembers.removeTooltipDisabled")}
-                        anchorId={"delete-service-members"}
                         standalone={true}
                         children={<Button onClick={this.remove(true)}
                                           txt={I18n.t("models.orgMembers.remove")}
-                                          anchorId={"delete-service-members"}
                                           small={true}
                                           icon={<ThrashIcon/>}/>}/>
                 </div>}
@@ -253,10 +251,8 @@ class ServiceAdmins extends React.Component {
                 {showResendInvite && <div>
                     <Tooltip
                         tip={!showResendInvite ? I18n.t("models.orgMembers.resendTooltipDisabled") : I18n.t("models.orgMembers.resendTooltip")}
-                        anchorId={"resend-service-invites"}
                         standalone={true}
                         children={<Button onClick={this.resend(true)} txt={I18n.t("models.orgMembers.resend")}
-                                          anchorId={"resend-service-invites"}
                                           icon={<FontAwesomeIcon icon="voicemail"/>}/>}
                     />
                 </div>}
@@ -271,14 +267,12 @@ class ServiceAdmins extends React.Component {
                 <div onClick={() => this.removeFromActionIcon(entity.id, entity.invite, true)}>
                     <Tooltip tip={entity.invite ? I18n.t("models.orgMembers.removeInvitationTooltip") :
                         I18n.t("models.orgMembers.removeMemberTooltip")}
-                             anchorId={`delete-org-member-${entity.id}`}
                              standalone={true}
                              children={<ThrashIcon/>}/>
                 </div>
                 {showResendInvite &&
                 <div onClick={this.resendFromActionMenu(entity.id, true)}>
                     <Tooltip tip={I18n.t("models.orgMembers.resendInvitationTooltip")}
-                             anchorId={`resend-invite-${entity.id}`}
                              standalone={true}
                              children={<FontAwesomeIcon icon="voicemail"/>}
                     />
@@ -342,9 +336,11 @@ class ServiceAdmins extends React.Component {
                 header: "",
                 mapper: entity => <div className="member-icon">
                     {entity.invite ?
-                        <Tooltip standalone={true} children={<InviteIcon/>} anchorId={"invite-icon"}
+                        <Tooltip standalone={true}
+                                 children={<InviteIcon/>}
                                  tip={I18n.t("tooltips.invitations")}/> :
-                        <Tooltip standalone={true} children={<UserIcon/>} anchorId={"admin-icon"}
+                        <Tooltip standalone={true}
+                                 children={<UserIcon/>}
                                  tip={I18n.t("tooltips.admin")}/>}
                 </div>
             },

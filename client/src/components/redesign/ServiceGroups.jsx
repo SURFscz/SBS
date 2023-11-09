@@ -122,8 +122,7 @@ class ServiceGroups extends React.Component {
         return (
             <div className="admin-icons"
                  onClick={() => this.removeFromActionIcon(entity.id, true)}>
-                <Tooltip anchorId={`delete-group-${entity.id}`}
-                         standalone={true}
+                <Tooltip standalone={true}
                          tip={I18n.t("models.groups.removeGroupTooltip")}
                          children={<ThrashIcon/>}/>
             </div>
@@ -253,11 +252,9 @@ class ServiceGroups extends React.Component {
             <div className="admin-actions">
                 <div>
                     <Tooltip standalone={true}
-                             anchorId={"remove-groups"}
                              tip={I18n.t("models.groups.removeTooltip")}
                              children={<Button onClick={() => this.removeGroups(true)}
                                                small={true}
-                                               anchorId={"remove-groups"}
                                                txt={I18n.t("models.orgMembers.remove")}
                                                icon={<ThrashIcon/>}/>}/>
                 </div>

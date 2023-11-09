@@ -6,7 +6,7 @@ import "./Button.scss";
 export default function Button({
                                    onClick, txt, disabled = false, cancelButton = false,
                                    warningButton = false, icon = null, small = false,
-                                   centralize = false, className = "", anchorId = null
+                                   centralize = false, className = ""
                                }) {
 
     const onClickInternal = e => {
@@ -24,7 +24,6 @@ export default function Button({
                       disabled={disabled}
                       centralize={centralize}
                       icon={icon}
-                      anchorId={anchorId}
                       size={buttonSize} type={buttonType}/>
 
 }
