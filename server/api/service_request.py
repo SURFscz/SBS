@@ -95,6 +95,7 @@ def approve_request(service_request_id):
 
     cleanse_short_name(client_data, "abbreviation")
     client_data["ldap_enabled"] = False
+    client_data["ldap_identifier"] = uuid.uuid4()
 
     # bugfix for logo url instead of raw data in the POST from the client - only happens when the logo is unchanged
     logo = client_data.get("logo")
@@ -105,6 +106,7 @@ def approve_request(service_request_id):
     client_data["connection_setting"] = "NO_ONE_ALLOWED"
     if "id" in client_data:
         del client_data["id"]
+
     res = save(Service, custom_json=client_data)
     service = res[0]
 
