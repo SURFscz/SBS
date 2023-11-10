@@ -76,6 +76,11 @@ class TestService(AbstractTest):
         self.assertEqual(res["name"], service_network_name)
         self.assertEqual(uuc_name, res["allowed_organisations"][0]["name"])
 
+    def test_ldap_identifier(self):
+        res = self.get("api/services/ldap_identifier")
+
+        self.assertEqual(36, len(res["ldap_identifier"]))
+
     def test_service_new(self):
         self.login()
 

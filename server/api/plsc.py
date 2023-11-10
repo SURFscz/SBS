@@ -34,11 +34,11 @@ def internal_sync():
         schac_home_organisations = [{"name": row[0], "organisation_id": row[1]} for row in rs]
         rs = conn.execute(
             text("SELECT id, name, entity_id, contact_email, uuid4, ldap_password, accepted_user_policy, "
-                 "support_email, security_email, privacy_policy, ldap_enabled FROM services"))
+                 "support_email, security_email, privacy_policy, ldap_enabled, ldap_identifier FROM services"))
         services = [{"id": row[0], "name": row[1], "entity_id": row[2], "contact_email": row[3],
                      "logo": logo_url("services", row[4]), "ldap_password": row[5],
                      "accepted_user_policy": row[6], "support_email": row[7], "security_email": row[8],
-                     "privacy_policy": row[9], "ldap_enabled": row[10]} for row in rs]
+                     "privacy_policy": row[9], "ldap_enabled": row[10], "ldap_identifier": row[11]} for row in rs]
         for service in services:
             if not service["contact_email"]:
                 rs = conn.execute(text(f"select u.email from users u where id in "
