@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import "./ServerError.scss";
-import {Player} from "@lottiefiles/react-lottie-player";
-import errorJson from "../lotties/error.json";
+import {ReactComponent as Warning} from "../lotties/undraw_warning.svg";
 import I18n from "../locale/I18n";
 import DOMPurify from "dompurify";
 import {isEmpty} from "../utils/Utils";
@@ -38,14 +37,10 @@ export default function ServerError() {
             <div className="content">
                 {<p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(error)}}/>}
                 {!isEmpty(code) &&
-                <p className={"status"} dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(code)}}/>}
+                    <p className={"status"} dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(code)}}/>}
                 {!isEmpty(message) &&
-                <p className={"status"} dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(message)}}/>}
-                <Player
-                    autoplay
-                    loop
-                    src={errorJson}
-                    style={{height: "auto", width: "100vw", "maxWidth": "900px"}}/>
+                    <p className={"status"} dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(message)}}/>}
+                <Warning/>
             </div>
         </div>
     );

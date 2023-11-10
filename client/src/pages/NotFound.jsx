@@ -1,7 +1,6 @@
 import React from "react";
 import "./NotFound.scss";
-import {Player} from '@lottiefiles/react-lottie-player';
-import notFound from "../lotties/not_found.json"
+import {ReactComponent as NotFoundSVG} from "../lotties/undraw_page_not_found.svg";
 import I18n from "../locale/I18n";
 import DOMPurify from "dompurify";
 
@@ -16,11 +15,7 @@ export default function NotFound({config}) {
     return (
         <div className="mod-not-found">
             <p className="not-found-msg" dangerouslySetInnerHTML={{__html: html}}/>
-            <Player
-                autoplay
-                loop
-                src={notFound}
-                style={{height: "auto", width: "100vw", "maxWidth": "900px"}}/>
+            <NotFoundSVG/>
         </div>
     );
 }

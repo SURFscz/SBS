@@ -10,8 +10,10 @@
         margin: 40px 20px;
     }
 
-    div#lottie {
-        max-width: 600px !important;
+    svg {
+        margin-top: 25px;
+        width: 480px;
+        height: auto;
     }
 
     p.not-found-msg {
