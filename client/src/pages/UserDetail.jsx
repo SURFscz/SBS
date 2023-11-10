@@ -34,6 +34,7 @@ class UserDetail extends React.Component {
         super(props, context);
         this.state = {
             loading: true,
+            loadingAuditLogs: false,
             confirmationDialogOpen: false,
             confirmationDialogAction: () => true,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
@@ -53,16 +54,22 @@ class UserDetail extends React.Component {
         const {user: currentUser} = this.props;
         const {id, org_id} = this.props.match.params;
         const promises = [findUserById(id)];
-        if (currentUser.admin) {
-            promises.push(auditLogsUser(id));
-        }
         if (org_id) {
             promises.push(organisationNameById(org_id))
         }
         Promise.all(promises)
             .then(res => {
+                if (currentUser.admin) {
+                    this.setState({loadingAuditLogs: true})
+                    auditLogsUser(id).then(auditLogs => {
+                        this.setState({
+                            auditLogs: auditLogs,
+                            filteredAuditLogs: auditLogs,
+                            loadingAuditLogs: false
+                        });
+                    });
+                }
                 const user = res[0];
-                const auditLogs = currentUser.admin ? res[1] : [];
                 let middlePath;
                 if (org_id) {
                     middlePath = {
@@ -83,8 +90,6 @@ class UserDetail extends React.Component {
                 this.setState({
                     loading: false,
                     user: user,
-                    auditLogs: auditLogs,
-                    filteredAuditLogs: auditLogs,
                     tab: tab
                 });
                 if (currentUser.admin && !isEmpty(res[0].user_ip_networks)) {
@@ -162,7 +167,7 @@ class UserDetail extends React.Component {
                     <InputField noInput={true} disabled={true} value={user.ssh_keys.length}
                                 name={I18n.t("user.ssh_key")}/>
                     {user.ssh_keys.length > 0 &&
-                    <a href="/ssh" onClick={this.toggleSsh}>{I18n.t("models.allUsers.showSsh")}</a>}
+                        <a href="/ssh" onClick={this.toggleSsh}>{I18n.t("models.allUsers.showSsh")}</a>}
                 </div>}
                 <div className="input-field">
                     <label>{I18n.t(`models.organisations.title`)}</label>
@@ -241,39 +246,42 @@ class UserDetail extends React.Component {
                 </div>}
                 <div className={"actions"}>
                     {currentUser.admin &&
-                    <Button warningButton={true}
-                            txt={I18n.t("user.deleteOther")}
-                            onClick={() => this.deleteUser(true)}/>}
+                        <Button warningButton={true}
+                                txt={I18n.t("user.deleteOther")}
+                                onClick={() => this.deleteUser(true)}/>}
                     {(user.suspended && currentUser.admin) &&
-                    <Button warningButton={true}
-                            txt={I18n.t("user.unsuspend")}
-                            onClick={() => this.unsuspendUser(true)}/>}
+                        <Button warningButton={true}
+                                txt={I18n.t("user.unsuspend")}
+                                onClick={() => this.unsuspendUser(true)}/>}
                     {(isUserAllowed(ROLES.ORG_ADMIN, currentUser) && user.mfa_reset_token) &&
-                    <Button warningButton={true}
-                            txt={I18n.t("user.reset2fa")}
-                            onClick={() => this.reset2fa(true)}/>}
+                        <Button warningButton={true}
+                                txt={I18n.t("user.reset2fa")}
+                                onClick={() => this.reset2fa(true)}/>}
                 </div>
             </div>
         </div>)
     }
 
-    getHistoryTab = (filteredAuditLogs, query) => {
-        return (<div key="history" name="history" label={I18n.t("home.history")}
-                     icon={<FontAwesomeIcon icon="history"/>}>
-            <div className={"user-history"}>
-                <section className="search-activity">
-                    <p>{I18n.t("models.allUsers.activity")}</p>
-                    <div className="search">
-                        <input type="text"
-                               onChange={this.onChangeQuery}
-                               value={query}
-                               placeholder={I18n.t("system.searchPlaceholder")}/>
-                        <FontAwesomeIcon icon="search"/>
-                    </div>
-                </section>
-                <Activity auditLogs={filteredAuditLogs}/>
+    getHistoryTab = (filteredAuditLogs, query, loadingAuditLogs) => {
+        return (
+            <div key="history" name="history" label={I18n.t("home.history")}
+                 icon={<FontAwesomeIcon icon="history"/>}>
+                <div className={"user-history"}>
+                    {!loadingAuditLogs && <section className="search-activity">
+                        <p>{I18n.t("models.allUsers.activity")}</p>
+                        <div className="search">
+                            <input type="text"
+                                   onChange={this.onChangeQuery}
+                                   value={query}
+                                   placeholder={I18n.t("system.searchPlaceholder")}/>
+                            <FontAwesomeIcon icon="search"/>
+                        </div>
+                    </section>}
+                    {!loadingAuditLogs && <Activity auditLogs={filteredAuditLogs}/>}
+                    {loadingAuditLogs && <SpinnerField/>}
+                </div>
             </div>
-        </div>)
+        )
     }
 
     toggleSsh = e => {
@@ -299,7 +307,7 @@ class UserDetail extends React.Component {
 
     render() {
         const {
-            loading, tab, user, filteredAuditLogs, query, showSshKeys,
+            loading, tab, user, filteredAuditLogs, query, showSshKeys, loadingAuditLogs,
             confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, confirmationQuestion
         } = this.state;
         if (loading) {
@@ -308,7 +316,7 @@ class UserDetail extends React.Component {
         const {user: currentUser} = this.props;
         const tabs = [this.getDetailsTab(user, currentUser)];
         if (currentUser.admin) {
-            tabs.push(this.getHistoryTab(filteredAuditLogs, query));
+            tabs.push(this.getHistoryTab(filteredAuditLogs, query, loadingAuditLogs));
         }
         return (
             <div className="mod-user-details">
