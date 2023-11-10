@@ -48,6 +48,7 @@ class TestPlsc(AbstractTest):
         self.assertTrue(wiki["logo"].startswith("http://localhost:8080/api/images/services/"))
         self.assertEqual(wiki["accepted_user_policy"], "https://google.nl")
         self.assertTrue(wiki["ldap_password"].startswith("$2b$12$"))
+        self.assertIsNotNone(wiki["ldap_identifier"])
         res_image = self.client.get(wiki["logo"].replace("http://localhost:8080", ""))
         self.assertIsNotNone(res_image.data)
         storage = next(s for s in services_ if s["entity_id"] == service_storage_entity_id)

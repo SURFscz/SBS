@@ -241,6 +241,10 @@ export function serviceById(id) {
     return fetchJson(`/api/services/${id}`, {}, {}, false);
 }
 
+export function serviceLdapIdentifier() {
+    return fetchJson("/api/services/ldap_identifier");
+}
+
 export function serviceByUuid4(uuid4) {
     return fetchJson(`/api/services/find_by_uuid4?uuid4=${encodeURIComponent(uuid4)}`, {}, {}, false);
 }

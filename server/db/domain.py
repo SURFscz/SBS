@@ -515,6 +515,7 @@ class Service(Base, db.Model, LogoMixin):
     privacy_policy = db.Column("privacy_policy", db.String(length=255), nullable=True)
     accepted_user_policy = db.Column("accepted_user_policy", db.Text(), nullable=True)
     ldap_password = db.Column("ldap_password", db.String(length=255), nullable=True)
+    ldap_identifier = db.Column("ldap_identifier", db.String(length=255), nullable=False, default=gen_uuid4)
     contact_email = db.Column("contact_email", db.String(length=255), nullable=True)
     support_email = db.Column("support_email", db.String(length=255), nullable=True)
     security_email = db.Column("security_email", db.String(length=255), nullable=True)

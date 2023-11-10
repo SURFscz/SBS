@@ -33,7 +33,7 @@ def validate(cls, json_dict, is_new_instance=True):
                         not coll.nullable and not coll.server_default]
     if is_new_instance:
         required_columns = [coll for coll in required_columns if not coll.primary_key]
-    required_attributes = [coll.name for coll in required_columns if coll.name != "uuid4"]
+    required_attributes = [coll.name for coll in required_columns if coll.name not in ["uuid4", "ldap_identifier"]]
     missing_attributes = [k for k in required_attributes if k not in json_dict]
     if missing_attributes:
         raise BadRequest(f"Missing attributes '{', '.join(missing_attributes)}' for {cls.__name__}")

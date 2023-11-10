@@ -1,4 +1,5 @@
 import urllib.parse
+import uuid
 
 from flask import Blueprint, request as current_request, g as request_context, jsonify, current_app
 from sqlalchemy import text, func
@@ -221,6 +222,12 @@ def abbreviation_exists():
         .filter(func.lower(Service.abbreviation) != func.lower(existing_service)) \
         .first()
     return service is not None, 200
+
+
+@service_api.route("/ldap_identifier", strict_slashes=False)
+@json_endpoint
+def ldap_identifier():
+    return {"ldap_identifier": uuid.uuid4()}, 200
 
 
 @service_api.route("/find_by_entity_id", strict_slashes=False)

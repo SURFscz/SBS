@@ -809,7 +809,7 @@ class ServiceOverview extends React.Component {
 
     renderLdap = (config, service, isAdmin, isServiceAdmin) => {
         const ldapBindAccount = config.ldap_bind_account;
-        const {entity_id, ldap_enabled} = this.state.service;
+        const {ldap_identifier, ldap_enabled} = this.state.service;
         return (
             <div className={"ldap"}>
                 <CheckBox name={"ldap_enabled"}
@@ -835,12 +835,12 @@ class ServiceOverview extends React.Component {
                                 copyClipBoard={true}
                                 disabled={true}/>
                     <InputField
-                        value={ldapBindAccount.substring(ldapBindAccount.indexOf(",") + 1).replace("entity_id", entity_id)}
+                        value={ldapBindAccount.substring(ldapBindAccount.indexOf(",") + 1).replace("entity_id", ldap_identifier)}
                         name={I18n.t("service.ldap.basedn")}
                         toolTip={I18n.t("service.ldap.basednTooltip")}
                         copyClipBoard={true}
                         disabled={true}/>
-                    <InputField value={ldapBindAccount.replace("entity_id", entity_id)}
+                    <InputField value={ldapBindAccount.replace("entity_id", ldap_identifier)}
                                 name={I18n.t("service.ldap.username")}
                                 toolTip={I18n.t("service.ldap.usernameTooltip")}
                                 copyClipBoard={true}

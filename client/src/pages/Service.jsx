@@ -8,6 +8,7 @@ import {
     ipNetworks,
     serviceAbbreviationExists,
     serviceEntityIdExists,
+    serviceLdapIdentifier,
     serviceNameExists,
     serviceRequestById
 } from "../api";
@@ -62,6 +63,7 @@ class Service extends React.Component {
         access_allowed_for_all: false,
         non_member_users_access_allowed: false,
         allow_restricted_orgs: false,
+        ldap_identifier: "",
         research_scholarship_compliant: null,
         code_of_conduct_compliant: null,
         sirtfi_compliant: null,
@@ -139,6 +141,9 @@ class Service extends React.Component {
         } else {
             this.addIpAddress();
             this.setState({loading: false});
+            if (!isServiceRequest) {
+                serviceLdapIdentifier().then(res => this.setState({ldap_identifier: res.ldap_identifier}))
+            }
             AppStore.update(s => {
                 s.breadcrumb.paths = [
                     {path: "/", value: I18n.t("breadcrumb.home")},
@@ -456,7 +461,8 @@ class Service extends React.Component {
                         accepted_user_policy, uri_info, privacy_policy, service, disabledSubmit, allow_restricted_orgs, sirtfi_compliant, token_enabled, pam_web_sso_enabled,
                         token_validity_days, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, administrators, message, logo, isServiceAdmin,
-                        providing_organisation, connection_type, redirect_urls, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails,disableEverything) => {
+                        providing_organisation, connection_type, redirect_urls, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails, disableEverything,
+                        ldap_identifier) => {
         const ldapBindAccount = config.ldap_bind_account;
         const {isServiceRequest} = this.props;
         return (
@@ -466,9 +472,9 @@ class Service extends React.Component {
                 <div className="first-column">
                     <InputField value={name}
                                 onChange={e => this.setState({
-                        name: e.target.value,
-                        alreadyExists: {...this.state.alreadyExists, name: false}
-                    })}
+                                    name: e.target.value,
+                                    alreadyExists: {...this.state.alreadyExists, name: false}
+                                })}
                                 placeholder={I18n.t("service.namePlaceHolder")}
                                 onBlur={this.validateServiceName}
                                 error={alreadyExists.name || (!initial && isEmpty(name))}
@@ -491,37 +497,38 @@ class Service extends React.Component {
                                    disabled={disableEverything}
                                    initial={initial}
                                    secondRow={true}/>
-                {((!isServiceRequest || isServiceRequestDetails) && !disableEverything) && <div className="first-column">
+                {((!isServiceRequest || isServiceRequestDetails) && !disableEverything) &&
+                    <div className="first-column">
 
-                    <InputField value={entity_id}
-                                onChange={e => this.setState({
-                        entity_id: e.target.value,
-                        alreadyExists: {...this.state.alreadyExists, entity_id: false}
-                    })}
-                                placeholder={I18n.t("service.entity_idPlaceHolder")}
-                                onBlur={this.validateServiceEntityId}
-                                name={I18n.t("service.entity_id")}
-                                toolTip={I18n.t("service.entity_idTooltip")}
-                                error={alreadyExists.entity_id || (!initial && isEmpty(entity_id))}
-                                copyClipBoard={true}
-                                disabled={isServiceRequest && !isServiceRequestDetails}/>
-                    {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
-                        attribute: I18n.t("service.entity_id").toLowerCase(),
-                        value: entity_id
-                    })}/>}
-                    {(!initial && isEmpty(entity_id)) && <ErrorIndicator msg={I18n.t("service.required", {
-                        attribute: I18n.t("service.entity_id").toLowerCase()
-                    })}/>}
+                        <InputField value={entity_id}
+                                    onChange={e => this.setState({
+                                        entity_id: e.target.value,
+                                        alreadyExists: {...this.state.alreadyExists, entity_id: false}
+                                    })}
+                                    placeholder={I18n.t("service.entity_idPlaceHolder")}
+                                    onBlur={this.validateServiceEntityId}
+                                    name={I18n.t("service.entity_id")}
+                                    toolTip={I18n.t("service.entity_idTooltip")}
+                                    error={alreadyExists.entity_id || (!initial && isEmpty(entity_id))}
+                                    copyClipBoard={true}
+                                    disabled={isServiceRequest && !isServiceRequestDetails}/>
+                        {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
+                            attribute: I18n.t("service.entity_id").toLowerCase(),
+                            value: entity_id
+                        })}/>}
+                        {(!initial && isEmpty(entity_id)) && <ErrorIndicator msg={I18n.t("service.required", {
+                            attribute: I18n.t("service.entity_id").toLowerCase()
+                        })}/>}
 
-                </div>
+                    </div>
                 }
                 <div className="first-column">
 
                     <InputField value={abbreviation}
                                 onChange={e => this.setState({
-                        abbreviation: sanitizeShortName(e.target.value),
-                        alreadyExists: {...this.state.alreadyExists, abbreviation: false}
-                    })}
+                                    abbreviation: sanitizeShortName(e.target.value),
+                                    alreadyExists: {...this.state.alreadyExists, abbreviation: false}
+                                })}
                                 placeholder={I18n.t("service.abbreviationPlaceHolder")}
                                 onBlur={this.validateServiceAbbreviation}
                                 name={I18n.t("service.abbreviation")}
@@ -784,7 +791,8 @@ class Service extends React.Component {
                     {(!initial && contactEmailRequired && !isServiceRequest) &&
                         <ErrorIndicator msg={I18n.t("service.contactEmailRequired")}/>}
                     {(!initial && contactEmailRequired && isServiceRequest) &&
-                        <ErrorIndicator msg={I18n.t("service.required", {attribute: I18n.t("service.contact_email").toLowerCase()})}/>}
+                        <ErrorIndicator
+                            msg={I18n.t("service.required", {attribute: I18n.t("service.contact_email").toLowerCase()})}/>}
                 </div>
                 <div className="first-column">
 
@@ -846,13 +854,13 @@ class Service extends React.Component {
                                 toolTip={I18n.t("service.ldap.urlTooltip")}
                                 copyClipBoard={true}
                                 disabled={true}/>
-                    <InputField value={ldapBindAccount.replace("entity_id", entity_id)}
+                    <InputField value={ldapBindAccount.replace("entity_id", ldap_identifier)}
                                 name={I18n.t("service.ldap.username")}
                                 toolTip={I18n.t("service.ldap.usernameTooltip")}
                                 copyClipBoard={true}
                                 disabled={true}/>
                     <InputField
-                        value={ldapBindAccount.substring(ldapBindAccount.indexOf(",") + 1).replace("entity_id", entity_id)}
+                        value={ldapBindAccount.substring(ldapBindAccount.indexOf(",") + 1).replace("entity_id", ldap_identifier)}
                         name={I18n.t("service.ldap.basedn")}
                         toolTip={I18n.t("service.ldap.basednTooltip")}
                         copyClipBoard={true}
@@ -999,6 +1007,7 @@ class Service extends React.Component {
             cancelDialogAction,
             name,
             entity_id,
+            ldap_identifier,
             abbreviation,
             description,
             uri,
@@ -1070,7 +1079,7 @@ class Service extends React.Component {
                         access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, uri_info, privacy_policy,
                         service, disabledSubmit, allow_restricted_orgs, sirtfi_compliant, token_enabled, pam_web_sso_enabled, token_validity_days, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, administrators, message, logo, isServiceAdmin, providing_organisation,
-                        connection_type, redirect_urls, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails, disableEverything)}
+                        connection_type, redirect_urls, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails, disableEverything, ldap_identifier)}
                 </div>
             </>)
             ;
