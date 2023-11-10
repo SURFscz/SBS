@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import "./ServiceDenied.scss";
-import {Player} from "@lottiefiles/react-lottie-player";
-import service_denied from "../lotties/service-denied.json";
+import {ReactComponent as NoAccess} from "../lotties/undraw_access_denied.svg";
 import I18n from "../locale/I18n";
 import escape from "lodash.escape";
 import DOMPurify from "dompurify";
@@ -31,14 +30,10 @@ export default function ServiceDenied() {
     return (
         <div className="mod-service-denied">
             <div className="content">
-                <h1 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize( I18n.t("sfo.title", {name: serviceName}))}}/>
-                <Player
-                    autoplay
-                    loop
-                    src={service_denied}
-                    style={{height: "auto", width: "85px", "maxWidth": "85px"}}/>
+                <h1 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("sfo.title", {name: serviceName}))}}/>
+                <NoAccess/>
                 {<div className={"status"}
-                       dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t(`sfo.info${status || ""}`, {name: serviceName}))}}/>}
+                      dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t(`sfo.info${status || ""}`, {name: serviceName}))}}/>}
             </div>
             <div className={"ticket"}>
                 <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("sfo.ticket"))}}/>

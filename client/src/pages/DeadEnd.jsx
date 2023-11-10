@@ -1,17 +1,12 @@
 import React from "react";
+import {ReactComponent as NoAccess} from "../lotties/undraw_access_denied.svg";
 import "./ServerError.scss";
-import {Player} from "@lottiefiles/react-lottie-player";
-import deadEnd from "../lotties/dead_end.json";
 
 export default function DeadEnd() {
     return (
         <div className="mod-server-error">
             <div className="content">
-            <Player
-                autoplay
-                loop
-                src={deadEnd}
-                style={{height: "auto", width: "100vw", "maxWidth": "900px"}}/>
+                <NoAccess/>
             </div>
         </div>
     );
