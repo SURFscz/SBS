@@ -1,5 +1,5 @@
 from server.db.db import db
-from server.db.domain import ServiceRequest, ServiceMembership
+from server.db.domain import ServiceRequest, ServiceMembership, Service
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_request_gpt_name
 
@@ -75,6 +75,9 @@ class TestServiceRequest(AbstractTest):
         service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)
         raw_logo = service_request.raw_logo()
         self.assertFalse(raw_logo.startswith("http"))
+
+        new_service = self.find_entity_by_name(Service, body["name"])
+        self.assertEqual(36, len(new_service.ldap_identifier))
 
     def test_request_service_deny(self):
         service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)
