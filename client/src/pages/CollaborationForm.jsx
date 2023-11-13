@@ -632,6 +632,25 @@ class CollaborationForm extends React.Component {
                                                           tooltip={I18n.t("collaboration.discloseEmailInformationTooltip")}
                                                           onChange={() => this.setState({disclose_email_information: !disclose_email_information})}/>}
 
+                    <SelectField value={organisation}
+                                 options={organisations}
+                                 name={I18n.t("collaboration.organisation_name")}
+                                 placeholder={I18n.t("collaboration.organisationPlaceholder")}
+                                 toolTip={I18n.t("collaboration.organisationTooltip")}
+                                 onChange={selectedOption => this.setState({organisation: selectedOption},
+                                     () => {
+                                         this.validateCollaborationName({target: {value: this.state.name}});
+                                         this.validateCollaborationShortName({target: {value: this.state.short_name}});
+                                         this.updateBreadCrumb(selectedOption,
+                                             this.state.collaboration,
+                                             false,
+                                             false);
+                                         this.updateTags(selectedOption.value);
+                                         this.updateUnits(selectedOption, {units: []});
+                                     })}
+                                 searchable={false}
+                                 disabled={organisations.length === 1}
+                    />
                     {!isEmpty(allUnits)  &&
                         <CollaborationUnits selectedUnits={units}
                                             allUnits={allUnits}
@@ -653,25 +672,6 @@ class CollaborationForm extends React.Component {
                                                              placeholder={I18n.t("collaboration.tagsPlaceholder")}
                                                              toolTip={I18n.t("collaboration.tagsTooltip")}
                                                              onChange={this.tagsSelectedChanged}/>}
-                    <SelectField value={organisation}
-                                 options={organisations}
-                                 name={I18n.t("collaboration.organisation_name")}
-                                 placeholder={I18n.t("collaboration.organisationPlaceholder")}
-                                 toolTip={I18n.t("collaboration.organisationTooltip")}
-                                 onChange={selectedOption => this.setState({organisation: selectedOption},
-                                     () => {
-                                         this.validateCollaborationName({target: {value: this.state.name}});
-                                         this.validateCollaborationShortName({target: {value: this.state.short_name}});
-                                         this.updateBreadCrumb(selectedOption,
-                                             this.state.collaboration,
-                                             false,
-                                             false);
-                                         this.updateTags(selectedOption.value);
-                                         this.updateUnits(selectedOption, {units: []});
-                                     })}
-                                 searchable={false}
-                                 disabled={organisations.length === 1}
-                    />
                     {(!initial && isEmpty(organisation)) && <ErrorIndicator msg={I18n.t("collaboration.required", {
                         attribute: I18n.t("collaboration.organisation_name").toLowerCase()
                     })}/>}

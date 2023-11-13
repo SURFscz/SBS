@@ -443,7 +443,7 @@ const en = {
             addMembersPlaceholder: "Search and select to add members"
         },
         collaboration: {
-            memberHeader: "{{nbrMember}} members - {{nbrGroups}} groups",
+            memberHeader: "{{nbrMember}} members – {{nbrGroups}} groups",
             memberInformation: "If you have any questions about this collaboration, please contact one of the admins:",
             noAdminsHeader: "No admins (yet)",
             adminsHeader: "Organised by <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong></a>",
@@ -2399,7 +2399,7 @@ const en = {
         column: "Units",
         label: "Units (e.g. department or project)",
         add: "+ Add unit",
-        confirmation: "Are you sure you want to remove this unit?",
+        confirmation: "Are you sure you want to remove unit {{name}}?",
         used: "It is being used by:",
         collaboration_requests: "Collaboration requests",
         invitations: "Organisation invitations",
@@ -2409,13 +2409,13 @@ const en = {
         unitsPlaceHolder: "Select an unit",
         collaborationRequest: "Organisational units (optional)",
         filter: "All units",
-        invitationLabel: "CO's to be managed",
-        invitationTooltip: "Select organisation unit's to limit the responsibilities of the organisation manager",
-        all: "All CO's",
-        specify: "Specify CO's",
+        invitationLabel: "COs of which units to be managed",
+        invitationTooltip: "Select the organisation units to scope the responsibilities of the organisation manager",
+        all: "All units",
+        specify: "Specify units",
         back: "Back to all admins",
-        editRole: "Edit org manager details",
-        duplicated: "There is already an unit with {{name}} for this organisation"
+        editRole: "Edit organisation manager details",
+        duplicated: "There is already an unit named {{name}} for this organisation"
     }
 };
 
