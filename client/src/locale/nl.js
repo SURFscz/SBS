@@ -443,7 +443,7 @@ const nl = {
             addMembersPlaceholder: "Zoek en selecteer om leden toe te voegen"
         },
         collaboration: {
-            memberHeader: "{{nbrMember}} leden - {{nbrGroups}} groepen",
+            memberHeader: "{{nbrMember}} leden – {{nbrGroups}} groepen",
             memberInformation: "Neem bij vragen over deze samenwerking contact op met een van de beheerders:",
             noAdminsHeader: "(Nog) geen beheerders",
             adminsHeader: "Georganiseerd door <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong></a>",
@@ -2398,24 +2398,24 @@ const nl = {
     },
     units: {
         column: "Units",
-        label: "Units (e.g. afdeling of project)",
-        add: "+ Voeg een unit toe",
+        label: "Units (bijv. afdeling of project)",
+        add: "+ Voeg unit toe",
         confirmation: "Weet je zeker dat je unit {{name}} wilt verwijderen?",
         used: "Het wordt gebruikt door:",
         collaboration_requests: "Samenwerkingsverzoeken",
         invitations: "Organisatie-uitnodigingen",
         collaborations: "Samenwerkingen",
         organisation_memberships: "Lidmaatschappen",
-        collaboration: "Relevante units (e.g. afdeling of project)",
+        collaboration: "Relevante units (bijv. afdeling of project)",
         unitsPlaceHolder: "Selecteer een unit",
-        collaborationRequest: "Organisatie units (optioneel)",
+        collaborationRequest: "Organisatieunits (optioneel)",
         filter: "Alle units",
-        invitationLabel: "Toegang tot de samenwerkingen",
-        invitationTooltip: "Selecteer organisatie unit's om de verantwoordelijkheid van de organisatie manager te limiteren",
-        all: "Alle samenwerkingen",
-        specify: "Kies samenwerkingen",
+        invitationLabel: "Managet samenwerkingen van de units",
+        invitationTooltip: "Selecteer de organisatieunits waarvoor de organisatiemanager verantwoordelijk is",
+        all: "Alle units",
+        specify: "Kies units",
         back: "Terug naar alle admins",
-        editRole: "Wijzig org manager details",
+        editRole: "Wijzig details organisatiemanager",
         duplicated: "Er is al een unit met de naam {{name}} voor deze organisatie"
     }
 };
