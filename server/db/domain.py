@@ -358,10 +358,10 @@ class Collaboration(Base, db.Model, LogoMixin):
         return res
 
     def is_allowed_unit_organisation_membership(self, organisation_membership):
-        if not self.units:
+        if not organisation_membership.units:
             return True
-        membership_units = set(organisation_membership.units)
-        return set(self.units).issubset(membership_units)
+        units = self.units if self.units else []
+        return bool([unit for unit in units if unit in organisation_membership.units])
 
 
 class OrganisationMembership(Base, db.Model):

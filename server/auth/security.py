@@ -181,18 +181,18 @@ def confirm_collaboration_admin(collaboration_id, org_manager_allowed=True, read
             if not collaboration:
                 return False
             org_id = collaboration.organisation_id
+            if is_organisation_admin(org_id):
+                return True
             if org_manager_allowed:
                 is_organisation_member = is_organisation_admin_or_manager(org_id)
                 if not is_organisation_member:
                     return False
                 unit_allowed = True
-                if collaboration.units:
-                    membership = list(
-                        filter(lambda m: m.user_id == user_id, collaboration.organisation.organisation_memberships))[0]
+                membership = list(
+                    filter(lambda m: m.user_id == user_id, collaboration.organisation.organisation_memberships))[0]
+                if membership.units:
                     unit_allowed = collaboration.is_allowed_unit_organisation_membership(membership)
                 return unit_allowed
-            else:
-                return is_organisation_admin(org_id)
         return True
 
     if read_only:

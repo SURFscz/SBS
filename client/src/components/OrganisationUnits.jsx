@@ -119,13 +119,13 @@ export const OrganisationUnits = ({units, setUnits, setDuplicated}) => {
         units = units.length > 0 ? units : [{name: ""}]
     }
 
-
+    const unitName = removalIndex !== -1 ? (units[removalIndex] || {}).name : "";
     return (
         <div className="organisation-units sds--text-field ">
             <ConfirmationDialog isOpen={confirmationDialogOpen}
                                 cancel={cancelRemoval}
                                 confirm={() => removeAfterConfirmation()}
-                                question={I18n.t("units.confirmation")}
+                                question={I18n.t("units.confirmation", {name: unitName})}
                                 closeTimeoutMS={0}
                                 isWarning={true}>
                 {confirmationDialogOpen && renderConfirmation()}
