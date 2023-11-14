@@ -2416,7 +2416,8 @@ const nl = {
         specify: "Kies units",
         back: "Terug naar alle admins",
         editRole: "Wijzig details organisatiemanager",
-        duplicated: "Er is al een unit met de naam {{name}} voor deze organisatie"
+        duplicated: "Er is al een unit met de naam {{name}} voor deze organisatie",
+        unitRequired: "Je moet minstens één unit selecteren"
     }
 };
 

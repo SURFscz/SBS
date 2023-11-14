@@ -29,7 +29,7 @@ export const CollaborationUnits = ({
             .find(m => m.user_id === user.id)
             .units.map(unit => ({...unit, value: unit.id}));
         //fixate the selectedUnits that are not in the organisationMembership
-        selectedUnits.forEach(option => option.disabled = !membershipUnits.some(unit => unit.value === option.value))
+        selectedUnits.forEach(option => option.isFixed = !membershipUnits.some(unit => unit.value === option.value))
         //remove the units from allUnits that are not in the organisationMembership
         allUnits = allUnits.filter(option => membershipUnits.some(unit => unit.value === option.value))
     }
@@ -43,7 +43,6 @@ export const CollaborationUnits = ({
                      searchable={false}
                      isClearable={true}
                      isMulti={true}
-                     isOptionDisabled={option => option.disabled}
                      placeholder={I18n.t("units.unitsPlaceHolder")}
                      onChange={selectedUnitsChanged}/>
 
