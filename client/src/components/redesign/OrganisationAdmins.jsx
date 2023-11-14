@@ -5,6 +5,7 @@ import {ReactComponent as UserIcon} from "../../icons/users.svg";
 import {ReactComponent as InviteIcon} from "../../icons/single-neutral-question.svg";
 import {ReactComponent as HandIcon} from "../../icons/puppet_new.svg";
 import {ReactComponent as ThrashIcon} from "../../icons/trash_new.svg";
+import {ReactComponent as PencilIcon} from "../../icons/pencil-1.svg";
 import CheckBox from "../CheckBox";
 import {ReactComponent as TrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
@@ -139,7 +140,8 @@ class OrganisationAdmins extends React.Component {
         this.setState({selectedMembers: {...selectedMembers}});
     }
 
-    removeFromActionIcon = (entityId, isInvite, showConfirmation) => {
+    removeFromActionIcon = (entityId, isInvite, showConfirmation,e) => {
+        stopEvent(e);
         const {user: currentUser, organisation} = this.props;
         const members = organisation.organisation_memberships;
         const invites = organisation.organisation_invitations || [];
@@ -150,7 +152,7 @@ class OrganisationAdmins extends React.Component {
             this.setState({
                 confirmationDialogOpen: true,
                 isWarning: true,
-                confirmationDialogAction: () => this.removeFromActionIcon(entityId, isInvite, false),
+                confirmationDialogAction: e => this.removeFromActionIcon(entityId, isInvite, false,e),
                 cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
                 confirmationQuestion: question,
             });
@@ -317,20 +319,29 @@ class OrganisationAdmins extends React.Component {
     }
 
     actionIcons = entity => {
-        const {organisation} = this.props;
+        const {user, organisation} = this.props;
         const {selectedMembers} = this.state;
         const showResendInvite = entity.invite === true && isInvitationExpired(entity);
         const nbrOfAdmins = organisation.organisation_memberships.filter(m => m.role === "admin").length;
         const oneAdminLeft = nbrOfAdmins < 2;
         const selectedAdmins = Object.values(selectedMembers).filter(entry => entry.selected && entry.ref.role === "admin").length;
         const noMoreAdminsToCheck = (selectedAdmins + 1) === nbrOfAdmins;
+        const isOrgAdmin = isUserAllowed(ROLES.ORG_ADMIN, user, organisation.id);
+        const showEdit = isOrgAdmin && !entity.invite && entity.role === "manager"
+            && !isEmpty(organisation.units);
 
         const showDelete = entity.invite || entity.role === "manager" || (!oneAdminLeft &&
             (!noMoreAdminsToCheck || selectedMembers[this.getIdentifier(entity)].selected));
         return (
             <div className="admin-icons">
+                {showEdit && <div onClick={this.gotoMember(entity)}>
+                    <Tooltip
+                        tip={I18n.t("models.orgMembers.editManagerTooltip")}
+                        children={<PencilIcon/>}
+                        standalone={true}/>
+                </div>}
                 {showDelete &&
-                    <div onClick={() => this.removeFromActionIcon(entity.id, entity.invite, true)}>
+                    <div onClick={e => this.removeFromActionIcon(entity.id, entity.invite, true, e)}>
                         <Tooltip
                             tip={entity.invite ? I18n.t("models.orgMembers.removeInvitationTooltip") :
                                 I18n.t("models.orgMembers.removeMemberTooltip")}
@@ -353,16 +364,28 @@ class OrganisationAdmins extends React.Component {
     }
 
     unitOptionCallback = unitOption => {
-        this.setState({unitOption: unitOption, selectedRole: unitOption === "all" ? this.state.selectedRole : this.roles[1]})
+        this.setState({
+            unitOption: unitOption,
+            selectedRole: unitOption === "all" ? this.state.selectedRole : this.roles[1]
+        })
     }
 
     setSelectedRole = selectedOption => {
-        this.setState({selectedRole: selectedOption, selectedUnits: selectedOption.value === "admin" ? [] : this.state.selectedUnits});
+        this.setState({
+            selectedRole: selectedOption,
+            selectedUnits: selectedOption.value === "admin" ? [] : this.state.selectedUnits
+        });
     }
 
     cancelSideScreen = e => {
         stopEvent(e);
-        this.setState({selectedMemberId: null, selectedUnits: [], selectedRole: this.roles[1], idpDisplayName: null, unitOption: "all"});
+        this.setState({
+            selectedMemberId: null,
+            selectedUnits: [],
+            selectedRole: this.roles[1],
+            idpDisplayName: null,
+            unitOption: "all"
+        });
     }
 
     renderSelectedMember = (selectedMember, organisation) => {
@@ -442,7 +465,7 @@ class OrganisationAdmins extends React.Component {
         const showImpersonation = currentUser.admin && !entity.invite && entity.user.id !== currentUser.id && impersonation_allowed;
         return (
             <div className={"action-icons-container"}>
-                {isAdmin && this.actionIcons(entity)}
+                {isAdmin && this.actionIcons(entity, currentUser)}
                 {showImpersonation && <div className="impersonation">
                     <HandIcon className="impersonate"
                               onClick={() => emitImpersonation(entity.user, this.props.history)}/>
@@ -589,9 +612,7 @@ class OrganisationAdmins extends React.Component {
                               const allowed = isOrgAdmin && !membership.invite && membership.role === "manager"
                                   && !isEmpty(organisation.units);
                               return allowed && this.gotoMember;
-                          }
-
-                          }
+                          }}
                           loading={false}
                           onHover={true}
                           showNew={isAdmin}
