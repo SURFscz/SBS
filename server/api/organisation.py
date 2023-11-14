@@ -216,14 +216,16 @@ def organisation_by_id(organisation_id):
         optional_managers = list(filter(lambda m: m.user_id == user_id, organisation.organisation_memberships))
         if not optional_managers:
             raise Forbidden()
-        manager_unit_identifiers = set([unit.id for unit in optional_managers[0].units])
+        manager_unit_identifiers = [unit.id for unit in optional_managers[0].units]
         organisation_json = jsonify(organisation).json
 
         def collaboration_allowed(collaboration):
-            if "units" not in collaboration or not collaboration["units"]:
-                return True
-            co_units = set([unit["id"] for unit in collaboration["units"]])
-            return co_units.issubset(manager_unit_identifiers)
+            if manager_unit_identifiers:
+                collaboration_has_units = "units" in collaboration and collaboration["units"]
+                # one of units of the manager has to match one of the units of the collaboration
+                co_units = [unit["id"] for unit in collaboration["units"]] if collaboration_has_units else []
+                return bool([id for id in manager_unit_identifiers if id in co_units])
+            return True
 
         collaborations = [co for co in organisation_json["collaborations"] if collaboration_allowed(co)]
         collaboration_requests = [co for co in organisation_json["collaboration_requests"] if collaboration_allowed(co)]
