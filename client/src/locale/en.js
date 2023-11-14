@@ -2405,7 +2405,7 @@ const en = {
         invitations: "Organisation invitations",
         collaborations: "Collaborations",
         organisation_memberships: "Memberships",
-        collaboration: "Relevant units (e.g. department tor project)",
+        collaboration: "Relevant units (e.g. department or project)",
         unitsPlaceHolder: "Select an unit",
         collaborationRequest: "Organisational units (optional)",
         filter: "All units",
@@ -2415,7 +2415,8 @@ const en = {
         specify: "Specify units",
         back: "Back to all admins",
         editRole: "Edit organisation manager details",
-        duplicated: "There is already an unit named {{name}} for this organisation"
+        duplicated: "There is already an unit named {{name}} for this organisation",
+        unitRequired: "You need to select at least one unit"
     }
 };
 
