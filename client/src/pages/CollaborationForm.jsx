@@ -90,7 +90,7 @@ class CollaborationForm extends React.Component {
                 if (user.admin) {
                     allOrganisations().then(res => {
                         const orgOptions = this.mapOrganisationsToOptions(res);
-                        this.setState({organisations: orgOptions });
+                        this.setState({organisations: orgOptions});
                     });
                 }
                 const expiryDate = collaboration.expiry_date ? moment(collaboration.expiry_date * 1000).toDate() : null;
@@ -263,10 +263,14 @@ class CollaborationForm extends React.Component {
     };
 
     isValid = () => {
-        const {required, alreadyExists, invalidInputs} = this.state;
+        const {required, alreadyExists, invalidInputs, isCollaborationRequest, organisation, units} = this.state;
+        const {user} = this.props;
+        const unitsRequired = !isCollaborationRequest && organisation && !isUserAllowed(ROLES.ORG_ADMIN, user, organisation.id)
+            && !isEmpty((user.organisation_memberships.filter(member => member.organisation_id === organisation.id && member.role === "manager")[0] || {}).units)
+            && isEmpty(units);
 
         const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(this.state[attr])) ||
-            Object.keys(invalidInputs).some(key => invalidInputs[key]);
+            Object.keys(invalidInputs).some(key => invalidInputs[key]) || unitsRequired;
         return !inValid;
     };
 
@@ -495,6 +499,8 @@ class CollaborationForm extends React.Component {
         const joinRequestUrl = (isNew || !allow_join_requests) ? I18n.t("collaboration.joinRequestUrlDisabled") :
             `${config.base_url}/registration?collaboration=${collaboration.identifier}`;
         const accessAllowedToOrg = organisation && isUserAllowed(ROLES.ORG_MANAGER, user, organisation.id);
+        const unitsRequired = !isCollaborationRequest && organisation && !isUserAllowed(ROLES.ORG_ADMIN, user, organisation.id)
+            && !isEmpty((user.organisation_memberships.filter(member => member.organisation_id === organisation.id && member.role === "manager")[0] || {}).units);
         return (
             <div className="mod-new-collaboration-container">
                 {isNew &&
@@ -632,7 +638,7 @@ class CollaborationForm extends React.Component {
                                                           tooltip={I18n.t("collaboration.discloseEmailInformationTooltip")}
                                                           onChange={() => this.setState({disclose_email_information: !disclose_email_information})}/>}
 
-                    {!isEmpty(allUnits)  &&
+                    {!isEmpty(allUnits) &&
                         <CollaborationUnits selectedUnits={units}
                                             allUnits={allUnits}
                                             setUnits={this.setUnits}
@@ -640,6 +646,10 @@ class CollaborationForm extends React.Component {
                                             organisation={organisation}
                                             readOnly={!accessAllowedToOrg && !isCollaborationRequest}
                                             label={I18n.t("units.collaboration")}/>
+
+                    }
+                    {(!initial && unitsRequired && isEmpty(units)) &&
+                        <ErrorIndicator msg={I18n.t("units.unitRequired")}/>
                     }
 
                     {!isCollaborationRequest && <SelectField value={tagsSelected}
