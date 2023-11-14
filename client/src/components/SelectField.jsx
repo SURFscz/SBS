@@ -11,44 +11,52 @@ export default function SelectField({
                                         onChange, name, value, options, placeholder = "", disabled = false,
                                         toolTip = null, searchable = false, small = false,
                                         clearable = false, isMulti = false, creatable = false,
-                                        onInputChange = null, copyClipBoard = false, isOptionDisabled= () => false
+                                        onInputChange = null, copyClipBoard = false, isOptionDisabled = () => false
                                     }) {
+    const styles = {
+        multiValue: (base, state) => state.data.isFixed ? {
+            ...base,
+            backgroundColor: 'var(--sds--color--gray--200)!important'
+        } : base,
+        multiValueRemove: (base, state) => state.data.isFixed ? {...base, display: 'none'} : base
+    };
     return (
         <div className="select-field">
             <label htmlFor={name}>{name}
                 {toolTip && <Tooltip tip={toolTip}/>}
             </label>
             <div className="select-field-inner">
-            {creatable &&
-                <CreatableSelect
-                    className={`input-select-inner creatable`}
+                {creatable &&
+                    <CreatableSelect
+                        className={`input-select-inner creatable`}
+                        classNamePrefix={"select-inner"}
+                        value={value}
+                        isMulti={true}
+                        placeholder={placeholder}
+                        isSearchable={true}
+                        onInputChange={onInputChange}
+                        isClearable={clearable}
+                        isDisabled={disabled}
+                        onChange={onChange}
+                        options={options}
+                    />}
+                {!creatable && <Select
+                    className={`input-select-inner ${small ? " small" : ""}`}
                     classNamePrefix={"select-inner"}
                     value={value}
-                    isMulti={true}
                     placeholder={placeholder}
-                    isSearchable={true}
-                    onInputChange={onInputChange}
-                    isClearable={clearable}
                     isDisabled={disabled}
                     onChange={onChange}
+                    styles={isMulti ? styles : undefined}
+                    isMulti={isMulti}
                     options={options}
+                    isSearchable={searchable}
+                    isClearable={clearable}
+                    isOptionDisabled={isOptionDisabled}
                 />}
-            {!creatable && <Select
-                className={`input-select-inner ${small ? " small" : ""}`}
-                classNamePrefix={"select-inner"}
-                value={value}
-                placeholder={placeholder}
-                isDisabled={disabled}
-                onChange={onChange}
-                isMulti={isMulti}
-                options={options}
-                isSearchable={searchable}
-                isClearable={clearable}
-                isOptionDisabled={isOptionDisabled}
-            />}
-            {copyClipBoard && <ClipBoardCopy
-                txt={isEmpty(value) ? "" : Array.isArray(value) ? value.map(v => v.label).join(", ") : value}
-                right={true}/>}
+                {copyClipBoard && <ClipBoardCopy
+                    txt={isEmpty(value) ? "" : Array.isArray(value) ? value.map(v => v.label).join(", ") : value}
+                    right={true}/>}
             </div>
         </div>
     );
