@@ -10,11 +10,16 @@
             }
 
             &.name {
-                width: 35%;
+                width: 25%;
+            }
+
+            &.units {
+                width: 17%;
+                text-align: center;
             }
 
             &.user__schac_home_organisation {
-                width: 20%;
+                width: 15%;
             }
 
             &.role {
@@ -22,7 +27,7 @@
             }
 
             &.status {
-                width: 20%;
+                width: 18%;
                 text-align: center;
             }
 
@@ -37,6 +42,18 @@
             &.check svg.information-circle {
                 width: 20px;
                 height: 20px;
+            }
+
+            &.units {
+                .unit-container {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+
+                    span.chip-container {
+                        margin: 0 auto;
+                    }
+                }
             }
 
             &.status {

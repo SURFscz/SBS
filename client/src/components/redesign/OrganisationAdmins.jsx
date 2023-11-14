@@ -525,6 +525,19 @@ class OrganisationAdmins extends React.Component {
                 header: I18n.t("models.users.name_email"),
                 mapper: entity => <UserColumn entity={entity} currentUser={currentUser}/>
             },
+            isEmpty(organisation.units) ? null : {
+                key: "units",
+                class: "units",
+                header: I18n.t("units.column"),
+                mapper: membership => <div className="unit-container">
+                    {(membership.units || [])
+                        .sort((u1, u2) => u1.name.localeCompare(u2.name))
+                        .map((unit, index) => <span key={index} className="chip-container">
+                        <Chip
+                            type={ChipType.Status_default}
+                            label={unit.name}/></span>)}
+                </div>
+            },
             {
                 key: "user__schac_home_organisation",
                 header: I18n.t("models.users.institute"),
@@ -556,7 +569,7 @@ class OrganisationAdmins extends React.Component {
                 header: "",
                 mapper: entity => this.getImpersonateMapper(entity, currentUser, impersonation_allowed, isAdmin)
             },
-        ]
+        ].filter(coll => coll !== null)
         const entities = admins.concat(invites);
         return (<>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -571,9 +584,13 @@ class OrganisationAdmins extends React.Component {
                           searchAttributes={["user__name", "user__email", "invitee_email"]}
                           defaultSort="name"
                           columns={isAdmin ? columns : columns.slice(1)}
-                          rowLinkMapper={membership =>
-                              isUserAllowed(ROLES.ORG_ADMIN, currentUser, organisation) && !membership.invite && membership.role === "manager"
-                              && !isEmpty(organisation.units) && this.gotoMember
+                          rowLinkMapper={membership => {
+                              const isOrgAdmin = isUserAllowed(ROLES.ORG_ADMIN, currentUser, organisation.id);
+                              const allowed = isOrgAdmin && !membership.invite && membership.role === "manager"
+                                  && !isEmpty(organisation.units);
+                              return allowed && this.gotoMember;
+                          }
+
                           }
                           loading={false}
                           onHover={true}
