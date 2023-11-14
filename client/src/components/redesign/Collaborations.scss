@@ -142,11 +142,13 @@ table.collaborations, table.memberCollaborations {
                     display: flex;
                     flex-direction: column;
                     gap: 10px;
+
                     span.chip-container {
                         margin: 0 auto;
                     }
                 }
             }
+
             &.collaboration_memberships_count {
                 text-align: center;
             }
