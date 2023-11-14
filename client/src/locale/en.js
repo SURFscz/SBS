@@ -240,6 +240,7 @@ const en = {
             invitation: "Invitation sent by {{inviter}} to {{email}} on {{date}}",
             removeTooltipDisabled: "First select users to delete",
             removeInvitationTooltip: "Delete invitation",
+            editManagerTooltip: "Edit manager",
             removeMemberTooltip: "Delete member",
             removeTooltip: "Delete all selected members",
             mailTooltipDisabled: "First select users to email",
