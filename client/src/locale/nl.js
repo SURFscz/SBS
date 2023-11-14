@@ -240,6 +240,7 @@ const nl = {
             invitation: "Uitnodiging verstuurd door {{inviter}} naar {{email}} op {{date}}",
             removeTooltipDisabled: "Selecteer eerst gebruikers om te verwijderen",
             removeInvitationTooltip: "Verwijder uitnodiging",
+            editManagerTooltip: "Bewerk manager",
             removeMemberTooltip: "Verwijder gebruiker",
             removeTooltip: "Verwijder alle geselecteerde leden",
             mailTooltipDisabled: "Selecteer eerst gebruikers om te e-mailen",
