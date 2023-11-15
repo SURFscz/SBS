@@ -60,6 +60,8 @@ uuc_hashed_secret = secure_hash(uuc_secret)
 uuc_unit_research_name = "Research"
 uuc_unit_support_name = "Support"
 
+monitoring_co_name = "Monitoring CO numero 1"
+
 uva_secret = generate_token()
 uva_hashed_secret = secure_hash(uva_secret)
 
@@ -541,7 +543,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                  short_name="uuc_teachers_short_name",
                                  accepted_user_policy="https://www.uuc.nl/teachers")
 
-    monitoring_co_1 = Collaboration(name="Monitoring CO numero 1",
+    monitoring_co_1 = Collaboration(name=monitoring_co_name,
                                     identifier="37d55167-23e4-4099-ae20-4f3d8d284b14",
                                     uuid4="b85e2ae6-05f3-4c27-9078-e11a420bdc08",
                                     global_urn="ucc:monitoring1",
