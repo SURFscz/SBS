@@ -4,10 +4,10 @@ from werkzeug.exceptions import Forbidden
 from server.auth.security import is_admin_user, is_application_admin, confirm_allow_impersonation, \
     confirm_write_access, \
     confirm_collaboration_admin, confirm_collaboration_member, confirm_organisation_admin, current_user_name, \
-    is_current_user_organisation_admin_or_manager
+    is_current_user_organisation_admin_or_manager, has_org_manager_unit_access
 from server.db.domain import CollaborationMembership, Collaboration, User, OrganisationMembership, Organisation
 from server.test.abstract_test import AbstractTest
-from server.test.seed import ai_computing_name, the_boss_name, uuc_name
+from server.test.seed import ai_computing_name, the_boss_name, uuc_name, monitoring_co_name
 
 
 class TestSecurity(AbstractTest):
@@ -127,3 +127,16 @@ class TestSecurity(AbstractTest):
             session["user"] = {"uid": "urn:paul", "id": paul.id, "admin": False}
 
             self.assertRaises(Forbidden, lambda: confirm_collaboration_admin(collaboration.id))
+
+    def test_has_org_manager_unit_access(self):
+        with self.app.app_context() as context:
+            org_manager = self.find_entity_by_name(User, "Harry Doe")
+            context.g.is_authorized_api_call = False
+            session["user"] = {"uid": "urn:paul", "id": org_manager.id, "admin": False}
+
+            collaboration = self.find_entity_by_name(Collaboration, monitoring_co_name)
+            self.assertFalse(has_org_manager_unit_access(org_manager.id, collaboration))
+
+            collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+            self.assertTrue(has_org_manager_unit_access(org_manager.id, collaboration))
+            self.assertFalse(has_org_manager_unit_access(org_manager.id, collaboration, org_manager_allowed=False))

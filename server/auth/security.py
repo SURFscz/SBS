@@ -41,18 +41,16 @@ def _get_impersonated_session():
     return session
 
 
-def _has_org_manager_unit_access(user_id, collaboration, org_manager_allowed=True):
-    organisation_id = collaboration.organisation_id
-    if is_organisation_admin(organisation_id):
+def has_org_manager_unit_access(user_id, collaboration, org_manager_allowed=True):
+    members = list(filter(lambda m: m.user_id == user_id, collaboration.organisation.organisation_memberships))
+    if not members:
+        return False
+    membership = members[0]
+    if membership.role == "admin":
         return True
     if not org_manager_allowed:
         return False
-    is_organisation_member = is_organisation_admin_or_manager(organisation_id)
-    if not is_organisation_member:
-        return False
     unit_allowed = True
-    membership = list(
-        filter(lambda m: m.user_id == user_id, collaboration.organisation.organisation_memberships))[0]
     if membership.units:
         unit_allowed = collaboration.is_allowed_unit_organisation_membership(membership)
     return unit_allowed
@@ -197,7 +195,7 @@ def confirm_collaboration_admin(collaboration_id, org_manager_allowed=True, read
             collaboration = db.session.get(Collaboration, collaboration_id)
             if not collaboration:
                 return False
-            return _has_org_manager_unit_access(user_id, collaboration, org_manager_allowed=org_manager_allowed)
+            return has_org_manager_unit_access(user_id, collaboration, org_manager_allowed=org_manager_allowed)
         return True
 
     if read_only:
@@ -219,7 +217,7 @@ def confirm_collaboration_member(collaboration_id):
         collaboration = db.session.get(Collaboration, collaboration_id)
         if not collaboration:
             return False
-        return _has_org_manager_unit_access(user_id, collaboration)
+        return has_org_manager_unit_access(user_id, collaboration)
 
     confirm_write_access(override_func=override_func)
 
