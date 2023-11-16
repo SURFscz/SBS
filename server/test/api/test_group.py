@@ -221,7 +221,7 @@ class TestGroup(AbstractTest):
                   },
                   headers={"Authorization": f"Bearer {uuc_secret}"},
                   with_basic_auth=False,
-                  response_status_code=403)
+                  response_status_code=404)
 
     def test_delete_group_api(self):
         group = self.find_entity_by_name(Group, ai_researchers_group)

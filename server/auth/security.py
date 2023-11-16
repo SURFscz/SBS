@@ -1,6 +1,6 @@
 from flask import session, g as request_context, request as current_request, current_app
 from sqlalchemy.orm import load_only
-from werkzeug.exceptions import Forbidden
+from werkzeug.exceptions import Forbidden, NotFound
 
 from server.db.db import db
 from server.db.domain import (CollaborationMembership, OrganisationMembership, Collaboration, User,
@@ -96,10 +96,12 @@ def confirm_external_api_call():
 def confirm_organisation_api_collaboration(collaboration_identifier, collaboration=None):
     confirm_external_api_call()
     organisation = request_context.external_api_organisation
+    if not organisation:  # i.e., not a valid Org key used for call
+        raise Forbidden()
     if collaboration is None:
         collaboration = Collaboration.query.filter(Collaboration.identifier == collaboration_identifier).one()
-    if not organisation or organisation.id != collaboration.organisation_id:
-        raise Forbidden()
+    if not collaboration or organisation.id != collaboration.organisation_id:  # i.e., CO not found (or not in this Org)
+        raise NotFound()
     return collaboration
 
 
