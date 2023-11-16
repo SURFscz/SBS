@@ -692,7 +692,7 @@ class TestCollaboration(AbstractTest):
                                     data=json.dumps({
                                         "name": "new_collaboration",
                                         "administrators": ["the@ex.org"],
-                                        "short_name": f"1{ai_computing_short_name}",
+                                        "short_name": f"{ai_computing_short_name}",
                                         "description": "new_collaboration",
                                         "accepted_user_policy": "https://aup.org",
                                         "disable_join_requests": True,
@@ -739,6 +739,40 @@ class TestCollaboration(AbstractTest):
                                         "description": "new_collaboration",
                                         "administrators": ["the@ex.org", "that@ex.org"],
                                         "short_name": "!@#$%^&*(nope",
+                                        "disable_join_requests": True,
+                                        "disclose_member_information": True,
+                                        "disclose_email_information": True
+                                    }),
+                                    content_type="application/json")
+        self.assertEqual(400, response.status_code)
+        response_json = response.json
+        self.assertTrue("Invalid CO short_name" in response_json["message"])
+
+    def test_api_call_with_invalid_short_name_2(self):
+        response = self.client.post("/api/collaborations/v1",
+                                    headers={"Authorization": f"Bearer {uuc_secret}"},
+                                    data=json.dumps({
+                                        "name": "new_collaboration",
+                                        "description": "new_collaboration",
+                                        "administrators": ["the@ex.org", "that@ex.org"],
+                                        "short_name": "lang56789012345678901234567890",
+                                        "disable_join_requests": True,
+                                        "disclose_member_information": True,
+                                        "disclose_email_information": True
+                                    }),
+                                    content_type="application/json")
+        self.assertEqual(400, response.status_code)
+        response_json = response.json
+        self.assertTrue("Invalid CO short_name" in response_json["message"])
+
+    def test_api_call_with_invalid_short_name_3(self):
+        response = self.client.post("/api/collaborations/v1",
+                                    headers={"Authorization": f"Bearer {uuc_secret}"},
+                                    data=json.dumps({
+                                        "name": "new_collaboration",
+                                        "description": "new_collaboration",
+                                        "administrators": ["the@ex.org", "that@ex.org"],
+                                        "short_name": "12begincijfer",
                                         "disable_join_requests": True,
                                         "disclose_member_information": True,
                                         "disclose_email_information": True
