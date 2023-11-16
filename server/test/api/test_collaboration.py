@@ -887,7 +887,7 @@ class TestCollaboration(AbstractTest):
     def test_find_by_identifier_api_not_allowed(self):
         self.get(f"/api/collaborations/v1/{collaboration_uva_researcher_uuid}",
                  headers={"Authorization": f"Bearer {uuc_secret}"},
-                 with_basic_auth=False, response_status_code=403)
+                 with_basic_auth=False, response_status_code=404)
 
     def test_collaboration_new_with_expiry_date_past(self):
         try:
@@ -963,7 +963,7 @@ class TestCollaboration(AbstractTest):
         self.delete(f"/api/collaborations/v1/{collaboration_ai_computing_uuid}",
                     headers={"Authorization": f"Bearer {uva_secret}"},
                     with_basic_auth=False,
-                    response_status_code=403)
+                    response_status_code=404)
 
     def test_collaboration_with_units(self):
         organisation = Organisation.query.filter(Organisation.name == uuc_name).one()
