@@ -51,14 +51,24 @@ def calculate_expiry_period(invitation, today=datetime.today()):
 
 
 def cleanse_short_name(data, attr="short_name"):
+    """
+    Cleanses a short_name attribute in a JSON object (typically a description of a CO).
+    :param data: The JSON object (CO)
+    :param attr: The attribute name
+    :return: True if the attribute was modified, False otherwise
+    """
     if attr not in data:
         raise BadRequest(f"Missing {attr} in JSON")
     short_name = data[attr]
     while short_name[0].isnumeric():
         short_name = short_name[1:]
 
-    data[attr] = re.sub(r"[^a-zA-Z_0-9]+", "", short_name).lower()[:16]
-    return data[attr] == short_name
+    short_name = re.sub(r"[^a-zA-Z_0-9]+", "", short_name).lower()[:16]
+
+    is_modified = not (data[attr] == short_name)
+    data[attr] = short_name
+
+    return not is_modified
 
 
 uri_re = re.compile("^(https?|ssh|ftp)://(.+)$")
