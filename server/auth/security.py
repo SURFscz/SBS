@@ -42,6 +42,8 @@ def _get_impersonated_session():
 
 
 def has_org_manager_unit_access(user_id, collaboration, org_manager_allowed=True):
+    if is_application_admin():
+        return True
     members = list(filter(lambda m: m.user_id == user_id, collaboration.organisation.organisation_memberships))
     if not members:
         return False
