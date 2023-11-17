@@ -7,8 +7,8 @@ from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED
 from server.db.domain import Collaboration, Service, User, UserLogin
 from server.test.abstract_test import AbstractTest
-from server.test.seed import john_name, service_network_entity_id, service_mail_entity_id, \
-    ai_computing_name, sarah_name, service_mail_name, jane_name
+from server.test.seed import (john_name, service_network_entity_id, service_mail_entity_id,
+                              ai_computing_name, sarah_name, service_mail_name, jane_name, uuc_short_name)
 
 
 class TestUserSaml(AbstractTest):
@@ -23,10 +23,11 @@ class TestUserSaml(AbstractTest):
                               "user_name": "sarah p"})
         attrs = res["attributes"]
         entitlements = attrs["eduPersonEntitlement"]
-        self.assertListEqual(["urn:example:sbs:group:uuc",
-                              "urn:example:sbs:group:uuc:ai_computing",
-                              "urn:example:sbs:label:uuc:ai_computing:tag_uuc"
-                              ], sorted(entitlements))
+        self.assertListEqual([
+            f"urn:example:sbs:group:{uuc_short_name}",
+            f"urn:example:sbs:group:{uuc_short_name}:ai_computing",
+            f"urn:example:sbs:label:{uuc_short_name}:ai_computing:tag_uuc"
+        ], sorted(entitlements))
         self.assertListEqual(["sarah@test.sram.surf.nl"], attrs["eduPersonPrincipalName"])
         self.assertListEqual(["sarah"], attrs["uid"])
         self.assertIsNotNone(attrs["sshkey"][0])
@@ -41,28 +42,29 @@ class TestUserSaml(AbstractTest):
 
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:jane", "service_id": service_network_entity_id,
-                              "issuer_id": "https://signon.rug.nl/nidp/saml2/metadata", "uid": "sarah",
+                              "issuer_id": "https://idp.uni-franeker.nl/", "uid": "sarah",
                               "user_email": "sarah@ex.com", "user_name": "sarah p"
                               })
         attrs = res["attributes"]
         entitlements = attrs["eduPersonEntitlement"]
-        self.assertListEqual(["urn:example:sbs:group:uuc",
-                              "urn:example:sbs:group:uuc:ai_computing",
-                              "urn:example:sbs:group:uuc:ai_computing:ai_res",
-                              "urn:example:sbs:label:uuc:ai_computing:tag_uuc"
-                              ], sorted(entitlements))
+        self.assertListEqual([
+            f"urn:example:sbs:group:{uuc_short_name}",
+            f"urn:example:sbs:group:{uuc_short_name}:ai_computing",
+            f"urn:example:sbs:group:{uuc_short_name}:ai_computing:ai_res",
+            f"urn:example:sbs:label:{uuc_short_name}:ai_computing:tag_uuc"
+        ], sorted(entitlements))
         self.assertListEqual(["jane@test.sram.surf.nl"], attrs["eduPersonPrincipalName"])
         self.assertListEqual(["jane"], attrs["uid"])
         self.assertEqual(0, len(attrs["sshkey"]))
 
         jane = self.find_entity_by_name(User, jane_name)
-        self.assertEqual("rug.nl", jane.schac_home_organisation)
+        self.assertEqual("uni-franeker.nl", jane.schac_home_organisation)
         second_fa_uuid = str(uuid.uuid4())
         jane.second_fa_uuid = second_fa_uuid
         self.save_entity(jane)
 
         res = self.get("/api/mfa/get2fa_proxy_authz", query_data={"second_fa_uuid": second_fa_uuid})
-        self.assertEqual("University of Groningen", res["idp_name"])
+        self.assertEqual("Academy of Franeker", res["idp_name"])
 
     def test_proxy_authz_suspended(self):
         self.mark_user_suspended(john_name)

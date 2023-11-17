@@ -14,4 +14,4 @@ class TestUnit(AbstractTest):
         self.assertListEqual([ai_computing_name], res["collaborations"])
         self.assertEqual(0, len(res["collaboration_requests"]))
         self.assertEqual(0, len(res["invitations"]))
-        self.assertListEqual(["Harry Doe - UUC"], res["organisation_memberships"])
+        self.assertListEqual([f"Harry Doe - {uuc_name}"], res["organisation_memberships"])

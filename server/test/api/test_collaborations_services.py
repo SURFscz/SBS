@@ -148,7 +148,7 @@ class TestCollaborationsServices(AbstractTest):
             "collaboration_id": collaboration_id,
             "service_id": service_cloud_id
         }, with_basic_auth=False, response_status_code=400)
-        self.assertTrue("Organisation UUC can only be linked to SURF services" in res["message"])
+        self.assertIn(f"Organisation {uuc_name} can only be linked to SURF services", res["message"])
 
     ###################################################################
     # Service groups

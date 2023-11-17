@@ -3,8 +3,9 @@ import uuid
 from server.db.db import db
 from server.db.domain import Collaboration, Service, ServiceConnectionRequest
 from server.test.abstract_test import AbstractTest
-from server.test.seed import ssh_service_connection_request_hash, uva_research_name, service_wiki_name, \
-    ai_computing_name, service_ssh_uva_name, service_storage_name, service_cloud_name
+from server.test.seed import (ssh_service_connection_request_hash, uva_research_name, service_wiki_name,
+                              ai_computing_name, service_ssh_uva_name, service_storage_name, service_cloud_name,
+                              uuc_short_name)
 
 
 class TestServiceConnectionRequest(AbstractTest):
@@ -131,7 +132,7 @@ class TestServiceConnectionRequest(AbstractTest):
             self.assertEqual(pre_services_count + 1, post_services_count)
 
             mail_msg = outbox[0]
-            self.assertEqual("Service SSH UvA connection request for collaboration UVA UCC research "
+            self.assertEqual(f"Service {service_ssh_uva_name} connection request for collaboration {uva_research_name} "
                              "has been accepted (local)", mail_msg.subject)
 
     def test_approve_service_connection_request_with_no_email_requester(self):
@@ -171,7 +172,7 @@ class TestServiceConnectionRequest(AbstractTest):
             self.assertEqual(pre_services_count, post_services_count)
 
             mail_msg = outbox[0]
-            self.assertEqual("Service SSH UvA connection request for collaboration UVA UCC research "
+            self.assertEqual(f"Service {service_ssh_uva_name} connection request for collaboration {uva_research_name} "
                              "has been declined (local)", mail_msg.subject)
 
     def test_all_service_request_connections_by_service(self):
@@ -200,5 +201,6 @@ class TestServiceConnectionRequest(AbstractTest):
 
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
 
-        group = list(filter(lambda group: group.global_urn == "uuc:ai_computing:wiki-wiki2", collaboration.groups))[0]
+        group = list(filter(lambda group: group.global_urn == f"{uuc_short_name}:ai_computing:wiki-wiki2",
+                            collaboration.groups))[0]
         self.assertEqual(1, len(group.invitations))
