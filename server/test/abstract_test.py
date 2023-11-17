@@ -1,6 +1,7 @@
 import datetime
 import json
 import os
+import pathlib
 import uuid
 from base64 import b64encode
 from time import time
@@ -56,6 +57,11 @@ class AbstractTest(TestCase):
         config = app.app_config
         config["profile"] = None
         config.test = True
+
+        # point config to correct metadata file
+        metadata_filename = pathlib.Path(__file__).parent.resolve() / "data" / "idps-metadata.xml"
+        app.app_config.metadata.idp_url = f"file:///{metadata_filename}"
+
         AbstractTest.app = app
 
     @staticmethod
