@@ -28,7 +28,7 @@ sarah_name = "Sarah Cross"
 jane_name = "Jane Doe"
 
 schac_home_organisation = "example.org"
-schac_home_organisation_uuc = "rug.nl"
+schac_home_organisation_uuc = "uni-harderwijk.nl"
 
 organisation_invitation_hash = generate_token()
 organisation_invitation_expired_hash = generate_token()
@@ -54,7 +54,8 @@ ai_computing_short_name = "ai_computing"
 
 uuc_teachers_name = "UUC Teachers"
 
-uuc_name = "UUC"
+uuc_name = "Universiteit van Harderwijk"
+uuc_short_name = "uniharderwijk"
 uuc_secret = generate_token()
 uuc_hashed_secret = secure_hash(uuc_secret)
 uuc_unit_research_name = "Research"
@@ -65,14 +66,14 @@ monitoring_co_name = "Monitoring CO numero 1"
 uva_secret = generate_token()
 uva_hashed_secret = secure_hash(uva_secret)
 
-amsterdam_uva_name = "Amsterdam UVA"
-tue_name = "TUE"
+amsterdam_uva_name = "Academia Franekerensis"
+tue_name = "Universitair Medisch Centrum Noord-Pekela"
 
 collaboration_uva_researcher_uuid = "da706611-0afb-4a7a-819b-b0a9c63e9b67"
 
-uva_research_name = "UVA UCC research"
+uva_research_name = "UCC research"
 
-uu_disabled_join_request_name = "UU"
+uu_disabled_join_request_name = "Robotics"
 join_request_peter_hash = generate_token()
 
 service_mail_name = "Mail Services"
@@ -89,7 +90,7 @@ service_storage_name = "Storage"
 service_wireless_name = "Wireless"
 service_cloud_name = "Cloud"
 service_wiki_name = "Wiki"
-service_ssh_uva_name = "SSH UvA"
+service_ssh_uva_name = "SSH Service"
 service_uuc_scheduler_name = "uuc_scheduler_name"
 service_sram_demo_sp = "SRAM Demo RP"
 
@@ -258,22 +259,22 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     sarah_other_user_ip_network = UserIpNetwork(network_value="255.0.0.9/24", user=sarah)
     persist_instance(db, sarah_user_ip_network, sarah_other_user_ip_network)
 
-    uuc = Organisation(name=uuc_name, short_name="uuc", identifier="95306a5f-0a16-4461-b358-8442e09dab20",
-                       description="Unincorporated Urban Community", logo=read_image("uuc.jpeg"),
+    uuc = Organisation(name=uuc_name, short_name=uuc_short_name, identifier="95306a5f-0a16-4461-b358-8442e09dab20",
+                       description="Unincorporated Urban Community", logo=read_image("uni-harderwijk.png"),
                        created_by="urn:admin", updated_by="urnadmin", category="Research",
                        on_boarding_msg="We are using **SRAM** to provide access to the following research tools:"
                                        "\n- Wiki\n- Cloud\n- Awesome things...\n\nIf you want to join one of our "
                                        "collaborations, please send a mail to [support@uuc.nl](mailto:support@uuc.nl)."
                                        "\n<br/><br/>\nHappy researching,\n\n*UUC support*",
                        collaboration_creation_allowed=True)
-    uva = Organisation(name=amsterdam_uva_name, description="University of Amsterdam",
-                       identifier="7c60a022-ab09-438c-8603-c361bc1a088d",
-                       created_by="urn:admin", updated_by="urn:admin", short_name="uva", logo=read_image("uva.jpg"),
+    uva = Organisation(name=amsterdam_uva_name, description=amsterdam_uva_name,
+                       identifier="7c60a022-ab09-438c-8603-c361bc1a088d", created_by="urn:admin",
+                       updated_by="urn:admin", short_name="uva", logo=read_image("uni-franeker.png"),
                        category="University")
-    tue = Organisation(name=tue_name, description="University of Eindhoven",
+    tue = Organisation(name=tue_name, description=tue_name,
                        identifier="65fadfcb-71fd-4962-8428-0ecd15970f8d",
-                       created_by="urn:admin", updated_by="urn:admin", short_name="tue", logo=read_image("tue.jpeg"),
-                       category="University")
+                       created_by="urn:admin", updated_by="urn:admin", short_name="tue",
+                       logo=read_image("umc-pekela.png"), category="UMC")
     persist_instance(db, uuc, uva, tue)
 
     uuc_unit_research = Unit(name=uuc_unit_research_name, organisation=uuc)

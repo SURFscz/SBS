@@ -11,9 +11,10 @@ from server.db.domain import Collaboration, Organisation, Invitation, Collaborat
     ServiceGroup, Tag, Service
 from server.db.models import flatten
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
-from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uva_research_name, john_name, \
-    ai_computing_short_name, uuc_teachers_name, read_image, collaboration_uva_researcher_uuid, service_group_wiki_name1, \
-    service_storage_name, uva_secret, amsterdam_uva_name
+from server.test.seed import (collaboration_ai_computing_uuid, ai_computing_name, uva_research_name, john_name,
+                              ai_computing_short_name, uuc_teachers_name, read_image, collaboration_uva_researcher_uuid,
+                              service_group_wiki_name1,
+                              service_storage_name, uva_secret, amsterdam_uva_name, uuc_short_name)
 from server.test.seed import uuc_secret, uuc_name
 
 
@@ -78,7 +79,7 @@ class TestCollaboration(AbstractTest):
 
             self.assertIsNotNone(collaboration["id"])
             self.assertIsNotNone(collaboration["identifier"])
-            self.assertEqual("uuc:new_short_name", collaboration["global_urn"])
+            self.assertEqual(f"{uuc_short_name}:new_short_name", collaboration["global_urn"])
             self.assertEqual(STATUS_ACTIVE, collaboration["status"])
             self.assertEqual(2, len(outbox))
 
@@ -341,7 +342,7 @@ class TestCollaboration(AbstractTest):
         self.login()
         collaboration = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
         self.assertEqual(collaboration_id, collaboration["id"])
-        self.assertEqual("UUC", collaboration["organisation"]["name"])
+        self.assertEqual(uuc_name, collaboration["organisation"]["name"])
         self.assertTrue(len(collaboration["collaboration_memberships"]) >= 4)
         self.assertEqual(1, len(collaboration["invitations"]))
         self.assertEqual(2, len(collaboration["services"]))
@@ -363,7 +364,7 @@ class TestCollaboration(AbstractTest):
                                  headers=API_AUTH_HEADER,
                                  with_basic_auth=False)
         self.assertEqual(collaboration_id, collaboration["id"])
-        self.assertEqual("UUC", collaboration["organisation"]["name"])
+        self.assertEqual(uuc_name, collaboration["organisation"]["name"])
         self.assertTrue(len(collaboration["collaboration_memberships"]) >= 4)
 
     def test_my_collaborations(self):
@@ -683,8 +684,8 @@ class TestCollaboration(AbstractTest):
                                     content_type="application/json")
         self.assertEqual(400, response.status_code)
         data = response.json
-        self.assertTrue(
-            "Collaboration with name 'AI computing' already exists within organisation 'UUC'." in data["message"])
+        self.assertIn(f"Collaboration with name '{ai_computing_name}' already exists within organisation '{uuc_name}'.",
+                      data["message"])
 
     def test_api_call_existing_short_name(self):
         response = self.client.post("/api/collaborations/v1",
@@ -703,8 +704,8 @@ class TestCollaboration(AbstractTest):
                                     content_type="application/json")
         self.assertEqual(400, response.status_code)
         data = response.json
-        self.assertTrue(
-            "Collaboration with short_name 'ai_computing' already exists within organisation 'UUC'." in data["message"])
+        self.assertIn(f"Collaboration with short_name '{ai_computing_short_name}' already exists within "
+                      f"organisation '{uuc_name}'.", data["message"])
 
     def test_api_call_no_api(self):
         self.login("urn:john")
@@ -916,7 +917,7 @@ class TestCollaboration(AbstractTest):
         self.login("urn:service_admin")
         service = self.find_entity_by_name(Service, service_storage_name)
         res = self.get(f"/api/collaborations/admins/{service.id}")
-        self.assertDictEqual({"UVA UCC research": ["sarah@uva.org"]}, res)
+        self.assertDictEqual({f"{uva_research_name}": ["sarah@uva.org"]}, res)
 
     def test_delete_membership_api(self):
         self.assertIsNotNone(self.find_collaboration_membership(collaboration_ai_computing_uuid, 'urn:jane'))

@@ -1,8 +1,8 @@
 from server.db.db import db
 from server.db.domain import Organisation, OrganisationInvitation, User, JoinRequest
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
-from server.test.seed import uuc_name, amsterdam_uva_name, schac_home_organisation_uuc, schac_home_organisation, \
-    read_image, uuc_secret, jane_name
+from server.test.seed import (uuc_name, amsterdam_uva_name, schac_home_organisation_uuc, schac_home_organisation,
+                              read_image, uuc_secret, jane_name, uuc_short_name)
 
 
 class TestOrganisation(AbstractTest):
@@ -41,10 +41,10 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(4, organisation["organisation_memberships_count"])
 
     def test_identity_provider_display_name(self):
-        self.login("urn:roger", "rug.nl")
+        self.login("urn:roger", "uni-franeker.nl")
         res = self.get("/api/organisations/identity_provider_display_name",
                        with_basic_auth=False)
-        self.assertEqual("University of Groningen", res["display_name"])
+        self.assertEqual("Academy of Franeker", res["display_name"])
 
     def test_identity_provider_display_name_other(self):
         self.login("urn:john")
@@ -52,7 +52,7 @@ class TestOrganisation(AbstractTest):
         res = self.get("/api/organisations/identity_provider_display_name",
                        query_data={"user_id": user.id, "lang": "nl"},
                        with_basic_auth=False)
-        self.assertEqual("Rijksuniversiteit Groningen", res["display_name"])
+        self.assertEqual(uuc_name, res["display_name"])
 
     def test_identity_provider_display_name_no_schac_home(self):
         self.login("urn:harry")
@@ -104,7 +104,7 @@ class TestOrganisation(AbstractTest):
         self.login("urn:betty")
         organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
         name = self.get(f"/api/organisations/schac_home/{organisation_id}", with_basic_auth=False)
-        self.assertEqual("rug.nl", name)
+        self.assertEqual(schac_home_organisation_uuc, name)
 
     def test_schac_homes(self):
         self.login("urn:betty")
@@ -209,10 +209,10 @@ class TestOrganisation(AbstractTest):
                   response_status_code=403)
 
     def test_organisation_name_exists(self):
-        res = self.get("/api/organisations/name_exists", query_data={"name": "uuc"})
+        res = self.get("/api/organisations/name_exists", query_data={"name": uuc_name})
         self.assertEqual(True, res)
 
-        res = self.get("/api/organisations/name_exists", query_data={"name": "uuc", "existing_organisation": "uuc"})
+        res = self.get("/api/organisations/name_exists", query_data={"name": uuc_name, "existing_organisation": uuc_name})
         self.assertEqual(False, res)
 
         res = self.get("/api/organisations/name_exists", query_data={"name": "xyc"})
@@ -222,11 +222,11 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(False, res)
 
     def test_organisation_short_name_exists(self):
-        res = self.get("/api/organisations/short_name_exists", query_data={"short_name": uuc_name})
+        res = self.get("/api/organisations/short_name_exists", query_data={"short_name": uuc_short_name})
         self.assertEqual(True, res)
 
-        res = self.get("/api/organisations/short_name_exists", query_data={"short_name": uuc_name,
-                                                                           "existing_organisation": uuc_name})
+        res = self.get("/api/organisations/short_name_exists", query_data={"short_name": uuc_short_name,
+                                                                           "existing_organisation": uuc_short_name})
         self.assertEqual(False, res)
 
         res = self.get("/api/organisations/short_name_exists", query_data={"short_name": "xyc"})

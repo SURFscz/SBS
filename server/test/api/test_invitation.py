@@ -213,7 +213,7 @@ class TestInvitation(AbstractTest):
                        headers={"Authorization": f"Bearer {uuc_secret}"},
                        response_status_code=403,
                        with_basic_auth=False)
-        self.assertTrue("Collaboration 123456 is not part of organisation UUC" in res["message"])
+        self.assertIn(f"Collaboration 123456 is not part of organisation {uuc_name}", res["message"])
 
     def test_collaboration_external_identifier(self):
         invitation = self._get_invitation_curious()

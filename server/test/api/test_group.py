@@ -2,9 +2,10 @@ from flask import jsonify
 
 from server.db.domain import Collaboration, Group, User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import ai_researchers_group, ai_computing_name, ai_researchers_group_short_name, \
-    service_group_mail_name, ai_dev_identifier, uuc_secret, john_name, uva_secret, collaboration_ai_computing_uuid, \
-    uva_research_name
+from server.test.seed import (ai_researchers_group, ai_computing_name, ai_researchers_group_short_name,
+                              service_group_mail_name, ai_dev_identifier, uuc_secret, john_name, uva_secret,
+                              collaboration_ai_computing_uuid,
+                              uva_research_name, uuc_short_name)
 
 
 class TestGroup(AbstractTest):
@@ -72,7 +73,7 @@ class TestGroup(AbstractTest):
         })
         group = self.find_entity_by_name(Group, group_name)
 
-        self.assertEqual("uuc:ai_computing:new_auth_group", group.global_urn)
+        self.assertEqual(f"{uuc_short_name}:ai_computing:new_auth_group", group.global_urn)
         self.assertEqual(invitations_count, len(group.invitations))
         self.assertEqual(members_count, len(group.collaboration_memberships))
 
@@ -93,7 +94,7 @@ class TestGroup(AbstractTest):
 
         group = self.find_entity_by_name(Group, ai_researchers_group)
 
-        self.assertEqual("uuc:ai_computing:new_short_name", group.global_urn)
+        self.assertEqual(f"{uuc_short_name}:ai_computing:new_short_name", group.global_urn)
         self.assertEqual(group.auto_provision_members, auto_provision_members)
         self.assertEqual(invitations_count, len(group.invitations))
         self.assertEqual(members_count, len(group.collaboration_memberships))
