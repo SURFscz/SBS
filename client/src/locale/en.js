@@ -1379,7 +1379,7 @@ const en = {
         },
     },
     apiKeys: {
-        title: "Create an organisation API token for {{organisation}}",
+        title: "Create an organisation API token for {{organisation}}",
         info: "An organisation API token is required to use the <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{base_url}}/apidocs/\"'>Application Programmer Interface (API)</a>.",
         backToOrganisationDetail: "Back to my organisation {{name}}",
         secretDisclaimer: "You can view this organisation API token only once. Copy it and store it somewhere safe.<br><br>If the token is lost, delete it and create a new one.",

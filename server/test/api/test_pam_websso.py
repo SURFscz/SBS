@@ -142,8 +142,7 @@ class TestPamWebSSO(AbstractTest):
                         body={"session_id": pam_session_id,
                               "pin": "1234"},
                         with_basic_auth=False,
-                        headers={"Authorization": f"bearer {service_storage_token}"},
-                        result_to_json=True)
+                        headers={"Authorization": f"bearer {service_storage_token}"})
         self.assertEqual("SUCCESS", res["result"])
         self.assertEqual("peter", res["username"])
         self.assertEqual(1, len(res["groups"]))
@@ -164,8 +163,7 @@ class TestPamWebSSO(AbstractTest):
                         body={"session_id": pam_session_id,
                               "pin": "nope"},
                         with_basic_auth=False,
-                        headers={"Authorization": f"bearer {service_storage_token}"},
-                        result_to_json=True)
+                        headers={"Authorization": f"bearer {service_storage_token}"})
         self.assertEqual("FAIL", res["result"])
 
     def test_check_pin_time_out(self):
@@ -205,7 +203,6 @@ class TestPamWebSSO(AbstractTest):
                         body={"session_id": pam_session_id,
                               "pin": pin},
                         with_basic_auth=False,
-                        headers={"Authorization": f"bearer {service_storage_token}"},
-                        result_to_json=True)
+                        headers={"Authorization": f"bearer {service_storage_token}"})
         self.assertEqual("SUCCESS", res["result"])
         self.assertEqual("peter", res["username"])
