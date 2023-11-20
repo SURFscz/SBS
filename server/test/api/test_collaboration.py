@@ -5,6 +5,7 @@ import time
 
 from sqlalchemy import text
 
+from server.api.collaboration import generate_short_name
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, Organisation, Invitation, CollaborationMembership, User, Group, \
@@ -588,6 +589,27 @@ class TestCollaboration(AbstractTest):
         count = Invitation.query.filter(Invitation.collaboration_id == collaboration.id).count()
         self.assertEqual(2, count)
 
+    def test_api_create_collaboration_generate_short_name(self):
+        response = self.client.post("/api/collaborations/v1",
+                                    headers={"Authorization": f"Bearer {uuc_secret}"},
+                                    data=json.dumps({
+                                        "name": "monitor1",
+                                        "description": "new_collaboration",
+                                        "accepted_user_policy": "https://aup.org",
+                                        "administrators": ["the@ex.org", "that@ex.org"],
+                                        "administrator": "urn:sarah",
+                                        "disable_join_requests": True,
+                                        "disclose_member_information": True,
+                                        "disclose_email_information": True,
+                                        "logo": read_image("uva.jpg"),
+                                        "tags": ["label_1", "label_2", "!-INVALID"]
+                                    }),
+                                    content_type="application/json")
+        self.assertEqual(201, response.status_code)
+
+        collaboration = self.find_entity_by_name(Collaboration, "monitor1")
+        self.assertEqual("monitor12", collaboration.short_name)
+
     def test_api_call_invalid_logo(self):
         response = self.client.post("/api/collaborations/v1",
                                     headers={"Authorization": f"Bearer {uuc_secret}"},
@@ -728,7 +750,7 @@ class TestCollaboration(AbstractTest):
                                     content_type="application/json")
         self.assertEqual(400, response.status_code)
         data = response.json
-        self.assertTrue("Missing required attributes: ['name', 'description', 'short_name', "
+        self.assertTrue("Missing required attributes: ['name', 'description', "
                         "'disable_join_requests', 'disclose_member_information', "
                         "'disclose_email_information', 'administrators']" in data["message"])
 
@@ -1007,3 +1029,10 @@ class TestCollaboration(AbstractTest):
         res = self.put("/api/collaborations", body=collaboration, with_basic_auth=False)
         collaboration = db.session.get(Collaboration, res["id"])
         self.assertEqual(1, len(collaboration.units))
+
+    def test_generate_short_name(self):
+        short_name = generate_short_name("monitor1")
+        self.assertEqual("monitor12", short_name)
+
+        short_name = generate_short_name("Name !@#$ test qwerty long name")
+        self.assertEqual("nametestqwertylo", short_name)
