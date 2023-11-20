@@ -269,7 +269,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     uva = Organisation(name=amsterdam_uva_name, description="University of Amsterdam",
                        identifier="7c60a022-ab09-438c-8603-c361bc1a088d",
                        created_by="urn:admin", updated_by="urn:admin", short_name="uva", logo=read_image("uva.jpg"),
-                       category="University")
+                       category="University", service_connection_requires_approval=True)
     tue = Organisation(name=tue_name, description="University of Eindhoven",
                        identifier="65fadfcb-71fd-4962-8428-0ecd15970f8d",
                        created_by="urn:admin", updated_by="urn:admin", short_name="tue", logo=read_image("tue.jpeg"),
@@ -686,10 +686,12 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     service_connection_request_network = ServiceConnectionRequest(message="AI computing needs storage",
                                                                   hash=network_service_connection_request_hash,
                                                                   requester=admin, collaboration=ai_computing,
+                                                                  pending_organisation_approval=False,
                                                                   service=storage)
     service_connection_request_wiki = ServiceConnectionRequest(message="UVA research needs ssh",
                                                                hash=ssh_service_connection_request_hash,
                                                                requester=sarah, collaboration=uva_research,
+                                                               pending_organisation_approval=True,
                                                                service=service_ssh_uva)
     persist_instance(db, service_connection_request_network, service_connection_request_wiki)
 

@@ -431,6 +431,8 @@ class Organisation(Base, db.Model, LogoMixin):
                                                passive_deletes=True, lazy="selectin")
     units = db.relationship("Unit", cascade="all, delete-orphan", passive_deletes=True, lazy="selectin")
     services_restricted = db.Column("services_restricted", db.Boolean(), nullable=True, default=False)
+    service_connection_requires_approval = db.Column("service_connection_requires_approval", db.Boolean(),
+                                                     nullable=True, default=False)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
@@ -776,6 +778,8 @@ class ServiceConnectionRequest(Base, db.Model):
     requester_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     requester = db.relationship("User")
     service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
+    pending_organisation_approval = db.Column("pending_organisation_approval", db.Boolean(), nullable=True,
+                                              default=False)
     service = db.relationship("Service", back_populates="service_connection_requests")
     collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
     collaboration = db.relationship("Collaboration", back_populates="service_connection_requests")
