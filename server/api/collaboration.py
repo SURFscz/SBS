@@ -1,4 +1,6 @@
 import base64
+import random
+import string
 import urllib.request
 import uuid
 from datetime import datetime, timedelta
@@ -85,6 +87,24 @@ def _get_collaboration_membership(co_identifier, user_uid) -> CollaborationMembe
     if not organisation or organisation.id != membership.collaboration.organisation_id:
         raise Forbidden()
     return membership
+
+
+def generate_short_name(name):
+    data = {"short_name": name}
+    cleanse_short_name(data)
+    short_name = data["short_name"]
+    if len(short_name) == 0:
+        short_name = "short_name"
+    counter = 2
+    generated_short_name = short_name
+    while True and counter < 999:
+        unique_short_name = Collaboration.query.filter(Collaboration.short_name == generated_short_name).count() == 0
+        if unique_short_name:
+            return generated_short_name
+        generated_short_name = f"{generated_short_name[:16 - len(str(counter))]}{counter}"
+        counter = counter + 1
+    # Very unlikely Fallback
+    return "".join(random.sample(string.ascii_lowercase, k=16))
 
 
 @collaboration_api.route("/admins/<service_id>", strict_slashes=False)
@@ -532,7 +552,7 @@ def save_collaboration():
 def save_collaboration_api():
     data = current_request.get_json()
     confirm_external_api_call()
-    required = ["name", "description", "short_name", "disable_join_requests", "disclose_member_information",
+    required = ["name", "description", "disable_join_requests", "disclose_member_information",
                 "disclose_email_information", "administrators"]
     if "accepted_user_policy" in data:
         del data["accepted_user_policy"]
@@ -563,8 +583,11 @@ def save_collaboration_api():
     missing = [req for req in required if req not in data]
     if missing:
         raise APIBadRequest(f"Missing required attributes: {missing}")
-    if not cleanse_short_name(data):
-        raise APIBadRequest(f"Invalid CO short_name: {data['short_name']}")
+    if "short_name" in data:
+        if not cleanse_short_name(data):
+            raise APIBadRequest(f"Invalid CO short_name: {data['short_name']}")
+    else:
+        data["short_name"] = generate_short_name(data["name"])
     # The do_save_collaboration strips out all non-collaboration keys
     tags = data.get("tags", None)
     administrator = data.get("administrator")
