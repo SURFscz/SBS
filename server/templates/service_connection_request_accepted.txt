@@ -4,7 +4,7 @@
 
 {{ salutation }},
 Your request to have access to service {{ service.name }} for collaboration {{ collaboration.name }}
-has been accepted by the contact person {{ service.contact_email }} of the service.
+has been accepted by the contact person {{ contact }} of the service.
 
 Login to view the collaboration:
 {{ base_url }}/collaborations/{{ collaboration.id }}
