@@ -96,11 +96,10 @@ def confirm_external_api_call():
 def confirm_organisation_api_collaboration(collaboration_identifier, collaboration=None):
     confirm_external_api_call()
     organisation = request_context.external_api_organisation
-    if not organisation:  # i.e., not a valid Org key used for call
-        raise Forbidden()
     if collaboration is None:
         collaboration = Collaboration.query.filter(Collaboration.identifier == collaboration_identifier).one()
-    if not collaboration or organisation.id != collaboration.organisation_id:  # i.e., CO not found (or not in this Org)
+    if not organisation or not collaboration or organisation.id != collaboration.organisation_id:
+        # i.e., CO not found (or not in this Org)
         raise NotFound()
     return collaboration
 
