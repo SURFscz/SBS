@@ -63,10 +63,12 @@ def internal_sync():
         rs = conn.execute(
             text("SELECT id, identifier, name, short_name, global_urn, organisation_id, status, description, "
                  "uuid4, website_url from collaborations"))
+        sbs_url_prefix = f"{current_app.app_config.base_url}/collaborations/"
         collaborations = [
             {"id": row[0], "identifier": row[1], "name": row[2], "short_name": row[3], "global_urn": row[4],
              'organisation_id': row[5], "status": row[6], "description": row[7],
-             "logo": logo_url("collaborations", row[8]), "website_url": row[9]} for row in rs]
+             "logo": logo_url("collaborations", row[8]), "website_url": row[9],
+             "sbs_url": f"{sbs_url_prefix}{row[1]}"} for row in rs]
         rs = conn.execute(
             text("SELECT id, name, short_name, global_urn, identifier, collaboration_id, description FROM `groups`"))
         groups = [
