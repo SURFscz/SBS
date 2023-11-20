@@ -1,0 +1,17 @@
+{% extends "mail_layout.txt" %}
+{% block title %}SURF service Connection request{% endblock %}
+{% block content %}
+
+{{ salutation }},
+
+The user {{ requester }} has requested access to the service {{ service.name }} for the collaboration
+{{ collaboration.name }}.
+
+You received this email, because you are an administrator of this service.
+The motivation for this request:
+{{ service_connection_request.message }}
+
+Click on this link to process this request:
+{{base_url}}/organisations/{{organisation.id}}/serviceConnectionRequests
+
+{% endblock %}

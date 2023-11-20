@@ -280,12 +280,14 @@ def mail_accepted_declined_service_request(context, service_request_name, accept
     )
 
 
-def mail_service_connection_request(context, service_name, collaboration_name, recipients):
+def mail_service_connection_request(context, service_name, collaboration_name, recipients,
+                                    pending_organisation_approval):
     _store_mail(context["user"], SERVICE_CONNECTION_REQUEST_MAIL, recipients)
+    template = "service_connection_request_org" if pending_organisation_approval else "service_connection_request"
     return _do_send_mail(
         subject=f"Request for new service {service_name} connection to collaboration {collaboration_name}",
         recipients=recipients,
-        template="service_connection_request",
+        template=template,
         context=context,
         preview=False)
 

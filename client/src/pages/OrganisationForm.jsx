@@ -50,6 +50,7 @@ class OrganisationForm extends React.Component {
             services_restricted: false,
             on_boarding_msg: "",
             on_boarding_changed: false,
+            service_connection_requires_approval: false,
             categoryOptions: categoryOptions,
             category: category,
             administrators: [],
@@ -218,7 +219,7 @@ class OrganisationForm extends React.Component {
         if (this.isValid()) {
             const {
                 name, short_name, administrators, message, schac_home_organisations, description, logo,
-                on_boarding_msg, category, services_restricted, units
+                on_boarding_msg, category, services_restricted, units, service_connection_requires_approval
             } = this.state;
             this.setState({loading: true});
             createOrganisation({
@@ -231,6 +232,7 @@ class OrganisationForm extends React.Component {
                 message,
                 description,
                 services_restricted,
+                service_connection_requires_approval,
                 logo,
                 on_boarding_msg
             })
@@ -257,8 +259,19 @@ class OrganisationForm extends React.Component {
     doUpdate = () => {
         if (this.isValid()) {
             const {
-                name, description, organisation, schac_home_organisations, collaboration_creation_allowed,
-                short_name, identifier, logo, on_boarding_msg, category, services_restricted, units
+                name,
+                description,
+                organisation,
+                schac_home_organisations,
+                collaboration_creation_allowed,
+                short_name,
+                identifier,
+                logo,
+                on_boarding_msg,
+                category,
+                services_restricted,
+                units,
+                service_connection_requires_approval
             } = this.state;
             this.setState({loading: true});
             updateOrganisation({
@@ -268,6 +281,7 @@ class OrganisationForm extends React.Component {
                 units: units.filter(unit => !isEmpty(unit.name)),
                 schac_home_organisations,
                 collaboration_creation_allowed,
+                service_connection_requires_approval,
                 services_restricted,
                 short_name,
                 identifier,
@@ -313,6 +327,7 @@ class OrganisationForm extends React.Component {
             short_name,
             schac_home_organisations,
             collaboration_creation_allowed,
+            service_connection_requires_approval,
             services_restricted,
             logo,
             on_boarding_msg,
@@ -445,6 +460,16 @@ class OrganisationForm extends React.Component {
                                   info={I18n.t("organisation.collaborationCreationAllowed")}
                                   readOnly={isEmpty(schac_home_organisations)}
                         />
+
+                        {(user.admin || service_connection_requires_approval) &&
+                            <CheckBox name={"service_connection_requires_approval"}
+                                      value={service_connection_requires_approval}
+                                      tooltip={I18n.t("organisation.serviceConnectionRequiresApprovalTooltip")}
+                                      onChange={() => this.setState({service_connection_requires_approval: !service_connection_requires_approval})}
+                                      info={I18n.t("organisation.serviceConnectionRequiresApproval")}
+                                      readOnly={!user.admin}
+                            />}
+
 
                         <OrganisationOnBoarding
                             on_boarding_msg={(isEmpty(on_boarding_msg) && isNew && !on_boarding_changed) ? I18n.t("organisation.onBoarding.template") : on_boarding_msg}
