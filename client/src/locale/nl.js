@@ -1173,6 +1173,8 @@ const nl = {
         schacHomeOrganisationTooltip: "De domeinnamen waarmee gebruikers van deze organisatie inloggen. Deze gebruikers kunnen samenwerkingen aanmaken of aanvragen bij je organisatie.",
         collaborationCreationAllowed: "Gebruikers kunnen zonder goedkeuring een samenwerking aanmaken",
         collaborationCreationAllowedTooltip: "Sta toe dat gebruikers van de organisatie samenwerkingen aanmaken zonder goedkeuring van de organisatiebeheerder of -manager",
+        serviceConnectionRequiresApproval: "Verzoek voor dienst koppeling moet worden goedgekeurd door de organisatie beheerder",
+        serviceConnectionRequiresApprovalTooltip: "Indien geselecteerd, dan moet een verzoek voor een dienst koppeling eerst worden goedgekeurd door de organisatie beheerder",
         collaborationCreationLabel: "Gebruikers van deze domeinen",
         collaborationCreationIsAllowed: "Kunnen samenwerkingen aanmaken",
         collaborationCreationNotAllowed: "Kunnen samenwerkingen aanvragen",

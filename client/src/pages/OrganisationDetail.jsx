@@ -9,6 +9,7 @@ import "./OrganisationDetail.scss";
 import I18n from "../locale/I18n";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import Tabs from "../components/Tabs";
+import {ReactComponent as ServiceConnectionRequestsIcon} from "../icons/connections.svg";
 import {ReactComponent as PlatformAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
 import {ReactComponent as ApiKeysIcon} from "../icons/security.svg";
@@ -33,6 +34,7 @@ import {ReactComponent as MembersIcon} from "../icons/single-neutral.svg";
 import Users from "../components/redesign/Users";
 import {ButtonType, MetaDataList} from "@surfnet/sds";
 import {isInvitationExpired} from "../utils/Date";
+import ServiceConnectionRequests from "../components/redesign/ServiceConnectionRequests";
 
 class OrganisationDetail extends React.Component {
 
@@ -155,6 +157,7 @@ class OrganisationDetail extends React.Component {
             this.getCollaborationsTab(organisation),
             this.getCollaborationRequestsTab(organisation),
             this.getOrganisationAdminsTab(organisation, user),
+            this.getServiceConnectionRequestsTab(organisation),
             user.admin ? this.getServicesTab(organisation) : null,
             config.api_keys_enabled ? this.getAPIKeysTab(organisation, user) : null,
             this.getUsersTab(organisation)
@@ -212,6 +215,12 @@ class OrganisationDetail extends React.Component {
         </div>)
     }
 
+    refresh = () => {
+        const params = this.props.match.params;
+        const organisation_id = parseInt(params.id, 10);
+        organisationById(organisation_id).then(json => this.setState({organisation: json}));
+    }
+
     getCollaborationRequestsTab = organisation => {
         const crl = (organisation.collaboration_requests || []).filter(cr => cr.status === "open").length;
         const tabLabel = I18n.t("home.tabs.collaborationRequests", {count: (organisation.collaboration_requests || []).length});
@@ -222,6 +231,32 @@ class OrganisationDetail extends React.Component {
             <CollaborationRequests {...this.props} organisation={organisation}/>
         </div>)
 
+    }
+
+    getServiceConnectionRequestsTab = organisation => {
+        const serviceConnectionRequests = organisation.collaborations
+            .map(coll => {
+                coll.service_connection_requests.forEach(scr => scr.collaboration = coll)
+                return coll.service_connection_requests
+            })
+            .flat()
+            .filter(scr => scr.pending_organisation_approval);
+        if (serviceConnectionRequests.length === 0) {
+            return null;
+        }
+        const nbr = serviceConnectionRequests.length;
+
+        return (
+            <div key="serviceConnectionRequests" name="serviceConnectionRequests"
+                 label={I18n.t("home.tabs.serviceConnectionRequests")}
+                 icon={<ServiceConnectionRequestsIcon/>}
+                 notifier={serviceConnectionRequests.length > 0 ? nbr : null}>
+                <ServiceConnectionRequests
+                    refresh={this.refresh}
+                    serviceConnectionRequests={serviceConnectionRequests}
+                    modelName={"serviceConnectionRequests"}
+                    {...this.props} />
+            </div>);
     }
 
     tabChanged = (name, id) => {

@@ -3,7 +3,7 @@ import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
 
 import "./ServiceConnectionRequests.scss";
 import "./UserColumn.scss";
-import {stopEvent} from "../../utils/Utils";
+import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "../../locale/I18n";
 import Button from "../Button";
 import {setFlash} from "../../utils/Flash";
@@ -58,10 +58,11 @@ class ServiceConnectionRequests extends React.Component {
     approveServiceConnectionRequest = () => {
         const {service} = this.props;
         const serviceConnectionRequest = this.getSelectedServiceConnectionRequest();
+        const name = isEmpty(service) ? serviceConnectionRequest.service.name : service.name;
         this.confirm(() => {
             this.refreshAndFlash(approveServiceConnectionRequest(serviceConnectionRequest),
                 I18n.t("serviceConnectionRequest.flash.accepted", {
-                    name: service.name
+                    name: name
                 }), () => this.componentDidMount())
         }, I18n.t("serviceConnectionRequest.approveConfirmation"), false);
 
@@ -70,10 +71,11 @@ class ServiceConnectionRequests extends React.Component {
     denyServiceConnectionRequest = () => {
         const {service} = this.props;
         const serviceConnectionRequest = this.getSelectedServiceConnectionRequest();
+        const name = isEmpty(service) ? serviceConnectionRequest.service.name : service.name;
         this.confirm(() => {
             this.refreshAndFlash(denyServiceConnectionRequest(serviceConnectionRequest),
                 I18n.t("serviceConnectionRequest.flash.declined", {
-                    name: service.name
+                    name: name
                 }), () => this.componentDidMount())
         }, I18n.t("serviceConnectionRequest.declineConfirmation"), true);
     };

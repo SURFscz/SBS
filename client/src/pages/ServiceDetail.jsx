@@ -315,10 +315,11 @@ class ServiceDetail extends React.Component {
     }
 
     getServiceConnectionRequestTab = (service, serviceConnectionRequests) => {
-        const nbr = (serviceConnectionRequests || []).length;
+        serviceConnectionRequests = (serviceConnectionRequests || []).filter(scr => !scr.pending_organisation_approval);
+        const nbr = serviceConnectionRequests.length;
         return (
             <div key="serviceConnectionRequests" name="serviceConnectionRequests"
-                 label={I18n.t("home.tabs.serviceConnectionRequests", {count: serviceConnectionRequests.length})}
+                 label={I18n.t("home.tabs.serviceConnectionRequests")}
                  icon={<ServiceConnectionRequestsIcon/>}
                  notifier={nbr > 0 ? nbr : null}>
                 <ServiceConnectionRequests

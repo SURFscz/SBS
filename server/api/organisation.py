@@ -21,7 +21,8 @@ from server.db.db import db
 from server.db.defaults import default_expiry_date, cleanse_short_name
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import Organisation, OrganisationMembership, OrganisationInvitation, User, \
-    CollaborationRequest, SchacHomeOrganisation, Collaboration, CollaborationMembership, Invitation
+    CollaborationRequest, SchacHomeOrganisation, Collaboration, CollaborationMembership, Invitation, \
+    ServiceConnectionRequest
 from server.db.models import update, save, delete
 from server.mail import mail_organisation_invitation, mail_platform_admins
 from server.scim.events import broadcast_organisation_deleted
@@ -197,6 +198,12 @@ def organisation_by_id(organisation_id):
                  .selectinload(CollaborationRequest.requester)) \
         .options(selectinload(Organisation.collaborations)
                  .selectinload(Collaboration.tags)) \
+        .options(selectinload(Organisation.collaborations)
+                 .selectinload(Collaboration.service_connection_requests)
+                 .selectinload(ServiceConnectionRequest.requester)) \
+        .options(selectinload(Organisation.collaborations)
+                 .selectinload(Collaboration.service_connection_requests)
+                 .selectinload(ServiceConnectionRequest.service)) \
         .filter(Organisation.id == organisation_id)
 
     api_call = request_context.is_authorized_api_call
@@ -414,6 +421,10 @@ def update_organisation():
 
     if not is_application_admin() and organisation.services_restricted:
         data["services_restricted"] = True
+
+    approval_changed = organisation.service_connection_requires_approval != data["service_connection_requires_approval"]
+    if not is_application_admin() and approval_changed:
+        data["service_connection_requires_approval"] = organisation.service_connection_requires_approval
 
     # Corner case: user removed name and added the exact same name again, prevent duplicate entry
     if "schac_home_organisations" in data:
