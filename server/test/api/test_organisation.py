@@ -285,7 +285,7 @@ class TestOrganisation(AbstractTest):
         uuid4_value = organisation["uuid4"]
 
         organisation["name"] = "changed"
-        organisation["logo"] = read_image("storage.jpeg")
+        organisation["logo"] = read_image("storage.png")
         organisation = self.put("/api/organisations", body=organisation)
 
         new_uuid4_value = organisation["uuid4"]

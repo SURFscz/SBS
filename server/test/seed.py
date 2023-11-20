@@ -323,7 +323,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
 
     mail = Service(entity_id=service_mail_entity_id, name=service_mail_name, contact_email=john.email,
                    override_access_allowed_all_connections=False, automatic_connection_allowed=True,
-                   logo=read_image("email.jpeg"),
+                   logo=read_image("email.png"),
                    accepted_user_policy="https://google.nl", allowed_organisations=[uuc, uva], abbreviation="mail",
                    privacy_policy="https://privacy.org", security_email="sec@org.nl")
     wireless = Service(entity_id="https://wireless", name=service_wireless_name, description="Network Wireless Service",
@@ -335,12 +335,12 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     # ldap_password is 'changethispassword'
     cloud = Service(entity_id=service_cloud_entity_id, name=service_cloud_name, description="SARA Cloud Service",
                     override_access_allowed_all_connections=False, automatic_connection_allowed=True,
-                    logo=read_image("cloud.jpg"),
+                    logo=read_image("cloud.png"),
                     allowed_organisations=[uuc, uva], abbreviation="cloud",
                     token_enabled=True, token_validity_days=1, security_email="sec@org.nl", scim_client_enabled=True,
                     scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret")
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, uva],
-                      description="SURF Storage Service", logo=read_image("storage.jpeg"), abbreviation="storage",
+                      description="SURF Storage Service", logo=read_image("storage.png"), abbreviation="storage",
                       override_access_allowed_all_connections=False, automatic_connection_allowed=True,
                       allow_restricted_orgs=True,
                       uri="https://storage.net", support_email="support@storage.net",
@@ -350,7 +350,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     wiki = Service(entity_id=service_wiki_entity_id, name=service_wiki_name, description="No more wiki's please",
                    uri="https://servicedesk.surf.nl/wiki/",
                    override_access_allowed_all_connections=False, automatic_connection_allowed=False,
-                   logo=read_image("wiki.jpeg"),
+                   logo=read_image("wiki.png"),
                    allowed_organisations=[uuc, uva], contact_email="help@wiki.com", abbreviation="wiki",
                    accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org",
                    automatic_connection_allowed_organisations=[uva],
@@ -360,7 +360,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
                       description="Network enabling service SSH access", address="Some address",
                       uri="https://uri.net", identity_type="SSH KEY", accepted_user_policy="https://aup.org",
-                      contact_email="help@network.com", logo=read_image("network.jpeg"),
+                      contact_email="help@network.com", logo=read_image("network.png"),
                       automatic_connection_allowed=False, abbreviation="network",
                       allowed_organisations=[uuc], privacy_policy="https://privacy.org",
                       token_enabled=True, token_validity_days=365, security_email="sec@org.nl",
@@ -370,7 +370,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     service_ssh_uva = Service(entity_id="service_ssh_uva", name=service_ssh_uva_name,
                               description="Uva SSH access",
                               uri="https://uri.com/ssh", identity_type="SSH KEY", accepted_user_policy="https://ssh",
-                              contact_email="help@ssh.com", logo=read_image("ssh_uva.png"),
+                              contact_email="help@ssh.com", logo=read_image("ssh.png"),
                               automatic_connection_allowed=False,
                               access_allowed_for_all=True, abbreviation="service_ssh",
                               research_scholarship_compliant=True,
@@ -379,7 +379,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
 
     uuc_scheduler = Service(entity_id=uuc_scheduler_entity_id, name=service_uuc_scheduler_name,
                             accepted_user_policy="https://google.nl", abbreviation="uuc_scheduler",
-                            description="UUC Scheduler Service", logo=read_image("scheduler_uuc.jpeg"),
+                            description="UUC Scheduler Service", logo=read_image("scheduler.png"),
                             contact_email="help@uuc_scheduler.example.com",
                             automatic_connection_allowed_organisations=[uva],
                             override_access_allowed_all_connections=False, automatic_connection_allowed=False,
@@ -412,7 +412,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     service_monitor = Service(entity_id="https://ldap-monitor.example.org", name="LDAP/SCIM Monitor Service",
                               description="Used for monitoring LDAP and SCIM.  NIET AANKOMEN.",
                               override_access_allowed_all_connections=False, automatic_connection_allowed=True,
-                              logo=read_image("ldap.jpg"),
+                              logo=read_image("ldap.png"),
                               allowed_organisations=[uuc, uva], abbreviation="ldap_mon",
                               privacy_policy="https://privacy.org", accepted_user_policy="https://example.nl/aup",
                               contact_email="admin@exmaple.nl", security_email="sec@example.nl",
@@ -512,7 +512,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                  identifier=collaboration_ai_computing_uuid,
                                  global_urn=f"ucc:{ai_computing_short_name}",
                                  description="Artifical Intelligence computing for the Unincorporated Urban Community",
-                                 logo=read_image("computing.jpeg"),
+                                 logo=read_image("computing.png"),
                                  organisation=uuc, services=[mail, network],
                                  join_requests=[], invitations=[],
                                  tags=[tag_uuc],
@@ -529,7 +529,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                  tags=[tag_uva],
                                  website_url="https://www.google.nl",
                                  description="University of Amsterdam Research - Urban Crowd Control",
-                                 logo=read_image("research.jpeg"),
+                                 logo=read_image("research.png"),
                                  organisation=uva, services=[cloud, storage, wiki],
                                  join_requests=[], invitations=[],
                                  disclose_member_information=True)
@@ -538,7 +538,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                  global_urn=f"ucc:{uuc_teachers_name}",
                                  website_url="https://www.google.nl",
                                  description="UUC Teachers",
-                                 logo=read_image("teachers.jpeg"),
+                                 logo=read_image("teachers.png"),
                                  organisation=uuc, services=[],
                                  join_requests=[], invitations=[],
                                  short_name="uuc_teachers_short_name",
@@ -568,12 +568,12 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                     accepted_user_policy="https://www.tue.example.nl/monitor")
 
     uu_disabled_join_request = Collaboration(name=uu_disabled_join_request_name,
-                                             short_name="uu_short",
-                                             global_urn="uva:uu_short",
+                                             short_name="ai_short",
+                                             global_urn="uva:ai_short",
                                              website_url="https://www.google.nl",
-                                             logo=read_image("uu.png"),
+                                             logo=read_image("robot.png"),
                                              identifier="568eed02-0e46-48ab-83fe-116d2a8a58c5",
-                                             description="UU",
+                                             description="Artification AI",
                                              disable_join_requests=True,
                                              organisation=uva,
                                              services=[],
@@ -675,11 +675,11 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     persist_instance(db, invitation, invitation_accepted, invitation_uva, invitation_noway)
 
     collaboration_request_1 = CollaborationRequest(name=collaboration_request_name, short_name="new_collaboration",
-                                                   website_url="https://google.com", logo=read_image("request.jpg"),
+                                                   website_url="https://google.com", logo=read_image("request.png"),
                                                    status=STATUS_OPEN, message="For research", organisation=uuc,
                                                    requester=peter, description="please", units=[uuc_unit_research])
     collaboration_request_2 = CollaborationRequest(name="Polse", short_name="polse",
-                                                   website_url="https://www.pols.me/", logo=read_image("pols.jpg"),
+                                                   website_url="https://www.pols.me/", logo=read_image("pols.png"),
                                                    status=STATUS_OPEN, message="For research", organisation=uuc,
                                                    requester=peter, description="please")
     persist_instance(db, collaboration_request_1, collaboration_request_2)
@@ -708,7 +708,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     persist_instance(db, pam_sso_session_peter, pam_sso_session_james)
 
     service_request_gpt = ServiceRequest(name=service_request_gpt_name, abbreviation="gpt",
-                                         description="We need more AI", logo=read_image("computing.jpeg"),
+                                         description="We need more AI", logo=read_image("computing.png"),
                                          uuid4=str(uuid.uuid4()), providing_organisation="Cloudy",
                                          uri_info="https://login.org", uri="https://website.org",
                                          contact_email="contact@gpt.org", support_email="support@gpt.org",
@@ -738,7 +738,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                short_name=f"co_nr_{i:03d}",
                                global_urn=f"ucc:co_nr_{i:03d}",
                                description="Een van vele COs",
-                               logo=read_image("computing.jpeg"),
+                               logo=read_image("computing.png"),
                                organisation=uuc,
                                services=[mail, network],
                                join_requests=[],
