@@ -570,7 +570,7 @@ class TestCollaboration(AbstractTest):
                                         "disable_join_requests": True,
                                         "disclose_member_information": True,
                                         "disclose_email_information": True,
-                                        "logo": read_image("uva.jpg"),
+                                        "logo": read_image("robot.png"),
                                         "tags": ["label_1", "label_2", "!-INVALID"]
                                     }),
                                     content_type="application/json")
@@ -905,7 +905,7 @@ class TestCollaboration(AbstractTest):
                                             "disclose_member_information": True,
                                             "disclose_email_information": True,
                                             "expiry_date": 999999999,
-                                            "logo": read_image("uuc.jpeg")
+                                            "logo": read_image("test.png")
                                         }),
                                         content_type="application/json")
             self.assertEqual(400, response.status_code)
