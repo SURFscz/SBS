@@ -145,25 +145,7 @@ def run_demo_seed():
         os.environ["SEEDING"] = "1"
 
         from server.test.demo_seed import demo_seed
-        demo_seed(db)
-        session.clear()
-    finally:
-        del os.environ["SEEDING"]
-
-    return {}, 201
-
-
-@system_api.route("/human_testing_seed", strict_slashes=False, methods=["GET"])
-@json_endpoint
-def run_human_testing_seed():
-    confirm_write_access()
-
-    check_seed_allowed("human-testing-seed")
-
-    try:
-        os.environ["SEEDING"] = "1"
-        from server.test.human_testing_seed import human_testing_seed
-        human_testing_seed(db)
+        demo_seed(db, current_app.app_config)
         session.clear()
     finally:
         del os.environ["SEEDING"]

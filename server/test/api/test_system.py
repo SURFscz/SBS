@@ -40,14 +40,6 @@ class TestSystem(AbstractTest):
         self.get("/api/system/demo_seed", response_status_code=400)
         self.app.app_config.feature.seed_allowed = 1
 
-    def test_db_human_testing_seed(self):
-        self.get("/api/system/human_testing_seed", response_status_code=201)
-
-    def test_db_human_testing_seed_forbidden(self):
-        self.app.app_config.feature.seed_allowed = 0
-        self.get("/api/system/human_testing_seed", response_status_code=400)
-        self.app.app_config.feature.seed_allowed = 1
-
     def test_outstanding_requests(self):
         past_date = "2018-03-20 14:51:40"
         with db.engine.connect() as conn:
