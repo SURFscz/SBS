@@ -4,34 +4,37 @@ import uuid
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
     CollaborationMembership, Group, SchacHomeOrganisation, SshKey, ServiceGroup, \
     ServiceMembership, Tag
-from server.test.seed import read_image, persist_instance, clean_db
+from server.test.seed import read_image, persist_instance, clean_db, seed, schac_home_organisation_unihar
 
 
-def demo_seed(db):
+def demo_seed(db, app_config):
     clean_db(db)
 
+    # start out with the regular test seed
+    seed(db, app_config)
+
     # Create organisations
-    shac_home_organisation_00 = "onlineresearch.com"
-    shac_home_organisation_01 = "school4us.org"
+    schac_home_organisation_00 = "onlineresearch.com"
+    schac_home_organisation_01 = "school4us.org"
 
     organisations = [
         {
-            "name": "Online Resarch bv",
+            "name": "Online Research bv",
             "short_name": "onlresbv",
             "description": "Organisation for online research",
-            "logo": "org_01.jpg",
+            "logo": "org_01.png",
             "category": "Research",
-            "shac_home_organisation": shac_home_organisation_00,
-            "identifier": "f4585521-07f0-413c-9f70-ec9f7013b2a6"
+            "shac_home_organisation": schac_home_organisation_00,
+            "identifier": "acc5a9c8-65bb-46a6-8fe8-29450bae0f28"
         },
         {
             "name": "School 4 US",
             "short_name": "school4us",
             "description": "A school for everybody",
-            "logo": "org_02.jpg",
+            "logo": "org_02.png",
             "category": "University",
-            "shac_home_organisation": shac_home_organisation_01,
-            "identifier": "fef3f1a3-f981-44f1-b31c-6b352e9d6826"
+            "shac_home_organisation": schac_home_organisation_01,
+            "identifier": "f38d0cb4-ca37-4f40-9c05-4c8427397965"
         }
     ]
 
@@ -61,17 +64,17 @@ def demo_seed(db):
     # Create Users
     users = [
         {
-            "username": "john",
-            "name": "John Doe",
-            "email": "john@example.org",
-            "schac_home_organisation": shac_home_organisation_00,
+            "username": "zaza",
+            "name": "Zaza Heijligers",
+            "email": "zaza@heiligers.example.org",
+            "schac_home_organisation": schac_home_organisation_00,
             "org": org_list[0]
         },
         {
-            "username": "peter",
-            "name": "Peter Doe",
-            "email": "john@example.org",
-            "schac_home_organisation": shac_home_organisation_01,
+            "username": "donny",
+            "name": "Donny Eimers",
+            "email": "d.eimers@example.com",
+            "schac_home_organisation": schac_home_organisation_01,
             "org": org_list[1]
         }
     ]
@@ -104,39 +107,19 @@ def demo_seed(db):
     # Create Services
     services = [
         {
-            "name": "Demo OIDC RP",
-            "entity_id": "APP-18DE6298-7BDD-4CFA-9399-E1CC62E8DE05",
-            "logo": "service_01.jpg",
-            "mail": users[0]['email'],
-            "allowed_organisations": [org_list[0], org_list[1]],
-            "abbreviation": "svc01",
-            "security_email": "sec@service_01.nl",
-            "service_memberships": [user_list[0], user_list[1]]
-        },
-        {
-            "name": "Demo SAML SP",
-            "entity_id": "https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/test",
-            "logo": "service_02.jpg",
-            "mail": users[1]['email'],
-            "allowed_organisations": [org_list[0], org_list[1]],
-            "abbreviation": "svc02",
-            "security_email": "sec@service_02.nl",
-            "service_memberships": user_list
-        },
-        {
-            "name": "Mail",
-            "entity_id": "service_entity_id_mail",
-            "logo": "service_03.jpg",
+            "name": "Supercomputer",
+            "entity_id": "urn:x-sram:supercomputer",
+            "logo": "super.jpg",
             "mail": users[0]['email'],
             "allowed_organisations": org_list,
-            "abbreviation": "svc03",
+            "abbreviation": "super01",
             "security_email": "sec@service_03.nl",
             "service_memberships": user_list
         },
         {
-            "name": "Wireless",
-            "entity_id": "service_entity_id_wireless",
-            "logo": "service_04.jpg",
+            "name": "Database of Ancient Knowledge",
+            "entity_id": "https://database.example.org/knowledge",
+            "logo": "ancient.jpg",
             "mail": users[0]['email'],
             "allowed_organisations": org_list,
             "abbreviation": "svc04",
@@ -152,7 +135,6 @@ def demo_seed(db):
             name=service['name'],
             logo=read_image(service['logo'], directory="demo_images"),
             contact_email=service['mail'],
-            override_access_allowed_all_connections=False,
             automatic_connection_allowed=True,
             allowed_organisations=service['allowed_organisations'],
             abbreviation=service['abbreviation'],
@@ -210,15 +192,15 @@ def demo_seed(db):
 
     collaborations = [
         {
-            "name": "AI Computing Group",
+            "name": "Radio Astronomy",
             "short_name": "collab01",
-            "description": "Artifical Intelligence computing",
+            "description": "Radio Astronomy Researcher",
             "logo": "collab_01.jpg",
             "organisation": org_list[0],
             "services": [service_list[0], service_list[1]],
             "tags": [tag_list[0]],
             "users": [user_list[0], user_list[1]],
-            "identifier": "e7f654c1-5ea8-4766-9d00-63cb029805bc"
+            "identifier": "b0d7861a-d490-4dc8-858e-1b9869f51e13"
         },
         {
             "name": "Genomics Group",
@@ -229,7 +211,7 @@ def demo_seed(db):
             "services": [service_list[0], service_list[1]],
             "tags": [tag_list[1]],
             "users": user_list,
-            "identifier": "57b7e3bc-954f-4975-8748-89922aa3386a"
+            "identifier": "2c50bd10-1325-403e-a775-dbb5980ba548"
         },
     ]
 
@@ -267,13 +249,13 @@ def demo_seed(db):
         # Add collaboration groups
         groups = [
             {
-                "name": "Student",
+                "name": "Students",
                 "short_name": "students",
                 "auto_provision": True,
                 "identifier": str(uuid.uuid4())
             },
             {
-                "name": "Teacher",
+                "name": "Teachers",
                 "short_name": "teacher",
                 "auto_provision": False,
                 "identifier": str(uuid.uuid4())
@@ -292,5 +274,37 @@ def demo_seed(db):
                 collaboration_memberships=membership_list
             )
             persist_instance(db, new_group)
+
+    # create large number of COs and users
+    users = []
+    for i in range(1, 84):
+        user = User(uid=f"urn:persoon:numero{i:03d}",
+                    name=f"Piet Doe de {i}de",
+                    email=f"pietdoe{i}@example.org",
+                    username=f"pietdoe{i}",
+                    schac_home_organisation=schac_home_organisation_unihar)
+        users.append(user)
+    persist_instance(db, *users)
+
+    for i in range(1, 40):
+        co = Collaboration(name=f"Samenwerking Numero {i}",
+                           identifier=str(uuid.uuid4()),
+                           short_name=f"co_nr_{i:03d}",
+                           global_urn=f"ucc:co_nr_{i:03d}",
+                           description="Een van vele COs",
+                           logo=read_image("scientists.jpg", directory="demo_images"),
+                           organisation=org_list[0],
+                           services=service_list,
+                           join_requests=[],
+                           invitations=[],
+                           website_url="https://www.google.nl",
+                           accepted_user_policy="https://www.google.nl",
+                           disclose_email_information=True,
+                           disclose_member_information=True)
+        persist_instance(db, co)
+        persist_instance(db, CollaborationMembership(role="admin", user=users[2 * i + 0], collaboration=co))
+        persist_instance(db, CollaborationMembership(role="member", user=users[2 * i + 1], collaboration=co))
+        persist_instance(db, CollaborationMembership(role="member", user=users[2 * i + 2], collaboration=co))
+        persist_instance(db, CollaborationMembership(role="member", user=users[2 * i + 3], collaboration=co))
 
     db.session.commit()

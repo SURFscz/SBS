@@ -1905,7 +1905,6 @@ const en = {
         runDbSeedConfirmation: "Are you absolutely sure? This will delete all current data",
         runDbSeedInfo: "Delete all data and insert the <strong>TEST</strong> seed",
         runDbDemoSeedInfo: "Delete all data and insert the <strong>DEMO</strong> seed",
-        runDbHumanTestingSeedInfo: "Delete all data and insert the <strong>HUMAN TEST</strong> seed",
         runDbSeed: "Run",
         runClearAuditLogsConfirmation: "Are you absolutely sure you want to delete all entries from the audit logs?",
         cleanSlate: "Delete everything",

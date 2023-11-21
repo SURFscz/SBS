@@ -11,7 +11,6 @@ import {
     clearAuditLogs,
     composition,
     dbDemoSeed,
-    dbHumanTestingSeed,
     dbSeed,
     dbStats,
     deleteOrphanUsers,
@@ -478,7 +477,7 @@ class System extends React.Component {
         </div>)
     }
 
-    getSeedTab = (seedResult, demoSeedResult, humanTestingSeedResult) => {
+    getSeedTab = (seedResult, demoSeedResult) => {
         return (<div key="seed" name="seed" label={I18n.t("home.tabs.seed")}
                      icon={<FontAwesomeIcon icon="seedling"/>}>
             <div className="mod-system">
@@ -489,10 +488,6 @@ class System extends React.Component {
                 <section className={"info-block-container"}>
                     {this.renderDbDemoSeed()}
                     <p className="result">{demoSeedResult}</p>
-                </section>
-                <section className={"info-block-container"}>
-                    {this.renderDbHumanTestingSeed()}
-                    <p className="result">{humanTestingSeedResult}</p>
                 </section>
             </div>
         </div>)
@@ -629,24 +624,6 @@ class System extends React.Component {
                     demoSeedResult: I18n.t("system.seedResult", {
                         seed: "Demo",
                         ms: new Date().getMilliseconds() - d.getMilliseconds()
-                    })
-                }, () => window.location.reload());
-            });
-        }
-    }
-
-    doDbHumanTestingSeed = showConfirmation => {
-        if (showConfirmation) {
-            this.confirm(() => this.doDbHumanTestingSeed(false), I18n.t("system.runDbSeedConfirmation"));
-        } else {
-            this.setState({confirmationDialogOpen: false, busy: true,});
-            const d = new Date();
-            dbHumanTestingSeed().then(() => {
-                this.setState({
-                    busy: false,
-                    humanTestingSeedResult: I18n.t("system.seedResult", {
-                        seed: "Human",
-                        ms: (new Date().getMilliseconds() - d.getMilliseconds())
                     })
                 }, () => window.location.reload());
             });
@@ -846,21 +823,6 @@ class System extends React.Component {
                                                         onClick={() => this.doDbDemoSeed(true)}/>}
                     {!isEmpty(demoSeedResult) && <Button txt={I18n.t("system.reload")}
                                                          onClick={this.reload} cancelButton={true}/>}
-                </div>
-            </div>
-        );
-    }
-
-    renderDbHumanTestingSeed = () => {
-        const {humanTestingSeedResult} = this.state;
-        return (
-            <div className="info-block">
-                <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("system.runDbHumanTestingSeedInfo"))}}/>
-                <div className="actions">
-                    {isEmpty(humanTestingSeedResult) && <Button txt={I18n.t("system.runDbSeed")}
-                                                                onClick={() => this.doDbHumanTestingSeed(true)}/>}
-                    {!isEmpty(humanTestingSeedResult) && <Button txt={I18n.t("system.reload")}
-                                                                 onClick={this.reload} cancelButton={true}/>}
                 </div>
             </div>
         );
@@ -1230,7 +1192,6 @@ class System extends React.Component {
             deletedUsers,
             serverQuery,
             demoSeedResult,
-            humanTestingSeedResult,
             plscView
         } = this.state;
         const {config} = this.props;
@@ -1242,7 +1203,7 @@ class System extends React.Component {
             this.getValidationTab(validationData, showOrganisationsWithoutAdmin, showServicesWithoutAdmin),
             this.getCronTab(suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations,
                 suspendedCollaborations, expiredMemberships, deletedUsers, sweepResults, cronJobs, parsedMetaData, parsedMetaDataView),
-            config.seed_allowed ? this.getSeedTab(seedResult, demoSeedResult, humanTestingSeedResult) : null,
+            config.seed_allowed ? this.getSeedTab(seedResult, demoSeedResult) : null,
             this.getDatabaseTab(databaseStats, config),
             this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables, serverQuery),
             this.getPlscTab(plscData, plscView),

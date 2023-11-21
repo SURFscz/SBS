@@ -870,10 +870,6 @@ export function dbDemoSeed() {
     return fetchJson("/api/system/demo_seed");
 }
 
-export function dbHumanTestingSeed() {
-    return fetchJson("/api/system/human_testing_seed");
-}
-
 export function clearAuditLogs() {
     return fetchDelete("/api/system/clear-audit-logs");
 }
