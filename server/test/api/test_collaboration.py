@@ -601,7 +601,7 @@ class TestCollaboration(AbstractTest):
                                         "disable_join_requests": True,
                                         "disclose_member_information": True,
                                         "disclose_email_information": True,
-                                        "logo": read_image("uva.jpg"),
+                                        "logo": read_image("uni-harderwijk-small.png"),
                                         "tags": ["label_1", "label_2", "!-INVALID"]
                                     }),
                                     content_type="application/json")
