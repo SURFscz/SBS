@@ -1,6 +1,7 @@
 import datetime
 import json
 import os
+import pathlib
 import uuid
 from base64 import b64encode
 from time import time
@@ -23,7 +24,7 @@ from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, User, Service, ServiceAup, UserToken, Invitation, \
     PamSSOSession, Group, CollaborationMembership
-from server.test.seed import seed, sarah_name
+from server.test.seed import seed, user_sarah_name
 from server.tools import read_file
 
 # See api_users in config/test_config.yml
@@ -56,6 +57,11 @@ class AbstractTest(TestCase):
         config = app.app_config
         config["profile"] = None
         config.test = True
+
+        # point config to correct metadata file
+        metadata_filename = pathlib.Path(__file__).parent.resolve() / "data" / "idps-metadata.xml"
+        app.app_config.metadata.idp_url = f"file:///{metadata_filename}"
+
         AbstractTest.app = app
 
     @staticmethod
@@ -242,7 +248,7 @@ class AbstractTest(TestCase):
         xml_authn_signed = OneLogin_Saml2_Utils.add_sign(xml_response, key, cert)
         return b64encode(xml_authn_signed)
 
-    def mark_user_ssid_required(self, name=sarah_name, home_organisation_uid=None, schac_home_organisation=None):
+    def mark_user_ssid_required(self, name=user_sarah_name, home_organisation_uid=None, schac_home_organisation=None):
         user = self.find_entity_by_name(User, name)
         user.ssid_required = True
         if home_organisation_uid:

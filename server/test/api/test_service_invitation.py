@@ -1,6 +1,6 @@
 from server.db.domain import ServiceInvitation, ServiceMembership, User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import service_invitation_hash, service_invitation_expired_hash
+from server.test.seed import service_invitation_cloud_hash, service_invitation_wiki_expired_hash
 
 
 class TestServiceInvitation(AbstractTest):
@@ -12,19 +12,19 @@ class TestServiceInvitation(AbstractTest):
 
     def test_find_by_hash(self):
         service_invitation = self.get("/api/service_invitations/find_by_hash",
-                                      query_data={"hash": service_invitation_hash})
-        self.assertEqual(service_invitation_hash, service_invitation["hash"])
+                                      query_data={"hash": service_invitation_cloud_hash})
+        self.assertEqual(service_invitation_cloud_hash, service_invitation["hash"])
         self.assertTrue(len(service_invitation["service"]["service_memberships"]) > 0)
 
     def test_find_by_hash_unauthorized(self):
         service_invitation = self.get("/api/service_invitations/find_by_hash",
-                                      query_data={"hash": service_invitation_hash},
+                                      query_data={"hash": service_invitation_cloud_hash},
                                       with_basic_auth=False)
-        self.assertEqual(service_invitation_hash, service_invitation["hash"])
+        self.assertEqual(service_invitation_cloud_hash, service_invitation["hash"])
 
     def test_accept(self):
         self.login("urn:paul")
-        self.put("/api/service_invitations/accept", body={"hash": service_invitation_hash},
+        self.put("/api/service_invitations/accept", body={"hash": service_invitation_cloud_hash},
                  with_basic_auth=False)
         service_membership = ServiceMembership.query \
             .join(ServiceMembership.user) \
@@ -34,32 +34,32 @@ class TestServiceInvitation(AbstractTest):
 
     def test_accept_already_member(self):
         self.login("urn:james")
-        self.put("/api/service_invitations/accept", body={"hash": service_invitation_hash},
+        self.put("/api/service_invitations/accept", body={"hash": service_invitation_cloud_hash},
                  with_basic_auth=False,
                  response_status_code=409)
 
     def test_accept_expired(self):
         self.login("urn:james")
-        self.put("/api/service_invitations/accept", body={"hash": service_invitation_expired_hash},
+        self.put("/api/service_invitations/accept", body={"hash": service_invitation_wiki_expired_hash},
                  with_basic_auth=False,
                  response_status_code=409)
 
     def test_decline(self):
         self.login("urn:james")
-        self.put("/api/service_invitations/decline", body={"hash": service_invitation_hash},
+        self.put("/api/service_invitations/decline", body={"hash": service_invitation_cloud_hash},
                  with_basic_auth=False)
-        invitations = self._invitation_by_hash(service_invitation_hash, require_one=False)
+        invitations = self._invitation_by_hash(service_invitation_cloud_hash, require_one=False)
         self.assertEqual(0, len(invitations))
 
     def test_delete(self):
         invitation_id = ServiceInvitation.query.filter(
-            ServiceInvitation.hash == service_invitation_hash).one().id
+            ServiceInvitation.hash == service_invitation_cloud_hash).one().id
         self.delete("/api/service_invitations", primary_key=invitation_id)
-        invitations = self._invitation_by_hash(service_invitation_hash, require_one=False)
+        invitations = self._invitation_by_hash(service_invitation_cloud_hash, require_one=False)
         self.assertEqual(0, len(invitations))
 
     def test_resend(self):
-        invitation_id = self._invitation_by_hash(service_invitation_hash).id
+        invitation_id = self._invitation_by_hash(service_invitation_cloud_hash).id
         mail = self.app.mail
         with mail.record_messages() as outbox:
             self.put("/api/service_invitations/resend", body={"id": invitation_id, "message": "changed"})

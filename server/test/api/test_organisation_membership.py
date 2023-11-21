@@ -1,13 +1,13 @@
 from server.db.domain import Organisation, User, OrganisationMembership
 from server.test.abstract_test import AbstractTest
-from server.test.seed import uuc_name
+from server.test.seed import unihard_name
 
 
 class TestOrganisationMembership(AbstractTest):
 
     def test_delete_organisation_membership(self):
         self.login("urn:john")
-        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
         user = self.find_entity_by_name(User, "Mary Doe")
 
         self.assertEqual(4, len(organisation.organisation_memberships))
@@ -15,11 +15,11 @@ class TestOrganisationMembership(AbstractTest):
         self.login("urn:mary")
         self.delete("/api/organisation_memberships", primary_key=f"{organisation.id}/{user.id}", )
 
-        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
         self.assertEqual(3, len(organisation.organisation_memberships))
 
     def test_delete_organisation_membership_not_allowed(self):
-        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
         user = self.find_entity_by_name(User, "Harry Doe")
 
         self.login("urn:roger")
@@ -27,13 +27,13 @@ class TestOrganisationMembership(AbstractTest):
                     response_status_code=403)
 
     def test_delete_organisation_membership_me(self):
-        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
         user = self.find_entity_by_name(User, "Harry Doe")
 
         self.login("urn:harry")
         self.delete("/api/organisation_memberships", primary_key=f"{organisation.id}/{user.id}", with_basic_auth=False)
 
-        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
         harry_members = len(list(filter(lambda m: m.user.uid == "urn:harry", organisation.organisation_memberships)))
         self.assertEqual(0, harry_members)
 

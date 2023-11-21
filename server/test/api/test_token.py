@@ -5,58 +5,63 @@ from server.auth.secrets import secure_hash
 from server.db.db import db
 from server.db.domain import UserToken, User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import sarah_user_token, service_network_token, sarah_name, service_wiki_token, betty_user_token_wiki, \
-    uuc_teachers_name
+from server.test.seed import (user_sarah_user_token_network, service_network_token, user_sarah_name, service_wiki_token,
+                              user_betty_user_token_wiki,
+                              co_teachers_name, unihard_short_name)
 
 
 class TestToken(AbstractTest):
 
     def test_introspect(self):
         res = self.client.post("/api/tokens/introspect", headers={"Authorization": f"bearer {service_network_token}"},
-                               data={"token": sarah_user_token}, content_type="application/x-www-form-urlencoded")
+                               data={"token": user_sarah_user_token_network}, content_type="application/x-www-form-urlencoded")
         self.assertEqual(200, res.status_code)
         json = res.json
         self.assertEqual(json["active"], True)
         self.assertEqual(json["user"]["uid"], "urn:sarah")
-        self.assertListEqual(sorted(['urn:example:sbs:group:uuc:ai_computing', 'urn:example:sbs:group:uuc']),
-                             sorted(json["user"]["eduperson_entitlement"]))
+        self.assertListEqual(sorted([
+            f'urn:example:sbs:group:{unihard_short_name}:ai_computing',
+            f'urn:example:sbs:group:{unihard_short_name}']
+        ), sorted(json["user"]["eduperson_entitlement"]))
 
-        user_token = UserToken.query.filter(UserToken.hashed_token == secure_hash(sarah_user_token)).first()
+        user_token = UserToken.query.filter(UserToken.hashed_token == secure_hash(user_sarah_user_token_network)).first()
         self.assertIsNotNone(user_token.last_used_date)
 
     def test_introspect_one_expired_membership(self):
         user = self.find_entity_by_name(User, "betty")
-        cm = [cm for cm in user.collaboration_memberships if cm.collaboration.name == uuc_teachers_name]
+        cm = [cm for cm in user.collaboration_memberships if cm.collaboration.name == co_teachers_name]
         self.expire_collaboration_memberships(cm)
 
         res = self.client.post("/api/tokens/introspect", headers={"Authorization": f"bearer {service_wiki_token}"},
-                               data={"token": betty_user_token_wiki}, content_type="application/x-www-form-urlencoded")
+                               data={"token": user_betty_user_token_wiki}, content_type="application/x-www-form-urlencoded")
         self.assertEqual(200, res.status_code)
         user = res.json["user"]
-        self.assertListEqual(sorted(['urn:example:sbs:group:uuc:ai_computing', 'urn:example:sbs:group:uuc',
-                                     'urn:example:sbs:group:uuc:monitor1']),
-                             sorted(user["eduperson_entitlement"]))
+        self.assertListEqual(sorted([
+            f'urn:example:sbs:group:{unihard_short_name}:ai_computing',
+            f'urn:example:sbs:group:{unihard_short_name}',
+            f'urn:example:sbs:group:{unihard_short_name}:monitor1'
+        ]), sorted(user["eduperson_entitlement"]))
 
     def test_introspect_not_connected(self):
         db.session.execute(text("DELETE from services_collaborations"))
         res = self.client.post("/api/tokens/introspect", headers={"Authorization": f"bearer {service_network_token}"},
-                               data={"token": sarah_user_token}, content_type="application/x-www-form-urlencoded")
+                               data={"token": user_sarah_user_token_network}, content_type="application/x-www-form-urlencoded")
         self.assertEqual(200, res.status_code)
         self.assertEqual(res.json["active"], False)
         self.assertEqual(res.json["status"], "token-not-connected")
 
     def test_introspect_user_suspended(self):
-        self.mark_user_suspended(sarah_name)
+        self.mark_user_suspended(user_sarah_name)
         res = self.client.post("/api/tokens/introspect", headers={"Authorization": f"bearer {service_network_token}"},
-                               data={"token": sarah_user_token}, content_type="application/x-www-form-urlencoded")
+                               data={"token": user_sarah_user_token_network}, content_type="application/x-www-form-urlencoded")
         self.assertEqual(200, res.status_code)
         self.assertEqual(res.json["active"], False)
         self.assertEqual(res.json["status"], "user-suspended")
 
     def test_introspect_expired_memberships(self):
-        self.expire_all_collaboration_memberships(sarah_name)
+        self.expire_all_collaboration_memberships(user_sarah_name)
         res = self.client.post("/api/tokens/introspect", headers={"Authorization": f"bearer {service_network_token}"},
-                               data={"token": sarah_user_token}, content_type="application/x-www-form-urlencoded")
+                               data={"token": user_sarah_user_token_network}, content_type="application/x-www-form-urlencoded")
         self.assertEqual(200, res.status_code)
         self.assertEqual(res.json["active"], False)
         self.assertEqual(res.json["status"], "token-not-connected")
@@ -74,17 +79,17 @@ class TestToken(AbstractTest):
         self.assertEqual(res.json["active"], False)
 
     def test_introspect_expired_user_token(self):
-        self.expire_user_token(sarah_user_token)
+        self.expire_user_token(user_sarah_user_token_network)
         res = self.client.post("/api/tokens/introspect", headers={"Authorization": f"bearer {service_network_token}"},
-                               data={"token": sarah_user_token}, content_type="application/x-www-form-urlencoded")
+                               data={"token": user_sarah_user_token_network}, content_type="application/x-www-form-urlencoded")
         self.assertEqual(200, res.status_code)
         self.assertEqual(res.json["status"], "token-expired")
         self.assertEqual(res.json["active"], False)
 
     def test_introspect_expired_collaboration(self):
-        self.expire_collaborations(sarah_name)
+        self.expire_collaborations(user_sarah_name)
         res = self.client.post("/api/tokens/introspect", headers={"Authorization": f"bearer {service_network_token}"},
-                               data={"token": sarah_user_token}, content_type="application/x-www-form-urlencoded")
+                               data={"token": user_sarah_user_token_network}, content_type="application/x-www-form-urlencoded")
 
         self.assertEqual(200, res.status_code)
         self.assertEqual(res.json["active"], False)

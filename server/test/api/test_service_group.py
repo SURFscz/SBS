@@ -3,7 +3,7 @@ from flask import jsonify
 from server.db.domain import Service, ServiceGroup, Collaboration
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_group_mail_name, service_cloud_name, service_group_wiki_name1, \
-    uva_research_name
+    co_research_name
 
 
 class TestServiceGroup(AbstractTest):
@@ -61,7 +61,7 @@ class TestServiceGroup(AbstractTest):
         self.assertEqual(1, len(groups))
         self.assertEqual("uva:research:cloud-new_auth_service", groups[0].global_urn)
 
-        collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
+        collaboration = self.find_entity_by_name(Collaboration, co_research_name)
         group = list(filter(lambda g: g.short_name == "cloud-new_auth_service", collaboration.groups))[0]
         # Not allowed to delete group with connected service
         self.delete("/api/groups", group.id, with_basic_auth=False, response_status_code=403)

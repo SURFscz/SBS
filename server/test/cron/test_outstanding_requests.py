@@ -3,6 +3,7 @@ from sqlalchemy import text
 from server.cron.outstanding_requests import outstanding_requests
 from server.db.db import db
 from server.test.abstract_test import AbstractTest
+from server.test.seed import unihard_name
 
 
 class TestOutstandingRequests(AbstractTest):
@@ -19,8 +20,8 @@ class TestOutstandingRequests(AbstractTest):
             outstanding_requests(self.app)
             self.assertEqual(1, len(outbox))
             html = outbox[0].html
-            self.assertTrue(f"New Collaboration requested by Peter Doe in organization UUC at {past_date}" in html)
-            self.assertTrue(f"John Doe requested access to collaboration AI computing at {past_date}" in html)
+            self.assertIn(f"New Collaboration requested by Peter Doe in organization {unihard_name} at {past_date}", html)
+            self.assertIn(f"John Doe requested access to collaboration AI computing at {past_date}", html)
 
     def test_no_outstanding_requests(self):
         mail = self.app.mail
