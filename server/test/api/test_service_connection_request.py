@@ -107,12 +107,11 @@ class TestServiceConnectionRequest(AbstractTest):
         res = self.post("/api/service_connection_requests", body=data, with_basic_auth=False, response_status_code=400)
         self.assertTrue("outstanding_service_connection_request" in res["message"])
 
-    def test_approve_service_connection_request(self):
+    def test_approve_service_connection_request_not_allowed(self):
         service = self.find_entity_by_name(Service, service_ssh_uva_name)
         service.override_access_allowed_all_connections = 0
         self.save_entity(service)
 
-        pre_services_count = len(self.find_entity_by_name(Collaboration, uva_research_name).services)
         request_id = ServiceConnectionRequest.query \
             .filter(ServiceConnectionRequest.hash == ssh_service_connection_request_hash).one().id
         # CO admin not allowed to approve
@@ -121,11 +120,43 @@ class TestServiceConnectionRequest(AbstractTest):
                  body={"id": request_id},
                  response_status_code=403)
 
+    def test_approve_service_connection_request_pending_org(self):
+        service = self.find_entity_by_name(Service, service_ssh_uva_name)
+        service.override_access_allowed_all_connections = 0
+        self.save_entity(service)
+
+        service_connection_request = ServiceConnectionRequest.query.filter(
+            ServiceConnectionRequest.hash == ssh_service_connection_request_hash).one()
+        self.assertTrue(service_connection_request.pending_organisation_approval)
+        request_id = service_connection_request.id
+        with self.app.mail.record_messages() as outbox:
+            # Org admin is allowed to approve
+            self.login("urn:jane")
+            self.put("/api/service_connection_requests/approve",
+                     body={"id": request_id})
+
+            service_connection_request = ServiceConnectionRequest.query.filter(
+                ServiceConnectionRequest.hash == ssh_service_connection_request_hash).one()
+            self.assertFalse(service_connection_request.pending_organisation_approval)
+            mail_msg = outbox[0]
+            self.assertTrue("Request for new service SSH UvA "
+                            "connection to collaboration UVA UCC research" in mail_msg.subject)
+
+    def test_approve_service_connection(self):
+        service = self.find_entity_by_name(Service, service_ssh_uva_name)
+        service.override_access_allowed_all_connections = 0
+        self.save_entity(service)
+
+        pre_services_count = len(self.find_entity_by_name(Collaboration, uva_research_name).services)
+        service_connection_request = ServiceConnectionRequest.query.filter(
+            ServiceConnectionRequest.hash == ssh_service_connection_request_hash).one()
+        service_connection_request.pending_organisation_approval = False
+        self.save_entity(service_connection_request)
         with self.app.mail.record_messages() as outbox:
             # Service admin is allowed to approve
             self.login("urn:betty")
             self.put("/api/service_connection_requests/approve/",
-                     body={"id": request_id})
+                     body={"id": service_connection_request.id})
             post_services_count = len(self.find_entity_by_name(Collaboration, uva_research_name).services)
 
             self.assertEqual(pre_services_count + 1, post_services_count)
@@ -143,6 +174,7 @@ class TestServiceConnectionRequest(AbstractTest):
             .filter(ServiceConnectionRequest.hash == ssh_service_connection_request_hash).one()
         request_id = request.id
         request.requester.email = None
+        request.pending_organisation_approval = False
         self.save_entity(request.requester)
         with self.app.mail.record_messages() as outbox:
             # Service admin is allowed to approve
