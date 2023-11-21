@@ -2,7 +2,7 @@ from server.db.db import db
 from server.db.domain import Organisation, OrganisationInvitation, User, JoinRequest
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import (unihard_name, unifra_name, schac_home_organisation_unihar, schac_home_organisation_example,
-                              read_image, unihard_secret, user_jane_name, unihard_short_name)
+                              read_image, unihard_secret, user_jane_name, unihard_short_name, unihard_unit_support_name)
 
 
 class TestOrganisation(AbstractTest):
@@ -189,17 +189,34 @@ class TestOrganisation(AbstractTest):
         self.login()
         organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
         organisation = self.get(f"/api/organisations/{organisation_id}", with_basic_auth=False)
-        units = organisation["units"]
-        units[0]["name"] = "changed"
-        units.append({"name": "extra"})
+        orig_sho = organisation["schac_home_organisations"][0]["name"]
 
-        organisation["schac_home_organisations"] = [{"name": "rug.nl"}]
+        organisation["schac_home_organisations"] = [
+            {"name": "rug.nl"},  # new
+            {"name": orig_sho}   # identical to before
+        ]
         self.put("/api/organisations", body=organisation)
 
         organisation = self.find_entity_by_name(Organisation, unihard_name)
-        self.assertEqual(1, len(organisation.schac_home_organisations))
+        self.assertEqual(2, len(organisation.schac_home_organisations))
+        self.assertSetEqual(set(["rug.nl", orig_sho]), set([sho.name for sho in organisation.schac_home_organisations]))
+
+    def test_organisation_update_units(self):
+        self.login()
+        organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
+        organisation = self.get(f"/api/organisations/{organisation_id}", with_basic_auth=False)
+        units = organisation["units"]
+
+        units[0]["name"] = "changed"  # change name of first unit
+        del units[1]["id"]  # remove id of second unit, so it will be added with an identical name (should be discarded)
+        units.append({"name": "extra"})  # add a new unit
+
+        self.put("/api/organisations", body=organisation)
+
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
         self.assertEqual(3, len(organisation.units))
-        self.assertEqual("rug.nl", organisation.schac_home_organisations[0].name)
+        self.assertSetEqual(set(["changed", unihard_unit_support_name, "extra"]),
+                            set([unit.name for unit in organisation.units]))
 
     def test_organisation_forbidden(self):
         self.login("urn:peter")
