@@ -9,16 +9,15 @@ from server.api.collaboration_request import STATUS_OPEN
 from server.auth.secrets import secure_hash, generate_token
 from server.db.audit_mixin import metadata
 from server.db.defaults import default_expiry_date, SERVICE_TOKEN_INTROSPECTION, SERVICE_TOKEN_SCIM, SERVICE_TOKEN_PAM
-from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
-    CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey, CollaborationRequest, \
-    ServiceConnectionRequest, SuspendNotification, Aup, SchacHomeOrganisation, SshKey, ServiceGroup, ServiceInvitation, \
-    ServiceMembership, ServiceAup, UserToken, UserIpNetwork, Tag, PamSSOSession, IpNetwork, ServiceToken, \
-    ServiceRequest, Unit
+from server.db.domain import (User, Organisation, OrganisationMembership, Service, Collaboration,
+                              CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey,
+                              CollaborationRequest, ServiceConnectionRequest, SuspendNotification, Aup,
+                              SchacHomeOrganisation, SshKey, ServiceGroup, ServiceInvitation, ServiceMembership,
+                              ServiceAup, UserToken, UserIpNetwork, Tag, PamSSOSession, IpNetwork, ServiceToken,
+                              ServiceRequest, Unit)
 
-collaboration_request_name = "New Collaboration"
 
-join_request_reference = "Dr. Johnson"
-
+# users
 the_boss_name = "The Boss"
 roger_name = "Roger Doe"
 john_name = "John Doe"
@@ -27,55 +26,54 @@ james_name = "James Byrd"
 sarah_name = "Sarah Cross"
 jane_name = "Jane Doe"
 
-schac_home_organisation = "example.org"
-schac_home_organisation_uuc = "uni-harderwijk.nl"
-
-organisation_invitation_hash = generate_token()
-organisation_invitation_expired_hash = generate_token()
-
-invitation_hash_curious = generate_token()
-invitation_hash_no_way = generate_token()
-invitation_hash_uva = generate_token()
-
-service_invitation_hash = generate_token()
-service_invitation_expired_hash = generate_token()
-
-service_cloud_token = generate_token()
-service_network_token = generate_token()
-service_storage_token = generate_token()
-service_wiki_token = generate_token()
-
 sarah_user_token = generate_token()
 betty_user_token_wiki = generate_token()
 
-collaboration_ai_computing_uuid = "a71a2b01-4642-4e1a-b3ac-0a06b2bf66f2"
-ai_computing_name = "AI computing"
-ai_computing_short_name = "ai_computing"
+schac_home_organisation = "example.org"
+schac_home_organisation_uuc = "uni-harderwijk.nl"
 
-uuc_teachers_name = "UUC Teachers"
-
+# organisations
 uuc_name = "Universiteit van Harderwijk"
 uuc_short_name = "uniharderwijk"
 uuc_secret = generate_token()
 uuc_hashed_secret = secure_hash(uuc_secret)
 uuc_unit_research_name = "Research"
 uuc_unit_support_name = "Support"
+organisation_invitation_hash = generate_token()  # uuc
+organisation_invitation_expired_hash = generate_token()  # uuc
 
-monitoring_co_name = "Monitoring CO numero 1"
-
+amsterdam_uva_name = "Academia Franekerensis"
 uva_secret = generate_token()
 uva_hashed_secret = secure_hash(uva_secret)
 
-amsterdam_uva_name = "Academia Franekerensis"
 tue_name = "Universitair Medisch Centrum Noord-Pekela"
 
-collaboration_uva_researcher_uuid = "da706611-0afb-4a7a-819b-b0a9c63e9b67"
+# collaborations
+ai_computing_name = "AI computing"
+ai_computing_short_name = "ai_computing"
+collaboration_ai_computing_uuid = "a71a2b01-4642-4e1a-b3ac-0a06b2bf66f2"
+
+uuc_teachers_name = "UUC Teachers"
 
 uva_research_name = "UCC research"
+collaboration_uva_researcher_uuid = "da706611-0afb-4a7a-819b-b0a9c63e9b67"
 
 uu_disabled_join_request_name = "Robotics"
 join_request_peter_hash = generate_token()
 
+monitoring_co_name = "Monitoring CO numero 1"
+
+collaboration_request_name = "New Collaboration"
+join_request_reference = "Dr. Johnson"
+
+# groups
+ai_researchers_group = "AI researchers"
+ai_researchers_group_short_name = "ai_res"
+ai_researchers_group_identifier = "9734e4c4-d23e-4228-b0e0-8e6a5b85e72e"
+ai_dev_identifier = "4c270cff-de30-49e8-a3bc-df032536b37c"
+group_science_name = "Science"
+
+# services
 service_mail_name = "Mail Services"
 service_mail_entity_id = "https://mail"
 
@@ -98,20 +96,28 @@ service_group_mail_name = "service_group_mail_name"
 service_group_wiki_name1 = "service_group_wiki_name_1"
 service_group_wiki_name2 = "service_group_wiki_name_2"
 
-ai_researchers_group = "AI researchers"
-ai_researchers_group_short_name = "ai_res"
-ai_researchers_group_identifier = "9734e4c4-d23e-4228-b0e0-8e6a5b85e72e"
-ai_dev_identifier = "4c270cff-de30-49e8-a3bc-df032536b37c"
-group_science_name = "Science"
-
 network_service_connection_request_hash = generate_token()
 ssh_service_connection_request_hash = generate_token()
 wireless_service_connection_request_hash = generate_token()
 
+service_request_gpt_name = "GPT"
+
+# tokens
+invitation_hash_curious = generate_token()
+invitation_hash_no_way = generate_token()
+invitation_hash_uva = generate_token()
+
+service_invitation_hash = generate_token()
+service_invitation_expired_hash = generate_token()
+
+service_cloud_token = generate_token()
+service_network_token = generate_token()
+service_storage_token = generate_token()
+service_wiki_token = generate_token()
+
+# pam
 pam_session_id = str(uuid.uuid4())
 invalid_service_pam_session_id = str(uuid.uuid4())
-
-service_request_gpt_name = "GPT"
 
 image_cache = {}
 
