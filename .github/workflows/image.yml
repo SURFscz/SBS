@@ -16,9 +16,9 @@ jobs:
       matrix:
         include:
           - dockerfile: ./client/Dockerfile
-            image: ${{ env.REGISTRY }}/${{ GITHUB_REPOSITORY_OWNER }}/SBS-Client
+            image: ghcr.io/surfscz/SBS-Client
           - dockerfile: ./server/Dockerfile
-            image: ${{ env.REGISTRY }}/${{ GITHUB_REPOSITORY_OWNER }}/SBS-Server
+            image: ghcr.io/surfscz/SBS-Server
     permissions:
       contents: read
       packages: write
