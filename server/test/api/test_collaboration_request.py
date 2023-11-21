@@ -2,7 +2,7 @@ from server.db.db import db
 from server.db.domain import Organisation, CollaborationRequest, CollaborationMembership, Collaboration
 from server.test.abstract_test import AbstractTest
 from server.test.seed import schac_home_organisation_example, unifra_name, collaboration_request_name, unihard_name, \
-    schac_home_organisation_uuc
+    schac_home_organisation_unihar
 
 
 class TestCollaborationRequest(AbstractTest):
@@ -31,7 +31,7 @@ class TestCollaborationRequest(AbstractTest):
             self.assertEqual("Request for new collaboration New Collaboration (local)", mail_msg.subject)
 
     def test_request_collaboration_collaboration_creation_allowed(self):
-        self.login("urn:roger", schac_home_organisation_uuc)
+        self.login("urn:roger", schac_home_organisation_unihar)
         organisation = self.find_entity_by_name(Organisation, unihard_name)
         data = {
             "name": "New Collaboration",

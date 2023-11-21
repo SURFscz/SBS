@@ -1,7 +1,7 @@
 from server.db.db import db
 from server.db.domain import Organisation, OrganisationInvitation, User, JoinRequest
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
-from server.test.seed import (unihard_name, unifra_name, schac_home_organisation_uuc, schac_home_organisation_example,
+from server.test.seed import (unihard_name, unifra_name, schac_home_organisation_unihar, schac_home_organisation_example,
                               read_image, unihard_secret, user_jane_name, unihard_short_name)
 
 
@@ -104,7 +104,7 @@ class TestOrganisation(AbstractTest):
         self.login("urn:betty")
         organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
         name = self.get(f"/api/organisations/schac_home/{organisation_id}", with_basic_auth=False)
-        self.assertEqual(schac_home_organisation_uuc, name)
+        self.assertEqual(schac_home_organisation_unihar, name)
 
     def test_schac_homes(self):
         self.login("urn:betty")
@@ -239,13 +239,13 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(False, res)
 
     def test_organisation_schac_home_exists(self):
-        res = self.get("/api/organisations/schac_home_exists", query_data={"schac_home": schac_home_organisation_uuc})
-        self.assertEqual(schac_home_organisation_uuc, res)
+        res = self.get("/api/organisations/schac_home_exists", query_data={"schac_home": schac_home_organisation_unihar})
+        self.assertEqual(schac_home_organisation_unihar, res)
 
         uuc_id = self.find_entity_by_name(Organisation, unihard_name).id
 
         res = self.get("/api/organisations/schac_home_exists",
-                       query_data={"schac_home": schac_home_organisation_uuc,
+                       query_data={"schac_home": schac_home_organisation_unihar,
                                    "existing_organisation_id": uuc_id})
         self.assertEqual(False, res)
 
