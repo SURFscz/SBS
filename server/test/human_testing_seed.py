@@ -275,4 +275,36 @@ def human_testing_seed(db, app_config):
             )
             persist_instance(db, new_group)
 
+    # create large number of COs and users
+    users = []
+    for i in range(1, 84):
+        user = User(uid=f"urn:persoon:numero{i:03d}",
+                    name=f"Piet Doe de {i}de",
+                    email=f"pietdoe{i}@example.org",
+                    username=f"pietdoe{i}",
+                    schac_home_organisation=schac_home_organisation_unihar)
+        users.append(user)
+    persist_instance(db, *users)
+
+    for i in range(1, 40):
+        co = Collaboration(name=f"Samenwerking Numero {i}",
+                           identifier=str(uuid.uuid4()),
+                           short_name=f"co_nr_{i:03d}",
+                           global_urn=f"ucc:co_nr_{i:03d}",
+                           description="Een van vele COs",
+                           logo=read_image("scientists.jpg", directory="demo_images"),
+                           organisation=org_list[0],
+                           services=service_list,
+                           join_requests=[],
+                           invitations=[],
+                           website_url="https://www.google.nl",
+                           accepted_user_policy="https://www.google.nl",
+                           disclose_email_information=True,
+                           disclose_member_information=True)
+        persist_instance(db, co)
+        persist_instance(db, CollaborationMembership(role="admin", user=users[2 * i + 0], collaboration=co))
+        persist_instance(db, CollaborationMembership(role="member", user=users[2 * i + 1], collaboration=co))
+        persist_instance(db, CollaborationMembership(role="member", user=users[2 * i + 2], collaboration=co))
+        persist_instance(db, CollaborationMembership(role="member", user=users[2 * i + 3], collaboration=co))
+
     db.session.commit()
