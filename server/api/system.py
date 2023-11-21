@@ -127,7 +127,7 @@ def run_seed():
     check_seed_allowed("seed")
     try:
         os.environ["SEEDING"] = "1"
-        seed(db, current_app.app_config, skip_seed=False, perf_test=False)
+        seed(db, current_app.app_config, skip_seed=False)
         session.clear()
     finally:
         del os.environ["SEEDING"]
