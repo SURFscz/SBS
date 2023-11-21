@@ -16,7 +16,6 @@ from server.db.domain import (User, Organisation, OrganisationMembership, Servic
                               ServiceAup, UserToken, UserIpNetwork, Tag, PamSSOSession, IpNetwork, ServiceToken,
                               ServiceRequest, Unit)
 
-
 # users
 user_boss_name = "The Boss"
 user_roger_name = "Roger Doe"
@@ -29,17 +28,16 @@ user_jane_name = "Jane Doe"
 user_sarah_user_token_network = generate_token()
 user_betty_user_token_wiki = generate_token()
 
-
-# schachomeorganisations
+# schac_home_organisations
 schac_home_organisation_example = "example.org"
-schac_home_organisation_uuc = "uni-harderwijk.nl"
+schac_home_organisation_unihar = "uni-harderwijk.nl"
 
 # organisations
 unihard_name = "Universiteit van Harderwijk"
 unihard_short_name = "uniharderwijk"
 unihard_secret = generate_token()
-unuhard_hashed_secret = secure_hash(unihard_secret)
-unuhard_unit_research_name = "Research"
+unihard_hashed_secret = secure_hash(unihard_secret)
+unihard_unit_research_name = "Research"
 unihard_unit_support_name = "Support"
 unihard_invitation_hash = generate_token()  # uuc
 unihard_invitation_expired_hash = generate_token()  # uuc
@@ -91,7 +89,7 @@ service_wireless_name = "Wireless"
 service_cloud_name = "Cloud"
 service_wiki_name = "Wiki"
 service_ssh_name = "SSH Service"
-service_scheduler_name = "uuc_scheduler_name"
+service_scheduler_name = "Scheduler Service"
 service_sram_demo_sp = "SRAM Demo RP"
 
 service_group_mail_name = "service_group_mail_name"
@@ -179,7 +177,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     harry = User(uid="urn:harry", name="Harry Doe", email="harry@example.org", username="harry",
                  external_id="91322eb8-1c26-4b85-90d0-39079ef47694")
     james = User(uid="urn:james", name=user_james_name, email="james@example.org", username="james",
-                 schac_home_organisation=schac_home_organisation_uuc, given_name="James",
+                 schac_home_organisation=schac_home_organisation_unihar, given_name="James",
                  external_id="100ae6f1-930f-459c-bf1a-f28facfe5834")
     sarah = User(uid="urn:sarah", name=user_sarah_name, email="sarah@uva.org", application_uid="sarah_application_uid",
                  username="sarah", external_id="8297d8a5-a2a4-4208-9fb6-100a5865f022")
@@ -285,17 +283,17 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                        logo=read_image("umc-pekela.png"), category="UMC")
     persist_instance(db, uuc, uva, tue)
 
-    uuc_unit_research = Unit(name=unuhard_unit_research_name, organisation=uuc)
+    uuc_unit_research = Unit(name=unihard_unit_research_name, organisation=uuc)
     uuc_unit_support = Unit(name=unihard_unit_support_name, organisation=uuc)
     persist_instance(db, uuc_unit_research, uuc_unit_support)
 
-    shouuc = SchacHomeOrganisation(name=schac_home_organisation_uuc, organisation=uuc, created_by="urn:admin",
+    shouuc = SchacHomeOrganisation(name=schac_home_organisation_unihar, organisation=uuc, created_by="urn:admin",
                                    updated_by="urn:admin")
     shouva = SchacHomeOrganisation(name=schac_home_organisation_example, organisation=uva, created_by="urn:admin",
                                    updated_by="urn:admin")
     persist_instance(db, shouuc, shouva)
 
-    api_key_uuc = ApiKey(hashed_secret=unuhard_hashed_secret, organisation=uuc, description="API access",
+    api_key_uuc = ApiKey(hashed_secret=unihard_hashed_secret, organisation=uuc, description="API access",
                          created_by="urn:admin", updated_by="urn:admin")
     api_key_uva = ApiKey(hashed_secret=unifra_hashed_secret, organisation=uva, description="API access",
                          created_by="urn:admin", updated_by="urn:admin")
@@ -396,7 +394,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
 
     demo_sp = Service(entity_id="https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/test",
                       name="SRAM Demo SP", abbreviation="sram_demosp", description="Generic SRAM demo sp",
-                      logo=read_image("test.png"), uri=("https://demo-sp.sram.surf.nl/"),
+                      logo=read_image("test.png"), uri="https://demo-sp.sram.surf.nl/",
                       privacy_policy="https://edu.nl/fcgbd",
                       contact_email="sram-beheer@surf.nl", security_email="sram-beheer@surf.nl",
                       override_access_allowed_all_connections=True, automatic_connection_allowed=True,
@@ -407,7 +405,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
 
     demo_rp = Service(entity_id="APP-18DE6298-7BDD-4CFA-9399-E1CC62E8DE05",
                       name=service_sram_demo_sp, abbreviation="sram_demorp", description="Generic SRAM demo rp",
-                      logo=read_image("test.png"), uri=("https://demo-sp.sram.surf.nl/"),
+                      logo=read_image("test.png"), uri="https://demo-sp.sram.surf.nl/",
                       privacy_policy="https://edu.nl/fcgbd",
                       contact_email="sram-beheer@surf.nl", security_email="sram-beheer@surf.nl",
                       override_access_allowed_all_connections=False, automatic_connection_allowed=True,
@@ -519,7 +517,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     ai_computing = Collaboration(name=co_ai_computing_name,
                                  identifier=co_ai_computing_uuid,
                                  global_urn=f"ucc:{co_ai_computing_short_name}",
-                                 description="Artifical Intelligence computing for the Unincorporated Urban Community",
+                                 description="Artificial Intelligence computing for the Unincorporated Urban Community",
                                  logo=read_image("computing.png"),
                                  organisation=uuc, services=[mail, network],
                                  join_requests=[], invitations=[],
@@ -581,7 +579,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                              website_url="https://www.google.nl",
                                              logo=read_image("robot.png"),
                                              identifier="568eed02-0e46-48ab-83fe-116d2a8a58c5",
-                                             description="Artification AI",
+                                             description="Artificiation AI",
                                              disable_join_requests=True,
                                              organisation=uva,
                                              services=[],
@@ -623,7 +621,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                               global_urn="uuc:ai_computing:ai_res",
                               identifier=group_ai_researchers_identifier,
                               auto_provision_members=False,
-                              description="Artifical computing researchers",
+                              description="Artificial computing researchers",
                               collaboration=ai_computing,
                               collaboration_memberships=[john_ai_computing,
                                                          jane_ai_computing])
@@ -632,7 +630,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                              global_urn="uuc:ai_computing:ai_dev",
                              identifier=group_ai_dev_identifier,
                              auto_provision_members=False,
-                             description="Artifical computing developers",
+                             description="Artificial computing developers",
                              collaboration=ai_computing,
                              collaboration_memberships=[john_ai_computing])
     group_science = Group(name=group_science_name,
