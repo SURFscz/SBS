@@ -18,18 +18,19 @@ from server.db.domain import (User, Organisation, OrganisationMembership, Servic
 
 
 # users
-the_boss_name = "The Boss"
-roger_name = "Roger Doe"
-john_name = "John Doe"
-mike_name = "Mike Doe"
-james_name = "James Byrd"
-sarah_name = "Sarah Cross"
-jane_name = "Jane Doe"
+user_boss_name = "The Boss"
+user_roger_name = "Roger Doe"
+user_john_name = "John Doe"
+user_mike_name = "Mike Doe"
+user_james_name = "James Byrd"
+user_sarah_name = "Sarah Cross"
+user_jane_name = "Jane Doe"
 
-sarah_user_token = generate_token()
-betty_user_token_wiki = generate_token()
-peter_join_request_hash = generate_token()
+user_sarah_user_token_network = generate_token()
+user_betty_user_token_wiki = generate_token()
 
+
+# schachomeorganisations
 schac_home_organisation_example = "example.org"
 schac_home_organisation_uuc = "uni-harderwijk.nl"
 
@@ -53,18 +54,19 @@ umcpekela_name = "Universitair Medisch Centrum Noord-Pekela"
 co_ai_computing_name = "AI computing"
 co_ai_computing_short_name = "ai_computing"
 co_ai_computing_uuid = "a71a2b01-4642-4e1a-b3ac-0a06b2bf66f2"
+co_ai_computing_join_request_peter_hash = generate_token()
+co_ai_computing_join_request_john_reference = "Dr. Johnson"
 
 co_teachers_name = "Teachers"
 
 co_research_name = "Research"
 co_research_uuid = "da706611-0afb-4a7a-819b-b0a9c63e9b67"
 
-co_robotics_disabled_join_request_name = "Robotics"
-
 co_monitoring_name = "Monitoring CO numero 1"
 
+co_robotics_disabled_join_request_name = "Robotics"
+
 collaboration_request_name = "New Collaboration"
-join_request_reference = "Dr. Johnson"
 
 # groups
 group_ai_researchers = "AI researchers"
@@ -96,19 +98,19 @@ service_group_mail_name = "service_group_mail_name"
 service_group_wiki_name1 = "service_group_wiki_name_1"
 service_group_wiki_name2 = "service_group_wiki_name_2"
 
-network_service_connection_request_hash = generate_token()
-ssh_service_connection_request_hash = generate_token()
-wireless_service_connection_request_hash = generate_token()
+service_connection_request_network_hash = generate_token()
+service_connection_request_ssh_hash = generate_token()
+service_connection_request_wireless_hash = generate_token()
 
 service_request_gpt_name = "GPT"
+
+service_invitation_cloud_hash = generate_token()
+service_invitation_wiki_expired_hash = generate_token()
 
 # tokens
 invitation_hash_curious = generate_token()
 invitation_hash_no_way = generate_token()
 invitation_hash_uva = generate_token()
-
-service_invitation_hash = generate_token()
-service_invitation_expired_hash = generate_token()
 
 service_cloud_token = generate_token()
 service_network_token = generate_token()
@@ -117,7 +119,7 @@ service_wiki_token = generate_token()
 
 # pam
 pam_session_id = str(uuid.uuid4())
-invalid_service_pam_session_id = str(uuid.uuid4())
+pam_invalid_service_session_id = str(uuid.uuid4())
 
 image_cache = {}
 
@@ -163,27 +165,27 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     if skip_seed:
         return
 
-    john = User(uid="urn:john", name=john_name, email="john@example.org", username="john",
+    john = User(uid="urn:john", name=user_john_name, email="john@example.org", username="john",
                 address="Postal 1234AA", external_id="86eee601-770f-4df3-bd4c-181a2edcbb2f")
     peter = User(uid="urn:peter", name="Peter Doe", email="peter@example.org", username="peter",
                  external_id="b7fdbc01-5b5a-4028-b90a-5409f380e603")
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org", username="mdoe",
                 schac_home_organisation=schac_home_organisation_example, external_id="bb3d4bd4-2848-4cf3-b30b-fd84186c0c52")
-    admin = User(uid="urn:admin", name=the_boss_name, email="boss@example.org", username="admin",
+    admin = User(uid="urn:admin", name=user_boss_name, email="boss@example.org", username="admin",
                  external_id="e906cf88-cdb3-480d-8bb3-ce53bdcda4e7")
-    roger = User(uid="urn:roger", name=roger_name, email="roger@example.org",
+    roger = User(uid="urn:roger", name=user_roger_name, email="roger@example.org",
                  schac_home_organisation=schac_home_organisation_example, username="roger",
                  external_id="c601d601-4a54-498a-9c45-f98882050733")
     harry = User(uid="urn:harry", name="Harry Doe", email="harry@example.org", username="harry",
                  external_id="91322eb8-1c26-4b85-90d0-39079ef47694")
-    james = User(uid="urn:james", name=james_name, email="james@example.org", username="james",
+    james = User(uid="urn:james", name=user_james_name, email="james@example.org", username="james",
                  schac_home_organisation=schac_home_organisation_uuc, given_name="James",
                  external_id="100ae6f1-930f-459c-bf1a-f28facfe5834")
-    sarah = User(uid="urn:sarah", name=sarah_name, email="sarah@uva.org", application_uid="sarah_application_uid",
+    sarah = User(uid="urn:sarah", name=user_sarah_name, email="sarah@uva.org", application_uid="sarah_application_uid",
                  username="sarah", external_id="8297d8a5-a2a4-4208-9fb6-100a5865f022")
     betty = User(uid="urn:betty", name="betty", email="betty@uuc.org", username="betty",
                  external_id="bbd8123c-b0f9-4e3d-b3ff-288aa1c1edd6", mfa_reset_token="1234567890")
-    jane = User(uid="urn:jane", name=jane_name, email="jane@ucc.org", username="jane",
+    jane = User(uid="urn:jane", name=user_jane_name, email="jane@ucc.org", username="jane",
                 entitlement="urn:mace:surf.nl:sram:allow-create-co", external_id="502e861e-f548-4335-89d8-f1764f803964")
     paul = User(uid="urn:paul", name="Paul Doe", email="paul@ucc.org", username="paul",
                 schac_home_organisation="example.org", external_id="0cb73fdf-3fe1-4e99-afe1-597d6226d030")
@@ -476,13 +478,13 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                      service_token_network_introspection, service_token_network_scim, service_token_storage_pam,
                      service_token_storage_scim, service_token_wiki_introspection, service_token_wiki_scim)
 
-    service_invitation_cloud = ServiceInvitation(message="Please join", hash=service_invitation_hash,
+    service_invitation_cloud = ServiceInvitation(message="Please join", hash=service_invitation_cloud_hash,
                                                  expiry_date=datetime.date.today() + datetime.timedelta(days=14),
                                                  invitee_email="admin@cloud.org", service=cloud,
                                                  intended_role="admin",
                                                  user=john)
     service_invitation_wiki_expired = ServiceInvitation(message="Please join",
-                                                        hash=service_invitation_expired_hash,
+                                                        hash=service_invitation_wiki_expired_hash,
                                                         expiry_date=datetime.date.today() - datetime.timedelta(
                                                             days=21),
                                                         intended_role="admin",
@@ -653,10 +655,10 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                service_group=service_group_mail)
     persist_instance(db, group_researchers, group_developers, group_science, group_service_mail)
 
-    join_request_john = JoinRequest(message="Please...", reference=join_request_reference, user=john,
+    join_request_john = JoinRequest(message="Please...", reference=co_ai_computing_join_request_john_reference, user=john,
                                     collaboration=ai_computing, hash=generate_token(), status="open")
     join_request_peter = JoinRequest(message="Please...", user=peter, collaboration=ai_computing,
-                                     hash=peter_join_request_hash, status="open")
+                                     hash=co_ai_computing_join_request_peter_hash, status="open")
     join_request_mary = JoinRequest(message="Please...", user=mary, collaboration=ai_computing, hash=generate_token(),
                                     status="open")
     join_request_uva_research = JoinRequest(message="Please...", user=james, collaboration=uva_research,
@@ -691,25 +693,25 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     persist_instance(db, collaboration_request_1, collaboration_request_2)
 
     service_connection_request_network = ServiceConnectionRequest(message="AI computing needs storage",
-                                                                  hash=network_service_connection_request_hash,
+                                                                  hash=service_connection_request_network_hash,
                                                                   requester=admin, collaboration=ai_computing,
                                                                   service=storage)
     service_connection_request_wiki = ServiceConnectionRequest(message="UVA research needs ssh",
-                                                               hash=ssh_service_connection_request_hash,
+                                                               hash=service_connection_request_ssh_hash,
                                                                requester=sarah, collaboration=uva_research,
                                                                service=service_ssh_uva)
     persist_instance(db, service_connection_request_network, service_connection_request_wiki)
 
-    user_token_sarah = UserToken(name="token", description="some", hashed_token=secure_hash(sarah_user_token),
+    user_token_sarah = UserToken(name="token", description="some", hashed_token=secure_hash(user_sarah_user_token_network),
                                  user=sarah, service=network)
-    user_token_sarah_for_wiki = UserToken(name="token", description="some",
-                                          hashed_token=secure_hash(betty_user_token_wiki),
+    user_token_betty_for_wiki = UserToken(name="token", description="some",
+                                          hashed_token=secure_hash(user_betty_user_token_wiki),
                                           user=betty, service=wiki)
-    persist_instance(db, user_token_sarah, user_token_sarah_for_wiki)
+    persist_instance(db, user_token_sarah, user_token_betty_for_wiki)
 
     pam_sso_session_peter = PamSSOSession(session_id=pam_session_id, attribute="email", user=peter, service=storage,
                                           pin="1234")
-    pam_sso_session_james = PamSSOSession(session_id=invalid_service_pam_session_id, attribute="email", user=james,
+    pam_sso_session_james = PamSSOSession(session_id=pam_invalid_service_session_id, attribute="email", user=james,
                                           service=storage, pin="1234")
     persist_instance(db, pam_sso_session_peter, pam_sso_session_james)
 

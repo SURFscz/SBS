@@ -10,7 +10,7 @@ from server.scim.events import broadcast_user_changed, broadcast_user_deleted, b
     broadcast_service_deleted, broadcast_group_deleted, broadcast_organisation_service_added, \
     broadcast_organisation_service_deleted
 from server.test.abstract_test import AbstractTest
-from server.test.seed import sarah_name, co_research_name, group_ai_researchers, unifra_name, service_cloud_name
+from server.test.seed import user_sarah_name, co_research_name, group_ai_researchers, unifra_name, service_cloud_name
 from server.tools import read_file
 
 
@@ -28,7 +28,7 @@ class TestEvents(AbstractTest):
 
     @responses.activate
     def test_apply_user_change_create(self):
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         no_user_found = json.loads(read_file("test/scim/no_user_found.json"))
         user_created = json.loads(read_file("test/scim/user_created.json"))
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
@@ -40,7 +40,7 @@ class TestEvents(AbstractTest):
 
     @responses.activate
     def test_apply_user_change_create_provisioning_error(self):
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         no_user_found = json.loads(read_file("test/scim/no_user_found.json"))
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=no_user_found, status=200)
@@ -51,7 +51,7 @@ class TestEvents(AbstractTest):
 
     @responses.activate
     def test_apply_user_change_create_with_invalid_response(self):
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         user_created = json.loads(read_file("test/scim/user_created.json"))
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json={}, status=400)
@@ -62,7 +62,7 @@ class TestEvents(AbstractTest):
 
     @responses.activate
     def test_apply_user_change_update(self):
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         user_found = json.loads(read_file("test/scim/user_found.json"))
         user_updated = json.loads(read_file("test/scim/user_created.json"))
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
@@ -76,7 +76,7 @@ class TestEvents(AbstractTest):
 
     @responses.activate
     def test_apply_user_change_delete(self):
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         user_found = json.loads(read_file("test/scim/user_found.json"))
         group_found = json.loads(read_file("test/scim/group_found.json"))
         group_created = json.loads(read_file("test/scim/group_created.json"))

@@ -6,8 +6,8 @@ from server.db.audit_mixin import ACTION_DELETE, ACTION_CREATE, ACTION_UPDATE, A
 from server.db.domain import User, Collaboration, Service, Organisation, Group
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_cloud_name, co_ai_computing_name, \
-    service_mail_name, invitation_hash_curious, unihard_invitation_hash, unihard_name, group_science_name, sarah_name, \
-    james_name
+    service_mail_name, invitation_hash_curious, unihard_invitation_hash, unihard_name, group_science_name, user_sarah_name, \
+    user_james_name
 
 
 class TestAuditLog(AbstractTest):
@@ -25,12 +25,12 @@ class TestAuditLog(AbstractTest):
 
     def test_me_impersonation(self):
         self.login("urn:john")
-        user_id = self.find_entity_by_name(User, james_name).id
+        user_id = self.find_entity_by_name(User, user_james_name).id
         res = self.get("/api/audit_logs/me", with_basic_auth=False, headers={"X-IMPERSONATE-ID": str(user_id)})
         self.assertEqual(2, len(res))
 
     def test_other_(self):
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         sarah_id = sarah.id
         self.login("urn:sarah")
         body = {
@@ -42,7 +42,7 @@ class TestAuditLog(AbstractTest):
         self.assertEqual("sarah", res["users"][0]["username"])
 
     def test_other_403(self):
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         self.login("urn:mary")
         self.get(f"/api/audit_logs/other/{sarah.id}", response_status_code=403)
 

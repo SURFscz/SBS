@@ -2,7 +2,7 @@ from server.db.db import db
 from server.db.domain import Organisation, OrganisationInvitation, User, JoinRequest
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import (unihard_name, unifra_name, schac_home_organisation_uuc, schac_home_organisation_example,
-                              read_image, unihard_secret, jane_name, unihard_short_name)
+                              read_image, unihard_secret, user_jane_name, unihard_short_name)
 
 
 class TestOrganisation(AbstractTest):
@@ -395,7 +395,7 @@ class TestOrganisation(AbstractTest):
         organisation = self.find_entity_by_name(Organisation, unihard_name)
         res = self.get(f"/api/organisations/{organisation.id}/users", query_data={"q": "jan"}, with_basic_auth=False)
         self.assertEqual(1, len(res))
-        self.assertEqual(res[0]["name"], jane_name)
+        self.assertEqual(res[0]["name"], user_jane_name)
         for attr in "last_accessed_date", "second_fa_uuid", "user_ip_networks", "second_factor_auth":
             self.assertFalse(attr in res[0])
 

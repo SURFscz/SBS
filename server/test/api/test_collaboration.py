@@ -12,7 +12,7 @@ from server.db.domain import Collaboration, Organisation, Invitation, Collaborat
     ServiceGroup, Tag, Service
 from server.db.models import flatten
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
-from server.test.seed import (co_ai_computing_uuid, co_ai_computing_name, co_research_name, john_name,
+from server.test.seed import (co_ai_computing_uuid, co_ai_computing_name, co_research_name, user_john_name,
                               co_ai_computing_short_name, co_teachers_name, read_image, co_research_uuid,
                               service_group_wiki_name1,
                               service_storage_name, unifra_secret, unifra_name, unihard_short_name)
@@ -52,7 +52,7 @@ class TestCollaboration(AbstractTest):
         members = self.get("/api/collaborations/members", query_data={"identifier": co_ai_computing_uuid})
         self.assertEqual(2, len(members))
 
-        member = self.find_by_name(members, john_name)
+        member = self.find_by_name(members, user_john_name)
         self.assertEqual("urn:john", member["uid"])
         self.assertEqual("John Doe", member["name"])
         self.assertFalse("email" in member)

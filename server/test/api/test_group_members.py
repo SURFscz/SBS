@@ -1,6 +1,6 @@
 from server.db.domain import Group, Collaboration, User, CollaborationMembership
 from server.test.abstract_test import AbstractTest
-from server.test.seed import group_ai_researchers, co_ai_computing_name, the_boss_name
+from server.test.seed import group_ai_researchers, co_ai_computing_name, user_boss_name
 
 
 class TestGroupMembers(AbstractTest):
@@ -8,7 +8,7 @@ class TestGroupMembers(AbstractTest):
     def test_add_authorisation_group_members(self):
         authorisation_group = self.find_entity_by_name(Group, group_ai_researchers)
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
-        the_boss = self.find_entity_by_name(User, the_boss_name)
+        the_boss = self.find_entity_by_name(User, user_boss_name)
         member = CollaborationMembership.query.filter(CollaborationMembership.user_id == the_boss.id).one()
 
         pre_count = len(authorisation_group.collaboration_memberships)

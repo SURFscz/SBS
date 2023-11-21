@@ -3,7 +3,7 @@ import time
 from server.db.db import db
 from server.db.domain import CollaborationMembership, User, Collaboration
 from server.test.abstract_test import AbstractTest
-from server.test.seed import co_ai_computing_name, sarah_name, co_research_name, co_teachers_name
+from server.test.seed import co_ai_computing_name, user_sarah_name, co_research_name, co_teachers_name
 
 
 class TestCollaborationMembership(AbstractTest):
@@ -91,7 +91,7 @@ class TestCollaborationMembership(AbstractTest):
     def test_update_expiry_date(self):
         self.login("urn:admin")
         collaboration_id = self.find_entity_by_name(Collaboration, co_ai_computing_name).id
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         memberships = sarah.collaboration_memberships
         membership_id = next(
             cm for cm in memberships if cm.user_id == sarah.id and cm.collaboration.id == collaboration_id).id

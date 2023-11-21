@@ -11,7 +11,7 @@ from server.scim.repo import all_scim_groups_by_service
 from server.scim.sweep import perform_sweep, _all_remote_scim_objects, _group_changed, _user_changed
 from server.scim.user_template import create_user_template, find_user_by_id_template
 from server.test.abstract_test import AbstractTest
-from server.test.seed import service_network_name, group_ai_researchers, john_name, co_ai_computing_name
+from server.test.seed import service_network_name, group_ai_researchers, user_john_name, co_ai_computing_name
 from server.tools import read_file
 
 
@@ -171,7 +171,7 @@ class TestSweep(AbstractTest):
         self.assertFalse(_group_changed(group, remote_group, remote_scim_users))
 
     def test_user_changed(self):
-        user = self.find_entity_by_name(User, john_name)
+        user = self.find_entity_by_name(User, user_john_name)
         remote_user = create_user_template(user)
         self.assertFalse(_user_changed(user, remote_user))
         for attr in ["username", "given_name", "family_name", "name", "email", "affiliation", "uid",

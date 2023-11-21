@@ -1,7 +1,7 @@
 from server.db.db import db
 from server.db.domain import User, Aup
 from server.test.abstract_test import AbstractTest
-from server.test.seed import sarah_name
+from server.test.seed import user_sarah_name
 
 
 class TestAup(AbstractTest):
@@ -13,7 +13,7 @@ class TestAup(AbstractTest):
         self.assertEqual("1", links["version"])
 
     def test_agree(self):
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         db.session.delete(Aup.query.filter(Aup.user == sarah).first())
 
         self.login("urn:sarah")

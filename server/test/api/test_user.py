@@ -11,8 +11,8 @@ from server.auth.security import CSRF_TOKEN
 from server.db.db import db
 from server.db.domain import Organisation, Collaboration, User, Aup
 from server.test.abstract_test import AbstractTest
-from server.test.seed import unihard_name, co_ai_computing_name, roger_name, john_name, james_name, co_research_name, \
-    co_ai_computing_uuid, sarah_name
+from server.test.seed import (unihard_name, co_ai_computing_name, user_roger_name, user_john_name, user_james_name,
+                              co_research_name, co_ai_computing_uuid, user_sarah_name)
 from server.tools import read_file
 
 
@@ -42,7 +42,7 @@ class TestUser(AbstractTest):
         self.assertFalse("second_fa_uuid" in user)
 
     def test_me_user_suspended(self):
-        self.mark_user_suspended(john_name)
+        self.mark_user_suspended(user_john_name)
         self.login("urn:john")
         res = self.client.get("/api/users/me")
         self.assertEqual(409, res.status_code)
@@ -219,7 +219,7 @@ class TestUser(AbstractTest):
         james = User.query.filter(User.uid == "urn:james").one()
 
         self.put("/api/users", body, headers={"X-IMPERSONATE-ID": james.id, "X-IMPERSONATE-UID": james.uid,
-                                              "X-IMPERSONATE-NAME": james_name}, with_basic_auth=False)
+                                              "X-IMPERSONATE-NAME": user_james_name}, with_basic_auth=False)
         james = User.query.filter(User.uid == "urn:james").one()
         self.assertEqual("bogus", james.ssh_keys[0].ssh_value)
 
@@ -233,7 +233,7 @@ class TestUser(AbstractTest):
         self.do_test_update_user_profile_ssk_key_conversion("pkcs8.pub")
 
     def do_test_update_user_profile_ssk_key_conversion(self, file_name):
-        user = self.find_entity_by_name(User, john_name)
+        user = self.find_entity_by_name(User, user_john_name)
         self.login("urn:john")
         ssh2_pub = self.read_file(file_name)
         body = {"ssh_keys": [{"ssh_value": ssh2_pub}],
@@ -294,7 +294,7 @@ class TestUser(AbstractTest):
     def test_delete_other(self):
         self.login("urn:john")
 
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         self.delete("/api/users/delete_other", primary_key=sarah.id, with_basic_auth=False)
         count = User.query.filter(User.uid == sarah.uid).count()
         self.assertEqual(0, count)
@@ -336,7 +336,7 @@ class TestUser(AbstractTest):
             self.app.app_config.mail.send_js_exceptions = False
 
     def test_update_date_bug(self):
-        roger = self.find_entity_by_name(User, roger_name)
+        roger = self.find_entity_by_name(User, user_roger_name)
         roger_id = roger.id
         now = datetime.datetime.now()
         roger.last_login_date = now
@@ -454,7 +454,7 @@ class TestUser(AbstractTest):
         self.assertEqual(17, len(res))
 
     def test_aup_agreed(self):
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         aups = Aup.query.filter(Aup.user == sarah).all()
         for aup in aups:
             db.session.delete(aup)
@@ -490,7 +490,7 @@ class TestUser(AbstractTest):
         self.assertEqual(2, len(sarah.user_ip_networks))
 
     def test_login_with_ssid_required(self):
-        self.mark_user_ssid_required(name=sarah_name, home_organisation_uid="admin", schac_home_organisation="ssid.org")
+        self.mark_user_ssid_required(name=user_sarah_name, home_organisation_uid="admin", schac_home_organisation="ssid.org")
 
         self.login("urn:sarah", schac_home_organisation="ssid.org")
 
@@ -509,7 +509,7 @@ class TestUser(AbstractTest):
         self.assertFalse(user["second_factor_confirmed"])
 
     def test_acs(self):
-        self.mark_user_ssid_required(name=sarah_name, home_organisation_uid="admin", schac_home_organisation="ssid.org")
+        self.mark_user_ssid_required(name=user_sarah_name, home_organisation_uid="admin", schac_home_organisation="ssid.org")
         self.login("urn:sarah", schac_home_organisation="ssid.org")
 
         xml_authn_b64 = self.get_authn_response("response.ok.xml")
@@ -538,7 +538,7 @@ class TestUser(AbstractTest):
         self.assertEqual(self.app.app_config.base_url + path, res.location)
 
     def test_acs_error_saml_error(self):
-        self.mark_user_ssid_required(name=sarah_name, home_organisation_uid="admin", schac_home_organisation="ssid.org")
+        self.mark_user_ssid_required(name=user_sarah_name, home_organisation_uid="admin", schac_home_organisation="ssid.org")
         self.login("urn:sarah", schac_home_organisation="ssid.org")
 
         xml_authn_b64 = self.get_authn_response("response.no_authn.xml")

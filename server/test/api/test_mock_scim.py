@@ -5,7 +5,7 @@ from server.scim.schema_template import SCIM_SCHEMA_SRAM_GROUP
 from server.scim.group_template import create_group_template, scim_member_object, update_group_template
 from server.scim.user_template import create_user_template
 from server.test.abstract_test import AbstractTest
-from server.test.seed import sarah_name, co_ai_computing_name, service_cloud_name
+from server.test.seed import user_sarah_name, co_ai_computing_name, service_cloud_name
 
 
 class TestMockScim(AbstractTest):
@@ -17,7 +17,7 @@ class TestMockScim(AbstractTest):
         cloud_service = self.find_entity_by_name(Service, service_cloud_name)
         cloud_service_id = cloud_service.id
         headers = {"X-Service": str(cloud_service.id), "Authorization": f"bearer {cloud_service.scim_bearer_token}"}
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
 
         body = create_user_template(sarah)
         # Create a user
@@ -28,7 +28,7 @@ class TestMockScim(AbstractTest):
         scim_id_user = res["id"]
         self.assertIsNotNone(scim_id_user)
 
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         sarah.email = "changed@example.com"
         body = create_user_template(sarah)
         # Update a user
@@ -46,13 +46,13 @@ class TestMockScim(AbstractTest):
                  response_status_code=400)
 
         # Find by externalId
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         res = self.get("/api/scim_mock/Users",
                        query_data={"filter": f"externalId eq \"{sarah.external_id}{EXTERNAL_ID_POST_FIX}\""},
                        headers=headers,
                        with_basic_auth=False)
         self.assertEqual(scim_id_user, res["Resources"][0]["id"])
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         self.assertEqual(sarah.email, res["Resources"][0]["emails"][0]["value"])
 
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)

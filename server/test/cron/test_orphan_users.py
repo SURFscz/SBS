@@ -4,14 +4,14 @@ from server.db.audit_mixin import AuditLog, ACTION_CREATE
 from server.db.db import db
 from server.db.domain import User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import jane_name
+from server.test.seed import user_jane_name
 
 
 class TestOrphanUsers(AbstractTest):
 
     def test_schedule(self):
         # insert some activity to test the assertion as audit logs are emptied before the test
-        jane = self.find_entity_by_name(User, jane_name)
+        jane = self.find_entity_by_name(User, user_jane_name)
         audit_log = AuditLog(jane.id, jane.id, "collaboration_memberships", None, None, None, None, ACTION_CREATE, None,
                              None)
         db.session.merge(audit_log)
