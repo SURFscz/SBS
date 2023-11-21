@@ -10,7 +10,7 @@ from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_network_entity_id, unihard_name, \
     service_network_name, service_scheduler_name, service_wiki_name, service_storage_name, \
     service_cloud_name, service_storage_entity_id, service_ssh_name, unifra_name, unihard_secret, \
-    jane_name, roger_name, service_sram_demo_sp
+    user_jane_name, user_roger_name, service_sram_demo_sp
 
 
 class TestService(AbstractTest):
@@ -423,14 +423,14 @@ class TestService(AbstractTest):
         self.assertEqual(0, len(services))
 
     def test_services_access(self):
-        jane = self.find_entity_by_name(User, jane_name)
+        jane = self.find_entity_by_name(User, user_jane_name)
         res = self.get(f"/api/services/v1/access/{jane.id}",
                        headers={"Authorization": f"Bearer {unihard_secret}"},
                        with_basic_auth=False)
         self.assertEqual(4, len(res))
 
     def test_services_access_forbidden(self):
-        roger = self.find_entity_by_name(User, roger_name)
+        roger = self.find_entity_by_name(User, user_roger_name)
         self.get(f"/api/services/v1/access/{roger.id}",
                  headers={"Authorization": f"Bearer {unihard_secret}"},
                  with_basic_auth=False,

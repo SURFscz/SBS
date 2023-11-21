@@ -24,7 +24,7 @@ from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, User, Service, ServiceAup, UserToken, Invitation, \
     PamSSOSession, Group, CollaborationMembership
-from server.test.seed import seed, sarah_name
+from server.test.seed import seed, user_sarah_name
 from server.tools import read_file
 
 # See api_users in config/test_config.yml
@@ -248,7 +248,7 @@ class AbstractTest(TestCase):
         xml_authn_signed = OneLogin_Saml2_Utils.add_sign(xml_response, key, cert)
         return b64encode(xml_authn_signed)
 
-    def mark_user_ssid_required(self, name=sarah_name, home_organisation_uid=None, schac_home_organisation=None):
+    def mark_user_ssid_required(self, name=user_sarah_name, home_organisation_uid=None, schac_home_organisation=None):
         user = self.find_entity_by_name(User, name)
         user.ssid_required = True
         if home_organisation_uid:

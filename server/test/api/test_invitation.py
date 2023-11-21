@@ -8,7 +8,7 @@ from server.db.domain import Invitation, CollaborationMembership, User, Collabor
     JoinRequest
 from server.test.abstract_test import AbstractTest
 from server.test.seed import invitation_hash_no_way, co_ai_computing_name, invitation_hash_curious, invitation_hash_uva, \
-    co_research_name, unihard_secret, unihard_name, co_ai_computing_short_name, peter_join_request_hash, \
+    co_research_name, unihard_secret, unihard_name, co_ai_computing_short_name, co_ai_computing_join_request_peter_hash, \
     co_ai_computing_uuid, group_ai_researchers_short_name, group_ai_dev_identifier
 
 
@@ -277,10 +277,10 @@ class TestInvitation(AbstractTest):
         self.assertTrue("Invalid group identifier: nope" in res["message"])
 
     def test_accept_with_existing_join_request(self):
-        self.assertEqual(1, JoinRequest.query.filter(JoinRequest.hash == peter_join_request_hash).count())
+        self.assertEqual(1, JoinRequest.query.filter(JoinRequest.hash == co_ai_computing_join_request_peter_hash).count())
         self.login("urn:peter")
         self.put("/api/invitations/accept", body={"hash": invitation_hash_curious}, with_basic_auth=False)
-        self.assertEqual(0, JoinRequest.query.filter(JoinRequest.hash == peter_join_request_hash).count())
+        self.assertEqual(0, JoinRequest.query.filter(JoinRequest.hash == co_ai_computing_join_request_peter_hash).count())
 
     def test_open_invites_api(self):
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)

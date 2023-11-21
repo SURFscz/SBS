@@ -11,7 +11,7 @@ from server.scim.resource_type_template import resource_type_template
 from server.scim.schema_template import schemas_template, SCIM_SCHEMA_SRAM_USER
 from server.scim.user_template import version_value
 from server.test.abstract_test import AbstractTest
-from server.test.seed import service_network_token, jane_name, co_ai_computing_name, group_ai_researchers, \
+from server.test.seed import service_network_token, user_jane_name, co_ai_computing_name, group_ai_researchers, \
     service_network_name, service_wiki_token, service_wiki_name
 from server.tools import read_file
 
@@ -30,7 +30,7 @@ class TestScim(AbstractTest):
         self.assertEqual(9, len(res["Resources"]))
 
     def test_user_by_external_id(self):
-        jane = self.find_entity_by_name(User, jane_name)
+        jane = self.find_entity_by_name(User, user_jane_name)
         jane_external_id = jane.external_id
         res = self.get(f"/api/scim/v2/Users/{jane_external_id}{EXTERNAL_ID_POST_FIX}",
                        headers={"Authorization": f"bearer {service_network_token}"},

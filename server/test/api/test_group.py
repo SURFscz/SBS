@@ -3,7 +3,7 @@ from flask import jsonify
 from server.db.domain import Collaboration, Group, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import (group_ai_researchers, co_ai_computing_name, group_ai_researchers_short_name,
-                              service_group_mail_name, group_ai_dev_identifier, unihard_secret, john_name, unifra_secret,
+                              service_group_mail_name, group_ai_dev_identifier, unihard_secret, user_john_name, unifra_secret,
                               co_ai_computing_uuid,
                               co_research_name, unihard_short_name)
 
@@ -164,7 +164,7 @@ class TestGroup(AbstractTest):
                   with_basic_auth=False)
 
     def test_add_membership_api_already_group_member_forbidden(self):
-        john = self.find_entity_by_name(User, john_name)
+        john = self.find_entity_by_name(User, user_john_name)
         self.assertTrue(self.find_entity_by_name(Group, "AI developers").is_member(john.id))
 
         self.post(f"/api/groups/v1/{group_ai_dev_identifier}",
