@@ -7,7 +7,7 @@ from server.db.domain import UserToken, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import (sarah_user_token, service_network_token, sarah_name, service_wiki_token,
                               betty_user_token_wiki,
-                              uuc_teachers_name, unihard_short_name)
+                              co_teachers_name, unihard_short_name)
 
 
 class TestToken(AbstractTest):
@@ -29,7 +29,7 @@ class TestToken(AbstractTest):
 
     def test_introspect_one_expired_membership(self):
         user = self.find_entity_by_name(User, "betty")
-        cm = [cm for cm in user.collaboration_memberships if cm.collaboration.name == uuc_teachers_name]
+        cm = [cm for cm in user.collaboration_memberships if cm.collaboration.name == co_teachers_name]
         self.expire_collaboration_memberships(cm)
 
         res = self.client.post("/api/tokens/introspect", headers={"Authorization": f"bearer {service_wiki_token}"},

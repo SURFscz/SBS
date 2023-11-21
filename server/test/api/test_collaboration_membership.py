@@ -3,7 +3,7 @@ import time
 from server.db.db import db
 from server.db.domain import CollaborationMembership, User, Collaboration
 from server.test.abstract_test import AbstractTest
-from server.test.seed import ai_computing_name, sarah_name, uva_research_name, uuc_teachers_name
+from server.test.seed import co_ai_computing_name, sarah_name, co_research_name, co_teachers_name
 
 
 class TestCollaborationMembership(AbstractTest):
@@ -19,7 +19,7 @@ class TestCollaborationMembership(AbstractTest):
         self.assertEqual(pre_count - 1, post_count)
 
     def test_delete_collaboration_membership_404(self):
-        collaboration = self.find_entity_by_name(Collaboration, uuc_teachers_name)
+        collaboration = self.find_entity_by_name(Collaboration, co_teachers_name)
         self.login("urn:john")
         self.delete("/api/collaboration_memberships", with_basic_auth=False,
                     primary_key=f"{collaboration.id}/9999999", response_status_code=404)
@@ -40,7 +40,7 @@ class TestCollaborationMembership(AbstractTest):
             .join(CollaborationMembership.user) \
             .join(CollaborationMembership.collaboration) \
             .filter(User.uid == "urn:sarah") \
-            .filter(Collaboration.name == ai_computing_name) \
+            .filter(Collaboration.name == co_ai_computing_name) \
             .one()
 
         self.delete("/api/collaboration_memberships", with_basic_auth=False, response_status_code=403,
@@ -61,7 +61,7 @@ class TestCollaborationMembership(AbstractTest):
 
     def test_create_collaboration_membership(self):
         self.login("urn:mary")
-        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         collaboration_id = collaboration.id
         self.post("/api/collaboration_memberships",
                   body={"collaborationId": collaboration_id},
@@ -77,20 +77,20 @@ class TestCollaborationMembership(AbstractTest):
 
     def test_create_collaboration_membership_auto_provisioning_group(self):
         self.login("urn:paul")
-        collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
+        collaboration = self.find_entity_by_name(Collaboration, co_research_name)
         is_paul_member = [m.user for m in collaboration.groups[0].collaboration_memberships if m.user.uid == "urn:paul"]
         self.assertFalse(is_paul_member)
 
         self.post("/api/collaboration_memberships",
                   body={"collaborationId": collaboration.id},
                   with_basic_auth=False)
-        collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
+        collaboration = self.find_entity_by_name(Collaboration, co_research_name)
         is_paul_member = [m.user for m in collaboration.groups[0].collaboration_memberships if m.user.uid == "urn:paul"]
         self.assertTrue(is_paul_member)
 
     def test_update_expiry_date(self):
         self.login("urn:admin")
-        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        collaboration_id = self.find_entity_by_name(Collaboration, co_ai_computing_name).id
         sarah = self.find_entity_by_name(User, sarah_name)
         memberships = sarah.collaboration_memberships
         membership_id = next(

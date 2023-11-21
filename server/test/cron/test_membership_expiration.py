@@ -6,7 +6,7 @@ from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED
 from server.db.domain import Collaboration, CollaborationMembership, User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import ai_computing_name, sarah_name, jane_name, \
+from server.test.seed import co_ai_computing_name, sarah_name, jane_name, \
     the_boss_name
 
 
@@ -17,7 +17,7 @@ class TestMembershipExpiration(AbstractTest):
         cfq = self.app.app_config.membership_expiration
         # Will cause expiration warning mail
         threshold_upper = datetime.timedelta(days=cfq.expired_warning_mail_days_threshold)
-        coll = self.find_entity_by_name(Collaboration, ai_computing_name)
+        coll = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         sarah_cm = next(cm for cm in coll.collaboration_memberships if cm.user.name == sarah_name)
         sarah_cm.expiry_date = now + threshold_upper - datetime.timedelta(hours=12)
         db.session.merge(sarah_cm)
@@ -49,10 +49,10 @@ class TestMembershipExpiration(AbstractTest):
         self.assertEqual(0, CollaborationMembership.query
                          .join(CollaborationMembership.collaboration)
                          .join(CollaborationMembership.user)
-                         .filter(Collaboration.name == ai_computing_name)
+                         .filter(Collaboration.name == co_ai_computing_name)
                          .filter(User.name == the_boss_name)
                          .count())
-        coll = self.find_entity_by_name(Collaboration, ai_computing_name)
+        coll = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         jane_cm = next(cm for cm in coll.collaboration_memberships if cm.user.name == jane_name)
         self.assertEqual(STATUS_EXPIRED, jane_cm.status)
 
@@ -63,6 +63,6 @@ class TestMembershipExpiration(AbstractTest):
         self.assertEqual(0, CollaborationMembership.query
                          .join(CollaborationMembership.collaboration)
                          .join(CollaborationMembership.user)
-                         .filter(Collaboration.name == ai_computing_name)
+                         .filter(Collaboration.name == co_ai_computing_name)
                          .filter(User.name == the_boss_name)
                          .count())

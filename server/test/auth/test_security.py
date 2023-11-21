@@ -7,7 +7,7 @@ from server.auth.security import is_admin_user, is_application_admin, confirm_al
     is_current_user_organisation_admin_or_manager, has_org_manager_unit_access
 from server.db.domain import CollaborationMembership, Collaboration, User, OrganisationMembership, Organisation
 from server.test.abstract_test import AbstractTest
-from server.test.seed import ai_computing_name, the_boss_name, unihard_name, monitoring_co_name
+from server.test.seed import co_ai_computing_name, the_boss_name, unihard_name, co_monitoring_name
 
 
 class TestSecurity(AbstractTest):
@@ -27,7 +27,7 @@ class TestSecurity(AbstractTest):
         admin_collaboration_membership = CollaborationMembership.query \
             .join(CollaborationMembership.collaboration) \
             .join(CollaborationMembership.user) \
-            .filter(Collaboration.name == ai_computing_name) \
+            .filter(Collaboration.name == co_ai_computing_name) \
             .filter(User.name == the_boss_name) \
             .one()
         self.assertEqual("admin", admin_collaboration_membership.role)
@@ -41,7 +41,7 @@ class TestSecurity(AbstractTest):
         member_collaboration_membership = CollaborationMembership.query \
             .join(CollaborationMembership.collaboration) \
             .join(CollaborationMembership.user) \
-            .filter(Collaboration.name == ai_computing_name) \
+            .filter(Collaboration.name == co_ai_computing_name) \
             .filter(User.uid == "urn:jane") \
             .one()
         self.assertEqual("member", member_collaboration_membership.role)
@@ -99,7 +99,7 @@ class TestSecurity(AbstractTest):
 
     def test_is_current_user_organisation_admin(self):
         mary_id = self.find_entity_by_name(User, "Mary Doe").id
-        ai_computing_name_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        ai_computing_name_id = self.find_entity_by_name(Collaboration, co_ai_computing_name).id
         with self.app.app_context():
             session["user"] = {"uid": "urn:mary", "admin": False, "id": mary_id}
             self.assertTrue(is_current_user_organisation_admin_or_manager(ai_computing_name_id))
@@ -122,7 +122,7 @@ class TestSecurity(AbstractTest):
         with self.app.app_context() as context:
             context.g.is_authorized_api_call = False
             paul = self.find_entity_by_name(User, "Paul Doe")
-            collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+            collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
 
             session["user"] = {"uid": "urn:paul", "id": paul.id, "admin": False}
 
@@ -134,9 +134,9 @@ class TestSecurity(AbstractTest):
             context.g.is_authorized_api_call = False
             session["user"] = {"uid": "urn:paul", "id": org_manager.id, "admin": False}
 
-            collaboration = self.find_entity_by_name(Collaboration, monitoring_co_name)
+            collaboration = self.find_entity_by_name(Collaboration, co_monitoring_name)
             self.assertFalse(has_org_manager_unit_access(org_manager.id, collaboration))
 
-            collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+            collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
             self.assertTrue(has_org_manager_unit_access(org_manager.id, collaboration))
             self.assertFalse(has_org_manager_unit_access(org_manager.id, collaboration, org_manager_allowed=False))

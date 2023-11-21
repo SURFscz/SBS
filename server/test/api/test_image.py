@@ -3,13 +3,13 @@ import uuid
 
 from server.db.domain import Service, CollaborationRequest
 from server.test.abstract_test import AbstractTest
-from server.test.seed import service_uuc_scheduler_name, collaboration_request_name
+from server.test.seed import service_scheduler_name, collaboration_request_name
 
 
 class TestImage(AbstractTest):
 
     def test_find_image(self):
-        service = self.find_entity_by_name(Service, service_uuc_scheduler_name)
+        service = self.find_entity_by_name(Service, service_scheduler_name)
         res = self.client.get(f"/api/images/services/{service.uuid4}")
 
         self.assertEqual("*", res.headers["Access-Control-Allow-Origin"])

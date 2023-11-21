@@ -8,7 +8,7 @@ from server.db.defaults import STATUS_EXPIRED
 from server.db.domain import Collaboration, Service, User, UserLogin
 from server.test.abstract_test import AbstractTest
 from server.test.seed import (john_name, service_network_entity_id, service_mail_entity_id,
-                              ai_computing_name, sarah_name, service_mail_name, jane_name, unihard_short_name)
+                              co_ai_computing_name, sarah_name, service_mail_name, jane_name, unihard_short_name)
 
 
 class TestUserSaml(AbstractTest):
@@ -81,7 +81,7 @@ class TestUserSaml(AbstractTest):
                          + "&entity_id=https%3A%2F%2Fnetwork&issuer_id=issuer.com&user_id=urn%3Ajohn")
 
     def test_proxy_authz_not_active_collaborations(self):
-        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         collaboration.status = STATUS_EXPIRED
         db.session.merge(collaboration)
         db.session.commit()

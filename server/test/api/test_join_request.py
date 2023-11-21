@@ -6,8 +6,8 @@ from server.api.base import STATUS_APPROVED, STATUS_DENIED
 from server.db.db import db
 from server.db.domain import JoinRequest, User, Collaboration
 from server.test.abstract_test import AbstractTest
-from server.test.seed import collaboration_ai_computing_uuid, uu_disabled_join_request_name, uva_research_name, \
-    ai_computing_name
+from server.test.seed import co_ai_computing_uuid, co_robotics_disabled_join_request_name, co_research_name, \
+    co_ai_computing_name
 
 
 class TestJoinRequest(AbstractTest):
@@ -18,7 +18,7 @@ class TestJoinRequest(AbstractTest):
 
     def test_new_join_request(self):
         collaboration_id = Collaboration.query \
-            .filter(Collaboration.identifier == collaboration_ai_computing_uuid).one().id
+            .filter(Collaboration.identifier == co_ai_computing_uuid).one().id
         self.login("urn:james")
         mail = self.app.mail
         with mail.record_messages() as outbox:
@@ -36,7 +36,7 @@ class TestJoinRequest(AbstractTest):
 
     def test_new_join_request_already_member(self):
         collaboration_id = Collaboration.query \
-            .filter(Collaboration.identifier == collaboration_ai_computing_uuid).one().id
+            .filter(Collaboration.identifier == co_ai_computing_uuid).one().id
         self.login("urn:jane")
         self.post("/api/join_requests",
                   response_status_code=409,
@@ -44,7 +44,7 @@ class TestJoinRequest(AbstractTest):
                   with_basic_auth=False)
 
     def test_new_join_request_with_existing(self):
-        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         user_id = self.find_entity_by_name(User, "Peter Doe").id
         join_request = JoinRequest(user_id=user_id, collaboration_id=collaboration.id, hash=str(uuid.uuid4()),
                                    status="open")
@@ -58,7 +58,7 @@ class TestJoinRequest(AbstractTest):
         self.assertEqual(1, JoinRequest.query.filter(JoinRequest.user_id == user_id).count())
 
     def test_disabled_join_requests(self):
-        collaboration = self.find_entity_by_name(Collaboration, uu_disabled_join_request_name)
+        collaboration = self.find_entity_by_name(Collaboration, co_robotics_disabled_join_request_name)
         self.login("urn:jane")
         self.post("/api/join_requests",
                   response_status_code=409,
@@ -73,7 +73,7 @@ class TestJoinRequest(AbstractTest):
 
     def _do_test_join_request_already_member(self, user_urn, result):
         collaboration_id = Collaboration.query \
-            .filter(Collaboration.identifier == collaboration_ai_computing_uuid).one().id
+            .filter(Collaboration.identifier == co_ai_computing_uuid).one().id
         self.login(user_urn)
         res = self.post("/api/join_requests/already-member",
                         response_status_code=200,
@@ -144,6 +144,6 @@ class TestJoinRequest(AbstractTest):
         join_request_hash = self._join_request_by_user("urn:james").hash
         self.login("urn:john")
         self.put("/api/join_requests/accept", body={"hash": join_request_hash})
-        coll = self.find_entity_by_name(Collaboration, uva_research_name)
+        coll = self.find_entity_by_name(Collaboration, co_research_name)
         is_james_member = [m.user for m in coll.groups[0].collaboration_memberships if m.user.uid == "urn:james"]
         self.assertTrue(is_james_member)

@@ -5,7 +5,7 @@ from server.scim.schema_template import SCIM_SCHEMA_SRAM_GROUP
 from server.scim.group_template import create_group_template, scim_member_object, update_group_template
 from server.scim.user_template import create_user_template
 from server.test.abstract_test import AbstractTest
-from server.test.seed import sarah_name, ai_computing_name, service_cloud_name
+from server.test.seed import sarah_name, co_ai_computing_name, service_cloud_name
 
 
 class TestMockScim(AbstractTest):
@@ -55,7 +55,7 @@ class TestMockScim(AbstractTest):
         sarah = self.find_entity_by_name(User, sarah_name)
         self.assertEqual(sarah.email, res["Resources"][0]["emails"][0]["value"])
 
-        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         collaboration_membership = collaboration.collaboration_memberships[0]
         member_object = scim_member_object(application_base_url(), collaboration_membership,
                                            scim_object={"id": scim_id_user})
@@ -69,14 +69,14 @@ class TestMockScim(AbstractTest):
         self.assertIsNotNone(scim_id_group)
 
         # Update the group
-        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         collaboration.global_urn = "Changed"
         body = update_group_template(collaboration, [member_object], scim_id_group)
         res = self.put(f"/api/scim_mock/Groups/{scim_id_group}",
                        body=body,
                        headers=headers,
                        with_basic_auth=False)
-        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         self.assertEqual(collaboration.global_urn, res[SCIM_SCHEMA_SRAM_GROUP]["urn"])
         self.assertEqual(scim_id_user, res["members"][0]["value"])
 

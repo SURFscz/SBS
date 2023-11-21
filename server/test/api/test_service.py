@@ -8,8 +8,8 @@ from server.db.db import db
 from server.db.domain import Service, Organisation, ServiceInvitation, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_network_entity_id, unihard_name, \
-    service_network_name, service_uuc_scheduler_name, service_wiki_name, service_storage_name, \
-    service_cloud_name, service_storage_entity_id, service_ssh_uva_name, unifra_name, unihard_secret, \
+    service_network_name, service_scheduler_name, service_wiki_name, service_storage_name, \
+    service_cloud_name, service_storage_entity_id, service_ssh_name, unifra_name, unihard_secret, \
     jane_name, roger_name, service_sram_demo_sp
 
 
@@ -35,19 +35,19 @@ class TestService(AbstractTest):
         self.get(f"api/services/{service.id}", response_status_code=200, with_basic_auth=False)
 
     def test_find_by_id_access_allowed_through_organisation_collaboration_memberships(self):
-        service = self.find_entity_by_name(Service, service_uuc_scheduler_name)
+        service = self.find_entity_by_name(Service, service_scheduler_name)
         self.login("urn:betty")
         self.get(f"api/services/{service.id}", response_status_code=200, with_basic_auth=False)
 
     def test_find_by_id_access_allowed_through_organisation_memberships(self):
-        service = self.find_entity_by_name(Service, service_uuc_scheduler_name)
+        service = self.find_entity_by_name(Service, service_scheduler_name)
         harry = self.find_entity_by_name(User, "Harry Doe")
         with self.app.app_context():
             session["user"] = {"id": harry.id, "uid": harry.uid, "admin": False}
             self.assertTrue(user_service(service.id, False))
 
     def test_find_by_id_admin(self):
-        service = self.find_entity_by_name(Service, service_uuc_scheduler_name)
+        service = self.find_entity_by_name(Service, service_scheduler_name)
         logo = self.client.get(f"/api/images/services/{service.uuid4}").data
         self.assertIsNotNone(logo)
 
@@ -65,7 +65,7 @@ class TestService(AbstractTest):
         self.get(f"api/services/{service.id}", response_status_code=200, with_basic_auth=False)
 
     def test_find_by_id_api_call(self):
-        service = self.find_entity_by_name(Service, service_uuc_scheduler_name)
+        service = self.find_entity_by_name(Service, service_scheduler_name)
         service = self.get(f"api/services/{service.id}")
         self.assertEqual(0, len(service["ip_networks"]))
         self.assertFalse("logo" in service)
@@ -247,7 +247,7 @@ class TestService(AbstractTest):
         self.assertFalse(service.access_allowed_for_all)
 
     def test_toggle_automatic_connection_allowed_false(self):
-        service = self.find_entity_by_name(Service, service_uuc_scheduler_name)
+        service = self.find_entity_by_name(Service, service_scheduler_name)
         self.assertEqual(1, len(service.automatic_connection_allowed_organisations))
         self.assertEqual(1, len(service.allowed_organisations))
 
@@ -256,14 +256,14 @@ class TestService(AbstractTest):
                  body={"automatic_connection_allowed": False},
                  with_basic_auth=False)
 
-        service = self.find_entity_by_name(Service, service_uuc_scheduler_name)
+        service = self.find_entity_by_name(Service, service_scheduler_name)
         self.assertFalse(service.automatic_connection_allowed)
         self.assertFalse(service.non_member_users_access_allowed)
         self.assertEqual(0, len(service.automatic_connection_allowed_organisations))
         self.assertEqual(2, len(service.allowed_organisations))
 
     def test_toggle_automatic_connection_allowed_reverse(self):
-        service = self.find_entity_by_name(Service, service_uuc_scheduler_name)
+        service = self.find_entity_by_name(Service, service_scheduler_name)
         self.assertEqual(1, len(service.automatic_connection_allowed_organisations))
         self.assertEqual(1, len(service.allowed_organisations))
 
@@ -272,7 +272,7 @@ class TestService(AbstractTest):
                  body={"automatic_connection_allowed": True},
                  with_basic_auth=False)
 
-        service = self.find_entity_by_name(Service, service_uuc_scheduler_name)
+        service = self.find_entity_by_name(Service, service_scheduler_name)
         self.assertTrue(service.automatic_connection_allowed)
         self.assertFalse(service.non_member_users_access_allowed)
         self.assertFalse(service.access_allowed_for_all)
@@ -396,7 +396,7 @@ class TestService(AbstractTest):
         self.assertEqual(1, service_mail["collaborations_count"])
         self.assertEqual(2, len(service_mail["allowed_organisations"]))
 
-        service_uuc = self.find_by_name(services, service_uuc_scheduler_name)
+        service_uuc = self.find_by_name(services, service_scheduler_name)
         self.assertEqual(1, service_uuc["organisations_count"])
         self.assertEqual(1, len(service_uuc["allowed_organisations"]))
 
@@ -442,7 +442,7 @@ class TestService(AbstractTest):
         self.assertTrue(len(services) > 0)
 
     def test_on_request_organisation(self):
-        service = self.find_entity_by_name(Service, service_uuc_scheduler_name)
+        service = self.find_entity_by_name(Service, service_scheduler_name)
         service_id = service.id
         organisation = self.find_entity_by_name(Organisation, unifra_name)
         organisation_id = organisation.id
@@ -452,7 +452,7 @@ class TestService(AbstractTest):
         self.login("urn:john")
         self.put(f"/api/services/on_request_organisation/{service_id}/{organisation_id}", with_basic_auth=False)
 
-        service = self.find_entity_by_name(Service, service_uuc_scheduler_name)
+        service = self.find_entity_by_name(Service, service_scheduler_name)
         organisation = self.find_entity_by_name(Organisation, unifra_name)
         self.assertTrue(organisation in service.allowed_organisations)
         self.assertFalse(organisation in service.automatic_connection_allowed_organisations)
@@ -522,7 +522,7 @@ class TestService(AbstractTest):
         self.assertEqual("help@wiki.com", res["service_emails"][str(wiki_id)][0])
 
     def test_service_by_uuid4_forbidden(self):
-        service_ssh_uva = self.find_entity_by_name(Service, service_ssh_uva_name)
+        service_ssh_uva = self.find_entity_by_name(Service, service_ssh_name)
         self.login("urn:peter")
         self.get("/api/services/find_by_uuid4", query_data={"uuid4": service_ssh_uva.uuid4}, with_basic_auth=False,
                  response_status_code=403)
