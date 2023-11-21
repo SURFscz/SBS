@@ -572,7 +572,8 @@ const en = {
             edit: "Approve / decline",
             details: "Service connection request made by {{name}} on {{date}} for collaboration {{collaborationName}}",
             requester: "Requester",
-            name: "Collaboration"
+            name: "Collaboration",
+            serviceName: "Service"
         },
         serviceGroups: {
             backToGroups: "Back to all service groups",

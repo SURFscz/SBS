@@ -224,12 +224,12 @@ class UsedServices extends React.Component {
     };
 
     serviceAllowedToConnect = (service, collaboration) => {
-        return service.automatic_connection_allowed ||
-            service.automatic_connection_allowed_organisations.some(org => org.id === collaboration.organisation.id);
+        const requiresApproval = collaboration.organisation.service_connection_requires_approval;
+        return !requiresApproval && (service.automatic_connection_allowed ||
+            service.automatic_connection_allowed_organisations.some(org => org.id === collaboration.organisation.id));
     }
 
-    getServiceAction = service => {
-        const {collaboration} = this.props;
+    getServiceAction = (service, collaboration) => {
         if (service.usedService && !service.connectionRequest &&
             collaboration.organisation.services.some(s => s.id === service.id)) {
             return null;
@@ -372,14 +372,14 @@ class UsedServices extends React.Component {
         );
     }
 
-    renderConnectedServices = (user, usedServices) => {
+    renderConnectedServices = (user, usedServices, collaboration) => {
         return (
             <div>
                 {isEmpty(usedServices) && <div className="no-services">
                     <p className={"margin"}>{I18n.t("models.collaboration.noServices")}
-                    <a href={"/#"}
-                       onClick={this.gotoConnectService}>{I18n.t("models.collaboration.connectFirstService")}</a>
-                </p>
+                        <a href={"/#"}
+                           onClick={this.gotoConnectService}>{I18n.t("models.collaboration.connectFirstService")}</a>
+                    </p>
                     <NoServicesIcon/>
                 </div>
                 }
@@ -389,7 +389,7 @@ class UsedServices extends React.Component {
                                  nameLinkAction={e => this.openService(service, e)}
                                  status={this.getServiceStatus(service)}
                                  message={this.getServiceMessage(service)}
-                                 ActionButton={this.getServiceAction(service)}
+                                 ActionButton={this.getServiceAction(service, collaboration)}
                                  limitWidth={true}
                                  launchLink={true}
                                  user={user}
@@ -399,7 +399,7 @@ class UsedServices extends React.Component {
         );
     }
 
-    renderAvailableServices = (user, usedServices) => {
+    renderAvailableServices = (user, usedServices, collaboration) => {
         return (
             <div>
                 {usedServices.map(service =>
@@ -407,7 +407,7 @@ class UsedServices extends React.Component {
                                  nameLinkAction={e => this.openService(service, e)}
                                  status={this.getServiceStatus(service)}
                                  message={this.getServiceStatus(service)}
-                                 ActionButton={this.getServiceAction(service)}
+                                 ActionButton={this.getServiceAction(service, collaboration)}
                                  limitWidth={true}
                                  launchLink={true}
                                  user={user}
@@ -434,12 +434,12 @@ class UsedServices extends React.Component {
             .filter(service => isEmpty(query) || service.name.toLowerCase().indexOf(query) > -1)
     }
 
-    renderCurrentTab = (currentTab, usedServices, availableServices, query, user) => {
+    renderCurrentTab = (currentTab, usedServices, availableServices, query, user, collaboration) => {
         switch (currentTab) {
             case CONNECTIONS:
-                return this.renderConnectedServices(user, this.sortAndFilter(usedServices, query));
+                return this.renderConnectedServices(user, this.sortAndFilter(usedServices, query), collaboration);
             case AVAILABLE:
-                return this.renderAvailableServices(user, this.sortAndFilter(availableServices, query));
+                return this.renderAvailableServices(user, this.sortAndFilter(availableServices, query), collaboration);
             default:
                 throw new Error(`unknown-tab: ${currentTab}`);
         }
@@ -510,7 +510,7 @@ class UsedServices extends React.Component {
                             {this.renderSearch(query)}
                         </div>
 
-                        {this.renderCurrentTab(currentTab, usedServices, services, query, user)}
+                        {this.renderCurrentTab(currentTab, usedServices, services, query, user, collaboration)}
                     </div>
 
                 </div>

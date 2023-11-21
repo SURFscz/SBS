@@ -164,21 +164,27 @@ class ServiceConnectionRequests extends React.Component {
             },
             {
                 key: "collaboration__name",
+                class: isEmpty(service) ? "" : "has-service",
                 header: I18n.t("models.serviceConnectionRequests.name"),
                 mapper: serviceConnectionRequest => serviceConnectionRequest.collaboration.name
             },
+            isEmpty(service) ?             {
+                key: "service__name",
+                header: I18n.t("models.serviceConnectionRequests.serviceName"),
+                mapper: serviceConnectionRequest => serviceConnectionRequest.service.name
+            } : null,
             {
                 key: "requester__name",
+                class: isEmpty(service) ? "" : "has-service",
                 header: I18n.t("models.serviceConnectionRequests.requester"),
                 mapper: serviceConnectionRequest => <UserColumn entity={{user:serviceConnectionRequest.requester}} currentUser={currentUser}/>
             },
-            {
+             {
                 key: "user__schac_home_organisation",
                 header: I18n.t("models.users.institute"),
                 mapper: serviceConnectionRequest => <InstituteColumn entity={{user:serviceConnectionRequest.requester}} currentUser={currentUser}/>
             },
-
-        ]
+        ].filter(tab => tab !== null)
         return (
             <div>
                 <Entities entities={serviceConnectionRequests}

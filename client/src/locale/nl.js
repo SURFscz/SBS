@@ -572,7 +572,8 @@ const nl = {
             edit: "Goed- / afkeuren",
             details: "Dienst koppelverzoek gemaakt door {{name}} op {{date}} voor samenwerking {{collaborationName}}",
             requester: "Aanvrager",
-            name: "Samenwerking"
+            name: "Samenwerking",
+            serviceName: "Dienst"
         },
         serviceGroups: {
             backToGroups: "Terug naar alle dienstgroepen",

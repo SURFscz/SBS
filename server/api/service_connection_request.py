@@ -42,7 +42,9 @@ def _service_connection_request_pending_organisation_approval(service_connection
 
     service_connection_request.pending_organisation_approval = False
     db.session.merge(service_connection_request)
-    _do_send_mail(collaboration, service, service_connection_request, False)
+    user = db.session.get(User, current_user_id())
+    _do_send_mail(collaboration, service, service_connection_request, user, False)
+    return {}, 201
 
 
 def _do_send_mail(collaboration, service, service_connection_request, user, pending_organisation_approval):
@@ -73,13 +75,16 @@ def _do_service_connection_request(approved):
     service_connection_request = ServiceConnectionRequest.query.filter(ServiceConnectionRequest.id == id).one()
 
     pending_on_org = service_connection_request.pending_organisation_approval
-    if pending_on_org and approved:
+    service = service_connection_request.service
+    organisation = service_connection_request.collaboration.organisation
+    allowed = service.automatic_connection_allowed or organisation in service.automatic_connection_allowed_organisations
+    if not allowed and pending_on_org and approved:
         return _service_connection_request_pending_organisation_approval(service_connection_request)
 
     service = service_connection_request.service
     collaboration = service_connection_request.collaboration
 
-    if not (is_service_admin(service.id) or is_application_admin()):
+    if not (is_service_admin(service.id) or is_application_admin() or is_organisation_admin(organisation.id)):
         raise Forbidden(f"Not allowed to approve / decline service_connection_request for service {service.entity_id}")
 
     if approved:
