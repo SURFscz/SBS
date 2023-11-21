@@ -5,7 +5,7 @@ from server.auth.security import CSRF_TOKEN
 from server.db.domain import Collaboration, User
 from server.mail import mail_collaboration_join_request
 from server.test.abstract_test import AbstractTest
-from server.test.seed import collaboration_uva_researcher_uuid, uuc_secret
+from server.test.seed import collaboration_uva_researcher_uuid, unihard_secret
 
 
 class TestMail(AbstractTest):
@@ -62,7 +62,7 @@ class TestMail(AbstractTest):
             mail = self.app.mail
             with mail.record_messages() as outbox:
                 self.client.post("/api/collaborations/v1",
-                                 headers={"Authorization": f"Bearer {uuc_secret}"},
+                                 headers={"Authorization": f"Bearer {unihard_secret}"},
                                  data=json.dumps({}),
                                  content_type="application/json")
                 self.assertEqual(0, len(outbox))

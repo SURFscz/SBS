@@ -1,12 +1,12 @@
 from server.db.domain import Organisation, Tag, Collaboration
 from server.test.abstract_test import AbstractTest
-from server.test.seed import uuc_name, ai_computing_name, amsterdam_uva_name
+from server.test.seed import unihard_name, ai_computing_name, unifra_name
 
 
 class TestTag(AbstractTest):
 
     def test_tags(self):
-        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
 
         self.login("urn:harry")
         tags = self.get("/api/tags", query_data={"organisation_id": organisation.id}, with_basic_auth=False)
@@ -14,7 +14,7 @@ class TestTag(AbstractTest):
         self.assertEqual("tag_uuc", tags[0]["tag_value"])
 
     def test_tags_not_allowed(self):
-        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
 
         self.login("urn:sarah")
         self.get("/api/tags", query_data={"organisation_id": organisation.id}, with_basic_auth=False,
@@ -36,7 +36,7 @@ class TestTag(AbstractTest):
     def test_delete_tag_forbidden(self):
         self.login("urn:john")
         tag = Tag.query.filter(Tag.tag_value == "tag_uuc").one()
-        organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
+        organisation = self.find_entity_by_name(Organisation, unifra_name)
         self.delete(f"/api/tags/{organisation.id}/{tag.id}", response_status_code=403)
 
     def test_all_tags(self):

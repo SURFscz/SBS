@@ -2,7 +2,7 @@ from base64 import b64encode
 
 from server.db.models import flatten
 from server.test.abstract_test import AbstractTest
-from server.test.seed import sarah_name, service_wiki_entity_id, uuc_name, ai_computing_name, ai_researchers_group, \
+from server.test.seed import sarah_name, service_wiki_entity_id, unihard_name, ai_computing_name, ai_researchers_group, \
     the_boss_name, service_storage_entity_id
 
 AUTH_HEADER_READ = {"Authorization": f"Basic {b64encode(b'sysread:secret').decode('ascii')}"}
@@ -53,7 +53,7 @@ class TestPlsc(AbstractTest):
         self.assertIsNotNone(res_image.data)
         storage = next(s for s in services_ if s["entity_id"] == service_storage_entity_id)
         self.assertEqual(storage["contact_email"], "service_admin@ucc.org")
-        collaborations = flatten([org["collaborations"] for org in res["organisations"] if org["name"] == uuc_name])
+        collaborations = flatten([org["collaborations"] for org in res["organisations"] if org["name"] == unihard_name])
         ai_computing = [coll for coll in collaborations if coll["name"] == ai_computing_name][0]
         self.assertEqual("active", ai_computing["status"])
         self.assertEqual("active", ai_computing["collaboration_memberships"][0]["status"])

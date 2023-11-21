@@ -7,7 +7,7 @@ from server.auth.security import is_admin_user, is_application_admin, confirm_al
     is_current_user_organisation_admin_or_manager, has_org_manager_unit_access
 from server.db.domain import CollaborationMembership, Collaboration, User, OrganisationMembership, Organisation
 from server.test.abstract_test import AbstractTest
-from server.test.seed import ai_computing_name, the_boss_name, uuc_name, monitoring_co_name
+from server.test.seed import ai_computing_name, the_boss_name, unihard_name, monitoring_co_name
 
 
 class TestSecurity(AbstractTest):
@@ -56,7 +56,7 @@ class TestSecurity(AbstractTest):
         admin_organisation_membership = OrganisationMembership.query \
             .join(OrganisationMembership.organisation) \
             .join(OrganisationMembership.user) \
-            .filter(Organisation.name == uuc_name) \
+            .filter(Organisation.name == unihard_name) \
             .filter(User.uid == "urn:mary") \
             .one()
         self.assertEqual("admin", admin_organisation_membership.role)

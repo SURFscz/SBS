@@ -8,7 +8,7 @@ from server.db.defaults import STATUS_EXPIRED
 from server.db.domain import Collaboration, Service, User, UserLogin
 from server.test.abstract_test import AbstractTest
 from server.test.seed import (john_name, service_network_entity_id, service_mail_entity_id,
-                              ai_computing_name, sarah_name, service_mail_name, jane_name, uuc_short_name)
+                              ai_computing_name, sarah_name, service_mail_name, jane_name, unihard_short_name)
 
 
 class TestUserSaml(AbstractTest):
@@ -24,9 +24,9 @@ class TestUserSaml(AbstractTest):
         attrs = res["attributes"]
         entitlements = attrs["eduPersonEntitlement"]
         self.assertListEqual([
-            f"urn:example:sbs:group:{uuc_short_name}",
-            f"urn:example:sbs:group:{uuc_short_name}:ai_computing",
-            f"urn:example:sbs:label:{uuc_short_name}:ai_computing:tag_uuc"
+            f"urn:example:sbs:group:{unihard_short_name}",
+            f"urn:example:sbs:group:{unihard_short_name}:ai_computing",
+            f"urn:example:sbs:label:{unihard_short_name}:ai_computing:tag_uuc"
         ], sorted(entitlements))
         self.assertListEqual(["sarah@test.sram.surf.nl"], attrs["eduPersonPrincipalName"])
         self.assertListEqual(["sarah"], attrs["uid"])
@@ -48,10 +48,10 @@ class TestUserSaml(AbstractTest):
         attrs = res["attributes"]
         entitlements = attrs["eduPersonEntitlement"]
         self.assertListEqual([
-            f"urn:example:sbs:group:{uuc_short_name}",
-            f"urn:example:sbs:group:{uuc_short_name}:ai_computing",
-            f"urn:example:sbs:group:{uuc_short_name}:ai_computing:ai_res",
-            f"urn:example:sbs:label:{uuc_short_name}:ai_computing:tag_uuc"
+            f"urn:example:sbs:group:{unihard_short_name}",
+            f"urn:example:sbs:group:{unihard_short_name}:ai_computing",
+            f"urn:example:sbs:group:{unihard_short_name}:ai_computing:ai_res",
+            f"urn:example:sbs:label:{unihard_short_name}:ai_computing:tag_uuc"
         ], sorted(entitlements))
         self.assertListEqual(["jane@test.sram.surf.nl"], attrs["eduPersonPrincipalName"])
         self.assertListEqual(["jane"], attrs["uid"])

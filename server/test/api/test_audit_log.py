@@ -6,7 +6,7 @@ from server.db.audit_mixin import ACTION_DELETE, ACTION_CREATE, ACTION_UPDATE, A
 from server.db.domain import User, Collaboration, Service, Organisation, Group
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_cloud_name, ai_computing_name, \
-    service_mail_name, invitation_hash_curious, organisation_invitation_hash, uuc_name, group_science_name, sarah_name, \
+    service_mail_name, invitation_hash_curious, unihard_invitation_hash, unihard_name, group_science_name, sarah_name, \
     james_name
 
 
@@ -84,10 +84,10 @@ class TestAuditLog(AbstractTest):
 
     def test_organisation(self):
         self.login("urn:sarah")
-        self.put("/api/organisation_invitations/accept", body={"hash": organisation_invitation_hash},
+        self.put("/api/organisation_invitations/accept", body={"hash": unihard_invitation_hash},
                  with_basic_auth=False)
 
-        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
         self.login()
         res = self.get(f"/api/audit_logs/info/{organisation_id}/organisations")
 
@@ -114,7 +114,7 @@ class TestAuditLog(AbstractTest):
 
     def test_activity(self):
         self.login("urn:sarah")
-        self.put("/api/organisation_invitations/accept", body={"hash": organisation_invitation_hash},
+        self.put("/api/organisation_invitations/accept", body={"hash": unihard_invitation_hash},
                  with_basic_auth=False)
 
         self.login()

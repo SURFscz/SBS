@@ -10,7 +10,7 @@ from server.scim.events import broadcast_user_changed, broadcast_user_deleted, b
     broadcast_service_deleted, broadcast_group_deleted, broadcast_organisation_service_added, \
     broadcast_organisation_service_deleted
 from server.test.abstract_test import AbstractTest
-from server.test.seed import sarah_name, uva_research_name, ai_researchers_group, amsterdam_uva_name, service_cloud_name
+from server.test.seed import sarah_name, uva_research_name, ai_researchers_group, unifra_name, service_cloud_name
 from server.tools import read_file
 
 
@@ -186,7 +186,7 @@ class TestEvents(AbstractTest):
         group_found = json.loads(read_file("test/scim/group_found.json"))
         group_created = json.loads(read_file("test/scim/group_created.json"))
         user_found = json.loads(read_file("test/scim/user_found.json"))
-        organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
+        organisation = self.find_entity_by_name(Organisation, unifra_name)
         service = self.find_entity_by_name(Service, service_cloud_name)
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=group_found, status=200)
@@ -202,7 +202,7 @@ class TestEvents(AbstractTest):
     def test_organisation_deleted_existing_users(self):
         group_found = json.loads(read_file("test/scim/group_found.json"))
         user_found = json.loads(read_file("test/scim/user_found.json"))
-        organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
+        organisation = self.find_entity_by_name(Organisation, unifra_name)
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=group_found, status=200)
             # We mock that all members are already known in the remote SCIM DB
@@ -219,7 +219,7 @@ class TestEvents(AbstractTest):
     def test_broadcast_organisation_service_deleted(self):
         group_found = json.loads(read_file("test/scim/group_found.json"))
         user_found = json.loads(read_file("test/scim/user_found.json"))
-        organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
+        organisation = self.find_entity_by_name(Organisation, unifra_name)
         service = self.find_entity_by_name(Service, service_cloud_name)
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=group_found, status=200)

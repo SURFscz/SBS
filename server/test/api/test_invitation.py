@@ -8,7 +8,7 @@ from server.db.domain import Invitation, CollaborationMembership, User, Collabor
     JoinRequest
 from server.test.abstract_test import AbstractTest
 from server.test.seed import invitation_hash_no_way, ai_computing_name, invitation_hash_curious, invitation_hash_uva, \
-    uva_research_name, uuc_secret, uuc_name, ai_computing_short_name, join_request_peter_hash, \
+    uva_research_name, unihard_secret, unihard_name, ai_computing_short_name, join_request_peter_hash, \
     collaboration_ai_computing_uuid, ai_researchers_group_short_name, ai_dev_identifier
 
 
@@ -149,7 +149,7 @@ class TestInvitation(AbstractTest):
                                "collaboration_identifier": collaboration_ai_computing_uuid,
                                "invites": ["q@demo.com"]
                            },
-                           headers={"Authorization": f"Bearer {uuc_secret}"},
+                           headers={"Authorization": f"Bearer {unihard_secret}"},
                            with_basic_auth=False)
             self.assertEqual(1, len(outbox))
             self.assertListEqual(["q@demo.com"], [inv["email"] for inv in res])
@@ -159,7 +159,7 @@ class TestInvitation(AbstractTest):
                  body={
                      "invites": ["q@demo.com"]
                  },
-                 headers={"Authorization": f"Bearer {uuc_secret}"},
+                 headers={"Authorization": f"Bearer {unihard_secret}"},
                  response_status_code=400,
                  with_basic_auth=False)
 
@@ -170,7 +170,7 @@ class TestInvitation(AbstractTest):
                      "short_name": ai_computing_short_name,
                      "invites": ["q@demo.com"]
                  },
-                 headers={"Authorization": f"Bearer {uuc_secret}"},
+                 headers={"Authorization": f"Bearer {unihard_secret}"},
                  response_status_code=400,
                  with_basic_auth=False)
 
@@ -182,7 +182,7 @@ class TestInvitation(AbstractTest):
                                "short_name": ai_computing_short_name,
                                "invites": ["q@demo.com", "x@demo.com", "invalid_email"]
                            },
-                           headers={"Authorization": f"Bearer {uuc_secret}"},
+                           headers={"Authorization": f"Bearer {unihard_secret}"},
                            with_basic_auth=False)
             self.assertEqual(2, len(outbox))
             self.assertListEqual(["q@demo.com", "x@demo.com"], [inv["email"] for inv in res])
@@ -197,7 +197,7 @@ class TestInvitation(AbstractTest):
 
     def test_collaboration_invites_api_super_user(self):
         self._delete_coll_memberships(ai_computing_name)
-        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
         organisation.organisation_memberships.clear()
         db.session.merge(organisation)
         db.session.commit()
@@ -210,10 +210,10 @@ class TestInvitation(AbstractTest):
                            "collaboration_identifier": "123456",
                            "invites": ["q@demo.com", "x@demo.com", "invalid_email"]
                        },
-                       headers={"Authorization": f"Bearer {uuc_secret}"},
+                       headers={"Authorization": f"Bearer {unihard_secret}"},
                        response_status_code=403,
                        with_basic_auth=False)
-        self.assertIn(f"Collaboration 123456 is not part of organisation {uuc_name}", res["message"])
+        self.assertIn(f"Collaboration 123456 is not part of organisation {unihard_name}", res["message"])
 
     def test_collaboration_external_identifier(self):
         invitation = self._get_invitation_curious()
@@ -241,10 +241,10 @@ class TestInvitation(AbstractTest):
                            "invites": ["joe@test.com"],
                            "groups": [ai_researchers_group_short_name, ai_dev_identifier]
                        },
-                       headers={"Authorization": f"Bearer {uuc_secret}"},
+                       headers={"Authorization": f"Bearer {unihard_secret}"},
                        with_basic_auth=False)
         invitation_id = res[0]["invitation_id"]
-        res = self.get(f"/api/invitations/v1/{invitation_id}", headers={"Authorization": f"Bearer {uuc_secret}"},
+        res = self.get(f"/api/invitations/v1/{invitation_id}", headers={"Authorization": f"Bearer {unihard_secret}"},
                        with_basic_auth=False)
         self.assertEqual("member", res["intended_role"])
         self.assertEqual("open", res["status"])
@@ -258,7 +258,7 @@ class TestInvitation(AbstractTest):
         self.login("urn:james")
         self.put("/api/invitations/accept", body={"hash": invitation.hash}, with_basic_auth=False)
 
-        res = self.get(f"/api/invitations/v1/{invitation_id}", headers={"Authorization": f"Bearer {uuc_secret}"},
+        res = self.get(f"/api/invitations/v1/{invitation_id}", headers={"Authorization": f"Bearer {unihard_secret}"},
                        with_basic_auth=False)
         self.assertEqual("accepted", res["status"])
 
@@ -271,7 +271,7 @@ class TestInvitation(AbstractTest):
                            "invites": ["joe@test.com"],
                            "groups": ["nope"]
                        },
-                       headers={"Authorization": f"Bearer {uuc_secret}"},
+                       headers={"Authorization": f"Bearer {unihard_secret}"},
                        with_basic_auth=False,
                        response_status_code=400)
         self.assertTrue("Invalid group identifier: nope" in res["message"])
@@ -285,7 +285,7 @@ class TestInvitation(AbstractTest):
     def test_open_invites_api(self):
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
         res = self.get(f"/api/invitations/v1/invitations/{collaboration.identifier}",
-                       headers={"Authorization": f"Bearer {uuc_secret}"},
+                       headers={"Authorization": f"Bearer {unihard_secret}"},
                        with_basic_auth=False)
         self.assertEqual(1, len(res))
         self.assertEqual(STATUS_OPEN, res[0]["status"])

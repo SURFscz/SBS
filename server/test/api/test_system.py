@@ -6,7 +6,7 @@ from server.cron.schedule import start_scheduling
 from server.db.db import db
 from server.db.domain import User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import organisation_invitation_hash
+from server.test.seed import unihard_invitation_hash
 
 
 class TestSystem(AbstractTest):
@@ -90,7 +90,7 @@ class TestSystem(AbstractTest):
 
     def test_clear_audit_logs(self):
         self.login("urn:sarah")
-        self.put("/api/organisation_invitations/accept", body={"hash": organisation_invitation_hash},
+        self.put("/api/organisation_invitations/accept", body={"hash": unihard_invitation_hash},
                  with_basic_auth=False)
 
         self.login("urn:john")

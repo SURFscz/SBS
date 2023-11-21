@@ -4,9 +4,9 @@ from server.db.db import db
 from server.db.domain import Service, Collaboration
 from server.test.abstract_test import AbstractTest, BASIC_AUTH_HEADER
 from server.test.seed import service_mail_name, ai_computing_name, service_cloud_name, uva_research_name, \
-    service_network_name, service_wiki_name, uuc_secret, service_group_wiki_name1, service_group_wiki_name2, \
-    uu_disabled_join_request_name, uva_secret, service_ssh_uva_name, service_storage_name, service_uuc_scheduler_name, \
-    uuc_name
+    service_network_name, service_wiki_name, unihard_secret, service_group_wiki_name1, service_group_wiki_name2, \
+    uu_disabled_join_request_name, unifra_secret, service_ssh_uva_name, service_storage_name, service_uuc_scheduler_name, \
+    unihard_name
 
 
 # there are a number of cases to test here:
@@ -125,7 +125,7 @@ class TestCollaborationsServices(AbstractTest):
 
     #  (a) connecting service to restricted organisation (ok)
     def test_add_collaborations_services_allowed(self):
-        self.mark_organisation_service_restricted(uuc_name)
+        self.mark_organisation_service_restricted(unihard_name)
         self.login("urn:admin")
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
         service_cloud_id = self.find_entity_by_name(Service, service_storage_name).id
@@ -138,7 +138,7 @@ class TestCollaborationsServices(AbstractTest):
     #  (b) connecting service to restricted organisation (fail with "Organisation {collaboration.organisation.name} can
     #      only be linked to SURF services")
     def test_add_collaborations_services_forbidden(self):
-        self.mark_organisation_service_restricted(uuc_name)
+        self.mark_organisation_service_restricted(unihard_name)
         self.login("urn:admin")
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
         # organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
@@ -148,7 +148,7 @@ class TestCollaborationsServices(AbstractTest):
             "collaboration_id": collaboration_id,
             "service_id": service_cloud_id
         }, with_basic_auth=False, response_status_code=400)
-        self.assertIn(f"Organisation {uuc_name} can only be linked to SURF services", res["message"])
+        self.assertIn(f"Organisation {unihard_name} can only be linked to SURF services", res["message"])
 
     ###################################################################
     # Service groups
@@ -191,7 +191,7 @@ class TestCollaborationsServices(AbstractTest):
 
         service_wiki = self.find_entity_by_name(Service, service_wiki_name)
         self.client.put("/api/collaborations_services/v1/connect_collaboration_service",
-                        headers={"Authorization": f"Bearer {uva_secret}"},
+                        headers={"Authorization": f"Bearer {unifra_secret}"},
                         data=json.dumps({
                             "short_name": collaboration.short_name,
                             "service_entity_id": service_wiki.entity_id
@@ -210,7 +210,7 @@ class TestCollaborationsServices(AbstractTest):
 
         service_cloud = self.find_entity_by_name(Service, service_cloud_name)
         res = self.client.put("/api/collaborations_services/v1/connect_collaboration_service",
-                              headers={"Authorization": f"Bearer {uuc_secret}"},
+                              headers={"Authorization": f"Bearer {unihard_secret}"},
                               data=json.dumps({
                                   "short_name": collaboration["short_name"],
                                   "service_entity_id": service_cloud.entity_id
@@ -222,7 +222,7 @@ class TestCollaborationsServices(AbstractTest):
 
     # org api
     def test_connect_collaboration_service_forbidden(self):
-        self.mark_organisation_service_restricted(uuc_name)
+        self.mark_organisation_service_restricted(unihard_name)
         self.login("urn:admin")
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
         short_name = collaboration.short_name
@@ -242,7 +242,7 @@ class TestCollaborationsServices(AbstractTest):
         service_cloud = self.find_entity_by_name(Service, service_cloud_name)
 
         res = self.client.put("/api/collaborations_services/v1/connect_collaboration_service",
-                              headers={"Authorization": f"Bearer {uuc_secret}"},
+                              headers={"Authorization": f"Bearer {unihard_secret}"},
                               data=json.dumps({
                                   "short_name": collaboration.short_name,
                                   "service_entity_id": service_cloud.entity_id
@@ -269,7 +269,7 @@ class TestCollaborationsServices(AbstractTest):
         collaboration = self.get(f"/api/collaborations/{collaboration_id}")
 
         res = self.client.put("/api/collaborations_services/v1/connect_collaboration_service",
-                              headers={"Authorization": f"Bearer {uuc_secret}"},
+                              headers={"Authorization": f"Bearer {unihard_secret}"},
                               data=json.dumps({
                                   "short_name": collaboration["short_name"],
                                   "service_entity_id": service_entity_id
@@ -291,7 +291,7 @@ class TestCollaborationsServices(AbstractTest):
         db.session.commit()
 
         res = self.client.put("/api/collaborations_services/v1/connect_collaboration_service",
-                              headers={"Authorization": f"Bearer {uuc_secret}"},
+                              headers={"Authorization": f"Bearer {unihard_secret}"},
                               data=json.dumps({
                                   "short_name": short_name,
                                   "service_entity_id": service_entity_id
@@ -306,7 +306,7 @@ class TestCollaborationsServices(AbstractTest):
         self.assertTrue(service in collaboration.services)
 
         res = self.client.put("/api/collaborations_services/v1/disconnect_collaboration_service",
-                              headers={"Authorization": f"Bearer {uva_secret}"},
+                              headers={"Authorization": f"Bearer {unifra_secret}"},
                               data=json.dumps({
                                   "short_name": collaboration.short_name,
                                   "service_entity_id": service.entity_id
@@ -323,7 +323,7 @@ class TestCollaborationsServices(AbstractTest):
         service_cloud = self.find_entity_by_name(Service, service_cloud_name)
 
         res = self.client.put("/api/collaborations_services/v1/disconnect_collaboration_service",
-                              headers={"Authorization": f"Bearer {uuc_secret}"},
+                              headers={"Authorization": f"Bearer {unihard_secret}"},
                               data=json.dumps({
                                   "short_name": collaboration.short_name,
                                   "service_entity_id": service_cloud.entity_id
@@ -339,7 +339,7 @@ class TestCollaborationsServices(AbstractTest):
         self.assertFalse(service in collaboration.services)
 
         res = self.client.put("/api/collaborations_services/v1/disconnect_collaboration_service",
-                              headers={"Authorization": f"Bearer {uva_secret}"},
+                              headers={"Authorization": f"Bearer {unifra_secret}"},
                               data=json.dumps({
                                   "short_name": collaboration.short_name,
                                   "service_entity_id": service.entity_id
