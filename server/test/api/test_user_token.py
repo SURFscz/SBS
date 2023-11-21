@@ -3,8 +3,8 @@ import datetime
 from server.auth.secrets import generate_token
 from server.db.domain import Service, User, UserToken
 from server.test.abstract_test import AbstractTest
-from server.test.seed import sarah_name, service_wiki_name, service_mail_name, service_cloud_name, sarah_user_token, \
-    john_name, service_network_name
+from server.test.seed import (user_sarah_name, service_wiki_name, service_mail_name, service_cloud_name,
+                              user_sarah_user_token_network, user_john_name, service_network_name)
 
 
 class TestUserToken(AbstractTest):
@@ -42,7 +42,7 @@ class TestUserToken(AbstractTest):
         self.assertIsNotNone(token_value)
 
     def test_create_user_token(self):
-        sarah_id = self.find_entity_by_name(User, sarah_name).id
+        sarah_id = self.find_entity_by_name(User, user_sarah_name).id
 
         self.login("urn:sarah")
         user_tokens = self.get("/api/user_tokens")
@@ -57,7 +57,7 @@ class TestUserToken(AbstractTest):
         self.assertEqual(2, len(user_tokens))
 
     def test_create_user_token_without_server_token(self):
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         wiki = self.find_entity_by_name(Service, service_wiki_name)
 
         self.login("urn:sarah")
@@ -65,7 +65,7 @@ class TestUserToken(AbstractTest):
         self.post("/api/user_tokens", body=user_token, response_status_code=403)
 
     def test_create_user_token_with_tampering(self):
-        sarah_id = self.find_entity_by_name(User, sarah_name).id
+        sarah_id = self.find_entity_by_name(User, user_sarah_name).id
 
         self.login("urn:sarah")
         self._get_token()
@@ -74,7 +74,7 @@ class TestUserToken(AbstractTest):
         self.post("/api/user_tokens", body=user_token, response_status_code=403)
 
     def test_create_user_token_platform_admin(self):
-        john_id = self.find_entity_by_name(User, john_name).id
+        john_id = self.find_entity_by_name(User, user_john_name).id
         self.login("urn:john")
 
         hashed_token = self._get_token()
@@ -86,13 +86,13 @@ class TestUserToken(AbstractTest):
         self.assertEqual(1, len(user_tokens))
 
     def test_create_user_token_for_other(self):
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         self.login("urn:james")
         user_token = {"user_id": sarah.id, "hashed_token": self._get_token()}
         self.post("/api/user_tokens", body=user_token, response_status_code=403)
 
     def test_create_user_token_service_not_token_enabled(self):
-        sarah_id = self.find_entity_by_name(User, sarah_name).id
+        sarah_id = self.find_entity_by_name(User, user_sarah_name).id
         self.login("urn:sarah")
 
         hashed_token = self._get_token()
@@ -122,7 +122,7 @@ class TestUserToken(AbstractTest):
         self.delete("/api/user_tokens", user_token.id, response_status_code=403)
 
     def test_renew_lease(self):
-        self.expire_user_token(sarah_user_token)
+        self.expire_user_token(user_sarah_user_token_network)
         self.login("urn:sarah")
         user_tokens = self.get("/api/user_tokens")
 

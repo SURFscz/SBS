@@ -7,8 +7,8 @@ from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED
 from server.db.domain import Collaboration, Service, User, UserLogin
 from server.test.abstract_test import AbstractTest
-from server.test.seed import john_name, service_network_entity_id, service_mail_entity_id, \
-    ai_computing_name, sarah_name, service_mail_name, jane_name
+from server.test.seed import (user_john_name, service_network_entity_id, service_mail_entity_id,
+                              co_ai_computing_name, user_sarah_name, service_mail_name, user_jane_name, unihard_short_name)
 
 
 class TestUserSaml(AbstractTest):
@@ -23,16 +23,17 @@ class TestUserSaml(AbstractTest):
                               "user_name": "sarah p"})
         attrs = res["attributes"]
         entitlements = attrs["eduPersonEntitlement"]
-        self.assertListEqual(["urn:example:sbs:group:uuc",
-                              "urn:example:sbs:group:uuc:ai_computing",
-                              "urn:example:sbs:label:uuc:ai_computing:tag_uuc"
-                              ], sorted(entitlements))
+        self.assertListEqual([
+            f"urn:example:sbs:group:{unihard_short_name}",
+            f"urn:example:sbs:group:{unihard_short_name}:ai_computing",
+            f"urn:example:sbs:label:{unihard_short_name}:ai_computing:tag_uuc"
+        ], sorted(entitlements))
         self.assertListEqual(["sarah@test.sram.surf.nl"], attrs["eduPersonPrincipalName"])
         self.assertListEqual(["sarah"], attrs["uid"])
         self.assertIsNotNone(attrs["sshkey"][0])
 
         user_login = UserLogin.query.first()
-        self.assertEqual(user_login.user_id, self.find_entity_by_name(User, sarah_name).id)
+        self.assertEqual(user_login.user_id, self.find_entity_by_name(User, user_sarah_name).id)
         self.assertEqual(user_login.service_id, self.find_entity_by_name(Service, service_mail_name).id)
 
     def test_proxy_authz_including_groups(self):
@@ -41,31 +42,32 @@ class TestUserSaml(AbstractTest):
 
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:jane", "service_id": service_network_entity_id,
-                              "issuer_id": "https://signon.rug.nl/nidp/saml2/metadata", "uid": "sarah",
+                              "issuer_id": "https://idp.uni-franeker.nl/", "uid": "sarah",
                               "user_email": "sarah@ex.com", "user_name": "sarah p"
                               })
         attrs = res["attributes"]
         entitlements = attrs["eduPersonEntitlement"]
-        self.assertListEqual(["urn:example:sbs:group:uuc",
-                              "urn:example:sbs:group:uuc:ai_computing",
-                              "urn:example:sbs:group:uuc:ai_computing:ai_res",
-                              "urn:example:sbs:label:uuc:ai_computing:tag_uuc"
-                              ], sorted(entitlements))
+        self.assertListEqual([
+            f"urn:example:sbs:group:{unihard_short_name}",
+            f"urn:example:sbs:group:{unihard_short_name}:ai_computing",
+            f"urn:example:sbs:group:{unihard_short_name}:ai_computing:ai_res",
+            f"urn:example:sbs:label:{unihard_short_name}:ai_computing:tag_uuc"
+        ], sorted(entitlements))
         self.assertListEqual(["jane@test.sram.surf.nl"], attrs["eduPersonPrincipalName"])
         self.assertListEqual(["jane"], attrs["uid"])
         self.assertEqual(0, len(attrs["sshkey"]))
 
-        jane = self.find_entity_by_name(User, jane_name)
-        self.assertEqual("rug.nl", jane.schac_home_organisation)
+        jane = self.find_entity_by_name(User, user_jane_name)
+        self.assertEqual("uni-franeker.nl", jane.schac_home_organisation)
         second_fa_uuid = str(uuid.uuid4())
         jane.second_fa_uuid = second_fa_uuid
         self.save_entity(jane)
 
         res = self.get("/api/mfa/get2fa_proxy_authz", query_data={"second_fa_uuid": second_fa_uuid})
-        self.assertEqual("University of Groningen", res["idp_name"])
+        self.assertEqual("Academy of Franeker", res["idp_name"])
 
     def test_proxy_authz_suspended(self):
-        self.mark_user_suspended(john_name)
+        self.mark_user_suspended(user_john_name)
 
         res = self.post("/api/users/proxy_authz", body={"user_id": "urn:john", "service_id": "https://network",
                                                         "issuer_id": "issuer.com", "uid": "sarah",
@@ -79,7 +81,7 @@ class TestUserSaml(AbstractTest):
                          + "&entity_id=https%3A%2F%2Fnetwork&issuer_id=issuer.com&user_id=urn%3Ajohn")
 
     def test_proxy_authz_not_active_collaborations(self):
-        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         collaboration.status = STATUS_EXPIRED
         db.session.merge(collaboration)
         db.session.commit()
@@ -148,7 +150,7 @@ class TestUserSaml(AbstractTest):
                               "uid": "sarah",
                               "homeorganization": "example.com",
                               "user_email": "sarah@ex.com", "user_name": "sarah p"})
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
 
         status_ = res["status"]
         self.assertEqual(status_["result"], "interrupt")
@@ -184,7 +186,7 @@ class TestUserSaml(AbstractTest):
         status_ = res["status"]
         self.assertEqual(status_["result"], "authorized")
 
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         self.assertFalse(sarah.ssid_required)
 
     def test_proxy_authz_mfa_sbs_ssid(self):
@@ -196,7 +198,7 @@ class TestUserSaml(AbstractTest):
                               "homeorganization": "ssid.org",
                               "user_email": "sarah@ex.com", "user_name": "sarah p"})
         status_ = res["status"]
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         self.assertEqual(status_["result"], "interrupt")
         self.assertEqual(res["status"]["redirect_url"],
                          f"{self.app.app_config.base_server_url}/api/mfa/ssid_start/{sarah.second_fa_uuid}")
@@ -212,7 +214,7 @@ class TestUserSaml(AbstractTest):
                               "uid": "sarah",
                               "homeorganization": "ssid.org",
                               "user_email": "sarah@ex.com", "user_name": "sarah p"})
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         self.assertEqual(res["status"]["result"], "authorized")
         self.assertFalse(sarah.ssid_required)
 
@@ -224,7 +226,7 @@ class TestUserSaml(AbstractTest):
                               "uid": "sarah",
                               "homeorganization": "idp.test",
                               "user_email": "sarah@ex.com", "user_name": "sarah p"})
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         self.assertEqual(res["status"]["result"], "authorized")
         self.assertFalse(sarah.ssid_required)
 
@@ -238,7 +240,7 @@ class TestUserSaml(AbstractTest):
                               "uid": "sarah",
                               "homeorganization": "example.com",
                               "user_email": "sarah@ex.com", "user_name": "sarah p"})
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         self.assertEqual(res["status"]["result"], "interrupt")
         self.assertEqual(res["status"]["redirect_url"], f"{self.app.app_config.base_url}/2fa/{sarah.second_fa_uuid}")
 
@@ -253,7 +255,7 @@ class TestUserSaml(AbstractTest):
                               "uid": "sarah",
                               "homeorganization": "example.com",
                               "user_email": "sarah@ex.com", "user_name": "sarah p"})
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         self.assertEqual(res["status"]["result"], "authorized")
         self.assertFalse(sarah.ssid_required)
 
@@ -266,13 +268,13 @@ class TestUserSaml(AbstractTest):
                               "homeorganization": "ssid.org",
                               "user_email": "sarah@ex.com", "user_name": "sarah p"
                               })
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
 
         self.assertEqual(res["status"]["result"], "interrupt")
         self.assertEqual(res["status"]["redirect_url"],
                          f"{self.app.app_config.base_server_url}/api/mfa/ssid_start/{sarah.second_fa_uuid}")
 
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         self.assertTrue(sarah.ssid_required)
         self.assertEqual("ssid.org", sarah.schac_home_organisation)
         self.assertEqual("sarah", sarah.home_organisation_uid)
@@ -287,7 +289,7 @@ class TestUserSaml(AbstractTest):
                               "issuer_id": "https://ssid.org",
                               "uid": "sarah",
                               "homeorganization": "ssid.org"})
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
 
         self.assertEqual(res["status"]["result"], "authorized")
         self.assertFalse(sarah.ssid_required)
@@ -354,7 +356,7 @@ class TestUserSaml(AbstractTest):
                         body={"user_id": "urn:sarah",
                               "service_id": service_mail_entity_id,
                               "issuer_id": "nope"})
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         self.assertEqual(res["status"]["result"], "interrupt")
         self.assertEqual(res["status"]["redirect_url"], f"{self.app.app_config.base_url}/2fa/{sarah.second_fa_uuid}")
 
@@ -365,7 +367,7 @@ class TestUserSaml(AbstractTest):
         self.assertTrue(res["error"])
 
     def test_proxy_authz_expired_collaboration(self):
-        self.expire_collaborations(sarah_name)
+        self.expire_collaborations(user_sarah_name)
         self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
         self.login_user_2fa("urn:sarah")
 

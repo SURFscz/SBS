@@ -6,7 +6,7 @@ from server.db.db import db
 from server.db.domain import PamSSOSession, User, Service
 from server.test.abstract_test import AbstractTest
 from server.test.seed import pam_session_id, service_storage_name, service_storage_token, \
-    invalid_service_pam_session_id, roger_name
+    pam_invalid_service_session_id, user_roger_name
 
 
 class TestPamWebSSO(AbstractTest):
@@ -36,7 +36,7 @@ class TestPamWebSSO(AbstractTest):
 
     def test_check_pin_no_service_access(self):
         self.login("urn:james")
-        res = self.get(f"/pam-weblogin/storage/{invalid_service_pam_session_id}", with_basic_auth=False)
+        res = self.get(f"/pam-weblogin/storage/{pam_invalid_service_session_id}", with_basic_auth=False)
         self.assertEqual("FAIL", res["validation"]["result"])
 
     def test_get_expired(self):
@@ -93,7 +93,7 @@ class TestPamWebSSO(AbstractTest):
 
     def test_start_cached_login(self):
         self.login_user_2fa("urn:roger")
-        roger = self.find_entity_by_name(User, roger_name)
+        roger = self.find_entity_by_name(User, user_roger_name)
         roger.pam_last_login_date = datetime.now()
         db.session.merge(roger)
         db.session.commit()

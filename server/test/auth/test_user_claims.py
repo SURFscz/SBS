@@ -8,7 +8,7 @@ from server.auth.user_claims import add_user_claims, generate_unique_username, u
 from server.db.db import db
 from server.db.domain import User, UserNameHistory
 from server.test.abstract_test import AbstractTest
-from server.test.seed import jane_name
+from server.test.seed import user_jane_name
 
 
 class TestUserClaims(AbstractTest):
@@ -101,18 +101,18 @@ class TestUserClaims(AbstractTest):
         self.assertIsNone(user.schac_home_organisation)
 
     def test_user_memberships(self):
-        user = self.find_entity_by_name(User, jane_name)
+        user = self.find_entity_by_name(User, user_jane_name)
         connected_collaborations = [cm.collaboration for cm in user.collaboration_memberships]
         memberships = user_memberships(user, connected_collaborations)
         self.assertEqual(3, len(memberships))
 
-        connected_collaborations = self.expire_collaborations(jane_name)
+        connected_collaborations = self.expire_collaborations(user_jane_name)
         memberships = user_memberships(user, connected_collaborations)
         self.assertEqual(0, len(memberships))
 
     def test_user_memberships_suspended_co(self):
-        self.suspend_collaborations(jane_name)
-        user = self.find_entity_by_name(User, jane_name)
+        self.suspend_collaborations(user_jane_name)
+        user = self.find_entity_by_name(User, user_jane_name)
         connected_collaborations = [cm.collaboration for cm in user.collaboration_memberships]
         memberships = user_memberships(user, connected_collaborations)
         self.assertEqual(0, len(memberships))

@@ -1,7 +1,7 @@
 
 from server.db.domain import User, Collaboration, ServiceAup, Service
 from server.test.abstract_test import AbstractTest
-from server.test.seed import ai_computing_name, invitation_hash_curious, service_mail_name
+from server.test.seed import co_ai_computing_name, invitation_hash_curious, service_mail_name
 
 
 class TestServiceAup(AbstractTest):
@@ -29,7 +29,7 @@ class TestServiceAup(AbstractTest):
         self.assertEqual(0, len(service_aups))
 
     def test_join_request(self):
-        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         self.login("urn:james")
         self.post("/api/join_requests",
                   body={"collaborationId": collaboration.id, "motivation": "please"},

@@ -121,7 +121,7 @@ retention:
   cron_hour_of_day: 7
 
 metadata:
-  idp_url: https://metadata.surfconext.nl/idps-metadata.xml
+  idp_url: "file://data/idps-metadata.xml"
   parse_at_startup: False
 
 service_bus:

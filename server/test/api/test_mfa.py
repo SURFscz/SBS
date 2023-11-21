@@ -8,7 +8,7 @@ from server.auth.ssid import saml_auth
 from server.db.db import db
 from server.db.domain import User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import service_mail_entity_id, sarah_name
+from server.test.seed import service_mail_entity_id, user_sarah_name
 
 
 class TestMfa(AbstractTest):
@@ -41,7 +41,7 @@ class TestMfa(AbstractTest):
                   body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
                         "uid": "sarah", "homeorganization": "ssid.org", "user_email": "sarah@ex.com",
                         "user_name": "sarah p"})
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
 
         # start the ssid
         res = self.get(f"/api/mfa/ssid_start/{sarah.second_fa_uuid}", query_data={"continue_url": "https://foo.bar"},
@@ -95,7 +95,7 @@ class TestMfa(AbstractTest):
         self.assertEqual("https://foo.bar", res["location"])
 
     def test_ssid_scenario_invalid_home_organisation_uid(self):
-        sarah = self.find_entity_by_name(User, sarah_name)
+        sarah = self.find_entity_by_name(User, user_sarah_name)
         sarah.second_fa_uuid = str(uuid.uuid4())
         db.session.merge(sarah)
 

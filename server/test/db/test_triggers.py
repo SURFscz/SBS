@@ -4,7 +4,7 @@ from sqlalchemy.exc import DatabaseError
 from server.db.db import db
 from server.db.domain import Group, User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import ai_researchers_group, roger_name
+from server.test.seed import group_ai_researchers, user_roger_name
 
 
 class TestTriggers(AbstractTest):
@@ -17,8 +17,8 @@ class TestTriggers(AbstractTest):
 
     def test_collaboration_memberships_groups_collaboration_id(self):
         try:
-            group = self.find_entity_by_name(Group, ai_researchers_group)
-            collaboration_membership = self.find_entity_by_name(User, roger_name).collaboration_memberships[0]
+            group = self.find_entity_by_name(Group, group_ai_researchers)
+            collaboration_membership = self.find_entity_by_name(User, user_roger_name).collaboration_memberships[0]
 
             self._execute_statement(f"insert into collaboration_memberships_groups "
                                     f"(collaboration_membership_id,group_id) "
