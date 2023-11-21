@@ -5,7 +5,7 @@ from server.db.domain import Collaboration, Service, ServiceConnectionRequest
 from server.test.abstract_test import AbstractTest
 from server.test.seed import (ssh_service_connection_request_hash, uva_research_name, service_wiki_name,
                               ai_computing_name, service_ssh_uva_name, service_storage_name, service_cloud_name,
-                              uuc_short_name)
+                              unihard_short_name)
 
 
 class TestServiceConnectionRequest(AbstractTest):
@@ -201,6 +201,6 @@ class TestServiceConnectionRequest(AbstractTest):
 
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
 
-        group = list(filter(lambda group: group.global_urn == f"{uuc_short_name}:ai_computing:wiki-wiki2",
+        group = list(filter(lambda group: group.global_urn == f"{unihard_short_name}:ai_computing:wiki-wiki2",
                             collaboration.groups))[0]
         self.assertEqual(1, len(group.invitations))

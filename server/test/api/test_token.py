@@ -7,7 +7,7 @@ from server.db.domain import UserToken, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import (sarah_user_token, service_network_token, sarah_name, service_wiki_token,
                               betty_user_token_wiki,
-                              uuc_teachers_name, uuc_short_name)
+                              uuc_teachers_name, unihard_short_name)
 
 
 class TestToken(AbstractTest):
@@ -20,8 +20,8 @@ class TestToken(AbstractTest):
         self.assertEqual(json["active"], True)
         self.assertEqual(json["user"]["uid"], "urn:sarah")
         self.assertListEqual(sorted([
-            f'urn:example:sbs:group:{uuc_short_name}:ai_computing',
-            f'urn:example:sbs:group:{uuc_short_name}']
+            f'urn:example:sbs:group:{unihard_short_name}:ai_computing',
+            f'urn:example:sbs:group:{unihard_short_name}']
         ), sorted(json["user"]["eduperson_entitlement"]))
 
         user_token = UserToken.query.filter(UserToken.hashed_token == secure_hash(sarah_user_token)).first()
@@ -37,9 +37,9 @@ class TestToken(AbstractTest):
         self.assertEqual(200, res.status_code)
         user = res.json["user"]
         self.assertListEqual(sorted([
-            f'urn:example:sbs:group:{uuc_short_name}:ai_computing',
-            f'urn:example:sbs:group:{uuc_short_name}',
-            f'urn:example:sbs:group:{uuc_short_name}:monitor1'
+            f'urn:example:sbs:group:{unihard_short_name}:ai_computing',
+            f'urn:example:sbs:group:{unihard_short_name}',
+            f'urn:example:sbs:group:{unihard_short_name}:monitor1'
         ]), sorted(user["eduperson_entitlement"]))
 
     def test_introspect_not_connected(self):

@@ -3,9 +3,9 @@ from flask import jsonify
 from server.db.domain import Collaboration, Group, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import (ai_researchers_group, ai_computing_name, ai_researchers_group_short_name,
-                              service_group_mail_name, ai_dev_identifier, uuc_secret, john_name, uva_secret,
+                              service_group_mail_name, ai_dev_identifier, unihard_secret, john_name, unifra_secret,
                               collaboration_ai_computing_uuid,
-                              uva_research_name, uuc_short_name)
+                              uva_research_name, unihard_short_name)
 
 
 class TestGroup(AbstractTest):
@@ -73,7 +73,7 @@ class TestGroup(AbstractTest):
         })
         group = self.find_entity_by_name(Group, group_name)
 
-        self.assertEqual(f"{uuc_short_name}:ai_computing:new_auth_group", group.global_urn)
+        self.assertEqual(f"{unihard_short_name}:ai_computing:new_auth_group", group.global_urn)
         self.assertEqual(invitations_count, len(group.invitations))
         self.assertEqual(members_count, len(group.collaboration_memberships))
 
@@ -94,7 +94,7 @@ class TestGroup(AbstractTest):
 
         group = self.find_entity_by_name(Group, ai_researchers_group)
 
-        self.assertEqual(f"{uuc_short_name}:ai_computing:new_short_name", group.global_urn)
+        self.assertEqual(f"{unihard_short_name}:ai_computing:new_short_name", group.global_urn)
         self.assertEqual(group.auto_provision_members, auto_provision_members)
         self.assertEqual(invitations_count, len(group.invitations))
         self.assertEqual(members_count, len(group.collaboration_memberships))
@@ -148,7 +148,7 @@ class TestGroup(AbstractTest):
 
         self.post(f"/api/groups/v1/{ai_dev_identifier}",
                   body={"uid": "urn:jane"},
-                  headers={"Authorization": f"Bearer {uuc_secret}"},
+                  headers={"Authorization": f"Bearer {unihard_secret}"},
                   with_basic_auth=False)
 
         self.assertIsNotNone(self.find_group_membership(ai_dev_identifier, "urn:jane"))
@@ -159,7 +159,7 @@ class TestGroup(AbstractTest):
 
         self.post(f"/api/groups/v1/{ai_dev_identifier}",
                   body={"uid": "urn:peter"},
-                  headers={"Authorization": f"Bearer {uuc_secret}"},
+                  headers={"Authorization": f"Bearer {unihard_secret}"},
                   response_status_code=409,
                   with_basic_auth=False)
 
@@ -169,7 +169,7 @@ class TestGroup(AbstractTest):
 
         self.post(f"/api/groups/v1/{ai_dev_identifier}",
                   body={"uid": "urn:john"},
-                  headers={"Authorization": f"Bearer {uuc_secret}"},
+                  headers={"Authorization": f"Bearer {unihard_secret}"},
                   response_status_code=409,
                   with_basic_auth=False)
 
@@ -177,7 +177,7 @@ class TestGroup(AbstractTest):
         self.assertIsNotNone(self.find_group_membership(ai_dev_identifier, "urn:john"))
 
         self.delete(f"/api/groups/v1/{ai_dev_identifier}/members/urn:john",
-                    headers={"Authorization": f"Bearer {uuc_secret}"},
+                    headers={"Authorization": f"Bearer {unihard_secret}"},
                     with_basic_auth=False)
 
         self.assertIsNone(self.find_group_membership(ai_dev_identifier, "urn:john"))
@@ -185,7 +185,7 @@ class TestGroup(AbstractTest):
 
     def test_delete_membership_api_forbidden(self):
         self.delete(f"/api/groups/v1/{ai_dev_identifier}/members/urn:john",
-                    headers={"Authorization": f"Bearer {uva_secret}"},
+                    headers={"Authorization": f"Bearer {unifra_secret}"},
                     response_status_code=403,
                     with_basic_auth=False)
 
@@ -201,7 +201,7 @@ class TestGroup(AbstractTest):
                             "auto_provision_members": True,
                             "collaboration_identifier": collaboration.identifier
                         },
-                        headers={"Authorization": f"Bearer {uuc_secret}"},
+                        headers={"Authorization": f"Bearer {unihard_secret}"},
                         with_basic_auth=False)
 
         self.assertIsNotNone(res["identifier"])
@@ -220,13 +220,13 @@ class TestGroup(AbstractTest):
                       "auto_provision_members": False,
                       "collaboration_identifier": collaboration.identifier
                   },
-                  headers={"Authorization": f"Bearer {uuc_secret}"},
+                  headers={"Authorization": f"Bearer {unihard_secret}"},
                   with_basic_auth=False,
                   response_status_code=404)
 
     def test_delete_group_api(self):
         group = self.find_entity_by_name(Group, ai_researchers_group)
         self.delete("/api/groups/v1", primary_key=group.identifier,
-                    headers={"Authorization": f"Bearer {uuc_secret}"},
+                    headers={"Authorization": f"Bearer {unihard_secret}"},
                     with_basic_auth=False)
         self.assertIsNone(self.find_entity_by_name(Group, ai_researchers_group))

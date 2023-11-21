@@ -11,7 +11,7 @@ from server.auth.security import CSRF_TOKEN
 from server.db.db import db
 from server.db.domain import Organisation, Collaboration, User, Aup
 from server.test.abstract_test import AbstractTest
-from server.test.seed import uuc_name, ai_computing_name, roger_name, john_name, james_name, uva_research_name, \
+from server.test.seed import unihard_name, ai_computing_name, roger_name, john_name, james_name, uva_research_name, \
     collaboration_ai_computing_uuid, sarah_name
 from server.tools import read_file
 
@@ -83,7 +83,7 @@ class TestUser(AbstractTest):
         self.assertEqual(1, len(users))
 
     def test_activate_by_organisation_admin(self):
-        organisation_id = Organisation.query.filter(Organisation.name == uuc_name).one().id
+        organisation_id = Organisation.query.filter(Organisation.name == unihard_name).one().id
         self.do_test_activate("urn:mary", {"organisation_id": organisation_id})
 
     def test_activate_by_collaboration_admin(self):
@@ -114,7 +114,7 @@ class TestUser(AbstractTest):
         res = self.get("/api/users/search", query_data={"q": "roger@roger"})
         self.assertEqual(1, len(res))
 
-        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
 
         res = self.get("/api/users/search", query_data={"q": "john", "organisation_id": organisation_id})
         self.assertEqual(1, len(res))

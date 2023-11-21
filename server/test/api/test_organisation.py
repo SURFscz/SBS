@@ -1,8 +1,8 @@
 from server.db.db import db
 from server.db.domain import Organisation, OrganisationInvitation, User, JoinRequest
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
-from server.test.seed import (uuc_name, amsterdam_uva_name, schac_home_organisation_uuc, schac_home_organisation,
-                              read_image, uuc_secret, jane_name, uuc_short_name)
+from server.test.seed import (unihard_name, unifra_name, schac_home_organisation_uuc, schac_home_organisation_example,
+                              read_image, unihard_secret, jane_name, unihard_short_name)
 
 
 class TestOrganisation(AbstractTest):
@@ -52,7 +52,7 @@ class TestOrganisation(AbstractTest):
         res = self.get("/api/organisations/identity_provider_display_name",
                        query_data={"user_id": user.id, "lang": "nl"},
                        with_basic_auth=False)
-        self.assertEqual(uuc_name, res["display_name"])
+        self.assertEqual(unihard_name, res["display_name"])
 
     def test_identity_provider_display_name_no_schac_home(self):
         self.login("urn:harry")
@@ -61,23 +61,23 @@ class TestOrganisation(AbstractTest):
         self.assertIsNone(res)
 
     def test_organisations_by_schac_home_organisation(self):
-        self.login("urn:roger", schac_home_organisation)
+        self.login("urn:roger", schac_home_organisation_example)
         organisation = self.get("/api/organisations/find_by_schac_home_organisation",
                                 with_basic_auth=False)[0]
         self.assertEqual(False, organisation["collaboration_creation_allowed"])
         self.assertEqual(False, organisation["collaboration_creation_allowed_entitlement"])
         self.assertEqual(True, organisation["has_members"])
-        self.assertEqual(amsterdam_uva_name, organisation["name"])
+        self.assertEqual(unifra_name, organisation["name"])
 
     def test_organisations_by_schac_home_organisation_subdomain(self):
         roger = User.query.filter(User.uid == "urn:roger").first()
-        roger.schac_home_organisation = "subdomain.example.org"
+        roger.schac_home_organisation = f"subdomain.{schac_home_organisation_example}"
         db.session.merge(roger)
 
-        self.login("urn:roger", schac_home_organisation)
+        self.login("urn:roger", schac_home_organisation_example)
         organisation = self.get("/api/organisations/find_by_schac_home_organisation",
                                 with_basic_auth=False)[0]
-        self.assertEqual(amsterdam_uva_name, organisation["name"])
+        self.assertEqual(unifra_name, organisation["name"])
         self.assertListEqual(["example.org"], organisation["schac_home_organisations"])
 
     def test_organisations_by_schac_home_organisation_none(self):
@@ -93,7 +93,7 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(0, len(organisations))
 
     def test_organisation_by_id_with_api_user(self):
-        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
         organisation = self.get(f"/api/organisations/{organisation_id}",
                                 headers=API_AUTH_HEADER,
                                 with_basic_auth=False)
@@ -102,7 +102,7 @@ class TestOrganisation(AbstractTest):
 
     def test_schac_home(self):
         self.login("urn:betty")
-        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
         name = self.get(f"/api/organisations/schac_home/{organisation_id}", with_basic_auth=False)
         self.assertEqual(schac_home_organisation_uuc, name)
 
@@ -122,7 +122,7 @@ class TestOrganisation(AbstractTest):
 
     def test_organisation_by_id(self):
         self.login()
-        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
         organisation = self.get(f"/api/organisations/{organisation_id}")
         self.assertTrue(len(organisation["organisation_memberships"]) > 0)
         self.assertTrue("invitations_count" in organisation["collaborations"][0])
@@ -130,21 +130,21 @@ class TestOrganisation(AbstractTest):
 
     def test_organisation_by_id_manager(self):
         self.login("urn:harry")
-        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
         organisation = self.get(f"/api/organisations/{organisation_id}")
         self.assertTrue(len(organisation["organisation_memberships"]) > 0)
         self.assertEqual(1, len(organisation["collaborations"]))
 
     def test_organisation_by_id_manager_restricted_collaborations(self):
         self.login("urn:paul")
-        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
         organisation = self.get(f"/api/organisations/{organisation_id}")
         # Paul has a organisation membership with an unit, that is not used by any collaboration
         self.assertEqual(0, len(organisation["collaborations"]))
 
     def test_organisation_by_id_404(self):
         self.login("urn:sarah")
-        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
         self.get(f"/api/organisations/{organisation_id}", response_status_code=404)
 
     def test_organisation_crud(self):
@@ -166,9 +166,9 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(3, Organisation.query.count())
 
     def test_organisation_update_short_name(self):
-        self.mark_organisation_service_restricted(uuc_name)
+        self.mark_organisation_service_restricted(unihard_name)
         self.login("urn:mary")
-        organisation_uuc = self.find_entity_by_name(Organisation, uuc_name)
+        organisation_uuc = self.find_entity_by_name(Organisation, unihard_name)
         organisation_id = organisation_uuc.id
 
         organisation = self.get(f"/api/organisations/{organisation_id}", with_basic_auth=False)
@@ -178,7 +178,7 @@ class TestOrganisation(AbstractTest):
         self.assertEqual("changed", organisation["short_name"])
         self.assertTrue(organisation["services_restricted"])
 
-        collaborations = self.find_entity_by_name(Organisation, uuc_name).collaborations
+        collaborations = self.find_entity_by_name(Organisation, unihard_name).collaborations
 
         for collaboration in collaborations:
             self.assertTrue("changed" in collaboration.global_urn)
@@ -187,7 +187,7 @@ class TestOrganisation(AbstractTest):
 
     def test_organisation_update_schac_home(self):
         self.login()
-        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
         organisation = self.get(f"/api/organisations/{organisation_id}", with_basic_auth=False)
         units = organisation["units"]
         units[0]["name"] = "changed"
@@ -196,7 +196,7 @@ class TestOrganisation(AbstractTest):
         organisation["schac_home_organisations"] = [{"name": "rug.nl"}]
         self.put("/api/organisations", body=organisation)
 
-        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
         self.assertEqual(1, len(organisation.schac_home_organisations))
         self.assertEqual(3, len(organisation.units))
         self.assertEqual("rug.nl", organisation.schac_home_organisations[0].name)
@@ -209,24 +209,26 @@ class TestOrganisation(AbstractTest):
                   response_status_code=403)
 
     def test_organisation_name_exists(self):
-        res = self.get("/api/organisations/name_exists", query_data={"name": uuc_name})
+        res = self.get("/api/organisations/name_exists", query_data={"name": unihard_name})
         self.assertEqual(True, res)
 
-        res = self.get("/api/organisations/name_exists", query_data={"name": uuc_name, "existing_organisation": uuc_name})
+        res = self.get("/api/organisations/name_exists",
+                       query_data={"name": unihard_name, "existing_organisation": unihard_name})
         self.assertEqual(False, res)
 
         res = self.get("/api/organisations/name_exists", query_data={"name": "xyc"})
         self.assertEqual(False, res)
 
-        res = self.get("/api/organisations/name_exists", query_data={"name": "xyc", "existing_organisation": "xyc"})
+        res = self.get("/api/organisations/name_exists",
+                       query_data={"name": "xyc", "existing_organisation": "xyc"})
         self.assertEqual(False, res)
 
     def test_organisation_short_name_exists(self):
-        res = self.get("/api/organisations/short_name_exists", query_data={"short_name": uuc_short_name})
+        res = self.get("/api/organisations/short_name_exists", query_data={"short_name": unihard_short_name})
         self.assertEqual(True, res)
 
-        res = self.get("/api/organisations/short_name_exists", query_data={"short_name": uuc_short_name,
-                                                                           "existing_organisation": uuc_short_name})
+        res = self.get("/api/organisations/short_name_exists", query_data={"short_name": unihard_short_name,
+                                                                           "existing_organisation": unihard_short_name})
         self.assertEqual(False, res)
 
         res = self.get("/api/organisations/short_name_exists", query_data={"short_name": "xyc"})
@@ -240,7 +242,7 @@ class TestOrganisation(AbstractTest):
         res = self.get("/api/organisations/schac_home_exists", query_data={"schac_home": schac_home_organisation_uuc})
         self.assertEqual(schac_home_organisation_uuc, res)
 
-        uuc_id = self.find_entity_by_name(Organisation, uuc_name).id
+        uuc_id = self.find_entity_by_name(Organisation, unihard_name).id
 
         res = self.get("/api/organisations/schac_home_exists",
                        query_data={"schac_home": schac_home_organisation_uuc,
@@ -274,13 +276,13 @@ class TestOrganisation(AbstractTest):
 
     def test_organisation_by_id_no_admin(self):
         self.login("urn:mary")
-        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
         organisation = self.get(f"/api/organisations/{organisation_id}")
         self.assertTrue(len(organisation["organisation_memberships"]) > 0)
 
     def test_organisation_update_admin(self):
         self.login("urn:mary")
-        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
         organisation = self.get(f"/api/organisations/{organisation_id}")
         uuid4_value = organisation["uuid4"]
 
@@ -295,7 +297,7 @@ class TestOrganisation(AbstractTest):
     def test_organisation_invites(self):
         pre_count = OrganisationInvitation.query.count()
         self.login("urn:john")
-        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
         mail = self.app.mail
         with mail.record_messages() as outbox:
             self.put("/api/organisations/invites", body={
@@ -306,12 +308,12 @@ class TestOrganisation(AbstractTest):
             post_count = OrganisationInvitation.query.count()
             self.assertEqual(2, len(outbox))
             self.assertTrue(
-                f"You have been invited by John Doe to become manager in organisation '{uuc_name}'" in outbox[0].html)
+                f"You have been invited by John Doe to become manager in organisation '{unihard_name}'" in outbox[0].html)
             self.assertEqual(pre_count + 2, post_count)
 
     def test_organisation_invites_with_bogus_intended_role(self):
         self.login("urn:john")
-        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
         units = [{"name": unit.name, "id": unit.id} for unit in organisation.units]
         organisation_id = organisation.id
         self.put("/api/organisations/invites", body={
@@ -347,7 +349,7 @@ class TestOrganisation(AbstractTest):
 
     def test_organisation_invites_preview(self):
         self.login("urn:john")
-        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
         res = self.post("/api/organisations/invites-preview", body={
             "organisation_id": organisation_id
         })
@@ -355,7 +357,7 @@ class TestOrganisation(AbstractTest):
 
     def test_organisation_invites_preview_personal_message(self):
         self.login("urn:john")
-        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
         res = self.post("/api/organisations/invites-preview", body={
             "organisation_id": organisation_id,
             "message": "Please join"
@@ -384,13 +386,13 @@ class TestOrganisation(AbstractTest):
 
     def test_find_api(self):
         res = self.get("/api/organisations/v1",
-                       headers={"Authorization": f"Bearer {uuc_secret}"},
+                       headers={"Authorization": f"Bearer {unihard_secret}"},
                        with_basic_auth=False)
         self.assertEqual(3, len(res["collaborations"]))
 
     def test_search_users(self):
         self.login("urn:harry")
-        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
         res = self.get(f"/api/organisations/{organisation.id}/users", query_data={"q": "jan"}, with_basic_auth=False)
         self.assertEqual(1, len(res))
         self.assertEqual(res[0]["name"], jane_name)
@@ -399,20 +401,20 @@ class TestOrganisation(AbstractTest):
 
     def test_search_users_admin(self):
         self.login("urn:john")
-        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
         res = self.get(f"/api/organisations/{organisation.id}/users", query_data={"q": "jane"}, with_basic_auth=False)
         for attr in "last_accessed_date", "second_fa_uuid", "user_ip_networks", "second_factor_auth":
             self.assertTrue(attr in res[0])
 
     def test_search_invitations(self):
         self.login("urn:harry")
-        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
         res = self.get(f"/api/organisations/{organisation.id}/invites", query_data={"q": "iou"}, with_basic_auth=False)
         self.assertEqual(1, len(res))
         self.assertEqual(res[0]["invitee_email"], "curious@ex.org")
 
     def test_name_by_id(self):
         self.login("urn:harry")
-        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
         res = self.get(f"/api/organisations/name_by_id/{organisation_id}", with_basic_auth=False)
-        self.assertEqual(uuc_name, res["name"])
+        self.assertEqual(unihard_name, res["name"])

@@ -29,24 +29,24 @@ jane_name = "Jane Doe"
 sarah_user_token = generate_token()
 betty_user_token_wiki = generate_token()
 
-schac_home_organisation = "example.org"
+schac_home_organisation_example = "example.org"
 schac_home_organisation_uuc = "uni-harderwijk.nl"
 
 # organisations
-uuc_name = "Universiteit van Harderwijk"
-uuc_short_name = "uniharderwijk"
-uuc_secret = generate_token()
-uuc_hashed_secret = secure_hash(uuc_secret)
-uuc_unit_research_name = "Research"
-uuc_unit_support_name = "Support"
-organisation_invitation_hash = generate_token()  # uuc
-organisation_invitation_expired_hash = generate_token()  # uuc
+unihard_name = "Universiteit van Harderwijk"
+unihard_short_name = "uniharderwijk"
+unihard_secret = generate_token()
+unuhard_hashed_secret = secure_hash(unihard_secret)
+unuhard_unit_research_name = "Research"
+unihard_unit_support_name = "Support"
+unihard_invitation_hash = generate_token()  # uuc
+unihard_invitation_expired_hash = generate_token()  # uuc
 
-amsterdam_uva_name = "Academia Franekerensis"
-uva_secret = generate_token()
-uva_hashed_secret = secure_hash(uva_secret)
+unifra_name = "Academia Franekerensis"
+unifra_secret = generate_token()
+unifra_hashed_secret = secure_hash(unifra_secret)
 
-tue_name = "Universitair Medisch Centrum Noord-Pekela"
+umcpekela_name = "Universitair Medisch Centrum Noord-Pekela"
 
 # collaborations
 ai_computing_name = "AI computing"
@@ -168,11 +168,11 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     peter = User(uid="urn:peter", name="Peter Doe", email="peter@example.org", username="peter",
                  external_id="b7fdbc01-5b5a-4028-b90a-5409f380e603")
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org", username="mdoe",
-                schac_home_organisation=schac_home_organisation, external_id="bb3d4bd4-2848-4cf3-b30b-fd84186c0c52")
+                schac_home_organisation=schac_home_organisation_example, external_id="bb3d4bd4-2848-4cf3-b30b-fd84186c0c52")
     admin = User(uid="urn:admin", name=the_boss_name, email="boss@example.org", username="admin",
                  external_id="e906cf88-cdb3-480d-8bb3-ce53bdcda4e7")
     roger = User(uid="urn:roger", name=roger_name, email="roger@example.org",
-                 schac_home_organisation=schac_home_organisation, username="roger",
+                 schac_home_organisation=schac_home_organisation_example, username="roger",
                  external_id="c601d601-4a54-498a-9c45-f98882050733")
     harry = User(uid="urn:harry", name="Harry Doe", email="harry@example.org", username="harry",
                  external_id="91322eb8-1c26-4b85-90d0-39079ef47694")
@@ -265,7 +265,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     sarah_other_user_ip_network = UserIpNetwork(network_value="255.0.0.9/24", user=sarah)
     persist_instance(db, sarah_user_ip_network, sarah_other_user_ip_network)
 
-    uuc = Organisation(name=uuc_name, short_name=uuc_short_name, identifier="95306a5f-0a16-4461-b358-8442e09dab20",
+    uuc = Organisation(name=unihard_name, short_name=unihard_short_name, identifier="95306a5f-0a16-4461-b358-8442e09dab20",
                        description="Unincorporated Urban Community", logo=read_image("uni-harderwijk.png"),
                        created_by="urn:admin", updated_by="urnadmin", category="Research",
                        on_boarding_msg="We are using **SRAM** to provide access to the following research tools:"
@@ -273,33 +273,33 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                        "collaborations, please send a mail to [support@uuc.nl](mailto:support@uuc.nl)."
                                        "\n<br/><br/>\nHappy researching,\n\n*UUC support*",
                        collaboration_creation_allowed=True)
-    uva = Organisation(name=amsterdam_uva_name, description=amsterdam_uva_name,
+    uva = Organisation(name=unifra_name, description=unifra_name,
                        identifier="7c60a022-ab09-438c-8603-c361bc1a088d", created_by="urn:admin",
                        updated_by="urn:admin", short_name="uva", logo=read_image("uni-franeker.png"),
                        category="University")
-    tue = Organisation(name=tue_name, description=tue_name,
+    tue = Organisation(name=umcpekela_name, description=umcpekela_name,
                        identifier="65fadfcb-71fd-4962-8428-0ecd15970f8d",
                        created_by="urn:admin", updated_by="urn:admin", short_name="tue",
                        logo=read_image("umc-pekela.png"), category="UMC")
     persist_instance(db, uuc, uva, tue)
 
-    uuc_unit_research = Unit(name=uuc_unit_research_name, organisation=uuc)
-    uuc_unit_support = Unit(name=uuc_unit_support_name, organisation=uuc)
+    uuc_unit_research = Unit(name=unuhard_unit_research_name, organisation=uuc)
+    uuc_unit_support = Unit(name=unihard_unit_support_name, organisation=uuc)
     persist_instance(db, uuc_unit_research, uuc_unit_support)
 
     shouuc = SchacHomeOrganisation(name=schac_home_organisation_uuc, organisation=uuc, created_by="urn:admin",
                                    updated_by="urn:admin")
-    shouva = SchacHomeOrganisation(name=schac_home_organisation, organisation=uva, created_by="urn:admin",
+    shouva = SchacHomeOrganisation(name=schac_home_organisation_example, organisation=uva, created_by="urn:admin",
                                    updated_by="urn:admin")
     persist_instance(db, shouuc, shouva)
 
-    api_key_uuc = ApiKey(hashed_secret=uuc_hashed_secret, organisation=uuc, description="API access",
+    api_key_uuc = ApiKey(hashed_secret=unuhard_hashed_secret, organisation=uuc, description="API access",
                          created_by="urn:admin", updated_by="urn:admin")
-    api_key_uva = ApiKey(hashed_secret=uva_hashed_secret, organisation=uva, description="API access",
+    api_key_uva = ApiKey(hashed_secret=unifra_hashed_secret, organisation=uva, description="API access",
                          created_by="urn:admin", updated_by="urn:admin")
     persist_instance(db, api_key_uuc, api_key_uva)
 
-    organisation_invitation_roger = OrganisationInvitation(message="Please join", hash=organisation_invitation_hash,
+    organisation_invitation_roger = OrganisationInvitation(message="Please join", hash=unihard_invitation_hash,
                                                            expiry_date=datetime.date.today() + datetime.timedelta(
                                                                days=14),
                                                            invitee_email="roger@example.org", organisation=uuc,
@@ -309,7 +309,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     organisation_invitation_pass = OrganisationInvitation(message="Let me please join as I "
                                                                   "really, really, really \n really, "
                                                                   "really, really \n want to...",
-                                                          hash=organisation_invitation_expired_hash,
+                                                          hash=unihard_invitation_expired_hash,
                                                           expiry_date=datetime.date.today() - datetime.timedelta(
                                                               days=21),
                                                           intended_role="admin",

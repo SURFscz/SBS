@@ -3,7 +3,7 @@ from werkzeug.exceptions import SecurityError
 from server.auth.secrets import hash_secret_key
 from server.db.domain import Organisation, ApiKey
 from server.test.abstract_test import AbstractTest
-from server.test.seed import uuc_name
+from server.test.seed import unihard_name
 
 
 class TestApiKey(AbstractTest):
@@ -12,12 +12,12 @@ class TestApiKey(AbstractTest):
         pre_count = ApiKey.query.count()
         secret = self.get("/api/api_keys")["value"]
 
-        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
 
         api_key = self.post("/api/api_keys",
                             body={"organisation_id": organisation.id, "hashed_secret": secret, "description": "Test"})
         self.assertIsNotNone(api_key["id"])
-        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
         self.assertEqual(organisation.id, api_key["organisation_id"])
         self.assertNotEqual(secret, api_key["hashed_secret"])
 
@@ -42,7 +42,7 @@ class TestApiKey(AbstractTest):
 
     def test_api_key_tampering(self):
         secret = self.get("/api/api_keys")["value"]
-        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
         self.post("/api/api_keys", body={"organisation_id": organisation.id, "hashed_secret": secret + "nope"},
                   response_status_code=403)
 

@@ -1,7 +1,7 @@
 from server.db.db import db
 from server.db.domain import Organisation, CollaborationRequest, CollaborationMembership, Collaboration
 from server.test.abstract_test import AbstractTest
-from server.test.seed import schac_home_organisation, amsterdam_uva_name, collaboration_request_name, uuc_name, \
+from server.test.seed import schac_home_organisation_example, unifra_name, collaboration_request_name, unihard_name, \
     schac_home_organisation_uuc
 
 
@@ -12,11 +12,11 @@ class TestCollaborationRequest(AbstractTest):
         res = self.get(f"/api/collaboration_requests/{collaboration_request.id}")
 
         self.assertEqual("urn:peter", res["requester"]["uid"])
-        self.assertEqual(uuc_name, res["organisation"]["name"])
+        self.assertEqual(unihard_name, res["organisation"]["name"])
 
     def test_request_collaboration(self):
-        organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
-        self.login("urn:roger", schac_home_organisation)
+        organisation = self.find_entity_by_name(Organisation, unifra_name)
+        self.login("urn:roger", schac_home_organisation_example)
         data = {
             "name": "New Collaboration",
             "short_name": "new_collaboration_short",
@@ -32,7 +32,7 @@ class TestCollaborationRequest(AbstractTest):
 
     def test_request_collaboration_collaboration_creation_allowed(self):
         self.login("urn:roger", schac_home_organisation_uuc)
-        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
         data = {
             "name": "New Collaboration",
             "description": "new_collaboration",
@@ -46,15 +46,15 @@ class TestCollaborationRequest(AbstractTest):
             # Max length short_name
             self.assertEqual("new_collaboratio", collaboration.short_name)
             mail_msg = outbox[0]
-            organisation = self.find_entity_by_name(Organisation, uuc_name)
+            organisation = self.find_entity_by_name(Organisation, unihard_name)
             self.assertEqual(f"New collaboration {collaboration.name} created in {organisation.name} (local)", mail_msg.subject)
             self.assertTrue("automatically approve collaboration requests" in mail_msg.html)
 
     def test_request_collaboration_collaboration_creation_allowed_entitlement(self):
         self.login("urn:harry",
-                   schac_home_organisation,
+                   schac_home_organisation_example,
                    {"eduperson_entitlement": ["urn:example:sbs:allow-create-co"]})
-        organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
+        organisation = self.find_entity_by_name(Organisation, unifra_name)
         data = {
             "name": "New Collaboration",
             "description": "new_collaboration",
@@ -68,7 +68,7 @@ class TestCollaborationRequest(AbstractTest):
 
             self.assertEqual("new_collaboratio", collaboration.short_name)
             mail_msg = outbox[0]
-            organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
+            organisation = self.find_entity_by_name(Organisation, unifra_name)
             self.assertEqual(f"New collaboration {collaboration.name} created in {organisation.name} (local)", mail_msg.subject)
 
     def test_request_collaboration_no_schachome(self):

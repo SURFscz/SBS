@@ -7,9 +7,9 @@ from server.api.service import user_service
 from server.db.db import db
 from server.db.domain import Service, Organisation, ServiceInvitation, User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import service_mail_name, service_network_entity_id, uuc_name, \
+from server.test.seed import service_mail_name, service_network_entity_id, unihard_name, \
     service_network_name, service_uuc_scheduler_name, service_wiki_name, service_storage_name, \
-    service_cloud_name, service_storage_entity_id, service_ssh_uva_name, amsterdam_uva_name, uuc_secret, \
+    service_cloud_name, service_storage_entity_id, service_ssh_uva_name, unifra_name, unihard_secret, \
     jane_name, roger_name, service_sram_demo_sp
 
 
@@ -74,7 +74,7 @@ class TestService(AbstractTest):
         res = self.get("api/services/find_by_entity_id", query_data={"entity_id": service_network_entity_id})
 
         self.assertEqual(res["name"], service_network_name)
-        self.assertEqual(uuc_name, res["allowed_organisations"][0]["name"])
+        self.assertEqual(unihard_name, res["allowed_organisations"][0]["name"])
 
     def test_ldap_identifier(self):
         res = self.get("api/services/ldap_identifier")
@@ -425,14 +425,14 @@ class TestService(AbstractTest):
     def test_services_access(self):
         jane = self.find_entity_by_name(User, jane_name)
         res = self.get(f"/api/services/v1/access/{jane.id}",
-                       headers={"Authorization": f"Bearer {uuc_secret}"},
+                       headers={"Authorization": f"Bearer {unihard_secret}"},
                        with_basic_auth=False)
         self.assertEqual(4, len(res))
 
     def test_services_access_forbidden(self):
         roger = self.find_entity_by_name(User, roger_name)
         self.get(f"/api/services/v1/access/{roger.id}",
-                 headers={"Authorization": f"Bearer {uuc_secret}"},
+                 headers={"Authorization": f"Bearer {unihard_secret}"},
                  with_basic_auth=False,
                  response_status_code=403)
 
@@ -444,7 +444,7 @@ class TestService(AbstractTest):
     def test_on_request_organisation(self):
         service = self.find_entity_by_name(Service, service_uuc_scheduler_name)
         service_id = service.id
-        organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
+        organisation = self.find_entity_by_name(Organisation, unifra_name)
         organisation_id = organisation.id
         self.assertTrue(organisation in service.automatic_connection_allowed_organisations)
         self.assertFalse(organisation in service.allowed_organisations)
@@ -453,13 +453,13 @@ class TestService(AbstractTest):
         self.put(f"/api/services/on_request_organisation/{service_id}/{organisation_id}", with_basic_auth=False)
 
         service = self.find_entity_by_name(Service, service_uuc_scheduler_name)
-        organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
+        organisation = self.find_entity_by_name(Organisation, unifra_name)
         self.assertTrue(organisation in service.allowed_organisations)
         self.assertFalse(organisation in service.automatic_connection_allowed_organisations)
 
     def test_trust_organisation(self):
         service = self.find_entity_by_name(Service, service_mail_name)
-        organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
+        organisation = self.find_entity_by_name(Organisation, unifra_name)
         self.assertTrue(organisation in service.allowed_organisations)
         self.assertFalse(organisation in service.automatic_connection_allowed_organisations)
 
@@ -467,13 +467,13 @@ class TestService(AbstractTest):
         self.put(f"/api/services/trust_organisation/{service.id}/{organisation.id}", with_basic_auth=False)
 
         service = self.find_entity_by_name(Service, service_mail_name)
-        organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
+        organisation = self.find_entity_by_name(Organisation, unifra_name)
         self.assertFalse(organisation in service.allowed_organisations)
         self.assertTrue(organisation in service.automatic_connection_allowed_organisations)
 
     def test_disallow_organisation(self):
         service = self.find_entity_by_name(Service, service_wiki_name)
-        organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
+        organisation = self.find_entity_by_name(Organisation, unifra_name)
         organisation.services.append(service)
         self.save_entity(organisation)
 
@@ -486,7 +486,7 @@ class TestService(AbstractTest):
         service = self.find_entity_by_name(Service, service_wiki_name)
         self.assertFalse(organisation in service.allowed_organisations)
         self.assertFalse(organisation in service.automatic_connection_allowed_organisations)
-        organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
+        organisation = self.find_entity_by_name(Organisation, unifra_name)
         self.assertFalse(service in organisation.services)
 
     def test_reset_ldap_password(self):
