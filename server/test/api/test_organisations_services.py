@@ -1,7 +1,7 @@
 from server.db.domain import Service, Organisation
 from server.test.abstract_test import AbstractTest, BASIC_AUTH_HEADER
 from server.test.seed import service_wiki_name, unihard_name, service_wireless_name, \
-    service_ssh_uva_name, service_mail_name, service_group_mail_name
+    service_ssh_name, service_mail_name, service_group_mail_name
 
 
 class TestOrganisationsServices(AbstractTest):
@@ -26,7 +26,7 @@ class TestOrganisationsServices(AbstractTest):
         self._do_add_organisations_services(unihard_name, service_wireless_name, response_status_code=400, user="urn:mary")
 
     def test_add_organisations_services_not_allowed_organisation(self):
-        res = self._do_add_organisations_services(unihard_name, service_ssh_uva_name, response_status_code=400)
+        res = self._do_add_organisations_services(unihard_name, service_ssh_name, response_status_code=400)
         self.assertTrue("not_allowed_organisation" in res["message"])
 
     def test_add_organisations_services_automatic_connection_allowed_organisations(self):

@@ -1,6 +1,6 @@
 from server.db.domain import Organisation, Unit
 from server.test.abstract_test import AbstractTest
-from server.test.seed import unihard_name, unihard_unit_support_name, ai_computing_name
+from server.test.seed import unihard_name, unihard_unit_support_name, co_ai_computing_name
 
 
 class TestUnit(AbstractTest):
@@ -11,7 +11,7 @@ class TestUnit(AbstractTest):
         self.login("urn:mary")
         res = self.get(f"/api/units/usages/{uuc.id}/{uuc_unit_support.id}", with_basic_auth=False)
 
-        self.assertListEqual([ai_computing_name], res["collaborations"])
+        self.assertListEqual([co_ai_computing_name], res["collaborations"])
         self.assertEqual(0, len(res["collaboration_requests"]))
         self.assertEqual(0, len(res["invitations"]))
         self.assertListEqual([f"Harry Doe - {unihard_name}"], res["organisation_memberships"])

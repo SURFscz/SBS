@@ -11,7 +11,7 @@ from server.scim.resource_type_template import resource_type_template
 from server.scim.schema_template import schemas_template, SCIM_SCHEMA_SRAM_USER
 from server.scim.user_template import version_value
 from server.test.abstract_test import AbstractTest
-from server.test.seed import service_network_token, jane_name, ai_computing_name, ai_researchers_group, \
+from server.test.seed import service_network_token, jane_name, co_ai_computing_name, group_ai_researchers, \
     service_network_name, service_wiki_token, service_wiki_name
 from server.tools import read_file
 
@@ -48,7 +48,7 @@ class TestScim(AbstractTest):
         self.assertEqual(3, len(res["Resources"]))
 
     def test_collaboration_by_identifier(self):
-        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         collaboration_identifier = collaboration.identifier
         res = self.get(f"/api/scim/v2/Groups/{collaboration_identifier}{EXTERNAL_ID_POST_FIX}",
                        headers={"Authorization": f"bearer {service_network_token}"},
@@ -57,7 +57,7 @@ class TestScim(AbstractTest):
         self.assertEqual(f"{collaboration_identifier}{EXTERNAL_ID_POST_FIX}", res["id"])
 
     def test_group_by_identifier(self):
-        group = self.find_entity_by_name(Group, ai_researchers_group)
+        group = self.find_entity_by_name(Group, group_ai_researchers)
         group_identifier = group.identifier
         # We mock that all members are already known in the remote SCIM DB
         res = self.get(f"/api/scim/v2/Groups/{group_identifier}{EXTERNAL_ID_POST_FIX}",

@@ -7,9 +7,9 @@ from server.db.db import db
 from server.db.domain import Invitation, CollaborationMembership, User, Collaboration, Organisation, ServiceAup, \
     JoinRequest
 from server.test.abstract_test import AbstractTest
-from server.test.seed import invitation_hash_no_way, ai_computing_name, invitation_hash_curious, invitation_hash_uva, \
-    uva_research_name, unihard_secret, unihard_name, ai_computing_short_name, join_request_peter_hash, \
-    collaboration_ai_computing_uuid, ai_researchers_group_short_name, ai_dev_identifier
+from server.test.seed import invitation_hash_no_way, co_ai_computing_name, invitation_hash_curious, invitation_hash_uva, \
+    co_research_name, unihard_secret, unihard_name, co_ai_computing_short_name, peter_join_request_hash, \
+    co_ai_computing_uuid, group_ai_researchers_short_name, group_ai_dev_identifier
 
 
 class TestInvitation(AbstractTest):
@@ -78,7 +78,7 @@ class TestInvitation(AbstractTest):
             .join(CollaborationMembership.user) \
             .join(CollaborationMembership.collaboration) \
             .filter(User.uid == "urn:jane") \
-            .filter(Collaboration.name == uva_research_name) \
+            .filter(Collaboration.name == co_research_name) \
             .one()
         self.assertEqual("member", collaboration_membership.role)
 
@@ -146,7 +146,7 @@ class TestInvitation(AbstractTest):
         with mail.record_messages() as outbox:
             res = self.put("/api/invitations/v1/collaboration_invites",
                            body={
-                               "collaboration_identifier": collaboration_ai_computing_uuid,
+                               "collaboration_identifier": co_ai_computing_uuid,
                                "invites": ["q@demo.com"]
                            },
                            headers={"Authorization": f"Bearer {unihard_secret}"},
@@ -166,8 +166,8 @@ class TestInvitation(AbstractTest):
     def test_collaboration_invites_api_bad_request_2(self):
         self.put("/api/invitations/v1/collaboration_invites",
                  body={
-                     "collaboration_identifier": collaboration_ai_computing_uuid,
-                     "short_name": ai_computing_short_name,
+                     "collaboration_identifier": co_ai_computing_uuid,
+                     "short_name": co_ai_computing_short_name,
                      "invites": ["q@demo.com"]
                  },
                  headers={"Authorization": f"Bearer {unihard_secret}"},
@@ -179,7 +179,7 @@ class TestInvitation(AbstractTest):
         with mail.record_messages() as outbox:
             res = self.put("/api/invitations/v1/collaboration_invites",
                            body={
-                               "short_name": ai_computing_short_name,
+                               "short_name": co_ai_computing_short_name,
                                "invites": ["q@demo.com", "x@demo.com", "invalid_email"]
                            },
                            headers={"Authorization": f"Bearer {unihard_secret}"},
@@ -191,12 +191,12 @@ class TestInvitation(AbstractTest):
         self._do_test_collaboration_invites_api()
 
     def test_collaboration_invites_api_org_admin(self):
-        self._delete_coll_memberships(ai_computing_name)
+        self._delete_coll_memberships(co_ai_computing_name)
 
         self._do_test_collaboration_invites_api()
 
     def test_collaboration_invites_api_super_user(self):
-        self._delete_coll_memberships(ai_computing_name)
+        self._delete_coll_memberships(co_ai_computing_name)
         organisation = self.find_entity_by_name(Organisation, unihard_name)
         organisation.organisation_memberships.clear()
         db.session.merge(organisation)
@@ -235,11 +235,11 @@ class TestInvitation(AbstractTest):
     def test_external_invitation(self):
         res = self.put("/api/invitations/v1/collaboration_invites",
                        body={
-                           "short_name": ai_computing_short_name,
+                           "short_name": co_ai_computing_short_name,
                            "intended_role": "bogus",
                            "invitation_expiry_date": (int(time.time()) * 1000) + 60 * 60 * 25 * 15,
                            "invites": ["joe@test.com"],
-                           "groups": [ai_researchers_group_short_name, ai_dev_identifier]
+                           "groups": [group_ai_researchers_short_name, group_ai_dev_identifier]
                        },
                        headers={"Authorization": f"Bearer {unihard_secret}"},
                        with_basic_auth=False)
@@ -250,7 +250,7 @@ class TestInvitation(AbstractTest):
         self.assertEqual("open", res["status"])
         self.assertEqual("joe@test.com", res["invitation"]["email"])
         self.assertEqual(2, len(res["groups"]))
-        self.assertEqual(ai_computing_short_name, res["collaboration"]["short_name"])
+        self.assertEqual(co_ai_computing_short_name, res["collaboration"]["short_name"])
 
         invitation = Invitation.query.filter(Invitation.external_identifier == invitation_id).first()
         self.assertEqual("member", invitation.intended_role)
@@ -265,7 +265,7 @@ class TestInvitation(AbstractTest):
     def test_external_invitation_invalid_group(self):
         res = self.put("/api/invitations/v1/collaboration_invites",
                        body={
-                           "short_name": ai_computing_short_name,
+                           "short_name": co_ai_computing_short_name,
                            "intended_role": "bogus",
                            "invitation_expiry_date": (int(time.time()) * 1000) + 60 * 60 * 25 * 15,
                            "invites": ["joe@test.com"],
@@ -277,13 +277,13 @@ class TestInvitation(AbstractTest):
         self.assertTrue("Invalid group identifier: nope" in res["message"])
 
     def test_accept_with_existing_join_request(self):
-        self.assertEqual(1, JoinRequest.query.filter(JoinRequest.hash == join_request_peter_hash).count())
+        self.assertEqual(1, JoinRequest.query.filter(JoinRequest.hash == peter_join_request_hash).count())
         self.login("urn:peter")
         self.put("/api/invitations/accept", body={"hash": invitation_hash_curious}, with_basic_auth=False)
-        self.assertEqual(0, JoinRequest.query.filter(JoinRequest.hash == join_request_peter_hash).count())
+        self.assertEqual(0, JoinRequest.query.filter(JoinRequest.hash == peter_join_request_hash).count())
 
     def test_open_invites_api(self):
-        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         res = self.get(f"/api/invitations/v1/invitations/{collaboration.identifier}",
                        headers={"Authorization": f"Bearer {unihard_secret}"},
                        with_basic_auth=False)

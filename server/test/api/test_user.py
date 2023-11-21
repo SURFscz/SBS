@@ -11,8 +11,8 @@ from server.auth.security import CSRF_TOKEN
 from server.db.db import db
 from server.db.domain import Organisation, Collaboration, User, Aup
 from server.test.abstract_test import AbstractTest
-from server.test.seed import unihard_name, ai_computing_name, roger_name, john_name, james_name, uva_research_name, \
-    collaboration_ai_computing_uuid, sarah_name
+from server.test.seed import unihard_name, co_ai_computing_name, roger_name, john_name, james_name, co_research_name, \
+    co_ai_computing_uuid, sarah_name
 from server.tools import read_file
 
 
@@ -87,7 +87,7 @@ class TestUser(AbstractTest):
         self.do_test_activate("urn:mary", {"organisation_id": organisation_id})
 
     def test_activate_by_collaboration_admin(self):
-        collaboration_id = Collaboration.query.filter(Collaboration.name == uva_research_name).one().id
+        collaboration_id = Collaboration.query.filter(Collaboration.name == co_research_name).one().id
         self.do_test_activate("urn:sarah", {"collaboration_id": collaboration_id})
 
     def test_activate_by_platform_admin(self):
@@ -119,7 +119,7 @@ class TestUser(AbstractTest):
         res = self.get("/api/users/search", query_data={"q": "john", "organisation_id": organisation_id})
         self.assertEqual(1, len(res))
 
-        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        collaboration_id = self.find_entity_by_name(Collaboration, co_ai_computing_name).id
 
         res = self.get("/api/users/search", query_data={"q": "john",
                                                         "organisation_id": organisation_id,
@@ -461,7 +461,7 @@ class TestUser(AbstractTest):
 
         self.login("urn:sarah")
         res = self.get("/api/collaborations/find_by_identifier",
-                       query_data={"identifier": collaboration_ai_computing_uuid},
+                       query_data={"identifier": co_ai_computing_uuid},
                        with_basic_auth=False, response_status_code=401)
         self.assertTrue("AUP not accepted" in res["message"])
 

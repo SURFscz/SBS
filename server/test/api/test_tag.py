@@ -1,6 +1,6 @@
 from server.db.domain import Organisation, Tag, Collaboration
 from server.test.abstract_test import AbstractTest
-from server.test.seed import unihard_name, ai_computing_name, unifra_name
+from server.test.seed import unihard_name, co_ai_computing_name, unifra_name
 
 
 class TestTag(AbstractTest):
@@ -31,7 +31,7 @@ class TestTag(AbstractTest):
         tag = Tag.query.filter(Tag.tag_value == "tag_uuc").one()
         self.delete(f"/api/tags/{tag.collaborations[0].organisation_id}/{tag.id}")
         self.assertEqual(2, Tag.query.count())
-        self.assertEqual(0, len(self.find_entity_by_name(Collaboration, ai_computing_name).tags))
+        self.assertEqual(0, len(self.find_entity_by_name(Collaboration, co_ai_computing_name).tags))
 
     def test_delete_tag_forbidden(self):
         self.login("urn:john")

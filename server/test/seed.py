@@ -28,6 +28,7 @@ jane_name = "Jane Doe"
 
 sarah_user_token = generate_token()
 betty_user_token_wiki = generate_token()
+peter_join_request_hash = generate_token()
 
 schac_home_organisation_example = "example.org"
 schac_home_organisation_uuc = "uni-harderwijk.nl"
@@ -49,28 +50,27 @@ unifra_hashed_secret = secure_hash(unifra_secret)
 umcpekela_name = "Universitair Medisch Centrum Noord-Pekela"
 
 # collaborations
-ai_computing_name = "AI computing"
-ai_computing_short_name = "ai_computing"
-collaboration_ai_computing_uuid = "a71a2b01-4642-4e1a-b3ac-0a06b2bf66f2"
+co_ai_computing_name = "AI computing"
+co_ai_computing_short_name = "ai_computing"
+co_ai_computing_uuid = "a71a2b01-4642-4e1a-b3ac-0a06b2bf66f2"
 
-uuc_teachers_name = "UUC Teachers"
+co_teachers_name = "Teachers"
 
-uva_research_name = "UCC research"
-collaboration_uva_researcher_uuid = "da706611-0afb-4a7a-819b-b0a9c63e9b67"
+co_research_name = "Research"
+co_research_uuid = "da706611-0afb-4a7a-819b-b0a9c63e9b67"
 
-uu_disabled_join_request_name = "Robotics"
-join_request_peter_hash = generate_token()
+co_robotics_disabled_join_request_name = "Robotics"
 
-monitoring_co_name = "Monitoring CO numero 1"
+co_monitoring_name = "Monitoring CO numero 1"
 
 collaboration_request_name = "New Collaboration"
 join_request_reference = "Dr. Johnson"
 
 # groups
-ai_researchers_group = "AI researchers"
-ai_researchers_group_short_name = "ai_res"
-ai_researchers_group_identifier = "9734e4c4-d23e-4228-b0e0-8e6a5b85e72e"
-ai_dev_identifier = "4c270cff-de30-49e8-a3bc-df032536b37c"
+group_ai_researchers = "AI researchers"
+group_ai_researchers_short_name = "ai_res"
+group_ai_researchers_identifier = "9734e4c4-d23e-4228-b0e0-8e6a5b85e72e"
+group_ai_dev_identifier = "4c270cff-de30-49e8-a3bc-df032536b37c"
 group_science_name = "Science"
 
 # services
@@ -82,14 +82,14 @@ service_network_entity_id = "https://network"
 service_wiki_entity_id = "https://wiki"
 service_storage_entity_id = "https://storage"
 service_cloud_entity_id = "https://cloud"
-uuc_scheduler_entity_id = "uuc_scheduler_entity_id"
+service_scheduler_entity_id = "uuc_scheduler_entity_id"
 
 service_storage_name = "Storage"
 service_wireless_name = "Wireless"
 service_cloud_name = "Cloud"
 service_wiki_name = "Wiki"
-service_ssh_uva_name = "SSH Service"
-service_uuc_scheduler_name = "uuc_scheduler_name"
+service_ssh_name = "SSH Service"
+service_scheduler_name = "uuc_scheduler_name"
 service_sram_demo_sp = "SRAM Demo RP"
 
 service_group_mail_name = "service_group_mail_name"
@@ -373,7 +373,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                       scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret",
                       sweep_scim_last_run=sweep_scim_last_run, sweep_scim_daily_rate=1, sweep_scim_enabled=True,
                       sweep_remove_orphans=True, scim_client_enabled=True)
-    service_ssh_uva = Service(entity_id="service_ssh_uva", name=service_ssh_uva_name,
+    service_ssh_uva = Service(entity_id="service_ssh_uva", name=service_ssh_name,
                               description="Uva SSH access",
                               uri="https://uri.com/ssh", identity_type="SSH KEY", accepted_user_policy="https://ssh",
                               contact_email="help@ssh.com", logo=read_image("ssh.png"),
@@ -383,7 +383,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                               code_of_conduct_compliant=True, sirtfi_compliant=True,
                               privacy_policy="https://privacy.org", security_email="sec@org.nl")
 
-    uuc_scheduler = Service(entity_id=uuc_scheduler_entity_id, name=service_uuc_scheduler_name,
+    uuc_scheduler = Service(entity_id=service_scheduler_entity_id, name=service_scheduler_name,
                             accepted_user_policy="https://google.nl", abbreviation="uuc_scheduler",
                             description="UUC Scheduler Service", logo=read_image("scheduler.png"),
                             contact_email="help@uuc_scheduler.example.com",
@@ -514,24 +514,24 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     tag_orphan = Tag(tag_value="tag_orphan")
     persist_instance(db, tag_uuc, tag_uva, tag_orphan)
 
-    ai_computing = Collaboration(name=ai_computing_name,
-                                 identifier=collaboration_ai_computing_uuid,
-                                 global_urn=f"ucc:{ai_computing_short_name}",
+    ai_computing = Collaboration(name=co_ai_computing_name,
+                                 identifier=co_ai_computing_uuid,
+                                 global_urn=f"ucc:{co_ai_computing_short_name}",
                                  description="Artifical Intelligence computing for the Unincorporated Urban Community",
                                  logo=read_image("computing.png"),
                                  organisation=uuc, services=[mail, network],
                                  join_requests=[], invitations=[],
                                  tags=[tag_uuc],
                                  units=[uuc_unit_support],
-                                 short_name=ai_computing_short_name,
+                                 short_name=co_ai_computing_short_name,
                                  website_url="https://www.google.nl",
                                  accepted_user_policy="https://www.google.nl",
                                  disclose_email_information=True,
                                  disclose_member_information=True)
-    uva_research = Collaboration(name=uva_research_name,
+    uva_research = Collaboration(name=co_research_name,
                                  short_name="research",
                                  global_urn="uva:research",
-                                 identifier=collaboration_uva_researcher_uuid,
+                                 identifier=co_research_uuid,
                                  tags=[tag_uva],
                                  website_url="https://www.google.nl",
                                  description="University of Amsterdam Research - Urban Crowd Control",
@@ -539,9 +539,9 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                  organisation=uva, services=[cloud, storage, wiki],
                                  join_requests=[], invitations=[],
                                  disclose_member_information=True)
-    uuc_teachers = Collaboration(name=uuc_teachers_name,
+    uuc_teachers = Collaboration(name=co_teachers_name,
                                  identifier="033cbc91-45ed-4020-bf86-3cc323e1f1cf",
-                                 global_urn=f"ucc:{uuc_teachers_name}",
+                                 global_urn=f"ucc:{co_teachers_name}",
                                  website_url="https://www.google.nl",
                                  description="UUC Teachers",
                                  logo=read_image("teachers.png"),
@@ -550,7 +550,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                  short_name="uuc_teachers_short_name",
                                  accepted_user_policy="https://www.uuc.nl/teachers")
 
-    monitoring_co_1 = Collaboration(name=monitoring_co_name,
+    monitoring_co_1 = Collaboration(name=co_monitoring_name,
                                     identifier="37d55167-23e4-4099-ae20-4f3d8d284b14",
                                     uuid4="b85e2ae6-05f3-4c27-9078-e11a420bdc08",
                                     global_urn="ucc:monitoring1",
@@ -573,7 +573,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                     short_name="monitor2",
                                     accepted_user_policy="https://www.tue.example.nl/monitor")
 
-    uu_disabled_join_request = Collaboration(name=uu_disabled_join_request_name,
+    uu_disabled_join_request = Collaboration(name=co_robotics_disabled_join_request_name,
                                              short_name="ai_short",
                                              global_urn="uva:ai_short",
                                              website_url="https://www.google.nl",
@@ -616,10 +616,10 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                           ai_computing.services]
     persist_instance(db, *admin_service_aups)
 
-    group_researchers = Group(name=ai_researchers_group,
-                              short_name=ai_researchers_group_short_name,
+    group_researchers = Group(name=group_ai_researchers,
+                              short_name=group_ai_researchers_short_name,
                               global_urn="uuc:ai_computing:ai_res",
-                              identifier=ai_researchers_group_identifier,
+                              identifier=group_ai_researchers_identifier,
                               auto_provision_members=False,
                               description="Artifical computing researchers",
                               collaboration=ai_computing,
@@ -628,7 +628,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     group_developers = Group(name="AI developers",
                              short_name="ai_dev",
                              global_urn="uuc:ai_computing:ai_dev",
-                             identifier=ai_dev_identifier,
+                             identifier=group_ai_dev_identifier,
                              auto_provision_members=False,
                              description="Artifical computing developers",
                              collaboration=ai_computing,
@@ -656,7 +656,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     join_request_john = JoinRequest(message="Please...", reference=join_request_reference, user=john,
                                     collaboration=ai_computing, hash=generate_token(), status="open")
     join_request_peter = JoinRequest(message="Please...", user=peter, collaboration=ai_computing,
-                                     hash=join_request_peter_hash, status="open")
+                                     hash=peter_join_request_hash, status="open")
     join_request_mary = JoinRequest(message="Please...", user=mary, collaboration=ai_computing, hash=generate_token(),
                                     status="open")
     join_request_uva_research = JoinRequest(message="Please...", user=james, collaboration=uva_research,

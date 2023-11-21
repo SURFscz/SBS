@@ -6,7 +6,7 @@ from server.db.db import db
 from server.db.defaults import STATUS_SUSPENDED
 from server.db.domain import Collaboration
 from server.test.abstract_test import AbstractTest
-from server.test.seed import ai_computing_name, uva_research_name, uuc_teachers_name
+from server.test.seed import co_ai_computing_name, co_research_name, co_teachers_name
 
 
 class TestCollaborationInactivitySuspension(AbstractTest):
@@ -17,16 +17,16 @@ class TestCollaborationInactivitySuspension(AbstractTest):
         threshold_for_warning = cfq.collaboration_inactivity_days_threshold - cfq.inactivity_warning_mail_days_threshold
         threshold_upper = datetime.timedelta(days=threshold_for_warning)
         warning_start_date = now - threshold_upper + datetime.timedelta(hours=12)
-        coll = self.find_entity_by_name(Collaboration, ai_computing_name)
+        coll = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         # Will cause warning email
         coll.last_activity_date = warning_start_date
         db.session.merge(coll)
-        coll = self.find_entity_by_name(Collaboration, uva_research_name)
+        coll = self.find_entity_by_name(Collaboration, co_research_name)
         notification_start_date = now - threshold_upper - datetime.timedelta(days=365 * 2)
         # Will cause notification email
         coll.last_activity_date = notification_start_date
         db.session.merge(coll)
-        coll = self.find_entity_by_name(Collaboration, uuc_teachers_name)
+        coll = self.find_entity_by_name(Collaboration, co_teachers_name)
         deletion_date = now - datetime.timedelta(days=365 * 5)
         # Will cause deletion
         coll.last_activity_date = deletion_date
@@ -41,17 +41,17 @@ class TestCollaborationInactivitySuspension(AbstractTest):
         with mail.record_messages() as outbox:
             results = suspend_collaborations(self.app)
             self.assertEqual(1, len(results["collaborations_warned"]))
-            self.assertEqual(ai_computing_name, results["collaborations_warned"][0]["name"])
+            self.assertEqual(co_ai_computing_name, results["collaborations_warned"][0]["name"])
             self.assertEqual(1, len(results["collaborations_suspended"]))
-            self.assertEqual(uva_research_name, results["collaborations_suspended"][0]["name"])
+            self.assertEqual(co_research_name, results["collaborations_suspended"][0]["name"])
             self.assertEqual(1, len(results["collaborations_deleted"]))
-            self.assertEqual(uuc_teachers_name, results["collaborations_deleted"][0]["name"])
+            self.assertEqual(co_teachers_name, results["collaborations_deleted"][0]["name"])
             self.assertEqual(2, len(outbox))
 
-        self.assertEqual(0, Collaboration.query.filter(Collaboration.name == uuc_teachers_name).count())
+        self.assertEqual(0, Collaboration.query.filter(Collaboration.name == co_teachers_name).count())
 
     def test_system_expire_collaborations(self):
         self._setup_data()
 
         self.put("/api/system/suspend_collaborations")
-        self.assertEqual(0, Collaboration.query.filter(Collaboration.name == uuc_teachers_name).count())
+        self.assertEqual(0, Collaboration.query.filter(Collaboration.name == co_teachers_name).count())

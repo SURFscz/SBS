@@ -10,7 +10,7 @@ from server.scim.events import broadcast_user_changed, broadcast_user_deleted, b
     broadcast_service_deleted, broadcast_group_deleted, broadcast_organisation_service_added, \
     broadcast_organisation_service_deleted
 from server.test.abstract_test import AbstractTest
-from server.test.seed import sarah_name, uva_research_name, ai_researchers_group, unifra_name, service_cloud_name
+from server.test.seed import sarah_name, co_research_name, group_ai_researchers, unifra_name, service_cloud_name
 from server.tools import read_file
 
 
@@ -99,7 +99,7 @@ class TestEvents(AbstractTest):
         group_created = json.loads(read_file("test/scim/group_created.json"))
         no_user_found = json.loads(read_file("test/scim/no_user_found.json"))
         user_created = json.loads(read_file("test/scim/user_created.json"))
-        collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
+        collaboration = self.find_entity_by_name(Collaboration, co_research_name)
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=no_group_found, status=200)
             # We mock that all members are not known in the remote SCIM DB
@@ -115,7 +115,7 @@ class TestEvents(AbstractTest):
         group_found = json.loads(read_file("test/scim/group_found.json"))
         group_created = json.loads(read_file("test/scim/group_created.json"))
         user_found = json.loads(read_file("test/scim/user_found.json"))
-        collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
+        collaboration = self.find_entity_by_name(Collaboration, co_research_name)
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=group_found, status=200)
             # We mock that all members are already known in the remote SCIM DB
@@ -130,7 +130,7 @@ class TestEvents(AbstractTest):
     def test_apply_group_change_delete_existing_users(self):
         group_found = json.loads(read_file("test/scim/group_found.json"))
         user_found = json.loads(read_file("test/scim/user_found.json"))
-        collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
+        collaboration = self.find_entity_by_name(Collaboration, co_research_name)
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=group_found, status=200)
             # We mock that all members are already known in the remote SCIM DB
@@ -147,7 +147,7 @@ class TestEvents(AbstractTest):
     def test_apply_group_change_create_no_users(self):
         no_group_found = json.loads(read_file("test/scim/no_user_found.json"))
         group_created = json.loads(read_file("test/scim/group_created.json"))
-        group = self.find_entity_by_name(Group, ai_researchers_group)
+        group = self.find_entity_by_name(Group, group_ai_researchers)
         self.clear_group_memberships(group)
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=no_group_found, status=200)
@@ -160,7 +160,7 @@ class TestEvents(AbstractTest):
     def test_apply_group_change_create_error_response(self):
         no_group_found = json.loads(read_file("test/scim/no_user_found.json"))
         group_created = json.loads(read_file("test/scim/group_created.json"))
-        group = self.find_entity_by_name(Group, ai_researchers_group)
+        group = self.find_entity_by_name(Group, group_ai_researchers)
         self.clear_group_memberships(group)
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=no_group_found, status=200)
@@ -172,7 +172,7 @@ class TestEvents(AbstractTest):
     @responses.activate
     def test_delete_group(self):
         group_found = json.loads(read_file("test/scim/group_found.json"))
-        group = self.find_entity_by_name(Group, ai_researchers_group)
+        group = self.find_entity_by_name(Group, group_ai_researchers)
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=group_found, status=200)
             rsps.add(responses.DELETE,
@@ -241,7 +241,7 @@ class TestEvents(AbstractTest):
         no_group_found = json.loads(read_file("test/scim/no_user_found.json"))
         group_created = json.loads(read_file("test/scim/group_created.json"))
 
-        collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
+        collaboration = self.find_entity_by_name(Collaboration, co_research_name)
         service = self.find_entity_by_name(Service, service_cloud_name)
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=no_user_found, status=200)
@@ -258,7 +258,7 @@ class TestEvents(AbstractTest):
     def test_apply_service_removed(self):
         user_found = json.loads(read_file("test/scim/user_found.json"))
         group_found = json.loads(read_file("test/scim/group_found.json"))
-        collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
+        collaboration = self.find_entity_by_name(Collaboration, co_research_name)
         service = self.find_entity_by_name(Service, service_cloud_name)
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=group_found, status=200)

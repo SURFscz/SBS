@@ -11,7 +11,7 @@ from server.scim.repo import all_scim_groups_by_service
 from server.scim.sweep import perform_sweep, _all_remote_scim_objects, _group_changed, _user_changed
 from server.scim.user_template import create_user_template, find_user_by_id_template
 from server.test.abstract_test import AbstractTest
-from server.test.seed import service_network_name, ai_researchers_group, john_name, ai_computing_name
+from server.test.seed import service_network_name, group_ai_researchers, john_name, co_ai_computing_name
 from server.tools import read_file
 
 
@@ -130,42 +130,42 @@ class TestSweep(AbstractTest):
         return remote_group, remote_scim_users
 
     def test_group_changed_urn(self):
-        group = self.find_entity_by_name(Group, ai_researchers_group)
+        group = self.find_entity_by_name(Group, group_ai_researchers)
         remote_group, remote_scim_users = self._construct_group_changed_parameters(group)
         group.global_urn = "changed"
         self.assertTrue(_group_changed(group, remote_group, remote_scim_users))
 
     def test_group_changed_name(self):
-        group = self.find_entity_by_name(Group, ai_researchers_group)
+        group = self.find_entity_by_name(Group, group_ai_researchers)
         remote_group, remote_scim_users = self._construct_group_changed_parameters(group)
         group.name = "changed"
         self.assertTrue(_group_changed(group, remote_group, remote_scim_users))
 
     def test_group_changed_description(self):
-        group = self.find_entity_by_name(Group, ai_researchers_group)
+        group = self.find_entity_by_name(Group, group_ai_researchers)
         remote_group, remote_scim_users = self._construct_group_changed_parameters(group)
         group.description = "changed"
         self.assertTrue(_group_changed(group, remote_group, remote_scim_users))
 
     def test_group_changed_members(self):
-        group = self.find_entity_by_name(Group, ai_researchers_group)
+        group = self.find_entity_by_name(Group, group_ai_researchers)
         remote_group, remote_scim_users = self._construct_group_changed_parameters(group)
         group.collaboration_memberships = []
         self.assertTrue(_group_changed(group, remote_group, remote_scim_users))
 
     def test_group_changed_tags(self):
-        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         remote_group, remote_scim_users = self._construct_group_changed_parameters(collaboration)
         collaboration.tags = []
         self.assertTrue(_group_changed(collaboration, remote_group, remote_scim_users))
 
     def test_group_not_changed(self):
-        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         remote_group, remote_scim_users = self._construct_group_changed_parameters(collaboration)
         self.assertFalse(_group_changed(collaboration, remote_group, remote_scim_users))
 
     def test_group_changed_description_empty(self):
-        group = self.find_entity_by_name(Group, ai_researchers_group)
+        group = self.find_entity_by_name(Group, group_ai_researchers)
         group.description = ""
         remote_group, remote_scim_users = self._construct_group_changed_parameters(group)
         self.assertFalse(_group_changed(group, remote_group, remote_scim_users))
