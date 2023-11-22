@@ -1145,6 +1145,13 @@ const en = {
             manuallyApprove: "I want to approve requests manually",
             depends: "It depends",
             settingsPerInstitution: "I'll choose for each organisation below"
+        },
+        sweep: {
+            test: "Test SCIM",
+            testTooltip: "Test the SCIM endpoint and the SCIM token",
+            success: "The SCIM connection test to {{url}} was successful",
+            failure: "The SCIM connection test to {{url}} was unsuccessful.",
+            response: "Response from the SCIM endpoint:"
         }
     },
     organisation: {
@@ -1418,7 +1425,7 @@ const en = {
         groups: "Group membership",
         requiredEmail: "At least one email address is required for an invitation for a collaboration.",
         requiredRole: "You must choose the intended role for the collaboration membership.",
-        requiredExpiryDate:"The expiry date for an invitation is required",
+        requiredExpiryDate: "The expiry date for an invitation is required",
         message: "Message",
         messagePlaceholder: "Personal message to the admins",
         messageTooltip: "The message will be included in the email invitation to the admins.",

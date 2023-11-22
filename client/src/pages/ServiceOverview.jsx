@@ -3,17 +3,21 @@ import {
     createServiceToken,
     deleteService,
     deleteServiceToken,
-    ipNetworks, requestDeleteService,
+    ipNetworks,
+    requestDeleteService,
     resetLdapPassword,
     serviceAbbreviationExists,
     serviceAupDelete,
     serviceEntityIdExists,
     serviceNameExists,
     serviceTokenValue,
+    sweep,
     updateService
 } from "../api";
 import I18n from "../locale/I18n";
+import {ReactComponent as CriticalIcon} from "@surfnet/sds/icons/functional-icons/alert-circle.svg";
 import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
+import {ReactComponent as CheckIcon} from "@surfnet/sds/icons/functional-icons/success.svg";
 import InputField from "../components/InputField";
 import "./ServiceOverview.scss";
 import "../components/redesign/ApiKeys.scss";
@@ -69,7 +73,9 @@ class ServiceOverview extends React.Component {
             description: "",
             hashedToken: null,
             validatingNetwork: false,
-            initial: true
+            initial: true,
+            sweepSuccess: null,
+            sweepResults: null
         }
     }
 
@@ -366,6 +372,43 @@ class ServiceOverview extends React.Component {
         return valid;
     };
 
+    doSweep = service => {
+        this.setState({loading: true});
+        sweep(service).then(res => {
+            this.setState({
+                loading: false,
+                sweepSuccess: true,
+                sweepResults: res,
+                confirmationDialogQuestion: null,
+                confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
+                confirmationHeader: I18n.t("service.sweep.test"),
+                confirmationTxt: I18n.t("confirmationDialog.ok"),
+                warning: false,
+                cancelDialogAction: null,
+                confirmationDialogOpen: true
+            });
+        }).catch(e => {
+            this.setState({
+                loading: false,
+                sweepSuccess: false,
+                confirmationDialogQuestion: null,
+                confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
+                confirmationHeader: I18n.t("service.sweep.test"),
+                confirmationTxt: I18n.t("confirmationDialog.ok"),
+                warning: false,
+                cancelDialogAction: null,
+                confirmationDialogOpen: true
+            });
+            if (e.response && e.response.json) {
+                e.response.json().then(res => {
+                    this.setState({
+                        sweepResults: res,
+                    });
+                })
+            }
+        })
+    }
+
     isValidTab = tab => {
         const {alreadyExists, invalidInputs, hasAdministrators, service, initial} = this.state;
         const {contact_email, ip_networks} = service;
@@ -481,7 +524,9 @@ class ServiceOverview extends React.Component {
         stopEvent(e);
         this.setState({
             currentTab: tab,
-            createNewServiceToken: false
+            createNewServiceToken: false,
+            sweepSuccess: null,
+            sweepResults: null,
         }, () => this.props.history.replace(`/services/${this.state.service.id}/details/${tab}`));
     }
 
@@ -530,7 +575,7 @@ class ServiceOverview extends React.Component {
     };
 
 
-    renderButtons = (isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView, createNewServiceToken) => {
+    renderButtons = (isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView, createNewServiceToken, service) => {
         const invalidTabsMsg = this.getInvalidTabs();
         return <>
             {((isAdmin || isServiceAdmin) && !createNewServiceToken) && <div className={"actions-container"}>
@@ -539,6 +584,12 @@ class ServiceOverview extends React.Component {
                     {((isAdmin || isServiceAdmin) && currentTab === "general") &&
                         <Button warningButton={true}
                                 onClick={this.delete}/>}
+                    {((isAdmin || isServiceAdmin) && currentTab === "SCIMServer") &&
+                        <Tooltip tip={I18n.t("service.sweep.testTooltip")} children={
+                            <Button txt={I18n.t("service.sweep.test")}
+                                    disabled={!service.scim_enabled}
+                                    onClick={() => this.doSweep(service)}/>
+                        }/>}
                     <Button disabled={disabledSubmit} txt={I18n.t("service.update")}
                             onClick={this.submit}/>
                 </section>
@@ -584,6 +635,19 @@ class ServiceOverview extends React.Component {
             />
             {this.renderServiceTokens(service, service.scim_client_enabled, tokenType, I18n.t("scim.scimClientEnabled"))}
         </div>)
+    }
+
+    renderScimResults = (service, sweepSuccess, sweepResults) => {
+        return (
+            <div className="sweep-results">
+                <p className={sweepSuccess ? "success" : "failure"}>{sweepSuccess ? <CheckIcon/> : <CriticalIcon/>}
+                    {I18n.t(`service.sweep.${sweepSuccess ? "success" : "failure"}`, {url: service.scim_url})}</p>
+                {(!isEmpty(sweepResults) && sweepResults.error) && <div className="response">
+                    <p>{I18n.t("service.sweep.response")}</p>
+                    <em>{sweepResults.error}</em>
+                </div>}
+            </div>
+        );
     }
 
     renderSCIMServer = (service, isAdmin, showServiceAdminView, alreadyExists, invalidInputs, initial) => {
@@ -1163,7 +1227,9 @@ class ServiceOverview extends React.Component {
             ldapPassword,
             tokenValue,
             createNewServiceToken,
-            initial
+            initial,
+            sweepResults,
+            sweepSuccess
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -1181,13 +1247,14 @@ class ServiceOverview extends React.Component {
                                 confirm={confirmationDialogAction}
                                 question={confirmationDialogQuestion}>
                 {ldapPassword && this.renderLdapPassword(ldapPassword)}
+                {!isEmpty(sweepSuccess) && this.renderScimResults(service, sweepSuccess, sweepResults)}
             </ConfirmationDialog>
 
             {this.sidebar(currentTab)}
             <div className={`service ${createNewServiceToken ? "no-grid" : ""}`}>
                 <h2 className="section-separator">{I18n.t(`serviceDetails.toc.${currentTab}`)}</h2>
                 {this.renderCurrentTab(config, currentTab, service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit, invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken, initial)}
-                {this.renderButtons(isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView, createNewServiceToken)}
+                {this.renderButtons(isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView, createNewServiceToken, service)}
             </div>
         </div>);
     }

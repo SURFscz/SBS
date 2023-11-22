@@ -7,6 +7,29 @@ section.dialog-content {
     }
 }
 
+.sweep-results {
+    p {
+        display: flex;
+        align-items: center;
+
+        svg {
+            width: 32px;
+            height: auto;
+            margin-right: 8px;
+        }
+        &.success {
+            svg {
+                color: var(--sds--color--green--400);
+            }
+        }
+        &.failure {
+            svg {
+                color: var(--sds--color--red--400);
+            }
+        }
+    }
+}
+
 .service-overview {
     max-width: $medium;
     margin: 40px auto 25px auto;
