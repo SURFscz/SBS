@@ -1145,6 +1145,13 @@ const nl = {
             manuallyApprove: "Ik wil koppelverzoeken handmatig goedkeuren",
             depends: "Hangt er vanaf",
             settingsPerInstitution: "Ik kies hieronder per organisatie"
+        },
+        sweep: {
+            test: "Test SCIM",
+            testTooltip: "Test het SCIM endpoint en het SCIM token",
+            success: "De SCIM connectie test naar {{url}} was succesvol",
+            failure: "De SCIM connectie test naar {{url}} was niet succesvol.",
+            response: "Antwoord van het SCIM endpoint:"
         }
     },
     organisation: {

@@ -9,7 +9,7 @@ from sqlalchemy import func
 from werkzeug.exceptions import Unauthorized, BadRequest
 
 from server.api.base import json_endpoint, query_param
-from server.auth.security import confirm_write_access
+from server.auth.security import confirm_write_access, is_service_admin
 from server.auth.tokens import validate_service_token
 from server.db.db import db
 from server.db.defaults import SERVICE_TOKEN_SCIM
@@ -142,8 +142,9 @@ def sweep():
     try:
         service = validate_service_token("scim_enabled", SERVICE_TOKEN_SCIM)
     except Unauthorized:
-        confirm_write_access()
-        service = db.session.get(Service, query_param("service_id"))
+        service_id = query_param("service_id")
+        confirm_write_access(service_id, override_func=is_service_admin)
+        service = db.session.get(Service, service_id)
     try:
         return perform_sweep(service), 201
     except BadRequest as error:
