@@ -60,7 +60,7 @@ export default function ServiceCard({
         const supportEmail = service.support_email;
         const hasPrivacyPolicy = !isEmpty(service.privacy_policy);
         return (
-            <div className={"service-metadata"}>
+            <div className={"service-metadata"} key={service.id}>
                 <div className={"policies"}>
                     <dt>{I18n.t("service.policies")}</dt>
                     {hasPrivacyPolicy &&

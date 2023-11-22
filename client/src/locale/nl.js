@@ -571,6 +571,7 @@ const nl = {
             noEntities: "Geen koppelverzoeken gevonden",
             edit: "Goed- / afkeuren",
             details: "Dienst koppelverzoek gemaakt door {{name}} op {{date}} voor samenwerking {{collaborationName}}",
+            detailsWithService: "Dienst koppelverzoek gemaakt door {{name}} op {{date}} voor samenwerking {{collaborationName}} en dienst {{serviceName}}",
             requester: "Aanvrager",
             name: "Samenwerking",
             serviceName: "Dienst"
