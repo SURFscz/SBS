@@ -44,6 +44,11 @@ def _service_connection_request_pending_organisation_approval(service_connection
     db.session.merge(service_connection_request)
     user = db.session.get(User, current_user_id())
     _do_send_mail(collaboration, service, service_connection_request, user, False)
+
+    emit_socket(f"service_{service.id}", include_current_user_id=True)
+    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
+    emit_socket(f"organisation_{collaboration.organisation_id}", include_current_user_id=True)
+
     return {}, 201
 
 
@@ -105,6 +110,7 @@ def _do_service_connection_request(approved):
 
     emit_socket(f"service_{service.id}", include_current_user_id=True)
     emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
+    emit_socket(f"organisation_{collaboration.organisation_id}", include_current_user_id=True)
 
     return {}, 201
 
@@ -146,6 +152,10 @@ def request_service_connection():
     request_new_service_connection(collaboration, data.get("message"), service, user)
 
     update_last_activity_date(collaboration.id)
+
+    emit_socket(f"service_{service.id}")
+    emit_socket(f"collaboration_{collaboration.id}")
+    emit_socket(f"organisation_{collaboration.organisation_id}")
 
     return {}, 201
 

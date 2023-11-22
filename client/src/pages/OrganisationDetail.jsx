@@ -215,12 +215,6 @@ class OrganisationDetail extends React.Component {
         </div>)
     }
 
-    refresh = () => {
-        const params = this.props.match.params;
-        const organisation_id = parseInt(params.id, 10);
-        organisationById(organisation_id).then(json => this.setState({organisation: json}));
-    }
-
     getCollaborationRequestsTab = organisation => {
         const crl = (organisation.collaboration_requests || []).filter(cr => cr.status === "open").length;
         const tabLabel = I18n.t("home.tabs.collaborationRequests", {count: (organisation.collaboration_requests || []).length});
@@ -252,7 +246,7 @@ class OrganisationDetail extends React.Component {
                  icon={<ServiceConnectionRequestsIcon/>}
                  notifier={serviceConnectionRequests.length > 0 ? nbr : null}>
                 <ServiceConnectionRequests
-                    refresh={this.refresh}
+                    refresh={callback => this.componentDidMount(callback)}
                     serviceConnectionRequests={serviceConnectionRequests}
                     modelName={"serviceConnectionRequests"}
                     {...this.props} />

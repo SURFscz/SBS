@@ -571,6 +571,7 @@ const en = {
             noEntities: "No service connection requests were found",
             edit: "Approve / decline",
             details: "Service connection request made by {{name}} on {{date}} for collaboration {{collaborationName}}",
+            detailsWithService: "Service connection request made by {{name}} on {{date}} for collaboration {{collaborationName}} and service {{serviceName}}",
             requester: "Requester",
             name: "Collaboration",
             serviceName: "Service"

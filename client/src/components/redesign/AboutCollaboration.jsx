@@ -56,7 +56,6 @@ class AboutCollaboration extends React.Component {
                         {services.sort((a, b) => a.name.localeCompare(b.name))
                             .map(service =>
                                 <ServiceCard service={service}
-                                             key={service.id}
                                              user={user}
                                              collaboration={collaboration}
                                              ActionButton={!isEmpty(service.uri) &&

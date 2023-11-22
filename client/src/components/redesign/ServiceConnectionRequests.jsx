@@ -121,12 +121,13 @@ class ServiceConnectionRequests extends React.Component {
                     </a>
                 </div>
                 <div className="service-connection-request-form">
-                    <h2>{I18n.t("models.serviceConnectionRequests.details",
+                    <h3>{I18n.t(`models.serviceConnectionRequests.${isEmpty(service) ? "detailsWithService": "details"}`,
                         {
                             date: moment(serviceConnectionRequest.created_at * 1000).format("LL"),
                             name: serviceConnectionRequest.requester.name || serviceConnectionRequest.requester.uid,
-                            collaborationName: serviceConnectionRequest.collaboration.name
-                        })}</h2>
+                            collaborationName: serviceConnectionRequest.collaboration.name,
+                            serviceName: isEmpty(service) ? serviceConnectionRequest.service.name : ""
+                        })}</h3>
 
                     <InputField name={I18n.t("serviceConnectionRequest.message")}
                                 value={serviceConnectionRequest.message}
