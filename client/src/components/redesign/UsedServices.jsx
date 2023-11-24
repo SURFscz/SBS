@@ -33,7 +33,7 @@ class UsedServices extends React.Component {
         super(props, context);
         this.state = {
             services: [],
-            currentTab: CONNECTIONS,
+            currentTab: null,
             requestConnectionService: null,
             message: "",
             confirmedAupConnectionRequest: false,
@@ -79,8 +79,9 @@ class UsedServices extends React.Component {
                             && !service.override_access_allowed_all_connections
                             && (service.allow_restricted_orgs || !collaboration.organisation.services_restricted);
                     });
-                const currentTab = urlSearchParams.has("add") ? AVAILABLE : CONNECTIONS;
-                this.setState({services: filteredServices, currentTab: currentTab, loading: false});
+                const {currentTab} = this.state;
+                const newTab = currentTab || (urlSearchParams.has("add") ? AVAILABLE : CONNECTIONS);
+                this.setState({services: filteredServices, currentTab: newTab, loading: false});
                 setTimeout(() => this.input && this.input.focus(), 150);
                 const {socketSubscribed} = this.state;
                 if (!socketSubscribed) {
