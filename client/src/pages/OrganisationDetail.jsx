@@ -32,7 +32,7 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../utils/SocketIO";
 import {ReactComponent as MembersIcon} from "../icons/single-neutral.svg";
 import Users from "../components/redesign/Users";
-import {ButtonType, MetaDataList} from "@surfnet/sds";
+import {ButtonType} from "@surfnet/sds";
 import {isInvitationExpired} from "../utils/Date";
 import ServiceConnectionRequests from "../components/redesign/ServiceConnectionRequests";
 
@@ -361,18 +361,6 @@ class OrganisationDetail extends React.Component {
         } else {
             role = adminOfOrganisation ? ROLES.ORG_ADMIN : ROLES.ORG_MANAGER;
         }
-        const metaDataListItems = [];
-        if (!isEmpty(organisation.schac_home_organisations)) {
-            metaDataListItems.push({
-                label: organisation.schac_home_organisations.length > 1 ? I18n.t("organisation.schacHomeOrganisationShortNames") :
-                    I18n.t("organisation.schacHomeOrganisationShortName"),
-                values: organisation.schac_home_organisations.map(schac => schac.name)
-            });
-            metaDataListItems.push({
-                label: I18n.t("organisation.collaborationCreationLabel"),
-                values: [I18n.t(`organisation.${organisation.collaboration_creation_allowed ? "collaborationCreationIsAllowed" : "collaborationCreationNotAllowed"}`)]
-            })
-        }
         return (
             <div className="mod-organisation-container">
                 <OrganisationWelcomeDialog name={organisation.name}
@@ -396,9 +384,7 @@ class OrganisationDetail extends React.Component {
                             breadcrumbName={I18n.t("breadcrumb.organisation", {name: organisation.name})}
                             firstTime={user.admin ? this.onBoarding : undefined}
                             name={organisation.name}
-                            actions={this.getActions(user, organisation, adminOfOrganisation)}>
-                    {metaDataListItems.length > 0 && <MetaDataList items={metaDataListItems}/>}
-                </UnitHeader>
+                            actions={this.getActions(user, organisation, adminOfOrganisation)}/>
                 <Tabs activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}
                 </Tabs>
