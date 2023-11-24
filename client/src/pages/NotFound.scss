@@ -5,15 +5,27 @@
     max-width: $medium;
     width: 100%;
     margin: 40px auto;
+    display: flex;
+    flex-direction: column;
 
-    @media (max-width: $tablet-max) {
-        margin: 40px 20px;
+    .mod-inner-not-found {
+        margin: 0 auto;
+        display: flex;
+    flex-direction: column;
+
+        @media (max-width: $compact-medium) {
+            margin: 0 10px;
+        }
+
     }
 
     svg {
         margin-top: 25px;
         width: 480px;
         height: auto;
+        @media (max-width: $compact-medium) {
+        width: 90vw;
+        }
     }
 
     p.not-found-msg {
