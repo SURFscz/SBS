@@ -14,8 +14,10 @@ export default function NotFound({config}) {
     const html = DOMPurify.sanitize(I18n.t(`notFound.${errorMessage}`, {base_url: config.base_url}));
     return (
         <div className="mod-not-found">
-            <p className="not-found-msg" dangerouslySetInnerHTML={{__html: html}}/>
-            <NotFoundSVG/>
+            <div className="mod-inner-not-found">
+                <p className="not-found-msg" dangerouslySetInnerHTML={{__html: html}}/>
+                <NotFoundSVG/>
+            </div>
         </div>
     );
 }
