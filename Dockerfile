@@ -21,7 +21,7 @@ RUN apt autoremove -y && apt clean && apt autoclean && rm -rf /var/lib/apt/lists
 WORKDIR /opt
 
 # Install SBS
-COPY ./sbs.tar.xz /opt/sbs.tar.xz
+COPY sbs.tar.xz /opt/sbs.tar.xz
 
 # Untar sbs
 RUN tar -Jxf sbs.tar.xz
@@ -33,7 +33,7 @@ RUN tar -Jxf sbs.tar.xz
 RUN pip install -r /opt/sbs/server/requirements/test.txt
 
 # Copy entrypoint
-COPY ./misc/entrypoint.sh /entrypoint.sh
+COPY misc/entrypoint.sh /entrypoint.sh
 RUN chmod 755 /entrypoint.sh
 
 # Set the default workdir
