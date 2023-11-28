@@ -14,6 +14,10 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: sram-sbs
+
 jobs:
   Server_tests:
     name: Server tests
@@ -198,7 +202,7 @@ jobs:
       ( github.ref_type=='tag' || github.ref_type=='branch' )
     needs:
       - "Client_build"
-      # - "Server_tests"
+      - "Server_tests"
 
     runs-on: ubuntu-latest
 
@@ -277,8 +281,6 @@ jobs:
       github.event_name!='pull_request' &&
       ( github.ref_type=='tag' || github.ref_type=='branch' )
     needs:
-      # - "Client_build"
-      # - "Server_tests"
       - "Artifact_upload"
 
     runs-on: ubuntu-latest
@@ -287,22 +289,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Display structure of current working directory (before)
-        run: ls -slahR
-
       - name: Fetch build
         uses: actions/download-artifact@v3
         with:
           name: "sbs-build"
 
-      - name: Display structure of current working directory (after)
-        run: ls -slahR
-
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/surfscz/sram-sbs
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Log in to the Container registry
         uses: docker/login-action@v3
