@@ -16,7 +16,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: sram-sbs
+  IMAGE_NAME: surfscz/sram-sbs
 
 jobs:
   Server_tests:
