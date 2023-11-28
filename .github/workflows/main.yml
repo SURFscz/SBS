@@ -284,11 +284,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Display structure of current working directory (before)
+        run: ls -slahR
+
       - name: Fetch build
-        id: fetch_artifact
         uses: actions/download-artifact@v3
         with:
           name: "sbs-build"
+
+      - name: Display structure of current working directory (after)
+        run: ls -slahR
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
