@@ -21,7 +21,7 @@ RUN apt autoremove -y && apt clean && apt autoclean && rm -rf /var/lib/apt/lists
 WORKDIR /opt
 
 # Install SBS
-COPY sbs.tar.xz /opt/sbs.tar.xz
+COPY ./sbs.tar.xz /opt/sbs.tar.xz
 
 # Untar sbs
 RUN tar -Jxf sbs.tar.xz
