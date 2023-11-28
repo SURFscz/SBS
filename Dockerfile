@@ -1,25 +1,46 @@
-    # Stage 1. - Client build environment
-FROM node:8 as yarn-deps
+FROM python:3.11-slim-bookworm
 
-WORKDIR /opt/app
+# Do an initial clean up and general upgrade of the distribution
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt clean && apt autoclean && apt update
+RUN apt -y upgrade && apt -y dist-upgrade
 
-COPY client/package.json client/yarn.lock ./
-RUN yarn
+# Install the packages we need
+RUN apt install -y curl \
+  git \
+  build-essential \
+  pkgconf \
+  python3-dev \
+  default-libmysqlclient-dev \
+  libxmlsec1-dev
 
-COPY client/ ./
-RUN yarn build
-RUN CI=true yarn test
+# Clean up
+RUN apt autoremove -y && apt clean && apt autoclean && rm -rf /var/lib/apt/lists/*
 
-# Stage 2. - Client build
-FROM python:3.6
+# Set the default workdir
+WORKDIR /opt
 
-WORKDIR /opt/app
+# Install SBS
+COPY artifacts/sbs.tar.xz /opt/sbs.tar.xz
 
-RUN apt-get update && apt-get install -y gettext-base nginx && apt-get clean && rm -rf /var/lib/apt/lists/*
+# Untar sbs
+RUN tar -Jxf sbs.tar.xz
 
-COPY server/ server/
-RUN pip install --no-cache-dir -r server/requirements/base.txt
-COPY --from=yarn-deps /opt/app/build /var/www
-COPY etc/nginx.conf /etc/nginx/nginx.conf
+# Create venv dir
+#RUN virtualenv /opt/sbs
+
+#RUN . /opt/sbs/bin/activate && \
+RUN pip install -r /opt/sbs/server/requirements/test.txt
+
+# Copy entrypoint
+COPY ./conf/entrypoint.sh /entrypoint.sh
+RUN chmod 755 /entrypoint.sh
+
+# Set the default workdir
+WORKDIR /opt/sbs
 
 EXPOSE 80
+
+ENTRYPOINT ["/entrypoint.sh"]
+#CMD ["bash"]
+CMD ["/usr/local/bin/gunicorn --worker-class eventlet --workers 8 --bind 0.0.0.0:80 server.__main__:app"]
