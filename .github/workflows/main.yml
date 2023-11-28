@@ -279,6 +279,7 @@ jobs:
     needs:
       - "Client_build"
       - "Server_tests"
+      - "Artifact_upload"
 
     runs-on: ubuntu-latest
 
@@ -294,7 +295,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ matrix.image }}
+          images: ghcr.io/surfscz/sram-sbs
 
       - name: Log in to the Container registry
         uses: docker/login-action@v3
@@ -306,7 +307,6 @@ jobs:
       - name: Build and push Docker images
         uses: docker/build-push-action@v5
         with:
-          context: ${{ matrix.context }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
