@@ -289,7 +289,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: "sbs-build"
-          path: "artifacts/"
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
