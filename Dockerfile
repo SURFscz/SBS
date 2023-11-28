@@ -33,7 +33,7 @@ RUN tar -Jxf sbs.tar.xz
 RUN pip install -r /opt/sbs/server/requirements/test.txt
 
 # Copy entrypoint
-COPY ./conf/entrypoint.sh /entrypoint.sh
+COPY ./misc/entrypoint.sh /entrypoint.sh
 RUN chmod 755 /entrypoint.sh
 
 # Set the default workdir
