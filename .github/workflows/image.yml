@@ -4,10 +4,8 @@ name: Create and publish a Docker image
 on:
   push:
     branches: ["ci-create-image"]
-  release:
     tags:
       - '*'
-    types: [published]
 
 env:
   REGISTRY: ghcr.io
