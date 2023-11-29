@@ -56,7 +56,7 @@ properties:
       example: "label_1"
   units:
     type: array
-    description: "Units, existing units of the collaboration"
+    description: "Units, existing units of this collaboration's organisation"
     items:
       type: object
       properties:
