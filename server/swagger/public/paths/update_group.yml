@@ -1,5 +1,9 @@
-summary: "Post a new group."
-description: "Save a new group."
+summary: "Update properties of a group."
+description: >
+  Update properties of a group. The group must exist in a CO owned by the organisation.
+  For regular groups, only the name, description and auto_provision_members properties can be
+  updated.
+  For service groups, only the the auto_provision_members property can be updated.
 
 tags:
   - "Organisation"
