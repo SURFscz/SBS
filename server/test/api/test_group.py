@@ -154,6 +154,13 @@ class TestGroup(AbstractTest):
 
         self.assertIsNotNone(self.find_group_membership(group_ai_dev_identifier, "urn:jane"))
 
+    def test_add_membership_forbidden_api(self):
+        self.post(f"/api/groups/v1/{group_ai_dev_identifier}",
+                  body={"uid": "urn:jane"},
+                  headers={"Authorization": f"Bearer {unifra_secret}"},
+                  with_basic_auth=False,
+                  response_status_code=403)
+
     def test_add_membership_api_not_collaboration_member_forbidden(self):
         peter = self.find_entity_by_name(User, "Peter Doe")
         self.assertFalse(self.find_entity_by_name(Collaboration, co_ai_computing_name).is_member(peter.id))
