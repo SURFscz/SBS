@@ -247,6 +247,30 @@ class TestGroup(AbstractTest):
         self.assertEqual(group.description, "a different description")
         self.assertEqual(group.auto_provision_members, True)
 
+    def test_update_group_servicegroup_api(self):
+        group = Group.query.filter(Group.name == service_group_mail_name
+                                   and Group.collaboration.identifier == co_research_uuid).first()
+
+        res = self.put(f"/api/groups/v1/{group.identifier}",
+                       body={
+                           "auto_provision_members": True
+                       },
+                       headers={"Authorization": f"Bearer {unifra_secret}"},
+                       with_basic_auth=False)
+
+        # need to refetch the group because after the API call the group session is no longer bound to the DB session
+        group = Group.query.filter(Group.name == service_group_mail_name
+                                   and Group.collaboration.identifier == co_research_uuid).first()
+
+        self.assertEqual(res["identifier"], group.identifier)
+        self.assertEqual(res["name"], group.name)
+        self.assertEqual(res["short_name"], group.short_name)
+        self.assertEqual(res["description"], group.description)
+        self.assertEqual(res["auto_provision_members"], True)
+
+        self.assertEqual(4, len(group.collaboration_memberships))
+        self.assertEqual(group.auto_provision_members, True)
+
     def test_update_group_not_allowed_api(self):
         self.put(f"/api/groups/v1/{group_science_identifier}",
                  body={
@@ -279,6 +303,7 @@ class TestGroup(AbstractTest):
                  with_basic_auth=False,
                  response_status_code=400)
 
+    def test_update_group_servicegroup_wrong_attribute_api(self):
         group = Group.query.filter(Group.name == service_group_mail_name
                                    and Group.collaboration.identifier == co_research_uuid).first()
 
