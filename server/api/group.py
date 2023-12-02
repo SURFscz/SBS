@@ -274,7 +274,7 @@ def api_add_group_membership(group_identifier):
         .filter(Group.identifier == group_identifier) \
         .one()
 
-    if not organisation or organisation.id != group.collaboration.organisation_id:
+    if organisation.id != group.collaboration.organisation_id:
         raise Forbidden()
 
     user = User.query \
