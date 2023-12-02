@@ -4,7 +4,7 @@ from flasgger import swag_from
 from flask import Blueprint, request as current_request, g as request_context
 from sqlalchemy import func
 from sqlalchemy.orm import load_only
-from werkzeug.exceptions import Forbidden, Conflict
+from werkzeug.exceptions import Forbidden, Conflict, BadRequest
 
 from server.api.base import json_endpoint, query_param, emit_socket
 from server.api.group_members import do_add_group_members
@@ -204,6 +204,41 @@ def update_group():
     update_last_activity_date(group.collaboration_id)
 
     emit_socket(f"collaboration_{collaboration.id}")
+    broadcast_group_changed(group.id)
+
+    return group, 201
+
+
+@group_api.route("/v1/<group_identifier>", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+@swag_from("../swagger/public/paths/update_group.yml")
+def update_group_api(group_identifier):
+    group = Group.query.filter(Group.identifier == group_identifier).one()
+
+    confirm_organisation_api_collaboration(None, group.collaboration)
+
+    data = current_request.get_json()
+    # check the input; we can only change name, description, auto_provision_members
+    # service groups can only update auto_provision_members
+    for key, value in data.items():
+        if key == "name" and not group.service_group:
+            group.name = value
+        elif key == "description" and not group.service_group:
+            group.description = value
+        elif key == "auto_provision_members":
+            group.auto_provision_members = bool(value)
+        else:
+            raise BadRequest(f"Cannot change {key} of group {group_identifier}")
+
+    db.session.merge(group)
+
+    # Ensure to skip current_user is CO admin check
+    request_context.skip_collaboration_admin_confirmation = True
+    auto_provision_all_members_and_invites(group)
+
+    update_last_activity_date(group.collaboration_id)
+
+    emit_socket(f"collaboration_{group.collaboration_id}")
     broadcast_group_changed(group.id)
 
     return group, 201

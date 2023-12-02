@@ -1,0 +1,16 @@
+---
+type: object
+properties:
+  name:
+    type: string
+    example: "AI researchers"
+    description: "Optional; update the name of the group"
+  description:
+    type: string
+    example: "AI researchers"
+    description: "Optional; update the description of the group"
+  auto_provision_members:
+    type: boolean
+    description: "Optional: if true then make every member member of this group"
+    example: true
+required: []
