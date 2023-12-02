@@ -5,7 +5,8 @@ from server.test.abstract_test import AbstractTest
 from server.test.seed import (group_ai_researchers, co_ai_computing_name, group_ai_researchers_short_name,
                               service_group_mail_name, group_ai_dev_identifier, unihard_secret, user_john_name, unifra_secret,
                               co_ai_computing_uuid,
-                              co_research_name, unihard_short_name)
+                              co_research_name, unihard_short_name, group_science_identifier, group_ai_researchers_identifier,
+                              co_research_uuid)
 
 
 class TestGroup(AbstractTest):
@@ -224,9 +225,81 @@ class TestGroup(AbstractTest):
                   with_basic_auth=False,
                   response_status_code=404)
 
+    def test_update_group_api(self):
+        res = self.put(f"/api/groups/v1/{group_ai_researchers_identifier}",
+                       body={
+                           "name": "a different name",
+                           "description": "a different description",
+                           "auto_provision_members": True,
+                       },
+                       headers={"Authorization": f"Bearer {unihard_secret}"},
+                       with_basic_auth=False)
+
+        self.assertEqual(res["identifier"], group_ai_researchers_identifier)
+        self.assertEqual(res["name"], "a different name")
+        self.assertEqual(res["short_name"], group_ai_researchers_short_name)
+        self.assertEqual(res["description"], "a different description")
+        self.assertEqual(res["auto_provision_members"], True)
+
+        group = Group.query.filter(Group.identifier == group_ai_researchers_identifier).first()
+        self.assertEqual(5, len(group.collaboration_memberships))
+        self.assertEqual(group.name, "a different name")
+        self.assertEqual(group.description, "a different description")
+        self.assertEqual(group.auto_provision_members, True)
+
+    def test_update_group_not_allowed_api(self):
+        self.put(f"/api/groups/v1/{group_science_identifier}",
+                 body={
+                     "name": "some name",
+                     "description": "optional",
+                     "auto_provision_members": False,
+                 },
+                 headers={"Authorization": f"Bearer {unihard_secret}"},
+                 with_basic_auth=False,
+                 response_status_code=404)
+
+    def test_update_group_wrong_attribute_api(self):
+        self.put(f"/api/groups/v1/{group_ai_researchers_identifier}",
+                 body={
+                     "name": "a different name",
+                     "description": "a different description",
+                     "auto_provision_members": True,
+                     "invalid_attribute": "invalid value"
+                 },
+                 headers={"Authorization": f"Bearer {unihard_secret}"},
+                 with_basic_auth=False,
+                 response_status_code=400)
+
+        self.put(f"/api/groups/v1/{group_ai_researchers_identifier}",
+                 body={
+                     "name": "a different name",
+                     "short_name": "very_short"
+                 },
+                 headers={"Authorization": f"Bearer {unihard_secret}"},
+                 with_basic_auth=False,
+                 response_status_code=400)
+
+        group = Group.query.filter(Group.name == service_group_mail_name
+                                   and Group.collaboration.identifier == co_research_uuid).first()
+
+        self.put(f"/api/groups/v1/{group.identifier}",
+                 body={
+                     "name": "a different name",
+                 },
+                 headers={"Authorization": f"Bearer {unifra_secret}"},
+                 with_basic_auth=False,
+                 response_status_code=400)
+
     def test_delete_group_api(self):
         group = self.find_entity_by_name(Group, group_ai_researchers)
         self.delete("/api/groups/v1", primary_key=group.identifier,
                     headers={"Authorization": f"Bearer {unihard_secret}"},
                     with_basic_auth=False)
         self.assertIsNone(self.find_entity_by_name(Group, group_ai_researchers))
+
+    def test_delete_group_not_allowed_api(self):
+        group = self.find_entity_by_name(Group, group_ai_researchers)
+        self.delete("/api/groups/v1", primary_key=group.identifier,
+                    headers={"Authorization": f"Bearer {unifra_secret}"},
+                    with_basic_auth=False,
+                    response_status_code=404)
