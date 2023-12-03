@@ -149,9 +149,9 @@ pip-upgrade requirements/test.txt --dry-run
 
 See the /config/saml_test configuration and the https://github.com/SURFscz/SCZ-deploy project
 
-### [flash](#flash)
+### [flask](#flask)
 
-To open a flash terminal session:
+To open a flask terminal session:
 
 ```bash
 source .venv/bin/activate

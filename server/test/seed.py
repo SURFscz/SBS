@@ -72,6 +72,7 @@ group_ai_researchers_short_name = "ai_res"
 group_ai_researchers_identifier = "9734e4c4-d23e-4228-b0e0-8e6a5b85e72e"
 group_ai_dev_identifier = "4c270cff-de30-49e8-a3bc-df032536b37c"
 group_science_name = "Science"
+group_science_identifier = "e46e388c-9362-4aaa-b23f-a855bf559598"
 
 # services
 service_mail_name = "Mail Services"
@@ -636,7 +637,7 @@ def seed(db, app_config, skip_seed=False):
     group_science = Group(name=group_science_name,
                           short_name="science",
                           global_urn="uva:research:science",
-                          identifier="e46e388c-9362-4aaa-b23f-a855bf559598",
+                          identifier=group_science_identifier,
                           auto_provision_members=True,
                           description="Science",
                           collaboration=uva_research,
