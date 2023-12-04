@@ -7,7 +7,7 @@ import {
     collaborationNameExists,
     collaborationShortNameExists,
     createCollaboration,
-    deleteCollaboration,
+    deleteCollaboration, hintShortName,
     myOrganisationsLite,
     requestCollaboration,
     tagsByOrganisation,
@@ -45,6 +45,7 @@ class CollaborationForm extends React.Component {
             name: "",
             logo: "",
             short_name: "",
+            shortNameEdited: false,
             description: "",
             website_url: "",
             administrators: [],
@@ -218,11 +219,23 @@ class CollaborationForm extends React.Component {
 
     validateCollaborationName = e =>
         collaborationNameExists(e.target.value, this.state.organisation.value, this.existingCollaborationName("name"))
-            .then(json => this.setState({alreadyExists: {...this.state.alreadyExists, name: json}}));
+            .then(json => {
+                this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
+                if (!json && !isEmpty(e.target.value)) {
+                    this.generateShortName(e.target.value);
+                }
+            });
 
     validateCollaborationShortName = e =>
         collaborationShortNameExists(sanitizeShortName(e.target.value), this.state.organisation.value, this.existingCollaborationName("short_name"))
             .then(json => this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}}));
+
+    generateShortName = name => {
+        const {short_name, shortNameEdited} = this.state;
+        if ((!shortNameEdited || isEmpty(short_name)) && !isEmpty(name)) {
+            hintShortName(name).then(res => this.setState({short_name: res.short_name}));
+        }
+    }
 
     cancel = () => {
         this.setState({
@@ -550,9 +563,12 @@ class CollaborationForm extends React.Component {
                                            includeLogoGallery={true}
                                            secondRow={true}/>
                     </div>
+
                     <InputField value={short_name} onChange={e => {
+                        const shortNameEdited = this.state.short_name !== e.target.value;
                         this.setState({
                             short_name: sanitizeShortName(e.target.value),
+                            shortNameEdited: shortNameEdited,
                             alreadyExists: {...this.state.alreadyExists, short_name: false}
                         })
                     }}

@@ -614,6 +614,14 @@ def save_collaboration_api():
     return collaboration_json, 201
 
 
+@collaboration_api.route("/hint_short_name", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def hint_short_name():
+    data = current_request.get_json()
+    short_name_hint = generate_short_name(data["name"])
+    return {"short_name": short_name_hint}, 200
+
+
 def do_save_collaboration(data, organisation, user, current_user_admin=True, save_tags=True):
     _validate_collaboration(data, organisation)
 
