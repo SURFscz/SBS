@@ -445,7 +445,7 @@ const nl = {
         },
         collaboration: {
             memberHeader: "{{nbrMember}} leden – {{nbrGroups}} groepen",
-            memberInformation: "Neem bij vragen over deze samenwerking contact op met een van de beheerders:",
+            memberInformation: "Neem contact op met een beheerder",
             noAdminsHeader: "(Nog) geen beheerders",
             adminsHeader: "Georganiseerd door <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong></a>",
             twoAdminsHeader: "Georganiseerd door <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong> en <strong>{{nbr}} ander</strong></a>",
@@ -469,7 +469,8 @@ const nl = {
             discloseNoMemberInformation: "Deze samenwerking deelt geen ledeninformatie",
             discloseNoMemberInformationJoinRequest: "Alleen zichtbaar voor leden",
             newCollaborationRequest: "Aanvragen samenwerking",
-            leave: "Lidmaatschap opzeggen"
+            leave: "Lidmaatschap opzeggen",
+            labels: "Label(s)",
         },
         apiKeys: {
             title: "Organisatie-API-tokens",
