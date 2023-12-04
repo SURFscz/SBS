@@ -16,6 +16,7 @@ import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {ReactComponent as DetailsIcon} from "../icons/services.svg";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
 import {ReactComponent as WebsiteIcon} from "../icons/network-information.svg";
+import {ReactComponent as ShortNameIcon} from "../icons/short-name.svg";
 import {ReactComponent as ServiceConnectionRequestsIcon} from "../icons/connections.svg";
 import {ReactComponent as AboutIcon} from "../icons/common-file-text-home.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
@@ -520,6 +521,10 @@ class ServiceDetail extends React.Component {
         }
         const iconListItems = [
             {
+                Icon: <ShortNameIcon/>,
+                value: <span>{I18n.t("service.abbreviation")}: <span className="abbreviation">{service.abbreviation}</span></span>
+            },
+            {
                 Icon: <ConnectedIcon/>,
                 value:
                     <span>{this.getCollaborationHeaderInfo(service)}{this.getInstitutionsHeadersInfo(service, organisations)}</span>
@@ -567,10 +572,6 @@ class ServiceDetail extends React.Component {
                             name={service.name}
                             firstTime={(user.admin && !showServiceAdminView) ? this.onBoarding : undefined}
                             actions={this.getActions(user, service, showServiceAdminView)}>
-                    <p>
-                        <span>{I18n.t("service.abbreviation")}:</span>
-                        <span className="abbreviation">{service.abbreviation}</span>
-                    </p>
                     {!invitation && this.getIconListItems(iconListItems)}
                 </UnitHeader>
                 <div className="mod-service-container">
