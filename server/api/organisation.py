@@ -192,6 +192,8 @@ def organisation_by_id(organisation_id):
                  .selectinload(OrganisationMembership.user)) \
         .options(selectinload(Organisation.organisation_invitations)
                  .selectinload(OrganisationInvitation.user)) \
+        .options(selectinload(Organisation.organisation_invitations)
+                 .selectinload(OrganisationInvitation.units)) \
         .options(selectinload(Organisation.api_keys)) \
         .options(selectinload(Organisation.services)) \
         .options(selectinload(Organisation.collaboration_requests)
