@@ -706,8 +706,9 @@ class TestCollaboration(AbstractTest):
                                     content_type="application/json")
         self.assertEqual(400, response.status_code)
         data = response.json
-        self.assertIn(f"Collaboration with name '{co_ai_computing_name}' already exists within organisation '{unihard_name}'.",
-                      data["message"])
+        self.assertIn(
+            f"Collaboration with name '{co_ai_computing_name}' already exists within organisation '{unihard_name}'.",
+            data["message"])
 
     def test_api_call_existing_short_name(self):
         response = self.client.post("/api/collaborations/v1",
@@ -1036,3 +1037,11 @@ class TestCollaboration(AbstractTest):
 
         short_name = generate_short_name("Name !@#$ test qwerty long name")
         self.assertEqual("nametestqwertylo", short_name)
+
+    def test_hint_short_name(self):
+        res = self.post("/api/collaborations/hint_short_name", body={"name": "monitor1"}, response_status_code=200)
+        self.assertEqual("monitor12", res["short_name"])
+
+    def test_empty_hint_short_name(self):
+        res = self.post("/api/collaborations/hint_short_name", body={"name": "*&^%$$@"}, response_status_code=200)
+        self.assertEqual("short_name", res["short_name"])

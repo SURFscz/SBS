@@ -437,6 +437,10 @@ export function activateCollaboration(collaborationId) {
     return postPutJson("/api/collaborations/activate", {collaboration_id: collaborationId}, "put");
 }
 
+export function hintShortName(name) {
+    return postPutJson("/api/collaborations/hint_short_name", {name: name}, "post");
+}
+
 //Organisations
 export function myOrganisationsLite() {
     return fetchJson(`/api/organisations/mine_lite`);
