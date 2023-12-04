@@ -1151,7 +1151,9 @@ const nl = {
             testTooltip: "Test het SCIM endpoint en het SCIM token",
             success: "De SCIM connectie test naar {{url}} was succesvol",
             failure: "De SCIM connectie test naar {{url}} was niet succesvol.",
-            response: "Antwoord van het SCIM endpoint:"
+            response: "Antwoord van het SCIM endpoint:",
+            saveBeforeTest: "Wijzigen dienst",
+            saveBeforeTestQuestion: "Je hebt wijzigingen gemaakt in de SCIM configuratie. Wil je deze wijzigingen eerst opslaan voordat je de SCIM connectie gaat testen?"
         }
     },
     organisation: {
