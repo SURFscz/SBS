@@ -75,7 +75,8 @@ class ServiceOverview extends React.Component {
             validatingNetwork: false,
             initial: true,
             sweepSuccess: null,
-            sweepResults: null
+            sweepResults: null,
+            originalSCIMConfiguration: {}
         }
     }
 
@@ -100,6 +101,7 @@ class ServiceOverview extends React.Component {
                 hasAdministrators: service.service_memberships.length > 0,
                 isServiceAdmin: serviceAdmin,
                 currentTab: tab,
+                originalSCIMConfiguration: {scim_bearer_token: service.scim_bearer_token, scim_url: service.scim_url},
                 loading: false
             }, () => {
                 const {ip_networks} = this.state.service;
@@ -372,41 +374,56 @@ class ServiceOverview extends React.Component {
         return valid;
     };
 
-    doSweep = service => {
-        this.setState({loading: true});
-        sweep(service).then(res => {
+    doSweep = (service, override) => {
+        const {originalSCIMConfiguration} = this.state;
+        if (!override && (originalSCIMConfiguration.scim_url !== service.scim_url || originalSCIMConfiguration.scim_bearer_token !== service.scim_bearer_token)) {
             this.setState({
-                loading: false,
-                sweepSuccess: true,
-                sweepResults: res,
-                confirmationDialogQuestion: null,
-                confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
-                confirmationHeader: I18n.t("service.sweep.test"),
-                confirmationTxt: I18n.t("confirmationDialog.ok"),
-                warning: false,
-                cancelDialogAction: null,
-                confirmationDialogOpen: true
-            });
-        }).catch(e => {
-            this.setState({
-                loading: false,
-                sweepSuccess: false,
-                confirmationDialogQuestion: null,
-                confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
-                confirmationHeader: I18n.t("service.sweep.test"),
-                confirmationTxt: I18n.t("confirmationDialog.ok"),
-                warning: false,
-                cancelDialogAction: null,
-                confirmationDialogOpen: true
-            });
-            if (e.response && e.response.json) {
-                e.response.json().then(res => {
-                    this.setState({
-                        sweepResults: res,
-                    });
-                })
-            }
-        })
+                    sweepSuccess: null,
+                    confirmationDialogQuestion: I18n.t("service.sweep.saveBeforeTestQuestion"),
+                    confirmationDialogAction: () => this.submit(false, true),
+                    confirmationHeader: I18n.t("service.sweep.saveBeforeTest"),
+                    confirmationTxt: I18n.t("confirmationDialog.confirm"),
+                    warning: false,
+                    cancelDialogAction: () => this.setState({confirmationDialogOpen: false}, () => this.doSweep(service, true)),
+                    confirmationDialogOpen: true
+                });
+        } else {
+            this.setState({loading: true});
+            sweep(service).then(res => {
+                this.setState({
+                    loading: false,
+                    sweepSuccess: true,
+                    sweepResults: res,
+                    confirmationDialogQuestion: null,
+                    confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
+                    confirmationHeader: I18n.t("service.sweep.test"),
+                    confirmationTxt: I18n.t("confirmationDialog.ok"),
+                    warning: false,
+                    cancelDialogAction: null,
+                    confirmationDialogOpen: true
+                });
+            }).catch(e => {
+                this.setState({
+                    loading: false,
+                    sweepSuccess: false,
+                    confirmationDialogQuestion: null,
+                    confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
+                    confirmationHeader: I18n.t("service.sweep.test"),
+                    confirmationTxt: I18n.t("confirmationDialog.ok"),
+                    warning: false,
+                    cancelDialogAction: null,
+                    confirmationDialogOpen: true
+                });
+                if (e.response && e.response.json) {
+                    e.response.json().then(res => {
+                        this.setState({
+                            sweepResults: res,
+                        });
+                    })
+                }
+            })
+
+        }
     }
 
     isValidTab = tab => {
@@ -437,7 +454,7 @@ class ServiceOverview extends React.Component {
         }
     };
 
-    submit = override => {
+    submit = (override, sweepAfterwards = false) => {
         this.setState({initial: false}, () => {
             if (this.isValid()) {
                 const {service} = this.state;
@@ -504,7 +521,7 @@ class ServiceOverview extends React.Component {
                         }
                     }, () => {
                         updateService(this.state.service)
-                            .then(() => this.afterUpdate(name, "updated"))
+                            .then(() => this.afterUpdate(name, "updated", sweepAfterwards))
                             .catch(() => this.setState({loading: false}));
                     });
                 }
@@ -514,10 +531,10 @@ class ServiceOverview extends React.Component {
         });
     };
 
-    afterUpdate = (name, action) => {
+    afterUpdate = (name, action, sweepAfterwards = false) => {
         setFlash(I18n.t(`service.flash.${action}`, {name: name}));
         this.setState({loading: false, initial: false, createNewServiceToken: false, confirmationDialogOpen: false});
-        this.props.refresh();
+        this.props.refresh(sweepAfterwards ? () => setTimeout(() => this.doSweep(this.state.service, true), 275) : null);
     };
 
     changeTab = tab => e => {

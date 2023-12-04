@@ -1151,7 +1151,9 @@ const en = {
             testTooltip: "Test the SCIM endpoint and the SCIM token",
             success: "The SCIM connection test to {{url}} was successful",
             failure: "The SCIM connection test to {{url}} was unsuccessful.",
-            response: "Response from the SCIM endpoint:"
+            response: "Response from the SCIM endpoint:",
+            saveBeforeTest: "Update service",
+            saveBeforeTestQuestion: "You have made changes to the SCIM configuration. Do you want to save this changes before you test the SCIM endpoint?"
         }
     },
     organisation: {
@@ -1167,7 +1169,7 @@ const en = {
         tenantPlaceHolder: "The unique tenant / organisation identifier linking the organisation to an institute",
         shortName: "Short name",
         shortNamePlaceHolder: "Short name of the organisation",
-        shortNameTooltip: "The short name is be used in LDAP services (like Linux directory names).<br/><br/>" +
+        shortNameTooltip: "The short name is used in LDAP services (like Linux directory names).<br/><br/>" +
             "Only digits, alphanumeric characters and the underscore are allowed.",
         identifier: "Identifier",
         identifierTooltip: "Generated, unique and immutable identifier of a organisation which used as identifier for external systems",
