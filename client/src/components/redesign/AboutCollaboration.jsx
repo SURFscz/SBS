@@ -4,8 +4,13 @@ import "./AboutCollaboration.scss";
 import {isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
 import {CO_SHORT_NAME, SRAM_USERNAME} from "../../validations/regExps";
 import ServiceCard from "../ServiceCard";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+
+import {ReactComponent as WebsiteIcon} from "../../icons/network-information.svg";
+import {ReactComponent as EmailActionIcon} from "../../icons/streamline/email-action-unread.svg";
+import {ReactComponent as ShortNameIcon} from "../../icons/short-name.svg";
+import {ReactComponent as TagsIcon} from "../../icons/tags.svg";
 import Button from "../Button";
+import {Chip, ChipType} from "@surfnet/sds";
 
 
 class AboutCollaboration extends React.Component {
@@ -57,6 +62,7 @@ class AboutCollaboration extends React.Component {
                             .map(service =>
                                 <ServiceCard service={service}
                                              user={user}
+                                             key={service.id}
                                              collaboration={collaboration}
                                              ActionButton={!isEmpty(service.uri) &&
                                                  <Button txt={I18n.t("service.launch")}
@@ -70,34 +76,65 @@ class AboutCollaboration extends React.Component {
                         <div className="services">
                             {(services.length === 0 && !isJoinRequest) &&
                                 <h4 className={"margin"}>{I18n.t("models.collaboration.noServices")}</h4>}
-                            {isJoinRequest && <h4 className={"margin"}>{I18n.t("models.collaboration.noServicesJoinRequest")}</h4>}
+                            {isJoinRequest &&
+                                <h4 className={"margin"}>{I18n.t("models.collaboration.noServicesJoinRequest")}</h4>}
                         </div>}
                 </div>
                 {!isJoinRequest &&
                     <div className="members">
-                        <div className="members-header">
-                            <p>{I18n.t("models.collaboration.memberInformation")}</p>
+
+                        {!isEmpty(collaboration.tags) &&
+                            <div className="meta-section">
+                                <div className="header">
+                                    <TagsIcon/>
+                                    <p>{I18n.t("models.collaboration.labels")}</p>
+                                </div>
+                                <div className="values">
+                                    {collaboration.tags
+                                        .sort()
+                                        .map((label, index) => <span key={index} className="chip-container">
+                                                <Chip type={ChipType.Support_100} label={label.tag_value}/>
+                                            </span>)}
+                                </div>
+                            </div>}
+                        <div className="meta-section">
+                            <div className="header">
+                                <ShortNameIcon/>
+                                <p>{I18n.t("collaboration.shortName")}</p>
+                            </div>
+                            <div className="values">
+                                <span><strong>{collaboration.short_name}</strong></span>
+                            </div>
                         </div>
-                        <table className={"admins"}>
-                            <thead/>
-                            <tbody>
-                            {memberships
-                                .sort((m1, m2) => m1.user.name.localeCompare(m2.user.name))
-                                .map(m =>
-                                    <tr key={m.id}>
-                                        <td className={"name"}>
-                                            {m.user.name}</td>
-                                        <td className={"email"}><a href={`mailto:${m.user.email}`}>
-                                            <FontAwesomeIcon
-                                                icon="envelope"/></a>
-                                        </td>
-                                    </tr>)}
-                            {!showMembers &&
-                                <tr className={"member-disclaimer"}>
-                                    <td colSpan={2}>{I18n.t("models.collaboration.discloseNoMemberInformation")}</td>
-                                </tr>}
-                            </tbody>
-                        </table>
+                        {collaboration.website_url &&
+                            <div className="meta-section">
+                                <div className="header">
+                                    <WebsiteIcon/>
+                                    <p>{I18n.t("collaborations.moreInformation")}</p>
+                                </div>
+                                <div className="values">
+                                    <a href={collaboration.website_url}
+                                       rel="noopener noreferrer"
+                                       target="_blank">{I18n.t("coPageHeaders.visit")}</a>
+                                </div>
+                            </div>}
+                        <div className="meta-section">
+                            <div className="header">
+                                <EmailActionIcon/>
+                                <p>{I18n.t("models.collaboration.memberInformation")}</p>
+                            </div>
+                            <div className="values">
+                                {memberships
+                                    .sort((m1, m2) => m1.user.name.localeCompare(m2.user.name))
+                                    .map(m => <p key={m.id}><a href={`mailto:${m.user.email}`}>{m.user.name}</a></p>)}
+                            </div>
+                        </div>
+
+
+                        {!showMembers &&
+                            <div className={"member-disclaimer"}>
+                                <p>{I18n.t("models.collaboration.discloseNoMemberInformation")}</p>
+                            </div>}
                     </div>}
 
                 {isJoinRequest && <div className="members">

@@ -22,14 +22,12 @@ import UnitHeader from "../components/redesign/UnitHeader";
 import Tabs from "../components/Tabs";
 import {ReactComponent as CoAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
-import {ReactComponent as ShortNameIcon} from "../icons/short-name.svg";
 import {ReactComponent as MemberIcon} from "../icons/groups.svg";
 import {ReactComponent as TimerIcon} from "../icons/streamline/timer2.svg";
 import {ReactComponent as GroupsIcon} from "../icons/ticket-group.svg";
-import {ReactComponent as WebsiteIcon} from "../icons/network-information.svg";
 import {ReactComponent as CopyIcon} from "../icons/duplicate.svg";
 import {ReactComponent as UserTokensIcon} from "../icons/connections.svg";
-import {ReactComponent as MemberStatusIcon} from "@surfnet/sds/icons/functional-icons/id-2.svg";
+import {ReactComponent as MemberStatusIcon} from "@surfnet/sds/icons/functional-icons/id-1.svg";
 import {ReactComponent as JoinRequestsIcon} from "../icons/single-neutral-question.svg";
 import {ReactComponent as AboutIcon} from "../icons/common-file-text-home.svg";
 import CollaborationAdmins from "../components/redesign/CollaborationAdmins";
@@ -559,15 +557,6 @@ class CollaborationDetail extends React.Component {
         </div>);
     }
 
-    getShortNameIconListItem = collaboration => {
-        return (
-            {
-                Icon: <ShortNameIcon/>,
-                value: <span>{collaboration.short_name}</span>
-            }
-        );
-    }
-
     getMemberIconListItem = collaboration => {
         const memberCount = collaboration.collaboration_memberships.length;
         const groupCount = collaboration.groups.length;
@@ -587,17 +576,8 @@ class CollaborationDetail extends React.Component {
     getUnitHeaderForMemberNew = (user, config, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember, adminOfCollaboration) => {
         const customAction = collaborationJoinRequest ? this.collaborationJoinRequestAction(collaboration, alreadyMember) : null;
         const iconListItems = [
-            this.getShortNameIconListItem(collaboration),
             this.getMemberIconListItem(collaboration)
         ];
-        if (collaboration.website_url) {
-            iconListItems.push({
-                Icon: <WebsiteIcon/>,
-                value: <a href={collaboration.website_url} target="_blank" rel="noopener noreferrer">
-                    {I18n.t("coPageHeaders.visit")}
-                </a>
-            })
-        }
         const membershipStatus = this.getMembershipStatus(collaboration, user);
         if (!collaborationJoinRequest && membershipStatus) {
             iconListItems.push({
@@ -789,18 +769,8 @@ class CollaborationDetail extends React.Component {
     getUnitHeader = (user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration) => {
         const joinRequestUrl = `${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`;
         const iconListItems = [
-            this.getShortNameIconListItem(collaboration),
             this.getMemberIconListItem(collaboration)
         ];
-        if (collaboration.website_url) {
-            iconListItems.push({
-                Icon: <WebsiteIcon/>,
-                value: <a href={collaboration.website_url} target="_blank" rel="noopener noreferrer">
-                    {I18n.t("coPageHeaders.visit")}
-                </a>
-            })
-        }
-
         if (!collaboration.disable_join_requests) {
             iconListItems.push({
                 Icon: <CopyIcon/>,
@@ -821,7 +791,6 @@ class CollaborationDetail extends React.Component {
                             auditLogPath={`collaborations/${collaboration.id}`}
                             breadcrumbName={I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
                             name={collaboration.name}
-                            labels={collaboration.tags.map(tag => tag.tag_value)}
                             displayDescription={false}
                             actions={this.getActions(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}>
             {this.getIconListItems(iconListItems)}

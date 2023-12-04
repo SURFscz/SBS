@@ -445,7 +445,7 @@ const en = {
         },
         collaboration: {
             memberHeader: "{{nbrMember}} members – {{nbrGroups}} groups",
-            memberInformation: "If you have any questions about this collaboration, please contact one of the admins:",
+            memberInformation: "Contact an administrator",
             noAdminsHeader: "No admins (yet)",
             adminsHeader: "Organised by <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong></a>",
             twoAdminsHeader: "Organised by <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong> and <strong>{{nbr}} other</strong></a>",
@@ -469,7 +469,8 @@ const en = {
             discloseNoMemberInformation: "This collaboration discloses no member information",
             discloseNoMemberInformationJoinRequest: "Only visible for members",
             newCollaborationRequest: "Request collaboration",
-            leave: "Leave collaboration"
+            leave: "Leave collaboration",
+            labels: "Label(s)",
         },
         apiKeys: {
             title: "Organisation API tokens",

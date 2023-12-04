@@ -29,60 +29,55 @@ div.collaboration-about-mod {
     }
 
     div.about {
-        width: 60%;
+        width: 50%;
         @media (max-width: $tablet-max) {
             width: 100%;
         }
     }
-
-    div.members {
-        width: 30%;
-    }
-
-    table.admins {
-        margin-top: 25px;
-        width: 100%;
-        tr {
-            border-bottom: 1px solid $light-grey;
-
-            &:first-child {
-                margin-top: 20px;
-                border-top: 1px solid $medium-grey;
-            }
-            td {
-            padding: 10px 0;
-                &.name {
-                    width: 80%;
-                }
-                &.email {
-                    width: 20%;
-                    text-align: center;
-                }
-            }
-
-
-        }
-    }
-
 
     .sds--content-card {
         margin-bottom: 25px;
     }
 
     .members {
+        width: 40%;
+
         margin: 0 20px 0 40px;
 
-        .members-header {
-            display: flex;
-
-            &.join-request {
-                flex-direction: column;
+        .meta-section {
+            &:not(:first-child) {
+                margin-top: 25px;
             }
 
-            a {
-                margin-left: 25px;
+            .header {
+                display: flex;
+                align-items: center;
+
+
+                svg {
+                    margin-right: 10px;
+                    width: 24px;
+                    height: auto;
+                }
+
+                &.join-request {
+                    flex-direction: column;
+                }
+
+
             }
+
+            div.values {
+                padding-left: 35px;
+
+                span.chip-container {
+                    display: inline-block;
+                    margin: 10px 10px 0 0;
+                }
+            }
+
         }
+
 
     }
 }
