@@ -907,7 +907,8 @@ class ServiceOverview extends React.Component {
                               }
                           })}
                 />
-                {!service.ldap_enabled && <div className={"input-field"}>
+                {!service.ldap_enabled &&
+                    <div className={"input-field sds--text-field"}>
                     <label>{I18n.t("service.ldap.section")}
                         <Tooltip tip={I18n.t("service.ldap.sectionTooltip")}/>
                     </label>
