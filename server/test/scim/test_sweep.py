@@ -30,7 +30,8 @@ class TestSweep(AbstractTest):
 
             self.assertDictEqual({
                 "users": {"deleted": [], "created": [], "updated": []},
-                "groups": {"deleted": [], "created": [], "updated": []}
+                "groups": {"deleted": [], "created": [], "updated": []},
+                "scim_url": "http://localhost:8080/api/scim_mock"
             }, sync_results)
 
     @responses.activate
