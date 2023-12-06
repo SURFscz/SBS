@@ -21,27 +21,28 @@ parameters:
     schema:
       type: string
       example: Bearer Am4Hp7GBO2lMseskWHRmEtE3DWD-VxZZ3qwMkNPv6qZ8
-  - name: user_id
+  - name: "PAM web login"
     in: body
-    description: The value of the attribute of the User for looking up the User
-    required: false
+    description: "The parameters for the PAM web login flow"
+    required: true
     schema:
-      type: string
-      example: jdoe
-  - name: attribute
-    in: body
-    description: The name of the attribute of the User for looking up the User
-    required: false
-    schema:
-      type: string
-      example: username
-  - name: cache_duration
-    in: body
-    description: Cache duration in seconds to see if SSO can be applied
-    required: false
-    schema:
-      type: integer
-      example: 600
+      type: object
+      properties:
+        user_id:
+          type: string
+          description: "The value of the attribute of the User for looking up the User"
+          example: jdoe
+          required: false
+        attribute:
+          type: string
+          description: "The name of the attribute of the User for looking up the User"
+          example: username
+          required: false
+        cache_duration:
+          type: integer
+          description: "Cache duration in seconds to see if SSO can be applied"
+          example: 600
+          required: false
 
 responses:
   200:

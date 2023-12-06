@@ -21,21 +21,22 @@ parameters:
     schema:
       type: string
       example: Bearer Am4Hp7GBO2lMseskWHRmEtE3DWD-VxZZ3qwMkNPv6qZ8
-  - name: session_id
+  - name: "PAM web login"
     in: body
-    description: The unique identifier of the PAM WebSSO session
+    description: "The parameters for the PAM web login flow"
     required: true
     schema:
-      type: string
-      format: uuid
-      example: "8B0177D8-D7D1-4B86-ADEE-982317DC9188"
-  - name: pin
-    in: body
-    description: The entered PIN by the User
-    required: true
-    schema:
-      type: integer
-      example: 1234
+      type: object
+      properties:
+        session_id:
+          type: string
+          required: true
+          format: uuid
+          example: "8B0177D8-D7D1-4B86-ADEE-982317DC9188"
+        pin:
+          type: integer
+          required: true
+          example: 1234
 
 responses:
   200:
