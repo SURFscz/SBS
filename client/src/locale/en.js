@@ -123,6 +123,7 @@ const en = {
         submit: "Add",
         save: "Save",
         apply: "Apply",
+        ignore: "Ignore changes",
         request: "Request",
         cancel: "Cancel",
         close: "Close",

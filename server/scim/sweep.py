@@ -126,7 +126,8 @@ def perform_sweep(service: Service):
             "deleted": [],
             "created": [],
             "updated": []
-        }
+        },
+        "scim_url": service.scim_url
     }
     all_groups = all_scim_groups_by_service(service)
     all_users = all_scim_users_by_service(service)

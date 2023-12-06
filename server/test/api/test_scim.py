@@ -117,11 +117,13 @@ class TestScim(AbstractTest):
                                     with_basic_auth=False)
             self.assertEqual(0, len(sweep_result["groups"]["created"]))
             self.assertEqual(0, len(sweep_result["users"]["created"]))
+            self.assertEqual("http://localhost:8080/api/scim_mock", sweep_result["scim_url"])
 
             service = self.find_entity_by_name(Service, service_network_name)
             sweep_result = self.put(f"/api/scim/v2/sweep?service_id={service.id}", with_basic_auth=True)
             self.assertEqual(0, len(sweep_result["groups"]["created"]))
             self.assertEqual(0, len(sweep_result["users"]["created"]))
+            self.assertEqual("http://localhost:8080/api/scim_mock", sweep_result["scim_url"])
 
     @responses.activate
     def test_sweep_error(self):

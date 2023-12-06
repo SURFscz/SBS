@@ -60,6 +60,7 @@ class ServiceOverview extends React.Component {
             confirmationDialogOpen: false,
             cancelDialogAction: () => true,
             confirmationDialogAction: () => true,
+            cancelButtonLabel: I18n.t("confirmationDialog.cancel"),
             confirmationTxt: null,
             confirmationHeader: null,
             ldapPassword: null,
@@ -378,15 +379,16 @@ class ServiceOverview extends React.Component {
         const {originalSCIMConfiguration} = this.state;
         if (!override && (originalSCIMConfiguration.scim_url !== service.scim_url || originalSCIMConfiguration.scim_bearer_token !== service.scim_bearer_token)) {
             this.setState({
-                    sweepSuccess: null,
-                    confirmationDialogQuestion: I18n.t("service.sweep.saveBeforeTestQuestion"),
-                    confirmationDialogAction: () => this.submit(false, true),
-                    confirmationHeader: I18n.t("service.sweep.saveBeforeTest"),
-                    confirmationTxt: I18n.t("confirmationDialog.confirm"),
-                    warning: false,
-                    cancelDialogAction: () => this.setState({confirmationDialogOpen: false}, () => this.doSweep(service, true)),
-                    confirmationDialogOpen: true
-                });
+                sweepSuccess: null,
+                confirmationDialogQuestion: I18n.t("service.sweep.saveBeforeTestQuestion"),
+                confirmationDialogAction: () => this.submit(false, true),
+                confirmationHeader: I18n.t("service.sweep.saveBeforeTest"),
+                cancelButtonLabel: I18n.t("forms.ignore"),
+                confirmationTxt: I18n.t("confirmationDialog.confirm"),
+                warning: false,
+                cancelDialogAction: () => this.setState({confirmationDialogOpen: false}, () => this.doSweep(service, true)),
+                confirmationDialogOpen: true
+            });
         } else {
             this.setState({loading: true});
             sweep(service).then(res => {
@@ -395,6 +397,7 @@ class ServiceOverview extends React.Component {
                     sweepSuccess: true,
                     sweepResults: res,
                     confirmationDialogQuestion: null,
+                    cancelButtonLabel: I18n.t("confirmationDialog.cancel"),
                     confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
                     confirmationHeader: I18n.t("service.sweep.test"),
                     confirmationTxt: I18n.t("confirmationDialog.ok"),
@@ -658,7 +661,8 @@ class ServiceOverview extends React.Component {
         return (
             <div className="sweep-results">
                 <p className={sweepSuccess ? "success" : "failure"}>{sweepSuccess ? <CheckIcon/> : <CriticalIcon/>}
-                    {I18n.t(`service.sweep.${sweepSuccess ? "success" : "failure"}`, {url: service.scim_url})}</p>
+                    {I18n.t(`service.sweep.${sweepSuccess ? "success" : "failure"}`,
+                        {url: sweepResults.scim_url})}</p>
                 {(!isEmpty(sweepResults) && sweepResults.error) && <div className="response">
                     <p>{I18n.t("service.sweep.response")}</p>
                     <em>{sweepResults.error}</em>
@@ -1240,6 +1244,7 @@ class ServiceOverview extends React.Component {
             loading,
             confirmationTxt,
             confirmationHeader,
+            cancelButtonLabel,
             confirmationDialogQuestion,
             ldapPassword,
             tokenValue,
@@ -1257,6 +1262,7 @@ class ServiceOverview extends React.Component {
         return (<div className="service-overview">
             <ConfirmationDialog isOpen={confirmationDialogOpen}
                                 cancel={cancelDialogAction}
+                                cancelButtonLabel={cancelButtonLabel}
                                 isWarning={warning}
                                 largeWidth={!isEmpty(tokenValue)}
                                 confirmationTxt={confirmationTxt}

@@ -146,16 +146,19 @@ def sweep():
         confirm_write_access(service_id, override_func=is_service_admin)
         service = db.session.get(Service, service_id)
     try:
-        return perform_sweep(service), 201
+        results = perform_sweep(service)
+        results["scim_url"] = service.scim_url
+        return results, 201
     except BadRequest as error:
-        return {"error": f"Error from remote scim server: {error.description}"}, 400
+        return {"error": f"Error from remote scim server: {error.description}",
+                "scim_url": service.scim_url}, 400
     except requests.RequestException as e:
-        return {
-            "error": f"Could not connect to remote SCIM server ({type(e).__name__})"
-                     f"{': ' + e.response.text if e.response else ''}"
-        }, 400
+        return {"error": f"Could not connect to remote SCIM server ({type(e).__name__})"
+                         f"{': ' + e.response.text if e.response else ''}",
+                "scim_url": service.scim_url}, 400
     except Exception:
-        return {"error": "Unknown error while connecting to remote SCIM server"}, 500
+        return {"error": "Unknown error while connecting to remote SCIM server",
+                "scim_url": service.scim_url}, 500
 
 
 @scim_api.route("/scim-services", methods=["GET"], strict_slashes=False)
