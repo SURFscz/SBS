@@ -471,7 +471,7 @@ const nl = {
             discloseNoMemberInformationJoinRequest: "Alleen zichtbaar voor leden",
             newCollaborationRequest: "Aanvragen samenwerking",
             leave: "Lidmaatschap opzeggen",
-            labels: "Label(s)",
+            labels: "Labels",
         },
         apiKeys: {
             title: "Organisatie-API-tokens",
