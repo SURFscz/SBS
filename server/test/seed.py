@@ -383,6 +383,7 @@ def seed(db, app_config, skip_seed=False):
                               research_scholarship_compliant=True,
                               code_of_conduct_compliant=True, sirtfi_compliant=True,
                               privacy_policy="https://privacy.org", security_email="sec@org.nl")
+    service_ssh_uva.ldap_identifier = service_ssh_uva.entity_id
 
     uuc_scheduler = Service(entity_id=service_scheduler_entity_id, name=service_scheduler_name,
                             accepted_user_policy="https://google.nl", abbreviation="uuc_scheduler",
@@ -401,8 +402,7 @@ def seed(db, app_config, skip_seed=False):
                       override_access_allowed_all_connections=True, automatic_connection_allowed=True,
                       allow_restricted_orgs=True,
                       access_allowed_for_all=True, sirtfi_compliant=True, research_scholarship_compliant=True,
-                      code_of_conduct_compliant=True,
-                      )
+                      code_of_conduct_compliant=True, ldap_enabled=False)
 
     demo_rp = Service(entity_id="APP-18DE6298-7BDD-4CFA-9399-E1CC62E8DE05",
                       name=service_sram_demo_sp, abbreviation="sram_demorp", description="Generic SRAM demo rp",
@@ -412,9 +412,8 @@ def seed(db, app_config, skip_seed=False):
                       override_access_allowed_all_connections=False, automatic_connection_allowed=True,
                       allow_restricted_orgs=True,
                       access_allowed_for_all=True,
-                      sirtfi_compliant=True,
-                      research_scholarship_compliant=True, code_of_conduct_compliant=True,
-                      )
+                      sirtfi_compliant=True, research_scholarship_compliant=True, code_of_conduct_compliant=True,
+                      ldap_enabled=False)
 
     service_monitor = Service(entity_id="https://ldap-monitor.example.org", name="LDAP/SCIM Monitor Service",
                               description="Used for monitoring LDAP and SCIM.  NIET AANKOMEN.",
@@ -427,6 +426,7 @@ def seed(db, app_config, skip_seed=False):
                               ldap_enabled=True,
                               scim_enabled=True, scim_url="https://scim-monitor.sram.surf.nl/scim/tst",
                               scim_bearer_token="server_token", scim_client_enabled=True)
+    service_monitor.ldap_identifier = service_monitor.entity_id
 
     service_token_monitor_scim = ServiceToken(hashed_token=secure_hash("Axyz_geheim"), description="Monitor token",
                                               service=service_monitor, token_type=SERVICE_TOKEN_SCIM)
