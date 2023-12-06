@@ -222,7 +222,7 @@ class CollaborationForm extends React.Component {
         collaborationNameExists(e.target.value, this.state.organisation.value, this.existingCollaborationName("name"))
             .then(json => {
                 this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
-                if (!json && !isEmpty(e.target.value)) {
+                if (!json && !isEmpty(e.target.value) && isEmpty(this.state.short_name)) {
                     this.generateShortName(e.target.value);
                 }
             });

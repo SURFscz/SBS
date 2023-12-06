@@ -168,7 +168,7 @@ class Service extends React.Component {
     validateServiceName = e =>
         serviceNameExists(e.target.value, null).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
-            if (!json && !isEmpty(e.target.value)) {
+            if (!json && !isEmpty(e.target.value) && isEmpty(this.state.abbreviation)) {
                 this.generateShortName(e.target.value);
             }
         });
