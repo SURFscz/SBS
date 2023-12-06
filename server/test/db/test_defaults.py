@@ -83,6 +83,7 @@ class TestDefaults(TestCase):
         _test_cleansing("123456789012345678X", "x")
         _test_cleansing("1ABC!D@E#F&G(HIJ)KLMNO-PQRSTUVWYZ", "abcdefghijklmnop")
         _test_cleansing("check", "check")
+        _test_cleansing("1222323", "")
 
     def test_valid_uri_attributes(self):
         self.assertTrue(valid_uri_attributes({"url": "https://sram.org"}, ["url"]))

@@ -81,7 +81,7 @@ def cleanse_short_name(data, attr="short_name"):
     if attr not in data:
         raise BadRequest(f"Missing {attr} in JSON")
     short_name = data[attr]
-    while short_name[0].isnumeric():
+    while short_name and short_name[0].isnumeric():
         short_name = short_name[1:]
 
     short_name = re.sub(r"[^a-zA-Z_0-9]+", "", short_name).lower()[:16]
