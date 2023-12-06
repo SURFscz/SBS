@@ -30,13 +30,14 @@ parameters:
       properties:
         session_id:
           type: string
-          required: true
           format: uuid
           example: "8B0177D8-D7D1-4B86-ADEE-982317DC9188"
         pin:
           type: integer
-          required: true
           example: 1234
+      required:
+        - session_id
+        - pin
 
 responses:
   200:
