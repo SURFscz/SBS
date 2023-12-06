@@ -1,4 +1,6 @@
+import random
 import re
+import string
 from collections.abc import Iterable
 from datetime import datetime, date, time, timedelta
 from typing import Optional
@@ -48,6 +50,25 @@ def calculate_expiry_period(invitation, today=datetime.today()):
     if diff.days == 1:
         return "1 day"
     return f"{diff.days} days"
+
+
+def generate_short_name(cls, name, attr="short_name"):
+    data = {"short_name": name}
+    cleanse_short_name(data)
+    short_name = data["short_name"]
+    if len(short_name) == 0:
+        short_name = "short_name"
+    counter = 2
+    generated_short_name = short_name
+    while True and counter < 999:
+        filters = {attr: generated_short_name}
+        unique_short_name = cls.query.filter_by(**filters).count() == 0
+        if unique_short_name:
+            return generated_short_name
+        generated_short_name = f"{generated_short_name[:16 - len(str(counter))]}{counter}"
+        counter = counter + 1
+    # Very unlikely Fallback
+    return "".join(random.sample(string.ascii_lowercase, k=16))
 
 
 def cleanse_short_name(data, attr="short_name"):

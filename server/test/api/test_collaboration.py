@@ -309,6 +309,18 @@ class TestCollaboration(AbstractTest):
         for group in collaboration.groups:
             self.assertTrue("changed" in group.global_urn)
 
+    def test_collaboration_update_short_name_not_allowd(self):
+        collaboration_id = self._find_by_identifier()["id"]
+        self.login("urn:admin")
+        collaboration = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
+        collaboration["short_name"] = "changed"
+        self.put("/api/collaborations", body=collaboration)
+
+        collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
+        self.assertEqual(co_ai_computing_short_name, collaboration.short_name)
+        for group in collaboration.groups:
+            self.assertFalse("changed" in group.global_urn)
+
     def test_collaboration_delete(self):
         pre_count = Collaboration.query.count()
         collaboration = self._find_by_identifier()
@@ -1032,10 +1044,10 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(1, len(collaboration.units))
 
     def test_generate_short_name(self):
-        short_name = generate_short_name("monitor1")
+        short_name = generate_short_name(Collaboration, "monitor1")
         self.assertEqual("monitor12", short_name)
 
-        short_name = generate_short_name("Name !@#$ test qwerty long name")
+        short_name = generate_short_name(Collaboration, "Name !@#$ test qwerty long name")
         self.assertEqual("nametestqwertylo", short_name)
 
     def test_hint_short_name(self):

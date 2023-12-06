@@ -332,6 +332,10 @@ export function hasMemberAccessToService(service) {
     return fetchJson(`/api/services/member_access_to_service/${service.id}`);
 }
 
+export function hintServiceShortName(name) {
+    return postPutJson("/api/services/hint_short_name", {name: name}, "post");
+}
+
 //ServiceRequest
 export function createServiceRequest(serviceRequest) {
     return postPutJson("/api/service_requests", serviceRequest, "post", false);
@@ -437,7 +441,7 @@ export function activateCollaboration(collaborationId) {
     return postPutJson("/api/collaborations/activate", {collaboration_id: collaborationId}, "put");
 }
 
-export function hintShortName(name) {
+export function hintCollaborationShortName(name) {
     return postPutJson("/api/collaborations/hint_short_name", {name: name}, "post");
 }
 

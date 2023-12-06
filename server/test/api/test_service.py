@@ -311,6 +311,7 @@ class TestService(AbstractTest):
         service["allow_restricted_orgs"] = False
         service["non_member_users_access_allowed"] = True
         service["entity_id"] = "https://changed"
+        service["abbreviation"] = "changed"
 
         self.login("urn:service_admin")
         self.put("/api/services", body=service, with_basic_auth=False)
@@ -320,6 +321,7 @@ class TestService(AbstractTest):
         self.assertEqual(True, service.allow_restricted_orgs)
         self.assertEqual(False, service.non_member_users_access_allowed)
         self.assertEqual(service_storage_entity_id, service.entity_id)
+        self.assertEqual("storage", service.abbreviation)
 
     def test_service_delete(self):
         pre_count = Service.query.count()
@@ -547,3 +549,11 @@ class TestService(AbstractTest):
         with mail.record_messages() as outbox:
             self.delete("/api/services/request_delete", primary_key=service_id)
             self.assertTrue(f"http://localhost:3000/services/{service_id}" in outbox[0].html)
+
+    def test_hint_short_name(self):
+        res = self.post("/api/services/hint_short_name", body={"name": "network"}, response_status_code=200)
+        self.assertEqual("network2", res["short_name"])
+
+    def test_empty_hint_short_name(self):
+        res = self.post("/api/services/hint_short_name", body={"name": "*&^%$$@"}, response_status_code=200)
+        self.assertEqual("short_name", res["short_name"])

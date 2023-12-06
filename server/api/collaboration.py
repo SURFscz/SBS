@@ -1,6 +1,4 @@
 import base64
-import random
-import string
 import urllib.request
 import uuid
 from datetime import datetime, timedelta
@@ -21,12 +19,12 @@ from server.auth.security import confirm_collaboration_admin, current_user_id, c
     confirm_authorized_api_call, \
     confirm_allow_impersonation, confirm_organisation_admin_or_manager, confirm_external_api_call, \
     is_organisation_admin_or_manager, is_application_admin, confirm_service_admin, \
-    confirm_organisation_api_collaboration, confirm_write_access, has_org_manager_unit_access
+    confirm_organisation_api_collaboration, confirm_write_access, has_org_manager_unit_access, is_admin_user
 from server.db.activity import update_last_activity_date
 from server.db.db import db
 from server.db.defaults import (default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name,
                                 STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED, valid_uri_attributes, valid_tag_label,
-                                uri_re)
+                                uri_re, generate_short_name)
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
     Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag, ServiceGroup, ServiceMembership
 from server.db.image import transform_image
@@ -87,24 +85,6 @@ def _get_collaboration_membership(co_identifier, user_uid) -> CollaborationMembe
     if not organisation or organisation.id != membership.collaboration.organisation_id:
         raise Forbidden()
     return membership
-
-
-def generate_short_name(name):
-    data = {"short_name": name}
-    cleanse_short_name(data)
-    short_name = data["short_name"]
-    if len(short_name) == 0:
-        short_name = "short_name"
-    counter = 2
-    generated_short_name = short_name
-    while True and counter < 999:
-        unique_short_name = Collaboration.query.filter(Collaboration.short_name == generated_short_name).count() == 0
-        if unique_short_name:
-            return generated_short_name
-        generated_short_name = f"{generated_short_name[:16 - len(str(counter))]}{counter}"
-        counter = counter + 1
-    # Very unlikely Fallback
-    return "".join(random.sample(string.ascii_lowercase, k=16))
 
 
 @collaboration_api.route("/admins/<service_id>", strict_slashes=False)
@@ -587,7 +567,7 @@ def save_collaboration_api():
         if not cleanse_short_name(data):
             raise APIBadRequest(f"Invalid CO short_name: {data['short_name']}")
     else:
-        data["short_name"] = generate_short_name(data["name"])
+        data["short_name"] = generate_short_name(Collaboration, data["name"])
     # The do_save_collaboration strips out all non-collaboration keys
     tags = data.get("tags", None)
     administrator = data.get("administrator")
@@ -618,7 +598,7 @@ def save_collaboration_api():
 @json_endpoint
 def hint_short_name():
     data = current_request.get_json()
-    short_name_hint = generate_short_name(data["name"])
+    short_name_hint = generate_short_name(Collaboration, data["name"])
     return {"short_name": short_name_hint}, 200
 
 
@@ -734,10 +714,18 @@ def update_collaboration():
     if collaboration.organisation_id != organisation.id:
         confirm_write_access()
 
-    if collaboration.short_name != data["short_name"] or collaboration.organisation_id != organisation.id:
+    current_user_id()
+    user = db.session.get(User, current_user_id())
+    is_admin = is_admin_user(user)
+
+    short_name_changed = collaboration.short_name != data["short_name"]
+    if is_admin and (short_name_changed or collaboration.organisation_id != organisation.id):
         for group in collaboration.groups:
             group.global_urn = f"{organisation.short_name}:{data['short_name']}:{group.short_name}"
             db.session.merge(group)
+
+    if not is_admin and short_name_changed:
+        data["short_name"] = collaboration.short_name
 
     if "tags" in data:
         _reconcile_tags(collaboration, data["tags"])
