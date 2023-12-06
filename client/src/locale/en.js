@@ -471,7 +471,7 @@ const en = {
             discloseNoMemberInformationJoinRequest: "Only visible for members",
             newCollaborationRequest: "Request collaboration",
             leave: "Leave collaboration",
-            labels: "Label(s)",
+            labels: "Labels",
         },
         apiKeys: {
             title: "Organisation API tokens",
