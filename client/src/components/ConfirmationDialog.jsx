@@ -13,7 +13,8 @@ export default function ConfirmationDialog({
                                                children = null,
                                                confirmationTxt = I18n.t("confirmationDialog.confirm"),
                                                largeWidth = false,
-                                               confirmationHeader = I18n.t("confirmationDialog.title")
+                                               confirmationHeader = I18n.t("confirmationDialog.title"),
+                                               cancelButtonLabel = I18n.t("confirmationDialog.cancel")
                                            }) {
     if (!isOpen) {
         return null;
@@ -26,7 +27,7 @@ export default function ConfirmationDialog({
             question={leavePage ? I18n.t("confirmationDialog.leavePage") : question}
             children={children}
             title={confirmationHeader || I18n.t("confirmationDialog.title")}
-            cancelButtonLabel={leavePage ? I18n.t("confirmationDialog.leave") : I18n.t("confirmationDialog.cancel")}
+            cancelButtonLabel={leavePage ? I18n.t("confirmationDialog.leave") : cancelButtonLabel}
             confirmationButtonLabel={leavePage ? I18n.t("confirmationDialog.stay") : confirmationTxt}
             confirmDisabled={disabledConfirm}
             subTitle={leavePage ? I18n.t("confirmationDialog.leavePage") : I18n.t("confirmationDialog.subTitle")}
