@@ -7,9 +7,15 @@ properties:
   short_name:
     type: string
     example: "cumulusgrp"
+    description: >
+      Short, human readable name/identifier for the collaboration.
+      Must be unique within the organisation.
+      Will be automatically generated if not provided."
   description:
     type: string
-    example: "Cumulus research group of the University of Harderwijk. Members can collaborate in the connected cloud service and contact eachother by email."
+    example: >
+      Cumulus research group of the University of Harderwijk.
+      Members can collaborate in the connected cloud service and contact eachother by email.
   website_url:
     type: string
     format: uri
@@ -40,7 +46,9 @@ properties:
     example: "Please join the Cumulus research group collaboration page."
   administrator:
     type: string
-    description: "Uid of the user who will become administrator of this collaboration (without an invite). Must be known in SRAM"
+    description: >
+      Uid of the user who will become administrator of this collaboration (without an invite).
+      Must be known in SRAM
     example: "e84a37938bf633d1e08377ab36024398308a8e22@acc.sram.eduteams.org"
   administrators:
     type: array
@@ -50,7 +58,9 @@ properties:
       example: "jdoe@uniharderwijk.nl"
   tags:
     type: array
-    description: "Labels, must be <= 32 chars and start with a lowercase char and only containers chars, digits, '_' and '-'"
+    description: >
+      Labels, must be <= 32 chars and start with a lowercase char and must
+      consist of only letter, digits, '_' and '-'
     items:
       type: string
       example: "label_1"
@@ -67,7 +77,6 @@ properties:
           type: integer
 required:
   - name
-  - short_name
   - description
   - disable_join_requests
   - disclose_member_information
