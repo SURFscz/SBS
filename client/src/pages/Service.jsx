@@ -5,6 +5,7 @@ import {
     createServiceRequest,
     deleteServiceRequest,
     denyServiceRequest,
+    hintServiceShortName,
     ipNetworks,
     serviceAbbreviationExists,
     serviceEntityIdExists,
@@ -50,6 +51,7 @@ class Service extends React.Component {
         serviceRequest: {},
         name: "",
         abbreviation: "",
+        abbreviationEdited: false,
         logo: "",
         entity_id: "",
         description: "",
@@ -156,9 +158,19 @@ class Service extends React.Component {
         }
     };
 
+    generateShortName = name => {
+        const {abbreviation, abbreviationEdited} = this.state;
+        if ((!abbreviationEdited || isEmpty(abbreviation)) && !isEmpty(name)) {
+            hintServiceShortName(name).then(res => this.setState({abbreviation: res.short_name}));
+        }
+    }
+
     validateServiceName = e =>
         serviceNameExists(e.target.value, null).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
+            if (!json && !isEmpty(e.target.value)) {
+                this.generateShortName(e.target.value);
+            }
         });
 
     validateServiceEntityId = e =>
@@ -525,10 +537,14 @@ class Service extends React.Component {
                 <div className="first-column">
 
                     <InputField value={abbreviation}
-                                onChange={e => this.setState({
-                                    abbreviation: sanitizeShortName(e.target.value),
-                                    alreadyExists: {...this.state.alreadyExists, abbreviation: false}
-                                })}
+                                onChange={e => {
+                                    const abbreviationEdited = this.state.abbreviation !== e.target.value;
+                                    this.setState({
+                                        abbreviation: sanitizeShortName(e.target.value),
+                                        abbreviationEdited: abbreviationEdited,
+                                        alreadyExists: {...this.state.alreadyExists, abbreviation: false}
+                                    })
+                                }}
                                 placeholder={I18n.t("service.abbreviationPlaceHolder")}
                                 onBlur={this.validateServiceAbbreviation}
                                 name={I18n.t("service.abbreviation")}

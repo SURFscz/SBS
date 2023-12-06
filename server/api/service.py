@@ -14,7 +14,7 @@ from server.auth.security import confirm_write_access, current_user_id, confirm_
     confirm_external_api_call
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, cleanse_short_name, default_expiry_date, valid_uri_attributes, \
-    service_token_options
+    service_token_options, generate_short_name
 from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, \
     User, ServiceInvitation, ServiceMembership, ServiceToken
 from server.db.models import update, save, delete, unique_model_objects
@@ -516,6 +516,14 @@ def service_invites():
     emit_socket(f"service_{service_id}", include_current_user_id=True)
 
     return None, 201
+
+
+@service_api.route("/hint_short_name", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def hint_short_name():
+    data = current_request.get_json()
+    short_name_hint = generate_short_name(Service, data["name"], "abbreviation")
+    return {"short_name": short_name_hint}, 200
 
 
 @service_api.route("/", methods=["PUT"], strict_slashes=False)

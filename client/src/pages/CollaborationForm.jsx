@@ -7,7 +7,8 @@ import {
     collaborationNameExists,
     collaborationShortNameExists,
     createCollaboration,
-    deleteCollaboration, hintShortName,
+    deleteCollaboration,
+    hintCollaborationShortName,
     myOrganisationsLite,
     requestCollaboration,
     tagsByOrganisation,
@@ -231,9 +232,9 @@ class CollaborationForm extends React.Component {
             .then(json => this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}}));
 
     generateShortName = name => {
-        const {short_name, shortNameEdited} = this.state;
-        if ((!shortNameEdited || isEmpty(short_name)) && !isEmpty(name)) {
-            hintShortName(name).then(res => this.setState({short_name: res.short_name}));
+        const {isNew, short_name, shortNameEdited} = this.state;
+        if ((!shortNameEdited || isEmpty(short_name)) && !isEmpty(name) && isNew) {
+            hintCollaborationShortName(name).then(res => this.setState({short_name: res.short_name}));
         }
     }
 
