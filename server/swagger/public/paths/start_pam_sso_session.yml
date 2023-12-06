@@ -32,17 +32,17 @@ parameters:
           type: string
           description: "The value of the attribute of the User for looking up the User"
           example: jdoe
-          required: false
         attribute:
           type: string
           description: "The name of the attribute of the User for looking up the User"
           example: username
-          required: false
         cache_duration:
           type: integer
           description: "Cache duration in seconds to see if SSO can be applied"
           example: 600
-          required: false
+      required:
+        - user_id
+        - attribute
 
 responses:
   200:
