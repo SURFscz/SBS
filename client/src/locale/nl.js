@@ -2158,7 +2158,9 @@ const nl = {
         info4: "<p>Je bent ingelogd via SURF Research Access Management, maar geen van de samenwerking(en) waar je lid van bent geven toegang tot <i>{{name}}</i>.</p><p>Neem contact op met de beheerders voor toegang tot deze dienst.</p>",
         info5: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i> omdat de samenwerking(en) waarvan je lid bent niet actief zijn.</p><p>Neem contact op met de beheerders van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
         info6: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. Je lidmaatschap van de samenwerking(en) waar je momenteel lid van bent zijn verlopen.</p><p>Neem contact op met de beheerders van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
-        ticket: "Kopieer en plak de volgende informatie als je contact wilt opnemen met SRAM support <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> voor hulp.",
+        ticket: "Als je wilt kan je contact opnemen met SRAM support " +
+            "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a> voor hulp.",
+        subject: "Geen toegang tot dienst {{name}}",
         entityId: "Entity ID",
         issuerId: "Issuer ID",
         userId: "User ID",
