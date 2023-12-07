@@ -123,7 +123,7 @@ const nl = {
         submit: "Toevoegen",
         save: "Opslaan",
         apply: "Toepassen",
-        ignore: "Negeer veranderingen",
+        ignore: "Negeer wijzigingen",
         request: "Aanvragen",
         cancel: "Annuleren",
         close: "Sluiten",
