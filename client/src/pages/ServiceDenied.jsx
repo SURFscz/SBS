@@ -27,6 +27,7 @@ export default function ServiceDenied() {
         setStatus(status);
     }, []);
 
+    const timestamp = new Date().toUTCString();
     return (
         <div className="mod-service-denied">
             <div className="content">
@@ -36,7 +37,15 @@ export default function ServiceDenied() {
                       dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t(`sfo.info${status || ""}`, {name: serviceName}))}}/>}
             </div>
             <div className={"ticket"}>
-                <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("sfo.ticket"))}}/>
+                <p dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(I18n.t("sfo.ticket", {
+                        subject: I18n.t("sfo.subject", {name: serviceName}),
+                        entityId: entityId,
+                        issuerId: issuerId,
+                        userId: userId,
+                        timestamp: timestamp
+                    }))
+                }}/>
                 <span>{I18n.t("sfo.entityId")}</span>
                 <span className={"value"}>{entityId}</span>
                 <span>{I18n.t("sfo.issuerId")}</span>
@@ -44,7 +53,7 @@ export default function ServiceDenied() {
                 <span>{I18n.t("sfo.userId")}</span>
                 <span className={"value"}>{userId}</span>
                 <span>{I18n.t("sfo.timestamp")}</span>
-                <span className={"value"}>{new Date().toUTCString()}</span>
+                <span className={"value"}>{timestamp}</span>
             </div>
         </div>
     );

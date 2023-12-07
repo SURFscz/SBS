@@ -2157,7 +2157,9 @@ const en = {
         info4: "<p>You are logged into SURF Research Access Management, but none of the collaborations you are member of grant you access to <i>{{name}}</i>.</p><p>Contact your admins to enable access to this service.</p>",
         info5: "<p>You are logged into SURF Research Access Management, but you don't have access to <i>{{name}}</i>. The collaboration that is connected to service <i>{{name}}</i> is inactive.</p><p>Contact your admins to enable access to this service.</p>",
         info6: "<p>You are logged into SURF Research Access Management, but you don't have access to <i>{{name}}</i>. Your collaboration membership which grants you access to <i>{{name}}</i> is expired.</p><p>Contact your admins to enable access to this service.</p>",
-        ticket: "Copy & paste the following information if you want to contact SRAM support at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for help.",
+        ticket: "If you want you can contact SRAM support at " +
+            "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a> for help.",
+        subject: "No access to service {{name}}",
         entityId: "Entity ID",
         issuerId: "Issuer ID",
         userId: "User ID",
