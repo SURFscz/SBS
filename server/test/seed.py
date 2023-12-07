@@ -360,7 +360,7 @@ def seed(db, app_config, skip_seed=False):
                    logo=read_image("wiki.png"),
                    allowed_organisations=[uuc, uva], contact_email="help@wiki.com", abbreviation="wiki",
                    accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org",
-                   automatic_connection_allowed_organisations=[uva],
+                   automatic_connection_allowed_organisations=[uva], ldap_enabled=True,
                    ldap_password="$2b$12$GLjC5hK59aeDcEe.tHHJMO.SQQjFgIIpZ7VaKTIsBn05z/gE7JQny",
                    token_enabled=True, scim_client_enabled=True, token_validity_days=365, security_email="sec@org.nl")
     sweep_scim_last_run = current_time - datetime.timedelta(days=1)
