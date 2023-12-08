@@ -7,8 +7,9 @@ from flasgger import swag_from
 from flask import Blueprint, jsonify, request as current_request, current_app, g as request_context
 from munch import munchify
 from sqlalchemy import text, or_, func, bindparam, String
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import aliased, load_only, selectinload
-from werkzeug.exceptions import BadRequest, Forbidden, MethodNotAllowed
+from werkzeug.exceptions import BadRequest, Forbidden, MethodNotAllowed, NotFound
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars, emit_socket
 from server.api.exceptions import APIBadRequest
@@ -126,16 +127,19 @@ def collaboration_by_identifier():
 @swag_from("../swagger/public/paths/get_collaboration_by_identifier.yml")
 @json_endpoint
 def api_collaboration_by_identifier(co_identifier):
-    collaboration = Collaboration.query \
-        .outerjoin(Collaboration.collaboration_memberships) \
-        .outerjoin(CollaborationMembership.user) \
-        .options(selectinload(Collaboration.services)) \
-        .options(selectinload(Collaboration.tags)) \
-        .options(selectinload(Collaboration.groups).selectinload(Group.collaboration_memberships)) \
-        .options(selectinload(Collaboration.collaboration_memberships)
-                 .selectinload(CollaborationMembership.user)) \
-        .filter(Collaboration.identifier == co_identifier) \
-        .one()
+    try:
+        collaboration = Collaboration.query \
+            .outerjoin(Collaboration.collaboration_memberships) \
+            .outerjoin(CollaborationMembership.user) \
+            .options(selectinload(Collaboration.services)) \
+            .options(selectinload(Collaboration.tags)) \
+            .options(selectinload(Collaboration.groups).selectinload(Group.collaboration_memberships)) \
+            .options(selectinload(Collaboration.collaboration_memberships)
+                     .selectinload(CollaborationMembership.user)) \
+            .filter(Collaboration.identifier == co_identifier) \
+            .one()
+    except NoResultFound:
+        raise NotFound
 
     confirm_organisation_api_collaboration(co_identifier, collaboration)
     return collaboration, 200
