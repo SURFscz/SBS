@@ -921,9 +921,16 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(res["tags"][0]["tag_value"], "tag_uuc")
 
     def test_find_by_identifier_api_not_allowed(self):
-        self.get(f"/api/collaborations/v1/{co_research_uuid}",
-                 headers={"Authorization": f"Bearer {unihard_secret}"},
-                 with_basic_auth=False, response_status_code=404)
+        result = self.get(f"/api/collaborations/v1/{co_research_uuid}",
+                          headers={"Authorization": f"Bearer {unihard_secret}"},
+                          with_basic_auth=False, response_status_code=404)
+        self.assertIn("The requested URL was not found", result["message"])
+
+    def test_find_by_identifier_api_not_exist(self):
+        result = self.get("/api/collaborations/v1/invalid_uuid",
+                          headers={"Authorization": f"Bearer {unihard_secret}"},
+                          with_basic_auth=False, response_status_code=404)
+        self.assertIn("The requested URL was not found", result["message"])
 
     def test_collaboration_new_with_expiry_date_past(self):
         try:
