@@ -334,7 +334,7 @@ const en = {
             name: "Name",
             memberCount: "Members",
             invitationsCount: "Invitations",
-            allMembers: "All members ({{count}})",
+            allMembers: "All groups",
             group: "Group {{name}} ({{count}})",
             hideInvites: "Hide invitations",
             noCollaborations: "There are no collaborations yet within your organisation. Why don't you create the first one?",
