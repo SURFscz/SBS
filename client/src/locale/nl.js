@@ -334,7 +334,7 @@ const nl = {
             name: "Naam",
             memberCount: "Leden",
             invitationsCount: "Uitnodigingen",
-            allMembers: "Alle leden ({{count}})",
+            allMembers: "Alle groepen",
             group: "Groep {{name}} ({{count}})",
             hideInvites: "Verberg uitnodigingen",
             noCollaborations: "Er zijn nog geen samenwerkingen in deze organisatie. Zullen we er een aanmaken?",
