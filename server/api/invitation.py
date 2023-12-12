@@ -242,8 +242,9 @@ def invitations_accept():
 
     unique_groups = list(set({ag.id: ag for ag in groups}.values()))
     for group in unique_groups:
-        group.collaboration_memberships.append(collaboration_membership)
-        db.session.merge(group)
+        if collaboration_membership not in group.collaboration_memberships:
+            group.collaboration_memberships.append(collaboration_membership)
+            db.session.merge(group)
 
     db.session.commit()
 
