@@ -2118,10 +2118,10 @@ const nl = {
             info1: "Vul de verificatiecode uit je authenticator-app voor <strong>SURF Research Access Management</strong> in om je identiteit te verifiëren.",
             explanation: "Tweefactor-authenticatie",
             signIn: "Verifiëren",
-            problems: "Problemen met je verificatiecode?",
-            invalid: "Foutieve verificatiecode",
-            resetRequest: "Vraag een reset aan",
-            resetToken: "Gebruik een ontvangen resetcode"
+            problems: "Problemen met inloggen?",
+            invalid: "Onjuiste verificatiecode",
+            resetRequest: "Reset je verificatiecode",
+            resetToken: "Gebruik een resetcode"
         },
         profile: {
             name: "Tweefactorauthenticatie",
