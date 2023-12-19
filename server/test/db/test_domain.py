@@ -30,9 +30,10 @@ class TestModels(AbstractTest):
 
         self.assertRaises(ValueError, invalid_role)
 
-    def test_prevent_duplicate_CO_membership(self):
+    def test_prevent_duplicate_collaboration_membership(self):
         def duplicate_member_raises_error():
             existing_membership = CollaborationMembership.query.first()
+            self.assertTrue(existing_membership.collaboration.is_member(existing_membership.user_id))
             duplicate = CollaborationMembership(
                 user_id=existing_membership.user_id,
                 collaboration_id=existing_membership.collaboration_id,

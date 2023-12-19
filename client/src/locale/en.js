@@ -2117,10 +2117,10 @@ const en = {
             info1: "Enter the verificatie code from your authenticator app for <strong>SURF Research Access Management</strong> to verify your identity.",
             explanation: "Two-factor authentication",
             signIn: "Verify",
-            problems: "Problems with your verification code?",
+            problems: "Can't log in?",
             invalid: "Invalid verification code",
-            resetRequest: "Request a reset",
-            resetToken: "Use a received reset code"
+            resetRequest: "Reset your verfication code",
+            resetToken: "Use a reset code"
         },
         profile: {
             name: "Two-factor authentication",
