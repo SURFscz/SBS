@@ -109,8 +109,8 @@ def _idp_configured(identity_providers, action, schac_home=None, entity_id=None)
     result = entity_id_allowed or schac_home_allowed
 
     logger = ctx_logger("user_api")
-    logger.debug(f"{action}: {result} (entity_id_allowed={entity_id_allowed}, "
-                 f"schac_home_allowed={schac_home_allowed}, "
+    logger.debug(f"{action}: {result} (entity_id_allowed={bool(entity_id_allowed)}, "
+                 f"schac_home_allowed={bool(schac_home_allowed)}, "
                  f"entity_id={entity_id}, schac_home={schac_home}")
 
     return bool(result)

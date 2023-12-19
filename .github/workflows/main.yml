@@ -14,6 +14,10 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: surfscz/sram-sbs
+
 jobs:
   Server_tests:
     name: Server tests
@@ -184,7 +188,7 @@ jobs:
           tar tvJf /tmp/sbs.tar.xz
 
       - name: Create Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: "sbs-build"
           path: "/tmp/sbs.tar.xz"
@@ -208,7 +212,7 @@ jobs:
 
       - name: Fetch build
         id: fetch_artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: "sbs-build"
           path: "artifacts/"
@@ -270,3 +274,43 @@ jobs:
               ref: 'main'
             })
 
+  Docker_image:
+    name: Create image
+    if: >
+      github.actor!='dependabot[bot]' &&
+      github.event_name!='pull_request' &&
+      ( github.ref_type=='tag' || github.ref_type=='branch' )
+    needs:
+      - "Artifact_upload"
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch build
+        uses: actions/download-artifact@v3
+        with:
+          name: "sbs-build"
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
