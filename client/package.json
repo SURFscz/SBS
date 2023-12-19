@@ -27,7 +27,7 @@
         "react-copy-to-clipboard": "^5.0.1",
         "react-datepicker": "^4.24.0",
         "react-dom": "^18.2.0",
-        "react-image-crop": "^11.0.1",
+        "react-image-crop": "^10.1.8",
         "react-json-formatter": "^0.4.0",
         "react-json-view": "^1.21.3",
         "react-md-spinner": "^1.0.0",
