@@ -151,12 +151,18 @@ class TestOrganisation(AbstractTest):
         self.login()
         organisation = self.post("/api/organisations",
                                  body={"name": "new_organisation",
-                                       "schac_home_organisations": [],
+                                       "schac_home_organisations": [
+                                           {"name": "new_schac_home.org"},
+                                           {"name": "new_schac_home.com"},
+                                       ],
                                        "short_name": "https://ti1"},
                                  with_basic_auth=False)
         self.assertIsNotNone(organisation["id"])
         self.assertEqual("new_organisation", organisation["name"])
         self.assertEqual(4, Organisation.query.count())
+
+        new_organisation = self.find_entity_by_name(Organisation, "new_organisation")
+        self.assertEqual(2, len(new_organisation.schac_home_organisations))
 
         organisation["name"] = "changed"
         organisation = self.put("/api/organisations", body=organisation)
