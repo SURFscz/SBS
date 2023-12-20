@@ -361,7 +361,8 @@ def save_organisation():
 
     message = data.get("message", None)
 
-    res = save(Organisation, custom_json=data, allow_child_cascades=False, allowed_child_collections=["units"])
+    res = save(Organisation, custom_json=data, allow_child_cascades=False,
+               allowed_child_collections=["schac_home_organisations", "units"])
     user = db.session.get(User, current_user_id())
     organisation = res[0]
 
