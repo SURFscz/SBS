@@ -26,7 +26,7 @@ export const CollaborationUnits = ({
     const userRole = rawGlobalUserRole(user, organisation, null, null, true);
     if (userRole === ROLES.ORG_MANAGER) {
         const membershipUnits = user.organisation_memberships
-            .find(m => m.user_id === user.id)
+            .find(m => m.organisation_id === organisation.id)
             .units.map(unit => ({...unit, value: unit.id}));
         //fixate the selectedUnits that are not in the organisationMembership
         selectedUnits.forEach(option => option.isFixed = !membershipUnits.some(unit => unit.value === option.value))
