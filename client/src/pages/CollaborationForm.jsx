@@ -203,18 +203,20 @@ class CollaborationForm extends React.Component {
         });
     }
 
-    mapOrganisationsToOptions = organisations => organisations.map(org => ({
-        id: org.id,
-        label: org.name,
-        name: org.name,
-        value: org.id,
-        short_name: org.short_name,
-        on_boarding_msg: org.on_boarding_msg,
-        units: org.units,
-        collaboration_creation_allowed: org.collaboration_creation_allowed,
-        collaboration_creation_allowed_entitlement: org.collaboration_creation_allowed_entitlement,
-        logo: org.logo
-    }));
+    mapOrganisationsToOptions = organisations => organisations
+        .map(org => ({
+            id: org.id,
+            label: org.name,
+            name: org.name,
+            value: org.id,
+            short_name: org.short_name,
+            on_boarding_msg: org.on_boarding_msg,
+            units: org.units,
+            collaboration_creation_allowed: org.collaboration_creation_allowed,
+            collaboration_creation_allowed_entitlement: org.collaboration_creation_allowed_entitlement,
+            logo: org.logo
+        }))
+        .sort((opt1, opt2) => opt1.name.toLowerCase().localeCompare(opt2.name.toLowerCase()));
 
     existingCollaborationName = attr => this.state.isNew ? null : this.state.collaboration[attr];
 
