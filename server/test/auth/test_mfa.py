@@ -4,9 +4,10 @@ from server.auth.mfa import _get_algorithm, eligible_users_to_reset_token, mfa_i
 from server.db.db import db
 from server.db.domain import User
 from server.test.abstract_test import AbstractTest
+from server.test.seed import unihard_name
 
 
-class TestSecurity(AbstractTest):
+class TestMFA(AbstractTest):
 
     def test_get_algorithm(self):
         self.assertEqual(_get_algorithm({"kty": "rsa"}), algorithms.RSAAlgorithm)
@@ -28,12 +29,14 @@ class TestSecurity(AbstractTest):
         res = eligible_users_to_reset_token(user)
         self.assertEqual(1, len(res))
         self.assertEqual("mary@example.org", res[0]["email"])
+        self.assertEqual(unihard_name, res[0]["unit"])
 
     def test_eligible_users_to_reset_token_coll_members(self):
         user = User.query.filter(User.uid == "urn:roger").one()
         res = eligible_users_to_reset_token(user)
         self.assertEqual(1, len(res))
         self.assertEqual("sarah@uva.org", res[0]["email"])
+        self.assertEqual("Research", res[0]["unit"])
 
     def test_eligible_users_to_reset_token_coll_org_members(self):
         user = User.query.filter(User.uid == "urn:roger").one()
@@ -50,6 +53,8 @@ class TestSecurity(AbstractTest):
         user = User.query.filter(User.uid == "urn:james").one()
         res = eligible_users_to_reset_token(user)
         self.assertEqual(4, len(res))
+        for user in res:
+            self.assertEqual(unihard_name, user["unit"])
 
     def test_mfa_idp_allowed(self):
         self.assertTrue(mfa_idp_allowed(schac_home="idp.test", entity_id=None))

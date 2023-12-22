@@ -66,17 +66,17 @@ def eligible_users_to_reset_token(user):
     for org_membership in user.organisation_memberships:
         for membership in org_membership.organisation.organisation_memberships:
             if membership.role == "admin" and membership.user != user:
-                user_information.append(membership.user)
+                user_information.append({"user": membership.user, "unit": membership.organisation.name})
     if not user_information:
         for coll_membership in user.collaboration_memberships:
             for membership in coll_membership.collaboration.collaboration_memberships:
                 if membership.role == "admin" and membership.user != user:
-                    user_information.append(membership.user)
+                    user_information.append({"user": membership.user, "unit": membership.collaboration.name})
     if not user_information:
         for membership in user.collaboration_memberships:
             for mb in membership.collaboration.organisation.organisation_memberships:
                 if mb.user != user:
-                    user_information.append(mb.user)
+                    user_information.append({"user": mb.user, "unit": mb.organisation.name})
 
     if not user_information and user.schac_home_organisation:
         organisations = SchacHomeOrganisation.organisations_by_user_schac_home(user)
@@ -84,13 +84,13 @@ def eligible_users_to_reset_token(user):
             org = db.session.get(Organisation, organisations[0].id)
             for membership in org.organisation_memberships:
                 if membership.user != user:
-                    user_information.append(membership.user)
+                    user_information.append({"user": membership.user, "unit": membership.organisation.name})
 
-    user_information = [{"name": u.name, "email": u.email} for u in user_information]
-    if not user_information:
-        user_information.append({"name": "SRAM support", "email": current_app.app_config.mail.info_email})
+    user_info = [{"name": u["user"].name, "email": u["user"].email, "unit": u["unit"]} for u in user_information]
+    if not user_info:
+        user_info.append({"name": "SRAM support", "email": current_app.app_config.mail.info_email, "unit": "admin"})
 
-    return user_information
+    return user_info
 
 
 def _idp_configured(identity_providers, action, schac_home=None, entity_id=None):

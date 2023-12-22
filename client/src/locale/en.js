@@ -2132,12 +2132,17 @@ const en = {
             edit: "Edit"
         },
         lost: {
-            title: "Reset your verification code",
-            request: "You can request an admin to reset your verification code. You will recieve a reset token to reconfigure two factor authentication.",
+            title: "Request a reset code",
+            how: "How this works",
+            info1: "You must ask an admin to reset your verification code",
+            info2: "<strong>We will send them an email</strong> with your request",
+            info3: "They will confirm you are you",
+            info4: "They will send you a <strong>reset token</strong>",
+            info5: "With that token you can reconfigure your two factor authentication",
             select: "Select who to ask for a reset token:",
             respondent: "Your request will be sent to:",
-            message: "Message for the reader",
-            sendMail: "Request a reset",
+            message: "Message to the admin(s)",
+            sendMail: "Request a reset token",
             flash: "Your request for a reset token has been sent"
         },
         reset: {
