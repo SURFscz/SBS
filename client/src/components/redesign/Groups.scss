@@ -81,9 +81,12 @@ table.groups {
     width: 100%;
     margin: 40px auto 25px auto;
 
+    @media (max-width: $medium) {
+        padding: 0 15px;
+    }
+
     @media (max-width: $compact-medium) {
         flex-direction: column;
-        padding: 0 15px;
     }
 
     a.back-to-groups {
