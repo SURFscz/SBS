@@ -2133,11 +2133,16 @@ const nl = {
             edit: "Aanpassen"
         },
         lost: {
-            title: "Reset je verificatiecode",
-            request: "Je kunt een beheerder vragen je verificatiecode te resetten. Je krijgt dan een resettoken en kunt daarmee je tweefactorauthenticatie opnieuw instellen.",
+            title: "Vraag een reset code aan",
+            how: "Hoe werkt dit",
+            info1: "Je moet een beheerder vragen om je verificatie-code te restten",
+            info2: "<strong>We zullen ze een email sturen</strong> met je verzoek",
+            info3: "Ze zullen bevestigen dat jij jij bent",
+            info4: "Ze zullen je een <strong>reset token</strong> sturen",
+            info5: "Met dat token kan je je tweefactorauthenticatie opnieuw instellen",
             select: "Selecteer aan wie de reset te vragen:",
             respondent: "Je verzoek wordt verzonden naar:",
-            message: "Bericht voor de ontvanger",
+            message: "Bericht voor de beheerder(s)",
             sendMail: "Vraag reset aan",
             flash: "Je verzoek om een reset is verzonden"
         },

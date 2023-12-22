@@ -18,10 +18,11 @@ import Button from "../components/Button";
 import InputField from "../components/InputField";
 import {setFlash} from "../utils/Flash";
 import CheckBox from "../components/CheckBox";
-import {ErrorOrigins, isEmpty, stopEvent} from "../utils/Utils";
+import {ErrorOrigins, isEmpty, pseudoGuid, stopEvent} from "../utils/Utils";
 import DOMPurify from "dompurify";
 import {Toaster, ToasterType} from "@surfnet/sds";
 import FeedbackDialog from "../components/Feedback";
+import {ReactComponent as ResetTokenIcon} from "../icons/reset-token.svg";
 
 const TOTP_ATTRIBUTE_NAME = "totp";
 const NEW_TOTP_ATTRIBUTE_NAME = "newTotp";
@@ -149,8 +150,8 @@ class SecondFactorAuthentication extends React.Component {
         if (respondents.length === 0) {
             this.setState({loading: true});
             tokenResetRespondents(secondFaUuid).then(res => {
-                res.forEach(respondent => respondent.selected = false);
-                res[0].selected = true;
+                const selectedMail = res[0].email;
+                res.forEach(respondent => respondent.selected = respondent.email === selectedMail);
                 this.setState({respondents: res, loading: false, showExplanation: true});
             });
         } else {
@@ -158,11 +159,11 @@ class SecondFactorAuthentication extends React.Component {
         }
     }
 
-    onSelectRespondent = email => () => {
+    onSelectRespondent = respondent => {
         const {respondents} = this.state;
-        const newRespondents = respondents.map(respondent => {
-            respondent.selected = respondent.email === email;
-            return respondent;
+        const newRespondents = respondents.map(other => {
+            other.selected = respondent.email === other.email;
+            return other;
         });
         this.setState({respondents: newRespondents});
     }
@@ -261,46 +262,70 @@ class SecondFactorAuthentication extends React.Component {
 
     renderLostCode = (respondents, message) => {
         const submitDisabled = respondents.filter(respondent => respondent.selected).length === 0;
-        return (<div className="authenticator-problems">
+        const groupedRespondents = Object.groupBy(respondents, ({unit}) => unit)
+        return (
+            <div className="authenticator-problems-container">
+                <h1>{I18n.t("mfa.lost.title")}</h1>
+                <div className="authenticator-problems">
+                    <div className="left">
+                        <ResetTokenIcon/>
+                        <h3>{I18n.t("mfa.lost.how")}</h3>
+                        <ul>
+                            {["1", "2", "3", "4", "5"].map(i =>
+                                <li dangerouslySetInnerHTML={{
+                                    __html: DOMPurify.sanitize(I18n.t(`mfa.lost.info${i}`))
+                                }}/>
+                            )}
+                        </ul>
+                    </div>
+                    <div className="right">
+                        {respondents.length > 1 &&
+                            <div className="select-respondents">
+                                <h3>{I18n.t("mfa.lost.select")}</h3>
+                                {Object.keys(groupedRespondents).map((unit, index) =>
+                                    <div key={index}>
+                                        <p className="unit">{unit}</p>
+                                        {groupedRespondents[unit].map((respondent, i) =>
+                                            <div key={i}>
+                                                <CheckBox name={pseudoGuid()}
+                                                          onChange={() => this.onSelectRespondent(respondent)}
+                                                          value={respondent.selected}
+                                                          info={respondent.name}/>
+                                            </div>)}
+                                    </div>
+                                )}
+                            </div>}
+                        {respondents.length === 1 &&
+                            <div className="select-respondents">
+                                <h3>{I18n.t("mfa.lost.respondent")}</h3>
+                                <div>
+                                    <p className="unit">{respondents[0].unit}</p>
+                                    <CheckBox name={`respondent`}
+                                              value={true}
+                                              readOnly={true}
+                                              info={respondents[0].name}/>
+                                </div>
+                            </div>}
+                        <InputField value={message}
+                                    multiline={true}
+                                    name={I18n.t("mfa.lost.message")}
+                                    onChange={e => this.setState({message: e.target.value})}/>
 
-            <h1>{I18n.t("mfa.lost.title")}</h1>
-            <p>{I18n.t("mfa.lost.request")}</p>
-            {respondents.length > 1 && <div className="select-respondents">
-                <p>{I18n.t("mfa.lost.select")}</p>
-                {respondents.map((respondent, i) => <div key={i}>
-                    <CheckBox name={`respondent${i}`}
-                              onChange={this.onSelectRespondent(respondent.email)}
-                              value={respondent.selected}
-                              info={respondent.name}
-                    />
-                </div>)}
-            </div>}
-            {respondents.length === 1 && <div className="select-respondents">
-                <p>{I18n.t("mfa.lost.respondent")}</p>
-                <div>
-                    <CheckBox name={`respondent`}
-                              value={true}
-                              readOnly={true}
-                              info={respondents[0].name}
-                    />
+
+                    </div>
                 </div>
-            </div>}
-            <InputField value={message} multiline={true} name={I18n.t("mfa.lost.message")}
-                        onChange={e => this.setState({message: e.target.value})}/>
-
-            <section className="actions">
-                <Button cancelButton={true}
-                        onClick={this.closeExplanation}
-                        txt={I18n.t("forms.cancel")}
-                />
-                <Button disabled={submitDisabled}
-                        onClick={this.sendResetRequest}
-                        txt={I18n.t("mfa.lost.sendMail")}
-                />
-            </section>
-        </div>)
-
-
+                <section className="actions">
+                    <Button cancelButton={true}
+                            onClick={this.closeExplanation}
+                            txt={I18n.t("forms.cancel")}
+                    />
+                    <Button disabled={submitDisabled}
+                            onClick={this.sendResetRequest}
+                            txt={I18n.t("mfa.lost.sendMail")}
+                    />
+                </section>
+            </div>
+        )
     }
 
     mfaFeedback = e => {
@@ -399,20 +424,20 @@ class SecondFactorAuthentication extends React.Component {
                 <section className="register-header">
                     <h1>{I18n.t(`mfa.register.${update ? "titleUpdate" : "title"}`)}</h1>
                     {action === "update" &&
-                    <Toaster message={I18n.t("mfa.update.info1", {name: idp_name})}
-                             toasterType={ToasterType.Info}/>}
+                        <Toaster message={I18n.t("mfa.update.info1", {name: idp_name})}
+                                 toasterType={ToasterType.Info}/>}
                     {action === "register" &&
-                    <Toaster toasterType={ToasterType.Info}>
-                        <p>
+                        <Toaster toasterType={ToasterType.Info}>
+                            <p>
                             <span dangerouslySetInnerHTML={{
                                 __html: DOMPurify.sanitize(`${I18n.t("mfa.register.info1", {name: idp_name})}`)
                             }}/>
-                            <a href="#" onClick={this.mfaFeedback}>{I18n.t("mfa.register.contactUs")}</a>
-                            <span dangerouslySetInnerHTML={{
-                                __html: DOMPurify.sanitize(`${I18n.t("mfa.register.info11")}`)
-                            }}/>
-                        </p>
-                    </Toaster>}
+                                <a href="#" onClick={this.mfaFeedback}>{I18n.t("mfa.register.contactUs")}</a>
+                                <span dangerouslySetInnerHTML={{
+                                    __html: DOMPurify.sanitize(`${I18n.t("mfa.register.info11")}`)
+                                }}/>
+                            </p>
+                        </Toaster>}
                     <p>{I18n.t(`mfa.${action}.info2`)}</p>
                 </section>
                 {!update && <div className="step">
@@ -430,14 +455,14 @@ class SecondFactorAuthentication extends React.Component {
                     </div>
                 </div>}
                 {update &&
-                <div className="step">
-                    <h2>{I18n.t("mfa.update.currentCode")}</h2>
-                    <div className="step-actions">
-                        <p>{I18n.t("mfa.update.currentCodeInfo")}</p>
-                        {this.totpValueContainer(totp, TOTP_ATTRIBUTE_NAME, this.totpRefs, false)}
-                        {error && <span className="error">{I18n.t("mfa.verify.invalid")}</span>}
-                    </div>
-                </div>}
+                    <div className="step">
+                        <h2>{I18n.t("mfa.update.currentCode")}</h2>
+                        <div className="step-actions">
+                            <p>{I18n.t("mfa.update.currentCodeInfo")}</p>
+                            {this.totpValueContainer(totp, TOTP_ATTRIBUTE_NAME, this.totpRefs, false)}
+                            {error && <span className="error">{I18n.t("mfa.verify.invalid")}</span>}
+                        </div>
+                    </div>}
                 {update && <div className="step">
                     {update ? <h2>{I18n.t("mfa.register.getAppUpdate")}</h2> : <h2>{I18n.t("mfa.register.getApp")}</h2>}
                     <ul>
@@ -469,9 +494,9 @@ class SecondFactorAuthentication extends React.Component {
                     </div>
                 </div>
                 {!update &&
-                <Button disabled={verifyDisabled} onClick={this.verify}
-                        txt={I18n.t("mfa.register.next")}
-                        centralize={true}/>}
+                    <Button disabled={verifyDisabled} onClick={this.verify}
+                            txt={I18n.t("mfa.register.next")}
+                            centralize={true}/>}
                 {update && <section className="actions">
                     <Button cancelButton={true}
                             onClick={this.cancel}
@@ -498,7 +523,8 @@ class SecondFactorAuthentication extends React.Component {
         const idpFeedbackName = idp_name === I18n.t("mfa.register.unknownIdp") ?
             I18n.t("mfa.register.unknownFeedbackIdp") : idp_name
         return (
-            <div className={`mod-mfa ${qrCode ? '' : 'verify'}`}>
+            <div
+                className={`mod-mfa ${qrCode ? '' : 'verify'} ${showExplanation && !showEnterToken ? 'reset-request' : ''}`}>
                 <FeedbackDialog isOpen={showFeedBack}
                                 close={() => this.setState({showFeedBack: false})}
                                 initialMessage={I18n.t("mfa.register.feedback", {name: idpFeedbackName})}/>
