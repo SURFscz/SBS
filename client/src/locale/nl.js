@@ -67,6 +67,7 @@ const nl = {
         sram: "SURF Research Access Management",
         edit: "Wijzigen",
         history: "Geschiedenis",
+        historyLink: "Bekijk geschiedenis",
         unsuspend: "Schorsing ongedaan maken",
         avoidSuspending: "Voorkom schorsing",
         resetLastActivity: "Reset activiteit",
@@ -1629,6 +1630,7 @@ const nl = {
             expiry_date: "Einddatum",
             actions: ""
         },
+        manageMembers: "Beheer leden"
     },
     aup: {
         hi: "Hallo {{name}},",

@@ -268,7 +268,7 @@ class App extends React.Component {
                                                                     currentUser={currentUser}
                                                                     Component={Welcome} {...props}/>}/>
 
-                            <Route exact path="/collaborations/:id/:tab?"
+                            <Route exact path="/collaborations/:id/:tab?/:groupId?"
                                    render={props => <ProtectedRoute config={config}
                                                                     currentUser={currentUser}
                                                                     refreshUser={this.refreshUserMemberships}

@@ -67,6 +67,7 @@ const en = {
         sram: "SURF Research Access Management",
         edit: "Edit",
         history: "History",
+        historyLink: "View history",
         unsuspend: "Revert suspension",
         avoidSuspending: "Avoid suspension",
         resetLastActivity: "Reset activity",
@@ -1628,6 +1629,7 @@ const en = {
             expiry_date: "Expiration date",
             actions: ""
         },
+        manageMembers: "Manage members"
     },
     aup: {
         hi: "Hi {{name}},",
