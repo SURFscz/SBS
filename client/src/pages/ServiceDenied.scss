@@ -1,11 +1,11 @@
 @import "../stylesheets/vars.scss";
 
 .mod-service-denied {
-    max-width: $compact-medium;
-    margin: 0 auto;
     width: 100%;
 
+
     .content {
+        max-width: $compact-medium;
         margin: 0 auto;
         display: flex;
         flex-direction: column;
@@ -28,6 +28,20 @@
         }
 
 
+    }
+    .info {
+
+    }
+    .service-denied-info {
+        display: flex;
+        background-color: $background;
+        @media (max-width: $compact-medium) {
+            flex-direction: column;
+            width: 100%;
+        }
+        margin: 60px auto 0;
+        max-width: 768px;
+        padding-bottom: 35px;
     }
 
     div.ticket {
