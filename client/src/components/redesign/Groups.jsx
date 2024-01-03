@@ -8,6 +8,8 @@ import {
     groupShortNameExists,
     updateGroup
 } from "../../api";
+import {ReactComponent as PencilIcon} from "@surfnet/sds/icons/functional-icons/edit.svg";
+import {ReactComponent as BinIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
 import "./Groups.scss";
 import {isEmpty, stopEvent} from "../../utils/Utils";
@@ -17,7 +19,6 @@ import {clearFlash, setFlash} from "../../utils/Flash";
 import ConfirmationDialog from "../ConfirmationDialog";
 import Entities from "./Entities";
 import SpinnerField from "./SpinnerField";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {ReactComponent as UserIcon} from "../../icons/users.svg";
 import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
 import UserColumn from "./UserColumn";
@@ -30,7 +31,7 @@ import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import ClipBoardCopy from "./ClipBoardCopy";
 import {AppStore} from "../../stores/AppStore";
 import ErrorIndicator from "./ErrorIndicator";
-import {Chip, ChipType, MetaDataList, Tooltip} from "@surfnet/sds";
+import {Chip, ChipType, IconButton, Tooltip} from "@surfnet/sds";
 import InstituteColumn from "./InstituteColumn";
 import {ReactComponent as ThrashIcon} from "../../icons/trash_new.svg";
 import {ReactComponent as EmailIcon} from "../../icons/email_new.svg";
@@ -69,8 +70,21 @@ class Groups extends React.Component {
         }
     }
 
+    componentWillUnmount() {
+        this.setState({selectedGroupId: null, createNewGroup: false, editGroup: false});
+        this.props.match.params.groupId = null;
+    }
+
     componentDidMount = callback => {
-        const selectedGroup = this.getSelectedGroup();
+        const {groupId} = this.props.match.params;
+        let selectedGroup = this.getSelectedGroup();
+        const {collaboration} = this.props;
+
+        if (isEmpty(selectedGroup) && !isEmpty(groupId)) {
+            const groupIdNumber = parseInt(groupId, 10);
+            selectedGroup = collaboration.groups.find(g => g.id === groupIdNumber);
+            this.setState({selectedGroupId: groupIdNumber});
+        }
         let selectedMembers = {};
         if (selectedGroup) {
             selectedMembers = selectedGroup.collaboration_memberships.reduce((acc, entity) => {
@@ -78,7 +92,6 @@ class Groups extends React.Component {
                 return acc;
             }, {});
         }
-        const {collaboration} = this.props;
         const selectedGroups = collaboration.groups.reduce((acc, entity) => {
             acc[entity.id] = {
                 selected: false,
@@ -173,6 +186,8 @@ class Groups extends React.Component {
     cancelSideScreen = e => {
         stopEvent(e);
         this.setState({selectedGroupId: null, createNewGroup: false, editGroup: false});
+        const {collaboration} = this.props;
+        this.props.history.replace(`/collaborations/${collaboration.id}/groups`);
         AppStore.update(s => {
             const paths = s.breadcrumb.paths.slice(0, s.breadcrumb.paths.length - 1);
             const lastPath = paths[paths.length - 1];
@@ -468,55 +483,71 @@ class Groups extends React.Component {
             });
         }
 
-        const metaDataListItems = [{
-            label: I18n.t("models.groups.autoProvisioning"),
-            values: [I18n.t(`models.groups.${selectedGroup.auto_provision_members ? "on" : "off"}`)]
-        }, {
-            label: I18n.t("collaboration.shortName"),
-            values: [
-                <span className="contains-copy">
-                        <CopyToClipboard text={selectedGroup.global_urn}>
-                            <span className={"copy-link"} onClick={e => {
-                                const me = e.target;
-                                me.classList.add("copied");
-                                setTimeout(() => me.classList.remove("copied"), 1250);
-                            }}>
-                                {selectedGroup.global_urn}
-                            </span>
-                        </CopyToClipboard>
-                        <ClipBoardCopy transparentBackground={true} txt={selectedGroup.global_urn}/>
-                    </span>
-            ]
-        }];
         const membersNotInGroup = isEmpty(selectedGroup.collaboration_memberships) ? collaboration.collaboration_memberships :
             collaboration.collaboration_memberships.filter(m => selectedGroup.collaboration_memberships.every(c => c.id !== m.id));
         const actions = this.memberActionButtons(collaboration, mayCreateGroups, membersNotInGroup, selectedMembers, selectedGroup);
         const queryParam = `name=${encodeURIComponent(I18n.t("breadcrumb.group", {name: selectedGroup.name}))}&back=${encodeURIComponent(window.location.pathname)}`;
         const children = (
-            <div className={"group-details"}>
-                <section className="header">
-                    <h1>{selectedGroup.name}</h1>
-                    {mayCreateGroups &&
-                        <div className="header-actions">
-                            <Button onClick={() => this.setState(this.newGroupState(selectedGroup))}
-                                    small={true}
-                                    txt={I18n.t("models.groups.edit")}/>
-                            {currentUser.admin && <span className="history"
-                                                        onClick={() => {
-                                                            clearFlash();
-                                                            this.props.history.push(`/audit-logs/groups/${selectedGroup.id}?${queryParam}`)
-                                                        }}>
-                            <FontAwesomeIcon icon="history"/>{I18n.t("home.history")}
-                        </span>}
-                        </div>}
-
-                </section>
-                <p className={`description ${mayCreateGroups ? "" : "no-header-actions"}`}>{selectedGroup.description}</p>
-                {metaDataListItems.length > 0 && <MetaDataList items={metaDataListItems}/>}
+            <div className="group-details">
+                <div className="group-details-header">
+                    <section className="header">
+                        <h1>{selectedGroup.name}</h1>
+                        {mayCreateGroups &&
+                            <div className="header-actions">
+                                <IconButton onClick={() => this.setState(this.newGroupState(selectedGroup))}>
+                                    <Tooltip
+                                        tip={I18n.t("models.groups.edit")}
+                                        children={<PencilIcon/>}
+                                        standalone={true}/>
+                                </IconButton>
+                                <IconButton onClick={this.delete}>
+                                    <Tooltip
+                                        tip={I18n.t("groups.delete")}
+                                        children={<BinIcon/>}
+                                        standalone={true}/>
+                                </IconButton>
+                            </div>}
+                    </section>
+                    <p className={`description ${mayCreateGroups ? "" : "no-header-actions"}`}>{selectedGroup.description}</p>
+                    <section className="group-meta-data">
+                        <div className="meta-data-item">
+                            <span className="item-label">
+                                {I18n.t("collaboration.shortName")}
+                            </span>
+                            <span className="contains-copy group-urn">
+                                <CopyToClipboard text={selectedGroup.global_urn}>
+                                    <span className={"copy-link"} onClick={e => {
+                                        const me = e.target;
+                                        me.classList.add("copied");
+                                        setTimeout(() => me.classList.remove("copied"), 750);
+                                    }}>
+                                {selectedGroup.global_urn}
+                            </span>
+                            </CopyToClipboard>
+                            <ClipBoardCopy transparentBackground={true} txt={selectedGroup.global_urn}/>
+                            </span>
+                        </div>
+                        <div className="meta-data-item">
+                            <span className="item-label">
+                                {I18n.t("models.groups.autoProvisioning")}
+                            </span>
+                            <span>{I18n.t(`models.groups.${selectedGroup.auto_provision_members ? "on" : "off"}`)}</span>
+                        </div>
+                        {currentUser.admin && <a className="history"
+                                                            onClick={e => {
+                                                                stopEvent(e);
+                                                                clearFlash();
+                                                                this.props.history.push(`/audit-logs/groups/${selectedGroup.id}?${queryParam}`)
+                                                            }}>
+                            {I18n.t("home.historyLink")}
+                        </a>}
+                    </section>
+                </div>
                 <Entities entities={selectedGroup.collaboration_memberships}
                           actions={actions}
                           actionHeader={"collaboration-groups"}
                           modelName="groupMembers"
+                          title={I18n.t("groups.manageMembers")}
                           showActionsAlways={!isEmpty(actions)}
                           searchCallback={this.searchCallback}
                           defaultSort="user__name"
@@ -626,7 +657,7 @@ class Groups extends React.Component {
                         <Button warningButton={true}
                                 onClick={this.delete}/>}
                     <Button cancelButton={true} txt={I18n.t("forms.cancel")}
-                            onClick={this.cancelSideScreen}/>
+                            onClick={() => this.setState({createNewGroup: false, editGroup: false})}/>
                     <Button disabled={disabledSubmit}
                             txt={I18n.t(`forms.save`)}
                             onClick={this.submit}/>
@@ -680,7 +711,9 @@ class Groups extends React.Component {
 
     delete = () => {
         const selectedGroup = this.getSelectedGroup();
+        const {collaboration} = this.props;
         const action = () => {
+            this.props.history.push(`/collaborations/${collaboration.id}/groups`);
             this.refreshAndFlash(deleteGroup(selectedGroup.id),
                 I18n.t("groups.flash.deleted", {name: selectedGroup.name}),
                 () => this.setState({
@@ -758,6 +791,8 @@ class Groups extends React.Component {
                 return acc;
             }, {});
             this.setState({selectedMembers: selectedMembers, allSelected: false});
+            const {collaboration} = this.props;
+            this.props.history.replace(`/collaborations/${collaboration.id}/groups/${selectedGroup.id}`);
         });
         AppStore.update(s => {
             const {collaboration} = this.props;
@@ -809,15 +844,15 @@ class Groups extends React.Component {
             columns.push({
                     nonSortable: true,
                     key: "check",
-                    header: displayCheckBoxHeader &&  <CheckBox value={allGroupsSelected}
-                                      name={"allGroupsSelected"}
-                                      onChange={this.allGroupChecksSelected}/>,
+                    header: displayCheckBoxHeader && <CheckBox value={allGroupsSelected}
+                                                               name={"allGroupsSelected"}
+                                                               onChange={this.allGroupChecksSelected}/>,
                     mapper: entity => <div className="check">
                         {this.mayRemoveGroup(entity, collaboration) ?
-                        <CheckBox name={"" + ++i}
-                                  onChange={this.onGroupCheck(entity)}
-                                  value={(selectedGroups[entity.id] || {}).selected || false}/> :
-                        <Tooltip tip={I18n.t("tooltips.serviceGroupConnectedNotDeletable")}
+                            <CheckBox name={"" + ++i}
+                                      onChange={this.onGroupCheck(entity)}
+                                      value={(selectedGroups[entity.id] || {}).selected || false}/> :
+                            <Tooltip tip={I18n.t("tooltips.serviceGroupConnectedNotDeletable")}
                                      standalone={true}
                                      children={<div>
                                          <CheckBox name={"" + ++i}

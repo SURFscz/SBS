@@ -517,7 +517,9 @@ class CollaborationDetail extends React.Component {
         if (collaboration) {
             this.updateAppStore(user, config, collaboration, adminOfCollaboration, orgManager);
         }
-        this.setState({tab: name}, () => this.props.history.replace(`/collaborations/${collId}/${name}`));
+        const {groupId} = this.props.match.params;
+        const groupIdPart = !isEmpty(groupId) && name === "groups" ? `/${groupId}` : "";
+        this.setState({tab: name}, () => this.props.history.replace(`/collaborations/${collId}/${name}${groupIdPart}`));
     }
 
 
