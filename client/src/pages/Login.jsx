@@ -29,12 +29,12 @@ class Login extends React.Component {
         }
     });
 
-toggleSpin = () => {
+    toggleSpin = () => {
         this.setState({spin: true})
         setTimeout(() => this.setState({spin: false}), 725);
     }
 
-render() {
+    render() {
         const {confirmationDialogOpen, confirmationDialogAction, confirmationQuestion, spin} = this.state;
         const {user} = this.props;
         return (
@@ -46,7 +46,8 @@ render() {
                 <div className="mod-login-container">
                     <div className="mod-login">
                         <div className="header-left">
-                            <h2 className={"header-title"} dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("landing.header.title"))}}/>
+                            <h2 className={"header-title"}
+                                dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("landing.header.title"))}}/>
                             <Button txt={I18n.t("landing.header.login")}
                                     disabled={user.suspended}
                                     onClick={login}/>
@@ -54,7 +55,10 @@ render() {
                                dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("landing.header.sup"))}}/>
                         </div>
                         <div className="header-right">
-                            <img className={spin ? "spin" : ""} onClick={() => this.toggleSpin()} src={HappyLogo} alt="logo"/>
+                            <img className={spin ? "spin" : ""}
+                                 onClick={() => this.toggleSpin()}
+                                 src={HappyLogo}
+                                 alt="logo"/>
                         </div>
                     </div>
                 </div>

@@ -1,6 +1,9 @@
 import React, {useEffect, useState} from "react";
 import "./ServiceDenied.scss";
-import {ReactComponent as NoAccess} from "../lotties/undraw_access_denied.svg";
+import {ReactComponent as NoAccessIcon} from "../icons/service-denied-1.svg";
+import {ReactComponent as LogonPrevIcon} from "../icons/service-denied-2.svg";
+import {ReactComponent as HappyIcon} from "../icons/landing/happy.svg";
+import {ReactComponent as ErrorInfoIcon} from "../icons/service-denied-3.svg";
 import I18n from "../locale/I18n";
 import escape from "lodash.escape";
 import DOMPurify from "dompurify";
@@ -27,34 +30,71 @@ export default function ServiceDenied() {
         setStatus(status);
     }, []);
 
+    const translate = item => {
+        return item
+            .replaceAll("{{serviceName}}", serviceName)
+            .replaceAll("{{userId}}", userId)
+            .replaceAll("{{subject}}", I18n.t("sfo.subject", {name: serviceName}))
+            .replaceAll("{{entityId}}", entityId)
+            .replaceAll("{{issuerId}}", issuerId)
+            .replaceAll("{{timestamp}}", timestamp)
+    }
+
+    const infoBlock = (name, Logo) => {
+        const translations = I18n.translations[I18n.locale].serviceDenied
+        return (
+            <div key={name} className={"service-denied-info"}>
+                <Logo/>
+                <div className="header-left info">
+                    <h2>{translations[`${name}Title`]}</h2>
+                    <ul>
+                        {translations[name].map((item, index) =>
+                            <li key={index} dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(translate(item))}}/>
+                        )}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
     const timestamp = new Date().toUTCString();
     return (
         <div className="mod-service-denied">
-            <div className="content">
-                <h1 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("sfo.title", {name: serviceName}))}}/>
-                <NoAccess/>
-                {<div className={"status"}
-                      dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t(`sfo.info${status || ""}`, {name: serviceName}))}}/>}
+            <div className="content-container">
+                <div className="content">
+                    <h1 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("sfo.title", {name: serviceName}))}}/>
+                    <NoAccessIcon/>
+                    {<div className={"status"}
+                          dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t(`sfo.info${status || ""}`, {name: serviceName}))}}/>}
+                </div>
             </div>
-            <div className={"ticket"}>
-                <p dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(I18n.t("sfo.ticket", {
-                        subject: I18n.t("sfo.subject", {name: serviceName}),
-                        entityId: entityId,
-                        issuerId: issuerId,
-                        userId: userId,
-                        timestamp: timestamp
-                    }))
-                }}/>
-                <span>{I18n.t("sfo.entityId")}</span>
-                <span className={"value"}>{entityId}</span>
-                <span>{I18n.t("sfo.issuerId")}</span>
-                <span className={"value"}>{issuerId}</span>
-                <span>{I18n.t("sfo.userId")}</span>
-                <span className={"value"}>{userId}</span>
-                <span>{I18n.t("sfo.timestamp")}</span>
-                <span className={"value"}>{timestamp}</span>
+            <div className="info-container">
+                <div className="info">
+                    {infoBlock("loginPrev", LogonPrevIcon)}
+                    {infoBlock("neverBeenBefore", HappyIcon)}
+                    {infoBlock("ticketInfo", ErrorInfoIcon)}
+                    <div className={"ticket"}>
+                        <p dangerouslySetInnerHTML={{
+                            __html: DOMPurify.sanitize(I18n.t("sfo.ticket", {
+                                subject: I18n.t("sfo.subject", {name: serviceName}),
+                                entityId: entityId,
+                                issuerId: issuerId,
+                                userId: userId,
+                                timestamp: timestamp
+                            }))
+                        }}/>
+                        <span>{I18n.t("sfo.entityId")}</span>
+                        <span className={"value"}>{entityId}</span>
+                        <span>{I18n.t("sfo.issuerId")}</span>
+                        <span className={"value"}>{issuerId}</span>
+                        <span>{I18n.t("sfo.userId")}</span>
+                        <span className={"value"}>{userId}</span>
+                        <span>{I18n.t("sfo.timestamp")}</span>
+                        <span className={"value"}>{timestamp}</span>
+                    </div>
+                </div>
             </div>
-        </div>
-    );
+        </>
+    )
+        ;
 }
