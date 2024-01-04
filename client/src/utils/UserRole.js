@@ -1,5 +1,7 @@
 import I18n from "../locale/I18n";
 import {ChipType} from "@surfnet/sds";
+import {isEmpty} from "./Utils";
+import {COLLABORATION_REQUEST_TYPE, JOIN_REQUEST_TYPE, SERVICE_TYPE_REQUEST} from "./SocketIO";
 
 
 export const ROLES = {
@@ -109,3 +111,21 @@ export function chipTypeForStatus(entity) {
     return status === "approved" ? ChipType.Status_success : status === "open" ? ChipType.Status_info : ChipType.Status_error;
     // "suspended", "expired", "active"
 }
+
+export function getUserRequests(user) {
+    const requests = [];
+    if (!isEmpty(user.join_requests)) {
+        user.join_requests.forEach(joinRequest => joinRequest.requestType = JOIN_REQUEST_TYPE);
+        requests.push(...user.join_requests);
+    }
+    if (!isEmpty(user.collaboration_requests)) {
+        user.collaboration_requests.forEach(collaborationRequest => collaborationRequest.requestType = COLLABORATION_REQUEST_TYPE);
+        requests.push(...user.collaboration_requests);
+    }
+    if (!isEmpty(user.service_requests)) {
+        user.service_requests.forEach(serviceRequest => serviceRequest.requestType = SERVICE_TYPE_REQUEST);
+        requests.push(...user.service_requests);
+    }
+    return requests;
+}
+
