@@ -2446,19 +2446,16 @@ const en = {
         loginPrevTitle: "Could you login previously?",
         loginPrev: [
             "Make sure you are using the correct account.",
-            "Check if you are still a member of the CO that organised your permission",
+            "Check if you are still a member of the CO that organised your permission.",
             "If something else is going wrong, please contact us at " +
             "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a>."
         ],
         neverBeenBeforeTitle: "Have you never been here before?",
         neverBeenBefore: [
-          "Learn what <a href='https://surf.nl/sram' target='_blank' rel='noopener noreferrer'>SRAM is all about</a>",
-          "If someone pointed you to <strong>{{serviceName}}</strong>, reach out to them on how to gain access via a research collaboration, or reach out to your institution"
+          "Learn what <a href=\"https://surf.nl/sram\" target=\"_blank\" rel=\"noopener noreferrer\">SRAM is all about</a>.",
+          "If someone pointed you to <strong>{{serviceName}}</strong>, reach out to them on how to gain access via a research collaboration, or reach out to your institution."
         ],
-        ticketInfoTitle: "Session information",
-        ticketInfo: [
-
-        ]
+        ticketInfoTitle: "Session information"
     }
 };
 

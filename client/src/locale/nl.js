@@ -2442,6 +2442,21 @@ const nl = {
         editRole: "Wijzig details organisatiemanager",
         duplicated: "Er is al een unit met de naam {{name}} voor deze organisatie",
         unitRequired: "Je moet minstens één unit selecteren"
+    },
+    serviceDenied: {
+        loginPrevTitle: "Kon je eerst wel inloggen?",
+        loginPrev: [
+            "Zorg dat je het juiste account gebruikt.",
+            "Controleer of je nog steeds lid bent van de juiste samenwerking.",
+            "Als er iets anders niet juist is, neem dan contact op " +
+            "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a>."
+        ],
+        neverBeenBeforeTitle: "Ben je hier nog nooit geweest?",
+        neverBeenBefore: [
+          "Lees wat je met <a href=\"https://surf.nl/sram\" target=\"_blank\" rel=\"noopener noreferrer\">SRAM allemaal kan doen.</a>",
+          "Als iemand je hebt gewezen op <strong>{{serviceName}}</strong>, neem dan contact met hen op om toegang te krijgen tot de juiste samenwerking, of neem contact op met je instelling."
+        ],
+        ticketInfoTitle: "Sessie informatie"
     }
 };
 
