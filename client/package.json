@@ -20,7 +20,7 @@
         "lodash.debounce": "^4.0.8",
         "lodash.escape": "^4.0.1",
         "moment": "^2.30.1",
-        "moment-timezone": "^0.5.34",
+        "moment-timezone": "^0.5.44",
         "prop-types": "^15.6.2",
         "pullstate": "^1.23.0",
         "react": "^18.2.0",
