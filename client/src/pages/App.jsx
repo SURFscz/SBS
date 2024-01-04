@@ -51,9 +51,11 @@ import ServiceAup from "./ServiceAup";
 import MissingServiceAup from "./MissingServiceAup";
 import PamWebSSO from "./PamWebSSO";
 
-import {isUserAllowed, ROLES} from "../utils/UserRole";
+import {getUserRequests, isUserAllowed, ROLES} from "../utils/UserRole";
 import {SUBSCRIPTION_ID_COOKIE_NAME} from "../utils/SocketIO";
 import MissingAttributes from "./MissingAttributes";
+import CollaborationsOverview from "./CollaborationsOverview";
+import MyRequests from "../components/redesign/MyRequests";
 
 addIcons();
 
@@ -273,6 +275,20 @@ class App extends React.Component {
                                                                     currentUser={currentUser}
                                                                     refreshUser={this.refreshUserMemberships}
                                                                     Component={CollaborationDetail} {...props}/>}/>
+
+                            <Route exact path="/collaborations-overview"
+                                   render={props => <ProtectedRoute config={config}
+                                                                    currentUser={currentUser}
+                                                                    refreshUser={this.refreshUserMemberships}
+                                                                    Component={CollaborationsOverview} {...props}/>}/>
+
+                            <Route exact path="/my-requests"
+                                   render={props => <ProtectedRoute config={config}
+                                                                    currentUser={currentUser}
+                                                                    refreshUserHook={this.refreshUserMemberships}
+                                                                    standAlone={true}
+                                                                    requests={getUserRequests(currentUser)}
+                                                                    Component={MyRequests} {...props}/>}/>
 
                             <Route exact path="/organisations/:id/:tab?"
                                    render={props => <ProtectedRoute

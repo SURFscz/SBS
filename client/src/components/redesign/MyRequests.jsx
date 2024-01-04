@@ -17,6 +17,7 @@ import {
 import {chipTypeForStatus} from "../../utils/UserRole";
 import {Chip} from "@surfnet/sds";
 import {organisationNames} from "../../api";
+import {AppStore} from "../../stores/AppStore";
 
 
 const allValue = "all";
@@ -60,7 +61,7 @@ export default class MyRequests extends React.PureComponent {
     }
 
     componentDidMount = callback => {
-        const {requests} = this.props;
+        const {requests, standAlone} = this.props;
         const filterOptions = [{
             label: I18n.t("collaborationRequest.statuses.all", {nbr: requests.length}),
             value: allValue
@@ -77,6 +78,14 @@ export default class MyRequests extends React.PureComponent {
             label: `${I18n.t("collaborationRequest.statuses." + option.status)} (${option.nbr})`,
             value: option.status
         })).sort((o1, o2) => o1.label.localeCompare(o2.label));
+        if (standAlone) {
+            AppStore.update(s => {
+                s.breadcrumb.paths = [
+                    {path: "/", value: I18n.t("breadcrumb.home")},
+                    {value: I18n.t("breadcrumb.myRequests")}
+                ];
+            });
+        }
 
         const {socketSubscribed} = this.state;
         if (!socketSubscribed) {

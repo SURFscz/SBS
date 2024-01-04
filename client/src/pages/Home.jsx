@@ -8,7 +8,7 @@ import {ReactComponent as MembersIcon} from "../icons/single-neutral.svg";
 import {ReactComponent as PlatformAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
 import {AppStore} from "../stores/AppStore";
-import {isUserServiceAdmin, rawGlobalUserRole, ROLES} from "../utils/UserRole";
+import {getUserRequests, isUserServiceAdmin, rawGlobalUserRole, ROLES} from "../utils/UserRole";
 import Tabs from "../components/Tabs";
 import Organisations from "../components/redesign/Organisations";
 import UnitHeader from "../components/redesign/UnitHeader";
@@ -23,7 +23,6 @@ import Users from "../components/redesign/Users";
 import ServiceRequests from "../components/redesign/ServiceRequests";
 import EmptyCollaborations from "../components/redesign/EmptyCollaborations";
 import MyRequests from "../components/redesign/MyRequests";
-import {COLLABORATION_REQUEST_TYPE, JOIN_REQUEST_TYPE, SERVICE_TYPE_REQUEST} from "../utils/SocketIO";
 
 class Home extends React.Component {
 
@@ -118,6 +117,10 @@ class Home extends React.Component {
                 this.props.history.push("/welcome");
                 return;
             }
+            if ((role === ROLES.COLL_ADMIN || role === ROLES.COLL_MEMBER) && !isUserServiceAdmin(user) && nbrCollaborations < 6) {
+                this.props.history.push("/collaborations-overview");
+                return;
+            }
             AppStore.update(s => {
                 s.breadcrumb.paths = [
                     {path: "/", value: I18n.t("breadcrumb.home")}
@@ -135,19 +138,7 @@ class Home extends React.Component {
     }
 
     addRequestsTabs = (user, refreshUserHook, tabs, tab) => {
-        const requests = [];
-        if (!isEmpty(user.join_requests)) {
-            user.join_requests.forEach(joinRequest => joinRequest.requestType = JOIN_REQUEST_TYPE);
-            requests.push(...user.join_requests);
-        }
-        if (!isEmpty(user.collaboration_requests)) {
-            user.collaboration_requests.forEach(collaborationRequest => collaborationRequest.requestType = COLLABORATION_REQUEST_TYPE);
-            requests.push(...user.collaboration_requests);
-        }
-        if (!isEmpty(user.service_requests)) {
-            user.service_requests.forEach(serviceRequest => serviceRequest.requestType = SERVICE_TYPE_REQUEST);
-            requests.push(...user.service_requests);
-        }
+        const requests = getUserRequests(user);
         if (!isEmpty(requests)) {
             tabs.push(this.getMyRequestsTab(requests, refreshUserHook));
             return "my_requests";
@@ -208,7 +199,9 @@ class Home extends React.Component {
                      name="my_requests"
                      label={I18n.t("home.tabs.myRequests", {count: requests.length})}
                      icon={<JoinRequestsIcon/>}>
-            <MyRequests requests={requests} refreshUserHook={refreshUserHook} {...this.props} />
+            <MyRequests requests={requests}
+                        standAlone={false}
+                        refreshUserHook={refreshUserHook} {...this.props} />
         </div>)
     }
 

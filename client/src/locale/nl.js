@@ -52,7 +52,8 @@ const nl = {
         invite: "Leden toevoegen",
         invitation: "Uitnodiging",
         users: "Gebruikers",
-        userToken: "Diensttoken '{{name}}'"
+        userToken: "Diensttoken '{{name}}'",
+        myRequests: "Mijn verzoeken"
     },
     login: {
         title: "Research Access Management",
@@ -2457,6 +2458,14 @@ const nl = {
           "Als iemand je hebt gewezen op <strong>{{serviceName}}</strong>, neem dan contact met hen op om toegang te krijgen tot de juiste samenwerking, of neem contact op met je instelling."
         ],
         ticketInfoTitle: "Sessie informatie"
+    },
+    collaborationsOverview: {
+        welcome: "Welkom {{name}}",
+        select: "Selecteer je samenwerking",
+        request: "Verzoek nieuwe samenwerking",
+        create: "Nieuwe samenwerking aanmaken",
+        viewRequests: "bekijk verzoeken",
+        open: "Open"
     }
 };
 
