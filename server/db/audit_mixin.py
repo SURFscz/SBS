@@ -1,11 +1,11 @@
 import os
 
 from flask import session, current_app
-
 from sqlalchemy import MetaData
 from sqlalchemy import event, inspect
 from sqlalchemy.orm import class_mapper
 from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.attributes import get_history
 
 from server.db.db import db
@@ -142,10 +142,10 @@ class AuditMixin(JsonSerializableBase):
                 kwargs.get("state_before"),
                 kwargs.get("state_after")
             )
-            if connection is None:
-                db.session.merge(audit)
-            else:
-                audit.save(connection)
+            scoped_session = sessionmaker(db.engine)
+            with scoped_session.begin() as sc:
+                sc.merge(audit)
+                sc.commit()
 
     @classmethod
     def __declare_last__(cls):
