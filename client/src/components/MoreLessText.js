@@ -3,12 +3,12 @@ import "./MoreLessText.scss";
 import I18n from "../locale/I18n";
 import {isEmpty, stopEvent} from "../utils/Utils";
 
-export const MoreLessText = ({txt}) => {
+export const MoreLessText = ({txt, initialShowMore = true}) => {
 
     const cutoffNumber = 190;
 
     const [showMore, setShowMore] = useState(txt && txt.length > cutoffNumber
-        && txt.substring(cutoffNumber).indexOf(" ") > 0);
+        && txt.substring(cutoffNumber).indexOf(" ") > 0 && initialShowMore);
 
     const toggleShowMore = e => {
         stopEvent(e);

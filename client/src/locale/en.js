@@ -52,7 +52,8 @@ const en = {
         invite: "Invite members",
         invitation: "Invitation",
         users: "Users",
-        userToken: "Service token '{{name}}'"
+        userToken: "Service token '{{name}}'",
+        myRequests: "My requests"
     },
     login: {
         title: "Research Access Management",
@@ -2456,6 +2457,14 @@ const en = {
           "If someone pointed you to <strong>{{serviceName}}</strong>, reach out to them on how to gain access via a research collaboration, or reach out to your institution."
         ],
         ticketInfoTitle: "Session information"
+    },
+    collaborationsOverview: {
+        welcome: "Welcome {{name}}",
+        select: "Select your collaboration",
+        request: "Request new collaboration",
+        create: "Create new collaboration",
+        viewRequests: "view requests",
+        open: "Open"
     }
 };
 
