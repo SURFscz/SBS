@@ -1,4 +1,5 @@
-FROM python:3.11-slim-bookworm
+# First build SRAM SBS image
+FROM python:3.11-slim-bookworm as surfscz/sram-sbs
 
 # Do an initial clean up and general upgrade of the distribution
 ENV DEBIAN_FRONTEND noninteractive
@@ -44,3 +45,14 @@ EXPOSE 80
 ENTRYPOINT ["/entrypoint.sh"]
 #CMD ["bash"]
 CMD ["/usr/local/bin/gunicorn --worker-class eventlet --workers 8 --bind 0.0.0.0:80 server.__main__:app"]
+
+# Then build SRAM SBS (apache) server image
+FROM ghcr.io/openconext/openconext-basecontainers/apache2:latest as surfscz/sram-sbs-server
+RUN rm -f /etc/apache2/sites-enabled/*.conf
+RUN a2enmod proxy_wstunnel
+
+# Set the default workdir
+WORKDIR /opt
+
+#CMD ["bash"]
+
