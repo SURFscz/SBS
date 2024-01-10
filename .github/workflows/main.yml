@@ -16,7 +16,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: surfscz/sram-sbs
+  IMAGE_NAME_SBS: surfscz/sram-sbs
+  IMAGE_NAME_SERVER: surfscz/sram-sbs-server
 
 jobs:
   Server_tests:
@@ -313,7 +314,9 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_SBS }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_SERVER }}
 
       - name: Build and push Docker images
         uses: docker/build-push-action@v5
