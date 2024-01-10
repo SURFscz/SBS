@@ -24,15 +24,18 @@ def connect_service_collaboration(service_id, collaboration_id, force=False):
     org_automatic_allowed = organisation in service.automatic_connection_allowed_organisations
 
     if service.override_access_allowed_all_connections:
-        raise BadRequest("Connection not allowed")
+        raise BadRequest(f"Connection not allowed "
+                         f"(service {service_id}, org {organisation.id}, co {collaboration_id})")
 
     if not org_allowed and not org_automatic_allowed \
             and not service.automatic_connection_allowed and not service.access_allowed_for_all:
-        raise BadRequest("not_allowed_organisation")
+        raise BadRequest("not_allowed_organisation "
+                         f"(service {service_id}, org {organisation.id}, co {collaboration_id})")
 
     allowed_to_connect = service.automatic_connection_allowed or org_automatic_allowed
     if not force and not allowed_to_connect:
-        raise BadRequest("automatic_connection_not_allowed")
+        raise BadRequest(f"automatic_connection_not_allowed "
+                         f"(service {service_id}, org {organisation.id}, co {collaboration_id})")
 
     if organisation.services_restricted and not service.allow_restricted_orgs:
         raise BadRequest(f"Organisation {collaboration.organisation.name} can only be linked to SURF services")
