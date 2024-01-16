@@ -4,7 +4,8 @@ from sqlalchemy.orm import load_only
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import current_user_id, confirm_allow_impersonation, confirm_write_access, \
-    is_organisation_admin_or_manager, is_collaboration_admin, access_allowed_to_collaboration_as_org_member
+    is_organisation_admin_or_manager, is_collaboration_admin, access_allowed_to_collaboration_as_org_member, \
+    has_org_manager_unit_access
 from server.db.audit_mixin import AuditLog
 from server.db.domain import User, Organisation, Collaboration, Service
 
@@ -80,7 +81,10 @@ def info(query_id, collection_name):
             return is_organisation_admin_or_manager(query_id)
         if collection_name == "collaborations":
             co_admin = is_collaboration_admin(user_id=user_id, collaboration_id=query_id)
-            return co_admin or access_allowed_to_collaboration_as_org_member(query_id)
+            if co_admin:
+                return True
+            collaboration = Collaboration.query.filter(Collaboration.id == query_id).one()
+            return has_org_manager_unit_access(user_id, collaboration)
         return False
 
     confirm_write_access(override_func=override_func)
@@ -90,6 +94,15 @@ def info(query_id, collection_name):
                     and_(AuditLog.target_id == query_id, AuditLog.target_type == collection_name))) \
         .order_by(desc(AuditLog.created_at)) \
         .all()
+
+    def access_collaboration_allowed(audit_log):
+        if audit_log.target_type != "collaborations":
+            return True
+        collaboration = Collaboration.query.filter(Collaboration.id == audit_log.target_id).one()
+        return has_org_manager_unit_access(current_user_id(), collaboration)
+
+    if collection_name == "organisations":
+        audit_logs = list(filter(access_collaboration_allowed, audit_logs))
 
     res = _add_references(audit_logs)
 
