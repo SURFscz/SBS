@@ -1,5 +1,6 @@
 import logging
 import os
+from datetime import datetime, timezone
 from os.path import exists
 
 from werkzeug.exceptions import BadRequest
@@ -15,3 +16,7 @@ def read_file(file_name: str) -> str:
             return f.read()
     else:
         raise BadRequest()
+
+
+def dt_now() -> datetime:
+    return datetime.now(timezone.utc)
