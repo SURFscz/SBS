@@ -58,7 +58,7 @@ def do_resend(invitation_id):
 
 
 def parse_date(val, default_date=None):
-    return datetime.datetime.fromtimestamp(val / 1e3) if val and (
+    return datetime.datetime.fromtimestamp(val / 1e3, tz=datetime.timezone.utc) if val and (
             isinstance(val, float) or isinstance(val, int)) else default_date
 
 

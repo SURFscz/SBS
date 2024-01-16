@@ -665,7 +665,7 @@ def _validate_collaboration(data, organisation, new_collaboration=True):
         dt = datetime.fromtimestamp(int(expiry_date), timezone.utc) + timedelta(hours=4)
         if not past_dates_allowed and dt < dt_now():
             raise APIBadRequest(f"It is not allowed to set the expiry date ({dt}) in the past")
-        data["expiry_date"] = datetime(year=dt.year, month=dt.month, day=dt.day, hour=0, minute=0, second=0)
+        data["expiry_date"] = dt.replace(hour=0, minute=0, second=0, microsecond=0)
     else:
         data["expiry_date"] = None
     # Check if the status needs updating

@@ -2,7 +2,7 @@ import random
 import re
 import string
 from collections.abc import Iterable
-from datetime import datetime, date, time, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from werkzeug.exceptions import BadRequest
@@ -33,9 +33,9 @@ USER_TOKEN_INTROSPECT = "user_token_introspect"
 def default_expiry_date(json_dict=None):
     if json_dict is not None and "expiry_date" in json_dict:
         ms = int(json_dict["expiry_date"])
-        dt = datetime.utcfromtimestamp(ms)
-        return datetime(year=dt.year, month=dt.month, day=dt.day, hour=0, minute=0, second=0)
-    return datetime.combine(date.today(), time()) + timedelta(days=15)
+        dt = datetime.fromtimestamp(ms, timezone.utc)
+        return datetime(year=dt.year, month=dt.month, day=dt.day, hour=0, minute=0, second=0, tzinfo=timezone.utc)
+    return dt_now() + timedelta(days=15)
 
 
 def calculate_expiry_period(invitation, today=dt_now()):
