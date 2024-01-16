@@ -12,14 +12,15 @@ class TZDateTime(sqlalchemy.TypeDecorator):
     def process_bind_param(self, value, dialect):
         if value is None:
             return None
-        elif isinstance(value, datetime.date):
-            # convert to datetime, setting time to 0
-            return datetime.datetime(value.year, value.month, value.day, tzinfo=datetime.timezone.utc)
         elif isinstance(value, datetime.datetime):
             if value.tzinfo is None:
                 raise Exception(f"Datetime '{value}' must be timezone aware")
             else:
                 return value.astimezone(datetime.timezone.utc).replace(tzinfo=None)
+        # note: datetime.date is also an instance of datetime.datetime, so ordering matters here
+        elif isinstance(value, datetime.date):
+            # convert to datetime, setting time to 0
+            return datetime.datetime(value.year, value.month, value.day, tzinfo=datetime.timezone.utc)
         else:
             raise Exception(f"Unknown type '{type(value)}' for datetime")
 
