@@ -3,6 +3,7 @@ import "./CollaborationUnits.scss";
 import I18n from "../locale/I18n";
 import SelectField from "./SelectField";
 import {rawGlobalUserRole, ROLES} from "../utils/UserRole";
+import {isEmpty} from "../utils/Utils";
 
 export const CollaborationUnits = ({
                                        selectedUnits,
@@ -29,9 +30,11 @@ export const CollaborationUnits = ({
             .find(m => m.organisation_id === organisation.id)
             .units.map(unit => ({...unit, value: unit.id}));
         //fixate the selectedUnits that are not in the organisationMembership
-        selectedUnits.forEach(option => option.isFixed = !membershipUnits.some(unit => unit.value === option.value))
-        //remove the units from allUnits that are not in the organisationMembership
-        allUnits = allUnits.filter(option => membershipUnits.some(unit => unit.value === option.value))
+        //remove the units from allUnits that are not in the organisationMembership (if there are membershipUnits)
+        if (!isEmpty(membershipUnits)) {
+            selectedUnits.forEach(option => option.isFixed = !membershipUnits.some(unit => unit.value === option.value))
+            allUnits = allUnits.filter(option => membershipUnits.some(unit => unit.value === option.value))
+        }
     }
 
     const options = allUnits.filter(unit => !selectedUnits.find(selectedUnit => selectedUnit.value === unit.value));
