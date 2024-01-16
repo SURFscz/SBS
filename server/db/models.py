@@ -132,7 +132,7 @@ def parse_date_fields(json_dict):
         if date_field in json_dict:
             val = json_dict[date_field]
             if isinstance(val, float) or isinstance(val, int):
-                json_dict[date_field] = datetime.datetime.fromtimestamp(val / 1e3)
+                json_dict[date_field] = datetime.datetime.fromtimestamp(val / 1e3, tz=datetime.timezone.utc)
         for rel in flatten(filter(lambda i: isinstance(i, list), json_dict.values())):
             parse_date_fields(rel)
 

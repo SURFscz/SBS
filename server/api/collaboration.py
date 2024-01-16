@@ -427,7 +427,7 @@ def collaboration_invites():
 
     membership_expiry_date = data.get("membership_expiry_date")
     if membership_expiry_date:
-        membership_expiry_date = datetime.fromtimestamp(data.get("membership_expiry_date"))
+        membership_expiry_date = datetime.fromtimestamp(data.get("membership_expiry_date"), tz=timezone.utc)
     for administrator in administrators:
         invitation = Invitation(hash=generate_token(), message=message, invitee_email=administrator,
                                 collaboration=collaboration, user=user, status="open",
