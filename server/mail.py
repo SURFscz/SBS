@@ -13,6 +13,8 @@ from server.db.db import db
 from server.db.defaults import calculate_expiry_period
 from server.db.domain import User, UserMail
 from server.logger.context_logger import ctx_logger
+from server.tools import dt_now
+
 from server.mail_types.mail_types import COLLABORATION_REQUEST_MAIL, \
     COLLABORATION_JOIN_REQUEST_MAIL, AUTOMATIC_COLLABORATION_JOIN_REQUEST_MAIL, ORGANISATION_INVITATION_MAIL, \
     COLLABORATION_INVITATION_MAIL, ACCEPTED_JOIN_REQUEST_MAIL, DENIED_JOIN_REQUEST_MAIL, \
@@ -489,7 +491,7 @@ def mail_collaboration_suspension_notification(collaboration, is_warning):
         subject = f"Collaboration {collaboration.name} will be suspended in {threshold} days"
     else:
         subject = f"Collaboration {collaboration.name} has been suspended"
-    now = datetime.datetime.utcnow()
+    now = dt_now()
     suspension_date = format_date_time(now + datetime.timedelta(days=cfq.inactivity_warning_mail_days_threshold))
     _do_send_mail(
         subject=subject,

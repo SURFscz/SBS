@@ -1,5 +1,3 @@
-import datetime
-
 from flask import Blueprint, jsonify, request as current_request, session
 from werkzeug.exceptions import Forbidden
 
@@ -10,6 +8,7 @@ from server.auth.security import current_user_id
 from server.db.db import db
 from server.db.domain import UserToken, User, Service
 from server.db.models import save, delete
+from server.tools import dt_now
 
 user_token_api = Blueprint("user_token_api", __name__, url_prefix="/api/user_tokens")
 
@@ -90,7 +89,7 @@ def update_token():
 def renew_lease():
     data = _sanitize_and_verify(current_request.get_json(), hash_token=False)
     user_token = db.session.get(UserToken, data["id"])
-    user_token.created_at = datetime.datetime.utcnow()
+    user_token.created_at = dt_now()
     db.session.merge(user_token)
     return {}, 201
 

@@ -8,6 +8,7 @@ from sqlalchemy.orm import selectinload
 from server.cron.shared import obtain_lock
 from server.db.domain import CollaborationRequest, JoinRequest
 from server.db.models import delete
+from server.tools import dt_now
 
 cleanup_non_open_requests_lock_name = "cleanup_non_open_requests_lock_name"
 
@@ -21,7 +22,7 @@ def _do_cleanup_non_open_requests(app):
     with app.app_context():
         cfq = app.app_config.user_requests_retention
 
-        current_time = datetime.datetime.utcnow()
+        current_time = dt_now()
         retention_date = current_time - datetime.timedelta(days=cfq.outstanding_join_request_days_threshold)
 
         start = int(time.time() * 1000.0)

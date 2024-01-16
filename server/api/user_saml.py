@@ -1,5 +1,4 @@
 import uuid
-from datetime import datetime
 from urllib.parse import urlencode
 
 from flask import Blueprint, current_app, request as current_request
@@ -17,7 +16,9 @@ from server.db.defaults import STATUS_ACTIVE, PROXY_AUTHZ, PROXY_AUTHZ_SBS
 from server.db.domain import User, Service
 from server.db.models import log_user_login
 from server.logger.context_logger import ctx_logger
+from server import tools
 import urllib.parse
+
 
 user_saml_api = Blueprint("user_saml_api", __name__, url_prefix="/api/users")
 
@@ -201,7 +202,7 @@ def _do_attributes(user, uid, service, service_entity_id, not_authorized_func, a
         logger.debug(f"Returning interrupt for user {uid} and service_entity_id {service_entity_id} to accept AUP")
         return not_authorized_func(service, AUP_NOT_AGREED)
 
-    now = datetime.now()
+    now = tools.dt_now()
     for coll in connected_collaborations:
         coll.last_activity_date = now
         db.session.merge(coll)

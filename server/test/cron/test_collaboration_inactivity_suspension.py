@@ -7,12 +7,13 @@ from server.db.defaults import STATUS_SUSPENDED
 from server.db.domain import Collaboration
 from server.test.abstract_test import AbstractTest
 from server.test.seed import co_ai_computing_name, co_research_name, co_teachers_name
+from server.tools import dt_now
 
 
 class TestCollaborationInactivitySuspension(AbstractTest):
 
     def _setup_data(self):
-        now = datetime.datetime.utcnow()
+        now = dt_now()
         cfq = self.app.app_config.collaboration_suspension
         threshold_for_warning = cfq.collaboration_inactivity_days_threshold - cfq.inactivity_warning_mail_days_threshold
         threshold_upper = datetime.timedelta(days=threshold_for_warning)

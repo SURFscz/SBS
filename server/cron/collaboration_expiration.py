@@ -9,6 +9,7 @@ from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED, STATUS_ACTIVE
 from server.db.domain import Collaboration
 from server.mail import mail_collaboration_expires_notification
+from server.tools import dt_now
 
 collaboration_expiration_lock_name = "collaboration_expiration_lock_name"
 
@@ -23,7 +24,7 @@ def _do_expire_collaboration(app):
     with app.app_context():
         cfq = app.app_config.collaboration_expiration
 
-        now = datetime.datetime.utcnow()
+        now = dt_now()
 
         start = int(time.time() * 1000.0)
         logger = logging.getLogger("scheduler")

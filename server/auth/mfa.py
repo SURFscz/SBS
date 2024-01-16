@@ -1,5 +1,5 @@
 import json
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import jwt
 import requests
@@ -11,6 +11,8 @@ from server.auth.security import is_admin_user, CSRF_TOKEN
 from server.db.db import db
 from server.db.domain import Organisation, SchacHomeOrganisation
 from server.logger.context_logger import ctx_logger
+from server.tools import dt_now
+
 
 ACR_VALUES = "https://refeds.org/profile/mfa"
 
@@ -119,7 +121,7 @@ def _idp_configured(identity_providers, action, schac_home=None, entity_id=None)
 def has_valid_mfa(user):
     last_login_date = user.last_login_date
     login_sso_cutoff = timedelta(hours=0, minutes=int(current_app.app_config.mfa_sso_time_in_minutes))
-    valid_mfa_sso = last_login_date and datetime.now() - user.last_login_date < login_sso_cutoff
+    valid_mfa_sso = last_login_date and dt_now() - user.last_login_date < login_sso_cutoff
 
     logger = ctx_logger("user_api")
     logger.debug(f"has_valid_mfa: {valid_mfa_sso} (user={user}, last_login={last_login_date}")

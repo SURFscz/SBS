@@ -10,6 +10,7 @@ from server.db.defaults import default_expiry_date
 from server.db.domain import ServiceInvitation, Service, ServiceMembership, db
 from server.db.models import delete
 from server.mail import mail_service_invitation
+from server.tools import dt_now
 
 service_invitations_api = Blueprint("service_invitations_api", __name__,
                                     url_prefix="/api/service_invitations")
@@ -60,7 +61,7 @@ def service_invitations_accept():
         .filter(ServiceInvitation.hash == current_request.get_json()["hash"]) \
         .one()
 
-    if service_invitation.expiry_date and service_invitation.expiry_date < datetime.datetime.now():
+    if service_invitation.expiry_date and service_invitation.expiry_date < dt_now():
         delete(ServiceInvitation, service_invitation.id)
         raise Conflict(f"The invitation has expired at {service_invitation.expiry_date}")
 

@@ -10,10 +10,11 @@ from werkzeug.exceptions import BadRequest
 from server.auth.security import CSRF_TOKEN
 from server.db.db import db
 from server.db.domain import Organisation, Collaboration, User, Aup
+from server.tools import dt_now, read_file
+
 from server.test.abstract_test import AbstractTest
 from server.test.seed import (unihard_name, co_ai_computing_name, user_roger_name, user_john_name, user_james_name,
                               co_research_name, co_ai_computing_uuid, user_sarah_name)
-from server.tools import read_file
 
 
 class TestUser(AbstractTest):
@@ -103,7 +104,7 @@ class TestUser(AbstractTest):
         user = User.query.filter(User.name == "user_deletion_warning").one()
         self.assertEqual(False, user.suspended)
         retention = current_app.app_config.retention
-        retention_date = datetime.datetime.now() - datetime.timedelta(days=retention.allowed_inactive_period_days + 1)
+        retention_date = dt_now() - datetime.timedelta(days=retention.allowed_inactive_period_days + 1)
         self.assertTrue(user.last_login_date > retention_date)
 
     def test_search(self):
@@ -338,7 +339,7 @@ class TestUser(AbstractTest):
     def test_update_date_bug(self):
         roger = self.find_entity_by_name(User, user_roger_name)
         roger_id = roger.id
-        now = datetime.datetime.now()
+        now = dt_now()
         roger.last_login_date = now
         roger.last_accessed_date = now
 

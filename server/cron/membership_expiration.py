@@ -9,6 +9,7 @@ from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED, STATUS_ACTIVE
 from server.db.domain import CollaborationMembership
 from server.mail import mail_membership_expires_notification
+from server.tools import dt_now
 
 membership_expiration_lock_name = "membership_expiration_lock_name"
 
@@ -23,7 +24,7 @@ def _do_expire_memberships(app):
     with app.app_context():
         cfq = app.app_config.membership_expiration
 
-        now = datetime.datetime.utcnow()
+        now = dt_now()
 
         start = int(time.time() * 1000.0)
         logger = logging.getLogger("scheduler")

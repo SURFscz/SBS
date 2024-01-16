@@ -2,7 +2,7 @@ import io
 import random
 import string
 import uuid
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import qrcode
 from flasgger import swag_from
@@ -18,6 +18,7 @@ from server.db.defaults import PAM_WEB_LOGIN, SERVICE_TOKEN_PAM
 from server.db.domain import User, PamSSOSession, Service, CollaborationMembership
 from server.db.models import log_user_login, flatten
 from server.logger.context_logger import ctx_logger
+from server.tools import dt_now
 
 pam_websso_api = Blueprint("pam_weblogin_api", __name__, url_prefix="/pam-weblogin")
 
@@ -27,7 +28,7 @@ def _get_pam_sso_session(session_id):
     if not pam_sso_session:
         raise NotFound(f"No PamSSOSession with session_id {session_id} found")
     timeout = current_app.app_config.pam_web_sso.session_timeout_seconds
-    seconds_ago = datetime.now() - timedelta(hours=0, minutes=0, seconds=timeout)
+    seconds_ago = dt_now() - timedelta(hours=0, minutes=0, seconds=timeout)
     if pam_sso_session.created_at < seconds_ago:
         db.session.delete(pam_sso_session)
         raise NotFound(f"PamSSOSession with session_id {session_id} is expired")
@@ -117,7 +118,7 @@ def start():
         session.modified = False
 
         pam_last_login_date = user.pam_last_login_date
-        seconds_ago = datetime.now() - timedelta(hours=0, minutes=0, seconds=cache_duration)
+        seconds_ago = dt_now() - timedelta(hours=0, minutes=0, seconds=cache_duration)
         if pam_last_login_date and pam_last_login_date > seconds_ago:
             log_user_login(PAM_WEB_LOGIN, True, user, user.uid, service, service.entity_id, status="Cached login")
 
@@ -180,13 +181,13 @@ def check_pin():
     success = validation["result"] == "SUCCESS"
     if success:
         db.session.delete(pam_sso_session)
-        user.pam_last_login_date = datetime.now()
+        user.pam_last_login_date = dt_now()
         db.session.merge(user)
         # We also update the activity date of linked collaboration
         collaborations = [cm.collaboration for cm in user.collaboration_memberships if
                           service in cm.collaboration.services]
         for collaboration in collaborations:
-            collaboration.last_activity_date = datetime.now()
+            collaboration.last_activity_date = dt_now()
             db.session.merge(collaboration)
         db.session.commit()
 

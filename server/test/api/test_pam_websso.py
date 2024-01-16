@@ -1,9 +1,11 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import requests
 
 from server.db.db import db
 from server.db.domain import PamSSOSession, User, Service
+from server.tools import dt_now
+
 from server.test.abstract_test import AbstractTest
 from server.test.seed import pam_session_id, service_storage_name, service_storage_token, \
     pam_invalid_service_session_id, user_roger_name
@@ -94,7 +96,7 @@ class TestPamWebSSO(AbstractTest):
     def test_start_cached_login(self):
         self.login_user_2fa("urn:roger")
         roger = self.find_entity_by_name(User, user_roger_name)
-        roger.pam_last_login_date = datetime.now()
+        roger.pam_last_login_date = dt_now()
         db.session.merge(roger)
         db.session.commit()
 
@@ -169,7 +171,7 @@ class TestPamWebSSO(AbstractTest):
     def test_check_pin_time_out(self):
         self.login("urn:peter")
         pam_sso_session = PamSSOSession.query.filter(PamSSOSession.session_id == pam_session_id).one()
-        pam_sso_session.created_at = datetime.utcnow() - timedelta(days=500)
+        pam_sso_session.created_at = dt_now() - timedelta(days=500)
         db.session.merge(pam_sso_session)
         db.session.commit()
 
