@@ -895,7 +895,7 @@ class TestCollaboration(AbstractTest):
         self.put("/api/collaborations/unsuspend", body={"collaboration_id": coll.id})
         coll = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         self.assertEqual(STATUS_ACTIVE, coll.status)
-        self.assertTrue(coll.last_activity_date > dt_now() - datetime.timedelta(hours=1))
+        self.assertGreater(coll.last_activity_date, dt_now() - datetime.timedelta(hours=1))
 
     def test_activate(self):
         coll = self.find_entity_by_name(Collaboration, co_ai_computing_name)
@@ -908,7 +908,7 @@ class TestCollaboration(AbstractTest):
         coll = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         self.assertEqual(STATUS_ACTIVE, coll.status)
         self.assertIsNone(coll.expiry_date)
-        self.assertTrue(coll.last_activity_date > dt_now() - datetime.timedelta(hours=1))
+        self.assertGreater(coll.last_activity_date, dt_now() - datetime.timedelta(hours=1))
 
     def test_id_by_identifier(self):
         res = self.get("/api/collaborations/id_by_identifier",

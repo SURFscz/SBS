@@ -110,7 +110,7 @@ class TestUserSaml(AbstractTest):
 
         network_service = Service.query.filter(Service.entity_id == service_network_entity_id).one()
         parameters = urlencode({"service_id": network_service.uuid4, "service_name": network_service.name})
-        self.assertEqual(res["status"]["redirect_url"], f"{self.app.app_config.base_url}/service-aup?{parameters}")
+        self.assertEqual(f"{self.app.app_config.base_url}/service-aup?{parameters}", res["status"]["redirect_url"], )
 
     def test_proxy_authz_no_user(self):
         res = self.post("/api/users/proxy_authz", body={"user_id": "urn:nope", "service_id": service_mail_entity_id,
@@ -184,7 +184,7 @@ class TestUserSaml(AbstractTest):
                               "homeorganization": "example.com",
                               "user_email": "sarah@ex.com", "user_name": "sarah p"})
         status_ = res["status"]
-        self.assertEqual(status_["result"], "authorized")
+        self.assertEqual("authorized", status_["result"])
 
         sarah = self.find_entity_by_name(User, user_sarah_name)
         self.assertFalse(sarah.ssid_required)
@@ -215,7 +215,7 @@ class TestUserSaml(AbstractTest):
                               "homeorganization": "ssid.org",
                               "user_email": "sarah@ex.com", "user_name": "sarah p"})
         sarah = self.find_entity_by_name(User, user_sarah_name)
-        self.assertEqual(res["status"]["result"], "authorized")
+        self.assertEqual("authorized", res["status"]["result"])
         self.assertFalse(sarah.ssid_required)
 
     def test_proxy_authz_mfa_sbs_idp(self):
@@ -256,7 +256,7 @@ class TestUserSaml(AbstractTest):
                               "homeorganization": "example.com",
                               "user_email": "sarah@ex.com", "user_name": "sarah p"})
         sarah = self.find_entity_by_name(User, user_sarah_name)
-        self.assertEqual(res["status"]["result"], "authorized")
+        self.assertEqual("authorized", res["status"]["result"], )
         self.assertFalse(sarah.ssid_required)
 
     def test_proxy_authz_mfa_service_ssid(self):
@@ -291,7 +291,7 @@ class TestUserSaml(AbstractTest):
                               "homeorganization": "ssid.org"})
         sarah = self.find_entity_by_name(User, user_sarah_name)
 
-        self.assertEqual(res["status"]["result"], "authorized")
+        self.assertEqual("authorized", res["status"]["result"])
         self.assertFalse(sarah.ssid_required)
 
     def test_proxy_authz_mfa_service_idp(self):
