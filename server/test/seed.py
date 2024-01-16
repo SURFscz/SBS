@@ -15,7 +15,7 @@ from server.db.domain import (User, Organisation, OrganisationMembership, Servic
                               SchacHomeOrganisation, SshKey, ServiceGroup, ServiceInvitation, ServiceMembership,
                               ServiceAup, UserToken, UserIpNetwork, Tag, PamSSOSession, IpNetwork, ServiceToken,
                               ServiceRequest, Unit)
-from server.tools import dt_now
+from server.tools import dt_now, dt_today
 
 # users
 user_boss_name = "The Boss"
@@ -302,8 +302,7 @@ def seed(db, app_config, skip_seed=False):
     persist_instance(db, api_key_uuc, api_key_uva)
 
     organisation_invitation_roger = OrganisationInvitation(message="Please join", hash=unihard_invitation_hash,
-                                                           expiry_date=datetime.date.today() + datetime.timedelta(
-                                                               days=14),
+                                                           expiry_date=dt_today() + datetime.timedelta(days=14),
                                                            invitee_email="roger@example.org", organisation=uuc,
                                                            units=[uuc_unit_research],
                                                            intended_role="admin",
@@ -312,8 +311,7 @@ def seed(db, app_config, skip_seed=False):
                                                                   "really, really, really \n really, "
                                                                   "really, really \n want to...",
                                                           hash=unihard_invitation_expired_hash,
-                                                          expiry_date=datetime.date.today() - datetime.timedelta(
-                                                              days=21),
+                                                          expiry_date=dt_today() - datetime.timedelta(days=21),
                                                           intended_role="admin",
                                                           invitee_email="pass@example.org", organisation=uuc, user=john)
     persist_instance(db, organisation_invitation_roger, organisation_invitation_pass)
@@ -479,14 +477,13 @@ def seed(db, app_config, skip_seed=False):
                      service_token_storage_scim, service_token_wiki_introspection, service_token_wiki_scim)
 
     service_invitation_cloud = ServiceInvitation(message="Please join", hash=service_invitation_cloud_hash,
-                                                 expiry_date=datetime.date.today() + datetime.timedelta(days=14),
+                                                 expiry_date=dt_today() + datetime.timedelta(days=14),
                                                  invitee_email="admin@cloud.org", service=cloud,
                                                  intended_role="admin",
                                                  user=john)
     service_invitation_wiki_expired = ServiceInvitation(message="Please join",
                                                         hash=service_invitation_wiki_expired_hash,
-                                                        expiry_date=datetime.date.today() - datetime.timedelta(
-                                                            days=21),
+                                                        expiry_date=dt_today() - datetime.timedelta(days=21),
                                                         intended_role="admin",
                                                         invitee_email="pass@wiki.org", service=wiki, user=john)
     persist_instance(db, service_invitation_cloud, service_invitation_wiki_expired)
@@ -676,7 +673,7 @@ def seed(db, app_config, skip_seed=False):
                                 expiry_date=default_expiry_date(), user=admin, message="Please join...",
                                 intended_role="member", groups=[group_science], status="open")
     invitation_noway = Invitation(hash=invitation_hash_no_way, invitee_email="noway@ex.org", collaboration=ai_computing,
-                                  expiry_date=datetime.date.today() - datetime.timedelta(days=21), user=admin,
+                                  expiry_date=dt_today() - datetime.timedelta(days=21), user=admin,
                                   intended_role="member", status="expired",
                                   message="Let me please join as I really, really, really \n really, "
                                           "really, really \n want to...")

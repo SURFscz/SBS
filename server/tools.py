@@ -20,3 +20,7 @@ def read_file(file_name: str) -> str:
 
 def dt_now() -> datetime:
     return datetime.now(timezone.utc)
+
+
+def dt_today() -> datetime:
+    return dt_now().replace(hour=0, minute=0, second=0, microsecond=0)
