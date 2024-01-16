@@ -10,6 +10,7 @@ from server.test.abstract_test import AbstractTest
 from server.test.seed import invitation_hash_no_way, co_ai_computing_name, invitation_hash_curious, invitation_hash_uva, \
     co_research_name, unihard_secret, unihard_name, co_ai_computing_short_name, co_ai_computing_join_request_peter_hash, \
     co_ai_computing_uuid, group_ai_researchers_short_name, group_ai_dev_identifier
+from server.tools import dt_now
 
 
 class TestInvitation(AbstractTest):
@@ -48,7 +49,7 @@ class TestInvitation(AbstractTest):
 
     def test_external_collaboration_expired_invitation(self):
         invitation = self._get_invitation_curious()
-        invitation.expiry_date = datetime.datetime.utcnow() - datetime.timedelta(days=500)
+        invitation.expiry_date = dt_now() - datetime.timedelta(days=500)
         invitation.external_identifier = str(uuid.uuid4())
         db.session.merge(invitation)
         db.session.commit()
@@ -217,7 +218,7 @@ class TestInvitation(AbstractTest):
 
     def test_collaboration_external_identifier(self):
         invitation = self._get_invitation_curious()
-        invitation.expiry_date = datetime.datetime.utcnow() - datetime.timedelta(days=500)
+        invitation.expiry_date = dt_now() - datetime.timedelta(days=500)
         invitation.external_identifier = str(uuid.uuid4())
         db.session.merge(invitation)
         db.session.commit()

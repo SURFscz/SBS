@@ -15,6 +15,7 @@ from server.db.domain import (User, Organisation, OrganisationMembership, Servic
                               SchacHomeOrganisation, SshKey, ServiceGroup, ServiceInvitation, ServiceMembership,
                               ServiceAup, UserToken, UserIpNetwork, Tag, PamSSOSession, IpNetwork, ServiceToken,
                               ServiceRequest, Unit)
+from server.tools import dt_now
 
 # users
 user_boss_name = "The Boss"
@@ -195,7 +196,7 @@ def seed(db, app_config, skip_seed=False):
                          external_id="c5ed5e18-b6aa-48f2-8849-a68a8cfe39a8")
     # User seed for suspend testing
     retention = app_config.retention
-    current_time = datetime.datetime.utcnow()
+    current_time = dt_now()
     retention_date = current_time - datetime.timedelta(days=retention.allowed_inactive_period_days + 1)
     retention_warning_date = retention_date + datetime.timedelta(days=retention.reminder_suspend_period_days)
 
@@ -229,11 +230,11 @@ def seed(db, app_config, skip_seed=False):
     notification_gets_suspended_old = SuspendNotification(user=user_suspend_warning, sent_at=warning_date_old,
                                                           is_suspension=True, is_warning=True)
 
-    warning_date = datetime.datetime.utcnow() - datetime.timedelta(days=retention.reminder_suspend_period_days + 1)
+    warning_date = dt_now() - datetime.timedelta(days=retention.reminder_suspend_period_days + 1)
     notification_gets_suspended = SuspendNotification(user=user_gets_suspended, sent_at=warning_date,
                                                       is_suspension=True, is_warning=True)
 
-    warning_date = datetime.datetime.utcnow() - datetime.timedelta(days=retention.remove_suspended_users_period_days) \
+    warning_date = dt_now() - datetime.timedelta(days=retention.remove_suspended_users_period_days) \
                    + datetime.timedelta(days=retention.reminder_expiry_period_days - 1)
     notification_suspension_warning = SuspendNotification(user=user_deletion_warning, sent_at=warning_date,
                                                           is_suspension=True, is_warning=False)

@@ -11,6 +11,8 @@ from server.db.defaults import STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, Organisation, Invitation, CollaborationMembership, User, Group, \
     ServiceGroup, Tag, Service
 from server.db.models import flatten
+from server.tools import dt_now
+
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import (co_ai_computing_uuid, co_ai_computing_name, co_research_name, user_john_name,
                               co_ai_computing_short_name, co_teachers_name, read_image, co_research_uuid,
@@ -595,7 +597,7 @@ class TestCollaboration(AbstractTest):
         self.assertIsNone(collaboration.accepted_user_policy)
         self.assertIsNotNone(collaboration.logo)
         self.assertEqual(2, len(collaboration.tags))
-        one_day_ago = datetime.datetime.now() - datetime.timedelta(days=1)
+        one_day_ago = dt_now() - datetime.timedelta(days=1)
         self.assertTrue(collaboration.last_activity_date > one_day_ago)
 
         count = Invitation.query.filter(Invitation.collaboration_id == collaboration.id).count()
@@ -885,7 +887,7 @@ class TestCollaboration(AbstractTest):
 
     def test_unsuspend(self):
         coll = self.find_entity_by_name(Collaboration, co_ai_computing_name)
-        coll.last_activity_date = datetime.datetime.now() - datetime.timedelta(days=365)
+        coll.last_activity_date = dt_now() - datetime.timedelta(days=365)
         coll.status = STATUS_SUSPENDED
         db.session.merge(coll)
         db.session.commit()
@@ -893,11 +895,11 @@ class TestCollaboration(AbstractTest):
         self.put("/api/collaborations/unsuspend", body={"collaboration_id": coll.id})
         coll = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         self.assertEqual(STATUS_ACTIVE, coll.status)
-        self.assertTrue(coll.last_activity_date > datetime.datetime.now() - datetime.timedelta(hours=1))
+        self.assertTrue(coll.last_activity_date > dt_now() - datetime.timedelta(hours=1))
 
     def test_activate(self):
         coll = self.find_entity_by_name(Collaboration, co_ai_computing_name)
-        coll.expiry_date = datetime.datetime.now() - datetime.timedelta(days=365)
+        coll.expiry_date = dt_now() - datetime.timedelta(days=365)
         coll.status = STATUS_EXPIRED
         db.session.merge(coll)
         db.session.commit()
@@ -906,7 +908,7 @@ class TestCollaboration(AbstractTest):
         coll = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         self.assertEqual(STATUS_ACTIVE, coll.status)
         self.assertIsNone(coll.expiry_date)
-        self.assertTrue(coll.last_activity_date > datetime.datetime.now() - datetime.timedelta(hours=1))
+        self.assertTrue(coll.last_activity_date > dt_now() - datetime.timedelta(hours=1))
 
     def test_id_by_identifier(self):
         res = self.get("/api/collaborations/id_by_identifier",

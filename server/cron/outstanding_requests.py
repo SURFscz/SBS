@@ -8,6 +8,7 @@ from sqlalchemy.orm import contains_eager
 from server.cron.shared import obtain_lock
 from server.db.domain import CollaborationRequest, JoinRequest
 from server.mail import mail_outstanding_requests
+from server.tools import dt_now
 
 outstanding_requests_lock_name = "outstanding_requests_lock_name"
 
@@ -21,7 +22,7 @@ def _do_outstanding_requests(app):
     with app.app_context():
         cfq = app.app_config.platform_admin_notifications
 
-        current_time = datetime.datetime.utcnow()
+        current_time = dt_now()
         retention_date = current_time - datetime.timedelta(days=cfq.outstanding_join_request_days_threshold)
 
         start = int(time.time() * 1000.0)

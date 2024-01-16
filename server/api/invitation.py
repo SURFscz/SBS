@@ -20,6 +20,7 @@ from server.db.domain import Invitation, CollaborationMembership, Collaboration,
 from server.db.models import delete
 from server.mail import mail_collaboration_invitation
 from server.scim.events import broadcast_collaboration_changed
+from server.tools import dt_now
 
 CREATED_BY_SYSTEM = "system"
 
@@ -210,7 +211,7 @@ def invitations_accept():
     if invitation.status != "open":
         raise Conflict(f"The invitation has status {invitation.status}")
 
-    if invitation.expiry_date and invitation.expiry_date < datetime.datetime.now():
+    if invitation.expiry_date and invitation.expiry_date < dt_now():
         if invitation.created_by == "system":
             invitation.status = "expired"
             db.session.merge(invitation)

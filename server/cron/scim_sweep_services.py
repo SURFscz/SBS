@@ -6,6 +6,7 @@ from server.cron.shared import obtain_lock
 from server.db.db import db
 from server.db.domain import Service
 from server.scim.sweep import perform_sweep
+from server.tools import dt_now
 
 scim_sweep_services_lock_name = "scim_sweep_services_lock_name"
 
@@ -25,7 +26,7 @@ def _do_scim_sweep_services(app):
             .filter(Service.sweep_scim_enabled == True) \
             .all()  # noqa: E712
 
-        now = datetime.datetime.utcnow()
+        now = dt_now()
 
         def service_needs_sweeping(service: Service):
             if service.sweep_scim_last_run is None:

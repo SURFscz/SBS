@@ -1,4 +1,3 @@
-import datetime
 import itertools
 import json
 import os
@@ -36,6 +35,8 @@ from server.db.models import log_user_login
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error, mail_account_deletion
 from server.scim.events import broadcast_user_deleted, broadcast_user_changed
+from server.tools import dt_now
+
 
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 
@@ -303,7 +304,7 @@ def resume_session():
         add_user_claims(user_info_json, uid, user)
 
         # last_login_date is set later in this method
-        user.last_accessed_date = datetime.datetime.now()
+        user.last_accessed_date = dt_now()
         logger.info(f"Provisioning new user {user.uid}")
     else:
         logger.info(f"Updating user {user.uid} with new claims / updated at")
@@ -368,7 +369,7 @@ def resume_session():
     no_mfa_required = not oidc_config.second_factor_authentication_required
     second_factor_confirmed = (no_mfa_required or not fallback_required) and not user.ssid_required
     if second_factor_confirmed:
-        user.last_login_date = datetime.datetime.now()
+        user.last_login_date = dt_now()
 
     return redirect_to_client(cfg, second_factor_confirmed, user)
 
@@ -451,7 +452,7 @@ def acs():
 
     if second_factor_confirmed:
         user.ssid_required = False
-        user.last_login_date = datetime.datetime.now()
+        user.last_login_date = dt_now()
     else:
         return redirect(
             location=f"{cfg.base_url}/error?reason=ssid_failed&code={status.get('code')}&msg={status.get('msg')}")
@@ -552,7 +553,7 @@ def activate():
     user = db.session.get(User, int(body["user_id"]))
 
     user.suspended = False
-    user.last_login_date = datetime.datetime.now()
+    user.last_login_date = dt_now()
     user.suspend_notifications = []
     db.session.merge(user)
     return {}, 201

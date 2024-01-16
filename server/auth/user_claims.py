@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import datetime
 import os
 import random
 import re
@@ -15,6 +14,7 @@ from server.db.defaults import STATUS_SUSPENDED
 from server.db.domain import User, UserNameHistory, Collaboration
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error
+from server.tools import dt_now
 
 claim_attribute_mapping_value = [
     {"sub": "uid"},
@@ -90,7 +90,7 @@ def add_user_claims(user_info_json, uid, user):
 
 # return all active (non-expired/suspended) collaboration from the list
 def _active_collaborations(collaborations: Iterator[Collaboration]) -> Iterator[Collaboration]:
-    now = datetime.datetime.utcnow()
+    now = dt_now()
     for collaboration in collaborations:
         not_expired = not collaboration.expiry_date or collaboration.expiry_date > now
         if not_expired and collaboration.status != STATUS_SUSPENDED:
@@ -142,7 +142,7 @@ def co_tags(connected_collaborations: list[Collaboration]) -> set[str]:
 
 def collaboration_memberships_for_service(user, service):
     memberships = []
-    now = datetime.datetime.utcnow()
+    now = dt_now()
     if user and service:
         for cm in user.collaboration_memberships:
             co_expired = cm.collaboration.expiry_date and cm.collaboration.expiry_date < now

@@ -1,4 +1,3 @@
-import datetime
 import os
 import uuid
 
@@ -12,6 +11,7 @@ from server.auth.security import is_admin_user, CSRF_TOKEN
 from server.auth.user_claims import add_user_claims
 from server.db.db import db
 from server.db.domain import User
+from server.tools import dt_now
 
 mock_user_api = Blueprint("mock_user_api", __name__, url_prefix="/api/mock")
 
@@ -26,7 +26,7 @@ def login_user():
     sub = data["sub"]  # oidc sub maps to sbs uid - see user_claims
     user = User.query.filter(User.uid == sub).first() or User(created_by="system", updated_by="system",
                                                               external_id=str(uuid.uuid4()))
-    user.last_login_date = datetime.datetime.now()
+    user.last_login_date = dt_now()
     add_user_claims(data, sub, user)
     db.session.merge(user)
 

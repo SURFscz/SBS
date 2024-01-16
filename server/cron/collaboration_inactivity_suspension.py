@@ -9,6 +9,7 @@ from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, STATUS_SUSPENDED
 from server.db.domain import Collaboration
 from server.mail import mail_collaboration_suspension_notification
+from server.tools import dt_now
 
 collaboration_inactivity_suspension_lock_name = "collaboration_inactivity_suspension_lock_name"
 
@@ -23,7 +24,7 @@ def _do_suspend_collaboration(app):
     with app.app_context():
         cfq = app.app_config.collaboration_suspension
 
-        now = datetime.datetime.utcnow()
+        now = dt_now()
 
         start = int(time.time() * 1000.0)
         logger = logging.getLogger("scheduler")

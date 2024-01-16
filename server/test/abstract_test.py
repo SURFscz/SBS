@@ -26,6 +26,7 @@ from server.db.domain import Collaboration, User, Service, ServiceAup, UserToken
     PamSSOSession, Group, CollaborationMembership
 from server.test.seed import seed, user_sarah_name
 from server.tools import read_file
+from server.tools import dt_now
 
 # See api_users in config/test_config.yml
 BASIC_AUTH_HEADER = {"Authorization": f"Basic {b64encode(b'sysadmin:secret').decode('ascii')}"}
@@ -97,7 +98,7 @@ class AbstractTest(TestCase):
     @staticmethod
     def expire_collaborations(user_name):
         def do_change(collaboration):
-            collaboration.expiry_date = datetime.datetime.utcnow() - datetime.timedelta(days=50)
+            collaboration.expiry_date = dt_now() - datetime.timedelta(days=50)
 
         return AbstractTest.change_collaboration(user_name, do_change)
 
@@ -175,7 +176,7 @@ class AbstractTest(TestCase):
         self.expire_collaboration_memberships(user.collaboration_memberships)
 
     def expire_collaboration_memberships(self, collaboration_memberships):
-        past = datetime.datetime.now() - datetime.timedelta(days=5)
+        past = dt_now() - datetime.timedelta(days=5)
         for cm in collaboration_memberships:
             cm.expiry_date = past
             cm.status = STATUS_EXPIRED
@@ -200,14 +201,14 @@ class AbstractTest(TestCase):
     @staticmethod
     def expire_user_token(raw_token):
         user_token = UserToken.query.filter(UserToken.hashed_token == secure_hash(raw_token)).first()
-        user_token.created_at = datetime.datetime.utcnow() - datetime.timedelta(days=500)
+        user_token.created_at = dt_now() - datetime.timedelta(days=500)
         db.session.merge(user_token)
         db.session.commit()
 
     @staticmethod
     def expire_invitation(hash):
         invitation = Invitation.query.filter(Invitation.hash == hash).first()
-        invitation.expiry_date = datetime.datetime.utcnow() - datetime.timedelta(days=500)
+        invitation.expiry_date = dt_now() - datetime.timedelta(days=500)
         invitation.created_by = "not_system"
         db.session.merge(invitation)
         db.session.commit()
@@ -215,7 +216,7 @@ class AbstractTest(TestCase):
     @staticmethod
     def login_user_2fa(user_uid):
         user = User.query.filter(User.uid == user_uid).one()
-        user.last_login_date = datetime.datetime.now()
+        user.last_login_date = dt_now()
         return AbstractTest._merge_user(user)
 
     @staticmethod
@@ -260,7 +261,7 @@ class AbstractTest(TestCase):
     @staticmethod
     def expire_pam_session(session_id):
         pam_websso = PamSSOSession.query.filter(PamSSOSession.session_id == session_id).first()
-        pam_websso.created_at = datetime.datetime.utcnow() - datetime.timedelta(days=500)
+        pam_websso.created_at = dt_now() - datetime.timedelta(days=500)
         db.session.merge(pam_websso)
         db.session.commit()
 

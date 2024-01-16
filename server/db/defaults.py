@@ -7,6 +7,8 @@ from typing import Optional
 
 from werkzeug.exceptions import BadRequest
 
+from server.tools import dt_now
+
 full_text_search_autocomplete_limit = 16
 
 STATUS_ACTIVE = "active"
@@ -36,7 +38,7 @@ def default_expiry_date(json_dict=None):
     return datetime.combine(date.today(), time()) + timedelta(days=15)
 
 
-def calculate_expiry_period(invitation, today=datetime.today()):
+def calculate_expiry_period(invitation, today=dt_now()):
     if (isinstance(invitation, Iterable) and "expiry_date" not in invitation) or not invitation.expiry_date:
         return "15 days"
     diff = invitation.expiry_date - today

@@ -32,6 +32,7 @@ from server.db.image import transform_image
 from server.db.models import update, save, delete, flatten, unique_model_objects
 from server.mail import mail_collaboration_invitation
 from server.scim.events import broadcast_collaboration_changed, broadcast_collaboration_deleted
+from server.tools import dt_now
 
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
 
@@ -458,7 +459,7 @@ def unsuspend():
     collaboration_id = data["collaboration_id"]
     confirm_collaboration_admin(collaboration_id)
     collaboration = db.session.get(Collaboration, collaboration_id)
-    collaboration.last_activity_date = datetime.now()
+    collaboration.last_activity_date = dt_now()
     collaboration.status = STATUS_ACTIVE
     db.session.merge(collaboration)
     db.session.commit()
@@ -472,7 +473,7 @@ def activate():
     collaboration_id = data["collaboration_id"]
     confirm_collaboration_admin(collaboration_id)
     collaboration = db.session.get(Collaboration, collaboration_id)
-    collaboration.last_activity_date = datetime.now()
+    collaboration.last_activity_date = dt_now()
     collaboration.expiry_date = None
     collaboration.status = STATUS_ACTIVE
     db.session.merge(collaboration)
@@ -661,8 +662,8 @@ def _validate_collaboration(data, organisation, new_collaboration=True):
     expiry_date = data.get("expiry_date")
     if expiry_date:
         past_dates_allowed = current_app.app_config.feature.past_dates_allowed
-        dt = datetime.utcfromtimestamp(int(expiry_date)) + timedelta(hours=4)
-        if not past_dates_allowed and dt < datetime.now():
+        dt = datetime.fromtimestamp(int(expiry_date), datetime.timezone.utc) + timedelta(hours=4)
+        if not past_dates_allowed and dt < dt_now():
             raise APIBadRequest(f"It is not allowed to set the expiry date ({dt}) in the past")
         data["expiry_date"] = datetime(year=dt.year, month=dt.month, day=dt.day, hour=0, minute=0, second=0)
     else:
@@ -672,7 +673,7 @@ def _validate_collaboration(data, organisation, new_collaboration=True):
         data["status"] = STATUS_ACTIVE
     else:
         collaboration = db.session.get(Collaboration, data["id"])
-        if collaboration.status == STATUS_EXPIRED and (not expiry_date or data["expiry_date"] > datetime.now()):
+        if collaboration.status == STATUS_EXPIRED and (not expiry_date or data["expiry_date"] > dt_now()):
             data["status"] = STATUS_ACTIVE
         if collaboration.status == STATUS_SUSPENDED:
             data["status"] = STATUS_ACTIVE
@@ -689,7 +690,7 @@ def _validate_collaboration(data, organisation, new_collaboration=True):
     validate_units(data, organisation)
 
     _assign_global_urn(data["organisation_id"], data)
-    data["last_activity_date"] = datetime.now()
+    data["last_activity_date"] = dt_now()
 
 
 def _assign_global_urn(organisation_id, data):

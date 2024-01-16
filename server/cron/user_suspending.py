@@ -8,13 +8,14 @@ from server.cron.shared import obtain_lock
 from server.db.db import db
 from server.db.domain import User, SuspendNotification, UserNameHistory
 from server.mail import mail_suspend_notification, mail_suspended_account_deletion, format_date_time
+from server.tools import dt_now
 
 suspend_users_lock_name = "suspend_users_lock"
 
 
 def create_suspend_notification(user, retention, app, is_warning, is_suspension):
     suspend_notification = SuspendNotification(user=user,
-                                               sent_at=datetime.datetime.utcnow(),
+                                               sent_at=dt_now(),
                                                is_warning=is_warning,
                                                is_suspension=is_suspension)
     user.suspend_notifications.append(suspend_notification)
@@ -23,7 +24,7 @@ def create_suspend_notification(user, retention, app, is_warning, is_suspension)
     logger = logging.getLogger("scheduler")
     logger.info(f"Sending suspend notification (warning: {is_warning}, is_suspension={is_suspension}) to "
                 f"user {user.email} because last_login_date is {user.last_login_date}")
-    current_time = datetime.datetime.utcnow()
+    current_time = dt_now()
     suspension_date = current_time + datetime.timedelta(days=retention.reminder_suspend_period_days)
     deletion_days = (
         retention.remove_suspended_users_period_days
@@ -39,7 +40,7 @@ def create_suspend_notification(user, retention, app, is_warning, is_suspension)
     mail_suspend_notification({"salutation": f"Hi {user.given_name}",
                                "base_url": app.app_config.base_url,
                                "retention": retention,
-                               "days_ago": (datetime.datetime.utcnow() - user.last_login_date).days,
+                               "days_ago": (dt_now() - user.last_login_date).days,
                                "suspend_notification": suspend_notification,
                                "suspension_date": format_date_time(suspension_date),
                                "deletion_date": format_date_time(deletion_date),
@@ -65,7 +66,7 @@ def _do_suspend_users(app):
         logger = logging.getLogger("scheduler")
         logger.info("Start running suspend_users job")
 
-        current_time = datetime.datetime.utcnow()
+        current_time = dt_now()
         suspension_date = current_time - datetime.timedelta(days=retention.allowed_inactive_period_days)
         warning_date = suspension_date + datetime.timedelta(days=retention.reminder_suspend_period_days)
         warning_timeout = current_time - datetime.timedelta(days=retention.reminder_suspend_period_days)

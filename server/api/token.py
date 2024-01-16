@@ -11,6 +11,7 @@ from server.db.defaults import USER_TOKEN_INTROSPECT, SERVICE_TOKEN_INTROSPECTIO
 from server.db.activity import update_last_activity_date
 from server.db.domain import UserToken
 from server.db.models import log_user_login
+from server.tools import dt_now
 
 token_api = Blueprint("token_api", __name__, url_prefix="/api/tokens")
 
@@ -26,7 +27,7 @@ def introspect():
     if not user_token or user_token.service_id != service.id:
         res = {"status": "token-unknown", "active": False}
 
-    current_time = datetime.datetime.utcnow()
+    current_time = dt_now()
     expiry_date = current_time - datetime.timedelta(days=service.token_validity_days)
     if res["active"] and user_token.created_at < expiry_date:
         res = {"status": "token-expired", "active": False}

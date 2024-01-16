@@ -9,6 +9,7 @@ from server.db.audit_mixin import AuditLog
 from server.db.db import db
 from server.db.domain import User
 from server.mail import mail_membership_orphan_users_deleted
+from server.tools import dt_now
 
 orphan_users_lock_name = "orphan_users_lock_name"
 
@@ -21,7 +22,7 @@ def _do_orphan_users(app):
     with app.app_context():
         cfq = app.app_config.orphan_users
 
-        now = datetime.datetime.utcnow()
+        now = dt_now()
 
         start = int(time.time() * 1000.0)
         logger = logging.getLogger("scheduler")

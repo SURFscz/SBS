@@ -1,3 +1,4 @@
+from server.tools import dt_now
 import datetime
 
 from flask import Blueprint, request as current_request, current_app
@@ -61,7 +62,7 @@ def organisation_invitations_accept():
         .filter(OrganisationInvitation.hash == current_request.get_json()["hash"]) \
         .one()
 
-    if organisation_invitation.expiry_date and organisation_invitation.expiry_date < datetime.datetime.now():
+    if organisation_invitation.expiry_date and organisation_invitation.expiry_date < dt_now():
         delete(OrganisationInvitation, organisation_invitation.id)
         raise Conflict(f"The invitation has expired at {organisation_invitation.expiry_date}")
 

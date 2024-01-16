@@ -5,6 +5,7 @@ from server.db.domain import Service, User, UserToken
 from server.test.abstract_test import AbstractTest
 from server.test.seed import (user_sarah_name, service_wiki_name, service_mail_name, service_cloud_name,
                               user_sarah_user_token_network, user_john_name, service_network_name)
+from server.tools import dt_now
 
 
 class TestUserToken(AbstractTest):
@@ -130,6 +131,6 @@ class TestUserToken(AbstractTest):
 
         user_tokens_updated = self.get("/api/user_tokens")
         created_at = int(user_tokens_updated[0]["created_at"])
-        one_day_ago = int((datetime.datetime.utcnow() - datetime.timedelta(days=1)).timestamp())
+        one_day_ago = int((dt_now() - datetime.timedelta(days=1)).timestamp())
         self.assertTrue(created_at > one_day_ago)
         self.assertIsNone(user_tokens[0].get("hashed_token"))

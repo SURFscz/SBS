@@ -1,5 +1,4 @@
 import base64
-import datetime
 from io import BytesIO
 
 import pyotp
@@ -18,6 +17,7 @@ from server.db.db import db
 from server.db.domain import User
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_reset_token
+from server.tools import dt_now
 
 mfa_api = Blueprint("mfa_api", __name__, url_prefix="/api/mfa")
 
@@ -50,7 +50,7 @@ def _do_verify_2fa(user: User, secret):
     if totp.verify(totp_value, valid_window=1) or _totp_backdoor(user):
         if not user.second_factor_auth:
             user.second_factor_auth = secret
-        user.last_login_date = datetime.datetime.now()
+        user.last_login_date = dt_now()
         user = db.session.merge(user)
         db.session.commit()
         store_user_in_session(user, True, user.has_agreed_with_aup())
