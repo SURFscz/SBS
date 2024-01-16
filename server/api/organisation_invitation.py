@@ -1,5 +1,4 @@
 from server.tools import dt_now
-import datetime
 
 from flask import Blueprint, request as current_request, current_app
 from sqlalchemy.orm import joinedload
@@ -30,7 +29,7 @@ def do_resend(organisation_invitation_id):
         .one()
     confirm_organisation_admin(organisation_invitation.organisation_id)
     organisation_invitation.expiry_date = default_expiry_date()
-    organisation_invitation.created_at = datetime.date.today(),
+    organisation_invitation.created_at = dt_now()
     organisation_invitation = db.session.merge(organisation_invitation)
     mail_organisation_invitation({
         "salutation": "Dear",

@@ -1,5 +1,3 @@
-import datetime
-
 from flask import Blueprint, request as current_request, current_app
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict
@@ -30,7 +28,7 @@ def do_resend(service_invitation_id):
         .one()
     confirm_service_admin(service_invitation.service_id)
     service_invitation.expiry_date = default_expiry_date()
-    service_invitation.created_at = datetime.date.today(),
+    service_invitation.created_at = dt_now()
     service_invitation = db.session.merge(service_invitation)
     mail_service_invitation({
         "salutation": "Dear",
