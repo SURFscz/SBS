@@ -1,17 +1,17 @@
 import time
 import uuid
-from datetime import date
 
 from flask import jsonify
 
 from server.test.abstract_test import AbstractTest
+from server.tools import dt_today
 
 
 class TestDynamicExtendedJSONEncoder(AbstractTest):
 
     def test_encoding(self):
         _uuid = uuid.uuid4()
-        today = date.today()
+        today = dt_today()
 
         obj = {"1": _uuid, "2": today, "3": "default", "4": (1, 2)}
         res = jsonify(obj).json

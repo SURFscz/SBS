@@ -8,32 +8,33 @@ from werkzeug.exceptions import BadRequest
 from server.db.defaults import default_expiry_date, calculate_expiry_period, cleanse_short_name, valid_uri_attributes, \
     uri_re
 from server.db.domain import Invitation
+from server.tools import dt_now
 
 
 class TestDefaults(TestCase):
 
     def test_default_expiry_date(self):
         default_date = default_expiry_date()
-        res = default_date - datetime.datetime.today()
+        res = default_date - dt_now()
         self.assertEqual(14, res.days)
 
     def test_expiry_date(self):
         date = default_expiry_date({"expiry_date": time.time()})
-        res = date - datetime.datetime.today()
+        res = date - dt_now()
         self.assertEqual(-1, res.days)
 
     def test_calculate_expiry_period_days(self):
         period = calculate_expiry_period(
-            munchify({"expiry_date": datetime.datetime.today() + datetime.timedelta(days=15)}))
+            munchify({"expiry_date": dt_now() + datetime.timedelta(days=15)}))
         self.assertTrue(period.endswith("days"))
 
     def test_calculate_expiry_period_hours(self):
-        today = datetime.datetime.today()
+        today = dt_now()
         period = calculate_expiry_period(munchify({"expiry_date": today + datetime.timedelta(hours=6)}), today=today)
         self.assertTrue(period.endswith("hours"))
 
     def test_calculate_expiry_period_today(self):
-        today = datetime.datetime.today()
+        today = dt_now()
         period = calculate_expiry_period(munchify({"expiry_date": today}), today=today)
         self.assertEqual("0 minutes", period)
 
@@ -45,23 +46,23 @@ class TestDefaults(TestCase):
         self.assertEqual("15 days", period)
 
     def test_calculate_expiry_period_diff(self):
-        today = datetime.datetime.today()
+        today = dt_now()
         period = calculate_expiry_period(munchify({"expiry_date": today + datetime.timedelta(minutes=15)}), today=today)
         self.assertEqual("15 minutes", period)
 
     def test_calculate_expiry_period_db_object(self):
-        invitation = Invitation(expiry_date=datetime.datetime.today() + datetime.timedelta(minutes=15))
+        invitation = Invitation(expiry_date=dt_now() + datetime.timedelta(minutes=15))
         period = calculate_expiry_period(invitation)
         self.assertTrue(period.endswith("minutes"))
 
     def test_calculate_expiry_period_with_today_hour(self):
-        today = datetime.datetime.today()
+        today = dt_now()
         invitation = Invitation(expiry_date=today + datetime.timedelta(hours=1))
         period = calculate_expiry_period(invitation, today=today)
         self.assertEqual("1 hour", period)
 
     def test_calculate_expiry_period_with_today_day(self):
-        today = datetime.datetime.today()
+        today = dt_now()
         invitation = Invitation(expiry_date=today + datetime.timedelta(days=1))
         period = calculate_expiry_period(invitation, today=today)
         self.assertEqual("1 day", period)
