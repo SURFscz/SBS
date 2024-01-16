@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from flask import Blueprint, request as current_request, jsonify
 
@@ -57,7 +57,7 @@ def update_collaboration_membership_expiry_date():
     membership_id = client_data["membership_id"]
     membership_expiry_date = client_data.get("expiry_date")
     if membership_expiry_date:
-        membership_expiry_date = datetime.fromtimestamp(client_data["expiry_date"])
+        membership_expiry_date = datetime.fromtimestamp(client_data["expiry_date"], tz=timezone.utc)
 
     confirm_collaboration_admin(collaboration_id)
 
