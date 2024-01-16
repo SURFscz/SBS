@@ -4,8 +4,7 @@ from sqlalchemy.orm import load_only
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import current_user_id, confirm_allow_impersonation, confirm_write_access, \
-    is_organisation_admin_or_manager, is_collaboration_admin, access_allowed_to_collaboration_as_org_member, \
-    has_org_manager_unit_access
+    is_organisation_admin_or_manager, is_collaboration_admin, has_org_manager_unit_access
 from server.db.audit_mixin import AuditLog
 from server.db.domain import User, Organisation, Collaboration, Service
 
