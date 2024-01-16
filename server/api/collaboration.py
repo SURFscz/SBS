@@ -1,7 +1,7 @@
 import base64
 import urllib.request
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from flasgger import swag_from
 from flask import Blueprint, jsonify, request as current_request, current_app, g as request_context
@@ -662,7 +662,7 @@ def _validate_collaboration(data, organisation, new_collaboration=True):
     expiry_date = data.get("expiry_date")
     if expiry_date:
         past_dates_allowed = current_app.app_config.feature.past_dates_allowed
-        dt = datetime.fromtimestamp(int(expiry_date), datetime.timezone.utc) + timedelta(hours=4)
+        dt = datetime.fromtimestamp(int(expiry_date), timezone.utc) + timedelta(hours=4)
         if not past_dates_allowed and dt < dt_now():
             raise APIBadRequest(f"It is not allowed to set the expiry date ({dt}) in the past")
         data["expiry_date"] = datetime(year=dt.year, month=dt.month, day=dt.day, hour=0, minute=0, second=0)
