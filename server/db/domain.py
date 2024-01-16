@@ -10,6 +10,7 @@ from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE
 from server.db.logo_mixin import LogoMixin
 from server.db.secret_mixin import SecretMixin
+from server.db.datetime import TZDateTime
 
 
 def gen_uuid4():
@@ -41,10 +42,10 @@ class User(Base, db.Model):
     user_ip_networks = db.relationship("UserIpNetwork", cascade="all, delete-orphan", passive_deletes=True,
                                        lazy="selectin")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
-    updated_at = db.Column("updated_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    updated_at = db.Column("updated_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
     organisation_memberships = db.relationship("OrganisationMembership", back_populates="user",
                                                cascade="all, delete, delete-orphan", passive_deletes=True)
@@ -65,9 +66,9 @@ class User(Base, db.Model):
                                   passive_deletes=True)
     eduperson_principal_name = db.Column("eduperson_principal_name", db.String(length=255), nullable=True)
     application_uid = db.Column("application_uid", db.String(length=255), nullable=True)
-    last_accessed_date = db.Column("last_accessed_date", db.DateTime(timezone=True), nullable=False)
-    last_login_date = db.Column("last_login_date", db.DateTime(timezone=True), nullable=False)
-    pam_last_login_date = db.Column("pam_last_login_date", db.DateTime(timezone=True), nullable=False)
+    last_accessed_date = db.Column("last_accessed_date", TZDateTime(), nullable=False)
+    last_login_date = db.Column("last_login_date", TZDateTime(), nullable=False)
+    pam_last_login_date = db.Column("pam_last_login_date", TZDateTime(), nullable=False)
     suspended = db.Column("suspended", db.Boolean(), nullable=True, default=False)
     suspend_notifications = db.relationship("SuspendNotification", back_populates="user", cascade="all, delete-orphan",
                                             passive_deletes=True)
@@ -180,7 +181,7 @@ class CollaborationMembership(Base, db.Model):
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     role = db.Column("role", db.String(length=255), nullable=False)
     status = db.Column("status", db.String(length=255), nullable=False, default=STATUS_ACTIVE)
-    expiry_date = db.Column("expiry_date", db.DateTime(timezone=True), nullable=True)
+    expiry_date = db.Column("expiry_date", TZDateTime(), nullable=True)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User", back_populates="collaboration_memberships")
     invitation_id = db.Column(db.Integer(), db.ForeignKey("invitations.id"))
@@ -193,14 +194,14 @@ class CollaborationMembership(Base, db.Model):
                              lazy="select")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
     def is_expired(self):
-        return self.expiry_date and datetime.datetime.utcnow() > self.expiry_date
+        return self.expiry_date and datetime.datetime.now(datetime.UTC) > self.expiry_date
 
     def is_active(self):
-        now = datetime.datetime.utcnow()
+        now = datetime.datetime.now(datetime.UTC)
         not_expired = not self.expiry_date or self.expiry_date > now
         co_not_expired = not self.collaboration.expiry_date or self.collaboration.expiry_date > now
         return not_expired and co_not_expired and not self.user.suspended
@@ -248,10 +249,10 @@ class Invitation(Base, db.Model):
                              back_populates="invitations")
     intended_role = db.Column("intended_role", db.String(length=255), nullable=True)
     external_identifier = db.Column("external_identifier", db.String(length=255), nullable=True)
-    expiry_date = db.Column("expiry_date", db.DateTime(timezone=True), nullable=True)
-    membership_expiry_date = db.Column("membership_expiry_date", db.DateTime(timezone=True), nullable=True)
+    expiry_date = db.Column("expiry_date", TZDateTime(), nullable=True)
+    membership_expiry_date = db.Column("membership_expiry_date", TZDateTime(), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
     @staticmethod
@@ -260,7 +261,7 @@ class Invitation(Base, db.Model):
             raise ValueError(f"{role} is not valid. Valid roles are admin and member")
 
     def is_expired(self):
-        return self.expiry_date and datetime.datetime.utcnow() > self.expiry_date
+        return self.expiry_date and datetime.datetime.now(datetime.UTC) > self.expiry_date
 
 
 services_collaborations_association = db.Table(
@@ -295,16 +296,16 @@ class Collaboration(Base, db.Model, LogoMixin):
     global_urn = db.Column("global_urn", db.Text, nullable=True)
     accepted_user_policy = db.Column("accepted_user_policy", db.Text(), nullable=True)
     status = db.Column("status", db.String(length=255), nullable=False, default=STATUS_ACTIVE)
-    last_activity_date = db.Column("last_activity_date", db.DateTime(timezone=True), nullable=False,
+    last_activity_date = db.Column("last_activity_date", TZDateTime(), nullable=False,
                                    server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
-    expiry_date = db.Column("expiry_date", db.DateTime(timezone=True), nullable=True)
+    expiry_date = db.Column("expiry_date", TZDateTime(), nullable=True)
     organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"))
     organisation = db.relationship("Organisation", back_populates="collaborations")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
-    updated_at = db.Column("updated_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    updated_at = db.Column("updated_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
     services = db.relationship("Service", secondary=services_collaborations_association, lazy="select",
                                back_populates="collaborations")
@@ -380,7 +381,7 @@ class OrganisationMembership(Base, db.Model):
                             back_populates="organisation_memberships")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
     def allowed_attr_view(self):
@@ -434,7 +435,7 @@ class Organisation(Base, db.Model, LogoMixin):
     service_connection_requires_approval = db.Column("service_connection_requires_approval", db.Boolean(),
                                                      nullable=True, default=False)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     collaboration_creation_allowed = db.Column("collaboration_creation_allowed", db.Boolean(), nullable=True,
@@ -481,7 +482,7 @@ class ServiceMembership(Base, db.Model):
     service = db.relationship("Service", back_populates="service_memberships")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
 
@@ -495,7 +496,7 @@ class ServiceToken(Base, db.Model, SecretMixin):
     service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
     service = db.relationship("Service", back_populates="service_tokens")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
 
@@ -570,10 +571,10 @@ class Service(Base, db.Model, LogoMixin):
     sweep_scim_enabled = db.Column("sweep_scim_enabled", db.Boolean(), nullable=True, default=False)
     sweep_remove_orphans = db.Column("sweep_remove_orphans", db.Boolean(), nullable=True, default=False)
     sweep_scim_daily_rate = db.Column("sweep_scim_daily_rate", db.Integer(), nullable=True, default=0)
-    sweep_scim_last_run = db.Column("sweep_scim_last_run", db.DateTime(timezone=True), nullable=True)
+    sweep_scim_last_run = db.Column("sweep_scim_last_run", TZDateTime(), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
     def is_member(self, user_id):
@@ -611,7 +612,7 @@ class ServiceRequest(Base, db.Model, LogoMixin):
     requester_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     requester = db.relationship("User", back_populates="service_requests")
     rejection_reason = db.Column("rejection_reason", db.Text(), nullable=True)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
 
@@ -627,9 +628,9 @@ class ServiceInvitation(Base, db.Model):
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User")
     intended_role = db.Column("intended_role", db.String(length=255), nullable=True)
-    expiry_date = db.Column("expiry_date", db.DateTime(timezone=True), nullable=True)
+    expiry_date = db.Column("expiry_date", TZDateTime(), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
 
@@ -655,9 +656,9 @@ class Group(Base, db.Model):
     service_group = db.relationship("ServiceGroup", back_populates="groups")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
-    updated_at = db.Column("updated_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    updated_at = db.Column("updated_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
     def is_member(self, user_id):
@@ -677,7 +678,7 @@ class JoinRequest(Base, db.Model):
     collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
     collaboration = db.relationship("Collaboration", back_populates="join_requests")
     hash = db.Column("hash", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
 
@@ -695,9 +696,9 @@ class OrganisationInvitation(Base, db.Model):
     units = db.relationship("Unit", secondary=units_organisation_invitations_association, lazy="select",
                             back_populates="organisation_invitations")
     intended_role = db.Column("intended_role", db.String(length=255), nullable=True)
-    expiry_date = db.Column("expiry_date", db.DateTime(timezone=True), nullable=True)
+    expiry_date = db.Column("expiry_date", TZDateTime(), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
     @staticmethod
@@ -715,7 +716,7 @@ class ApiKey(Base, db.Model, SecretMixin):
     organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"))
     organisation = db.relationship("Organisation", back_populates="api_keys")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
 
@@ -727,7 +728,7 @@ class Aup(Base, db.Model):
     au_version = db.Column("au_version", db.String(length=255), nullable=False)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User", back_populates="aups")
-    agreed_at = db.Column("agreed_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    agreed_at = db.Column("agreed_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                           nullable=False)
 
 
@@ -737,7 +738,7 @@ class SuspendNotification(Base, db.Model):
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User", back_populates="suspend_notifications")
-    sent_at = db.Column("sent_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    sent_at = db.Column("sent_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                         nullable=False)
     is_suspension = db.Column("is_suspension", db.Boolean(), nullable=True, default=False)
     is_warning = db.Column("is_warning", db.Boolean(), nullable=True, default=False)
@@ -765,7 +766,7 @@ class CollaborationRequest(Base, db.Model, LogoMixin):
                             back_populates="collaboration_requests")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
 
@@ -785,7 +786,7 @@ class ServiceConnectionRequest(Base, db.Model):
     collaboration = db.relationship("Collaboration", back_populates="service_connection_requests")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
 
@@ -797,7 +798,7 @@ class IpNetwork(Base, db.Model):
     service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
     service = db.relationship("Service", back_populates="ip_networks")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
 
@@ -810,7 +811,7 @@ class SchacHomeOrganisation(Base, db.Model):
     organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"))
     organisation = db.relationship("Organisation", back_populates="schac_home_organisations")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
 
@@ -831,7 +832,7 @@ class SshKey(Base, db.Model):
     ssh_value = db.Column("ssh_value", db.Text(), nullable=False)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User", back_populates="ssh_keys")
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
 
@@ -840,7 +841,7 @@ class UserNameHistory(Base, db.Model):
     metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     username = db.Column("username", db.String(length=255), nullable=True)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
 
@@ -852,7 +853,7 @@ class UserMail(Base, db.Model):
     recipient = db.Column("recipient", db.String(length=255), nullable=True)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User", back_populates="user_mails")
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
     audit_log_exclude = True
 
@@ -871,7 +872,7 @@ class ServiceGroup(Base, db.Model):
                              passive_deletes=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
 
@@ -884,7 +885,7 @@ class ServiceAup(Base, db.Model):
     user = db.relationship("User", back_populates="service_aups")
     service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
     service = db.relationship("Service", back_populates="service_aups")
-    agreed_at = db.Column("agreed_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    agreed_at = db.Column("agreed_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                           nullable=False)
 
 
@@ -899,8 +900,8 @@ class UserToken(Base, db.Model, SecretMixin):
     user = db.relationship("User", back_populates="user_tokens")
     service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
     service = db.relationship("Service", back_populates="user_tokens")
-    last_used_date = db.Column("last_used_date", db.DateTime(timezone=True), nullable=True)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    last_used_date = db.Column("last_used_date", TZDateTime(), nullable=True)
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
 
@@ -912,7 +913,7 @@ class UserIpNetwork(Base, db.Model):
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User", back_populates="user_ip_networks")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
 
@@ -928,7 +929,7 @@ class PamSSOSession(Base, db.Model):
     user = db.relationship("User")
     service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
     service = db.relationship("Service")
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
     audit_log_exclude = True
@@ -947,7 +948,7 @@ class UserLogin(Base, db.Model):
     service_id = db.Column(db.Integer(), db.ForeignKey("services.id", ondelete="SET NULL"), nullable=True)
     service = db.relationship("Service")
     service_entity_id = db.Column("service_entity_id", db.String(length=512), nullable=True)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
     audit_log_exclude = True
