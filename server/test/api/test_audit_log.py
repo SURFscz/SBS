@@ -6,8 +6,9 @@ from server.db.audit_mixin import ACTION_DELETE, ACTION_CREATE, ACTION_UPDATE, A
 from server.db.domain import User, Collaboration, Service, Organisation, Group
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_cloud_name, co_ai_computing_name, \
-    service_mail_name, invitation_hash_curious, unihard_invitation_hash, unihard_name, group_science_name, user_sarah_name, \
-    user_james_name
+    service_mail_name, invitation_hash_curious, unihard_invitation_hash, unihard_name, group_science_name, \
+    user_sarah_name, \
+    user_james_name, co_teachers_name
 
 
 class TestAuditLog(AbstractTest):
@@ -143,3 +144,17 @@ class TestAuditLog(AbstractTest):
         self.save_entity(collaboration)
         audit_logs = AuditLog.query.all()
         self.assertEqual(0, len(audit_logs))
+
+    def test_manager_no_access_based_on_unit(self):
+        self.login("urn:harry")
+        collaboration = self.find_entity_by_name(Collaboration, co_teachers_name)
+        self.get(f"/api/audit_logs/info/{collaboration.id}/collaborations", response_status_code=403)
+
+    def test_filter_collaborations_audit_logs_based_on_units(self):
+        collaboration = self.find_entity_by_name(Collaboration, co_teachers_name)
+        collaboration.name = "changed"
+        self.save_entity(collaboration)
+        self.login("urn:harry")
+        res = self.get(f"/api/audit_logs/info/{collaboration.organisation_id}/organisations")
+        collaboration_audit_logs = [log for log in res["audit_logs"] if log["target_type"] == "collaborations"]
+        self.assertEqual(0, len(collaboration_audit_logs))
