@@ -1,15 +1,14 @@
 import datetime
 
-from db import db
+import sqlalchemy
 
 
 # make sure all database columns can be used as timezone aware datetime
 # adapted from https://docs.sqlalchemy.org/en/20/core/custom_types.html#store-timezone-aware-timestamps-as-timezone-naive-utc
-class TZDateTime(db.TypeDecorator):
-    impl = db.DateTime
+class TZDateTime(sqlalchemy.TypeDecorator):
+    impl = sqlalchemy.DateTime
     cache_ok = True
 
-    @staticmethod
     def process_bind_param(self, value, dialect):
         if value is None:
             return None
@@ -24,7 +23,6 @@ class TZDateTime(db.TypeDecorator):
         else:
             raise Exception(f"Unknown type '{type(value)}' for datetime")
 
-    @staticmethod
     def process_result_value(self, value, dialect):
         if value is None:
             return None
