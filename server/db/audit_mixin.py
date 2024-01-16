@@ -8,7 +8,7 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.attributes import get_history
 
-from server.db.db import db
+from server.db.db import db, TZDateTime
 from server.db.json_serialize_base import JsonSerializableBase
 
 ACTION_CREATE = 1
@@ -39,7 +39,7 @@ class AuditLog(JsonSerializableBase, db.Model):
     action = db.Column("action", db.Integer())
     state_before = db.Column("state_before", db.Text())
     state_after = db.Column("state_after", db.Text())
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
     def __init__(self, current_user_id, subject_id, target_type, target_id, target_name, parent_id, parent_name, action,
