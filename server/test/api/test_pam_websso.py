@@ -107,7 +107,7 @@ class TestPamWebSSO(AbstractTest):
                         with_basic_auth=False,
                         headers={"Authorization": f"bearer {service_storage_token}"})
 
-        self.assertEqual(res["cached"], True)
+        self.assertTrue(res["cached"])
 
     def test_check_pin_fail(self):
         with requests.Session():
