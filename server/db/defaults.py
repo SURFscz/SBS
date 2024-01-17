@@ -67,7 +67,7 @@ def generate_short_name(cls, name, attr="short_name"):
         unique_short_name = cls.query.filter_by(**filters).count() == 0
         if unique_short_name:
             return generated_short_name
-        generated_short_name = f"{generated_short_name[:16 - len(str(counter))]}{counter}"
+        generated_short_name = f"{short_name[:16 - len(str(counter))]}{counter}"
         counter = counter + 1
     # Very unlikely Fallback
     return "".join(random.sample(string.ascii_lowercase, k=16))

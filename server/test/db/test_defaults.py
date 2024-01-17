@@ -1,17 +1,18 @@
 import datetime
 import time
-from unittest import TestCase
 
 from munch import munchify
 from werkzeug.exceptions import BadRequest
 
-from server.db.defaults import default_expiry_date, calculate_expiry_period, cleanse_short_name, valid_uri_attributes, \
-    uri_re
-from server.db.domain import Invitation
 from server.tools import dt_now
+from server.db.db import db
+from server.db.defaults import (default_expiry_date, calculate_expiry_period, cleanse_short_name, valid_uri_attributes,
+                                uri_re, generate_short_name)
+from server.db.domain import Invitation, Service
+from server.test.abstract_test import AbstractTest
 
 
-class TestDefaults(TestCase):
+class TestDefaults(AbstractTest):
 
     def test_default_expiry_date(self):
         default_date = default_expiry_date()
@@ -85,6 +86,21 @@ class TestDefaults(TestCase):
         _test_cleansing("1ABC!D@E#F&G(HIJ)KLMNO-PQRSTUVWYZ", "abcdefghijklmnop")
         _test_cleansing("check", "check")
         _test_cleansing("1222323", "")
+
+    def test_generate_short_name_fallback(self):
+        # first generate service with abbreviation entity1..entity999
+        db.session.merge(Service(entity_id="entity", name="entity", created_by="test", updated_by="test",
+                                 abbreviation="entity"))
+        for i in range(1, 1000):
+            db.session.merge(Service(entity_id=f"entity{i}", name=f"entity{i}", created_by="test", updated_by="test",
+                                     abbreviation=f"entity{i}"))
+        db.session.commit()
+
+        # adding a new entity should now result in a random abbreviation
+        abbr = generate_short_name(Service, "entity", "abbreviation")
+        # we expect a random string of 16 characters
+        self.assertNotIn("entity", abbr)
+        self.assertEqual(16, len(abbr))
 
     def test_valid_uri_attributes(self):
         self.assertTrue(valid_uri_attributes({"url": "https://sram.org"}, ["url"]))
