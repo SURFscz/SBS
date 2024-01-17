@@ -4,7 +4,7 @@ from werkzeug.exceptions import Forbidden, NotFound
 
 from server.db.db import db
 from server.db.domain import (CollaborationMembership, OrganisationMembership, Collaboration, User,
-                              ServiceMembership, Organisation)
+                              ServiceMembership)
 
 CSRF_TOKEN = "CSRFToken"
 
@@ -156,17 +156,6 @@ def is_organisation_admin(organisation_id=None):
 
 def is_organisation_admin_or_manager(organisation_id=None):
     return _has_organisation_role(organisation_id, ["admin", "manager"])
-
-
-def access_allowed_to_collaboration_as_org_member(collaboration_id):
-    user_id = current_user_id()
-    query = OrganisationMembership.query \
-        .options(load_only(OrganisationMembership.user_id)) \
-        .join(OrganisationMembership.organisation) \
-        .join(Organisation.collaborations) \
-        .filter(Collaboration.id == collaboration_id) \
-        .filter(OrganisationMembership.user_id == user_id)
-    return query.count() > 0
 
 
 def _has_organisation_role(organisation_id, roles):
