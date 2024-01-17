@@ -56,21 +56,6 @@ class AuditLog(JsonSerializableBase, db.Model):
         self.state_before = state_before
         self.state_after = state_after
 
-    def save(self, connection):
-        connection.execute(
-            self.__table__.insert(),
-            dict(user_id=self.user_id,
-                 subject_id=self.subject_id,
-                 target_type=self.target_type,
-                 target_id=self.target_id,
-                 target_name=self.target_name,
-                 parent_id=self.parent_id,
-                 parent_name=self.parent_name,
-                 action=self.action,
-                 state_before=self.state_before,
-                 state_after=self.state_after)
-        )
-
 
 def find_subject(mapper, target):
     if target.__tablename__ == "users":
