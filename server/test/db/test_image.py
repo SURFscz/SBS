@@ -16,7 +16,8 @@ class TestImage(TestCase):
         self.do_assert_transform("horizontal.png")
 
     def test_transform_image_from_url(self):
-        res = urllib.request.urlopen("https://static.surfconext.nl/media/idp/eduid.png")
+        file = f"{os.path.dirname(os.path.realpath(__file__))}/../images/eduid.png"
+        res = urllib.request.urlopen(f"file://{file}")
         image_pil = Image.open(BytesIO(base64.b64decode(transform_image(res.read()).encode())))
         self.assertEqual(480, image_pil.width)
         self.assertEqual(348, image_pil.height)
