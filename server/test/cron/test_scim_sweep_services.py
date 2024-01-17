@@ -20,18 +20,29 @@ class TestScimSweepServices(AbstractTest):
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=remote_groups, status=200)
             sweep_result = scim_sweep_services(self.app)
             # This is a temporarily fix for wonkey test results (OH 19-12-2022)
-            if len(sweep_result["services"]) > 0:
-                self.assertEqual(service_network_name, sweep_result["services"][0]["name"])
-                sync_results = sweep_result["services"][0]["sync_results"]
-                self.assertEqual(0, len(sync_results["groups"]["created"]))
-                self.assertEqual(0, len(sync_results["users"]["created"]))
+            self.assertEqual(1, len(sweep_result["services"]))
 
-                sweep_result = scim_sweep_services(self.app)
-                self.assertEqual(0, len(sweep_result["services"]))
+            self.assertEqual(service_network_name, sweep_result["services"][0]["name"])
+            sync_results = sweep_result["services"][0]["sync_results"]
+            self.assertEqual(0, len(sync_results["groups"]["created"]))
+            self.assertEqual(0, len(sync_results["users"]["created"]))
 
-                service = self.find_entity_by_name(Service, service_network_name)
-                service.sweep_scim_last_run = None
-                self.save_entity(service)
-                sweep_result = scim_sweep_services(self.app)
-                if len(sweep_result["services"]) > 0:
-                    self.assertEqual(service_network_name, sweep_result["services"][0]["name"])
+            sweep_result = scim_sweep_services(self.app)
+            self.assertEqual(0, len(sweep_result["services"]))
+
+            service = self.find_entity_by_name(Service, service_network_name)
+            service.sweep_scim_last_run = None
+            self.save_entity(service)
+
+            sweep_result = scim_sweep_services(self.app)
+            self.assertEqual(service_network_name, sweep_result["services"][0]["name"])
+
+    def test_schedule_sweep_fail(self):
+        with responses.RequestsMock(assert_all_requests_are_fired=False) as rsps:
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", status=503, body="Server unavailable")
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", status=503, body="Server unavailable")
+            sweep_result = scim_sweep_services(self.app)
+
+            self.assertEqual(1, len(sweep_result["services"]))
+            sync_results = sweep_result["services"][0]["sync_results"]
+            self.assertEqual("400 Bad Request: Invalid response from remote SCIM server (got HTTP status 503)", sync_results)
