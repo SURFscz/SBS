@@ -13,8 +13,6 @@ from server.db.db import db
 from server.db.defaults import calculate_expiry_period
 from server.db.domain import User, UserMail
 from server.logger.context_logger import ctx_logger
-from server.tools import dt_now
-
 from server.mail_types.mail_types import COLLABORATION_REQUEST_MAIL, \
     COLLABORATION_JOIN_REQUEST_MAIL, AUTOMATIC_COLLABORATION_JOIN_REQUEST_MAIL, ORGANISATION_INVITATION_MAIL, \
     COLLABORATION_INVITATION_MAIL, ACCEPTED_JOIN_REQUEST_MAIL, DENIED_JOIN_REQUEST_MAIL, \
@@ -24,6 +22,7 @@ from server.mail_types.mail_types import COLLABORATION_REQUEST_MAIL, \
     COLLABORATION_EXPIRED_NOTIFICATION_MAIL, COLLABORATION_SUSPENDED_NOTIFICATION_MAIL, \
     COLLABORATION_SUSPENSION_WARNING_MAIL, MEMBERSHIP_EXPIRED_NOTIFICATION_MAIL, MEMBERSHIP_EXPIRES_WARNING_MAIL, \
     SERVICE_INVITATION_MAIL, ACCEPTED_SERVICE_REQUEST_MAIL, DENIED_SERVICE_REQUEST_MAIL
+from server.tools import dt_now
 
 
 def _send_async_email(ctx, msg, mail):
@@ -72,7 +71,7 @@ def _user_attributes(user: User):
 
 
 def _now_strf_time():
-    return datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+    return dt_now().strftime('%Y-%m-%d %H:%M')
 
 
 def _do_send_mail(subject, recipients, template, context, preview, working_outside_of_request_context=False, cc=None,
