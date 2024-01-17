@@ -198,10 +198,10 @@ class CollaborationMembership(Base, db.Model):
                            nullable=False)
 
     def is_expired(self):
-        return self.expiry_date and datetime.datetime.now(datetime.UTC) > self.expiry_date
+        return self.expiry_date and datetime.datetime.now(datetime.timezone.utc) > self.expiry_date
 
     def is_active(self):
-        now = datetime.datetime.now(datetime.UTC)
+        now = datetime.datetime.now(datetime.timezone.utc)
         not_expired = not self.expiry_date or self.expiry_date > now
         co_not_expired = not self.collaboration.expiry_date or self.collaboration.expiry_date > now
         return not_expired and co_not_expired and not self.user.suspended
@@ -261,7 +261,7 @@ class Invitation(Base, db.Model):
             raise ValueError(f"{role} is not valid. Valid roles are admin and member")
 
     def is_expired(self):
-        return self.expiry_date and datetime.datetime.now(datetime.UTC) > self.expiry_date
+        return self.expiry_date and datetime.datetime.now(datetime.timezone.utc) > self.expiry_date
 
 
 services_collaborations_association = db.Table(
