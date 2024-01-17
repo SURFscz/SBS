@@ -14,7 +14,7 @@ socket_url: "127.0.0.1:8080/"
 api_users:
   - name: "sysadmin"
     password: "secret"
-    scopes: [ "read", "write", "system", "ipaddress" ]
+    scopes: [ "read", "write", "system", "ipaddress", "stats" ]
   - name: "sysread"
     password: "secret"
     scopes: [ read ]
