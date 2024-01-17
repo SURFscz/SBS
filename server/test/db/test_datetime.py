@@ -39,6 +39,17 @@ class TestDatetime(AbstractTest):
         test_user_readback = User.query.filter_by(uid=base_user["uid"]).first()
         self.assertEqual(dt, test_user_readback.last_login_date)
 
+    def test_datetime_other_tz(self):
+        dt = datetime.datetime(2019, 1, 1, 0, 0, 0, tzinfo=datetime.timezone(datetime.timedelta(hours=1)))
+        test_user = User(**base_user, last_login_date=dt)
+        db.session.add(test_user)
+        db.session.commit()
+
+        test_user_readback = User.query.filter_by(uid=base_user["uid"]).first()
+        # new tz should be UTC, but actual times should be equal
+        self.assertEqual(datetime.UTC, test_user_readback.last_login_date.tzinfo)
+        self.assertEqual(dt, test_user_readback.last_login_date)
+
     def test_datetime_no_timezone(self):
         invalid_dt = datetime.datetime(2019, 1, 1, 0, 0, 0)
         test_user = User(**base_user, last_login_date=invalid_dt)
