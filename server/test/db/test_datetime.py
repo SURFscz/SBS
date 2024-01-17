@@ -1,6 +1,5 @@
 import datetime
 
-import pytest
 from sqlalchemy.exc import StatementError
 
 from server.db.db import db
@@ -47,20 +46,20 @@ class TestDatetime(AbstractTest):
 
         test_user_readback = User.query.filter_by(uid=base_user["uid"]).first()
         # new tz should be UTC, but actual times should be equal
-        self.assertEqual(datetime.UTC, test_user_readback.last_login_date.tzinfo)
+        self.assertEqual(datetime.timezone.utc, test_user_readback.last_login_date.tzinfo)
         self.assertEqual(dt, test_user_readback.last_login_date)
 
     def test_datetime_no_timezone(self):
         invalid_dt = datetime.datetime(2019, 1, 1, 0, 0, 0)
         test_user = User(**base_user, last_login_date=invalid_dt)
-        with pytest.raises(StatementError) as excinfo:
+        with self.assertRaises(StatementError) as exc:
             db.session.add(test_user)
             db.session.commit()
-        self.assertIn("must be timezone aware", str(excinfo.value))
+        self.assertIn("must be timezone aware", str(exc.exception))
 
     def test_datetime_invalid(self):
         test_user = User(**base_user, last_login_date=42)
-        with pytest.raises(StatementError) as excinfo:
+        with self.assertRaises(StatementError) as exc:
             db.session.add(test_user)
             db.session.commit()
-        self.assertIn("Unknown type '<class 'int'>' for datetime", str(excinfo.value))
+        self.assertIn("Unknown type '<class 'int'>' for datetime", str(exc.exception))
