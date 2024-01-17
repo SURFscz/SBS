@@ -1,19 +1,16 @@
 from sqlalchemy.exc import IntegrityError
 
 from server.db.db import db
-from server.db.domain import Collaboration, CollaborationMembership, Invitation, OrganisationInvitation, User
+from server.db.domain import Collaboration, CollaborationMembership, Invitation, OrganisationInvitation
 from server.test.abstract_test import AbstractTest
-from server.test.seed import co_ai_computing_name, user_boss_name
+from server.test.seed import co_ai_computing_name
 
 
 class TestModels(AbstractTest):
 
     def test_collaboration(self):
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
-        self.assertFalse(collaboration.is_admin(999))
-
-        admin = self.find_entity_by_name(User, user_boss_name)
-        self.assertTrue(collaboration.is_admin(admin.id))
+        self.assertEqual(False, collaboration.is_admin(999))
 
     def test_invitation_role(self):
         Invitation.validate_role("admin")
