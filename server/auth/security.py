@@ -130,6 +130,10 @@ def confirm_ipaddress_access(*args, override_func=None):
     return confirm_scope_access(*args, override_func=override_func, scope="ipaddress")
 
 
+def confirm_stats_access(*args, override_func=None):
+    return confirm_scope_access(*args, override_func=override_func, scope="stats")
+
+
 def is_current_user_organisation_admin_or_manager(collaboration_id):
     return is_organisation_admin_or_manager(db.session.get(Collaboration, collaboration_id).organisation_id)
 

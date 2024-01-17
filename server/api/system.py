@@ -6,7 +6,7 @@ from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint
-from server.auth.security import confirm_write_access, current_user_id
+from server.auth.security import confirm_write_access, current_user_id, confirm_stats_access
 from server.cron.scim_sweep_services import scim_sweep_services
 from server.db.audit_mixin import metadata
 from server.db.db import db
@@ -263,7 +263,7 @@ def sweep():
 @system_api.route("/statistics", strict_slashes=False, methods=["GET"])
 @json_endpoint
 def statistics():
-    confirm_write_access()
+    confirm_stats_access()
 
     def group_by_month(cls):
         month = extract("month", cls.created_at)
