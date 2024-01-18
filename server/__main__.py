@@ -2,10 +2,6 @@
 # monkey_patch before importing anything else!
 # see https://github.com/gevent/gevent/issues/1016#issuecomment-328529454
 import eventlet
-
-from server.api.service_request import service_request_api
-from server.api.unit import unit_api
-
 eventlet.monkey_patch()
 
 import logging
@@ -55,10 +51,12 @@ from server.api.service_connection_request import service_connection_request_api
 from server.api.service_group import service_group_api
 from server.api.service_invitation import service_invitations_api
 from server.api.service_membership import service_membership_api
+from server.api.service_request import service_request_api
 from server.api.service_token import service_token_api
 from server.api.system import system_api
 from server.api.tag import tag_api
 from server.api.token import token_api
+from server.api.unit import unit_api
 from server.api.user import user_api
 from server.api.user_login import user_login_api
 from server.api.user_saml import user_saml_api
