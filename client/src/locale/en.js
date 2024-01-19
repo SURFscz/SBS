@@ -216,6 +216,7 @@ const en = {
             noResults: "No users were found...",
             noResultsInvitations: "No users or invitations were found...",
             activity: "User history",
+            loading: "Please wait, loading all history....",
             showSsh: "Show",
             ssh: {
                 title: "Public SSH keys of {{name}}"

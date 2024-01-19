@@ -216,6 +216,7 @@ const nl = {
             noResults: "Geen gebruikers gevonden...",
             noResultsInvitations: "Geen gebruikers of uitnodigingen gevonden...",
             activity: "User-historie",
+            loading: "Geduld, alle historie wordt geladen....",
             showSsh: "Toon",
             ssh: {
                 title: "Publieke SSH-sleutels van {{name}}"

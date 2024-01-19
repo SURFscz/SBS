@@ -27,6 +27,7 @@ import {Link} from "react-router-dom";
 import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {isUserAllowed, ROLES} from "../utils/UserRole";
+import {Loader} from "@surfnet/sds";
 
 class UserDetail extends React.Component {
 
@@ -278,7 +279,8 @@ class UserDetail extends React.Component {
                         </div>
                     </section>}
                     {!loadingAuditLogs && <Activity auditLogs={filteredAuditLogs}/>}
-                    {loadingAuditLogs && <SpinnerField/>}
+                    {loadingAuditLogs && <Loader children={
+                        <div className={"loader-msg"}><span>{I18n.t("models.allUsers.loading")}</span></div>}/>}
                 </div>
             </div>
         )
