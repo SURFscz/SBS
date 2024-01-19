@@ -11,15 +11,17 @@ import {auditLogsMe} from "../api";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Activity from "../components/Activity";
 import {filterAuditLogs} from "../utils/AuditLog";
+import {Loader} from "@surfnet/sds";
 
 class Profile extends React.Component {
 
     constructor(props, context) {
         super(props, context);
         this.state = {
-            loading: true,
+            loading: false,
             auditLogs: [],
             filteredAuditLogs: [],
+            loadingAuditLogs: true,
             tab: "details",
             tabs: [],
             query: "",
@@ -27,18 +29,18 @@ class Profile extends React.Component {
     }
 
     componentDidMount = () => {
+        AppStore.update(s => {
+            s.breadcrumb.paths = [
+                {path: "/", value: I18n.t("breadcrumb.home")},
+                {path: "", value: I18n.t("breadcrumb.profile")}
+            ];
+        })
         auditLogsMe().then(res => {
             this.setState({
                 auditLogs: res,
                 filteredAuditLogs: res,
-                loading: false
+                loadingAuditLogs: false
             });
-            AppStore.update(s => {
-                s.breadcrumb.paths = [
-                    {path: "/", value: I18n.t("breadcrumb.home")},
-                    {path: "", value: I18n.t("breadcrumb.profile")}
-                ];
-            })
         });
     };
 
@@ -52,11 +54,12 @@ class Profile extends React.Component {
         });
     }
 
-    getHistoryTab = (filteredAuditLogs, query) => {
+    getHistoryTab = (filteredAuditLogs, query, loadingAuditLogs) => {
         return (<div key="history" name="history" label={I18n.t("home.history")}
                      icon={<FontAwesomeIcon icon="history"/>}>
             <div className={"user-history"}>
-                <section className="search-activity">
+
+                {!loadingAuditLogs && <section className="search-activity">
                     <h2>{I18n.t("models.allUsers.activity")}</h2>
                     <div className="search">
                         <input type="text"
@@ -65,8 +68,10 @@ class Profile extends React.Component {
                                placeholder={I18n.t("system.searchPlaceholder")}/>
                         <FontAwesomeIcon icon="search"/>
                     </div>
-                </section>
-                <Activity auditLogs={filteredAuditLogs}/>
+                </section>}
+                {!loadingAuditLogs && <Activity auditLogs={filteredAuditLogs}/>}
+                {loadingAuditLogs && <Loader children={
+                    <div className={"loader-msg"}><span>{I18n.t("models.allUsers.loading")}</span></div>}/>}
             </div>
         </div>)
     }
@@ -88,10 +93,13 @@ class Profile extends React.Component {
     }
 
     render() {
-        const {tab, filteredAuditLogs, query} = this.state;
+        const {tab, filteredAuditLogs, query, loadingAuditLogs} = this.state;
         const {user} = this.props;
         const meProps = {...this.props}
-        const tabs = [this.getDetailsTab(meProps), this.getHistoryTab(filteredAuditLogs, query),]
+        const tabs = [
+            this.getDetailsTab(meProps),
+            this.getHistoryTab(filteredAuditLogs, query, loadingAuditLogs)
+        ]
         return (
             <div className="mod-user-profile">
                 <UnitHeader obj={({name: user.name, svg: PersonIcon})}
