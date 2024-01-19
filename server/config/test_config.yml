@@ -73,6 +73,7 @@ mail:
   suppress_sending_mails: False
   info_email: sram-support@surf.nl
   beheer_email: sram-beheer@surf.nl
+  ticket_email: sram-support@surf.nl
   eduteams_email: support+sram@eduteams.org
   # Do we mail a summary of new Organizations and Services to the beheer_email?
   audit_trail_notifications_enabled: True
