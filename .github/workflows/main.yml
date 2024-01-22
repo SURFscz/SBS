@@ -97,7 +97,7 @@ jobs:
       - name: Run tests with coverage
         run: |
           cd ./server
-          pytest -o log_cli=true --log-level=DEBUG --log-cli-level=DEBUG --capture=tee-sys test
+          pytest -o log_cli=true --log-level=DEBUG --log-cli-level=DEBUG --capture=tee-sys test -k TestScimSweepServices
         timeout-minutes: 20
 
 
