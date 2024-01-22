@@ -17,7 +17,7 @@ service_group_api = Blueprint("service_group_api", __name__, url_prefix="/api/se
 def create_service_group(service: Service, collaboration: Collaboration, service_group: ServiceGroup):
     data = {
         "name": service_group.name,
-        "description": f"Provisioned by service {service.name} - {service_group.description}",
+        "description": {service_group.description},
         "short_name": f"{service.abbreviation}-{service_group.short_name}",
         "collaboration_id": collaboration.id,
         "auto_provision_members": service_group.auto_provision_members,
