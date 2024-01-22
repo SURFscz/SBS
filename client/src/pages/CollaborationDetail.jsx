@@ -16,7 +16,6 @@ import {
 } from "../api";
 import "./CollaborationDetail.scss";
 import I18n from "../locale/I18n";
-import {collaborationRoles} from "../forms/constants";
 import {AppStore} from "../stores/AppStore";
 import UnitHeader from "../components/redesign/UnitHeader";
 import Tabs from "../components/Tabs";
@@ -56,12 +55,10 @@ class CollaborationDetail extends React.Component {
 
     constructor(props, context) {
         super(props, context);
-        this.roleOptions = collaborationRoles.map(role => ({
-            value: role, label: I18n.t(`profile.${role}`)
-        }));
         this.state = {
             invitation: null,
             serviceEmails: {},
+            adminEmails: [],
             collaboration: null,
             schacHomeOrganisation: null,
             userTokens: null,
@@ -104,10 +101,12 @@ class CollaborationDetail extends React.Component {
             invitationByHash(params.hash, true).then(res => {
                 const invitation = res["invitation"];
                 const serviceEmails = res["service_emails"];
+                const adminEmails = res["admin_emails"];
                 this.setState({
                     invitation: invitation,
                     collaboration: invitation.collaboration,
                     serviceEmails: serviceEmails,
+                    adminEmails: adminEmails,
                     loading: false,
                     firstTime: true,
                     adminOfCollaboration: false,
@@ -819,7 +818,8 @@ class CollaborationDetail extends React.Component {
             isWarning,
             isInvitation,
             invitation,
-            serviceEmails
+            serviceEmails,
+            adminEmails
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -832,6 +832,7 @@ class CollaborationDetail extends React.Component {
         } else {
             role = adminOfCollaboration ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER;
         }
+
         return (<>
             {(adminOfCollaboration && showMemberView) && this.getUnitHeader(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}
             {(!showMemberView || !adminOfCollaboration) && this.getUnitHeaderForMemberNew(user, config, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember, adminOfCollaboration)}
@@ -840,8 +841,10 @@ class CollaborationDetail extends React.Component {
                                                                       isOpen={firstTime}
                                                                       role={role}
                                                                       serviceEmails={serviceEmails}
+                                                                      adminEmails={adminEmails}
                                                                       collaboration={collaboration}
                                                                       isAdmin={user.admin}
+                                                                      user={user}
                                                                       isInvitation={isInvitation}
                                                                       close={this.doAcceptInvitation}/>}
 

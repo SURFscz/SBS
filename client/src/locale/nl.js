@@ -1672,6 +1672,11 @@ const nl = {
             multipleInfo: "Diensten gebruikt binnen deze samenwerking vereisen dat je akkoord gaat met de acceptable use policies.",
             singleCheck: "Ik ga akkoord met de hierboven genoemde acceptable use policy",
             multipleCheck: "Ik ga akkoord met de hierboven genoemde acceptable use policies"
+        },
+        organisation: {
+            title: "Organisatie AUP",
+            info: "Je bent geen lid van de organisatie <strong>{{name}}</strong>. Voordat je verder kunt gaan, moet je het beleid voor acceptabel gebruik (AUP) van de organisatie lezen. Bevestig hieronder of je ze accepteert.",
+            check: "Ik ga akkoord met de hierboven genoemde acceptable use policies"
         }
     },
     collaborationRequest: {

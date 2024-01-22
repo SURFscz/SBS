@@ -270,6 +270,7 @@ def seed(db, app_config, skip_seed=False):
     uuc = Organisation(name=unihard_name, short_name=unihard_short_name, identifier="95306a5f-0a16-4461-b358-8442e09dab20",
                        description="Unincorporated Urban Community", logo=read_image("uni-harderwijk.png"),
                        created_by="urn:admin", updated_by="urnadmin", category="Research",
+                       accepted_user_policy="https://uni-harderwijk/aup/v1",
                        on_boarding_msg="We are using **SRAM** to provide access to the following research tools:"
                                        "\n- Wiki\n- Cloud\n- Awesome things...\n\nIf you want to join one of our "
                                        "collaborations, please send a mail to [support@uuc.nl](mailto:support@uuc.nl)."
@@ -278,7 +279,8 @@ def seed(db, app_config, skip_seed=False):
     uva = Organisation(name=unifra_name, description=unifra_name,
                        identifier="7c60a022-ab09-438c-8603-c361bc1a088d", created_by="urn:admin",
                        updated_by="urn:admin", short_name="uva", logo=read_image("uni-franeker.png"),
-                       category="University", service_connection_requires_approval=True)
+                       category="University", service_connection_requires_approval=True,
+                       accepted_user_policy="https://uni-franeker/aup/v1",)
     tue = Organisation(name=umcpekela_name, description=umcpekela_name,
                        identifier="65fadfcb-71fd-4962-8428-0ecd15970f8d",
                        created_by="urn:admin", updated_by="urn:admin", short_name="tue",

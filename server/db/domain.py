@@ -62,6 +62,8 @@ class User(Base, db.Model):
     aups = db.relationship("Aup", back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
     service_aups = db.relationship("ServiceAup", back_populates="user", cascade="all, delete-orphan",
                                    passive_deletes=True)
+    organisation_aups = db.relationship("OrganisationAup", back_populates="user", cascade="all, delete-orphan",
+                                        passive_deletes=True)
     user_tokens = db.relationship("UserToken", back_populates="user", cascade="all, delete-orphan",
                                   passive_deletes=True)
     eduperson_principal_name = db.Column("eduperson_principal_name", db.String(length=255), nullable=True)
@@ -428,6 +430,7 @@ class Organisation(Base, db.Model, LogoMixin):
     logo = db.Column("logo", db.Text(), nullable=True)
     uuid4 = db.Column("uuid4", db.String(length=255), nullable=False, default=gen_uuid4)
     on_boarding_msg = db.Column("on_boarding_msg", db.Text(), nullable=True)
+    accepted_user_policy = db.Column("accepted_user_policy", db.Text(), nullable=True)
     schac_home_organisations = db.relationship("SchacHomeOrganisation", cascade="all, delete-orphan",
                                                passive_deletes=True, lazy="selectin")
     units = db.relationship("Unit", cascade="all, delete-orphan", passive_deletes=True, lazy="selectin")
@@ -455,6 +458,8 @@ class Organisation(Base, db.Model, LogoMixin):
     api_keys = db.relationship("ApiKey", back_populates="organisation",
                                cascade="delete, delete-orphan",
                                passive_deletes=True)
+    organisation_aups = db.relationship("OrganisationAup", back_populates="organisation", cascade="all, delete-orphan",
+                                        passive_deletes=True)
     collaborations_count = column_property(select(func.count(Collaboration.id))
                                            .where(Collaboration.organisation_id == id)
                                            .correlate_except(Collaboration)
@@ -466,6 +471,9 @@ class Organisation(Base, db.Model, LogoMixin):
 
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.organisation_memberships))) > 0
+
+    def admin_emails(self):
+        return [membership.user.email for membership in self.organisation_memberships]
 
 
 class ServiceMembership(Base, db.Model):
@@ -953,3 +961,16 @@ class UserLogin(Base, db.Model):
                            nullable=False)
 
     audit_log_exclude = True
+
+
+class OrganisationAup(Base, db.Model):
+    __tablename__ = "organisation_aups"
+    metadata = metadata
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    aup_url = db.Column("aup_url", db.String(length=255), nullable=False)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    user = db.relationship("User", back_populates="organisation_aups")
+    organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"))
+    organisation = db.relationship("Organisation", back_populates="organisation_aups")
+    agreed_at = db.Column("agreed_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
+                          nullable=False)

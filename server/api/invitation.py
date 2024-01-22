@@ -16,7 +16,8 @@ from server.auth.security import confirm_collaboration_admin, current_user_id, c
     confirm_organisation_api_collaboration
 from server.db.activity import update_last_activity_date
 from server.db.defaults import default_expiry_date
-from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, JoinRequest, Group
+from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, JoinRequest, Group, \
+    OrganisationAup
 from server.db.models import delete
 from server.mail import mail_collaboration_invitation
 from server.scim.events import broadcast_collaboration_changed
@@ -98,6 +99,15 @@ def invitation_to_dict(invitation, include_expiry_date=False):
     return res
 
 
+def add_organisation_aups(collaboration: Collaboration, user: User):
+    organisation = collaboration.organisation
+    org_identifiers = [aup.organisation_id for aup in user.organisation_aups]
+    if organisation.accepted_user_policy and organisation.id not in org_identifiers:
+        organisation_aup = OrganisationAup(aup_url=organisation.accepted_user_policy, user=user,
+                                           organisation=organisation)
+        db.session.merge(organisation_aup)
+
+
 @invitations_api.route("/find_by_hash", strict_slashes=False)
 @json_endpoint
 def invitations_by_hash():
@@ -113,6 +123,7 @@ def invitations_by_hash():
     invitation.collaboration.services
     invitation.collaboration.organisation
     invitation.collaboration.organisation.services
+
     for member in invitation.collaboration.collaboration_memberships:
         member.user
 
@@ -121,7 +132,8 @@ def invitations_by_hash():
 
     invitation_json = jsonify(invitation).json
     service_emails = invitation.collaboration.service_emails()
-    return {"invitation": invitation_json, "service_emails": service_emails}, 200
+    admin_emails = invitation.collaboration.organisation.admin_emails()
+    return {"invitation": invitation_json, "service_emails": service_emails, "admin_emails": admin_emails}, 200
 
 
 @invitations_api.route("/v1/collaboration_invites", methods=["PUT"], strict_slashes=False)
@@ -249,7 +261,8 @@ def invitations_accept():
 
     db.session.commit()
 
-    add_user_aups(collaboration, user_id)
+    user = add_user_aups(collaboration, user_id)
+    add_organisation_aups(collaboration, user)
 
     # Any outstanding join request for this user and this collaboration can be deleted now
     JoinRequest.query.filter(JoinRequest.user_id == user_id, JoinRequest.collaboration_id == collaboration.id).delete()
