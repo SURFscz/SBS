@@ -4,11 +4,10 @@ import requests
 
 from server.db.db import db
 from server.db.domain import PamSSOSession, User, Service
-from server.tools import dt_now
-
 from server.test.abstract_test import AbstractTest
 from server.test.seed import pam_session_id, service_storage_name, service_storage_token, \
     pam_invalid_service_session_id, user_roger_name
+from server.tools import dt_now
 
 
 class TestPamWebSSO(AbstractTest):
@@ -30,6 +29,8 @@ class TestPamWebSSO(AbstractTest):
         self.assertEqual(service_storage_name, res["service"]["name"])
         self.assertEqual("1234", res["pin"])
         self.assertEqual("SUCCESS", res["validation"]["result"])
+        # Second time is not allowed
+        self.get(f"/pam-weblogin/storage/{pam_session_id}", with_basic_auth=False, response_status_code=403)
 
     def test_get_session_different_user(self):
         self.login("urn:sarah")
