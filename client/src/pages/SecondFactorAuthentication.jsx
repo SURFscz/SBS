@@ -426,18 +426,6 @@ class SecondFactorAuthentication extends React.Component {
                     {action === "update" &&
                         <Toaster message={I18n.t("mfa.update.info1", {name: idp_name})}
                                  toasterType={ToasterType.Info}/>}
-                    {action === "register" &&
-                        <Toaster toasterType={ToasterType.Info}>
-                            <p>
-                            <span dangerouslySetInnerHTML={{
-                                __html: DOMPurify.sanitize(`${I18n.t("mfa.register.info1", {name: idp_name})}`)
-                            }}/>
-                                <a href="#" onClick={this.mfaFeedback}>{I18n.t("mfa.register.contactUs")}</a>
-                                <span dangerouslySetInnerHTML={{
-                                    __html: DOMPurify.sanitize(`${I18n.t("mfa.register.info11")}`)
-                                }}/>
-                            </p>
-                        </Toaster>}
                     <p>{I18n.t(`mfa.${action}.info2`)}</p>
                 </section>
                 {!update && <div className="step">
