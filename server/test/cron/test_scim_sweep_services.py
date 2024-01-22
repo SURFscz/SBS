@@ -19,7 +19,7 @@ class TestScimSweepServices(AbstractTest):
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=remote_users, status=200)
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=remote_groups, status=200)
             sweep_result = scim_sweep_services(self.app)
-            # This is a temporarily fix for wonkey test results (OH 19-12-2022)
+            # This is a temporary fix for wonkey test results (OH 19-12-2022)
             self.assertEqual(1, len(sweep_result["services"]))
 
             self.assertEqual(service_network_name, sweep_result["services"][0]["name"])
