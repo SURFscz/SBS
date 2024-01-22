@@ -29,15 +29,20 @@ def _do_scim_sweep_services(app):
             .filter(Service.sweep_scim_enabled == True) \
             .all()  # noqa: E712
 
+        ctx_logger("wonky").info(f"services: {services}")
+
         now = dt_now()
 
         def service_needs_sweeping(service: Service):
             if service.sweep_scim_last_run is None:
                 return True
             cutoff_time = service.sweep_scim_last_run + datetime.timedelta(hours=24 / service.sweep_scim_daily_rate)
+            ctx_logger("wonky").info(f"service_need_sweeping: {service.entity_id} - {cutoff_time} < {now} : "
+                                     f"{cutoff_time < now}")
             return cutoff_time < now
 
         services_sweeping = [service for service in services if service_needs_sweeping(service)]
+
         aggregated_results = _result_container()
         for service in services_sweeping:
             logger.info(f"Running scim_sweep for service {service.abbreviation} ({service.entity_id})")
