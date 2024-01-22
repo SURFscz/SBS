@@ -39,10 +39,13 @@ class TestScimSweepServices(AbstractTest):
 
     def test_schedule_sweep_fail(self):
         with responses.RequestsMock(assert_all_requests_are_fired=False) as rsps:
-            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", status=503, body="Server unavailable")
-            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", status=503, body="Server unavailable")
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", status=503,
+                     body="Server unavailable")
+            rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", status=503,
+                     body="Server unavailable")
             sweep_result = scim_sweep_services(self.app)
             # This is a temporary fix for wonkey test results (OH 22-1-2024)
             if len(sweep_result["services"]) == 1:
                 sync_results = sweep_result["services"][0]["sync_results"]
-                self.assertEqual("400 Bad Request: Invalid response from remote SCIM server (got HTTP status 503)", sync_results)
+                self.assertEqual("400 Bad Request: Invalid response from remote SCIM server (got HTTP status 503)",
+                                 sync_results)
