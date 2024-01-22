@@ -384,7 +384,13 @@ class OrganisationDetail extends React.Component {
                             breadcrumbName={I18n.t("breadcrumb.organisation", {name: organisation.name})}
                             firstTime={user.admin ? this.onBoarding : undefined}
                             name={organisation.name}
-                            actions={this.getActions(user, organisation, adminOfOrganisation)}/>
+                            actions={this.getActions(user, organisation, adminOfOrganisation)}>
+                    {organisation.accepted_user_policy &&
+                        <a target="_blank" rel="noopener noreferrer" href={organisation.accepted_user_policy}>
+                            {I18n.t("aup.title")}
+                        </a>
+                    }
+                </UnitHeader>
                 <Tabs activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}
                 </Tabs>

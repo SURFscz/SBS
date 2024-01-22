@@ -17,7 +17,7 @@ import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
-import {sanitizeShortName, validSchacHomeRegExp} from "../validations/regExps";
+import {sanitizeShortName, validSchacHomeRegExp, validUrlRegExp} from "../validations/regExps";
 import {AppStore} from "../stores/AppStore";
 import UnitHeader from "../components/redesign/UnitHeader";
 import CroppedImageField from "../components/redesign/CroppedImageField";
@@ -41,6 +41,7 @@ class OrganisationForm extends React.Component {
         this.state = {
             name: "",
             description: "",
+            accepted_user_policy: "",
             short_name: "",
             schac_home_organisations: [],
             schac_home_organisation: "",
@@ -56,6 +57,7 @@ class OrganisationForm extends React.Component {
             administrators: [],
             message: "",
             required: ["name", "short_name", "logo"],
+            invalidInputs: {},
             alreadyExists: {},
             duplicatedUnit: false,
             initial: true,
@@ -210,16 +212,28 @@ class OrganisationForm extends React.Component {
     };
 
     isValid = () => {
-        const {required, alreadyExists, administrators, isNew, duplicatedUnit} = this.state;
-        const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(this.state[attr])) || duplicatedUnit;
+        const {required, alreadyExists, administrators, isNew, duplicatedUnit,invalidInputs } = this.state;
+        const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(this.state[attr]))
+            || duplicatedUnit || Object.keys(invalidInputs).some(key => invalidInputs[key]);
         return !inValid && (!isNew || !isEmpty(administrators));
     };
 
     doSubmit = () => {
         if (this.isValid()) {
             const {
-                name, short_name, administrators, message, schac_home_organisations, description, logo,
-                on_boarding_msg, category, services_restricted, units, service_connection_requires_approval
+                name,
+                short_name,
+                administrators,
+                message,
+                schac_home_organisations,
+                description,
+                accepted_user_policy,
+                logo,
+                on_boarding_msg,
+                category,
+                services_restricted,
+                units,
+                service_connection_requires_approval
             } = this.state;
             this.setState({loading: true});
             createOrganisation({
@@ -231,6 +245,7 @@ class OrganisationForm extends React.Component {
                 administrators,
                 message,
                 description,
+                accepted_user_policy,
                 services_restricted,
                 service_connection_requires_approval,
                 logo,
@@ -261,6 +276,7 @@ class OrganisationForm extends React.Component {
             const {
                 name,
                 description,
+                accepted_user_policy,
                 organisation,
                 schac_home_organisations,
                 collaboration_creation_allowed,
@@ -278,6 +294,7 @@ class OrganisationForm extends React.Component {
                 id: organisation.id,
                 name,
                 description,
+                accepted_user_policy,
                 units: units.filter(unit => !isEmpty(unit.name)),
                 schac_home_organisations,
                 collaboration_creation_allowed,
@@ -312,13 +329,23 @@ class OrganisationForm extends React.Component {
         this.setState({administrators: uniqueEmails});
     };
 
+    validateURI = name => e => {
+        const uri = e.target.value;
+        const {invalidInputs} = this.state;
+        const inValid = !isEmpty(uri) && !validUrlRegExp.test(uri);
+        this.setState({invalidInputs: {...invalidInputs, [name]: inValid}});
+    };
+
+
     render() {
         const {
             name,
             description,
+            accepted_user_policy,
             initial,
             alreadyExists,
             administrators,
+            invalidInputs,
             message,
             confirmationDialogOpen,
             confirmationDialogAction,
@@ -406,6 +433,19 @@ class OrganisationForm extends React.Component {
                         <InputField value={description} onChange={e => this.setState({description: e.target.value})}
                                     placeholder={I18n.t("organisation.descriptionPlaceholder")} multiline={true}
                                     name={I18n.t("organisation.description")}/>
+
+                        <InputField value={accepted_user_policy}
+                                    onChange={e => this.setState({accepted_user_policy: e.target.value})}
+                                    placeholder={I18n.t("service.accepted_user_policyPlaceholder")}
+                                    externalLink={true}
+                                    error={invalidInputs.accepted_user_policy}
+                                    toolTip={I18n.t("service.accepted_user_policyTooltip")}
+                                    name={I18n.t("service.accepted_user_policy")}
+                                    onBlur={this.validateURI("accepted_user_policy")}/>
+                        {invalidInputs["accepted_user_policy"] &&
+                            <ErrorIndicator
+                                msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
+
 
                         <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
                                            isNew={isNew} title={I18n.t("organisation.logo")} value={logo}
