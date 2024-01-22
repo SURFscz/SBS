@@ -23,7 +23,7 @@ from server.tools import dt_now
 pam_websso_api = Blueprint("pam_weblogin_api", __name__, url_prefix="/pam-weblogin")
 
 
-def _get_pam_sso_session(session_id):
+def _get_pam_sso_session(session_id) -> PamSSOSession:
     pam_sso_session = PamSSOSession.query.filter(PamSSOSession.session_id == session_id).first()
     if not pam_sso_session:
         raise NotFound(f"No PamSSOSession with session_id {session_id} found")
@@ -66,7 +66,8 @@ def _validate_pam_sso_session(pam_sso_session: PamSSOSession, pin, validate_pin,
 @json_endpoint
 def find_by_session_id(service_shortname, session_id):
     pam_sso_session = _get_pam_sso_session(session_id)
-
+    if pam_sso_session.pin_shown:
+        raise Forbidden("PIN already shown")
     if pam_sso_session.service.abbreviation.lower() != service_shortname.lower():
         raise Forbidden(f"Short name {service_shortname} is not correct")
 
@@ -77,6 +78,9 @@ def find_by_session_id(service_shortname, session_id):
             db.session.add(pam_sso_session)
         res["validation"] = _validate_pam_sso_session(pam_sso_session, None, False, True)
         res["pin"] = pam_sso_session.pin
+        # Ensure the link can't be used anymore, but we can't delete it as we need to verify the entered pin
+        pam_sso_session.pin_shown = True
+        db.session.merge(pam_sso_session)
     return res, 200
 
 
