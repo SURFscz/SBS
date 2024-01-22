@@ -1,4 +1,5 @@
 import json
+from time import sleep
 
 import responses
 
@@ -13,13 +14,16 @@ class TestScimSweepServices(AbstractTest):
 
     @responses.activate
     def test_schedule_sweep(self):
+        # wait to make sure time has passed since initialization;
+        # otherwise time checks in scim run check will fail
+        sleep(1)
+
         remote_groups = json.loads(read_file("test/scim/sweep/remote_groups_unchanged.json"))
         remote_users = json.loads(read_file("test/scim/sweep/remote_users_unchanged.json"))
         with responses.RequestsMock(assert_all_requests_are_fired=False) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", json=remote_users, status=200)
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json=remote_groups, status=200)
             sweep_result = scim_sweep_services(self.app)
-            # This is a temporary fix for wonkey test results (OH 19-12-2022)
             self.assertEqual(1, len(sweep_result["services"]))
 
             self.assertEqual(service_network_name, sweep_result["services"][0]["name"])
@@ -38,14 +42,16 @@ class TestScimSweepServices(AbstractTest):
             self.assertEqual(service_network_name, sweep_result["services"][0]["name"])
 
     def test_schedule_sweep_fail(self):
+        # wait to make sure time has passed since initialization;
+        # otherwise time checks in scim run check will fail
+        sleep(1)
+
         with responses.RequestsMock(assert_all_requests_are_fired=False) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", status=503,
                      body="Server unavailable")
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", status=503,
                      body="Server unavailable")
             sweep_result = scim_sweep_services(self.app)
-            # This is a temporary fix for wonkey test results (OH 22-1-2024)
-            if len(sweep_result["services"]) == 1:
-                sync_results = sweep_result["services"][0]["sync_results"]
-                self.assertEqual("400 Bad Request: Invalid response from remote SCIM server (got HTTP status 503)",
-                                 sync_results)
+            sync_results = sweep_result["services"][0]["sync_results"]
+            self.assertEqual("400 Bad Request: Invalid response from remote SCIM server (got HTTP status 503)",
+                             sync_results)
