@@ -5,6 +5,7 @@ import time
 from server.cron.shared import obtain_lock
 from server.db.db import db
 from server.db.domain import Service
+from server.logger.context_logger import ctx_logger
 from server.scim.sweep import perform_sweep
 from server.tools import dt_now
 
@@ -16,6 +17,8 @@ def _result_container():
 
 
 def _do_scim_sweep_services(app):
+    ctx_logger("wonky").info("_do_scim_sweep_services")
+
     with app.app_context():
         start = int(time.time() * 1000.0)
         logger = logging.getLogger("scheduler")
@@ -56,4 +59,5 @@ def _do_scim_sweep_services(app):
 
 
 def scim_sweep_services(app):
+    ctx_logger("wonky").info("scim_sweep_services")
     return obtain_lock(app, scim_sweep_services_lock_name, _do_scim_sweep_services, _result_container)
