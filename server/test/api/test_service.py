@@ -10,7 +10,7 @@ from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_network_entity_id, unihard_name, \
     service_network_name, service_scheduler_name, service_wiki_name, service_storage_name, \
     service_cloud_name, service_storage_entity_id, service_ssh_name, unifra_name, unihard_secret, \
-    user_jane_name, user_roger_name, service_sram_demo_sp
+    user_jane_name, user_roger_name, service_sram_demo_sp, umcpekela_name
 
 
 class TestService(AbstractTest):
@@ -201,10 +201,11 @@ class TestService(AbstractTest):
         self.login("urn:john")
         self.put(f"/api/services/toggle_access_property/{service.id}",
                  body={"allow_restricted_orgs": True},
-                 with_basic_auth=False)
+                 with_basic_auth=False,
+                 response_status_code=400)
 
         service = self.find_entity_by_name(Service, service_cloud_name)
-        self.assertTrue(service.allow_restricted_orgs)
+        self.assertFalse(service.allow_restricted_orgs)
 
     def test_toggle_non_member_users_access_allowed(self):
         service = self.find_entity_by_name(Service, service_cloud_name)
@@ -557,3 +558,27 @@ class TestService(AbstractTest):
     def test_empty_hint_short_name(self):
         res = self.post("/api/services/hint_short_name", body={"name": "*&^%$$@"}, response_status_code=200)
         self.assertEqual("short_name", res["short_name"])
+
+    def test_toggle_access_allowed_for_services_restricted(self):
+        service = self.find_entity_by_name(Service, service_cloud_name)
+        self.assertFalse(service.access_allowed_for_all)
+        self.assertFalse(service.allow_restricted_orgs)
+        self.assertEqual(2, len(service.allowed_organisations))
+
+        service.automatic_connection_allowed = False
+        self.save_entity(service)
+
+        organisation = self.find_entity_by_name(Organisation, umcpekela_name)
+        organisation.services_restricted = True
+        self.save_entity(organisation)
+
+        self.login("urn:james")
+        self.put(f"/api/services/toggle_access_property/{service.id}",
+                 body={"access_allowed_for_all": True},
+                 with_basic_auth=False)
+
+        service = self.find_entity_by_name(Service, service_cloud_name)
+        self.assertTrue(service.access_allowed_for_all)
+        self.assertFalse(service.non_member_users_access_allowed)
+        self.assertEqual(2, len(service.allowed_organisations))
+
