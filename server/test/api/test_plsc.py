@@ -29,7 +29,7 @@ class TestPlsc(AbstractTest):
         users_ = res["users"]
         self.assertEqual(17, len(users_))
         sarah = next(u for u in users_ if u["name"] == user_sarah_name)
-        self.assertEqual("sarah@uva.org", sarah["email"])
+        self.assertEqual("sarah@uni-franeker.nl", sarah["email"])
         self.assertEqual("sarah", sarah["username"])
         self.assertEqual("some-lame-key", sarah["ssh_keys"][0])
         self.assertEqual(2, len(sarah["user_ip_networks"]))

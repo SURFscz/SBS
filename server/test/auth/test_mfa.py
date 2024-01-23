@@ -35,7 +35,7 @@ class TestMFA(AbstractTest):
         user = User.query.filter(User.uid == "urn:roger").one()
         res = eligible_users_to_reset_token(user)
         self.assertEqual(1, len(res))
-        self.assertEqual("sarah@uva.org", res[0]["email"])
+        self.assertEqual("sarah@uni-franeker.nl", res[0]["email"])
         self.assertEqual("Research", res[0]["unit"])
 
     def test_eligible_users_to_reset_token_coll_org_members(self):

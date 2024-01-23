@@ -181,7 +181,7 @@ def seed(db, app_config, skip_seed=False):
     james = User(uid="urn:james", name=user_james_name, email="james@example.org", username="james",
                  schac_home_organisation=schac_home_organisation_unihar, given_name="James",
                  external_id="100ae6f1-930f-459c-bf1a-f28facfe5834")
-    sarah = User(uid="urn:sarah", name=user_sarah_name, email="sarah@uva.org", application_uid="sarah_application_uid",
+    sarah = User(uid="urn:sarah", name=user_sarah_name, email="sarah@uni-franeker.nl", application_uid="sarah_application_uid",
                  username="sarah", external_id="8297d8a5-a2a4-4208-9fb6-100a5865f022")
     betty = User(uid="urn:betty", name="betty", email="betty@uuc.org", username="betty",
                  external_id="bbd8123c-b0f9-4e3d-b3ff-288aa1c1edd6", mfa_reset_token="1234567890")
@@ -278,7 +278,7 @@ def seed(db, app_config, skip_seed=False):
                        collaboration_creation_allowed=True)
     uva = Organisation(name=unifra_name, description=unifra_name,
                        identifier="7c60a022-ab09-438c-8603-c361bc1a088d", created_by="urn:admin",
-                       updated_by="urn:admin", short_name="uva", logo=read_image("uni-franeker.png"),
+                       updated_by="urn:admin", short_name="ufra", logo=read_image("uni-franeker.png"),
                        category="University", service_connection_requires_approval=True,
                        accepted_user_policy="https://uni-franeker/aup/v1",)
     tue = Organisation(name=umcpekela_name, description=umcpekela_name,
@@ -374,8 +374,8 @@ def seed(db, app_config, skip_seed=False):
                       scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret",
                       sweep_scim_last_run=sweep_scim_last_run, sweep_scim_daily_rate=1, sweep_scim_enabled=True,
                       sweep_remove_orphans=True, scim_client_enabled=True)
-    service_ssh_uva = Service(entity_id="service_ssh_uva", name=service_ssh_name,
-                              description="Uva SSH access",
+    service_ssh_uva = Service(entity_id="service_ssh_ufra", name=service_ssh_name,
+                              description="Franeker SSH access",
                               uri="https://uri.com/ssh", identity_type="SSH KEY", accepted_user_policy="https://ssh",
                               contact_email="help@ssh.com", logo=read_image("ssh.png"),
                               automatic_connection_allowed=False,
@@ -510,7 +510,7 @@ def seed(db, app_config, skip_seed=False):
     uuc.services.append(wiki)
 
     tag_uuc = Tag(tag_value="tag_uuc")
-    tag_uva = Tag(tag_value="tag_uva")
+    tag_uva = Tag(tag_value="tag_ufra")
     tag_orphan = Tag(tag_value="tag_orphan")
     persist_instance(db, tag_uuc, tag_uva, tag_orphan)
 
@@ -530,7 +530,7 @@ def seed(db, app_config, skip_seed=False):
                                  disclose_member_information=True)
     uva_research = Collaboration(name=co_research_name,
                                  short_name="research",
-                                 global_urn="uva:research",
+                                 global_urn="ufra:research",
                                  identifier=co_research_uuid,
                                  tags=[tag_uva],
                                  website_url="https://www.google.nl",
@@ -575,7 +575,7 @@ def seed(db, app_config, skip_seed=False):
 
     uu_disabled_join_request = Collaboration(name=co_robotics_disabled_join_request_name,
                                              short_name="ai_short",
-                                             global_urn="uva:ai_short",
+                                             global_urn="ufra:ai_short",
                                              website_url="https://www.google.nl",
                                              logo=read_image("robot.png"),
                                              identifier="568eed02-0e46-48ab-83fe-116d2a8a58c5",
@@ -635,7 +635,7 @@ def seed(db, app_config, skip_seed=False):
                              collaboration_memberships=[john_ai_computing])
     group_science = Group(name=group_science_name,
                           short_name="science",
-                          global_urn="uva:research:science",
+                          global_urn="ufra:research:science",
                           identifier=group_science_identifier,
                           auto_provision_members=True,
                           description="Science",
@@ -670,7 +670,7 @@ def seed(db, app_config, skip_seed=False):
     invitation_accepted = Invitation(hash=generate_token(), invitee_email="some@ex.org", collaboration=ai_computing,
                                      expiry_date=default_expiry_date(), user=admin, message="Please join...",
                                      status="accepted", intended_role="admin")
-    invitation_uva = Invitation(hash=invitation_hash_uva, invitee_email="uva@ex.org", collaboration=uva_research,
+    invitation_uva = Invitation(hash=invitation_hash_uva, invitee_email="ufra@ex.org", collaboration=uva_research,
                                 expiry_date=default_expiry_date(), user=admin, message="Please join...",
                                 intended_role="member", groups=[group_science], status="open")
     invitation_noway = Invitation(hash=invitation_hash_no_way, invitee_email="noway@ex.org", collaboration=ai_computing,
@@ -695,7 +695,7 @@ def seed(db, app_config, skip_seed=False):
                                                                   requester=admin, collaboration=ai_computing,
                                                                   pending_organisation_approval=False,
                                                                   service=storage)
-    service_connection_request_wiki = ServiceConnectionRequest(message="UVA research needs ssh",
+    service_connection_request_wiki = ServiceConnectionRequest(message="UFra research needs ssh",
                                                                hash=service_connection_request_ssh_hash,
                                                                requester=sarah, collaboration=uva_research,
                                                                pending_organisation_approval=True,

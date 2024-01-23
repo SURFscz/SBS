@@ -59,7 +59,7 @@ class TestServiceGroup(AbstractTest):
         service_group = self.find_entity_by_name(ServiceGroup, service_group_name)
         groups = service_group.groups
         self.assertEqual(1, len(groups))
-        self.assertEqual("uva:research:cloud-new_auth_service", groups[0].global_urn)
+        self.assertEqual("ufra:research:cloud-new_auth_service", groups[0].global_urn)
 
         collaboration = self.find_entity_by_name(Collaboration, co_research_name)
         group = list(filter(lambda g: g.short_name == "cloud-new_auth_service", collaboration.groups))[0]
@@ -82,7 +82,7 @@ class TestServiceGroup(AbstractTest):
 
         groups = service_group.groups
         self.assertEqual(1, len(groups))
-        self.assertEqual("uva:research:mail-new_short_name", groups[0].global_urn)
+        self.assertEqual("ufra:research:mail-new_short_name", groups[0].global_urn)
         self.assertEqual(4, len(groups[0].collaboration_memberships))
 
     def test_delete_service_group(self):
