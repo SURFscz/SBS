@@ -283,10 +283,6 @@ export function toggleAccessAllowedForAll(serviceId, value) {
     return postPutJson(`/api/services/toggle_access_property/${serviceId}`, {access_allowed_for_all: value}, "put")
 }
 
-export function toggleAllowRestrictedOrgs(serviceId, allowRestrictedOrgs) {
-    return postPutJson(`/api/services/toggle_access_property/${serviceId}`, {allow_restricted_orgs: allowRestrictedOrgs}, "put")
-}
-
 export function toggleNonMemberUsersAccessAllowed(serviceId, nonMemberUsersAccessAllowed) {
     return postPutJson(`/api/services/toggle_access_property/${serviceId}`,
         {non_member_users_access_allowed: nonMemberUsersAccessAllowed}, "put")

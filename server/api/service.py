@@ -408,12 +408,12 @@ def save_service():
 def toggle_access_property(service_id):
     json_dict = current_request.get_json()
     attribute = list(json_dict.keys())[0]
-    if attribute not in ["reset", "allow_restricted_orgs", "non_member_users_access_allowed", "access_allowed_for_all",
+    if attribute not in ["reset", "non_member_users_access_allowed", "access_allowed_for_all",
                          "automatic_connection_allowed", "connection_setting",
                          "override_access_allowed_all_connections"]:
         raise BadRequest(f"attribute {attribute} not allowed")
     enabled = json_dict.get(attribute)
-    if attribute in ["allow_restricted_orgs"] or (attribute in ["non_member_users_access_allowed"] and enabled):
+    if attribute in ["non_member_users_access_allowed"] and enabled:
         confirm_write_access()
     else:
         confirm_service_admin(service_id)
@@ -436,14 +436,14 @@ def toggle_access_property(service_id):
         if attribute == "access_allowed_for_all":
             service.override_access_allowed_all_connections = False
             if enabled:
-                # For all organisations that are not connected we need to make a connection
+                # For all organisations that are not connected we need to make a connection (with surf-only check)
                 allowed_org_identifiers = [org.id for org in service.allowed_organisations]
                 automatic_allowed_org_identifiers = [org.id for org in
                                                      service.automatic_connection_allowed_organisations]
                 query = Organisation.query \
                     .filter(Organisation.id.notin_(allowed_org_identifiers + automatic_allowed_org_identifiers))
                 if not service.allow_restricted_orgs:
-                    query.filter(Organisation.services_restricted == False)  # noqa: E712
+                    query = query.filter(Organisation.services_restricted == False)  # noqa: E712
                 not_connected_organisations = query.all()
                 if service.automatic_connection_allowed:
                     filtered_organisations = [org for org in not_connected_organisations if
