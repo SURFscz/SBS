@@ -581,4 +581,3 @@ class TestService(AbstractTest):
         self.assertTrue(service.access_allowed_for_all)
         self.assertFalse(service.non_member_users_access_allowed)
         self.assertEqual(2, len(service.allowed_organisations))
-
