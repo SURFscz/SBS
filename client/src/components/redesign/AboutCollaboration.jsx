@@ -10,7 +10,6 @@ import {ReactComponent as EmailActionIcon} from "../../icons/streamline/email-ac
 import {ReactComponent as ShortNameIcon} from "../../icons/short-name.svg";
 import {ReactComponent as TagsIcon} from "../../icons/tags.svg";
 import Button from "../Button";
-import {Chip, ChipType} from "@surfnet/sds";
 
 
 class AboutCollaboration extends React.Component {
@@ -89,11 +88,12 @@ class AboutCollaboration extends React.Component {
                                     <TagsIcon/>
                                     <p>{I18n.t("models.collaboration.labels")}</p>
                                 </div>
-                                <div className="values">
+                                <div className="labels values">
                                     {collaboration.tags
                                         .sort()
-                                        .map((label, index) => <span key={index} className="chip-container">
-                                                <Chip type={ChipType.Support_100} label={label.tag_value}/>
+                                        .map((label, index) =>
+                                            <span key={index} className="chip-container">
+                                                {label.tag_value}
                                             </span>)}
                                 </div>
                             </div>}

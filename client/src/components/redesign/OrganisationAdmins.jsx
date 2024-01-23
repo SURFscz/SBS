@@ -140,7 +140,7 @@ class OrganisationAdmins extends React.Component {
         this.setState({selectedMembers: {...selectedMembers}});
     }
 
-    removeFromActionIcon = (entityId, isInvite, showConfirmation,e) => {
+    removeFromActionIcon = (entityId, isInvite, showConfirmation, e) => {
         stopEvent(e);
         const {user: currentUser, organisation} = this.props;
         const members = organisation.organisation_memberships;
@@ -152,7 +152,7 @@ class OrganisationAdmins extends React.Component {
             this.setState({
                 confirmationDialogOpen: true,
                 isWarning: true,
-                confirmationDialogAction: e => this.removeFromActionIcon(entityId, isInvite, false,e),
+                confirmationDialogAction: e => this.removeFromActionIcon(entityId, isInvite, false, e),
                 cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
                 confirmationQuestion: question,
             });
@@ -556,9 +556,8 @@ class OrganisationAdmins extends React.Component {
                     {(membership.units || [])
                         .sort((u1, u2) => u1.name.localeCompare(u2.name))
                         .map((unit, index) => <span key={index} className="chip-container">
-                        <Chip
-                            type={ChipType.Status_default}
-                            label={unit.name}/></span>)}
+                            {unit.name}
+                        </span>)}
                 </div>
             },
             {
