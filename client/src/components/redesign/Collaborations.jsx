@@ -298,9 +298,7 @@ export default class Collaborations extends React.PureComponent {
                     {collaboration.units
                         .sort((u1, u2) => u1.name.localeCompare(u2.name))
                         .map((unit, index) => <span key={index} className="chip-container">
-                        <Chip
-                            type={ChipType.Status_default}
-                            label={unit.name}/></span>)}
+                        {unit.name}</span>)}
                 </div>
             },
             {

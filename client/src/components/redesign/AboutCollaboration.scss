@@ -70,9 +70,10 @@ div.collaboration-about-mod {
             div.values {
                 padding-left: 35px;
 
-                span.chip-container {
-                    display: inline-block;
-                    margin: 10px 10px 0 0;
+                &.labels {
+                    display: flex;
+                    flex-direction: column;
+                    font-weight: 600;
                 }
             }
 
