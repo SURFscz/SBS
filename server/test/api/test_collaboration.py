@@ -263,8 +263,8 @@ class TestCollaboration(AbstractTest):
         self.put("/api/collaborations", body=collaboration)
 
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
-        self.assertEqual("uva:ai_computing", collaboration.global_urn)
-        self.assertListEqual(["uva:ai_computing:ai_dev", "uva:ai_computing:ai_res"],
+        self.assertEqual("ufra:ai_computing", collaboration.global_urn)
+        self.assertListEqual(["ufra:ai_computing:ai_dev", "ufra:ai_computing:ai_res"],
                              sorted(group.global_urn for group in collaboration.groups))
         self.assertEqual(pre_uuid4, collaboration.uuid4)
 
@@ -961,7 +961,7 @@ class TestCollaboration(AbstractTest):
         self.login("urn:service_admin")
         service = self.find_entity_by_name(Service, service_storage_name)
         res = self.get(f"/api/collaborations/admins/{service.id}")
-        self.assertDictEqual({f"{co_research_name}": ["sarah@uva.org"]}, res)
+        self.assertDictEqual({f"{co_research_name}": ["sarah@uni-franeker.nl"]}, res)
 
     def test_delete_membership_api(self):
         self.assertIsNotNone(self.find_collaboration_membership(co_ai_computing_uuid, 'urn:jane'))
