@@ -2,14 +2,19 @@
 
 <div class="mail-head" style="background-color: #f5f5f5;padding: 30px 0 20px 60px;">
     <p class="title" style="font-weight: 600;font-size: 34px;line-height: 42px; margin: 0;">
-        {{ invitation.user.name }} invited you to become an admin for service {{ invitation.service.name }}.
+        {{ invitation.user.name }} invited you to become an {{ invitation.intended_role }} for service {{ invitation.service.name }}.
     </p>
     <p>
+        {% if invitation.intended_role == "admin" %}
         As a service admin you can manage service properties, manage which organisations can use this service, and invite other service admins for this service.
+        {% endif %}
+        {% if invitation.intended_role == "manager" %}
+        As a service manager you can approve or deny connection requests and disconnect collaborations from the Service.
+        {% endif %}
     </p>
     </p>
     <a class="button" href="{{ base_url }}/service-invitations/accept/{{ invitation.hash }}" style="border-radius: 4px;color: white;background-color: #0077c8;text-decoration: none;display: inline-block;margin: 40px 0;cursor:pointer;padding: 18px 36px;font-size: 18px;">
-        Become admin of {{ invitation.service.name }}</a>
+        Become {{ invitation.intended_role }} of {{ invitation.service.name }}</a>
 </div>
 {% if invitation.message is defined and invitation.message != None and invitation.message|length %}
 <div class="mail-middle" style="padding: 40px 0 40px 60px;max-width: 800px;">

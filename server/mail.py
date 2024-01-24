@@ -227,7 +227,7 @@ def mail_service_invitation(context, service, recipients, preview=False):
     context = {**context, **{"expiry_period": calculate_expiry_period(context["invitation"])},
                "service": service}
     return _do_send_mail(
-        subject=f"Invitation to become service admin for {service.name}",
+        subject=f"Invitation to become service {context['intended_role']} for {service.name}",
         recipients=recipients,
         template="service_invitation",
         context=context,

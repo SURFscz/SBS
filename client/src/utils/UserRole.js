@@ -11,6 +11,7 @@ export const ROLES = {
     COLL_ADMIN: "coAdmin",
     COLL_MEMBER: "coMember",
     SERVICE_ADMIN: "serviceAdmin",
+    SERVICE_MANAGER: "serviceManager",
     USER: "user"
 }
 
@@ -81,9 +82,13 @@ export function rawGlobalUserRole(user, organisation, collaboration, service, me
         ((!collaboration && !membershipRequired) || (collaboration && user.collaboration_memberships.find(m => m.collaboration_id === collaboration.id)))) {
         return ROLES.COLL_MEMBER;
     }
+    if (user.service_memberships && user.service_memberships.find(m => m.role === "manager" &&
+        ((!service && !membershipRequired) || (service && m.service_id === service.id)))) {
+        return ROLES.SERVICE_ADMIN;
+    }
     if (user.service_memberships && user.service_memberships.length > 0 &&
         ((!service && !membershipRequired) || (service && user.service_memberships.find(m => m.service_id === service.id)))) {
-        return ROLES.SERVICE_ADMIN;
+        return ROLES.SERVICE_MANAGER;
     }
     return ROLES.USER;
 }

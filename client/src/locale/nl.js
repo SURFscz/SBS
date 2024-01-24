@@ -2212,11 +2212,11 @@ const nl = {
         }
     },
     serviceDetail: {
-        deleteMemberConfirmation: "Weet je zeker dat je alle geselecteerde beheerders en uitnodigingen wil verwijderen?",
+        deleteMemberConfirmation: "Weet je zeker dat je alle geselecteerde leden en uitnodigingen wil verwijderen?",
         deleteYourselfMemberConfirmation: "Weet je zeker dat je deze dienst wil verlaten? Je kan dit niet terugdraaien.",
         resendInvitations: "Weet je zeker dat je alle geselecteerde uitnodigingen opnieuw wil versturen?",
         flash: {
-            entitiesDeleted: "Beheerders en uitnodigingen zijn verwijderd",
+            entitiesDeleted: "Leden en uitnodigingen zijn verwijderd",
             invitesResend: "Uitnodigingen voor organisatie {{name}} zijn opnieuw verzonden.",
         },
         gone: {
@@ -2224,8 +2224,9 @@ const nl = {
             invitation: "Deze uitnodiging is al geaccepteerd/afgewezen en bestaat niet meer. Na het sluiten van deze pop-up worden de uitnodigingen ververst."
         },
         admin: "Dienstbeheerder",
+        manager: "Dienstmanager",
         intendedRole: "Rol binnen de dienst",
-        intendedRoleTooltip: "De enige rol binnen een dienst is beheerder"
+        intendedRoleTooltip: "De dienstmanager rol is gelimiteerd tot het beheren van koppelingen met samenwerkingen"
     },
     scim: {
         scimEnabled: "SCIM server provisioning",

@@ -498,7 +498,8 @@ class ServiceDetail extends React.Component {
         if (loading) {
             return <SpinnerField/>;
         }
-        const {user, invitation} = this.props;
+        const {user} = this.props;
+        const {invitation, isInvitation} = this.state;
         let tabs = [];
         const params = this.props.match.params;
         const userServiceAdmin = isUserServiceAdmin(user, {id: parseInt(params.id, 10)}) || user.admin;
@@ -548,8 +549,8 @@ class ServiceDetail extends React.Component {
             <div className="mod-service-container">
                 <ServiceWelcomeDialog name={service.name}
                                       isOpen={firstTime}
+                                      invitation={invitation}
                                       close={this.doAcceptInvitation}/>
-
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     isWarning={isWarning}
@@ -572,7 +573,7 @@ class ServiceDetail extends React.Component {
                             name={service.name}
                             firstTime={(user.admin && !showServiceAdminView) ? this.onBoarding : undefined}
                             actions={this.getActions(user, service, showServiceAdminView)}>
-                    {!invitation && this.getIconListItems(iconListItems)}
+                    {!isInvitation && this.getIconListItems(iconListItems)}
                 </UnitHeader>
                 <div className="mod-service-container">
                     <Tabs activeTab={tab} tabChanged={this.tabChanged}>

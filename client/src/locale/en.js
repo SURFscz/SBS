@@ -1997,7 +1997,7 @@ const en = {
         title: "Welcome to {{name}}",
         hi: "Hi,",
         label: "",
-        roleServiceAdmin: "You are invited to become a service <strong>admin</strong>",
+        roleServiceAdmin: "You are invited to become a service <strong>{{role}}</strong>",
         roleOrganisationAdmin: "You are invited to become an organisation <strong>admin</strong>",
         roleOrganisationManager: "You are invited to become an organisation <strong>manager</strong>",
         roleCollaborationAdmin: "You are invited to become <strong>admin</strong> of this collaboration",
@@ -2211,11 +2211,11 @@ const en = {
         }
     },
     serviceDetail: {
-        deleteMemberConfirmation: "Are you sure you want to delete the selected service admins and invitations?",
+        deleteMemberConfirmation: "Are you sure you want to delete the selected service members and invitations?",
         deleteYourselfMemberConfirmation: "Are you sure you want to leave this service? You will have to be re-invited by an admin to rejoin.",
         resendInvitations: "Are you sure you want to resend all selected invitation?",
         flash: {
-            entitiesDeleted: "Admins and invitations have been deleted",
+            entitiesDeleted: "Members and invitations have been deleted",
             invitesResend: "Invitations for service {{name}} were resent.",
         },
         gone: {
@@ -2223,8 +2223,9 @@ const en = {
             invitation: "This invitation has already been accepted / rejected and does no longer exists. After closing this popup the invitations will be refreshed."
         },
         admin: "Service admin",
+        manager: "Service manager",
         intendedRole: "Role in the service",
-        intendedRoleTooltip: "The only role within a service is admin"
+        intendedRoleTooltip: "The service manager role is limited to managing collaboration connections"
     },
     scim: {
         scimEnabled: "SCIM server provisioning",
