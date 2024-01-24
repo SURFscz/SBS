@@ -1,5 +1,6 @@
 from base64 import b64encode
 
+from server.db.domain import User
 from server.db.models import flatten
 from server.test.abstract_test import AbstractTest
 from server.test.seed import user_sarah_name, service_wiki_entity_id, unihard_name, co_ai_computing_name, \
@@ -19,6 +20,17 @@ class TestPlsc(AbstractTest):
     def test_syncing_fetch(self):
         res = self.get("/api/plsc/syncing")
         self.assert_sync_result(res)
+
+    def test_suspended_user(self):
+        sarah = self.find_entity_by_name(User, user_sarah_name)
+        sarah.suspended = True
+        self.save_entity(sarah)
+
+        res = self.get("/api/plsc/syncing")
+        users = res["users"]
+        suspended_user_names = sorted([user["name"] for user in users if user["status"] == "suspended"])
+        self.assertListEqual([user_sarah_name, "user_deletion_warning", "user_gets_deleted"], suspended_user_names)
+        self.assertEqual(14, len([user["name"] for user in users if user["status"] == "active"]))
 
     def assert_sync_result(self, res):
         self.assertEqual(3, len(res["organisations"]))

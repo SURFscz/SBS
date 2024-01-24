@@ -38,7 +38,8 @@ def internal_sync():
         services = [{"id": row[0], "name": row[1], "entity_id": row[2], "contact_email": row[3],
                      "logo": logo_url("services", row[4]), "ldap_password": row[5],
                      "accepted_user_policy": row[6], "support_email": row[7], "security_email": row[8],
-                     "privacy_policy": row[9], "ldap_enabled": row[10], "ldap_identifier": row[11], "abbreviation": row[12]}
+                     "privacy_policy": row[9], "ldap_enabled": row[10], "ldap_identifier": row[11],
+                     "abbreviation": row[12]}
                     for row in rs]
         for service in services:
             if not service["contact_email"]:
@@ -55,7 +56,7 @@ def internal_sync():
         organisation_memberships = [{"role": row[0], "user_id": row[1], "organisation_id": row[2]} for row in rs]
         rs = conn.execute(text("SELECT cm.id, cm.role, cm.user_id, collaboration_id, cm.status FROM "
                                "collaboration_memberships cm "
-                               "INNER JOIN users u ON u.id = cm.user_id where u.suspended = 0"))
+                               "INNER JOIN users u ON u.id = cm.user_id"))
         collaboration_memberships = [
             {"id": row[0], "role": row[1], "user_id": row[2], "collaboration_id": row[3], "status": row[4]} for row
             in rs]
@@ -110,11 +111,12 @@ def internal_sync():
             })
         result["services"] = services
         rs = conn.execute(text("SELECT id, uid, name, given_name, family_name, email, scoped_affiliation, "
-                               "eduperson_principal_name, username, last_login_date FROM users"))
+                               "eduperson_principal_name, username, last_login_date, suspended FROM users"))
         for row in rs:
             user_row = {"id": row[0], "uid": row[1], "name": row[2], "given_name": row[3], "family_name": row[4],
                         "email": row[5], "scoped_affiliation": row[6], "eduperson_principal_name": row[7],
-                        "username": row[8], "last_login_date": str(row[9])}
+                        "username": row[8], "last_login_date": str(row[9]),
+                        "status": "suspended" if row[10] else "active"}
             rs_ssh_keys = conn.execute(text(f"SELECT ssh_value FROM ssh_keys WHERE user_id = {row[0]}"))
             user_row["ssh_keys"] = [r[0] for r in rs_ssh_keys]
             user_ip_networks = conn.execute(text(f"SELECT network_value FROM user_ip_networks "
