@@ -2,7 +2,7 @@
 # monkey_patch before importing anything else!
 # see https://github.com/gevent/gevent/issues/1016#issuecomment-328529454
 import eventlet
-eventlet.monkey_patch()
+eventlet.monkey_patch(thread=False)
 
 import logging
 from sqlalchemy.orm import sessionmaker
@@ -141,7 +141,12 @@ if config.feature.mock_scim_enabled:
 
 app.register_error_handler(404, page_not_found)
 
+logging.error(os.environ)
+
 app.config["SQLALCHEMY_DATABASE_URI"] = config.database.uri
+if 'SBS_DB_NAME_OVERRIDE' in os.environ:
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ['SBS_DB_NAME_OVERRIDE']
+logging.error(f"db_uri: {app.config['SQLALCHEMY_DATABASE_URI']}")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = False  # Set to True for query debugging
 # app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {"pool_size": 25, "max_overflow": 15}
@@ -164,6 +169,7 @@ app.mail = Mail(app)
 
 app.json = DynamicExtendedJSONProvider(app)
 
+logging.error(f"db_uri before db init: {app.config['SQLALCHEMY_DATABASE_URI']}")
 db.init_app(app)
 app.db = db
 
@@ -190,17 +196,22 @@ with app.app_context():
         except OperationalError:
             logger.info("Waiting for the database...")
             time.sleep(1)
+    logging.error(f"connected to database: {app.db.engine.url}")
+
 
 with app.app_context():
     Session = sessionmaker(db.engine)
     lock_name = "db_migration"
     with Session.begin() as session:
         try:
+            logging.error("wating for lock for migrations")
             result = session.execute(text(f"SELECT GET_LOCK('{lock_name}', 0)"))
             lock_obtained = next(result, (0,))[0]
             if lock_obtained:
+                logging.error("running migrations")
                 db_migrations(config.database.uri)
         finally:
+            logging.error("done running migrations")
             session.execute(text(f"SELECT RELEASE_LOCK('{lock_name}')"))
 
 from server.auth.user_claims import generate_unique_username  # noqa: E402
