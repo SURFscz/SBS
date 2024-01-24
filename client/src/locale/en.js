@@ -597,9 +597,9 @@ const en = {
         },
         serviceAdmins: {
             searchPlaceHolder: "Search for service admins..",
-            noEntities: "There are no service admins",
+            noEntities: "There are no service admins or managers",
             new: "Invite admins",
-            title: "Service admins"
+            title: "Service admins & managers"
         },
         userTokens: {
             backToUserTokens: "Back to all service tokens",
