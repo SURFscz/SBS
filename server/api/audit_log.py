@@ -6,7 +6,7 @@ from server.api.base import json_endpoint, query_param
 from server.auth.security import current_user_id, confirm_allow_impersonation, confirm_write_access, \
     is_organisation_admin_or_manager, is_collaboration_admin, has_org_manager_unit_access
 from server.db.audit_mixin import AuditLog
-from server.db.domain import User, Organisation, Collaboration, Service
+from server.db.domain import User, Organisation, Collaboration, Service, Group
 
 audit_log_api = Blueprint("audit_log_api", __name__, url_prefix="/api/audit_logs")
 
@@ -14,6 +14,7 @@ table_names_cls_mapping = {
     "organisations": Organisation,
     "collaborations": Collaboration,
     "services": Service,
+    "groups": Group
 }
 
 
@@ -88,17 +89,25 @@ def info(query_id, collection_name):
 
     confirm_write_access(override_func=override_func)
 
-    audit_logs = AuditLog.query \
-        .filter(or_(and_(AuditLog.parent_id == query_id, AuditLog.parent_name == collection_name),
-                    and_(AuditLog.target_id == query_id, AuditLog.target_type == collection_name))) \
-        .order_by(desc(AuditLog.created_at)) \
-        .all()
+    conditions = [
+        and_(AuditLog.parent_id == query_id, AuditLog.parent_name == collection_name),
+        and_(AuditLog.target_id == query_id, AuditLog.target_type == collection_name)
+    ]
+    if collection_name == "collaborations":
+        groups = Group.query.options(load_only(Group.id)) \
+            .filter(Group.collaboration_id == query_id) \
+            .all()
+        group_identifiers = [group.id for group in groups]
+        conditions.append(and_(AuditLog.parent_id.in_(group_identifiers), AuditLog.parent_name == "groups"))
+
+    query = AuditLog.query.filter(or_(*conditions))
+    audit_logs = query.order_by(desc(AuditLog.created_at)).all()
 
     def access_collaboration_allowed(audit_log):
         if audit_log.target_type != "collaborations":
             return True
-        collaboration = Collaboration.query.filter(Collaboration.id == audit_log.target_id).one()
-        return has_org_manager_unit_access(current_user_id(), collaboration)
+        co = Collaboration.query.filter(Collaboration.id == audit_log.target_id).one()
+        return has_org_manager_unit_access(current_user_id(), co)
 
     if collection_name == "organisations":
         audit_logs = list(filter(access_collaboration_allowed, audit_logs))
