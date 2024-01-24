@@ -118,11 +118,7 @@ export default class Activity extends React.PureComponent {
                             <td>{pseudoIso(log.created_at)}</td>
                             <td>{this.userLabel(log.user)}</td>
                             <td>
-                                {I18n.t("history.overview", {
-                                    action: I18n.t(`history.actions.${log.action}`),
-                                    name: log.target_name ? ` ${log.target_name}` : " ",
-                                    collection: I18n.t(`history.tables.${log.target_type}`)
-                                })}
+                                {this.getSummaryTitle(log)}
                             </td>
                         </tr>)}
                     </tbody>
@@ -133,6 +129,15 @@ export default class Activity extends React.PureComponent {
                             pageCount={pageCount}/>
             </div>);
     };
+
+    getSummaryTitle = log => {
+        const targetType = this.getTargetType(log);
+        return I18n.t("history.overview", {
+            action: I18n.t(`history.actions.${log.action}`),
+            name: log.target_name ? ` ${log.target_name}` : " ",
+            collection: I18n.t(`history.tables.${targetType}`)
+        });
+    }
 
     auditLogReference = (value, key, auditLogs) => {
         const auditLogReferences = {
@@ -174,11 +179,13 @@ export default class Activity extends React.PureComponent {
         const afterState = auditLog.stateAfter;
 
         const delta = this.differ.diff(beforeState, afterState) || {};
+        const targetType = this.getTargetType(auditLog);
+
         return (
             <div className="details">
                 {(auditLog.parent_name && [1, 3].includes(auditLog.action)) &&
                     <p className="info">{I18n.t(auditLog.action === 1 ? "history.parentNew" : "history.parentDeleted", {
-                        collection: I18n.t(`history.tables.${auditLog.target_type}`),
+                        collection: I18n.t(`history.tables.${targetType}`),
                         parent: I18n.t(`history.tables.${auditLog.parent_name}`)
                     })}{parentName && <span className="parent"> {parentName}</span>}</p>}
                 {(auditLog.parent_name && auditLog.action === 2) &&
@@ -209,6 +216,14 @@ export default class Activity extends React.PureComponent {
                 </div>
             </div>);
     };
+
+    getTargetType = auditLog => {
+        let targetType = auditLog.target_type;
+        if (auditLog.parent_name === "groups" && targetType === "collaboration_memberships") {
+            targetType = "collaboration_memberships_groups";
+        }
+        return targetType;
+    }
 
     exportData = auditLogEntries => {
         const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
