@@ -531,8 +531,8 @@ class Service(Base, db.Model, LogoMixin):
     support_email = db.Column("support_email", db.String(length=255), nullable=True)
     security_email = db.Column("security_email", db.String(length=255), nullable=True)
     override_access_allowed_all_connections = db.Column("override_access_allowed_all_connections", db.Boolean(),
-                                                        nullable=True, default=True)
-    automatic_connection_allowed = db.Column("automatic_connection_allowed", db.Boolean(), nullable=True, default=True)
+                                                        nullable=True, default=False)
+    automatic_connection_allowed = db.Column("automatic_connection_allowed", db.Boolean(), nullable=True, default=False)
     access_allowed_for_all = db.Column("access_allowed_for_all", db.Boolean(), nullable=True, default=False)
     allow_restricted_orgs = db.Column("allow_restricted_orgs", db.Boolean(), nullable=True, default=False)
     non_member_users_access_allowed = db.Column("non_member_users_access_allowed", db.Boolean(), nullable=True,
