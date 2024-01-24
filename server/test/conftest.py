@@ -15,14 +15,11 @@ from server.db.db import db_migrations
 from server.tools import read_file
 
 
-def pytest_sessionstart(session):
-    print("Starting pytest session...")
-
+def pytest_sessionstart():
     import eventlet
+
     eventlet.monkey_patch(thread=False)
 
-    #from gevent import monkey
-    #monkey.patch_all()
 
 @pytest.fixture(autouse=True, scope='session')
 def use_random_db(request, worker_id):
@@ -48,4 +45,3 @@ def use_random_db(request, worker_id):
 
     os.environ['SBS_DB_URI_OVERRIDE'] = database_uri
     db_migrations(database_uri)
-
