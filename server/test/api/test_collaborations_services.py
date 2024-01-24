@@ -80,7 +80,7 @@ class TestCollaborationsServices(AbstractTest):
         }, response_status_code=400)
 
         self.assertTrue(res["error"])
-        self.assertTrue("Connection not allowed" in res["message"])
+        self.assertTrue("automatic_connection_not_allowed" in res["message"])
 
     #  (3) add a Service set to allow connection from this Org only (ok)
     def test_add_collaborations_automatic_connection_allowed_organisations(self):
