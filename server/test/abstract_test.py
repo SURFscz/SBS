@@ -1,5 +1,6 @@
 import datetime
 import json
+import logging
 import os
 import pathlib
 import uuid
@@ -52,6 +53,11 @@ class AbstractTest(TestCase):
         os.environ["CONFIG"] = os.environ.get("CONFIG", "config/test_config.yml")
         os.environ["TESTING"] = "1"
         os.environ["SCIM_DISABLED"] = "1"
+        if "PYTEST_XDIST_WORKER" in os.environ:
+            logging.error(f"overriding db name PYTEST_XDIST_WORKER={os.environ['PYTEST_XDIST_WORKER']}")
+            os.environ['SBS_DB_NAME_OVERRIDE'] = f"mysql+mysqldb://sbs:sbs@127.0.0.1/sbs_{os.environ['PYTEST_XDIST_WORKER']}?charset=utf8mb4"
+
+        logging.error(os.environ)
 
         from server.__main__ import app
 
