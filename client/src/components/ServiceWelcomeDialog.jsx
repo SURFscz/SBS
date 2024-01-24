@@ -8,6 +8,7 @@ import {AlertType, Modal} from "@surfnet/sds";
 export default function ServiceWelcomeDialog({
                                                  name,
                                                  isOpen = false,
+                                                 invitation,
                                                  close
                                              }) {
 
@@ -15,7 +16,7 @@ export default function ServiceWelcomeDialog({
         return (
             <section className={"welcome-dialog-content"}>
                 <section className="responsibilities">
-                    {I18n.locale === "en" ? <ServiceEn/> : <ServiceNl/>}
+                    {I18n.locale === "en" ? <ServiceEn role={invitation.intended_role}/> : <ServiceNl role={invitation.intended_role}/>}
                 </section>
 
             </section>)
@@ -28,7 +29,7 @@ export default function ServiceWelcomeDialog({
         <Modal
             confirm={close}
             alertType={AlertType.Info}
-            subTitle={I18n.t("welcomeDialog.roleServiceAdmin")}
+            subTitle={I18n.t("welcomeDialog.roleServiceAdmin", {role: invitation.intended_role})}
             children={content()}
             title={I18n.t("welcomeDialog.title", {name: name})}
             confirmationButtonLabel={I18n.t("welcomeDialog.ok", {type: I18n.t("welcomeDialog.service")})}

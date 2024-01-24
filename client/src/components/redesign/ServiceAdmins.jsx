@@ -360,7 +360,9 @@ class ServiceAdmins extends React.Component {
                 key: "role",
                 header: I18n.t("models.users.role"),
                 className: !isAdmin ? "not-allowed" : "",
-                mapper: () => <span className="member-role">{I18n.t(`organisation.admin`)}</span>
+                mapper: entity => <span className="member-role">
+                    {I18n.t(`organisation.${entity.invite ? entity.intended_role : entity.role}`)}
+                </span>
             },
             {
                 nonSortable: true,

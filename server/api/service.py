@@ -497,22 +497,30 @@ def service_invites():
 
     administrators = data.get("administrators", [])
     message = data.get("message", None)
-    intended_role = "admin"
+    intended_role = data.get("intended_role", "manager")
+    if intended_role not in ["admin", "manager"]:
+        raise BadRequest("Invalid intended role")
 
     service = db.session.get(Service, service_id)
     user = db.session.get(User, current_user_id())
 
     for administrator in administrators:
-        invitation = ServiceInvitation(hash=generate_token(), message=message, invitee_email=administrator,
-                                       service=service, user=user, created_by=user.uid,
-                                       intended_role=intended_role, expiry_date=default_expiry_date(json_dict=data))
+        invitation = ServiceInvitation(hash=generate_token(),
+                                       message=message,
+                                       invitee_email=administrator,
+                                       service=service,
+                                       user=user,
+                                       intended_role=intended_role,
+                                       created_by=user.uid,
+                                       expiry_date=default_expiry_date(json_dict=data))
         invitation = db.session.merge(invitation)
         mail_service_invitation({
             "salutation": "Dear",
             "invitation": invitation,
             "base_url": current_app.app_config.base_url,
             "wiki_link": current_app.app_config.wiki_link,
-            "recipient": administrator
+            "recipient": administrator,
+            "intended_role": intended_role
         }, service, [administrator])
 
     emit_socket(f"service_{service_id}", include_current_user_id=True)

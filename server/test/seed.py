@@ -490,12 +490,13 @@ def seed(db, app_config, skip_seed=False):
     persist_instance(db, service_invitation_cloud, service_invitation_wiki_expired)
 
     service_membership_james = ServiceMembership(role="admin", user=james, service=cloud)
+    cloud_manager = ServiceMembership(role="manager", user=betty, service=cloud)
     service_membership_service_admin_1 = ServiceMembership(role="admin", user=service_admin, service=storage)
     service_membership_service_admin_2 = ServiceMembership(role="admin", user=service_admin, service=network)
     service_membership_wiki = ServiceMembership(role="admin", user=service_admin, service=wiki)
     service_membership_mail = ServiceMembership(role="admin", user=service_admin, service=mail)
     service_membership_betty = ServiceMembership(role="admin", user=betty, service=service_ssh_uva)
-    persist_instance(db, service_membership_james, service_membership_service_admin_1,
+    persist_instance(db, service_membership_james, cloud_manager, service_membership_service_admin_1,
                      service_membership_service_admin_2, service_membership_wiki, service_membership_mail,
                      service_membership_betty)
 
