@@ -111,6 +111,8 @@ cd server
 pytest --cov=server --cov-report html:htmlcov test
 open htmlcov/index.html
 ```
+Within PyCharm you must mark the `SBS/server/test` directory as Test sources root in order to execute `conftest.py`
+before tests are run. See https://intellij-support.jetbrains.com/hc/en-us/community/posts/12897247432338-PyCharm-unable-to-find-fixtures-in-conftest-py
 
 To run all JavaScript tests:
 
