@@ -144,8 +144,9 @@ app.register_error_handler(404, page_not_found)
 logging.error(os.environ)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = config.database.uri
-if 'SBS_DB_NAME_OVERRIDE' in os.environ:
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ['SBS_DB_NAME_OVERRIDE']
+if 'SBS_DB_URI_OVERRIDE' in os.environ:
+    # used for pytest fixture: override database uri to use a separate database for each worker
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ['SBS_DB_URI_OVERRIDE']
 logging.error(f"db_uri: {app.config['SQLALCHEMY_DATABASE_URI']}")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = False  # Set to True for query debugging

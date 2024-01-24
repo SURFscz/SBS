@@ -13,8 +13,8 @@ def db_migrations(sqlalchemy_database_uri):
     migrations_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../migrations/")
     from alembic.config import Config
     config = Config(migrations_dir + "alembic.ini")
-    if 'SBS_DB_NAME_OVERRIDE' in os.environ:
-        config.set_main_option("sqlalchemy.url",os.environ['SBS_DB_NAME_OVERRIDE'])
+    if 'SBS_DB_URI_OVERRIDE' in os.environ:
+        config.set_main_option("sqlalchemy.url",os.environ['SBS_DB_URI_OVERRIDE'])
     else:
         config.set_main_option("sqlalchemy.url", sqlalchemy_database_uri)
     config.set_main_option("script_location", migrations_dir)
