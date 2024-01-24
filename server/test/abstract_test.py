@@ -1,6 +1,5 @@
 import datetime
 import json
-import logging
 import os
 import pathlib
 import uuid
@@ -53,8 +52,6 @@ class AbstractTest(TestCase):
         os.environ["CONFIG"] = os.environ.get("CONFIG", "config/test_config.yml")
         os.environ["TESTING"] = "1"
         os.environ["SCIM_DISABLED"] = "1"
-
-        logging.error(os.environ)
 
         from server.__main__ import app
 
