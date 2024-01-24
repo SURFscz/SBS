@@ -6,6 +6,7 @@ import logging
 import os
 import re
 
+import sqlalchemy
 import pytest
 import yaml
 from munch import munchify
@@ -41,11 +42,10 @@ def use_random_db(request, worker_id):
     with open(f'/tmp/pytest_{worker_id}', 'a') as f:
         f.write(f"{worker_id}\n{database_uri}\n")
 
-    import sqlalchemy
     engine = sqlalchemy.create_engine(database_uri_root)
     with engine.connect() as conn:
         conn.execute(sqlalchemy.text(f"CREATE DATABASE IF NOT EXISTS sbs_{worker_id}"))
 
-    os.environ['SBS_DB_NAME_OVERRIDE'] = database_uri
+    os.environ['SBS_DB_URI_OVERRIDE'] = database_uri
     db_migrations(database_uri)
 
