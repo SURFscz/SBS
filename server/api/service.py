@@ -478,6 +478,8 @@ def toggle_access_property(service_id):
                     service.automatic_connection_allowed_organisations = []
         if attribute == "non_member_users_access_allowed":
             service.connection_setting = None
+            if not enabled:
+                service.override_access_allowed_all_connections = False
         db.session.merge(service)
 
     emit_socket(f"service_{service_id}")
