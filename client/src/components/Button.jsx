@@ -24,6 +24,7 @@ export default function Button({
                       disabled={disabled}
                       centralize={centralize}
                       icon={icon}
-                      size={buttonSize} type={buttonType}/>
+                      size={buttonSize}
+                      type={buttonType}/>
 
 }

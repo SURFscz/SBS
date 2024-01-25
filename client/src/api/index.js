@@ -1,4 +1,4 @@
-import {isEmpty} from "../utils/Utils";
+import {capitalize, isEmpty} from "../utils/Utils";
 import {emitter} from "../utils/Events";
 import I18n from "../locale/I18n";
 import {getCsrfToken} from "../stores/AppStore";
@@ -103,15 +103,16 @@ export function me(config) {
     if (config.local && 1 == 1) {
         let sub = "urn:service_admin";
         sub = "urn:john";
-        //sub = "urn:james";
+         // sub = "urn:james";
         const second_factor_confirmed = true;
         // const second_factor_confirmed = false;
         // sub = "urn:unknown";
         // Need to mock a login
+        const part = sub.substring(sub.indexOf(":") + 1);
         return postPutJson("/api/mock", {
             sub,
-            "name": "John Doe",
-            "email": "john@example.org",
+            "name": `${capitalize(part)} Doe`,
+            "email": `${part}@example.org`,
             "given_name": "Doe",
             "second_factor_confirmed": second_factor_confirmed,
             // "voperson_external_id": "john@example.com"
@@ -934,6 +935,14 @@ export function createServiceMembershipRole(serviceId) {
     return postPutJson("/api/service_memberships", {
         serviceId: serviceId
     }, "post")
+}
+
+export function updateServiceMembershipRole(serviceId, userId, role) {
+    return postPutJson("/api/service_memberships", {
+        serviceId: serviceId,
+        userId: userId,
+        role: role
+    }, "put")
 }
 
 //ServiceInvitations

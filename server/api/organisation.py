@@ -14,8 +14,8 @@ from server.api.base import json_endpoint, query_param, replace_full_text_search
 from server.api.unit import validate_units
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_write_access, current_user_id, is_application_admin, \
-    confirm_organisation_admin, is_service_admin, confirm_external_api_call, confirm_read_access, \
-    confirm_organisation_admin_or_manager, is_organisation_admin
+    confirm_organisation_admin, confirm_external_api_call, confirm_read_access, \
+    confirm_organisation_admin_or_manager, is_organisation_admin, is_service_admin_or_manager
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
 from server.db.defaults import default_expiry_date, cleanse_short_name
@@ -127,7 +127,7 @@ def organisation_all():
 @organisation_api.route("/search", strict_slashes=False)
 @json_endpoint
 def organisation_search():
-    confirm_write_access(override_func=is_service_admin)
+    confirm_write_access(override_func=is_service_admin_or_manager)
 
     res = []
     q = query_param("q")

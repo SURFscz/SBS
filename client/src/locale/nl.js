@@ -1983,6 +1983,7 @@ const nl = {
         coAdmin: "beheerder",
         coMember: "lid",
         serviceAdmin: "dienstbeheerder",
+        serviceManager: "dienstmanager",
         user: "gebruiker"
     },
     actionRoles: {
@@ -2215,9 +2216,11 @@ const nl = {
         deleteMemberConfirmation: "Weet je zeker dat je alle geselecteerde leden en uitnodigingen wil verwijderen?",
         deleteYourselfMemberConfirmation: "Weet je zeker dat je deze dienst wil verlaten? Je kan dit niet terugdraaien.",
         resendInvitations: "Weet je zeker dat je alle geselecteerde uitnodigingen opnieuw wil versturen?",
+        downgradeYourselfMemberConfirmation: "Weet je zeker dat je geen beheerder meer wil zijn? Je kan dit niet terugdraaien.",
         flash: {
             entitiesDeleted: "Leden en uitnodigingen zijn verwijderd",
             invitesResend: "Uitnodigingen voor organisatie {{name}} zijn opnieuw verzonden.",
+            memberUpdated: "De rol of lidmaatschap van {{name}} is bijgewerkt naar {{role}}.",
         },
         gone: {
             member: "Dit lidmaatschap bestaat niet meer. Na het sluiten van deze pop-up worden de lidmaatschappen vernieuwd.",

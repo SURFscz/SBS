@@ -67,6 +67,7 @@ class ServiceOverview extends React.Component {
             tokenValue: null,
             warning: false,
             isServiceAdmin: false,
+            isServiceManager: false,
             hasAdministrators: false,
             currentTab: "general",
             createNewServiceToken: false,
@@ -89,7 +90,7 @@ class ServiceOverview extends React.Component {
     }
 
     componentDidMount = nextProps => {
-        const {service, serviceAdmin} = nextProps ? nextProps : this.props;
+        const {service, serviceAdmin, serviceManager} = nextProps ? nextProps : this.props;
         const {params} = this.props.match;
         let tab = params.subTab || this.state.currentTab;
         if (!toc.includes(tab)) {
@@ -101,6 +102,7 @@ class ServiceOverview extends React.Component {
                 service: {...service},
                 hasAdministrators: service.service_memberships.length > 0,
                 isServiceAdmin: serviceAdmin,
+                isServiceManager: serviceManager,
                 currentTab: tab,
                 originalSCIMConfiguration: {scim_bearer_token: service.scim_bearer_token, scim_url: service.scim_url},
                 loading: false
@@ -598,46 +600,51 @@ class ServiceOverview extends React.Component {
     renderButtons = (isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView, createNewServiceToken, service) => {
         const invalidTabsMsg = this.getInvalidTabs();
         return <>
-            {((isAdmin || isServiceAdmin) && !createNewServiceToken) && <div className={"actions-container"}>
+            {!createNewServiceToken && <div className={"actions-container"}>
                 {invalidTabsMsg && <span className={"error"}>{invalidTabsMsg}</span>}
                 <section className="actions">
-                    {((isAdmin || isServiceAdmin) && currentTab === "general") &&
+                    {(currentTab === "general") &&
                         <Button warningButton={true}
+                                disabled={!isAdmin && !isServiceAdmin}
                                 onClick={this.delete}/>}
-                    {((isAdmin || isServiceAdmin) && currentTab === "SCIMServer") &&
+                    {currentTab === "SCIMServer" &&
                         <Tooltip tip={I18n.t("service.sweep.testTooltip")} children={
                             <Button txt={I18n.t("service.sweep.test")}
-                                    disabled={!service.scim_enabled}
+                                    disabled={!service.scim_enabled || (!isAdmin && !isServiceAdmin)}
                                     onClick={() => this.doSweep(service)}/>
                         }/>}
-                    <Button disabled={disabledSubmit} txt={I18n.t("service.update")}
+                    <Button disabled={disabledSubmit || (!isAdmin && !isServiceAdmin)}
+                            txt={I18n.t("service.update")}
                             onClick={this.submit}/>
                 </section>
             </div>}
         </>
     }
 
-    renderPamWebLogin = (service, createNewServiceToken, tokenType) => {
+    renderPamWebLogin = (service, isAdmin, isServiceAdmin, createNewServiceToken, tokenType) => {
         if (createNewServiceToken) {
             return this.renderNewServiceTokenForm();
         }
 
-        return (<div className={"pamWebLogin"}>
-            <CheckBox name={"pam_web_sso_enabled"}
-                      value={service.pam_web_sso_enabled || false}
-                      onChange={e => this.setState({
-                          "service": {
-                              ...service, pam_web_sso_enabled: e.target.checked
-                          }
-                      })}
-                      tooltip={I18n.t("userTokens.pamWebSSOEnabledTooltip")}
-                      info={I18n.t("userTokens.pamWebSSOEnabled")}
-            />
-            {this.renderServiceTokens(service, service.pam_web_sso_enabled, tokenType, I18n.t("userTokens.pamWebSSOEnabled"))}
-        </div>)
+        return (
+            <div className={"pamWebLogin"}>
+                <CheckBox name={"pam_web_sso_enabled"}
+                          value={service.pam_web_sso_enabled || false}
+                          onChange={e => this.setState({
+                              "service": {
+                                  ...service, pam_web_sso_enabled: e.target.checked
+                              }
+                          })}
+                          readOnly={!isAdmin && !isServiceAdmin}
+                          tooltip={I18n.t("userTokens.pamWebSSOEnabledTooltip")}
+                          info={I18n.t("userTokens.pamWebSSOEnabled")}
+                />
+                {this.renderServiceTokens(service, isServiceAdmin, service.pam_web_sso_enabled, tokenType, I18n.t("userTokens.pamWebSSOEnabled"))}
+            </div>
+        )
     }
 
-    renderSCIMClient = (service, isAdmin, showServiceAdminView, createNewServiceToken, tokenType) => {
+    renderSCIMClient = (service, isAdmin, isServiceAdmin, showServiceAdminView, createNewServiceToken, tokenType) => {
         if (createNewServiceToken) {
             return this.renderNewServiceTokenForm();
         }
@@ -653,7 +660,7 @@ class ServiceOverview extends React.Component {
                           }
                       })}
             />
-            {this.renderServiceTokens(service, service.scim_client_enabled, tokenType, I18n.t("scim.scimClientEnabled"))}
+            {this.renderServiceTokens(service, isServiceAdmin, service.scim_client_enabled, tokenType, I18n.t("scim.scimClientEnabled"))}
         </div>)
     }
 
@@ -671,7 +678,7 @@ class ServiceOverview extends React.Component {
         );
     }
 
-    renderSCIMServer = (service, isAdmin, showServiceAdminView, alreadyExists, invalidInputs, initial) => {
+    renderSCIMServer = (service, isAdmin, isServiceAdmin, showServiceAdminView, alreadyExists, invalidInputs, initial) => {
         let sweepScimDailyRate = null;
         if (service.sweep_scim_enabled && service.sweep_scim_daily_rate && service.sweep_scim_daily_rate.value) {
             sweepScimDailyRate = service.sweep_scim_daily_rate
@@ -699,7 +706,7 @@ class ServiceOverview extends React.Component {
                         toolTip={I18n.t("scim.scimURLTooltip")}
                         error={invalidInputs.scim_url || (!initial && isEmpty(service.scim_url) && service.scim_enabled)}
                         onBlur={this.validateURI("scim_url")}
-                        disabled={!service.scim_enabled}/>
+                        disabled={!service.scim_enabled || (!isAdmin && !isServiceAdmin)}/>
             {invalidInputs.scim_url &&
                 <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
             {(!initial && isEmpty(service.scim_url) && service.scim_enabled) &&
@@ -712,13 +719,13 @@ class ServiceOverview extends React.Component {
                         multiline={true}
                         onChange={e => this.changeServiceProperty("scim_bearer_token")(e)}
                         toolTip={I18n.t("scim.scimBearerTokenTooltip")}
-                        disabled={!service.scim_enabled}/>
+                        disabled={!service.scim_enabled || (!isAdmin && !isServiceAdmin)}/>
 
             <CheckBox name={"sweep_scim_enabled"}
                       value={service.sweep_scim_enabled || false}
                       tooltip={I18n.t("scim.sweepScimEnabledTooltip")}
                       info={I18n.t("scim.sweepScimEnabled")}
-                      readOnly={!service.scim_enabled}
+                      readOnly={!service.scim_enabled || (!isAdmin && !isServiceAdmin)}
                       onChange={e => this.setState({
                           "service": {
                               ...service,
@@ -732,7 +739,7 @@ class ServiceOverview extends React.Component {
                       value={(service.sweep_remove_orphans && service.sweep_scim_enabled) || false}
                       tooltip={I18n.t("scim.scimSweepDeleteOrphansTooltip")}
                       info={I18n.t("scim.scimSweepDeleteOrphans")}
-                      readOnly={!service.scim_enabled || !service.sweep_scim_enabled}
+                      readOnly={!service.scim_enabled || !service.sweep_scim_enabled || (!isAdmin && !isServiceAdmin)}
                       onChange={e => this.setState({
                           "service": {
                               ...service, sweep_remove_orphans: e.target.checked
@@ -746,7 +753,7 @@ class ServiceOverview extends React.Component {
                          }))}
                          name={I18n.t("scim.sweepScimDailyRate")}
                          toolTip={I18n.t("scim.sweepScimDailyRateTooltip")}
-                         disabled={!service.scim_enabled || !service.sweep_scim_enabled}
+                         disabled={!service.scim_enabled || !service.sweep_scim_enabled || (!isAdmin && !isServiceAdmin)}
                          onChange={item => this.setState({
                              "service": {
                                  ...service, sweep_scim_daily_rate: item
@@ -798,7 +805,7 @@ class ServiceOverview extends React.Component {
         </div>);
     }
 
-    renderTokens = (config, service, isAdmin, createNewServiceToken, tokenType) => {
+    renderTokens = (config, service, isAdmin, isServiceAdmin, createNewServiceToken, tokenType) => {
         if (createNewServiceToken) {
             return this.renderNewServiceTokenForm();
         }
@@ -808,6 +815,7 @@ class ServiceOverview extends React.Component {
                       value={service.token_enabled || false}
                       tooltip={I18n.t("userTokens.tokenEnabledTooltip")}
                       info={I18n.t("userTokens.tokenEnabled")}
+                      readOnly={!isAdmin && !isServiceAdmin}
                       onChange={e => this.setState({
                           "service": {
                               ...service,
@@ -831,14 +839,14 @@ class ServiceOverview extends React.Component {
                                 ...service, token_validity_days: e.target.value.replace(/\D/, "")
                             }
                         })}
-                        disabled={!service.token_enabled}/>
+                        disabled={!service.token_enabled || (!isAdmin && !isServiceAdmin)}/>
 
-            {this.renderServiceTokens(service, service.token_enabled, tokenType,
+            {this.renderServiceTokens(service, isServiceAdmin, service.token_enabled, tokenType,
                 I18n.t("userTokens.tokenEnabled").toLowerCase())}
         </div>)
     }
 
-    renderServiceTokens = (service, enabled, tokenType, action) => {
+    renderServiceTokens = (service, isServiceAdmin, enabled, tokenType, action) => {
         const columns = [{
             key: "hashed_token",
             header: I18n.t("serviceDetails.hashedToken"),
@@ -855,14 +863,17 @@ class ServiceOverview extends React.Component {
             key: "created_at",
             header: I18n.t("models.userTokens.createdAt"),
             mapper: serviceToken => dateFromEpoch(serviceToken.created_at)
-        }, {
-            nonSortable: true,
-            key: "trash",
-            header: "",
-            mapper: serviceToken => <span onClick={() => this.removeServiceToken(serviceToken)}>
+        }]
+        if (isServiceAdmin) {
+            columns.push({
+                nonSortable: true,
+                key: "trash",
+                header: "",
+                mapper: serviceToken => <span onClick={() => this.removeServiceToken(serviceToken)}>
                     <ThrashIcon/>
                 </span>
-        },]
+            })
+        }
         const customNoEntities = enabled ? I18n.t("serviceDetails.noTokens") : I18n.t("serviceDetails.enableTokens", {action: action});
         return <>
             <div className="input-field">
@@ -880,7 +891,7 @@ class ServiceOverview extends React.Component {
                     hideTitle={true}
                     displaySearch={false}
                     {...this.props}/>
-                {enabled &&
+                {(enabled && isServiceAdmin) &&
                     <div className="add-token-link">
                         <a href="/token"
                            onClick={e => {
@@ -901,6 +912,7 @@ class ServiceOverview extends React.Component {
                           value={service.ldap_enabled || false}
                           tooltip={I18n.t("service.ldap.ldapEnabledTooltip")}
                           info={I18n.t("service.ldap.ldapClient")}
+                          readOnly={!isAdmin && !isServiceAdmin}
                           onChange={e => this.setState({
                               "service": {
                                   ...service, ldap_enabled: e.target.checked
@@ -909,11 +921,11 @@ class ServiceOverview extends React.Component {
                 />
                 {!service.ldap_enabled &&
                     <div className={"input-field sds--text-field"}>
-                    <label>{I18n.t("service.ldap.section")}
-                        <Tooltip tip={I18n.t("service.ldap.sectionTooltip")}/>
-                    </label>
-                    <p>{I18n.t("service.ldap.ldapDisclaimer")}</p>
-                </div>}
+                        <label>{I18n.t("service.ldap.section")}
+                            <Tooltip tip={I18n.t("service.ldap.sectionTooltip")}/>
+                        </label>
+                        <p>{I18n.t("service.ldap.ldapDisclaimer")}</p>
+                    </div>}
                 {service.ldap_enabled && <div>
                     <InputField value={config.ldap_url}
                                 name={I18n.t("service.ldap.section")}
@@ -967,14 +979,14 @@ class ServiceOverview extends React.Component {
                                 <ErrorIndicator msg={I18n.t("service.networkNotGlobal")}/>}
 
                         </div>)}
-                        {ldap_enabled &&
+                        {(ldap_enabled) &&
                             <div className="add-token-link">
                                 <span>{I18n.t("service.ldap.preTitle")}
-                                    <a href="/token"
-                                       onClick={e => {
-                                           stopEvent(e);
-                                           this.ldapResetAction(true)
-                                       }}>{I18n.t("service.ldap.title")}</a>
+                                    {(isAdmin || isServiceAdmin) && <a href="/token"
+                                                                       onClick={e => {
+                                                                           stopEvent(e);
+                                                                           this.ldapResetAction(true)
+                                                                       }}>{I18n.t("service.ldap.title")}</a>}
                                     </span>
                             </div>}
                     </div>
@@ -1022,6 +1034,7 @@ class ServiceOverview extends React.Component {
                          name={"sirtfi_compliant"}
                          value={service.sirtfi_compliant}
                          checked={service.sirtfi_compliant}
+                         disabled={!isAdmin && !isServiceAdmin}
                          tooltip={I18n.t("service.sirtfiCompliantTooltip")}
                          onChange={val => this.setState({"service": {...service, sirtfi_compliant: val}})}/>
 
@@ -1029,6 +1042,7 @@ class ServiceOverview extends React.Component {
                          name={"code_of_conduct_compliant"}
                          value={service.code_of_conduct_compliant}
                          checked={service.code_of_conduct_compliant}
+                         disabled={!isAdmin && !isServiceAdmin}
                          tooltip={I18n.t("service.codeOfConductCompliantTooltip")}
                          onChange={val => this.setState({
                              "service": {
@@ -1040,6 +1054,7 @@ class ServiceOverview extends React.Component {
                          name={"research_scholarship_compliant"}
                          value={service.research_scholarship_compliant}
                          checked={service.research_scholarship_compliant}
+                         disabled={!isAdmin && !isServiceAdmin}
                          tooltip={I18n.t("service.researchScholarshipCompliantTooltip")}
                          onChange={val => this.setState({
                              "service": {
@@ -1121,6 +1136,7 @@ class ServiceOverview extends React.Component {
                                isNew={false}
                                title={I18n.t("service.logo")}
                                value={service.logo}
+                               disabled={!isAdmin && !isServiceAdmin}
                                initial={false}
                                secondRow={true}/>
 
@@ -1216,15 +1232,15 @@ class ServiceOverview extends React.Component {
             case "policy":
                 return this.renderPolicy(service, isAdmin, isServiceAdmin, invalidInputs, alreadyExists);
             case "SCIMServer":
-                return this.renderSCIMServer(service, isAdmin, showServiceAdminView, alreadyExists, invalidInputs, initial);
+                return this.renderSCIMServer(service, isAdmin, isServiceAdmin, showServiceAdminView, alreadyExists, invalidInputs, initial);
             case "SCIMClient":
-                return this.renderSCIMClient(service, isAdmin, showServiceAdminView, createNewServiceToken, "scim");
+                return this.renderSCIMClient(service, isAdmin, isServiceAdmin, showServiceAdminView, createNewServiceToken, "scim");
             case "ldap":
                 return this.renderLdap(config, service, isAdmin, isServiceAdmin);
             case "tokens":
-                return this.renderTokens(config, service, isAdmin, createNewServiceToken, "introspection");
+                return this.renderTokens(config, service, isAdmin, isServiceAdmin, createNewServiceToken, "introspection");
             case "pamWebLogin":
-                return this.renderPamWebLogin(service, createNewServiceToken, "pam");
+                return this.renderPamWebLogin(service, isAdmin, isServiceAdmin, createNewServiceToken, "pam");
             default:
                 throw new Error(`unknown-tab: ${currentTab}`);
         }

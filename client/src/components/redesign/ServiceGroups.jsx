@@ -262,22 +262,21 @@ class ServiceGroups extends React.Component {
         )
     }
 
-    renderGroupDetails = (selectedGroup) => {
+    renderGroupDetails = (selectedGroup, mayCreateGroups) => {
         const queryParam = `name=${encodeURIComponent(I18n.t("breadcrumb.group", {name: selectedGroup.name}))}&back=${encodeURIComponent(window.location.pathname)}`;
         const children = (
             <div className={"service-group-details"}>
                 <section className="header">
                     <h2>{selectedGroup.name}</h2>
-                    {
-                        <div className="header-actions">
-                            <Button onClick={() => this.setState(this.newGroupState(selectedGroup))}
-                                    small={true}
-                                    txt={I18n.t("models.groups.edit")}/>
-                            <span className="history"
-                                  onClick={() => this.props.history.push(`/audit-logs/service_groups/${selectedGroup.id}?${queryParam}`)}>
-                        <FontAwesomeIcon icon="history"/>{I18n.t("home.history")}
-                    </span>
-                        </div>}
+                    {mayCreateGroups && <div className="header-actions">
+                        <Button onClick={() => this.setState(this.newGroupState(selectedGroup))}
+                                small={true}
+                                txt={I18n.t("models.groups.edit")}/>
+                        <span className="history"
+                              onClick={() => this.props.history.push(`/audit-logs/service_groups/${selectedGroup.id}?${queryParam}`)}>
+                            <FontAwesomeIcon icon="history"/>{I18n.t("home.history")}
+                        </span>
+                    </div>}
 
                 </section>
                 <p className={`description`}>{selectedGroup.description}</p>
@@ -497,11 +496,11 @@ class ServiceGroups extends React.Component {
             return this.renderGroupForm(createNewGroup, selectedGroup, mayCreateGroups);
         }
         if (selectedGroup) {
-            return this.renderGroupDetails(selectedGroup);
+            return this.renderGroupDetails(selectedGroup, mayCreateGroups);
         }
         const groups = service.service_groups;
         const columns = [
-            {
+            mayCreateGroups ? {
                 nonSortable: true,
                 key: "check",
                 header: <CheckBox value={allGroupsSelected}
@@ -512,7 +511,7 @@ class ServiceGroups extends React.Component {
                               onChange={this.onGroupCheck(entity)}
                               value={(selectedGroups[entity.id] || {}).selected || false}/>
                 </div>
-            },
+            } : null,
             {
                 key: "name",
                 header: I18n.t("models.serviceGroups.name"),
@@ -532,7 +531,7 @@ class ServiceGroups extends React.Component {
                 header: I18n.t("models.serviceGroups.description"),
                 mapper: group => <span className={"cut-of-lines"}>{group.description}</span>
             },
-        ]
+        ].filter(column => !isEmpty(column));
         if (mayCreateGroups) {
             columns.push({
                 key: "auto_provision_members",
