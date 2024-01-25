@@ -71,11 +71,11 @@ jobs:
           "
       - name: Load SBS schema
         # not strictly necessary, but it avoids running 200+ migrations during tests
-        run: >
-          mysql -uroot -proot -h127.0.0.1 sbs_gw0 < misc/sbs-db.sql
-          mysql -uroot -proot -h127.0.0.1 sbs_gw1 < misc/sbs-db.sql
-          mysql -uroot -proot -h127.0.0.1 sbs_gw2 < misc/sbs-db.sql
-          mysql -uroot -proot -h127.0.0.1 sbs_gw3 < misc/sbs-db.sql
+        run: |
+          mysql -uroot -proot -h127.0.0.1 sbs_gw0 < misc/sbs-db.sql;
+          mysql -uroot -proot -h127.0.0.1 sbs_gw1 < misc/sbs-db.sql;
+          mysql -uroot -proot -h127.0.0.1 sbs_gw2 < misc/sbs-db.sql;
+          mysql -uroot -proot -h127.0.0.1 sbs_gw3 < misc/sbs-db.sql;
       - name: Install SAML2 dependencies
         run: |
           sudo apt-get update
