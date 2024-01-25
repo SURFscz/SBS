@@ -11,6 +11,7 @@ export const ROLES = {
     COLL_ADMIN: "coAdmin",
     COLL_MEMBER: "coMember",
     SERVICE_ADMIN: "serviceAdmin",
+    SERVICE_MANAGER: "serviceManager",
     USER: "user"
 }
 
@@ -64,7 +65,6 @@ export function rawGlobalUserRole(user, organisation, collaboration, service, me
     if (user.admin) {
         return ROLES.PLATFORM_ADMIN;
     }
-
     if (user.organisation_memberships && user.organisation_memberships.find(m => m.role === "admin" &&
         ((!organisation && !membershipRequired) || (organisation && m.organisation_id === organisation.id)))) {
         return ROLES.ORG_ADMIN;
@@ -72,6 +72,14 @@ export function rawGlobalUserRole(user, organisation, collaboration, service, me
     if (user.organisation_memberships && user.organisation_memberships.find(m => m.role === "manager" &&
         ((!organisation && !membershipRequired) || (organisation && m.organisation_id === organisation.id)))) {
         return ROLES.ORG_MANAGER;
+    }
+    if (user.service_memberships && user.service_memberships.find(m => m.role === "admin" &&
+        ((!service && !membershipRequired) || (service && m.service_id === service.id)))) {
+        return ROLES.SERVICE_ADMIN;
+    }
+    if (user.service_memberships && user.service_memberships.length > 0 &&
+        ((!service && !membershipRequired) || (service && user.service_memberships.find(m => m.service_id === service.id)))) {
+        return ROLES.SERVICE_MANAGER;
     }
     if (user.collaboration_memberships && user.collaboration_memberships.find(m => m.role === "admin" &&
         ((!collaboration && !membershipRequired) || (collaboration && m.collaboration_id === collaboration.id)))) {
@@ -81,15 +89,17 @@ export function rawGlobalUserRole(user, organisation, collaboration, service, me
         ((!collaboration && !membershipRequired) || (collaboration && user.collaboration_memberships.find(m => m.collaboration_id === collaboration.id)))) {
         return ROLES.COLL_MEMBER;
     }
-    if (user.service_memberships && user.service_memberships.length > 0 &&
-        ((!service && !membershipRequired) || (service && user.service_memberships.find(m => m.service_id === service.id)))) {
-        return ROLES.SERVICE_ADMIN;
-    }
     return ROLES.USER;
 }
 
 export function isUserServiceAdmin(user, service) {
-    return user.service_memberships.some(m => !service || m.service_id === service.id)
+    return user.service_memberships
+        .some(m => !service || (m.service_id === service.id && m.role === "admin"))
+}
+
+export function isUserServiceManager(user, service) {
+    return user.service_memberships
+        .some(m => !service || m.service_id === service.id)
 }
 
 export function globalUserRole(user) {

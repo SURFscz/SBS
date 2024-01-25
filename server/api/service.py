@@ -10,8 +10,8 @@ from server.api.base import json_endpoint, query_param, emit_socket
 from server.api.ipaddress import validate_ip_networks
 from server.auth.secrets import generate_token, generate_ldap_password_with_hash
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
-    is_organisation_admin_or_manager, is_application_admin, is_service_admin, confirm_service_admin, \
-    confirm_external_api_call
+    is_organisation_admin_or_manager, is_application_admin, confirm_service_admin, \
+    confirm_external_api_call, is_service_admin_or_manager
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, cleanse_short_name, default_expiry_date, valid_uri_attributes, \
     service_token_options, generate_short_name
@@ -93,8 +93,8 @@ def member_access_to_service(service_id):
 
 
 def user_service(service_id, view_only=True):
-    # Every service may be seen by organisation admin, service admin, manager or coll admin
-    if is_service_admin(service_id) or is_application_admin():
+    # Every service may be seen by organisation admin, service admin, service manager or coll admin
+    if is_service_admin_or_manager(service_id) or is_application_admin():
         return True
 
     if view_only and (is_collaboration_admin() or is_organisation_admin_or_manager()):
@@ -105,7 +105,7 @@ def user_service(service_id, view_only=True):
 
 def _do_get_services(restrict_for_current_user=False, include_counts=False):
     def override_func():
-        return is_collaboration_admin() or _is_org_member() or is_service_admin()
+        return is_collaboration_admin() or _is_org_member() or is_service_admin_or_manager()
 
     confirm_read_access(override_func=override_func)
     query = Service.query \
@@ -254,7 +254,7 @@ def service_by_uuid4():
     if service.contact_email:
         service_emails[service.id] = [service.contact_email]
     else:
-        service_emails[service.id] = [membership.user.email for membership in service.service_memberships]
+        service_emails[service.id] = [m.user.email for m in service.service_memberships if m.role == "admin"]
 
     collaborations = []
     for cm in user.collaboration_memberships:
@@ -280,7 +280,7 @@ def service_by_id(service_id):
         .options(selectinload(Service.service_memberships).selectinload(ServiceMembership.user))
 
     api_call = request_context.is_authorized_api_call
-    add_admin_info = not api_call and (is_application_admin() or is_service_admin(service_id))
+    add_admin_info = not api_call and (is_application_admin() or is_service_admin_or_manager(service_id))
     if add_admin_info:
         query = query \
             .options(selectinload(Service.collaborations).selectinload(Collaboration.organisation)) \
@@ -497,22 +497,30 @@ def service_invites():
 
     administrators = data.get("administrators", [])
     message = data.get("message", None)
-    intended_role = "admin"
+    intended_role = data.get("intended_role", "manager")
+    if intended_role not in ["admin", "manager"]:
+        raise BadRequest("Invalid intended role")
 
     service = db.session.get(Service, service_id)
     user = db.session.get(User, current_user_id())
 
     for administrator in administrators:
-        invitation = ServiceInvitation(hash=generate_token(), message=message, invitee_email=administrator,
-                                       service=service, user=user, created_by=user.uid,
-                                       intended_role=intended_role, expiry_date=default_expiry_date(json_dict=data))
+        invitation = ServiceInvitation(hash=generate_token(),
+                                       message=message,
+                                       invitee_email=administrator,
+                                       service=service,
+                                       user=user,
+                                       intended_role=intended_role,
+                                       created_by=user.uid,
+                                       expiry_date=default_expiry_date(json_dict=data))
         invitation = db.session.merge(invitation)
         mail_service_invitation({
             "salutation": "Dear",
             "invitation": invitation,
             "base_url": current_app.app_config.base_url,
             "wiki_link": current_app.app_config.wiki_link,
-            "recipient": administrator
+            "recipient": administrator,
+            "intended_role": intended_role
         }, service, [administrator])
 
     emit_socket(f"service_{service_id}", include_current_user_id=True)

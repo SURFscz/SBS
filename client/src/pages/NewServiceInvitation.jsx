@@ -20,6 +20,7 @@ import {AppStore} from "../stores/AppStore";
 import SpinnerField from "../components/redesign/SpinnerField";
 import EmailField from "../components/EmailField";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
+import {serviceRoles} from "../forms/constants";
 
 class NewServiceInvitation extends React.Component {
 
@@ -27,10 +28,10 @@ class NewServiceInvitation extends React.Component {
         super(props, context);
         const email = getParameterByName("email", window.location.search);
         const administrators = !isEmpty(email) && validEmailRegExp.test(email.trim()) ? [email.trim()] : [];
-        this.intendedRolesOptions = [{
-            value: "manager",
-            label: I18n.t("serviceDetail.admin")
-        }];
+        this.intendedRolesOptions = serviceRoles.map(role => ({
+            value: role,
+            label: I18n.t(`serviceDetail.${role}`)
+        }));
         this.state = {
             service: undefined,
             administrators: administrators,
@@ -39,6 +40,7 @@ class NewServiceInvitation extends React.Component {
             fileTypeError: false,
             fileInputKey: new Date().getMilliseconds(),
             message: "",
+            intended_role: "admin",
             expiry_date: moment().add(16, "days").toDate(),
             initial: true,
             confirmationDialogOpen: false,
@@ -85,11 +87,12 @@ class NewServiceInvitation extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            const {administrators, message, service, expiry_date, fileEmails} = this.state;
+            const {administrators, message, service, expiry_date, fileEmails, intended_role} = this.state;
             this.setState({loading: true});
             serviceInvitations({
                 administrators: administrators.concat(fileEmails),
                 message,
+                intended_role,
                 expiry_date: expiry_date.getTime() / 1000,
                 service_id: service.id
             }).then(() => {
@@ -124,7 +127,7 @@ class NewServiceInvitation extends React.Component {
     };
 
     invitationForm = (service, message, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, expiry_date,
-                      disabledSubmit) =>
+                      disabledSubmit, intended_role) =>
         <div className={"invitation-form"}>
             <EmailField addEmails={this.addEmails}
                         removeMail={this.removeMail}
@@ -135,10 +138,10 @@ class NewServiceInvitation extends React.Component {
             {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) && <ErrorIndicator
                 msg={I18n.t("organisationInvitation.requiredAdministrator")}/>}
 
-            <SelectField value={this.intendedRolesOptions[0]}
+            <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
                          options={this.intendedRolesOptions}
                          small={true}
-                         disabled={true}
+                         onChange={selectedOption => this.setState({intended_role: selectedOption ? selectedOption.value : null})}
                          toolTip={I18n.t("serviceDetail.intendedRoleTooltip")}
                          name={I18n.t("serviceDetail.intendedRole")}/>
 

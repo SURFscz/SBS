@@ -6,7 +6,12 @@ import {ReactComponent as InviteIcon} from "../../icons/single-neutral-question.
 import {ReactComponent as HandIcon} from "../../icons/puppet_new.svg";
 import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 import CheckBox from "../CheckBox";
-import {deleteServiceMembership, serviceInvitationBulkResend, serviceInvitationDelete} from "../../api";
+import {
+    deleteServiceMembership,
+    serviceInvitationBulkResend,
+    serviceInvitationDelete,
+    updateServiceMembershipRole
+} from "../../api";
 import {setFlash} from "../../utils/Flash";
 import "./ServiceAdmins.scss";
 import {isInvitationExpired, shortDateFromEpoch} from "../../utils/Date";
@@ -21,6 +26,7 @@ import InstituteColumn from "./InstituteColumn";
 import {isEmpty} from "../../utils/Utils";
 import {emitImpersonation} from "../../utils/Impersonation";
 import LastAdminWarning from "./LastAdminWarning";
+import Select from "react-select";
 
 const INVITE_IDENTIFIER = "INVITE_IDENTIFIER";
 const MEMBER_IDENTIFIER = "MEMBER_IDENTIFIER";
@@ -29,6 +35,11 @@ class ServiceAdmins extends React.Component {
 
     constructor(props, context) {
         super(props, context);
+        this.roles = [
+            {value: "admin", label: I18n.t(`organisation.organisationShortRoles.admin`)},
+            {value: "manager", label: I18n.t(`organisation.organisationShortRoles.manager`)}
+        ];
+
         this.state = {
             selectedMembers: {},
             message: "",
@@ -271,12 +282,12 @@ class ServiceAdmins extends React.Component {
                              children={<ThrashIcon/>}/>
                 </div>
                 {showResendInvite &&
-                <div onClick={this.resendFromActionMenu(entity.id, true)}>
-                    <Tooltip tip={I18n.t("models.orgMembers.resendInvitationTooltip")}
-                             standalone={true}
-                             children={<FontAwesomeIcon icon="voicemail"/>}
-                    />
-                </div>}
+                    <div onClick={this.resendFromActionMenu(entity.id, true)}>
+                        <Tooltip tip={I18n.t("models.orgMembers.resendInvitationTooltip")}
+                                 standalone={true}
+                                 children={<FontAwesomeIcon icon="voicemail"/>}
+                        />
+                    </div>}
 
             </div>);
     }
@@ -292,6 +303,62 @@ class ServiceAdmins extends React.Component {
                 </div>}
             </div>
         );
+    }
+
+    changeMemberRole = member => selectedOption => {
+        const {service, user} = this.props;
+        const currentRole = service.service_memberships.find(m => m.user_id === member.user_id).role;
+        if (currentRole === selectedOption.value) {
+            return;
+        }
+        if (member.user_id === user.id) {
+            this.setState({
+                confirmationDialogOpen: true,
+                confirmationTxt: I18n.t("confirmationDialog.confirm"),
+                confirmationDialogAction: () => {
+                    this.setState({loading: true});
+                    updateServiceMembershipRole(service.id, member.user_id, selectedOption.value)
+                        .then(() => {
+                            this.props.refreshUser(() => this.props.refresh(this.componentDidMount));
+                            setFlash(I18n.t("serviceDetail.flash.memberUpdated", {
+                                name: member.user.name,
+                                role: selectedOption.value
+                            }));
+                        }).catch(() => {
+                        this.handle404("member");
+                    });
+                },
+                cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+                confirmationQuestion: I18n.t("serviceDetail.downgradeYourselfMemberConfirmation"),
+            });
+        } else {
+            this.setState({loading: true});
+            updateServiceMembershipRole(service.id, member.user_id, selectedOption.value)
+                .then(() => {
+                    this.props.refresh(this.componentDidMount);
+                    setFlash(I18n.t("serviceDetail.flash.memberUpdated", {
+                        name: member.user.name,
+                        role: selectedOption.value
+                    }));
+                }).catch(() => {
+                this.handle404("member");
+            });
+        }
+    };
+
+    renderSelectRole = (entity, currentUser, service) => {
+        if (entity.invite) {
+            return <span className="member-role">{I18n.t(`organisation.${entity.intended_role}`)}</span>;
+        }
+        const serviceAdmin = isUserServiceAdmin(currentUser, service);
+        const enabled = serviceAdmin && !entity.invite;
+        return (
+            <Select
+                value={this.roles.find(option => option.value === entity.role)}
+                options={this.roles}
+                classNamePrefix={`select-member-role`}
+                onChange={this.changeMemberRole(entity)}
+                isDisabled={!enabled}/>)
     }
 
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
@@ -314,7 +381,7 @@ class ServiceAdmins extends React.Component {
         let i = 0;
         const {impersonation_allowed} = this.props.config;
         const columns = [
-            {
+            isAdmin ? {
                 nonSortable: true,
                 key: "check",
                 header: <CheckBox value={false}
@@ -329,7 +396,7 @@ class ServiceAdmins extends React.Component {
                                   value={(selectedMembers[this.getIdentifier(entity)] || {}).selected || false}/>
                     </div>
                 }
-            },
+            } : null,
             {
                 nonSortable: true,
                 key: "icon",
@@ -360,7 +427,7 @@ class ServiceAdmins extends React.Component {
                 key: "role",
                 header: I18n.t("models.users.role"),
                 className: !isAdmin ? "not-allowed" : "",
-                mapper: () => <span className="member-role">{I18n.t(`organisation.admin`)}</span>
+                mapper: entity => this.renderSelectRole(entity, currentUser, service)
             },
             {
                 nonSortable: true,
@@ -382,7 +449,7 @@ class ServiceAdmins extends React.Component {
                 header: "",
                 mapper: entity => this.getImpersonateMapper(entity, currentUser, impersonation_allowed)
             },
-        ]
+        ].filter(column => !isEmpty(column))
         const entities = admins.concat(invites);
         return (<>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}

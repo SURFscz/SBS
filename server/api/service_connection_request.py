@@ -6,7 +6,7 @@ from server.api.base import json_endpoint, emit_socket
 from server.api.collaborations_services import connect_service_collaboration
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_write_access, \
-    is_service_admin, is_application_admin, is_organisation_admin
+    is_application_admin, is_organisation_admin, is_service_admin_or_manager
 from server.db.activity import update_last_activity_date
 from server.db.domain import ServiceConnectionRequest, Service, Collaboration, db, User
 from server.db.models import delete
@@ -89,7 +89,8 @@ def _do_service_connection_request(approved):
     service = service_connection_request.service
     collaboration = service_connection_request.collaboration
 
-    if not (is_service_admin(service.id) or is_application_admin() or is_organisation_admin(organisation.id)):
+    if not (is_service_admin_or_manager(service.id) or is_application_admin() or is_organisation_admin(
+            organisation.id)):
         raise Forbidden(f"Not allowed to approve / decline service_connection_request for service {service.entity_id}")
 
     if approved:
@@ -202,7 +203,7 @@ def deny_service_connection_request():
 @service_connection_request_api.route("/all/<service_id>", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def all_service_request_connections_by_service(service_id):
-    confirm_write_access(service_id, override_func=is_service_admin)
+    confirm_write_access(service_id, override_func=is_service_admin_or_manager)
     return ServiceConnectionRequest.query \
         .join(ServiceConnectionRequest.collaboration) \
         .join(ServiceConnectionRequest.requester) \
