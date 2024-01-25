@@ -10,13 +10,13 @@ class TestServiceMembership(AbstractTest):
         service = self.find_entity_by_name(Service, service_cloud_name)
         user = self.find_entity_by_name(User, user_james_name)
 
-        self.assertEqual(1, len(service.service_memberships))
+        self.assertEqual(2, len(service.service_memberships))
 
         self.login("urn:james")
         self.delete("/api/service_memberships", primary_key=f"{service.id}/{user.id}", )
 
         service = self.find_entity_by_name(Service, service_cloud_name)
-        self.assertEqual(0, len(service.service_memberships))
+        self.assertEqual(1, len(service.service_memberships))
 
     def test_delete_service_membership_not_allowed(self):
         service = self.find_entity_by_name(Service, service_cloud_name)
