@@ -19,8 +19,9 @@ from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_collaboration_member, \
     confirm_authorized_api_call, \
     confirm_allow_impersonation, confirm_organisation_admin_or_manager, confirm_external_api_call, \
-    is_organisation_admin_or_manager, is_application_admin, confirm_service_admin, \
-    confirm_organisation_api_collaboration, confirm_write_access, has_org_manager_unit_access, is_admin_user
+    is_organisation_admin_or_manager, is_application_admin, confirm_organisation_api_collaboration, \
+    confirm_write_access, has_org_manager_unit_access, is_admin_user, \
+    confirm_service_manager
 from server.db.activity import update_last_activity_date
 from server.db.db import db
 from server.db.defaults import (default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name,
@@ -92,7 +93,7 @@ def _get_collaboration_membership(co_identifier, user_uid) -> CollaborationMembe
 @collaboration_api.route("/admins/<service_id>", strict_slashes=False)
 @json_endpoint
 def collaboration_admins(service_id):
-    confirm_service_admin(service_id)
+    confirm_service_manager(service_id)
     service = db.session.get(Service, service_id)
     collaborations = service.collaborations + flatten([o.collaborations for o in service.organisations])
     return {c.name: c.admin_emails() for c in unique_model_objects(collaborations)}, 200

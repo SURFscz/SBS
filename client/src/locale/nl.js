@@ -597,9 +597,9 @@ const nl = {
         },
         serviceAdmins: {
             searchPlaceHolder: "Zoek naar dienstbeheerders..",
-            noEntities: "Er zijn geen dienstbeheerders",
+            noEntities: "Er zijn geen dienstbeheerders of dienstmanagers",
             new: "Nodig beheerders uit",
-            title: "Dienstbeheerders"
+            title: "Dienstbeheerders & dienstmanagers"
         },
         userTokens: {
             backToUserTokens: "Terug naar alle diensttokens",
@@ -1983,6 +1983,7 @@ const nl = {
         coAdmin: "beheerder",
         coMember: "lid",
         serviceAdmin: "dienstbeheerder",
+        serviceManager: "dienstmanager",
         user: "gebruiker"
     },
     actionRoles: {
@@ -2212,20 +2213,23 @@ const nl = {
         }
     },
     serviceDetail: {
-        deleteMemberConfirmation: "Weet je zeker dat je alle geselecteerde beheerders en uitnodigingen wil verwijderen?",
+        deleteMemberConfirmation: "Weet je zeker dat je alle geselecteerde leden en uitnodigingen wil verwijderen?",
         deleteYourselfMemberConfirmation: "Weet je zeker dat je deze dienst wil verlaten? Je kan dit niet terugdraaien.",
         resendInvitations: "Weet je zeker dat je alle geselecteerde uitnodigingen opnieuw wil versturen?",
+        downgradeYourselfMemberConfirmation: "Weet je zeker dat je geen beheerder meer wil zijn? Je kan dit niet terugdraaien.",
         flash: {
-            entitiesDeleted: "Beheerders en uitnodigingen zijn verwijderd",
+            entitiesDeleted: "Leden en uitnodigingen zijn verwijderd",
             invitesResend: "Uitnodigingen voor organisatie {{name}} zijn opnieuw verzonden.",
+            memberUpdated: "De rol of lidmaatschap van {{name}} is bijgewerkt naar {{role}}.",
         },
         gone: {
             member: "Dit lidmaatschap bestaat niet meer. Na het sluiten van deze pop-up worden de lidmaatschappen vernieuwd.",
             invitation: "Deze uitnodiging is al geaccepteerd/afgewezen en bestaat niet meer. Na het sluiten van deze pop-up worden de uitnodigingen ververst."
         },
         admin: "Dienstbeheerder",
+        manager: "Dienstmanager",
         intendedRole: "Rol binnen de dienst",
-        intendedRoleTooltip: "De enige rol binnen een dienst is beheerder"
+        intendedRoleTooltip: "De dienstmanager rol is gelimiteerd tot het beheren van koppelingen met samenwerkingen"
     },
     scim: {
         scimEnabled: "SCIM server provisioning",

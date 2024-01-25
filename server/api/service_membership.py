@@ -43,3 +43,25 @@ def create_service_membership_role():
 
     db.session.merge(service_membership)
     return service_membership, 201
+
+
+@service_membership_api.route("/", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def update_service_membership_role():
+    client_data = current_request.get_json()
+    service_id = client_data["serviceId"]
+    user_id = client_data["userId"]
+    role = client_data["role"]
+
+    confirm_service_admin(service_id)
+
+    service_membership = ServiceMembership.query \
+        .filter(ServiceMembership.service_id == service_id) \
+        .filter(ServiceMembership.user_id == user_id) \
+        .one()
+    service_membership.role = role
+
+    emit_socket(f"service_{service_id}", include_current_user_id=True)
+
+    db.session.merge(service_membership)
+    return service_membership, 201

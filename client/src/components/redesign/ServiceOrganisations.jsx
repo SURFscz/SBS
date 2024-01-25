@@ -90,7 +90,7 @@ class ServiceOrganisations extends React.Component {
         }
     }
 
-    permissionOptions = (organisation, service, connectionSettingValue) => {
+    permissionOptions = (organisation, service, connectionSettingValue, serviceAdmin) => {
         const allowed = service.allowed_organisations.some(org => org.id === organisation.id)
         const always = service.automatic_connection_allowed_organisations.some(org => org.id === organisation.id)
             || (allowed && service.automatic_connection_allowed)
@@ -108,6 +108,7 @@ class ServiceOrganisations extends React.Component {
         return (
             <SegmentedControl onClick={option => this.changePermission(organisation, option)}
                               options={options}
+                              disabled={!serviceAdmin}
                               optionLabelResolver={option => I18n.t(`models.serviceOrganisations.options.${option}`)}
                               option={always ? ALWAYS : allowed ? PERMISSION_OPTIONS[1] : PERMISSION_OPTIONS[0]}
             />
@@ -257,7 +258,7 @@ class ServiceOrganisations extends React.Component {
                 nonSortable: false,
                 key: "permissions",
                 header: I18n.t("models.serviceOrganisations.options.header"),
-                mapper: org => this.permissionOptions(org, service, connectionSettingValue)
+                mapper: org => this.permissionOptions(org, service, connectionSettingValue, serviceAdmin)
             },
             {
                 key: "name",
@@ -371,19 +372,20 @@ class ServiceOrganisations extends React.Component {
                     {confirmationDialogOpen && this.renderConfirmation(service, disallowedOrganisation)}
                 </ConfirmationDialog>
                 {loading && <SpinnerField absolute={true}/>}
-                {serviceAdmin &&
+
                     <div className={`options-container ${showEntities ? "" : "no-entities"}`}>
                         <div>
                             <h4>{I18n.t("service.connectionSettings.connectQuestion")}</h4>
                             <BlockSwitchChoice value={connectionAllowedValue}
                                                items={connectionAllowedChoices}
-                                               disabled={connectionAllowedValue === ALL_ALLOWED && !userAdmin}
+                                               disabled={!serviceAdmin || (connectionAllowedValue === ALL_ALLOWED && !userAdmin)}
                                                setValue={this.setConnectionAccessValue}/>
                         </div>
                         {connectionAllowedValue !== NO_ONE_ALLOWED && <div>
                             <h4>{I18n.t("service.connectionSettings.whichInstitutionsQuestion")}</h4>
                             <BlockSwitchChoice value={institutionAccessValue}
                                                items={institutionAccessChoices}
+                                               disabled={!serviceAdmin}
                                                setValue={this.setInstitutionAccessValue}/>
                         </div>}
                         {(connectionAllowedValue !== NO_ONE_ALLOWED && institutionAccessValue !== NONE_INSTITUTIONS) &&
@@ -391,9 +393,10 @@ class ServiceOrganisations extends React.Component {
                                 <h4>{I18n.t("service.connectionSettings.directlyConnectQuestion")}</h4>
                                 <BlockSwitchChoice value={connectionSettingValue}
                                                    items={connectionSettingChoices}
+                                                   disabled={!serviceAdmin}
                                                    setValue={this.setConnectionSettingValue}/>
                             </div>}
-                    </div>}
+                    </div>
                 {(service.non_member_users_access_allowed && (!userAdmin || showServiceAdminView)) &&
                     <div className={"options-container radio-button-container"}>
                         <span>{I18n.t("service.nonMemberUsersAccessAllowedTooltip")}</span>

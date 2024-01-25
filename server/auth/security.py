@@ -222,6 +222,17 @@ def is_service_admin(service_id=None):
     user_id = current_user_id()
     query = ServiceMembership.query \
         .options(load_only(ServiceMembership.user_id)) \
+        .filter(ServiceMembership.user_id == user_id) \
+        .filter(ServiceMembership.role == "admin")
+    if service_id:
+        query = query.filter(ServiceMembership.service_id == service_id)
+    return query.count() > 0
+
+
+def is_service_admin_or_manager(service_id=None):
+    user_id = current_user_id()
+    query = ServiceMembership.query \
+        .options(load_only(ServiceMembership.user_id)) \
         .filter(ServiceMembership.user_id == user_id)
     if service_id:
         query = query.filter(ServiceMembership.service_id == service_id)
@@ -231,5 +242,12 @@ def is_service_admin(service_id=None):
 def confirm_service_admin(service_id=None):
     def override_func():
         return is_service_admin(service_id)
+
+    confirm_write_access(override_func=override_func)
+
+
+def confirm_service_manager(service_id=None):
+    def override_func():
+        return is_service_admin_or_manager(service_id)
 
     confirm_write_access(override_func=override_func)
