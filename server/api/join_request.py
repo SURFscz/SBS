@@ -71,7 +71,6 @@ def new_join_request():
         db.session.delete(jr)
 
     join_request = JoinRequest(message=client_data["motivation"],
-                               reference=client_data["reference"] if "reference" in client_data else None,
                                user_id=user_id,
                                status=STATUS_OPEN,
                                collaboration_id=collaboration.id,

@@ -21,13 +21,4 @@
         {{ join_request.message }}
     </p>
 </div>
-<div class="mail-end" style="padding: 30px 0 0 60px;">
-    {% if join_request.reference is defined and join_request.reference != None and join_request.reference|length %}
-    <p>The user has provided the following references within the collaboration.</p>
-    <p style="white-space: pre-line;margin: 0;">{{ join_request.reference }}</p>
-    {% else %}
-    <p style="margin: 0;">The user has not provided any references within the collaboration.</p>
-    {% endif %}
-</div>
-
 {% endblock %}

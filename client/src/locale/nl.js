@@ -1340,8 +1340,6 @@ const nl = {
         title: "Verzoek van {{requester}} om lid te worden van samenwerking {{collaboration}}",
         message: "Onderbouwing",
         messageTooltip: "De onderbouwing van {{name}} voor dit verzoek",
-        reference: "Bekende",
-        referenceTooltip: "{{name}} kent de volgende mensen binnen samenwerking {{collaboration}}",
         collaborationName: "Samenwerking",
         userName: "Gebruiker",
         decline: "Afwijzen",
