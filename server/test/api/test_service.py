@@ -116,6 +116,7 @@ class TestService(AbstractTest):
                 "service_id": service_id,
                 "administrators": ["new@example.org", "pop@example.org"],
                 "message": "Please join",
+                "intended_role": "admin",
                 "expiry_date": int(time.time())
             })
             post_count = ServiceInvitation.query.count()

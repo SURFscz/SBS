@@ -34,6 +34,7 @@ def do_resend(service_invitation_id):
         "salutation": "Dear",
         "invitation": service_invitation,
         "base_url": current_app.app_config.base_url,
+        "intended_role": service_invitation.intended_role,
         "recipient": service_invitation.invitee_email
     }, service_invitation.service, [service_invitation.invitee_email])
 
