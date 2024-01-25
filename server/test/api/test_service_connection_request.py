@@ -80,7 +80,7 @@ class TestServiceConnectionRequest(AbstractTest):
         with self.app.mail.record_messages() as outbox:
             self.post("/api/service_connection_requests", body=data, with_basic_auth=False)
             mail_msg = outbox[0]
-            self.assertEqual(["james@example.org"], mail_msg.recipients)
+            self.assertListEqual(["betty@uuc.org", "james@example.org"], sorted(mail_msg.recipients))
 
     def test_service_connection_request_by_member(self):
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)

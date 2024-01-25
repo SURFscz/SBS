@@ -395,6 +395,7 @@ def save_service():
             "invitation": invitation,
             "base_url": current_app.app_config.base_url,
             "wiki_link": current_app.app_config.wiki_link,
+            "intended_role": "admin",
             "recipient": administrator
         }, service, [administrator])
 

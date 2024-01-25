@@ -102,12 +102,12 @@ class TestUserToken(AbstractTest):
         self.post("/api/user_tokens", body=user_token, response_status_code=403)
 
     def test_create_user_token_service_not_allowed(self):
-        betty_id = self.find_entity_by_name(User, "betty").id
-        self.login("urn:betty")
+        mary_id = self.find_entity_by_name(User, "Mary Doe").id
+        self.login("urn:mary")
 
         hashed_token = self._get_token()
         cloud = self.find_entity_by_name(Service, service_cloud_name)
-        user_token = {"name": "token", "hashed_token": hashed_token, "user_id": betty_id, "service_id": cloud.id}
+        user_token = {"name": "token", "hashed_token": hashed_token, "user_id": mary_id, "service_id": cloud.id}
         self.post("/api/user_tokens", body=user_token, response_status_code=403)
 
     def test_delete_user_token(self):
