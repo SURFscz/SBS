@@ -54,6 +54,9 @@ jobs:
           - 6379:6379
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Setup mysql server
         run: >
           mysql -uroot -proot -h127.0.0.1 -e "
@@ -77,9 +80,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libxml2-dev libxmlsec1-dev libxml2
-      # Run Checkout code
-      - name: Checkout
-        uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
