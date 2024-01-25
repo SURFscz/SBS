@@ -2,7 +2,7 @@
 # monkey_patch before importing anything else!
 # see https://github.com/gevent/gevent/issues/1016#issuecomment-328529454
 import eventlet
-eventlet.monkey_patch()
+eventlet.monkey_patch(thread=False)
 
 import logging
 from sqlalchemy.orm import sessionmaker
@@ -142,6 +142,9 @@ if config.feature.mock_scim_enabled:
 app.register_error_handler(404, page_not_found)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = config.database.uri
+if 'SBS_DB_URI_OVERRIDE' in os.environ:
+    # used for pytest fixture: override database uri to use a separate database for each worker
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ['SBS_DB_URI_OVERRIDE']
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = False  # Set to True for query debugging
 # app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {"pool_size": 25, "max_overflow": 15}

@@ -54,21 +54,32 @@ jobs:
           - 6379:6379
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Setup mysql server
         run: >
           mysql -uroot -proot -h127.0.0.1 -e "
             DROP DATABASE IF EXISTS sbs_test;
             CREATE DATABASE IF NOT EXISTS sbs_test DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
+            CREATE DATABASE IF NOT EXISTS sbs_gw0 DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
+            CREATE DATABASE IF NOT EXISTS sbs_gw1 DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
+            CREATE DATABASE IF NOT EXISTS sbs_gw2 DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
+            CREATE DATABASE IF NOT EXISTS sbs_gw3 DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
             CREATE USER 'sbs'@'%' IDENTIFIED BY 'sbs';
             GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'%' WITH GRANT OPTION;
           "
+      - name: Load SBS schema
+        # not strictly necessary, but it avoids running 200+ migrations during tests
+        run: |
+          mysql -uroot -proot -h127.0.0.1 sbs_gw0 < misc/sbs-db.sql;
+          mysql -uroot -proot -h127.0.0.1 sbs_gw1 < misc/sbs-db.sql;
+          mysql -uroot -proot -h127.0.0.1 sbs_gw2 < misc/sbs-db.sql;
+          mysql -uroot -proot -h127.0.0.1 sbs_gw3 < misc/sbs-db.sql;
       - name: Install SAML2 dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y libxml2-dev libxmlsec1-dev libxml2
-      # Run Checkout code
-      - name: Checkout
-        uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -102,7 +113,7 @@ jobs:
       - name: Run tests with coverage
         run: |
           cd ./server
-          coverage run -m pytest test --cov-report xml --cov=server
+          coverage run -m pytest test --cov-report xml --cov=server --numprocesses=4
         timeout-minutes: 20
 
       - name: Upload coverage to Codecov
