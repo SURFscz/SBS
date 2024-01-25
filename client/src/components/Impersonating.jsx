@@ -21,6 +21,7 @@ export default function Impersonating({impersonator, currentUser}) {
     });
   }
 
+  const role = globalUserRole(currentUser);
   return <div className="impersonator ">
     <NavLink to="/impersonate">
            <Tooltip children={<HandIcon/>} standalone={true} tip={I18n.t("impersonate.impersonatorTooltip", {
@@ -31,7 +32,7 @@ export default function Impersonating({impersonator, currentUser}) {
     <p dangerouslySetInnerHTML={{
       __html: DOMPurify.sanitize(I18n.t("impersonate.impersonator", {
         name: currentUser.name,
-        role: globalUserRole(currentUser)
+        role: role
       }))
     }}/>
     <Route render={({history}) => (

@@ -26,7 +26,7 @@ import {ReactComponent as ConnectedIcon} from "../icons/groups.svg";
 import ServiceOrganisations from "../components/redesign/ServiceOrganisations";
 import SpinnerField from "../components/redesign/SpinnerField";
 import {capitalize, isEmpty, removeDuplicates, splitListSemantically, stopEvent} from "../utils/Utils";
-import {actionMenuUserRole, isUserServiceAdmin} from "../utils/UserRole";
+import {actionMenuUserRole, isUserServiceAdmin, isUserServiceManager} from "../utils/UserRole";
 import ServiceConnectionRequests from "../components/redesign/ServiceConnectionRequests";
 import {ReactComponent as GroupsIcon} from "../icons/ticket-group.svg";
 import ServiceGroups from "../components/redesign/ServiceGroups";
@@ -93,7 +93,7 @@ class ServiceDetail extends React.Component {
             }).catch(() => this.props.history.push("/404"));
         } else if (params.id) {
             const {user} = this.props;
-            const userServiceAdmin = isUserServiceAdmin(user, {id: parseInt(params.id, 10)}) || user.admin;
+            const userServiceAdmin = isUserServiceManager(user, {id: parseInt(params.id, 10)}) || user.admin;
             if (userServiceAdmin) {
                 Promise.all([serviceById(params.id), searchOrganisations("*"),
                     allServiceConnectionRequests(params.id)])
@@ -194,8 +194,8 @@ class ServiceDetail extends React.Component {
     refresh = callback => {
         const params = this.props.match.params;
         const {user} = this.props;
-        const userServiceAdmin = isUserServiceAdmin(user, {id: parseInt(params.id, 10)}) || user.admin;
-        if (userServiceAdmin) {
+        const userServiceManager = isUserServiceManager(user, {id: parseInt(params.id, 10)}) || user.admin;
+        if (userServiceManager) {
             Promise.all([serviceById(params.id), allServiceConnectionRequests(params.id)])
                 .then(res => {
                     this.setState({
@@ -220,7 +220,7 @@ class ServiceDetail extends React.Component {
         }
     };
 
-    getDetailsTab = (service, user, serviceAdmin, showServiceAdminView) => {
+    getDetailsTab = (service, user, serviceAdmin, serviceManager, showServiceAdminView) => {
         return (<div key="details" name="details"
                      label={I18n.t("home.tabs.details")}
                      icon={<DetailsIcon/>}>
@@ -230,7 +230,8 @@ class ServiceDetail extends React.Component {
                              user={user}
                              showServiceAdminView={showServiceAdminView}
                              userAdmin={user.admin}
-                             serviceAdmin={serviceAdmin}/>
+                             serviceAdmin={serviceAdmin}
+                             serviceManager={serviceManager}/>
         </div>)
     }
 
@@ -256,32 +257,24 @@ class ServiceDetail extends React.Component {
                      label={I18n.t("home.tabs.serviceAdmins", {count: service.service_memberships.length})}
                      icon={<UserAdminIcon/>}
                      notifier={expiredInvitations}>
-            <ServiceAdmins {...this.props} service={service}
+            <ServiceAdmins {...this.props}
+                           service={service}
                            refresh={this.refresh}/>
         </div>)
     }
 
-    getTokenTab = service => {
-        const openInvitations = (service.service_invitations || []).length;
-        return (<div key="admins" name="admins"
-                     label={I18n.t("home.tabs.serviceAdmins", {count: service.service_memberships.length})}
-                     icon={<UserAdminIcon/>}
-                     notifier={openInvitations > 0 ? openInvitations : null}>
-            <ServiceAdmins {...this.props} service={service}
-                           refresh={this.refresh}/>
-        </div>)
-    }
-
-    getServiceGroupsTab = (service) => {
+    getServiceGroupsTab = (service, userServiceAdmin) => {
         return (<div key="groups" name="groups"
                      label={I18n.t("home.tabs.groups", {count: (service.service_groups || []).length})}
                      icon={<GroupsIcon/>}>
-            {<ServiceGroups {...this.props} service={service}
+            {<ServiceGroups {...this.props}
+                            service={service}
+                            userServiceAdmin={userServiceAdmin}
                             refresh={this.refresh}/>}
         </div>)
     }
 
-    getCollaborationsTab = (service, showServiceAdminView) => {
+    getCollaborationsTab = (service, userServiceAdmin, showServiceAdminView) => {
         const collaborations = this.allCollaborationsForService(service);
         return (
             <div key="collaborations" name="collaborations"
@@ -290,6 +283,7 @@ class ServiceDetail extends React.Component {
                 <ServiceCollaborations
                     service={service}
                     showServiceAdminView={showServiceAdminView}
+                    userServiceAdmin={userServiceAdmin}
                     goToOrganisationsTab={() => this.tabChanged("organisations")}
                     collaborations={collaborations}
                     refresh={this.refresh}
@@ -503,27 +497,29 @@ class ServiceDetail extends React.Component {
         let tabs = [];
         const params = this.props.match.params;
         const userServiceAdmin = isUserServiceAdmin(user, {id: parseInt(params.id, 10)}) || user.admin;
+        const userServiceManager = isUserServiceManager(user, {id: parseInt(params.id, 10)}) || userServiceAdmin;
         if (params.hash) {
             tabs = [this.getAdminsTab(service)];
-        } else if (userServiceAdmin) {
+        } else if (userServiceManager) {
             tabs = [
-                this.getDetailsTab(service, user, userServiceAdmin, showServiceAdminView),
+                this.getDetailsTab(service, user, userServiceAdmin, userServiceManager, showServiceAdminView),
                 this.getAdminsTab(service),
-                this.getServiceGroupsTab(service),
-                this.getCollaborationsTab(service, showServiceAdminView),
+                this.getServiceGroupsTab(service, userServiceAdmin),
+                this.getCollaborationsTab(service, userServiceAdmin, showServiceAdminView),
                 this.getOrganisationsTab(service, organisations, user.admin, userServiceAdmin, showServiceAdminView),
             ];
-            if (serviceConnectionRequests.length > 0) {
+            if (serviceConnectionRequests.filter(scr => !scr.pending_organisation_approval).length > 0) {
                 tabs.push(this.getServiceConnectionRequestTab(service, serviceConnectionRequests));
             }
         }
-        if (!userServiceAdmin) {
+        if (!userServiceManager) {
             tabs.push(this.getAboutTab(service));
         }
         const iconListItems = [
             {
                 Icon: <ShortNameIcon/>,
-                value: <span>{I18n.t("service.abbreviation")}: <span className="abbreviation">{service.abbreviation}</span></span>
+                value: <span>{I18n.t("service.abbreviation")}: <span
+                    className="abbreviation">{service.abbreviation}</span></span>
             },
             {
                 Icon: <ConnectedIcon/>,

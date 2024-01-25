@@ -1982,6 +1982,7 @@ const en = {
         coAdmin: "admin",
         coMember: "member",
         serviceAdmin: "service admin",
+        serviceManager: "service manager",
         user: "user"
     },
     actionRoles: {
@@ -2214,9 +2215,11 @@ const en = {
         deleteMemberConfirmation: "Are you sure you want to delete the selected service members and invitations?",
         deleteYourselfMemberConfirmation: "Are you sure you want to leave this service? You will have to be re-invited by an admin to rejoin.",
         resendInvitations: "Are you sure you want to resend all selected invitation?",
+        downgradeYourselfMemberConfirmation: "Are you sure you don't want to be an admin anymore? You won't be able to revert this.",
         flash: {
             entitiesDeleted: "Members and invitations have been deleted",
             invitesResend: "Invitations for service {{name}} were resent.",
+            memberUpdated: "The role of membership of {{name}} was updated to {{role}}",
         },
         gone: {
             member: "This membership does no longer exists. After closing this popup the memberships will be refreshed.",

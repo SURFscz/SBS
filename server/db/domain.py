@@ -357,7 +357,7 @@ class Collaboration(Base, db.Model, LogoMixin):
             if service.contact_email:
                 res[service.id] = [service.contact_email]
             else:
-                res[service.id] = [membership.user.email for membership in service.service_memberships]
+                res[service.id] = [m.user.email for m in service.service_memberships if m.role == "admin"]
         return res
 
     def is_allowed_unit_organisation_membership(self, organisation_membership):

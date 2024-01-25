@@ -4,9 +4,9 @@ from werkzeug.exceptions import BadRequest, Forbidden, Conflict
 
 from server.api.base import json_endpoint, emit_socket
 from server.api.service_group import create_service_groups
-from server.auth.security import confirm_collaboration_admin, confirm_external_api_call, confirm_service_admin
-from server.db.db import db
+from server.auth.security import confirm_collaboration_admin, confirm_external_api_call, confirm_service_manager
 from server.db.activity import update_last_activity_date
+from server.db.db import db
 from server.db.domain import Service, Collaboration, Organisation
 from server.schemas import json_schema_validator
 from server.scim.events import broadcast_service_added, broadcast_service_deleted
@@ -168,7 +168,7 @@ def delete_collaborations_services(collaboration_id, service_id):
     try:
         confirm_collaboration_admin(collaboration_id)
     except Forbidden:
-        confirm_service_admin(service_id)
+        confirm_service_manager(service_id)
 
     collaboration = db.session.get(Collaboration, collaboration_id)
 
