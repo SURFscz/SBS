@@ -54,7 +54,6 @@ co_ai_computing_name = "AI computing"
 co_ai_computing_short_name = "ai_computing"
 co_ai_computing_uuid = "a71a2b01-4642-4e1a-b3ac-0a06b2bf66f2"
 co_ai_computing_join_request_peter_hash = generate_token()
-co_ai_computing_join_request_john_reference = "Dr. Johnson"
 
 co_teachers_name = "Teachers"
 
@@ -170,7 +169,8 @@ def seed(db, app_config, skip_seed=False):
     peter = User(uid="urn:peter", name="Peter Doe", email="peter@example.org", username="peter",
                  external_id="b7fdbc01-5b5a-4028-b90a-5409f380e603")
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org", username="mdoe",
-                schac_home_organisation=schac_home_organisation_example, external_id="bb3d4bd4-2848-4cf3-b30b-fd84186c0c52")
+                schac_home_organisation=schac_home_organisation_example,
+                external_id="bb3d4bd4-2848-4cf3-b30b-fd84186c0c52")
     admin = User(uid="urn:admin", name=user_boss_name, email="boss@example.org", username="admin",
                  external_id="e906cf88-cdb3-480d-8bb3-ce53bdcda4e7")
     roger = User(uid="urn:roger", name=user_roger_name, email="roger@example.org",
@@ -181,7 +181,8 @@ def seed(db, app_config, skip_seed=False):
     james = User(uid="urn:james", name=user_james_name, email="james@example.org", username="james",
                  schac_home_organisation=schac_home_organisation_unihar, given_name="James",
                  external_id="100ae6f1-930f-459c-bf1a-f28facfe5834")
-    sarah = User(uid="urn:sarah", name=user_sarah_name, email="sarah@uni-franeker.nl", application_uid="sarah_application_uid",
+    sarah = User(uid="urn:sarah", name=user_sarah_name, email="sarah@uni-franeker.nl",
+                 application_uid="sarah_application_uid",
                  username="sarah", external_id="8297d8a5-a2a4-4208-9fb6-100a5865f022")
     betty = User(uid="urn:betty", name="betty", email="betty@uuc.org", username="betty",
                  external_id="bbd8123c-b0f9-4e3d-b3ff-288aa1c1edd6", mfa_reset_token="1234567890")
@@ -267,7 +268,8 @@ def seed(db, app_config, skip_seed=False):
     sarah_other_user_ip_network = UserIpNetwork(network_value="255.0.0.9/24", user=sarah)
     persist_instance(db, sarah_user_ip_network, sarah_other_user_ip_network)
 
-    uuc = Organisation(name=unihard_name, short_name=unihard_short_name, identifier="95306a5f-0a16-4461-b358-8442e09dab20",
+    uuc = Organisation(name=unihard_name, short_name=unihard_short_name,
+                       identifier="95306a5f-0a16-4461-b358-8442e09dab20",
                        description="Unincorporated Urban Community", logo=read_image("uni-harderwijk.png"),
                        created_by="urn:admin", updated_by="urnadmin", category="Research",
                        accepted_user_policy="https://uni-harderwijk/aup/v1",
@@ -280,7 +282,7 @@ def seed(db, app_config, skip_seed=False):
                        identifier="7c60a022-ab09-438c-8603-c361bc1a088d", created_by="urn:admin",
                        updated_by="urn:admin", short_name="ufra", logo=read_image("uni-franeker.png"),
                        category="University", service_connection_requires_approval=True,
-                       accepted_user_policy="https://uni-franeker/aup/v1",)
+                       accepted_user_policy="https://uni-franeker/aup/v1", )
     tue = Organisation(name=umcpekela_name, description=umcpekela_name,
                        identifier="65fadfcb-71fd-4962-8428-0ecd15970f8d",
                        created_by="urn:admin", updated_by="urn:admin", short_name="tue",
@@ -654,7 +656,7 @@ def seed(db, app_config, skip_seed=False):
                                service_group=service_group_mail)
     persist_instance(db, group_researchers, group_developers, group_science, group_service_mail)
 
-    join_request_john = JoinRequest(message="Please...", reference=co_ai_computing_join_request_john_reference, user=john,
+    join_request_john = JoinRequest(message="Please...", user=john,
                                     collaboration=ai_computing, hash=generate_token(), status="open")
     join_request_peter = JoinRequest(message="Please...", user=peter, collaboration=ai_computing,
                                      hash=co_ai_computing_join_request_peter_hash, status="open")
@@ -703,7 +705,8 @@ def seed(db, app_config, skip_seed=False):
                                                                service=service_ssh_uva)
     persist_instance(db, service_connection_request_network, service_connection_request_wiki)
 
-    user_token_sarah = UserToken(name="token", description="some", hashed_token=secure_hash(user_sarah_user_token_network),
+    user_token_sarah = UserToken(name="token", description="some",
+                                 hashed_token=secure_hash(user_sarah_user_token_network),
                                  user=sarah, service=network)
     user_token_betty_for_wiki = UserToken(name="token", description="some",
                                           hashed_token=secure_hash(user_betty_user_token_wiki),

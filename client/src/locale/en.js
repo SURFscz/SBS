@@ -1339,8 +1339,6 @@ const en = {
         title: "Join request from {{requester}} for collaboration {{collaboration}}",
         message: "Motivation",
         messageTooltip: "The motivation from {{name}} for this join request",
-        reference: "Reference",
-        referenceTooltip: "The references {{name}} has within collaboration {{collaboration}}",
         collaborationName: "Collaboration",
         userName: "User",
         decline: "Decline",

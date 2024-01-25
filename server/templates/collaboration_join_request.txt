@@ -7,12 +7,6 @@
 The user {{ user.name }} has requested access to the collaboration {{ collaboration.name }}.
 The motivation for this request:
 {{ join_request.message }}
-{% if join_request.reference is defined and join_request.reference != None and join_request.reference|length %}
-The user has provided the following references within the collaboration.
-{{ join_request.reference }}
-{% else %}
-The user has not provided any references within the collaboration.
-{% endif %}
 Login to process this request:
 
 {{base_url}}/collaborations/{{collaboration.id}}/joinrequests

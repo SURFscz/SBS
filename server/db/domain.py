@@ -678,7 +678,6 @@ class JoinRequest(Base, db.Model):
     metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     message = db.Column("message", db.Text(), nullable=True)
-    reference = db.Column("reference", db.Text(), nullable=True)
     rejection_reason = db.Column("rejection_reason", db.Text(), nullable=True)
     status = db.Column("status", db.String(length=255), nullable=False)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))

@@ -206,16 +206,6 @@ class JoinRequests extends React.Component {
                         {<Chip label={I18n.t(`collaborationRequest.statuses.${joinRequest.status}`)}
                                type={chipTypeForStatus(joinRequest)}/>}
                     </div>
-                    {joinRequest.reference && <InputField name={I18n.t("joinRequest.reference")}
-                                                          value={joinRequest.reference}
-                                                          disabled={true}
-                                                          noInput={true}
-                                                          toolTip={I18n.t("joinRequest.referenceTooltip",
-                                                              {
-                                                                  collaboration: collaboration.name,
-                                                                  name: joinRequest.user.name
-                                                              })}/>}
-
                     <InputField name={I18n.t("joinRequest.message")} value={joinRequest.message}
                                 disabled={true}
                                 multiline={true}
