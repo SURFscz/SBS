@@ -15,7 +15,7 @@ def read_file(file_name: str) -> str:
         with open(file) as f:
             return f.read()
     else:
-        raise BadRequest()
+        raise BadRequest(f"Can't read file: {file_name}")
 
 
 def dt_now() -> datetime:
