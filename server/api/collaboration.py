@@ -118,7 +118,8 @@ def collaboration_by_identifier():
 
     collaboration = Collaboration.query \
         .options(selectinload(Collaboration.groups)) \
-        .options(selectinload(Collaboration.collaboration_memberships)) \
+        .options(selectinload(Collaboration.services)) \
+        .options(selectinload(Collaboration.organisation).selectinload(Organisation.services)) \
         .filter(Collaboration.identifier == identifier) \
         .one()
 
