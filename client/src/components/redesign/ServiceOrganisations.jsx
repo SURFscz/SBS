@@ -255,7 +255,7 @@ class ServiceOrganisations extends React.Component {
         const availableOrganisations = service.allow_restricted_orgs ? organisations : organisations.filter(org => !org.services_restricted);
         const columns = [
             {
-                nonSortable: false,
+                nonSortable: true,
                 key: "permissions",
                 header: I18n.t("models.serviceOrganisations.options.header"),
                 mapper: org => this.permissionOptions(org, service, connectionSettingValue, serviceAdmin)

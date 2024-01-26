@@ -352,6 +352,16 @@ def external_invitation(external_identifier):
     return res, 200
 
 
+@invitations_api.route("/v1/<external_identifier>", methods=["DELETE"], strict_slashes=False)
+@swag_from("../swagger/public/paths/delete_invitation_by_identifier.yml")
+@json_endpoint
+def delete_external_invitation(external_identifier):
+    confirm_external_api_call()
+    invitation = Invitation.query.filter(Invitation.external_identifier == external_identifier).one()
+    db.session.delete(invitation)
+    return None, 204
+
+
 @invitations_api.route("/v1/invitations/<co_identifier>", strict_slashes=False)
 @swag_from("../swagger/public/paths/get_open_invitations.yml")
 @json_endpoint
