@@ -43,7 +43,7 @@ class AboutCollaboration extends React.Component {
 
     render() {
         const {collaboration, user, isJoinRequest} = this.props;
-        const services = isJoinRequest ? [] : removeDuplicates(collaboration.services.concat(collaboration.organisation.services), "id");
+        const services = removeDuplicates(collaboration.services.concat(collaboration.organisation.services), "id");
         const {collaboration_memberships} = collaboration
         const showMembers = !isJoinRequest;
         let memberships = isJoinRequest ? [] : collaboration_memberships
@@ -63,10 +63,10 @@ class AboutCollaboration extends React.Component {
                                              user={user}
                                              key={service.id}
                                              collaboration={collaboration}
-                                             ActionButton={!isEmpty(service.uri) &&
+                                             ActionButton={(!isEmpty(service.uri) && !isJoinRequest) &&
                                                  <Button txt={I18n.t("service.launch")}
                                                          onClick={this.openServiceUri(service, collaboration, user)}/>}
-                                             tokenAction={enabledServiceToken && this.openTokens}
+                                             tokenAction={(enabledServiceToken && !isJoinRequest) && this.openTokens}
                                 />
                             )}
 
@@ -139,7 +139,7 @@ class AboutCollaboration extends React.Component {
 
                 {isJoinRequest && <div className="members">
                     <div className="members-header join-request">
-                        <p>{I18n.t("models.collaboration.members", {nbr: collaboration_memberships.length})}</p>
+                        <p>{I18n.t("models.collaboration.members", {nbr: collaboration.collaboration_memberships_count})}</p>
                         <p>{I18n.t("models.collaboration.discloseNoMemberInformationJoinRequest")}</p>
                     </div>
                 </div>}

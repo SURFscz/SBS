@@ -369,7 +369,7 @@ class CollaborationDetail extends React.Component {
                 this.getJoinRequestsTab(collaboration),] :
             [this.getAboutTab(collaboration, showMemberView, isJoinRequest),
                 this.getMembersTab(collaboration, showMemberView, isJoinRequest),
-                this.getGroupsTab(collaboration, showMemberView, isJoinRequest),];
+                this.getGroupsTab(collaboration, showMemberView, isJoinRequest)];
         this.addUserTokenTab(userTokens, services, isJoinRequest, tabs, collaboration);
 
         return tabs.filter(tab => tab !== null);
@@ -397,6 +397,9 @@ class CollaborationDetail extends React.Component {
     }
 
     getMembersTab = (collaboration, showMemberView, isJoinRequest = false) => {
+        if (isJoinRequest) {
+            return null;
+        }
         const expiredInvitations = (collaboration.invitations || []).some(inv => isInvitationExpired(inv));
         return (<div key="members" name="members"
                      label={I18n.t("home.tabs.members")}
@@ -410,6 +413,9 @@ class CollaborationDetail extends React.Component {
     }
 
     getGroupsTab = (collaboration, showMemberView, isJoinRequest = false) => {
+        if (isJoinRequest) {
+            return null;
+        }
         return (<div key="groups" name="groups"
                      label={I18n.t("home.tabs.groups", {count: (collaboration.groups || []).length})}
                      readOnly={isJoinRequest}
@@ -559,7 +565,7 @@ class CollaborationDetail extends React.Component {
     }
 
     getMemberIconListItem = collaboration => {
-        const memberCount = collaboration.collaboration_memberships.length;
+        const memberCount = collaboration.collaboration_memberships_count;
         const groupCount = collaboration.groups.length;
         return (
             {
@@ -749,7 +755,7 @@ class CollaborationDetail extends React.Component {
     }
 
     getMembershipStatus = (collaboration, user) => {
-        if (!user || !collaboration) {
+        if (!user || !collaboration || isEmpty(collaboration.collaboration_memberships)) {
             return null;
         }
         const membership = collaboration.collaboration_memberships.find(cm => cm.user_id === user.id);
