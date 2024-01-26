@@ -691,11 +691,11 @@ const nl = {
         explanation: "Schrijf je motivatie om lid te worden van samenwerking <strong>{{name}}</strong>.",
         title: "Verzoek tot lidmaatschap van {{name}}",
         alreadyMember: "Je bent reeds lid van {{name}}",
-        motivation: "Motivatie om lid te worden van {{name}}?",
-        motivationPlaceholder: "Omschrijf je motivatie om lid te worden zodat een beheerder je verzoek kan honoreren.",
+        motivation: "Je reden om lid te worden van {{name}}?",
+        motivationPlaceholder: "Omschrijf de reden om lid te worden zodat een beheerder je verzoek kan honoreren.",
         policyConfirmation: "{{collaboration}} heeft een AUP waar je <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{aup}}\"'>hier</a> meer over kan lezen.",
         feedback: {
-            info: "Je verzoek is verzonden naar de beheerder van <strong>{{name}}</strong> die je aanvraag zal beoordelen. De beslissing wordt je per e-mail meegedeeld",
+            info: "Je verzoek is verzonden naar de beheerders van <strong>{{name}}</strong> die je aanvraag zullen beoordelen. De beslissing wordt je per e-mail meegedeeld.",
         },
     },
     profile: {
@@ -1349,6 +1349,10 @@ const nl = {
         rejectionReason: "Voeg de reden voor de afwijzing toe",
         rejectionReasonLabel: "Reden voor afwijzing",
         rejectionReasonNote: "Let op dat de reden wordt opgenomen in de e-mail naar de aanvrager",
+        why: "Waarom wil je lid worden van deze samenwerking?",
+        invited: "Ik ben uitgenodigd om lid te worden",
+        projectMember: "Ik ben lid van dit project",
+        other: "Anders, gaarne uitleggen",
         flash: {
             declined: "Verzoek voor lidmaatschap van samenwerking {{name}} is afgewezen.",
             accepted: "Verzoek voor lidmaatschap van samenwerking {{name}} is goedgekeurd.",

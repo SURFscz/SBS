@@ -2,13 +2,12 @@ import React from "react";
 
 import I18n from "../locale/I18n";
 import "./JoinRequestDialog.scss";
-import Button from "./Button";
 import InputField from "./InputField";
 import {isEmpty} from "../utils/Utils";
 import {joinRequestForCollaboration} from "../api";
-import {ReactComponent as InformationIcon} from "../icons/informational.svg";
+import {Modal} from "@surfnet/sds";
+import RadioButtonGroup from "./redesign/RadioButtonGroup";
 import DOMPurify from "dompurify";
-import {AlertType, Modal} from "@surfnet/sds";
 
 export default class JoinRequestDialog extends React.Component {
 
@@ -16,13 +15,16 @@ export default class JoinRequestDialog extends React.Component {
         super(props, context);
         this.state = {
             motivation: "",
+            reason: "invited",
             submitted: false,
         }
     }
 
     submit = () => {
-        const {collaboration,} = this.props;
-        joinRequestForCollaboration({...this.state, collaborationId: collaboration.id})
+        const {collaboration} = this.props;
+        const {reason, motivation} = this.state;
+        const motivationValue = reason === "other" ? motivation : I18n.t(`joinRequest.${reason}`);
+        joinRequestForCollaboration({motivation: motivationValue, collaborationId: collaboration.id})
             .then(() => this.setState({submitted: true}));
     }
 
@@ -31,66 +33,46 @@ export default class JoinRequestDialog extends React.Component {
         refresh(() => setTimeout(() => this.props.history.push("/home/joinrequests"), 75));
     }
 
-    renderForm = (collaboration, motivation) => {
-        return (
-            <div>
-                <InputField name={I18n.t("registration.motivation", {name: collaboration.name})}
-                            value={motivation}
-                            multiline={true}
-                            placeholder={I18n.t("registration.motivationPlaceholder")}
-                            onChange={e => this.setState({motivation: e.target.value})}/>
-            </div>
-        );
-    }
-
-    renderFeedback = collaboration => {
-        return (
-            <div>
-                <section className="explanation informational">
-                    <InformationIcon/>
-                    <span dangerouslySetInnerHTML={{
-                        __html: DOMPurify.sanitize(I18n.t("registration.feedback.info", {
-                            name: collaboration.name
-                        }))
-                    }}/>
-                </section>
-                <section className="actions">
-                    <Button txt={I18n.t("confirmationDialog.ok")}
-                            onClick={this.gotoHome}/>
-                </section>
-            </div>
-        )
-            ;
-    }
-
-    content = (submitted, collaboration, motivation) => {
+    content = (submitted, collaboration, motivation, reason) => {
         return (
             <div className="join-request-form">
                 {!submitted &&
-                this.renderForm(collaboration, motivation, close)}
+                    <div>
+                        <RadioButtonGroup name={"reason"}
+                                          label={I18n.t("joinRequest.why")}
+                                          value={reason}
+                                          values={["invited", "projectMember", "other"]}
+                                          onChange={value => this.setState({reason: value})}
+                                          labelResolver={label => I18n.t(`joinRequest.${label}`)}/>
+                        {reason === "other" &&
+                            <InputField name={I18n.t("registration.motivation", {name: collaboration.name})}
+                                        value={motivation}
+                                        multiline={true}
+                                        placeholder={I18n.t("registration.motivationPlaceholder")}
+                                        onChange={e => this.setState({motivation: e.target.value})}/>}
+                    </div>}
+                {submitted && <div>
+                    <span dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("registration.feedback.info", {name: collaboration.name}))}}/>
+                </div>}
             </div>
         );
     }
 
     render() {
         const {collaboration, isOpen = false, close} = this.props;
-        const {motivation, submitted} = this.state;
+        const {motivation, submitted, reason} = this.state;
         if (!isOpen) {
             return null;
         }
-        const subTitle = submitted ? I18n.t("registration.feedback.info", {name: collaboration.name}) :
-            I18n.t("registration.explanation", {name: collaboration.name});
         return (
             <Modal
                 confirm={submitted ? this.gotoHome : this.submit}
                 cancel={submitted ? null : close}
-                alertType={AlertType.Info}
-                subTitle={subTitle}
-                children={this.content(submitted, collaboration, motivation)}
+                children={this.content(submitted, collaboration, motivation, reason)}
                 title={I18n.t("registration.title", {name: collaboration.name})}
                 cancelButtonLabel={submitted ? null : I18n.t("forms.cancel")}
                 confirmationButtonLabel={submitted ? I18n.t("confirmationDialog.ok") : I18n.t("forms.request")}
-                confirmDisabled={isEmpty(motivation)}
+                confirmDisabled={isEmpty(motivation) && reason === "other"}
                 question={null}/>
         );
     }
