@@ -691,11 +691,11 @@ const en = {
         explanation: "Please fill in your motivation for joining collaboration <strong>{{name}}</strong>.",
         title: "Request membership of {{name}}",
         alreadyMember: "You are already a member of {{name}}",
-        motivation: "Your motivation",
-        motivationPlaceholder: "Describe your motivation to join in order for an admin to grant you access.",
+        motivation: "Your reason",
+        motivationPlaceholder: "Describe your reason to join in order for an admin to grant you access.",
         policyConfirmation: "{{collaboration}} has an AUP which you can read (more about) at <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{aup}}\"'>here</a>.",
         feedback: {
-            info: "Your request has been sent to the collaboration manager of <strong>{{name}}</strong> who will review your application. Their decision will be communicated to you by email",
+            info: "Your request has been sent to the collaboration managers of <strong>{{name}}</strong> who will review your application. Their decision will be communicated to you by email.",
         },
     },
     profile: {
@@ -1348,6 +1348,10 @@ const en = {
         rejectionReason: "Please enter the reason to decline this join request",
         rejectionReasonLabel: "Reason for declination",
         rejectionReasonNote: "Note that the reason is included in the email to the requester",
+        why: "Why do you want to join this collaboration?",
+        invited: "I was invited to apply",
+        projectMember: "I am a member of this project",
+        other: "Other, please explain",
         flash: {
             declined: "Join request for collaboration {{name}} was denied.",
             accepted: "Join request for collaboration {{name}} was accepted.",
