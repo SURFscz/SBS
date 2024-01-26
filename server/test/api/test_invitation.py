@@ -278,10 +278,12 @@ class TestInvitation(AbstractTest):
         self.assertTrue("Invalid group identifier: nope" in res["message"])
 
     def test_accept_with_existing_join_request(self):
-        self.assertEqual(1, JoinRequest.query.filter(JoinRequest.hash == co_ai_computing_join_request_peter_hash).count())
+        self.assertEqual(1,
+                         JoinRequest.query.filter(JoinRequest.hash == co_ai_computing_join_request_peter_hash).count())
         self.login("urn:peter")
         self.put("/api/invitations/accept", body={"hash": invitation_hash_curious}, with_basic_auth=False)
-        self.assertEqual(0, JoinRequest.query.filter(JoinRequest.hash == co_ai_computing_join_request_peter_hash).count())
+        self.assertEqual(0,
+                         JoinRequest.query.filter(JoinRequest.hash == co_ai_computing_join_request_peter_hash).count())
 
     def test_open_invites_api(self):
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
@@ -290,3 +292,24 @@ class TestInvitation(AbstractTest):
                        with_basic_auth=False)
         self.assertEqual(1, len(res))
         self.assertEqual(STATUS_OPEN, res[0]["status"])
+
+    def test_delete_external_invitation(self):
+        res = self.put("/api/invitations/v1/collaboration_invites",
+                       body={
+                           "short_name": co_ai_computing_short_name,
+                           "intended_role": "bogus",
+                           "invitation_expiry_date": (int(time.time()) * 1000) + 60 * 60 * 25 * 15,
+                           "invites": ["joe@test.com"],
+                           "groups": [group_ai_researchers_short_name, group_ai_dev_identifier]
+                       },
+                       headers={"Authorization": f"Bearer {unihard_secret}"},
+                       with_basic_auth=False)
+        invitation_id = res[0]["invitation_id"]
+        invitation = Invitation.query.filter(Invitation.external_identifier == invitation_id).one()
+        self.assertIsNotNone(invitation)
+
+        self.delete(f"/api/invitations/v1/{invitation_id}",
+                    headers={"Authorization": f"Bearer {unihard_secret}"},
+                    with_basic_auth=False)
+        invitation = Invitation.query.filter(Invitation.external_identifier == invitation_id).first()
+        self.assertIsNone(invitation)
