@@ -351,7 +351,7 @@ class ServiceAdmins extends React.Component {
             return <span className="member-role">{I18n.t(`organisation.${entity.intended_role}`)}</span>;
         }
         const serviceAdmin = isUserServiceAdmin(currentUser, service);
-        const enabled = serviceAdmin && !entity.invite;
+        const enabled = (serviceAdmin || currentUser.admin) && !entity.invite;
         return (
             <Select
                 value={this.roles.find(option => option.value === entity.role)}
