@@ -11,7 +11,7 @@
     .mod-inner-not-found {
         margin: 0 auto;
         display: flex;
-    flex-direction: column;
+        flex-direction: column;
 
         @media (max-width: $compact-medium) {
             margin: 0 10px;
@@ -20,11 +20,11 @@
     }
 
     svg {
-        margin-top: 25px;
+        margin: 25px auto;
         width: 480px;
         height: auto;
         @media (max-width: $compact-medium) {
-        width: 90vw;
+            width: 90vw;
         }
     }
 

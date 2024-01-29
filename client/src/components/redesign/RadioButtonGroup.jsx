@@ -1,6 +1,6 @@
 import React from "react";
 import "./RadioButton.scss";
-import {RadioOptions} from "@surfnet/sds";
+import {RadioOptions, RadioOptionsOrientation} from "@surfnet/sds";
 
 export default function RadioButtonGroup({
                                              label,
@@ -10,7 +10,8 @@ export default function RadioButtonGroup({
                                              tooltip,
                                              values,
                                              labelResolver,
-                                             disabled = false
+                                             disabled = false,
+                                        horizontal=true
                                          }) {
 
     const internalOnChange = e => {
@@ -23,6 +24,7 @@ export default function RadioButtonGroup({
                          value={value}
                          name={name}
                          labels={values}
+                         orientation={horizontal ? RadioOptionsOrientation.row : RadioOptionsOrientation.column}
                          isMultiple={true}
                          labelResolver={labelResolver}
                          tooltip={tooltip}
