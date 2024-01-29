@@ -41,6 +41,7 @@ export default class JoinRequestDialog extends React.Component {
                         <RadioButtonGroup name={"reason"}
                                           label={I18n.t("joinRequest.why")}
                                           value={reason}
+                                          horizontal={false}
                                           values={["invited", "projectMember", "other"]}
                                           onChange={value => this.setState({reason: value})}
                                           labelResolver={label => I18n.t(`joinRequest.${label}`)}/>
