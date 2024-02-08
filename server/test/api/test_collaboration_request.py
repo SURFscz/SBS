@@ -47,7 +47,8 @@ class TestCollaborationRequest(AbstractTest):
             self.assertEqual("new_collaboratio", collaboration.short_name)
             mail_msg = outbox[0]
             organisation = self.find_entity_by_name(Organisation, unihard_name)
-            self.assertEqual(f"New collaboration {collaboration.name} created in {organisation.name} (local)", mail_msg.subject)
+            self.assertEqual(f"New collaboration {collaboration.name} created in {organisation.name} (local)",
+                             mail_msg.subject)
             self.assertTrue("automatically approve collaboration requests" in mail_msg.html)
 
     def test_request_collaboration_collaboration_creation_allowed_entitlement(self):
@@ -69,7 +70,8 @@ class TestCollaborationRequest(AbstractTest):
             self.assertEqual("new_collaboratio", collaboration.short_name)
             mail_msg = outbox[0]
             organisation = self.find_entity_by_name(Organisation, unifra_name)
-            self.assertEqual(f"New collaboration {collaboration.name} created in {organisation.name} (local)", mail_msg.subject)
+            self.assertEqual(f"New collaboration {collaboration.name} created in {organisation.name} (local)",
+                             mail_msg.subject)
 
     def test_request_collaboration_no_schachome(self):
         self.login("urn:user_suspend_warning", schac_home_organisation=None)
@@ -106,13 +108,13 @@ class TestCollaborationRequest(AbstractTest):
 
         self.login("urn:john")
         self.put(f"/api/collaboration_requests/approve/{collaboration_request_id}",
-                       body={
-                           "name": res["name"],
-                           "logo": res["logo"],
-                           "description": "new_collaboration",
-                           "short_name": res["short_name"],
-                           "organisation_id": res["organisation_id"]
-                       }, with_basic_auth=False)
+                 body={
+                     "name": res["name"],
+                     "logo": res["logo"],
+                     "description": "new_collaboration",
+                     "short_name": res["short_name"],
+                     "organisation_id": res["organisation_id"]
+                 }, with_basic_auth=False)
         collaboration_request = self.find_entity_by_name(CollaborationRequest, collaboration_request_name)
         raw_logo = collaboration_request.raw_logo()
         self.assertFalse(raw_logo.startswith("http"))
@@ -134,7 +136,7 @@ class TestCollaborationRequest(AbstractTest):
 
     def test_delete(self):
         collaboration_request = self.find_entity_by_name(CollaborationRequest, collaboration_request_name)
-        self.login("urn:harry")
+        self.login("urn:john")
         self.delete("/api/collaboration_requests", primary_key=collaboration_request.id, with_basic_auth=False,
                     response_status_code=400)
 
@@ -142,7 +144,7 @@ class TestCollaborationRequest(AbstractTest):
         pre_count = CollaborationRequest.query.count()
         collaboration_request = self.find_entity_by_name(CollaborationRequest, collaboration_request_name)
         collaboration_request_id = collaboration_request.id
-        self.login("urn:harry")
+        self.login("urn:john")
         self.put(f"/api/collaboration_requests/approve/{collaboration_request_id}",
                  body={
                      "name": collaboration_request.name,
@@ -152,3 +154,39 @@ class TestCollaborationRequest(AbstractTest):
                  }, with_basic_auth=False)
         self.delete("/api/collaboration_requests", primary_key=collaboration_request_id, with_basic_auth=False)
         self.assertEqual(pre_count - 1, CollaborationRequest.query.count())
+
+    def test_request_collaboration_limited_recipients(self):
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
+        organisation.collaboration_creation_allowed = False
+        self.save_entity(organisation)
+        self.login("urn:james", schac_home_organisation_unihar)
+        data = {
+            "name": "New Collaboration",
+            "short_name": "new_collaboration_short",
+            "message": "pretty please",
+            "organisation_id": organisation.id
+        }
+        with self.app.mail.record_messages() as outbox:
+            self.post("/api/collaboration_requests", body=data, with_basic_auth=False)
+            mail_msg = outbox[0]
+            # harry is not a recipient because he has a unit
+            self.assertEqual(["john@example.org", "mary@example.org"], sorted(mail_msg.recipients))
+
+    def test_collaboration_request_approve_not_allowed(self):
+        collaboration_request = self.find_entity_by_name(CollaborationRequest, collaboration_request_name)
+        self.login("urn:harry")
+        self.put(f"/api/collaboration_requests/approve/{collaboration_request.id}",
+                 body={}, with_basic_auth=False, response_status_code=403)
+
+    def test_collaboration_request_by_id_not_allowed(self):
+        collaboration_request = self.find_entity_by_name(CollaborationRequest, collaboration_request_name)
+        collaboration_request_id = collaboration_request.id
+        self.login("urn:harry")
+        self.get(f"/api/collaboration_requests/{collaboration_request_id}",
+                 with_basic_auth=False, response_status_code=403)
+
+    def test_delete_not_allowed(self):
+        collaboration_request = self.find_entity_by_name(CollaborationRequest, collaboration_request_name)
+        self.login("urn:harry")
+        self.delete("/api/collaboration_requests", primary_key=collaboration_request.id, with_basic_auth=False,
+                    response_status_code=403)
