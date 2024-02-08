@@ -10,10 +10,10 @@ from server.api.base import json_endpoint, STATUS_OPEN, STATUS_APPROVED, STATUS_
 from server.api.collaboration import assign_global_urn_to_collaboration, do_save_collaboration
 from server.api.unit import validate_units
 from server.auth.security import current_user_id, current_user_name, \
-    confirm_organisation_admin_or_manager
+    confirm_organisation_admin_or_manager, confirm_write_access
 from server.db.defaults import cleanse_short_name, STATUS_ACTIVE
 from server.db.domain import User, Organisation, CollaborationRequest, Collaboration, CollaborationMembership, db, \
-    SchacHomeOrganisation
+    SchacHomeOrganisation, OrganisationMembership
 from server.db.logo_mixin import logo_from_cache
 from server.db.models import save, delete
 from server.mail import mail_collaboration_request, mail_accepted_declined_collaboration_request, \
@@ -23,18 +23,36 @@ from server.scim.events import broadcast_collaboration_changed
 collaboration_request_api = Blueprint("collaboration_request_api", __name__, url_prefix="/api/collaboration_requests")
 
 
+def membership_allowed(membership: OrganisationMembership, co_units) -> bool:
+    if membership.role == "admin" or not membership.units:
+        return True
+    manager_unit_identifiers = [unit.id for unit in membership.units]
+    return bool([identifier for identifier in manager_unit_identifiers if identifier in co_units])
+
+
+def current_member_unit_allowed(organisation_id, units):
+    user_id = current_user_id()
+    membership = OrganisationMembership.query \
+        .filter(OrganisationMembership.user_id == user_id) \
+        .filter(OrganisationMembership.organisation_id == organisation_id) \
+        .one()
+    return membership_allowed(membership, [unit.id for unit in units])
+
+
 @collaboration_request_api.route("/<collaboration_request_id>", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def collaboration_request_by_id(collaboration_request_id):
-    res = CollaborationRequest.query \
+    collaboration_request = CollaborationRequest.query \
         .join(CollaborationRequest.organisation) \
         .join(CollaborationRequest.requester) \
         .options(contains_eager(CollaborationRequest.organisation)) \
         .options(contains_eager(CollaborationRequest.requester)) \
         .filter(CollaborationRequest.id == collaboration_request_id) \
         .one()
-    confirm_organisation_admin_or_manager(res.organisation_id)
-    return res, 200
+
+    organisation_id = collaboration_request.organisation_id
+    confirm_write_access(organisation_id, collaboration_request.units, override_func=current_member_unit_allowed)
+    return collaboration_request, 200
 
 
 @collaboration_request_api.route("/", methods=["POST"], strict_slashes=False)
@@ -58,7 +76,10 @@ def request_collaboration():
     auto_create = organisation.collaboration_creation_allowed
     entitlement = current_app.app_config.collaboration_creation_allowed_entitlement
     auto_aff = user.entitlement and entitlement in user.entitlement
-    recipients = list(map(lambda membership: membership.user.email, organisation.organisation_memberships))
+    co_units = [int(unit["id"]) for unit in data.get("units", [])]
+
+    allowed_members = [m for m in organisation.organisation_memberships if membership_allowed(m, co_units)]
+    recipients = [member.user.email for member in allowed_members]
 
     emit_socket(f"organisation_{organisation.id}", include_current_user_id=True)
 
@@ -99,7 +120,8 @@ def request_collaboration():
 @json_endpoint
 def delete_request_collaboration(collaboration_request_id):
     collaboration_request = db.session.get(CollaborationRequest, collaboration_request_id)
-    confirm_organisation_admin_or_manager(collaboration_request.organisation_id)
+    organisation_id = collaboration_request.organisation_id
+    confirm_write_access(organisation_id, collaboration_request.units, override_func=current_member_unit_allowed)
     if collaboration_request.status == STATUS_OPEN:
         raise BadRequest("Collaboration request with status 'open' can not be deleted")
 
@@ -113,7 +135,9 @@ def delete_request_collaboration(collaboration_request_id):
 @json_endpoint
 def approve_request(collaboration_request_id):
     collaboration_request = db.session.get(CollaborationRequest, collaboration_request_id)
-    confirm_organisation_admin_or_manager(collaboration_request.organisation_id)
+    organisation_id = collaboration_request.organisation_id
+    confirm_write_access(organisation_id, collaboration_request.units, override_func=current_member_unit_allowed)
+
     client_data = current_request.get_json()
     attributes = ["name", "short_name", "description", "organisation_id", "accepted_user_policy", "logo",
                   "website_url", "logo"]
