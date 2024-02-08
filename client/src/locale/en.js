@@ -1191,6 +1191,8 @@ const en = {
         collaborationCreationAllowedTooltip: "Allows users from your organisation to create a collaboration without requiring approval from an organisation admin or manager",
         serviceConnectionRequiresApproval: "Service connection request must be approved by the Organisation admin",
         serviceConnectionRequiresApprovalTooltip: "If checked then service connection requests must first be approved by an Organisation admin",
+        accepted_user_policyPlaceholder: "The Acceptable Use Policy (AUP) of the organisation",
+        accepted_user_policyTooltip: "An acceptable use policy (AUP) is a document stipulating constraints and practices that a user must agree to for access to a service or system.",
         collaborationCreationLabel: "Users from these domains",
         collaborationCreationIsAllowed: "Can create collaborations",
         collaborationCreationNotAllowed: "Can request collaborations",

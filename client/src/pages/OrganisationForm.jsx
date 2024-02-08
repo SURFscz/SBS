@@ -436,10 +436,10 @@ class OrganisationForm extends React.Component {
 
                         <InputField value={accepted_user_policy}
                                     onChange={e => this.setState({accepted_user_policy: e.target.value})}
-                                    placeholder={I18n.t("service.accepted_user_policyPlaceholder")}
+                                    placeholder={I18n.t("organisation.accepted_user_policyPlaceholder")}
                                     externalLink={true}
                                     error={invalidInputs.accepted_user_policy}
-                                    toolTip={I18n.t("service.accepted_user_policyTooltip")}
+                                    toolTip={I18n.t("organisation.accepted_user_policyTooltip")}
                                     name={I18n.t("service.accepted_user_policy")}
                                     onBlur={this.validateURI("accepted_user_policy")}/>
                         {invalidInputs["accepted_user_policy"] &&
