@@ -1192,7 +1192,7 @@ const en = {
         serviceConnectionRequiresApproval: "Service connection request must be approved by the Organisation admin",
         serviceConnectionRequiresApprovalTooltip: "If checked then service connection requests must first be approved by an Organisation admin",
         accepted_user_policyPlaceholder: "The Acceptable Use Policy (AUP) of the organisation",
-        accepted_user_policyTooltip: "An acceptable use policy (AUP) is a document stipulating constraints and practices that a user must agree to for access to a service or system.",
+        accepted_user_policyTooltip: "Users outside your organisation must accept this AUP before joining one of this organisation's collaboration for the first time.",
         collaborationCreationLabel: "Users from these domains",
         collaborationCreationIsAllowed: "Can create collaborations",
         collaborationCreationNotAllowed: "Can request collaborations",
