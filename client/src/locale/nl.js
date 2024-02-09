@@ -1192,7 +1192,7 @@ const nl = {
         serviceConnectionRequiresApproval: "Verzoek voor dienst koppeling moet worden goedgekeurd door de organisatie beheerder",
         serviceConnectionRequiresApprovalTooltip: "Indien geselecteerd, dan moet een verzoek voor een dienst koppeling eerst worden goedgekeurd door de organisatie beheerder",
         accepted_user_policyPlaceholder: "De acceptable use policy (AUP) van de organisatie.",
-        accepted_user_policyTooltip: "Een acceptable use policy (AUP) is een document waarin staat wat een gebruiker wel en niet mag/hoort te doen en waarmee de gebruiker akkoord moet gaan om toegang te krijgen tot een dienst of systeem.",
+        accepted_user_policyTooltip: "Gebruikers van buiten de organsatie moeten deze AUP accepteren wanneer ze voor het eerste lid worden van een samenwerking van deze organisatie.",
         collaborationCreationLabel: "Gebruikers van deze domeinen",
         collaborationCreationIsAllowed: "Kunnen samenwerkingen aanmaken",
         collaborationCreationNotAllowed: "Kunnen samenwerkingen aanvragen",
