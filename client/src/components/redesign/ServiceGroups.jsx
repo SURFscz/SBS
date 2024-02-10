@@ -8,15 +8,16 @@ import {
 } from "../../api";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
 import {ReactComponent as ThrashIcon} from "../../icons/trash_new.svg";
+import {ReactComponent as PencilIcon} from "@surfnet/sds/icons/functional-icons/edit.svg";
+import {ReactComponent as BinIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 import "./ServiceGroups.scss";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "../../locale/I18n";
 import Button from "../Button";
-import {setFlash} from "../../utils/Flash";
+import {clearFlash, setFlash} from "../../utils/Flash";
 import ConfirmationDialog from "../ConfirmationDialog";
 import Entities from "./Entities";
 import SpinnerField from "./SpinnerField";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import InputField from "../InputField";
 import CheckBox from "../CheckBox";
 import moment from "moment";
@@ -24,7 +25,9 @@ import {sanitizeShortName} from "../../validations/regExps";
 import {AppStore} from "../../stores/AppStore";
 import ErrorIndicator from "./ErrorIndicator";
 import {isUserServiceAdmin} from "../../utils/UserRole";
-import {Tooltip} from "@surfnet/sds";
+import {IconButton, Tooltip} from "@surfnet/sds";
+import {CopyToClipboard} from "react-copy-to-clipboard";
+import ClipBoardCopy from "./ClipBoardCopy";
 
 class ServiceGroups extends React.Component {
 
@@ -266,29 +269,59 @@ class ServiceGroups extends React.Component {
         const queryParam = `name=${encodeURIComponent(I18n.t("breadcrumb.group", {name: selectedGroup.name}))}&back=${encodeURIComponent(window.location.pathname)}`;
         const children = (
             <div className={"service-group-details"}>
-                <section className="header">
-                    <h2>{selectedGroup.name}</h2>
-                    {mayCreateGroups && <div className="header-actions">
-                        <Button onClick={() => this.setState(this.newGroupState(selectedGroup))}
-                                small={true}
-                                txt={I18n.t("models.groups.edit")}/>
-                        <span className="history"
-                              onClick={() => this.props.history.push(`/audit-logs/service_groups/${selectedGroup.id}?${queryParam}`)}>
-                            <FontAwesomeIcon icon="history"/>{I18n.t("home.history")}
-                        </span>
-                    </div>}
-
-                </section>
-                <p className={`description`}>{selectedGroup.description}</p>
-                <div className="org-attributes-container">
-                    <div className="org-attributes">
-                        <span>{I18n.t("models.groups.autoProvisioning")}</span>
-                        <span>{I18n.t(`models.groups.${selectedGroup.auto_provision_members ? "on" : "off"}`)}</span>
-                    </div>
-                    <div className="org-attributes">
-                        <span>{I18n.t("groups.short_name")}</span>
-                        <span>{selectedGroup.short_name}</span>
-                    </div>
+                <div className="group-details-header">
+                    <section className="header">
+                        <h1>{selectedGroup.name}</h1>
+                        {mayCreateGroups &&
+                            <div className="header-actions">
+                                <IconButton onClick={() => this.setState(this.newGroupState(selectedGroup))}>
+                                    <Tooltip
+                                        tip={I18n.t("models.groups.edit")}
+                                        children={<PencilIcon/>}
+                                        standalone={true}/>
+                                </IconButton>
+                                <IconButton onClick={this.delete}>
+                                    <Tooltip
+                                        tip={I18n.t("groups.delete")}
+                                        children={<BinIcon/>}
+                                        standalone={true}/>
+                                </IconButton>
+                            </div>}
+                    </section>
+                    <p className={`description ${mayCreateGroups ? "" : "no-header-actions"}`}>{selectedGroup.description}</p>
+                    <section className="group-meta-data">
+                        <div className="meta-data-item">
+                            <span className="item-label">
+                                {I18n.t("collaboration.shortName")}
+                            </span>
+                            <span className="contains-copy group-urn">
+                                <CopyToClipboard text={selectedGroup.short_name}>
+                                    <span className={"copy-link"} onClick={e => {
+                                        const me = e.target;
+                                        me.classList.add("copied");
+                                        setTimeout(() => me.classList.remove("copied"), 750);
+                                    }}>
+                                {selectedGroup.short_name}
+                            </span>
+                            </CopyToClipboard>
+                            <ClipBoardCopy transparentBackground={true} txt={selectedGroup.short_name}/>
+                            </span>
+                        </div>
+                        <div className="meta-data-item">
+                            <span className="item-label">
+                                {I18n.t("models.groups.autoProvisioning")}
+                            </span>
+                            <span>{I18n.t(`models.groups.${selectedGroup.auto_provision_members ? "on" : "off"}`)}</span>
+                        </div>
+                        <a className="history"
+                           onClick={e => {
+                               stopEvent(e);
+                               clearFlash();
+                               this.props.history.push(`/audit-logs/service_groups/${selectedGroup.id}?${queryParam}`)
+                           }}>
+                            {I18n.t("home.historyLink")}
+                        </a>
+                    </section>
                 </div>
             </div>
         );
@@ -439,11 +472,7 @@ class ServiceGroups extends React.Component {
                         service_id: service.id
                     }),
                     I18n.t("groups.flash.updated", {name: name}),
-                    () => this.setState({
-                        editGroup: false,
-                        createNewGroup: false
-                    }));
-                this.cancelSideScreen();
+                    () => this.gotoGroup({id: selectedGroupId, name: name})());
             }
         } else {
             window.scrollTo(0, 0);
@@ -545,8 +574,6 @@ class ServiceGroups extends React.Component {
                 header: "",
                 mapper: group => this.getActionIcons(group)
             });
-
-
         }
 
         const groupActions = this.groupActionButtons(selectedGroups);
