@@ -262,7 +262,7 @@ class SecondFactorAuthentication extends React.Component {
 
     renderLostCode = (respondents, message) => {
         const submitDisabled = respondents.filter(respondent => respondent.selected).length === 0;
-        const groupedRespondents = Object.groupBy(respondents, ({unit}) => unit)
+        const groupedRespondents = Object.groupBy(respondents, ({unit}) => unit);
         return (
             <div className="authenticator-problems-container">
                 <h1>{I18n.t("mfa.lost.title")}</h1>
@@ -299,11 +299,13 @@ class SecondFactorAuthentication extends React.Component {
                             <div className="select-respondents">
                                 <h3>{I18n.t("mfa.lost.respondent")}</h3>
                                 <div>
-                                    <p className="unit">{respondents[0].unit}</p>
+                                    <p className="unit">
+                                        {isEmpty(respondents[0].unit) ? I18n.t("mfa.lost.organisationNamePlatformAdmin") : respondents[0].unit}
+                                    </p>
                                     <CheckBox name={`respondent`}
                                               value={true}
                                               readOnly={true}
-                                              info={respondents[0].name}/>
+                                              info={isEmpty(respondents[0].name) ? I18n.t("mfa.lost.displayNamePlatformAdmin") : respondents[0].name}/>
                                 </div>
                             </div>}
                         <InputField value={message}

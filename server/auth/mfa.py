@@ -90,7 +90,8 @@ def eligible_users_to_reset_token(user):
 
     user_info = [{"name": u["user"].name, "email": u["user"].email, "unit": u["unit"]} for u in user_information]
     if not user_info:
-        user_info.append({"name": "SRAM support", "email": current_app.app_config.mail.info_email, "unit": "admin"})
+        # Empty strings will be translated client side
+        user_info.append({"name": "", "email": current_app.app_config.mail.info_email, "unit": ""})
 
     return user_info
 

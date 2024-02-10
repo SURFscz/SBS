@@ -2155,6 +2155,8 @@ const nl = {
             info4: "Ze zullen je een <strong>reset token</strong> sturen",
             info5: "Met dat token kan je je tweefactorauthenticatie opnieuw instellen",
             select: "Selecteer aan wie de reset te vragen:",
+            organisationNamePlatformAdmin: "",
+            displayNamePlatformAdmin: "SRAM support",
             respondent: "Je verzoek wordt verzonden naar:",
             message: "Bericht voor de beheerder(s)",
             sendMail: "Vraag reset aan",
