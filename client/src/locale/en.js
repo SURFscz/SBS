@@ -2154,6 +2154,8 @@ const en = {
             info4: "They will send you a <strong>reset token</strong>",
             info5: "With that token you can reconfigure your two factor authentication",
             select: "Select who to ask for a reset token:",
+            organisationNamePlatformAdmin: "",
+            displayNamePlatformAdmin: "SRAM support",
             respondent: "Your request will be sent to:",
             message: "Message to the admin(s)",
             sendMail: "Request a reset token",
