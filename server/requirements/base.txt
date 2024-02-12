@@ -15,7 +15,7 @@ paho-mqtt==2.0.0
 python2-secrets==1.0.5
 pytz==2024.1
 requests==2.31.0
-uWSGI==2.0.23
+uWSGI==2.0.24
 urllib3==2.2.0
 websockets==12.0
 redis==5.0.1
