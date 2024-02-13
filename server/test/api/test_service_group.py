@@ -2,8 +2,7 @@ from flask import jsonify
 
 from server.db.domain import Service, ServiceGroup, Collaboration
 from server.test.abstract_test import AbstractTest
-from server.test.seed import service_mail_name, service_group_mail_name, service_cloud_name, service_group_wiki_name1, \
-    co_research_name
+from server.test.seed import service_mail_name, service_group_mail_name, service_cloud_name, co_research_name
 
 
 class TestServiceGroup(AbstractTest):
@@ -87,6 +86,6 @@ class TestServiceGroup(AbstractTest):
 
     def test_delete_service_group(self):
         self.login("urn:service_admin")
-        service_group_id = self.find_entity_by_name(ServiceGroup, service_group_wiki_name1).id
+        service_group_id = self.find_entity_by_name(ServiceGroup, service_group_mail_name).id
         self.delete("/api/servicegroups", primary_key=service_group_id, with_basic_auth=False)
         self.delete("/api/servicegroups", primary_key=service_group_id, response_status_code=404)

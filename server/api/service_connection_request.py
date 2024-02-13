@@ -16,22 +16,6 @@ service_connection_request_api = Blueprint("service_connection_request_api", __n
                                            url_prefix="/api/service_connection_requests")
 
 
-def _service_connection_request_query():
-    return ServiceConnectionRequest.query \
-        .join(ServiceConnectionRequest.service) \
-        .join(ServiceConnectionRequest.collaboration) \
-        .join(ServiceConnectionRequest.requester) \
-        .options(contains_eager(ServiceConnectionRequest.service)) \
-        .options(contains_eager(ServiceConnectionRequest.collaboration)) \
-        .options(contains_eager(ServiceConnectionRequest.requester))
-
-
-def _service_connection_request_by_hash(hash_value):
-    return _service_connection_request_query() \
-        .filter(ServiceConnectionRequest.hash == hash_value) \
-        .one()
-
-
 def _service_connection_request_pending_organisation_approval(service_connection_request: ServiceConnectionRequest):
     service = service_connection_request.service
     collaboration = service_connection_request.collaboration

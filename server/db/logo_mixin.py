@@ -6,7 +6,7 @@ from werkzeug.exceptions import NotFound, BadRequest
 
 uuid4_reg_exp = re.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$")
 
-login_mixins_classes = ["collaborations", "collaboration_requests", "organisations", "services"]
+login_mixins_classes = ["collaborations", "collaboration_requests", "organisations", "services", "service_requests"]
 
 
 def _redis_key(object_type, sid):

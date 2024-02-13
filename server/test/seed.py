@@ -102,6 +102,7 @@ service_connection_request_ssh_hash = generate_token()
 service_connection_request_wireless_hash = generate_token()
 
 service_request_gpt_name = "GPT"
+service_request_gpt_uuid4 = str(uuid.uuid4())
 
 service_invitation_cloud_hash = generate_token()
 service_invitation_wiki_expired_hash = generate_token()
@@ -356,7 +357,8 @@ def seed(db, app_config, skip_seed=False):
                       uri="https://storage.net", support_email="support@storage.net",
                       pam_web_sso_enabled=True, security_email="sec@org.nl",
                       accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org",
-                      scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret")
+                      scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret",
+                      token_enabled=False, token_validity_days=0)
     wiki = Service(entity_id=service_wiki_entity_id, name=service_wiki_name, description="No more wiki's please",
                    uri="https://servicedesk.surf.nl/wiki/",
                    override_access_allowed_all_connections=False, automatic_connection_allowed=False,
@@ -721,7 +723,7 @@ def seed(db, app_config, skip_seed=False):
 
     service_request_gpt = ServiceRequest(name=service_request_gpt_name, abbreviation="gpt",
                                          description="We need more AI", logo=read_image("computing.png"),
-                                         uuid4=str(uuid.uuid4()), providing_organisation="Cloudy",
+                                         uuid4=service_request_gpt_uuid4, providing_organisation="Cloudy",
                                          uri_info="https://login.org", uri="https://website.org",
                                          contact_email="contact@gpt.org", support_email="support@gpt.org",
                                          security_email="security@gpt.org", privacy_policy="https://privacy_policy.org",

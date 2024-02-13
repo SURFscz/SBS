@@ -1,7 +1,7 @@
 from server.db.defaults import SERVICE_TOKEN_SCIM, SERVICE_TOKEN_INTROSPECTION, SERVICE_TOKEN_PAM
 from server.db.domain import ServiceToken, Service
 from server.test.abstract_test import AbstractTest
-from server.test.seed import service_network_name, service_mail_name
+from server.test.seed import service_network_name, service_mail_name, service_storage_name
 
 
 class TestServiceToken(AbstractTest):
@@ -31,6 +31,23 @@ class TestServiceToken(AbstractTest):
         self.delete("/api/service_tokens", primary_key=service_token["id"])
         post_count = ServiceToken.query.count()
         self.assertEqual(pre_count, post_count)
+
+    def test_service_token_flow_autoenable(self):
+        secret = self.get("/api/service_tokens")["value"]
+
+        service = self.find_entity_by_name(Service, service_storage_name)
+        self.assertFalse(service.token_enabled)
+        self.assertEqual(0, service.token_validity_days)
+
+        self.login("urn:john")
+        body = {"service_id": service.id, "hashed_token": secret, "description": "Test",
+                "token_type": SERVICE_TOKEN_INTROSPECTION}
+        self.post("/api/service_tokens", body=body, with_basic_auth=False)
+
+        # service should have been updated
+        service = self.find_entity_by_name(Service, service_storage_name)
+        self.assertTrue(service.token_enabled)
+        self.assertEqual(1, service.token_validity_days)
 
     def test_service_token_tampering(self):
         service = self.find_entity_by_name(Service, service_network_name)

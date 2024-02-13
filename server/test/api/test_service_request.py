@@ -1,7 +1,7 @@
 from server.db.db import db
 from server.db.domain import ServiceRequest, ServiceMembership, Service
 from server.test.abstract_test import AbstractTest
-from server.test.seed import service_request_gpt_name
+from server.test.seed import service_request_gpt_name, service_request_gpt_uuid4
 
 
 class TestServiceRequest(AbstractTest):
@@ -40,7 +40,9 @@ class TestServiceRequest(AbstractTest):
             "comment": "pretty please",
             "providing_organisation": "cloudy",
             "entity_id": "https://entity_id.com",
-            "privacy_policy": "https://privacy_policy.org"
+            "privacy_policy": "https://privacy_policy.org",
+            "logo": f"https://sbs/api/images/service_requests/{service_request_gpt_uuid4}",
+            "id": "invalid_id"
         }
         with self.app.mail.record_messages() as outbox:
             self.login("urn:john")

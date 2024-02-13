@@ -301,7 +301,16 @@ class TestUser(AbstractTest):
         self.assertEqual(0, count)
 
     def test_error(self):
-        self.post("/api/users/error", body={"error": "403"}, with_basic_auth=False, response_status_code=401)
+        self.post("/api/users/error", body={"status": 403}, with_basic_auth=False, response_status_code=401)
+
+        self.post("/api/users/error", body={"status": 403}, with_basic_auth=True)
+
+        self.login("urn:betty")
+        res = self.post("/api/users/error", body={"status": 429}, with_basic_auth=False)
+        self.assertDictEqual({}, res)
+
+        res = self.post("/api/users/error", body={"status": 500}, with_basic_auth=False)
+        self.assertDictEqual({}, res)
 
     def test_csrf(self):
         try:
