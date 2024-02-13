@@ -1,6 +1,6 @@
 from server.db.domain import Service, User, ServiceMembership
 from server.test.abstract_test import AbstractTest
-from server.test.seed import service_cloud_name, user_james_name
+from server.test.seed import service_cloud_name, user_james_name, service_wiki_name
 
 
 class TestServiceMembership(AbstractTest):
@@ -41,3 +41,23 @@ class TestServiceMembership(AbstractTest):
             .filter(ServiceMembership.service_id == service_id) \
             .one()
         self.assertEqual("admin", service_membership.role)
+
+    def test_update_service_membership(self):
+        self.login("urn:john")
+        service_id = self.find_entity_by_name(Service, service_wiki_name).id
+        user_id = User.query.filter(User.uid == "urn:service_admin").one().id
+
+        res = self.put("/api/service_memberships",
+                       body={"serviceId": service_id, "userId": user_id, "role": "manager"},
+                       with_basic_auth=False)
+        self.assertEqual(service_id, res["service_id"])
+        self.assertEqual(user_id, res["user_id"])
+        self.assertEqual("manager", res["role"])
+
+        service_membership = ServiceMembership \
+            .query \
+            .join(ServiceMembership.user) \
+            .filter(User.uid == "urn:service_admin") \
+            .filter(ServiceMembership.service_id == service_id) \
+            .one()
+        self.assertEqual("manager", service_membership.role)

@@ -138,3 +138,17 @@ class TestSystem(AbstractTest):
     def test_statistics(self):
         res = self.get("/api/system/statistics")
         self.assertEqual(8, len(res))
+
+    def test_parse_metadata(self):
+        res = self.get("/api/system/parse_metadata")
+        self.assertIn("entity_ids", res)
+        self.assertEqual(2, len(res["entity_ids"]))
+        self.assertIn("schac_home_organizations", res)
+        self.assertEqual(4, len(res["schac_home_organizations"]))
+
+    def test_sweep(self):
+        res = self.get("/api/system/sweep")
+        self.assertEqual(1, len(res))
+        self.assertIn("services", res)
+        self.assertEqual(1, len(res["services"]))
+        self.assertEqual("Network Services", res["services"][0]["name"])
