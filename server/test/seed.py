@@ -152,7 +152,6 @@ def persist_instance(db, *objs):
 
 def clean_db(db):
     tables = reversed(metadata.sorted_tables)
-    # tables = reversed(metadata.sort_tables_and_constraints)
     for table in tables:
         db.session.execute(table.delete())
     db.session.execute(text("DELETE FROM audit_logs"))
