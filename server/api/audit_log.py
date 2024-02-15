@@ -106,8 +106,8 @@ def info(query_id, collection_name):
     def access_collaboration_allowed(audit_log):
         if audit_log.target_type != "collaborations":
             return True
-        co = Collaboration.query.filter(Collaboration.id == audit_log.target_id).one()
-        return has_org_manager_unit_access(current_user_id(), co)
+        co = Collaboration.query.filter(Collaboration.id == audit_log.target_id).first()
+        return co and has_org_manager_unit_access(current_user_id(), co)
 
     if collection_name == "organisations":
         audit_logs = list(filter(access_collaboration_allowed, audit_logs))
