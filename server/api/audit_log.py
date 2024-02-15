@@ -6,7 +6,7 @@ from server.api.base import json_endpoint, query_param
 from server.auth.security import current_user_id, confirm_allow_impersonation, confirm_write_access, \
     is_organisation_admin_or_manager, is_collaboration_admin, has_org_manager_unit_access, is_application_admin, \
     is_organisation_admin
-from server.db.audit_mixin import AuditLog, ACTION_DELETE
+from server.db.audit_mixin import AuditLog
 from server.db.domain import User, Organisation, Collaboration, Service, Group
 
 audit_log_api = Blueprint("audit_log_api", __name__, url_prefix="/api/audit_logs")
