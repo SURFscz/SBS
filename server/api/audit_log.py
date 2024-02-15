@@ -4,8 +4,9 @@ from sqlalchemy.orm import load_only
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import current_user_id, confirm_allow_impersonation, confirm_write_access, \
-    is_organisation_admin_or_manager, is_collaboration_admin, has_org_manager_unit_access
-from server.db.audit_mixin import AuditLog
+    is_organisation_admin_or_manager, is_collaboration_admin, has_org_manager_unit_access, is_application_admin, \
+    is_organisation_admin
+from server.db.audit_mixin import AuditLog, ACTION_DELETE
 from server.db.domain import User, Organisation, Collaboration, Service, Group
 
 audit_log_api = Blueprint("audit_log_api", __name__, url_prefix="/api/audit_logs")
@@ -106,10 +107,12 @@ def info(query_id, collection_name):
     def access_collaboration_allowed(audit_log):
         if audit_log.target_type != "collaborations":
             return True
+        if audit_log.parent_name == "organisations" and is_organisation_admin(audit_log.parent_id):
+            return True
         co = Collaboration.query.filter(Collaboration.id == audit_log.target_id).first()
         return co and has_org_manager_unit_access(current_user_id(), co)
 
-    if collection_name == "organisations":
+    if collection_name == "organisations" and not is_application_admin():
         audit_logs = list(filter(access_collaboration_allowed, audit_logs))
 
     res = _add_references(audit_logs)
