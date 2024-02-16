@@ -98,8 +98,10 @@ class Home extends React.Component {
                     hasAnyRoles = false;
             }
             if (isUserServiceAdmin(user) && !user.admin) {
-                if (!isEmpty(user.organisation_from_user_schac_home) && !tabs.some(t => t.key === "collaborations")) {
-                    tabs.push(this.getEmptyCollaborationsTab())
+                if (nbrCollaborations > 0) {
+                    tabs.push(this.getCollaborationsTab());
+                } else if (!isEmpty(user.organisation_from_user_schac_home)) {
+                    tabs.push(this.getEmptyCollaborationsTab());
                 }
                 if (nbrServices === 1 && tabs.length === 0 && !redirect) {
                     setTimeout(() => this.props.history.push(`/services/${user.service_memberships[0].service_id}`), 50);
