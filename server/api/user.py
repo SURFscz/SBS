@@ -729,7 +729,7 @@ def error():
     user_id = user.get("id")
     if not user_id:
         return {}, 201
-    js_dump = json.dumps(request_json, default=str)
+    js_dump = json.dumps(request_json, indent=4, default=str)
     ctx_logger("user").exception(js_dump)
     mail_conf = current_app.app_config.mail
     if mail_conf.send_js_exceptions and not os.environ.get("TESTING"):
