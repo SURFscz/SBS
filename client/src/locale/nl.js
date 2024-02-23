@@ -1239,7 +1239,6 @@ const nl = {
             tooltip: "Dit bericht wordt getoond aan gebruikers van de organisatie wanneer ze een samenewerking aanvragen of aanmaken",
             template: "Hoi!,\n\n" +
                 "Je kunt een samenwerking **aanmaken/aanvragen**. Omschrijf waarom je deze samenwerking wilt gaan gebruiken. We kunnen contact met je opnemen over je aanvraag.",
-
             tabs: {
                 write: "Markdown",
                 preview: "Voorbeeld"
