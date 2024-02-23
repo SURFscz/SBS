@@ -215,7 +215,7 @@ const nl = {
             moreResults: "Er zijn nog meer zoekresultaten, verfijn je zoekterm.",
             noResults: "Geen gebruikers gevonden...",
             noResultsInvitations: "Geen gebruikers of uitnodigingen gevonden...",
-            activity: "User-historie",
+            activity: "Gebruikersgeschiedenis",
             loading: "Geduld, alle historie wordt geladen....",
             showSsh: "Toon",
             ssh: {
@@ -1741,7 +1741,7 @@ const nl = {
         resultsLimited: "Meer resultaten dan we kunnen tonen; pas de zoekopdracht aan."
     },
     history: {
-        changes: "Historie",
+        changes: "Geschiedenis",
         detail: "Detail",
         actions: {
             "1": "Nieuwe",
@@ -1749,7 +1749,7 @@ const nl = {
             "3": "Verwijderd"
         },
         overview: "{{action}} {{collection}}{{name}}",
-        none: "Geen historie",
+        none: "Geen geschiedenis weer te geven",
         key: "Attribuut",
         oldValue: "Oude waarde",
         newValue: "Nieuwe waarde",
@@ -1855,7 +1855,7 @@ const nl = {
         invitation_form: "Uitnodigingsdetails",
         invitation_preview: "Uitnodigingspreview",
         form: "Details",
-        history: "Historie"
+        history: "Geschiedenis"
     },
     error_dialog: {
         title: "Onverwachte fout",

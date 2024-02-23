@@ -1748,7 +1748,7 @@ const en = {
             "3": "Deleted"
         },
         overview: "{{action}} {{collection}}{{name}}",
-        none: "No history",
+        none: "No history to display",
         key: "Attribute",
         oldValue: "Old value",
         newValue: "New value",
