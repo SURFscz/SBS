@@ -70,7 +70,7 @@ class UnitHeader extends React.Component {
                                 {obj.name && <h1>{obj.name}</h1>}
                                 {obj.organisation &&
                                     <span className="name">
-                                        {`${obj.organisation.name}${isEmpty(obj.units) ? "" : " - " + splitListSemantically(obj.units.map(unit => unit.name), I18n.t("service.compliancySeparator"))}`}
+                                        {`${obj.organisation.name}${isEmpty(obj.units) ? "" : " – " + splitListSemantically(obj.units.map(unit => unit.name), I18n.t("service.compliancySeparator"))}`}
                                     </span>}
                                 {!isEmpty(labels) &&
                                     <div className="labels">
