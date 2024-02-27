@@ -192,12 +192,13 @@ class TestServiceConnectionRequest(AbstractTest):
             # CO admin not allowed to deny
             self.login("urn:sarah")
             self.put("/api/service_connection_requests/deny",
-                     body={"id": request_id},
+                     body={"id": request_id, "rejection_reason": "Because..."},
                      response_status_code=403)
 
             # Service admin is allowed to deny
             self.login("urn:betty")
-            self.put("/api/service_connection_requests/deny", body={"id": request_id})
+            self.put("/api/service_connection_requests/deny",
+                     body={"id": request_id, "rejection_reason": "Because..."})
             post_services_count = len(self.find_entity_by_name(Collaboration, co_research_name).services)
 
             self.assertEqual(pre_services_count, post_services_count)
