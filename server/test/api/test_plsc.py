@@ -85,6 +85,11 @@ class TestPlsc(AbstractTest):
         group_membership = ai_researchers["collaboration_memberships"][0]
         self.assertIsNotNone(group_membership["user_id"])
 
+        org_harderwijk = [org for org in res["organisations"] if org["name"] == unihard_name][0]
+        self.assertListEqual(["Research", "Support"], sorted(org_harderwijk["units"]))
+        co_ai_computing = [co for co in org_harderwijk["collaborations"] if co["name"] == co_ai_computing_name][0]
+        self.assertListEqual(["Support"], co_ai_computing["units"])
+
     def test_ip_ranges_fetch(self):
         res = self.get("/api/plsc/ip_ranges")
         self.assertTrue("service_ipranges" in res)
