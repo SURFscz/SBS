@@ -7,7 +7,7 @@
         "@fortawesome/free-solid-svg-icons": "^6.5.1",
         "@fortawesome/react-fontawesome": "^0.2.0",
         "@surfnet/sds": "^0.0.101",
-        "core-js": "^3.35.1",
+        "core-js": "^3.36.0",
         "dompurify": "^3.0.9",
         "es6-promise": "^4.2.8",
         "events": "^3.2.0",
