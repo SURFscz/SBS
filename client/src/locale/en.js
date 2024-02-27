@@ -571,7 +571,7 @@ const en = {
         },
         serviceConnectionRequests: {
             backToServiceConnectionRequests: "Back to all connection requests",
-            title: "Outstanding connection requests",
+            title: "Connection requests",
             searchPlaceHolder: "Search for connection requests...",
             noEntities: "No service connection requests were found",
             edit: "Approve / decline",
@@ -1722,9 +1722,11 @@ const en = {
         retract: "Retract",
         approveConfirmation: "Are you sure you want to approve this request?",
         declineConfirmation: "Are you sure you want to decline this request?",
+        deleteConfirmation: "Are you sure you want to delete this request?",
         flash: {
             declined: "Service Connect request for service {{name}} was declined",
             accepted: "Service Connect request for service {{name}} was accepted",
+            deleted: "Service Connect request for service {{name}} was deleted",
             notFound: "This request has already been accepted / declined."
         }
     },

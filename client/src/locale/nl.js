@@ -571,7 +571,7 @@ const nl = {
         },
         serviceConnectionRequests: {
             backToServiceConnectionRequests: "Terug naar alle koppelverzoeken",
-            title: "Openstaande koppelverzoeken",
+            title: "Koppelverzoeken",
             searchPlaceHolder: "Zoek koppelverzoeken...",
             noEntities: "Geen koppelverzoeken gevonden",
             edit: "Goed- / afkeuren",
@@ -1722,9 +1722,11 @@ const nl = {
         retract: "Intrekken",
         approveConfirmation: "Weet je zeker dat je dit verzoek wil goedkeuren?",
         declineConfirmation: "Weet je zeker dat je dit verzoek wil afwijzen?",
+        deleteConfirmation: "Weet je zeker dat je dit verzoek wil verwijderen?",
         flash: {
             declined: "Dienstkoppelverzoek voor {{name}} is afgewezen",
             accepted: "Dienstkoppelverzoek voor {{name}} is geaccepteerd",
+            deleted: "Dienstkoppelverzoek voor {{name}} is verwijderd",
             notFound: "Dit verzoek is reeds geaccepteerd/afgewezen."
         }
     },

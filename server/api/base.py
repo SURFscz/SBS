@@ -26,10 +26,6 @@ from server.mail import mail_error
 
 base_api = Blueprint("base_api", __name__, url_prefix="/")
 
-STATUS_OPEN = "open"
-STATUS_DENIED = "denied"
-STATUS_APPROVED = "approved"
-
 _audit_trail_methods = ["PUT", "POST", "DELETE"]
 
 

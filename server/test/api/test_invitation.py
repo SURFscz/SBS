@@ -2,7 +2,7 @@ import datetime
 import time
 import uuid
 
-from server.api.base import STATUS_OPEN
+from server.db.defaults import STATUS_OPEN
 from server.db.db import db
 from server.db.domain import Invitation, CollaborationMembership, User, Collaboration, Organisation, ServiceAup, \
     JoinRequest

@@ -33,6 +33,7 @@ class Services extends React.Component {
         promise.then(services => {
             services.forEach(s => s.connection_requests_count = s.service_connection_requests
                 .filter(scr => !scr.pending_organisation_approval)
+                .filter(scr => scr.status === "open")
                 .length)
             this.setState({services: services, loading: false})
         });

@@ -2,7 +2,7 @@ import uuid
 
 from sqlalchemy.orm import joinedload
 
-from server.api.base import STATUS_APPROVED, STATUS_DENIED
+from server.db.defaults import STATUS_DENIED, STATUS_APPROVED
 from server.db.db import db
 from server.db.domain import JoinRequest, User, Collaboration
 from server.test.abstract_test import AbstractTest

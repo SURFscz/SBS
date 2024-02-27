@@ -455,7 +455,9 @@ class CollaborationDetail extends React.Component {
 
     getServicesTab = (collaboration, user) => {
         const usedServices = removeDuplicates(collaboration.services.concat(collaboration.organisation.services), "id");
-        const openServiceConnectionRequests = (collaboration.service_connection_requests || []).length;
+        const openServiceConnectionRequests = (collaboration.service_connection_requests || [])
+            .filter(r => r.status === "open")
+            .length;
         return (<div key="services" name="services"
                      label={I18n.t("home.tabs.coServices", {count: usedServices.length})}
                      icon={<ServicesIcon/>}
