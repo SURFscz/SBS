@@ -80,6 +80,14 @@ def internal_sync():
         rs = conn.execute(text("SELECT ct.collaboration_id, t.tag_value FROM collaboration_tags ct "
                                "INNER JOIN tags t ON t.id = ct.tag_id"))
         tags = [{"collaboration_id": row[0], "tag_value": row[1]} for row in rs]
+
+        rs = conn.execute(text("SELECT name, organisation_id from units"))
+        units = [{"name": row[0], "organisation_id": row[1]} for row in rs]
+
+        rs = conn.execute(text("SELECT cu.collaboration_id, u.name from collaboration_units cu "
+                               "inner join units u on u.id = cu.unit_id"))
+        collaboration_units = [{"collaboration_id": row[0], "name": row[1]} for row in rs]
+
         for coll in collaborations:
             collaboration_id = coll["id"]
             coll["groups"] = _find_by_id(groups, "collaboration_id", collaboration_id)
@@ -96,6 +104,8 @@ def internal_sync():
             coll["collaboration_memberships"] = _find_by_id(collaboration_memberships, "collaboration_id",
                                                             collaboration_id)
             coll["tags"] = [tag["tag_value"] for tag in tags if tag["collaboration_id"] == collaboration_id]
+            coll["units"] = [u["name"] for u in collaboration_units if u["collaboration_id"] == collaboration_id]
+
         rs = conn.execute(text("SELECT id, name, identifier, short_name, uuid4 FROM organisations"))
         for row in rs:
             organisation_id = row[0]
@@ -106,6 +116,7 @@ def internal_sync():
                 "schac_home_organisations": _find_by_id(schac_home_organisations, "organisation_id", organisation_id),
                 "organisation_memberships": _find_by_id(organisation_memberships, "organisation_id", organisation_id),
                 "collaborations": _find_by_id(collaborations, "organisation_id", organisation_id),
+                "units": [u["name"] for u in units if u["organisation_id"] == organisation_id],
                 "services": _identifiers_only(
                     _find_by_identifiers(services, "id", [si["service_id"] for si in service_identifiers]))
             })
