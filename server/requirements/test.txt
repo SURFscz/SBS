@@ -4,7 +4,7 @@ flake8==7.0.0
 flask-testing==0.8.1
 flask-webtest==0.1.4
 hbmqtt2==0.9.7
-pytest==8.0.0
+pytest==8.0.2
 pytest-cov==4.1.0
 pytest-xdist==3.5.0
 responses==0.24.1
