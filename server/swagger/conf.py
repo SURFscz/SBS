@@ -34,7 +34,8 @@ SWAGGER_TEMPLATE = {
         },
         "Service": {
             "type": "apiKey", "name": "Authorization", "in": "header",
-            "description": "Authorization header using the bearer scheme with PAM web login, SCIM client and User introspection. "
+            "description": "Authorization header using the bearer scheme with PAM web login, "
+                           "SCIM client and User introspection. "
                            "Example: \"Authorization: Bearer {token}\""
         }
     }
