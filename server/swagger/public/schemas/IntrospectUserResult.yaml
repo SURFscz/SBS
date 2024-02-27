@@ -1,0 +1,71 @@
+---
+type: object
+properties:
+  active:
+    type: boolean
+    example: true
+  status:
+    type: string
+    enum:
+      - "token-unknown"
+      - "token-expired"
+      - "user-suspended"
+      - "token-not-connected"
+      - "token-valid"
+  client_id:
+    type: string
+    example: "https://service.cloud.com"
+  sub:
+    type: string
+    example: "7e28ebe36633f958e75a15a803aa6f4a7f0ab8ac@acc.sram.eduteams.org"
+  username:
+    type: string
+    example: "jdoe11"
+  iat:
+    type: number
+    example: 1709043044
+  exp:
+    type: number
+    example: 1709043044
+  aud:
+    type: string
+    example: "https://service.cloud.com"
+  iss:
+    type: string
+    example: "https://test.sram.surf.nl/"
+  user:
+    type: object
+    properties:
+      name:
+        type: string
+        example: "John Doe"
+      given_name:
+        type: string
+        example: "John"
+      family_name:
+        type: string
+        example: "Doe"
+      email:
+        type: string
+        example: "rdoe@uniharderwijk.nl"
+      entitlement:
+        type: string
+        example: "employee"
+      sub:
+        type: string
+        example: "7e28ebe36633f958e75a15a803aa6f4a7f0ab8ac@acc.sram.eduteams.org"
+      voperson_external_id:
+        type: string
+        example: "jdoe@example.com"
+      voperson_external_affiliation:
+        type: string
+        example: "student"
+      uid:
+        type: string
+        example: "7e28ebe36633f958e75a15a803aa6f4a7f0ab8ac@acc.sram.eduteams.org"
+      eduperson_entitlement:
+        type: array
+        description: "All the public SSH keys"
+        items:
+          type: string
+          example: "ssh-rsa AAAAB3NzaC1yc2EAAA..."

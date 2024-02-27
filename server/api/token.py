@@ -1,5 +1,6 @@
 import datetime
 
+from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app
 
 from server.api.base import json_endpoint
@@ -17,6 +18,7 @@ token_api = Blueprint("token_api", __name__, url_prefix="/api/tokens")
 
 
 @token_api.route("/introspect", methods=["POST"], strict_slashes=False)
+@swag_from("../swagger/public/paths/token_introspect.yml")
 @json_endpoint
 def introspect():
     service = validate_service_token("token_enabled", SERVICE_TOKEN_INTROSPECTION)

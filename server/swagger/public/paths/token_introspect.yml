@@ -1,0 +1,35 @@
+summary: "Token introspect."
+description: "User information retrieved by token."
+
+tags:
+  - "User token introspection"
+
+consumes:
+  - "application/x-www-form-urlencoded"
+
+produces:
+  - "application/json"
+
+security:
+  - Service: [ 'Authorization' ]
+
+parameters:
+  - name: Authorization
+    in: header
+    description: Bearer service token
+    required: true
+    schema:
+      type: string
+      example: Bearer Am4Hp7GBO2lMseskWHRmEtE3DWD-VxZZ3qwMkNPv6qZ8
+  - name: token
+    in: formData
+    description: Hashed user token
+    required: true
+    type: string
+    example: 'Aanl9A87WkaHKahT-7xvV7P6isFDfJQXjuEo9PE7tDbA'
+
+responses:
+  200:
+    description: Userinfo
+    schema:
+      $ref: '/swagger/schemas/IntrospectUserResult.yaml'
