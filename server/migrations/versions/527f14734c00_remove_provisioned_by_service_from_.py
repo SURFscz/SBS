@@ -26,7 +26,8 @@ def upgrade():
         index = description.find("- ")
         if index > 0:
             new_description = description[index + 2:]
-            conn.execute(text(f"UPDATE `groups` SET `description` = '{new_description}' WHERE id = {identifier}"))
+            conn.execute(text("UPDATE `groups` SET `description` = :descr WHERE id = :id"),
+                         {"id": identifier, "descr": new_description})
 
 
 def downgrade():
