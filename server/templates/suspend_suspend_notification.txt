@@ -11,7 +11,8 @@ If you want to keep using the services available through SURF Research Access Ma
 simply login using the link below or by going to {{ base_url }}/login.
 If you want to delete your profile right away, please go to {{ base_url }}/profile?delete=true.
 
-If you have any questions, please let us know by replying to this email.
+If you have any questions, please let us know by sending a mail to {{ support_address }}.
+
 Kind regards,
 SURF Research Access Management support
 {% endblock %}

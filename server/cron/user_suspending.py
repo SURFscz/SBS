@@ -44,7 +44,8 @@ def create_suspend_notification(user, retention, app, is_warning, is_suspension)
                                "suspend_notification": suspend_notification,
                                "suspension_date": format_date_time(suspension_date),
                                "deletion_date": format_date_time(deletion_date),
-                               "user": user
+                               "user": user,
+                               "support_address": app.app_config.mail.info_email,
                                },
                               [user.email], is_warning, is_suspension)
 
