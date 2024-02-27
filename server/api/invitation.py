@@ -9,13 +9,13 @@ from sqlalchemy import or_
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict, Forbidden, BadRequest
 
-from server.api.base import json_endpoint, query_param, emit_socket, STATUS_OPEN
+from server.api.base import json_endpoint, query_param, emit_socket
 from server.api.service_aups import add_user_aups
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call, \
     confirm_organisation_api_collaboration
 from server.db.activity import update_last_activity_date
-from server.db.defaults import default_expiry_date
+from server.db.defaults import default_expiry_date, STATUS_OPEN
 from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, JoinRequest, Group, \
     OrganisationAup
 from server.db.models import delete

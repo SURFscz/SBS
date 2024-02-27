@@ -7,28 +7,33 @@ table.serviceConnectionRequests {
     thead {
         th {
             &.collaboration__name {
-                width: 25%;
+                width: 20%;
                 padding-left: 15px;
-
-                &.has-service {
-                    width: 40%;
-                }
-            }
-
-            &.service__name {
-                width: 25%;
-            }
-
-            &.requester__name {
-                width: 25%;
 
                 &.has-service {
                     width: 35%;
                 }
             }
 
+            &.service__name {
+                width: 20%;
+            }
+
+            &.requester__name {
+                width: 20%;
+
+                &.has-service {
+                    width: 30%;
+                }
+            }
+
             &.user__schac_home_organisation {
-                width: 25%;
+                width: 15%;
+            }
+
+            &.status {
+                text-align: center;
+                width: 20%;
             }
 
         }
@@ -40,8 +45,32 @@ table.serviceConnectionRequests {
                 padding-left: 15px;
             }
 
+            &.status {
+                text-align: center;
+            }
+
+
         }
     }
+}
+
+.mod-entities {
+
+    .service-connection-request-filter {
+        display: flex;
+        @media (max-width: $compact-medium) {
+            flex-direction: column;
+        }
+
+        .service-connection-request-filter-select {
+            width: 290px;
+            @media (max-width: $compact-medium) {
+                margin: 15px 0;
+            }
+
+        }
+    }
+
 }
 
 .service-connection-requests-details-container {
@@ -79,6 +108,16 @@ table.serviceConnectionRequests {
 
         h1 {
             margin: 1px 0 30px 0;
+        }
+
+        .service-connection-request-header {
+            display: flex;
+            align-items: center;
+
+            button.sds--chips {
+                margin-left: 25px;
+                max-height: 34px;
+            }
         }
 
         display: flex;

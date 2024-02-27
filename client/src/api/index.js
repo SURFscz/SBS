@@ -787,8 +787,9 @@ export function approveServiceConnectionRequest(serviceConnectionRequest) {
     return postPutJson(`/api/service_connection_requests/approve`, {id: serviceConnectionRequest.id}, "put");
 }
 
-export function denyServiceConnectionRequest(serviceConnectionRequest) {
-    return postPutJson(`/api/service_connection_requests/deny`, {id: serviceConnectionRequest.id}, "put");
+export function denyServiceConnectionRequest(serviceConnectionRequest, rejectionReason) {
+    const body = {id: serviceConnectionRequest.id, rejection_reason: rejectionReason};
+    return postPutJson(`/api/service_connection_requests/deny`, body, "put");
 }
 
 export function allServiceConnectionRequests(serviceId) {

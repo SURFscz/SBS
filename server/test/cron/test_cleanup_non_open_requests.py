@@ -1,6 +1,6 @@
 from sqlalchemy import text
 
-from server.api.base import STATUS_DENIED, STATUS_APPROVED
+from server.db.defaults import STATUS_DENIED, STATUS_APPROVED
 from server.cron.cleanup_non_open_requests import cleanup_non_open_requests
 from server.db.db import db
 from server.test.abstract_test import AbstractTest

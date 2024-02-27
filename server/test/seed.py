@@ -5,10 +5,10 @@ import uuid
 
 from sqlalchemy import text
 
-from server.api.collaboration_request import STATUS_OPEN
 from server.auth.secrets import secure_hash, generate_token
 from server.db.audit_mixin import metadata
-from server.db.defaults import default_expiry_date, SERVICE_TOKEN_INTROSPECTION, SERVICE_TOKEN_SCIM, SERVICE_TOKEN_PAM
+from server.db.defaults import default_expiry_date, SERVICE_TOKEN_INTROSPECTION, SERVICE_TOKEN_SCIM, SERVICE_TOKEN_PAM, \
+    STATUS_OPEN
 from server.db.domain import (User, Organisation, OrganisationMembership, Service, Collaboration,
                               CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey,
                               CollaborationRequest, ServiceConnectionRequest, SuspendNotification, Aup,
@@ -698,11 +698,13 @@ def seed(db, app_config, skip_seed=False):
                                                                   hash=service_connection_request_network_hash,
                                                                   requester=admin, collaboration=ai_computing,
                                                                   pending_organisation_approval=False,
+                                                                  status=STATUS_OPEN,
                                                                   service=storage)
     service_connection_request_wiki = ServiceConnectionRequest(message="UFra research needs ssh",
                                                                hash=service_connection_request_ssh_hash,
                                                                requester=sarah, collaboration=uva_research,
                                                                pending_organisation_approval=True,
+                                                               status=STATUS_OPEN,
                                                                service=service_ssh_uva)
     persist_instance(db, service_connection_request_network, service_connection_request_wiki)
 

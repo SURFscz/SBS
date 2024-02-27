@@ -65,6 +65,7 @@ class UsedServices extends React.Component {
             .then(json => {
                 const services = json;
                 const requestedServices = collaboration.service_connection_requests
+                    .filter(r => r.status === "open")
                     .map(r => r.service);
                 const servicesInUse = collaboration.services
                     .concat(collaboration.organisation.services)
@@ -111,17 +112,16 @@ class UsedServices extends React.Component {
 
     getServiceStatus = service => {
         const {collaboration} = this.props;
+        let status = null;
         if (service.usedService && !service.connectionRequest &&
             collaboration.organisation.services.some(s => s.id === service.id)) {
-            service.status = I18n.t("models.services.statuses.active");
+            status = I18n.t("models.services.statuses.active");
         } else if (service.connectionRequest) {
-            service.status = I18n.t("models.services.statuses.pending");
+            status = I18n.t("models.services.statuses.pending");
         } else if (service.usedService) {
-            service.status = service.connectionRequest ? I18n.t("models.services.statuses.active") : ""
-        } else {
-            service.status = null;
+            status = service.connectionRequest ? I18n.t("models.services.statuses.active") : ""
         }
-        return service.status;
+        return status;
 
     }
 
@@ -486,7 +486,7 @@ class UsedServices extends React.Component {
         const {collaboration, user} = this.props;
         let usedServices = collaboration.services.concat(collaboration.organisation.services);
         usedServices = removeDuplicates(usedServices, "id");
-        const serviceConnectionRequests = collaboration.service_connection_requests;
+        const serviceConnectionRequests = collaboration.service_connection_requests.filter(r => r.status === "open");
         serviceConnectionRequests.forEach(req => {
             req.connectionRequest = true;
             req.name = req.service.name;

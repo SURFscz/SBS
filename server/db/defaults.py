@@ -15,6 +15,10 @@ STATUS_ACTIVE = "active"
 STATUS_EXPIRED = "expired"
 STATUS_SUSPENDED = "suspended"
 
+STATUS_OPEN = "open"
+STATUS_DENIED = "denied"
+STATUS_APPROVED = "approved"
+
 SERVICE_TOKEN_INTROSPECTION = "introspection"
 SERVICE_TOKEN_PAM = "pam"
 SERVICE_TOKEN_SCIM = "scim"

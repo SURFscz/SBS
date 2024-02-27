@@ -7,7 +7,7 @@ from sqlalchemy.orm import column_property
 from server.db.audit_mixin import Base, metadata
 from server.db.datetime import TZDateTime
 from server.db.db import db
-from server.db.defaults import STATUS_ACTIVE
+from server.db.defaults import STATUS_ACTIVE, STATUS_OPEN
 from server.db.logo_mixin import LogoMixin
 from server.db.secret_mixin import SecretMixin
 from server.tools import dt_now
@@ -788,6 +788,8 @@ class ServiceConnectionRequest(Base, db.Model):
     service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
     pending_organisation_approval = db.Column("pending_organisation_approval", db.Boolean(), nullable=True,
                                               default=False)
+    status = db.Column("status", db.String(length=255), nullable=False, default=STATUS_OPEN)
+    rejection_reason = db.Column("rejection_reason", db.Text(), nullable=True)
     service = db.relationship("Service", back_populates="service_connection_requests")
     collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
     collaboration = db.relationship("Collaboration", back_populates="service_connection_requests")

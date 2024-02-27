@@ -2,8 +2,8 @@ from flask import Blueprint, request as current_request, current_app
 from sqlalchemy.orm import contains_eager
 from werkzeug.exceptions import Conflict, BadRequest
 
-from server.api.base import json_endpoint, STATUS_DENIED, STATUS_APPROVED, emit_socket
-from server.api.collaboration_request import STATUS_OPEN
+from server.api.base import json_endpoint, emit_socket
+from server.db.defaults import STATUS_OPEN, STATUS_DENIED, STATUS_APPROVED
 from server.api.service_aups import add_user_aups
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, current_user, \

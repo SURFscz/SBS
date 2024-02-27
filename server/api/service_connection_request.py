@@ -3,10 +3,11 @@ from sqlalchemy.orm import contains_eager, load_only
 from werkzeug.exceptions import BadRequest, Forbidden
 
 from server.api.base import json_endpoint, emit_socket
+from server.db.defaults import STATUS_DENIED, STATUS_APPROVED, STATUS_OPEN
 from server.api.collaborations_services import connect_service_collaboration
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_write_access, \
-    is_application_admin, is_organisation_admin, is_service_admin_or_manager
+    is_application_admin, is_organisation_admin, is_service_admin_or_manager, confirm_service_manager
 from server.db.activity import update_last_activity_date
 from server.db.domain import ServiceConnectionRequest, Service, Collaboration, db, User
 from server.db.models import delete
@@ -60,7 +61,8 @@ def _do_send_mail(collaboration, service, service_connection_request, user, pend
 
 
 def _do_service_connection_request(approved):
-    id = int(current_request.get_json().get("id"))
+    json_data = current_request.get_json()
+    id = int(json_data.get("id"))
     service_connection_request = ServiceConnectionRequest.query.filter(ServiceConnectionRequest.id == id).one()
 
     pending_on_org = service_connection_request.pending_organisation_approval
@@ -91,7 +93,12 @@ def _do_service_connection_request(approved):
     emails = [requester.email] if requester.email else [current_app.app_config.mail.beheer_email]
     mail_accepted_declined_service_connection_request(context, service.name, collaboration.name, approved,
                                                       emails)
-    db.session.delete(service_connection_request)
+    service_connection_request.status = STATUS_APPROVED if approved else STATUS_DENIED
+    if not approved:
+        rejection_reason = json_data["rejection_reason"]
+        service_connection_request.rejection_reason = rejection_reason
+
+    db.session.merge(service_connection_request)
 
     emit_socket(f"service_{service.id}", include_current_user_id=True)
     emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
@@ -113,10 +120,13 @@ def service_request_connections_by_service(service_id):
 @json_endpoint
 def delete_service_request_connection(service_connection_request_id):
     service_connection_request = db.session.get(ServiceConnectionRequest, service_connection_request_id)
-
-    confirm_collaboration_admin(service_connection_request.collaboration_id)
-
     service = service_connection_request.service
+
+    # Also service admins are allowed to delete service_connection_requests
+    try:
+        confirm_collaboration_admin(service_connection_request.collaboration_id)
+    except Forbidden:
+        confirm_service_manager(service.id)
 
     emit_socket(f"service_{service.id}")
     emit_socket(f"collaboration_{service_connection_request.collaboration_id}", include_current_user_id=True)
@@ -149,6 +159,7 @@ def request_new_service_connection(collaboration, message, service, user):
     existing_request = ServiceConnectionRequest.query \
         .filter(ServiceConnectionRequest.collaboration_id == collaboration.id) \
         .filter(ServiceConnectionRequest.service_id == service.id) \
+        .filter(ServiceConnectionRequest.status == STATUS_OPEN) \
         .all()
     if existing_request:
         raise BadRequest(f"outstanding_service_connection_request: {service.name} and {collaboration.name}")

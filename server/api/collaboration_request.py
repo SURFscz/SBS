@@ -6,12 +6,12 @@ from munch import munchify
 from sqlalchemy.orm import contains_eager
 from werkzeug.exceptions import BadRequest
 
-from server.api.base import json_endpoint, STATUS_OPEN, STATUS_APPROVED, STATUS_DENIED, emit_socket
+from server.api.base import json_endpoint, emit_socket
 from server.api.collaboration import assign_global_urn_to_collaboration, do_save_collaboration
 from server.api.unit import validate_units
 from server.auth.security import current_user_id, current_user_name, \
     confirm_organisation_admin_or_manager, confirm_write_access
-from server.db.defaults import cleanse_short_name, STATUS_ACTIVE
+from server.db.defaults import cleanse_short_name, STATUS_ACTIVE, STATUS_OPEN, STATUS_DENIED, STATUS_APPROVED
 from server.db.domain import User, Organisation, CollaborationRequest, Collaboration, CollaborationMembership, db, \
     SchacHomeOrganisation, OrganisationMembership
 from server.db.logo_mixin import logo_from_cache
