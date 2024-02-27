@@ -417,6 +417,9 @@ class Unit(Base, db.Model):
 
     audit_log_exclude = True
 
+    def __json__(self):
+        return self.name
+
 
 class Organisation(Base, db.Model, LogoMixin):
     __tablename__ = "organisations"
