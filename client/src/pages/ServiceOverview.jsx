@@ -669,7 +669,7 @@ class ServiceOverview extends React.Component {
             <div className="sweep-results">
                 <p className={sweepSuccess ? "success" : "failure"}>{sweepSuccess ? <CheckIcon/> : <CriticalIcon/>}
                     {I18n.t(`service.sweep.${sweepSuccess ? "success" : "failure"}`,
-                        {url: sweepResults.scim_url})}</p>
+                        {url: sweepResults?.scim_url})}</p>
                 {(!isEmpty(sweepResults) && sweepResults.error) && <div className="response">
                     <p>{I18n.t("service.sweep.response")}</p>
                     <em>{sweepResults.error}</em>
