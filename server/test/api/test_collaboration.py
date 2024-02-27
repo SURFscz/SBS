@@ -1066,3 +1066,23 @@ class TestCollaboration(AbstractTest):
     def test_empty_hint_short_name(self):
         res = self.post("/api/collaborations/hint_short_name", body={"name": "*&^%$$@"}, response_status_code=200)
         self.assertEqual("short_name", res["short_name"])
+
+    def test_api_call_invalid_emails(self):
+        response = self.client.post("/api/collaborations/v1",
+                                    headers={"Authorization": f"Bearer {unihard_secret}"},
+                                    data=json.dumps({
+                                        "name": "new_collaboration",
+                                        "description": "new_collaboration",
+                                        "accepted_user_policy": "https://aup.org",
+                                        "administrators": ["nope", "nada"],
+                                        "administrator": "urn:sarah",
+                                        "short_name": "new_short_name",
+                                        "disable_join_requests": True,
+                                        "disclose_member_information": True,
+                                        "disclose_email_information": True,
+                                        "logo": read_image("robot.png")
+                                    }),
+                                    content_type="application/json")
+        self.assertEqual(400, response.status_code)
+        response_json = response.json
+        self.assertTrue("Invalid emails" in response_json["message"])

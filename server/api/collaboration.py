@@ -13,6 +13,7 @@ from werkzeug.exceptions import BadRequest, Forbidden, MethodNotAllowed, NotFoun
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars, emit_socket
 from server.api.exceptions import APIBadRequest
+from server.api.invitation import email_re
 from server.api.service_group import create_service_groups
 from server.api.unit import validate_units
 from server.auth.secrets import generate_token
@@ -613,6 +614,9 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True, sav
     _validate_collaboration(data, organisation)
 
     administrators = data.get("administrators", [])
+    invalid_emails = [email for email in administrators if not bool(email_re.match(email))]
+    if invalid_emails:
+        raise BadRequest(f"Invalid emails {invalid_emails}")
     message = data.get("message", None)
     tags = data.get("tags", None)
 
