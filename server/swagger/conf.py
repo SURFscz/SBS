@@ -19,7 +19,12 @@ SWAGGER_TEMPLATE = {
         {
             "name": "PAM web login",
             "description": "All endpoints for external services using the PAM web login"
-        }
+        },
+        {
+            "name": "User token introspection",
+            "description": "All endpoints for external services using an Introspect token"
+        },
+
     ],
     "securityDefinitions": {
         "Organisation": {
@@ -29,8 +34,8 @@ SWAGGER_TEMPLATE = {
         },
         "Service": {
             "type": "apiKey", "name": "Authorization", "in": "header",
-            "description": "Authorization header using the bearer scheme with PAM web login and SCIM client. "
-                           "Example: \"Authorization: Bearer {scim_token}\""
+            "description": "Authorization header using the bearer scheme with PAM web login, SCIM client and User introspection. "
+                           "Example: \"Authorization: Bearer {token}\""
         }
     }
 }
