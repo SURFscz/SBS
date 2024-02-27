@@ -23,7 +23,8 @@ relationship_configuration = {
     "groups": ["collaboration_memberships", "invitations"],
     "collaborations": ["services", "tags"],
     "organisations": ["services"],
-    "services": ["allowed_organisations", "service_groups", "automatic_connection_allowed_organisations"]
+    "services": ["allowed_organisations", "service_groups", "automatic_connection_allowed_organisations",
+                 "service_connection_requests"]
 }
 
 
