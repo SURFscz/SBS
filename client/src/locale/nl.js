@@ -2472,7 +2472,7 @@ const nl = {
         neverBeenBeforeTitle: "Ben je hier nog nooit geweest?",
         neverBeenBefore: [
           "Lees wat je met <a href=\"https://surf.nl/sram\" target=\"_blank\" rel=\"noopener noreferrer\">SRAM allemaal kan doen.</a>",
-          "Als iemand je hebt gewezen op <strong>{{serviceName}}</strong>, neem dan contact met hen op om toegang te krijgen tot de juiste samenwerking, of neem contact op met je instelling."
+          "Als iemand je heeft gewezen op <strong>{{serviceName}}</strong>, neem dan contact met hen op om toegang te krijgen tot de juiste samenwerking, of neem contact op met je instelling."
         ],
         ticketInfoTitle: "Sessieinformatie"
     },
