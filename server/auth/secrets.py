@@ -38,12 +38,11 @@ def generate_ldap_password_with_hash():
     return hashed.decode("utf-8"), password
 
 
-def encrypt_secret(encryption_key: str, plain_secret, context: dict) -> str:
+def encrypt_secret(encryption_key: str, plain_secret: str, context: dict) -> str:
     nonce = secrets.token_urlsafe()
     context["plain_secret"] = plain_secret
-    base64_encoded_context = {key: base64.b64encode(str(value).encode()).decode() for (key, value) in context.items()}
     aes_gcm = AESGCM(base64.b64decode(encryption_key))
-    data = json.dumps(base64_encoded_context).encode()
+    data = json.dumps(context).encode()
     encrypted_context = aes_gcm.encrypt(nonce.encode(), data, None)
     return f"{nonce}:{base64.b64encode(encrypted_context).decode()}"
 
@@ -55,9 +54,8 @@ def decrypt_secret(encryption_key: str, encrypted_value: str, context: dict) -> 
     data = base64.b64decode(encrypted_context)
     aes_gcm = AESGCM(base64.b64decode(encryption_key))
     decrypted = aes_gcm.decrypt(nonce.encode(), data, None).decode()
-    base64_context = json.loads(decrypted)
-    decrypted_context = {key: base64.b64decode(value.encode()).decode() for (key, value) in base64_context.items()}
+    original_context = json.loads(decrypted)
     for key, value in context.items():
-        if str(value) != decrypted_context[key]:
-            raise BadRequest(f"Invalid value(={decrypted_context[key]}) for {key}, expected {value}")
-    return decrypted_context["plain_secret"]
+        if value != original_context[key]:
+            raise BadRequest(f"Invalid value(={original_context[key]}) for {key}, expected {value}")
+    return original_context["plain_secret"]

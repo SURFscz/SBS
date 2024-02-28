@@ -1,8 +1,6 @@
 import base64
 import os
 from unittest import TestCase
-from random import randbytes
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 from server.auth.secrets import secure_hash, generate_token, generate_ldap_password_with_hash, decrypt_secret, \
     encrypt_secret
