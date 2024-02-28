@@ -2,6 +2,9 @@ database:
   uri: "mysql+mysqldb://sbs:sbs@127.0.0.1/sbs_test?charset=utf8mb4"
 
 secret_key: secret
+# Must be a base64 encoded key of 128, 192, or 256 bits.
+# Hint: base64.b64encode(AESGCM.generate_key(bit_length=256)).decode()
+encryption_key: 3Kw2sDznh4jSZsShUcsxgfeOkaaKE8TC24OWJ1KWeDs=
 
 # Lifetime of session in minutes (one day is 60 * 24)
 permanent_session_lifetime: 1440
