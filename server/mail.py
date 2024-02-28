@@ -75,7 +75,7 @@ def _now_strf_time():
 
 
 def _do_send_mail(subject, recipients, template, context, preview, working_outside_of_request_context=False, cc=None,
-                  attachment_url=None):
+                  attachment_url=None, bulk_headers=True):
     recipients = recipients if isinstance(recipients, list) else list(
         map(lambda x: x.strip(), recipients.split(",")))
 
@@ -86,15 +86,16 @@ def _do_send_mail(subject, recipients, template, context, preview, working_outsi
     context = {**context, **{"environment": environment}}
     msg_html = render_template(f"{template}.html", **context)
     msg_body = render_template(f"{template}.txt", **context)
+    extra_headers = {
+        "Auto-submitted": "auto-generated",
+        "X-Auto-Response-Suppress": "yes",
+        "Precedence": "bulk"
+    } if bulk_headers else {}
     msg = Message(subject=subject,
                   sender=(mail_ctx.get("sender_name", "SURF"), mail_ctx.get("sender_email", "no-reply@surf.nl")),
                   recipients=recipients,
                   cc=cc,
-                  extra_headers={
-                      "Auto-submitted": "auto-generated",
-                      "X-Auto-Response-Suppress": "yes",
-                      "Precedence": "bulk"
-                  })
+                  extra_headers=extra_headers)
     if attachment_url and not os.environ.get("TESTING"):
         image = attachment_url[attachment_url.rindex('/') + 1:]
         file_name = f"{image}.jpeg"
@@ -356,6 +357,7 @@ def mail_service_request(service_request, context):
         recipients=[mail_cfg.ticket_email],
         template="service_request",
         context=context,
+        bulk_headers=False,
         preview=False
     )
 
@@ -455,6 +457,7 @@ def mail_reset_token(admin_email, user, message):
         recipients=[admin_email],
         template="user_reset_mfa_token",
         context={"user": user, "message": message},
+        bulk_headers=False,
         preview=False
     )
 
