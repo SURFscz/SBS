@@ -1,6 +1,7 @@
 import base64
+import os
 from unittest import TestCase
-
+from random import randbytes
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 from server.auth.secrets import secure_hash, generate_token, generate_ldap_password_with_hash, decrypt_secret, \
@@ -20,7 +21,7 @@ class TestSecret(TestCase):
         self.assertEqual(32, len(password))
 
     def test_encrypt_decrypt_secret(self):
-        encryption_key = base64.b64encode(AESGCM.generate_key(bit_length=256)).decode()
+        encryption_key = base64.b64encode(os.urandom(256 // 8)).decode()
         context = {
             "database_name": "sbs_test",
             "table_name": "services",
