@@ -3,7 +3,8 @@ database:
 
 secret_key: secret
 # Must be a base64 encoded key of 128, 192, or 256 bits.
-# Hint: base64.b64encode(AESGCM.generate_key(bit_length=256)).decode()
+# Hint: base64.b64encode(AESGCM.generate_key(bit_length=256)).decode() or
+#  base64.b64encode(os.urandom(256 // 8)).decode()
 encryption_key: 3Kw2sDznh4jSZsShUcsxgfeOkaaKE8TC24OWJ1KWeDs=
 
 # Lifetime of session in minutes (one day is 60 * 24)

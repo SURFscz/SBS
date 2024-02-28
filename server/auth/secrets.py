@@ -49,11 +49,11 @@ def encrypt_secret(encryption_key: str, plain_secret, context: dict) -> str:
 
 
 def decrypt_secret(encryption_key: str, encrypted_value: str, context: dict) -> str:
-    aes_gcm = AESGCM(base64.b64decode(encryption_key))
     index = encrypted_value.index(':')
     nonce = encrypted_value[0:index]
     encrypted_context = encrypted_value[index + 1:]
     data = base64.b64decode(encrypted_context)
+    aes_gcm = AESGCM(base64.b64decode(encryption_key))
     decrypted = aes_gcm.decrypt(nonce.encode(), data, None).decode()
     base64_context = json.loads(decrypted)
     decrypted_context = {key: base64.b64decode(value.encode()).decode() for (key, value) in base64_context.items()}
