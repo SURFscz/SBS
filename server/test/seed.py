@@ -110,7 +110,7 @@ service_invitation_wiki_expired_hash = generate_token()
 # tokens
 invitation_hash_curious = generate_token()
 invitation_hash_no_way = generate_token()
-invitation_hash_uva = generate_token()
+invitation_hash_ufra = generate_token()
 
 service_cloud_token = generate_token()
 service_network_token = generate_token()
@@ -278,36 +278,36 @@ def seed(db, app_config, skip_seed=False):
                                        "collaborations, please send a mail to [support@uuc.nl](mailto:support@uuc.nl)."
                                        "\n<br/><br/>\nHappy researching,\n\n*UUC support*",
                        collaboration_creation_allowed=True)
-    uva = Organisation(name=unifra_name, description=unifra_name,
-                       identifier="7c60a022-ab09-438c-8603-c361bc1a088d", created_by="urn:admin",
-                       updated_by="urn:admin", short_name="ufra", logo=read_image("uni-franeker.png"),
-                       category="University", service_connection_requires_approval=True,
-                       accepted_user_policy="https://uni-franeker/aup/v1", )
-    tue = Organisation(name=umcpekela_name, description=umcpekela_name,
-                       identifier="65fadfcb-71fd-4962-8428-0ecd15970f8d",
-                       created_by="urn:admin", updated_by="urn:admin", short_name="tue",
-                       logo=read_image("umc-pekela.png"), category="UMC")
+    ufra = Organisation(name=unifra_name, description=unifra_name,
+                        identifier="7c60a022-ab09-438c-8603-c361bc1a088d", created_by="urn:admin",
+                        updated_by="urn:admin", short_name="ufra", logo=read_image("uni-franeker.png"),
+                        category="University", service_connection_requires_approval=True,
+                        accepted_user_policy="https://uni-franeker/aup/v1", )
+    pekela = Organisation(name=umcpekela_name, description=umcpekela_name,
+                          identifier="65fadfcb-71fd-4962-8428-0ecd15970f8d",
+                          created_by="urn:admin", updated_by="urn:admin", short_name="pekela",
+                          logo=read_image("umc-pekela.png"), category="UMC")
     tst = Organisation(name="Test Organisation", description="Organisation for unit testing",
                        identifier="9ba681d0-d70d-11ee-a264-001c4288d429",
                        created_by="urn:admin", updated_by="urn:admin", short_name="test",
                        logo=read_image("testbeeld.png"), category="Overig")
-    persist_instance(db, uuc, uva, tue, tst)
+    persist_instance(db, uuc, ufra, pekela, tst)
 
     uuc_unit_research = Unit(name=unihard_unit_research_name, organisation=uuc)
     uuc_unit_support = Unit(name=unihard_unit_support_name, organisation=uuc)
     persist_instance(db, uuc_unit_research, uuc_unit_support)
 
-    shouuc = SchacHomeOrganisation(name=schac_home_organisation_unihar, organisation=uuc, created_by="urn:admin",
-                                   updated_by="urn:admin")
-    shouva = SchacHomeOrganisation(name=schac_home_organisation_example, organisation=uva, created_by="urn:admin",
-                                   updated_by="urn:admin")
-    persist_instance(db, shouuc, shouva)
+    sho_uuc = SchacHomeOrganisation(name=schac_home_organisation_unihar, organisation=uuc, created_by="urn:admin",
+                                    updated_by="urn:admin")
+    sho_ufra = SchacHomeOrganisation(name=schac_home_organisation_example, organisation=ufra, created_by="urn:admin",
+                                     updated_by="urn:admin")
+    persist_instance(db, sho_uuc, sho_ufra)
 
     api_key_uuc = ApiKey(hashed_secret=unihard_hashed_secret, organisation=uuc, description="API access",
                          created_by="urn:admin", updated_by="urn:admin")
-    api_key_uva = ApiKey(hashed_secret=unifra_hashed_secret, organisation=uva, description="API access",
-                         created_by="urn:admin", updated_by="urn:admin")
-    persist_instance(db, api_key_uuc, api_key_uva)
+    api_key_ufra = ApiKey(hashed_secret=unifra_hashed_secret, organisation=ufra, description="API access",
+                          created_by="urn:admin", updated_by="urn:admin")
+    persist_instance(db, api_key_uuc, api_key_ufra)
 
     organisation_invitation_roger = OrganisationInvitation(message="Please join", hash=unihard_invitation_hash,
                                                            expiry_date=dt_today() + datetime.timedelta(days=14),
@@ -326,36 +326,36 @@ def seed(db, app_config, skip_seed=False):
 
     organisation_membership_john_uuc = OrganisationMembership(role="admin", user=john, organisation=uuc)
     organisation_membership_mary_uuc = OrganisationMembership(role="admin", user=mary, organisation=uuc)
-    organisation_membership_mary_tue = OrganisationMembership(role="admin", user=mary, organisation=tue)
+    organisation_membership_mary_pek = OrganisationMembership(role="admin", user=mary, organisation=pekela)
     organisation_membership_harry = OrganisationMembership(role="manager", user=harry, organisation=uuc,
                                                            units=[uuc_unit_support])
-    organisation_membership_jane = OrganisationMembership(role="admin", user=jane, organisation=uva)
+    organisation_membership_jane = OrganisationMembership(role="admin", user=jane, organisation=ufra)
     organisation_membership_paul_uuc = OrganisationMembership(role="manager", user=paul, organisation=uuc,
                                                               units=[uuc_unit_research])
-    organisation_membership_paul_uva = OrganisationMembership(role="manager", user=paul, organisation=uva)
-    persist_instance(db, organisation_membership_john_uuc, organisation_membership_mary_uuc, organisation_membership_mary_tue,
+    organisation_membership_paul_ufra = OrganisationMembership(role="manager", user=paul, organisation=ufra)
+    persist_instance(db, organisation_membership_john_uuc, organisation_membership_mary_uuc, organisation_membership_mary_pek,
                      organisation_membership_harry, organisation_membership_jane, organisation_membership_paul_uuc,
-                     organisation_membership_paul_uva)
+                     organisation_membership_paul_ufra)
 
     mail = Service(entity_id=service_mail_entity_id, name=service_mail_name, contact_email=john.email,
                    override_access_allowed_all_connections=False, automatic_connection_allowed=True,
                    logo=read_image("email.png"),
-                   accepted_user_policy="https://google.nl", allowed_organisations=[uuc, uva], abbreviation="mail",
+                   accepted_user_policy="https://google.nl", allowed_organisations=[uuc, ufra], abbreviation="mail",
                    privacy_policy="https://privacy.org", security_email="sec@org.nl")
     wireless = Service(entity_id="https://wireless", name=service_wireless_name, description="Network Wireless Service",
                        override_access_allowed_all_connections=False, automatic_connection_allowed=True,
                        contact_email=john.email,
                        logo=read_image("wireless.png"), accepted_user_policy="https://google.nl", abbreviation="wire",
-                       allowed_organisations=[uuc, uva], uri="https://wireless", non_member_users_access_allowed=True,
+                       allowed_organisations=[uuc, ufra], uri="https://wireless", non_member_users_access_allowed=True,
                        privacy_policy="https://privacy.org", security_email="sec@org.nl")
     # ldap_password is 'changethispassword'
     cloud = Service(entity_id=service_cloud_entity_id, name=service_cloud_name, description="SARA Cloud Service",
                     override_access_allowed_all_connections=False, automatic_connection_allowed=True,
                     logo=read_image("cloud.png"),
-                    allowed_organisations=[uuc, uva], abbreviation="cloud",
+                    allowed_organisations=[uuc, ufra], abbreviation="cloud",
                     token_enabled=True, token_validity_days=1, security_email="sec@org.nl", scim_client_enabled=True,
                     scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock")
-    storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, uva],
+    storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, ufra],
                       description="SURF Storage Service", logo=read_image("storage.png"), abbreviation="storage",
                       override_access_allowed_all_connections=False, automatic_connection_allowed=True,
                       allow_restricted_orgs=True,
@@ -368,9 +368,9 @@ def seed(db, app_config, skip_seed=False):
                    uri="https://servicedesk.surf.nl/wiki/",
                    override_access_allowed_all_connections=False, automatic_connection_allowed=False,
                    logo=read_image("wiki.png"),
-                   allowed_organisations=[uuc, uva], contact_email="help@wiki.com", abbreviation="wiki",
+                   allowed_organisations=[uuc, ufra], contact_email="help@wiki.com", abbreviation="wiki",
                    accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org",
-                   automatic_connection_allowed_organisations=[uva], ldap_enabled=True,
+                   automatic_connection_allowed_organisations=[ufra], ldap_enabled=True,
                    ldap_password="$2b$12$GLjC5hK59aeDcEe.tHHJMO.SQQjFgIIpZ7VaKTIsBn05z/gE7JQny",
                    token_enabled=True, scim_client_enabled=True, token_validity_days=365, security_email="sec@org.nl")
     sweep_scim_last_run = current_time - datetime.timedelta(days=1)
@@ -383,7 +383,7 @@ def seed(db, app_config, skip_seed=False):
                       scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock",
                       sweep_scim_last_run=sweep_scim_last_run, sweep_scim_daily_rate=1, sweep_scim_enabled=True,
                       sweep_remove_orphans=True, scim_client_enabled=True)
-    service_ssh_uva = Service(entity_id="service_ssh_ufra", name=service_ssh_name,
+    service_ssh = Service(entity_id="service_ssh_ufra", name=service_ssh_name,
                               description="Franeker SSH access",
                               uri="https://uri.com/ssh", identity_type="SSH KEY", accepted_user_policy="https://ssh",
                               contact_email="help@ssh.com", logo=read_image("ssh.png"),
@@ -392,13 +392,13 @@ def seed(db, app_config, skip_seed=False):
                               research_scholarship_compliant=True,
                               code_of_conduct_compliant=True, sirtfi_compliant=True,
                               privacy_policy="https://privacy.org", security_email="sec@org.nl")
-    service_ssh_uva.ldap_identifier = service_ssh_uva.entity_id
+    service_ssh.ldap_identifier = service_ssh.entity_id
 
     uuc_scheduler = Service(entity_id=service_scheduler_entity_id, name=service_scheduler_name,
                             accepted_user_policy="https://google.nl", abbreviation="uuc_scheduler",
                             description="UUC Scheduler Service", logo=read_image("scheduler.png"),
                             contact_email="help@uuc_scheduler.example.com",
-                            automatic_connection_allowed_organisations=[uva],
+                            automatic_connection_allowed_organisations=[ufra],
                             override_access_allowed_all_connections=False, automatic_connection_allowed=False,
                             allowed_organisations=[uuc],
                             privacy_policy="https://privacy.org", security_email="sec@org.nl", ldap_enabled=False)
@@ -434,7 +434,7 @@ def seed(db, app_config, skip_seed=False):
                               description="Used for monitoring LDAP and SCIM.  NIET AANKOMEN.",
                               override_access_allowed_all_connections=False, automatic_connection_allowed=True,
                               logo=read_image("ldap.png"),
-                              allowed_organisations=[uuc, uva], abbreviation="ldap_mon",
+                              allowed_organisations=[uuc, ufra], abbreviation="ldap_mon",
                               privacy_policy="https://privacy.org", accepted_user_policy="https://example.nl/aup",
                               contact_email="admin@exmaple.nl", security_email="sec@example.nl",
                               ldap_password="$2b$12$GLjC5hK59aeDcEe.tHHJMO.SQQjFgIIpZ7VaKTIsBn05z/gE7JQny",
@@ -446,7 +446,7 @@ def seed(db, app_config, skip_seed=False):
     service_token_monitor_scim = ServiceToken(hashed_token=secure_hash("Axyz_geheim"), description="Monitor token",
                                               service=service_monitor, token_type=SERVICE_TOKEN_SCIM)
 
-    persist_instance(db, mail, wireless, cloud, storage, wiki, network, service_ssh_uva, uuc_scheduler,
+    persist_instance(db, mail, wireless, cloud, storage, wiki, network, service_ssh, uuc_scheduler,
                      service_empty, demo_sp, demo_rp, service_monitor, service_token_monitor_scim)
 
     service_group_mail = ServiceGroup(name=service_group_mail_name,
@@ -510,7 +510,7 @@ def seed(db, app_config, skip_seed=False):
     service_membership_service_admin_2 = ServiceMembership(role="admin", user=service_admin, service=network)
     service_membership_wiki = ServiceMembership(role="admin", user=service_admin, service=wiki)
     service_membership_mail = ServiceMembership(role="admin", user=service_admin, service=mail)
-    service_membership_ssh = ServiceMembership(role="admin", user=betty, service=service_ssh_uva)
+    service_membership_ssh = ServiceMembership(role="admin", user=betty, service=service_ssh)
     service_membership_scheduler = ServiceMembership(role="admin", user=betty, service=uuc_scheduler)
     service_membership_wireless = ServiceMembership(role="admin", user=betty, service=wireless)
     service_membership_demosp = ServiceMembership(role="admin", user=betty, service=demo_sp)
@@ -532,9 +532,9 @@ def seed(db, app_config, skip_seed=False):
     uuc.services.append(wiki)
 
     tag_uuc = Tag(tag_value="tag_uuc")
-    tag_uva = Tag(tag_value="tag_ufra")
+    tag_ufra = Tag(tag_value="tag_ufra")
     tag_orphan = Tag(tag_value="tag_orphan")
-    persist_instance(db, tag_uuc, tag_uva, tag_orphan)
+    persist_instance(db, tag_uuc, tag_ufra, tag_orphan)
 
     ai_computing = Collaboration(name=co_ai_computing_name,
                                  identifier=co_ai_computing_uuid,
@@ -550,17 +550,17 @@ def seed(db, app_config, skip_seed=False):
                                  accepted_user_policy="https://www.google.nl",
                                  disclose_email_information=True,
                                  disclose_member_information=True)
-    uva_research = Collaboration(name=co_research_name,
-                                 short_name="research",
-                                 global_urn="ufra:research",
-                                 identifier=co_research_uuid,
-                                 tags=[tag_uva],
-                                 website_url="https://www.google.nl",
-                                 description="University of Amsterdam Research - Urban Crowd Control",
-                                 logo=read_image("research.png"),
-                                 organisation=uva, services=[cloud, storage, wiki],
-                                 join_requests=[], invitations=[],
-                                 disclose_member_information=True)
+    ufra_research = Collaboration(name=co_research_name,
+                                  short_name="research",
+                                  global_urn="ufra:research",
+                                  identifier=co_research_uuid,
+                                  tags=[tag_ufra],
+                                  website_url="https://www.google.nl",
+                                  description="University of Amsterdam Research - Urban Crowd Control",
+                                  logo=read_image("research.png"),
+                                  organisation=ufra, services=[cloud, storage, wiki],
+                                  join_requests=[], invitations=[],
+                                  disclose_member_information=True)
     uuc_teachers = Collaboration(name=co_teachers_name,
                                  identifier="033cbc91-45ed-4020-bf86-3cc323e1f1cf",
                                  global_urn=f"ucc:{co_teachers_name}",
@@ -586,16 +586,16 @@ def seed(db, app_config, skip_seed=False):
     monitoring_co_2 = Collaboration(name="Monitoring CO numero 2",
                                     identifier="4c1095e5-ae60-4d6d-8bfe-f711d0f81942",
                                     uuid4="716065e3-5154-4883-b1a6-06d6e32f11e9",
-                                    global_urn="tue:monitoring2",
+                                    global_urn="pekela:monitoring2",
                                     website_url="https://www.google.nl",
                                     description="CO voor monitoring.  NIET AANKOMEN.",
                                     logo=read_image("monitor2.png"),
-                                    organisation=tue, services=[service_monitor],
+                                    organisation=pekela, services=[service_monitor],
                                     join_requests=[], invitations=[],
                                     short_name="monitor2",
-                                    accepted_user_policy="https://www.tue.example.nl/monitor")
+                                    accepted_user_policy="https://www.example.nl/monitor_aup.txt")
 
-    uu_disabled_join_request = Collaboration(name=co_robotics_disabled_join_request_name,
+    ai_disabled_join_request = Collaboration(name=co_robotics_disabled_join_request_name,
                                              short_name="ai_short",
                                              global_urn="ufra:ai_short",
                                              website_url="https://www.google.nl",
@@ -603,10 +603,10 @@ def seed(db, app_config, skip_seed=False):
                                              identifier="568eed02-0e46-48ab-83fe-116d2a8a58c5",
                                              description="Artificiation AI",
                                              disable_join_requests=True,
-                                             organisation=uva,
+                                             organisation=ufra,
                                              services=[],
                                              join_requests=[], invitations=[])
-    persist_instance(db, ai_computing, uva_research, uu_disabled_join_request, uuc_teachers,
+    persist_instance(db, ai_computing, ufra_research, ai_disabled_join_request, uuc_teachers,
                      monitoring_co_1, monitoring_co_2)
 
     john_ai_computing = CollaborationMembership(role="member", user=john, collaboration=ai_computing)
@@ -617,26 +617,26 @@ def seed(db, app_config, skip_seed=False):
     betty_uuc_teachers = CollaborationMembership(role="member", user=betty, collaboration=uuc_teachers)
     betty_uuc_ai_computing = CollaborationMembership(role="member", user=betty, collaboration=ai_computing)
 
-    roger_uva_research = CollaborationMembership(role="member", user=roger, collaboration=uva_research)
-    peter_uva_research = CollaborationMembership(role="member", user=peter, collaboration=uva_research)
-    sarah_uva_research = CollaborationMembership(role="admin", user=sarah, collaboration=uva_research)
-    user_two_suspend_uva_research = CollaborationMembership(role="member", user=user_deletion_warning,
-                                                            collaboration=uva_research)
+    roger_ufra_research = CollaborationMembership(role="member", user=roger, collaboration=ufra_research)
+    peter_ufra_research = CollaborationMembership(role="member", user=peter, collaboration=ufra_research)
+    sarah_ufra_research = CollaborationMembership(role="admin", user=sarah, collaboration=ufra_research)
+    user_two_suspend_ufra_research = CollaborationMembership(role="member", user=user_deletion_warning,
+                                                             collaboration=ufra_research)
 
     paul_monitoring_co_1 = CollaborationMembership(role="member", user=paul, collaboration=monitoring_co_1)
     betty_monitoring_co_1 = CollaborationMembership(role="member", user=betty, collaboration=monitoring_co_1)
     betty_monitoring_co_2 = CollaborationMembership(role="member", user=betty, collaboration=monitoring_co_2)
     harry_monitoring_co_2 = CollaborationMembership(role="member", user=harry, collaboration=monitoring_co_2)
 
-    paul_uu_disabled_join_request = CollaborationMembership(role="admin", user=paul, collaboration=uu_disabled_join_request)
-    harry_uu_disabled_join_request = CollaborationMembership(role="member", user=harry, collaboration=uu_disabled_join_request)
+    paul_ai_disabled_join_request = CollaborationMembership(role="admin", user=paul, collaboration=ai_disabled_join_request)
+    harry_ai_disabled_join_request = CollaborationMembership(role="member", user=harry, collaboration=ai_disabled_join_request)
 
-    persist_instance(db, john_ai_computing, admin_ai_computing, roger_uva_research, peter_uva_research,
-                     sarah_uva_research,
-                     jane_ai_computing, sarah_ai_computing, user_two_suspend_uva_research, betty_uuc_teachers,
+    persist_instance(db, john_ai_computing, admin_ai_computing, roger_ufra_research, peter_ufra_research,
+                     sarah_ufra_research,
+                     jane_ai_computing, sarah_ai_computing, user_two_suspend_ufra_research, betty_uuc_teachers,
                      betty_uuc_ai_computing,
                      paul_monitoring_co_1, betty_monitoring_co_1, betty_monitoring_co_2, harry_monitoring_co_2,
-                     paul_uu_disabled_join_request, harry_uu_disabled_join_request)
+                     paul_ai_disabled_join_request, harry_ai_disabled_join_request)
 
     admin_service_aups = [ServiceAup(user=admin, service=service, aup_url=service.accepted_user_policy) for service in
                           ai_computing.services]
@@ -665,8 +665,8 @@ def seed(db, app_config, skip_seed=False):
                           identifier=group_science_identifier,
                           auto_provision_members=True,
                           description="Science",
-                          collaboration=uva_research,
-                          collaboration_memberships=[roger_uva_research])
+                          collaboration=ufra_research,
+                          collaboration_memberships=[roger_ufra_research])
 
     group_service_mail = Group(name=service_group_mail_name,
                                short_name="mail-mail",
@@ -674,7 +674,7 @@ def seed(db, app_config, skip_seed=False):
                                identifier="9946ca40-2a53-40a8-bc63-fb0758e716e3",
                                auto_provision_members=False,
                                description="Provisioned by service Mail Services - Mail group",
-                               collaboration=uva_research,
+                               collaboration=ufra_research,
                                collaboration_memberships=[],
                                service_group=service_group_mail)
     persist_instance(db, group_researchers, group_developers, group_science, group_service_mail)
@@ -685,10 +685,10 @@ def seed(db, app_config, skip_seed=False):
                                      hash=co_ai_computing_join_request_peter_hash, status="open")
     join_request_mary = JoinRequest(message="Please...", user=mary, collaboration=ai_computing, hash=generate_token(),
                                     status="open")
-    join_request_uva_research = JoinRequest(message="Please...", user=james, collaboration=uva_research,
-                                            hash=generate_token(), status="open")
+    join_request_ufra_research = JoinRequest(message="Please...", user=james, collaboration=ufra_research,
+                                             hash=generate_token(), status="open")
 
-    persist_instance(db, join_request_john, join_request_peter, join_request_mary, join_request_uva_research)
+    persist_instance(db, join_request_john, join_request_peter, join_request_mary, join_request_ufra_research)
 
     invitation = Invitation(hash=invitation_hash_curious, invitee_email="curious@ex.org", collaboration=ai_computing,
                             expiry_date=default_expiry_date(), user=admin, message="Please join...",
@@ -696,15 +696,15 @@ def seed(db, app_config, skip_seed=False):
     invitation_accepted = Invitation(hash=generate_token(), invitee_email="some@ex.org", collaboration=ai_computing,
                                      expiry_date=default_expiry_date(), user=admin, message="Please join...",
                                      status="accepted", intended_role="admin")
-    invitation_uva = Invitation(hash=invitation_hash_uva, invitee_email="ufra@ex.org", collaboration=uva_research,
-                                expiry_date=default_expiry_date(), user=admin, message="Please join...",
-                                intended_role="member", groups=[group_science], status="open")
+    invitation_ufra = Invitation(hash=invitation_hash_ufra, invitee_email="ufra@ex.org", collaboration=ufra_research,
+                                 expiry_date=default_expiry_date(), user=admin, message="Please join...",
+                                 intended_role="member", groups=[group_science], status="open")
     invitation_noway = Invitation(hash=invitation_hash_no_way, invitee_email="noway@ex.org", collaboration=ai_computing,
                                   expiry_date=dt_today() - datetime.timedelta(days=21), user=admin,
                                   intended_role="member", status="expired",
                                   message="Let me please join as I really, really, really \n really, "
                                           "really, really \n want to...")
-    persist_instance(db, invitation, invitation_accepted, invitation_uva, invitation_noway)
+    persist_instance(db, invitation, invitation_accepted, invitation_ufra, invitation_noway)
 
     collaboration_request_1 = CollaborationRequest(name=collaboration_request_name, short_name="new_collaboration",
                                                    website_url="https://google.com", logo=read_image("request.png"),
@@ -724,10 +724,10 @@ def seed(db, app_config, skip_seed=False):
                                                                   service=storage)
     service_connection_request_wiki = ServiceConnectionRequest(message="UFra research needs ssh",
                                                                hash=service_connection_request_ssh_hash,
-                                                               requester=sarah, collaboration=uva_research,
+                                                               requester=sarah, collaboration=ufra_research,
                                                                pending_organisation_approval=True,
                                                                status=STATUS_OPEN,
-                                                               service=service_ssh_uva)
+                                                               service=service_ssh)
     persist_instance(db, service_connection_request_storage, service_connection_request_wiki)
 
     user_token_sarah = UserToken(name="token", description="some",
