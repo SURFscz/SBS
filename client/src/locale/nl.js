@@ -1054,6 +1054,12 @@ const nl = {
             tokenUpdated: "Token van dienst {{name}} is bijgewerkt",
             tokenDeleted: "Token van dienst {{name}} is verwijderd",
         },
+        scim_token: {
+            preTitle: "Om veiligheidsredenen kan het huidige SCIM token niet worden weergegeven. ",
+            title: "Verander het SCIM token.",
+            confirmation: "Voer het SCIM token in voor {{name}}. Het zal encrypted worden opgeslagen.",
+            success: "SCIM token is veranderd.",
+        },
         ldap: {
             preTitle: "Om veiligheidsredenen kan het huidige wachtwoord niet worden weergegeven. ",
             title: "Reset LDAP-wachtwoord.",

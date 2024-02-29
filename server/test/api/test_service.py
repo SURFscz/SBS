@@ -582,3 +582,19 @@ class TestService(AbstractTest):
         self.assertTrue(service.access_allowed_for_all)
         self.assertFalse(service.non_member_users_access_allowed)
         self.assertEqual(2, len(service.allowed_organisations))
+
+    def test_service_update_scim_url(self):
+        service = self._find_by_name(service_cloud_name)
+        self.put(f"/api/services/reset_scim_bearer_token/{service['id']}",
+                 {"scim_bearer_token": "secret"})
+        rows = db.session.execute(text(f"SELECT scim_bearer_token FROM services where id = {service['id']}"))
+        scim_bearer_token = next(rows)[0]
+        self.assertIsNotNone(scim_bearer_token)
+
+        service["scim_url"] = "https://changed.com"
+
+        self.login("urn:john")
+        service = self.put("/api/services", body=service, with_basic_auth=False)
+        rows = db.session.execute(text(f"SELECT scim_bearer_token FROM services where id = {service['id']}"))
+        new_scim_bearer_token = next(rows)[0]
+        self.assertNotEquals(scim_bearer_token, new_scim_bearer_token)

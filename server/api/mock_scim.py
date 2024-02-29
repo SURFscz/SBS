@@ -9,6 +9,7 @@ from werkzeug.exceptions import BadRequest, Unauthorized
 
 from server.api.base import query_param, json_endpoint
 from server.auth.security import confirm_write_access
+from server.auth.tokens import decrypt_scim_bearer_token
 from server.db.domain import Service
 
 scim_mock_api = Blueprint("scim_mock_api", __name__, url_prefix="/api/scim_mock")
@@ -23,7 +24,8 @@ def _check_authorization_header(service_id):
     if not authorization_header or not authorization_header.lower().startswith("bearer"):
         raise Unauthorized(description="Invalid bearer token")
     service = Service.query.filter(Service.id == service_id).one()
-    if service.scim_bearer_token != authorization_header[len('bearer '):]:
+    plain_bearer_token = decrypt_scim_bearer_token(service)
+    if plain_bearer_token != authorization_header[len('bearer '):]:
         raise Unauthorized(description="Invalid bearer token")
 
 

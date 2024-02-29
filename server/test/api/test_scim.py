@@ -108,6 +108,9 @@ class TestScim(AbstractTest):
 
     @responses.activate
     def test_sweep(self):
+        service_id = self.find_entity_by_name(Service, service_network_name).id
+        self.put(f"/api/services/reset_scim_bearer_token/{service_id}",
+                 {"scim_bearer_token": "secret"})
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             remote_groups = json.loads(read_file("test/scim/sweep/remote_groups_unchanged.json"))
             remote_users = json.loads(read_file("test/scim/sweep/remote_users_unchanged.json"))
@@ -127,26 +130,29 @@ class TestScim(AbstractTest):
 
     @responses.activate
     def test_sweep_error(self):
+        service_id = self.find_entity_by_name(Service, service_network_name).id
+        self.put(f"/api/services/reset_scim_bearer_token/{service_id}",
+                 {"scim_bearer_token": "secret"})
         # test error response from remote SCIM server
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Groups", json={"error": True},
                      status=400)
             res = self.put("/api/scim/v2/sweep", headers={"Authorization": f"bearer {service_network_token}"},
-                                    with_basic_auth=False, response_status_code=400)
+                           with_basic_auth=False, response_status_code=400)
             self.assertTrue("error" in res)
             self.assertTrue("Invalid response from remote SCIM server (got HTTP status 400)" in res["error"])
 
         # test HTTP error from remote SCIM server
         with mock.patch("requests.get", side_effect=requests.Timeout('Connection timed out')):
             res = self.put("/api/scim/v2/sweep", headers={"Authorization": f"bearer {service_network_token}"},
-                                    with_basic_auth=False, response_status_code=400)
+                           with_basic_auth=False, response_status_code=400)
             self.assertTrue("error" in res)
             self.assertEqual(res["error"], "Could not connect to remote SCIM server (Timeout)")
 
         # test other errors during SCIM sweep
         with mock.patch("requests.get", side_effect=Exception("Weird error")):
             res = self.put("/api/scim/v2/sweep", headers={"Authorization": f"bearer {service_network_token}"},
-                                    with_basic_auth=False, response_status_code=500)
+                           with_basic_auth=False, response_status_code=500)
             self.assertTrue("error" in res)
             self.assertEqual(res["error"], "Unknown error while connecting to remote SCIM server")
 

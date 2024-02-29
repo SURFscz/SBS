@@ -326,6 +326,11 @@ export function resetLdapPassword(service) {
     return fetchJson(`/api/services/reset_ldap_password/${service.id}`);
 }
 
+export function resetScimBearerToken(service, scim_bearer_token) {
+    const body = {scim_bearer_token: scim_bearer_token}
+    return postPutJson(`/api/services/reset_scim_bearer_token/${service.id}`, body, "put");
+}
+
 export function hasMemberAccessToService(service) {
     return fetchJson(`/api/services/member_access_to_service/${service.id}`);
 }

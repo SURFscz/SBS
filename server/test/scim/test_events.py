@@ -26,6 +26,10 @@ class TestEvents(AbstractTest):
         super(TestEvents, cls).tearDownClass()
         os.environ["SCIM_DISABLED"] = "1"
 
+    def setUp(self):
+        super(TestEvents, self).setUp()
+        self.add_bearer_token_to_services()
+
     @responses.activate
     def test_apply_user_change_create(self):
         sarah = self.find_entity_by_name(User, user_sarah_name)
