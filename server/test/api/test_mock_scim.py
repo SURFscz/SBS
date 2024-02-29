@@ -13,10 +13,13 @@ class TestMockScim(AbstractTest):
     # Very lengthy flow test, but we need the ordering right
     def test_mock_scim_flow(self):
         self.delete("/api/scim_mock/clear")
-
+        cloud_service_id = self.find_entity_by_name(Service, service_cloud_name).id
+        self.put(f"/api/services/reset_scim_bearer_token/{cloud_service_id}",
+                 {"scim_bearer_token": "secret"})
+        # Prevent sqlalchemy.orm.exc.DetachedInstanceError
         cloud_service = self.find_entity_by_name(Service, service_cloud_name)
-        cloud_service_id = cloud_service.id
-        headers = {"X-Service": str(cloud_service.id), "Authorization": f"bearer {cloud_service.scim_bearer_token}"}
+
+        headers = {"X-Service": str(cloud_service.id), "Authorization": "bearer secret"}
         sarah = self.find_entity_by_name(User, user_sarah_name)
 
         body = create_user_template(sarah)
@@ -116,6 +119,8 @@ class TestMockScim(AbstractTest):
 
     def test_mock_scim_authorization(self):
         cloud_service_id = self.find_entity_by_name(Service, service_cloud_name).id
+        self.put(f"/api/services/reset_scim_bearer_token/{cloud_service_id}",
+                 {"scim_bearer_token": "secret"})
 
         self.post("/api/scim_mock/Users",
                   body={},

@@ -17,6 +17,10 @@ from server.tools import read_file
 
 class TestSweep(AbstractTest):
 
+    def setUp(self):
+        super(TestSweep, self).setUp()
+        self.add_bearer_token_to_services()
+
     @responses.activate
     def test_sweep_no_changes(self):
         service = self.find_entity_by_name(Service, service_network_name)

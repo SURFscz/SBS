@@ -6,6 +6,7 @@ import {
     ipNetworks,
     requestDeleteService,
     resetLdapPassword,
+    resetScimBearerToken,
     serviceAbbreviationExists,
     serviceAupDelete,
     serviceEntityIdExists,
@@ -78,7 +79,9 @@ class ServiceOverview extends React.Component {
             initial: true,
             sweepSuccess: null,
             sweepResults: null,
-            originalSCIMConfiguration: {}
+            originalSCIMConfiguration: {},
+            scimBearerToken: null,
+            scimTokenChange: false
         }
     }
 
@@ -142,7 +145,9 @@ class ServiceOverview extends React.Component {
     cancelDialogAction = () => {
         this.setState({confirmationDialogOpen: false}, () => setTimeout(() => this.setState({
             ldapPassword: null,
-            tokenValue: null
+            tokenValue: null,
+            scimTokenChange: false,
+            scimBearerToken: null
         }), 5));
     }
 
@@ -234,9 +239,49 @@ class ServiceOverview extends React.Component {
     }
 
     renderLdapPassword = ldapPassword => {
-        return (<div className="ldap-password">
-            <InputField copyClipBoard={true} disabled={true} value={ldapPassword}/>
-        </div>);
+        return (
+            <div className="ldap-password">
+                <InputField copyClipBoard={true} disabled={true} value={ldapPassword}/>
+            </div>
+        );
+    }
+
+    renderScimTokenChange = scimBearerToken => {
+        return (
+            <div className="scim-bearer-token">
+                <InputField multiline={true}
+                            value={scimBearerToken}
+                            onChange={e => this.setState({scimBearerToken: e.target.value})}/>
+            </div>
+        );
+    }
+
+    scimTokenChangeAction = showConfirmation => {
+        const {service} = this.state;
+        if (showConfirmation) {
+            this.setState({
+                confirmationDialogOpen: true,
+                cancelDialogAction: this.cancelDialogAction,
+                confirmationDialogAction: () => this.scimTokenChangeAction(false),
+                warning: false,
+                lastAdminWarning: false,
+                scimTokenChange: true,
+                confirmationHeader: I18n.t("confirmationDialog.title"),
+                confirmationDialogQuestion: I18n.t("service.scim_token.confirmation", {name: service.name}),
+                confirmationTxt: I18n.t("confirmationDialog.confirm"),
+            });
+
+        } else {
+            const {scimBearerToken} = this.state;
+            resetScimBearerToken(service, scimBearerToken).then(() => {
+                setFlash(I18n.t("service.scim_token.success"));
+                this.setState({
+                    confirmationDialogOpen: false,
+                    scimTokenChange: false,
+                    loading: false
+                });
+            })
+        }
     }
 
     validateServiceName = e => serviceNameExists(e.target.value, this.props.service.name).then(json => {
@@ -714,12 +759,21 @@ class ServiceOverview extends React.Component {
                     attribute: I18n.t("scim.scimURL")
                 })}/>}
 
-            <InputField value={service.scim_bearer_token}
-                        name={I18n.t("scim.scimBearerToken")}
-                        multiline={true}
-                        onChange={e => this.changeServiceProperty("scim_bearer_token")(e)}
-                        toolTip={I18n.t("scim.scimBearerTokenTooltip")}
-                        disabled={!service.scim_enabled || (!isAdmin && !isServiceAdmin)}/>
+            {(service.scim_enabled && (isAdmin || isServiceAdmin)) &&
+                <div className="input-field sds--text-field">
+                    <label htmlFor="">{I18n.t("scim.scimBearerToken")}
+                        <Tooltip tip={I18n.t("scim.scimBearerTokenTooltip")}/>
+                    </label>
+                    <div className="scim-token-link">
+                                <span>{I18n.t("service.scim_token.preTitle")}
+                                    {(isAdmin || isServiceAdmin) && <a href="/scim"
+                                                                       onClick={e => {
+                                                                           stopEvent(e);
+                                                                           this.scimTokenChangeAction(true)
+                                                                       }}>{I18n.t("service.scim_token.title")}</a>}
+                                    </span>
+                    </div>
+                </div>}
 
             <CheckBox name={"sweep_scim_enabled"}
                       value={service.sweep_scim_enabled || false}
@@ -1268,7 +1322,10 @@ class ServiceOverview extends React.Component {
             createNewServiceToken,
             initial,
             sweepResults,
-            sweepSuccess
+            sweepSuccess,
+            scimTokenChange,
+            scimBearerToken
+
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -1281,13 +1338,15 @@ class ServiceOverview extends React.Component {
                                 cancel={cancelDialogAction}
                                 cancelButtonLabel={cancelButtonLabel}
                                 isWarning={warning}
-                                largeWidth={!isEmpty(tokenValue)}
+                                largeWidth={!isEmpty(tokenValue) || scimTokenChange}
                                 confirmationTxt={confirmationTxt}
+                                disabledConfirm={scimTokenChange && isEmpty(scimBearerToken)}
                                 confirmationHeader={confirmationHeader}
                                 confirm={confirmationDialogAction}
                                 question={confirmationDialogQuestion}>
                 {ldapPassword && this.renderLdapPassword(ldapPassword)}
                 {!isEmpty(sweepSuccess) && this.renderScimResults(service, sweepSuccess, sweepResults)}
+                {scimTokenChange && this.renderScimTokenChange(scimBearerToken)}
             </ConfirmationDialog>
 
             {this.sidebar(currentTab)}

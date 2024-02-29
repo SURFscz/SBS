@@ -1054,6 +1054,12 @@ const en = {
             tokenUpdated: "Token of {{name}} was updated",
             tokenDeleted: "Token of {{name}} was deleted",
         },
+        scim_token: {
+            preTitle: "For security reasons, the current SCIM token can not be displayed. ",
+            title: "Change the SCIM token.",
+            confirmation: "Please enter the SCIM token for {{name}}. It will be stored encrypted.",
+            success: "SCIM token has been updated.",
+        },
         ldap: {
             preTitle: "For security reasons, the current password can not be displayed. ",
             title: "Reset the LDAP password.",
@@ -2471,8 +2477,8 @@ const en = {
         ],
         neverBeenBeforeTitle: "Have you never been here before?",
         neverBeenBefore: [
-          "Learn what <a href=\"https://surf.nl/sram\" target=\"_blank\" rel=\"noopener noreferrer\">SRAM is all about</a>.",
-          "If someone pointed you to <strong>{{serviceName}}</strong>, reach out to them on how to gain access via a research collaboration, or reach out to your institution."
+            "Learn what <a href=\"https://surf.nl/sram\" target=\"_blank\" rel=\"noopener noreferrer\">SRAM is all about</a>.",
+            "If someone pointed you to <strong>{{serviceName}}</strong>, reach out to them on how to gain access via a research collaboration, or reach out to your institution."
         ],
         ticketInfoTitle: "Session information"
     },

@@ -12,6 +12,10 @@ from server.tools import read_file
 
 class TestScimSweepServices(AbstractTest):
 
+    def setUp(self):
+        super(TestScimSweepServices, self).setUp()
+        self.add_bearer_token_to_services()
+
     @responses.activate
     def test_schedule_sweep(self):
         # wait to make sure time has passed since initialization;

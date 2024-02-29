@@ -97,7 +97,7 @@ service_group_mail_name = "service_group_mail_name"
 service_group_wiki_name1 = "service_group_wiki_name_1"
 service_group_wiki_name2 = "service_group_wiki_name_2"
 
-service_connection_request_network_hash = generate_token()
+service_connection_request_storage_hash = generate_token()
 service_connection_request_ssh_hash = generate_token()
 service_connection_request_wireless_hash = generate_token()
 
@@ -348,7 +348,7 @@ def seed(db, app_config, skip_seed=False):
                     logo=read_image("cloud.png"),
                     allowed_organisations=[uuc, uva], abbreviation="cloud",
                     token_enabled=True, token_validity_days=1, security_email="sec@org.nl", scim_client_enabled=True,
-                    scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret")
+                    scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock")
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, uva],
                       description="SURF Storage Service", logo=read_image("storage.png"), abbreviation="storage",
                       override_access_allowed_all_connections=False, automatic_connection_allowed=True,
@@ -356,7 +356,7 @@ def seed(db, app_config, skip_seed=False):
                       uri="https://storage.net", support_email="support@storage.net",
                       pam_web_sso_enabled=True, security_email="sec@org.nl",
                       accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org",
-                      scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret",
+                      scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock",
                       token_enabled=False, token_validity_days=0)
     wiki = Service(entity_id=service_wiki_entity_id, name=service_wiki_name, description="No more wiki's please",
                    uri="https://servicedesk.surf.nl/wiki/",
@@ -374,7 +374,7 @@ def seed(db, app_config, skip_seed=False):
                       logo=read_image("network.png"), automatic_connection_allowed=False, abbreviation="network",
                       allowed_organisations=[uuc], privacy_policy="https://privacy.org",
                       token_enabled=True, token_validity_days=365, security_email="sec@org.nl",
-                      scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock", scim_bearer_token="secret",
+                      scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock",
                       sweep_scim_last_run=sweep_scim_last_run, sweep_scim_daily_rate=1, sweep_scim_enabled=True,
                       sweep_remove_orphans=True, scim_client_enabled=True)
     service_ssh_uva = Service(entity_id="service_ssh_ufra", name=service_ssh_name,
@@ -428,7 +428,7 @@ def seed(db, app_config, skip_seed=False):
                               ldap_password="$2b$12$GLjC5hK59aeDcEe.tHHJMO.SQQjFgIIpZ7VaKTIsBn05z/gE7JQny",
                               ldap_enabled=True,
                               scim_enabled=True, scim_url="https://scim-monitor.sram.surf.nl/scim/tst",
-                              scim_bearer_token="server_token", scim_client_enabled=True)
+                              scim_client_enabled=True)
     service_monitor.ldap_identifier = service_monitor.entity_id
 
     service_token_monitor_scim = ServiceToken(hashed_token=secure_hash("Axyz_geheim"), description="Monitor token",
@@ -694,8 +694,8 @@ def seed(db, app_config, skip_seed=False):
                                                    requester=peter, description="please")
     persist_instance(db, collaboration_request_1, collaboration_request_2)
 
-    service_connection_request_network = ServiceConnectionRequest(message="AI computing needs storage",
-                                                                  hash=service_connection_request_network_hash,
+    service_connection_request_storage = ServiceConnectionRequest(message="AI computing needs storage",
+                                                                  hash=service_connection_request_storage_hash,
                                                                   requester=admin, collaboration=ai_computing,
                                                                   pending_organisation_approval=False,
                                                                   status=STATUS_OPEN,
@@ -706,7 +706,7 @@ def seed(db, app_config, skip_seed=False):
                                                                pending_organisation_approval=True,
                                                                status=STATUS_OPEN,
                                                                service=service_ssh_uva)
-    persist_instance(db, service_connection_request_network, service_connection_request_wiki)
+    persist_instance(db, service_connection_request_storage, service_connection_request_wiki)
 
     user_token_sarah = UserToken(name="token", description="some",
                                  hashed_token=secure_hash(user_sarah_user_token_network),

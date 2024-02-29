@@ -8,6 +8,7 @@ from typing import Union, List
 import requests
 
 from server.api.base import application_base_url
+from server.auth.tokens import decrypt_scim_bearer_token
 from server.db.db import db
 from server.db.domain import Service, User, Group, Collaboration, Organisation
 from server.db.models import flatten, unique_model_objects
@@ -24,7 +25,7 @@ def apply_change(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         try:
-            # We dont want to sleep in the sync_executor or in the testing mode
+            # We don't want to sleep in the sync_executor or in the testing mode
             if not os.environ.get("TESTING", False) and args[len(args) - 1] == SYNC_MODE:
                 sleep(1)
             res = f(*args, **kwargs)
@@ -63,7 +64,8 @@ def validate_response(response, service, outside_user_context=False, extra_loggi
 
 # Get the headers with the bearer authentication
 def scim_headers(service: Service, is_delete=False):
-    headers = {"Authorization": f"Bearer {service.scim_bearer_token}",
+    plain_bearer_token = decrypt_scim_bearer_token(service)
+    headers = {"Authorization": f"Bearer {plain_bearer_token}",
                "X-Service": str(service.id)}
     if not is_delete:
         headers["Accept"] = "application/scim+json"

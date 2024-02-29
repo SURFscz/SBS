@@ -12,6 +12,7 @@ from server.auth.secrets import generate_token, generate_ldap_password_with_hash
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
     is_organisation_admin_or_manager, is_application_admin, confirm_service_admin, \
     confirm_external_api_call, is_service_admin_or_manager
+from server.auth.tokens import encrypt_scim_bearer_token, decrypt_scim_bearer_token
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, cleanse_short_name, default_expiry_date, valid_uri_attributes, \
     service_token_options, generate_short_name
@@ -557,11 +558,9 @@ def update_service():
         for attr in [fb for fb in forbidden if fb in data]:
             data[attr] = getattr(service, attr)
 
-    if "sweep_scim_last_run" in data:
-        del data["sweep_scim_last_run"]
-
-    if "ldap_password" in data:
-        del data["ldap_password"]
+    for attr in ["sweep_scim_last_run", "ldap_password", "scim_bearer_token"]:
+        if attr in data:
+            del data[attr]
 
     if not data.get("ldap_enabled"):
         data["ldap_password"] = None
@@ -573,8 +572,17 @@ def update_service():
                 .filter(ServiceToken.token_type == token_type) \
                 .delete()
 
+    scim_url_changed = data.get("scim_url", None) != service.scim_url and bool(service.scim_bearer_token)
+    # Before we update we need to get the unencrypted bearer_token
+    if scim_url_changed:
+        plain_bearer_token = decrypt_scim_bearer_token(service)
+
     res = update(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]
+    if scim_url_changed and service.scim_enabled:
+        service.scim_bearer_token = plain_bearer_token
+        encrypt_scim_bearer_token(service)
+
     service.ip_networks
 
     emit_socket(f"service_{service_id}")
@@ -628,3 +636,14 @@ def reset_ldap_password(service_id):
     service.ldap_password = hashed
     db.session.merge(service)
     return {"ldap_password": password}, 200
+
+
+@service_api.route("/reset_scim_bearer_token/<service_id>", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def reset_scim_bearer_token(service_id):
+    confirm_service_admin(service_id)
+    service = db.session.get(Service, service_id)
+    # Ensure we only change the scim_bearer_token
+    service.scim_bearer_token = current_request.get_json()["scim_bearer_token"]
+    encrypt_scim_bearer_token(service)
+    return {}, 201

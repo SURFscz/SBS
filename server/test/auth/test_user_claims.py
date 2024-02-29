@@ -4,7 +4,7 @@ import uuid
 
 from munch import munchify
 
-from server.auth.user_claims import add_user_claims, generate_unique_username, user_memberships
+from server.auth.user_claims import add_user_claims, generate_unique_username, user_memberships, valid_user_attributes
 from server.db.db import db
 from server.db.domain import User, UserNameHistory
 from server.test.abstract_test import AbstractTest
@@ -136,3 +136,11 @@ class TestUserClaims(AbstractTest):
 
         finally:
             os.environ["TESTING"] = "1"
+
+    def test_valid_user_attributes(self):
+        attributes = {
+            "given_name": " John ",
+            "family_name": " Doe "
+        }
+        self.assertFalse(valid_user_attributes(attributes))
+        self.assertEqual("John Doe", attributes.get("name"))

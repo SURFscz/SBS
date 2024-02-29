@@ -4,7 +4,8 @@ from server.db.db import db
 from server.db.domain import Collaboration, Service, ServiceConnectionRequest
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_connection_request_ssh_hash, co_research_name, service_wiki_name, \
-    co_ai_computing_name, service_ssh_name, service_storage_name, service_cloud_name
+    co_ai_computing_name, service_ssh_name, service_storage_name, service_cloud_name, \
+    co_robotics_disabled_join_request_name, service_connection_request_storage_hash
 
 
 class TestServiceConnectionRequest(AbstractTest):
@@ -236,3 +237,27 @@ class TestServiceConnectionRequest(AbstractTest):
         groups = collaboration.groups
         group = list(filter(lambda group: group.global_urn == "uniharderwijk:ai_computing:wiki-wiki2", groups))[0]
         self.assertEqual(1, len(group.invitations))
+
+    def test_delete_service_request_connection_by_service_manager(self):
+        request = ServiceConnectionRequest.query \
+            .filter(ServiceConnectionRequest.hash == service_connection_request_storage_hash).one()
+
+        self.login("urn:service_admin")
+        self.delete("/api/service_connection_requests", request.id, with_basic_auth=False)
+
+    def test_service_connection_request_pending_organisation(self):
+        collaboration = self.find_entity_by_name(Collaboration, co_robotics_disabled_join_request_name)
+        service = self.find_entity_by_name(Service, service_ssh_name)
+
+        self.login("urn:jane")
+        data = {
+            "collaboration_id": collaboration.id,
+            "service_id": service.id,
+            "message": "Pretty please"
+        }
+        with self.app.mail.record_messages() as outbox:
+            self.post("/api/service_connection_requests", body=data, with_basic_auth=False)
+
+            mail_msg = outbox[0]
+            # Admin of the organisation
+            self.assertEqual(["jdoe@example.com"], mail_msg.recipients)

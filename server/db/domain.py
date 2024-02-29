@@ -509,7 +509,7 @@ class ServiceToken(Base, db.Model, SecretMixin):
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
 
 
-class Service(Base, db.Model, LogoMixin):
+class Service(Base, db.Model, LogoMixin, SecretMixin):
     __tablename__ = "services"
     metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)

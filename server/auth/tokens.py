@@ -1,9 +1,21 @@
-from flask import request as current_request, g as request_context
-from werkzeug.exceptions import Unauthorized
+from flask import request as current_request, g as request_context, current_app
+from werkzeug.exceptions import Unauthorized, BadRequest
 
-from server.auth.secrets import secure_hash
+from server.auth.secrets import secure_hash, encrypt_secret, decrypt_secret
+from server.db.db import db
 from server.db.domain import Service, ServiceToken
 from server.logger.context_logger import ctx_logger
+
+
+def _service_context(service: Service):
+    return {"scim_url": service.scim_url, "identifier": service.id, "table_name": "services"}
+
+
+def _get_encryption_key(service: Service):
+    if not service.scim_bearer_token or not service.scim_url:
+        raise BadRequest("encrypt_scim_bearer_token requires scim_bearer_token and scim_url")
+    encryption_key = current_app.app_config.encryption_key
+    return encryption_key
 
 
 def get_authorization_header(is_external_api_url, ignore_missing_auth_header=False):
@@ -30,3 +42,15 @@ def validate_service_token(attr_enabled, token_type) -> Service:
         raise Unauthorized()
     request_context.service_token = f"Service token {service.name}"
     return service
+
+
+def encrypt_scim_bearer_token(service: Service):
+    encryption_key = _get_encryption_key(service)
+    encrypted_bearer_token = encrypt_secret(encryption_key, service.scim_bearer_token, _service_context(service))
+    service.scim_bearer_token = encrypted_bearer_token
+    db.session.merge(service)
+
+
+def decrypt_scim_bearer_token(service: Service):
+    encryption_key = _get_encryption_key(service)
+    return decrypt_secret(encryption_key, service.scim_bearer_token, _service_context(service))

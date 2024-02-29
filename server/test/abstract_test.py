@@ -16,7 +16,7 @@ from flask import current_app
 from flask_testing import TestCase
 from onelogin.saml2.utils import OneLogin_Saml2_Utils
 from sqlalchemy import text
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, load_only
 
 from server.auth.mfa import ACR_VALUES
 from server.auth.secrets import secure_hash
@@ -296,3 +296,10 @@ class AbstractTest(TestCase):
             .filter(Collaboration.identifier == collaboration_identifier) \
             .filter(User.uid == user_uid) \
             .first()
+
+    def add_bearer_token_to_services(self):
+        services = Service.query.options(load_only(Service.id)).filter(Service.scim_enabled == True).all()  # noqa: E712
+        service_identifiers = [s.id for s in services]
+        for identifier in service_identifiers:
+            self.put(f"/api/services/reset_scim_bearer_token/{identifier}",
+                     {"scim_bearer_token": "secret"})
