@@ -1,8 +1,9 @@
 import base64
 import datetime
 import json
+import os
 import time
-
+import responses
 from sqlalchemy import text
 
 from server.api.collaboration import generate_short_name
@@ -666,25 +667,36 @@ class TestCollaboration(AbstractTest):
                                     content_type="application/json")
         self.assertEqual(400, response.status_code)
 
+    @responses.activate
     def test_api_call_with_logo_url(self):
-        response = self.client.post("/api/collaborations/v1",
-                                    headers={"Authorization": f"Bearer {unihard_secret}"},
-                                    data=json.dumps({
-                                        "name": "new_collaboration",
-                                        "description": "new_collaboration",
-                                        "administrators": ["the@ex.org", "that@ex.org"],
-                                        "short_name": "new_short_name",
-                                        "disable_join_requests": True,
-                                        "disclose_member_information": True,
-                                        "disclose_email_information": True,
-                                        "logo": "https://static.surfconext.nl/media/idp/eduid.png"
-                                    }),
-                                    content_type="application/json")
-        self.assertEqual(201, response.status_code)
+        file = f"{os.path.dirname(os.path.realpath(__file__))}/../images/eduid.png"
+        with open(file, "rb") as f:
+            body = f.read()
+            logo_url = "http://localhost:8081/eduid.png"
+            responses.add(method=responses.GET,
+                          url=logo_url,
+                          body=body,
+                          status=200,
+                          content_type="image/jpeg",
+                          stream=True)
+            response = self.client.post("/api/collaborations/v1",
+                                        headers={"Authorization": f"Bearer {unihard_secret}"},
+                                        data=json.dumps({
+                                            "name": "new_collaboration",
+                                            "description": "new_collaboration",
+                                            "administrators": ["the@ex.org", "that@ex.org"],
+                                            "short_name": "new_short_name",
+                                            "disable_join_requests": True,
+                                            "disclose_member_information": True,
+                                            "disclose_email_information": True,
+                                            "logo": logo_url
+                                        }),
+                                        content_type="application/json")
+            self.assertEqual(201, response.status_code)
 
-        collaboration = self.find_entity_by_name(Collaboration, "new_collaboration")
-        raw_logo = collaboration.raw_logo()
-        self.assertFalse(raw_logo.startswith("http"))
+            collaboration = self.find_entity_by_name(Collaboration, "new_collaboration")
+            raw_logo = collaboration.raw_logo()
+            self.assertFalse(raw_logo.startswith("http"))
 
     def test_api_call_without_logo(self):
         response = self.client.post("/api/collaborations/v1",
