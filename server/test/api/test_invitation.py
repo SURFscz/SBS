@@ -7,7 +7,7 @@ from server.db.db import db
 from server.db.domain import Invitation, CollaborationMembership, User, Collaboration, Organisation, ServiceAup, \
     JoinRequest
 from server.test.abstract_test import AbstractTest
-from server.test.seed import invitation_hash_no_way, co_ai_computing_name, invitation_hash_curious, invitation_hash_uva, \
+from server.test.seed import invitation_hash_no_way, co_ai_computing_name, invitation_hash_curious, invitation_hash_ufra, \
     co_research_name, unihard_secret, unihard_name, co_ai_computing_short_name, co_ai_computing_join_request_peter_hash, \
     co_ai_computing_uuid, group_ai_researchers_short_name, group_ai_dev_identifier
 from server.tools import dt_now
@@ -73,7 +73,7 @@ class TestInvitation(AbstractTest):
 
     def test_accept_with_authorisation_group_invitations(self):
         self.login("urn:jane")
-        self.put("/api/invitations/accept", body={"hash": invitation_hash_uva}, with_basic_auth=False)
+        self.put("/api/invitations/accept", body={"hash": invitation_hash_ufra}, with_basic_auth=False)
 
         collaboration_membership = CollaborationMembership.query \
             .join(CollaborationMembership.user) \
