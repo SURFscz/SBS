@@ -597,4 +597,4 @@ class TestService(AbstractTest):
         service = self.put("/api/services", body=service, with_basic_auth=False)
         rows = db.session.execute(text(f"SELECT scim_bearer_token FROM services where id = {service['id']}"))
         new_scim_bearer_token = next(rows)[0]
-        self.assertNotEquals(scim_bearer_token, new_scim_bearer_token)
+        self.assertNotEqual(scim_bearer_token, new_scim_bearer_token)
