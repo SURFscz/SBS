@@ -193,7 +193,7 @@ class TestService(AbstractTest):
         service = self.find_entity_by_name(Service, service_cloud_name)
         self.assertTrue(service.access_allowed_for_all)
         self.assertFalse(service.non_member_users_access_allowed)
-        self.assertEqual(3, len(service.allowed_organisations))
+        self.assertEqual(4, len(service.allowed_organisations))
 
     def test_toggle_allow_restricted(self):
         service = self.find_entity_by_name(Service, service_cloud_name)
@@ -411,7 +411,7 @@ class TestService(AbstractTest):
     def test_services_mine(self):
         self.login("urn:service_admin")
         services = self.get("/api/services/mine", with_basic_auth=False)
-        self.assertEqual(4, len(services))
+        self.assertEqual(5, len(services))
 
         service_storage = self.find_by_name(services, service_storage_name)
         self.assertEqual(0, service_storage["organisations_count"])
@@ -581,7 +581,7 @@ class TestService(AbstractTest):
         service = self.find_entity_by_name(Service, service_cloud_name)
         self.assertTrue(service.access_allowed_for_all)
         self.assertFalse(service.non_member_users_access_allowed)
-        self.assertEqual(2, len(service.allowed_organisations))
+        self.assertEqual(3, len(service.allowed_organisations))
 
     def test_service_update_scim_url(self):
         service = self._find_by_name(service_cloud_name)

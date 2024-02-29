@@ -34,7 +34,7 @@ class TestOrganisation(AbstractTest):
         organisations = self.get("/api/organisations/all",
                                  headers=API_AUTH_HEADER,
                                  with_basic_auth=False)
-        self.assertEqual(3, len(organisations))
+        self.assertEqual(4, len(organisations))
 
         organisation = organisations[0]
         self.assertEqual(3, organisation["collaborations_count"])
@@ -159,7 +159,7 @@ class TestOrganisation(AbstractTest):
                                  with_basic_auth=False)
         self.assertIsNotNone(organisation["id"])
         self.assertEqual("new_organisation", organisation["name"])
-        self.assertEqual(4, Organisation.query.count())
+        self.assertEqual(5, Organisation.query.count())
 
         new_organisation = self.find_entity_by_name(Organisation, "new_organisation")
         self.assertEqual(2, len(new_organisation.schac_home_organisations))
@@ -169,7 +169,7 @@ class TestOrganisation(AbstractTest):
         self.assertEqual("changed", organisation["name"])
 
         self.delete("/api/organisations", primary_key=organisation["id"])
-        self.assertEqual(3, Organisation.query.count())
+        self.assertEqual(4, Organisation.query.count())
 
     def test_organisation_update_short_name(self):
         self.mark_organisation_service_restricted(unihard_name)
@@ -285,12 +285,12 @@ class TestOrganisation(AbstractTest):
     def test_my_organisations_lite_super_user(self):
         self.login("urn:john")
         res = self.get("/api/organisations/mine_lite")
-        self.assertEqual(3, len(res))
+        self.assertEqual(4, len(res))
 
     def test_my_organisations_lite_admin(self):
         self.login("urn:mary")
         res = self.get("/api/organisations/mine_lite")
-        self.assertEqual(1, len(res))
+        self.assertEqual(2, len(res))
 
     def test_my_organisations_lite_no_admin(self):
         self.login("urn:james")
