@@ -7,8 +7,8 @@ from sqlalchemy import text
 
 from server.auth.secrets import secure_hash, generate_token
 from server.db.audit_mixin import metadata
-from server.db.defaults import default_expiry_date, SERVICE_TOKEN_INTROSPECTION, SERVICE_TOKEN_SCIM, SERVICE_TOKEN_PAM, \
-    STATUS_OPEN
+from server.db.defaults import (default_expiry_date, SERVICE_TOKEN_INTROSPECTION, SERVICE_TOKEN_SCIM, SERVICE_TOKEN_PAM,
+                                STATUS_OPEN)
 from server.db.domain import (User, Organisation, OrganisationMembership, Service, Collaboration,
                               CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey,
                               CollaborationRequest, ServiceConnectionRequest, SuspendNotification, Aup,
@@ -47,7 +47,7 @@ unifra_name = "Academia Franekerensis"
 unifra_secret = generate_token()
 unifra_hashed_secret = secure_hash(unifra_secret)
 
-umcpekela_name = "Universitair Medisch Centrum Noord-Pekela"
+umcpekela_name = "Universitair Medisch Centrum Zuid-Pekela"
 
 # collaborations
 co_ai_computing_name = "AI computing"
@@ -287,7 +287,11 @@ def seed(db, app_config, skip_seed=False):
                        identifier="65fadfcb-71fd-4962-8428-0ecd15970f8d",
                        created_by="urn:admin", updated_by="urn:admin", short_name="tue",
                        logo=read_image("umc-pekela.png"), category="UMC")
-    persist_instance(db, uuc, uva, tue)
+    tst = Organisation(name="Test Organisation", description="Organisation for unit testing",
+                       identifier="9ba681d0-d70d-11ee-a264-001c4288d429",
+                       created_by="urn:admin", updated_by="urn:admin", short_name="test",
+                       logo=read_image("testbeeld.png"), category="Overig")
+    persist_instance(db, uuc, uva, tue, tst)
 
     uuc_unit_research = Unit(name=unihard_unit_research_name, organisation=uuc)
     uuc_unit_support = Unit(name=unihard_unit_support_name, organisation=uuc)
@@ -320,16 +324,18 @@ def seed(db, app_config, skip_seed=False):
                                                           invitee_email="pass@example.org", organisation=uuc, user=john)
     persist_instance(db, organisation_invitation_roger, organisation_invitation_pass)
 
-    organisation_membership_john = OrganisationMembership(role="admin", user=john, organisation=uuc)
-    organisation_membership_mary = OrganisationMembership(role="admin", user=mary, organisation=uuc)
+    organisation_membership_john_uuc = OrganisationMembership(role="admin", user=john, organisation=uuc)
+    organisation_membership_mary_uuc = OrganisationMembership(role="admin", user=mary, organisation=uuc)
+    organisation_membership_mary_tue = OrganisationMembership(role="admin", user=mary, organisation=tue)
     organisation_membership_harry = OrganisationMembership(role="manager", user=harry, organisation=uuc,
                                                            units=[uuc_unit_support])
     organisation_membership_jane = OrganisationMembership(role="admin", user=jane, organisation=uva)
     organisation_membership_paul_uuc = OrganisationMembership(role="manager", user=paul, organisation=uuc,
                                                               units=[uuc_unit_research])
     organisation_membership_paul_uva = OrganisationMembership(role="manager", user=paul, organisation=uva)
-    persist_instance(db, organisation_membership_john, organisation_membership_mary, organisation_membership_harry,
-                     organisation_membership_jane, organisation_membership_paul_uuc, organisation_membership_paul_uva)
+    persist_instance(db, organisation_membership_john_uuc, organisation_membership_mary_uuc, organisation_membership_mary_tue,
+                     organisation_membership_harry, organisation_membership_jane, organisation_membership_paul_uuc,
+                     organisation_membership_paul_uva)
 
     mail = Service(entity_id=service_mail_entity_id, name=service_mail_name, contact_email=john.email,
                    override_access_allowed_all_connections=False, automatic_connection_allowed=True,
@@ -397,6 +403,12 @@ def seed(db, app_config, skip_seed=False):
                             allowed_organisations=[uuc],
                             privacy_policy="https://privacy.org", security_email="sec@org.nl", ldap_enabled=False)
 
+    service_empty = Service(entity_id="urn:x-test:empty", name="Test service",
+                            accepted_user_policy="https://google.nl", abbreviation="empty",
+                            description="Test Service for Unit tests", logo=read_image("testbeeld.png"),
+                            contact_email="help@example.com", automatic_connection_allowed=False,
+                            privacy_policy="https://privacy.org", security_email="sec@org.nl", ldap_enabled=False)
+
     demo_sp = Service(entity_id="https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/test",
                       name="SRAM Demo SP", abbreviation="sram_demosp", description="Generic SRAM demo sp",
                       logo=read_image("test.png"), uri="https://demo-sp.sram.surf.nl/",
@@ -434,8 +446,8 @@ def seed(db, app_config, skip_seed=False):
     service_token_monitor_scim = ServiceToken(hashed_token=secure_hash("Axyz_geheim"), description="Monitor token",
                                               service=service_monitor, token_type=SERVICE_TOKEN_SCIM)
 
-    persist_instance(db, mail, wireless, cloud, storage, wiki, network, service_ssh_uva, uuc_scheduler, demo_sp,
-                     demo_rp, service_monitor, service_token_monitor_scim)
+    persist_instance(db, mail, wireless, cloud, storage, wiki, network, service_ssh_uva, uuc_scheduler,
+                     service_empty, demo_sp, demo_rp, service_monitor, service_token_monitor_scim)
 
     service_group_mail = ServiceGroup(name=service_group_mail_name,
                                       short_name="mail",
@@ -498,10 +510,16 @@ def seed(db, app_config, skip_seed=False):
     service_membership_service_admin_2 = ServiceMembership(role="admin", user=service_admin, service=network)
     service_membership_wiki = ServiceMembership(role="admin", user=service_admin, service=wiki)
     service_membership_mail = ServiceMembership(role="admin", user=service_admin, service=mail)
-    service_membership_betty = ServiceMembership(role="admin", user=betty, service=service_ssh_uva)
+    service_membership_ssh = ServiceMembership(role="admin", user=betty, service=service_ssh_uva)
+    service_membership_scheduler = ServiceMembership(role="admin", user=betty, service=uuc_scheduler)
+    service_membership_wireless = ServiceMembership(role="admin", user=betty, service=wireless)
+    service_membership_demosp = ServiceMembership(role="admin", user=betty, service=demo_sp)
+    service_membership_demorp = ServiceMembership(role="admin", user=betty, service=demo_rp)
+    service_membership_monitor = ServiceMembership(role="admin", user=service_admin, service=service_monitor)
     persist_instance(db, service_membership_james, cloud_manager, service_membership_service_admin_1,
                      service_membership_service_admin_2, service_membership_wiki, service_membership_mail,
-                     service_membership_betty)
+                     service_membership_ssh, service_membership_wireless, service_membership_scheduler,
+                     service_membership_demosp, service_membership_demorp, service_membership_monitor)
 
     service_iprange_cloud_v4 = IpNetwork(network_value="82.217.86.55/24", service=cloud)
     service_iprange_cloud_v6 = IpNetwork(network_value="2001:1c02:2b2f:be00:1cf0:fd5a:a548:1a16/128", service=cloud)
@@ -610,11 +628,15 @@ def seed(db, app_config, skip_seed=False):
     betty_monitoring_co_2 = CollaborationMembership(role="member", user=betty, collaboration=monitoring_co_2)
     harry_monitoring_co_2 = CollaborationMembership(role="member", user=harry, collaboration=monitoring_co_2)
 
+    paul_uu_disabled_join_request = CollaborationMembership(role="admin", user=paul, collaboration=uu_disabled_join_request)
+    harry_uu_disabled_join_request = CollaborationMembership(role="member", user=harry, collaboration=uu_disabled_join_request)
+
     persist_instance(db, john_ai_computing, admin_ai_computing, roger_uva_research, peter_uva_research,
                      sarah_uva_research,
                      jane_ai_computing, sarah_ai_computing, user_two_suspend_uva_research, betty_uuc_teachers,
                      betty_uuc_ai_computing,
-                     paul_monitoring_co_1, betty_monitoring_co_1, betty_monitoring_co_2, harry_monitoring_co_2)
+                     paul_monitoring_co_1, betty_monitoring_co_1, betty_monitoring_co_2, harry_monitoring_co_2,
+                     paul_uu_disabled_join_request, harry_uu_disabled_join_request)
 
     admin_service_aups = [ServiceAup(user=admin, service=service, aup_url=service.accepted_user_policy) for service in
                           ai_computing.services]
