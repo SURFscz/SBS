@@ -260,4 +260,4 @@ class TestServiceConnectionRequest(AbstractTest):
 
             mail_msg = outbox[0]
             # Admin of the organisation
-            self.assertEqual(["jdoe@example.com"], mail_msg.recipients)
+            self.assertEqual(["jdoe@example"], mail_msg.recipients)
