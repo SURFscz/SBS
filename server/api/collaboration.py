@@ -1,8 +1,8 @@
 import base64
-import urllib.request
 import uuid
 from datetime import datetime, timedelta, timezone
 
+import requests
 from flasgger import swag_from
 from flask import Blueprint, jsonify, request as current_request, current_app, g as request_context
 from munch import munchify
@@ -553,9 +553,9 @@ def save_collaboration_api():
     logo = data.get("logo")
     if logo and logo.startswith("http") and bool(uri_re.match(logo)):
         try:
-            res = urllib.request.urlopen(logo, timeout=10)
-            if res.status == 200:
-                data["logo"] = transform_image(res.read())
+            res = requests.get(logo, stream=True)
+            if res.status_code == 200:
+                data["logo"] = transform_image(res.raw.read())
         except Exception as e:
             raise APIBadRequest(f"Invalid Logo: {str(e)}")
     elif logo:
