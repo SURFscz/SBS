@@ -129,7 +129,7 @@ class TestUser(AbstractTest):
 
         res = self.get("/api/users/search", query_data={"q": "*",
                                                         "collaboration_admins": True})
-        self.assertEqual(2, len(res))
+        self.assertEqual(3, len(res))
 
         res = self.get("/api/users/search", query_data={"q": "*",
                                                         "organisation_admins": True})
@@ -150,7 +150,7 @@ class TestUser(AbstractTest):
         res = self.get("/api/users/other", query_data={"uid": "urn:mary"})
         self.assertEqual("Mary Doe", res["name"])
         self.assertEqual(0, len(res["collaboration_memberships"]))
-        self.assertEqual(1, len(res["organisation_memberships"]))
+        self.assertEqual(2, len(res["organisation_memberships"]))
         self.assertEqual("Research", res["organisation_memberships"][0]["organisation"]["category"])
 
     def test_find_by_id(self):
