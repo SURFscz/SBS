@@ -33,7 +33,7 @@ class TestPlsc(AbstractTest):
         self.assertEqual(14, len([user["name"] for user in users if user["status"] == "active"]))
 
     def assert_sync_result(self, res):
-        self.assertEqual(3, len(res["organisations"]))
+        self.assertEqual(4, len(res["organisations"]))
         logo = res["organisations"][0]["logo"]
         self.assertTrue(logo.startswith("http://localhost:8080/api/images/organisations/"))
         res_image = self.client.get(logo.replace("http://localhost:8080", ""))
@@ -54,7 +54,7 @@ class TestPlsc(AbstractTest):
         user_gets_deleted = next(u for u in users_ if u["name"] == "user_gets_deleted")
         self.assertIsNotNone(user_gets_deleted["last_login_date"])
         services_ = res["services"]
-        self.assertEqual(11, len(services_))
+        self.assertEqual(12, len(services_))
         wiki = next(s for s in services_ if s["entity_id"] == service_wiki_entity_id)
         self.assertEqual(wiki["contact_email"], "help@wiki.com")
         self.assertEqual(wiki["name"], "Wiki")
