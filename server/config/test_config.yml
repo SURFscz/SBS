@@ -184,6 +184,13 @@ membership_expiration:
   # How many days before actual expiration do we mail the co admin and member
   expired_warning_mail_days_threshold: 14
 
+invitation_reminders:
+  # Do we daily check for invitations that need a reminder?
+  enabled: True
+  cron_hour_of_day: 10
+  # How long before expiration of an invitation do we remind the user?
+  invitation_reminders_threshold: 5
+
 orphan_users:
   # Do we daily check for users that are orphans?
   enabled: True

@@ -104,6 +104,9 @@
                         text-align: left;
                         width: 50%;
 
+                        &.invitation-reminders {
+                            width: 33%;
+                        }
                     }
                 }
 
@@ -314,6 +317,11 @@
                 vertical-align: middle;
             }
         }
+    }
+
+    .invitation_reminders {
+        display: flex;
+        flex-direction: column;
     }
 
 }

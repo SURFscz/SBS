@@ -103,6 +103,16 @@ def do_cleanup_non_open_requests():
     return cleanup_non_open_requests(current_app), 201
 
 
+@system_api.route("/invitation_reminders", strict_slashes=False, methods=["PUT"])
+@json_endpoint
+def do_invitation_reminders():
+    confirm_write_access()
+
+    from server.cron.invitation_reminders import invitation_reminders
+
+    return invitation_reminders(current_app), 201
+
+
 @system_api.route("/db_stats", strict_slashes=False, methods=["GET"])
 @json_endpoint
 def do_db_stats():

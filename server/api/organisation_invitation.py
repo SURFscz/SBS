@@ -36,7 +36,7 @@ def do_resend(organisation_invitation_id):
         "invitation": organisation_invitation,
         "base_url": current_app.app_config.base_url,
         "recipient": organisation_invitation.invitee_email
-    }, organisation_invitation.organisation, [organisation_invitation.invitee_email])
+    }, organisation_invitation.organisation, [organisation_invitation.invitee_email], reminder=True)
 
 
 @organisation_invitations_api.route("/find_by_hash", strict_slashes=False)

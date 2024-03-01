@@ -253,6 +253,7 @@ class Invitation(Base, db.Model):
     external_identifier = db.Column("external_identifier", db.String(length=255), nullable=True)
     expiry_date = db.Column("expiry_date", TZDateTime(), nullable=True)
     membership_expiry_date = db.Column("membership_expiry_date", TZDateTime(), nullable=True)
+    reminder_send = db.Column("reminder_send", db.Boolean(), nullable=True, default=False)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
@@ -637,6 +638,7 @@ class ServiceInvitation(Base, db.Model):
     user = db.relationship("User")
     intended_role = db.Column("intended_role", db.String(length=255), nullable=True)
     expiry_date = db.Column("expiry_date", TZDateTime(), nullable=True)
+    reminder_send = db.Column("reminder_send", db.Boolean(), nullable=True, default=False)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
@@ -704,6 +706,7 @@ class OrganisationInvitation(Base, db.Model):
                             back_populates="organisation_invitations")
     intended_role = db.Column("intended_role", db.String(length=255), nullable=True)
     expiry_date = db.Column("expiry_date", TZDateTime(), nullable=True)
+    reminder_send = db.Column("reminder_send", db.Boolean(), nullable=True, default=False)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)

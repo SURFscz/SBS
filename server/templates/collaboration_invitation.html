@@ -4,12 +4,22 @@
 
     <div class="mail-head" style="padding: 30px 0 20px 10px;">
         <p class="title" style="font-weight: 400;font-size: 30px;line-height: 42px; margin: 0;">
+        {% if reminder is not defined or reminder == False %}
             {% if invitation.intended_role == "member" %}
             You have been invited by <strong>{{ invitation.user.name }}</strong> to join a collaboration page.
             {% endif %}
             {% if invitation.intended_role == "admin" %}
             You have been invited by <strong>{{ invitation.user.name }}</strong> to become an admin in collaboration {{ collaboration.name }}.
             {% endif %}
+        {% endif %}
+        {% if reminder == True %}
+            {% if invitation.intended_role == "member" %}
+            Reminder: you have been invited by <strong>{{ invitation.user.name }}</strong> to join a collaboration page.
+            {% endif %}
+            {% if invitation.intended_role == "admin" %}
+            Reminder: you have been invited by <strong>{{ invitation.user.name }}</strong> to become an admin in collaboration {{ collaboration.name }}.
+            {% endif %}
+        {% endif %}
         </p>
     </div>
 

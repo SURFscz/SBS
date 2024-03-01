@@ -36,7 +36,7 @@ def do_resend(service_invitation_id):
         "base_url": current_app.app_config.base_url,
         "intended_role": service_invitation.intended_role,
         "recipient": service_invitation.invitee_email
-    }, service_invitation.service, [service_invitation.invitee_email])
+    }, service_invitation.service, [service_invitation.invitee_email], reminder=True)
 
 
 @service_invitations_api.route("/find_by_hash", strict_slashes=False)
