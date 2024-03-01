@@ -2,7 +2,12 @@
 
 <div class="mail-head" style="background-color: #f5f5f5;padding: 30px 0 20px 60px;">
     <p class="title" style="font-weight: 600;font-size: 34px;line-height: 42px; margin: 0;">
+        {% if reminder is not defined or reminder == False %}
         {{ invitation.user.name }} invited you to become an {{ invitation.intended_role }} for service {{ invitation.service.name }}.
+        {% endif %}
+        {% if reminder == True %}
+        Reminder: {{ invitation.user.name }} invited you to become an {{ invitation.intended_role }} for service {{ invitation.service.name }}.
+        {% endif %}
     </p>
     <p>
         {% if invitation.intended_role == "admin" %}

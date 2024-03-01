@@ -1892,6 +1892,7 @@ const nl = {
         runExpiredMemberships: "Run the job to expire memberships that have an expiration date before today",
         runSuspendedCollaborations: "Run the job to suspend collaborations that have had no activity for X days",
         runOrphanUsers: "Run the job to delete orphan users (e.g. no membership, join request and collaboration requests)",
+        runInvitationReminders: "Run the job to send reminder mails to all invitations that expire in X days",
         runDailyJobs: "Trigger",
         showDailyJobs: "Show",
         showDailyJobsInfo: "Toon alle ingeplande Cron jobs",
@@ -1981,6 +1982,11 @@ const nl = {
             date: "Date",
             user: "User",
             action: "Action"
+        },
+        invitationReminders: {
+            invitations: "CO invitations resend",
+            serviceInvitations: "Service invitations resend",
+            organisationInvitations: "ORG invitations resend",
         }
     },
     access: {

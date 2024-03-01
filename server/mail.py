@@ -188,13 +188,14 @@ def mail_automatic_collaboration_request(context, collaboration, organisation, r
     )
 
 
-def mail_organisation_invitation(context, organisation, recipients, preview=False):
+def mail_organisation_invitation(context, organisation, recipients, reminder=False, preview=False):
     if not preview:
         _store_mail(None, ORGANISATION_INVITATION_MAIL, recipients)
     context = {**context, **{"expiry_period": calculate_expiry_period(context["invitation"])},
-               "organisation": organisation}
+               "organisation": organisation, "reminder": reminder}
+    reminder_part = "Reminder: " if reminder else ""
     return _do_send_mail(
-        subject=f"Invitation to join organisation {organisation.name}",
+        subject=f"{reminder_part}Invitation to join organisation {organisation.name}",
         recipients=recipients,
         template="organisation_invitation",
         context=context,
@@ -202,16 +203,16 @@ def mail_organisation_invitation(context, organisation, recipients, preview=Fals
     )
 
 
-def mail_collaboration_invitation(context, collaboration, recipients, preview=False):
+def mail_collaboration_invitation(context, collaboration, recipients, reminder=False, preview=False):
     if not preview:
         _store_mail(None, COLLABORATION_INVITATION_MAIL, recipients)
     invitation = context["invitation"]
     message = invitation.message.replace("\n", "<br/>") if invitation.message else None
     context = {**context, "expiry_period": calculate_expiry_period(invitation),
-               "collaboration": collaboration, "message": message}
-
+               "collaboration": collaboration, "message": message, "reminder": reminder}
+    reminder_part = "Reminder: " if reminder else ""
     return _do_send_mail(
-        subject=f"Invitation to join collaboration {collaboration.name}",
+        subject=f"{reminder_part}Invitation to join collaboration {collaboration.name}",
         recipients=recipients,
         template="collaboration_invitation",
         context=context,
@@ -222,13 +223,14 @@ def mail_collaboration_invitation(context, collaboration, recipients, preview=Fa
     )
 
 
-def mail_service_invitation(context, service, recipients, preview=False):
+def mail_service_invitation(context, service, recipients, reminder=False, preview=False):
     if not preview:
         _store_mail(None, SERVICE_INVITATION_MAIL, recipients)
     context = {**context, **{"expiry_period": calculate_expiry_period(context["invitation"])},
-               "service": service}
+               "service": service, "reminder": reminder}
+    reminder_part = "Reminder: " if reminder else ""
     return _do_send_mail(
-        subject=f"Invitation to become service {context['intended_role']} for {service.name}",
+        subject=f"{reminder_part}Invitation to become service {context['intended_role']} for {service.name}",
         recipients=recipients,
         template="service_invitation",
         context=context,

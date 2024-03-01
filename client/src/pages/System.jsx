@@ -15,6 +15,7 @@ import {
     dbStats,
     deleteOrphanUsers,
     expireCollaborationMemberships,
+    invitationReminders,
     expireCollaborations,
     getResetTOTPRequestedUsers,
     getSuspendedUsers,
@@ -77,6 +78,7 @@ class System extends React.Component {
             suspendedUsers: {},
             suspendedCollaborations: {},
             expiredCollaborations: {},
+            invitationReminders: [],
             deletedUsers: {},
             expiredMemberships: {},
             outstandingRequests: {},
@@ -132,6 +134,7 @@ class System extends React.Component {
             expiredCollaborations: {},
             deletedUsers: {},
             expiredMemberships: {},
+            invitationReminders: [],
             outstandingRequests: {},
             parsedMetaData: {},
             cleanedRequests: {},
@@ -153,7 +156,7 @@ class System extends React.Component {
     }
 
     getCronTab = (suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations, suspendedCollaborations,
-                  expiredMemberships, deletedUsers, sweepResults, cronJobs, parsedMetaData, parsedMetaDataView) => {
+                  expiredMemberships, invitationReminders, deletedUsers, sweepResults, cronJobs, parsedMetaData, parsedMetaDataView) => {
         return (<div key="cron" name="cron" label={I18n.t("home.tabs.cron")}
                      icon={<FontAwesomeIcon icon="clock"/>}>
             <div className="mod-system">
@@ -166,6 +169,8 @@ class System extends React.Component {
                     {this.renderSuspendedCollaborationsResults(suspendedCollaborations)}
                     {this.renderExpiredMemberships()}
                     {this.renderExpiredMembershipsResults(expiredMemberships)}
+                    {this.renderInvitationReminders()}
+                    {this.renderInvitationRemindersResults(invitationReminders)}
                     {this.renderOrphanUsers()}
                     {this.renderOrphanUsersResults(deletedUsers)}
                     {this.renderOutstandingRequests()}
@@ -522,6 +527,13 @@ class System extends React.Component {
         });
     }
 
+    doInvitationReminders = () => {
+        this.setState({busy: true})
+        invitationReminders().then(res => {
+            this.setState({invitationReminders: res, busy: false});
+        });
+    }
+
     doOrphanUsers = () => {
         this.setState({busy: true})
         deleteOrphanUsers().then(res => {
@@ -670,6 +682,21 @@ class System extends React.Component {
                                                             onClick={this.doExpireMemberships}/>}
                     {!isEmpty(expiredMemberships) && <Button txt={I18n.t("system.clear")}
                                                              onClick={this.clear} cancelButton={true}/>}
+                </div>
+            </div>
+        );
+    }
+
+    renderInvitationReminders = () => {
+        const {invitationReminders} = this.state;
+        return (
+            <div className="info-block">
+                <p>{I18n.t("system.runInvitationReminders")}</p>
+                <div className="actions">
+                    {isEmpty(invitationReminders) && <Button txt={I18n.t("system.runDailyJobs")}
+                                                             onClick={this.doInvitationReminders}/>}
+                    {!isEmpty(invitationReminders) && <Button txt={I18n.t("system.clear")}
+                                                              onClick={this.clear} cancelButton={true}/>}
                 </div>
             </div>
         );
@@ -913,6 +940,42 @@ class System extends React.Component {
                                 </td>
                             </tr>
                         )}
+                        </tbody>
+                    </table>
+                </div>}
+            </div>)
+    }
+
+    renderInvitationRemindersResults = invitationReminders => {
+        return (
+            <div className="results">
+                {!isEmpty(invitationReminders) && <div className="results">
+                    <table className="expired-memberships">
+                        <thead>
+                        <tr>
+                            <th className="invitation-reminders">{I18n.t("system.invitationReminders.invitations")}</th>
+                            <th className="invitation-reminders">{I18n.t("system.invitationReminders.organisationInvitations")}</th>
+                            <th className="invitation-reminders">{I18n.t("system.invitationReminders.serviceInvitations")}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td className="action">
+                                <div className="invitation_reminders">
+                                    {invitationReminders.invitations.map(email => <span>{email}</span>)}
+                                </div>
+                            </td>
+                            <td className="action">
+                                <div className="invitation_reminders">
+                                    {invitationReminders.organisation_invitations.map(email => <span>{email}</span>)}
+                                </div>
+                            </td>
+                            <td className="action">
+                                <div className="invitation_reminders">
+                                    {invitationReminders.service_invitations.map(email => <span>{email}</span>)}
+                                </div>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>}
@@ -1177,6 +1240,7 @@ class System extends React.Component {
             expiredCollaborations,
             suspendedCollaborations,
             expiredMemberships,
+            invitationReminders,
             sweepResults,
             cronJobs,
             parsedMetaData,
@@ -1202,7 +1266,7 @@ class System extends React.Component {
         const tabs = [
             this.getValidationTab(validationData, showOrganisationsWithoutAdmin, showServicesWithoutAdmin),
             this.getCronTab(suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations,
-                suspendedCollaborations, expiredMemberships, deletedUsers, sweepResults, cronJobs, parsedMetaData, parsedMetaDataView),
+                suspendedCollaborations, expiredMemberships, invitationReminders, deletedUsers, sweepResults, cronJobs, parsedMetaData, parsedMetaDataView),
             config.seed_allowed ? this.getSeedTab(seedResult, demoSeedResult) : null,
             this.getDatabaseTab(databaseStats, config),
             this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables, serverQuery),

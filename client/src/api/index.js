@@ -642,6 +642,10 @@ export function expireCollaborationMemberships() {
     return postPutJson("/api/system/expire_memberships", {}, "PUT");
 }
 
+export function invitationReminders() {
+    return postPutJson("/api/system/invitation_reminders", {}, "PUT");
+}
+
 export function parseMetaData() {
     return fetchJson("/api/system/parse_metadata");
 }

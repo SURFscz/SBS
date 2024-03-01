@@ -3,6 +3,7 @@ import threading
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
+from server.cron.invitation_reminders import invitation_reminders
 from server.cron.cleanup_non_open_requests import cleanup_non_open_requests
 from server.cron.collaboration_expiration import expire_collaborations
 from server.cron.collaboration_inactivity_suspension import suspend_collaborations
@@ -39,6 +40,8 @@ def start_scheduling(app):
         scheduler.add_job(func=cleanup_non_open_requests, hour=cfg.user_requests_retention.cron_hour_of_day, **options)
     if cfg.orphan_users.enabled:
         scheduler.add_job(func=delete_orphan_users, hour=cfg.orphan_users.cron_hour_of_day, **options)
+    if cfg.invitation_reminders.enabled:
+        scheduler.add_job(func=invitation_reminders, hour=cfg.invitation_reminders.cron_hour_of_day, **options)
 
     if cfg.metadata.get("parse_at_startup", False):
         threading.Thread(target=parse_idp_metadata, args=(app,)).start()
