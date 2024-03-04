@@ -97,10 +97,11 @@ class Home extends React.Component {
                 default:
                     hasAnyRoles = false;
             }
+            const collaborationTabPresent = tabs.some(t => t.key === "collaborations")
             if (isUserServiceAdmin(user) && !user.admin) {
-                if (nbrCollaborations > 0) {
+                if (nbrCollaborations > 0 && !collaborationTabPresent) {
                     tabs.push(this.getCollaborationsTab());
-                } else if (!isEmpty(user.organisation_from_user_schac_home)) {
+                } else if (!isEmpty(user.organisation_from_user_schac_home) && !collaborationTabPresent) {
                     tabs.push(this.getEmptyCollaborationsTab());
                 }
                 if (nbrServices === 1 && tabs.length === 0 && !redirect) {
