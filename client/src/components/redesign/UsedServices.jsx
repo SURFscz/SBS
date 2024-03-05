@@ -373,17 +373,17 @@ class UsedServices extends React.Component {
         );
     }
 
-    renderConnectedServices = (user, usedServices, collaboration) => {
+    renderConnectedServices = (user, usedServices, collaboration, hasServices) => {
         return (
             <div>
-                {isEmpty(usedServices) && <div className="no-services">
-                    <p className={"margin"}>{I18n.t("models.collaboration.noServices")}
-                        <a href={"/#"}
-                           onClick={this.gotoConnectService}>{I18n.t("models.collaboration.connectFirstService")}</a>
-                    </p>
-                    <NoServicesIcon/>
-                </div>
-                }
+                {!hasServices &&
+                    <div className="no-services">
+                        <p className={"margin"}>{I18n.t("models.collaboration.noServices")}
+                            <a href={"/#"}
+                               onClick={this.gotoConnectService}>{I18n.t("models.collaboration.connectFirstService")}</a>
+                        </p>
+                        <NoServicesIcon/>
+                    </div>}
                 {usedServices.map(service =>
                     <ServiceCard service={service}
                                  key={service.id}
@@ -430,15 +430,16 @@ class UsedServices extends React.Component {
     }
 
     sortAndFilter = (services, query) => {
+        const queryToLower = query.toLowerCase();
         return services
             .sort((s1, s2) => s1.name.localeCompare(s2.name))
-            .filter(service => isEmpty(query) || service.name.toLowerCase().indexOf(query) > -1)
+            .filter(service => isEmpty(query) || service.name.toLowerCase().indexOf(queryToLower) > -1)
     }
 
     renderCurrentTab = (currentTab, usedServices, availableServices, query, user, collaboration) => {
         switch (currentTab) {
             case CONNECTIONS:
-                return this.renderConnectedServices(user, this.sortAndFilter(usedServices, query), collaboration);
+                return this.renderConnectedServices(user, this.sortAndFilter(usedServices, query), collaboration, usedServices.length > 0);
             case AVAILABLE:
                 return this.renderAvailableServices(user, this.sortAndFilter(availableServices, query), collaboration);
             default:
