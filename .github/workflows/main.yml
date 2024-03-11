@@ -328,7 +328,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: "."
-          file: "Dockerfile-sbs"
+          file: "Dockerfile.sbs"
           pull: true
           push: true
           tags: ${{ steps.meta-sbs.outputs.tags }}
@@ -346,7 +346,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: "."
-          file: "Dockerfile-sbs-server"
+          file: "Dockerfile.sbs-server"
           pull: true
           push: true
           tags: ${{ steps.meta-sbs-server.outputs.tags }}
