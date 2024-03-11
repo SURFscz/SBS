@@ -324,24 +324,6 @@ jobs:
           images: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_SBS }}
 
-      - name: Build and push Docker SBS-server image
-        uses: docker/build-push-action@v5
-        with:
-          context: "."
-          file: "Dockerfile-sbs-server"
-          pull: true
-          push: true
-          tags: ${{ steps.meta-sbs-server.outputs.tags }}
-          labels: ${{ steps.meta-sbs-server.outputs.labels }}
-
-      # The SBS (apache) server image
-      - name: Extract metadata (tags, labels) for SBS-server image
-        id: meta-sbs-server
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_SERVER }}
-
       - name: Build and push Docker SBS image
         uses: docker/build-push-action@v5
         with:
@@ -351,3 +333,21 @@ jobs:
           push: true
           tags: ${{ steps.meta-sbs.outputs.tags }}
           labels: ${{ steps.meta-sbs.outputs.labels }}
+
+      # The SBS (apache) server image
+      - name: Extract metadata (tags, labels) for SBS-server image
+        id: meta-sbs-server
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_SERVER }}
+
+      - name: Build and push Docker SBS-server image
+        uses: docker/build-push-action@v5
+        with:
+          context: "."
+          file: "Dockerfile-sbs-server"
+          pull: true
+          push: true
+          tags: ${{ steps.meta-sbs-server.outputs.tags }}
+          labels: ${{ steps.meta-sbs-server.outputs.labels }}
