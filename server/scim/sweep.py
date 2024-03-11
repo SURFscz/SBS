@@ -91,7 +91,7 @@ def _all_remote_scim_objects(service: Service, scim_type):
     scim_resources = []
     while True:
         url = f"{service.scim_url}/{scim_type}?startIndex={len(scim_resources) + 1}"
-        response = requests.get(url, headers=scim_headers(service), timeout=10)
+        response = requests.get(url, headers=scim_headers(service), timeout=10, verify=False)
         if not validate_response(response, service, outside_user_context=True, extra_logging=f"SCIM {scim_type} list"):
             raise BadRequest(f"Invalid response from remote SCIM server (got HTTP status {response.status_code})")
 
@@ -146,7 +146,8 @@ def perform_sweep(service: Service):
         if f"{remote_group.get('externalId', '').replace(EXTERNAL_ID_POST_FIX, '')}" not in groups_by_identifier:
             if "meta" in remote_group and "location" in remote_group['meta']:
                 url = f"{service.scim_url}{remote_group['meta']['location']}"
-                response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10)
+                response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10,
+                                           verify=False)
                 if validate_response(response, service, outside_user_context=True, extra_logging="SCIM group delete"):
                     sync_results["groups"]["deleted"].append(url)
 
@@ -154,7 +155,7 @@ def perform_sweep(service: Service):
         if f"{remote_user.get('externalId', '').replace(EXTERNAL_ID_POST_FIX, '')}" not in users_by_external_id:
             if "meta" in remote_user and "location" in remote_user['meta']:
                 url = f"{service.scim_url}{remote_user['meta']['location']}"
-                response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10)
+                response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10, verify=False)
                 if validate_response(response, service, outside_user_context=True, extra_logging="SCIM user delete"):
                     sync_results["users"]["deleted"].append(url)
 
@@ -169,7 +170,8 @@ def perform_sweep(service: Service):
             remote_user = remote_users_by_external_id.get(user.external_id)
             if remote_user and "meta" in remote_user and "location" in remote_user['meta']:
                 url = f"{service.scim_url}{remote_user['meta']['location']}"
-                response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10)
+                response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10,
+                                           verify=False)
                 if validate_response(response, service, outside_user_context=True, extra_logging="SCIM user delete"):
                     sync_results["groups"]["deleted"].append(url)
         # Add all SRAM users that are not present in the remote SCIM database
@@ -178,7 +180,7 @@ def perform_sweep(service: Service):
             url = f"{service.scim_url}/{SCIM_USERS}"
             scim_dict_cleansed = replace_none_values(scim_dict)
             response = requests.post(url, json=scim_dict_cleansed, headers=scim_headers(service),
-                                     timeout=10)
+                                     timeout=10, verify=False)
             if validate_response(response, service, outside_user_context=True, extra_logging="SCIM user create"):
                 # Add the new remote user to the remote_users_by_external_id for membership lookup
                 response_json = response.json()
@@ -192,7 +194,8 @@ def perform_sweep(service: Service):
                 if "meta" in remote_user and "location" in remote_user['meta']:
                     url = f"{service.scim_url}{remote_user['meta']['location']}"
                     scim_dict_cleansed = replace_none_values(scim_dict)
-                    response = requests.put(url, json=scim_dict_cleansed, headers=scim_headers(service), timeout=10)
+                    response = requests.put(url, json=scim_dict_cleansed, headers=scim_headers(service), timeout=10,
+                                            verify=False)
                     if validate_response(response, service, outside_user_context=True,
                                          extra_logging="SCIM user update"):
                         response_json = response.json()
@@ -204,14 +207,16 @@ def perform_sweep(service: Service):
             remote_group = remote_groups_by_external_id.get(group.identifier)
             if remote_group and "meta" in remote_group and "location" in remote_group["meta"]:
                 url = f"{service.scim_url}{remote_group['meta']['location']}"
-                response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10)
+                response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10,
+                                           verify=False)
                 if validate_response(response, service, outside_user_context=True, extra_logging="SCIM group delete"):
                     sync_results["groups"]["deleted"].append(url)
         elif group.identifier not in remote_groups_by_external_id:
             scim_dict = create_group_template(group, membership_scim_objects)
             url = f"{service.scim_url}/{SCIM_GROUPS}"
             scim_dict_cleansed = replace_none_values(scim_dict)
-            response = requests.post(url, json=scim_dict_cleansed, headers=scim_headers(service), timeout=10)
+            response = requests.post(url, json=scim_dict_cleansed, headers=scim_headers(service), timeout=10,
+                                     verify=False)
             if validate_response(response, service, outside_user_context=True, extra_logging="SCIM group create"):
                 response_json = response.json()
                 sync_results["groups"]["created"].append(response_json)
@@ -222,7 +227,8 @@ def perform_sweep(service: Service):
                 if remote_group and "meta" in remote_group and "location" in remote_group["meta"]:
                     url = f"{service.scim_url}{remote_group['meta']['location']}"
                     scim_dict_cleansed = replace_none_values(scim_dict)
-                    response = requests.put(url, json=scim_dict_cleansed, headers=scim_headers(service), timeout=10)
+                    response = requests.put(url, json=scim_dict_cleansed, headers=scim_headers(service), timeout=10,
+                                            verify=False)
                     if validate_response(response, service, outside_user_context=True,
                                          extra_logging="SCIM group update"):
                         response_json = response.json()
