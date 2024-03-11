@@ -103,7 +103,7 @@ pytest test
 flake8 ./
 ```
 
-To generate coverage reports:
+To generate the coverage reports:
 
 ```bash
 source .venv/bin/activate
