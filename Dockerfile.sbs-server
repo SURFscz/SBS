@@ -1,0 +1,10 @@
+# Build SRAM SBS (apache) server image
+FROM ghcr.io/openconext/openconext-basecontainers/apache2:latest AS sram-sbs-server
+RUN rm -f /etc/apache2/sites-enabled/*.conf
+RUN a2enmod proxy_wstunnel
+
+# Set the default workdir
+WORKDIR /opt
+
+#CMD ["bash"]
+
