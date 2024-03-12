@@ -1984,9 +1984,9 @@ const en = {
             action: "Action"
         },
         invitationReminders: {
-            invitations: "CO invitations resend",
-            serviceInvitations: "Service invitations resend",
-            organisationInvitations: "ORG invitations resend",
+            invitations: "Invitations resent",
+            serviceInvitations: "Service invitations resent",
+            organisationInvitations: "Organisation invitations resent",
         }
     },
     access: {
