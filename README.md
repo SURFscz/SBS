@@ -44,13 +44,14 @@ Ensure MySQL is running and run the Python server with the correct local environ
 PROFILE=local ALLOW_MOCK_USER_API=1 CONFIG=config/test_config.yml python -m server
 ```
 
-With TESTING=1 no mails will be send. If you do want to validate the mails you can run a fake smtp server with:
+With TESTING=1 no mails will be sent. If you do want to validate the mails you can run a fake smtp server with:
 
 ```bash
 python -m smtpd -n -c DebuggingServer localhost:1025
 ```
 
-If you want the emails to be opened in the browser when developing add the `OPEN_MAIL_IN_BROWSER=1` to your environment
+If you want the emails to be opened in the browser when developing add the `OPEN_MAIL_IN_BROWSER=1` to your environment.
+Or even better, use https://mailpit.axllent.org/ and capture all emails send. 
 
 #### [Client](#client)
 
