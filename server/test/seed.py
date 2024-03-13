@@ -5,7 +5,8 @@ import uuid
 
 from sqlalchemy import text
 
-from server.auth.secrets import secure_hash, generate_token
+from server.auth.secrets import secure_hash, generate_token, encrypt_secret
+from server.auth.tokens import _service_context
 from server.db.audit_mixin import metadata
 from server.db.defaults import (default_expiry_date, SERVICE_TOKEN_INTROSPECTION, SERVICE_TOKEN_SCIM, SERVICE_TOKEN_PAM,
                                 STATUS_OPEN)
@@ -442,6 +443,9 @@ def seed(db, app_config, skip_seed=False):
                               scim_enabled=True, scim_url="https://scim-monitor.sram.surf.nl/scim/tst",
                               scim_client_enabled=True)
     service_monitor.ldap_identifier = service_monitor.entity_id
+
+    encrypted_bearer_token = encrypt_secret(app_config.encryption_key, "server_token", _service_context(service_monitor))
+    service_monitor.scim_bearer_token = encrypted_bearer_token
 
     service_token_monitor_scim = ServiceToken(hashed_token=secure_hash("Axyz_geheim"), description="Monitor token",
                                               service=service_monitor, token_type=SERVICE_TOKEN_SCIM)
