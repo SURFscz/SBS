@@ -193,7 +193,7 @@ def mail_organisation_invitation(context, organisation, recipients, reminder=Fal
         _store_mail(None, ORGANISATION_INVITATION_MAIL, recipients)
     context = {**context, **{"expiry_period": calculate_expiry_period(context["invitation"])},
                "organisation": organisation, "reminder": reminder}
-    reminder_part = "Reminder: " if reminder else ""
+    reminder_part = "Reminder - " if reminder else ""
     return _do_send_mail(
         subject=f"{reminder_part}Invitation to join organisation {organisation.name}",
         recipients=recipients,
@@ -210,7 +210,7 @@ def mail_collaboration_invitation(context, collaboration, recipients, reminder=F
     message = invitation.message.replace("\n", "<br/>") if invitation.message else None
     context = {**context, "expiry_period": calculate_expiry_period(invitation),
                "collaboration": collaboration, "message": message, "reminder": reminder}
-    reminder_part = "Reminder: " if reminder else ""
+    reminder_part = "Reminder - " if reminder else ""
     return _do_send_mail(
         subject=f"{reminder_part}Invitation to join collaboration {collaboration.name}",
         recipients=recipients,
@@ -228,7 +228,7 @@ def mail_service_invitation(context, service, recipients, reminder=False, previe
         _store_mail(None, SERVICE_INVITATION_MAIL, recipients)
     context = {**context, **{"expiry_period": calculate_expiry_period(context["invitation"])},
                "service": service, "reminder": reminder}
-    reminder_part = "Reminder: " if reminder else ""
+    reminder_part = "Reminder - " if reminder else ""
     return _do_send_mail(
         subject=f"{reminder_part}Invitation to become service {context['intended_role']} for {service.name}",
         recipients=recipients,
