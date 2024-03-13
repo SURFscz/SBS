@@ -161,6 +161,9 @@ class ServiceOverview extends React.Component {
                 confirmationDialogAction: () => this.resetAups(false),
                 confirmationHeader: I18n.t("confirmationDialog.title"),
                 lastAdminWarning: false,
+                scimTokenChange: false,
+                sweepSuccess: null,
+                ldapPassword: null,
                 confirmationDialogQuestion: I18n.t("service.aup.confirmation", {name: service.name}),
                 confirmationTxt: I18n.t("confirmationDialog.confirm"),
             });
@@ -216,11 +219,13 @@ class ServiceOverview extends React.Component {
                 confirmationDialogAction: () => this.ldapResetAction(false),
                 warning: false,
                 lastAdminWarning: false,
+                scimTokenChange: false,
+                sweepSuccess: null,
+                ldapPassword: null,
                 confirmationHeader: I18n.t("confirmationDialog.title"),
                 confirmationDialogQuestion: I18n.t("service.ldap.confirmation", {name: service.name}),
                 confirmationTxt: I18n.t("confirmationDialog.confirm"),
             });
-
         } else {
             resetLdapPassword(service).then(res => {
                 this.setState({
@@ -230,6 +235,8 @@ class ServiceOverview extends React.Component {
                     cancelDialogAction: null,
                     confirmationDialogQuestion: I18n.t("service.ldap.info"),
                     ldapPassword: res.ldap_password,
+                    scimTokenChange: false,
+                    sweepSuccess: null,
                     tokenValue: null,
                     loading: false,
                     confirmationDialogAction: this.cancelDialogAction
@@ -266,6 +273,8 @@ class ServiceOverview extends React.Component {
                 warning: false,
                 lastAdminWarning: false,
                 scimTokenChange: true,
+                sweepSuccess: null,
+                ldapPassword: null,
                 confirmationHeader: I18n.t("confirmationDialog.title"),
                 confirmationDialogQuestion: I18n.t("service.scim_token.confirmation", {name: service.name}),
                 confirmationTxt: I18n.t("confirmationDialog.confirm"),
@@ -359,6 +368,10 @@ class ServiceOverview extends React.Component {
                 confirmationDialogQuestion: I18n.t("service.deleteWarning"),
                 confirmationTxt: I18n.t("confirmationDialog.ok"),
                 cancelDialogAction: null,
+                lastAdminWarning: false,
+                scimTokenChange: false,
+                sweepSuccess: null,
+                ldapPassword: null,
                 confirmationHeader: I18n.t("confirmationDialog.title"),
                 confirmationDialogAction: this.closeConfirmationDialog
             });
@@ -369,6 +382,10 @@ class ServiceOverview extends React.Component {
                 confirmationDialogQuestion: I18n.t(`service.${userServiceAdmin ? "requestDeleteConfirmation" : "deleteConfirmation"}`,
                     {name: service.name}),
                 warning: true,
+                lastAdminWarning: false,
+                scimTokenChange: false,
+                sweepSuccess: null,
+                ldapPassword: null,
                 confirmationTxt: I18n.t("confirmationDialog.confirm"),
                 cancelDialogAction: this.closeConfirmationDialog,
                 confirmationHeader: I18n.t("confirmationDialog.title"),
@@ -433,6 +450,9 @@ class ServiceOverview extends React.Component {
                 cancelButtonLabel: I18n.t("forms.ignore"),
                 confirmationTxt: I18n.t("confirmationDialog.confirm"),
                 warning: false,
+                lastAdminWarning: false,
+                scimTokenChange: false,
+                ldapPassword: null,
                 cancelDialogAction: () => this.setState({confirmationDialogOpen: false}, () => this.doSweep(service, true)),
                 confirmationDialogOpen: true
             });
@@ -443,6 +463,9 @@ class ServiceOverview extends React.Component {
                     loading: false,
                     sweepSuccess: true,
                     sweepResults: res,
+                    lastAdminWarning: false,
+                    scimTokenChange: false,
+                    ldapPassword: null,
                     confirmationDialogQuestion: null,
                     cancelButtonLabel: I18n.t("confirmationDialog.cancel"),
                     confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
@@ -541,6 +564,10 @@ class ServiceOverview extends React.Component {
                     this.setState({
                         confirmationDialogOpen: true,
                         leavePage: false,
+                        lastAdminWarning: false,
+                        scimTokenChange: false,
+                        sweepSuccess: null,
+                        ldapPassword: null,
                         confirmationDialogQuestion: question,
                         warning: true,
                         confirmationTxt: I18n.t("confirmationDialog.confirm"),
@@ -634,6 +661,10 @@ class ServiceOverview extends React.Component {
             leavePage: false,
             confirmationDialogQuestion: I18n.t("serviceDetails.tokenDeleteConfirmation"),
             warning: true,
+            lastAdminWarning: false,
+            scimTokenChange: false,
+            sweepSuccess: null,
+            ldapPassword: null,
             confirmationTxt: I18n.t("confirmationDialog.confirm"),
             cancelDialogAction: this.closeConfirmationDialog,
             confirmationHeader: I18n.t("confirmationDialog.title"),
