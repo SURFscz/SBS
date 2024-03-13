@@ -37,5 +37,9 @@ def use_random_db(request, worker_id):
     with engine.connect() as conn:
         conn.execute(sqlalchemy.text(f"CREATE DATABASE IF NOT EXISTS sbs_{worker_id}"))
 
+    # not sure why, but this is not picked up from AbstractTest.setUpClass
+    # and we need it in some of the migrations
+    os.environ["CONFIG"] = os.environ.get("CONFIG", "config/test_config.yml")
+
     os.environ['SBS_DB_URI_OVERRIDE'] = database_uri
     db_migrations(database_uri)
