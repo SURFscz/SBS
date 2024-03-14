@@ -68,19 +68,24 @@ def _do_suspend_users(app):
         logger.info("Start running suspend_users job")
 
         current_time = dt_now()
+        # users who have bene inactive since this date will be suspended
         suspension_date = current_time - datetime.timedelta(days=retention.allowed_inactive_period_days)
+        # users who have been inactive since this date will get a first suspension warning
         warning_date = suspension_date + datetime.timedelta(days=retention.reminder_suspend_period_days)
+        # suspension warnings that have been sent before this date are considered "old" and can be acted upon
         warning_timeout = current_time - datetime.timedelta(days=retention.reminder_suspend_period_days)
 
         results = _result_container()
 
         # note: we handle the following progression here:
-        #  - at allowed_inactive_period_days-reminder_suspend_period_days after the last login,
+        #  - at warning_date = allowed_inactive_period_days-reminder_suspend_period_days after the last login,
         #    a user is warned about pending suspension
-        #  - at allowed_inactive_period_days after the last login, a user's account is suspended
+        #  - at reminder_suspend_period_days after the warning _and_ allowed_inactive_period_days after the last login,
+        #    a user's account is suspended
         #  - at remove_suspended_users_period_days-reminder_expiry_period_days after suspension, a
         #    user is warned about pending deletion
-        #  - at remove_suspended_users_period_days after suspension, a user is deleted
+        #  - at reminder_expiry_period_days after the reminder _and_ remove_suspended_users_period_days after suspension,
+        #    a user is deleted
 
         # first, we handle suspension and warning about suspension
         # concretely:
@@ -105,7 +110,7 @@ def _do_suspend_users(app):
                 # no recent reminder, sent one first
                 create_suspend_notification(user, retention, app, True, True)
                 results["warning_suspend_notifications"].append(user.email)
-            elif user.last_login_date < suspension_date and last_suspend_notification.sent_at < warning_timeout:
+            elif user.last_login_date < suspension_date < last_suspend_notification.sent_at < warning_timeout:
                 # user has gotten reminder, and we've waited long enough
                 logger.info(f"Suspending user {user.email} because of inactivity")
                 user.suspended = True
@@ -122,17 +127,21 @@ def _do_suspend_users(app):
         # - if deletion reminder was reminder_expiry_period_days ago, and last login was
         #   (allowed_inactive_period_days+remove_suspended_users_period_days) days ago, delete user
 
+        # users who have been inactive since this date can be deleted
         deletion_date = (
             current_time
             - datetime.timedelta(days=retention.allowed_inactive_period_days)
             - datetime.timedelta(days=retention.remove_suspended_users_period_days)
         )
+        # users who have been inactive since this date will get a first deletion warning
         warning_date = deletion_date + datetime.timedelta(days=retention.reminder_expiry_period_days)
+        # users who have been suspended since this date can be warned about deletion
         suspension_timeout = (
             current_time
             - datetime.timedelta(days=retention.remove_suspended_users_period_days)
             + datetime.timedelta(days=retention.reminder_expiry_period_days)
         )
+        # deletion warnings that have been sent before this date are considered "old" and can be acted upon
         warning_timeout = current_time - datetime.timedelta(days=retention.reminder_expiry_period_days)
         suspended_users = User.query \
             .filter(User.last_login_date < warning_date, User.suspended == True) \
@@ -151,13 +160,17 @@ def _do_suspend_users(app):
                 SuspendNotification.is_suspension.is_(False)
             ).order_by(desc(SuspendNotification.sent_at)).first()  # noqa: E712
 
-            if last_suspend_notification is not None and \
-               last_suspend_notification.sent_at < suspension_timeout and \
-               (last_delete_warning is None or last_delete_warning.sent_at < suspension_date):
+            if last_suspend_notification is None:
+                raise Exception(f"User {user.uid} ({user.uid}) is suspended but has no suspension notification."
+                                "This should not happen.")
+            if last_suspend_notification.sent_at > suspension_timeout:
+                continue  # user suspended too recently, don't delete yet
+
+            if last_delete_warning is None or last_delete_warning.sent_at < suspension_date:
+                # no recent deletion warning, sent one first
                 create_suspend_notification(user, retention, app, True, False)
                 results["warning_deleted_notifications"].append(user.email)
-            elif user.last_login_date < deletion_date and \
-                 last_delete_warning is not None and last_delete_warning.sent_at < warning_timeout:
+            elif user.last_login_date < deletion_date < last_delete_warning.sent_at < warning_timeout:
                 # don't send mail to user; they have already received 3 emails, and this one is not actionable.
                 results["deleted_notifications"].append(user.email)
                 deleted_user_uids.append(user.uid)
