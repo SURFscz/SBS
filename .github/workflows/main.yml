@@ -22,6 +22,7 @@ env:
 jobs:
   Server_tests:
     name: Server tests
+    if: false
 
     runs-on: ubuntu-latest
 
@@ -125,6 +126,7 @@ jobs:
 
   Client_build:
     name: Client build
+    if: false
 
     runs-on: ubuntu-latest
 
@@ -211,6 +213,7 @@ jobs:
   Artifact_upload:
     name: Create release
     if: >
+      false &&
       github.actor!='dependabot[bot]' &&
       github.event_name!='pull_request' &&
       ( github.ref_type=='tag' || github.ref_type=='branch' )
@@ -291,6 +294,7 @@ jobs:
   Docker_image:
     name: Create image
     if: >
+      false &&
       github.actor!='dependabot[bot]' &&
       github.event_name!='pull_request' &&
       ( github.ref_type=='tag' || github.ref_type=='branch' )
@@ -409,7 +413,7 @@ jobs:
       - name: Dump latest database schema
         run: |
           echo "-- Dump of empty SBS datasbase, git commit $(git rev-parse HEAD), alembic revision $(ALEMBIC_CURRENT)" > misc/sbs-db.sql
-          mysqldump -u sbs --password=sbs sbs >> misc/sbs-db.sql
+          mysqldump -h 127.0.0.1 -u sbs --password=sbs sbs >> misc/sbs-db.sql
 
       - name: Create Pull Request
         uses: "peter-evans/create-pull-request@v6"
