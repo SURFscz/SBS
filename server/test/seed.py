@@ -431,6 +431,9 @@ def seed(db, app_config, skip_seed=False):
                       sirtfi_compliant=True, research_scholarship_compliant=True, code_of_conduct_compliant=True,
                       ldap_enabled=False)
 
+    persist_instance(db, mail, wireless, cloud, storage, wiki, network, service_ssh, uuc_scheduler,
+                     service_empty, demo_sp, demo_rp)
+
     service_monitor = Service(entity_id="https://ldap-monitor.example.org", name="LDAP/SCIM Monitor Service",
                               description="Used for monitoring LDAP and SCIM.  NIET AANKOMEN.",
                               override_access_allowed_all_connections=False, automatic_connection_allowed=True,
@@ -439,19 +442,23 @@ def seed(db, app_config, skip_seed=False):
                               privacy_policy="https://privacy.org", accepted_user_policy="https://example.nl/aup",
                               contact_email="admin@exmaple.nl", security_email="sec@example.nl",
                               ldap_password="$2b$12$GLjC5hK59aeDcEe.tHHJMO.SQQjFgIIpZ7VaKTIsBn05z/gE7JQny",
-                              ldap_enabled=True,
-                              scim_enabled=True, scim_url="https://scim-monitor.sram.surf.nl/scim/tst",
-                              scim_client_enabled=True)
+                              ldap_enabled=True, scim_enabled=True)
     service_monitor.ldap_identifier = service_monitor.entity_id
-
-    encrypted_bearer_token = encrypt_secret(app_config.encryption_key, "server_token", _service_context(service_monitor))
-    service_monitor.scim_bearer_token = encrypted_bearer_token
 
     service_token_monitor_scim = ServiceToken(hashed_token=secure_hash("Axyz_geheim"), description="Monitor token",
                                               service=service_monitor, token_type=SERVICE_TOKEN_SCIM)
 
-    persist_instance(db, mail, wireless, cloud, storage, wiki, network, service_ssh, uuc_scheduler,
-                     service_empty, demo_sp, demo_rp, service_monitor, service_token_monitor_scim)
+    persist_instance(db, service_monitor, service_token_monitor_scim)
+
+    # set (encrypted) SCIM Bearer token for this service
+    # can't do this directly, because the service id is needed for the token encryption
+    service_monitor = Service.query.filter(Service.entity_id == service_monitor.entity_id).first()
+    encrypted_bearer_token = encrypt_secret(app_config.encryption_key, "server_token", _service_context(service_monitor))
+    service_monitor.scim_bearer_token = encrypted_bearer_token
+    service_monitor.scim_url = "https://scim-monitor.sram.surf.nl/scim/tst",
+    service_monitor.scim_client_enabled = True
+
+    persist_instance(db, service_monitor)
 
     service_group_mail = ServiceGroup(name=service_group_mail_name,
                                       short_name="mail",
