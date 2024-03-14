@@ -351,3 +351,70 @@ jobs:
           push: true
           tags: ${{ steps.meta-sbs-server.outputs.tags }}
           labels: ${{ steps.meta-sbs-server.outputs.labels }}
+
+  Schema_pr:
+    name: Update schema cache
+
+    runs-on: ubuntu-latest
+
+    if: "github.ref == 'refs/heads/test-gha'"
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup mysql server
+        run: >
+          mysql -uroot -proot -h127.0.0.1 -e "
+            DROP DATABASE IF EXISTS sbs;
+            CREATE DATABASE IF NOT EXISTS sbs DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
+            CREATE USER 'sbs'@'%' IDENTIFIED BY 'sbs';
+            GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'%' WITH GRANT OPTION;
+          "
+      - name: Load SBS schema
+        # not strictly necessary, but it avoids running 200+ migrations during tests
+        run: |
+          mysql -uroot -proot -h127.0.0.1 sbs < misc/sbs-db.sql
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: 'pip'
+          cache-dependency-path: 'server/requirements/*.txt'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install pip setuptools wheel
+          pip install --upgrade pip
+          pip install -r ./server/requirements/test.txt
+
+      - name: Run alembic migrations
+        run: |
+          cd server
+          alembic --config migrations/alembic.ini upgrade head
+          echo ALEMBIC_CURRENT=$(alembic --config migrations/alembic.ini current) >> "$GITHUB_ENV"
+        env:
+          CONFIG: "config/test_config"
+
+      - name: dump latest database schema
+        run: |
+          echo "-- Dump of empty SBS datasbase, git commit $(git rev-parse HEAD), alembic revision $(ALEMBIC_CURRENT)" > misc/sbs-db.sql
+          mysqldump -u sbs --password=sbs sbs >> misc/sbs-db.sql
+
+      - name: Create Pull Request
+        uses: "peter-evans/create-pull-request@v6"
+        with:
+          add-paths: "misc/sbs-db.sql"
+          commit-message: "Update schema cache for Alembic revision $(ALEMBIC_CURRENT)"
+          branch: "update-schema-cache"
+          title: "Update schema cache"
