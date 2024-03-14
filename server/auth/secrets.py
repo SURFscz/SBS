@@ -6,8 +6,9 @@ import string
 from secrets import token_urlsafe, SystemRandom
 
 import bcrypt
+from cryptography.exceptions import InvalidTag
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-from werkzeug.exceptions import SecurityError, BadRequest
+from werkzeug.exceptions import SecurityError
 
 SYSTEM_RANDOM = SystemRandom()
 
@@ -57,5 +58,5 @@ def decrypt_secret(encryption_key: str, encrypted_value: str, context: dict) -> 
     original_context = json.loads(decrypted)
     for key, value in context.items():
         if value != original_context[key]:
-            raise BadRequest(f"Invalid value(={original_context[key]}) for {key}, expected {value}")
+            raise InvalidTag(f"Invalid value(={original_context[key]}) for {key}, expected {value}")
     return original_context["plain_secret"]

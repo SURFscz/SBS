@@ -1,14 +1,16 @@
 import re
+import traceback
 import urllib.parse
 from typing import Union
 
 import requests
+from cryptography.exceptions import InvalidTag
 from flasgger import swag_from
 from flask import Blueprint, Response
 from sqlalchemy import func
 from werkzeug.exceptions import Unauthorized, BadRequest
 
-from server.api.base import json_endpoint, query_param
+from server.api.base import json_endpoint, query_param, send_error_mail
 from server.auth.security import confirm_write_access, is_service_admin
 from server.auth.tokens import validate_service_token
 from server.db.db import db
@@ -149,12 +151,16 @@ def sweep():
         results = perform_sweep(service)
         results["scim_url"] = service.scim_url
         return results, 201
-    except BadRequest as error:
-        return {"error": f"Error from remote scim server: {error.description}",
+    except BadRequest as bad_request:
+        return {"error": f"Error from remote scim server: {bad_request.description}",
                 "scim_url": service.scim_url}, 400
-    except requests.RequestException as e:
-        return {"error": f"Could not connect to remote SCIM server ({type(e).__name__})"
-                         f"{': ' + e.response.text if e.response else ''}",
+    except requests.RequestException as request_exception:
+        return {"error": f"Could not connect to remote SCIM server ({type(request_exception).__name__})"
+                         f"{': ' + request_exception.response.text if request_exception.response else ''}",
+                "scim_url": service.scim_url}, 400
+    except InvalidTag:
+        send_error_mail(tb=traceback.format_exc())
+        return {"error": "Could not decrypt SCIM bearer secret",
                 "scim_url": service.scim_url}, 400
     except Exception:
         return {"error": "Unknown error while connecting to remote SCIM server",
