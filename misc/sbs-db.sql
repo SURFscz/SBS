@@ -1,14 +1,14 @@
--- Dump of empty SBS database, tag v53, alembic revision 7ff5f119c762
--- MariaDB dump 10.19-11.2.2-MariaDB, for osx10.19 (arm64)
+-- Dump of empty SBS datasbase, git commit 446b70bbcfa4ddd4857250965e7a67bf76dc0b00, alembic revision 
+-- MySQL dump 10.13  Distrib 8.0.36, for Linux (x86_64)
 --
--- Host: localhost    Database: sbs
+-- Host: 127.0.0.1    Database: sbs
 -- ------------------------------------------------------
--- Server version	11.2.2-MariaDB
+-- Server version	5.7.44
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+/*!50503 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -22,11 +22,11 @@
 
 DROP TABLE IF EXISTS `alembic_version`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `alembic_version` (
   `version_num` varchar(32) NOT NULL,
   PRIMARY KEY (`version_num`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -35,7 +35,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('7ff5f119c762');
+INSERT INTO `alembic_version` VALUES ('811a3753d09f');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -45,13 +45,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `api_keys`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `api_keys` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `hashed_secret` varchar(255) NOT NULL,
   `organisation_id` int(11) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_by` varchar(255) NOT NULL,
   `updated_by` varchar(255) NOT NULL,
   `description` text NOT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE `api_keys` (
   UNIQUE KEY `users_unique_hashed_secret` (`hashed_secret`),
   KEY `organisation_id` (`organisation_id`),
   CONSTRAINT `api_keys_ibfk_1` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -77,7 +77,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `audit_logs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `audit_logs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,
@@ -85,14 +85,14 @@ CREATE TABLE `audit_logs` (
   `target_type` varchar(255) DEFAULT NULL,
   `target_id` int(11) DEFAULT NULL,
   `action` int(11) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `state_before` text DEFAULT NULL,
-  `state_after` text DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `state_before` text,
+  `state_after` text,
   `parent_name` varchar(100) DEFAULT NULL,
   `parent_id` int(11) DEFAULT NULL,
   `target_name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -110,16 +110,16 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `aups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `aups` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `au_version` varchar(255) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `agreed_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `agreed_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `aups_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -137,7 +137,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `automatic_connection_allowed_organisations_services`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `automatic_connection_allowed_organisations_services` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `service_id` int(11) NOT NULL,
@@ -147,7 +147,7 @@ CREATE TABLE `automatic_connection_allowed_organisations_services` (
   KEY `organisation_id` (`organisation_id`),
   CONSTRAINT `automatic_connection_allowed_organisations_services_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE,
   CONSTRAINT `automatic_connection_allowed_organisations_services_ibfk_2` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -165,14 +165,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `collaboration_memberships`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `collaboration_memberships` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `collaboration_id` int(11) NOT NULL,
   `role` varchar(255) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_by` varchar(255) NOT NULL,
   `updated_by` varchar(255) NOT NULL,
   `invitation_id` int(11) DEFAULT NULL,
@@ -185,7 +185,7 @@ CREATE TABLE `collaboration_memberships` (
   CONSTRAINT `col_membership_invitation` FOREIGN KEY (`invitation_id`) REFERENCES `invitations` (`id`),
   CONSTRAINT `collaboration_memberships_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `collaboration_memberships_ibfk_2` FOREIGN KEY (`collaboration_id`) REFERENCES `collaborations` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -203,7 +203,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `collaboration_memberships_groups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `collaboration_memberships_groups` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `collaboration_membership_id` int(11) NOT NULL,
@@ -213,7 +213,7 @@ CREATE TABLE `collaboration_memberships_groups` (
   KEY `group_id` (`group_id`),
   CONSTRAINT `collaboration_memberships_groups_ibfk_1` FOREIGN KEY (`collaboration_membership_id`) REFERENCES `collaboration_memberships` (`id`) ON DELETE CASCADE,
   CONSTRAINT `collaboration_memberships_groups_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -246,24 +246,24 @@ DELIMITER ;
 
 DROP TABLE IF EXISTS `collaboration_requests`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `collaboration_requests` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `short_name` varchar(255) NOT NULL,
-  `description` text DEFAULT NULL,
-  `message` text DEFAULT NULL,
+  `description` text,
+  `message` text,
   `accepted_user_policy` varchar(255) DEFAULT NULL,
   `organisation_id` int(11) NOT NULL,
   `requester_id` int(11) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_by` varchar(255) NOT NULL,
   `updated_by` varchar(255) NOT NULL,
   `website_url` varchar(512) DEFAULT NULL,
-  `logo` mediumtext DEFAULT NULL,
+  `logo` mediumtext,
   `status` varchar(255) NOT NULL,
-  `rejection_reason` text DEFAULT NULL,
+  `rejection_reason` text,
   `uuid4` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `collaboration_requests_uuid4` (`uuid4`),
@@ -271,7 +271,7 @@ CREATE TABLE `collaboration_requests` (
   KEY `requester_id` (`requester_id`),
   CONSTRAINT `collaboration_requests_ibfk_1` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `collaboration_requests_ibfk_2` FOREIGN KEY (`requester_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -289,7 +289,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `collaboration_requests_units`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `collaboration_requests_units` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `collaboration_request_id` int(11) NOT NULL,
@@ -299,7 +299,7 @@ CREATE TABLE `collaboration_requests_units` (
   KEY `unit_id` (`unit_id`),
   CONSTRAINT `collaboration_requests_units_ibfk_1` FOREIGN KEY (`collaboration_request_id`) REFERENCES `collaboration_requests` (`id`) ON DELETE CASCADE,
   CONSTRAINT `collaboration_requests_units_ibfk_2` FOREIGN KEY (`unit_id`) REFERENCES `units` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -317,7 +317,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `collaboration_tags`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `collaboration_tags` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `collaboration_id` int(11) NOT NULL,
@@ -327,7 +327,7 @@ CREATE TABLE `collaboration_tags` (
   KEY `tag_id` (`tag_id`),
   CONSTRAINT `collaboration_tags_ibfk_1` FOREIGN KEY (`collaboration_id`) REFERENCES `collaborations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `collaboration_tags_ibfk_2` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -345,7 +345,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `collaboration_units`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `collaboration_units` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `collaboration_id` int(11) NOT NULL,
@@ -355,7 +355,7 @@ CREATE TABLE `collaboration_units` (
   KEY `unit_id` (`unit_id`),
   CONSTRAINT `collaboration_units_ibfk_1` FOREIGN KEY (`collaboration_id`) REFERENCES `collaborations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `collaboration_units_ibfk_2` FOREIGN KEY (`unit_id`) REFERENCES `units` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -373,28 +373,28 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `collaborations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `collaborations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `identifier` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `description` text NOT NULL,
-  `accepted_user_policy` mediumtext DEFAULT NULL,
+  `accepted_user_policy` mediumtext,
   `organisation_id` int(11) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_by` varchar(255) NOT NULL,
   `updated_by` varchar(255) NOT NULL,
   `short_name` varchar(255) NOT NULL,
   `global_urn` text NOT NULL,
-  `disable_join_requests` tinyint(1) DEFAULT 0,
-  `disclose_member_information` tinyint(1) DEFAULT 0,
-  `disclose_email_information` tinyint(1) DEFAULT 0,
-  `logo` mediumtext DEFAULT NULL,
+  `disable_join_requests` tinyint(1) DEFAULT '0',
+  `disclose_member_information` tinyint(1) DEFAULT '0',
+  `disclose_email_information` tinyint(1) DEFAULT '0',
+  `logo` mediumtext,
   `website_url` varchar(512) DEFAULT NULL,
   `uuid4` varchar(255) NOT NULL,
   `status` varchar(255) NOT NULL DEFAULT 'active',
-  `last_activity_date` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `last_activity_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `expiry_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `collaborations_unique_name` (`name`,`organisation_id`),
@@ -404,7 +404,7 @@ CREATE TABLE `collaborations` (
   KEY `organisation_id` (`organisation_id`),
   FULLTEXT KEY `ft_collaborations_search` (`name`,`description`),
   CONSTRAINT `collaborations_ibfk_1` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -422,17 +422,17 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `groups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `groups` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `short_name` varchar(255) NOT NULL,
   `global_urn` text NOT NULL,
-  `description` text DEFAULT NULL,
+  `description` text,
   `auto_provision_members` tinyint(1) DEFAULT NULL,
   `collaboration_id` int(11) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_by` varchar(255) NOT NULL,
   `updated_by` varchar(255) NOT NULL,
   `identifier` varchar(255) NOT NULL,
@@ -445,7 +445,7 @@ CREATE TABLE `groups` (
   KEY `groups_ibfk_2` (`service_group_id`),
   CONSTRAINT `groups_ibfk_1` FOREIGN KEY (`collaboration_id`) REFERENCES `collaborations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `groups_ibfk_2` FOREIGN KEY (`service_group_id`) REFERENCES `service_groups` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -463,7 +463,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `groups_invitations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `groups_invitations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `group_id` int(11) NOT NULL,
@@ -473,7 +473,7 @@ CREATE TABLE `groups_invitations` (
   KEY `invitation_id` (`invitation_id`),
   CONSTRAINT `groups_invitations_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`) ON DELETE CASCADE,
   CONSTRAINT `groups_invitations_ibfk_2` FOREIGN KEY (`invitation_id`) REFERENCES `invitations` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -491,27 +491,28 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `invitations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `invitations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `hash` varchar(255) NOT NULL,
-  `message` text DEFAULT NULL,
+  `message` text,
   `invitee_email` varchar(255) NOT NULL,
   `collaboration_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `intended_role` varchar(255) NOT NULL,
   `expiry_date` datetime DEFAULT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `created_by` varchar(255) NOT NULL,
   `membership_expiry_date` datetime DEFAULT NULL,
   `external_identifier` varchar(255) DEFAULT NULL,
   `status` varchar(255) NOT NULL,
+  `reminder_send` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `collaboration_id` (`collaboration_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `invitations_ibfk_1` FOREIGN KEY (`collaboration_id`) REFERENCES `collaborations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `invitations_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -529,19 +530,19 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `ip_networks`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ip_networks` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `network_value` text NOT NULL,
   `service_id` int(11) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_by` varchar(255) NOT NULL,
   `updated_by` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `service_id` (`service_id`),
   CONSTRAINT `ip_networks_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -559,23 +560,23 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `join_requests`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `join_requests` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `reference` text DEFAULT NULL,
-  `message` text DEFAULT NULL,
+  `reference` text,
+  `message` text,
   `user_id` int(11) NOT NULL,
   `collaboration_id` int(11) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `hash` varchar(512) DEFAULT NULL,
   `status` varchar(255) NOT NULL,
-  `rejection_reason` text DEFAULT NULL,
+  `rejection_reason` text,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `collaboration_id` (`collaboration_id`),
   CONSTRAINT `join_requests_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `join_requests_ibfk_2` FOREIGN KEY (`collaboration_id`) REFERENCES `collaborations` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -593,19 +594,19 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `organisation_aups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `organisation_aups` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `aup_url` varchar(255) NOT NULL,
   `user_id` int(11) NOT NULL,
   `organisation_id` int(11) NOT NULL,
-  `agreed_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `agreed_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `organisation_id` (`organisation_id`),
   CONSTRAINT `organisation_aups_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `organisation_aups_ibfk_2` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -623,24 +624,25 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `organisation_invitations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `organisation_invitations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `hash` varchar(255) NOT NULL,
-  `message` text DEFAULT NULL,
+  `message` text,
   `invitee_email` varchar(255) NOT NULL,
   `organisation_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `expiry_date` datetime DEFAULT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `created_by` varchar(255) NOT NULL,
   `intended_role` varchar(255) NOT NULL,
+  `reminder_send` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `organisation_id` (`organisation_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `organisation_invitations_ibfk_1` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `organisation_invitations_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -658,7 +660,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `organisation_membership_units`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `organisation_membership_units` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `organisation_membership_id` int(11) NOT NULL,
@@ -668,7 +670,7 @@ CREATE TABLE `organisation_membership_units` (
   KEY `unit_id` (`unit_id`),
   CONSTRAINT `organisation_membership_units_ibfk_1` FOREIGN KEY (`organisation_membership_id`) REFERENCES `organisation_memberships` (`id`) ON DELETE CASCADE,
   CONSTRAINT `organisation_membership_units_ibfk_2` FOREIGN KEY (`unit_id`) REFERENCES `units` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -686,14 +688,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `organisation_memberships`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `organisation_memberships` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `organisation_id` int(11) NOT NULL,
   `role` varchar(255) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_by` varchar(255) NOT NULL,
   `updated_by` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
@@ -701,7 +703,7 @@ CREATE TABLE `organisation_memberships` (
   KEY `organisation_id` (`organisation_id`),
   CONSTRAINT `organisation_memberships_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `organisation_memberships_ibfk_2` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -719,31 +721,31 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `organisations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `organisations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `description` text DEFAULT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `description` text,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_by` varchar(255) NOT NULL,
   `updated_by` varchar(255) NOT NULL,
   `short_name` varchar(255) NOT NULL,
-  `collaboration_creation_allowed` tinyint(1) DEFAULT 0,
+  `collaboration_creation_allowed` tinyint(1) DEFAULT '0',
   `identifier` varchar(255) NOT NULL,
-  `logo` mediumtext DEFAULT NULL,
+  `logo` mediumtext,
   `category` varchar(255) DEFAULT NULL,
-  `on_boarding_msg` mediumtext DEFAULT NULL,
-  `services_restricted` tinyint(1) DEFAULT 0,
+  `on_boarding_msg` mediumtext,
+  `services_restricted` tinyint(1) DEFAULT '0',
   `uuid4` varchar(255) NOT NULL,
-  `service_connection_requires_approval` tinyint(1) DEFAULT 0,
+  `service_connection_requires_approval` tinyint(1) DEFAULT '0',
   `accepted_user_policy` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `organisations_unique_name` (`name`),
   UNIQUE KEY `organisations_uuid4` (`uuid4`),
   UNIQUE KEY `organisations_unique_short_name` (`short_name`),
   FULLTEXT KEY `ft_organisations_search` (`name`,`description`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -761,7 +763,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `organisations_services`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `organisations_services` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `organisation_id` int(11) NOT NULL,
@@ -771,7 +773,7 @@ CREATE TABLE `organisations_services` (
   KEY `service_id` (`service_id`),
   CONSTRAINT `organisations_services_ibfk_1` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `organisations_services_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -789,22 +791,22 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `pam_sso_sessions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pam_sso_sessions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `session_id` varchar(255) NOT NULL,
   `attribute` varchar(255) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
   `service_id` int(11) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `pin` char(4) DEFAULT NULL,
-  `pin_shown` tinyint(1) DEFAULT 0,
+  `pin_shown` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `service_id` (`service_id`),
   CONSTRAINT `pam_sso_sessions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `pam_sso_sessions_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -822,20 +824,20 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `schac_home_organisations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `schac_home_organisations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `organisation_id` int(11) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_by` varchar(255) NOT NULL,
   `updated_by` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `schac_home_organisation_name_unique` (`name`),
   KEY `organisation_id` (`organisation_id`),
   CONSTRAINT `schac_home_organisations_ibfk_1` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -853,19 +855,19 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `service_aups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `service_aups` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `aup_url` varchar(255) NOT NULL,
   `user_id` int(11) NOT NULL,
   `service_id` int(11) NOT NULL,
-  `agreed_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `agreed_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `service_id` (`service_id`),
   CONSTRAINT `service_aups_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `service_aups_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -883,19 +885,21 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `service_connection_requests`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `service_connection_requests` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `message` text DEFAULT NULL,
+  `message` text,
   `requester_id` int(11) NOT NULL,
   `service_id` int(11) NOT NULL,
   `collaboration_id` int(11) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_by` varchar(255) NOT NULL,
   `updated_by` varchar(255) NOT NULL,
   `hash` varchar(512) DEFAULT NULL,
-  `pending_organisation_approval` tinyint(1) DEFAULT 0,
+  `pending_organisation_approval` tinyint(1) DEFAULT '0',
+  `status` varchar(255) NOT NULL,
+  `rejection_reason` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `service_connection_requests_unique_hash` (`hash`),
   KEY `requester_id` (`requester_id`),
@@ -904,7 +908,7 @@ CREATE TABLE `service_connection_requests` (
   CONSTRAINT `service_connection_requests_ibfk_1` FOREIGN KEY (`requester_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `service_connection_requests_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE,
   CONSTRAINT `service_connection_requests_ibfk_3` FOREIGN KEY (`collaboration_id`) REFERENCES `collaborations` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -922,16 +926,16 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `service_groups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `service_groups` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `short_name` varchar(255) NOT NULL,
-  `description` text DEFAULT NULL,
+  `description` text,
   `auto_provision_members` tinyint(1) DEFAULT NULL,
   `service_id` int(11) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_by` varchar(255) NOT NULL,
   `updated_by` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
@@ -939,7 +943,7 @@ CREATE TABLE `service_groups` (
   UNIQUE KEY `service_groups_unique_short_name` (`short_name`,`service_id`),
   KEY `service_id` (`service_id`),
   CONSTRAINT `service_groups_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -957,24 +961,25 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `service_invitations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `service_invitations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `hash` varchar(255) NOT NULL,
-  `message` text DEFAULT NULL,
+  `message` text,
   `invitee_email` varchar(255) NOT NULL,
   `intended_role` varchar(255) NOT NULL,
   `service_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `expiry_date` datetime DEFAULT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `created_by` varchar(255) NOT NULL,
+  `reminder_send` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `service_id` (`service_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `service_invitations_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE,
   CONSTRAINT `service_invitations_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -992,14 +997,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `service_memberships`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `service_memberships` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `service_id` int(11) NOT NULL,
   `role` varchar(255) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_by` varchar(255) NOT NULL,
   `updated_by` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
@@ -1007,7 +1012,7 @@ CREATE TABLE `service_memberships` (
   KEY `service_id` (`service_id`),
   CONSTRAINT `service_memberships_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `service_memberships_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1025,13 +1030,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `service_requests`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `service_requests` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `abbreviation` varchar(255) NOT NULL,
-  `description` text DEFAULT NULL,
-  `logo` mediumtext DEFAULT NULL,
+  `description` text,
+  `logo` mediumtext,
   `providing_organisation` varchar(255) NOT NULL,
   `uri` varchar(255) DEFAULT NULL,
   `uri_info` varchar(255) DEFAULT NULL,
@@ -1044,20 +1049,20 @@ CREATE TABLE `service_requests` (
   `sirtfi_compliant` tinyint(1) DEFAULT NULL,
   `research_scholarship_compliant` tinyint(1) DEFAULT NULL,
   `connection_type` varchar(255) DEFAULT NULL,
-  `redirect_urls` text DEFAULT NULL,
-  `saml_metadata` text DEFAULT NULL,
+  `redirect_urls` text,
+  `saml_metadata` text,
   `saml_metadata_url` varchar(255) DEFAULT NULL,
-  `comments` text DEFAULT NULL,
+  `comments` text,
   `requester_id` int(11) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `status` varchar(255) DEFAULT NULL,
   `uuid4` varchar(255) NOT NULL,
-  `rejection_reason` text DEFAULT NULL,
+  `rejection_reason` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `service_requests_uuid4` (`uuid4`),
   KEY `requester_id` (`requester_id`),
   CONSTRAINT `service_requests_ibfk_1` FOREIGN KEY (`requester_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1075,21 +1080,21 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `service_tokens`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `service_tokens` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `hashed_token` varchar(512) NOT NULL,
   `description` text NOT NULL,
   `service_id` int(11) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_by` varchar(255) NOT NULL,
   `updated_by` varchar(255) NOT NULL,
   `token_type` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `service_id` (`service_id`),
   CONSTRAINT `service_tokens_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1107,57 +1112,57 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `services`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `services` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `entity_id` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `description` text DEFAULT NULL,
-  `address` text DEFAULT NULL,
+  `description` text,
+  `address` text,
   `identity_type` varchar(255) DEFAULT NULL,
   `uri` varchar(255) DEFAULT NULL,
   `accepted_user_policy` varchar(255) DEFAULT NULL,
   `contact_email` varchar(255) DEFAULT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_by` varchar(255) NOT NULL,
   `updated_by` varchar(255) NOT NULL,
-  `automatic_connection_allowed` tinyint(1) DEFAULT 1,
+  `automatic_connection_allowed` tinyint(1) DEFAULT '1',
   `allow_restricted_orgs` tinyint(1) DEFAULT NULL,
-  `research_scholarship_compliant` tinyint(1) DEFAULT 0,
-  `code_of_conduct_compliant` tinyint(1) DEFAULT 0,
-  `sirtfi_compliant` tinyint(1) DEFAULT 0,
-  `logo` mediumtext DEFAULT NULL,
-  `access_allowed_for_all` tinyint(1) DEFAULT 0,
+  `research_scholarship_compliant` tinyint(1) DEFAULT '0',
+  `code_of_conduct_compliant` tinyint(1) DEFAULT '0',
+  `sirtfi_compliant` tinyint(1) DEFAULT '0',
+  `logo` mediumtext,
+  `access_allowed_for_all` tinyint(1) DEFAULT '0',
   `uuid4` varchar(255) NOT NULL,
-  `non_member_users_access_allowed` tinyint(1) DEFAULT 0,
+  `non_member_users_access_allowed` tinyint(1) DEFAULT '0',
   `abbreviation` varchar(255) NOT NULL,
   `privacy_policy` varchar(255) DEFAULT NULL,
   `ldap_password` varchar(255) DEFAULT NULL,
   `support_email` varchar(255) DEFAULT NULL,
   `security_email` varchar(255) DEFAULT NULL,
-  `token_enabled` tinyint(1) DEFAULT 0,
-  `token_validity_days` int(11) DEFAULT 1,
-  `pam_web_sso_enabled` tinyint(1) DEFAULT 0,
+  `token_enabled` tinyint(1) DEFAULT '0',
+  `token_validity_days` int(11) DEFAULT '1',
+  `pam_web_sso_enabled` tinyint(1) DEFAULT '0',
   `uri_info` varchar(255) DEFAULT NULL,
-  `scim_enabled` tinyint(1) DEFAULT 0,
+  `scim_enabled` tinyint(1) DEFAULT '0',
   `scim_url` varchar(255) DEFAULT NULL,
-  `scim_bearer_token` mediumtext DEFAULT NULL,
-  `sweep_scim_enabled` tinyint(1) DEFAULT 0,
-  `sweep_scim_daily_rate` int(11) DEFAULT 1,
+  `scim_bearer_token` mediumtext,
+  `sweep_scim_enabled` tinyint(1) DEFAULT '0',
+  `sweep_scim_daily_rate` int(11) DEFAULT '1',
   `sweep_scim_last_run` datetime DEFAULT NULL,
-  `sweep_remove_orphans` tinyint(1) DEFAULT 0,
-  `scim_client_enabled` tinyint(1) DEFAULT 0,
-  `ldap_enabled` tinyint(1) DEFAULT 1,
+  `sweep_remove_orphans` tinyint(1) DEFAULT '0',
+  `scim_client_enabled` tinyint(1) DEFAULT '0',
+  `ldap_enabled` tinyint(1) DEFAULT '1',
   `connection_setting` varchar(255) DEFAULT NULL,
-  `override_access_allowed_all_connections` tinyint(1) DEFAULT 0,
+  `override_access_allowed_all_connections` tinyint(1) DEFAULT '0',
   `ldap_identifier` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `services_unique_entity_id` (`entity_id`),
   UNIQUE KEY `services_uuid4` (`uuid4`),
   UNIQUE KEY `services_unique_abbreviation` (`abbreviation`),
   FULLTEXT KEY `ft_services_search` (`name`,`entity_id`,`description`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1175,7 +1180,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `services_collaborations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `services_collaborations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `service_id` int(11) NOT NULL,
@@ -1185,7 +1190,7 @@ CREATE TABLE `services_collaborations` (
   KEY `collaboration_id` (`collaboration_id`),
   CONSTRAINT `services_collaborations_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE,
   CONSTRAINT `services_collaborations_ibfk_2` FOREIGN KEY (`collaboration_id`) REFERENCES `collaborations` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1203,7 +1208,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `services_organisations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `services_organisations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `service_id` int(11) NOT NULL,
@@ -1213,7 +1218,7 @@ CREATE TABLE `services_organisations` (
   KEY `organisation_id` (`organisation_id`),
   CONSTRAINT `services_organisations_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE,
   CONSTRAINT `services_organisations_ibfk_2` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1231,18 +1236,18 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `ssh_keys`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ssh_keys` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ssh_value` text NOT NULL,
   `user_id` int(11) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `ssh_keys_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1260,17 +1265,17 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `suspend_notifications`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `suspend_notifications` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
-  `sent_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `is_suspension` tinyint(1) DEFAULT 0,
-  `is_warning` tinyint(1) DEFAULT 0,
+  `sent_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_suspension` tinyint(1) DEFAULT '0',
+  `is_warning` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `suspend_notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1288,12 +1293,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `tags`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tags` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `tag_value` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1311,7 +1316,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `units`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `units` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
@@ -1319,7 +1324,7 @@ CREATE TABLE `units` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `organisation_units_unique` (`organisation_id`,`name`),
   CONSTRAINT `units_ibfk_1` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1337,7 +1342,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `units_organisation_invitations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `units_organisation_invitations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `organisation_invitation_id` int(11) NOT NULL,
@@ -1347,7 +1352,7 @@ CREATE TABLE `units_organisation_invitations` (
   KEY `unit_id` (`unit_id`),
   CONSTRAINT `units_organisation_invitations_ibfk_1` FOREIGN KEY (`organisation_invitation_id`) REFERENCES `organisation_invitations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `units_organisation_invitations_ibfk_2` FOREIGN KEY (`unit_id`) REFERENCES `units` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1365,19 +1370,19 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `user_ip_networks`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user_ip_networks` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `network_value` text NOT NULL,
   `user_id` int(11) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_by` varchar(255) NOT NULL,
   `updated_by` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `user_ip_networks_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1395,7 +1400,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `user_logins`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user_logins` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `login_type` varchar(255) NOT NULL,
@@ -1404,14 +1409,14 @@ CREATE TABLE `user_logins` (
   `user_uid` varchar(512) DEFAULT NULL,
   `service_id` int(11) DEFAULT NULL,
   `service_entity_id` varchar(512) DEFAULT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `status` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `service_id` (`service_id`),
   CONSTRAINT `user_logins_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `user_logins_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1429,18 +1434,18 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `user_mails`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user_mails` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `recipient` mediumtext DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `recipient` mediumtext,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `user_mails_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1458,14 +1463,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `user_names_history`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user_names_history` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(255) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_names_history_username` (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1483,23 +1488,23 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `user_tokens`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user_tokens` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `description` text DEFAULT NULL,
+  `description` text,
   `hashed_token` varchar(255) NOT NULL,
   `user_id` int(11) NOT NULL,
   `service_id` int(11) NOT NULL,
   `last_used_date` datetime DEFAULT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `service_id` (`service_id`),
   CONSTRAINT `user_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `user_tokens_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1517,37 +1522,37 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `uid` varchar(255) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `nick_name` varchar(255) DEFAULT NULL,
-  `edu_members` text DEFAULT NULL,
-  `affiliation` text DEFAULT NULL,
+  `edu_members` text,
+  `affiliation` text,
   `schac_home_organisation` varchar(255) DEFAULT NULL,
   `family_name` varchar(255) DEFAULT NULL,
   `given_name` varchar(255) DEFAULT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_by` varchar(255) NOT NULL,
   `updated_by` varchar(255) NOT NULL,
-  `scoped_affiliation` text DEFAULT NULL,
-  `entitlement` text DEFAULT NULL,
+  `scoped_affiliation` text,
+  `entitlement` text,
   `address` varchar(255) DEFAULT NULL,
   `username` varchar(255) DEFAULT NULL,
-  `confirmed_super_user` tinyint(1) DEFAULT 0,
+  `confirmed_super_user` tinyint(1) DEFAULT '0',
   `application_uid` varchar(255) DEFAULT NULL,
   `eduperson_principal_name` varchar(255) DEFAULT NULL,
   `last_login_date` datetime DEFAULT NULL,
   `last_accessed_date` datetime DEFAULT NULL,
-  `suspended` tinyint(1) DEFAULT 0,
+  `suspended` tinyint(1) DEFAULT '0',
   `second_factor_auth` varchar(255) DEFAULT NULL,
   `mfa_reset_token` varchar(512) DEFAULT NULL,
   `second_fa_uuid` varchar(255) DEFAULT NULL,
   `home_organisation_uid` varchar(512) DEFAULT NULL,
-  `ssid_required` tinyint(1) DEFAULT 0,
+  `ssid_required` tinyint(1) DEFAULT '0',
   `pam_last_login_date` datetime DEFAULT NULL,
   `external_id` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
@@ -1555,7 +1560,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `users_unique_external_id` (`external_id`),
   UNIQUE KEY `users_username` (`username`),
   FULLTEXT KEY `ft_users_search` (`name`,`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1566,10 +1571,6 @@ LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping routines for database 'sbs'
---
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -1580,4 +1581,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-01-24 17:35:42
+-- Dump completed on 2024-03-14 17:19:44
