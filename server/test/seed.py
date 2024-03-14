@@ -237,15 +237,18 @@ def seed(db, app_config, skip_seed=False):
 
     warning_date = dt_now() - datetime.timedelta(days=retention.remove_suspended_users_period_days) \
                    + datetime.timedelta(days=retention.reminder_expiry_period_days - 1)
-    notification_suspension_warning = SuspendNotification(user=user_deletion_warning, sent_at=warning_date,
-                                                          is_suspension=True, is_warning=False)
+    notification_deletion_warning = SuspendNotification(user=user_deletion_warning, sent_at=warning_date,
+                                                        is_suspension=True, is_warning=False)
 
-    deletion_date = current_time - datetime.timedelta(retention.remove_suspended_users_period_days + 1)
-    notification_gets_deleted = SuspendNotification(user=user_gets_deleted, sent_at=deletion_date,
-                                                    is_suspension=False, is_warning=True)
+    suspension_date = current_time - datetime.timedelta(days=retention.remove_suspended_users_period_days + 1)
+    deletion_date = current_time - datetime.timedelta(days=retention.reminder_expiry_period_days + 1)
+    notification_gets_deleted_1 = SuspendNotification(user=user_gets_deleted, sent_at=suspension_date,
+                                                      is_suspension=True, is_warning=False)
+    notification_gets_deleted_2 = SuspendNotification(user=user_gets_deleted, sent_at=deletion_date,
+                                                      is_suspension=False, is_warning=True)
 
     persist_instance(db, notification_gets_suspended_old, notification_gets_suspended,
-                     notification_suspension_warning, notification_gets_deleted)
+                     notification_deletion_warning, notification_gets_deleted_1, notification_gets_deleted_2)
 
     ssh_key_john = SshKey(user=john, ssh_value="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
                                                "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"

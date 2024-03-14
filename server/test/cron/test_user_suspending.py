@@ -84,3 +84,42 @@ class TestUserSuspending(AbstractTest):
                 self.assertListEqual(["user_gets_suspended@example.org"], results["warning_deleted_notifications"])
                 self.assertListEqual(["user_deletion_warning@example.org"], results["deleted_notifications"])
                 self.assertEqual(3, len(outbox))
+
+    def test_schedule_changed_config(self):
+        mail = self.app.mail
+
+        # run suspend cron job
+        results = suspend_users(self.app)
+        self.assertListEqual(["user_suspend_warning@example.org"], results["warning_suspend_notifications"])
+        self.assertListEqual(["user_gets_suspended@example.org"], results["suspended_notifications"])
+        self.assertListEqual(["user_deletion_warning@example.org"], results["warning_deleted_notifications"])
+        self.assertListEqual(["user_gets_deleted@example.org"], results["deleted_notifications"])
+
+        # now we change the config
+        # this causes the last active date of all suspended users to shift past the deletion date
+        self.app.app_config.retention.allowed_inactive_period_days -= (
+                self.app.app_config.retention.remove_suspended_users_period_days
+                + 1)
+        # now run suspend cron job again; nothing should change!
+        with mail.record_messages() as outbox:
+            results = suspend_users(self.app)
+            self.assertListEqual([], results["warning_suspend_notifications"])
+            self.assertListEqual([], results["suspended_notifications"])
+            self.assertListEqual([], results["warning_deleted_notifications"])
+            self.assertListEqual([], results["deleted_notifications"])
+            self.assertListEqual([], outbox)
+
+        # now fast-forward time past the waiting window
+        retention = self.app.app_config.retention
+        newdate = (dt_now()
+                   + timedelta(retention.reminder_suspend_period_days)
+                   + timedelta(retention.remove_suspended_users_period_days))
+        with freeze_time(newdate):
+            with mail.record_messages() as outbox:
+                # now users should be suspended/reminede again because their notifications are older than the threshold
+                results = suspend_users(self.app)
+                self.assertListEqual([], results["warning_suspend_notifications"])
+                self.assertListEqual(["user_suspend_warning@example.org"], results["suspended_notifications"])
+                self.assertListEqual(["user_gets_suspended@example.org"], results["warning_deleted_notifications"])
+                self.assertListEqual(["user_deletion_warning@example.org"], results["deleted_notifications"])
+                self.assertEqual(3, len(outbox))
