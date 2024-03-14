@@ -404,9 +404,9 @@ jobs:
           alembic --config migrations/alembic.ini upgrade head
           echo ALEMBIC_CURRENT=$(alembic --config migrations/alembic.ini current) >> "$GITHUB_ENV"
         env:
-          CONFIG: "config/test_config"
+          CONFIG: "config/test_config.yml"
 
-      - name: dump latest database schema
+      - name: Dump latest database schema
         run: |
           echo "-- Dump of empty SBS datasbase, git commit $(git rev-parse HEAD), alembic revision $(ALEMBIC_CURRENT)" > misc/sbs-db.sql
           mysqldump -u sbs --password=sbs sbs >> misc/sbs-db.sql
