@@ -418,6 +418,7 @@ jobs:
             misc/sbs-db.sql
           commit-message: "Update schema cache for Alembic revision ${{ env.alembic_current }}"
           branch: "update-schema-cache"
+          delete-branch: true
           title: "Update schema cache"
           body: |
             This PR updates the schema cache to the latest version.
