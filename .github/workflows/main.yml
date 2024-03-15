@@ -422,3 +422,6 @@ jobs:
           commit-message: "Update schema cache for Alembic revision $alembic_current"
           branch: "update-schema-cache"
           title: "Update schema cache"
+          body: |
+            This PR updates the schema cache to the latest version.
+            It was created by a GitHub Actions workflow.
