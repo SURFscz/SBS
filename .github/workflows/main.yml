@@ -416,7 +416,7 @@ jobs:
         with:
           add-paths: |
             misc/sbs-db.sql
-          commit-message: "Update schema cache for Alembic revision $alembic_current"
+          commit-message: "Update schema cache for Alembic revision ${{ env.alembic_current }}"
           branch: "update-schema-cache"
           title: "Update schema cache"
           body: |
