@@ -16,6 +16,7 @@ from server.auth.tokens import validate_service_token
 from server.db.db import db
 from server.db.defaults import SERVICE_TOKEN_SCIM
 from server.db.domain import User, Collaboration, Group, Service
+from server.logger.context_logger import ctx_logger
 from server.scim import SCIM_URL_PREFIX, EXTERNAL_ID_POST_FIX
 from server.scim.group_template import find_groups_template, find_group_by_id_template
 from server.scim.repo import all_scim_users_by_service, all_scim_groups_by_service
@@ -141,28 +142,38 @@ def service_group_by_identifier(group_external_id: str):
 @swag_from("../swagger/public/paths/sweep.yml")
 @json_endpoint
 def sweep():
+    logger = ctx_logger("scim_sweep")
+
     try:
         service = validate_service_token("scim_enabled", SERVICE_TOKEN_SCIM)
     except Unauthorized:
         service_id = query_param("service_id")
         confirm_write_access(service_id, override_func=is_service_admin)
         service = db.session.get(Service, service_id)
+
     try:
         results = perform_sweep(service)
         results["scim_url"] = service.scim_url
         return results, 201
     except BadRequest as bad_request:
+        logger.warn(f"Error from remote SCIM server for {service.entity_id}: {bad_request.description}")
         return {"error": f"Error from remote scim server: {bad_request.description}",
                 "scim_url": service.scim_url}, 400
     except requests.RequestException as request_exception:
+        logger.warn(f"Could not connect to remote SCIM server {service.scim_url} for {service.entity_id}:"
+                    f" {type(request_exception).__name__}")
         return {"error": f"Could not connect to remote SCIM server ({type(request_exception).__name__})"
                          f"{': ' + request_exception.response.text if request_exception.response else ''}",
                 "scim_url": service.scim_url}, 400
     except InvalidTag:
-        send_error_mail(tb=traceback.format_exc())
+        exc = traceback.format_exc()
+        logger.error(f"Could not decrypt SCIM bearer secret for service {service.entity_id}\n{exc}")
+        send_error_mail(tb=f"Could not decrypt SCIM bearer secret for service {service.entity_id}\n\n{exc}")
         return {"error": "Could not decrypt SCIM bearer secret",
                 "scim_url": service.scim_url}, 400
     except Exception:
+        logger.error(f"Unknown error while connecting to remote SCIM server {service.scim_url} for "
+                     f"{service.entity_id}: {traceback.format_exc()}")
         return {"error": "Unknown error while connecting to remote SCIM server",
                 "scim_url": service.scim_url}, 500
 
