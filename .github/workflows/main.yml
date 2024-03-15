@@ -357,7 +357,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    if: "github.ref == 'refs/heads/test-gha'"
+    if: "github.ref == 'refs/heads/main'"
 
     services:
       mysql:
