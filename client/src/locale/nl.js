@@ -319,7 +319,7 @@ const nl = {
                 add: "Weet je zeker dat je {{service}} beschikbaar wil maken voor alle leden van {{name}}?",
                 remove: "Weet je zeker dat je {{service}} wil ontkoppelen van {{name}}?",
                 check: "Ik ben bekend met de <a target=\"_blank\" href=\"{{aup}}\">AUP</a> van {{name}}",
-                noPolicy: "Deze dienst heeft geen privacy policy opgegeven!"
+                noPolicy: "Deze dienst heeft geen privacy policy opgegeven"
             },
             statuses: {
                 active: "Ingeschakeld door organisatie",
@@ -1661,7 +1661,7 @@ const nl = {
         service: {
             title: "Bekijk de informatie om verder te gaan",
             info: "Je staat op het punt om in te loggen op <strong>{{name}}</strong>. Voordat je verder kunt gaan, moet je het beleid voor acceptabel gebruik (AUP) en het privacyverklaring van de service lezen. Bevestig hieronder of je ze accepteert.",
-            noPrivacyPolicy: "Geen privacyverklaring verstrekt!",
+            noPrivacyPolicy: "Geen privacyverklaring verstrekt",
             noAup: "Geen AUP verstrekt",
             agreeWithTerms: "Ik verklaar dat ik deze voorwaarden heb gelezen en accepteer",
             firstLogin: "Inloggen. Daarna kom je hier terug om de voorwaarden van {{name}} te bekijken.",
@@ -2028,7 +2028,7 @@ const nl = {
         toggleRole: "Wissel van rol",
         infoMember: "Houd er rekening mee dat wanneer je lid wordt van deze samenwerking, je persoonlijke gegevens gedeeld kunnen worden met de volgende diensten. Neem even de tijd om de door de dienst opgegeven beleidsdocumenten door te nemen.",
         infoAdmin: "Houd er rekening mee dat wanneer je beheerder wordt van deze samenwerking, je persoonlijke gegevens gedeeld kunnen worden met de volgende diensten. Neem even de tijd om de door de dienst opgegeven beleidsdocumenten door te nemen.",
-        infoJoinRequest: "Bijna zover! Voordat je kunt verzoeken lid te worden van deze samenwerking moet je de acceptable use policy (AUP) en het privacyverklaring van de dienst lezen. Geef hieronder aan of je deze accepteert.",
+        infoJoinRequest: " Voordat je kunt verzoeken lid te worden van deze samenwerking moet je de acceptable use policy (AUP) en het privacyverklaring van de dienst lezen. Geef hieronder aan of je deze accepteert.",
         purpose: "Doel van deze samenwerking",
         noServices: "Nog geen diensten gekoppeld.",
         proceed: "Ga door naar {{name}}"
@@ -2050,7 +2050,7 @@ const nl = {
     },
     feedback: {
         title: "Feedback geven",
-        info: "Loop je ergens tegenaan? Heb je een suggestie? Laat ons hier weten wat je ervan vindt!",
+        info: "Loop je ergens tegenaan? Heb je een suggestie? Laat ons hier weten wat je ervan vindt",
         disclaimer: "We zullen deze informatie gebruiken om problemen op te lossen, ons product te verbeteren en je te helpen. " +
             "We kunnen contact met je opnemen over je feedback. " +
             "Zorg dat je feedback geen vertrouwelijke, gevoelige of persoonlijke informatie bevat. " +

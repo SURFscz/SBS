@@ -319,7 +319,7 @@ const en = {
                 add: "Are you sure you want to make {{service}} available for all members of {{name}}?",
                 remove: "Are you sure you want to remove {{service}} from {{name}}?",
                 check: "I know about the <a target=\"_blank\" href=\"{{aup}}\">AUP</a> of {{name}}",
-                noPolicy: "This service did not provide a privacy policy!"
+                noPolicy: "This service did not provide a privacy policy"
             },
             statuses: {
                 active: "Enabled by organisation",
@@ -1661,7 +1661,7 @@ const en = {
         service: {
             title: "Review the information in order to continue",
             info: "You are about to log in to <strong>{{name}}</strong>. Before you can continue you must review the acceptable use policy (AUP) and privacy policy of the service. Confirm below whether you accept them.",
-            noPrivacyPolicy: "No privacy policy provided!",
+            noPrivacyPolicy: "No privacy policy provided",
             noAup: "No AUP provided",
             agreeWithTerms: "I hereby certify that I have read these terms and that I accept them",
             firstLogin: "Proceed to log in and afterwards you'll return here to view the policies of {{name}}",
@@ -2050,7 +2050,7 @@ const en = {
     },
     feedback: {
         title: "Provide Feedback",
-        info: "Like what you see? Have a suggestion? Let us know what you think here!",
+        info: "Like what you see? Have a suggestion? Let us know what you think here",
         disclaimer: "We will use this information to fix problems, improve our products and help you. " +
             "We may follow up with you regarding your feedback. " +
             "Please make sure the feedback does not contain any confidential, sensitive, or personal information. " +
