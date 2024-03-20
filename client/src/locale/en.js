@@ -2010,7 +2010,8 @@ const en = {
         coMember: "Member",
         platformAdmin: "Platform admin",
         user: "User",
-        serviceAdmin: "Service admin"
+        serviceAdmin: "Service admin",
+        serviceManager: "Service manager"
     },
     welcomeDialog: {
         title: "Welcome to {{name}}",
