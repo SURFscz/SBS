@@ -43,6 +43,9 @@ class TestUserSuspending(AbstractTest):
             messages = [m for m in outbox if "Results of inactive account check" in m.subject]
             self.assertEqual(1, len(messages))
             self.assertIn("suspension warning:\n  - user_suspend_warning@example.org", messages[0].body)
+            self.assertIn("have been suspended:\n  - user_gets_suspended@example.org", messages[0].body)
+            self.assertIn("deletion warning:\n  - user_deletion_warning@example.org", messages[0].body)
+            self.assertIn("have been deleted:\n  - user_gets_deleted@example.org", messages[0].body)
 
         user_suspend_warning = self.find_entity_by_name(User, "user_suspend_warning")
         self.assertEqual(False, user_suspend_warning.suspended)
