@@ -2010,7 +2010,8 @@ const nl = {
         coMember: "Lid",
         platformAdmin: "Platformbeheerder",
         user: "Gebruiker",
-        serviceAdmin: "Dienstbeheerder"
+        serviceAdmin: "Dienstbeheerder",
+        serviceManager: "Dienstmanager"
     },
     welcomeDialog: {
         title: "Welkom bij {{name}}",
