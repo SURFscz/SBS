@@ -109,11 +109,12 @@ def _do_suspend_users(app):
 
             if last_suspend_notification is None or last_suspend_notification.sent_at < suspension_warning_date:
                 # no recent reminder, sent one first
+                logger.info(f"Sending suspension reminder to user {user.uid} ({user.email})")
                 create_suspend_notification(user, retention, app, True, True)
                 results["warning_suspend_notifications"].append(user.email)
             elif user.last_login_date < suspension_date < last_suspend_notification.sent_at < warning_timeout:
                 # user has gotten reminder, and we've waited long enough
-                logger.info(f"Suspending user {user.email} because of inactivity")
+                logger.info(f"Suspending user {user.uid} ({user.email}) because of inactivity")
                 user.suspended = True
                 create_suspend_notification(user, retention, app, False, True)
                 results["suspended_notifications"].append(user.email)
@@ -169,10 +170,12 @@ def _do_suspend_users(app):
 
             if last_delete_warning is None or last_delete_warning.sent_at < suspension_date:
                 # no recent deletion warning, sent one first
+                logger.info(f"Sending deletion reminder to user {user.uid} ({user.email})")
                 create_suspend_notification(user, retention, app, True, False)
                 results["warning_deleted_notifications"].append(user.email)
             elif user.last_login_date < deletion_date < last_delete_warning.sent_at < warning_timeout:
                 # don't send mail to user; they have already received 3 emails, and this one is not actionable.
+                logger.info(f"Deleting user {user.uid} ({user.email}) because of inactivity")
                 results["deleted_notifications"].append(user.email)
                 deleted_user_uids.append(user.uid)
                 if user.username:
