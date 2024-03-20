@@ -25,11 +25,24 @@ class TestUserSuspending(AbstractTest):
 
     def test_schedule(self):
         mail = self.app.mail
-        results = suspend_users(self.app)
-        self.assertListEqual(["user_suspend_warning@example.org"], results["warning_suspend_notifications"])
-        self.assertListEqual(["user_gets_suspended@example.org"], results["suspended_notifications"])
-        self.assertListEqual(["user_deletion_warning@example.org"], results["warning_deleted_notifications"])
-        self.assertListEqual(["user_gets_deleted@example.org"], results["deleted_notifications"])
+
+        with mail.record_messages() as outbox:
+            results = suspend_users(self.app)
+            self.assertListEqual(["user_suspend_warning@example.org"], results["warning_suspend_notifications"])
+            self.assertListEqual(["user_gets_suspended@example.org"], results["suspended_notifications"])
+            self.assertListEqual(["user_deletion_warning@example.org"], results["warning_deleted_notifications"])
+            self.assertListEqual(["user_gets_deleted@example.org"], results["deleted_notifications"])
+            self.assertEqual(5, len(outbox))
+
+            # check recepients of mails
+            self.assertListEqual(["user_suspend_warning@example.org", "user_gets_suspended@example.org",
+                                  "user_deletion_warning@example.org", "support+sram@eduteams.org", "sram-beheer@surf.nl"],
+                                 [m.recipients[0] for m in outbox])
+
+            # find results mail
+            messages = [m for m in outbox if "Results of inactive account check" in m.subject]
+            self.assertEqual(1, len(messages))
+            self.assertIn("suspension warning:\n  - user_suspend_warning@example.org", messages[0].body)
 
         user_suspend_warning = self.find_entity_by_name(User, "user_suspend_warning")
         self.assertEqual(False, user_suspend_warning.suspended)
@@ -83,7 +96,11 @@ class TestUserSuspending(AbstractTest):
                 self.assertListEqual(["user_suspend_warning@example.org"], results["suspended_notifications"])
                 self.assertListEqual(["user_gets_suspended@example.org"], results["warning_deleted_notifications"])
                 self.assertListEqual(["user_deletion_warning@example.org"], results["deleted_notifications"])
-                self.assertEqual(3, len(outbox))
+
+                self.assertEqual(4, len(outbox))
+                recipients = set([m.recipients[0] for m in outbox])
+                self.assertSetEqual({"user_suspend_warning@example.org", "user_gets_suspended@example.org",
+                                     "sram-beheer@surf.nl", "support+sram@eduteams.org"}, recipients)
 
     def test_schedule_changed_config(self):
         mail = self.app.mail
@@ -98,8 +115,8 @@ class TestUserSuspending(AbstractTest):
         # now we change the config
         # this causes the last active date of all suspended users to shift past the deletion date
         self.app.app_config.retention.allowed_inactive_period_days -= (
-                self.app.app_config.retention.remove_suspended_users_period_days
-                + 1)
+            self.app.app_config.retention.remove_suspended_users_period_days
+            + 1)
         # now run suspend cron job again; nothing should change!
         with mail.record_messages() as outbox:
             results = suspend_users(self.app)
@@ -122,4 +139,4 @@ class TestUserSuspending(AbstractTest):
                 self.assertListEqual(["user_suspend_warning@example.org"], results["suspended_notifications"])
                 self.assertListEqual(["user_gets_suspended@example.org"], results["warning_deleted_notifications"])
                 self.assertListEqual(["user_deletion_warning@example.org"], results["deleted_notifications"])
-                self.assertEqual(3, len(outbox))
+                self.assertEqual(4, len(outbox))

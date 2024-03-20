@@ -1,0 +1,60 @@
+{% extends "mail_layout.html" %}
+{% block title %}SRAM account deletion notification for {{ environment }}{% endblock %}
+{% block content %}
+
+    <p>Hi,</p>
+    <p>Below follow the results for the check for inactive user accounts on {{ environment }}.</p>
+
+    <p>Current limits are:</p>
+    <table>
+        <tr>
+            <td>Warning</td>
+            <td>{{ dates[0] }}</td>
+        </tr>
+        <tr>
+            <td>Suspension</td>
+            <td>{{ dates[1] }}</td>
+        </tr>
+        <tr>
+            <td>Last warning</td>
+            <td>{{ dates[2] }}</td>
+        </tr>
+        <tr>
+            <td>Deletion</td>
+            <td>{{ dates[3] }}</td>
+        </tr>
+    </table>
+
+    <p>The following accounts have received a suspension warning:</p>
+    <ul>
+        {% for mail in suspend_warning %}
+            <li>{{ mail }}</li>
+        {% endfor %}
+    </ul>
+
+    <p>The following accounts have been suspended:</p>
+    <ul>
+        {% for mail in suspended %}
+            <li>{{ mail }}</li>
+        {% endfor %}
+    </ul>
+
+
+    <p>The following accounts have received a deletion warning:</p>
+    <ul>
+        {% for mail in delete_warning %}
+            <li>{{ mail }}</li>
+        {% endfor %}
+    </ul>
+
+
+    <p>The following accounts have been deleted:</p>
+    <ul>
+        {% for mail in deleted %}
+            <li>{{ mail }}</li>
+        {% endfor %}
+    </ul>
+
+    <p>This email is automatically sent for environment {{ environment }}.</p>
+
+{% endblock %}

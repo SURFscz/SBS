@@ -452,6 +452,26 @@ def mail_suspended_account_deletion(uids: list[str]):
     )
 
 
+def mail_suspended_account_admin_notification(results: dict[str, list[str]], dates: list[datetime.date]):
+    mail_cfg = current_app.app_config.mail
+    recipients = [mail_cfg.beheer_email]
+    _do_send_mail(
+        subject=f"Results of inactive account check for environment {mail_cfg.environment}",
+        recipients=recipients,
+        template="admin_suspended_user_account_actions",
+        context={"environment": mail_cfg.environment,
+                 "date": _now_strf_time(),
+                 "warning_suspend": results["warning_suspend_notifications"],
+                 "suspend": results["suspended_notifications"],
+                 "warning_delete": results["warning_deleted_notifications"],
+                 "delete": results["deleted_notifications"],
+                 "dates": [d.strftime("%Y-%m-%d") for d in dates[0:4]]},
+
+        preview=False,
+        working_outside_of_request_context=True
+    )
+
+
 def mail_reset_token(admin_email, user, message):
     _store_mail(user, RESET_MFA_TOKEN_MAIL, admin_email)
     _do_send_mail(
