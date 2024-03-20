@@ -72,16 +72,20 @@ class TestServiceGroup(AbstractTest):
         self.assertEqual(0, len(service_group.groups[0].collaboration_memberships))
 
         service_group_json = jsonify(service_group).json
+        service_group_json["description"] = "this is a new description"
         service_group_json["short_name"] = "new_short_name"
         service_group_json["auto_provision_members"] = True
         self.put("/api/servicegroups/", body=service_group_json, with_basic_auth=False)
 
         service_group = self.find_entity_by_name(ServiceGroup, service_group_mail_name)
+        self.assertEqual("this is a new description", service_group.description)
         self.assertEqual("new_short_name", service_group.short_name)
 
         groups = service_group.groups
         self.assertEqual(1, len(groups))
+        self.assertEqual("this is a new description", groups[0].description)
         self.assertEqual("ufra:research:mail-new_short_name", groups[0].global_urn)
+        self.assertTrue(groups[0].auto_provision_members)
         self.assertEqual(4, len(groups[0].collaboration_memberships))
 
     def test_delete_service_group(self):
