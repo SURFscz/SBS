@@ -25,35 +25,42 @@
         </tr>
     </table>
 
-    <p>The following accounts have received a suspension warning:</p>
-    <ul>
-        {% for mail in suspend_warning %}
-            <li>{{ mail }}</li>
-        {% endfor %}
-    </ul>
+    {% if warning_suspend|length -%}
+        <p>The following accounts have received a suspension warning:</p>
+        <ul>
+            {% for mail in warning_suspend %}
+                <li>{{ mail }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
-    <p>The following accounts have been suspended:</p>
-    <ul>
-        {% for mail in suspended %}
-            <li>{{ mail }}</li>
-        {% endfor %}
-    </ul>
-
-
-    <p>The following accounts have received a deletion warning:</p>
-    <ul>
-        {% for mail in delete_warning %}
-            <li>{{ mail }}</li>
-        {% endfor %}
-    </ul>
+    {% if suspend|length -%}
+        <p>The following accounts have been suspended:</p>
+        <ul>
+            {% for mail in suspend %}
+                <li>{{ mail }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
 
-    <p>The following accounts have been deleted:</p>
-    <ul>
-        {% for mail in deleted %}
-            <li>{{ mail }}</li>
-        {% endfor %}
-    </ul>
+    {% if warning_delete|length %}
+        <p>The following accounts have received a deletion warning:</p>
+        <ul>
+            {% for mail in warning_delete %}
+                <li>{{ mail }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if delete|length %}
+        <p>The following accounts have been deleted:</p>
+        <ul>
+            {% for mail in delete %}
+                <li>{{ mail }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
     <p>This email is automatically sent for environment {{ environment }}.</p>
 
