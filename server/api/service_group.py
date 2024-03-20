@@ -109,7 +109,7 @@ def update_service_group():
             "id": group.id,
             "name": service_group.name,
             "short_name": short_name,
-            "description": f"Provisioned by service {service.name} - {service_group.description}",
+            "description": service_group.description,
             "auto_provision_members": service_group.auto_provision_members,
             "global_urn": f"{collaboration.organisation.short_name}:{collaboration.short_name}:{short_name}",
             "identifier": group.identifier,
