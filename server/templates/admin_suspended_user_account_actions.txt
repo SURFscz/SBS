@@ -1,0 +1,44 @@
+{% extends "mail_layout.txt" %}
+{% block title %}SRAM inactive account check for {{ environment }}{% endblock %}
+{% block content %}
+
+Hi,
+Below follow the results for the check for inactive user accounts on {{ environment }}.
+
+Current limits are:
+ - warning:      inactive since {{ dates[0] }}
+ - suspension:   inactive since {{ dates[1] }}
+ - last warning: inactive since {{ dates[2] }}
+ - deletion:     inactive since {{ dates[3] }}
+
+{% if warning_suspend|length -%}
+The following accounts have received a suspension warning:
+{%- for email in warning_suspend %}
+  - {{ email }}
+{%- endfor -%}
+{% endif %}
+
+{% if suspend|length -%}
+The following accounts have been suspended:
+{%- for email in suspend %}
+  - {{ email }}
+{%- endfor -%}
+{% endif %}
+
+{% if warning_delete|length -%}
+The following accounts have received a deletion warning:
+{%- for email in warning_delete %}
+  - {{ email }}
+{%- endfor -%}
+{% endif %}
+
+{% if delete|length -%}
+The following accounts have been deleted:
+{%- for email in delete %}
+  - {{ email }}
+{%- endfor -%}
+{% endif %}
+
+This email is automatically sent for environment {{ environment }}.
+
+{% endblock %}

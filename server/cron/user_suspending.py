@@ -7,7 +7,8 @@ from sqlalchemy import desc
 from server.cron.shared import obtain_lock
 from server.db.db import db
 from server.db.domain import User, SuspendNotification, UserNameHistory
-from server.mail import mail_suspend_notification, mail_suspended_account_deletion, format_date_time
+from server.mail import (mail_suspend_notification, mail_suspended_account_deletion, format_date_time,
+                         mail_suspended_account_admin_notification)
 from server.tools import dt_now
 
 suspend_users_lock_name = "suspend_users_lock"
@@ -68,10 +69,10 @@ def _do_suspend_users(app):
         logger.info("Start running suspend_users job")
 
         current_time = dt_now()
-        # users who have bene inactive since this date will be suspended
+        # users who have been inactive since this date will be suspended
         suspension_date = current_time - datetime.timedelta(days=retention.allowed_inactive_period_days)
         # users who have been inactive since this date will get a first suspension warning
-        warning_date = suspension_date + datetime.timedelta(days=retention.reminder_suspend_period_days)
+        suspension_warning_date = suspension_date + datetime.timedelta(days=retention.reminder_suspend_period_days)
         # suspension warnings that have been sent before this date are considered "old" and can be acted upon
         warning_timeout = current_time - datetime.timedelta(days=retention.reminder_suspend_period_days)
 
@@ -96,7 +97,7 @@ def _do_suspend_users(app):
         excluded_user_accounts = [user.uid for user in app.app_config.excluded_user_accounts]
 
         users = User.query \
-            .filter(User.last_login_date < warning_date, User.suspended == False) \
+            .filter(User.last_login_date < suspension_warning_date, User.suspended == False) \
             .filter(User.uid.not_in(excluded_user_accounts)) \
             .all()  # noqa: E712
         for user in users:
@@ -106,7 +107,7 @@ def _do_suspend_users(app):
                 SuspendNotification.is_suspension.is_(True)
             ).order_by(desc(SuspendNotification.sent_at)).first()
 
-            if last_suspend_notification is None or last_suspend_notification.sent_at < warning_date:
+            if last_suspend_notification is None or last_suspend_notification.sent_at < suspension_warning_date:
                 # no recent reminder, sent one first
                 create_suspend_notification(user, retention, app, True, True)
                 results["warning_suspend_notifications"].append(user.email)
@@ -134,7 +135,7 @@ def _do_suspend_users(app):
             - datetime.timedelta(days=retention.remove_suspended_users_period_days)
         )
         # users who have been inactive since this date will get a first deletion warning
-        warning_date = deletion_date + datetime.timedelta(days=retention.reminder_expiry_period_days)
+        deletion_warning_date = deletion_date + datetime.timedelta(days=retention.reminder_expiry_period_days)
         # users who have been suspended since this date can be warned about deletion
         suspension_timeout = (
             current_time
@@ -144,7 +145,7 @@ def _do_suspend_users(app):
         # deletion warnings that have been sent before this date are considered "old" and can be acted upon
         warning_timeout = current_time - datetime.timedelta(days=retention.reminder_expiry_period_days)
         suspended_users = User.query \
-            .filter(User.last_login_date < warning_date, User.suspended == True) \
+            .filter(User.last_login_date < deletion_warning_date, User.suspended == True) \
             .filter(User.uid.not_in(excluded_user_accounts)) \
             .all()  # noqa: E712
         deleted_user_uids = []
@@ -186,6 +187,14 @@ def _do_suspend_users(app):
 
         if deleted_user_uids:
             mail_suspended_account_deletion(deleted_user_uids)
+
+        if retention.admin_notification_mail and any(results.values()):
+            mail_suspended_account_admin_notification(results, [
+                suspension_warning_date,
+                suspension_date,
+                deletion_warning_date,
+                deletion_date
+            ])
 
         end = int(time.time() * 1000.0)
         logger.info(f"Finished running suspend_users job in {end - start} ms")
