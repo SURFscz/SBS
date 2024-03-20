@@ -124,6 +124,7 @@ retention:
   remove_suspended_users_period_days: 90
   reminder_expiry_period_days: 7
   cron_hour_of_day: 7
+  admin_notification_mail: True
 
 metadata:
   idp_url: "file://data/idps-metadata.xml"
