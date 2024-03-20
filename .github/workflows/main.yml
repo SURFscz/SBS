@@ -188,6 +188,7 @@ jobs:
       - name: Save version info
         run: |
           git log -1 > ./server/api/git.info
+          git describe --all --long > ./version.txt
 
       - name: Create build file
         run: |
