@@ -26,7 +26,7 @@
     </table>
 
     {% if warning_suspend|length -%}
-        <p>The following accounts have received a suspension warning:</p>
+        <p>The following {{ warning_suspend|length }} accounts have received a suspension warning:</p>
         <ul>
             {% for mail in warning_suspend %}
                 <li>{{ mail }}</li>
@@ -35,7 +35,7 @@
     {% endif %}
 
     {% if suspend|length -%}
-        <p>The following accounts have been suspended:</p>
+        <p>The following {{ suspend|length }} accounts have been suspended:</p>
         <ul>
             {% for mail in suspend %}
                 <li>{{ mail }}</li>
@@ -45,7 +45,7 @@
 
 
     {% if warning_delete|length %}
-        <p>The following accounts have received a deletion warning:</p>
+        <p>The following {{ warning_delete|length }} accounts have received a deletion warning:</p>
         <ul>
             {% for mail in warning_delete %}
                 <li>{{ mail }}</li>
@@ -54,7 +54,7 @@
     {% endif %}
 
     {% if delete|length %}
-        <p>The following accounts have been deleted:</p>
+        <p>The following {{ delete|length }} accounts have been deleted:</p>
         <ul>
             {% for mail in delete %}
                 <li>{{ mail }}</li>
