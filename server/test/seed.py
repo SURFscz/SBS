@@ -199,8 +199,8 @@ def seed(db, app_config, skip_seed=False):
 
     # User seed for suspend testing
     retention = app_config.retention
-    current_time = dt_today().replace(hour=20)
-    retention_date = current_time - datetime.timedelta(days=retention.allowed_inactive_period_days + 1)
+    retention_today = dt_today().replace(hour=20)
+    retention_date = retention_today - datetime.timedelta(days=retention.allowed_inactive_period_days + 1)
     retention_warning_date = retention_date + datetime.timedelta(days=retention.reminder_suspend_period_days)
 
     user_suspend_warning = User(uid="urn:user_suspend_warning", name="user_suspend_warning",
@@ -229,7 +229,7 @@ def seed(db, app_config, skip_seed=False):
                      paul, hannibal, service_admin)
 
     # old suspension warning, should not affect new suspension warnings
-    warning_date_old = current_time - datetime.timedelta(retention.allowed_inactive_period_days + 1)
+    warning_date_old = retention_today - datetime.timedelta(retention.allowed_inactive_period_days + 1)
     notification_gets_suspended_old = SuspendNotification(user=user_suspend_warning, sent_at=warning_date_old,
                                                           is_suspension=True, is_warning=True)
 
@@ -242,8 +242,8 @@ def seed(db, app_config, skip_seed=False):
     notification_deletion_warning = SuspendNotification(user=user_deletion_warning, sent_at=warning_date,
                                                         is_suspension=True, is_warning=False)
 
-    suspension_date = current_time - datetime.timedelta(days=retention.remove_suspended_users_period_days + 1)
-    deletion_date = current_time - datetime.timedelta(days=retention.reminder_expiry_period_days + 1)
+    suspension_date = retention_today - datetime.timedelta(days=retention.remove_suspended_users_period_days + 1)
+    deletion_date = retention_today - datetime.timedelta(days=retention.reminder_expiry_period_days + 1)
     notification_gets_deleted_1 = SuspendNotification(user=user_gets_deleted, sent_at=suspension_date,
                                                       is_suspension=True, is_warning=False)
     notification_gets_deleted_2 = SuspendNotification(user=user_gets_deleted, sent_at=deletion_date,
@@ -378,7 +378,7 @@ def seed(db, app_config, skip_seed=False):
                    automatic_connection_allowed_organisations=[ufra], ldap_enabled=True,
                    ldap_password="$2b$12$GLjC5hK59aeDcEe.tHHJMO.SQQjFgIIpZ7VaKTIsBn05z/gE7JQny",
                    token_enabled=True, scim_client_enabled=True, token_validity_days=365, security_email="sec@org.nl")
-    sweep_scim_last_run = current_time - datetime.timedelta(days=1)
+    sweep_scim_last_run = dt_now() - datetime.timedelta(days=1)
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
                       description="Network enabling service SSH access", address="Some address",
                       uri="https://uri.net", identity_type="SSH KEY", accepted_user_policy="https://aup.org",
