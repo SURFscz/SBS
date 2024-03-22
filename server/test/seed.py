@@ -196,9 +196,10 @@ def seed(db, app_config, skip_seed=False):
     service_admin = User(uid="urn:service_admin", name="Service Admin", email="service_admin@ucc.org",
                          username="service_admin", schac_home_organisation="service.admin.com",
                          external_id="c5ed5e18-b6aa-48f2-8849-a68a8cfe39a8")
+
     # User seed for suspend testing
     retention = app_config.retention
-    current_time = dt_now()
+    current_time = dt_today().replace(hour=20)
     retention_date = current_time - datetime.timedelta(days=retention.allowed_inactive_period_days + 1)
     retention_warning_date = retention_date + datetime.timedelta(days=retention.reminder_suspend_period_days)
 
