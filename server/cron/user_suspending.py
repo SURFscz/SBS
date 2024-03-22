@@ -9,7 +9,7 @@ from server.db.db import db
 from server.db.domain import User, SuspendNotification, UserNameHistory
 from server.mail import (mail_suspend_notification, mail_suspended_account_deletion, format_date_time,
                          mail_suspended_account_admin_notification)
-from server.tools import dt_now
+from server.tools import dt_today, dt_now
 
 suspend_users_lock_name = "suspend_users_lock"
 
@@ -25,7 +25,7 @@ def create_suspend_notification(user, retention, app, is_warning, is_suspension)
     logger = logging.getLogger("scheduler")
     logger.info(f"Sending suspend notification (warning: {is_warning}, is_suspension={is_suspension}) to "
                 f"user {user.email} because last_login_date is {user.last_login_date}")
-    current_time = dt_now()
+    current_time = dt_today()
     suspension_date = current_time + datetime.timedelta(days=retention.reminder_suspend_period_days)
     deletion_days = (
         retention.remove_suspended_users_period_days
@@ -41,7 +41,7 @@ def create_suspend_notification(user, retention, app, is_warning, is_suspension)
     mail_suspend_notification({"salutation": f"Hi {user.given_name}",
                                "base_url": app.app_config.base_url,
                                "retention": retention,
-                               "days_ago": (dt_now() - user.last_login_date).days,
+                               "days_ago": (dt_today() - user.last_login_date).days,
                                "suspend_notification": suspend_notification,
                                "suspension_date": format_date_time(suspension_date),
                                "deletion_date": format_date_time(deletion_date),
@@ -68,7 +68,7 @@ def _do_suspend_users(app):
         logger = logging.getLogger("scheduler")
         logger.info("Start running suspend_users job")
 
-        current_time = dt_now()
+        current_time = dt_today()
         # users who have been inactive since this date will be suspended
         suspension_date = current_time - datetime.timedelta(days=retention.allowed_inactive_period_days)
         # users who have been inactive since this date will get a first suspension warning
