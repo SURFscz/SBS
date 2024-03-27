@@ -988,7 +988,7 @@ const nl = {
         networkSyntaxError: "Dit is geen geldig IPv4- of IPv6-adres",
         networkReservedError: "Dit is een gereserveerd IPv{{version}}-adres",
         networkNotGlobal: "Alleen globale unicast-adressen kunnen worden ingevoerd",
-        networkInfo: "Laagste IP: {lower}, hoogste IP: {higher}, # adressen: {num_addresses}, versie: IPv{version}",
+        networkInfo: "Laagste IP: {{lower}}, hoogste IP: {{higher}}, # adressen: {{num_addresses}}, versie: IPv{{version}}",
         automaticConnectionAllowed: "Samenwerkingen mogen koppelen zonder jouw toestemming",
         automaticConnectionAllowedTooltip: "Indien ingeschakeld mag een samenwerking deze dienst koppelen zonder toestemming van de diensteigenaar (jou). Er wordt dan geen koppelverzoek ter goedkeuring voorgelegd.",
         automaticConnectionAllowedOrganisations: "Vertrouwde / je eigen organisaties",
