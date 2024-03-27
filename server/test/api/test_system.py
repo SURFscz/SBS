@@ -76,7 +76,7 @@ class TestSystem(AbstractTest):
 
         start_scheduling(self.app)
         jobs = self.get("/api/system/scheduled_jobs")
-        self.assertEqual(9, len(jobs))
+        self.assertEqual(10, len(jobs))
 
     def test_scheduled_jobs_async(self):
         try:

@@ -13,4 +13,5 @@ class TestOpenRequest(AbstractTest):
         mail = self.app.mail
         with mail.record_messages() as outbox:
             res = open_requests(self.app)
-            self.assertEqual(5, len(outbox))
+            self.assertEqual(6, len(res))
+            self.assertEqual(6, len(outbox))
