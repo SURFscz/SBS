@@ -199,6 +199,11 @@ orphan_users:
   # How long after created do we delete orphan users
   delete_days_threshold: -1
 
+open_requests:
+  # Do we weekly check for all open requests?
+  enabled: True
+  cron_day_of_week: 1
+
 scim_sweep:
   # Do we enable scim sweeps?
   enabled: False
