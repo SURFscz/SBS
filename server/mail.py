@@ -563,3 +563,12 @@ def mail_membership_orphan_users_deleted(user_uids):
         preview=False,
         working_outside_of_request_context=True
     )
+
+
+def mail_open_requests(recipient, context):
+    return _do_send_mail(
+        subject=f"SRAM Open requests",
+        recipients=[recipient],
+        template="open_requests",
+        context={**context, "base_url": current_app.app_config.base_url},
+        preview=False)

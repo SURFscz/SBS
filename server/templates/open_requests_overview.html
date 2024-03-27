@@ -1,0 +1,64 @@
+{% extends "mail_layout.html" %}
+{% block title %}SRAM open requests for {{ environment }}{% endblock %}
+{% block content %}
+
+    <div class="mail-middle"
+         style="padding: 40px 0 40px 60px;max-width: 800px;border: 1px solid #e0e0e0;border-radius: 6px">
+
+        <p>Hi,</p>
+        <p>Below are all the open requests that need your attention on {{ environment }}.</p>
+
+
+        {% if collaboration_requests|length -%}
+            <p>The following {{ collaboration_requests|length }} collaboration requests are outstanding:</p>
+            <ul style="margin-bottom: 25px">
+                {% for cr in collaboration_requests %}
+                    <li>
+                        <a href="{{ base_url }}/organisations/{{ cr.organisation_id }}/collaboration_requests">{{ cr.name }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if join_requests|length -%}
+            <p>The following {{ join_requests|length }} join requests are outstanding:</p>
+            <ul style="margin-bottom: 25px">
+                {% for jr in join_requests %}
+                    <li>
+                        <a href="{{ base_url }}/collaborations/{{ jr.collaboration_id }}/joinrequests">{{ jr.collaboration.name }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if service_connection_requests|length -%}
+            <p>The following {{ service_connection_requests|length }} service connection requests are outstanding:</p>
+            <ul style="margin-bottom: 25px">
+                {% for scr in service_connection_requests %}
+                    {% if scr.pending_organisation_approval == True %}
+                    <li>
+                        <a href="{{ base_url }}/organisations/{{ scr.collaboration.organisation_id }}/serviceConnectionRequests">{{ scr.collaboration.name }}</a>
+                    </li>
+                    {% endif %}
+                    {% if scr.pending_organisation_approval == False %}
+                    <li>
+                        <a href="{{ base_url }}/services/{{ scr.service_id }}/serviceConnectionRequests">{{ scr.collaboration.name }}</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if service_requests|length -%}
+            <p>The following {{ service_requests|length }} service requests are outstanding:</p>
+            <ul style="margin-bottom: 25px">
+                {% for sr in service_requests %}
+                    <li>
+                        <a href="{{ base_url }}/home/service_requests">{{ sr.name }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+    </div>
+{% endblock %}
