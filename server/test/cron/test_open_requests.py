@@ -1,10 +1,5 @@
-from sqlalchemy import text
-
 from server.cron.open_requests import open_requests
-from server.cron.outstanding_requests import outstanding_requests
-from server.db.db import db
 from server.test.abstract_test import AbstractTest
-from server.test.seed import unihard_name
 
 
 class TestOpenRequest(AbstractTest):
