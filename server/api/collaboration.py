@@ -245,12 +245,8 @@ def _do_short_name_exists(name, organisation_id, existing_collaboration=""):
 @json_endpoint
 def may_request_collaboration():
     user = db.session.get(User, current_user_id())
-    sho = user.schac_home_organisation
-    if not sho:
-        return False, 200
-    return Organisation.query \
-               .join(Organisation.schac_home_organisations) \
-               .filter(SchacHomeOrganisation.name == sho).count() > 0, 200
+    organisations = SchacHomeOrganisation.organisations_by_user_schac_home(user)
+    return len(organisations) > 0, 200
 
 
 @collaboration_api.route("/all", strict_slashes=False)

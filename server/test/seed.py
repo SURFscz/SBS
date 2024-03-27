@@ -170,7 +170,7 @@ def seed(db, app_config, skip_seed=False):
     peter = User(uid="urn:peter", name="Peter Doe", email="peter@example.org", username="peter",
                  external_id="b7fdbc01-5b5a-4028-b90a-5409f380e603")
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org", username="mdoe",
-                schac_home_organisation=schac_home_organisation_example,
+                schac_home_organisation=f"student.{schac_home_organisation_example}",
                 external_id="bb3d4bd4-2848-4cf3-b30b-fd84186c0c52")
     admin = User(uid="urn:admin", name=user_boss_name, email="boss@example.org", username="admin",
                  external_id="e906cf88-cdb3-480d-8bb3-ce53bdcda4e7")
