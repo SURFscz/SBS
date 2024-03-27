@@ -82,17 +82,17 @@ def _do_open_requests(app):
             .all()  # noqa: E712
         for scr in service_connection_requests:
             service_admins = [member for member in scr.service.service_memberships if member.role == "admin"]
-            for service_admin in service_admins:
-                _add_open_request_to_recipient(service_admin.user, recipients, "service_connection_requests", scr)
+            for sa in service_admins:
+                _add_open_request_to_recipient(sa.user, recipients, "service_connection_requests", scr)
 
         service_connection_requests = ServiceConnectionRequest.query \
             .filter(ServiceConnectionRequest.status == STATUS_OPEN) \
             .filter(ServiceConnectionRequest.pending_organisation_approval == True) \
             .all()  # noqa: E712
         for scr in service_connection_requests:
-            org_admins = [member for member in scr.organisation.organisation_memberships if member.role == "admin"]
-            for org_admin in org_admins:
-                _add_open_request_to_recipient(org_admin.user, recipients, "service_connection_requests", scr)
+            org_admins = [m for m in scr.collaboration.organisation.organisation_memberships if m.role == "admin"]
+            for admin in org_admins:
+                _add_open_request_to_recipient(admin.user, recipients, "service_connection_requests", scr)
 
         config = app.app_config
         admin_users = [u.uid for u in config.admin_users]

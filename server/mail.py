@@ -569,6 +569,6 @@ def mail_open_requests(recipient, context):
     return _do_send_mail(
         subject=f"SRAM Open requests",
         recipients=[recipient],
-        template="open_requests",
+        template="open_requests_overview",
         context={**context, "base_url": current_app.app_config.base_url},
         preview=False)
