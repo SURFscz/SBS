@@ -12,7 +12,7 @@ from server.api.unit import validate_units
 from server.auth.security import current_user_id, current_user_name, \
     confirm_organisation_admin_or_manager, confirm_write_access
 from server.db.defaults import cleanse_short_name, STATUS_ACTIVE, STATUS_OPEN, STATUS_DENIED, STATUS_APPROVED
-from server.db.domain import User, Organisation, CollaborationRequest, Collaboration, CollaborationMembership, db, \
+from server.db.domain import User, CollaborationRequest, Collaboration, CollaborationMembership, db, \
     SchacHomeOrganisation, OrganisationMembership
 from server.db.logo_mixin import logo_from_cache
 from server.db.models import save, delete
@@ -60,14 +60,11 @@ def collaboration_request_by_id(collaboration_request_id):
 def request_collaboration():
     data = current_request.get_json()
     user = db.session.get(User, current_user_id())
-    organisation = Organisation.query \
-        .join(Organisation.schac_home_organisations) \
-        .filter(SchacHomeOrganisation.name == user.schac_home_organisation) \
-        .first()
-    if not organisation:
+    organisations = SchacHomeOrganisation.organisations_by_user_schac_home(user)
+    if not organisations:
         raise BadRequest(f"There is no organisation with a schac_home_organisation that equals the "
                          f"schac_home_organisation {user.schac_home_organisation} of User {user.email}")
-
+    organisation = organisations[0]
     data["requester_id"] = user.id
 
     cleanse_short_name(data)

@@ -190,3 +190,16 @@ class TestCollaborationRequest(AbstractTest):
         self.login("urn:harry")
         self.delete("/api/collaboration_requests", primary_key=collaboration_request.id, with_basic_auth=False,
                     response_status_code=403)
+
+    def test_request_collaboration_with_subdomain(self):
+        organisation = self.find_entity_by_name(Organisation, unifra_name)
+        self.login("urn:mary")
+        data = {
+            "name": "New Collaboration",
+            "short_name": "new_collaboration_short",
+            "message": "pretty please",
+            "organisation_id": organisation.id
+        }
+        res = self.post("/api/collaboration_requests", body=data, with_basic_auth=False)
+        collaboration_request = db.session.get(CollaborationRequest, res["id"])
+        self.assertEqual("urn:mary", collaboration_request.requester.uid)
