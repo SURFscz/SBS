@@ -1,15 +1,11 @@
-import datetime
 import logging
 import time
 
 from server.cron.shared import obtain_lock
-from server.db.db import db
 from server.db.defaults import STATUS_OPEN
-from server.db.domain import Invitation, OrganisationInvitation, ServiceInvitation, CollaborationRequest, User, \
+from server.db.domain import CollaborationRequest, User, \
     JoinRequest, ServiceConnectionRequest, ServiceRequest
-from server.mail import mail_service_invitation, mail_collaboration_invitation, \
-    mail_organisation_invitation, mail_open_requests
-from server.tools import dt_now
+from server.mail import mail_open_requests
 
 open_requests_lock_name = "open_requests_lock_name"
 
