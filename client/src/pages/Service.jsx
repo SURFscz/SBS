@@ -79,7 +79,7 @@ class Service extends React.Component {
         ip_networks: [],
         administrators: [],
         message: "",
-        required: ["name", "entity_id", "abbreviation", "logo", "security_email",
+        required: ["name", "entity_id", "abbreviation", "logo", "security_email", "connection_type",
             "research_scholarship_compliant", "code_of_conduct_compliant", "sirtfi_compliant"],
         alreadyExists: {},
         initial: true,
@@ -93,7 +93,7 @@ class Service extends React.Component {
         isServiceAdmin: false,
         hasAdministrators: false,
         providing_organisation: "",
-        connection_type: "openIDConnect",
+        connection_type: null,
         redirect_urls: [],
         saml_metadata_url: "",
         saml_metadata: "",
@@ -111,7 +111,7 @@ class Service extends React.Component {
         if (isServiceRequest) {
             const required = this.state.required
                 .filter(attr => attr !== "entity_id" || isServiceRequestDetails)
-                .concat("providing_organisation");
+                .concat(["providing_organisation", "connection_type"]);
             this.setState({required: required})
         }
         if (!isServiceRequest && !user.admin) {
@@ -610,6 +610,9 @@ class Service extends React.Component {
                                           values={["openIDConnect", "saml2URL", "saml2File", "none"]}
                                           onChange={value => this.setState({connection_type: value})}
                                           labelResolver={label => I18n.t(`service.protocols.${label}`)}/>
+                        {(!initial && isEmpty(connection_type)) &&
+                        <ErrorIndicator
+                            msg={I18n.t("service.required", {attribute: I18n.t("service.protocol").toLowerCase()})}/>}
                     </div>}
                 {(isServiceRequest && connection_type === "openIDConnect") &&
                     <SelectField value={redirect_urls}
