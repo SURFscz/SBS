@@ -1901,6 +1901,7 @@ const nl = {
         jobName: "Naam",
         jobNextRun: "Geplande run-time",
         runOutdatedRequestsInfo: "Voer de cron-taak uit om alle verouderde open join-verzoeken en nieuwe samenwerkingsverzoeken voor de geconfigureerde drempel te rapporteren",
+        runOpenRequestsInfo: "Run the weekly cron job to report all open requests for CO, Org and Service admins",
         runOutdatedRequests: "Run",
         runCleanedRequestsInfo: "Voer de cron-taak uit om alle verouderde goedgekeurde / geweigerde aanmeldingsverzoeken en samenwerkingsverzoeken voor de geconfigureerde drempel te verwijderen",
         runCleanedRequests: "Verwijder",
@@ -1987,6 +1988,17 @@ const nl = {
             invitations: "CO invitations resend",
             serviceInvitations: "Service invitations resend",
             organisationInvitations: "ORG invitations resend",
+        },
+        openRequests: {
+            recipient: "Recipient",
+            service_requests: "Service requests",
+            service_connection_requests: "Service connection requests",
+            join_requests: "Join requets",
+            collaboration_requests: "Collaboration requests",
+            collaboration_name: "CO name",
+            requester: "Requester",
+            organisation_name: "ORG name",
+            service_name: "Service name",
         }
     },
     access: {
