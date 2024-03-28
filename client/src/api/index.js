@@ -646,6 +646,10 @@ export function invitationReminders() {
     return postPutJson("/api/system/invitation_reminders", {}, "PUT");
 }
 
+export function openRequests() {
+    return fetchJson("/api/system//open_requests");
+}
+
 export function parseMetaData() {
     return fetchJson("/api/system/parse_metadata");
 }

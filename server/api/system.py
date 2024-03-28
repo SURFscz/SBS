@@ -113,6 +113,16 @@ def do_invitation_reminders():
     return invitation_reminders(current_app), 201
 
 
+@system_api.route("/open_requests", strict_slashes=False, methods=["GET"])
+@json_endpoint
+def do_open_requests():
+    confirm_write_access()
+
+    from server.cron.open_requests import open_requests
+
+    return open_requests(current_app), 201
+
+
 @system_api.route("/db_stats", strict_slashes=False, methods=["GET"])
 @json_endpoint
 def do_db_stats():

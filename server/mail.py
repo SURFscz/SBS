@@ -571,4 +571,5 @@ def mail_open_requests(recipient, context):
         recipients=[recipient],
         template="open_requests_overview",
         context={**context, "base_url": current_app.app_config.base_url},
-        preview=False)
+        preview=False,
+        working_outside_of_request_context=True)
