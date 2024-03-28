@@ -534,11 +534,11 @@ class Groups extends React.Component {
                             <span>{I18n.t(`models.groups.${selectedGroup.auto_provision_members ? "on" : "off"}`)}</span>
                         </div>
                         {currentUser.admin && <a className="history"
-                                                            onClick={e => {
-                                                                stopEvent(e);
-                                                                clearFlash();
-                                                                this.props.history.push(`/audit-logs/groups/${selectedGroup.id}?${queryParam}`)
-                                                            }}>
+                                                 onClick={e => {
+                                                     stopEvent(e);
+                                                     clearFlash();
+                                                     this.props.history.push(`/audit-logs/groups/${selectedGroup.id}?${queryParam}`)
+                                                 }}>
                             {I18n.t("home.historyLink")}
                         </a>}
                     </section>
@@ -891,10 +891,11 @@ class Groups extends React.Component {
             {
                 key: "service_group__service__name",
                 header: I18n.t("models.groups.service_group"),
-                mapper: group => group.service_group ? <a href={`/services/${group.service_group.service_id}`}
-                                                          className={"neutral-appearance"}
-                                                          onClick={this.openService(group.service_group)}>
-                    {group.service_group.service.name}</a> : ""
+                mapper: group => (group.service_group && currentUser.admin) ?
+                    <a href={`/services/${group.service_group.service_id}`}
+                       className={"neutral-appearance"}
+                       onClick={this.openService(group.service_group)}>
+                        {group.service_group.service.name}</a> : ""
             },
             {
                 key: "memberCount",
