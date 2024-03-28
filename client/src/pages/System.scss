@@ -207,121 +207,163 @@
             margin: 25px;
 
         }
-    }
 
-    .table-selection {
-        display: flex;
 
-        .select-field {
-            width: 100%;
-            margin-top: 0;
-        }
-
-        div.action-container {
+        .table-selection {
             display: flex;
 
-            button {
-                margin: auto 0 0 15px;
+            .select-field {
+                width: 100%;
+                margin-top: 0;
+            }
+
+            div.action-container {
+                display: flex;
+
+                button {
+                    margin: auto 0 0 15px;
+                }
+            }
+
+        }
+
+        .toggle-json {
+            display: flex;
+            margin: 15px 0;
+
+            .copy-to-clipboard {
+                margin-left: 25px;
             }
         }
 
-    }
+        .search {
+            position: relative;
+            display: flex;
 
-    .toggle-json {
-        display: flex;
-        margin: 15px 0;
-
-        .copy-to-clipboard {
-            margin-left: 25px;
-        }
-    }
-
-    .search {
-        position: relative;
-        display: flex;
-
-        &.no-clear-logs {
-            margin-left: auto;
-        }
-
-        @media (max-width: $compact-medium) {
-            margin-left: 0;
-        }
-
-        svg.fa-search, svg.fa-magnifying-glass {
-            position: absolute;
-            font-size: 16px;
-            color: $blue;
-            top: 7px;
-            right: 9px;
-        }
-
-        &.server-side {
-            height: 48px;
-            margin-top: auto;
-            margin-left: 15px;
-
-            svg.fa-search, svg.fa-magnifying-glass {
-                top: 14px;
+            &.no-clear-logs {
+                margin-left: auto;
             }
-        }
-
-        input[type=text] {
-            flex-grow: 2;
-            border: 1px solid $lighter-grey;
-            padding: 0 15px 0 10px;
-            min-height: 38px;
-            font-size: 16px;
-            border-radius: $br;
-            min-width: 560px;
 
             @media (max-width: $compact-medium) {
-                min-width: 0;
+                margin-left: 0;
             }
 
+            svg.fa-search, svg.fa-magnifying-glass {
+                position: absolute;
+                font-size: 16px;
+                color: $blue;
+                top: 7px;
+                right: 9px;
+            }
 
-            &:focus {
-                outline: none;
-                box-shadow: 1px 1px 1px $blue-hover, -1px -1px 1px $blue-hover;
+            &.server-side {
+                height: 48px;
+                margin-top: auto;
+                margin-left: 15px;
+
+                svg.fa-search, svg.fa-magnifying-glass {
+                    top: 14px;
+                }
+            }
+
+            input[type=text] {
+                flex-grow: 2;
+                border: 1px solid $lighter-grey;
+                padding: 0 15px 0 10px;
+                min-height: 38px;
+                font-size: 16px;
+                border-radius: $br;
+                min-width: 560px;
+
+                @media (max-width: $compact-medium) {
+                    min-width: 0;
+                }
+
+
+                &:focus {
+                    outline: none;
+                    box-shadow: 1px 1px 1px $blue-hover, -1px -1px 1px $blue-hover;
+                }
+            }
+
+        }
+
+        table.suspended-users {
+
+            margin-bottom: 25px;
+
+            thead {
+                th {
+                    &.name {
+                        width: 25%;
+                    }
+
+                    &.email {
+                        width: 25%;
+                    }
+
+                    &.lastLogin {
+                        width: 25%;
+                    }
+
+                    &.actions {
+                        width: 25%;
+                    }
+                }
+            }
+
+            tbody {
+                td {
+                    vertical-align: middle;
+                }
             }
         }
 
-    }
+        .invitation_reminders {
+            display: flex;
+            flex-direction: column;
+        }
 
-    table.suspended-users {
-
-        margin-bottom: 25px;
-
-        thead {
+        table.open-requests {
             th {
-                &.name {
-                    width: 25%;
+                padding-left: 5px !important;
+
+                &.recipient {
+                    width: 15%;
                 }
 
-                &.email {
-                    width: 25%;
+                &.service_requests {
+                    width: 20%;
                 }
 
-                &.lastLogin {
-                    width: 25%;
+                &.service_connection_requests {
+                    width: 20%;
                 }
 
-                &.actions {
-                    width: 25%;
+                &.join_requests {
+                    width: 20%;
+                }
+
+                &.collaboration_requests {
+                    width: 20%;
                 }
             }
-        }
 
-        tbody {
             td {
-                vertical-align: middle;
+                padding-left: 5px !important;
+            }
+
+            .open-requests {
+                display: flex;
+                flex-direction: column;
+
+                &:not(:last-child) {
+                    padding-bottom: 4px;
+                    border-bottom: 1px solid $lighter-grey;
+                }
+
             }
         }
-    }
 
-    .invitation_reminders {
-        display: flex;
-        flex-direction: column;
     }
-
 }

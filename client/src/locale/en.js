@@ -1901,6 +1901,7 @@ const en = {
         jobName: "Name",
         jobNextRun: "Next scheduled run-time",
         runOutdatedRequestsInfo: "Run the cron job to report all open outdated join requests and new collaboration requests for the configured threshold",
+        runOpenRequestsInfo: "Run the weekly cron job to report all open requests for CO, Org and Service admins",
         runOutdatedRequests: "Run",
         runCleanedRequestsInfo: "Run the cron job to delete all outdated approved / denied join requests and collaboration requests for the configured threshold",
         runCleanedRequests: "Delete",
@@ -1987,6 +1988,17 @@ const en = {
             invitations: "Invitations resent",
             serviceInvitations: "Service invitations resent",
             organisationInvitations: "Organisation invitations resent",
+        },
+        openRequests: {
+            recipient: "Recipient",
+            service_requests: "Service requests",
+            service_connection_requests: "Service connection requests",
+            join_requests: "Join requets",
+            collaboration_requests: "Collaboration requests",
+            collaboration_name: "CO name",
+            requester: "Requester",
+            organisation_name: "ORG name",
+            service_name: "Service name",
         }
     },
     access: {

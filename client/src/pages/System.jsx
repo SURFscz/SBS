@@ -15,11 +15,12 @@ import {
     dbStats,
     deleteOrphanUsers,
     expireCollaborationMemberships,
-    invitationReminders,
     expireCollaborations,
     getResetTOTPRequestedUsers,
     getSuspendedUsers,
     health,
+    invitationReminders,
+    openRequests,
     outstandingRequests,
     parseMetaData,
     plscSync,
@@ -82,6 +83,7 @@ class System extends React.Component {
             deletedUsers: {},
             expiredMemberships: {},
             outstandingRequests: {},
+            openRequests: {},
             parsedMetaData: {},
             parsedMetaDataView: false,
             cleanedRequests: {},
@@ -136,6 +138,7 @@ class System extends React.Component {
             expiredMemberships: {},
             invitationReminders: [],
             outstandingRequests: {},
+            openRequests: {},
             parsedMetaData: {},
             cleanedRequests: {},
             databaseStats: [],
@@ -155,7 +158,7 @@ class System extends React.Component {
         window.location.href = window.location.href;
     }
 
-    getCronTab = (suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations, suspendedCollaborations,
+    getCronTab = (suspendedUsers, outstandingRequests, openRequests, cleanedRequests, expiredCollaborations, suspendedCollaborations,
                   expiredMemberships, invitationReminders, deletedUsers, sweepResults, cronJobs, parsedMetaData, parsedMetaDataView) => {
         return (<div key="cron" name="cron" label={I18n.t("home.tabs.cron")}
                      icon={<FontAwesomeIcon icon="clock"/>}>
@@ -175,6 +178,8 @@ class System extends React.Component {
                     {this.renderOrphanUsersResults(deletedUsers)}
                     {this.renderOutstandingRequests()}
                     {this.renderOutstandingRequestsResults(outstandingRequests)}
+                    {this.renderOpenRequests()}
+                    {this.renderOpenRequestsResults(openRequests)}
                     {this.renderCleanedRequests()}
                     {this.renderCleanedRequestsResults(cleanedRequests)}
                     {this.renderParsedMetaData()}
@@ -555,6 +560,13 @@ class System extends React.Component {
         });
     }
 
+    doOpenRequests = () => {
+        this.setState({busy: true})
+        openRequests().then(res => {
+            this.setState({openRequests: res, busy: false});
+        });
+    }
+
     doCleanupNonOpenRequests = () => {
         this.setState({busy: true})
         cleanupNonOpenRequests().then(res => {
@@ -742,6 +754,21 @@ class System extends React.Component {
                                                              onClick={this.doOutstandingRequests}/>}
                     {!isEmpty(outstandingRequests) && <Button txt={I18n.t("system.clear")}
                                                               onClick={this.clear} cancelButton={true}/>}
+                </div>
+            </div>
+        );
+    }
+
+    renderOpenRequests = () => {
+        const {openRequests} = this.state;
+        return (
+            <div className="info-block">
+                <p>{I18n.t("system.runOpenRequestsInfo")}</p>
+                <div className="actions">
+                    {isEmpty(openRequests) && <Button txt={I18n.t("system.runOutdatedRequests")}
+                                                      onClick={this.doOpenRequests}/>}
+                    {!isEmpty(openRequests) && <Button txt={I18n.t("system.clear")}
+                                                       onClick={this.clear} cancelButton={true}/>}
                 </div>
             </div>
         );
@@ -1055,6 +1082,59 @@ class System extends React.Component {
         )
     }
 
+    renderOpenRequestsResults = openRequests => {
+        return (
+            <div className="results">
+                {!isEmpty(openRequests) && <div className="results">
+                    <table className="open-requests">
+                        <thead>
+                        <tr>
+                            <th className="recipient">{I18n.t("system.openRequests.recipient")}</th>
+                            <th className="service_requests">{I18n.t("system.openRequests.service_requests")}</th>
+                            <th className="service_connection_requests">{I18n.t("system.openRequests.service_connection_requests")}</th>
+                            <th className="join_requests">{I18n.t("system.openRequests.join_requests")}</th>
+                            <th className="collaboration_requests">{I18n.t("system.openRequests.collaboration_requests")}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {Object.keys(openRequests).map((recipient, index) =>
+                            <tr key={index}>
+                                <td>{recipient}</td>
+                                <td>{openRequests[recipient].service_requests.map((sr, i) =>
+                                    <div key={i} className={"open-requests"}>
+                                        <span>{I18n.t("system.openRequests.service_name")}: {sr.name}</span>
+                                        <span>{I18n.t("system.openRequests.requester")}: {sr.requester}</span>
+                                    </div>
+                                )}</td>
+                                <td>{openRequests[recipient].service_connection_requests.map((scr, i) =>
+                                    <div key={i} className={"open-requests"}>
+                                        <span>{I18n.t("system.openRequests.organisation_name")}: {scr.organisation}</span>
+                                        <span>{I18n.t("system.openRequests.service_name")}: {scr.service}</span>
+                                        <span>{I18n.t("system.openRequests.requester")}: {scr.requester}</span>
+                                    </div>
+                                )}</td>
+                                <td>{openRequests[recipient].join_requests.map((jr, i) =>
+                                    <div key={i} className={"open-requests"}>
+                                        <span>{I18n.t("system.openRequests.collaboration_name")}: {jr.name}</span>
+                                        <span>{I18n.t("system.openRequests.requester")}: {jr.requester}</span>
+                                    </div>
+                                )}</td>
+                                <td>{openRequests[recipient].collaboration_requests.map((cr, i) =>
+                                    <div key={i} className={"open-requests"}>
+                                        <span>{I18n.t("system.openRequests.collaboration_name")}: {cr.name}</span>
+                                        <span>{I18n.t("system.openRequests.requester")}: {cr.requester}</span>
+                                    </div>
+                                )}</td>
+                            </tr>
+                        )}
+                        </tbody>
+                    </table>
+
+                </div>}
+            </div>
+        )
+    }
+
     renderSweepResults = sweepResults => {
         const sweepJson = JSON.stringify(sweepResults);
         return (
@@ -1227,6 +1307,7 @@ class System extends React.Component {
             cancelDialogAction,
             confirmationDialogAction,
             outstandingRequests,
+            openRequests,
             confirmationDialogQuestion,
             busy,
             tab,
@@ -1265,7 +1346,7 @@ class System extends React.Component {
         }
         const tabs = [
             this.getValidationTab(validationData, showOrganisationsWithoutAdmin, showServicesWithoutAdmin),
-            this.getCronTab(suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations,
+            this.getCronTab(suspendedUsers, outstandingRequests, openRequests, cleanedRequests, expiredCollaborations,
                 suspendedCollaborations, expiredMemberships, invitationReminders, deletedUsers, sweepResults, cronJobs, parsedMetaData, parsedMetaDataView),
             config.seed_allowed ? this.getSeedTab(seedResult, demoSeedResult) : null,
             this.getDatabaseTab(databaseStats, config),
