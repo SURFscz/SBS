@@ -180,10 +180,12 @@ class ServiceDetail extends React.Component {
                         if (res.message && res.message.indexOf("already a member") > -1) {
                             this.setState({errorOccurred: true, firstTime: false}, () =>
                                 setFlash(I18n.t("organisationInvitation.flash.alreadyMember"), "error"));
+                        } else {
+                            this.props.history.push("/404");
                         }
                     });
                 } else {
-                    throw e;
+                     this.props.history.push("/404");
                 }
             });
         } else {

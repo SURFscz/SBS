@@ -223,7 +223,8 @@ class NewInvitation extends React.Component {
                         removeMail={this.removeMail}
                         name={I18n.t("invitation.invitees")}
                         emails={administrators}
-                        error={!initial && isEmpty(administrators) && isEmpty(fileEmails)}/>
+                        error={!initial && isEmpty(administrators) && isEmpty(fileEmails)}
+                        autoFocus={true}/>
             {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) &&
                 <ErrorIndicator msg={I18n.t("invitation.requiredEmail")}/>}
 

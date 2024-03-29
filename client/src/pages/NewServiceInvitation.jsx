@@ -133,7 +133,8 @@ class NewServiceInvitation extends React.Component {
                         removeMail={this.removeMail}
                         name={I18n.t("invitation.invitees")}
                         error={!initial && isEmpty(administrators)}
-                        emails={administrators}/>
+                        emails={administrators}
+                        autoFocus={true}/>
 
             {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) && <ErrorIndicator
                 msg={I18n.t("organisationInvitation.requiredAdministrator")}/>}
