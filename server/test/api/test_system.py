@@ -1,9 +1,9 @@
 from flask import current_app
 from sqlalchemy import text
 
-from server.db.defaults import STATUS_DENIED, STATUS_APPROVED
 from server.cron.schedule import start_scheduling
 from server.db.db import db
+from server.db.defaults import STATUS_DENIED, STATUS_APPROVED
 from server.db.domain import User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import unihard_invitation_hash
@@ -158,3 +158,7 @@ class TestSystem(AbstractTest):
         self.assertIn("services", res)
         self.assertEqual(1, len(res["services"]))
         self.assertEqual("Network Services", res["services"][0]["name"])
+
+    def test_open_requests(self):
+        res = self.get("/api/system/open_requests")
+        self.assertEqual(6, len(res))

@@ -120,7 +120,7 @@ def do_open_requests():
 
     from server.cron.open_requests import open_requests
 
-    return open_requests(current_app), 201
+    return open_requests(current_app), 200
 
 
 @system_api.route("/db_stats", strict_slashes=False, methods=["GET"])
