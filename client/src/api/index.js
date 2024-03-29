@@ -647,7 +647,7 @@ export function invitationReminders() {
 }
 
 export function openRequests() {
-    return fetchJson("/api/system//open_requests");
+    return fetchJson("/api/system/open_requests");
 }
 
 export function parseMetaData() {
