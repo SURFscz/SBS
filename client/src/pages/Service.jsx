@@ -28,7 +28,6 @@ import {Chip, Tooltip} from "@surfnet/sds";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {ReactComponent as TrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 import {AppStore} from "../stores/AppStore";
-import RadioButton from "../components/redesign/RadioButton";
 import CroppedImageField from "../components/redesign/CroppedImageField";
 import SpinnerField from "../components/redesign/SpinnerField";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
@@ -66,9 +65,6 @@ class Service extends React.Component {
         non_member_users_access_allowed: false,
         allow_restricted_orgs: false,
         ldap_identifier: "",
-        research_scholarship_compliant: null,
-        code_of_conduct_compliant: null,
-        sirtfi_compliant: null,
         token_enabled: false,
         token_validity_days: "",
         pam_web_sso_enabled: false,
@@ -79,8 +75,7 @@ class Service extends React.Component {
         ip_networks: [],
         administrators: [],
         message: "",
-        required: ["name", "entity_id", "abbreviation", "logo", "security_email", "connection_type",
-            "research_scholarship_compliant", "code_of_conduct_compliant", "sirtfi_compliant"],
+        required: ["name", "entity_id", "abbreviation", "logo", "security_email", "connection_type"],
         alreadyExists: {},
         initial: true,
         invalidInputs: {},
@@ -470,9 +465,8 @@ class Service extends React.Component {
 
     serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
                         access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired,
-                        accepted_user_policy, uri_info, privacy_policy, service, disabledSubmit, allow_restricted_orgs, sirtfi_compliant, token_enabled, pam_web_sso_enabled,
-                        token_validity_days, code_of_conduct_compliant,
-                        research_scholarship_compliant, config, ip_networks, administrators, message, logo, isServiceAdmin,
+                        accepted_user_policy, uri_info, privacy_policy, service, disabledSubmit, allow_restricted_orgs, token_enabled, pam_web_sso_enabled,
+                        token_validity_days, config, ip_networks, administrators, message, logo, isServiceAdmin,
                         providing_organisation, connection_type, redirect_urls, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails, disableEverything,
                         ldap_identifier) => {
         const ldapBindAccount = config.ldap_bind_account;
@@ -611,8 +605,8 @@ class Service extends React.Component {
                                           onChange={value => this.setState({connection_type: value})}
                                           labelResolver={label => I18n.t(`service.protocols.${label}`)}/>
                         {(!initial && isEmpty(connection_type)) &&
-                        <ErrorIndicator
-                            msg={I18n.t("service.required", {attribute: I18n.t("service.protocol").toLowerCase()})}/>}
+                            <ErrorIndicator
+                                msg={I18n.t("service.required", {attribute: I18n.t("service.protocol").toLowerCase()})}/>}
                     </div>}
                 {(isServiceRequest && connection_type === "openIDConnect") &&
                     <SelectField value={redirect_urls}
@@ -726,44 +720,6 @@ class Service extends React.Component {
                         invalidInputs["accepted_user_policy"] &&
                         <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>
                     }
-                </div>
-                <div className="compliance">
-                    <RadioButton label={I18n.t("service.sirtfiCompliant")}
-                                 name={"sirtfi_compliant"}
-                                 value={sirtfi_compliant}
-                                 checked={sirtfi_compliant}
-                                 disabled={disableEverything}
-                                 tooltip={I18n.t("service.sirtfiCompliantTooltip")}
-                                 onChange={val => this.setState({sirtfi_compliant: val})}/>
-                    {(!initial && isEmpty(sirtfi_compliant)) &&
-                        <ErrorIndicator msg={I18n.t("service.required", {
-                            attribute: I18n.t("service.sirtfiCompliant").toLowerCase()
-                        })}/>}
-
-                    <RadioButton label={I18n.t("service.codeOfConductCompliant")}
-                                 name={"code_of_conduct_compliant"}
-                                 value={code_of_conduct_compliant}
-                                 checked={code_of_conduct_compliant}
-                                 disabled={disableEverything}
-                                 tooltip={I18n.t("service.codeOfConductCompliantTooltip")}
-                                 onChange={val => this.setState({code_of_conduct_compliant: val})}/>
-                    {(!initial && isEmpty(code_of_conduct_compliant)) &&
-                        <ErrorIndicator msg={I18n.t("service.required", {
-                            attribute: I18n.t("service.codeOfConductCompliant").toLowerCase()
-                        })}/>}
-
-                    <RadioButton label={I18n.t("service.researchScholarshipCompliant")}
-                                 name={"research_scholarship_compliant"}
-                                 value={research_scholarship_compliant}
-                                 checked={research_scholarship_compliant}
-                                 disabled={disableEverything}
-                                 tooltip={I18n.t("service.researchScholarshipCompliantTooltip")}
-                                 onChange={val => this.setState({research_scholarship_compliant: val})}/>
-                    {(!initial && isEmpty(research_scholarship_compliant)) &&
-                        <ErrorIndicator msg={I18n.t("service.required", {
-                            attribute: I18n.t("service.researchScholarshipCompliant").toLowerCase()
-                        })}/>}
-
                 </div>
 
                 <h2 className="section-separator">{I18n.t("service.contactSupport")}</h2>
@@ -1043,12 +999,9 @@ class Service extends React.Component {
             access_allowed_for_all,
             non_member_users_access_allowed,
             allow_restricted_orgs,
-            sirtfi_compliant,
             token_enabled,
             pam_web_sso_enabled,
             token_validity_days,
-            code_of_conduct_compliant,
-            research_scholarship_compliant,
             ip_networks,
             administrators,
             message,
@@ -1096,9 +1049,9 @@ class Service extends React.Component {
                     </ConfirmationDialog>
                     {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
                         access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, uri_info, privacy_policy,
-                        service, disabledSubmit, allow_restricted_orgs, sirtfi_compliant, token_enabled, pam_web_sso_enabled, token_validity_days, code_of_conduct_compliant,
-                        research_scholarship_compliant, config, ip_networks, administrators, message, logo, isServiceAdmin, providing_organisation,
-                        connection_type, redirect_urls, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails, disableEverything, ldap_identifier)}
+                        service, disabledSubmit, allow_restricted_orgs, token_enabled, pam_web_sso_enabled, token_validity_days, config, ip_networks,
+                        administrators, message, logo, isServiceAdmin, providing_organisation, connection_type, redirect_urls, saml_metadata_url,
+                        samlMetaDataFile, comments, isServiceRequestDetails, disableEverything, ldap_identifier)}
                 </div>
             </>)
             ;

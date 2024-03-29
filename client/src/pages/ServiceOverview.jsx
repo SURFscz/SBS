@@ -1115,37 +1115,6 @@ class ServiceOverview extends React.Component {
             {invalidInputs.accepted_user_policy &&
                 <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
 
-            <RadioButton label={I18n.t("service.sirtfiCompliant")}
-                         name={"sirtfi_compliant"}
-                         value={service.sirtfi_compliant}
-                         checked={service.sirtfi_compliant}
-                         disabled={!isAdmin && !isServiceAdmin}
-                         tooltip={I18n.t("service.sirtfiCompliantTooltip")}
-                         onChange={val => this.setState({"service": {...service, sirtfi_compliant: val}})}/>
-
-            <RadioButton label={I18n.t("service.codeOfConductCompliant")}
-                         name={"code_of_conduct_compliant"}
-                         value={service.code_of_conduct_compliant}
-                         checked={service.code_of_conduct_compliant}
-                         disabled={!isAdmin && !isServiceAdmin}
-                         tooltip={I18n.t("service.codeOfConductCompliantTooltip")}
-                         onChange={val => this.setState({
-                             "service": {
-                                 ...service, code_of_conduct_compliant: val
-                             }
-                         })}/>
-
-            <RadioButton label={I18n.t("service.researchScholarshipCompliant")}
-                         name={"research_scholarship_compliant"}
-                         value={service.research_scholarship_compliant}
-                         checked={service.research_scholarship_compliant}
-                         disabled={!isAdmin && !isServiceAdmin}
-                         tooltip={I18n.t("service.researchScholarshipCompliantTooltip")}
-                         onChange={val => this.setState({
-                             "service": {
-                                 ...service, research_scholarship_compliant: val
-                             }
-                         })}/>
         </div>)
     }
 
