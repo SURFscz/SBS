@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Tooltip} from "@surfnet/sds";
 import "./EmailField.scss";
@@ -13,11 +13,20 @@ export default function EmailField({
                                        removeMail,
                                        isAdmin = false,
                                        pinnedEmails = [],
-                                       error = false
+                                       error = false,
+                                       autoFocus = false
                                    }) {
 
     const [emailErrors, setEmailErrors] = useState([]);
     const [value, setValue] = useState("");
+
+    const inputRef = useRef(null);
+
+    useEffect(() => {
+        if (autoFocus && inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [autoFocus]);
 
     const internalOnChange = e => {
         if (!["Enter", "Spacebar", "Backspace", "Tab"].includes(e.key)) {
@@ -108,6 +117,7 @@ export default function EmailField({
                           value={value}
                           onChange={internalOnChange}
                           onBlur={internalAddEmail}
+                          ref={inputRef}
                           onKeyDown={e => {
                               if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
                                   internalAddEmail(e);
