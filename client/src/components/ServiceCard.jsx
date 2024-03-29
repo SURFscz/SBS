@@ -2,7 +2,7 @@ import React, {useState} from "react";
 
 import "./ServiceCard.scss";
 import Logo from "./redesign/Logo";
-import {Chip, ChipType, Tooltip} from "@surfnet/sds";
+import {Chip, ChipType} from "@surfnet/sds";
 import {MoreLessText} from "./MoreLessText";
 import {ReactComponent as ArrowDown} from "@surfnet/sds/icons/functional-icons/arrow-down-2.svg";
 import {ReactComponent as ArrowUp} from "@surfnet/sds/icons/functional-icons/arrow-up-2.svg";
@@ -56,7 +56,6 @@ export default function ServiceCard({
         const admins = (service.service_memberships || []).map(member => member.user)
         const admin = !isEmpty(service.contact_email) ? service.contact_email : !isEmpty(admins) ? admins[0].email : null;
         const adminName = !isEmpty(service.contact_email) ? service.contact_email : !isEmpty(admins) ? admins[0].name : null;
-        const compliance = service.sirtfi_compliant || service.code_of_conduct_compliant || service.research_scholarship_compliant;
         const supportEmail = service.support_email;
         const hasPrivacyPolicy = !isEmpty(service.privacy_policy);
         return (
@@ -72,15 +71,6 @@ export default function ServiceCard({
                         <a href={service.accepted_user_policy} target="_blank" rel="noopener noreferrer">
                             {I18n.t("service.accepted_user_policy")}
                         </a>}
-                    <dt>{I18n.t("service.compliancyShort")}</dt>
-                    {!compliance && <dd>{I18n.t("service.none")}</dd>}
-                    {service.code_of_conduct_compliant && <dd>{I18n.t("service.codeOfConductCompliantShort")}<Tooltip
-                        tip={I18n.t("service.codeOfConductCompliantTooltip")}/></dd>}
-                    {service.sirtfi_compliant && <dd>{I18n.t("service.sirtfiCompliantShort")}<Tooltip
-                        tip={I18n.t("service.sirtfiCompliantTooltip")}/></dd>}
-                    {service.research_scholarship_compliant &&
-                        <dd>{I18n.t("service.researchScholarshipCompliantShort")}<Tooltip
-                            tip={I18n.t("service.researchScholarshipCompliantTooltip")}/></dd>}
                 </div>
                 <div className={"support"}>
                     <dt>{I18n.t("service.supportShort")}</dt>

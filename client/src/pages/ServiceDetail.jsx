@@ -25,7 +25,7 @@ import {ReactComponent as UserAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ConnectedIcon} from "../icons/groups.svg";
 import ServiceOrganisations from "../components/redesign/ServiceOrganisations";
 import SpinnerField from "../components/redesign/SpinnerField";
-import {capitalize, isEmpty, removeDuplicates, splitListSemantically, stopEvent} from "../utils/Utils";
+import {capitalize, isEmpty, removeDuplicates, stopEvent} from "../utils/Utils";
 import {actionMenuUserRole, isUserServiceAdmin, isUserServiceManager} from "../utils/UserRole";
 import ServiceConnectionRequests from "../components/redesign/ServiceConnectionRequests";
 import {ReactComponent as GroupsIcon} from "../icons/ticket-group.svg";
@@ -185,7 +185,7 @@ class ServiceDetail extends React.Component {
                         }
                     });
                 } else {
-                     this.props.history.push("/404");
+                    this.props.history.push("/404");
                 }
             });
         } else {
@@ -334,24 +334,6 @@ class ServiceDetail extends React.Component {
         this.updateBreadCrumb(service);
         this.setState({tab: name}, () =>
             this.props.history.replace(`/services/${serviceId}/${name}`));
-    }
-
-    compliancy = service => {
-        const compliancies = [];
-        if (service.sirtfi_compliant) {
-            compliancies.push("Sirtfi")
-        }
-        if (service.code_of_conduct_compliant) {
-            compliancies.push("CoCo")
-        }
-        if (service.research_scholarship_compliant) {
-            compliancies.push("R&S")
-        }
-        if (compliancies.length === 0) {
-            return I18n.t("service.none");
-        }
-        return splitListSemantically(compliancies, I18n.t("service.compliancySeparator"));
-
     }
 
     doDeleteMe = () => {
