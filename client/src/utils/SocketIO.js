@@ -18,4 +18,5 @@ export const SUBSCRIPTION_ID_COOKIE_NAME = "subscription_id";
 
 export const JOIN_REQUEST_TYPE = "joinRequest";
 export const COLLABORATION_REQUEST_TYPE = "collaborationRequest";
-export const SERVICE_TYPE_REQUEST = "serviceRequest";
+export const SERVICE_REQUEST_TYPE = "serviceRequest";
+export const SERVICE_CONNECTION_REQUEST_TYPE = "serviceConnectionRequest";

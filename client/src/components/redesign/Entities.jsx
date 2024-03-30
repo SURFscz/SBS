@@ -204,7 +204,8 @@ class Entities extends React.Component {
         }
         const {query, sorted, reverse, page} = this.state;
         const filteredEntities = this.filterEntities(entities, query, searchAttributes, customSearch);
-        const sortedEntities = sortObjects(filteredEntities, sorted, reverse);
+        const column = columns.find(column => column.key === sorted);
+        const sortedEntities = sortObjects(filteredEntities, sorted, reverse, column?.customSort);
         return (
             <div className={`mod-entities ${className}`}>
                 {displaySearch && this.renderSearch(modelName, title, entities, query, searchAttributes, showNew, newLabel, filters, customSearch, hideTitle)}

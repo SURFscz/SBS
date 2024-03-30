@@ -2457,11 +2457,13 @@ const nl = {
         types: {
             joinRequest: "Lidmaatschapsverzoek",
             collaborationRequest: "Nieuw samenwerkingsverzoek",
-            serviceRequest: "Dienstregistratie"
+            serviceRequest: "Dienstregistratie",
+            serviceConnectionRequest: "Dienstkoppelverzoek"
         },
         name: "Naam",
         description: "Omschrijving",
-        organisationName: "Organisatie / instelling"
+        organisationName: "Organisatie / instelling",
+        notApplicable: "N/A"
     },
     units: {
         column: "Units",
@@ -2496,8 +2498,8 @@ const nl = {
         ],
         neverBeenBeforeTitle: "Ben je hier nog nooit geweest?",
         neverBeenBefore: [
-          "Lees wat je met <a href=\"https://surf.nl/sram\" target=\"_blank\" rel=\"noopener noreferrer\">SRAM allemaal kan doen.</a>",
-          "Als iemand je heeft gewezen op <strong>{{serviceName}}</strong>, neem dan contact met hen op om toegang te krijgen tot de juiste samenwerking, of neem contact op met je instelling."
+            "Lees wat je met <a href=\"https://surf.nl/sram\" target=\"_blank\" rel=\"noopener noreferrer\">SRAM allemaal kan doen.</a>",
+            "Als iemand je heeft gewezen op <strong>{{serviceName}}</strong>, neem dan contact met hen op om toegang te krijgen tot de juiste samenwerking, of neem contact op met je instelling."
         ],
         ticketInfoTitle: "Sessieinformatie"
     },

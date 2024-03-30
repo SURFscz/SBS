@@ -30,7 +30,7 @@ from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit, SBS_LOGIN
 from server.db.domain import User, OrganisationMembership, CollaborationMembership, JoinRequest, CollaborationRequest, \
     UserNameHistory, SshKey, ServiceMembership, ServiceAup, UserIpNetwork, \
-    ServiceRequest
+    ServiceRequest, ServiceConnectionRequest
 from server.db.models import log_user_login
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error, mail_account_deletion
@@ -97,6 +97,8 @@ def _user_query():
                  .subqueryload(ServiceMembership.service)) \
         .options(joinedload(User.join_requests)
                  .subqueryload(JoinRequest.collaboration)) \
+        .options(joinedload(User.service_connection_requests)
+                 .subqueryload(ServiceConnectionRequest.service)) \
         .options(joinedload(User.aups)) \
         .options(joinedload(User.organisation_aups)) \
         .options(joinedload(User.service_requests)) \
