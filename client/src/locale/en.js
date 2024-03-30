@@ -2457,11 +2457,13 @@ const en = {
         types: {
             joinRequest: "Collaboration join request",
             collaborationRequest: "New collaboration request",
-            serviceRequest: "Service registration"
+            serviceRequest: "Service registration",
+            serviceConnectionRequest: "Service connection request"
         },
         name: "Name",
         description: "Description",
-        organisationName: "Organisation / institution"
+        organisationName: "Organisation / institution",
+        notApplicable: "N/A"
     },
     units: {
         column: "Units",
