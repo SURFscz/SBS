@@ -154,6 +154,7 @@ export default class ServiceRequests extends React.PureComponent {
                       searchAttributes={["user__name", "user__email", "description", "name", "status"]}
                       defaultSort="status"
                       columns={columns}
+                      inputFocus={true}
                       showNew={false}
                       filters={this.filter(filterOptions, filterValue)}
                       loading={false}

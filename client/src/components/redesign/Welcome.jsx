@@ -2,12 +2,12 @@ import React from "react";
 import "./Welcome.scss";
 import I18n from "../../locale/I18n";
 import {identityProviderDisplayName} from "../../api";
-import {isEmpty} from "../../utils/Utils";
+import {capitalize, isEmpty, stopEvent} from "../../utils/Utils";
 import SpinnerField from "./SpinnerField";
 import "react-mde/lib/styles/css/react-mde-all.css";
 import Button from "../Button";
 import {AppStore} from "../../stores/AppStore";
-import {rawGlobalUserRole, ROLES} from "../../utils/UserRole";
+import {getUserRequests, rawGlobalUserRole, ROLES} from "../../utils/UserRole";
 import DOMPurify from "dompurify";
 import LandingInfo from "../LandingInfo";
 
@@ -18,14 +18,16 @@ class Welcome extends React.Component {
         this.state = {
             organisation: {},
             idpDisplayName: I18n.t("welcome.unknown"),
-            loading: true
+            loading: true,
+            requests: []
         };
     }
 
     componentDidMount() {
         const {user} = this.props;
+        this.setState({requests: getUserRequests(user)})
         const role = rawGlobalUserRole(user);
-        if (role !== ROLES.USER || !isEmpty(user.collaboration_requests) || !isEmpty(user.service_requests) || !isEmpty(user.join_requests)) {
+        if (role !== ROLES.USER) {
             this.props.history.push("/home");
             return;
         }
@@ -44,7 +46,7 @@ class Welcome extends React.Component {
             });
     }
 
-    knownOrganisation = (idpDisplayName, organisation) => {
+    knownOrganisation = (idpDisplayName, organisation, requests) => {
         const canCreate = organisation.collaboration_creation_allowed_entitlement || organisation.collaboration_creation_allowed;
         return (
             <div>
@@ -53,24 +55,41 @@ class Welcome extends React.Component {
                     __html: DOMPurify.sanitize(I18n.t(`welcome.${canCreate ? "startCreateColl" : "startRequestColl"}`,
                         {name: idpDisplayName}))
                 }}/>
-                <Button onClick={() => this.props.history.push("/new-collaboration")}
-                        txt={I18n.t(`welcome.${canCreate ? "createCollTxt" : "createCollRequestTxt"}`)}/>
+                <div className="known-organisation">
+                    <Button onClick={() => this.props.history.push("/new-collaboration")}
+                            txt={I18n.t(`welcome.${canCreate ? "createCollTxt" : "createCollRequestTxt"}`)}/>
+                    {!isEmpty(requests) &&
+                        <a href="#" onClick={this.showRequests}>{I18n.t("collaborationsOverview.viewRequests")}</a>
+                    }
+                </div>
+
             </div>
         );
     }
 
-    unknownOrganisation = idpDisplayName => {
+    unknownOrganisation = (idpDisplayName, requests) => {
         return (
             <div>
                 <h2>{I18n.t("welcome.creating")}</h2>
                 <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcome.institutionCollNotAllowed", {name: idpDisplayName}))}}/>
+                {!isEmpty(requests) && <div className="unknown-organisation">
+                    <Button onClick={this.showRequests}
+                            txt={capitalize( I18n.t("collaborationsOverview.viewRequests"))}/>
+                </div>
+
+                }
             </div>
         );
     }
 
+    showRequests = e => {
+        stopEvent(e);
+        this.props.history.push("/my-requests");
+    }
+
     render() {
         const {user} = this.props;
-        const {organisation, loading, idpDisplayName} = this.state;
+        const {organisation, loading, idpDisplayName, requests} = this.state;
 
         if (loading) {
             return <SpinnerField/>;
@@ -85,8 +104,9 @@ class Welcome extends React.Component {
                         <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcome.subTitle"))}}/>
                         <h2>{I18n.t("welcome.joining")}</h2>
                         <p>{I18n.t("welcome.invited")}</p>
-                        {orphanUser && this.unknownOrganisation(idpDisplayName)}
-                        {!orphanUser && this.knownOrganisation(idpDisplayName, organisation)}
+                        {orphanUser && this.unknownOrganisation(idpDisplayName, requests)}
+                        {!orphanUser && this.knownOrganisation(idpDisplayName, organisation, requests)}
+
                     </div>
                 </div>
                 <LandingInfo/>
