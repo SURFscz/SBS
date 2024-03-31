@@ -105,7 +105,12 @@ class Home extends React.Component {
                     return;
                 } else {
                     tabs.push(this.getServicesTab(nbrServices));
-                    tab = tabs[0].key;
+                    if (nbrServices > 0 && nbrCollaborations === 0) {
+                        tab = "services";
+                    } else {
+                        tab = tabs[0].key;
+                    }
+
                 }
             }
             const tabSuggestion = this.addRequestsTabs(user, this.refreshUserHook, tabs, tab);
