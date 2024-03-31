@@ -22,6 +22,7 @@ import {statusCustomSort} from "../../utils/Utils";
 
 
 const allValue = "all";
+
 export default class MyRequests extends React.PureComponent {
 
     constructor(props, context) {
@@ -204,6 +205,7 @@ export default class MyRequests extends React.PureComponent {
                       defaultSort="status"
                       columns={columns}
                       showNew={false}
+                      inputFocus={true}
                       filters={this.filter(filterOptions, filterValue)}
                       loading={false}
                       {...this.props}/>
