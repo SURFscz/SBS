@@ -10,8 +10,9 @@ from flask_mail import Message
 
 from server.auth.security import current_user_id
 from server.db.db import db
-from server.db.defaults import calculate_expiry_period
+from server.db.defaults import calculate_expiry_period, split_list_semantically
 from server.db.domain import User, UserMail
+from server.db.models import flatten
 from server.logger.context_logger import ctx_logger
 from server.mail_types.mail_types import COLLABORATION_REQUEST_MAIL, \
     COLLABORATION_JOIN_REQUEST_MAIL, AUTOMATIC_COLLABORATION_JOIN_REQUEST_MAIL, ORGANISATION_INVITATION_MAIL, \
@@ -313,7 +314,8 @@ def mail_accepted_declined_service_connection_request(context, service_name, col
 
 
 def mail_suspend_notification(context, recipients, is_warning, is_suspension):
-    _store_mail(context["user"], SUSPEND_NOTIFICATION_MAIL, recipients)
+    user = context["user"]
+    _store_mail(user, SUSPEND_NOTIFICATION_MAIL, recipients)
     if is_suspension and is_warning:
         template = "suspend_suspend_warning_notification"
     elif is_suspension and not is_warning:
@@ -322,6 +324,11 @@ def mail_suspend_notification(context, recipients, is_warning, is_suspension):
         template = "suspend_delete_warning_notification"
     else:
         raise Exception("We don't send mails on account deletion")
+    collaborations = [m.collaboration for m in user.collaboration_memberships]
+    services = flatten([co.services for co in collaborations])
+    affs = (user.affiliation if user.affiliation else []) + (user.scoped_affiliation if user.scoped_affiliation else [])
+    context = {**context, "affiliations": split_list_semantically(affs),
+               "collaborations": collaborations, "services": services}
     return _do_send_mail(
         subject="SURF SRAM: suspend notification",
         recipients=recipients,

@@ -1,0 +1,26 @@
+
+        <p>We have stored the following personal information about you:</p>
+        <ul style="margin-bottom: 25px">
+            <li>Name: {{ user.name }}</li>
+            <li>Email: {{ user.email }}</li>
+            {% if affiliations|length -%}
+                <li>Affiliations: {{ affiliations }}</li>
+            {% endif %}
+        </ul>
+        {% if collaborations|length -%}
+        <p>You are a member of the following collaborations:</p>
+        <ul style="margin-bottom: 25px">
+            {% for co in collaborations %}
+                <li>{{ co.name }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if services|length -%}
+        <p>You have access to the following services:</p>
+        <ul style="margin-bottom: 25px">
+            {% for service in services %}
+                <li>{{ service.name }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
