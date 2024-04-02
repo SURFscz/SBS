@@ -80,7 +80,15 @@ def _do_service_connection_request(approved):
         raise Forbidden(f"Not allowed to approve / decline service_connection_request for service {service.entity_id}")
 
     if approved:
+        service_connection_request.status = STATUS_APPROVED
+        db.session.merge(service_connection_request)
+
         connect_service_collaboration(service.id, collaboration.id, force=True)
+    else:
+        service_connection_request.status = STATUS_DENIED
+        rejection_reason = json_data["rejection_reason"]
+        service_connection_request.rejection_reason = rejection_reason
+        db.session.merge(service_connection_request)
 
     user = User.query.filter(User.id == current_user_id()).one()
     requester = service_connection_request.requester
@@ -93,12 +101,6 @@ def _do_service_connection_request(approved):
     emails = [requester.email] if requester.email else [current_app.app_config.mail.beheer_email]
     mail_accepted_declined_service_connection_request(context, service.name, collaboration.name, approved,
                                                       emails)
-    service_connection_request.status = STATUS_APPROVED if approved else STATUS_DENIED
-    if not approved:
-        rejection_reason = json_data["rejection_reason"]
-        service_connection_request.rejection_reason = rejection_reason
-
-    db.session.merge(service_connection_request)
 
     emit_socket(f"service_{service.id}", include_current_user_id=True)
     emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)

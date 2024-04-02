@@ -30,6 +30,7 @@ export default class Activity extends React.PureComponent {
             includeProperties: true,
             includeMembers: true,
             includeServices: true,
+            includeConnections: true
         };
         this.differ = new DiffPatcher();
     }
@@ -56,6 +57,7 @@ export default class Activity extends React.PureComponent {
             "organisation_invitations",
             "join_requests"]
         const includeServicesTargets = [];
+        const includeConnectionsTargets = ["service_connection_requests"]
         const includePropertiesTargets = [
             "collaborations",
             "groups",
@@ -75,6 +77,7 @@ export default class Activity extends React.PureComponent {
                 log.isService = includeServicesTargets.includes(log.target_type);
                 log.isMember = includeMembersTargets.includes(log.target_type);
                 log.isProperty = includePropertiesTargets.includes(log.target_type);
+                log.isConnection = includeConnectionsTargets.includes(log.target_type);
             }
         });
 
@@ -157,9 +160,7 @@ export default class Activity extends React.PureComponent {
                             className={`${selected && log.id === selected.id ? "selected" : ""}`}>
                             <td>{pseudoIso(log.created_at)}</td>
                             <td>{this.userLabel(log.user)}</td>
-                            <td>
-                                {this.getSummaryTitle(log)}
-                            </td>
+                            <td>{this.getSummaryTitle(log)}</td>
                         </tr>)}
                     </tbody>
                 </table>
@@ -172,8 +173,13 @@ export default class Activity extends React.PureComponent {
 
     getSummaryTitle = log => {
         const targetType = this.getTargetType(log);
+        let action = I18n.t(`history.actions.${log.action}`);
+        if (targetType === "service_connection_requests" && log.action === 2) {
+            const status = JSON.parse(log.state_after).status
+            action = I18n.t(`history.actions.${status || log.action}`)
+        }
         return I18n.t("history.overview", {
-            action: I18n.t(`history.actions.${log.action}`),
+            action: action,
             name: log.target_name ? ` ${log.target_name}` : " ",
             collection: I18n.t(`history.tables.${targetType}`)
         });
@@ -287,7 +293,7 @@ export default class Activity extends React.PureComponent {
         const {auditLogs, collectionName} = this.props;
         const isService = collectionName === "services";
         const isSystemView = collectionName === "all";
-        const {selected, page, query, includeServices, includeMembers, includeProperties} = this.state;
+        const {selected, page, query, includeServices, includeMembers, includeProperties, includeConnections} = this.state;
         const filteredAuditLogs = filterAuditLogs(auditLogs, query);
         const auditLogEntries = this.excludeAuditLogs(filteredAuditLogs.audit_logs, includeServices, includeMembers, includeProperties);
         return (
@@ -315,6 +321,14 @@ export default class Activity extends React.PureComponent {
                                                  info={I18n.t("history.includeServices")}
                                                  onChange={e => this.setState({
                                                      includeServices: e.target.checked,
+                                                     selected: null
+                                                 })}
+                        />}
+                        {isService && <CheckBox name="includeConnections"
+                                                 value={includeConnections}
+                                                 info={I18n.t("history.includeConnections")}
+                                                 onChange={e => this.setState({
+                                                     includeConnections: e.target.checked,
                                                      selected: null
                                                  })}
                         />}
