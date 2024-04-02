@@ -27,17 +27,57 @@ export default class Activity extends React.PureComponent {
             selected: null,
             page: 1,
             query: "",
-            includeCOProperties: true,
+            includeProperties: true,
             includeMembers: true,
             includeServices: true,
-
         };
         this.differ = new DiffPatcher();
     }
 
     componentDidMount = () => {
-        const {auditLogs} = this.props;
+        const {auditLogs, user, collectionName} = this.props;
         auditLogs.audit_logs = this.convertReferences(auditLogs);
+        if (!user.admin && collectionName === "collaborations") {
+            auditLogs.audit_logs = auditLogs.audit_logs.filter(log => {
+                if (!isEmpty(log.state_after)) {
+                    const stateAfter = JSON.parse(log.state_after);
+                    return !(Object.keys(stateAfter).length === 1 && stateAfter.last_activity_date);
+                }
+                return true;
+            })
+        }
+        const includeMembersTargets = [
+            "collaboration_memberships",
+            "collaboration_memberships_groups",
+            "invitations",
+            "service_memberships",
+            "service_invitations",
+            "organisation_memberships",
+            "organisation_invitations",
+            "join_requests"]
+        const includeServicesTargets = [];
+        const includePropertiesTargets = [
+            "collaborations",
+            "groups",
+            "tags",
+            "organisations",
+            "api_keys",
+            "service_groups",
+            "ssh_keys",
+            "ip_networks"];
+        if (collectionName === "services") {
+            includePropertiesTargets.push("services");
+        } else {
+            ["services", "service_connection_requests"].forEach(name => includeServicesTargets.push(name));
+        }
+        auditLogs.audit_logs.forEach(log => {
+            if (log.target_type) {
+                log.isService = includeServicesTargets.includes(log.target_type);
+                log.isMember = includeMembersTargets.includes(log.target_type);
+                log.isProperty = includePropertiesTargets.includes(log.target_type);
+            }
+        });
+
         this.setState({
             selected: auditLogs.audit_logs[0],
         });
@@ -50,7 +90,7 @@ export default class Activity extends React.PureComponent {
         try {
             return JSON.parse(state);
         } catch (e) {
-            console.log("Error parsing JSON "+state)
+            console.log("Error parsing JSON " + state)
             return {};
         }
     }
@@ -112,8 +152,8 @@ export default class Activity extends React.PureComponent {
                     {auditLogs.map(log =>
                         <tr key={log.id}
                             onClick={() =>
-                            this.setState({selected: log})
-                        }
+                                this.setState({selected: log})
+                            }
                             className={`${selected && log.id === selected.id ? "selected" : ""}`}>
                             <td>{pseudoIso(log.created_at)}</td>
                             <td>{this.userLabel(log.user)}</td>
@@ -235,74 +275,75 @@ export default class Activity extends React.PureComponent {
         link.click();
     };
 
-    excludeAuditLogs = (auditLogs, includeServices, includeMembers, includeCOProperties) => {
+    excludeAuditLogs = (auditLogs, includeServices, includeMembers, includeProperties) => {
         return auditLogs.filter(log =>
             (includeServices || !log.isService) &&
             (includeMembers || !log.isMember) &&
-            (includeCOProperties || !log.isCOProperty)
+            (includeProperties || !log.isProperty)
         )
     }
 
     render() {
-        const {auditLogs, isCollaboration} = this.props;
-        const {selected, page, query, includeServices, includeMembers, includeCOProperties} = this.state;
+        const {auditLogs, collectionName} = this.props;
+        const isService = collectionName === "services";
+        const isSystemView = collectionName === "all";
+        const {selected, page, query, includeServices, includeMembers, includeProperties} = this.state;
         const filteredAuditLogs = filterAuditLogs(auditLogs, query);
-        const auditLogEntries = this.excludeAuditLogs(filteredAuditLogs.audit_logs, includeServices, includeMembers, includeCOProperties);
+        const auditLogEntries = this.excludeAuditLogs(filteredAuditLogs.audit_logs, includeServices, includeMembers, includeProperties);
         return (
             <div className="activity-container">
-                {isCollaboration &&
-                    <div className="action-container">
-                        <div className="filter-options">
-                            <CheckBox name="includeCOProperties"
-                                      value={includeCOProperties}
-                                      info={I18n.t("history.includeCOProperties")}
-                                      onChange={e => this.setState({
-                                          includeCOProperties: e.target.checked,
-                                          selected: null
-                                      })}
-                            />
-                            <CheckBox name="includeMembers"
-                                      value={includeMembers}
-                                      info={I18n.t("history.includeMembers")}
-                                      onChange={e => this.setState({
-                                          includeMembers: e.target.checked,
-                                          selected: null
-                                      })}
-                            />
-                            <CheckBox name="includeServices"
-                                      value={includeServices}
-                                      info={I18n.t("history.includeServices")}
-                                      onChange={e => this.setState({
-                                          includeServices: e.target.checked,
-                                          selected: null
-                                      })}
-                            />
-                        </div>
-                        <div className="search">
-                            <div className={"sds--text-field sds--text-field--has-icon"}>
-                                <div className="sds--text-field--shape">
-                                    <div className="sds--text-field--input-and-icon">
-                                        <input className={"sds--text-field--input"}
-                                               type="search"
-                                               onChange={e =>
-                                                   this.setState({
-                                                       query: e.target.value,
-                                                       selected: null
-                                                   })}
-                                               value={query}
-                                               placeholder={I18n.t("history.searchPlaceholder")}/>
-                                        <span className="sds--text-field--icon">
+                {!isSystemView && <div className="action-container">
+                    <div className="filter-options">
+                        <CheckBox name="includeProperties"
+                                  value={includeProperties}
+                                  info={I18n.t("history.includeProperties")}
+                                  onChange={e => this.setState({
+                                      includeProperties: e.target.checked,
+                                      selected: null
+                                  })}
+                        />
+                        <CheckBox name="includeMembers"
+                                  value={includeMembers}
+                                  info={I18n.t("history.includeMembers")}
+                                  onChange={e => this.setState({
+                                      includeMembers: e.target.checked,
+                                      selected: null
+                                  })}
+                        />
+                        {!isService && <CheckBox name="includeServices"
+                                                 value={includeServices}
+                                                 info={I18n.t("history.includeServices")}
+                                                 onChange={e => this.setState({
+                                                     includeServices: e.target.checked,
+                                                     selected: null
+                                                 })}
+                        />}
+                    </div>
+                    <div className="search">
+                        <div className={"sds--text-field sds--text-field--has-icon"}>
+                            <div className="sds--text-field--shape">
+                                <div className="sds--text-field--input-and-icon">
+                                    <input className={"sds--text-field--input"}
+                                           type="search"
+                                           onChange={e =>
+                                               this.setState({
+                                                   query: e.target.value,
+                                                   selected: null
+                                               })}
+                                           value={query}
+                                           placeholder={I18n.t("history.searchPlaceholder")}/>
+                                    <span className="sds--text-field--icon">
                                     <SearchIcon/>
                                 </span>
-                                    </div>
                                 </div>
                             </div>
-                            <Button txt={I18n.t("history.export")}
-                                    onClick={() => this.exportData(auditLogEntries)}
-                            />
                         </div>
+                        <Button txt={I18n.t("history.export")}
+                                onClick={() => this.exportData(auditLogEntries)}
+                        />
+                    </div>
 
-                    </div>}
+                </div>}
                 <div className="activity">
                     {this.renderAuditLogs(auditLogEntries, selected, page)}
                     {(!isEmpty(auditLogEntries) && !isEmpty(selected)) &&

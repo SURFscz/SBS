@@ -268,17 +268,7 @@ class UserDetail extends React.Component {
             <div key="history" name="history" label={I18n.t("home.history")}
                  icon={<FontAwesomeIcon icon="history"/>}>
                 <div className={"user-history"}>
-                    {!loadingAuditLogs && <section className="search-activity">
-                        <p>{I18n.t("models.allUsers.activity")}</p>
-                        <div className="search">
-                            <input type="text"
-                                   onChange={this.onChangeQuery}
-                                   value={query}
-                                   placeholder={I18n.t("system.searchPlaceholder")}/>
-                            <FontAwesomeIcon icon="search"/>
-                        </div>
-                    </section>}
-                    {!loadingAuditLogs && <Activity auditLogs={filteredAuditLogs}/>}
+                    {!loadingAuditLogs && <Activity auditLogs={filteredAuditLogs} collectionName={"users"} user={this.props.user}/>}
                     {loadingAuditLogs && <Loader children={
                         <div className={"loader-msg"}><span>{I18n.t("models.allUsers.loading")}</span></div>}/>}
                 </div>

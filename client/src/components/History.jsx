@@ -8,7 +8,6 @@ import {getParameterByName} from "../utils/QueryParameters";
 import UnitHeader from "./redesign/UnitHeader";
 import SpinnerField from "./redesign/SpinnerField";
 import Activity from "./Activity";
-import {isEmpty} from "../utils/Utils";
 
 export default class History extends React.PureComponent {
 
@@ -24,32 +23,6 @@ export default class History extends React.PureComponent {
         const {collection, id} = this.props.match.params;
         const promise = collection === "me" ? auditLogsMe() : auditLogsInfo(id, collection);
         promise.then(res => {
-            const {user} = this.props;
-            if (!user.admin && collection === "collaborations") {
-                res.audit_logs = res.audit_logs.filter(log => {
-                    if (!isEmpty(log.state_after)) {
-                        const stateAfter = JSON.parse(log.state_after);
-                        return !(Object.keys(stateAfter).length === 1 && stateAfter.last_activity_date);
-                    }
-                    return true;
-                })
-            }
-            const includeMembersTargets = [
-                "collaboration_memberships",
-                "collaboration_memberships_groups",
-                "invitations",
-                "join_requests"]
-            const includeServicesTargets = ["services", "service_connection_requests"];
-            const includeCOPropertiesTargets = ["collaborations", "groups", "tags"];
-            if (collection === "collaborations") {
-                res.audit_logs.forEach(log => {
-                    if (log.target_type) {
-                        log.isService = includeServicesTargets.includes(log.target_type);
-                        log.isMember = includeMembersTargets.includes(log.target_type);
-                        log.isCOProperty = includeCOPropertiesTargets.includes(log.target_type);
-                    }
-                });
-            }
             this.setState({
                 auditLogs: res,
                 loading: false
@@ -70,13 +43,14 @@ export default class History extends React.PureComponent {
     render() {
         const {auditLogs, loading} = this.state;
         const {collection} = this.props.match.params;
+        const {user} = this.props;
         if (loading) {
             return <SpinnerField/>
         }
         return (
             <div className="history-container">
                 <UnitHeader obj={({name: I18n.t("home.history"), icon: "history"})}/>
-                <Activity auditLogs={auditLogs} isCollaboration={collection === "collaborations"}/>
+                <Activity auditLogs={auditLogs} user={user} collectionName={collection}/>
             </div>);
     }
 

@@ -280,7 +280,7 @@ class System extends React.Component {
                             </div>
 
                         </section>
-                        <Activity auditLogs={filteredAuditLogs}/>
+                        <Activity auditLogs={filteredAuditLogs} collectionName={"all"} user={this.props.user}/>
                     </section>
                 </div>
             </div>)
