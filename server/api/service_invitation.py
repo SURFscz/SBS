@@ -1,4 +1,5 @@
 from flask import Blueprint, request as current_request, current_app
+from sqlalchemy import func
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict
 
@@ -126,3 +127,13 @@ def delete_service_invitation(id):
     emit_socket(f"service_{service_invitation.service_id}")
 
     return delete(ServiceInvitation, id)
+
+
+@service_invitations_api.route("/exists_email", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def invitation_exists_by_email():
+    email = query_param("email")
+    invitation_first = ServiceInvitation.query \
+        .filter(func.lower(ServiceInvitation.invitee_email) == email.lower()) \
+        .count()
+    return {"exists": invitation_first > 0, "email": email}, 200

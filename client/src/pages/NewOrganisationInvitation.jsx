@@ -3,11 +3,16 @@ import moment from "moment";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-import {organisationById, organisationInvitations, organisationInvitationsPreview} from "../api";
+import {
+    organisationById,
+    organisationInvitationExists,
+    organisationInvitations,
+    organisationInvitationsPreview
+} from "../api";
 import I18n from "../locale/I18n";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
-import {isEmpty, stopEvent} from "../utils/Utils";
+import {isEmpty, splitListSemantically, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {validEmailRegExp} from "../validations/regExps";
@@ -52,7 +57,8 @@ class NewOrganisationInvitation extends React.Component {
             leavePage: true,
             activeTab: "invitation_form",
             htmlPreview: "",
-            loading: true
+            loading: true,
+            existingInvitations: []
         };
     }
 
@@ -120,14 +126,28 @@ class NewOrganisationInvitation extends React.Component {
         stopEvent(e);
         const {administrators} = this.state;
         const newAdministrators = administrators.filter(currentMail => currentMail !== email);
+        this.validateDuplicates(newAdministrators);
         this.setState({administrators: newAdministrators});
     };
 
     addEmails = emails => {
         const {administrators} = this.state;
         const uniqueEmails = [...new Set(administrators.concat(emails))];
+        this.validateDuplicates(uniqueEmails);
         this.setState({administrators: uniqueEmails});
     };
+
+    validateDuplicates(newAdministrators) {
+        const organisationId = this.props.match.params.organisation_id;
+        const promises = newAdministrators.map(email => organisationInvitationExists(email, organisationId));
+        Promise.all(promises)
+            .then(res => {
+                const existingInvitations = res
+                    .filter(email => email.exists)
+                    .map(email => email.email);
+                this.setState({existingInvitations: existingInvitations, initial: isEmpty(existingInvitations)})
+            })
+    }
 
     tabChanged = activeTab => {
         this.setState({activeTab: activeTab});
@@ -156,7 +176,7 @@ class NewOrganisationInvitation extends React.Component {
 
 
     invitationForm = (organisation, message, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, expiry_date,
-                      disabledSubmit, intended_role, units) =>
+                      disabledSubmit, intended_role, units, existingInvitations) =>
         <div className={"invitation-form"}>
             <EmailField addEmails={this.addEmails}
                         removeMail={this.removeMail}
@@ -167,6 +187,9 @@ class NewOrganisationInvitation extends React.Component {
 
             {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) && <ErrorIndicator
                 msg={I18n.t("organisationInvitation.requiredAdministrator")}/>}
+
+            {!isEmpty(existingInvitations) && <ErrorIndicator
+                msg={I18n.t("invitation.existingInvitations", {emails: splitListSemantically(existingInvitations, I18n.t("service.compliancySeparator"))})}/>}
 
             <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
                          options={this.intendedRolesOptions}
@@ -210,7 +233,7 @@ class NewOrganisationInvitation extends React.Component {
         const {
             initial, administrators, expiry_date, organisation,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, fileName,
-            fileTypeError, fileEmails, fileInputKey, intended_role, loading, units
+            fileTypeError, fileEmails, fileInputKey, intended_role, loading, units, existingInvitations
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -228,7 +251,7 @@ class NewOrganisationInvitation extends React.Component {
                     <h2>{I18n.t("tabs.invitation_form")}</h2>
                     <div className="new-organisation-invitation">
                         {this.invitationForm(organisation, message, fileInputKey, fileName, fileTypeError, fileEmails, initial,
-                            administrators, expiry_date, disabledSubmit, intended_role, units)}
+                            administrators, expiry_date, disabledSubmit, intended_role, units, existingInvitations)}
                     </div>
                 </div>
             </>);

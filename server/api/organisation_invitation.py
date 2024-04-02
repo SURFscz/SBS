@@ -1,3 +1,5 @@
+from sqlalchemy import func
+
 from server.tools import dt_now
 
 from flask import Blueprint, request as current_request, current_app
@@ -128,3 +130,15 @@ def delete_organisation_invitation(id):
     confirm_organisation_admin(organisation_invitation.organisation_id)
 
     return delete(OrganisationInvitation, id)
+
+
+@organisation_invitations_api.route("/exists_email", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def invitation_exists_by_email():
+    email = query_param("email")
+    organisation_id = int(query_param("organisation_id"))
+    invitation_first = OrganisationInvitation.query \
+        .filter(func.lower(OrganisationInvitation.invitee_email) == email.lower()) \
+        .filter(OrganisationInvitation.organisation_id == organisation_id) \
+        .count()
+    return {"exists": invitation_first > 0, "email": email}, 200
