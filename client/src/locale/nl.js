@@ -1773,7 +1773,7 @@ const nl = {
         searchPlaceholder: "Zoek...",
         includeServices: "Toon diensten",
         includeMembers: "Toon leden",
-        includeCOProperties: "Toon eigenschappen",
+        includeProperties: "Toon eigenschappen",
         tables: {
             "api_keys": "Organisatie-API-tokens",
             "aups": "Acceptable User Policy",
@@ -1787,6 +1787,7 @@ const nl = {
             "join_requests": "Lidmaatschapsverzoek",
             "organisation_invitations": "Organisatieuitnodiging",
             "organisation_memberships": "Organisatielidmaatschap",
+            "organisation_aups": "Organisatie AUP",
             "organisations": "Organisatie",
             "organisations_services": "Dienst",
             "service_connection_requests": "Koppelverzoek",

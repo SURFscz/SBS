@@ -1773,7 +1773,7 @@ const en = {
         searchPlaceholder: "Search... ",
         includeServices: "Show services",
         includeMembers: "Show members",
-        includeCOProperties: "Show properties",
+        includeProperties: "Show properties",
         tables: {
             "api_keys": "Organisation API tokens",
             "aups": "Acceptable User Policy",
@@ -1787,6 +1787,7 @@ const en = {
             "join_requests": "Join request",
             "organisation_invitations": "Organisation invitation",
             "organisation_memberships": "Organisation membership",
+            "organisation_aups": "Organisation AUP",
             "organisations": "Organisation",
             "organisations_services": "Organisation service",
             "service_connection_requests": "Service connection request",
