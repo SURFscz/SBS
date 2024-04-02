@@ -7,7 +7,7 @@ from server.auth.security import current_user_id, confirm_allow_impersonation, c
     is_organisation_admin_or_manager, is_collaboration_admin, has_org_manager_unit_access, is_application_admin, \
     is_organisation_admin
 from server.db.audit_mixin import AuditLog
-from server.db.domain import User, Organisation, Collaboration, Service, Group
+from server.db.domain import User, Organisation, Collaboration, Service, Group, ServiceConnectionRequest
 
 audit_log_api = Blueprint("audit_log_api", __name__, url_prefix="/api/audit_logs")
 
@@ -100,6 +100,13 @@ def info(query_id, collection_name):
             .all()
         group_identifiers = [group.id for group in groups]
         conditions.append(and_(AuditLog.parent_id.in_(group_identifiers), AuditLog.parent_name == "groups"))
+
+    if collection_name == "services":
+        requests = ServiceConnectionRequest.query.options(load_only(ServiceConnectionRequest.id)) \
+            .filter(ServiceConnectionRequest.service_id == query_id) \
+            .all()
+        req_identifiers = [req.id for req in requests]
+        conditions.append(AuditLog.target_id.in_(req_identifiers))
 
     query = AuditLog.query.filter(or_(*conditions))
     audit_logs = query.order_by(desc(AuditLog.created_at)).all()

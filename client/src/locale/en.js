@@ -1753,7 +1753,9 @@ const en = {
         actions: {
             "1": "New",
             "2": "Updated",
-            "3": "Deleted"
+            "3": "Deleted",
+            approved: "Approved",
+            denied: "Denied"
         },
         overview: "{{action}} {{collection}}{{name}}",
         none: "No history to display",
@@ -1773,6 +1775,7 @@ const en = {
         searchPlaceholder: "Search... ",
         includeServices: "Show services",
         includeMembers: "Show members",
+        includeConnections: "Show connections",
         includeProperties: "Show properties",
         tables: {
             "api_keys": "Organisation API tokens",

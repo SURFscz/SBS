@@ -192,7 +192,7 @@ class AuditMixin(JsonSerializableBase):
                     if isinstance(state_before_list, list):
                         state_before[attr.key] = state_before_list.pop()
                         state_after[attr.key] = getattr(target, attr.key)
-        # connection, subject_id, target_type, target_id, parent_id, parent_name, action
+        # connection, subject_id, target, parent_id, parent_name, action
         pi = parent_info(target)
         if state_before and state_after:
             before_response = current_app.json.response(state_before).data.decode("ascii", "ignore")

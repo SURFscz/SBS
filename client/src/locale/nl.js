@@ -1753,7 +1753,9 @@ const nl = {
         actions: {
             "1": "Nieuwe",
             "2": "Gewijzigd",
-            "3": "Verwijderd"
+            "3": "Verwijderd",
+            approved: "Goedgekeurd",
+            denied: "Afgewezen"
         },
         overview: "{{action}} {{collection}}{{name}}",
         none: "Geen geschiedenis weer te geven",
@@ -1773,6 +1775,7 @@ const nl = {
         searchPlaceholder: "Zoek...",
         includeServices: "Toon diensten",
         includeMembers: "Toon leden",
+        includeConnections: "Show connections",
         includeProperties: "Toon eigenschappen",
         tables: {
             "api_keys": "Organisatie-API-tokens",
