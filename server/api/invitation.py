@@ -5,7 +5,7 @@ from operator import xor
 
 from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app, g as request_context, jsonify
-from sqlalchemy import or_
+from sqlalchemy import or_, func
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict, Forbidden, BadRequest
 
@@ -108,7 +108,7 @@ def add_organisation_aups(collaboration: Collaboration, user: User):
         db.session.merge(organisation_aup)
 
 
-@invitations_api.route("/find_by_hash", strict_slashes=False)
+@invitations_api.route("/find_by_hash", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def invitations_by_hash():
     hash_value = query_param("hash")
@@ -134,6 +134,19 @@ def invitations_by_hash():
     service_emails = invitation.collaboration.service_emails()
     admin_emails = invitation.collaboration.organisation.admin_emails()
     return {"invitation": invitation_json, "service_emails": service_emails, "admin_emails": admin_emails}, 200
+
+
+@invitations_api.route("/exists_email", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def invitation_exists_by_email():
+    email = query_param("email")
+    collaboration_id = int(query_param("collaboration_id"))
+    invitation_first = Invitation.query \
+        .filter(func.lower(Invitation.invitee_email) == email.lower()) \
+        .filter(Invitation.collaboration_id == collaboration_id) \
+        .filter(Invitation.status == STATUS_OPEN) \
+        .count()
+    return {"exists": invitation_first > 0, "email": email}, 200
 
 
 @invitations_api.route("/v1/collaboration_invites", methods=["PUT"], strict_slashes=False)

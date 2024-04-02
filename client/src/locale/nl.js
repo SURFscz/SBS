@@ -1441,6 +1441,7 @@ const nl = {
         groupsTooltip: "De groepen waar alle genodigden lid van worden.",
         groups: "Groepslidmaatschap",
         requiredEmail: "Je dient minimaal één e-mailadres op te geven waar je de uitnodiging om lid te worden naartoe wil sturen.",
+        existingInvitations: "Er zijn al bestaande uitnodigingen voor: {{emails}}",
         requiredRole: "Je moet een rol kiezen voor het uit te nodigen lid.",
         requiredExpiryDate: "De geldigheidsdatum van de uitnodiging is verplicht",
         message: "Bericht",

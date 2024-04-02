@@ -3,11 +3,11 @@ import moment from "moment";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-import {collaborationById, collaborationInvitations, collaborationInvitationsPreview} from "../api";
+import {collaborationById, collaborationInvitations, collaborationInvitationsPreview, invitationExists} from "../api";
 import I18n from "../locale/I18n";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
-import {isEmpty, stopEvent} from "../utils/Utils";
+import {isEmpty, splitListSemantically, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {validEmailRegExp} from "../validations/regExps";
@@ -57,7 +57,8 @@ class NewInvitation extends React.Component {
             htmlPreview: "",
             activeTab: "invitation_form",
             loading: true,
-            isAdminView: false
+            isAdminView: false,
+            existingInvitations: []
         };
     }
 
@@ -112,8 +113,8 @@ class NewInvitation extends React.Component {
     };
 
     isValid = () => {
-        const {administrators, fileEmails, intended_role, expiry_date} = this.state;
-        return (!isEmpty(administrators) || !isEmpty(fileEmails)) && !isEmpty(intended_role) && !isEmpty(expiry_date);
+        const {administrators, fileEmails, intended_role, expiry_date, existingInvitations} = this.state;
+        return (!isEmpty(administrators) || !isEmpty(fileEmails)) && !isEmpty(intended_role) && !isEmpty(expiry_date) && isEmpty(existingInvitations);
     };
 
     doSubmit = () => {
@@ -153,12 +154,26 @@ class NewInvitation extends React.Component {
         stopEvent(e);
         const {administrators} = this.state;
         const newAdministrators = administrators.filter(currentMail => currentMail !== email);
+        this.validateDuplicates(newAdministrators);
         this.setState({administrators: newAdministrators});
     };
+
+    validateDuplicates(newAdministrators) {
+        const collaborationId = this.props.match.params.collaboration_id;
+        const promises = newAdministrators.map(email => invitationExists(email, collaborationId));
+        Promise.all(promises)
+            .then(res => {
+                const existingInvitations = res
+                    .filter(email => email.exists)
+                    .map(email => email.email);
+                this.setState({existingInvitations: existingInvitations, initial: isEmpty(existingInvitations)})
+            })
+    }
 
     addEmails = emails => {
         const {administrators} = this.state;
         const uniqueEmails = [...new Set(administrators.concat(emails))];
+        this.validateDuplicates(uniqueEmails);
         this.setState({administrators: uniqueEmails});
     };
 
@@ -216,7 +231,7 @@ class NewInvitation extends React.Component {
     }
 
     invitationForm = (fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators,
-                      intended_role, message, expiry_date, disabledSubmit, groups, selectedGroup, membership_expiry_date) =>
+                      intended_role, message, expiry_date, disabledSubmit, groups, selectedGroup, membership_expiry_date, existingInvitations) =>
         <div className={"invitation-form"}>
 
             <EmailField addEmails={this.addEmails}
@@ -227,6 +242,9 @@ class NewInvitation extends React.Component {
                         autoFocus={true}/>
             {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) &&
                 <ErrorIndicator msg={I18n.t("invitation.requiredEmail")}/>}
+
+            {!isEmpty(existingInvitations) && <ErrorIndicator
+                msg={I18n.t("invitation.existingInvitations", {emails: splitListSemantically(existingInvitations, I18n.t("service.compliancySeparator"))})}/>}
 
             <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
                          options={this.intendedRolesOptions}
@@ -301,7 +319,8 @@ class NewInvitation extends React.Component {
             fileEmails,
             groups,
             selectedGroup,
-            loading
+            loading,
+            existingInvitations
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -320,7 +339,7 @@ class NewInvitation extends React.Component {
                     <div className="new-collaboration-invitation">
                         {this.invitationForm(fileInputKey, fileName, fileTypeError, fileEmails, initial,
                             administrators, intended_role, message, expiry_date, disabledSubmit, groups,
-                            selectedGroup, membership_expiry_date)}
+                            selectedGroup, membership_expiry_date, existingInvitations)}
                     </div>
                 </div>
             </>);

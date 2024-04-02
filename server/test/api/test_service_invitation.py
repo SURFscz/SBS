@@ -81,3 +81,11 @@ class TestServiceInvitation(AbstractTest):
 
     def test_delete_not_found(self):
         self.delete("/api/service_invitations", primary_key="nope", response_status_code=404)
+
+    def test_invitation_exists_by_email(self):
+        res = self.get("/api/service_invitations/exists_email",
+                              query_data={"email": "ADMIN@CLOUD.ORG"})
+        self.assertEqual(True, res["exists"])
+        res = self.get("/api/service_invitations/exists_email",
+                              query_data={"email": "nope@ex.org"})
+        self.assertEqual(False, res["exists"])
