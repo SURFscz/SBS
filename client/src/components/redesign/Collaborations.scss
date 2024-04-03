@@ -69,6 +69,14 @@ table.collaborations, table.memberCollaborations {
             &.name {
                 width: 24%;
                 padding-left: 15px;
+
+                &.no-units, &.no-labels {
+                    width: 35%;
+                }
+
+                &.no-units.no-labels {
+                    width: 46%;
+                }
             }
 
             &.organisation__name {
@@ -85,10 +93,20 @@ table.collaborations, table.memberCollaborations {
 
             &.expiry_date {
                 width: 18%;
+
+                &.no-units, &.no-labels {
+                    width: 29%;
+                }
+
             }
 
             &.last_activity_date {
                 width: 12%;
+
+                &.no-units, &.no-labels {
+                    width: 23%;
+                }
+
             }
 
             &.fromCollaboration {
