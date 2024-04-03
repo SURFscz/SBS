@@ -31,7 +31,7 @@ class TestJoinRequest(AbstractTest):
             self.assertEqual(1, len(outbox))
             mail_msg = outbox[0]
 
-            self.assertListEqual(["boss@example.org"], mail_msg.recipients)
+            self.assertListEqual(["boss@example.org"], mail_msg.to)
             self.assertTrue(f"{self.app.app_config.base_url}/collaborations/{collaboration_id}/joinrequests" in mail_msg.html)
 
     def test_new_join_request_already_member(self):
@@ -92,7 +92,7 @@ class TestJoinRequest(AbstractTest):
             self.put("/api/join_requests/accept", body={"hash": join_request_hash})
             self.assertEqual(1, len(outbox))
             mail_msg = outbox[0]
-            self.assertListEqual(["peter@example.org"], mail_msg.recipients)
+            self.assertListEqual(["peter@example.org"], mail_msg.to)
             self.assertTrue("accepted" in mail_msg.html)
             join_request = db.session.get(JoinRequest, join_request_id)
             self.assertEqual(STATUS_APPROVED, join_request.status)
@@ -114,7 +114,7 @@ class TestJoinRequest(AbstractTest):
                                                          "rejection_reason": rejection_reason})
             self.assertEqual(1, len(outbox))
             mail_msg = outbox[0]
-            self.assertListEqual(["peter@example.org"], mail_msg.recipients)
+            self.assertListEqual(["peter@example.org"], mail_msg.to)
             self.assertTrue("declined" in mail_msg.html)
             self.assertTrue(rejection_reason in mail_msg.html)
 

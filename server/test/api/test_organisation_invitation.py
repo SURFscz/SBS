@@ -74,7 +74,7 @@ class TestOrganisationInvitation(AbstractTest):
             self.put("/api/organisation_invitations/resend", body={"id": invitation_id, "message": "changed"})
             self.assertEqual(1, len(outbox))
             mail_msg = outbox[0]
-            self.assertListEqual(["roger@example.org"], mail_msg.recipients)
+            self.assertListEqual(["roger@example.org"], mail_msg.to)
 
     def test_resend_bulk(self):
         identifiers = []

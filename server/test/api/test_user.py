@@ -578,7 +578,7 @@ class TestUser(AbstractTest):
                 self.assertTrue("http://localhost:3000/missing-attributes" in res.headers.get('Location'))
                 self.assertEqual(1, len(outbox))
                 mail_msg = outbox[0]
-                self.assertListEqual(["sram-support@surf.nl"], mail_msg.recipients)
+                self.assertListEqual(["sram-support@surf.nl"], mail_msg.to)
                 self.assertTrue("subby" in mail_msg.html)
 
         finally:
@@ -594,7 +594,7 @@ class TestUser(AbstractTest):
                 self.assertTrue("http://localhost:3000/missing-attributes" in res.headers.get('Location'))
                 self.assertEqual(1, len(outbox))
                 mail_msg = outbox[0]
-                self.assertListEqual(["sram-support@surf.nl"], mail_msg.recipients)
+                self.assertListEqual(["sram-support@surf.nl"], mail_msg.to)
                 self.assertTrue("subby" in mail_msg.html)
                 self.assertTrue("jdoe" in mail_msg.html)
 

@@ -2,6 +2,9 @@
 # monkey_patch before importing anything else!
 # see https://github.com/gevent/gevent/issues/1016#issuecomment-328529454
 import eventlet
+
+from server.mail import MailMan
+
 eventlet.monkey_patch(thread=False)
 
 import logging
@@ -14,7 +17,7 @@ from logging.handlers import TimedRotatingFileHandler
 from server.api.mock_user import mock_user_api
 import yaml
 from flask import Flask, jsonify, request as current_request
-from flask_mail import Mail
+from flask_mailman import Mail
 from flask_migrate import Migrate
 from flask_socketio import SocketIO
 from munch import munchify
@@ -152,6 +155,7 @@ app.config["SQLALCHEMY_ECHO"] = False  # Set to True for query debugging
 app.config["TESTING"] = test
 app.config["MAIL_SERVER"] = config.mail.host
 app.config["MAIL_PORT"] = int(config.mail.port)
+app.config["MAIL_BACKEND"] = "locmem" if is_test else "smtp"
 app.config["OPEN_MAIL_IN_BROWSER"] = os.environ.get("OPEN_MAIL_IN_BROWSER", 0)
 app.config["LOCAL"] = is_local
 app.config["SESSION_COOKIE_SECURE"] = not is_test and not is_local
@@ -163,7 +167,7 @@ app.jinja_env.globals.update({
     "invitation_role": invitation_role,
 })
 
-app.mail = Mail(app)
+app.mail = MailMan(app)
 
 app.json = DynamicExtendedJSONProvider(app)
 
