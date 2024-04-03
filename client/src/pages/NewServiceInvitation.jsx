@@ -3,7 +3,7 @@ import moment from "moment";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-import {serviceById, serviceInvitations} from "../api";
+import {serviceById, serviceInvitationExists, serviceInvitations} from "../api";
 import I18n from "../locale/I18n";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
@@ -50,7 +50,8 @@ class NewServiceInvitation extends React.Component {
             leavePage: true,
             activeTab: "invitation_form",
             htmlPreview: "",
-            loading: true
+            loading: true,
+            existingInvitations: []
         };
     }
 
@@ -81,8 +82,8 @@ class NewServiceInvitation extends React.Component {
     };
 
     isValid = () => {
-        const {administrators, fileEmails} = this.state;
-        return !isEmpty(administrators) || !isEmpty(fileEmails);
+        const {administrators, fileEmails, existingInvitations} = this.state;
+        return (!isEmpty(administrators) || !isEmpty(fileEmails)) && isEmpty(existingInvitations);
     };
 
     doSubmit = () => {
@@ -113,16 +114,31 @@ class NewServiceInvitation extends React.Component {
         }
     };
 
+    validateDuplicates(newAdministrators) {
+        const collaborationId = this.props.match.params.collaboration_id;
+        this.setState({loading: true});
+        serviceInvitationExists(newAdministrators, collaborationId)
+            .then(existingInvitations =>
+                this.setState({
+                    existingInvitations: existingInvitations,
+                    initial: isEmpty(existingInvitations),
+                    loading: false
+                })
+            )
+    }
+
     removeMail = email => e => {
         stopEvent(e);
         const {administrators} = this.state;
         const newAdministrators = administrators.filter(currentMail => currentMail !== email);
+        this.validateDuplicates(newAdministrators);
         this.setState({administrators: newAdministrators});
     };
 
     addEmails = emails => {
         const {administrators} = this.state;
         const uniqueEmails = [...new Set(administrators.concat(emails))];
+        this.validateDuplicates(uniqueEmails);
         this.setState({administrators: uniqueEmails});
     };
 

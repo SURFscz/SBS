@@ -94,9 +94,15 @@ class TestOrganisationInvitation(AbstractTest):
     def test_invitation_exists_by_email(self):
         inv = OrganisationInvitation.query.filter(OrganisationInvitation.invitee_email == "roger@example.org").one()
         organisation_id = inv.organisation_id
-        res = self.get("/api/organisation_invitations/exists_email",
-                       query_data={"email": "roger@EXAMPLE.ORG", "organisation_id": organisation_id})
-        self.assertEqual(True, res["exists"])
-        res = self.get("/api/organisation_invitations/exists_email",
-                       query_data={"email": "nope@ex.org", "organisation_id": organisation_id})
-        self.assertEqual(False, res["exists"])
+        res = self.post("/api/organisation_invitations/exists_email",
+                        body={"emails": ["roger@EXAMPLE.ORG"], "organisation_id": organisation_id},
+                        response_status_code=200)
+        self.assertEqual(["roger@example.org"], res)
+        res = self.post("/api/organisation_invitations/exists_email",
+                        body={"emails": ["nope@ex.org"], "organisation_id": organisation_id},
+                        response_status_code=200)
+        self.assertEqual(0, len(res))
+        res = self.post("/api/organisation_invitations/exists_email",
+                        body={"emails": ["roger@example.org"], "organisation_id": "9999"},
+                        response_status_code=200)
+        self.assertEqual(0, len(res))

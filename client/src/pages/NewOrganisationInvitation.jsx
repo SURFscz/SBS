@@ -139,14 +139,15 @@ class NewOrganisationInvitation extends React.Component {
 
     validateDuplicates(newAdministrators) {
         const organisationId = this.props.match.params.organisation_id;
-        const promises = newAdministrators.map(email => organisationInvitationExists(email, organisationId));
-        Promise.all(promises)
-            .then(res => {
-                const existingInvitations = res
-                    .filter(email => email.exists)
-                    .map(email => email.email);
-                this.setState({existingInvitations: existingInvitations, initial: isEmpty(existingInvitations)})
-            })
+        this.setState({loading: true});
+        organisationInvitationExists(newAdministrators, organisationId)
+            .then(existingInvitations =>
+                this.setState({
+                    existingInvitations: existingInvitations,
+                    initial: isEmpty(existingInvitations),
+                    loading: false
+                })
+            );
     }
 
     tabChanged = activeTab => {
