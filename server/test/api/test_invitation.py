@@ -318,9 +318,11 @@ class TestInvitation(AbstractTest):
     def test_invitation_exists_by_email(self):
         invitation = Invitation.query.filter(Invitation.invitee_email == "curious@ex.org").one()
         collaboration_id = invitation.collaboration_id
-        res = self.get("/api/invitations/exists_email",
-                       query_data={"email": "CURIOUS@ex.org", "collaboration_id": collaboration_id})
-        self.assertEqual(True, res["exists"])
-        res = self.get("/api/invitations/exists_email",
-                       query_data={"email": "nope@ex.org", "collaboration_id": collaboration_id})
-        self.assertEqual(False, res["exists"])
+        res = self.post("/api/invitations/exists_email",
+                        body={"emails": ["CURIOUS@ex.org"], "collaboration_id": collaboration_id},
+                        response_status_code=200)
+        self.assertEqual(["curious@ex.org"], res)
+        res = self.post("/api/invitations/exists_email",
+                        body={"emails": ["nope@ex.org"], "collaboration_id": collaboration_id},
+                        response_status_code=200)
+        self.assertEqual(0, len(res))

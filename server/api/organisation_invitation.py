@@ -1,9 +1,6 @@
-from sqlalchemy import func
-
-from server.tools import dt_now
-
 from flask import Blueprint, request as current_request, current_app
-from sqlalchemy.orm import joinedload
+from sqlalchemy import func
+from sqlalchemy.orm import joinedload, load_only
 from werkzeug.exceptions import Conflict
 
 from server.api.base import json_endpoint, query_param, emit_socket
@@ -12,6 +9,7 @@ from server.db.defaults import default_expiry_date
 from server.db.domain import OrganisationInvitation, Organisation, OrganisationMembership, db
 from server.db.models import delete
 from server.mail import mail_organisation_invitation
+from server.tools import dt_now
 
 organisation_invitations_api = Blueprint("organisation_invitations_api", __name__,
                                          url_prefix="/api/organisation_invitations")
@@ -132,13 +130,13 @@ def delete_organisation_invitation(id):
     return delete(OrganisationInvitation, id)
 
 
-@organisation_invitations_api.route("/exists_email", methods=["GET"], strict_slashes=False)
+@organisation_invitations_api.route("/exists_email", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def invitation_exists_by_email():
-    email = query_param("email")
-    organisation_id = int(query_param("organisation_id"))
-    invitation_first = OrganisationInvitation.query \
-        .filter(func.lower(OrganisationInvitation.invitee_email) == email.lower()) \
+    data = current_request.get_json()
+    organisation_id = int(data["organisation_id"])
+    invitations = OrganisationInvitation.query.options(load_only(OrganisationInvitation.invitee_email)) \
+        .filter(func.lower(OrganisationInvitation.invitee_email).in_([e.lower() for e in data["emails"]])) \
         .filter(OrganisationInvitation.organisation_id == organisation_id) \
-        .count()
-    return {"exists": invitation_first > 0, "email": email}, 200
+        .all()
+    return [i.invitee_email for i in invitations], 200

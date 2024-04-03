@@ -83,9 +83,12 @@ class TestServiceInvitation(AbstractTest):
         self.delete("/api/service_invitations", primary_key="nope", response_status_code=404)
 
     def test_invitation_exists_by_email(self):
-        res = self.get("/api/service_invitations/exists_email",
-                              query_data={"email": "ADMIN@CLOUD.ORG"})
-        self.assertEqual(True, res["exists"])
-        res = self.get("/api/service_invitations/exists_email",
-                              query_data={"email": "nope@ex.org"})
-        self.assertEqual(False, res["exists"])
+        inv = ServiceInvitation.query.filter(ServiceInvitation.invitee_email == "admin@cloud.org").one()
+        service_id = inv.service_id
+        res = self.post("/api/service_invitations/exists_email",
+                        body={"emails": ["ADMIN@CLOUD.ORG", "nice@nope.com"], "service_id": service_id},
+                        response_status_code=200)
+        self.assertEqual(["admin@cloud.org"], res)
+        res = self.post("/api/service_invitations/exists_email",
+                        body={"emails": ["nope@ex.org"], "service_id": service_id}, response_status_code=200)
+        self.assertEqual(0, len(res))

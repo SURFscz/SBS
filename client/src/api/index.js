@@ -593,8 +593,9 @@ export function organisationInvitationDelete(organisationInvitationId, showError
     return fetchDelete(`/api/organisation_invitations/${organisationInvitationId}`, showErrorDialog);
 }
 
-export function organisationInvitationExists(email, organisationId) {
-    return fetchJson(`/api/organisation_invitations/exists_email?email=${email}&organisation_id=${organisationId}`);
+export function organisationInvitationExists(emails, organisationId) {
+    const body = {emails: emails, organisation_id: organisationId}
+    return postPutJson("/api/organisation_invitations/exists_email", body, "POST");
 }
 
 //Invitations
@@ -623,8 +624,9 @@ export function invitationDelete(invitationId, showErrorDialog = true) {
     return fetchDelete(`/api/invitations/${invitationId}`, showErrorDialog);
 }
 
-export function invitationExists(email, collaborationId) {
-    return fetchJson(`/api/invitations/exists_email?email=${email}&collaboration_id=${collaborationId}`);
+export function invitationExists(emails, collaborationId) {
+    const body = {emails: emails, collaboration_id: collaborationId}
+    return postPutJson("/api/organisation_invitations/exists_email", body, "POST");
 }
 
 
@@ -988,8 +990,9 @@ export function serviceInvitationDelete(serviceInvitationId, showErrorDialog = t
     return fetchDelete(`/api/service_invitations/${serviceInvitationId}`, showErrorDialog);
 }
 
-export function serviceInvitationExists(email, serviceId) {
-    return fetchJson(`/api/service_invitations/exists_email?email=${email}&service_id=${serviceId}`);
+export function serviceInvitationExists(emails, serviceId) {
+    const body = {emails: emails, service_id: serviceId}
+    return postPutJson("/api/service_invitations/exists_email", body, "POST");
 }
 
 //ServiceAups
