@@ -122,7 +122,7 @@ class TestInvitation(AbstractTest):
             self.put("/api/invitations/resend", body={"id": invitation_id})
             self.assertEqual(1, len(outbox))
             mail_msg = outbox[0]
-            self.assertListEqual(["curious@ex.org"], mail_msg.recipients)
+            self.assertListEqual(["curious@ex.org"], mail_msg.to)
             self.assertTrue(self.app.app_config.base_url + "/invitations/accept/" in mail_msg.html)
 
     def test_resend_bulk(self):

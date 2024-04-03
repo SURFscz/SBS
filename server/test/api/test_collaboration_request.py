@@ -170,7 +170,7 @@ class TestCollaborationRequest(AbstractTest):
             self.post("/api/collaboration_requests", body=data, with_basic_auth=False)
             mail_msg = outbox[0]
             # harry is not a recipient because he has a unit
-            self.assertEqual(["john@example.org", "mary@example.org"], sorted(mail_msg.recipients))
+            self.assertEqual(["john@example.org", "mary@example.org"], sorted(mail_msg.to))
 
     def test_collaboration_request_approve_not_allowed(self):
         collaboration_request = self.find_entity_by_name(CollaborationRequest, collaboration_request_name)

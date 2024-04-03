@@ -130,7 +130,7 @@ class TestUserClaims(AbstractTest):
                 }, "urn:john", user)
                 self.assertEqual(1, len(outbox))
                 mail_msg = outbox[0]
-                self.assertListEqual(["sram-support@surf.nl"], mail_msg.recipients)
+                self.assertListEqual(["sram-support@surf.nl"], mail_msg.to)
                 self.assertTrue("scoped_affiliation" in mail_msg.html)
                 self.assertTrue("email" in mail_msg.html)
 

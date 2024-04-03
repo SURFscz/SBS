@@ -46,7 +46,7 @@ class TestServiceConnectionRequest(AbstractTest):
             mail_msg = outbox[0]
             self.assertEqual("Request for new service Wiki connection to collaboration AI computing (local)",
                              mail_msg.subject)
-            self.assertEqual(["service_admin@ucc.org"], mail_msg.recipients)
+            self.assertEqual(["service_admin@ucc.org"], mail_msg.to)
 
     def test_service_connection_request_with_no_admins(self):
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
@@ -65,7 +65,7 @@ class TestServiceConnectionRequest(AbstractTest):
         with self.app.mail.record_messages() as outbox:
             self.post("/api/service_connection_requests", body=data, with_basic_auth=False)
             mail_msg = outbox[0]
-            self.assertEqual(["john@example.org"], mail_msg.recipients)
+            self.assertEqual(["john@example.org"], mail_msg.to)
             self.assertEqual(0, len(mail_msg.cc))
 
     def test_service_connection_request_by_admin_email_admin(self):
@@ -81,7 +81,7 @@ class TestServiceConnectionRequest(AbstractTest):
         with self.app.mail.record_messages() as outbox:
             self.post("/api/service_connection_requests", body=data, with_basic_auth=False)
             mail_msg = outbox[0]
-            self.assertListEqual(["betty@uuc.org", "james@example.org"], sorted(mail_msg.recipients))
+            self.assertListEqual(["betty@uuc.org", "james@example.org"], sorted(mail_msg.to))
 
     def test_service_connection_request_by_member(self):
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
@@ -183,7 +183,7 @@ class TestServiceConnectionRequest(AbstractTest):
             self.put("/api/service_connection_requests/approve", body={"id": request_id})
 
             mail_msg = outbox[0]
-            self.assertListEqual(["sram-beheer@surf.nl"], mail_msg.recipients)
+            self.assertListEqual(["sram-beheer@surf.nl"], mail_msg.to)
 
     def test_deny_service_connection_request(self):
         pre_services_count = len(self.find_entity_by_name(Collaboration, co_research_name).services)
@@ -260,4 +260,4 @@ class TestServiceConnectionRequest(AbstractTest):
 
             mail_msg = outbox[0]
             # Admin of the organisation
-            self.assertEqual(["jdoe@example"], mail_msg.recipients)
+            self.assertEqual(["jdoe@example"], mail_msg.to)

@@ -2,11 +2,12 @@ import datetime
 import logging
 import os
 import uuid
+from email.mime.image import MIMEImage
 from threading import Thread
-
+from flask_mailman import Mail
 import requests
 from flask import current_app, render_template
-from flask_mail import Message
+from flask_mailman import EmailMultiAlternatives
 
 from server.auth.security import current_user_id
 from server.db.db import db
@@ -26,23 +27,41 @@ from server.mail_types.mail_types import COLLABORATION_REQUEST_MAIL, \
 from server.tools import dt_now
 
 
-def _send_async_email(ctx, msg, mail):
+# Backward compatibility Flask-Mail context manager for testing
+class MailMan(Mail):
+
+    def __init__(self, app=None):
+        super().__init__(app)
+
+    def record_messages(self):
+        return self
+
+    def __enter__(self):
+        if not hasattr(self.state, 'outbox') or not getattr(self.state, 'outbox'):
+            self.state.outbox = []
+        return self.state.outbox
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.state.outbox.clear()
+
+
+def _send_async_email(ctx, msg):
     with ctx:
         attempts = 1
         try:
-            mail.send(msg)
+            msg.send()
         except Exception as e:
             logger = logging.getLogger("mail")
             logger.error("Error in sending mail", exc_info=1)
             attempts = attempts + 1
             if attempts < 5:
-                _send_async_email(ctx, msg, mail)
+                _send_async_email(ctx, msg)
             else:
                 logger.info(f"After attempts mailing {msg.body} failed")
                 raise e
 
 
-def _open_mail_in_browser(msg):
+def _open_mail_in_browser(msg_html):
     import tempfile
     import webbrowser
 
@@ -50,7 +69,7 @@ def _open_mail_in_browser(msg):
     path = tmp.name + ".html"
 
     f = open(path, "w")
-    f.write(msg.html)
+    f.write(msg_html)
     f.close()
     webbrowser.open("file://" + path)
 
@@ -87,46 +106,51 @@ def _do_send_mail(subject, recipients, template, context, preview, working_outsi
     context = {**context, **{"environment": environment}}
     msg_html = render_template(f"{template}.html", **context)
     msg_body = render_template(f"{template}.txt", **context)
+    message_id = f"<{str(uuid.uuid4())}@{os.uname()[1]}.internal.sram.surf.nl>".replace("-", ".")
     extra_headers = {
         "Auto-submitted": "auto-generated",
         "X-Auto-Response-Suppress": "yes",
-        "Precedence": "bulk"
+        "Precedence": "bulk",
+        "message-id": message_id
     } if bulk_headers else {}
-    msg = Message(subject=subject,
-                  sender=(mail_ctx.get("sender_name", "SURF"), mail_ctx.get("sender_email", "no-reply@surf.nl")),
-                  recipients=recipients,
-                  cc=cc,
-                  extra_headers=extra_headers)
+    msg = EmailMultiAlternatives(subject=subject,
+                                 body=msg_body,
+                                 from_email=(mail_ctx.get("sender_name", "SURF"),
+                                             mail_ctx.get("sender_email", "no-reply@surf.nl")),
+                                 to=recipients,
+                                 cc=cc,
+                                 headers=extra_headers)
+    msg.attach_alternative(msg_html, "text/html")
+    msg.html = msg_html
+    msg.mixed_subtype = 'related'
     if attachment_url and not os.environ.get("TESTING"):
         image = attachment_url[attachment_url.rindex('/') + 1:]
         file_name = f"{image}.jpeg"
         data = requests.get(attachment_url).content
-        msg.attach(file_name, "image/jpeg", data, "attachment", headers=[["Content-ID", "<logo>"], ])
-    msg.html = msg_html
-    msg.body = msg_body
-    msg.msgId = f"<{str(uuid.uuid4())}@{os.uname()[1]}.internal.sram.surf.nl>".replace("-", ".")
+        logo = MIMEImage(data, "jpeg")
+        logo.add_header("Content-ID", "<logo>")
+        msg.attach(logo)
 
     logger = logging.getLogger("mail") if working_outside_of_request_context else ctx_logger("user")
-    logger.debug(f"Sending mail message to {','.join(recipients)} with Message-id {msg.msgId}")
+    logger.debug(f"Sending mail message to {','.join(recipients)} with Message-id {message_id}")
 
     suppress_mail = "suppress_sending_mails" in mail_ctx and mail_ctx.suppress_sending_mails
     open_mail_in_browser = current_app.config["OPEN_MAIL_IN_BROWSER"]
 
     if not preview and not suppress_mail and not open_mail_in_browser:
-        mail = current_app.mail
         if "TESTING" in os.environ:
-            mail.send(msg)
+            msg.send()
         else:
             ctx = current_app.app_context()
-            thr = Thread(target=_send_async_email, args=[ctx, msg, mail])
+            thr = Thread(target=_send_async_email, args=[ctx, msg])
             thr.start()
 
     if suppress_mail and not preview:
-        logger.info(f"Sending mail {msg.html}")
+        logger.info(f"Sending mail {msg_html}")
 
     if open_mail_in_browser and not preview:
-        _open_mail_in_browser(msg)
-    return msg.html
+        _open_mail_in_browser(msg_html)
+    return msg_html
 
 
 def _store_mail(user, mail_type, recipients):
