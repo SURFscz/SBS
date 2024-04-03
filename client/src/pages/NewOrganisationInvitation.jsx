@@ -58,7 +58,8 @@ class NewOrganisationInvitation extends React.Component {
             activeTab: "invitation_form",
             htmlPreview: "",
             loading: true,
-            existingInvitations: []
+            existingInvitations: [],
+            validating: false
         };
     }
 
@@ -89,8 +90,8 @@ class NewOrganisationInvitation extends React.Component {
     };
 
     isValid = () => {
-        const {administrators, fileEmails} = this.state;
-        return !isEmpty(administrators) || !isEmpty(fileEmails);
+        const {administrators, fileEmails, validating, existingInvitations} = this.state;
+        return (!isEmpty(administrators) || !isEmpty(fileEmails)) && !validating && isEmpty(existingInvitations);
     };
 
     doSubmit = () => {
@@ -139,13 +140,13 @@ class NewOrganisationInvitation extends React.Component {
 
     validateDuplicates(newAdministrators) {
         const organisationId = this.props.match.params.organisation_id;
-        this.setState({loading: true});
+        this.setState({validating: true});
         organisationInvitationExists(newAdministrators, organisationId)
             .then(existingInvitations =>
                 this.setState({
                     existingInvitations: existingInvitations,
                     initial: isEmpty(existingInvitations),
-                    loading: false
+                    validating: false
                 })
             );
     }

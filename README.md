@@ -115,6 +115,8 @@ open htmlcov/index.html
 Within PyCharm you must mark the `SBS/server/test` directory as Test sources root in order to execute `conftest.py`
 before tests are run. See https://intellij-support.jetbrains.com/hc/en-us/community/posts/12897247432338-PyCharm-unable-to-find-fixtures-in-conftest-py
 
+If you are getting errors in Pycharm when debugging, then have a look at https://youtrack.jetbrains.com/issue/PY-51495/PyCharm-debug-fails-upon-import-asyncio 
+
 To run all JavaScript tests:
 
 ```bash
