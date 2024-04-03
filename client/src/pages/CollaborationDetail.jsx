@@ -734,7 +734,7 @@ class CollaborationDetail extends React.Component {
 
     alreadyMemberConfirmation = invitation => {
         this.setState({loading: true})
-        deleteInvitationByHash(invitation.hash).then(r => {
+        deleteInvitationByHash(invitation.hash).then(() => {
             const path = encodeURIComponent(`/collaborations/${invitation.collaboration_id}`);
             this.props.history.push(`/refresh-route/${path}`);
         });
