@@ -7,7 +7,7 @@ import {serviceById, serviceInvitationExists, serviceInvitations} from "../api";
 import I18n from "../locale/I18n";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
-import {isEmpty, stopEvent} from "../utils/Utils";
+import {isEmpty, splitListSemantically, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {validEmailRegExp} from "../validations/regExps";
@@ -51,7 +51,8 @@ class NewServiceInvitation extends React.Component {
             activeTab: "invitation_form",
             htmlPreview: "",
             loading: true,
-            existingInvitations: []
+            existingInvitations: [],
+            validating: false
         };
     }
 
@@ -82,8 +83,8 @@ class NewServiceInvitation extends React.Component {
     };
 
     isValid = () => {
-        const {administrators, fileEmails, existingInvitations} = this.state;
-        return (!isEmpty(administrators) || !isEmpty(fileEmails)) && isEmpty(existingInvitations);
+        const {administrators, fileEmails, existingInvitations, validating} = this.state;
+        return (!isEmpty(administrators) || !isEmpty(fileEmails)) && isEmpty(existingInvitations) && !validating;
     };
 
     doSubmit = () => {
@@ -115,14 +116,14 @@ class NewServiceInvitation extends React.Component {
     };
 
     validateDuplicates(newAdministrators) {
-        const collaborationId = this.props.match.params.collaboration_id;
-        this.setState({loading: true});
-        serviceInvitationExists(newAdministrators, collaborationId)
+        const serviceId = this.props.match.params.service_id;
+        this.setState({validating: true});
+        serviceInvitationExists(newAdministrators, serviceId)
             .then(existingInvitations =>
                 this.setState({
                     existingInvitations: existingInvitations,
                     initial: isEmpty(existingInvitations),
-                    loading: false
+                    validating: false
                 })
             )
     }
@@ -143,7 +144,7 @@ class NewServiceInvitation extends React.Component {
     };
 
     invitationForm = (service, message, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, expiry_date,
-                      disabledSubmit, intended_role) =>
+                      disabledSubmit, intended_role, existingInvitations) =>
         <div className={"invitation-form"}>
             <EmailField addEmails={this.addEmails}
                         removeMail={this.removeMail}
@@ -154,6 +155,9 @@ class NewServiceInvitation extends React.Component {
 
             {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) && <ErrorIndicator
                 msg={I18n.t("organisationInvitation.requiredAdministrator")}/>}
+
+            {!isEmpty(existingInvitations) && <ErrorIndicator
+                msg={I18n.t("invitation.existingInvitations", {emails: splitListSemantically(existingInvitations, I18n.t("service.compliancySeparator"))})}/>}
 
             <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
                          options={this.intendedRolesOptions}
@@ -191,7 +195,7 @@ class NewServiceInvitation extends React.Component {
         const {
             initial, administrators, expiry_date, service,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, fileName,
-            fileTypeError, fileEmails, fileInputKey, intended_role, loading
+            fileTypeError, fileEmails, fileInputKey, intended_role, loading, existingInvitations
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -209,7 +213,7 @@ class NewServiceInvitation extends React.Component {
                     <h2>{I18n.t("tabs.invitation_form")}</h2>
                     <div className="new-service-invitation">
                         {this.invitationForm(service, message, fileInputKey, fileName, fileTypeError, fileEmails, initial,
-                            administrators, expiry_date, disabledSubmit, intended_role)}
+                            administrators, expiry_date, disabledSubmit, intended_role, existingInvitations)}
                     </div>
                 </div>
             </>);

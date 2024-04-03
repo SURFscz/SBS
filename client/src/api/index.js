@@ -626,7 +626,7 @@ export function invitationDelete(invitationId, showErrorDialog = true) {
 
 export function invitationExists(emails, collaborationId) {
     const body = {emails: emails, collaboration_id: collaborationId}
-    return postPutJson("/api/organisation_invitations/exists_email", body, "POST");
+    return postPutJson("/api/invitations/exists_email", body, "POST");
 }
 
 

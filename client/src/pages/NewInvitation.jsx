@@ -56,7 +56,8 @@ class NewInvitation extends React.Component {
             activeTab: "invitation_form",
             loading: true,
             isAdminView: false,
-            existingInvitations: []
+            existingInvitations: [],
+            validating: false
         };
     }
 
@@ -102,8 +103,9 @@ class NewInvitation extends React.Component {
     };
 
     isValid = () => {
-        const {administrators, fileEmails, intended_role, expiry_date, existingInvitations} = this.state;
-        return (!isEmpty(administrators) || !isEmpty(fileEmails)) && !isEmpty(intended_role) && !isEmpty(expiry_date) && isEmpty(existingInvitations);
+        const {administrators, fileEmails, intended_role, expiry_date, existingInvitations, validating} = this.state;
+        return (!isEmpty(administrators) || !isEmpty(fileEmails)) && !isEmpty(intended_role) && !isEmpty(expiry_date)
+            && isEmpty(existingInvitations) && !validating;
     };
 
     doSubmit = () => {
@@ -156,10 +158,10 @@ class NewInvitation extends React.Component {
 
     validateDuplicates(newAdministrators) {
         const collaborationId = this.props.match.params.collaboration_id;
-        this.setState({loading: true});
+        this.setState({validating: true});
         invitationExists(newAdministrators, collaborationId)
             .then(existingInvitations => this.setState({
-                existingInvitations: existingInvitations, initial: isEmpty(existingInvitations), loading: false
+                existingInvitations: existingInvitations, initial: isEmpty(existingInvitations), validating: false
             }))
     }
 
