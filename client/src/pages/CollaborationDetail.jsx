@@ -7,7 +7,7 @@ import {
     collaborationIdByIdentifier,
     collaborationLiteById,
     createCollaborationMembershipRole,
-    deleteCollaborationMembership,
+    deleteCollaborationMembership, deleteInvitationByHash,
     health,
     invitationAccept,
     invitationByHash,
@@ -99,7 +99,9 @@ class CollaborationDetail extends React.Component {
         const params = this.props.match.params;
         if (params.hash) {
             invitationByHash(params.hash, true).then(res => {
+                const {user} = this.props;
                 const invitation = res["invitation"];
+                const membership = (user.collaboration_memberships || []).find(m => m.collaboration_id === invitation.collaboration_id);
                 const serviceEmails = res["service_emails"];
                 const adminEmails = res["admin_emails"];
                 this.setState({
@@ -114,7 +116,8 @@ class CollaborationDetail extends React.Component {
                     confirmationDialogOpen: false,
                     tab: "about",
                     isInvitation: true,
-                    tabs: [this.getAboutTab(invitation.collaboration, true, false)]
+                    tabs: [this.getAboutTab(invitation.collaboration, true, false)],
+                    alreadyCollaborationMembership: !isEmpty(membership)
                 });
             }).catch(() => this.props.history.push(`/404?eo=${ErrorOrigins.invitationNotFound}`));
         } else if (params.id) {
@@ -729,6 +732,14 @@ class CollaborationDetail extends React.Component {
                 </span>);
     }
 
+    alreadyMemberConfirmation = invitation => {
+        this.setState({loading: true})
+        deleteInvitationByHash(invitation.hash).then(r => {
+            const path = encodeURIComponent(`/collaborations/${invitation.collaboration_id}`);
+            this.props.history.push(`/refresh-route/${path}`);
+        });
+    }
+
     doAcceptInvitation = () => {
         const {invitation, isInvitation} = this.state;
         if (isInvitation) {
@@ -794,16 +805,18 @@ class CollaborationDetail extends React.Component {
                 Icon: <TimerIcon/>, value: collaborationStatus
             })
         }
-        return (<UnitHeader obj={collaboration}
-                            firstTime={user.admin ? this.onBoarding : undefined}
-                            history={(user.admin && allowedToEdit) && this.props.history}
-                            auditLogPath={`collaborations/${collaboration.id}`}
-                            breadcrumbName={I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
-                            name={collaboration.name}
-                            displayDescription={false}
-                            actions={this.getActions(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}>
-            {this.getIconListItems(iconListItems)}
-        </UnitHeader>);
+        return (
+            <UnitHeader obj={collaboration}
+                        firstTime={user.admin ? this.onBoarding : undefined}
+                        history={(user.admin && allowedToEdit) && this.props.history}
+                        auditLogPath={`collaborations/${collaboration.id}`}
+                        breadcrumbName={I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
+                        name={collaboration.name}
+                        displayDescription={false}
+                        actions={this.getActions(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}>
+                {this.getIconListItems(iconListItems)}
+            </UnitHeader>
+        );
     }
 
     render() {
@@ -827,7 +840,8 @@ class CollaborationDetail extends React.Component {
             isInvitation,
             invitation,
             serviceEmails,
-            adminEmails
+            adminEmails,
+            alreadyCollaborationMembership
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -845,17 +859,24 @@ class CollaborationDetail extends React.Component {
             {(adminOfCollaboration && showMemberView) && this.getUnitHeader(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}
             {(!showMemberView || !adminOfCollaboration) && this.getUnitHeaderForMemberNew(user, config, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember, adminOfCollaboration)}
 
-            {!collaborationJoinRequest && <CollaborationWelcomeDialog name={collaboration.name}
-                                                                      isOpen={firstTime}
-                                                                      role={role}
-                                                                      serviceEmails={serviceEmails}
-                                                                      adminEmails={adminEmails}
-                                                                      collaboration={collaboration}
-                                                                      isAdmin={user.admin}
-                                                                      user={user}
-                                                                      isInvitation={isInvitation}
-                                                                      close={this.doAcceptInvitation}/>}
-
+            {(!collaborationJoinRequest && !alreadyCollaborationMembership) &&
+                <CollaborationWelcomeDialog name={collaboration.name}
+                                            isOpen={firstTime}
+                                            role={role}
+                                            serviceEmails={serviceEmails}
+                                            adminEmails={adminEmails}
+                                            collaboration={collaboration}
+                                            isAdmin={user.admin}
+                                            user={user}
+                                            isInvitation={isInvitation}
+                                            close={this.doAcceptInvitation}/>}
+            {alreadyCollaborationMembership &&
+                <ConfirmationDialog isOpen={true}
+                                    confirm={() => this.alreadyMemberConfirmation(invitation)}
+                                    confirmationHeader={I18n.t("organisationMembership.alreadyMemberHeader")}
+                                    confirmationTxt={I18n.t("confirmationDialog.ok")}
+                                    question={I18n.t("organisationMembership.alreadyMember")}/>
+            }
             <JoinRequestDialog collaboration={collaboration}
                                isOpen={joinRequestDialogOpen}
                                refresh={callback => refreshUser(callback)}
@@ -877,7 +898,6 @@ class CollaborationDetail extends React.Component {
 
         </>)
     }
-
 
 }
 

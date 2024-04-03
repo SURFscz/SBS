@@ -326,3 +326,8 @@ class TestInvitation(AbstractTest):
                         body={"emails": ["nope@ex.org"], "collaboration_id": collaboration_id},
                         response_status_code=200)
         self.assertEqual(0, len(res))
+
+    def test_delete_by_hash(self):
+        self.delete(f"/api/invitations/delete_by_hash/{invitation_hash_no_way}")
+        self.get("/api/invitations/find_by_hash", query_data={"hash": invitation_hash_no_way},
+                 response_status_code=404)

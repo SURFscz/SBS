@@ -2238,6 +2238,8 @@ const en = {
         expiryDate: "Expiration date",
         expiryDateTooltip: "The expiration date of the membership. After this date the membership will be suspended and this member can no longer use the services",
         update: "Update",
+        alreadyMember: "You are already a member of this CO and do not need to accept a new invitation.",
+        alreadyMemberHeader: "Already member",
         status: {
             name: "Your membership",
             active: "Active",
