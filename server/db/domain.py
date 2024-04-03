@@ -541,11 +541,6 @@ class Service(Base, db.Model, LogoMixin, SecretMixin):
     non_member_users_access_allowed = db.Column("non_member_users_access_allowed", db.Boolean(), nullable=True,
                                                 default=False)
     connection_setting = db.Column("connection_setting", db.String(length=255), nullable=True)
-    research_scholarship_compliant = db.Column("research_scholarship_compliant", db.Boolean(),
-                                               nullable=True,
-                                               default=False)
-    code_of_conduct_compliant = db.Column("code_of_conduct_compliant", db.Boolean(), nullable=True, default=False)
-    sirtfi_compliant = db.Column("sirtfi_compliant", db.Boolean(), nullable=True, default=False)
     token_enabled = db.Column("token_enabled", db.Boolean(), nullable=True, default=False)
     token_validity_days = db.Column("token_validity_days", db.Integer(), nullable=True, default=0)
     pam_web_sso_enabled = db.Column("pam_web_sso_enabled", db.Boolean(), nullable=True, default=False)
@@ -609,11 +604,6 @@ class ServiceRequest(Base, db.Model, LogoMixin):
     security_email = db.Column("security_email", db.String(length=255), nullable=True)
     privacy_policy = db.Column("privacy_policy", db.String(length=255), nullable=False)
     accepted_user_policy = db.Column("accepted_user_policy", db.String(length=255), nullable=True)
-    code_of_conduct_compliant = db.Column("code_of_conduct_compliant", db.Boolean(), nullable=True, default=False)
-    sirtfi_compliant = db.Column("sirtfi_compliant", db.Boolean(), nullable=True, default=False)
-    research_scholarship_compliant = db.Column("research_scholarship_compliant", db.Boolean(),
-                                               nullable=True,
-                                               default=False)
     status = db.Column("status", db.String(length=255), nullable=False)
     comments = db.Column("comments", db.Text(), nullable=True)
     connection_type = db.Column("connection_type", db.String(length=255), nullable=True)

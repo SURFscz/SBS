@@ -41,10 +41,6 @@ properties:
     type: boolean
     description: "If true all collaborations can connect to this service"
     example: true
-  code_of_conduct_compliant:
-    type: boolean
-    description: "Compliant with the code of conduct"
-    example: true
   non_member_users_access_allowed:
     type: boolean
     description: "If true then non collaboration members can access this service"
@@ -52,14 +48,6 @@ properties:
   override_access_allowed_all_connections:
     type: boolean
     description: "If true in combination access_allowed_for_all equals true then connections need to be requested"
-    example: true
-  research_scholarship_compliant:
-    type: boolean
-    description: "Compliant with the research scholarship"
-    example: true
-  sirtfi_compliant:
-    type: boolean
-    description: "Compliant with sirtfi"
     example: true
   token_enabled:
     type: boolean
