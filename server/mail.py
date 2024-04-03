@@ -189,7 +189,8 @@ def mail_automatic_collaboration_request(context, collaboration, organisation, r
     )
 
 
-def mail_organisation_invitation(context, organisation, recipients, reminder=False, preview=False):
+def mail_organisation_invitation(context, organisation, recipients, reminder=False, preview=False,
+                                 working_outside_of_request_context=False):
     if not preview:
         _store_mail(None, ORGANISATION_INVITATION_MAIL, recipients)
     context = {**context, **{"expiry_period": calculate_expiry_period(context["invitation"])},
@@ -200,11 +201,13 @@ def mail_organisation_invitation(context, organisation, recipients, reminder=Fal
         recipients=recipients,
         template="organisation_invitation",
         context=context,
-        preview=preview
+        preview=preview,
+        working_outside_of_request_context=working_outside_of_request_context
     )
 
 
-def mail_collaboration_invitation(context, collaboration, recipients, reminder=False, preview=False):
+def mail_collaboration_invitation(context, collaboration, recipients, reminder=False, preview=False,
+                                  working_outside_of_request_context=False):
     if not preview:
         _store_mail(None, COLLABORATION_INVITATION_MAIL, recipients)
     invitation = context["invitation"]
@@ -218,13 +221,14 @@ def mail_collaboration_invitation(context, collaboration, recipients, reminder=F
         template="collaboration_invitation",
         context=context,
         preview=preview,
-        working_outside_of_request_context=False,
+        working_outside_of_request_context=working_outside_of_request_context,
         cc=None,
         attachment_url=collaboration.organisation.logo
     )
 
 
-def mail_service_invitation(context, service, recipients, reminder=False, preview=False):
+def mail_service_invitation(context, service, recipients, reminder=False, preview=False,
+                            working_outside_of_request_context=False):
     if not preview:
         _store_mail(None, SERVICE_INVITATION_MAIL, recipients)
     context = {**context, **{"expiry_period": calculate_expiry_period(context["invitation"])},
@@ -235,7 +239,8 @@ def mail_service_invitation(context, service, recipients, reminder=False, previe
         recipients=recipients,
         template="service_invitation",
         context=context,
-        preview=preview
+        preview=preview,
+        working_outside_of_request_context=working_outside_of_request_context
     )
 
 

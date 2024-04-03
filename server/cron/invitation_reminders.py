@@ -52,7 +52,8 @@ def _do_invitation_reminders(app):
                 "base_url": app.app_config.base_url,
                 "wiki_link": app.app_config.wiki_link,
                 "recipient": invitation.invitee_email
-            }, invitation.collaboration, [invitation.invitee_email], reminder=True)
+            }, invitation.collaboration, [invitation.invitee_email], reminder=True,
+                preview=False, working_outside_of_request_context=True)
 
         organisation_invitations = OrganisationInvitation.query \
             .filter(OrganisationInvitation.expiry_date < reminder_date) \
@@ -69,7 +70,8 @@ def _do_invitation_reminders(app):
                 "invitation": invitation,
                 "base_url": app.app_config.base_url,
                 "recipient": invitation.invitee_email
-            }, invitation.organisation, [invitation.invitee_email], reminder=True)
+            }, invitation.organisation, [invitation.invitee_email], reminder=True,
+                working_outside_of_request_context=True)
 
         service_invitations = ServiceInvitation.query \
             .filter(ServiceInvitation.expiry_date < reminder_date) \
@@ -87,7 +89,8 @@ def _do_invitation_reminders(app):
                 "base_url": app.app_config.base_url,
                 "intended_role": invitation.intended_role,
                 "recipient": invitation.invitee_email
-            }, invitation.service, [invitation.invitee_email], reminder=True)
+            }, invitation.service, [invitation.invitee_email], reminder=True,
+                working_outside_of_request_context=True)
 
         db.session.commit()
 
