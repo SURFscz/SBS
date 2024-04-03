@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision 811a3753d09f (head)
+-- Dump of empty SBS database, alembic revision b133d5e0e198 (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('811a3753d09f');
+INSERT INTO `alembic_version` VALUES ('b133d5e0e198');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_keys`;
@@ -765,9 +765,6 @@ CREATE TABLE `service_requests` (
   `security_email` varchar(255) DEFAULT NULL,
   `privacy_policy` varchar(255) DEFAULT NULL,
   `accepted_user_policy` varchar(255) DEFAULT NULL,
-  `code_of_conduct_compliant` tinyint(1) DEFAULT NULL,
-  `sirtfi_compliant` tinyint(1) DEFAULT NULL,
-  `research_scholarship_compliant` tinyint(1) DEFAULT NULL,
   `connection_type` varchar(255) DEFAULT NULL,
   `redirect_urls` text,
   `saml_metadata` text,
@@ -831,9 +828,6 @@ CREATE TABLE `services` (
   `updated_by` varchar(255) NOT NULL,
   `automatic_connection_allowed` tinyint(1) DEFAULT '1',
   `allow_restricted_orgs` tinyint(1) DEFAULT NULL,
-  `research_scholarship_compliant` tinyint(1) DEFAULT '0',
-  `code_of_conduct_compliant` tinyint(1) DEFAULT '0',
-  `sirtfi_compliant` tinyint(1) DEFAULT '0',
   `logo` mediumtext,
   `access_allowed_for_all` tinyint(1) DEFAULT '0',
   `uuid4` varchar(255) NOT NULL,
