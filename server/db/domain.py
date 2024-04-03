@@ -59,6 +59,8 @@ class User(Base, db.Model):
                                           cascade="all, delete, delete-orphan", passive_deletes=True)
     join_requests = db.relationship("JoinRequest", back_populates="user",
                                     cascade="all, delete, delete-orphan", passive_deletes=True)
+    service_connection_requests = db.relationship("ServiceConnectionRequest", back_populates="requester",
+                                                  cascade="all, delete-orphan", passive_deletes=True)
     aups = db.relationship("Aup", back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
     service_aups = db.relationship("ServiceAup", back_populates="user", cascade="all, delete-orphan",
                                    passive_deletes=True)

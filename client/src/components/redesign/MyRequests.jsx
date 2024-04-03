@@ -9,8 +9,8 @@ import SpinnerField from "./SpinnerField";
 import {dateFromEpoch} from "../../utils/Date";
 import {
     COLLABORATION_REQUEST_TYPE,
-    JOIN_REQUEST_TYPE,
-    SERVICE_TYPE_REQUEST,
+    JOIN_REQUEST_TYPE, SERVICE_CONNECTION_REQUEST_TYPE,
+    SERVICE_REQUEST_TYPE,
     socket,
     SUBSCRIPTION_ID_COOKIE_NAME
 } from "../../utils/SocketIO";
@@ -18,9 +18,11 @@ import {chipTypeForStatus} from "../../utils/UserRole";
 import {Chip} from "@surfnet/sds";
 import {organisationNames} from "../../api";
 import {AppStore} from "../../stores/AppStore";
+import {statusCustomSort} from "../../utils/Utils";
 
 
 const allValue = "all";
+
 export default class MyRequests extends React.PureComponent {
 
     constructor(props, context) {
@@ -39,6 +41,7 @@ export default class MyRequests extends React.PureComponent {
             s.off(`service_requests`);
             requests.forEach(request => {
                 switch (request.requestType) {
+                    case SERVICE_CONNECTION_REQUEST_TYPE:
                     case JOIN_REQUEST_TYPE: {
                         s.off(`collaboration_${request.collaboration_id}`);
                         break;
@@ -90,13 +93,13 @@ export default class MyRequests extends React.PureComponent {
         const {socketSubscribed} = this.state;
         if (!socketSubscribed) {
             socket.then(s => {
-                if (this.hasRequest(requests, SERVICE_TYPE_REQUEST)) {
+                if (this.hasRequest(requests, SERVICE_REQUEST_TYPE)) {
                     s.on(`service_requests`, this.onSocketMessage);
                 }
                 requests.forEach(request => {
                     if (request.requestType === COLLABORATION_REQUEST_TYPE) {
                         s.on(`organisation_${request.organisation_id}`, this.onSocketMessage);
-                    } else if (request.requestType === JOIN_REQUEST_TYPE) {
+                    } else if (request.requestType === JOIN_REQUEST_TYPE || request.requestType === SERVICE_CONNECTION_REQUEST_TYPE) {
                         s.on(`collaboration_${request.collaboration_id}`, this.onSocketMessage)
                     }
                 });
@@ -141,8 +144,10 @@ export default class MyRequests extends React.PureComponent {
                 return request.organisationName;
             case COLLABORATION_REQUEST_TYPE:
                 return request.organisation.name;
-            case SERVICE_TYPE_REQUEST:
+            case SERVICE_REQUEST_TYPE:
                 return request.providing_organisation;
+            case SERVICE_CONNECTION_REQUEST_TYPE:
+                return I18n.t("myRequests.notApplicable")
         }
     }
 
@@ -158,7 +163,8 @@ export default class MyRequests extends React.PureComponent {
                 key: "logo",
                 header: "",
                 mapper: request => <Logo
-                    src={request.requestType === JOIN_REQUEST_TYPE ? request.collaboration.logo : request.logo}/>
+                    src={request.requestType === JOIN_REQUEST_TYPE ? request.collaboration.logo :
+                        request.requestType === SERVICE_CONNECTION_REQUEST_TYPE ? request.service.logo : request.logo}/>
             },
             {
                 key: "requestType",
@@ -168,7 +174,8 @@ export default class MyRequests extends React.PureComponent {
             {
                 key: "name",
                 header: I18n.t("myRequests.name"),
-                mapper: request => request.requestType === JOIN_REQUEST_TYPE ? request.collaboration.name : request.name,
+                mapper: request => request.requestType === JOIN_REQUEST_TYPE ? request.collaboration.name :
+                    request.requestType === SERVICE_CONNECTION_REQUEST_TYPE ? request.service.name : request.name,
             },
             {
                 key: "organisationName",
@@ -184,7 +191,8 @@ export default class MyRequests extends React.PureComponent {
                 key: "status",
                 header: I18n.t("collaborationRequest.status"),
                 mapper: entity => <Chip type={chipTypeForStatus(entity)}
-                                        label={I18n.t(`collaborationRequest.statuses.${entity.status}`)}/>
+                                        label={I18n.t(`collaborationRequest.statuses.${entity.status}`)}/>,
+                customSort: statusCustomSort
             }
         ]
         const filteredRequests = filterValue.value === allValue ? requests :
@@ -194,9 +202,10 @@ export default class MyRequests extends React.PureComponent {
             <Entities entities={filteredRequests}
                       modelName={"my_requests"}
                       searchAttributes={["name", "description", "organisationName", "status"]}
-                      defaultSort="requestType"
+                      defaultSort="status"
                       columns={columns}
                       showNew={false}
+                      inputFocus={true}
                       filters={this.filter(filterOptions, filterValue)}
                       loading={false}
                       {...this.props}/>

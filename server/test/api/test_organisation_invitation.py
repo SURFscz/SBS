@@ -90,3 +90,19 @@ class TestOrganisationInvitation(AbstractTest):
 
     def test_delete_not_found(self):
         self.delete("/api/organisation_invitations", primary_key="nope", response_status_code=404)
+
+    def test_invitation_exists_by_email(self):
+        inv = OrganisationInvitation.query.filter(OrganisationInvitation.invitee_email == "roger@example.org").one()
+        organisation_id = inv.organisation_id
+        res = self.post("/api/organisation_invitations/exists_email",
+                        body={"emails": ["roger@EXAMPLE.ORG"], "organisation_id": organisation_id},
+                        response_status_code=200)
+        self.assertEqual(["roger@example.org"], res)
+        res = self.post("/api/organisation_invitations/exists_email",
+                        body={"emails": ["nope@ex.org"], "organisation_id": organisation_id},
+                        response_status_code=200)
+        self.assertEqual(0, len(res))
+        res = self.post("/api/organisation_invitations/exists_email",
+                        body={"emails": ["roger@example.org"], "organisation_id": "9999"},
+                        response_status_code=200)
+        self.assertEqual(0, len(res))

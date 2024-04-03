@@ -37,7 +37,11 @@ export function groupBy(arr, key) {
     }, {});
 }
 
-export function sortObjects(objects, attribute, reverse) {
+export function sortObjects(objects, attribute, reverse, customSort = null) {
+    //Check if the column has a custom sort function
+    if (!isEmpty(customSort) && typeof customSort === "function") {
+        return [...objects].sort((a, b) => customSort(a, b, reverse));
+    }
     return [...objects].sort((a, b) => {
         const val1 = valueForSort(attribute, a);
         const val2 = valueForSort(attribute, b);
@@ -124,4 +128,9 @@ export const shuffleArray = arr => {
 export const capitalize = str => {
     return isEmpty(str) ? str : (str.charAt(0).toUpperCase() + str.slice(1));
 }
+
+export const statusCustomSort = (o1, o2, reverse) => {
+    const comparison = o1.status === "open" ? -1 : o2.status === "open" ? 1 : o1.status.localeCompare(o2.status);
+    return reverse ? comparison * -1 : comparison;
+};
 

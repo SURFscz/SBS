@@ -3,11 +3,11 @@ import moment from "moment";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-import {collaborationById, collaborationInvitations, collaborationInvitationsPreview} from "../api";
+import {collaborationById, collaborationInvitations, collaborationInvitationsPreview, invitationExists} from "../api";
 import I18n from "../locale/I18n";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
-import {isEmpty, stopEvent} from "../utils/Utils";
+import {isEmpty, splitListSemantically, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {validEmailRegExp} from "../validations/regExps";
@@ -29,8 +29,7 @@ class NewInvitation extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.intendedRolesOptions = collaborationRoles.map(role => ({
-            value: role,
-            label: I18n.t(`collaboration.${role}`)
+            value: role, label: I18n.t(`collaboration.${role}`)
         }));
         const email = getParameterByName("email", window.location.search);
         const administrators = !isEmpty(email) && validEmailRegExp.test(email.trim()) ? [email.trim()] : [];
@@ -51,13 +50,14 @@ class NewInvitation extends React.Component {
             initial: true,
             confirmationDialogOpen: false,
             confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
-            cancelDialogAction: () => this.setState({confirmationDialogOpen: false},
-                () => this.props.history.push(`/collaborations/${this.props.match.params.collaboration_id}`)),
+            cancelDialogAction: () => this.setState({confirmationDialogOpen: false}, () => this.props.history.push(`/collaborations/${this.props.match.params.collaboration_id}`)),
             leavePage: true,
             htmlPreview: "",
             activeTab: "invitation_form",
             loading: true,
-            isAdminView: false
+            isAdminView: false,
+            existingInvitations: [],
+            validating: false
         };
     }
 
@@ -85,25 +85,16 @@ class NewInvitation extends React.Component {
     updateAppStore = (collaboration, user) => {
         const orgManager = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id, null);
         AppStore.update(s => {
-            s.breadcrumb.paths = orgManager ? [
-                {path: "/", value: I18n.t("breadcrumb.home")},
-                {
-                    path: `/organisations/${collaboration.organisation_id}`,
-                    value: I18n.t("breadcrumb.organisation", {name: collaboration.organisation.name})
-                },
-                {
-                    path: `/collaborations/${collaboration.id}`,
-                    value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})
-                },
-                {value: I18n.t("breadcrumb.invite")}
-            ] : [
-                {path: "/", value: I18n.t("breadcrumb.home")},
-                {
-                    path: `/collaborations/${collaboration.id}`,
-                    value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})
-                },
-                {value: I18n.t("breadcrumb.invite")}
-            ];
+            s.breadcrumb.paths = orgManager ? [{path: "/", value: I18n.t("breadcrumb.home")}, {
+                path: `/organisations/${collaboration.organisation_id}`,
+                value: I18n.t("breadcrumb.organisation", {name: collaboration.organisation.name})
+            }, {
+                path: `/collaborations/${collaboration.id}`,
+                value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})
+            }, {value: I18n.t("breadcrumb.invite")}] : [{path: "/", value: I18n.t("breadcrumb.home")}, {
+                path: `/collaborations/${collaboration.id}`,
+                value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})
+            }, {value: I18n.t("breadcrumb.invite")}];
         });
     }
 
@@ -112,14 +103,22 @@ class NewInvitation extends React.Component {
     };
 
     isValid = () => {
-        const {administrators, fileEmails, intended_role, expiry_date} = this.state;
-        return (!isEmpty(administrators) || !isEmpty(fileEmails)) && !isEmpty(intended_role) && !isEmpty(expiry_date);
+        const {administrators, fileEmails, intended_role, expiry_date, existingInvitations, validating} = this.state;
+        return (!isEmpty(administrators) || !isEmpty(fileEmails)) && !isEmpty(intended_role) && !isEmpty(expiry_date)
+            && isEmpty(existingInvitations) && !validating;
     };
 
     doSubmit = () => {
         const {
-            administrators, message, collaboration, expiry_date, fileEmails, intended_role,
-            selectedGroup, membership_expiry_date, isAdminView
+            administrators,
+            message,
+            collaboration,
+            expiry_date,
+            fileEmails,
+            intended_role,
+            selectedGroup,
+            membership_expiry_date,
+            isAdminView
         } = this.state;
         if (this.isValid()) {
             this.setState({loading: true});
@@ -153,12 +152,23 @@ class NewInvitation extends React.Component {
         stopEvent(e);
         const {administrators} = this.state;
         const newAdministrators = administrators.filter(currentMail => currentMail !== email);
+        this.validateDuplicates(newAdministrators);
         this.setState({administrators: newAdministrators});
     };
+
+    validateDuplicates(newAdministrators) {
+        const collaborationId = this.props.match.params.collaboration_id;
+        this.setState({validating: true});
+        invitationExists(newAdministrators, collaborationId)
+            .then(existingInvitations => this.setState({
+                existingInvitations: existingInvitations, initial: isEmpty(existingInvitations), validating: false
+            }))
+    }
 
     addEmails = emails => {
         const {administrators} = this.state;
         const uniqueEmails = [...new Set(administrators.concat(emails))];
+        this.validateDuplicates(uniqueEmails);
         this.setState({administrators: uniqueEmails});
     };
 
@@ -199,12 +209,10 @@ class NewInvitation extends React.Component {
         }
     };
 
-    preview = disabledSubmit => (
-        <div>
+    preview = disabledSubmit => (<div>
             <div className={"preview-mail"} dangerouslySetInnerHTML={{__html: this.state.htmlPreview}}/>
             {this.renderActions(disabledSubmit)}
-        </div>
-    );
+        </div>);
 
     selectedGroupsChanged = selectedOptions => {
         if (selectedOptions === null) {
@@ -215,8 +223,7 @@ class NewInvitation extends React.Component {
         }
     }
 
-    invitationForm = (fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators,
-                      intended_role, message, expiry_date, disabledSubmit, groups, selectedGroup, membership_expiry_date) =>
+    invitationForm = (fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, intended_role, message, expiry_date, disabledSubmit, groups, selectedGroup, membership_expiry_date, existingInvitations) =>
         <div className={"invitation-form"}>
 
             <EmailField addEmails={this.addEmails}
@@ -227,6 +234,9 @@ class NewInvitation extends React.Component {
                         autoFocus={true}/>
             {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) &&
                 <ErrorIndicator msg={I18n.t("invitation.requiredEmail")}/>}
+
+            {!isEmpty(existingInvitations) && <ErrorIndicator
+                msg={I18n.t("invitation.existingInvitations", {emails: splitListSemantically(existingInvitations, I18n.t("service.compliancySeparator"))})}/>}
 
             <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
                          options={this.intendedRolesOptions}
@@ -268,19 +278,16 @@ class NewInvitation extends React.Component {
                        maxDate={moment().add(31, "day").toDate()}
                        name={I18n.t("invitation.expiryDate")}
                        toolTip={I18n.t("invitation.expiryDateTooltip")}/>
-            {(!initial && isEmpty(expiry_date)) &&
-                <ErrorIndicator msg={I18n.t("invitation.requiredExpiryDate")}/>}
+            {(!initial && isEmpty(expiry_date)) && <ErrorIndicator msg={I18n.t("invitation.requiredExpiryDate")}/>}
 
             {this.renderActions(disabledSubmit)}
         </div>;
 
-    renderActions = disabledSubmit => (
-        <section className="actions">
+    renderActions = disabledSubmit => (<section className="actions">
             <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
             <Button disabled={disabledSubmit} txt={I18n.t("invitation.invite")}
                     onClick={this.submit}/>
-        </section>
-    );
+        </section>);
 
     render() {
         const {
@@ -301,29 +308,27 @@ class NewInvitation extends React.Component {
             fileEmails,
             groups,
             selectedGroup,
-            loading
+            loading,
+            existingInvitations
         } = this.state;
         if (loading) {
             return <SpinnerField/>
         }
         const disabledSubmit = (!initial && !this.isValid());
-        return (
-            <>
-                <UnitHeader obj={collaboration}
-                            name={collaboration.name}/>
-                <ConfirmationDialog isOpen={confirmationDialogOpen}
-                                    cancel={cancelDialogAction}
-                                    confirm={confirmationDialogAction}
-                                    leavePage={leavePage}/>
-                <div className="mod-new-collaboration-invitation">
-                    <h2>{I18n.t("tabs.invitation_form")}</h2>
-                    <div className="new-collaboration-invitation">
-                        {this.invitationForm(fileInputKey, fileName, fileTypeError, fileEmails, initial,
-                            administrators, intended_role, message, expiry_date, disabledSubmit, groups,
-                            selectedGroup, membership_expiry_date)}
-                    </div>
+        return (<>
+            <UnitHeader obj={collaboration}
+                        name={collaboration.name}/>
+            <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                cancel={cancelDialogAction}
+                                confirm={confirmationDialogAction}
+                                leavePage={leavePage}/>
+            <div className="mod-new-collaboration-invitation">
+                <h2>{I18n.t("tabs.invitation_form")}</h2>
+                <div className="new-collaboration-invitation">
+                    {this.invitationForm(fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, intended_role, message, expiry_date, disabledSubmit, groups, selectedGroup, membership_expiry_date, existingInvitations)}
                 </div>
-            </>);
+            </div>
+        </>);
     }
 
 }

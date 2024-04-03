@@ -1441,6 +1441,7 @@ const nl = {
         groupsTooltip: "De groepen waar alle genodigden lid van worden.",
         groups: "Groepslidmaatschap",
         requiredEmail: "Je dient minimaal één e-mailadres op te geven waar je de uitnodiging om lid te worden naartoe wil sturen.",
+        existingInvitations: "Er zijn al bestaande uitnodigingen voor: {{emails}}",
         requiredRole: "Je moet een rol kiezen voor het uit te nodigen lid.",
         requiredExpiryDate: "De geldigheidsdatum van de uitnodiging is verplicht",
         message: "Bericht",
@@ -1753,7 +1754,9 @@ const nl = {
         actions: {
             "1": "Nieuwe",
             "2": "Gewijzigd",
-            "3": "Verwijderd"
+            "3": "Verwijderd",
+            approved: "Goedgekeurd",
+            denied: "Afgewezen"
         },
         overview: "{{action}} {{collection}}{{name}}",
         none: "Geen geschiedenis weer te geven",
@@ -1773,7 +1776,8 @@ const nl = {
         searchPlaceholder: "Zoek...",
         includeServices: "Toon diensten",
         includeMembers: "Toon leden",
-        includeCOProperties: "Toon eigenschappen",
+        includeConnections: "Show connections",
+        includeProperties: "Toon eigenschappen",
         tables: {
             "api_keys": "Organisatie-API-tokens",
             "aups": "Acceptable User Policy",
@@ -1787,6 +1791,7 @@ const nl = {
             "join_requests": "Lidmaatschapsverzoek",
             "organisation_invitations": "Organisatieuitnodiging",
             "organisation_memberships": "Organisatielidmaatschap",
+            "organisation_aups": "Organisatie AUP",
             "organisations": "Organisatie",
             "organisations_services": "Dienst",
             "service_connection_requests": "Koppelverzoek",
@@ -2457,11 +2462,13 @@ const nl = {
         types: {
             joinRequest: "Lidmaatschapsverzoek",
             collaborationRequest: "Nieuw samenwerkingsverzoek",
-            serviceRequest: "Dienstregistratie"
+            serviceRequest: "Dienstregistratie",
+            serviceConnectionRequest: "Dienstkoppelverzoek"
         },
         name: "Naam",
         description: "Omschrijving",
-        organisationName: "Organisatie / instelling"
+        organisationName: "Organisatie / instelling",
+        notApplicable: "N/A"
     },
     units: {
         column: "Units",
@@ -2496,8 +2503,8 @@ const nl = {
         ],
         neverBeenBeforeTitle: "Ben je hier nog nooit geweest?",
         neverBeenBefore: [
-          "Lees wat je met <a href=\"https://surf.nl/sram\" target=\"_blank\" rel=\"noopener noreferrer\">SRAM allemaal kan doen.</a>",
-          "Als iemand je heeft gewezen op <strong>{{serviceName}}</strong>, neem dan contact met hen op om toegang te krijgen tot de juiste samenwerking, of neem contact op met je instelling."
+            "Lees wat je met <a href=\"https://surf.nl/sram\" target=\"_blank\" rel=\"noopener noreferrer\">SRAM allemaal kan doen.</a>",
+            "Als iemand je heeft gewezen op <strong>{{serviceName}}</strong>, neem dan contact met hen op om toegang te krijgen tot de juiste samenwerking, of neem contact op met je instelling."
         ],
         ticketInfoTitle: "Sessieinformatie"
     },
