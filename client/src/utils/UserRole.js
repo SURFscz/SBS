@@ -1,7 +1,12 @@
 import I18n from "../locale/I18n";
 import {ChipType} from "@surfnet/sds";
 import {isEmpty} from "./Utils";
-import {COLLABORATION_REQUEST_TYPE, JOIN_REQUEST_TYPE, SERVICE_TYPE_REQUEST} from "./SocketIO";
+import {
+    COLLABORATION_REQUEST_TYPE,
+    JOIN_REQUEST_TYPE,
+    SERVICE_CONNECTION_REQUEST_TYPE,
+    SERVICE_REQUEST_TYPE
+} from "./SocketIO";
 
 
 export const ROLES = {
@@ -133,8 +138,12 @@ export function getUserRequests(user) {
         requests.push(...user.collaboration_requests);
     }
     if (!isEmpty(user.service_requests)) {
-        user.service_requests.forEach(serviceRequest => serviceRequest.requestType = SERVICE_TYPE_REQUEST);
+        user.service_requests.forEach(serviceRequest => serviceRequest.requestType = SERVICE_REQUEST_TYPE);
         requests.push(...user.service_requests);
+    }
+    if (!isEmpty(user.service_connection_requests)) {
+        user.service_connection_requests.forEach(serviceConnectionRequest => serviceConnectionRequest.requestType = SERVICE_CONNECTION_REQUEST_TYPE);
+        requests.push(...user.service_connection_requests);
     }
     return requests;
 }

@@ -55,21 +55,15 @@ class Profile extends React.Component {
     }
 
     getHistoryTab = (filteredAuditLogs, query, loadingAuditLogs) => {
+        const {user} = this.props;
         return (<div key="history" name="history" label={I18n.t("home.history")}
                      icon={<FontAwesomeIcon icon="history"/>}>
             <div className={"user-history"}>
 
                 {!loadingAuditLogs && <section className="search-activity">
                     <h2>{I18n.t("models.allUsers.activity")}</h2>
-                    <div className="search">
-                        <input type="text"
-                               onChange={this.onChangeQuery}
-                               value={query}
-                               placeholder={I18n.t("system.searchPlaceholder")}/>
-                        <FontAwesomeIcon icon="search"/>
-                    </div>
                 </section>}
-                {!loadingAuditLogs && <Activity auditLogs={filteredAuditLogs}/>}
+                {!loadingAuditLogs && <Activity auditLogs={filteredAuditLogs} collectionName={"users"} user={user}/>}
                 {loadingAuditLogs && <Loader children={
                     <div className={"loader-msg"}><span>{I18n.t("models.allUsers.loading")}</span></div>}/>}
             </div>

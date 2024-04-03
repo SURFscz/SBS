@@ -52,11 +52,7 @@ class Home extends React.Component {
             const nbrOrganisations = user.organisation_memberships.length;
             const nbrCollaborations = user.collaboration_memberships.length;
             const nbrServices = user.service_memberships.length;
-            const canStayInHome = !isEmpty(user.service_requests) ||
-                !isEmpty(user.collaboration_requests) ||
-                !isEmpty(user.join_requests) ||
-                nbrServices > 0 ||
-                (user.organisation_from_user_schac_home && redirect);
+            const canStayInHome = nbrServices > 0 || (user.organisation_from_user_schac_home && redirect);
             let hasAnyRoles = true;
             switch (role) {
                 case ROLES.PLATFORM_ADMIN:
@@ -109,14 +105,19 @@ class Home extends React.Component {
                     return;
                 } else {
                     tabs.push(this.getServicesTab(nbrServices));
-                    tab = tabs[0].key;
+                    if (nbrServices > 0 && nbrCollaborations === 0) {
+                        tab = "services";
+                    } else {
+                        tab = tabs[0].key;
+                    }
+
                 }
             }
             const tabSuggestion = this.addRequestsTabs(user, this.refreshUserHook, tabs, tab);
             if (role === ROLES.USER) {
                 tab = tabSuggestion;
             }
-            if (isEmpty(tabs) && !hasAnyRoles) {
+            if (tabs.length === 1 && tab === "my_requests" && !hasAnyRoles) {
                 this.props.history.push("/welcome");
                 return;
             }

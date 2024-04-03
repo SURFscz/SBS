@@ -12,7 +12,7 @@ import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
 import {chipTypeForStatus} from "../../utils/UserRole";
 import {Chip} from "@surfnet/sds";
 import {findAllServiceRequests} from "../../api";
-import {stopEvent} from "../../utils/Utils";
+import {statusCustomSort, stopEvent} from "../../utils/Utils";
 
 const allValue = "all";
 
@@ -141,7 +141,8 @@ export default class ServiceRequests extends React.PureComponent {
                 key: "status",
                 header: I18n.t("collaborationRequest.status"),
                 mapper: entity => <Chip type={chipTypeForStatus(entity)}
-                                        label={I18n.t(`collaborationRequest.statuses.${entity.status}`)}/>
+                                        label={I18n.t(`collaborationRequest.statuses.${entity.status}`)}/>,
+                customSort: statusCustomSort
             }
         ]
         const filteredServiceRequests = filterValue.value === allValue ? service_requests :
@@ -151,8 +152,9 @@ export default class ServiceRequests extends React.PureComponent {
             <Entities entities={filteredServiceRequests}
                       modelName={"service_requests"}
                       searchAttributes={["user__name", "user__email", "description", "name", "status"]}
-                      defaultSort="name"
+                      defaultSort="status"
                       columns={columns}
+                      inputFocus={true}
                       showNew={false}
                       filters={this.filter(filterOptions, filterValue)}
                       loading={false}

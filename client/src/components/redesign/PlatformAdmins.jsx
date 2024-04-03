@@ -73,6 +73,7 @@ class PlatformAdmins extends React.Component {
                       title={`${I18n.t("home.tabs.platformAdmins")} (${admins.length})`}
                       rowLinkMapper={() => this.openPlatformAdmin}
                       columns={columns}
+                      inputFocus={true}
                       loading={loading}
                       {...this.props}/>
         )

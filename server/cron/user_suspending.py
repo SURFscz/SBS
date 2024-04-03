@@ -28,9 +28,9 @@ def create_suspend_notification(user, retention, app, is_warning, is_suspension)
     current_time = dt_today()
     suspension_date = current_time + datetime.timedelta(days=retention.reminder_suspend_period_days)
     deletion_days = (
-        retention.remove_suspended_users_period_days
-        + retention.reminder_suspend_period_days
-        + retention.reminder_expiry_period_days
+            retention.remove_suspended_users_period_days
+            + retention.reminder_suspend_period_days
+            + retention.reminder_expiry_period_days
     )
     if is_warning and not is_suspension:
         deletion_days -= retention.reminder_suspend_period_days
@@ -131,17 +131,17 @@ def _do_suspend_users(app):
 
         # users who have been inactive since this date can be deleted
         deletion_date = (
-            current_time
-            - datetime.timedelta(days=retention.allowed_inactive_period_days)
-            - datetime.timedelta(days=retention.remove_suspended_users_period_days)
+                current_time
+                - datetime.timedelta(days=retention.allowed_inactive_period_days)
+                - datetime.timedelta(days=retention.remove_suspended_users_period_days)
         )
         # users who have been inactive since this date will get a first deletion warning
         deletion_warning_date = deletion_date + datetime.timedelta(days=retention.reminder_expiry_period_days)
         # users who have been suspended since this date can be warned about deletion
         suspension_timeout = (
-            current_time
-            - datetime.timedelta(days=retention.remove_suspended_users_period_days)
-            + datetime.timedelta(days=retention.reminder_expiry_period_days)
+                current_time
+                - datetime.timedelta(days=retention.remove_suspended_users_period_days)
+                + datetime.timedelta(days=retention.reminder_expiry_period_days)
         )
         # deletion warnings that have been sent before this date are considered "old" and can be acted upon
         warning_timeout = current_time - datetime.timedelta(days=retention.reminder_expiry_period_days)

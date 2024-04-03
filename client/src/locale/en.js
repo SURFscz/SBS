@@ -1441,6 +1441,7 @@ const en = {
         groupsTooltip: "Select the groups the invitees become member of.",
         groups: "Group membership",
         requiredEmail: "At least one email address is required for an invitation for a collaboration.",
+        existingInvitations: "There are already outstanding invitations for: {{emails}}",
         requiredRole: "You must choose the intended role for the collaboration membership.",
         requiredExpiryDate: "The expiry date for an invitation is required",
         message: "Message",
@@ -1753,7 +1754,9 @@ const en = {
         actions: {
             "1": "New",
             "2": "Updated",
-            "3": "Deleted"
+            "3": "Deleted",
+            approved: "Approved",
+            denied: "Denied"
         },
         overview: "{{action}} {{collection}}{{name}}",
         none: "No history to display",
@@ -1773,7 +1776,8 @@ const en = {
         searchPlaceholder: "Search... ",
         includeServices: "Show services",
         includeMembers: "Show members",
-        includeCOProperties: "Show properties",
+        includeConnections: "Show connections",
+        includeProperties: "Show properties",
         tables: {
             "api_keys": "Organisation API tokens",
             "aups": "Acceptable User Policy",
@@ -1787,6 +1791,7 @@ const en = {
             "join_requests": "Join request",
             "organisation_invitations": "Organisation invitation",
             "organisation_memberships": "Organisation membership",
+            "organisation_aups": "Organisation AUP",
             "organisations": "Organisation",
             "organisations_services": "Organisation service",
             "service_connection_requests": "Service connection request",
@@ -2457,11 +2462,13 @@ const en = {
         types: {
             joinRequest: "Collaboration join request",
             collaborationRequest: "New collaboration request",
-            serviceRequest: "Service registration"
+            serviceRequest: "Service registration",
+            serviceConnectionRequest: "Service connection request"
         },
         name: "Name",
         description: "Description",
-        organisationName: "Organisation / institution"
+        organisationName: "Organisation / institution",
+        notApplicable: "N/A"
     },
     units: {
         column: "Units",
