@@ -34,7 +34,6 @@ import {
 } from "../validations/regExps";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Tooltip} from "@surfnet/sds";
-import RadioButton from "../components/redesign/RadioButton";
 import DOMPurify from "dompurify";
 import {ReactComponent as ChevronLeft} from "../icons/chevron-left.svg";
 import Entities from "../components/redesign/Entities";
