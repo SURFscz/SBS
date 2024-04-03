@@ -394,8 +394,6 @@ def seed(db, app_config, skip_seed=False):
                               contact_email="help@ssh.com", logo=read_image("ssh.png"),
                               automatic_connection_allowed=False,
                               access_allowed_for_all=True, abbreviation="service_ssh",
-                              research_scholarship_compliant=True,
-                              code_of_conduct_compliant=True, sirtfi_compliant=True,
                               privacy_policy="https://privacy.org", security_email="sec@org.nl")
     service_ssh.ldap_identifier = service_ssh.entity_id
 
@@ -421,8 +419,7 @@ def seed(db, app_config, skip_seed=False):
                       contact_email="sram-beheer@surf.nl", security_email="sram-beheer@surf.nl",
                       override_access_allowed_all_connections=True, automatic_connection_allowed=True,
                       allow_restricted_orgs=True,
-                      access_allowed_for_all=True, sirtfi_compliant=True, research_scholarship_compliant=True,
-                      code_of_conduct_compliant=True, ldap_enabled=False)
+                      access_allowed_for_all=True, ldap_enabled=False)
 
     demo_rp = Service(entity_id="APP-18DE6298-7BDD-4CFA-9399-E1CC62E8DE05",
                       name=service_sram_demo_sp, abbreviation="sram_demorp", description="Generic SRAM demo rp",
@@ -432,7 +429,6 @@ def seed(db, app_config, skip_seed=False):
                       override_access_allowed_all_connections=False, automatic_connection_allowed=True,
                       allow_restricted_orgs=True,
                       access_allowed_for_all=True,
-                      sirtfi_compliant=True, research_scholarship_compliant=True, code_of_conduct_compliant=True,
                       ldap_enabled=False)
 
     persist_instance(db, mail, wireless, cloud, storage, wiki, network, service_ssh, uuc_scheduler,
@@ -766,8 +762,7 @@ def seed(db, app_config, skip_seed=False):
                                          contact_email="contact@gpt.org", support_email="support@gpt.org",
                                          security_email="security@gpt.org", privacy_policy="https://privacy_policy.org",
                                          accepted_user_policy="https://accepted_user_policy.org",
-                                         code_of_conduct_compliant=True, sirtfi_compliant=True,
-                                         research_scholarship_compliant=True, status="open", comments="Please",
+                                         status="open", comments="Please",
                                          connection_type="openIDConnect",
                                          redirect_urls="https://redirect.org, https://redirect.alternative.org",
                                          requester=sarah)
