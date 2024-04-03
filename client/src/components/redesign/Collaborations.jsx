@@ -181,10 +181,11 @@ export default class Collaborations extends React.PureComponent {
         this.props.history.push(`/collaborations/${collaboration.id}`);
     };
 
-    filters = (filterOptions, filterValue, unitFilterOptions, unitFilterValue) => {
+    filters = (organisation, filterOptions, filterValue, unitFilterOptions, unitFilterValue) => {
         return (
             <div className={"collaboration-label-filter-container"}>
-                <div className="collaboration-label-filter">
+                {(!organisation || unitFilterOptions.length > 1) &&
+                    <div className="collaboration-label-filter">
                     <Select
                         className={"collaboration-label-filter-select"}
                         value={unitFilterValue}
@@ -194,8 +195,8 @@ export default class Collaborations extends React.PureComponent {
                         isSearchable={false}
                         isClearable={false}
                     />
-                </div>
-                <div className="collaboration-label-filter">
+                </div>}
+                {(!organisation || filterOptions.length > 1) &&<div className="collaboration-label-filter">
                     <Select
                         className={"collaboration-label-filter-select"}
                         value={filterValue}
@@ -205,7 +206,7 @@ export default class Collaborations extends React.PureComponent {
                         isSearchable={false}
                         isClearable={false}
                     />
-                </div>
+                </div>}
             </div>
         );
     }
@@ -275,6 +276,8 @@ export default class Collaborations extends React.PureComponent {
                 }
             });
         }
+        const displayUnitColumn = !organisation || unitFilterOptions.length > 1;
+        const displayLabelColumn = !organisation || filterOptions.length > 1;
         columns.push(
             {
                 nonSortable: true,
@@ -284,13 +287,13 @@ export default class Collaborations extends React.PureComponent {
             },
             {
                 key: "name",
-                class: serviceKey,
+                class: `${serviceKey} ${displayLabelColumn ? "" : "no-labels"} ${displayUnitColumn ? "" : "no-units"}`,
                 header: I18n.t("models.collaborations.name"),
                 mapper: collaboration => <a href={`/collaborations/${collaboration.id}`}
                                             className={"neutral-appearance"}
                                             onClick={this.openCollaboration(collaboration)}>{collaboration.name}</a>
             },
-            {
+            displayUnitColumn ? {
                 key: "units",
                 class: "units",
                 header: I18n.t("units.column"),
@@ -300,8 +303,8 @@ export default class Collaborations extends React.PureComponent {
                         .map((unit, index) => <span key={index} className="chip-container">
                         {unit.name}</span>)}
                 </div>
-            },
-            {
+            } : null,
+            displayLabelColumn ? {
                 key: organisation ? "tagValues" : "organisation__name",
                 class: serviceKey,
                 header: organisation ? I18n.t("collaboration.tags") : I18n.t("models.serviceCollaborations.organisationName"),
@@ -309,7 +312,7 @@ export default class Collaborations extends React.PureComponent {
                     .sort((t1, t2) => t1.tag_value.localeCompare(t2.tag_value))
                     .map((tag, index) => <span key={index}
                                                className={"collaboration_tag"}>{tag.tag_value}</span>) : collaboration.organisation.name
-            },
+            } : null,
             {
                 key: "role",
                 class: serviceKey,
@@ -324,6 +327,7 @@ export default class Collaborations extends React.PureComponent {
             },
             {
                 key: "expiry_date",
+                class: `expiry_date ${serviceKey} ${displayLabelColumn ? "" : "no-labels"} ${displayUnitColumn ? "" : "no-units"}`,
                 header: I18n.t("collaboration.expiryDate"),
                 mapper: collaboration => {
                     if (collaboration.expiry_date) {
@@ -353,6 +357,7 @@ export default class Collaborations extends React.PureComponent {
             },
             {
                 key: "last_activity_date",
+                class: `last_activity_date ${serviceKey} ${displayLabelColumn ? "" : "no-labels"} ${displayUnitColumn ? "" : "no-units"}`,
                 header: I18n.t("collaboration.lastActivityDate"),
                 mapper: collaboration => {
                     const today = new Date().getTime();
@@ -397,10 +402,10 @@ export default class Collaborations extends React.PureComponent {
                           inputFocus={true}
                           title={`${I18n.t("home.tabs.collaborations")} (${collaborations.length})`}
                           rowLinkMapper={() => this.openCollaboration}
-                          columns={columns}
+                          columns={columns.filter(col => !isEmpty(col))}
                           onHover={true}
                           newLabel={newLabel}
-                          filters={this.filters(filterOptions, filterValue, unitFilterOptions, unitFilterValue)}
+                          filters={this.filters(organisation, filterOptions, filterValue, unitFilterOptions, unitFilterValue)}
                           actionHeader={"collaboration-services"}
                           actions={serviceModule ? this.actionButtons(selectedCollaborations, collaborationAdminEmails, collaborations) : null}
                           showNew={mayCreateCollaborations || mayRequestCollaboration}
