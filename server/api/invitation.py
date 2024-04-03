@@ -344,6 +344,18 @@ def delete_invitation(invitation_id):
     return delete(Invitation, invitation_id)
 
 
+@invitations_api.route("/delete_by_hash/<hash>", methods=["DELETE"], strict_slashes=False)
+@json_endpoint
+def delete_by_hash(hash):
+    invitation = Invitation.query.filter(Invitation.hash == hash).one()
+    collaboration = invitation.collaboration
+
+    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
+
+    db.session.delete(invitation)
+    return {}, 204
+
+
 @invitations_api.route("/v1/<external_identifier>", strict_slashes=False)
 @swag_from("../swagger/public/paths/get_invitation_by_identifier.yml")
 @json_endpoint

@@ -603,6 +603,10 @@ export function invitationByHash(hash, expand = false) {
     return fetchJson(`/api/invitations/find_by_hash?hash=${hash}${expand ? "&expand=True" : ""}`, {}, {}, false);
 }
 
+export function deleteInvitationByHash(hash) {
+    return fetchDelete(`/api/invitations/delete_by_hash/${hash}`);
+}
+
 export function invitationAccept(invitation) {
     return fetchJson("/api/invitations/accept",
         {method: "put", body: JSON.stringify({hash: invitation.hash})}, {}, false);

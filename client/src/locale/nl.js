@@ -2238,6 +2238,8 @@ const nl = {
         expiryDate: "Einddatum",
         expiryDateTooltip: "De einddatum van dit lidmaatschap. Hierna verloopt het lidmaatschap en kan de gebruiker geen gebruikmaken van de diensten van deze samenwerking.",
         update: "Opslaan",
+        alreadyMember: "je bent al een lid van deze samenwerking en je hoeft geen nieuwe uitnodiging te accepteren.",
+        alreadyMemberHeader: "Reeds lid",
         status: {
             name: "Je lidmaatschap",
             active: "Actief",
