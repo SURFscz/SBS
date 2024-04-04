@@ -141,12 +141,17 @@ def invitations_by_hash():
 def invitation_exists_by_email():
     data = current_request.get_json()
     collaboration_id = int(data["collaboration_id"])
+    invitations = invitations_by_email(collaboration_id, data["emails"])
+    return [i.invitee_email for i in invitations], 200
+
+
+def invitations_by_email(collaboration_id, emails):
     invitations = Invitation.query.options(load_only(Invitation.invitee_email)) \
-        .filter(func.lower(Invitation.invitee_email).in_([e.lower() for e in data["emails"]])) \
+        .filter(func.lower(Invitation.invitee_email).in_([e.lower() for e in emails])) \
         .filter(Invitation.collaboration_id == collaboration_id) \
         .filter(Invitation.status == STATUS_OPEN) \
         .all()
-    return [i.invitee_email for i in invitations], 200
+    return invitations
 
 
 @invitations_api.route("/v1/collaboration_invites", methods=["PUT"], strict_slashes=False)
@@ -187,6 +192,11 @@ def collaboration_invites_api():
     expiry_date = parse_date(data.get("invitation_expiry_date"), default_expiry_date())
     membership_expiry_date = parse_date(data.get("membership_expiry_date"))
     invites = list(filter(lambda recipient: bool(email_re.match(recipient)), data["invites"]))
+
+    duplicate_invitations = [i.invitee_email for i in invitations_by_email(collaboration.id, invites)]
+    if duplicate_invitations:
+        raise BadRequest(f"Duplicate email invitations: {duplicate_invitations}")
+
     invites_results = []
 
     group_ids = data.get("groups", [])

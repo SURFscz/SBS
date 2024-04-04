@@ -495,6 +495,15 @@ class TestCollaboration(AbstractTest):
         invitation = Invitation.query.filter(Invitation.invitee_email == "new@example.org").first()
         self.assertEqual("member", invitation.intended_role)
 
+    def test_collaboration_duplicate_invites(self):
+        self.login("urn:john")
+        collaboration_id = self.find_entity_by_name(Collaboration, co_ai_computing_name).id
+        existing_invitee_mail = "curious@ex.org"
+        res = self.put("/api/collaborations/invites",
+                       body={"collaboration_id": collaboration_id, "administrators": [existing_invitee_mail],
+                             "intended_role": "admin"}, response_status_code=400)
+        self.assertTrue(existing_invitee_mail in res["message"])
+
     def test_collaboration_invites_preview(self):
         self.login("urn:john")
         collaboration_id = self._find_by_identifier()["id"]

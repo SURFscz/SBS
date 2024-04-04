@@ -135,8 +135,13 @@ def delete_organisation_invitation(id):
 def invitation_exists_by_email():
     data = current_request.get_json()
     organisation_id = int(data["organisation_id"])
+    invitations = organisation_invitations_by_email(data["emails"], organisation_id)
+    return [i.invitee_email for i in invitations], 200
+
+
+def organisation_invitations_by_email(emails, organisation_id):
     invitations = OrganisationInvitation.query.options(load_only(OrganisationInvitation.invitee_email)) \
-        .filter(func.lower(OrganisationInvitation.invitee_email).in_([e.lower() for e in data["emails"]])) \
+        .filter(func.lower(OrganisationInvitation.invitee_email).in_([e.lower() for e in emails])) \
         .filter(OrganisationInvitation.organisation_id == organisation_id) \
         .all()
-    return [i.invitee_email for i in invitations], 200
+    return invitations

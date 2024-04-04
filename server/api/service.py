@@ -8,6 +8,7 @@ from werkzeug.exceptions import Forbidden, BadRequest
 
 from server.api.base import json_endpoint, query_param, emit_socket
 from server.api.ipaddress import validate_ip_networks
+from server.api.service_invitation import service_invitations_by_email
 from server.auth.secrets import generate_token, generate_ldap_password_with_hash
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
     is_organisation_admin_or_manager, is_application_admin, confirm_service_admin, \
@@ -505,6 +506,10 @@ def service_invites():
 
     service = db.session.get(Service, service_id)
     user = db.session.get(User, current_user_id())
+
+    duplicate_invitations = [i.invitee_email for i in service_invitations_by_email(administrators, service_id)]
+    if duplicate_invitations:
+        raise BadRequest(f"Duplicate email invitations: {duplicate_invitations}")
 
     for administrator in administrators:
         invitation = ServiceInvitation(hash=generate_token(),

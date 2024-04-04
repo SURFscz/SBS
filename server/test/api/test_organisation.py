@@ -1,7 +1,8 @@
 from server.db.db import db
 from server.db.domain import Organisation, OrganisationInvitation, User, JoinRequest
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
-from server.test.seed import (unihard_name, unifra_name, schac_home_organisation_unihar, schac_home_organisation_example,
+from server.test.seed import (unihard_name, unifra_name, schac_home_organisation_unihar,
+                              schac_home_organisation_example,
                               read_image, unihard_secret, user_jane_name, unihard_short_name, unihard_unit_support_name)
 
 
@@ -199,7 +200,7 @@ class TestOrganisation(AbstractTest):
 
         organisation["schac_home_organisations"] = [
             {"name": "rug.nl"},  # new
-            {"name": orig_sho}   # identical to before
+            {"name": orig_sho}  # identical to before
         ]
         self.put("/api/organisations", body=organisation)
 
@@ -262,7 +263,8 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(False, res)
 
     def test_organisation_schac_home_exists(self):
-        res = self.get("/api/organisations/schac_home_exists", query_data={"schac_home": schac_home_organisation_unihar})
+        res = self.get("/api/organisations/schac_home_exists",
+                       query_data={"schac_home": schac_home_organisation_unihar})
         self.assertEqual(schac_home_organisation_unihar, res)
 
         uuc_id = self.find_entity_by_name(Organisation, unihard_name).id
@@ -331,7 +333,8 @@ class TestOrganisation(AbstractTest):
             post_count = OrganisationInvitation.query.count()
             self.assertEqual(2, len(outbox))
             self.assertTrue(
-                f"You have been invited by John Doe to become manager in organisation '{unihard_name}'" in outbox[0].html)
+                f"You have been invited by John Doe to become manager in organisation '{unihard_name}'" in outbox[
+                    0].html)
             self.assertEqual(pre_count + 2, post_count)
 
     def test_organisation_invites_with_bogus_intended_role(self):
@@ -349,6 +352,15 @@ class TestOrganisation(AbstractTest):
             .filter(OrganisationInvitation.invitee_email == "new@example.org").first()
         self.assertEqual("manager", invitation.intended_role)
         self.assertEqual(2, len(invitation.units))
+
+    def test_organisation_duplicate_invites(self):
+        self.login("urn:john")
+        organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
+        email = "roger@example.org"
+        res = self.put("/api/organisations/invites",
+                       body={"organisation_id": organisation_id, "administrators": [email], "message": "Please join"},
+                       response_status_code=400)
+        self.assertTrue(email in res["message"])
 
     def test_organisation_save_with_invites(self):
         pre_count = OrganisationInvitation.query.count()
