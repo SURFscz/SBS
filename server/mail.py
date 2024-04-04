@@ -37,8 +37,7 @@ class MailMan(Mail):
         return self
 
     def __enter__(self):
-        if not hasattr(self.state, 'outbox') or not getattr(self.state, 'outbox'):
-            self.state.outbox = []
+        self.state.outbox = []
         return self.state.outbox
 
     def __exit__(self, exc_type, exc_val, exc_tb):
