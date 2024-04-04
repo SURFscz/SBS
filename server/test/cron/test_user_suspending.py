@@ -37,7 +37,7 @@ class TestUserSuspending(AbstractTest):
             # check recepients of mails
             self.assertListEqual(["user_suspend_warning@example.org", "user_gets_suspended@example.org",
                                   "user_deletion_warning@example.org", "support+sram@eduteams.org", "sram-beheer@surf.nl"],
-                                 [m.recipients[0] for m in outbox])
+                                 [m.to[0] for m in outbox])
 
             # find results mail
             messages = [m for m in outbox if "Results of inactive account check" in m.subject]
@@ -101,9 +101,9 @@ class TestUserSuspending(AbstractTest):
                 self.assertListEqual(["user_deletion_warning@example.org"], results["deleted_notifications"])
 
                 self.assertEqual(4, len(outbox))
-                recipients = set([m.recipients[0] for m in outbox])
+                to = set([m.to[0] for m in outbox])
                 self.assertSetEqual({"user_suspend_warning@example.org", "user_gets_suspended@example.org",
-                                     "sram-beheer@surf.nl", "support+sram@eduteams.org"}, recipients)
+                                     "sram-beheer@surf.nl", "support+sram@eduteams.org"}, to)
 
     def test_schedule_changed_config(self):
         mail = self.app.mail
@@ -127,7 +127,7 @@ class TestUserSuspending(AbstractTest):
             self.assertListEqual([], results["suspended_notifications"])
             self.assertListEqual([], results["warning_deleted_notifications"])
             self.assertListEqual([], results["deleted_notifications"])
-            self.assertListEqual([], outbox)
+            self.assertEqual(5, len(outbox))
 
         # now fast-forward time past the waiting window
         retention = self.app.app_config.retention

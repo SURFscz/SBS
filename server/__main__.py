@@ -3,10 +3,9 @@
 # see https://github.com/gevent/gevent/issues/1016#issuecomment-328529454
 import eventlet
 
-from server.mail import MailMan
-
 eventlet.monkey_patch(thread=False)
 
+from server.mail import MailMan
 import logging
 from sqlalchemy.orm import sessionmaker
 import os
@@ -17,7 +16,6 @@ from logging.handlers import TimedRotatingFileHandler
 from server.api.mock_user import mock_user_api
 import yaml
 from flask import Flask, jsonify, request as current_request
-from flask_mailman import Mail
 from flask_migrate import Migrate
 from flask_socketio import SocketIO
 from munch import munchify
