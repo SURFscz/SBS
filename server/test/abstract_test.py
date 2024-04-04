@@ -44,11 +44,6 @@ class AbstractTest(TestCase):
             seed(db, self.app.app_config)
             del os.environ["SEEDING"]
 
-    def tearDown(self):
-        with self.app.app_context():
-            if hasattr(self.app.mail, "outbox") and getattr(self.app.mail, "outbox"):
-                self.app.mail.outbox.clear()
-
     def create_app(self):
         return AbstractTest.app
 

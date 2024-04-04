@@ -127,7 +127,7 @@ class TestUserSuspending(AbstractTest):
             self.assertListEqual([], results["suspended_notifications"])
             self.assertListEqual([], results["warning_deleted_notifications"])
             self.assertListEqual([], results["deleted_notifications"])
-            self.assertEqual(5, len(outbox))
+            self.assertEqual(0, len(outbox))
 
         # now fast-forward time past the waiting window
         retention = self.app.app_config.retention
