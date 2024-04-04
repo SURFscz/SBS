@@ -133,7 +133,6 @@ def _audit_trail():
 
 def send_error_mail(tb):
     mail_conf = current_app.app_config.mail
-    # if mail_conf.send_exceptions and not os.environ.get("TESTING"):
     if mail_conf.send_exceptions:
         if "user" in session and "id" in session["user"]:
             user_id = db.session.get(User, current_user_id()).email
