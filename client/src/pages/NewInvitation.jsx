@@ -210,9 +210,9 @@ class NewInvitation extends React.Component {
     };
 
     preview = disabledSubmit => (<div>
-            <div className={"preview-mail"} dangerouslySetInnerHTML={{__html: this.state.htmlPreview}}/>
-            {this.renderActions(disabledSubmit)}
-        </div>);
+        <div className={"preview-mail"} dangerouslySetInnerHTML={{__html: this.state.htmlPreview}}/>
+        {this.renderActions(disabledSubmit)}
+    </div>);
 
     selectedGroupsChanged = selectedOptions => {
         if (selectedOptions === null) {
@@ -236,7 +236,8 @@ class NewInvitation extends React.Component {
                 <ErrorIndicator msg={I18n.t("invitation.requiredEmail")}/>}
 
             {!isEmpty(existingInvitations) && <ErrorIndicator
-                msg={I18n.t("invitation.existingInvitations", {emails: splitListSemantically(existingInvitations, I18n.t("service.compliancySeparator"))})}/>}
+                msg={I18n.t(`invitation.${existingInvitations.length === 1 ? "existingInvitation" : "existingInvitations"}`,
+                    {emails: splitListSemantically(existingInvitations, I18n.t("service.compliancySeparator"))})}/>}
 
             <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
                          options={this.intendedRolesOptions}
@@ -284,10 +285,10 @@ class NewInvitation extends React.Component {
         </div>;
 
     renderActions = disabledSubmit => (<section className="actions">
-            <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-            <Button disabled={disabledSubmit} txt={I18n.t("invitation.invite")}
-                    onClick={this.submit}/>
-        </section>);
+        <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+        <Button disabled={disabledSubmit} txt={I18n.t("invitation.invite")}
+                onClick={this.submit}/>
+    </section>);
 
     render() {
         const {

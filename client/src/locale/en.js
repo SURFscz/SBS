@@ -1441,6 +1441,7 @@ const en = {
         groupsTooltip: "Select the groups the invitees become member of.",
         groups: "Group membership",
         requiredEmail: "At least one email address is required for an invitation for a collaboration.",
+        existingInvitation: "There is already an outstanding invitation for: {{emails}}",
         existingInvitations: "There are already outstanding invitations for: {{emails}}",
         requiredRole: "You must choose the intended role for the collaboration membership.",
         requiredExpiryDate: "The expiry date for an invitation is required",

@@ -191,7 +191,8 @@ class NewOrganisationInvitation extends React.Component {
                 msg={I18n.t("organisationInvitation.requiredAdministrator")}/>}
 
             {!isEmpty(existingInvitations) && <ErrorIndicator
-                msg={I18n.t("invitation.existingInvitations", {emails: splitListSemantically(existingInvitations, I18n.t("service.compliancySeparator"))})}/>}
+                msg={I18n.t(`invitation.${existingInvitations.length === 1 ? "existingInvitation" : "existingInvitations"}`,
+                    {emails: splitListSemantically(existingInvitations, I18n.t("service.compliancySeparator"))})}/>}
 
             <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
                          options={this.intendedRolesOptions}
