@@ -13,7 +13,7 @@ from werkzeug.exceptions import BadRequest, Forbidden, MethodNotAllowed, NotFoun
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars, emit_socket
 from server.api.exceptions import APIBadRequest
-from server.api.invitation import email_re
+from server.api.invitation import email_re, invitations_by_email
 from server.api.service_group import create_service_groups
 from server.api.unit import validate_units
 from server.auth.secrets import generate_token
@@ -427,6 +427,11 @@ def collaboration_invites():
     membership_expiry_date = data.get("membership_expiry_date")
     if membership_expiry_date:
         membership_expiry_date = datetime.fromtimestamp(data.get("membership_expiry_date"), tz=timezone.utc)
+
+    duplicate_invitations = [i.invitee_email for i in invitations_by_email(collaboration_id, administrators)]
+    if duplicate_invitations:
+        raise BadRequest(f"Duplicate email invitations: {duplicate_invitations}")
+
     for administrator in administrators:
         invitation = Invitation(hash=generate_token(), message=message, invitee_email=administrator,
                                 collaboration=collaboration, user=user, status="open",

@@ -7,10 +7,11 @@ from sqlalchemy import or_
 from sqlalchemy import text, func, bindparam, String
 from sqlalchemy.orm import load_only
 from sqlalchemy.orm import selectinload
-from werkzeug.exceptions import Forbidden
+from werkzeug.exceptions import Forbidden, BadRequest
 
 from server.api.base import emit_socket, organisation_by_user_schac_home
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
+from server.api.organisation_invitation import organisation_invitations_by_email
 from server.api.unit import validate_units
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_write_access, current_user_id, is_application_admin, \
@@ -321,6 +322,11 @@ def organisation_invites():
     user = db.session.get(User, current_user_id())
 
     valid_units = validate_units(data, organisation)
+
+    duplicate_invitations = [i.invitee_email for i in
+                             organisation_invitations_by_email(administrators, organisation_id)]
+    if duplicate_invitations:
+        raise BadRequest(f"Duplicate email invitations: {duplicate_invitations}")
 
     for administrator in administrators:
         invitation = OrganisationInvitation(hash=generate_token(),

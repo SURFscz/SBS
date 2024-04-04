@@ -126,6 +126,14 @@ class TestService(AbstractTest):
             self.assertEqual("admin", invitation.intended_role)
             self.assertIsNotNone(invitation.expiry_date)
 
+    def test_service_invites_duplicate_mail(self):
+        self.login("urn:john")
+        service_id = self.find_entity_by_name(Service, service_cloud_name).id
+        mail = "admin@cloud.org"
+        res = self.put("/api/services/invites", body={"service_id": service_id, "administrators": [mail]},
+                       response_status_code=400)
+        self.assertTrue(mail in res["message"])
+
     def test_service_update(self):
         service = self._find_by_name(service_cloud_name)
         service["name"] = "changed"

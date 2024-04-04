@@ -157,24 +157,28 @@ class TestInvitation(AbstractTest):
             self.assertListEqual(["q@demo.com"], [inv["email"] for inv in res])
 
     def test_collaboration_invites_api_bad_request(self):
-        self.put("/api/invitations/v1/collaboration_invites",
-                 body={
-                     "invites": ["q@demo.com"]
-                 },
-                 headers={"Authorization": f"Bearer {unihard_secret}"},
-                 response_status_code=400,
-                 with_basic_auth=False)
+        res = self.put("/api/invitations/v1/collaboration_invites", body={"invites": ["q@demo.com"]},
+                       headers={"Authorization": f"Bearer {unihard_secret}"}, response_status_code=400,
+                       with_basic_auth=False)
+        self.assertTrue("Exactly one of short_name and collaboration_identifier is required" in res["message"])
 
     def test_collaboration_invites_api_bad_request_2(self):
-        self.put("/api/invitations/v1/collaboration_invites",
-                 body={
-                     "collaboration_identifier": co_ai_computing_uuid,
-                     "short_name": co_ai_computing_short_name,
-                     "invites": ["q@demo.com"]
-                 },
-                 headers={"Authorization": f"Bearer {unihard_secret}"},
-                 response_status_code=400,
-                 with_basic_auth=False)
+        res = self.put("/api/invitations/v1/collaboration_invites",
+                       body={"collaboration_identifier": co_ai_computing_uuid, "short_name": co_ai_computing_short_name,
+                             "invites": ["q@demo.com"]}, headers={"Authorization": f"Bearer {unihard_secret}"},
+                       response_status_code=400, with_basic_auth=False)
+        self.assertTrue("Exactly one of short_name and collaboration_identifier is required" in res["message"])
+
+    def test_collaboration_invites_api_duplicate_mails(self):
+        mail = "curious@ex.org"
+        res = self.put("/api/invitations/v1/collaboration_invites",
+                       body={
+                           "short_name": co_ai_computing_short_name,
+                           "invites": [mail]
+                       },
+                       headers={"Authorization": f"Bearer {unihard_secret}"},
+                       with_basic_auth=False, response_status_code=400)
+        self.assertTrue(mail in res["message"])
 
     def _do_test_collaboration_invites_api(self):
         mail = self.app.mail
