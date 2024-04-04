@@ -20,7 +20,7 @@ class TestScimSweepServices(AbstractTest):
     def test_schedule_sweep(self):
         # wait to make sure time has passed since initialization;
         # otherwise time checks in scim run check will fail
-        sleep(3)
+        sleep(5)
 
         remote_groups = json.loads(read_file("test/scim/sweep/remote_groups_unchanged.json"))
         remote_users = json.loads(read_file("test/scim/sweep/remote_users_unchanged.json"))
@@ -48,7 +48,7 @@ class TestScimSweepServices(AbstractTest):
     def test_schedule_sweep_fail(self):
         # wait to make sure time has passed since initialization;
         # otherwise time checks in scim run check will fail
-        sleep(3)
+        sleep(5)
 
         with responses.RequestsMock(assert_all_requests_are_fired=False) as rsps:
             rsps.add(responses.GET, "http://localhost:8080/api/scim_mock/Users", status=503,
