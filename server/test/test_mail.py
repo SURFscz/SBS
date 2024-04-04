@@ -61,7 +61,7 @@ class TestMail(AbstractTest):
                                  headers={"Authorization": f"Bearer {unihard_secret}"},
                                  data=json.dumps({}),
                                  content_type="application/json")
-                self.assertEquals(0, len(outbox))
+                self.assertEqual(0, len(outbox))
         finally:
             self.app.app_config.mail.send_exceptions = False
 
