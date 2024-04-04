@@ -56,11 +56,12 @@ class TestMail(AbstractTest):
         try:
             self.app.app_config.mail.send_exceptions = True
             mail = self.app.mail
-            self.client.post("/api/collaborations/v1",
-                             headers={"Authorization": f"Bearer {unihard_secret}"},
-                             data=json.dumps({}),
-                             content_type="application/json")
-            self.assertFalse(bool(mail.outbox))
+            with mail.record_messages() as outbox:
+                self.client.post("/api/collaborations/v1",
+                                 headers={"Authorization": f"Bearer {unihard_secret}"},
+                                 data=json.dumps({}),
+                                 content_type="application/json")
+                self.assertEquals(0, len(outbox))
         finally:
             self.app.app_config.mail.send_exceptions = False
 
@@ -70,15 +71,15 @@ class TestMail(AbstractTest):
             mail = self.app.mail
             self.login("urn:john")
             me = self.get("/api/users/me")
-            self.post("/api/organisations",
-                      body={"name": "new_organisation",
-                            "short_name": "https://ti1"},
-                      headers={CSRF_TOKEN: me[CSRF_TOKEN]},
-                      with_basic_auth=False)
-            self.assertEqual(1, len(mail.outbox))
-            mail_msg = mail.outbox[0]
-            alternatives_ = mail_msg.alternatives[0][0]
-            self.assertTrue("<p>User John Doe has created a(n) Organisation"
-                            " on environment <strong>local</strong>" in alternatives_)
+            with mail.record_messages() as outbox:
+                self.post("/api/organisations",
+                          body={"name": "new_organisation",
+                                "short_name": "https://ti1"},
+                          headers={CSRF_TOKEN: me[CSRF_TOKEN]},
+                          with_basic_auth=False)
+                self.assertEqual(1, len(outbox))
+                mail_msg = outbox[0]
+                self.assertTrue("<p>User John Doe has created a(n) Organisation"
+                                " on environment <strong>local</strong>" in mail_msg.html)
         finally:
             self.app.app_config.mail.audit_trail_notifications_enabled = False
