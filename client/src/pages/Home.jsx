@@ -1,6 +1,5 @@
 import React from "react";
 import "./Home.scss";
-import sheep from "./sram_sheep.ogg";
 import I18n from "../locale/I18n";
 import {ReactComponent as Logo} from "../icons/ram.svg";
 import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
@@ -32,7 +31,8 @@ class Home extends React.Component {
             tabs: [],
             role: ROLES.USER,
             loading: true,
-            tab: "organisations"
+            tab: "organisations",
+            winking: false
         };
     }
 
@@ -227,9 +227,14 @@ class Home extends React.Component {
             this.props.history.replace(`/home/${name}`));
     }
 
+    winky = () => {
+        this.setState({winking: true});
+        setTimeout(() => this.setState({winking: false}), 850);
+    }
+
 
     render() {
-        const {tabs, loading, tab} = this.state;
+        const {tabs, loading, tab, winking} = this.state;
         if (loading) {
             return <SpinnerField/>;
         }
@@ -238,8 +243,9 @@ class Home extends React.Component {
             && user.service_memberships === 0;
         return (
             <div className="mod-home-container">
-                {(user.admin || noMemberships) && <UnitHeader obj={({name: I18n.t("home.sram"), svg: Logo})}
-                                                              svgClick={() => new Audio(sheep).play()}/>}
+                {(user.admin || noMemberships) &&
+                    <UnitHeader obj={({name: I18n.t("home.sram"), svg: Logo, style: winking ? "wink" : ""})}
+                                svgClick={() => this.winky()}/>}
                 <Tabs standAlone={!user.admin} activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}
                 </Tabs>

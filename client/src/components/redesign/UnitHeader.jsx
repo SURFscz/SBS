@@ -59,7 +59,7 @@ class UnitHeader extends React.Component {
         return (
             <div className="unit-header-container">
                 <div className="unit-header">
-                    <div className="image">
+                    <div className={`image ${obj.style || ""}`}>
                         {obj.logo && <Logo src={obj.logo}/>}
                         {obj.svg && <obj.svg onClick={() => svgClick && svgClick()}/>}
                         {obj.icon && <FontAwesomeIcon icon={obj.icon}/>}
