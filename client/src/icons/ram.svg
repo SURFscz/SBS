@@ -37,8 +37,8 @@
           fill="#8d9ba3"/>
     <ellipse cx="24" cy="28.2" rx="4.9" ry="4.7" fill="#fff"/>
     <ellipse cx="24" cy="28.2" rx="3.4" ry="3.3" fill="#3e4347"/>
-    <ellipse cx="39.7" cy="28.2" rx="4.9" ry="4.7" fill="#fff"/>
-    <g fill="#3e4347">
+    <ellipse class="right-eye" cx="39.7" cy="28.2" rx="4.9" ry="4.7"/>
+    <g class="right-eye">
         <ellipse cx="39.7" cy="28.2" rx="3.4" ry="3.3"/>
         <path d="m24.6 37.3c3.5.6 3.7.6 5.4 4"/>
         <path d="m39.2 37.3c-3.5.6-3.7.6-5.4 4"/>
