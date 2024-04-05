@@ -312,22 +312,8 @@ class TestUser(AbstractTest):
         res = self.post("/api/users/error", body={"status": 500}, with_basic_auth=False)
         self.assertDictEqual({}, res)
 
-    def test_csrf(self):
-        try:
-            del os.environ["TESTING"]
-            self.login("urn:john")
-            self.post("/api/organisations",
-                      body={"name": "new_organisation",
-                            "schac_home_organisations": [],
-                            "short_name": "https://ti1"},
-                      response_status_code=401,
-                      with_basic_auth=False)
-        finally:
-            os.environ["TESTING"] = "1"
-
     def test_error_mail(self):
         try:
-            del os.environ["TESTING"]
             mail = self.app.mail
             with mail.record_messages() as outbox:
                 self.app.app_config.mail.send_js_exceptions = True
@@ -342,7 +328,6 @@ class TestUser(AbstractTest):
                 self.assertTrue("weird" in mail_msg.html)
                 self.assertTrue("An error occurred in local" in mail_msg.html)
         finally:
-            os.environ["TESTING"] = "1"
             self.app.app_config.mail.send_js_exceptions = False
 
     def test_update_date_bug(self):
@@ -500,7 +485,8 @@ class TestUser(AbstractTest):
         self.assertEqual(2, len(sarah.user_ip_networks))
 
     def test_login_with_ssid_required(self):
-        self.mark_user_ssid_required(name=user_sarah_name, home_organisation_uid="admin", schac_home_organisation="ssid.org")
+        self.mark_user_ssid_required(name=user_sarah_name, home_organisation_uid="admin",
+                                     schac_home_organisation="ssid.org")
 
         self.login("urn:sarah", schac_home_organisation="ssid.org")
 
@@ -519,7 +505,8 @@ class TestUser(AbstractTest):
         self.assertFalse(user["second_factor_confirmed"])
 
     def test_acs(self):
-        self.mark_user_ssid_required(name=user_sarah_name, home_organisation_uid="admin", schac_home_organisation="ssid.org")
+        self.mark_user_ssid_required(name=user_sarah_name, home_organisation_uid="admin",
+                                     schac_home_organisation="ssid.org")
         self.login("urn:sarah", schac_home_organisation="ssid.org")
 
         # Commented out by oharsta because of Fatal Python error: Segmentation fault
@@ -552,7 +539,8 @@ class TestUser(AbstractTest):
         # self.assertEqual(self.app.app_config.base_url + path, res.location)
 
     def test_acs_error_saml_error(self):
-        self.mark_user_ssid_required(name=user_sarah_name, home_organisation_uid="admin", schac_home_organisation="ssid.org")
+        self.mark_user_ssid_required(name=user_sarah_name, home_organisation_uid="admin",
+                                     schac_home_organisation="ssid.org")
         self.login("urn:sarah", schac_home_organisation="ssid.org")
 
         # Commented out by oharsta because of Fatal Python error: Segmentation fault

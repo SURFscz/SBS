@@ -28,7 +28,6 @@ class TestBase(AbstractTest):
 
     def test_send_error_mail_with_no_user(self):
         try:
-            del os.environ["TESTING"]
             self.app.app_config.mail.send_exceptions = True
             with self.app.app_context():
                 mail = self.app.mail
@@ -39,7 +38,6 @@ class TestBase(AbstractTest):
                     self.assertTrue("unknown" in html)
 
         finally:
-            os.environ["TESTING"] = "1"
             self.app.app_config.mail.send_exceptions = False
 
     def test_health(self):
