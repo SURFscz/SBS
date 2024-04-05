@@ -1,6 +1,5 @@
 import itertools
 import json
-import os
 import subprocess
 import tempfile
 import unicodedata
@@ -36,7 +35,6 @@ from server.logger.context_logger import ctx_logger
 from server.mail import mail_error, mail_account_deletion
 from server.scim.events import broadcast_user_deleted, broadcast_user_changed
 from server.tools import dt_now
-
 
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 
