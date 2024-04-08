@@ -163,7 +163,7 @@ See the /config/saml_test configuration and the https://github.com/SURFscz/SCZ-d
 
 ### [flask](#flask)
 
-To open a flask terminal session:
+To open a Flask terminal session:
 
 ```bash
 source .venv/bin/activate
