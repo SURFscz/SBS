@@ -117,7 +117,7 @@ class Home extends React.Component {
             if (role === ROLES.USER) {
                 tab = tabSuggestion;
             }
-            if (tabs.length === 1 && tab === "my_requests" && !hasAnyRoles) {
+            if (tabs.length === 0 || (tabs.length === 1 && tab === "my_requests" && !hasAnyRoles)) {
                 this.props.history.push("/welcome");
                 return;
             }
