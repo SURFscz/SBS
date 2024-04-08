@@ -895,7 +895,7 @@ class Groups extends React.Component {
                     <a href={`/services/${group.service_group.service_id}`}
                        className={"neutral-appearance"}
                        onClick={this.openService(group.service_group)}>
-                        {group.service_group.service.name}</a> : ""
+                        {group.service_group.service.name}</a> : group.service_group ? <span>{group.service_group.service.name}</span> : ""
             },
             {
                 key: "memberCount",
