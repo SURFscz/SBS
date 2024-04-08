@@ -123,5 +123,8 @@ def valid_tag_label(tag_value: Optional[str]) -> bool:
     return False
 
 
-def split_list_semantically(arr):
+def split_user_affiliations(user):
+    affiliations = (user.affiliation.split(",") if user.affiliation else []) + (
+        user.scoped_affiliation.split(",") if user.scoped_affiliation else [])
+    arr = [affiliation.strip() for affiliation in affiliations]
     return f"{', '.join(arr[:-1])} and {arr[-1]}" if len(arr) > 1 else ",".join(arr)

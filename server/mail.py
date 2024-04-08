@@ -11,7 +11,7 @@ from flask_mailman import EmailMultiAlternatives
 
 from server.auth.security import current_user_id
 from server.db.db import db
-from server.db.defaults import calculate_expiry_period, split_list_semantically
+from server.db.defaults import calculate_expiry_period, split_user_affiliations
 from server.db.domain import User, UserMail
 from server.db.models import flatten
 from server.logger.context_logger import ctx_logger
@@ -352,8 +352,7 @@ def mail_suspend_notification(context, recipients, is_warning, is_suspension):
         raise Exception("We don't send mails on account deletion")
     collaborations = [m.collaboration for m in user.collaboration_memberships]
     services = flatten([co.services for co in collaborations])
-    affs = (user.affiliation if user.affiliation else []) + (user.scoped_affiliation if user.scoped_affiliation else [])
-    context = {**context, "affiliations": split_list_semantically(affs),
+    context = {**context, "affiliations": split_user_affiliations(user),
                "collaborations": collaborations, "services": services}
     return _do_send_mail(
         subject="SURF SRAM: suspend notification",
