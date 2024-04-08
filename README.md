@@ -51,7 +51,14 @@ python -m smtpd -n -c DebuggingServer localhost:1025
 ```
 
 If you want the emails to be opened in the browser when developing add the `OPEN_MAIL_IN_BROWSER=1` to your environment.
-Or even better, use https://mailpit.axllent.org/ and capture all emails send. 
+Or even better, use https://mailpit.axllent.org/ and capture all emails send. You can see all mails delivered at
+http://0.0.0.0:8025/ when you have the following configuration in you config file:
+
+```yaml
+mail:
+  host: 0.0.0.0
+  port: 1025
+```
 
 #### [Client](#client)
 
@@ -171,7 +178,6 @@ Because of eventlet the debugger in PyCharm sometimes crashes. Use the following
 ALLOW_MOCK_USER_API=1;
 CONFIG=config/acc_config.yml;
 EVENTLET_HUB=poll;
-OPEN_MAIL_IN_BROWSER=1;
 PROFILE=local;
 PYDEVD_USE_CYTHON=NO;
 PYDEVD_USE_FRAME_EVAL=NO;
