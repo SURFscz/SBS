@@ -2115,7 +2115,8 @@ const nl = {
         serviceGroupConnectedNotDeletable: "Dienstgroep van een gekoppelde dienst mag niet worden verwijderd; ontkoppel de dienst eerst."
     },
     notFound: {
-        invitationNotFound: "Deze uitnodiging bestaat niet (meer). Waarschijnlijk is de uitnodiging al eerder gebruikt. Vraag aan de uitnodiger of je een nieuwe uitnodiging kunt krijgen.",
+        invitationNotFound: "Deze uitnodiging bestaat niet (meer). Waarschijnlijk is de uitnodiging al eerder gebruikt.</br></br>" +
+            "Vraag aan de uitnodiger of je een nieuwe uitnodiging kunt krijgen.",
         invalidSecondFactorUUID: "De koppeling is verlopen. Ga terug naar de dienst die je probeerde te bereiken en probeer het opnieuw.",
         invalidPamWebSSO: "Je sessie is verlopen. Ga terug naar de service waar je probeert in te loggen en probeer het opnieuw.",
         msg: "Het spijt ons, deze pagina kunnen we niet vinden.</br></br>" +

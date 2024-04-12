@@ -2115,7 +2115,8 @@ const en = {
         serviceGroupConnectedNotDeletable: "It is not allowed to delete a Service group for a service that is currently connected; disconnect the service first."
     },
     notFound: {
-        invitationNotFound: "This invitation does not exist (anymore). The invitation has probably already been used. Ask the person who invited you to send you a new one.",
+        invitationNotFound: "This invitation does not exist (anymore). The invitation has probably already been used.</br></br>" +
+            "Ask the person who invited you to send you a new one.",
         invalidSecondFactorUUID: "The link has expired. Please go back to the service where you we're trying to log in and try again.",
         invalidPamWebSSO: "Your session has expired. Please go back to the service you were trying to log in to and try again.",
         msg: "We can't seem to find that page. Sorry for that.</br></br>" +
