@@ -1937,7 +1937,7 @@ const en = {
         searchPlaceholderServer: "Search in table audit logs (e.g. server side)...",
         runDbSeedConfirmation: "Are you absolutely sure? This will delete all current data",
         runDbSeedInfo: "Delete all data and insert the <strong>TEST</strong> seed",
-        runDbDemoSeedInfo: "Delete all data and insert the <strong>DEMO</strong> seed",
+        runDbDemoSeedInfo: "Delete all data and insert the <strong>TEST+DEMO</strong> seed",
         runDbSeed: "Run",
         runClearAuditLogsConfirmation: "Are you absolutely sure you want to delete all entries from the audit logs?",
         cleanSlate: "Delete everything",
