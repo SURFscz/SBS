@@ -1937,7 +1937,7 @@ const nl = {
         searchPlaceholderServer: "Zoek in tabel audit_logs (e.g. server side)...",
         runDbSeedConfirmation: "Weet je het zeker? Hiermee worden alle huidige gegevens verwijderd",
         runDbSeedInfo: "Verwijder alle gegevens en voeg de <strong>TEST</strong> gegevens toe",
-        runDbDemoSeedInfo: "Verwijder alle gegevens en voeg de <strong>DEMO</strong> gegevens toe",
+        runDbDemoSeedInfo: "Verwijder alle gegevens en voeg de <strong>TEST+DEMO</strong> gegevens toe",
         runDbSeed: "Voer uit",
         runClearAuditLogsConfirmation: "Weet je zeker dat je alle gegevens uit de audit-logs wil verwijderen?",
         cleanSlate: "Verwijder alles",
