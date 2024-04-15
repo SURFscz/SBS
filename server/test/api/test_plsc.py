@@ -48,7 +48,8 @@ class TestPlsc(AbstractTest):
         self.assertListEqual(["255.0.0.1/32", "255.0.0.9/24"],
                              sarah["user_ip_networks"])
         # Edge case due to the seed data - just ensure it does not break
-        self.assertEqual("None", sarah["last_login_date"])
+        # Nobody has a last_login_date == None anymore
+        # self.assertEqual("None", sarah["last_login_date"])
         boss = next(u for u in users_ if u["name"] == user_boss_name)
         self.assertEqual(2, len(boss["accepted_aups"]))
         user_gets_deleted = next(u for u in users_ if u["name"] == "user_gets_deleted")
