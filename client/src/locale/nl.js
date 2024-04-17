@@ -1686,8 +1686,8 @@ const nl = {
         },
         organisation: {
             title: "Organisatie AUP",
-            info: "Je bent geen lid van de organisatie <strong>{{name}}</strong>. Voordat je verder kunt gaan, moet je het beleid voor acceptabel gebruik (AUP) van de organisatie lezen. Bevestig hieronder of je ze accepteert.",
-            check: "Ik ga akkoord met de hierboven genoemde acceptable use policies"
+            info: "Je bent geen lid van de organisatie <strong>{{name}}</strong>. Voordat je verder kunt gaan, moet je de acceptable use policy (AUP) van de organisatie lezen. Bevestig hieronder of je die accepteert.",
+            check: "Ik ga akkoord met de acceptable use policy van deze organisatie"
         }
     },
     collaborationRequest: {

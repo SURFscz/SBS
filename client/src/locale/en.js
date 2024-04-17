@@ -1686,7 +1686,7 @@ const en = {
         },
         organisation: {
             title: "Organisation AUP",
-            info: "You are not a member of organisation <strong>{{name}}</strong>. Before you can continue you must review the AUP of this organisation. Confirm below whether you accept them.",
+            info: "You are not a member of organisation <strong>{{name}}</strong>. Before you can continue you must review the AUP of this organisation. Confirm below whether you accept it.",
             check: "I agree to the organisation acceptable use policy"
         }
     },
