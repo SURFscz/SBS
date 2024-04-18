@@ -25,10 +25,10 @@ class TestSystem(AbstractTest):
         # convert list to proper dict:
         stats = {r["name"]: r["count"] for r in res}
         self.assertEqual(len(res), len(stats.keys()))
-        self.assertEqual(17, stats["users"])
+        self.assertEqual(18, stats["users"])
         self.assertEqual(14, stats["organisations_services"])
         self.assertEqual(2, stats["units"])
-        self.assertEqual(17, stats["aups"])
+        self.assertEqual(18, stats["aups"])
 
     def test_db_seed(self):
         self.get("/api/system/seed", response_status_code=201)
@@ -129,8 +129,8 @@ class TestSystem(AbstractTest):
     def test_validations(self):
         res = self.get("/api/system/validations", response_status_code=200)
         self.assertEqual(2, len(res["organisation_invitations"]))
-        self.assertEqual(1, len(res['services']))
-        self.assertEqual(1, len(res["organisations"]))
+        self.assertEqual(0, len(res['services']))
+        self.assertEqual(0, len(res["organisations"]))
 
     def test_composition(self):
         composition = self.get("/api/system/composition")

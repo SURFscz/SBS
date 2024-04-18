@@ -1,14 +1,17 @@
 #!/opt/sbs/sbs-env/bin/python
 import uuid
+import datetime
 
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
     CollaborationMembership, Group, SchacHomeOrganisation, SshKey, ServiceGroup, \
     ServiceMembership, Tag
 from server.test.seed import read_image, persist_instance, clean_db, seed, schac_home_organisation_unihar
+from server.tools import dt_now
 
 
 def demo_seed(db, app_config):
     clean_db(db)
+    yesterday = dt_now() - datetime.timedelta(days=1)
 
     # start out with the regular test seed
     seed(db, app_config)
@@ -87,7 +90,8 @@ def demo_seed(db, app_config):
             name=user['name'],
             email=f"{user['username']}@{user['schac_home_organisation']}",
             address="Postbus 1234AA",
-            schac_home_organisation=user['schac_home_organisation']
+            schac_home_organisation=user['schac_home_organisation'],
+            last_login_date=yesterday
         )
         persist_instance(db, new_user)
         user_list.append(new_user)
@@ -278,11 +282,14 @@ def demo_seed(db, app_config):
     # create large number of COs and users
     users = []
     for i in range(1, 84):
-        user = User(uid=f"urn:persoon:numero{i:03d}",
-                    name=f"Piet Doe de {i}de",
-                    email=f"pietdoe{i}@example.org",
-                    username=f"pietdoe{i}",
-                    schac_home_organisation=schac_home_organisation_unihar)
+        user = User(
+            uid=f"urn:persoon:numero{i:03d}",
+            name=f"Piet Doe de {i}de",
+            email=f"pietdoe{i}@example.org",
+            username=f"pietdoe{i}",
+            schac_home_organisation=schac_home_organisation_unihar,
+            last_login_date=yesterday
+        )
         users.append(user)
     persist_instance(db, *users)
 

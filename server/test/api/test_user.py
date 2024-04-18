@@ -129,11 +129,11 @@ class TestUser(AbstractTest):
 
         res = self.get("/api/users/search", query_data={"q": "*",
                                                         "collaboration_admins": True})
-        self.assertEqual(3, len(res))
+        self.assertEqual(4, len(res))
 
         res = self.get("/api/users/search", query_data={"q": "*",
                                                         "organisation_admins": True})
-        self.assertEqual(3, len(res))
+        self.assertEqual(4, len(res))
 
     def test_other_not_allowed(self):
         self.get("/api/users/other", query_data={"uid": "urn:mary"}, response_status_code=403)
@@ -446,7 +446,7 @@ class TestUser(AbstractTest):
         self.assertEqual(12, len(res))
 
         res = self.get("/api/users/query", query_data={"q": "@"})
-        self.assertEqual(17, len(res))
+        self.assertEqual(18, len(res))
 
     def test_aup_agreed(self):
         sarah = self.find_entity_by_name(User, user_sarah_name)
