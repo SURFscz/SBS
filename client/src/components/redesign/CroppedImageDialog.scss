@@ -18,6 +18,18 @@
             width: 100%;
         }
 
+        input[type="file"] {
+            &::file-selector-button {
+                cursor: pointer;
+                padding: 5px;
+
+                &:hover {
+                    background-color: var(--sds--palette--support-color--100);
+                    color: var(--sds--palette--support-color--500);
+                }
+            }
+        }
+
         .no-image svg {
             width: 464px;
             height: 348px;
