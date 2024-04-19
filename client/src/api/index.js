@@ -394,6 +394,10 @@ export function allCollaborations() {
     return fetchJson(`/api/collaborations/all`);
 }
 
+export function allCollaborationsOptimized() {
+    return fetchJson(`/api/collaborations/all_optimized`);
+}
+
 export function createCollaboration(collaboration) {
     return postPutJson("/api/collaborations", collaboration, "post", false);
 }
