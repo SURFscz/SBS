@@ -266,22 +266,21 @@ def collaboration_all():
 def collaboration_all_optimized():
     confirm_authorized_api_call()
     sql = text("""
-        SELECT c.id, c.name, c.uuid4, c.expiry_date, c.last_activity_date, 
-        (SELECT GROUP_CONCAT(DISTINCT u.name) FROM units u 
-        INNER JOIN collaboration_units cou ON cou.unit_id = u.id 
-        WHERE cou.collaboration_id = c.id) AS names, 
-        (SELECT GROUP_CONCAT(DISTINCT t.tag_value) FROM tags t 
+        SELECT c.id, c.name, c.uuid4, c.expiry_date, c.last_activity_date,
+        (SELECT GROUP_CONCAT(DISTINCT u.name) FROM units u
+        INNER JOIN collaboration_units cou ON cou.unit_id = u.id
+        WHERE cou.collaboration_id = c.id) AS names,
+        (SELECT GROUP_CONCAT(DISTINCT t.tag_value) FROM tags t
         INNER JOIN collaboration_tags ct ON ct.tag_id = t.id WHERE ct.collaboration_id = c.id) AS tag_values,
         (SELECT COUNT(id) FROM collaboration_memberships cm WHERE cm.collaboration_id = c.id) AS member_count,
         org.name
-        FROM collaborations c INNER JOIN organisations org ON org.id = c.organisation_id;    
+        FROM collaborations c INNER JOIN organisations org ON org.id = c.organisation_id  
     """)
     with db.engine.connect() as conn:
         result_set = conn.execute(sql)
         return [{"id": row[0], "name": row[1], "logo": f"{logo_url('collaborations', row[2])}",
                  "expiry_date": row[3], "last_activity_date": row[4], "units": row[5], "tags": row[6],
-                 "member_count": row[7], "organisation_name": row[8]} for row in
-                result_set], 200
+                 "member_count": row[7], "organisation_name": row[8]} for row in result_set], 200
 
 
 @collaboration_api.route("/search", strict_slashes=False)
