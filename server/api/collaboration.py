@@ -273,8 +273,7 @@ def collaboration_all_optimized():
         (SELECT GROUP_CONCAT(DISTINCT t.tag_value) FROM tags t
         INNER JOIN collaboration_tags ct ON ct.tag_id = t.id WHERE ct.collaboration_id = c.id) AS tag_values,
         (SELECT COUNT(id) FROM collaboration_memberships cm WHERE cm.collaboration_id = c.id) AS member_count,
-        org.name
-        FROM collaborations c INNER JOIN organisations org ON org.id = c.organisation_id
+        org.name FROM collaborations c INNER JOIN organisations org ON org.id = c.organisation_id
     """)
     with db.engine.connect() as conn:
         result_set = conn.execute(sql)
