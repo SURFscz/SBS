@@ -274,7 +274,7 @@ def collaboration_all_optimized():
         INNER JOIN collaboration_tags ct ON ct.tag_id = t.id WHERE ct.collaboration_id = c.id) AS tag_values,
         (SELECT COUNT(id) FROM collaboration_memberships cm WHERE cm.collaboration_id = c.id) AS member_count,
         org.name
-        FROM collaborations c INNER JOIN organisations org ON org.id = c.organisation_id  
+        FROM collaborations c INNER JOIN organisations org ON org.id = c.organisation_id
     """)
     with db.engine.connect() as conn:
         result_set = conn.execute(sql)
