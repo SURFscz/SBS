@@ -11,6 +11,7 @@
     border-top: 0.1875rem solid transparent;
     background-color: var(--sds--color--gray--300);
     padding: 0 8px;
+    cursor: pointer;
 
     &.busy {
         min-width: 85px;
@@ -92,6 +93,7 @@
         display: flex;
         align-items: center;
         margin: 0 auto;
+        cursor: pointer;
     }
 
     .sds--badge--number {
