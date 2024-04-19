@@ -158,7 +158,7 @@ def _do_attributes(user, uid, service, service_entity_id, not_authorized_func, a
 
     if not connected_collaborations and no_free_ride:
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
-                     f" as the service is not connected to any of the user collaborations")
+                     f" as the service is not connected to any of the user's collaborations")
         return not_authorized_func(service.name, SERVICE_NOT_CONNECTED)
 
     if all(coll.status != STATUS_ACTIVE for coll in connected_collaborations) and no_free_ride:
