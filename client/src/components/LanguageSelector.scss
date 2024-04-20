@@ -1,0 +1,9 @@
+.sds--language-switcher {
+    a.is-active {
+        cursor: initial;
+
+        &:hover {
+            text-decoration: none!important;
+        }
+    }
+}

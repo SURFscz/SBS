@@ -11,16 +11,19 @@ export default class LanguageSelector extends React.PureComponent {
 
     handleChooseLocale = locale => e => {
         stopEvent(e);
-        Cookies.set("lang", locale, {expires: 356, secure: document.location.protocol.endsWith("https")});
-        I18n.locale = locale;
-        moment.locale(locale);
-        languageSwitched();
-        window.location.search = replaceQueryParameter(window.location.search, "lang", locale);
+        if (locale !== I18n.locale) {
+            Cookies.set("lang", locale, {expires: 356, secure: document.location.protocol.endsWith("https")});
+            I18n.locale = locale;
+            moment.locale(locale);
+            languageSwitched();
+            window.location.search = replaceQueryParameter(window.location.search, "lang", locale);
+        }
     };
 
     renderLocaleChooser(locale) {
         return (
-            <a href={"locale"} className={`${I18n.locale === locale ? "is-active" : ""}`}
+            <a href={"locale"}
+               className={`${I18n.locale === locale ? "is-active" : ""}`}
                title={I18n.t("select_locale", {locale: locale})}
                onClick={this.handleChooseLocale(locale)}>
                 {I18n.t("code", {locale: locale})}
