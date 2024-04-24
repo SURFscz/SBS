@@ -2,7 +2,7 @@ import React from "react";
 import I18n from "../../locale/I18n";
 import "./CroppedImageDialog.scss";
 import {ReactComponent as NotFoundIcon} from "../../icons/image-not-found.svg";
-
+import {detect} from "detect-browser";
 import Undraw1 from "../../undraw/undraw_Adventure_re_ncqp.png";
 import Undraw2 from "../../undraw/undraw_Aircraft_re_m05i.png";
 import Undraw3 from "../../undraw/undraw_Alien_science_re_0f8q.png";
@@ -143,6 +143,7 @@ export default class CroppedImageDialog extends React.PureComponent {
             Undraw61,
             Undraw62,];
         this.shuffledImages = shuffleArray(images);
+        this.browser = detect();
     }
 
     initialState = (props = {}) => ({
@@ -158,7 +159,8 @@ export default class CroppedImageDialog extends React.PureComponent {
         addWhiteSpace: false,
         showImageGallery: false,
         galleryIndex: null,
-        galleryImage: null
+        galleryImage: null,
+        croppedOnce: false
     });
 
     centerAspectCrop = (mediaWidth, mediaHeight, aspect) => {
@@ -231,7 +233,13 @@ export default class CroppedImageDialog extends React.PureComponent {
         }
     }
 
-    onCropComplete = crop => {
+    onCropComplete = (crop) => {
+        const {croppedOnce} = this.state;
+        if (!croppedOnce && this.browser.name === "safari") {
+            this.setState({croppedOnce: true},
+                () => setTimeout(() => this.onCropComplete(crop), 750))
+
+        }
         if (this.imageRef && crop.width && crop.height) {
             this.setState({busy: true});
             const canvas = document.createElement("canvas");
@@ -436,12 +444,12 @@ export default class CroppedImageDialog extends React.PureComponent {
                     }
                 </div>
                 {includeLogoGallery &&
-                <div className={"button-container"}>
-                    <Button txt={I18n.t("gallery.select")}
-                            onClick={this.selectFromGallery}
-                            className={"tertiary"}
-                    />
-                </div>}
+                    <div className={"button-container"}>
+                        <Button txt={I18n.t("gallery.select")}
+                                onClick={this.selectFromGallery}
+                                className={"tertiary"}
+                        />
+                    </div>}
             </div>
         );
     }

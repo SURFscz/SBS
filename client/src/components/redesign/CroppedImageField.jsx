@@ -30,7 +30,6 @@ export default class CroppedImageField extends React.PureComponent {
 
     closeDialog = () => {
         this.setState({dialogOpen: false});
-
     }
 
     render() {
