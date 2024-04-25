@@ -1,4 +1,3 @@
-
 from flask import Blueprint
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Forbidden
@@ -19,9 +18,7 @@ def all_organisation_tags():
     confirm_organisation_admin_or_manager(organisation_id)
 
     tags = Tag.query \
-        .join(Tag.collaborations) \
-        .join(Collaboration.organisation) \
-        .filter(Collaboration.organisation_id == organisation_id) \
+        .filter(Tag.organisation_id == organisation_id) \
         .all()
     return tags, 200
 
@@ -38,9 +35,8 @@ def all_tags():
 def delete_tag(organisation_id, id):
     confirm_organisation_admin_or_manager(organisation_id)
     tag = db.session.get(Tag, id)
-    for collaboration in tag.collaborations:
-        if collaboration.organisation_id != int(organisation_id):
-            raise Forbidden()
+    if tag.organisation_id != int(organisation_id):
+        raise Forbidden()
     return delete(Tag, id)
 
 

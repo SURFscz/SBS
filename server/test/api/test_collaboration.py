@@ -3,6 +3,7 @@ import datetime
 import json
 import os
 import time
+
 import responses
 from sqlalchemy import text
 
@@ -12,14 +13,13 @@ from server.db.defaults import STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, Organisation, Invitation, CollaborationMembership, User, Group, \
     ServiceGroup, Tag, Service
 from server.db.models import flatten
-from server.tools import dt_now
-
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import (co_ai_computing_uuid, co_ai_computing_name, co_research_name, user_john_name,
                               co_ai_computing_short_name, co_teachers_name, read_image, co_research_uuid,
                               service_group_wiki_name1,
                               service_storage_name, unifra_secret, unifra_name, unihard_short_name)
 from server.test.seed import unihard_secret, unihard_name
+from server.tools import dt_now
 
 
 class TestCollaboration(AbstractTest):
@@ -145,18 +145,12 @@ class TestCollaboration(AbstractTest):
     def test_collaboration_with_tags(self):
         organisation_id = Organisation.query.filter(Organisation.name == unihard_name).one().id
 
-        value_just_valid = "just_valid-234567890123456789012"
-        value_too_long = "invalid__--2345678901234567890123"
-        value_invalid = "invalid__#"
-        value_digit_start = "123_valid"
-        value_weird_start = "_123_invalid"
-
-        tag_existing = {'label': 'tag_uuc', 'value': Tag.query.filter(Tag.tag_value == "tag_uuc").one().id}
-        tag_just_valid = {'label': value_just_valid, 'value': value_just_valid, '__isNew__': True}
-        tag_too_long = {'label': value_too_long, 'value': value_too_long, '__isNew__': True}
-        tag_invalid = {'label': value_invalid, 'value': value_invalid, '__isNew__': True}
-        tag_digit_start = {'label': value_digit_start, 'value': value_digit_start, '__isNew__': True}
-        tag_weird_start = {'label': value_weird_start, 'value': value_weird_start, '__isNew__': True}
+        tag_existing = "tag_uuc"
+        tag_just_valid = "just_valid-234567890123456789012"
+        tag_too_long = "invalid__--2345678901234567890123"
+        tag_invalid = "invalid__#"
+        tag_digit_start = "123_valid"
+        tag_weird_start = "_123_invalid"
 
         body = {
             "name": "new_collaboration",
@@ -243,10 +237,7 @@ class TestCollaboration(AbstractTest):
         self.login()
         collaboration = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
         collaboration["name"] = "changed"
-        collaboration["tags"] = [
-            {'label': 'tag_orphan', 'value': Tag.query.filter(Tag.tag_value == "tag_orphan").one().id},
-            {'label': 'new_tag_created', 'value': 'new_tag_created', '__isNew__': True}
-        ]
+        collaboration["tags"] = ["tag_orphan", "new_tag_created"]
         collaboration = self.put("/api/collaborations", body=collaboration)
         self.assertEqual("changed", collaboration["name"])
 
@@ -611,6 +602,7 @@ class TestCollaboration(AbstractTest):
         self.assertIsNone(collaboration.accepted_user_policy)
         self.assertIsNotNone(collaboration.logo)
         self.assertEqual(2, len(collaboration.tags))
+
         one_day_ago = dt_now() - datetime.timedelta(days=1)
         self.assertTrue(collaboration.last_activity_date > one_day_ago)
 

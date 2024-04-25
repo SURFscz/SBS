@@ -426,7 +426,7 @@ export function searchCollaborations(q) {
 }
 
 export function updateCollaboration(collaboration) {
-    //We need to limit the size so we delete the relations-ships that are not used server-side
+    //We need to limit the size soo we delete the relations-ships that are not used server-side
     ["service_connection_requests", "invitations", "join_requests", "groups", "services", "collaboration_memberships"]
         .forEach(relation => delete collaboration[relation])
     return postPutJson("/api/collaborations", collaboration, "put", false);
