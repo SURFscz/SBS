@@ -27,7 +27,7 @@ from server.db.activity import update_last_activity_date
 from server.db.db import db
 from server.db.defaults import (default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name,
                                 STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED, valid_uri_attributes, uri_re,
-                                generate_short_name)
+                                generate_short_name, valid_tag_label)
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
     Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag, ServiceGroup, ServiceMembership
 from server.db.image import transform_image
@@ -58,6 +58,9 @@ def _reconcile_tags(collaboration: Collaboration, tags, is_external_api=False):
         org_tags = collaboration.organisation.tags
         existing_tags = collaboration.tags
 
+        # cleanup tags received from client
+        tags = [t for t in tags if valid_tag_label(t)]
+
         def is_new_tag(label, persisted_tags):
             return label not in [t.tag_value for t in persisted_tags]
 
@@ -68,7 +71,7 @@ def _reconcile_tags(collaboration: Collaboration, tags, is_external_api=False):
         for tag in removed_tags:
             tag.collaborations.remove(collaboration)
             # We delete orphan tags
-            if tag not in org_tags:
+            if not tag.collaborations:
                 db.session.delete(tag)
         for tag in added_existing_tags:
             tag = next((t for t in org_tags if t.tag_value == tag), None)

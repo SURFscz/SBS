@@ -284,6 +284,7 @@ class TestCollaboration(AbstractTest):
         collaboration = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
         collaboration["name"] = "changed"
         collaboration["logo"] = "https://bogus"
+        collaboration["tags"] = [t["tag_value"] for t in collaboration["tags"]]
         self.put("/api/collaborations", body=collaboration)
 
         rows = db.session.execute(text(f"SELECT logo FROM collaborations WHERE id = {collaboration_id}"))
@@ -296,6 +297,7 @@ class TestCollaboration(AbstractTest):
         self.login()
         collaboration = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
         collaboration["short_name"] = "changed"
+        collaboration["tags"] = [t["tag_value"] for t in collaboration["tags"]]
         self.put("/api/collaborations", body=collaboration)
 
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
@@ -889,6 +891,7 @@ class TestCollaboration(AbstractTest):
         self.login()
         collaboration = self.get(f"/api/collaborations/{collaboration.id}", with_basic_auth=False)
         collaboration["expiry_date"] = expiry_date
+        collaboration["tags"] = [t["tag_value"] for t in collaboration["tags"]]
         collaboration = self.put("/api/collaborations", body=collaboration)
         self.assertEqual(post_status, collaboration["status"])
 

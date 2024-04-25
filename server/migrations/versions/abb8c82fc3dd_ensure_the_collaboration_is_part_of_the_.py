@@ -18,7 +18,7 @@ depends_on = None
 
 
 def upgrade():
-    # For a new relationship between collaboration_membership and group both collaboration_id values must
+    # For a new relationship between collaboration and tag group both organisation_id values must
     # match.
     trigger = """
     CREATE TRIGGER collaboration_organisation_id_tags

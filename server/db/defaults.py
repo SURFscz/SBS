@@ -114,7 +114,7 @@ def valid_uri_attributes(data, uri_attributes):
     return True
 
 
-tag_re = re.compile(r"^[a-z0-9][a-z_0-9-]{1,32}}$")
+tag_re = re.compile(r"^[a-z0-9][a-z_0-9-]{1,31}$")
 
 
 def valid_tag_label(tag_value: Optional[str]) -> bool:

@@ -6,7 +6,7 @@ from munch import munchify
 from werkzeug.exceptions import BadRequest
 
 from server.db.defaults import (default_expiry_date, calculate_expiry_period, cleanse_short_name, valid_uri_attributes,
-                                uri_re)
+                                uri_re, valid_tag_label)
 from server.db.defaults import split_user_affiliations
 from server.db.domain import Invitation
 from server.db.domain import User
@@ -137,3 +137,12 @@ class TestCaseDefaults(TestCase):
 
         data = {"uri": "https://auth.tudelft.nl/auth/realms/sram/protocol/saml/clients/amazon-aws "}
         self.assertTrue(valid_uri_attributes(data, ["uri"]))
+
+    def test_valid_tag_label(self):
+        self.assertTrue(valid_tag_label("tag_uuc"))
+        self.assertTrue(valid_tag_label("just_valid-234567890123456789012"))
+        self.assertTrue(valid_tag_label("123_valid"))
+
+        self.assertFalse(valid_tag_label("invalid__#"))
+        self.assertFalse(valid_tag_label("invalid__--2345678901234567890123"))
+        self.assertFalse(valid_tag_label("_123_invalid"))
