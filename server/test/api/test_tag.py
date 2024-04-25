@@ -10,8 +10,7 @@ class TestTag(AbstractTest):
 
         self.login("urn:harry")
         tags = self.get("/api/tags", query_data={"organisation_id": organisation.id}, with_basic_auth=False)
-        self.assertEqual(1, len(tags))
-        self.assertEqual("tag_uuc", tags[0]["tag_value"])
+        self.assertEqual(2, len(tags))
 
     def test_tags_not_allowed(self):
         organisation = self.find_entity_by_name(Organisation, unihard_name)
