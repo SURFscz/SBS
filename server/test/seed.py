@@ -564,9 +564,9 @@ def seed(db, app_config, skip_seed=False):
     uuc.services.append(uuc_scheduler)
     uuc.services.append(wiki)
 
-    tag_uuc = Tag(tag_value="tag_uuc")
-    tag_ufra = Tag(tag_value="tag_ufra")
-    tag_orphan = Tag(tag_value="tag_orphan")
+    tag_uuc = Tag(tag_value="tag_uuc", organisation=uuc)
+    tag_ufra = Tag(tag_value="tag_ufra", organisation=ufra)
+    tag_orphan = Tag(tag_value="tag_orphan", organisation=uuc)
     persist_instance(db, tag_uuc, tag_ufra, tag_orphan)
 
     ai_computing = Collaboration(name=co_ai_computing_name,
@@ -664,8 +664,10 @@ def seed(db, app_config, skip_seed=False):
     harry_monitoring_co_2 = CollaborationMembership(role="member", user=harry, collaboration=monitoring_co_2)
     admin_monitoring_co_2 = CollaborationMembership(role="admin", user=extra_admin, collaboration=monitoring_co_2)
 
-    paul_ai_disabled_join_request = CollaborationMembership(role="admin", user=paul, collaboration=ai_disabled_join_request)
-    harry_ai_disabled_join_request = CollaborationMembership(role="member", user=harry, collaboration=ai_disabled_join_request)
+    paul_ai_disabled_join_request = CollaborationMembership(role="admin", user=paul,
+                                                            collaboration=ai_disabled_join_request)
+    harry_ai_disabled_join_request = CollaborationMembership(role="member", user=harry,
+                                                             collaboration=ai_disabled_join_request)
 
     persist_instance(db, john_ai_computing, admin_ai_computing, roger_ufra_research, peter_ufra_research,
                      sarah_ufra_research,

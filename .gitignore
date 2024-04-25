@@ -138,3 +138,5 @@ server/config/_config.yml
 server/pipdeptree.txt
 sample_json/
 LIBXML2.md
+login.svg
+.run

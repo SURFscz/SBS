@@ -26,8 +26,8 @@ from server.auth.security import confirm_collaboration_admin, current_user_id, c
 from server.db.activity import update_last_activity_date
 from server.db.db import db
 from server.db.defaults import (default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name,
-                                STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED, valid_uri_attributes, valid_tag_label,
-                                uri_re, generate_short_name)
+                                STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED, valid_uri_attributes, uri_re,
+                                generate_short_name)
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
     Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag, ServiceGroup, ServiceMembership
 from server.db.image import transform_image
@@ -52,30 +52,30 @@ def _del_non_disclosure_info(collaboration, json_collaboration):
 
 
 def _reconcile_tags(collaboration: Collaboration, tags, is_external_api=False):
-    # [{'label': 'tag_uuc', 'value': 947}, {'label': 'new_tag_created', 'value': 'new_tag_created', '__isNew__': True}]
+    # tags is a list of strings
     if is_external_api or is_application_admin() or is_organisation_admin_or_manager(collaboration.organisation_id):
         # find delta, e.g. which tags to remove and which tags to add
-        new_tags = [tag["value"] for tag in tags if "__isNew__" in tag and "value" in tag]
+        org_tags = collaboration.organisation.tags
+        existing_tags = collaboration.tags
 
-        # cleanup new tags
-        new_tags = [tag_label for tag_label in new_tags if valid_tag_label(tag_label)]
+        def is_new_tag(label, persisted_tags):
+            return label not in [t.tag_value for t in persisted_tags]
 
-        tag_identifiers = [tag["value"] for tag in tags if "__isNew__" not in tag and "value" in tag]
-        tag_identifiers += [tag["id"] for tag in tags if "__isNew__" not in tag and "id" in tag]
-        current_tag_ids = [tag.id for tag in collaboration.tags]
-        removed_tags = [tag_id for tag_id in current_tag_ids if tag_id not in tag_identifiers]
-        added_existing_tags = [tag_id for tag_id in tag_identifiers if tag_id not in current_tag_ids]
+        new_tags = [t for t in tags if is_new_tag(t, existing_tags) and is_new_tag(t, org_tags)]
+        added_existing_tags = [t for t in tags if is_new_tag(t, existing_tags) and not is_new_tag(t, org_tags)]
+        removed_tags = [t for t in existing_tags if t.tag_value not in tags]
 
-        for tag_id in removed_tags:
-            tag = db.session.get(Tag, tag_id)
+        for tag in removed_tags:
             tag.collaborations.remove(collaboration)
-            if not tag.collaborations:
+            # We delete orphan tags
+            if tag not in org_tags:
                 db.session.delete(tag)
-        for tag_id in added_existing_tags:
-            tag = db.session.get(Tag, tag_id)
+        for tag in added_existing_tags:
+            tag = next((t for t in org_tags if t.tag_value == tag), None)
             tag.collaborations.append(collaboration)
-        for tag_value in new_tags:
-            new_tag = save(Tag, {"tag_value": tag_value}, allow_child_cascades=False)[0]
+        for tag in new_tags:
+            new_tag = save(Tag, {"tag_value": tag, "organisation_id": collaboration.organisation_id},
+                           allow_child_cascades=False)[0]
             new_tag.collaborations.append(collaboration)
 
 
@@ -618,9 +618,7 @@ def save_collaboration_api():
     # Prevent ValueError: Circular reference detected cause of tags
     collaboration_json = jsonify(collaboration).json
     if tags:
-        # expected format [{'label': 'new_tag_created', 'value': 'new_tag_created', '__isNew__': True}]
-        transformed_tags = [{"label": tag, "value": tag, "__isNew__": True} for tag in tags]
-        _reconcile_tags(collaboration, transformed_tags, is_external_api=True)
+        _reconcile_tags(collaboration, tags, is_external_api=True)
         collaboration_json["tags"] = tags
     return collaboration_json, 201
 

@@ -114,13 +114,11 @@ def valid_uri_attributes(data, uri_attributes):
     return True
 
 
-tag_re = re.compile(r"^[a-z0-9][a-z_0-9-]+$")
+tag_re = re.compile(r"^[a-z0-9][a-z_0-9-]{1,32}}$")
 
 
 def valid_tag_label(tag_value: Optional[str]) -> bool:
-    if tag_value is not None and len(tag_value) <= 32 and tag_re.fullmatch(tag_value):
-        return True
-    return False
+    return bool(tag_value and tag_re.fullmatch(tag_value))
 
 
 def split_user_affiliations(user):

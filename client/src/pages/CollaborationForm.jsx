@@ -329,7 +329,7 @@ class CollaborationForm extends React.Component {
                 disclose_email_information
             };
             if (!isCollaborationRequest) {
-                body.tags = tagsSelected;
+                body.tags = tagsSelected.map(tag => tag.label);
             }
             promise(body)
                 .then(res => {
@@ -383,7 +383,7 @@ class CollaborationForm extends React.Component {
                 short_name,
                 description,
                 website_url,
-                tags: tagsSelected,
+                tags: tagsSelected.map(tag => tag.label),
                 units,
                 logo,
                 identifier: collaboration.identifier,

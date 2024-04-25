@@ -282,9 +282,12 @@ class Tag(Base, db.Model):
     __tablename__ = "tags"
     metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
-    tag_value = db.Column("tag_value", db.Text(), nullable=False)
+    tag_value = db.Column("tag_value", db.String(length=255), nullable=False)
     collaborations = db.relationship("Collaboration", secondary=collaboration_tags_association, lazy="select",
                                      back_populates="tags")
+    organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"))
+    organisation = db.relationship("Organisation", back_populates="tags")
+
     audit_log_exclude = True
 
 
@@ -461,6 +464,7 @@ class Organisation(Base, db.Model, LogoMixin):
     api_keys = db.relationship("ApiKey", back_populates="organisation",
                                cascade="delete, delete-orphan",
                                passive_deletes=True)
+    tags = db.relationship("Tag", back_populates="organisation", cascade="delete, delete-orphan", passive_deletes=True)
     organisation_aups = db.relationship("OrganisationAup", back_populates="organisation", cascade="all, delete-orphan",
                                         passive_deletes=True)
     collaborations_count = column_property(select(func.count(Collaboration.id))
