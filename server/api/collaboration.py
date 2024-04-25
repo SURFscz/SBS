@@ -553,11 +553,7 @@ def save_collaboration():
     if "current_user_admin" in data:
         del data["current_user_admin"]
 
-    res = do_save_collaboration(data, organisation, user, current_user_admin)
-    collaboration = res[0]
-    # Prevent ValueError: Circular reference detected cause of tags
-    collaboration_json = jsonify(collaboration).json
-    return collaboration_json, 201
+    return do_save_collaboration(data, organisation, user, current_user_admin)
 
 
 @collaboration_api.route("/v1", methods=["POST"], strict_slashes=False)
