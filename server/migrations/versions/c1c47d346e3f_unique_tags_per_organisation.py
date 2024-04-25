@@ -38,20 +38,9 @@ def upgrade():
     conn.execute(text("ALTER TABLE tags CHANGE tag_value tag_value VARCHAR(255) NOT NULL"))
 
     # now add the organisation_id to the tags table
-    conn.execute(text("ALTER TABLE `tags` ADD COLUMN `organisation_id` INT NULL, "
-                      "ADD FOREIGN KEY `collaboration_tags_ibfk_2`(`organisation_id`) "
-                      "REFERENCES `organisations`(`id`) ON DELETE CASCADE"))
-
-    conn.execute(text("UPDATE tags t set t.organisation_id = (select c.organisation_id from collaborations c "
-                      "inner join collaboration_tags ct on ct.tag_id = t.id limit 1)"))
-    # Delete orphan tags
-    conn.execute(text("DELETE FROM `tags` WHERE `organisation_id` IS NULL"))
-
-    # Make the foreign_key not nullable
-    conn.execute(text("ALTER TABLE `tags` MODIFY COLUMN `organisation_id` INT NOT NULL"))
-
-    # now add the unique index
-    conn.execute(text("ALTER TABLE `tags` ADD UNIQUE INDEX tag_organisation_unique_name(tag_value, organisation_id)"))
+    conn.execute(text("ALTER TABLE tags ADD COLUMN organisation_id INT NULL, "
+                      "ADD FOREIGN KEY collaboration_tags_ibfk_2(organisation_id) "
+                      "REFERENCES organisations(id) ON DELETE CASCADE"))
 
 
 def downgrade():
