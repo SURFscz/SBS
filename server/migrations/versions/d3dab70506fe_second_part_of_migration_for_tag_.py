@@ -17,8 +17,20 @@ depends_on = None
 
 def upgrade():
     conn = op.get_bind()
-    conn.execute(text("UPDATE tags t set t.organisation_id = (select c.organisation_id from collaborations c "
-                      "inner join collaboration_tags ct on ct.tag_id = t.id limit 1)"))
+    # Because of version 5 of mySQL in prod we have to use a for loop instead of inner select in update
+    result = conn.execute(text("SELECT id from tags"))
+    for row in result:
+        pk = row[0]
+        # Now get the organisation_id from the collaboration that uses this tag
+        inner_results = conn.execute(text(f"SELECT c.organisation_id FROM collaborations c "
+                                          f"INNER JOIN collaboration_tags ct on ct.collaboration_id = c.id "
+                                          f"INNER JOIN tags t ON t.id = ct.tag_id "
+                                          f"WHERE t.id = {pk} LIMIT 1"))
+        # If there are no results, then the tag is not being used, and we delete orphan tags later in this migration
+        for r in inner_results:
+            organisation_id = r[0]
+            conn.execute(text(f"UPDATE tags set organisation_id = {organisation_id}"))
+
     # Delete orphan tags
     conn.execute(text("DELETE FROM tags WHERE organisation_id IS NULL"))
 
