@@ -185,8 +185,8 @@ def demo_seed(db, app_config):
 
     # Create Collaborations
     tags = [
-        Tag(tag_value="label_01"),
-        Tag(tag_value="label_02"),
+        Tag(tag_value="label_01", organisation=org_list[0]),
+        Tag(tag_value="label_02", organisation=org_list[1]),
     ]
 
     tag_list = []
