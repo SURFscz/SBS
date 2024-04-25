@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision b133d5e0e198 (head)
+-- Dump of empty SBS database, alembic revision d3dab70506fe (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('b133d5e0e198');
+INSERT INTO `alembic_version` VALUES ('d3dab70506fe');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_keys`;
@@ -243,6 +243,21 @@ LOCK TABLES `collaboration_tags` WRITE;
 /*!40000 ALTER TABLE `collaboration_tags` DISABLE KEYS */;
 /*!40000 ALTER TABLE `collaboration_tags` ENABLE KEYS */;
 UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`sbs`@`%`*/ /*!50003 TRIGGER collaboration_organisation_id_tags        BEFORE INSERT ON collaboration_tags FOR EACH ROW        BEGIN            IF (SELECT c.organisation_id FROM collaborations c WHERE c.id = NEW.collaboration_id)             <>            (SELECT t.organisation_id FROM `tags` t WHERE t.id = NEW.tag_id)            THEN                SIGNAL SQLSTATE '45000'                SET MESSAGE_TEXT = 'The collaboration must be part of the organisation';            END IF ;        END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 DROP TABLE IF EXISTS `collaboration_units`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -947,8 +962,12 @@ DROP TABLE IF EXISTS `tags`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tags` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `tag_value` text NOT NULL,
-  PRIMARY KEY (`id`)
+  `tag_value` varchar(255) NOT NULL,
+  `organisation_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `tag_organisation_unique_tag` (`tag_value`,`organisation_id`),
+  KEY `tags_ibfk_1` (`organisation_id`),
+  CONSTRAINT `tags_ibfk_1` FOREIGN KEY (`organisation_id`) REFERENCES `organisations` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
