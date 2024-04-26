@@ -38,9 +38,7 @@ def upgrade():
     conn.execute(text("ALTER TABLE tags CHANGE tag_value tag_value VARCHAR(255) NOT NULL"))
 
     # now add the organisation_id to the tags table
-    conn.execute(text("ALTER TABLE tags ADD COLUMN organisation_id INT NULL, "
-                      "ADD FOREIGN KEY collaboration_tags_ibfk_2(organisation_id) "
-                      "REFERENCES organisations(id) ON DELETE CASCADE"))
+    conn.execute(text("ALTER TABLE tags ADD COLUMN organisation_id INT NULL"))
 
 
 def downgrade():
