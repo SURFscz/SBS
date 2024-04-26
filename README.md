@@ -92,6 +92,15 @@ yarn analyze
 See the [Swagger](https://test.sram.surf.nl/apidocs/) for the API documentation and data model.
 Or for local development http://localhost:8080/apidocs/
 
+You can use the Swagger interface for testing or cUrl using the command line:
+
+```bash
+curl -H "Accept: application/json" -H "Content-type: application/json" -H "Authorization: bearer {api_key}" "http://localhost:8080/api/organisations/v1" | jq .
+curl -H "Accept: application/json" -H "Content-type: application/json" -H "Authorization: bearer {api_key}" "http://localhost:8080/api/collaborations/v1/{co_identifier}" | jq . 
+```
+
+### [Routes](#routes)
+
 To see all routes:
 
 ```bash

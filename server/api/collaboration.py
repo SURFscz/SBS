@@ -29,7 +29,7 @@ from server.db.defaults import (default_expiry_date, full_text_search_autocomple
                                 STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED, valid_uri_attributes, uri_re,
                                 generate_short_name, valid_tag_label)
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
-    Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag, ServiceGroup, ServiceMembership
+    Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag, ServiceGroup, ServiceMembership, Unit
 from server.db.image import transform_image
 from server.db.logo_mixin import logo_url
 from server.db.models import update, save, delete, flatten, unique_model_objects
@@ -80,6 +80,7 @@ def _reconcile_tags(collaboration: Collaboration, tags, is_external_api=False):
             new_tag = save(Tag, {"tag_value": tag, "organisation_id": collaboration.organisation_id},
                            allow_child_cascades=False)[0]
             new_tag.collaborations.append(collaboration)
+    return tags
 
 
 def _get_collaboration_membership(co_identifier, user_uid) -> CollaborationMembership:
@@ -150,7 +151,10 @@ def api_collaboration_by_identifier(co_identifier):
         raise NotFound
 
     confirm_organisation_api_collaboration(co_identifier, collaboration)
-    return collaboration, 200
+    json_collaboration = jsonify(collaboration).json
+    json_collaboration["units"] = [unit.name for unit in collaboration.units]
+    json_collaboration["tags"] = [tag.tag_value for tag in collaboration.tags]
+    return json_collaboration, 200
 
 
 @collaboration_api.route("/v1/<co_identifier>", methods=["DELETE"], strict_slashes=False)
@@ -603,6 +607,12 @@ def save_collaboration_api():
     administrator = data.get("administrator")
     # Ensure to skip current_user is CO admin check
     request_context.skip_collaboration_admin_confirmation = True
+    # units - if present - need to be transformed to dict objects
+    if "units" in data:
+        data["units"] = [
+            {"id": Unit.query.filter(Unit.name == unit).first().id,
+             "organisation_id": organisation.id,
+             "name": unit} for unit in data["units"]]
     res = do_save_collaboration(data, organisation, user, current_user_admin=False, save_tags=False)
     collaboration = res[0]
 
@@ -616,8 +626,10 @@ def save_collaboration_api():
             db.session.commit()
     # Prevent ValueError: Circular reference detected cause of tags
     collaboration_json = jsonify(collaboration).json
+    collaboration_json["units"] = [unit.name for unit in collaboration.units]
+
     if tags:
-        _reconcile_tags(collaboration, tags, is_external_api=True)
+        tags = _reconcile_tags(collaboration, tags, is_external_api=True)
         collaboration_json["tags"] = tags
     return collaboration_json, 201
 
