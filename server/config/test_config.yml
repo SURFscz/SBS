@@ -39,7 +39,6 @@ oidc:
   jwks_endpoint: http://localhost:9001/jwks
   #Note that the paths for these  uri's is hardcoded and only domain and port differ per environment
   redirect_uri: http://localhost:8080/api/users/resume-session
-  sfo_eduteams_redirect_uri: http://localhosst:9001/sfo
   continue_eduteams_redirect_uri: https://proxy.acc.sram.eduteams.org/continue
   second_factor_authentication_required: True
   totp_token_name: "SRAM local"
