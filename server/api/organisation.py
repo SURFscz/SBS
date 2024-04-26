@@ -182,7 +182,12 @@ def api_organisation_details():
         collaboration.groups
         collaboration.tags
         collaboration.services
-    return organisation, 200
+    json_organisation = jsonify(organisation).json
+    json_organisation["units"] = [unit.name for unit in organisation.units]
+    for collaboration in json_organisation["collaborations"]:
+        collaboration["units"] = [unit["name"] for unit in collaboration["units"]]
+        collaboration["tags"] = [tag["tag_value"] for tag in collaboration["tags"]]
+    return json_organisation, 200
 
 
 @organisation_api.route("/<organisation_id>", strict_slashes=False)

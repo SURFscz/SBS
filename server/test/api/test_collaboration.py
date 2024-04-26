@@ -593,10 +593,14 @@ class TestCollaboration(AbstractTest):
                                         "disclose_member_information": True,
                                         "disclose_email_information": True,
                                         "logo": read_image("robot.png"),
-                                        "tags": ["label_1", "label_2", "!-INVALID"]
+                                        "tags": ["label_1", "label_2", "!-INVALID"],
+                                        "units": ["Research", "Support"]
                                     }),
                                     content_type="application/json")
         self.assertEqual(201, response.status_code)
+        collaboration_json = response.json
+        self.assertEqual(2, len(collaboration_json["tags"]))
+        self.assertEqual(2, len(collaboration_json["units"]))
 
         collaboration = self.find_entity_by_name(Collaboration, "new_collaboration")
         self.assertEqual(1, len(collaboration.collaboration_memberships))
@@ -604,6 +608,7 @@ class TestCollaboration(AbstractTest):
         self.assertIsNone(collaboration.accepted_user_policy)
         self.assertIsNotNone(collaboration.logo)
         self.assertEqual(2, len(collaboration.tags))
+        self.assertEqual(2, len(collaboration.units))
 
         one_day_ago = dt_now() - datetime.timedelta(days=1)
         self.assertTrue(collaboration.last_activity_date > one_day_ago)
@@ -940,7 +945,7 @@ class TestCollaboration(AbstractTest):
                        headers={"Authorization": f"Bearer {unihard_secret}"},
                        with_basic_auth=False)
         self.assertIsNotNone(res["groups"][0]["collaboration_memberships"][0]["user"]["email"])
-        self.assertEqual(res["tags"][0]["tag_value"], "tag_uuc")
+        self.assertListEqual(res["tags"], ["tag_uuc"])
 
     def test_find_by_identifier_api_not_allowed(self):
         result = self.get(f"/api/collaborations/v1/{co_research_uuid}",
