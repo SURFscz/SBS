@@ -32,8 +32,8 @@ Connect to your local mysql database: `mysql -uroot` and create the SBS database
 ```sql
 DROP DATABASE IF EXISTS sbs;
 DROP DATABASE IF EXISTS sbs_test;
-CREATE DATABASE sbs DEFAULT CHARACTER SET utf8mb4;
-CREATE DATABASE sbs_test DEFAULT CHARACTER SET utf8mb4;
+CREATE DATABASE sbs CHARACTER SET utf8mb4DEFAULT CHARACTER SET utf8mb4;
+CREATE DATABASE sbs_test CHARACTER SET utf8mb4 DEFAULT CHARACTER SET utf8mb4;
 CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
 GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;
 ```
