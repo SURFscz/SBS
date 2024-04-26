@@ -35,7 +35,6 @@ def upgrade():
     conn.execute(text("DELETE FROM tags WHERE organisation_id IS NULL"))
 
     # Make the foreign_key not nullable, because of version 5 we can not do this in one go
-    conn.execute(text("ALTER TABLE tags DROP FOREIGN KEY tags_ibfk_1"))
     conn.execute(text("ALTER TABLE tags MODIFY COLUMN organisation_id INT NOT NULL"))
     conn.execute(text("ALTER TABLE tags ADD CONSTRAINT tags_ibfk_1 "
                       "FOREIGN KEY (organisation_id) REFERENCES organisations(id) ON DELETE CASCADE"))
