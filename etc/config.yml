@@ -35,7 +35,6 @@ oidc:
   jwks_endpoint: ${AUDIENCE}/OIDC/jwks
   #Note that the paths for these  uri's is hardcoded and only domain and port differ per environment
   redirect_uri: ${BASE_URL}/api/users/resume-session
-  sfo_eduteams_redirect_uri: ${AUDIENCE}/OIDC/sfo
   continue_eduteams_redirect_uri: ${AUDIENCE}/continue
   second_factor_authentication_required: True
   totp_token_name: "SRAM local"
