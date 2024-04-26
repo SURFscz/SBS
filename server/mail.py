@@ -389,6 +389,7 @@ def mail_service_request(service_request, context):
     return _do_send_mail(
         subject=f"Request for new service {service_request.name}",
         recipients=[mail_cfg.ticket_email],
+        cc=[context["requester_email"]],
         template="service_request",
         context=context,
         bulk_headers=False,

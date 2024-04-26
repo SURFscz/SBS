@@ -16,7 +16,7 @@ class TestServiceRequest(AbstractTest):
         self.assertEqual(1, len(res))
 
     def test_request_service(self):
-        self.login("urn:roger")
+        self.login("urn:roger", add_default_attributes=False)
         data = {
             "name": "New Service",
             "abbreviation": "new_service_abbreviation",
@@ -30,6 +30,9 @@ class TestServiceRequest(AbstractTest):
             self.assertEqual("urn:roger", service_request.requester.uid)
             mail_msg = outbox[0]
             self.assertEqual("Request for new service New Service (local)", mail_msg.subject)
+            self.assertIn("no-reply@surf.nl", mail_msg.from_email)
+            self.assertIn("sram-support@surf.nl", mail_msg.to)
+            self.assertIn("roger@example.org", mail_msg.cc)
 
     def test_request_service_approve(self):
         service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)
