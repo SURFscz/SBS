@@ -66,6 +66,7 @@ def request_service():
     context = {"salutation": "Dear platform admin,",
                "base_url": current_app.app_config.base_url,
                "service_request": service_request,
+               "requester_email": user.email,
                "user": user}
 
     mail_service_request(munchify(data), context)
