@@ -2,6 +2,10 @@ database:
   uri: "${DATABASE_URI}"
 
 secret_key: ${SECRET}
+# Must be a base64 encoded key of 128, 192, or 256 bits.
+# Hint: base64.b64encode(AESGCM.generate_key(bit_length=256)).decode() or
+#  base64.b64encode(os.urandom(256 // 8)).decode()
+encryption_key: 3Kw2sDznh4jSZsShUcsxgfeOkaaKE8TC24OWJ1KWeDs=
 
 # Lifetime of session in minutes (one day is 60 * 24)
 permanent_session_lifetime: 60
@@ -38,8 +42,9 @@ oidc:
   continue_eduteams_redirect_uri: ${AUDIENCE}/continue
   second_factor_authentication_required: True
   totp_token_name: "SRAM local"
-  # The service_id of SBS. Most likely to equal the oidc.client_id
+  # The client_id of SBS. Most likely to equal the oidc.client_id
   sram_service_entity_id: ${BASE_URL}
+
 
   scopes:
     - profile
@@ -61,6 +66,8 @@ entitlement_group_namespace: "urn:example:sbs"
 eppn_scope: "test.sram.surf.nl"
 collaboration_creation_allowed_entitlement: "urn:example:sbs:allow-create-co"
 
+environment_disclaimer: "local"
+
 mail:
   host: localhost
   port: 1025
@@ -69,6 +76,7 @@ mail:
   suppress_sending_mails: False
   info_email: sram-support@surf.nl
   beheer_email: sram-beheer@surf.nl
+  ticket_email: sram-support@surf.nl
   eduteams_email: support+sram@eduteams.org
   # Do we mail a summary of new Organizations and Services to the beheer_email?
   audit_trail_notifications_enabled: True
@@ -110,11 +118,12 @@ feature:
 
 # The retention config determines how long users may be inactive, how long the reminder magic link is valid and when do we resent the magic link
 retention:
-  allowed_inactive_period_days: 90
-  reminder_expiry_period_days: 14
-  reminder_resent_period_days: 7
+  allowed_inactive_period_days: 365
+  reminder_suspend_period_days: 7
+  remove_suspended_users_period_days: 90
+  reminder_expiry_period_days: 7
   cron_hour_of_day: 7
-  remove_suspended_users_period_days: 540
+  admin_notification_mail: True
 
 metadata:
   idp_url: https://metadata.surfconext.nl/idps-metadata.xml
@@ -127,7 +136,7 @@ service_bus:
   user: "sbs"
   password: "changethispassword"
 
-# note: all cron hours below ae in UTC
+# note: all cron hours below are in UTC
 platform_admin_notifications:
   # Do we daily check for CO join_requests and CO requests and send a summary mail to beheer_email?
   enabled: True
@@ -175,12 +184,24 @@ membership_expiration:
   # How many days before actual expiration do we mail the co admin and member
   expired_warning_mail_days_threshold: 14
 
+invitation_reminders:
+  # Do we daily check for invitations that need a reminder?
+  enabled: True
+  cron_hour_of_day: 10
+  # How long before expiration of an invitation do we remind the user?
+  invitation_reminders_threshold: 5
+
 orphan_users:
-  # Do we daily check for users that are orphans so they can be deleted?
+  # Do we daily check for users that are orphans?
   enabled: True
   cron_hour_of_day: 10
   # How long after created do we delete orphan users
   delete_days_threshold: -1
+
+open_requests:
+  # Do we weekly check for all open requests?
+  enabled: True
+  cron_day_of_week: 1
 
 scim_sweep:
   # Do we enable scim sweeps?
@@ -192,27 +213,39 @@ ldap:
   url: "${LDAP_URL}"
   bind_account: "${LDAP_BIND}"
 
+# A MFA login in a different flow is valid for X minutes
+mfa_sso_time_in_minutes: 10
+
+# whether to require TOTP for users form IdPs that match neither mfa_idp_allowed
+# nor ssid_identity_providers
 mfa_fallback_enabled: true
-# Lower case schachome organisations / entity ID's allowed skipping MFA
+
+# Lower case schachome organisations / entity ID's allowed skipping MFA;
+# MFA is supposed to be handled at the IdP for these entities
 mfa_idp_allowed:
   - schac_home: "idp.test"
     entity_id: "https://idp.test"
-
-# A MFA login in a different flow is valid for X minutes
-mfa_sso_time_in_minutes: 10
+  - schac_home: "erroridp.example.edu"
+    entity_id: "https://erroridp.example.edu"
+  - schac_home: "only_sho"
+  - entity_id: "https://only_entityid"
 
 # Lower case schachome organisations / entity ID's where SURFSecure ID is used for step-up
 # If this feature is no longer needed, just replace the value with an empty list []
 ssid_identity_providers:
-  - schac_home: "example.com"
-    entity_id: "https://example.com"
   - schac_home: "ssid.org"
     entity_id: "https://ssid.org"
   - schac_home: "erroridp.example.edu"
     entity_id: "https://erroridp.example.edu"
+
 ssid_config_folder: saml_test
 
 pam_web_sso:
   session_timeout_seconds: 300
 
-rate_limit_totp_guesses_per_30_seconds: 1
+rate_limit_totp_guesses_per_30_seconds: 10
+
+# The uid's of user that will never be suspended or deleted
+excluded_user_accounts:
+  - uid: "urn:paul"
+  - uid: "urn:peter"

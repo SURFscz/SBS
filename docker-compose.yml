@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 #
-version: "3.2"
 
 volumes:
   data:
@@ -18,11 +17,8 @@ services:
       - server
     ports:
       - 8080:80
-    environment:
-      SERVER_HOST: server
-      SERVER_PORT: 8080
     volumes:
-      - ${PWD}/etc/nginx.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - ${PWD}/etc/apache.conf:/etc/apache2/sites-enabled/sbs.conf:ro
 
   server:
     build: server
@@ -38,7 +34,7 @@ services:
     environment:
       CONFIG_TEMPLATE: /etc/config.yml
       TESTING: 1
-      DATABASE_URI: mysql+mysqldb://sbs:sbs@db/sbs_test?charset=utf8mb4
+      DATABASE_URI: mysql+mysqldb://sbs:sbs@db/sbs?charset=utf8mb4
       REDIS_URI: redis://redis:6379/
       BASE_URL: http://localhost:8080
       SOCKET_URL: 0.0.0.0:8080/
@@ -51,15 +47,15 @@ services:
       LDAP_BIND: ${LDAP_BIND}
 
   db:
-    image: biarms/mysql:5.7
+    image: mariadb:11
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-sbs}
-      MYSQL_DATABASE: sbs
-      MYSQL_USER: sbs
-      MYSQL_PASSWORD: sbs
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-sbs}
+      MARIADB_DATABASE: sbs
+      MARIADB_USER: sbs
+      MARIADB_PASSWORD: sbs
     ports:
-      - 3306:3306
+      - 13306:3306
     volumes:
-      - data:/var/lib/mysql
+      - data:/var/lib/mysql:Z
       - ${PWD}/etc/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
