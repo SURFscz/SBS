@@ -40,8 +40,8 @@ RUN chmod 755 /entrypoint.sh
 # Set the default workdir
 WORKDIR /opt/sbs
 
-EXPOSE 80
+EXPOSE 8080
 
 ENTRYPOINT ["/entrypoint.sh"]
 #CMD ["bash"]
-CMD ["/usr/local/bin/gunicorn --worker-class eventlet --workers 8 --bind 0.0.0.0:80 server.__main__:app"]
+CMD ["/usr/local/bin/gunicorn --worker-class eventlet --workers 8 --bind 0.0.0.0:8080 server.__main__:app"]
