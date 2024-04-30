@@ -34,6 +34,8 @@ services:
     environment:
       CONFIG_TEMPLATE: /etc/config.yml
       TESTING: 1
+      PROFILE: local
+      ALLOW_MOCK_USER_API: 1
       DATABASE_URI: mysql+mysqldb://sbs:sbs@db/sbs?charset=utf8mb4
       REDIS_URI: redis://redis:6379/
       BASE_URL: http://localhost:8080
