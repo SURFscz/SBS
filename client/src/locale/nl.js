@@ -138,8 +138,8 @@ const nl = {
         invalidInput: "Ongeldig{{name}}",
         attributes: {
             email: " e-mailadres",
-            uri: "een URL (begin met bijvoorbeeld 'https://')",
-            contact: "contact (een e-mailadres of een URL)"
+            uri: "e URL (begin met bijvoorbeeld 'https://')",
+            contact: " contact (een e-mailadres of een URL)"
         },
         back: "Terug",
         reset: "Herstel",
