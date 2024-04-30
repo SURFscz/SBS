@@ -14,7 +14,7 @@ def check_rate_limit(user):
         db.session.merge(user)
         db.session.commit()
         session.clear()
-        raise TooManyRequests(f"Suspended user {user.name} for rate limiting TOTP")
+        raise TooManyRequests(f"Suspended user {user.name}, uid={user.uid}, email={user.email} for rate limiting TOTP")
 
 
 def rate_limit_reached(user: User):
