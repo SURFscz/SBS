@@ -41,3 +41,16 @@ class TestTriggers(AbstractTest):
         except DatabaseError as err:
             self.assertEqual("The collaboration must be part of the organisation",
                              err.orig.args[1])
+
+    def test_collaboration_organisation_id_tags_before_update(self):
+        try:
+            # co_ai_computing_name belongs to organisation uuc
+            collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
+            # tag_ufra belongs to organisation ufra
+            tag_ufra = Tag.query.filter(Tag.tag_value == "tag_ufra")[0]
+            self._execute_statement(f"update collaboration_tags set tag_id = {tag_ufra.id} "
+                                    f"WHERE collaboration_id = {collaboration.id}")
+            self.fail("Expected database error")
+        except DatabaseError as err:
+            self.assertEqual("The collaboration must be part of the organisation",
+                             err.orig.args[1])
