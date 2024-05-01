@@ -16,6 +16,11 @@ depends_on = None
 
 
 def upgrade():
+    # This migration is successful when the following query has an empty result set
+    # SELECT t.id, t.tag_value, c.id, c.name, c.organisation_id AS co_org_id, t.organisation_id AS tag_org_id
+    # FROM collaborations c
+    # INNER JOIN collaboration_tags ct ON ct.collaboration_id = c.id
+    # INNER JOIN tags t ON t.id = ct.tag_id WHERE c.organisation_id <> t.organisation_id;
     conn = op.get_bind()
     # Find all collaboration_tags that have the wrong tag.organisation_id and where there is no correct tag
     result = conn.execute(text("SELECT ct.id, t.tag_value, c.organisation_id FROM collaborations c "
