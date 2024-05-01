@@ -15,7 +15,9 @@ def check_rate_limit(user):
         db.session.merge(user)
         db.session.commit()
         session.clear()
-        mail_error(tb=f"TOTP rate limit reached, user suspended: name={user.name}, uid={user.uid}, email={user.email}")
+        mail_conf = current_app.app_config.mail
+        tb = f"TOTP rate limit reached, user suspended: name={user.name}, uid={user.uid}, email={user.email}"
+        mail_error(mail_conf.environment, user.id, mail_conf.send_exceptions_recipients, tb)
         raise TooManyRequests(f"Suspended user {user.name}, uid={user.uid}, email={user.email} for rate limiting TOTP")
 
 
