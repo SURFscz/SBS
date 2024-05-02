@@ -225,9 +225,11 @@ export default class CroppedImageDialog extends React.PureComponent {
                 crop: undefined,
                 addWhiteSpace: false,
                 showImageGallery: false,
-                galleryIndex: null
+                galleryIndex: null,
+                croppedOnce: false
             })
         } else {
+
             this.props.onSave(result);
             this.setState(this.initialState());
         }
