@@ -35,7 +35,7 @@ def upgrade():
         tag_value = row[1]
         organisation_id = row[2]
         conn.execute(text(f"INSERT INTO tags (tag_value, organisation_id) "
-                          f"VALUES ({tag_value}, {organisation_id})"))
+                          f"VALUES ('{tag_value}', {organisation_id})"))
         result = conn.execute(text(f"SELECT id FROM tags "
                                    f"WHERE tag_value = '{tag_value}' AND organisation_id = {organisation_id}"))
         tag_id = next(result, (0,))[0]
