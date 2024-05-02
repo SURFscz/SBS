@@ -96,7 +96,7 @@ class OrganisationForm extends React.Component {
                         {value: I18n.t("home.edit")}
                     ];
                 });
-            });
+            }).catch(() => this.props.history.push("/404"));
         } else {
             health().then(() => {
                 this.setState({loading: false})
@@ -212,7 +212,7 @@ class OrganisationForm extends React.Component {
     };
 
     isValid = () => {
-        const {required, alreadyExists, administrators, isNew, duplicatedUnit,invalidInputs } = this.state;
+        const {required, alreadyExists, administrators, isNew, duplicatedUnit, invalidInputs} = this.state;
         const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(this.state[attr]))
             || duplicatedUnit || Object.keys(invalidInputs).some(key => invalidInputs[key]);
         return !inValid && (!isNew || !isEmpty(administrators));

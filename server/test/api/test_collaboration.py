@@ -318,10 +318,15 @@ class TestCollaboration(AbstractTest):
             self.assertFalse("changed" in group.global_urn)
 
     def test_collaboration_delete(self):
-        pre_count = Collaboration.query.count()
-        collaboration = self._find_by_identifier()
-        self.delete("/api/collaborations", primary_key=collaboration["id"])
-        self.assertEqual(pre_count - 1, Collaboration.query.count())
+        tag = Tag.query.filter(Tag.tag_value == "tag_uuc").one()
+        self.assertIsNotNone(tag)
+
+        collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
+        self.delete("/api/collaborations", primary_key=collaboration.id)
+
+        self.assertIsNone(self.find_entity_by_name(Collaboration, co_ai_computing_name))
+        tag = Tag.query.filter(Tag.tag_value == "tag_uuc").first()
+        self.assertIsNone(tag)
 
     def test_collaboration_delete_no_admin(self):
         collaboration = self._find_by_identifier()
@@ -1023,11 +1028,16 @@ class TestCollaboration(AbstractTest):
                  response_status_code=400)
 
     def test_delete_collaboration_api(self):
+        tag = Tag.query.filter(Tag.tag_value == "tag_uuc").one()
+        self.assertIsNotNone(tag)
+
         self.delete(f"/api/collaborations/v1/{co_ai_computing_uuid}",
                     headers={"Authorization": f"Bearer {unihard_secret}"},
                     with_basic_auth=False)
 
         self.assertIsNone(self.find_entity_by_name(Collaboration, co_ai_computing_name))
+        tag = Tag.query.filter(Tag.tag_value == "tag_uuc").first()
+        self.assertIsNone(tag)
 
     def test_delete_collaboration_api_forbidden(self):
         self.delete(f"/api/collaborations/v1/{co_ai_computing_uuid}",
