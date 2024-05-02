@@ -34,10 +34,14 @@ def upgrade():
         collaboration_tag_id = row[0]
         tag_value = row[1]
         organisation_id = row[2]
-        conn.execute(text(f"INSERT INTO tags (tag_value, organisation_id) "
-                          f"VALUES ('{tag_value}', {organisation_id})"))
         result = conn.execute(text(f"SELECT id FROM tags "
                                    f"WHERE tag_value = '{tag_value}' AND organisation_id = {organisation_id}"))
+        count = result.rowcount
+        if count == 0:
+            conn.execute(text(f"INSERT INTO tags (tag_value, organisation_id) "
+                              f"VALUES ('{tag_value}', {organisation_id})"))
+            result = conn.execute(text(f"SELECT id FROM tags "
+                                       f"WHERE tag_value = '{tag_value}' AND organisation_id = {organisation_id}"))
         tag_id = next(result, (0,))[0]
         conn.execute(text(f"UPDATE collaboration_tags SET tag_id = {tag_id} WHERE id = {collaboration_tag_id}"))
 
