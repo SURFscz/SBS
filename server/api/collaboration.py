@@ -101,7 +101,7 @@ def _tag_identifiers(collaboration_id):
     return [tag.id for tag in collaboration.tags]
 
 
-def delete_orphan_tags(tag_identifiers):
+def _delete_orphan_tags(tag_identifiers):
     # We delete orphan tags, but need to look them up to prevent Parent instance is not bound to a Session
     for tag_pk in tag_identifiers:
         tag = Tag.query.filter(Tag.id == tag_pk).first()
@@ -182,7 +182,7 @@ def delete_collaboration_api(co_identifier):
     broadcast_collaboration_deleted(collaboration_id)
     res = delete(Collaboration, collaboration_id)
 
-    delete_orphan_tags(tag_identifiers)
+    _delete_orphan_tags(tag_identifiers)
 
     broadcast_collaboration_deleted(collaboration_id)
     return res
@@ -811,6 +811,6 @@ def delete_collaboration(collaboration_id):
     broadcast_collaboration_deleted(collaboration_id)
     res = delete(Collaboration, collaboration_id)
 
-    delete_orphan_tags(tag_identifiers)
+    _delete_orphan_tags(tag_identifiers)
 
     return res
