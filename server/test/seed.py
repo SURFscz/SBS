@@ -461,7 +461,9 @@ def seed(db, app_config, skip_seed=False):
                               privacy_policy="https://privacy.org", accepted_user_policy="https://example.nl/aup",
                               contact_email="admin@exmaple.nl", security_email="sec@example.nl",
                               ldap_password="$2b$12$GLjC5hK59aeDcEe.tHHJMO.SQQjFgIIpZ7VaKTIsBn05z/gE7JQny",
-                              ldap_enabled=True, scim_enabled=True)
+                              ldap_enabled=True,
+                              scim_url="https://scim-monitor.sram.surf.nl/scim/tst",
+                              scim_client_enabled=True, scim_enabled=True)
     service_monitor.ldap_identifier = service_monitor.entity_id
 
     service_token_monitor_scim = ServiceToken(hashed_token=secure_hash("Axyz_geheim"), description="Monitor token",
@@ -475,9 +477,6 @@ def seed(db, app_config, skip_seed=False):
     encrypted_bearer_token = encrypt_secret(app_config.encryption_key, "server_token",
                                             _service_context(service_monitor))
     service_monitor.scim_bearer_token = encrypted_bearer_token
-    service_monitor.scim_url = "https://scim-monitor.sram.surf.nl/scim/tst",
-    service_monitor.scim_client_enabled = True
-
     persist_instance(db, service_monitor)
 
     service_group_mail = ServiceGroup(name=service_group_mail_name,
