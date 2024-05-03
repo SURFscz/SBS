@@ -1,4 +1,6 @@
+import datetime
 import re
+import time
 import uuid
 
 from server.db.domain import Service, CollaborationRequest
@@ -13,6 +15,10 @@ class TestImage(AbstractTest):
         res = self.client.get(f"/api/images/services/{service.uuid4}")
 
         self.assertEqual("*", res.headers["Access-Control-Allow-Origin"])
+        today = datetime.date.today()
+        one_year_later = today.replace(year=today.year + 1)
+        expires = time.strftime('%a, %d %b %Y %H:%M:%S GMT', one_year_later.timetuple())
+        self.assertEqual(expires, res.headers["Expires"])
         self.assertIsNotNone(res.data)
 
     def test_logo_url(self):
