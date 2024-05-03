@@ -18,6 +18,5 @@ def get_logo(object_type, sid):
     res.cache_control.clear()
     res.cache_control.max_age = 1209600
     today = datetime.date.today()
-    one_year_later = today.replace(year=today.year + 1)
-    res.expires = one_year_later
+    res.expires = today.replace(year=today.year + 1)
     return res
