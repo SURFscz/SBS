@@ -1,4 +1,5 @@
 import base64
+import datetime
 import io
 
 from flask import Blueprint, send_file
@@ -16,4 +17,7 @@ def get_logo(object_type, sid):
     res.headers.add('Access-Control-Allow-Origin', '*')
     res.cache_control.clear()
     res.cache_control.max_age = 1209600
+    today = datetime.date.today()
+    one_year_later = today.replace(year=today.year + 1)
+    res.expires = one_year_later
     return res
