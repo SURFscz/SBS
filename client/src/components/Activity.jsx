@@ -74,10 +74,14 @@ export default class Activity extends React.PureComponent {
         }
         auditLogs.audit_logs.forEach(log => {
             if (log.target_type) {
-                log.isService = includeServicesTargets.includes(log.target_type);
-                log.isMember = includeMembersTargets.includes(log.target_type);
-                log.isProperty = includePropertiesTargets.includes(log.target_type);
-                log.isConnection = includeConnectionsTargets.includes(log.target_type);
+                if (log.target_type === "services" && log.parent_name === "collaborations") {
+                    log.isConnection = true;
+                } else {
+                    log.isService = includeServicesTargets.includes(log.target_type);
+                    log.isMember = includeMembersTargets.includes(log.target_type);
+                    log.isProperty = includePropertiesTargets.includes(log.target_type);
+                    log.isConnection = includeConnectionsTargets.includes(log.target_type);
+                }
             }
         });
 
@@ -293,7 +297,15 @@ export default class Activity extends React.PureComponent {
         const {auditLogs, collectionName} = this.props;
         const isService = collectionName === "services";
         const isSystemView = collectionName === "all";
-        const {selected, page, query, includeServices, includeMembers, includeProperties, includeConnections} = this.state;
+        const {
+            selected,
+            page,
+            query,
+            includeServices,
+            includeMembers,
+            includeProperties,
+            includeConnections
+        } = this.state;
         const filteredAuditLogs = filterAuditLogs(auditLogs, query);
         const auditLogEntries = this.excludeAuditLogs(filteredAuditLogs.audit_logs, includeServices, includeMembers, includeProperties);
         return (
@@ -325,12 +337,12 @@ export default class Activity extends React.PureComponent {
                                                  })}
                         />}
                         {isService && <CheckBox name="includeConnections"
-                                                 value={includeConnections}
-                                                 info={I18n.t("history.includeConnections")}
-                                                 onChange={e => this.setState({
-                                                     includeConnections: e.target.checked,
-                                                     selected: null
-                                                 })}
+                                                value={includeConnections}
+                                                info={I18n.t("history.includeConnections")}
+                                                onChange={e => this.setState({
+                                                    includeConnections: e.target.checked,
+                                                    selected: null
+                                                })}
                         />}
                     </div>
                     <div className="search">
