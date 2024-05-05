@@ -37,6 +37,7 @@ export default class Activity extends React.PureComponent {
 
     componentDidMount = () => {
         const {auditLogs, user, collectionName} = this.props;
+        const isService = collectionName === "services";
         auditLogs.audit_logs = this.convertReferences(auditLogs);
         if (!user.admin && collectionName === "collaborations") {
             auditLogs.audit_logs = auditLogs.audit_logs.filter(log => {
@@ -67,7 +68,7 @@ export default class Activity extends React.PureComponent {
             "service_groups",
             "ssh_keys",
             "ip_networks"];
-        if (collectionName === "services") {
+        if (isService) {
             includePropertiesTargets.push("services");
         } else {
             ["services", "service_connection_requests"].forEach(name => includeServicesTargets.push(name));
@@ -75,7 +76,8 @@ export default class Activity extends React.PureComponent {
         auditLogs.audit_logs.forEach(log => {
             if (log.target_type) {
                 if (log.target_type === "services" && log.parent_name === "collaborations") {
-                    log.isConnection = true;
+                    log.isConnection = isService;
+                    log.isService = !isService
                 } else {
                     log.isService = includeServicesTargets.includes(log.target_type);
                     log.isMember = includeMembersTargets.includes(log.target_type);
@@ -84,9 +86,10 @@ export default class Activity extends React.PureComponent {
                 }
             }
         });
-
         this.setState({
             selected: auditLogs.audit_logs[0],
+            includeConnections: isService,
+            includeServices: !isService
         });
     }
 
@@ -285,10 +288,11 @@ export default class Activity extends React.PureComponent {
         link.click();
     };
 
-    excludeAuditLogs = (auditLogs, includeServices, includeMembers, includeProperties) => {
+    excludeAuditLogs = (auditLogs, includeServices, includeMembers, includeProperties, includeConnections) => {
         return auditLogs.filter(log =>
             (includeServices || !log.isService) &&
             (includeMembers || !log.isMember) &&
+            (includeConnections || !log.isConnection) &&
             (includeProperties || !log.isProperty)
         )
     }
@@ -307,7 +311,7 @@ export default class Activity extends React.PureComponent {
             includeConnections
         } = this.state;
         const filteredAuditLogs = filterAuditLogs(auditLogs, query);
-        const auditLogEntries = this.excludeAuditLogs(filteredAuditLogs.audit_logs, includeServices, includeMembers, includeProperties);
+        const auditLogEntries = this.excludeAuditLogs(filteredAuditLogs.audit_logs, includeServices, includeMembers, includeProperties, includeConnections);
         return (
             <div className="activity-container">
                 {!isSystemView && <div className="action-container">
