@@ -62,12 +62,14 @@ properties:
       Labels, must be <= 32 chars and start with a lowercase char and must
       consist of only letter, digits, '_' and '-'; may be an existing tag or a new tag
     items:
-      $ref: '/swagger/schemas/Tag.yaml'
+      type: string
+      example: "label_test"
   units:
     type: array
     description: "Units, existing units of this collaboration's organisation"
     items:
-      $ref: '/swagger/schemas/Unit.yaml'
+      type: string
+      example: "fac_wiskunde"
 required:
   - name
   - description
