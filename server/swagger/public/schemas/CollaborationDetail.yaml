@@ -102,3 +102,7 @@ properties:
     type: array
     items:
       $ref: '/swagger/schemas/Tag.yaml'
+  units:
+    type: array
+    items:
+      $ref: '/swagger/schemas/Unit.yaml'
