@@ -1,10 +1,4 @@
 ---
-type: object
-properties:
-  id:
-    type: number
-    readOnly: true
-    example: 999
-  tag_value:
-    type: string
-    example: "label_1"
+type: string
+description: "Tag value for the collaboration"
+example: "label_1"
