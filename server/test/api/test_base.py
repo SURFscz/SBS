@@ -42,7 +42,7 @@ class TestBase(AbstractTest):
 
     def test_health(self):
         res = self.client.get("/health")
-        self.assertDictEqual({"status": "UP"}, res.json)
+        self.assertDictEqual({"components": {"database": "UP", "redis": "UP"}, "status": "UP"}, res.json)
 
     def test_config(self):
         res = self.client.get("/config").json
