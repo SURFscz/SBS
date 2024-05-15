@@ -19,12 +19,6 @@ div.mod-aup-services {
             max-width: 76px;
         }
 
-        div.border-right {
-            margin-right: 25px;
-            padding-right: 25px;
-            border-right: 1px solid $dark-grey;
-        }
-
         table {
             width: 100%;
 
@@ -47,6 +41,18 @@ div.mod-aup-services {
 
                 div.policies {
                     display: flex;
+                    gap: 25px;
+                    width: 100%;
+
+                    .policy {
+                        flex: 1;
+
+                        &:not(:last-child) {
+                            padding-right: 25px;
+                            border-right: 1px solid $dark-grey;
+
+                        }
+                    }
                 }
 
                 div.contact {

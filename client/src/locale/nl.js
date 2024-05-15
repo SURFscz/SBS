@@ -1665,6 +1665,7 @@ const nl = {
             info: "Je staat op het punt om in te loggen op <strong>{{name}}</strong>. Voordat je verder kunt gaan, moet je het beleid voor acceptabel gebruik (AUP) en het privacyverklaring van de service lezen. Bevestig hieronder of je ze accepteert.",
             noPrivacyPolicy: "Geen privacyverklaring verstrekt",
             noAup: "Geen AUP verstrekt",
+            noContact: "Geen contact verstrekt",
             agreeWithTerms: "Ik verklaar dat ik deze voorwaarden heb gelezen en accepteer",
             firstLogin: "Inloggen. Daarna kom je hier terug om de voorwaarden van {{name}} te bekijken.",
             login: "Inloggen",
