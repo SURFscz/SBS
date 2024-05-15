@@ -1665,6 +1665,7 @@ const en = {
             info: "You are about to log in to <strong>{{name}}</strong>. Before you can continue you must review the acceptable use policy (AUP) and privacy policy of the service. Confirm below whether you accept them.",
             noPrivacyPolicy: "No privacy policy provided",
             noAup: "No AUP provided",
+            noContact: "No contact provided",
             agreeWithTerms: "I hereby certify that I have read these terms and that I accept them",
             firstLogin: "Proceed to log in and afterwards you'll return here to view the policies of {{name}}",
             login: "Log in",
