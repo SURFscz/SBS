@@ -55,7 +55,7 @@ def _validate_pam_sso_session(pam_sso_session: PamSSOSession, pin, validate_pin,
         {
             "short_name": m.collaboration.short_name,
             "name": m.collaboration.name,
-            "id": m.collaboration.id
+            "id": m.collaboration.identifier
         } for m in
             user.collaboration_memberships if include_service(service, m)
     ]
