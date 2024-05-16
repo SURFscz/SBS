@@ -51,8 +51,14 @@ def _validate_pam_sso_session(pam_sso_session: PamSSOSession, pin, validate_pin,
     def include_service(s: Service, m: CollaborationMembership):
         return s in m.collaboration.services or s in m.collaboration.organisation.services
 
-    groups = [{"short_name": m.collaboration.short_name, "name": m.collaboration.name} for m in
-              user.collaboration_memberships if include_service(service, m)]
+    groups = [
+        {
+            "short_name": m.collaboration.short_name,
+            "name": m.collaboration.name,
+            "id": m.collaboration.id
+        } for m in
+            user.collaboration_memberships if include_service(service, m)
+    ]
     sorted_groups = sorted(groups, key=lambda group: group["name"].lower())
     return {"result": "SUCCESS",
             "username": user.username,
