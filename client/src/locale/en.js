@@ -2360,7 +2360,7 @@ const en = {
         toc: {
             general: "General",
             contacts: "Contacts",
-            policy: "Policy & compliance",
+            policy: "Policy",
             ldap: "LDAP",
             tokens: "User introspection tokens",
             pamWebLogin: "PAM web login",

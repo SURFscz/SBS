@@ -2360,7 +2360,7 @@ const nl = {
         toc: {
             general: "Algemeen",
             contacts: "Contact",
-            policy: "Policy & compliance",
+            policy: "Policy",
             ldap: "LDAP",
             tokens: "User introspection tokens",
             pamWebLogin: "PAM web login",
