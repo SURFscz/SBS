@@ -21,6 +21,11 @@ class TestInvitationReminders(AbstractTest):
             invitation.status = STATUS_OPEN
             invitation.reminder_send = False
             db.session.merge(invitation)
+        # Also mark one invitation with an expiry_date in the past, those should be ignored
+        invitation = Invitation.query.first()
+        invitation.expiry_date = now - datetime.timedelta(days=5)
+        db.session.merge(invitation)
+
         for invitation in ServiceInvitation.query.all():
             invitation.expiry_date = expiry_date
             invitation.reminder_send = False
@@ -37,10 +42,10 @@ class TestInvitationReminders(AbstractTest):
         mail = self.app.mail
         with mail.record_messages() as outbox:
             results = invitation_reminders(self.app)
-            self.assertEqual(4, len(results["invitations"]))
+            self.assertEqual(3, len(results["invitations"]))
             self.assertEqual(2, len(results["organisation_invitations"]))
             self.assertEqual(2, len(results["service_invitations"]))
-            self.assertEqual(8, len(outbox))
+            self.assertEqual(7, len(outbox))
 
         results = invitation_reminders(self.app)
         self.assertEqual(0, len(results["invitations"]))
@@ -52,6 +57,6 @@ class TestInvitationReminders(AbstractTest):
 
         results = self.put("/api/system/invitation_reminders")
 
-        self.assertEqual(4, len(results["invitations"]))
+        self.assertEqual(3, len(results["invitations"]))
         self.assertEqual(2, len(results["organisation_invitations"]))
         self.assertEqual(2, len(results["service_invitations"]))
