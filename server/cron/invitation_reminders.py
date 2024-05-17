@@ -46,6 +46,7 @@ def _do_invitation_reminders(app):
             db.session.merge(invitation)
 
             results["invitations"].append(invitation.invitee_email)
+            logger.info(f"Sending reminder for CO invitation to {invitation.invitee_email}")
 
             mail_collaboration_invitation({
                 "salutation": "Dear",
@@ -65,6 +66,7 @@ def _do_invitation_reminders(app):
             db.session.merge(invitation)
 
             results["organisation_invitations"].append(invitation.invitee_email)
+            logger.info(f"Sending reminder for Org invitation to {invitation.invitee_email}")
 
             mail_organisation_invitation({
                 "salutation": "Dear",
@@ -83,6 +85,7 @@ def _do_invitation_reminders(app):
             db.session.merge(invitation)
 
             results["service_invitations"].append(invitation.invitee_email)
+            logger.info(f"Sending reminder for Service invitation to {invitation.invitee_email}")
 
             mail_service_invitation({
                 "salutation": "Dear",
@@ -96,6 +99,7 @@ def _do_invitation_reminders(app):
         db.session.commit()
 
         end = int(time.time() * 1000.0)
+        logger.info(f"Result for invitation_reminders job: {results}")
         logger.info(f"Finished running invitation_reminders job in {end - start} ms")
 
         return results
