@@ -144,7 +144,7 @@ def start():
     logger.debug(f"PamWebSSO user {user.uid if user else None} new session")
     url = f"{current_app.app_config.base_url}/weblogin/{service.abbreviation}/{pam_sso_session.session_id}"
 
-    qr = qrcode.QRCode(border=0)
+    qr = qrcode.QRCode(border=1)
     qr.add_data(url)
 
     # ASCII QRCode
