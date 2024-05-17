@@ -37,6 +37,7 @@ def _do_invitation_reminders(app):
         invitations = Invitation.query \
             .filter(Invitation.status == STATUS_OPEN) \
             .filter(Invitation.expiry_date < reminder_date) \
+            .filter(Invitation.expiry_date > now) \
             .filter(Invitation.reminder_send == False) \
             .all()  # noqa: E712
 
