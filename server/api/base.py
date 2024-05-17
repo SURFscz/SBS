@@ -244,6 +244,7 @@ def health():
         User.query.first()
         database_status = True
     except OperationalError:
+        db.session.rollback()
         pass
 
     redis_status = False
