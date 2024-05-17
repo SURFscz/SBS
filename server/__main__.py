@@ -196,9 +196,6 @@ with app.app_context():
             logger.info("Waiting for the database...")
             time.sleep(1)
 
-from server.db.domain import User  # noqa: E402
-from server.auth.user_claims import generate_unique_username  # noqa: E402
-
 with app.app_context():
     Session = sessionmaker(db.engine)
     lock_name = "db_migration"
@@ -208,18 +205,11 @@ with app.app_context():
             lock_obtained = next(result, (0,))[0]
             if lock_obtained:
                 db_migrations(config.database.uri)
-
-            # make sure there is at least one user in the database
-            # do this inside the lock to prevent multiple threads from creating the same user
-            if User.query.count() == 0:
-                logger.info("No users found, creating default admin user")
-                user = User(uid="urn:admin", name="admin", email="root@localhost", username="admin",
-                            external_id="0803fbe9-92d1-4b74-b57e-d7fe4907c2bc", created_by="system", updated_by="system")
-                db.session.add(user)
-                db.session.commit()
         finally:
             session.execute(text(f"SELECT RELEASE_LOCK('{lock_name}')"))
 
+from server.auth.user_claims import generate_unique_username  # noqa: E402
+from server.db.domain import User  # noqa: E402
 
 if not test:
     with app.app_context():

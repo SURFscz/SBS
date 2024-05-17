@@ -241,9 +241,8 @@ def json_endpoint(f):
 def health():
     database_status = False
     try:
-        user_count = User.query.count()
-        if user_count > 0:
-            database_status = True
+        User.query.first()
+        database_status = True
     except OperationalError:
         pass
 
