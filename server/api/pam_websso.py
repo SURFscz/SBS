@@ -5,6 +5,7 @@ import uuid
 from datetime import timedelta
 
 import qrcode
+import base64
 from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app, session
 from werkzeug.exceptions import NotFound, Forbidden, HTTPException
@@ -143,19 +144,29 @@ def start():
     logger.debug(f"PamWebSSO user {user.uid if user else None} new session")
     url = f"{current_app.app_config.base_url}/weblogin/{service.abbreviation}/{pam_sso_session.session_id}"
 
-    qr = qrcode.QRCode()
+    qr = qrcode.QRCode(border=0)
     qr.add_data(url)
 
+    # ASCII QRCode
     f = io.StringIO()
     qr.print_ascii(out=f, invert=True)
     f.seek(0)
+    qr_code_ascii = f.read()
 
-    qr_code = f.read()
+    # Base64 PNG QRCode
+    png = io.BytesIO()
+    qr.make_image().save(png, format="PNG")
+    qr_code_png = base64.b64encode(png.getvalue()).decode()
 
-    return {"result": "OK",
-            "session_id": pam_sso_session.session_id,
-            "challenge": f"Please sign in to: {url}\n{qr_code}",
-            "cached": False}, 201
+    return {
+        "result": "OK",
+        "cached": False,
+        "session_id": pam_sso_session.session_id,
+        "challenge": f"Please sign in to: {url}\n{qr_code_ascii}",
+        "url": f"{url}",
+        "qr_code_ascii": f"{qr_code_ascii}",
+        "qr_code_png": f"{qr_code_png}"
+    }, 201
 
 
 @pam_websso_api.route("/check-pin", methods=["POST"], strict_slashes=False)
