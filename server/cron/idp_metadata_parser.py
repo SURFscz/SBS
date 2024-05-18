@@ -11,12 +11,11 @@ from server.cron.shared import obtain_lock
 idp_metadata = None
 
 idp_metadata_lock_name = "idp_metadata_lock"
-idp_metadata_file_name = "idp_metadata.json"
+idp_metadata_file = "/tmp/idp_metadata.json"
 
 
 def _do_parse_idp_metadata(app, write_result_to_file=True):
     global idp_metadata
-    idp_metadata_file = os.path.join(os.path.dirname(__file__), idp_metadata_file_name)
     if not write_result_to_file and not idp_metadata and os.path.isfile(idp_metadata_file):
         with open(idp_metadata_file) as f:
             idp_metadata = json.loads(f.read())
