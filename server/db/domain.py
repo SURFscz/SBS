@@ -443,6 +443,7 @@ class Organisation(Base, db.Model, LogoMixin):
     services_restricted = db.Column("services_restricted", db.Boolean(), nullable=True, default=False)
     service_connection_requires_approval = db.Column("service_connection_requires_approval", db.Boolean(),
                                                      nullable=True, default=False)
+    crm_id = db.Column("crm_id", db.String(length=255), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
