@@ -1199,6 +1199,8 @@ const en = {
         serviceConnectionRequiresApprovalTooltip: "If checked then service connection requests must first be approved by an Organisation admin",
         accepted_user_policyPlaceholder: "The Acceptable Use Policy (AUP) of the organisation",
         accepted_user_policyTooltip: "Users outside your organisation must accept this AUP before joining one of this organisation's collaboration for the first time.",
+        crmId: "CRM ID",
+        crmIdPlaceholder: "CRM identifier, e.g. A80A11E8-1998-4206-9F83-24ECA6336615",
         collaborationCreationLabel: "Users from these domains",
         collaborationCreationIsAllowed: "Can create collaborations",
         collaborationCreationNotAllowed: "Can request collaborations",

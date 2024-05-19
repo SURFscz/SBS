@@ -42,6 +42,7 @@ class OrganisationForm extends React.Component {
             name: "",
             description: "",
             accepted_user_policy: "",
+            crm_id: "",
             short_name: "",
             schac_home_organisations: [],
             schac_home_organisation: "",
@@ -228,6 +229,7 @@ class OrganisationForm extends React.Component {
                 schac_home_organisations,
                 description,
                 accepted_user_policy,
+                crm_id,
                 logo,
                 on_boarding_msg,
                 category,
@@ -246,6 +248,7 @@ class OrganisationForm extends React.Component {
                 message,
                 description,
                 accepted_user_policy,
+                crm_id,
                 services_restricted,
                 service_connection_requires_approval,
                 logo,
@@ -277,6 +280,7 @@ class OrganisationForm extends React.Component {
                 name,
                 description,
                 accepted_user_policy,
+                crm_id,
                 organisation,
                 schac_home_organisations,
                 collaboration_creation_allowed,
@@ -295,6 +299,7 @@ class OrganisationForm extends React.Component {
                 name,
                 description,
                 accepted_user_policy,
+                crm_id,
                 units: units.filter(unit => !isEmpty(unit.name)),
                 schac_home_organisations,
                 collaboration_creation_allowed,
@@ -342,6 +347,7 @@ class OrganisationForm extends React.Component {
             name,
             description,
             accepted_user_policy,
+            crm_id,
             initial,
             alreadyExists,
             administrators,
@@ -430,8 +436,10 @@ class OrganisationForm extends React.Component {
                             attribute: I18n.t("organisation.shortName").toLowerCase()
                         })}/>}
 
-                        <InputField value={description} onChange={e => this.setState({description: e.target.value})}
-                                    placeholder={I18n.t("organisation.descriptionPlaceholder")} multiline={true}
+                        <InputField value={description}
+                                    onChange={e => this.setState({description: e.target.value})}
+                                    placeholder={I18n.t("organisation.descriptionPlaceholder")}
+                                    multiline={true}
                                     name={I18n.t("organisation.description")}/>
 
                         <InputField value={accepted_user_policy}
@@ -446,6 +454,10 @@ class OrganisationForm extends React.Component {
                             <ErrorIndicator
                                 msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
 
+                        <InputField value={crm_id}
+                                    onChange={e => this.setState({crm_id: e.target.value})}
+                                    placeholder={I18n.t("organisation.crmIdPlaceholder")}
+                                    name={I18n.t("organisation.crmId")}/>
 
                         <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
                                            isNew={isNew} title={I18n.t("organisation.logo")} value={logo}

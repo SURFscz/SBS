@@ -1199,6 +1199,8 @@ const nl = {
         serviceConnectionRequiresApprovalTooltip: "Indien geselecteerd, dan moet een verzoek voor een dienst koppeling eerst worden goedgekeurd door de organisatie beheerder",
         accepted_user_policyPlaceholder: "De acceptable use policy (AUP) van de organisatie.",
         accepted_user_policyTooltip: "Gebruikers van buiten de organsatie moeten deze AUP accepteren wanneer ze voor het eerste lid worden van een samenwerking van deze organisatie.",
+        crmId: "CRM ID",
+        crmIdPlaceholder: "CRM identifier, e.g. A80A11E8-1998-4206-9F83-24ECA6336615",
         collaborationCreationLabel: "Gebruikers van deze domeinen",
         collaborationCreationIsAllowed: "Kunnen samenwerkingen aanmaken",
         collaborationCreationNotAllowed: "Kunnen samenwerkingen aanvragen",
