@@ -23,7 +23,7 @@ import {isUserServiceAdmin} from "../../utils/UserRole";
 import SpinnerField from "./SpinnerField";
 import {Chip, ChipType, Tooltip} from "@surfnet/sds";
 import InstituteColumn from "./InstituteColumn";
-import {isEmpty} from "../../utils/Utils";
+import {isEmpty, userColumnsCustomSort} from "../../utils/Utils";
 import {emitImpersonation} from "../../utils/Impersonation";
 import LastAdminWarning from "./LastAdminWarning";
 import Select from "react-select";
@@ -412,8 +412,9 @@ class ServiceAdmins extends React.Component {
                 </div>
             },
             {
-                nonSortable: true,
+                nonSortable: false,
                 key: "name",
+                customSort: userColumnsCustomSort,
                 header: I18n.t("models.users.name_email"),
                 mapper: entity => <UserColumn entity={entity} currentUser={currentUser}
                                               gotoInvitation={isAdmin ? this.gotoInvitation : null}/>
