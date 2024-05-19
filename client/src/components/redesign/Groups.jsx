@@ -12,7 +12,7 @@ import {ReactComponent as PencilIcon} from "@surfnet/sds/icons/functional-icons/
 import {ReactComponent as BinIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
 import "./Groups.scss";
-import {isEmpty, stopEvent} from "../../utils/Utils";
+import {isEmpty, stopEvent, userColumnsCustomSort} from "../../utils/Utils";
 import I18n from "../../locale/I18n";
 import Button from "../Button";
 import {clearFlash, setFlash} from "../../utils/Flash";
@@ -458,8 +458,9 @@ class Groups extends React.Component {
                 </div>
             },
             {
-                nonSortable: true,
+                nonSortable: false,
                 key: "name",
+                customSort: userColumnsCustomSort,
                 showHeader: !Object.values(selectedMembers).some(m => m.selected),
                 header: I18n.t("models.users.name_email"),
                 mapper: membership => <UserColumn entity={membership}
@@ -550,7 +551,7 @@ class Groups extends React.Component {
                           title={I18n.t("groups.manageMembers")}
                           showActionsAlways={!isEmpty(actions)}
                           searchCallback={this.searchCallback}
-                          defaultSort="user__name"
+                          defaultSort="name"
                           searchAttributes={["user__name", "user__email"]}
                           loading={false}
                           onHover={true}
