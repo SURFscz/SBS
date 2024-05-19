@@ -15,14 +15,15 @@ idp_metadata_file = "/tmp/idp_metadata.json"
 
 
 def _do_parse_idp_metadata(app, write_result_to_file=True):
+    logger = logging.getLogger("scheduler")
     global idp_metadata
     if not write_result_to_file and not idp_metadata and os.path.isfile(idp_metadata_file):
         with open(idp_metadata_file) as f:
+            logger.info(f"Reading idp_metadata from {os.path.realpath(f.name)}")
             idp_metadata = json.loads(f.read())
             return
 
     with app.app_context():
-        logger = logging.getLogger("scheduler")
         start = int(time.time() * 1000.0)
         logger.info("Start running parse_idp_metadata job")
 
@@ -66,12 +67,15 @@ def _do_parse_idp_metadata(app, write_result_to_file=True):
 
         idp_metadata = {"schac_home_organizations": results_by_scope, "entity_ids": results_by_entity_id}
         with open(idp_metadata_file, "w") as f:
+            logger.info(f"Writing idp_metadata to {os.path.realpath(f.name)}")
             f.write(json.dumps(idp_metadata))
 
         return idp_metadata
 
 
 def _reset_idp_meta_data():
+    logger = logging.getLogger("scheduler")
+    logger.info("Resetting idp_metadata as no lock could be obtained ")
     global idp_metadata
     idp_metadata = None
     return None
