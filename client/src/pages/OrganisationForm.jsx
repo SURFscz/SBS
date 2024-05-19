@@ -454,10 +454,10 @@ class OrganisationForm extends React.Component {
                             <ErrorIndicator
                                 msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
 
-                        <InputField value={crm_id}
-                                    onChange={e => this.setState({crm_id: e.target.value})}
-                                    placeholder={I18n.t("organisation.crmIdPlaceholder")}
-                                    name={I18n.t("organisation.crmId")}/>
+                        {user.admin && <InputField value={crm_id}
+                                                   onChange={e => this.setState({crm_id: e.target.value})}
+                                                   placeholder={I18n.t("organisation.crmIdPlaceholder")}
+                                                   name={I18n.t("organisation.crmId")}/>}
 
                         <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
                                            isNew={isNew} title={I18n.t("organisation.logo")} value={logo}
