@@ -6,6 +6,7 @@ from operator import xor
 from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app, g as request_context, jsonify
 from sqlalchemy import or_, func
+from sqlalchemy.exc import DatabaseError
 from sqlalchemy.orm import joinedload, load_only
 from werkzeug.exceptions import Conflict, Forbidden, BadRequest
 
@@ -270,19 +271,22 @@ def invitations_accept():
                                                        updated_by=invitation.user.uid)
     if invitation.created_by == "system":
         collaboration_membership.invitation_id = invitation.id
+    try:
+        collaboration_membership = db.session.merge(collaboration_membership)
 
-    collaboration_membership = db.session.merge(collaboration_membership)
+        # ensure all authorisation group membership are added
+        groups = invitation.groups + list(filter(lambda ag: ag.auto_provision_members, collaboration.groups))
 
-    # ensure all authorisation group membership are added
-    groups = invitation.groups + list(filter(lambda ag: ag.auto_provision_members, collaboration.groups))
+        unique_groups = list(set({ag.id: ag for ag in groups}.values()))
+        for group in unique_groups:
+            if collaboration_membership not in group.collaboration_memberships:
+                group.collaboration_memberships.append(collaboration_membership)
+                db.session.merge(group)
 
-    unique_groups = list(set({ag.id: ag for ag in groups}.values()))
-    for group in unique_groups:
-        if collaboration_membership not in group.collaboration_memberships:
-            group.collaboration_memberships.append(collaboration_membership)
-            db.session.merge(group)
-
-    db.session.commit()
+        db.session.commit()
+    except DatabaseError as e:
+        # This can happen as multiple threads try to accept the outstanding invitation
+        return {"error": str(e)}, 400
 
     user = add_user_aups(collaboration, user_id)
     add_organisation_aups(collaboration, user)
