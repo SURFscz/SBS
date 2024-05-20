@@ -271,16 +271,18 @@ class ServiceAdmins extends React.Component {
             </div>);
     }
 
-    actionIcons = entity => {
-        const showResendInvite = entity.invite === true && isInvitationExpired(entity);
+    actionIcons = (entity, currentUser, isAmin) => {
+        const showResendInvite = entity.invite === true && isInvitationExpired(entity) && isAmin;
+        const showDeleteMember = (!entity.invite && entity.user_id === currentUser.id) || isAmin;
         return (
             <div className="admin-icons">
+                {showDeleteMember &&
                 <div onClick={() => this.removeFromActionIcon(entity.id, entity.invite, true)}>
                     <Tooltip tip={entity.invite ? I18n.t("models.orgMembers.removeInvitationTooltip") :
                         I18n.t("models.orgMembers.removeMemberTooltip")}
                              standalone={true}
                              children={<ThrashIcon/>}/>
-                </div>
+                </div>}
                 {showResendInvite &&
                     <div onClick={this.resendFromActionMenu(entity.id, true)}>
                         <Tooltip tip={I18n.t("models.orgMembers.resendInvitationTooltip")}
@@ -292,11 +294,11 @@ class ServiceAdmins extends React.Component {
             </div>);
     }
 
-    getImpersonateMapper = (entity, currentUser, impersonation_allowed) => {
+    getImpersonateMapper = (entity, currentUser, impersonation_allowed, isAdmin) => {
         const showImpersonation = currentUser.admin && !entity.invite && entity.user.id !== currentUser.id && impersonation_allowed;
         return (
             <div className={"action-icons-container"}>
-                {this.actionIcons(entity)}
+                {this.actionIcons(entity, currentUser, isAdmin)}
                 {showImpersonation && <div className="impersonation">
                     <HandIcon className="impersonate"
                               onClick={() => emitImpersonation(entity.user, this.props.history)}/>
@@ -448,7 +450,7 @@ class ServiceAdmins extends React.Component {
                 nonSortable: true,
                 key: "impersonate",
                 header: "",
-                mapper: entity => this.getImpersonateMapper(entity, currentUser, impersonation_allowed)
+                mapper: entity => this.getImpersonateMapper(entity, currentUser, impersonation_allowed, isAdmin)
             },
         ].filter(column => !isEmpty(column))
         const entities = admins.concat(invites);
