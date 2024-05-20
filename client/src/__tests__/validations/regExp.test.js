@@ -11,9 +11,8 @@ test("Sanitize tag names", () => {
     expect(sanitizeTagName(null)).toEqual(null);
     expect(sanitizeTagName("1QWERTY")).toEqual("1qwerty");
     expect(sanitizeTagName("1234567890123456789012345678901234567890")).toEqual("12345678901234567890123456789012");
-    expect(sanitizeTagName("&X")).toEqual("x");
-    expect(sanitizeTagName("_X")).toEqual("x");
-    expect(sanitizeTagName("$ABC!D@E#F&G(HIJ)KLMNOPQRSTUVWYZ")).toEqual("abcdefghijklmnopqrstuvwyz");
+    expect(sanitizeTagName("😁")).toEqual("😁");
+    expect(sanitizeTagName(" 🌹 ")).toEqual("🌹");
 });
 
 test("Sanitize short names", () => {
