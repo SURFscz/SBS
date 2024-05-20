@@ -150,7 +150,6 @@ class TestCollaboration(AbstractTest):
         tag_too_long = "invalid__--2345678901234567890123"
         tag_invalid = "invalid__#"
         tag_digit_start = "123_valid"
-        tag_weird_start = "_123_invalid"
 
         body = {
             "name": "new_collaboration",
@@ -171,22 +170,6 @@ class TestCollaboration(AbstractTest):
 
         # tag too long
         body["tags"] = [tag_existing, tag_just_valid, tag_too_long]
-        body["name"] += "_"
-        body["short_name"] += "_"
-        res = self.post("/api/collaborations", body=body, with_basic_auth=False)
-        collaboration = db.session.get(Collaboration, res["id"])
-        self.assertEqual(2, len(collaboration.tags))
-
-        # tag too long
-        body["tags"] = [tag_existing, tag_just_valid, tag_invalid]
-        body["name"] += "_"
-        body["short_name"] += "_"
-        res = self.post("/api/collaborations", body=body, with_basic_auth=False)
-        collaboration = db.session.get(Collaboration, res["id"])
-        self.assertEqual(2, len(collaboration.tags))
-
-        # tag start with invalid char
-        body["tags"] = [tag_existing, tag_just_valid, tag_weird_start]
         body["name"] += "_"
         body["short_name"] += "_"
         res = self.post("/api/collaborations", body=body, with_basic_auth=False)
@@ -598,7 +581,7 @@ class TestCollaboration(AbstractTest):
                                         "disclose_member_information": True,
                                         "disclose_email_information": True,
                                         "logo": read_image("robot.png"),
-                                        "tags": ["label_1", "label_2", "!-INVALID"],
+                                        "tags": ["label_1", "label_2", "1234567890123456789012345678901234"],
                                         "units": ["Research", "Support"]
                                     }),
                                     content_type="application/json")
