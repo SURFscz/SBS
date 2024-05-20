@@ -148,7 +148,6 @@ class TestCollaboration(AbstractTest):
         tag_existing = "tag_uuc"
         tag_just_valid = "just_valid-234567890123456789012"
         tag_too_long = "invalid__--2345678901234567890123"
-        tag_invalid = "invalid__#"
         tag_digit_start = "123_valid"
 
         body = {
