@@ -142,7 +142,7 @@ class TestCaseDefaults(TestCase):
         self.assertTrue(valid_tag_label("tag_uuc"))
         self.assertTrue(valid_tag_label("just_valid-234567890123456789012"))
         self.assertTrue(valid_tag_label("123_valid"))
+        self.assertTrue(valid_tag_label("🌹"))
 
-        self.assertFalse(valid_tag_label("invalid__#"))
-        self.assertFalse(valid_tag_label("invalid__--2345678901234567890123"))
-        self.assertFalse(valid_tag_label("_123_invalid"))
+        self.assertFalse(valid_tag_label("123456789012345678901234567890123"))
+        self.assertFalse(valid_tag_label(" "))
