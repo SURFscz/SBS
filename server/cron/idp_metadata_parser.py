@@ -25,9 +25,10 @@ def _do_parse_idp_metadata(app, write_result_to_file=True):
 
     with app.app_context():
         start = int(time.time() * 1000.0)
-        logger.info("Start running parse_idp_metadata job")
-
         metadata = app.app_config.metadata
+
+        logger.info(f"Start running parse_idp_metadata job from {metadata.idp_url}")
+
         pre = request.urlopen(metadata.idp_url)
         results_by_scope = {}
         results_by_entity_id = {}
