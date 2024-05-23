@@ -3,11 +3,12 @@
 # see https://github.com/gevent/gevent/issues/1016#issuecomment-328529454
 import eventlet
 
+from server.cron.shared import obtain_lock
+
 eventlet.monkey_patch(thread=False)
 
 from server.mail import MailMan
 import logging
-from sqlalchemy.orm import sessionmaker
 import os
 import sys
 import time
@@ -196,29 +197,27 @@ with app.app_context():
             logger.info("Waiting for the database...")
             time.sleep(1)
 
-with app.app_context():
-    Session = sessionmaker(db.engine)
-    lock_name = "db_migration"
-    with Session.begin() as session:
-        try:
-            result = session.execute(text(f"SELECT GET_LOCK('{lock_name}', 0)"))
-            lock_obtained = next(result, (0,))[0]
-            if lock_obtained:
-                db_migrations(config.database.uri)
-        finally:
-            session.execute(text(f"SELECT RELEASE_LOCK('{lock_name}')"))
+
+def perform_db_migration(_):
+    db_migrations(config.database.uri)
+
+
+obtain_lock(app, "db_migration", perform_db_migration, lambda: None)
 
 from server.auth.user_claims import generate_unique_username  # noqa: E402
 from server.db.domain import User  # noqa: E402
 
 if not test:
-    with app.app_context():
+    def perform_generate_unique_username(_):
         users = User.query.filter(User.username == None).all()  # noqa: E711
         for user in users:
             user.username = generate_unique_username(user)
             db.session.merge(user)
         if len(users) > 0:
             db.session.commit()
+
+
+    obtain_lock(app, "generate_unique_username", perform_generate_unique_username, lambda: None)
 
 if not test:
     start_scheduling(app)
