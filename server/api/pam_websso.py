@@ -66,6 +66,13 @@ def _validate_pam_sso_session(pam_sso_session: PamSSOSession, pin, validate_pin,
             "info": f"User {user.uid} has authenticated successfully"}
 
 
+@pam_websso_api.route("/status/success/<session_id>", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def success_by_session_id(session_id):
+    pam_sso_session = PamSSOSession.query.filter(PamSSOSession.session_id == session_id).first()
+    return False if pam_sso_session else True, 200
+
+
 # This is the challenge URL
 @pam_websso_api.route("/<service_shortname>/<session_id>", methods=["GET"], strict_slashes=False)
 @swag_from("../swagger/public/paths/get_pam_sso_session_by_id.yml")

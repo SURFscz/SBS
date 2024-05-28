@@ -2327,6 +2327,11 @@ const nl = {
         proceed: "Inloggen",
         enterPin: "Je verificatiecode",
         enterPinInfo: "Voer de code in op de command line interface van {{service}}.",
+        success: "Helemaal klaar",
+        successInfo: "Je kan dit scherm sluiten.",
+        timeOut: "Je sessie is verlopen",
+        timeOutInfo: " Ga terug naar de service waar je probeert in te loggen en probeer het opnieuw.",
+
         afterPin: "Na het invoeren van de code kun je dit scherm sluiten.",
         denied: "Toegang geweigerd",
         deniedInfo: "Helaas heb je geen toegang tot de deze dienst.",

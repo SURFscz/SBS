@@ -32,6 +32,14 @@ class TestPamWebSSO(AbstractTest):
         # Second time is not allowed
         self.get(f"/pam-weblogin/storage/{pam_session_id}", with_basic_auth=False, response_status_code=403)
 
+    def test_get_status(self):
+        self.login("urn:peter")
+        res = self.get(f"/pam-weblogin/status/success/{pam_session_id}", with_basic_auth=False)
+        self.assertFalse(res)
+        PamSSOSession.query.filter(PamSSOSession.session_id == pam_session_id).delete()
+        res = self.get(f"/pam-weblogin/status/success/{pam_session_id}", with_basic_auth=False)
+        self.assertTrue(res)
+
     def test_get_session_different_user(self):
         self.login("urn:sarah")
         res = self.get(f"/pam-weblogin/storage/{pam_session_id}", with_basic_auth=False)

@@ -23,6 +23,12 @@
             line-height: 26px;
         }
 
+        .success {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
         span.attr {
             font-weight: bold;
         }
@@ -57,27 +63,57 @@
         }
 
         div.pin-value {
-            margin: 35px 0;
             display: flex;
+            margin: 20px 0 35px 0;
+            padding: 20px;
+            background: $background;
+            width: 100%;
 
             div.pin-value-inner {
                 display: flex;
+                gap: 60px;
                 margin: 0 auto;
+
                 span.value {
-                    font-size: 36px;
-                    font-weight: bold;
-                    margin-right: 18px;
-                    letter-spacing: 8px;
+                    font-size: 40px;
+                    font-weight: 600;
+                    letter-spacing: 16px;
+                    line-height: 36px;
+                    margin-top: 6px;
                 }
-                section.copy-to-clipboard {
-                    border: none;
-                    font-size: 18px;
-                    &:hover {
-                        background-color: transparent;
-                    }
+
+                button.sds--btn--ghost--dark {
+                    color: var(--sds--color--gray--500);
+                    font-size: 20px;
+                    background-color: white;
+
                     svg {
-                        width: 34px;
+                        height: auto;
+                        width: 22px;
+                        color: var(--sds--color--gray--500);
                     }
+
+                    &:hover {
+                        background-color: black;
+                        color: white;
+
+                        svg {
+                            color: white;
+                        }
+
+                    }
+
+                    &:active {
+                        color: black;
+                        font-size: 20px;
+                        background-color: white;
+
+                        svg {
+                            color: black;
+
+                        }
+                    }
+
                 }
             }
         }
