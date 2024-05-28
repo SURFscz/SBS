@@ -3,14 +3,15 @@ import {withRouter} from "react-router-dom";
 import I18n from "../locale/I18n";
 import "./PamWebSSO.scss";
 import Button from "../components/Button";
-import {pamWebSSOSession} from "../api";
+import {pamWebSSOSession, pollPamWebSSO} from "../api";
 import SpinnerField from "../components/redesign/SpinnerField";
 import {ErrorOrigins} from "../utils/Utils";
 import Logo from "../components/redesign/Logo";
 import {login} from "../utils/Login";
-import ClipBoardCopy from "../components/redesign/ClipBoardCopy";
 import DOMPurify from "dompurify";
-
+import {CopyToClipboard} from "react-copy-to-clipboard";
+import {ReactComponent as Duplicate} from "../icons/duplicate.svg";
+import {poll} from "../utils/Poll";
 
 class PamWebSSO extends React.Component {
 
@@ -19,7 +20,9 @@ class PamWebSSO extends React.Component {
         this.state = {
             pamSession: {},
             service: {},
-            loading: true
+            loading: true,
+            loginSuccessFull: false,
+            timeOut: false
         };
     }
 
@@ -32,7 +35,21 @@ class PamWebSSO extends React.Component {
                     service: res.service,
                     pin: res.pin,
                     loading: false
-                })
+                });
+                if (res.validation.result === "SUCCESS") {
+                    poll({
+                        fn: () => pollPamWebSSO(session_id),
+                        validate: isSuccess => {
+                            const {timeOut} = this.state;
+                            this.setState({loginSuccessFull: isSuccess});
+                            return isSuccess || timeOut;
+                        },
+                        interval: 1500,
+                        maxAttempts: 60 * 10 // 15 minute timeout
+                    }).catch(() => {
+                        this.setState({timeOut: true});
+                    });
+                }
             })
             .catch(() => this.props.history.push(`/404?eo=${ErrorOrigins.invalidPamWebSSO}`));
     };
@@ -51,12 +68,30 @@ class PamWebSSO extends React.Component {
                         <a href={service.uri} target="_blank" rel="noopener noreferrer">{service.uri}</a>
                     </div>}
                     {service.support_email &&
-                    <div className="org-attribute">
-                        <span className="attr">{I18n.t("service.support_email")}: </span>
-                        <a href={`mailto:${service.support_email}`}>{service.support_email}</a>
-                    </div>}
+                        <div className="org-attribute">
+                            <span className="attr">{I18n.t("service.support_email")}: </span>
+                            <a href={`mailto:${service.support_email}`}>{service.support_email}</a>
+                        </div>}
 
                 </div>
+            </div>
+        );
+    }
+
+    renderTimeOut = service => {
+        return (
+            <div className="success">
+                <h1>{I18n.t("pamWebSSO.timeOut", {service: service.name})}</h1>
+                <p className="info">{I18n.t("pamWebSSO.timeOutInfo")}</p>
+            </div>
+        );
+    }
+
+    renderLoginSuccessFull = service => {
+        return (
+            <div className="success">
+                <h1>{I18n.t("pamWebSSO.success", {service: service.name})}</h1>
+                <p className="info">{I18n.t("pamWebSSO.successInfo")}</p>
             </div>
         );
     }
@@ -94,17 +129,21 @@ class PamWebSSO extends React.Component {
                 <div className="pin-value">
                     <div className="pin-value-inner">
                         <span className="value">{pin}</span>
-                        <ClipBoardCopy transparentBackground={true} txt={pin}/>
+                        <CopyToClipboard text={pin}>
+                            <Button className="ghost"
+                                    onClick={() => true}
+                                    txt={"Copy"}
+                                    icon={<Duplicate/>}/>
+                        </CopyToClipboard>
                     </div>
                 </div>
                 <p>{I18n.t("pamWebSSO.enterPinInfo", {service: service.name})}</p>
-                <p className={"info"}>{I18n.t("pamWebSSO.afterPin")}</p>
             </div>
         );
     }
 
     render() {
-        const {validation, service, pin, loading} = this.state;
+        const {validation, service, pin, loading, loginSuccessFull, timeOut} = this.state;
 
         if (loading) {
             return <SpinnerField/>;
@@ -113,9 +152,11 @@ class PamWebSSO extends React.Component {
         return (
             <div className="mod-pam-web-sso-container">
                 <div className="mod-pam-web-sso">
+                    {loginSuccessFull && this.renderLoginSuccessFull(service)}
+                    {timeOut && this.renderTimeOut(service)}
                     {!validation && this.renderLogin(service)}
                     {(validation && validation.result !== "SUCCESS") && this.renderFailure(service, pin)}
-                    {(validation && validation.result === "SUCCESS") && this.renderPin(service, pin)}
+                    {(validation && !loginSuccessFull && !timeOut && validation.result === "SUCCESS") && this.renderPin(service, pin)}
                 </div>
             </div>
         )

@@ -104,7 +104,7 @@ export function me(config) {
         let sub = "urn:service_admin";
         sub = "urn:john";
         // sub = "urn:harry";
-        const second_factor_confirmed = false;
+        const second_factor_confirmed = true;
         // const second_factor_confirmed = false;
         // sub = "urn:unknown";
         // Need to mock a login
@@ -1050,7 +1050,11 @@ export function tagsByOrganisation(organisationId) {
 
 //pam-weblogin
 export function pamWebSSOSession(serviceAbbreviation, sessionId) {
-    return fetchJson(`/pam-weblogin/${serviceAbbreviation}/${sessionId}`, {}, {}, false)
+    return fetchJson(`/pam-weblogin/${serviceAbbreviation}/${sessionId}`, {}, {}, false);
+}
+
+export function pollPamWebSSO(sessionId) {
+    return fetchJson(`/pam-weblogin/status/success/${sessionId}`, {}, {}, false);
 }
 
 //ServiceTokens

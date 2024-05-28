@@ -2326,8 +2326,11 @@ const en = {
         info: "Log in to get the verfication code required for the command line interface",
         proceed: "Log in",
         enterPin: "Your verification code",
-        enterPinInfo: "Please enter this code in the command line interface of {{service}}.",
-        afterPin: "After entering the code you can close this screen.",
+        enterPinInfo: "Use this code in the command line interface to access {{service}}.",
+        success: "All done",
+        successInfo: "You can close this window.",
+        timeOut: "Your session has expired",
+        timeOutInfo: " Please go back to the service you were trying to log in to and try again.",
         denied: "Permission denied",
         deniedInfo: "Unfortunately, you don't have access to this service.",
         contact: "Please contact <a href='mailto:{{support}}'>{{support}}</a> to arrange access to this service."
