@@ -169,7 +169,7 @@ def start():
         "result": "OK",
         "cached": False,
         "session_id": pam_sso_session.session_id,
-        "challenge": f"Please sign in to: {url}\n{qr_code_ascii}",
+        "challenge": f"{qr_code_ascii}\nGet a verification code via: {url}\n(or scan the QR code)",
         "url": f"{url}",
         "qr_code_ascii": f"{qr_code_ascii}",
         "qr_code_png": f"{qr_code_png}"

@@ -64,8 +64,8 @@ class TestPamWebSSO(AbstractTest):
 
         self.assertEqual(res["result"], "OK")
         self.assertEqual(res["cached"], False)
-        prefix = f"Please sign in to: {self.app.app_config.base_url}/weblogin/storage/{res['session_id']}\n"
-        self.assertTrue(res["challenge"].startswith(prefix))
+        challenge = f"Get a verification code via: {self.app.app_config.base_url}/weblogin/storage/{res['session_id']}"
+        self.assertTrue(challenge in res["challenge"])
 
         res = self.get(f"/pam-weblogin/storage/{res['session_id']}", with_basic_auth=False)
         self.assertEqual(res["service"]["name"], service_storage_name)
@@ -78,8 +78,8 @@ class TestPamWebSSO(AbstractTest):
 
         self.assertEqual(res["result"], "OK")
         self.assertEqual(res["cached"], False)
-        prefix = f"Please sign in to: {self.app.app_config.base_url}/weblogin/storage/{res['session_id']}\n"
-        self.assertTrue(res["challenge"].startswith(prefix))
+        challenge = f"Get a verification code via: {self.app.app_config.base_url}/weblogin/storage/{res['session_id']}"
+        self.assertTrue(challenge in res["challenge"])
 
         res = self.get(f"/pam-weblogin/storage/{res['session_id']}", with_basic_auth=False)
         self.assertEqual(res["service"]["name"], service_storage_name)
