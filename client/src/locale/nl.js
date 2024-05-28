@@ -2331,8 +2331,6 @@ const nl = {
         successInfo: "Je kan dit scherm sluiten.",
         timeOut: "Je sessie is verlopen",
         timeOutInfo: " Ga terug naar de service waar je probeert in te loggen en probeer het opnieuw.",
-
-        afterPin: "Na het invoeren van de code kun je dit scherm sluiten.",
         denied: "Toegang geweigerd",
         deniedInfo: "Helaas heb je geen toegang tot de deze dienst.",
         contact: "Neem contact op met <a href='mailto:{{support}}'>{{support}}</a> voor toegang tot deze dienst."
