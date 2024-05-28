@@ -37,7 +37,7 @@ export const UserMenu = ({currentUser, config, provideFeedback}) => {
                     <li>
                         <Link onClick={toggleUserMenu} to={`/profile`}>{I18n.t(`header.links.profile`)}</Link>
                     </li>
-                    {(!currentUser.admin && !userServiceAdmin)&& <li>
+                    {!userServiceAdmin && <li>
                         <Link onClick={toggleUserMenu} to={`/new-service-request`}>
                             {I18n.t("header.links.requestService")}
                         </Link>
