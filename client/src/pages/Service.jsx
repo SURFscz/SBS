@@ -75,7 +75,7 @@ class Service extends React.Component {
         ip_networks: [],
         administrators: [],
         message: "",
-        required: ["name", "entity_id", "abbreviation", "logo", "security_email", "connection_type"],
+        required: ["name", "entity_id", "abbreviation", "logo", "security_email"],
         alreadyExists: {},
         initial: true,
         invalidInputs: {},
