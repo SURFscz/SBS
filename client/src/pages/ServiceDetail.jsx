@@ -530,7 +530,7 @@ class ServiceDetail extends React.Component {
             <div className="mod-service-container">
                 <ServiceWelcomeDialog name={service.name}
                                       isOpen={firstTime}
-                                      invitation={invitation}
+                                      invitation={invitation || {intended_role: "admin"}}
                                       close={this.doAcceptInvitation}/>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
