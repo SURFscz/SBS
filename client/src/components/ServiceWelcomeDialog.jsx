@@ -8,7 +8,7 @@ import {AlertType, Modal} from "@surfnet/sds";
 export default function ServiceWelcomeDialog({
                                                  name,
                                                  isOpen = false,
-                                                 invitation,
+                                                 invitation = {intended_role: "admin"},
                                                  close
                                              }) {
 
