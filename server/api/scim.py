@@ -113,6 +113,7 @@ def service_users():
 @swag_from("../swagger/public/paths/get_user_by_external_id.yml")
 @json_endpoint
 def service_user_by_external_id(user_external_id: str):
+    validate_service_token("scim_client_enabled", SERVICE_TOKEN_SCIM)
     stripped_external_id = user_external_id.replace(EXTERNAL_ID_POST_FIX, "")
     user = User.query.filter(User.external_id == stripped_external_id).one()
     return find_user_by_id_template(user), _add_etag_header(user)
@@ -131,6 +132,7 @@ def service_groups():
 @swag_from("../swagger/public/paths/get_group_by_external_id.yml")
 @json_endpoint
 def service_group_by_identifier(group_external_id: str):
+    validate_service_token("scim_client_enabled", SERVICE_TOKEN_SCIM)
     stripped_group_identifier = group_external_id.replace(EXTERNAL_ID_POST_FIX, "")
     group = Collaboration.query.filter(Collaboration.identifier == stripped_group_identifier).first()
     if not group:
