@@ -1,9 +1,9 @@
 import json
 import urllib.parse
 
+import mock
 import requests
 import responses
-import mock
 
 from server.db.domain import User, Collaboration, Group, Service
 from server.scim import EXTERNAL_ID_POST_FIX
@@ -19,14 +19,16 @@ from server.tools import read_file
 class TestScim(AbstractTest):
 
     def test_users(self):
-        res = self.get("/api/scim/v2/Users", headers={"Authorization": f"bearer {service_network_token}"})
+        res = self.get("/api/scim/v2/Users", headers={"Authorization": f"bearer {service_network_token}"},
+                       with_basic_auth=False)
         self.assertEqual(5, len(res["Resources"]))
 
     def test_users_no_scim_enabled(self):
         wiki = self.find_entity_by_name(Service, service_wiki_name)
         self.assertFalse(wiki.scim_enabled)
 
-        res = self.get("/api/scim/v2/Users", headers={"Authorization": f"bearer {service_wiki_token}"})
+        res = self.get("/api/scim/v2/Users", headers={"Authorization": f"bearer {service_wiki_token}"},
+                       with_basic_auth=False)
         self.assertEqual(10, len(res["Resources"]))
 
     def test_user_by_external_id(self):
@@ -34,6 +36,7 @@ class TestScim(AbstractTest):
         jane_external_id = jane.external_id
         res = self.get(f"/api/scim/v2/Users/{jane_external_id}{EXTERNAL_ID_POST_FIX}",
                        headers={"Authorization": f"bearer {service_network_token}"},
+                       with_basic_auth=False,
                        expected_headers={"Etag": version_value(jane)})
         self.assertEqual(f"{jane_external_id}{EXTERNAL_ID_POST_FIX}", res["externalId"])
         self.assertEqual("User", res["meta"]["resourceType"])
@@ -41,10 +44,12 @@ class TestScim(AbstractTest):
     def test_user_by_external_id_404(self):
         self.get("/api/scim/v2/Users/nope",
                  headers={"Authorization": f"bearer {service_network_token}"},
+                 with_basic_auth=False,
                  response_status_code=404)
 
     def test_groups(self):
-        res = self.get("/api/scim/v2/Groups", headers={"Authorization": f"bearer {service_network_token}"})
+        res = self.get("/api/scim/v2/Groups", headers={"Authorization": f"bearer {service_network_token}"},
+                       with_basic_auth=False)
         self.assertEqual(3, len(res["Resources"]))
 
     def test_collaboration_by_identifier(self):
@@ -52,6 +57,7 @@ class TestScim(AbstractTest):
         collaboration_identifier = collaboration.identifier
         res = self.get(f"/api/scim/v2/Groups/{collaboration_identifier}{EXTERNAL_ID_POST_FIX}",
                        headers={"Authorization": f"bearer {service_network_token}"},
+                       with_basic_auth=False,
                        expected_headers={"Etag": version_value(collaboration)})
         self.assertEqual(f"{collaboration_identifier}{EXTERNAL_ID_POST_FIX}", res["externalId"])
         self.assertEqual(f"{collaboration_identifier}{EXTERNAL_ID_POST_FIX}", res["id"])
@@ -61,7 +67,8 @@ class TestScim(AbstractTest):
         group_identifier = group.identifier
         # We mock that all members are already known in the remote SCIM DB
         res = self.get(f"/api/scim/v2/Groups/{group_identifier}{EXTERNAL_ID_POST_FIX}",
-                       headers={"Authorization": f"bearer {service_network_token}"})
+                       headers={"Authorization": f"bearer {service_network_token}"},
+                       with_basic_auth=False)
         self.assertEqual(f"{group_identifier}{EXTERNAL_ID_POST_FIX}", res["externalId"])
         self.assertEqual(f"{group_identifier}{EXTERNAL_ID_POST_FIX}", res["id"])
         self.assertEqual("Group", res["meta"]["resourceType"])
@@ -69,6 +76,7 @@ class TestScim(AbstractTest):
     def test_collaboration_by_identifier_404(self):
         self.get("/api/scim/v2/Groups/nope",
                  headers={"Authorization": f"bearer {service_network_token}"},
+                 with_basic_auth=False,
                  response_status_code=404)
 
     def test_schemas(self):
@@ -89,14 +97,16 @@ class TestScim(AbstractTest):
         query = urllib.parse.quote(f"{SCIM_SCHEMA_SRAM_USER}.eduPersonUniqueId eq \"urn:john\"")
         res = self.get("/api/scim/v2/Users",
                        query_data={"filter": query},
-                       headers={"Authorization": f"bearer {service_network_token}"})
+                       headers={"Authorization": f"bearer {service_network_token}"},
+                       with_basic_auth=False)
         self.assertEqual(1, len(res["Resources"]))
 
     def test_users_filter_single_quote(self):
         query = urllib.parse.quote(f"{SCIM_SCHEMA_SRAM_USER}.eduPersonUniqueId eq 'urn:john'")
         res = self.get("/api/scim/v2/Users",
                        query_data={"filter": query},
-                       headers={"Authorization": f"bearer {service_network_token}"})
+                       headers={"Authorization": f"bearer {service_network_token}"},
+                       with_basic_auth=False)
         self.assertEqual(1, len(res["Resources"]))
 
     def test_users_filter_not_implemented(self):
@@ -104,6 +114,7 @@ class TestScim(AbstractTest):
         self.get("/api/scim/v2/Users",
                  query_data={"filter": query},
                  headers={"Authorization": f"bearer {service_network_token}"},
+                 with_basic_auth=False,
                  response_status_code=500)
 
     @responses.activate
