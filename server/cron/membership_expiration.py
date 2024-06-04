@@ -38,6 +38,9 @@ def _do_expire_memberships(app):
             .filter(CollaborationMembership.expiry_date < notification_end_date).all()  # noqa: E712
 
         for membership in memberships_warned:
+            logger.info(f"Sending expiration warning for membership "
+                        f"of CO {membership.collaboration.global_urn} ({membership.collaboration.name})"
+                        f"to user {membership.user.uid} ({membership.user.email})")
             mail_membership_expires_notification(membership, True)
 
         deletion_date = now - datetime.timedelta(days=cfq.expired_memberships_days_threshold - 1)
@@ -48,6 +51,9 @@ def _do_expire_memberships(app):
             # ensure we have the user and collaboration in the json
             membership.user.name
             membership.collaboration.name
+            logger.info(f"Deleting expired membership "
+                        f"of CO {membership.collaboration.global_urn} ({membership.collaboration.name})"
+                        f"for user {membership.user.uid} ({membership.user.email})")
             db.session.delete(membership)
         memberships_deleted_json = jsonify(memberships_deleted).json
 
@@ -55,6 +61,9 @@ def _do_expire_memberships(app):
             .filter(CollaborationMembership.status == STATUS_ACTIVE) \
             .filter(CollaborationMembership.expiry_date < now).all()  # noqa: E712
         for membership in memberships_expired:
+            logger.info(f"Sending expiration notification for membership "
+                        f"of CO {membership.collaboration.global_urn} ({membership.collaboration.name})"
+                        f"to user {membership.user.uid} ({membership.user.email})")
             mail_membership_expires_notification(membership, False)
             membership.status = STATUS_EXPIRED
             db.session.merge(membership)
