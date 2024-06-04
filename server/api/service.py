@@ -620,7 +620,7 @@ def trust_organisation(service_id, organisation_id):
 @json_endpoint
 def request_delete_service(service_id):
     confirm_service_admin(service_id)
-    service = Service.query.get(service_id)
+    service = db.session.get(Service, service_id)
     mail_delete_service_request(service)
     return {}, 204
 

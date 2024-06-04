@@ -158,12 +158,12 @@ def sweep():
         results["scim_url"] = service.scim_url
         return results, 201
     except BadRequest as bad_request:
-        logger.warn(f"Error from remote SCIM server for {service.entity_id}: {bad_request.description}")
+        logger.warning(f"Error from remote SCIM server for {service.entity_id}: {bad_request.description}")
         return {"error": f"Error from remote scim server: {bad_request.description}",
                 "scim_url": service.scim_url}, 400
     except requests.RequestException as request_exception:
-        logger.warn(f"Could not connect to remote SCIM server {service.scim_url} for {service.entity_id}:"
-                    f" {type(request_exception).__name__}")
+        logger.warning(f"Could not connect to remote SCIM server {service.scim_url} for {service.entity_id}:"
+                       f" {type(request_exception).__name__}")
         return {"error": f"Could not connect to remote SCIM server ({type(request_exception).__name__})"
                          f"{': ' + request_exception.response.text if request_exception.response else ''}",
                 "scim_url": service.scim_url}, 400
