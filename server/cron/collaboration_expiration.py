@@ -38,6 +38,7 @@ def _do_expire_collaboration(app):
             .filter(Collaboration.expiry_date < notification_end_date).all()  # noqa: E712
 
         for coll in collaborations_warned:
+            logger.info(f"Send expiration warning for CO {coll.global_urn} ({coll.name})")
             mail_collaboration_expires_notification(coll, True)
 
         deletion_date = now - datetime.timedelta(days=cfq.expired_collaborations_days_threshold - 1)
@@ -45,12 +46,14 @@ def _do_expire_collaboration(app):
             .filter(Collaboration.status == STATUS_EXPIRED) \
             .filter(Collaboration.expiry_date < deletion_date).all()  # noqa: E712
         for coll in collaborations_deleted:
+            logger.info(f"Deleting expired CO {coll.global_urn} ({coll.name})")
             db.session.delete(coll)
 
         collaborations_expired = Collaboration.query \
             .filter(Collaboration.status == STATUS_ACTIVE) \
             .filter(Collaboration.expiry_date < now).all()  # noqa: E712
         for coll in collaborations_expired:
+            logger.info(f"Send expiration notification for CO {coll.global_urn} ({coll.name})")
             mail_collaboration_expires_notification(coll, False)
             coll.status = STATUS_EXPIRED
             db.session.merge(coll)
