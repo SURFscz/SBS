@@ -109,7 +109,23 @@ class TestUserSaml(AbstractTest):
         self.assertEqual(res["status"]["result"], "interrupt")
 
         network_service = Service.query.filter(Service.entity_id == service_network_entity_id).one()
-        parameters = urlencode({"service_id": network_service.uuid4, "service_name": network_service.name})
+        parameters = urlencode({"service_id": network_service.uuid4, "service_name": network_service.name, "status": 99})
+        self.assertEqual(f"{self.app.app_config.base_url}/service-aup?{parameters}", res["status"]["redirect_url"], )
+
+    def test_proxy_authz_free_ride(self):
+        network_service = Service.query.filter(Service.entity_id == service_network_entity_id).one()
+        network_service.non_member_users_access_allowed = True
+        self.save_entity(network_service)
+
+        # user unknown is SBS
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:gandalf", "service_id": service_network_entity_id,
+                              "issuer_id": "issuer.com", "uid": "gandalf", "homeorganization": "lothlorien.middleearth",
+                              "user_email": "gandalf@lothlorien.middleearth"})
+        self.assertEqual(res["status"]["result"], "interrupt")
+
+        network_service = Service.query.filter(Service.entity_id == service_network_entity_id).one()
+        parameters = urlencode({"service_id": network_service.uuid4, "service_name": network_service.name, "status": 97})
         self.assertEqual(f"{self.app.app_config.base_url}/service-aup?{parameters}", res["status"]["redirect_url"], )
 
     def test_proxy_authz_no_user(self):
