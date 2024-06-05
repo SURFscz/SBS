@@ -26,6 +26,7 @@ USER_IS_SUSPENDED = 2
 SERVICE_UNKNOWN = 3
 SERVICE_NOT_CONNECTED = 4
 COLLABORATION_NOT_ACTIVE = 5
+NEW_FREE_RIDE_USER = 97
 MISSING_ATTRIBUTES = 98
 AUP_NOT_AGREED = 99
 SECOND_FA_REQUIRED = 100
@@ -42,6 +43,8 @@ def status_to_string(status):
         return "SERVICE_NOT_CONNECTED"
     elif status == COLLABORATION_NOT_ACTIVE:
         return "COLLABORATION_NOT_ACTIVE"
+    elif status == NEW_FREE_RIDE_USER:
+        return "NEW_FREE_RIDE_USER"
     elif status == AUP_NOT_AGREED:
         return "AUP_NOT_AGREED"
     elif status == SECOND_FA_REQUIRED:
@@ -146,7 +149,7 @@ def _do_attributes(user, uid, service, service_entity_id, not_authorized_func, a
     if user is None:
         if free_ride:
             logger.debug(f"Returning interrupt for new user {uid} and service_entity_id {service_entity_id} to provision user")
-            return not_authorized_func(service, AUP_NOT_AGREED)
+            return not_authorized_func(service, NEW_FREE_RIDE_USER)
         else:
             logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
                          f" as the user is unknown")
@@ -283,9 +286,13 @@ def proxy_authz():
             else:
                 redirect_url = f"{base_url}/2fa/{user_not_authorized.second_fa_uuid}"
             result = "interrupt"
-        elif status == AUP_NOT_AGREED:
+        elif status == AUP_NOT_AGREED or status == NEW_FREE_RIDE_USER:
             # Internal contract, in case of AUP_NOT_AGREED we get the Service instance returned
-            parameters = urlencode({"service_id": service_name.uuid4, "service_name": service_name.name})
+            parameters = urlencode({
+                "service_id": service_name.uuid4,
+                "service_name": service_name.name,
+                "status": status
+            })
             redirect_url = f"{base_url}/service-aup?{parameters}"
             result = "interrupt"
         else:
