@@ -19,7 +19,6 @@ from server.logger.context_logger import ctx_logger
 from server import tools
 import urllib.parse
 
-
 user_saml_api = Blueprint("user_saml_api", __name__, url_prefix="/api/users")
 
 USER_UNKNOWN = 1
@@ -51,7 +50,7 @@ def status_to_string(status):
         return "UNKNOWN_STATUS"
 
 
-# Independent mapping, so different attribute names can be send back
+# Independent mapping, so different attribute names can be sent back
 custom_saml_mapping = {
     "multi_value_attributes": ["edu_members", "affiliation", "scoped_affiliation", "entitlement"],
     "attribute_saml_mapping": {
@@ -143,12 +142,17 @@ def _do_attributes(user, uid, service, service_entity_id, not_authorized_func, a
         logger.error(msg)
         send_error_mail(tb=msg)
         return not_authorized_func(service_entity_id, SERVICE_UNKNOWN)
-    no_free_ride = not service.non_member_users_access_allowed
-    if not user:
-        logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
-                     f" as the user is unknown")
-        return not_authorized_func(service.name, USER_UNKNOWN)
-    if user.suspended and no_free_ride:
+    free_ride = service.non_member_users_access_allowed
+    if user is None:
+        if free_ride:
+            logger.debug(f"Returning interrupt for new user {uid} and service_entity_id {service_entity_id} to provision user")
+            return not_authorized_func(service, AUP_NOT_AGREED)
+        else:
+            logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
+                         f" as the user is unknown")
+            return not_authorized_func(service.name, USER_UNKNOWN)
+
+    if user.suspended and not free_ride:
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
                      f" as the user is suspended")
         return not_authorized_func(service.name, USER_IS_SUSPENDED)
@@ -156,12 +160,12 @@ def _do_attributes(user, uid, service, service_entity_id, not_authorized_func, a
     memberships = collaboration_memberships_for_service(user, service)
     connected_collaborations = [cm.collaboration for cm in memberships]
 
-    if not connected_collaborations and no_free_ride:
+    if not connected_collaborations and not free_ride:
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
                      f" as the service is not connected to any of the user's collaborations")
         return not_authorized_func(service.name, SERVICE_NOT_CONNECTED)
 
-    if all(coll.status != STATUS_ACTIVE for coll in connected_collaborations) and no_free_ride:
+    if all(coll.status != STATUS_ACTIVE for coll in connected_collaborations) and not free_ride:
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
                      f" as the service is not connected to any active collaborations")
         return not_authorized_func(service.name, COLLABORATION_NOT_ACTIVE)
@@ -222,7 +226,7 @@ def _do_attributes(user, uid, service, service_entity_id, not_authorized_func, a
     return all_attributes, http_status
 
 
-# Endpoint for EDUteams
+# Endpoint for eduTEAMS
 @user_saml_api.route("/proxy_authz", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def proxy_authz():
