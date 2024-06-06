@@ -2525,6 +2525,11 @@ const en = {
         create: "Create new collaboration",
         viewRequests: "view requests",
         open: "Open"
+    },
+    countDownDialog: {
+        title: "Access to {{name}}",
+        subTitle: "To access service {{name}} you will have to be provisioned. This unfortunately takes some time, grab a cup of ☕️.",
+        info: "You will be granted access in <span class='counter'>{{counter}}</span> seconds."
     }
 };
 

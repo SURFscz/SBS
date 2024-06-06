@@ -1,6 +1,6 @@
 import {isEmpty} from "../utils/Utils";
 
-export const validEmailRegExp = /^\S+@\S+$/;
+export const validEmailRegExp = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.?[a-zA-Z]*$/;///^\S+@\S+$/;
 
 export const validSchacHomeRegExp = /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}$/;
 

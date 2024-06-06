@@ -1,10 +1,17 @@
 import {sanitizeShortName, validUrlRegExp, validEmailRegExp, sanitizeTagName} from "../../validations/regExps";
 
 test("Valid emails", () => {
-    expect(validEmailRegExp.test("a@a.com")).toEqual(true);
-    expect(validEmailRegExp.test("b@b")).toEqual(true);
+    expect(validEmailRegExp.test("a@a.com")).toBeTruthy();
+    expect(validEmailRegExp.test("b@b")).toBeTruthy();
+    expect(validEmailRegExp.test("a@a")).toBeTruthy();
+    expect(validEmailRegExp.test("a.x@a")).toBeTruthy();
+    expect(validEmailRegExp.test("a@a.c")).toBeTruthy();
 
-    expect(validEmailRegExp.test("nope")).toEqual(false);
+    expect(validEmailRegExp.test("nope")).toBeFalsy();
+    expect(validEmailRegExp.test("aa")).toBeFalsy();
+    expect(validEmailRegExp.test("a!@a.c")).toBeFalsy();
+    expect(validEmailRegExp.test("a!@a.c@")).toBeFalsy();
+
 })
 
 test("Sanitize tag names", () => {

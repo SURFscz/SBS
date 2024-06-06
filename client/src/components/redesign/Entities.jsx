@@ -11,6 +11,8 @@ import SpinnerField from "./SpinnerField";
 import {Pagination} from "@surfnet/sds";
 import {pageCount} from "../../utils/Pagination";
 
+const NONE_SORTABLE_COLUMNS = ["check", "icon", "impersonate"]
+
 class Entities extends React.Component {
 
     constructor(props, context) {
@@ -128,9 +130,10 @@ class Entities extends React.Component {
         }
         return (
             <section className="entities-list">
-                {(actions && (showActionsAlways || hasEntities)) && <div className={`actions-header ${actionHeader}`}>
-                    {actions}
-                </div>}
+                {(actions && (showActionsAlways || hasEntities)) &&
+                    <div className={`actions-header ${actionHeader}`}>
+                        {actions}
+                    </div>}
                 {hasEntities &&
                     <div className={"sds--table"}>
                         <table className={tableClassName || modelName}>
@@ -140,7 +143,7 @@ class Entities extends React.Component {
                                     const showHeader = !actions || (i < 2 && !column.hideHeader) || column.showHeader;
                                     return <th key={`th_${column.key}_${i}`}
                                                className={`${column.key} ${column.class || ""} ${column.nonSortable ? "" : "sortable"} ${showHeader ? "" : "hide"}`}
-                                               onClick={() => column.key !== "check" && this.setSorted(column.key)}>
+                                               onClick={() => !NONE_SORTABLE_COLUMNS.includes(column.key) && !column.nonSortable && this.setSorted(column.key)}>
                                         {column.header}
                                         {headerIcon(column, sorted, reverse)}
                                     </th>
