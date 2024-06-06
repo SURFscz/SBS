@@ -11,6 +11,8 @@ import {isEmpty} from "../utils/Utils";
 import CountDownDialog from "../components/CountDownDialog";
 
 
+const counterTimeOut = 20;
+
 class ServiceAup extends React.Component {
 
     constructor(props, context) {
@@ -19,7 +21,7 @@ class ServiceAup extends React.Component {
             agreed: false,
             service: {},
             showCountDown: false,
-            counter: 20,
+            counter: counterTimeOut,
             collaborations: [],
             serviceEmails: {},
             continueUrl: null,

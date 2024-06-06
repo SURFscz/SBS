@@ -29,7 +29,7 @@ export default function CountDownDialog({
             subTitle={null}
             children={content()}
             title={I18n.t("countDownDialog.title", {name: service.name})}
-            className={"count-down-dialog"}
+            className={`count-down-dialog ${counter < 5 ? "almost-there" : ""}`}
         />
     );
 
