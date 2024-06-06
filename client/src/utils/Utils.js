@@ -149,3 +149,20 @@ export const userColumnsCustomSort = (o1, o2, reverse) => {
 
 }
 
+export const expiryDateCustomSort = (o1, o2, reverse) => {
+    let comparison;
+    if (o1.invite && !o2.invite) {
+        comparison = 1;
+    } else if (!o1.invite && o2.invite) {
+        comparison = -1;
+    } else if (o1.invite && o2.invite) {
+        comparison = (o1.expiry_date || 0) - (o2.expiry_date || 0);
+    } else if (!o1.invite && !o2.invite && o1.organisation_id && o2.organisation_id) {
+        comparison = 0;
+    } else if (!o1.invite && !o2.invite) {
+        comparison = (o1.expiry_date || 0) - (o2.expiry_date || 0);
+    }
+    return reverse ? comparison * -1 : comparison;
+
+}
+
