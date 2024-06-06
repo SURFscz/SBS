@@ -487,7 +487,7 @@ def collaboration_invites():
                                 intended_role=intended_role, expiry_date=default_expiry_date(json_dict=data),
                                 membership_expiry_date=membership_expiry_date, created_by=user.uid,
                                 external_identifier=str(uuid.uuid4()))
-        invitation = db.session.merge(invitation)
+        db.session.add(invitation)
         invitation.groups.extend(groups)
         db.session.commit()
         mail_collaboration_invitation({
