@@ -520,7 +520,7 @@ def service_invites():
                                        intended_role=intended_role,
                                        created_by=user.uid,
                                        expiry_date=default_expiry_date(json_dict=data))
-        invitation = db.session.merge(invitation)
+        db.session.add(invitation)
         mail_service_invitation({
             "salutation": "Dear",
             "invitation": invitation,

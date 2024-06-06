@@ -343,7 +343,7 @@ def organisation_invites():
                                             user=user,
                                             expiry_date=default_expiry_date(json_dict=data),
                                             created_by=user.uid)
-        invitation = db.session.merge(invitation)
+        db.session.add(invitation)
         mail_organisation_invitation({
             "salutation": "Dear",
             "invitation": invitation,

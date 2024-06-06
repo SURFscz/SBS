@@ -217,7 +217,7 @@ def collaboration_invites_api():
                                 expiry_date=expiry_date, membership_expiry_date=membership_expiry_date,
                                 created_by=CREATED_BY_SYSTEM, external_identifier=str(uuid.uuid4()), status="open")
         invitation.groups.extend(groups)
-        invitation = db.session.merge(invitation)
+        db.session.add(invitation)
         invites_results.append({
             "email": email,
             "invitation_expiry_date": expiry_date,
