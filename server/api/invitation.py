@@ -106,7 +106,7 @@ def add_organisation_aups(collaboration: Collaboration, user: User):
     if organisation.accepted_user_policy and organisation.id not in org_identifiers:
         organisation_aup = OrganisationAup(aup_url=organisation.accepted_user_policy, user=user,
                                            organisation=organisation)
-        db.session.merge(organisation_aup)
+        db.session.add(organisation_aup)
 
 
 @invitations_api.route("/find_by_hash", methods=["GET"], strict_slashes=False)
