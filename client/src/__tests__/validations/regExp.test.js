@@ -6,6 +6,7 @@ test("Valid emails", () => {
     expect(validEmailRegExp.test("a@a")).toBeTruthy();
     expect(validEmailRegExp.test("a.x@a")).toBeTruthy();
     expect(validEmailRegExp.test("a@a.c")).toBeTruthy();
+    expect(validEmailRegExp.test("axz+test@a.c")).toBeTruthy();
 
     expect(validEmailRegExp.test("nope")).toBeFalsy();
     expect(validEmailRegExp.test("aa")).toBeFalsy();
