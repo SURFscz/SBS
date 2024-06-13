@@ -36,7 +36,7 @@ class PamWebSSO extends React.Component {
                     pin: res.pin,
                     loading: false
                 });
-                if (res.validation.result === "SUCCESS") {
+                if (res.validation?.result === "SUCCESS") {
                     poll({
                         fn: () => pollPamWebSSO(session_id),
                         validate: isSuccess => {
