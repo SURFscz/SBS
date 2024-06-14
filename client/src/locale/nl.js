@@ -2529,7 +2529,7 @@ const nl = {
     countDownDialog: {
         title: "Toegang tot {{name}}",
         subTitle: "Om toegang te krijgen tot de service {{name}} moet je worden geadministreerd. Dit duurt helaas even, neem een kop ☕️.",
-        info: "Binnen <span class='counter'>{{counter}}</span> seconden zal je toegang hebben."
+        info: "Over <span class='counter'>{{counter}}</span> seconden zal je worden doorgestuurd."
     }
 };
 

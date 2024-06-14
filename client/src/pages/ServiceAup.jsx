@@ -8,10 +8,7 @@ import SpinnerField from "../components/redesign/SpinnerField";
 import CollaborationAupAcceptance from "../components/CollaborationAupAcceptance";
 import DOMPurify from "dompurify";
 import {isEmpty} from "../utils/Utils";
-import CountDownDialog from "../components/CountDownDialog";
 
-
-const counterTimeOut = 20;
 
 class ServiceAup extends React.Component {
 
@@ -20,8 +17,6 @@ class ServiceAup extends React.Component {
         this.state = {
             agreed: false,
             service: {},
-            showCountDown: false,
-            counter: counterTimeOut,
             collaborations: [],
             serviceEmails: {},
             continueUrl: null,
@@ -41,7 +36,6 @@ class ServiceAup extends React.Component {
             throw new Error(`Invalid continue url: '${continueUrl}'`)
         }
         const serviceId = urlSearchParams.get("service_id");
-        const status = urlSearchParams.get("status");
         serviceByUuid4(serviceId).then(res => {
             this.setState({
                 loading: false,
@@ -50,7 +44,6 @@ class ServiceAup extends React.Component {
                 collaborations: res["collaborations"],
                 serviceEmails: res["service_emails"],
                 agreed: isEmpty(res["service"].accepted_user_policy),
-                showCountDown: status === "97" || parseInt(status, 10) === 97
             });
         })
     }
@@ -64,23 +57,13 @@ class ServiceAup extends React.Component {
     }
 
     render() {
-        const {agreed, loading, service, collaborations, serviceEmails, showCountDown, counter} = this.state;
+        const {agreed, loading, service, collaborations, serviceEmails} = this.state;
         if (loading) {
             return <SpinnerField/>;
         }
         const serviceName = {name: service.name};
-        if (showCountDown) {
-            const keepCountingDown = counter > 1;
-            setTimeout(() => this.setState({counter: counter - 1, showCountDown: keepCountingDown}), 1000);
-        }
         return (
             <div className="mod-service-aup">
-                {showCountDown &&
-                    <CountDownDialog
-                        service={service}
-                        isOpen={true}
-                        counter={counter}/>
-                }
                 <h1>{I18n.t("aup.service.title")}</h1>
                 <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("aup.service.info", serviceName))}}/>
                 {collaborations.length > 1 &&
