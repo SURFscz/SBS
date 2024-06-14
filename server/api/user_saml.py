@@ -293,7 +293,8 @@ def proxy_authz():
                 "service_name": service_name.name,
                 "status": status
             })
-            redirect_url = f"{base_url}/service-aup?{parameters}"
+            pathname = "delay" if status == NEW_FREE_RIDE_USER else "service-aup"
+            redirect_url = f"{base_url}/{pathname}?{parameters}"
             result = "interrupt"
         else:
             parameters = urlencode({"service_name": service_name, "error_status": status,

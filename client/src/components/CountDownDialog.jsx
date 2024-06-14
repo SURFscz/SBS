@@ -5,7 +5,7 @@ import {Modal} from "@surfnet/sds";
 import DOMPurify from "dompurify";
 
 export default function CountDownDialog({
-                                            service,
+                                            serviceName,
                                             isOpen = false,
                                             counter
                                         }) {
@@ -14,7 +14,7 @@ export default function CountDownDialog({
         return (
             <section className={"count-down-content"}>
                 <p>
-                    {I18n.t("countDownDialog.subTitle", {name: service.name})}
+                    {I18n.t("countDownDialog.subTitle", {name: serviceName})}
                 </p>
                 <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("countDownDialog.info", {counter: counter}))}}/>
             </section>)
@@ -28,7 +28,7 @@ export default function CountDownDialog({
             confirm={null}
             subTitle={null}
             children={content()}
-            title={I18n.t("countDownDialog.title", {name: service.name})}
+            title={I18n.t("countDownDialog.title", {name: serviceName})}
             className={`count-down-dialog ${counter < 5 ? "almost-there" : ""}`}
         />
     );

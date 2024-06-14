@@ -126,7 +126,7 @@ class TestUserSaml(AbstractTest):
 
         network_service = Service.query.filter(Service.entity_id == service_network_entity_id).one()
         parameters = urlencode({"service_id": network_service.uuid4, "service_name": network_service.name, "status": 97})
-        self.assertEqual(f"{self.app.app_config.base_url}/service-aup?{parameters}", res["status"]["redirect_url"], )
+        self.assertEqual(f"{self.app.app_config.base_url}/delay?{parameters}", res["status"]["redirect_url"], )
 
     def test_proxy_authz_no_user(self):
         res = self.post("/api/users/proxy_authz", body={"user_id": "urn:nope", "service_id": service_mail_entity_id,
