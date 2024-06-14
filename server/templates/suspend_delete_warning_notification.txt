@@ -5,11 +5,16 @@
 {{ salutation }},
 According to our information, it's been {{ days_ago }} days since you last used SURF Research Access Management.
 Because we do not want to store your information longer than necessary, your profile will be deleted on {{ deletion_date }}.
-This means non-web services might not work anymore.
+{# This means non-web services might not work anymore. #}
+This means you will not be able to log in any longer to services conencted to your collaborations.
 
+If you would like to keep using the services available through SURF Research Access Management,
+please contact us at sram-support@surf.nl.
+{#
 If you want to keep using the services available through SURF Research Access Management,
 simply login using the link below or by going to {{ base_url }}/login.
 If you want to delete your profile right away, please go to {{ base_url }}/profile?delete=true.
+#}
 
 If you have any questions, please let us know by sending a mail to {{ support_address }}.
 

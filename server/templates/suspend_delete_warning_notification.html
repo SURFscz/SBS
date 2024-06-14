@@ -15,15 +15,22 @@
             Management.
             Because we do not want to store your information longer than necessary,
             your profile will be deleted on {{ deletion_date }}.
-            This means non-web services might not work anymore.</p>
+            {# This means non-web services might not work anymore. #}
+            This means you will not be able to log in any longer to services conencted to your collaborations.
+        </p>
 
         {% include "personal_information.html" %}
 
+{#
         <p>If you want to keep using the services available through SURF Research Access Management,
             simply login using the link below or by going to <a href="{{ base_url }}/login">{{ base_url }}/login</a>.
         </p>
         <p>If you want to delete your profile right away, please go
             to <a href="{{ base_url }}/profile?delete=true">{{ base_url }}/profile?delete=true</a>.
+        </p>
+#}
+        <p>If you would like to keep using the services available through SURF Research Access Management,
+            please contact us at <a href="mailto:sram-support@surf.nl">sram-support@surf.nl</a>.
         </p>
 
         <a class="button" href="{{ base_url }}/login"
