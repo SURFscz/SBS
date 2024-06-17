@@ -587,7 +587,7 @@ class Service(Base, db.Model, LogoMixin, SecretMixin):
     saml_metadata = db.Column("saml_metadata", db.Text(), nullable=True)
     saml_metadata_url = db.Column("saml_metadata_url", db.String(length=255), nullable=True)
     oidc_client_secret = db.Column("oidc_client_secret", db.String(length=255), nullable=True)
-    providing_organisation = db.Column("providing_organisation", db.String(length=255), nullable=False)
+    providing_organisation = db.Column("providing_organisation", db.String(length=255), nullable=True)
     grants = db.Column("grants", db.Text(), nullable=True)
     is_public_client = db.Column("is_public_client", db.Boolean(), nullable=True, default=False)
     saml_enabled = db.Column("saml_enabled", db.Boolean(), nullable=True, default=False)
