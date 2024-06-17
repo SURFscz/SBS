@@ -17,6 +17,7 @@ from server.db.logo_mixin import logo_from_cache
 from server.db.models import save, delete
 from server.mail import mail_accepted_declined_service_request, \
     mail_service_request
+from server.saml.sp_metadata_parser import parse_metadata_xml, parse_metadata_url
 
 service_request_api = Blueprint("service_request_api", __name__, url_prefix="/api/service_requests")
 
@@ -30,6 +31,20 @@ def service_request_all():
         .options(contains_eager(ServiceRequest.requester)) \
         .all()
     return res, 200
+
+
+@service_request_api.route("/metadata/parse", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def metadata_parse():
+    data = current_request.get_json()
+    meta_data_url = data.get("meta_data_url")
+    meta_data_xml = data.get("meta_data_xml")
+    if not meta_data_url and not meta_data_xml:
+        raise BadRequest("Either meta_data_url or meta_data_xml is required")
+
+    result = parse_metadata_xml(meta_data_xml) if meta_data_xml else parse_metadata_url(meta_data_url)
+
+    return result, 200
 
 
 @service_request_api.route("/<service_request_id>", methods=["GET"], strict_slashes=False)

@@ -1,11 +1,8 @@
 const nl = {
-    code: "NL",
-    name: "Nederlands",
-    select_locale: "Kies Nederlands als taal",
+    code: "NL", name: "Nederlands", select_locale: "Kies Nederlands als taal",
 
     header: {
-        title: "Research Access Management",
-        links: {
+        title: "Research Access Management", links: {
             login: "Inloggen",
             system: "Systeem",
             impersonate: "Imiteer",
@@ -18,8 +15,7 @@ const nl = {
             feedback: "Geef feedback",
             helpUrl: "https://edu.nl/vw3jx"
         },
-    },
-    breadcrumb: {
+    }, breadcrumb: {
         home: "Home",
         registration: "Registratie",
         collaborations: "Samenwerkingen",
@@ -54,8 +50,7 @@ const nl = {
         users: "Gebruikers",
         userToken: "Diensttoken '{{name}}'",
         myRequests: "Mijn verzoeken"
-    },
-    login: {
+    }, login: {
         title: "Research Access Management",
         subTitle: "Inloggen...",
         suspended: "Je profiel is geschorst. Neem contact op sram-support@surf.nl om dit op te lossen",
@@ -63,8 +58,7 @@ const nl = {
         successfullyActivated: "Gelukt: je profiel is geheractiveerd",
         closeBrowser: "Om volledig uit te loggen, moet je je browser sluiten",
         closeBrowserAfterDelete: "Om het verwijderen van je profiel te voltooien, moet je je browser sluiten."
-    },
-    home: {
+    }, home: {
         sram: "SURF Research Access Management",
         edit: "Wijzigen",
         history: "Geschiedenis",
@@ -120,8 +114,7 @@ const nl = {
             scim: "SCIM",
             stats: "Stats"
         }
-    },
-    forms: {
+    }, forms: {
         submit: "Toevoegen",
         save: "Opslaan",
         apply: "Toepassen",
@@ -155,8 +148,7 @@ const nl = {
         imageRequired: "Afbeelding is verplicht",
         whiteSpace: "Afbeelding passend maken",
         no: "Nee"
-    },
-    explain: {
+    }, explain: {
         title: "Uitleg {{subject}}",
         impersonate: "Imitatie",
         services: "Diensten",
@@ -164,8 +156,7 @@ const nl = {
         apiKeys: "Organisatie-API-tokens",
         tokens: "Diensttokens",
         serviceGroups: "Dienstgroepen"
-    },
-    models: {
+    }, models: {
         users: {
             name_email: "Naam / e-mail",
             blank: "",
@@ -187,8 +178,7 @@ const nl = {
             me: "Jij",
             userTooltip: "Lid {{username}} sinds {{date}}",
             inviteTooltip: "Uitnodiging voor {{email}} verstuurd door {{name}} op {{date}}"
-        },
-        allUsers: {
+        }, allUsers: {
             name_email: "Naam / e-mail",
             name: "Naam",
             email: "E-mail",
@@ -221,8 +211,7 @@ const nl = {
             ssh: {
                 title: "Publieke SSH-sleutels van {{name}}"
             }
-        },
-        orgMembers: {
+        }, orgMembers: {
             title: "Organisatiebeheerders & -managers",
             noEntities: "Er zijn nog geen beheerders en managers in deze organisatie...",
             searchPlaceHolder: "Zoek leden...",
@@ -255,25 +244,21 @@ const nl = {
             resendTooltipDisabled: "Selecteer eerst verlopen uitnodigingen om opnieuw te versturen",
             resendTooltip: "Verstuur alle verlopen geselecteerde opnieuw",
             resendInvitationTooltip: "Verstuur uitnodiging opnieuw",
-        },
-        orgInvitations: {
+        }, orgInvitations: {
             title: "Openstaande organisatieuitnodigingen",
             noEntities: "Er zijn geen openstaande organisatieuitnodigingen...",
             searchPlaceHolder: "Zoek uitnodigingen...",
             backToMembers: "Terug naar openstaande uitnodigingen...",
             orgName: "Organisatie"
-        },
-        organisationsWithoutAdmin: {
+        }, organisationsWithoutAdmin: {
             title: "Organisaties zonder beheerders",
             noEntities: "Er zijn geen organisaties zonder beheerders...",
             searchPlaceHolder: "Zoek organisaties...",
-        },
-        servicesWithoutAdmin: {
+        }, servicesWithoutAdmin: {
             title: "Diensten zonder beheerders",
             noEntities: "Er zijn geen diensten zonder beheerders...",
             searchPlaceHolder: "Zoek diensten...",
-        },
-        organisations: {
+        }, organisations: {
             title: "Organisaties",
             noEntities: "Er zijn nog geen organisaties...",
             searchPlaceHolder: "Zoek organisaties...",
@@ -284,8 +269,7 @@ const nl = {
             schacHomeOrganisations: "Organisatiedomeinen",
             category: "Categorie",
             leave: "Verlaat organisatie"
-        },
-        services: {
+        }, services: {
             title: "Diensten",
             noEntities: "Er zijn nog geen diensten...",
             searchPlaceHolder: "Zoek diensten...",
@@ -322,12 +306,10 @@ const nl = {
                 noPolicy: "Deze dienst heeft geen privacy policy opgegeven"
             },
             statuses: {
-                active: "Ingeschakeld door organisatie",
-                pending: "Aangevraagd",
+                active: "Ingeschakeld door organisatie", pending: "Aangevraagd",
             },
             missingServices: "<a href=\"mailto:sram-support@surf.nl\">Stuur ons een verzoek</a> als je denkt dat een specifieke dienst ontbreekt en moet worden vermeld."
-        },
-        collaborations: {
+        }, collaborations: {
             title: "Samenwerkingen",
             titleForOrgAdmin: "Samenwerkingen gemanaged door je organisatie",
             searchPlaceHolder: "Zoek samenwerkingen...",
@@ -345,8 +327,7 @@ const nl = {
             noCollaborationsUser: "Je bent nog niet lid van een samenwerking. Zullen we er een aanmaken?",
             noCollaborationsRequestUser: "Je bent nog niet lid van een samenwerking. Zullen we er een aanvragen?",
             allLabels: "Alle labels",
-        },
-        serviceOrganisations: {
+        }, serviceOrganisations: {
             searchPlaceHolder: "Zoek organisaties",
             title: "Organisaties",
             availableForAll: "Maak automatisch beschikbaar voor alle organisaties",
@@ -362,19 +343,14 @@ const nl = {
                 allowAll: "Samenwerkingen van alle organisaties mogen zelfstandig koppelen"
             },
             options: {
-                header: "Koppelingen met samenwerkingen",
-                DISALLOW: "Niet",
-                ON_REQUEST: "Op verzoek",
-                ALWAYS: "Altijd"
+                header: "Koppelingen met samenwerkingen", DISALLOW: "Niet", ON_REQUEST: "Op verzoek", ALWAYS: "Altijd"
             }
-        },
-        memberCollaborations: {
+        }, memberCollaborations: {
             searchPlaceHolder: "Zoek samenwerkingen...",
             title: "Samenwerkingen",
             new: "Vraag samenwerking aan",
             noEntities: "Er zijn geen samenwerkingen",
-        },
-        serviceCollaborations: {
+        }, serviceCollaborations: {
             searchPlaceHolder: "Zoek samenwerkingen...",
             title: "Samenwerkingen die deze dienst gebruiken",
             organisationName: "Organisatie",
@@ -393,32 +369,25 @@ const nl = {
             flash: {
                 removed: "De samenwerking(en) zijn ontkoppeld"
             }
-        },
-        coAdmins: {
+        }, coAdmins: {
             searchPlaceHolder: "Zoek beheerders...",
             title: "Beheerders",
             new: "Nodig beheerders uit",
             noEntities: "Er zijn geen beheerder",
-        },
-        members: {
+        }, members: {
             searchPlaceHolder: "Zoek leden...",
             title: "Leden",
             new: "Nodig leden uit",
             noEntities: "Er zijn geen leden",
-        },
-        servicesAvailable: {
+        }, servicesAvailable: {
             title: "Beschikbare diensten",
             searchPlaceHolder: "Zoek diensten...",
             noEntities: "Er zijn geen diensten beschikbaar om toe te voegen"
-        },
-        servicesUsed: {
-            searchPlaceHolder: "Zoek diensten...",
-            noEntities: "Geen diensten in gebruik"
-        },
-        servicesRequested: {
+        }, servicesUsed: {
+            searchPlaceHolder: "Zoek diensten...", noEntities: "Geen diensten in gebruik"
+        }, servicesRequested: {
             searchPlaceHolder: "Zoek diensten..."
-        },
-        groups: {
+        }, groups: {
             backToGroups: "Terug naar all groepen",
             title: "Groepen",
             searchPlaceHolder: "Zoek groepen...",
@@ -440,14 +409,12 @@ const nl = {
             deleteGroupsConfirmation: "Weet je zeker dat je de geselecteerde groepen wilt verwijderen?",
             removeGroupTooltip: "Verwijder groep",
             removeTooltip: "Verwijder alle geselecteerde groepen",
-        },
-        groupMembers: {
+        }, groupMembers: {
             title: "Leden",
             searchPlaceHolder: "Zoek leden",
             noEntities: "Geen leden",
             addMembersPlaceholder: "Zoek en selecteer om leden toe te voegen"
-        },
-        collaboration: {
+        }, collaboration: {
             memberHeader: "{{nbrMember}} leden – {{nbrGroups}} groepen",
             memberInformation: "Neem contact op met een beheerder",
             noAdminsHeader: "(Nog) geen beheerders",
@@ -475,47 +442,39 @@ const nl = {
             newCollaborationRequest: "Aanvragen samenwerking",
             leave: "Lidmaatschap opzeggen",
             labels: "Labels",
-        },
-        apiKeys: {
+        }, apiKeys: {
             title: "Organisatie-API-tokens",
             new: "Voeg organisatie-API-token toe",
             searchPlaceHolder: "Zoek organisatie-API-tokens...",
             noEntities: "Geen organisatie-API-tokens",
             backToApiKeys: "Terug naar alle organisatie-API-tokens"
-        },
-        collaboration_requests: {
+        }, collaboration_requests: {
             title: "Aanvragen voor samenwerkingen",
             requester: "Aanvrager",
             searchPlaceHolder: "Zoek samenwerkingsaanvragen...",
             noEntities: "Geen aanvragen voor samenwerkingen",
-        },
-        service_requests: {
+        }, service_requests: {
             title: "Dienstregistratie",
             requester: "Aanvrager",
             searchPlaceHolder: "Zoek dienstregistratie...",
             noEntities: "Geen aanvragen voor registratie",
-        },
-        member_collaboration_requests: {
+        }, member_collaboration_requests: {
             title: "Mijn samenwerkingensaanvragen",
             searchPlaceHolder: "Zoek samenwerkingsaanvragen...",
             noEntities: "Geen samenwerkingenaanvragen",
-        },
-        my_requests: {
+        }, my_requests: {
             title: "Mijn aanvragen",
             searchPlaceHolder: "Zoek naar aanvragen...",
             noEntities: "Je hebt geen aanvragen gedaan",
-        },
-        system_collaboration_requests: {
+        }, system_collaboration_requests: {
             title: "Verlopen aanvragen voor samenwerkingen",
             searchPlaceHolder: "Zoek samenwerkingsaanvragen...",
             noEntities: "Geen verlopen samenwerkingenaanvragen",
-        },
-        deleted_collaboration_requests: {
+        }, deleted_collaboration_requests: {
             title: "Verwijderde samenwerkingenaanvragen",
             searchPlaceHolder: "Verzoeken zoeken...",
             noEntities: "Geen verlopen geweigerde / goedgekeurde samenwerkingenaanvragen",
-        },
-        invitation: {
+        }, invitation: {
             welcome: "Welkom in SURF Research Access Management (SRAM). Hier wordt de toegang tot onderzoeksdiensten geregeld voor onderzoekssamenwerkingen.",
             invited: "Je bent door <a href=\"mailto:{{email}}\">{{inviter}}</a> uitgenodigd lid te worden van {{type}} '{{collaboration}}'",
             followingSteps: "SURF Research Access Management geeft leden van onderzoekssamenwerkingen snel en veilig toegang tot onderzoeksdiensten.</br> Inloggen kan met je instellingsaccount of eduID.",
@@ -542,34 +501,29 @@ const nl = {
             disclaimer: "Als je doorgaat, zal SURF gegevens over jou doorsturen naar de onderzoekssamenwerking. Elke gegevensverwerking door de samenwerking, zoals het overdragen van gegevens aan diensten zodat je daar toegang toe hebt, is een verantwoordelijkheid van de samenwerking.",
             disclaimerAup: "De samenwerking heeft SURF gemeld dat op <a href=\"{{aup}}\" target=\"_blank\">deze URL</a> nog relevante informatie voor je staat.",
             disclaimerQuestions: "Heb je vragen over de verwerking van je gegevens door de samenwerking? Neem contact op met de persoon die je heeft uitgenodigd."
-        },
-        joinRequests: {
+        }, joinRequests: {
             backToJoinRequests: "Terug naar alle verzoeken",
             title: "Verzoek om lid te worden",
             searchPlaceHolder: "Zoek verzoeken...",
             noEntities: "Geen verzoeken gevonden",
             edit: "Accepteer / keur af",
             details: "Verzoek gemaakt door {{name}} op {{date}}"
-        },
-        memberJoinRequests: {
+        }, memberJoinRequests: {
             title: "Mijn verzoeken voor samenwerkingen",
             searchPlaceHolder: "Zoek verzoeken...",
             noEntities: "Geen verzoeken gevonden",
             collaborationName: "Naam samenwerking",
             requested: "Verzocht op",
             organisationName: "Instelling",
-        },
-        systemJoinRequests: {
+        }, systemJoinRequests: {
             title: "Verlopen open verzoeken voor samenwerkingen",
             searchPlaceHolder: "Zoek verzoeken...",
             noEntities: "Geen verlopen verzoeken gevonden",
-        },
-        deletedJoinRequests: {
+        }, deletedJoinRequests: {
             title: "Verwijderde verzoeken lid te worden van een samenwerking",
             searchPlaceHolder: "Zoek naar verzoeken...",
             noEntities: "Geen verlopen goedgekeurde / afgekeurde verzoeken gevonden",
-        },
-        serviceConnectionRequests: {
+        }, serviceConnectionRequests: {
             backToServiceConnectionRequests: "Terug naar alle koppelverzoeken",
             title: "Koppelverzoeken",
             searchPlaceHolder: "Zoek koppelverzoeken...",
@@ -580,8 +534,7 @@ const nl = {
             requester: "Aanvrager",
             name: "Samenwerking",
             serviceName: "Dienst"
-        },
-        serviceGroups: {
+        }, serviceGroups: {
             backToGroups: "Terug naar alle dienstgroepen",
             autoProvisionMembersTooltip: "Vink aan om automatisch alle bestaande leden en nieuwe leden toe te voegen aan deze groep als deze wordt aangemaakt",
             title: "Dienstgroepen",
@@ -594,14 +547,12 @@ const nl = {
             autoProvisioning: "Iedereen automatisch lid",
             on: "Aan",
             off: "Uit"
-        },
-        serviceAdmins: {
+        }, serviceAdmins: {
             searchPlaceHolder: "Zoek naar dienstbeheerders..",
             noEntities: "Er zijn geen dienstbeheerders of dienstmanagers",
             new: "Nodig beheerders uit",
             title: "Dienstbeheerders & dienstmanagers"
-        },
-        userTokens: {
+        }, userTokens: {
             backToUserTokens: "Terug naar alle diensttokens",
             title: "Diensttokens",
             searchPlaceHolder: "Zoek naar diensttokens...",
@@ -630,13 +581,11 @@ const nl = {
                 updated: "Diensttoken {{name}} bijgewerkt",
                 reactivated: "Diensttoken {{name}} geheractiveerd",
             }
-        },
-        scimServices: {
+        }, scimServices: {
             searchPlaceHolder: "Search for SCIM services..",
             noEntities: "There are no service configured with the mock SCIM endpoint",
         }
-    },
-    user: {
+    }, user: {
         titleUpdate: "Werk de SSH-sleutels in je gebruikersprofiel bij",
         ssh_key: "Publieke SSH-sleutel",
         ssh_keys_zero_state: "Er zijn geen SSH-sleutels geassociëerd bij je profiel",
@@ -661,8 +610,7 @@ const nl = {
         unsuspendOtherConfirmation: "Weet je zeker dat je de schorsing van gebruiker {{name}} wilt doorhalen?",
         reset2fa: "Reset TOTP",
         reset2faConfirmation: "Weet je zeker dat je de TOTP van gebruiker {{name}} wilt resetten?",
-    },
-    impersonate: {
+    }, impersonate: {
         title: "Wie wil je zijn?",
         organisation: "Organisatie",
         organisationPlaceholder: "Voer de naam van een organisatie in om de lijst met zoekresultaten te beperken",
@@ -685,8 +633,7 @@ const nl = {
         exit: "Stop met imiteren",
         impersonator: "Je bent <strong>{{name}}</strong> aan het imiteren | <strong>{{role}}</strong>",
         impersonatorTooltip: "Je bent echt <em>{{impersonator}}</em>, maar je imiteert <em>{{currentUser}}</em>. Op de <strong>Imitatie</strong>pagina kun je je identiteit veranderen of jezelf weer worden."
-    },
-    registration: {
+    }, registration: {
         joinRequest: "Vraag lidmaatschap voor {{name}}",
         explanation: "Schrijf je motivatie om lid te worden van samenwerking <strong>{{name}}</strong>.",
         title: "Verzoek tot lidmaatschap van {{name}}",
@@ -697,8 +644,7 @@ const nl = {
         feedback: {
             info: "Je verzoek is verzonden naar de beheerders van <strong>{{name}}</strong> die je aanvraag zullen beoordelen. De beslissing wordt je per e-mail meegedeeld.",
         },
-    },
-    profile: {
+    }, profile: {
         name: "Naam",
         email: "E-mail",
         uid: "UID",
@@ -724,17 +670,11 @@ const nl = {
         network: "IP-ranges",
         addSSHKey: "Upload een SSH-sleutel",
         addSSHKeyManually: "Voeg handmatig een SSH-sleutel toe",
-        networkTooltip: "Configureer je IP-bereiken voor deze dienst. Je kunt IPv4 en IPv6 network ranges toevoegen. " +
-            "Bijvoorbeeld: <ul>" +
-            "<li>Enkelvoudig IPv4-adres 198.51.100.12 waar een /32 is aangenomen</li>" +
-            "<li>IPv4-bereik 198.51.100.0/24. Maximaal toegestane omvang subnet voor IPv4 is een /24</li>" +
-            "<li>IPv6-bereik 2001:db8:f00f:bab::/64. Maximaal toegestane omvang subnet voor IPv6 is een /64</li>" +
-            "</ul> ",
+        networkTooltip: "Configureer je IP-bereiken voor deze dienst. Je kunt IPv4 en IPv6 network ranges toevoegen. " + "Bijvoorbeeld: <ul>" + "<li>Enkelvoudig IPv4-adres 198.51.100.12 waar een /32 is aangenomen</li>" + "<li>IPv4-bereik 198.51.100.0/24. Maximaal toegestane omvang subnet voor IPv4 is een /24</li>" + "<li>IPv6-bereik 2001:db8:f00f:bab::/64. Maximaal toegestane omvang subnet voor IPv6 is een /64</li>" + "</ul> ",
         networkExplanation: "Informeer de serviceproviders vanaf welke IP-adressen je hun services gebruikt. De serviceproviders kunnen je IP-adressen toegang geven als ze dit ondersteunen.",
         deleteHeader: "Verwijder je profiel",
         deleteDisclaimer: "Als je je profiel verwijdert, worden ook al je lidmaatschappen en beheerrollen verwijderd. Dit kan niet ongedaan worden gemaakt."
-    },
-    collaborations: {
+    }, collaborations: {
         dashboard: "Dashboard voor je samenwerkingen",
         dashboardAdmin: "Beheer-dashboard voor mijn samenwerkingen",
         dashboardAdminTooltip: "Dit is een overzicht van alle samenwerkingen waar je een van de beheerders van bent.",
@@ -749,13 +689,9 @@ const nl = {
         services: "Diensten",
         add: "Nieuwe samenwerking",
         searchPlaceHolder: "Zoek op alle samenwerkingen"
-    },
-    accessTypes: {
-        open: "Open",
-        closed: "Besloten",
-        on_acceptance: "Na goedkeuring"
-    },
-    collaboration: {
+    }, accessTypes: {
+        open: "Open", closed: "Besloten", on_acceptance: "Na goedkeuring"
+    }, collaboration: {
         about: "Over de samenwerking",
         invitations: "Beheerders uitnodigen",
         title: "Nieuwe samenwerking maken",
@@ -770,8 +706,7 @@ const nl = {
         namePlaceHolder: "De unieke naam van de samenwerking",
         shortName: "Korte naam",
         shortNamePlaceHolder: "Korte naam van de samenwerking",
-        shortNameTooltip: "Ken korte namen toe aan de samenwerkingen zodat die namen bruikbaar zijn in de via ldap te koppelen diensten (zoals Linux groepsnamen).<br/><br/>" +
-            "Alleen getallen, alfanumerieke karakers en de lage streep zijn toegstaan.",
+        shortNameTooltip: "Ken korte namen toe aan de samenwerkingen zodat die namen bruikbaar zijn in de via ldap te koppelen diensten (zoals Linux groepsnamen).<br/><br/>" + "Alleen getallen, alfanumerieke karakers en de lage streep zijn toegstaan.",
         globalUrn: "Platform identifier",
         globalUrnTooltip: "Binnen het platform unieke en onaanpasbare identifier, gebaseerd op de korte naam van de organisatie en de samenwerking.",
         identifier: "Identifier",
@@ -792,8 +727,7 @@ const nl = {
         noAup: "Geen acceptable use policy opgegeven",
         expiryDate: "Einddatum",
         expiryDateWarning: {
-            one: "Verloopt over 1 dag!",
-            other: "Verloopt over {{nbr}} dagen!"
+            one: "Verloopt over 1 dag!", other: "Verloopt over {{nbr}} dagen!"
         },
         expiryDateExpired: "Verlopen!",
         lastActivityDate: "Laatste activiteit",
@@ -859,11 +793,9 @@ const nl = {
             activeWithExpiryDateAction: "Collaboration settings",
         },
         flash: {
-            created: "Samenwerking {{name}} is aangemaakt.",
-            requested: "Samenwerking {{name}} is aangevraagd."
+            created: "Samenwerking {{name}} is aangemaakt.", requested: "Samenwerking {{name}} is aangevraagd."
         }
-    },
-    collaborationDetail: {
+    }, collaborationDetail: {
         title: "Details samenwerking {{name}}",
         backToCollaborations: "Terug naar mijn samenwerkingen",
         backToHome: "Terug naar mijn dashboard",
@@ -909,8 +841,7 @@ const nl = {
         },
         invite: "Uitnodigen",
         addMe: "Voeg mij toe"
-    },
-    organisations: {
+    }, organisations: {
         title: "Mijn organisaties ({{nbr}})",
         noOrganisations: "Je bent nog geen lid van een organisatie",
         members: "Leden",
@@ -920,17 +851,11 @@ const nl = {
         add: "Nieuwe organisatie maken",
         searchPlaceHolder: "Doorzoek alle organisaties",
         deleteConfirmation: "Weet je zeker dat je dienst {{name}} wil verwijderen? Dit kan niet teruggedraaid worden."
-    },
-    services: {
-        title: "Diensten",
-        add: "Nieuwe dienst",
-        searchPlaceHolder: "Doorzoek alle diensten",
-        toc: {
-            connections: "Koppelingen",
-            available: "Beschikbare diensten",
+    }, services: {
+        title: "Diensten", add: "Nieuwe dienst", searchPlaceHolder: "Doorzoek alle diensten", toc: {
+            connections: "Koppelingen", available: "Beschikbare diensten",
         }
-    },
-    service: {
+    }, service: {
         about: "Over de dienst",
         aboutShort: "Over",
         logo: "Dienstlogo",
@@ -951,8 +876,7 @@ const nl = {
         entity_idTooltip: "De Entity ID is bij SAML (Entity ID) en OIDC (client_id) het unieke kenmerk van je dienst voor de identity proxy. Het wordt ook gebruikt bij provisioning via LDAP.",
         abbreviation: "Korte naam",
         abbreviationPlaceHolder: "De korte naam van de dienst",
-        abbreviationTooltip: "De korte naam van een dienst wordt gebruikt als prefix voor groepen aangemaakt door de dienstgroepen van deze dienst.<br/><br/>" +
-            "Alleen getallen, alfanumerieke karakers en de lage streep zijn toegstaan.",
+        abbreviationTooltip: "De korte naam van een dienst wordt gebruikt als prefix voor groepen aangemaakt door de dienstgroepen van deze dienst.<br/><br/>" + "Alleen getallen, alfanumerieke karakers en de lage streep zijn toegstaan.",
         service_request: "Link voor dienstverzoek",
         service_requestTooltip: "De URL om een koppeling met de dienst aan te vragen door een lid van samenwerking",
         service_requestError: "Vereist een valide URI en samenwerkingen moeten kunnen koppelen zonder toestemming",
@@ -965,8 +889,7 @@ const nl = {
         identity_typeTooltip: "De primaire manier om bij deze deze dienst te identificeren.",
         uri: "Inlog-URL",
         uriPlaceholder: "De URL waar gebruikers inloggen",
-        uriTooltip: "URL waarop gebruikers zich dienen aan te melden bij de dienst. Wordt duidelijk getoond aan leden van samenwerkingen.<br/><br/>" +
-            "Deze variabelen worden vervangen door de corresponderende waarden: <em>{CO_short_name}</em> en <em>{username}</em>.",
+        uriTooltip: "URL waarop gebruikers zich dienen aan te melden bij de dienst. Wordt duidelijk getoond aan leden van samenwerkingen.<br/><br/>" + "Deze variabelen worden vervangen door de corresponderende waarden: <em>{CO_short_name}</em> en <em>{username}</em>.",
         infoUri: "Website",
         infoUriPlaceholder: "De URL met informatie over deze dienst",
         infoUriTooltip: "URL van een website met informatie over deze dienst",
@@ -977,12 +900,7 @@ const nl = {
         accepted_user_policyPlaceholder: "De acceptable use policy (AUP) van de dienst",
         accepted_user_policyTooltip: "Een acceptable use policy (AUP) is een document waarin staat wat een gebruiker wel en niet mag/hoort te doen en waarmee de gebruiker akkoord moet gaan om toegang te krijgen tot een dienst of systeem.",
         network: "ACL IP-ranges",
-        networkTooltip: "De IP-reeksen die deze dienst gebruikt om de LDAP-server van het platform te bereiken. Zowel IPv4- als IPv6-bereiken zijn toegestaan. " +
-            "Bijvoorbeeld: <ul>" +
-            "<li>Enkelvoudig IPv4-adres 198.51.100.12 waarbij een /32 wordt aangenomen</li>" +
-            "<li>IPv4-bereik 198.51.100.0/24. Maximaal toegestane omvang subnet voor IPv4 is een /24</li>" +
-            "<li>IPv6-bereik 2001:db8:f00f:bab::/64. Maximaal toegestane omvang subnet voor IPv6 is een /64</li>" +
-            "</ul> ",
+        networkTooltip: "De IP-reeksen die deze dienst gebruikt om de LDAP-server van het platform te bereiken. Zowel IPv4- als IPv6-bereiken zijn toegestaan. " + "Bijvoorbeeld: <ul>" + "<li>Enkelvoudig IPv4-adres 198.51.100.12 waarbij een /32 wordt aangenomen</li>" + "<li>IPv4-bereik 198.51.100.0/24. Maximaal toegestane omvang subnet voor IPv4 is een /24</li>" + "<li>IPv6-bereik 2001:db8:f00f:bab::/64. Maximaal toegestane omvang subnet voor IPv6 is een /64</li>" + "</ul> ",
         networkPlaceholder: "IPv4-of IPv6-adres met optioneel subnet",
         networkError: "Die {{prefix}} subnetomvang is niet toegestaan. Maximaal toegestane prefix voor IPv{{version}} is {{max}}",
         networkSyntaxError: "Dit is geen geldig IPv4- of IPv6-adres",
@@ -1029,9 +947,7 @@ const nl = {
         support_emailTooltip: "Het support e-mailadres wordt gecontacteerd als er functionale vragen zijn over deze dienst. Idealiter is dit een functioneel e-mailadres, zoals dienst_A_support@sp.org.",
         invitations: "Nodig dienstbeheerders uit",
         status: {
-            name: "Status",
-            active: "Actief",
-            in_active: "Inactief"
+            name: "Status", active: "Actief", in_active: "Inactief"
         },
         statusPlaceholder: "De status van de dienst",
         alreadyExists: "Een dienst met {{attribute}} {{value}} bestaat al.",
@@ -1165,9 +1081,20 @@ const nl = {
             response: "Antwoord van het SCIM endpoint:",
             saveBeforeTest: "Wijzigen dienst",
             saveBeforeTestQuestion: "Je hebt wijzigingen gemaakt in de SCIM configuratie. Wil je deze wijzigingen eerst opslaan voordat je de SCIM connectie gaat testen?"
+        },
+        openIDConnectGrants: "OpenID Connect grants",
+        openIDConnectGrantsPlaceholder: "Choose grant(s)",
+        openIDConnectGrantsTooltip: "Grant types are the way to specify how a Relying Party will interact with the OIDC server",
+        isPublicClient: "Public client",
+        isPublicClientTooltip: "Public clients are not required to authenticate, but must use the Proof key for Code Exchange (PKCE) authorisation",
+        grants: {
+            authorization_code: "Authorization code",
+            implicit: "Implicit (deprecated)",
+            refresh_token: "Refresh token",
+            client_credentials: "Client credentials",
+            device_code: "Device code"
         }
-    },
-    organisation: {
+    }, organisation: {
         title: "Nieuwe organisatie toevoegen",
         subTitle: "Wijzig de omschrijving van de organisatie.",
         actions: "",
@@ -1180,8 +1107,7 @@ const nl = {
         tenantPlaceHolder: "De unieke tenant-/organisatie-identifier die de organisatie verbindt met een instelling",
         shortName: "Korte naam",
         shortNamePlaceHolder: "Korte naam van de organisatie",
-        shortNameTooltip: "De korte name wordt gebruikt voor LDAP-diensten (zoals Linux directory-namen).<br/><br/>" +
-            "Alleen getallen, alfanumerieke karakers en de lage streep zijn toegstaan.",
+        shortNameTooltip: "De korte name wordt gebruikt voor LDAP-diensten (zoals Linux directory-namen).<br/><br/>" + "Alleen getallen, alfanumerieke karakers en de lage streep zijn toegstaan.",
         identifier: "Identifier",
         identifierTooltip: "Gegenereerde, unieke en niet aanpasbare identifier van een organisatie die wordt gebruikt als identifier voor externe systemen",
         description: "Omschrijving",
@@ -1226,14 +1152,10 @@ const nl = {
         manager: "Manager",
         member: "Lid",
         organisationRoles: {
-            admin: "Organisatiebeheerder",
-            manager: "Organisatiemanager",
-            undefined: ""
+            admin: "Organisatiebeheerder", manager: "Organisatiemanager", undefined: ""
         },
         organisationShortRoles: {
-            admin: "Beheerder",
-            manager: "Manager",
-            undefined: ""
+            admin: "Beheerder", manager: "Manager", undefined: ""
         },
         yourself: "{{name}} (jijzelf dus)",
         logo: "Organisatielogo",
@@ -1245,15 +1167,12 @@ const nl = {
             label: "Bericht voor gebruikers bij aanvragen of aanmaken van een samenwerking",
             invalid: "Je moet het bericht aan gebruikers aanpassen",
             tooltip: "Dit bericht wordt getoond aan gebruikers van de organisatie wanneer ze een samenewerking aanvragen of aanmaken",
-            template: "Hoi!,\n\n" +
-                "Je kunt een samenwerking **aanmaken/aanvragen**. Omschrijf waarom je deze samenwerking wilt gaan gebruiken. We kunnen contact met je opnemen over je aanvraag.",
+            template: "Hoi!,\n\n" + "Je kunt een samenwerking **aanmaken/aanvragen**. Omschrijf waarom je deze samenwerking wilt gaan gebruiken. We kunnen contact met je opnemen over je aanvraag.",
             tabs: {
-                write: "Markdown",
-                preview: "Voorbeeld"
+                write: "Markdown", preview: "Voorbeeld"
             }
         }
-    },
-    organisationDetail: {
+    }, organisationDetail: {
         backToOrganisations: "Terug naar mijn organisaties",
         backToOrganisationDetail: "Terug naar mijn organisatie {{name}}",
         title: "Omschrijving organisatie {{name}}",
@@ -1288,11 +1207,7 @@ const nl = {
             message: "Bericht",
         },
         collaborationRequest: {
-            actions: "",
-            name: "Naam",
-            short_name: "Korte naam",
-            requester__name: "Aanvrager",
-            message: "Motivatie"
+            actions: "", name: "Naam", short_name: "Korte naam", requester__name: "Aanvrager", message: "Motivatie"
         },
         collaboration: {
             name: "Naam",
@@ -1305,11 +1220,7 @@ const nl = {
             link: ""
         },
         service: {
-            name: "Naam",
-            entity_id: "Entity ID",
-            abbreviation: "Korte naam",
-            description: "Omschrijving",
-            actions: "",
+            name: "Naam", entity_id: "Entity ID", abbreviation: "Korte naam", description: "Omschrijving", actions: "",
         },
         apiKeys: "Organisatie-API-tokens van {{name}}",
         collaborations: "Samenwerkingen van {{name}}",
@@ -1344,8 +1255,7 @@ const nl = {
             member: "Dit lidmaatschap bestaat niet meer. Na het sluiten van deze pop-up worden de lidmaatschappen vernieuwd.",
             invitation: "Deze uitnodiging is al geaccepteerd/afgewezen en bestaat niet meer. Na het sluiten van deze pop-up worden de uitnodigingen ververst."
         }
-    },
-    joinRequest: {
+    }, joinRequest: {
         title: "Verzoek van {{requester}} om lid te worden van samenwerking {{collaboration}}",
         message: "Onderbouwing",
         messageTooltip: "De onderbouwing van {{name}} voor dit verzoek",
@@ -1369,8 +1279,7 @@ const nl = {
             notFound: "Dit verzoek voor lidmaatschap is reeds goedgekeurd of afgewezen.",
             alreadyMember: "Je bent al lid van de samenwerking {{name}} en kan daarom deze uitnodiging niet accepteren."
         }
-    },
-    organisationInvitation: {
+    }, organisationInvitation: {
         title: "Uitnodiging om lid te worden van {{organisation}}",
         backToOrganisationDetail: "Terug naar mijn organisatie {{name}}",
         createTitle: "Uitnodigingen versturen om lid te worden van organisatie {{organisation}}",
@@ -1407,8 +1316,7 @@ const nl = {
             alreadyMember: "De uitnodiging kon niet worden geaccepteerd omdat je al lid bent van deze organisatie.",
             notFound: "Deze uitnodiging is reeds geaccepteerd of afgewezen. Als je denkt dat er een probleem is, neem dan contact op met je beheerder (of met ondersteuning op sram-support@surf.nl)."
         },
-    },
-    apiKeys: {
+    }, apiKeys: {
         title: "Nieuw API-token voor {{organisation}}",
         info: "Met een organisatie-API-token kan de <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{base_url}}/apidocs/\"'>Application Programmer Interface (API)</a> worden gebruikt.",
         backToOrganisationDetail: "Terug naar mijn organisatie {{name}}",
@@ -1424,8 +1332,7 @@ const nl = {
         },
         submit: "Opslaan",
         required: "{{attribute}} is een verplicht veld voor een API token",
-    },
-    invitation: {
+    }, invitation: {
         title: "Uitnodiging om lid te worden van samenwerking {{collaboration}}",
         createTitle: "Verstuur uitnodigingen om lid te worden van samenwerking {{collaboration}}",
         collaborationName: "Naam",
@@ -1480,8 +1387,7 @@ const nl = {
             created: "Uitnodigingen voor samenwerking {{name}} zijn aangemaakt.",
             alreadyMember: "Je bent al lid van de samenwerking {{name}} en kan daarom deze uitnodiging niet accepteren.",
         },
-    },
-    collaborationServices: {
+    }, collaborationServices: {
         title: "Diensten voor samenwerking {{name}}",
         connectedServices: "Met {{name}} gekoppelde diensten",
         noServices: "Deze samenwerking heeft geen gekoppelde diensten.",
@@ -1522,8 +1428,7 @@ const nl = {
         serviceDeleteConfirmation: "Weet je zeker dat je deze dienst uit de samenwerking {{collaboration}} wil verwijderen?",
         serviceConnectionRequestDeleteConfirmation: "Weet je zeker dat je dit koppelverzoek wil verwijderen?",
         serviceConnectionRequestResendConfirmation: "Weet je zeker dat je dit koppelverzoek opnieuw wil versturen?",
-    },
-    organisationServices: {
+    }, organisationServices: {
         title: "Diensten voor organisatie {{name}}",
         connectedServices: "Gekoppelde diensten aan {{name}}",
         noServices: "Deze organisatie heeft geen gekoppelde diensten.",
@@ -1538,15 +1443,10 @@ const nl = {
             deleted: "{{service}} is onbeschikbaar gemaakt voor organisatie {{name}}.",
         },
         service: {
-            open: "",
-            actions: "",
-            name: "Naam",
-            entity_id: "Entity ID",
-            description: "Omschrijving"
+            open: "", actions: "", name: "Naam", entity_id: "Entity ID", description: "Omschrijving"
         },
         serviceDeleteConfirmation: "Weet je zeker dat je deze dienst wil verwijderen uit organisatie {{organisation}}",
-    },
-    groups: {
+    }, groups: {
         title: "Groepen in samenwerking {{name}}",
         servicesTitle: "Diensten voor groep {{name}}",
         membersTitle: "Leden van groep {{name}}",
@@ -1565,8 +1465,7 @@ const nl = {
         namePlaceholder: "Naam van de groep",
         short_name: "Korte naam",
         shortNamePlaceHolder: "Korte naam van de groep",
-        shortNameTooltip: "De korte naam van een dienstgroep wordt gebruikt (1) voor groepen aangemaakt in samenwerkingen, voorafgegaan door de korte naam van de dienst, gescheiden door een koppelteken '-' en (2) in de challenge URL gebruikt door PAM web login.<br/><br/>" +
-            "Alleen getallen, alfanumerieke karakers en de lage streep zijn toegstaan.",
+        shortNameTooltip: "De korte naam van een dienstgroep wordt gebruikt (1) voor groepen aangemaakt in samenwerkingen, voorafgegaan door de korte naam van de dienst, gescheiden door een koppelteken '-' en (2) in de challenge URL gebruikt door PAM web login.<br/><br/>" + "Alleen getallen, alfanumerieke karakers en de lage streep zijn toegstaan.",
         identifier: "Identifier",
         identifierTooltip: "Gegenereerde, unieke en niet aanpasbare identifier van een groep die wordt gebruikt als identifier voor externe systemen",
         collaboration: "Samenwerking",
@@ -1592,8 +1491,7 @@ const nl = {
         user: "Gebruiker {{name}}",
         attributes: "Attributen",
         statusValues: {
-            active: "Actief",
-            in_active: "Inactief"
+            active: "Actief", in_active: "Inactief"
         },
         add: "Maak aan",
         update: "Opslaan",
@@ -1626,28 +1524,16 @@ const nl = {
         deleteMemberTooltip: "Verwijder dit lid uit de groep {{name}}. <strong>Let op</strong>: de gebruiker wordt niet verwijderd, alleen niet langer lid van deze groep.",
         deleteInvitationTooltip: "Verwijder deze uitnodiging uit de groep {{name}}. <strong>Let op</strong>: de uitnodiging wordt niet verwijderd. De genodigde zal niet als lid van deze groep worden toegevoegd als de uitnodiging wordt geaccepteerd.",
         service: {
-            actions: "",
-            name: "Naam",
-            entity_id: "Entity ID",
-            description: "Omschrijving"
+            actions: "", name: "Naam", entity_id: "Entity ID", description: "Omschrijving"
         },
         member: {
-            user__name: "Naam",
-            user__email: "E-mail",
-            user__uid: "UID",
-            role: "Rol",
-            created_at: "Sinds",
-            actions: ""
+            user__name: "Naam", user__email: "E-mail", user__uid: "UID", role: "Rol", created_at: "Sinds", actions: ""
         },
         invitation: {
-            invitee_email: "E-mail",
-            intended_role: "Rol",
-            expiry_date: "Einddatum",
-            actions: ""
+            invitee_email: "E-mail", intended_role: "Rol", expiry_date: "Einddatum", actions: ""
         },
         manageMembers: "Beheer leden"
-    },
-    aup: {
+    }, aup: {
         hi: "Hallo {{name}},",
         name: "Naam.",
         email: "E-mailadres",
@@ -1692,8 +1578,7 @@ const nl = {
             info: "Je bent geen lid van de organisatie <strong>{{name}}</strong>. Voordat je verder kunt gaan, moet je de acceptable use policy (AUP) van de organisatie lezen. Bevestig hieronder of je die accepteert.",
             check: "Ik ga akkoord met de acceptable use policy van deze organisatie"
         }
-    },
-    collaborationRequest: {
+    }, collaborationRequest: {
         title: {
             open: "{{requester}} heeft een verzoek gedaan om een nieuwe samenwerking '{{name}}' te maken .",
             approved: "{{requester}} samenwerkingsverzoek is goedgekeurd.",
@@ -1709,18 +1594,14 @@ const nl = {
         deny: "Afkeuren",
         status: "Status",
         statuses: {
-            all: "Allemaal ({{nbr}})",
-            open: "Open",
-            denied: "Afgewezen",
-            approved: "Goedgekeurd"
+            all: "Allemaal ({{nbr}})", open: "Open", denied: "Afgewezen", approved: "Goedgekeurd"
         },
         flash: {
             approved: "Samenwerking {{name}} is aangemaakt en het verzoek daartoe is verwijderd",
             denied: "Het verzoek om samenwerking {{name}} aan te maken is afgewezen",
             deleted: "Verzoek voor samenwerking {{name}} is verwijderd",
         }
-    },
-    serviceConnectionRequest: {
+    }, serviceConnectionRequest: {
         title: "Dienst koppelverzoek",
         subTitle: "Verzoek van {{requester}} om toegang voor samenwerking {{collaboration}} voor dienst {{service}} toe te staan",
         message: " Motivatie",
@@ -1740,8 +1621,7 @@ const nl = {
             deleted: "Dienstkoppelverzoek voor {{name}} is verwijderd",
             notFound: "Dit verzoek is reeds geaccepteerd/afgewezen."
         }
-    },
-    autocomplete: {
+    }, autocomplete: {
         name: "Name",
         description: "Omschrijving",
         email: "E-mail",
@@ -1751,16 +1631,11 @@ const nl = {
         link: "Link",
         noResults: "Geen resultaat",
         resultsLimited: "Meer resultaten dan we kunnen tonen; pas de zoekopdracht aan."
-    },
-    history: {
+    }, history: {
         changes: "Geschiedenis",
         detail: "Detail",
         actions: {
-            "1": "Nieuwe",
-            "2": "Gewijzigd",
-            "3": "Verwijderd",
-            approved: "Goedgekeurd",
-            denied: "Afgewezen"
+            "1": "Nieuwe", "2": "Gewijzigd", "3": "Verwijderd", approved: "Goedgekeurd", denied: "Afgewezen"
         },
         overview: "{{action}} {{collection}}{{name}}",
         none: "Geen geschiedenis weer te geven",
@@ -1818,8 +1693,7 @@ const nl = {
             "tags": "Label",
             "service_tokens": "Diensttokens (allemaal)"
         }
-    },
-    serviceRequest: {
+    }, serviceRequest: {
         title: {
             open: "{{requester}} heeft een verzoek gedaan om een nieuwe dienst '{{name}}' te maken .",
             approved: "{{requester}} dienstregistratie is goedgekeurd.",
@@ -1837,26 +1711,20 @@ const nl = {
         showMetaData: "Toon de SAML metadata",
         status: "Status",
         statuses: {
-            all: "Allemaal ({{nbr}})",
-            open: "Open",
-            denied: "Afgewezen",
-            approved: "Goedgekeurd"
+            all: "Allemaal ({{nbr}})", open: "Open", denied: "Afgewezen", approved: "Goedgekeurd"
         },
         flash: {
             approved: "Dienst {{name}} is aangemaakt",
             denied: "De dienstregistratie is afgewezen",
             deleted: "Aanvraag voor registratie van dienst {{name}} is verwijderd",
         }
-    },
-    confirmation: {
+    }, confirmation: {
         title: "Promoveer tot platformbeheerder",
         info: "Je bent geconfigureerd als platformbeheerder, maar je moet dit verifiëren met een sterkere verificatie. Klik op de onderstaande knop om de upgrade van je profiel te starten.",
         confirmAccount: "Start verificatie"
-    },
-    inputField: {
+    }, inputField: {
         fileImport: "Upload",
-    },
-    confirmationDialog: {
+    }, confirmationDialog: {
         title: "Bevestiging",
         subTitle: "Deze actie vereist een bevestiging",
         confirm: "Bevestig",
@@ -1866,26 +1734,20 @@ const nl = {
         leavePageSub: "Wijzigingen die niet zijn opgeslagen worden niet bewaard.",
         stay: "Blijf",
         leave: "Verlaat deze pagina"
-    },
-    tabs: {
+    }, tabs: {
         invitation_form: "Uitnodigingsdetails",
         invitation_preview: "Uitnodigingspreview",
         form: "Details",
         history: "Geschiedenis"
-    },
-    error_dialog: {
+    }, error_dialog: {
         title: "Onverwachte fout",
         subTitle: "Er is een fout opgetreden",
         body: "Dit is gênant; er is een onverwachte fout opgetreden. De fout is gerapporteerd. Probeer het nogmaals.",
         deadEnd: "Geen idee waar we vanaf dit punt naartoe kunnen",
         ok: "Sluiten"
-    },
-    not_found: {
-        title: "404",
-        description_html: "Deze pagina kan niet worden gevonden.",
-        loginLink: "Inloggen"
-    },
-    footer: {
+    }, not_found: {
+        title: "404", description_html: "Deze pagina kan niet worden gevonden.", loginLink: "Inloggen"
+    }, footer: {
         support: "Hulp",
         supportLink: "https://edu.nl/vw3jx",
         terms: "Gebruiksvoorwaarden",
@@ -1893,8 +1755,7 @@ const nl = {
         privacy: "Privacyverklaring",
         privacyLink: "https://edu.nl/fcgbd",
         surfLink: "https://surf.nl",
-    },
-    system: {
+    }, system: {
         title: "Systeemonderhoud",
         runDailyJobsInfo: "Voer de dagelijkse cron-taak uit om notificatie-e-mails te verzenden en mogelijk gebruikers op te schorten die zich gedurende de geconfigureerde periode niet hebben aangemeld",
         runExpiredCollaborations: "Run the job to expire collaborations that have an expiratiob date before today",
@@ -1963,14 +1824,10 @@ const nl = {
             reset: "Reset"
         },
         userlogins: {
-            loginType: "Type",
-            total: "Logins",
-            succeeded: "Succeeded",
-            failed: "Failed",
+            loginType: "Type", total: "Logins", succeeded: "Succeeded", failed: "Failed",
         },
         scim: {
-            info: "If enabled there is a mock remote SCIM client available to test the SCIM messages." +
-                "Configure a Service with the following SCIM URL to start testing the SCIM functionality",
+            info: "If enabled there is a mock remote SCIM client available to test the SCIM messages." + "Configure a Service with the following SCIM URL to start testing the SCIM functionality",
             services: "SCIM enabled Services",
             stats: "All API calls and state updates send to the mock SCIM endpoints are stored in an in-memory database.",
             retrieveStats: "Fetch stats",
@@ -1989,9 +1846,7 @@ const nl = {
             loading: "Loading, please wait..."
         },
         activityTable: {
-            date: "Date",
-            user: "User",
-            action: "Action"
+            date: "Date", user: "User", action: "Action"
         },
         invitationReminders: {
             invitations: "CO invitations resend",
@@ -2009,8 +1864,7 @@ const nl = {
             organisation_name: "ORG name",
             service_name: "Service name",
         }
-    },
-    access: {
+    }, access: {
         full: "Volledige",
         limited: "Beperkte",
         readOnly: "Lees-",
@@ -2023,8 +1877,7 @@ const nl = {
         serviceAdmin: "dienstbeheerder",
         serviceManager: "dienstmanager",
         user: "gebruiker"
-    },
-    actionRoles: {
+    }, actionRoles: {
         orgAdmin: "Organisatiebeheerder",
         orgManager: "Organisatiemanager",
         coAdmin: "Beheerder",
@@ -2033,8 +1886,7 @@ const nl = {
         user: "Gebruiker",
         serviceAdmin: "Dienstbeheerder",
         serviceManager: "Dienstmanager"
-    },
-    welcomeDialog: {
+    }, welcomeDialog: {
         title: "Welkom bij {{name}}",
         hi: "Hoi,",
         label: "",
@@ -2054,8 +1906,7 @@ const nl = {
         purpose: "Doel van deze samenwerking",
         noServices: "Nog geen diensten gekoppeld.",
         proceed: "Ga door naar {{name}}"
-    },
-    welcome: {
+    }, welcome: {
         title: "Hallo {{name}},",
         subTitle: "Met <strong>SURF Research Access Management</strong> kun je inloggen op onderzoeksdiensten en samenwerken met andere onderzoekers.",
         unknown: "een onbekende instelling",
@@ -2069,20 +1920,15 @@ const nl = {
         instructions: "Bericht van <strong>{{name}}</strong>",
         createCollTxt: "Samenwerking aanmaken",
         createCollRequestTxt: "Vraag samenwerking aan",
-    },
-    feedback: {
+    }, feedback: {
         title: "Feedback geven",
         info: "Loop je ergens tegenaan? Heb je een suggestie? Laat ons hier weten wat je ervan vindt",
-        disclaimer: "We zullen deze informatie gebruiken om problemen op te lossen, ons product te verbeteren en je te helpen. " +
-            "We kunnen contact met je opnemen over je feedback. " +
-            "Zorg dat je feedback geen vertrouwelijke, gevoelige of persoonlijke informatie bevat. " +
-            "Raadpleeg voor meer informatie onze <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://edu.nl/fcgbd\">Privacyverklaring</a>.",
+        disclaimer: "We zullen deze informatie gebruiken om problemen op te lossen, ons product te verbeteren en je te helpen. " + "We kunnen contact met je opnemen over je feedback. " + "Zorg dat je feedback geen vertrouwelijke, gevoelige of persoonlijke informatie bevat. " + "Raadpleeg voor meer informatie onze <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://edu.nl/fcgbd\">Privacyverklaring</a>.",
         help: "Hulp nodig?",
         helpInfo: "Neem bij vragen of problemen contact met ons op via <a href='mailto:sram-support@surf.nl'> sram-support@surf.nl </a>",
         send: "Feedback geven",
         flash: "Je feedback is verzonden. Bedankt!"
-    },
-    landing: {
+    }, landing: {
         header: {
             title: "Eenvoudige en veilige toegang tot onderzoeksdiensten voor onderzoekssamenwerkingen",
             login: "Inloggen",
@@ -2091,19 +1937,15 @@ const nl = {
         works: "Hoe werkt het?",
         adminFunction: "beheerdersfunctie",
         create: "Aanmaken",
-        createInfo: "<p>Beheerders maken een pagina aan voor de onderzoekers van hun samenwerking.</p>" +
-            "<p>Vervolgens selecteren zij diensten uit de catalogus om ze beschikbaar te maken voor de samenwerking.</p>",
+        createInfo: "<p>Beheerders maken een pagina aan voor de onderzoekers van hun samenwerking.</p>" + "<p>Vervolgens selecteren zij diensten uit de catalogus om ze beschikbaar te maken voor de samenwerking.</p>",
         invite: "Uitnodigen",
-        inviteInfo: "<p>Beheerders nodigen medeonderzoekers uit voor de samenwerkingspagina.</p>" +
-            "<p>Ze kunnen ook leden uitnodigen mee te helpen als beheerder.</p>",
+        inviteInfo: "<p>Beheerders nodigen medeonderzoekers uit voor de samenwerkingspagina.</p>" + "<p>Ze kunnen ook leden uitnodigen mee te helpen als beheerder.</p>",
         join: "Meedoen",
         joinInfo: "<p>Uitgenodigde onderzoekers loggen in via hun instelling of eduID.nl.</p>",
         collaborate: "Samenwerken",
         collaborateInfo: "<p>De beveiligde samenwerkingspagina toont de leden en geeft toegang tot de onderzoeksdiensten.</p>",
-        footer: "<p>SURF Research Access Management is een dienst voor toegangsbeheer van Nederlandse onderzoekssamenwerkingen.</p>" +
-            "<p>Wil je meer weten? Bezoek <a href='https://surf.nl/sram'>https://surf.nl/sram</a>.</p>"
-    },
-    tooltips: {
+        footer: "<p>SURF Research Access Management is een dienst voor toegangsbeheer van Nederlandse onderzoekssamenwerkingen.</p>" + "<p>Wil je meer weten? Bezoek <a href='https://surf.nl/sram'>https://surf.nl/sram</a>.</p>"
+    }, tooltips: {
         members: "Samenstelling van deze samenwerking",
         admins: "Beheerders van deze samenwerking",
         collaborationUrl: "Meer informatie over deze samenwerking",
@@ -2116,21 +1958,16 @@ const nl = {
         platformAdmin: "Goddess divinity",
         oneAdminWarning: "Een organisatie heeft ten minste 1 admin nodig.",
         serviceGroupConnectedNotDeletable: "Dienstgroep van een gekoppelde dienst mag niet worden verwijderd; ontkoppel de dienst eerst."
-    },
-    notFound: {
-        invitationNotFound: "Deze uitnodiging bestaat niet (meer). Waarschijnlijk is de uitnodiging al eerder gebruikt.</br>" +
-            "Vraag aan de uitnodiger of je een nieuwe uitnodiging kunt krijgen.",
+    }, notFound: {
+        invitationNotFound: "Deze uitnodiging bestaat niet (meer). Waarschijnlijk is de uitnodiging al eerder gebruikt.</br>" + "Vraag aan de uitnodiger of je een nieuwe uitnodiging kunt krijgen.",
         invalidSecondFactorUUID: "De koppeling is verlopen. Ga terug naar de dienst die je probeerde te bereiken en probeer het opnieuw.",
         invalidPamWebSSO: "Je sessie is verlopen. Ga terug naar de service waar je probeert in te loggen en probeer het opnieuw.",
-        msg: "Het spijt ons, deze pagina kunnen we niet vinden.</br></br>" +
-            "Probeer opnieuw vanaf de <a href='{{base_url}}'>thuispagina</a> of neem contact met ons op via <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
-    },
-    mfa: {
+        msg: "Het spijt ons, deze pagina kunnen we niet vinden.</br></br>" + "Probeer opnieuw vanaf de <a href='{{base_url}}'>thuispagina</a> of neem contact met ons op via <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
+    }, mfa: {
         register: {
             title: "Tweefactorauthenticatie is vereist",
             titleUpdate: "Voeg een tweefactorauthenticatie-apparaat toe",
-            info1: "SURF Research Access Management vereist sinds kort twee-factor-authenticatie. Dat betekent dat je een extra controle dat jij het bent moet configureren.<br/><br/>" +
-                "Heb je al een tweede factor gebruikt om je aan te melden bij {{name}}? Neem dan ",
+            info1: "SURF Research Access Management vereist sinds kort twee-factor-authenticatie. Dat betekent dat je een extra controle dat jij het bent moet configureren.<br/><br/>" + "Heb je al een tweede factor gebruikt om je aan te melden bij {{name}}? Neem dan ",
             info11: " zodat we dat kunnen oplossen.",
             contactUs: "contact op",
             info2: "Voer de volgende stappen uit om tweefactorauthenticatie in te stellen:",
@@ -2149,10 +1986,8 @@ const nl = {
             verificationCodeInfo: "Voer verificatiecode die de app weergeeft in",
             verify: "Verifiëren en activeren",
             next: "Volgende",
-            feedback: "Ik moest twee-factor-authenticatie configureren bij SURF Research Access Management, maar ik heb al een tweede factor gebruikt om aan te melden bij {{name}}.\n\n" +
-                "Bedankt voor je bericht! Je kunt informatie toevoegen, als je wil."
-        },
-        update: {
+            feedback: "Ik moest twee-factor-authenticatie configureren bij SURF Research Access Management, maar ik heb al een tweede factor gebruikt om aan te melden bij {{name}}.\n\n" + "Bedankt voor je bericht! Je kunt informatie toevoegen, als je wil."
+        }, update: {
             info1: "Volg de onderstaande stappen om je tweefactorauthenticatie bij te werken.",
             info2: "Je moet toegang hebben tot de authenticator-app die je momenteel gebruikt om in te loggen bij SURF Research Access Management, evenals tot de nieuwe authenticator-app die je wil gebruiken voor toekomstige logins.",
             currentCode: "Voer de huidige verificatiecode in",
@@ -2162,8 +1997,7 @@ const nl = {
             verify: "Verifiëren en wijzigen",
             flash: "Je tweefactorauthenticatie is aangepast voor je nieuwe authenticator-app",
             preValidatedFlash: "Correct!"
-        },
-        verify: {
+        }, verify: {
             title: "Vul je verificatiecode in",
             info1: "Vul de verificatiecode uit je authenticator-app voor <strong>SURF Research Access Management</strong> in om je identiteit te verifiëren.",
             explanation: "Tweefactor-authenticatie",
@@ -2172,8 +2006,7 @@ const nl = {
             invalid: "Onjuiste verificatiecode",
             resetRequest: "Reset je verificatiecode",
             resetToken: "Gebruik een resetcode"
-        },
-        profile: {
+        }, profile: {
             name: "Tweefactorauthenticatie",
             no2FA: "Tweefactorauthenticatie is niet geconfigureerd.",
             tooltip: "Tweefactorauthenticatie (2FA) voegt een extra beveiligingslaag aan je SURF Research Access Management profiel toe. Het vereist een extra login —meer dan alleen je gebruikersnaam en wachtwoord— om toegang te krijgen tot je profiel, en om die tweede referentie te krijgen, moet je toegang hebben tot je mobiele authenticator-app.",
@@ -2181,8 +2014,7 @@ const nl = {
             institution: "je instelling",
             handledBySRAM: "Tweefactorauthenticatie met authenticator-app voor mobiele telefoon is geconfigureerd.",
             edit: "Aanpassen"
-        },
-        lost: {
+        }, lost: {
             title: "Vraag een reset code aan",
             how: "Hoe werkt dit",
             info1: "Je moet een beheerder vragen om je verificatie-code te restten",
@@ -2197,16 +2029,14 @@ const nl = {
             message: "Bericht voor de beheerder(s)",
             sendMail: "Vraag reset aan",
             flash: "Je verzoek om een reset is verzonden"
-        },
-        reset: {
+        }, reset: {
             title: "Reset je verificatiecode",
             info1: "Voer je ontvangen resettoken in",
             submit: "Reset",
             resetCodePlaceholder: "Resettoken",
             invalid: "Ongeldig resettoken",
         }
-    },
-    sfo: {
+    }, sfo: {
         title: "Je hebt geen toegang tot <i>{{name}}</i>",
         info: "Pech gehad...",
         info1: "<p>Toegang tot <i>{{name}}</i> vereist lidmaatschap van een samenwerking in SURF Research Access Management.</p><p>Vraag de beheerders om je uit te nodigen voor een samenwerking die toegang geeft tot deze dienst.</p>",
@@ -2215,27 +2045,22 @@ const nl = {
         info4: "<p>Je bent ingelogd via SURF Research Access Management, maar geen van de samenwerking(en) waar je lid van bent geven toegang tot <i>{{name}}</i>.</p><p>Neem contact op met de beheerders voor toegang tot deze dienst.</p>",
         info5: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i> omdat de samenwerking(en) waarvan je lid bent niet actief zijn.</p><p>Neem contact op met de beheerders van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
         info6: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. Je lidmaatschap van de samenwerking(en) waar je momenteel lid van bent zijn verlopen.</p><p>Neem contact op met de beheerders van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
-        ticket: "Als je wilt kan je contact opnemen met SRAM support " +
-            "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a> voor hulp.",
+        ticket: "Als je wilt kan je contact opnemen met SRAM support " + "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a> voor hulp.",
         subject: "Geen toegang tot dienst {{name}}",
         entityId: "Entity ID",
         issuerId: "Issuer ID",
         userId: "User ID",
         timestamp: "Timestamp"
-    },
-    unsuspend: {
+    }, unsuspend: {
         confirmation: "Weet je zeker dat je de schorsing van deze samenwerking ongedaan wil maken?",
         flash: "Samenwerking {{name}} is weer actief"
-    },
-    resetActivity: {
+    }, resetActivity: {
         confirmation: "Weet je zeker dat je de datum van de laatste activiteit van deze samenwerking wilt resetten?",
         flash: "Collaboration {{name}} laatste activiteit datum is gereset."
-    },
-    activate: {
+    }, activate: {
         confirmation: "Weet je zeker dat je de verloopdatum van deze samenwerking wilt verwijderen?",
         flash: "Collaboration {{name}} verloopdatum is verwijderd."
-    },
-    organisationMembership: {
+    }, organisationMembership: {
         membership: "Lidmaatschap van {{name}} heeft geen einddatum.",
         membershipWithExpiry: "Lidmaatschap van {{name}} verloopt op {{date}}.",
         expiredMembership: "Dit lidmaatschap is verlopen op {{date}}. Pas de einddatum van het lidmaatschap aan om {{name}} weer lid te maken.",
@@ -2255,8 +2080,7 @@ const nl = {
             expiredTooltipMember: "Je lidmaatschap is verlopen op {{date}}. Neem contact op met de beheerders van deze samenwerking om dit te verhelpen. ",
             activeWithExpiryDateTooltip: "je lidmaatschap is actief, maar verloopt op {{date}}. "
         }
-    },
-    serviceDetail: {
+    }, serviceDetail: {
         deleteMemberConfirmation: "Weet je zeker dat je alle geselecteerde leden en uitnodigingen wil verwijderen?",
         deleteYourselfMemberConfirmation: "Weet je zeker dat je deze dienst wil verlaten? Je kan dit niet terugdraaien.",
         resendInvitations: "Weet je zeker dat je alle geselecteerde uitnodigingen opnieuw wil versturen?",
@@ -2274,8 +2098,7 @@ const nl = {
         manager: "Dienstmanager",
         intendedRole: "Rol binnen de dienst",
         intendedRoleTooltip: "De dienstmanager rol is gelimiteerd tot het beheren van koppelingen met samenwerkingen"
-    },
-    scim: {
+    }, scim: {
         scimEnabled: "SCIM server provisioning",
         scimEnabledTooltip: "Sta deze service toe om SCIM-berichten te ontvangen?",
         scimClientEnabled: "SCIM client",
@@ -2291,8 +2114,7 @@ const nl = {
         scimSweepDeleteOrphansTooltip: "Verwijder met een sweep gebruikers zonder lidmaatschappen en samenwerkingen en groepen zonder leden",
         sweepScimDailyRate: "Sweeps per dag",
         sweepScimDailyRateTooltip: "Aantal maal per 24 uur dat de SCIM data op de service gesweept wordt"
-    },
-    userTokens: {
+    }, userTokens: {
         actionTitle: "Nieuwe API-token",
         tokens: "Tokens",
         tokenEnabled: "Gebruikertoken introspectie",
@@ -2320,8 +2142,7 @@ const nl = {
             copy: "Copy",
             close: "Sluit",
         }
-    },
-    pamWebSSO: {
+    }, pamWebSSO: {
         title: "Log in op {{service}}",
         info: "Log in voor de verificatiecode die gevraagd wordt op de command line interface.",
         proceed: "Inloggen",
@@ -2334,8 +2155,7 @@ const nl = {
         denied: "Toegang geweigerd",
         deniedInfo: "Helaas heb je geen toegang tot de deze dienst.",
         contact: "Neem contact op met <a href='mailto:{{support}}'>{{support}}</a> voor toegang tot deze dienst."
-    },
-    serviceDetails: {
+    }, serviceDetails: {
         details: "Dienstgegevens",
         tokens: "Tokens",
         tokensTooltips: {
@@ -2373,12 +2193,8 @@ const nl = {
             SCIMClient: "SCIM client"
         },
         updateDisabled: "Er zijn velden met ongeldige of ontbrekende waarden in de secties {{invalid}}."
-    },
-    expirations: {
-        expires: "Verloopt {{relativeTime}}",
-        expired: "Verlopen {{relativeTime}}",
-        never: "Verloopt nooit",
-        activity: {
+    }, expirations: {
+        expires: "Verloopt {{relativeTime}}", expired: "Verlopen {{relativeTime}}", never: "Verloopt nooit", activity: {
             now: "Zojuist",
             seconds: "Vandaag",
             minute: "Vandaag",
@@ -2393,8 +2209,7 @@ const nl = {
             months: "%s maanden geleden",
             year: "1 jaar geleden",
             years: "%s jaar geleden"
-        },
-        ago: {
+        }, ago: {
             now: "zojuist",
             seconds: "%s seconden geleden",
             minute: "1 minuut geleden",
@@ -2409,8 +2224,7 @@ const nl = {
             months: "%s maanden geleden",
             year: "1 jaar geleden",
             years: "%s jaar geleden"
-        },
-        in: {
+        }, in: {
             now: "nu",
             seconds: "over %s seconden",
             minute: "over 1 minuut",
@@ -2426,25 +2240,17 @@ const nl = {
             year: "over 1 jaar",
             years: "over %s jaar"
         }
-    },
-    error: {
-        message: "Het spijt ons, we zijn tegen een onbekende fout aangelopen.</br>" +
-            "Probeer opnieuw vanaf de <a href='/'>thuispagina</a> of neem contact met ons op via <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>.",
-        ssid_failed: "SURF Research Access Management vereist twee-factor-authenticatie, een extra controle dat jij het bent.</br>" +
-            "Helaas is deze authenticatie door SURFsecureID zojuist mislukt.</br></br>" +
-            "Kopieer en plak de volgende informatie en neem contact op met SRAM support op <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> voor hulp.",
+    }, error: {
+        message: "Het spijt ons, we zijn tegen een onbekende fout aangelopen.</br>" + "Probeer opnieuw vanaf de <a href='/'>thuispagina</a> of neem contact met ons op via <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>.",
+        ssid_failed: "SURF Research Access Management vereist twee-factor-authenticatie, een extra controle dat jij het bent.</br>" + "Helaas is deze authenticatie door SURFsecureID zojuist mislukt.</br></br>" + "Kopieer en plak de volgende informatie en neem contact op met SRAM support op <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> voor hulp.",
         defaultCode: "urn:oasis:names:tc:SAML:2.0:status:Responder",
         defaultMessage: ""
-    },
-    gallery: {
-        upload: "Upload je eigen logo",
-        select: "Of selecteer een logo"
-    },
-    missingAttributes: {
+    }, gallery: {
+        upload: "Upload je eigen logo", select: "Of selecteer een logo"
+    }, missingAttributes: {
         info: "Er is iets misgegaan, niet alle inloginformatie is goed doorgekomen. Probeer nogmaals in te loggen, zo mogelijk via een incognito browser venster.",
         contact: "Als het probleem zich nogmaals voordoet, vraag ons dan om hulp via <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>"
-    },
-    coPageHeaders: {
+    }, coPageHeaders: {
         membersGroups: "{{memberCount}} {{members}} & {{groupCount}} {{groups}}",
         singleMember: " lid ",
         multipleMembers: " leden ",
@@ -2454,8 +2260,7 @@ const nl = {
         visit: "Bezoek website",
         membership: "Lid sinds {{date}}",
         expiresTooltip: "Lidmaatschap verloopt op {{date}}"
-    },
-    servicePageHeaders: {
+    }, servicePageHeaders: {
         notConnected: "<span class='not-connected'>Niet gekoppeld</span> aan een samenwerking",
         allConnected: "Gekoppeld aan <span class='all-connected'>alle</span> samenwerkingen",
         connectedToSingle: "Gekoppeld aan {{count}} samenwerking",
@@ -2466,21 +2271,14 @@ const nl = {
         all: "alle",
         launch: "Open de dienst",
         visit: "bezoek de website"
-    },
-    myRequests: {
-        requestType: "Aanvraag type",
-        types: {
+    }, myRequests: {
+        requestType: "Aanvraag type", types: {
             joinRequest: "Lidmaatschapsverzoek",
             collaborationRequest: "Nieuw samenwerkingsverzoek",
             serviceRequest: "Dienstregistratie",
             serviceConnectionRequest: "Dienstkoppelverzoek"
-        },
-        name: "Naam",
-        description: "Omschrijving",
-        organisationName: "Organisatie / instelling",
-        notApplicable: "N/A"
-    },
-    units: {
+        }, name: "Naam", description: "Omschrijving", organisationName: "Organisatie / instelling", notApplicable: "N/A"
+    }, units: {
         column: "Units",
         label: "Units (bijv. afdeling of project)",
         add: "+ Voeg unit toe",
@@ -2502,31 +2300,20 @@ const nl = {
         editRole: "Wijzig details organisatiemanager",
         duplicated: "Er is al een unit met de naam {{name}} voor deze organisatie",
         unitRequired: "Je moet minstens één unit selecteren"
-    },
-    serviceDenied: {
+    }, serviceDenied: {
         loginPrevTitle: "Kon je eerst wel inloggen?",
-        loginPrev: [
-            "Zorg dat je het juiste account gebruikt.",
-            "Controleer of je nog steeds lid bent van de juiste samenwerking.",
-            "Als er iets anders niet juist is, neem dan contact op " +
-            "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a>."
-        ],
+        loginPrev: ["Zorg dat je het juiste account gebruikt.", "Controleer of je nog steeds lid bent van de juiste samenwerking.", "Als er iets anders niet juist is, neem dan contact op " + "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a>."],
         neverBeenBeforeTitle: "Ben je hier nog nooit geweest?",
-        neverBeenBefore: [
-            "Lees wat je met <a href=\"https://surf.nl/sram\" target=\"_blank\" rel=\"noopener noreferrer\">SRAM allemaal kan doen.</a>",
-            "Als iemand je heeft gewezen op <strong>{{serviceName}}</strong>, neem dan contact met hen op om toegang te krijgen tot de juiste samenwerking, of neem contact op met je instelling."
-        ],
+        neverBeenBefore: ["Lees wat je met <a href=\"https://surf.nl/sram\" target=\"_blank\" rel=\"noopener noreferrer\">SRAM allemaal kan doen.</a>", "Als iemand je heeft gewezen op <strong>{{serviceName}}</strong>, neem dan contact met hen op om toegang te krijgen tot de juiste samenwerking, of neem contact op met je instelling."],
         ticketInfoTitle: "Sessieinformatie"
-    },
-    collaborationsOverview: {
+    }, collaborationsOverview: {
         welcome: "Welkom {{name}}",
         select: "Selecteer je samenwerking",
         request: "Verzoek nieuwe samenwerking",
         create: "Nieuwe samenwerking aanmaken",
         viewRequests: "bekijk verzoeken",
         open: "Open"
-    },
-    countDownDialog: {
+    }, countDownDialog: {
         title: "Toegang tot {{name}}",
         subTitle: "Om toegang te krijgen tot de service {{name}} moet je worden geadministreerd. Dit duurt helaas even, neem een kop ☕️.",
         info: "Over <span class='counter'>{{counter}}</span> seconden zal je worden doorgestuurd."

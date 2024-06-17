@@ -1165,6 +1165,18 @@ const en = {
             response: "Response from the SCIM endpoint:",
             saveBeforeTest: "Update service",
             saveBeforeTestQuestion: "You have made changes to the SCIM configuration. Do you want to save this changes before you test the SCIM endpoint?"
+        },
+        openIDConnectGrants: "OpenID Connect grants",
+        openIDConnectGrantsPlaceholder: "Choose grant(s)",
+        openIDConnectGrantsTooltip: "Grant types are the way to specify how a Relying Party will interact with the OIDC server",
+        isPublicClient: "Public client",
+        isPublicClientTooltip: "Public clients are not required to authenticate, but must use the Proof key for Code Exchange (PKCE) authorisation",
+        grants: {
+            authorization_code: "Authorization code",
+            implicit: "Implicit (deprecated)",
+            refresh_token: "Refresh token",
+            client_credentials: "Client credentials",
+            device_code: "Device code"
         }
     },
     organisation: {
