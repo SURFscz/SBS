@@ -43,6 +43,8 @@ class Service extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.state = this.initialState();
+        this.grantOptions = ["authorization_code", "implicit", "refresh_token", "client_credentials"]
+            .map(val => ({value: val, label: I18n.t(`service.grants.${val}`)}));
     }
 
     initialState = () => ({
@@ -90,6 +92,8 @@ class Service extends React.Component {
         providing_organisation: "",
         connection_type: null,
         redirect_urls: [],
+        grants: ["authorization_code"].map(val => ({value: val, label: I18n.t(`service.grants.${val}`)})),
+        is_public_client: false,
         saml_metadata_url: "",
         saml_metadata: "",
         samlMetaDataFile: "",
@@ -122,6 +126,8 @@ class Service extends React.Component {
                         loading: false,
                         isServiceRequestDetails: isServiceRequestDetails,
                         redirect_urls: isEmpty(res.redirect_urls) ? [] : res.redirect_urls.split(",")
+                            .map(s => ({value: s.trim(), label: s.trim()})),
+                        grants: isEmpty(res.grants) ? [] : res.grants.split(",")
                             .map(s => ({value: s.trim(), label: s.trim()}))
                     });
                     AppStore.update(s => {
@@ -235,6 +241,16 @@ class Service extends React.Component {
             this.setState({redirect_urls: newRedirectUrls});
         }
     }
+
+    grantsChanged = selectedOptions => {
+        if (selectedOptions === null) {
+            this.setState({grants: []});
+        } else {
+            const newGrants = Array.isArray(selectedOptions) ? [...selectedOptions] : [selectedOptions];
+            this.setState({grants: newGrants});
+        }
+    }
+
     closeConfirmationDialog = () => this.setState({
         declineDialog: false,
         rejectionReason: "",
@@ -350,7 +366,7 @@ class Service extends React.Component {
     doSubmit = () => {
         if (this.isValid()) {
             this.setState({loading: true});
-            const {name, ip_networks, redirect_urls} = this.state;
+            const {name, ip_networks, redirect_urls, grants} = this.state;
             const {isServiceRequest} = this.props;
             const strippedIpNetworks = ip_networks
                 .filter(network => network.network_value && network.network_value.trim())
@@ -363,12 +379,16 @@ class Service extends React.Component {
                     network.id = parseInt(network.id, 10)
                 }
             });
-            const joined_redirect_urls = isEmpty(redirect_urls) ? null : redirect_urls
+            const joinedRedirectUrls = isEmpty(redirect_urls) ? null : redirect_urls
+                .map(option => option.value)
+                .join(",")
+            const joinedGrants = isEmpty(grants) ? null : grants
                 .map(option => option.value)
                 .join(",")
             this.setState({
                 ip_networks: strippedIpNetworks,
-                redirect_urls: joined_redirect_urls,
+                redirect_urls: joinedRedirectUrls,
+                grants: joinedGrants
             }, () => {
                 if (isServiceRequest) {
                     createServiceRequest(this.state)
@@ -467,7 +487,7 @@ class Service extends React.Component {
                         access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired,
                         accepted_user_policy, uri_info, privacy_policy, service, disabledSubmit, allow_restricted_orgs, token_enabled, pam_web_sso_enabled,
                         token_validity_days, config, ip_networks, administrators, message, logo, isServiceAdmin,
-                        providing_organisation, connection_type, redirect_urls, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails, disableEverything,
+                        providing_organisation, connection_type, redirect_urls, grants, is_public_client, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails, disableEverything,
                         ldap_identifier) => {
         const ldapBindAccount = config.ldap_bind_account;
         const {isServiceRequest} = this.props;
@@ -621,6 +641,29 @@ class Service extends React.Component {
                                  toolTip={I18n.t("service.openIDConnectRedirectsTooltip")}
                                  onChange={this.redirectUrlsChanged}/>
                 }
+                {(isServiceRequest && connection_type === "openIDConnect") &&
+                    <SelectField value={grants}
+                                 options={this.grantOptions.filter(option => !grants.find(grant => grant.value === option.value))}
+                                 creatable={false}
+                                 onInputChange={val => val}
+                                 isMulti={true}
+                                 disabled={disableEverything}
+                                 copyClipBoard={isServiceRequestDetails}
+                                 name={I18n.t("service.openIDConnectGrants")}
+                                 placeholder={I18n.t("service.openIDConnectGrantsPlaceholder")}
+                                 toolTip={I18n.t("service.openIDConnectGrantsTooltip")}
+                                 onChange={this.grantsChanged}/>
+                }
+                {(isServiceRequest && connection_type === "openIDConnect") &&
+                                    <CheckBox name={"is_public_client"}
+                          value={is_public_client}
+                          onChange={() => this.setState({is_public_client:!is_public_client})}
+                          tooltip={I18n.t("service.isPublicClientTooltip")}
+                          info={I18n.t("service.isPublicClient")}
+                />
+
+                }
+
                 {(isServiceRequest && connection_type === "saml2URL") &&
                     <div className="first-column">
 
@@ -1013,6 +1056,8 @@ class Service extends React.Component {
             providing_organisation,
             connection_type,
             redirect_urls,
+            grants,
+            is_public_client,
             saml_metadata_url,
             samlMetaDataFile,
             comments,
@@ -1050,8 +1095,8 @@ class Service extends React.Component {
                     {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
                         access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, uri_info, privacy_policy,
                         service, disabledSubmit, allow_restricted_orgs, token_enabled, pam_web_sso_enabled, token_validity_days, config, ip_networks,
-                        administrators, message, logo, isServiceAdmin, providing_organisation, connection_type, redirect_urls, saml_metadata_url,
-                        samlMetaDataFile, comments, isServiceRequestDetails, disableEverything, ldap_identifier)}
+                        administrators, message, logo, isServiceAdmin, providing_organisation, connection_type, redirect_urls, grants, is_public_client,
+                        saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails, disableEverything, ldap_identifier)}
                 </div>
             </>)
             ;

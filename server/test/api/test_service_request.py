@@ -1,7 +1,15 @@
+import responses
+
 from server.db.db import db
 from server.db.domain import ServiceRequest, ServiceMembership, Service
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_request_gpt_name, service_request_gpt_uuid4
+from server.tools import read_file
+
+expected_metadata_dict = {"entity_id": "https://engine.test.surfconext.nl/authentication/sp/metadata",
+                          "acs_location": "https://engine.test.surfconext.nl/authentication/sp/consume-assertion",
+                          "acs_binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST",
+                          "organization_name": "SURFconext TEST EN"}
 
 
 class TestServiceRequest(AbstractTest):
@@ -122,3 +130,26 @@ class TestServiceRequest(AbstractTest):
                  body=body, with_basic_auth=False)
         self.delete("/api/service_requests", primary_key=service_request_id, with_basic_auth=False)
         self.assertEqual(pre_count - 1, ServiceRequest.query.count())
+
+    def test_metadata_parse_xml(self):
+        self.login("urn:betty")
+        xml = read_file("test/saml2/sp_meta_data.xml")
+        meta_data = self.post("/api/service_requests/metadata/parse", body={"meta_data_xml": xml},
+                              response_status_code=200, with_basic_auth=False)
+        self.assertDictEqual(expected_metadata_dict, meta_data)
+
+    @responses.activate
+    def test_parse_metadata_url(self):
+        self.login("urn:betty")
+        xml = read_file("test/saml2/sp_meta_data.xml")
+        url = "http://localhost:9001/metadata"
+        with responses.RequestsMock(assert_all_requests_are_fired=True) as request_mocks:
+            request_mocks.add(responses.GET, url, body=xml, status=200, content_type="text/xml")
+            meta_data = self.post("/api/service_requests/metadata/parse", body={"meta_data_url": url},
+                                  response_status_code=200, with_basic_auth=False)
+            self.assertDictEqual(expected_metadata_dict, meta_data)
+
+    def test_metadata_parse_bad_request(self):
+        self.login("urn:betty")
+        self.post("/api/service_requests/metadata/parse", body={}, response_status_code=400,
+                  with_basic_auth=False)
