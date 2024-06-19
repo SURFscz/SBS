@@ -15,8 +15,10 @@
             Management.
             Because we do not want to store your information longer than necessary,
             your profile will be marked inactive on {{ suspension_date }}.
-            This means non-web services might not work anymore. On {{ deletion_date }}, your profile will be
-            deleted.</p>
+            {#  This means non-web services might not work anymore. #}
+            This means that after this date, you will not be able to log in any longer to services connected to your collaborations.
+
+            On {{ deletion_date }}, your profile will be deleted.</p>
 
         {% include "personal_information.html" %}
 

@@ -5,7 +5,9 @@
 {{ salutation }},
 According to our information, it's been {{ days_ago }} days since you last used SURF Research Access Management.
 Because we do not want to store your information longer than necessary, your profile will be marked inactive on {{ suspension_date }}.
-This means non-web services might not work anymore. On {{ deletion_date }}, your profile will be deleted.
+{#  This means non-web services might not work anymore. #}
+This means that after this dat,e you will not be able to log in any longer to services connected to your collaborations.
+On {{ deletion_date }}, your profile will be deleted.
 
 If you want to keep using the services available through SURF Research Access Management,
 simply login using the link below or by going to {{ base_url }}/login.
