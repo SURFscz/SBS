@@ -54,7 +54,8 @@
     },
     "resolutions": {
         "minimatch": "^9.0.4",
-        "tough-cookie": "4.1.4"
+        "tough-cookie": "4.1.4",
+        "ws": "^8.17.1"
     },
     "scripts": {
         "start": "DANGEROUSLY_DISABLE_HOST_CHECK=true GENERATE_SOURCEMAP=false HOST=localhost react-scripts start",
