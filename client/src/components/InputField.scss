@@ -72,6 +72,12 @@
         }
     }
 
+    span.extra-info {
+        margin-bottom: 6px;
+        display: inline-block;
+        font-size: 15px;
+    }
+
     div.inner-input-field {
         display: flex;
 
@@ -133,7 +139,7 @@
 
     }
 
-    div.input-field-link{
+    div.input-field-link {
         margin-left: 10px;
         display: flex;
         border-radius: 4px;

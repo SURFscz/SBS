@@ -1126,8 +1126,9 @@ const en = {
         },
         openIDConnectRedirects: "OpenID Connect redirect URLs",
         openIDConnectRedirectsPlaceholder: "https://service.com/redirect",
-        openIDConnectRedirectsTooltip: "The redirect URL after the user authentication is successfully done. Must be a full match.",
-        samlMetadata: "SAML metadata URL",
+        openIDConnectRedirectsTooltip: "The redirect URLs after the user authentication is successfully done. Must be a full match, but you can enter multiple URLs.",
+        samlMetadata: "SAML metadata",
+        samlMetadataURL: "SAML metadata URL",
         samlMetadataPlaceholder: "https://metadata",
         samlMetadataUpload: "Upload SAML metadata",
         noneInfo: "Other protocols can be selected later",
@@ -1177,6 +1178,19 @@ const en = {
             refresh_token: "Refresh token",
             client_credentials: "Client credentials",
             device_code: "Device code"
+        },
+        samlMetaData: {
+            acs_binding: "ACSBinding",
+            acs_location: "ACSLocation",
+            entity_id: "EntityID",
+            organization_name: "Organization",
+            unknown: "Not present",
+            missingAttributes: "Incomplete SAML meta data"
+        },
+        oidc: {
+            oidcClientSecretDisclaimer: "You can view this OIDC client secret only once. Copy it and store it somewhere safe. If the secret is lost, then you'll have to request a new one.",
+            oidcClientSecret: "OpenID client secret",
+            oidcClientSecretTooltip: "The secret to use when requesting a OIDC token"
         }
     },
     organisation: {

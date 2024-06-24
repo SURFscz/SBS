@@ -5,8 +5,10 @@ import {
     createServiceRequest,
     deleteServiceRequest,
     denyServiceRequest,
+    generateOidcClientSecret,
     hintServiceShortName,
     ipNetworks,
+    parseSAMLMetaData,
     serviceAbbreviationExists,
     serviceEntityIdExists,
     serviceLdapIdentifier,
@@ -37,6 +39,8 @@ import SelectField from "../components/SelectField";
 import UploadButton from "../components/UploadButton";
 import {chipTypeForStatus} from "../utils/UserRole";
 import MetaDataDialog from "./MetaDataDialog";
+
+const connectionTypes = ["openIDConnect", "saml2URL", "saml2File", "none"];
 
 class Service extends React.Component {
 
@@ -94,9 +98,13 @@ class Service extends React.Component {
         redirect_urls: [],
         grants: ["authorization_code"].map(val => ({value: val, label: I18n.t(`service.grants.${val}`)})),
         is_public_client: false,
+        oidc_client_secret: null,
         saml_metadata_url: "",
         saml_metadata: "",
         samlMetaDataFile: "",
+        parsedSAMLMetaData: null,
+        parsedSAMLMetaDataError: false,
+        parsedSAMLMetaDataURLError: false,
         comments: "",
         isServiceRequestDetails: false,
         rejectionReason: null,
@@ -130,6 +138,21 @@ class Service extends React.Component {
                         grants: isEmpty(res.grants) ? [] : res.grants.split(",")
                             .map(s => ({value: s.trim(), label: s.trim()}))
                     });
+                    if (isServiceRequestDetails && (res.saml_metadata_url || res.saml_metadata)) {
+                        parseSAMLMetaData(res.saml_metadata, res.saml_metadata_url)
+                            .then(metaData => this.setState({
+                                parsedSAMLMetaData: metaData,
+                                entity_id: metaData.entity_id,
+                                parsedSAMLMetaDataError: false,
+                                parsedSAMLMetaDataURLError: false
+                            }))
+                            .catch(() => this.setState({
+                                parsedSAMLMetaData: null,
+                                entity_id: null,
+                                parsedSAMLMetaDataError: !isEmpty(res.saml_metadata_url),
+                                parsedSAMLMetaDataURLError: !isEmpty(res.saml_metadata)
+                            }))
+                    }
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
@@ -191,11 +214,51 @@ class Service extends React.Component {
         this.setState({invalidInputs: {...invalidInputs, [name]: inValid}});
     };
 
+    renderSAMLMetaData = parsedSAMLMetaData => {
+        return (
+            <div className="parsed-saml-meta-data">
+                <table>
+                    <thead/>
+                    <tbody>
+                    <tr>
+                        <td className="attribute">{I18n.t("service.samlMetaData.acs_binding")}</td>
+                        <td className="value">{parsedSAMLMetaData.acs_binding || I18n.t("service.samlMetaData.unknown")}</td>
+                    </tr>
+                    <tr>
+                        <td className="attribute">{I18n.t("service.samlMetaData.acs_location")}</td>
+                        <td className="value">{parsedSAMLMetaData.acs_location || I18n.t("service.samlMetaData.unknown")}</td>
+                    </tr>
+                    <tr>
+                        <td className="attribute">{I18n.t("service.samlMetaData.entity_id")}</td>
+                        <td className="value">{parsedSAMLMetaData.entity_id || I18n.t("service.samlMetaData.unknown")}</td>
+                    </tr>
+                    {!isEmpty(parsedSAMLMetaData.organization_name) && <tr>
+                        <td className="attribute">{I18n.t("service.samlMetaData.organization_name")}</td>
+                        <td className="value">{parsedSAMLMetaData.organization_name}</td>
+                    </tr>}
+                    </tbody>
+                </table>
+            </div>
+        )
+            ;
+    }
+
     validateURI = name => e => {
         const uri = e.target.value;
         const {invalidInputs} = this.state;
         const inValid = !isEmpty(uri) && !validUrlRegExp.test(uri);
         this.setState({invalidInputs: {...invalidInputs, [name]: inValid}});
+        if (name === "saml_metadata_url") {
+            parseSAMLMetaData(null, uri)
+                .then(metaData => this.setState({
+                    parsedSAMLMetaData: metaData, entity_id: metaData.entity_id,
+                    parsedSAMLMetaDataURLError: false
+                }))
+                .catch(() => this.setState({
+                    parsedSAMLMetaData: null, entity_id: null,
+                    parsedSAMLMetaDataURLError: true
+                }))
+        }
     };
 
     validateIpAddress = index => e => {
@@ -419,6 +482,15 @@ class Service extends React.Component {
             reader.onload = () => {
                 const metaData = reader.result.toString();
                 this.setState({samlMetaDataFile: file.name, saml_metadata: metaData});
+                parseSAMLMetaData(metaData, null)
+                    .then(metaData => this.setState({
+                        parsedSAMLMetaData: metaData, entity_id: metaData.entity_id,
+                        parsedSAMLMetaDataError: false
+                    }))
+                    .catch(() => this.setState({
+                        parsedSAMLMetaData: null, entity_id: null,
+                        parsedSAMLMetaDataError: true
+                    }))
             };
             reader.readAsText(file);
         }
@@ -465,6 +537,22 @@ class Service extends React.Component {
         </div>);
     }
 
+    fetchNewOidcClientSecretValue = () => {
+
+    };
+
+    onChangeConnectionType = value => {
+        this.setState({connection_type: value});
+        if ("openIDConnect" === value) {
+            generateOidcClientSecret()
+                .then(res => this.setState({
+                    oidc_client_secret: res.value
+                }));
+        } else {
+            this.setState({oidc_client_secret: null});
+        }
+    }
+
     toggleSamlMetadataModal = e => {
         stopEvent(e);
         this.setState({showMetaData: !this.state.showMetaData})
@@ -488,7 +576,7 @@ class Service extends React.Component {
                         accepted_user_policy, uri_info, privacy_policy, service, disabledSubmit, allow_restricted_orgs, token_enabled, pam_web_sso_enabled,
                         token_validity_days, config, ip_networks, administrators, message, logo, isServiceAdmin,
                         providing_organisation, connection_type, redirect_urls, grants, is_public_client, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails, disableEverything,
-                        ldap_identifier) => {
+                        ldap_identifier, parsedSAMLMetaData, parsedSAMLMetaDataError, parsedSAMLMetaDataURLError, oidc_client_secret) => {
         const ldapBindAccount = config.ldap_bind_account;
         const {isServiceRequest} = this.props;
         return (
@@ -621,8 +709,8 @@ class Service extends React.Component {
                                           label={I18n.t("service.protocol")}
                                           value={connection_type}
                                           disabled={disableEverything}
-                                          values={["openIDConnect", "saml2URL", "saml2File", "none"]}
-                                          onChange={value => this.setState({connection_type: value})}
+                                          values={connectionTypes}
+                                          onChange={this.onChangeConnectionType}
                                           labelResolver={label => I18n.t(`service.protocols.${label}`)}/>
                         {(!initial && isEmpty(connection_type)) &&
                             <ErrorIndicator
@@ -643,7 +731,7 @@ class Service extends React.Component {
                 }
                 {(isServiceRequest && connection_type === "openIDConnect") &&
                     <SelectField value={grants}
-                                 options={this.grantOptions.filter(option => !grants.find(grant => grant.value === option.value))}
+                                 options={this.grantOptions.filter(option => Array.isArray(grants) && !grants.find(grant => grant.value === option.value))}
                                  creatable={false}
                                  onInputChange={val => val}
                                  isMulti={true}
@@ -654,13 +742,25 @@ class Service extends React.Component {
                                  toolTip={I18n.t("service.openIDConnectGrantsTooltip")}
                                  onChange={this.grantsChanged}/>
                 }
+                {(isServiceRequest && connection_type === "openIDConnect" && !isServiceRequestDetails) &&
+                    <div className="new-oidc-secret">
+
+                        <InputField value={oidc_client_secret}
+                                    name={I18n.t("service.oidc.oidcClientSecret")}
+                                    toolTip={I18n.t("service.oidc.oidcClientSecretTooltip")}
+                                    disabled={true}
+                                    copyClipBoard={true}
+                                    extraInfo={I18n.t("service.oidc.oidcClientSecretDisclaimer")}/>
+
+                    </div>}
+
                 {(isServiceRequest && connection_type === "openIDConnect") &&
-                                    <CheckBox name={"is_public_client"}
-                          value={is_public_client}
-                          onChange={() => this.setState({is_public_client:!is_public_client})}
-                          tooltip={I18n.t("service.isPublicClientTooltip")}
-                          info={I18n.t("service.isPublicClient")}
-                />
+                    <CheckBox name={"is_public_client"}
+                              value={is_public_client}
+                              onChange={() => this.setState({is_public_client: !is_public_client})}
+                              tooltip={I18n.t("service.isPublicClientTooltip")}
+                              info={I18n.t("service.isPublicClient")}
+                    />
 
                 }
 
@@ -668,7 +768,7 @@ class Service extends React.Component {
                     <div className="first-column">
 
                         <InputField value={saml_metadata_url}
-                                    name={I18n.t("service.samlMetadata")}
+                                    name={I18n.t("service.samlMetadataURL")}
                                     placeholder={I18n.t("service.samlMetadataPlaceholder")}
                                     onChange={e => this.setState({
                                         saml_metadata_url: e.target.value,
@@ -681,6 +781,9 @@ class Service extends React.Component {
                         {invalidInputs["saml_metadata_url"] &&
                             <ErrorIndicator
                                 msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
+                        {(parsedSAMLMetaDataURLError && !invalidInputs["saml_metadata_url"]) && <ErrorIndicator
+                            msg={I18n.t("forms.invalidInput", {name: I18n.t("service.samlMetadataURL")})}/>}
+                        {!isEmpty(parsedSAMLMetaData) && this.renderSAMLMetaData(parsedSAMLMetaData)}
                     </div>}
                 {(!disableEverything && isServiceRequest && connection_type === "saml2File" && !isServiceRequestDetails) &&
                     <div className="saml-meta-data">
@@ -688,7 +791,10 @@ class Service extends React.Component {
                                       txt={I18n.t("service.samlMetadataUpload")}
                                       acceptFileFormat={".xml"}
                                       onFileUpload={this.onFileUpload}/>
-                        {samlMetaDataFile && <em>{samlMetaDataFile}</em>}
+                        {(samlMetaDataFile && !isEmpty(parsedSAMLMetaData) && !isServiceRequestDetails && this.renderSAMLMetaData(parsedSAMLMetaData))}
+                        {(parsedSAMLMetaDataError && !invalidInputs["saml_metadata"]) && <ErrorIndicator
+                            msg={I18n.t("forms.invalidInput", {name: I18n.t("service.samlMetadata")})}/>}
+
                     </div>}
                 {(isServiceRequest && connection_type === "saml2File" && isServiceRequestDetails) &&
                     <a href="/metadata"
@@ -801,6 +907,7 @@ class Service extends React.Component {
                                 disabled={disableEverything}
                                 error={invalidInputs["email"] || (!initial && contactEmailRequired)}
                                 onBlur={this.validateEmail("email")}
+                                externalLink={validUrlRegExp.test(contact_email)}
                                 classNamePostFix={"second-column"}
                     />
                     {invalidInputs["email"] &&
@@ -828,6 +935,7 @@ class Service extends React.Component {
                                 disabled={disableEverything}
                                 error={(!initial && isEmpty(security_email)) || invalidInputs["security_email"]}
                                 onBlur={this.validateEmail("security_email")}
+                                externalLink={validUrlRegExp.test(security_email)}
                     />
 
                     {invalidInputs["security_email"] &&
@@ -853,6 +961,7 @@ class Service extends React.Component {
                                 disabled={disableEverything}
                                 error={invalidInputs["support_email"]}
                                 onBlur={this.validateEmail("support_email")}
+                                externalLink={validUrlRegExp.test(support_email)}
                                 classNamePostFix={"second-column"}
                     />
                     {invalidInputs["support_email"] &&
@@ -1063,7 +1172,11 @@ class Service extends React.Component {
             comments,
             serviceRequest,
             declineDialog,
-            rejectionReason
+            rejectionReason,
+            parsedSAMLMetaData,
+            parsedSAMLMetaDataError,
+            parsedSAMLMetaDataURLError,
+            oidc_client_secret
         } = this.state;
         const {isServiceRequest} = this.props;
         if (loading) {
@@ -1096,7 +1209,8 @@ class Service extends React.Component {
                         access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, uri_info, privacy_policy,
                         service, disabledSubmit, allow_restricted_orgs, token_enabled, pam_web_sso_enabled, token_validity_days, config, ip_networks,
                         administrators, message, logo, isServiceAdmin, providing_organisation, connection_type, redirect_urls, grants, is_public_client,
-                        saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails, disableEverything, ldap_identifier)}
+                        saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails, disableEverything, ldap_identifier,
+                        parsedSAMLMetaData, parsedSAMLMetaDataError, parsedSAMLMetaDataURLError, oidc_client_secret)}
                 </div>
             </>)
             ;

@@ -31,11 +31,15 @@ def hash_secret_key(data, attr_name="hashed_secret"):
     return data
 
 
-def generate_ldap_password_with_hash():
+def generate_random_password():
     start = SYSTEM_RANDOM.choice(string.ascii_letters)
     ldap_characters = string.ascii_letters + string.digits + "@%=+_-"
     password = start + "".join(SYSTEM_RANDOM.sample(population=ldap_characters, k=31))
-    hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+    return password
+
+
+def generate_password_with_hash(password=generate_random_password(), rounds=12):
+    hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt(rounds))
     return hashed.decode("utf-8"), password
 
 

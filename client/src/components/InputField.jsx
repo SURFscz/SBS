@@ -33,23 +33,26 @@ export default function InputField({
                                        onRef = null,
                                        displayLabel = true,
                                        button = null,
-                                       classNamePostFix = null
+                                       classNamePostFix = null,
+                                       extraInfo = null
                                    }) {
     placeholder = disabled ? "" : placeholder;
     let className = "sds--text-field--input";
     if (error) {
         className += "error ";
     }
-    if (classNamePostFix){
+    if (classNamePostFix) {
         className += classNamePostFix;
     }
     const validExternalLink = externalLink && !isEmpty(value) && validUrlRegExp.test(value);
     return (
-        <div className={`input-field sds--text-field ${error ? "sds--text-field--status-error" : ""} ${classNamePostFix ? classNamePostFix : ""}`}>
+        <div
+            className={`input-field sds--text-field ${error ? "sds--text-field--status-error" : ""} ${classNamePostFix ? classNamePostFix : ""}`}>
             {(name && displayLabel) && <label htmlFor={name}>{name}
                 {toolTip && <Tooltip tip={toolTip}/>}
             </label>}
             {!isEmpty(fileName) && <em className="file-name">{fileName}</em>}
+            {extraInfo && <span className="extra-info">{extraInfo}</span>}
             <div className="inner-input-field">
                 {(!multiline && !noInput) &&
                     <input type="text"
