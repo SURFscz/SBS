@@ -9,7 +9,7 @@ from werkzeug.exceptions import Forbidden, BadRequest
 from server.api.base import json_endpoint, query_param, emit_socket
 from server.api.ipaddress import validate_ip_networks
 from server.api.service_invitation import service_invitations_by_email
-from server.auth.secrets import generate_token, generate_ldap_password_with_hash
+from server.auth.secrets import generate_token, generate_password_with_hash
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
     is_organisation_admin_or_manager, is_application_admin, confirm_service_admin, \
     confirm_external_api_call, is_service_admin_or_manager
@@ -375,7 +375,7 @@ def save_service():
 
     data["status"] = STATUS_ACTIVE
     cleanse_short_name(data, "abbreviation")
-    hashed, _ = generate_ldap_password_with_hash()
+    hashed, _ = generate_password_with_hash()
     data["ldap_password"] = hashed
 
     # Before the JSON is cleaned in the save method
@@ -637,7 +637,7 @@ def delete_service(service_id):
 def reset_ldap_password(service_id):
     confirm_service_admin(service_id)
     service = db.session.get(Service, service_id)
-    hashed, password = generate_ldap_password_with_hash()
+    hashed, password = generate_password_with_hash()
     service.ldap_password = hashed
     db.session.merge(service)
     return {"ldap_password": password}, 200

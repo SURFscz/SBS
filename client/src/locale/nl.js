@@ -1127,7 +1127,8 @@ const nl = {
         openIDConnectRedirects: "OpenID Connect redirect URL's",
         openIDConnectRedirectsPlaceholder: "https://service.com/redirect",
         openIDConnectRedirectsTooltip: "De redirect URL nadat de user is ingelogd; moet volledig overeenkomen.",
-        samlMetadata: "SAML metadata URL",
+        samlMetadata: "SAML metadata",
+        samlMetadataURL: "SAML metadata URL",
         samlMetadataPlaceholder: "https://metadata",
         samlMetadataUpload: "Upload SAML metadata",
         noneInfo: "Andere protocollen kunnen later worden toegevoegd",
@@ -1177,6 +1178,19 @@ const nl = {
             refresh_token: "Refresh token",
             client_credentials: "Client credentials",
             device_code: "Device code"
+        },
+        samlMetaData: {
+            acs_binding: "ACSBinding",
+            acs_location: "ACSLocation",
+            entity_id: "EntityID",
+            organization_name: "Organization",
+            unknown: "Not present",
+            missingAttributes: "Incomplete SAML meta data"
+        },
+        oidc: {
+            oidcClientSecretDisclaimer: "Het secret wordt slechts eenmaal getoond. Sla het secret op en bewaar het veilig.Bij verlies zal je een nieuwe secret moeten aanvragen.",
+            oidcClientSecret: "OpenID client secret",
+            oidcClientSecretTooltip: "Het secret wat je gebruikt om een OIDC token aan te vragen"
         }
     },
     organisation: {
