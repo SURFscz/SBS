@@ -22,7 +22,7 @@ from server.db.domain import Service, Collaboration, CollaborationMembership, Or
 from server.db.models import update, save, delete, unique_model_objects
 from server.mail import mail_platform_admins, mail_service_invitation, mail_delete_service_request
 
-URI_ATTRIBUTES = ["uri", "uri_info", "privacy_policy", "accepted_user_policy"]
+URI_ATTRIBUTES = ["uri", "uri_info", "privacy_policy", "accepted_user_policy", "scim_url"]
 
 DISALLOW = "DISALLOW"
 ON_REQUEST = "ON_REQUEST"

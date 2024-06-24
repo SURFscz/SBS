@@ -140,6 +140,12 @@ def approve_request(service_request_id):
     if "id" in client_data:
         del client_data["id"]
 
+    # If a ServiceRequest is approved then we want sensible values for the *_enabled fields
+    if client_data.get("oidc_client_secret") and client_data.get("redirect_urls") and client_data.get("grants"):
+        client_data["oidc_enabled"] = True
+    if client_data.get("saml_metadata_url") or client_data.get("saml_metadata"):
+        client_data["saml_enabled"] = True
+
     res = save(Service, custom_json=client_data)
     service = res[0]
 
