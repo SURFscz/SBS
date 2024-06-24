@@ -2,7 +2,7 @@ import base64
 import os
 from unittest import TestCase
 
-from server.auth.secrets import secure_hash, generate_token, generate_ldap_password_with_hash, decrypt_secret, \
+from server.auth.secrets import secure_hash, generate_token, generate_password_with_hash, decrypt_secret, \
     encrypt_secret
 
 
@@ -14,8 +14,14 @@ class TestSecret(TestCase):
         hashed2 = secure_hash(token)
         self.assertEqual(hashed, hashed2)
 
-    def test_ldap_password(self):
-        _, password = generate_ldap_password_with_hash()
+    def test_hashed_password_default_rounds(self):
+        results = generate_password_with_hash()
+        self.assertEqual(60, len(results[0]))
+        self.assertEqual(32, len(results[1]))
+
+    def test_hashed_password_limited_rounds(self):
+        hashed_password, password = generate_password_with_hash(rounds=5)
+        self.assertEqual(60, len(hashed_password))
         self.assertEqual(32, len(password))
 
     def test_encrypt_decrypt_secret(self):
