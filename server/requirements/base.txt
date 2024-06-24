@@ -28,9 +28,7 @@ passlib==1.7.4
 werkzeug==3.0.3
 Flask-Executor==1.0.0
 Flask-SocketIO==5.3.6
-# Untill https://github.com/corydolphin/flask-cors/pull/351 is merged we use our fork
-# Flask-Cors==4.0.0
-git+https://github.com/SURFscz/flask-cors-fork.git
+Flask-Cors==4.0.1
 dnspython==2.6.1
 python3-saml==1.16.0
 bcrypt==4.1.3
