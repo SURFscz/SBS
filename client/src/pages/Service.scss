@@ -128,6 +128,14 @@
             grid-column-start: first;
         }
 
+        div.new-oidc-secret {
+            grid-column-start: first;
+
+            em {
+                margin-top: 6px;
+            }
+        }
+
         .second-column {
             grid-column-start: second;
             @media (max-width: $tablet-max) {
@@ -222,5 +230,30 @@
             margin: 20px 0 10px 0;
         }
 
+        .parsed-saml-meta-data {
+            margin: 15px 0;
+            background-color: $hover;
+            border: 1px solid $dark-grey;
+            padding: 6px 12px;
+            border-radius: $br;
+            font-size: 14px;
+            font-family: "Courier New", serif;
+
+            table {
+                td {
+                    padding: 5px;
+                    vertical-align: top;
+                    word-break: break-word;
+
+                    &.attribute {
+                        width: 25%;
+                    }
+
+                    &.value {
+                        width: 75%;
+                    }
+                }
+            }
+        }
     }
 }

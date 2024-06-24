@@ -1,13 +1,14 @@
 import re
 import uuid
 
-from flask import Blueprint, request as current_request, current_app
+from flask import Blueprint, request as current_request, current_app, session
 from munch import munchify
 from sqlalchemy.orm import contains_eager
-from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import BadRequest, Forbidden
 
 from server.api.base import json_endpoint, emit_socket
 from server.api.service import URI_ATTRIBUTES
+from server.auth.secrets import generate_password_with_hash, generate_random_password
 from server.auth.security import current_user_id, current_user_name, \
     confirm_write_access
 from server.db.defaults import cleanse_short_name, valid_uri_attributes, STATUS_OPEN, STATUS_DENIED, STATUS_APPROVED
@@ -31,6 +32,15 @@ def service_request_all():
         .options(contains_eager(ServiceRequest.requester)) \
         .all()
     return res, 200
+
+
+@service_request_api.route("/generate_oidc_client_secret", strict_slashes=False)
+@json_endpoint
+def generate_oidc_client_secret():
+    # The secret is checked with every login, and therefore we use only 5 rounds combined with a strong pasword
+    oidc_client_secret = generate_random_password()
+    session["oidc_client_secret"] = oidc_client_secret
+    return {"value": oidc_client_secret}, 200
 
 
 @service_request_api.route("/metadata/parse", methods=["POST"], strict_slashes=False)
@@ -72,6 +82,13 @@ def request_service():
 
     data["status"] = STATUS_OPEN
     cleanse_short_name(data, "abbreviation")
+
+    oidc_client_secret_posted = data.get("oidc_client_secret")
+    if oidc_client_secret_posted:
+        oidc_client_secret = session.get("oidc_client_secret")
+        if oidc_client_secret != oidc_client_secret_posted:
+            raise Forbidden("Tampering with oidc_client_secret token is not allowed")
+        data["oidc_client_secret"] = generate_password_with_hash(password=oidc_client_secret, rounds=5)[0]
 
     res = save(ServiceRequest, custom_json=data, allow_child_cascades=False)
     service_request = res[0]
