@@ -92,6 +92,40 @@ class TestServiceRequest(AbstractTest):
         new_service = self.find_entity_by_name(Service, body["name"])
         self.assertEqual(36, len(new_service.ldap_identifier))
 
+    def test_request_service_approve_oidc_enabled(self):
+        self.login("urn:john")
+
+        service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)
+        service_request_id = service_request.id
+
+        body = self.get(f"/api/service_requests/{service_request_id}")
+        # MySQLdb.IntegrityError: (1048, "Column 'entity_id' cannot be null")
+        body["entity_id"] = "http://entity/id"
+        self.put(f"/api/service_requests/approve/{service_request_id}",
+                 body=body, with_basic_auth=False)
+
+        new_service = self.find_entity_by_name(Service, body["name"])
+        self.assertTrue(new_service.oidc_enabled)
+        self.assertFalse(new_service.saml_enabled)
+
+    def test_request_service_approve_saml_enabled(self):
+        self.login("urn:john")
+
+        service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)
+        service_request_id = service_request.id
+
+        body = self.get(f"/api/service_requests/{service_request_id}")
+        # MySQLdb.IntegrityError: (1048, "Column 'entity_id' cannot be null")
+        body["entity_id"] = "http://entity/id"
+        body["oidc_client_secret"] = None
+        body["saml_metadata_url"] = "https://engine.test.surfconext.nl/authentication/sp/metadata"
+        self.put(f"/api/service_requests/approve/{service_request_id}",
+                 body=body, with_basic_auth=False)
+
+        new_service = self.find_entity_by_name(Service, body["name"])
+        self.assertTrue(new_service.saml_enabled)
+        self.assertFalse(new_service.oidc_enabled)
+
     def test_request_service_deny(self):
         service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)
 

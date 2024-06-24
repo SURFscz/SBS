@@ -22,7 +22,7 @@ import "./Service.scss";
 import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
-import {isEmpty, stopEvent} from "../utils/Utils";
+import {commaSeparatedArrayToSelectValues, isEmpty, joinSelectValuesArray, stopEvent} from "../utils/Utils";
 import {sanitizeShortName, validEmailRegExp, validUrlRegExp} from "../validations/regExps";
 import CheckBox from "../components/CheckBox";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -38,7 +38,6 @@ import RadioButtonGroup from "../components/redesign/RadioButtonGroup";
 import SelectField from "../components/SelectField";
 import UploadButton from "../components/UploadButton";
 import {chipTypeForStatus} from "../utils/UserRole";
-import MetaDataDialog from "./MetaDataDialog";
 
 const connectionTypes = ["openIDConnect", "saml2URL", "saml2File", "none"];
 
@@ -133,10 +132,8 @@ class Service extends React.Component {
                         isNew: false,
                         loading: false,
                         isServiceRequestDetails: isServiceRequestDetails,
-                        redirect_urls: isEmpty(res.redirect_urls) ? [] : res.redirect_urls.split(",")
-                            .map(s => ({value: s.trim(), label: s.trim()})),
-                        grants: isEmpty(res.grants) ? [] : res.grants.split(",")
-                            .map(s => ({value: s.trim(), label: s.trim()}))
+                        redirect_urls: commaSeparatedArrayToSelectValues(res.redirect_urls),
+                        grants: commaSeparatedArrayToSelectValues(res.grants)
                     });
                     if (isServiceRequestDetails && (res.saml_metadata_url || res.saml_metadata)) {
                         parseSAMLMetaData(res.saml_metadata, res.saml_metadata_url)
@@ -154,14 +151,9 @@ class Service extends React.Component {
                             }))
                     }
                     AppStore.update(s => {
-                        s.breadcrumb.paths = [
-                            {path: "/", value: I18n.t("breadcrumb.home")},
-                            {
-                                path: `/home/service_requests`,
-                                value: I18n.t("breadcrumb.serviceRequest", {name: res.name})
-                            },
-                            {value: I18n.t("home.edit")}
-                        ];
+                        s.breadcrumb.paths = [{path: "/", value: I18n.t("breadcrumb.home")}, {
+                            path: `/home/service_requests`, value: I18n.t("breadcrumb.serviceRequest", {name: res.name})
+                        }, {value: I18n.t("home.edit")}];
                     });
                 });
         } else {
@@ -171,13 +163,9 @@ class Service extends React.Component {
                 serviceLdapIdentifier().then(res => this.setState({ldap_identifier: res.ldap_identifier}))
             }
             AppStore.update(s => {
-                s.breadcrumb.paths = [
-                    {path: "/", value: I18n.t("breadcrumb.home")},
-                    {
-                        value: I18n.t("breadcrumb.service",
-                            {name: I18n.t(`breadcrumb.${isServiceRequest ? "requestService" : "newService"}`)})
-                    }
-                ];
+                s.breadcrumb.paths = [{path: "/", value: I18n.t("breadcrumb.home")}, {
+                    value: I18n.t("breadcrumb.service", {name: I18n.t(`breadcrumb.${isServiceRequest ? "requestService" : "newService"}`)})
+                }];
             });
         }
     };
@@ -189,23 +177,20 @@ class Service extends React.Component {
         }
     }
 
-    validateServiceName = e =>
-        serviceNameExists(e.target.value, null).then(json => {
-            this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
-            if (!json && !isEmpty(e.target.value) && isEmpty(this.state.abbreviation)) {
-                this.generateShortName(e.target.value);
-            }
-        });
+    validateServiceName = e => serviceNameExists(e.target.value, null).then(json => {
+        this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
+        if (!json && !isEmpty(e.target.value) && isEmpty(this.state.abbreviation)) {
+            this.generateShortName(e.target.value);
+        }
+    });
 
-    validateServiceEntityId = e =>
-        serviceEntityIdExists(e.target.value, null).then(json => {
-            this.setState({alreadyExists: {...this.state.alreadyExists, entity_id: json}});
-        });
+    validateServiceEntityId = e => serviceEntityIdExists(e.target.value, null).then(json => {
+        this.setState({alreadyExists: {...this.state.alreadyExists, entity_id: json}});
+    });
 
-    validateServiceAbbreviation = e =>
-        serviceAbbreviationExists(sanitizeShortName(e.target.value), null).then(json => {
-            this.setState({alreadyExists: {...this.state.alreadyExists, abbreviation: json}});
-        });
+    validateServiceAbbreviation = e => serviceAbbreviationExists(sanitizeShortName(e.target.value), null).then(json => {
+        this.setState({alreadyExists: {...this.state.alreadyExists, abbreviation: json}});
+    });
 
     validateEmail = name => e => {
         const email = e.target.value;
@@ -215,32 +200,29 @@ class Service extends React.Component {
     };
 
     renderSAMLMetaData = parsedSAMLMetaData => {
-        return (
-            <div className="parsed-saml-meta-data">
-                <table>
-                    <thead/>
-                    <tbody>
-                    <tr>
-                        <td className="attribute">{I18n.t("service.samlMetaData.acs_binding")}</td>
-                        <td className="value">{parsedSAMLMetaData.acs_binding || I18n.t("service.samlMetaData.unknown")}</td>
-                    </tr>
-                    <tr>
-                        <td className="attribute">{I18n.t("service.samlMetaData.acs_location")}</td>
-                        <td className="value">{parsedSAMLMetaData.acs_location || I18n.t("service.samlMetaData.unknown")}</td>
-                    </tr>
-                    <tr>
-                        <td className="attribute">{I18n.t("service.samlMetaData.entity_id")}</td>
-                        <td className="value">{parsedSAMLMetaData.entity_id || I18n.t("service.samlMetaData.unknown")}</td>
-                    </tr>
-                    {!isEmpty(parsedSAMLMetaData.organization_name) && <tr>
-                        <td className="attribute">{I18n.t("service.samlMetaData.organization_name")}</td>
-                        <td className="value">{parsedSAMLMetaData.organization_name}</td>
-                    </tr>}
-                    </tbody>
-                </table>
-            </div>
-        )
-            ;
+        return (<div className="parsed-saml-meta-data">
+            <table>
+                <thead/>
+                <tbody>
+                <tr>
+                    <td className="attribute">{I18n.t("service.samlMetaData.acs_binding")}</td>
+                    <td className="value">{parsedSAMLMetaData.acs_binding || I18n.t("service.samlMetaData.unknown")}</td>
+                </tr>
+                <tr>
+                    <td className="attribute">{I18n.t("service.samlMetaData.acs_location")}</td>
+                    <td className="value">{parsedSAMLMetaData.acs_location || I18n.t("service.samlMetaData.unknown")}</td>
+                </tr>
+                <tr>
+                    <td className="attribute">{I18n.t("service.samlMetaData.entity_id")}</td>
+                    <td className="value">{parsedSAMLMetaData.entity_id || I18n.t("service.samlMetaData.unknown")}</td>
+                </tr>
+                {!isEmpty(parsedSAMLMetaData.organization_name) && <tr>
+                    <td className="attribute">{I18n.t("service.samlMetaData.organization_name")}</td>
+                    <td className="value">{parsedSAMLMetaData.organization_name}</td>
+                </tr>}
+                </tbody>
+            </table>
+        </div>);
     }
 
     validateURI = name => e => {
@@ -251,12 +233,10 @@ class Service extends React.Component {
         if (name === "saml_metadata_url") {
             parseSAMLMetaData(null, uri)
                 .then(metaData => this.setState({
-                    parsedSAMLMetaData: metaData, entity_id: metaData.entity_id,
-                    parsedSAMLMetaDataURLError: false
+                    parsedSAMLMetaData: metaData, entity_id: metaData.entity_id, parsedSAMLMetaDataURLError: false
                 }))
                 .catch(() => this.setState({
-                    parsedSAMLMetaData: null, entity_id: null,
-                    parsedSAMLMetaDataURLError: true
+                    parsedSAMLMetaData: null, entity_id: null, parsedSAMLMetaDataURLError: true
                 }))
         }
     };
@@ -315,9 +295,7 @@ class Service extends React.Component {
     }
 
     closeConfirmationDialog = () => this.setState({
-        declineDialog: false,
-        rejectionReason: "",
-        confirmationDialogOpen: false
+        declineDialog: false, rejectionReason: "", confirmationDialogOpen: false
     });
 
     cancel = () => {
@@ -325,8 +303,7 @@ class Service extends React.Component {
             confirmationDialogOpen: true,
             leavePage: true,
             warning: false,
-            cancelDialogAction: () => this.setState({confirmationDialogOpen: false},
-                () => this.props.history.goBack()),
+            cancelDialogAction: () => this.setState({confirmationDialogOpen: false}, () => this.props.history.goBack()),
             confirmationDialogAction: this.closeConfirmationDialog
         });
     };
@@ -338,27 +315,24 @@ class Service extends React.Component {
             leavePage: false,
             warning: true,
             cancelDialogAction: this.closeConfirmationDialog,
-            confirmationDialogAction: () => this.setState({confirmationDialogOpen: false, loading: true},
-                () => {
-                    deleteServiceRequest(this.state.serviceRequest.id).then(() => {
-                        this.props.history.push(`/home/service_requests?refresh=true`);
-                        setFlash(I18n.t("serviceRequest.flash.deleted", {name: this.state.serviceRequest.name}));
-                    });
-                })
+            confirmationDialogAction: () => this.setState({confirmationDialogOpen: false, loading: true}, () => {
+                deleteServiceRequest(this.state.serviceRequest.id).then(() => {
+                    this.props.history.push(`/home/service_requests?refresh=true`);
+                    setFlash(I18n.t("serviceRequest.flash.deleted", {name: this.state.serviceRequest.name}));
+                });
+            })
         });
 
     }
 
     getDeclineRejectionOptions = rejectionReason => {
-        return (
-            <div className="rejection-reason-container">
-                <label htmlFor="rejection-reason">{I18n.t("joinRequest.rejectionReason")}</label>
-                <InputField value={rejectionReason}
-                            multiline={true}
-                            onChange={e => this.setState({rejectionReason: e.target.value})}/>
-                <span className="rejection-reason-disclaimer">{I18n.t("joinRequest.rejectionReasonNote")}</span>
-            </div>
-        );
+        return (<div className="rejection-reason-container">
+            <label htmlFor="rejection-reason">{I18n.t("joinRequest.rejectionReason")}</label>
+            <InputField value={rejectionReason}
+                        multiline={true}
+                        onChange={e => this.setState({rejectionReason: e.target.value})}/>
+            <span className="rejection-reason-disclaimer">{I18n.t("joinRequest.rejectionReasonNote")}</span>
+        </div>);
     }
 
     approve = () => {
@@ -372,9 +346,17 @@ class Service extends React.Component {
 
     doApprove = () => {
         if (this.isValid()) {
-            const {serviceRequest} = this.state;
+            const {serviceRequest, redirect_urls, grants} = this.state;
             this.setState({loading: true});
-            approveServiceRequest({...serviceRequest, ...this.state, token_validity_days: null}).then(() => {
+            const joinedRedirectUrls = joinSelectValuesArray(redirect_urls);
+            const joinedGrants = joinSelectValuesArray(grants);
+
+            approveServiceRequest({
+                ...serviceRequest, ...this.state,
+                redirect_urls: joinedRedirectUrls,
+                grants: joinedGrants,
+                token_validity_days: null
+            }).then(() => {
                 this.props.history.push(`/home/service_requests?refresh=true`);
                 setFlash(I18n.t("serviceRequest.flash.approved", {name: serviceRequest.name}));
             });
@@ -405,11 +387,8 @@ class Service extends React.Component {
     }
 
     isValid = () => {
-        const {required, alreadyExists, invalidInputs, contact_email, hasAdministrators, ip_networks}
-            = this.state;
-        const inValid = Object.values(alreadyExists).some(val => val) ||
-            required.some(attr => isEmpty(this.state[attr])) ||
-            Object.keys(invalidInputs).some(key => invalidInputs[key]);
+        const {required, alreadyExists, invalidInputs, contact_email, hasAdministrators, ip_networks} = this.state;
+        const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(this.state[attr])) || Object.keys(invalidInputs).some(key => invalidInputs[key]);
         const {user, isServiceRequest} = this.props;
         const isAdmin = user.admin;
         const contactEmailRequired = (isAdmin && !hasAdministrators && isEmpty(contact_email)) || (isEmpty(contact_email) && isServiceRequest);
@@ -442,16 +421,10 @@ class Service extends React.Component {
                     network.id = parseInt(network.id, 10)
                 }
             });
-            const joinedRedirectUrls = isEmpty(redirect_urls) ? null : redirect_urls
-                .map(option => option.value)
-                .join(",")
-            const joinedGrants = isEmpty(grants) ? null : grants
-                .map(option => option.value)
-                .join(",")
+            const joinedRedirectUrls = joinSelectValuesArray(redirect_urls);
+            const joinedGrants = joinSelectValuesArray(grants);
             this.setState({
-                ip_networks: strippedIpNetworks,
-                redirect_urls: joinedRedirectUrls,
-                grants: joinedGrants
+                ip_networks: strippedIpNetworks, redirect_urls: joinedRedirectUrls, grants: joinedGrants
             }, () => {
                 if (isServiceRequest) {
                     createServiceRequest(this.state)
@@ -484,12 +457,10 @@ class Service extends React.Component {
                 this.setState({samlMetaDataFile: file.name, saml_metadata: metaData});
                 parseSAMLMetaData(metaData, null)
                     .then(metaData => this.setState({
-                        parsedSAMLMetaData: metaData, entity_id: metaData.entity_id,
-                        parsedSAMLMetaDataError: false
+                        parsedSAMLMetaData: metaData, entity_id: metaData.entity_id, parsedSAMLMetaDataError: false
                     }))
                     .catch(() => this.setState({
-                        parsedSAMLMetaData: null, entity_id: null,
-                        parsedSAMLMetaDataError: true
+                        parsedSAMLMetaData: null, entity_id: null, parsedSAMLMetaDataError: true
                     }))
             };
             reader.readAsText(file);
@@ -504,36 +475,31 @@ class Service extends React.Component {
                     <span className="add-network" onClick={() => this.addIpAddress()}><FontAwesomeIcon
                         icon="plus"/></span>}
             </label>
-            {ip_networks.map((network, i) =>
-                <div className="network-container" key={i}>
-                    <div className="network">
-                        <InputField value={network.network_value}
-                                    onChange={this.saveIpAddress(i)}
-                                    onBlur={this.validateIpAddress(i)}
-                                    placeholder={I18n.t("service.networkPlaceholder")}
-                                    error={network.error || network.syntax || (network.higher && !network.global && network.version === 6)}
+            {ip_networks.map((network, i) => <div className="network-container" key={i}>
+                <div className="network">
+                    <InputField value={network.network_value}
+                                onChange={this.saveIpAddress(i)}
+                                onBlur={this.validateIpAddress(i)}
+                                placeholder={I18n.t("service.networkPlaceholder")}
+                                error={network.error || network.syntax || (network.higher && !network.global && network.version === 6)}
 
-                                    onEnter={e => {
-                                        this.validateIpAddress(i);
-                                        e.target.blur()
-                                    }}
-                        />
-                        {(isAdmin || isServiceAdmin) &&
-                            <span className="trash" onClick={() => this.deleteIpAddress(i)}>
+                                onEnter={e => {
+                                    this.validateIpAddress(i);
+                                    e.target.blur()
+                                }}
+                    />
+                    {(isAdmin || isServiceAdmin) && <span className="trash" onClick={() => this.deleteIpAddress(i)}>
                             <TrashIcon/>
                         </span>}
-                    </div>
-                    {(network.error && !network.syntax && !network.reserved) &&
-                        <ErrorIndicator msg={I18n.t("service.networkError", network)}/>}
-                    {network.syntax && <ErrorIndicator msg={I18n.t("service.networkSyntaxError")}/>}
-                    {network.reserved &&
-                        <ErrorIndicator msg={I18n.t("service.networkReservedError", network)}/>}
-                    {network.higher &&
-                        <span className="network-info">{I18n.t("service.networkInfo", network)}</span>}
-                    {(network.higher && network.version === 6 && !network.global) &&
-                        <ErrorIndicator msg={I18n.t("service.networkNotGlobal")}/>}
                 </div>
-            )}
+                {(network.error && !network.syntax && !network.reserved) &&
+                    <ErrorIndicator msg={I18n.t("service.networkError", network)}/>}
+                {network.syntax && <ErrorIndicator msg={I18n.t("service.networkSyntaxError")}/>}
+                {network.reserved && <ErrorIndicator msg={I18n.t("service.networkReservedError", network)}/>}
+                {network.higher && <span className="network-info">{I18n.t("service.networkInfo", network)}</span>}
+                {(network.higher && network.version === 6 && !network.global) &&
+                    <ErrorIndicator msg={I18n.t("service.networkNotGlobal")}/>}
+            </div>)}
         </div>);
     }
 
@@ -571,518 +537,459 @@ class Service extends React.Component {
         this.setState({administrators: uniqueEmails});
     };
 
-    serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
-                        access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired,
-                        accepted_user_policy, uri_info, privacy_policy, service, disabledSubmit, allow_restricted_orgs, token_enabled, pam_web_sso_enabled,
-                        token_validity_days, config, ip_networks, administrators, message, logo, isServiceAdmin,
-                        providing_organisation, connection_type, redirect_urls, grants, is_public_client, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails, disableEverything,
-                        ldap_identifier, parsedSAMLMetaData, parsedSAMLMetaDataError, parsedSAMLMetaDataURLError, oidc_client_secret) => {
+    serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed, access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, uri_info, privacy_policy, service, disabledSubmit, allow_restricted_orgs, token_enabled, pam_web_sso_enabled, token_validity_days, config, ip_networks, administrators, message, logo, isServiceAdmin, providing_organisation, connection_type, redirect_urls, grants, is_public_client, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails, disableEverything, ldap_identifier, parsedSAMLMetaData, parsedSAMLMetaDataError, parsedSAMLMetaDataURLError, oidc_client_secret) => {
         const ldapBindAccount = config.ldap_bind_account;
         const {isServiceRequest} = this.props;
-        return (
-            <div className="service">
+        return (<div className="service">
 
-                <h2 className="section-separator">{I18n.t("service.about")}</h2>
-                <div className="first-column">
-                    <InputField value={name}
-                                onChange={e => this.setState({
-                                    name: e.target.value,
-                                    alreadyExists: {...this.state.alreadyExists, name: false}
-                                })}
-                                placeholder={I18n.t("service.namePlaceHolder")}
-                                onBlur={this.validateServiceName}
-                                error={alreadyExists.name || (!initial && isEmpty(name))}
-                                name={I18n.t("service.name")}
-                                disabled={disableEverything}
-                    />
-                    {alreadyExists.name && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
-                        attribute: I18n.t("service.name").toLowerCase(),
-                        value: name
-                    })}/>}
-                    {(!initial && isEmpty(name)) && <ErrorIndicator msg={I18n.t("service.required", {
-                        attribute: I18n.t("service.name").toLowerCase()
-                    })}/>}
-                </div>
-                <CroppedImageField name="logo"
-                                   onChange={s => this.setState({logo: s})}
-                                   isNew={true}
-                                   title={I18n.t("service.logo")}
-                                   value={logo}
-                                   disabled={disableEverything}
-                                   initial={initial}
-                                   secondRow={true}/>
-                {((!isServiceRequest || isServiceRequestDetails) && !disableEverything) &&
-                    <div className="first-column">
-
-                        <InputField value={entity_id}
-                                    onChange={e => this.setState({
-                                        entity_id: e.target.value,
-                                        alreadyExists: {...this.state.alreadyExists, entity_id: false}
-                                    })}
-                                    placeholder={I18n.t("service.entity_idPlaceHolder")}
-                                    onBlur={this.validateServiceEntityId}
-                                    name={I18n.t("service.entity_id")}
-                                    toolTip={I18n.t("service.entity_idTooltip")}
-                                    error={alreadyExists.entity_id || (!initial && isEmpty(entity_id))}
-                                    copyClipBoard={true}
-                                    disabled={isServiceRequest && !isServiceRequestDetails}/>
-                        {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
-                            attribute: I18n.t("service.entity_id").toLowerCase(),
-                            value: entity_id
-                        })}/>}
-                        {(!initial && isEmpty(entity_id)) && <ErrorIndicator msg={I18n.t("service.required", {
-                            attribute: I18n.t("service.entity_id").toLowerCase()
-                        })}/>}
-
-                    </div>
-                }
-                <div className="first-column">
-
-                    <InputField value={abbreviation}
-                                onChange={e => {
-                                    const abbreviationEdited = this.state.abbreviation !== e.target.value;
-                                    this.setState({
-                                        abbreviation: sanitizeShortName(e.target.value),
-                                        abbreviationEdited: abbreviationEdited,
-                                        alreadyExists: {...this.state.alreadyExists, abbreviation: false}
-                                    })
-                                }}
-                                placeholder={I18n.t("service.abbreviationPlaceHolder")}
-                                onBlur={this.validateServiceAbbreviation}
-                                name={I18n.t("service.abbreviation")}
-                                disabled={disableEverything}
-                                toolTip={I18n.t("service.abbreviationTooltip")}
-                                error={alreadyExists.abbreviation || (!initial && isEmpty(abbreviation))}
-                                copyClipBoard={false}
-                    />
-                    {alreadyExists.abbreviation && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
-                        attribute: I18n.t("service.abbreviation").toLowerCase(),
-                        value: abbreviation
-                    })}/>}
-                    {(!initial && isEmpty(abbreviation)) && <ErrorIndicator msg={I18n.t("service.required", {
-                        attribute: I18n.t("service.abbreviation").toLowerCase()
-                    })}/>}
-                </div>
-                <InputField value={description}
-                            name={I18n.t("service.description")}
+            <h2 className="section-separator">{I18n.t("service.about")}</h2>
+            <div className="first-column">
+                <InputField value={name}
+                            onChange={e => this.setState({
+                                name: e.target.value, alreadyExists: {...this.state.alreadyExists, name: false}
+                            })}
+                            placeholder={I18n.t("service.namePlaceHolder")}
+                            onBlur={this.validateServiceName}
+                            error={alreadyExists.name || (!initial && isEmpty(name))}
+                            name={I18n.t("service.name")}
                             disabled={disableEverything}
-                            placeholder={I18n.t("service.descriptionPlaceholder")}
-                            onChange={e => this.setState({description: e.target.value})}
-                            multiline={true}
                 />
+                {alreadyExists.name && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
+                    attribute: I18n.t("service.name").toLowerCase(), value: name
+                })}/>}
+                {(!initial && isEmpty(name)) && <ErrorIndicator msg={I18n.t("service.required", {
+                    attribute: I18n.t("service.name").toLowerCase()
+                })}/>}
+            </div>
+            <CroppedImageField name="logo"
+                               onChange={s => this.setState({logo: s})}
+                               isNew={true}
+                               title={I18n.t("service.logo")}
+                               value={logo}
+                               disabled={disableEverything}
+                               initial={initial}
+                               secondRow={true}/>
+            {((!isServiceRequest || isServiceRequestDetails) && !disableEverything) && <div className="first-column">
 
-                {isServiceRequest && <div className="first-column">
-                    <InputField value={providing_organisation}
-                                name={I18n.t("service.providingOrganisation")}
-                                disabled={disableEverything}
-                                placeholder={I18n.t("service.providingOrganisationPlaceholder")}
-                                onChange={e => this.setState({providing_organisation: e.target.value})}
-                    />
-                    {(!initial && isEmpty(providing_organisation)) &&
-                        <ErrorIndicator msg={I18n.t("service.required", {
-                            attribute: I18n.t("service.providingOrganisation").toLowerCase()
-                        })}/>}
+                <InputField value={entity_id}
+                            onChange={e => this.setState({
+                                entity_id: e.target.value,
+                                alreadyExists: {...this.state.alreadyExists, entity_id: false}
+                            })}
+                            placeholder={I18n.t("service.entity_idPlaceHolder")}
+                            onBlur={this.validateServiceEntityId}
+                            name={I18n.t("service.entity_id")}
+                            toolTip={I18n.t("service.entity_idTooltip")}
+                            error={alreadyExists.entity_id || (!initial && isEmpty(entity_id))}
+                            copyClipBoard={true}
+                            disabled={isServiceRequest && !isServiceRequestDetails}/>
+                {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
+                    attribute: I18n.t("service.entity_id").toLowerCase(), value: entity_id
+                })}/>}
+                {(!initial && isEmpty(entity_id)) && <ErrorIndicator msg={I18n.t("service.required", {
+                    attribute: I18n.t("service.entity_id").toLowerCase()
+                })}/>}
+
+            </div>}
+            <div className="first-column">
+
+                <InputField value={abbreviation}
+                            onChange={e => {
+                                const abbreviationEdited = this.state.abbreviation !== e.target.value;
+                                this.setState({
+                                    abbreviation: sanitizeShortName(e.target.value),
+                                    abbreviationEdited: abbreviationEdited,
+                                    alreadyExists: {...this.state.alreadyExists, abbreviation: false}
+                                })
+                            }}
+                            placeholder={I18n.t("service.abbreviationPlaceHolder")}
+                            onBlur={this.validateServiceAbbreviation}
+                            name={I18n.t("service.abbreviation")}
+                            disabled={disableEverything}
+                            toolTip={I18n.t("service.abbreviationTooltip")}
+                            error={alreadyExists.abbreviation || (!initial && isEmpty(abbreviation))}
+                            copyClipBoard={false}
+                />
+                {alreadyExists.abbreviation && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
+                    attribute: I18n.t("service.abbreviation").toLowerCase(), value: abbreviation
+                })}/>}
+                {(!initial && isEmpty(abbreviation)) && <ErrorIndicator msg={I18n.t("service.required", {
+                    attribute: I18n.t("service.abbreviation").toLowerCase()
+                })}/>}
+            </div>
+            <InputField value={description}
+                        name={I18n.t("service.description")}
+                        disabled={disableEverything}
+                        placeholder={I18n.t("service.descriptionPlaceholder")}
+                        onChange={e => this.setState({description: e.target.value})}
+                        multiline={true}
+            />
+
+            {isServiceRequest && <div className="first-column">
+                <InputField value={providing_organisation}
+                            name={I18n.t("service.providingOrganisation")}
+                            disabled={disableEverything}
+                            placeholder={I18n.t("service.providingOrganisationPlaceholder")}
+                            onChange={e => this.setState({providing_organisation: e.target.value})}
+                />
+                {(!initial && isEmpty(providing_organisation)) && <ErrorIndicator msg={I18n.t("service.required", {
+                    attribute: I18n.t("service.providingOrganisation").toLowerCase()
+                })}/>}
+            </div>}
+
+            <h2 className="section-separator">{I18n.t("service.connectionDetails")}</h2>
+            <div className="first-column">
+
+                <InputField value={uri}
+                            name={I18n.t("service.uri")}
+                            placeholder={I18n.t("service.uriPlaceholder")}
+                            onChange={e => this.setState({
+                                uri: e.target.value, invalidInputs: {...invalidInputs, uri: false}
+                            })}
+                            disabled={disableEverything}
+                            toolTip={I18n.t("service.uriTooltip")}
+                            externalLink={true}
+                            onBlur={this.validateURI("uri")}
+                />
+                {invalidInputs["uri"] && <ErrorIndicator
+                    msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
+            </div>
+            {isServiceRequest && <div className={"radio-button-group"}>
+                <RadioButtonGroup name={"connection_type"}
+                                  label={I18n.t("service.protocol")}
+                                  value={connection_type}
+                                  disabled={disableEverything}
+                                  values={connectionTypes}
+                                  onChange={this.onChangeConnectionType}
+                                  labelResolver={label => I18n.t(`service.protocols.${label}`)}/>
+                {(!initial && isEmpty(connection_type)) && <ErrorIndicator
+                    msg={I18n.t("service.required", {attribute: I18n.t("service.protocol").toLowerCase()})}/>}
+            </div>}
+            {(isServiceRequest && connection_type === "openIDConnect") && <SelectField value={redirect_urls}
+                                                                                       options={[]}
+                                                                                       creatable={true}
+                                                                                       onInputChange={val => val}
+                                                                                       isMulti={true}
+                                                                                       disabled={disableEverything}
+                                                                                       copyClipBoard={isServiceRequestDetails}
+                                                                                       name={I18n.t("service.openIDConnectRedirects")}
+                                                                                       placeholder={I18n.t("service.openIDConnectRedirectsPlaceholder")}
+                                                                                       toolTip={I18n.t("service.openIDConnectRedirectsTooltip")}
+                                                                                       onChange={this.redirectUrlsChanged}/>}
+            {(isServiceRequest && connection_type === "openIDConnect") && <SelectField value={grants}
+                                                                                       options={this.grantOptions.filter(option => Array.isArray(grants) && !grants.find(grant => grant.value === option.value))}
+                                                                                       creatable={false}
+                                                                                       onInputChange={val => val}
+                                                                                       isMulti={true}
+                                                                                       disabled={disableEverything}
+                                                                                       copyClipBoard={isServiceRequestDetails}
+                                                                                       name={I18n.t("service.openIDConnectGrants")}
+                                                                                       placeholder={I18n.t("service.openIDConnectGrantsPlaceholder")}
+                                                                                       toolTip={I18n.t("service.openIDConnectGrantsTooltip")}
+                                                                                       onChange={this.grantsChanged}/>}
+            {(isServiceRequest && connection_type === "openIDConnect" && !isServiceRequestDetails) &&
+                <div className="new-oidc-secret">
+
+                    <InputField value={oidc_client_secret}
+                                name={I18n.t("service.oidc.oidcClientSecret")}
+                                toolTip={I18n.t("service.oidc.oidcClientSecretTooltip")}
+                                disabled={true}
+                                copyClipBoard={true}
+                                extraInfo={I18n.t("service.oidc.oidcClientSecretDisclaimer")}/>
+
                 </div>}
 
-                <h2 className="section-separator">{I18n.t("service.connectionDetails")}</h2>
-                <div className="first-column">
+            {(isServiceRequest && connection_type === "openIDConnect") && <CheckBox name={"is_public_client"}
+                                                                                    value={is_public_client}
+                                                                                    onChange={() => this.setState({is_public_client: !is_public_client})}
+                                                                                    tooltip={I18n.t("service.isPublicClientTooltip")}
+                                                                                    info={I18n.t("service.isPublicClient")}
+            />
 
-                    <InputField value={uri}
-                                name={I18n.t("service.uri")}
-                                placeholder={I18n.t("service.uriPlaceholder")}
-                                onChange={e => this.setState({
-                                    uri: e.target.value,
-                                    invalidInputs: {...invalidInputs, uri: false}
-                                })}
-                                disabled={disableEverything}
-                                toolTip={I18n.t("service.uriTooltip")}
-                                externalLink={true}
-                                onBlur={this.validateURI("uri")}
-                    />
-                    {invalidInputs["uri"] &&
-                        <ErrorIndicator
-                            msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
-                </div>
-                {isServiceRequest &&
-                    <div className={"radio-button-group"}>
-                        <RadioButtonGroup name={"connection_type"}
-                                          label={I18n.t("service.protocol")}
-                                          value={connection_type}
-                                          disabled={disableEverything}
-                                          values={connectionTypes}
-                                          onChange={this.onChangeConnectionType}
-                                          labelResolver={label => I18n.t(`service.protocols.${label}`)}/>
-                        {(!initial && isEmpty(connection_type)) &&
-                            <ErrorIndicator
-                                msg={I18n.t("service.required", {attribute: I18n.t("service.protocol").toLowerCase()})}/>}
-                    </div>}
-                {(isServiceRequest && connection_type === "openIDConnect") &&
-                    <SelectField value={redirect_urls}
-                                 options={[]}
-                                 creatable={true}
-                                 onInputChange={val => val}
-                                 isMulti={true}
-                                 disabled={disableEverything}
-                                 copyClipBoard={isServiceRequestDetails}
-                                 name={I18n.t("service.openIDConnectRedirects")}
-                                 placeholder={I18n.t("service.openIDConnectRedirectsPlaceholder")}
-                                 toolTip={I18n.t("service.openIDConnectRedirectsTooltip")}
-                                 onChange={this.redirectUrlsChanged}/>
-                }
-                {(isServiceRequest && connection_type === "openIDConnect") &&
-                    <SelectField value={grants}
-                                 options={this.grantOptions.filter(option => Array.isArray(grants) && !grants.find(grant => grant.value === option.value))}
-                                 creatable={false}
-                                 onInputChange={val => val}
-                                 isMulti={true}
-                                 disabled={disableEverything}
-                                 copyClipBoard={isServiceRequestDetails}
-                                 name={I18n.t("service.openIDConnectGrants")}
-                                 placeholder={I18n.t("service.openIDConnectGrantsPlaceholder")}
-                                 toolTip={I18n.t("service.openIDConnectGrantsTooltip")}
-                                 onChange={this.grantsChanged}/>
-                }
-                {(isServiceRequest && connection_type === "openIDConnect" && !isServiceRequestDetails) &&
-                    <div className="new-oidc-secret">
+            }
 
-                        <InputField value={oidc_client_secret}
-                                    name={I18n.t("service.oidc.oidcClientSecret")}
-                                    toolTip={I18n.t("service.oidc.oidcClientSecretTooltip")}
-                                    disabled={true}
-                                    copyClipBoard={true}
-                                    extraInfo={I18n.t("service.oidc.oidcClientSecretDisclaimer")}/>
+            {(isServiceRequest && connection_type === "saml2URL") && <div className="first-column">
 
-                    </div>}
+                <InputField value={saml_metadata_url}
+                            name={I18n.t("service.samlMetadataURL")}
+                            placeholder={I18n.t("service.samlMetadataPlaceholder")}
+                            onChange={e => this.setState({
+                                saml_metadata_url: e.target.value,
+                                invalidInputs: {...invalidInputs, saml_metadata_url: false}
+                            })}
+                            disabled={disableEverything}
+                            externalLink={true}
+                            onBlur={this.validateURI("saml_metadata_url")}
+                />
+                {invalidInputs["saml_metadata_url"] && <ErrorIndicator
+                    msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
+                {(parsedSAMLMetaDataURLError && !invalidInputs["saml_metadata_url"]) && <ErrorIndicator
+                    msg={I18n.t("forms.invalidInput", {name: I18n.t("service.samlMetadataURL")})}/>}
+                {!isEmpty(parsedSAMLMetaData) && this.renderSAMLMetaData(parsedSAMLMetaData)}
+            </div>}
+            {(!disableEverything && isServiceRequest && connection_type === "saml2File" && !isServiceRequestDetails) &&
+                <div className="saml-meta-data">
+                    <UploadButton name={I18n.t("service.samlMetadataUpload")}
+                                  txt={I18n.t("service.samlMetadataUpload")}
+                                  acceptFileFormat={".xml"}
+                                  onFileUpload={this.onFileUpload}/>
+                    {(samlMetaDataFile && !isEmpty(parsedSAMLMetaData) && !isServiceRequestDetails && this.renderSAMLMetaData(parsedSAMLMetaData))}
+                    {(parsedSAMLMetaDataError && !invalidInputs["saml_metadata"]) && <ErrorIndicator
+                        msg={I18n.t("forms.invalidInput", {name: I18n.t("service.samlMetadata")})}/>}
 
-                {(isServiceRequest && connection_type === "openIDConnect") &&
-                    <CheckBox name={"is_public_client"}
-                              value={is_public_client}
-                              onChange={() => this.setState({is_public_client: !is_public_client})}
-                              tooltip={I18n.t("service.isPublicClientTooltip")}
-                              info={I18n.t("service.isPublicClient")}
-                    />
+                </div>}
+            {((isServiceRequest && (connection_type === "saml2File" || connection_type === "saml2URL") && isServiceRequestDetails) && !isEmpty(parsedSAMLMetaData)) && this.renderSAMLMetaData(parsedSAMLMetaData)}
 
-                }
+            {(isServiceRequest && connection_type === "none") &&
+                <label className="title">{I18n.t("service.noneInfo")}</label>}
 
-                {(isServiceRequest && connection_type === "saml2URL") &&
-                    <div className="first-column">
+            {!isServiceRequest && <CheckBox name="automatic_connection_allowed" value={automatic_connection_allowed}
+                                            info={I18n.t("service.automaticConnectionAllowed")}
+                                            tooltip={I18n.t("service.automaticConnectionAllowedTooltip")}
+                                            onChange={e => this.setState({automatic_connection_allowed: e.target.checked})}/>}
 
-                        <InputField value={saml_metadata_url}
-                                    name={I18n.t("service.samlMetadataURL")}
-                                    placeholder={I18n.t("service.samlMetadataPlaceholder")}
-                                    onChange={e => this.setState({
-                                        saml_metadata_url: e.target.value,
-                                        invalidInputs: {...invalidInputs, saml_metadata_url: false}
-                                    })}
-                                    disabled={disableEverything}
-                                    externalLink={true}
-                                    onBlur={this.validateURI("saml_metadata_url")}
-                        />
-                        {invalidInputs["saml_metadata_url"] &&
-                            <ErrorIndicator
-                                msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
-                        {(parsedSAMLMetaDataURLError && !invalidInputs["saml_metadata_url"]) && <ErrorIndicator
-                            msg={I18n.t("forms.invalidInput", {name: I18n.t("service.samlMetadataURL")})}/>}
-                        {!isEmpty(parsedSAMLMetaData) && this.renderSAMLMetaData(parsedSAMLMetaData)}
-                    </div>}
-                {(!disableEverything && isServiceRequest && connection_type === "saml2File" && !isServiceRequestDetails) &&
-                    <div className="saml-meta-data">
-                        <UploadButton name={I18n.t("service.samlMetadataUpload")}
-                                      txt={I18n.t("service.samlMetadataUpload")}
-                                      acceptFileFormat={".xml"}
-                                      onFileUpload={this.onFileUpload}/>
-                        {(samlMetaDataFile && !isEmpty(parsedSAMLMetaData) && !isServiceRequestDetails && this.renderSAMLMetaData(parsedSAMLMetaData))}
-                        {(parsedSAMLMetaDataError && !invalidInputs["saml_metadata"]) && <ErrorIndicator
-                            msg={I18n.t("forms.invalidInput", {name: I18n.t("service.samlMetadata")})}/>}
+            {!isServiceRequest && <CheckBox name="access_allowed_for_all" value={access_allowed_for_all}
+                                            info={I18n.t("service.accessAllowedForAll")}
+                                            tooltip={I18n.t("service.accessAllowedForAllTooltip")}
+                                            onChange={e => this.setState({access_allowed_for_all: e.target.checked})}/>}
 
-                    </div>}
-                {(isServiceRequest && connection_type === "saml2File" && isServiceRequestDetails) &&
-                    <a href="/metadata"
-                       className="metadata-link"
-                       onClick={this.toggleSamlMetadataModal}>{I18n.t("serviceRequest.showMetaData")}</a>
-                }
-                {(isServiceRequest && connection_type === "saml2File" && isServiceRequestDetails && this.state.showMetaData) &&
-                    <MetaDataDialog samlMetadata={this.state.serviceRequest.saml_metadata}
-                                    toggle={this.toggleSamlMetadataModal}/>
-                }
-                {(isServiceRequest && connection_type === "none") &&
-                    <label className="title">{I18n.t("service.noneInfo")}</label>
-                }
-                {!isServiceRequest && <CheckBox name="automatic_connection_allowed" value={automatic_connection_allowed}
-                                                info={I18n.t("service.automaticConnectionAllowed")}
-                                                tooltip={I18n.t("service.automaticConnectionAllowedTooltip")}
-                                                onChange={e => this.setState({automatic_connection_allowed: e.target.checked})}/>}
-
-                {!isServiceRequest && <CheckBox name="access_allowed_for_all" value={access_allowed_for_all}
-                                                info={I18n.t("service.accessAllowedForAll")}
-                                                tooltip={I18n.t("service.accessAllowedForAllTooltip")}
-                                                onChange={e => this.setState({access_allowed_for_all: e.target.checked})}/>}
-
-                {!isServiceRequest &&
-                    <CheckBox name="non_member_users_access_allowed" value={non_member_users_access_allowed}
-                              info={I18n.t("service.nonMemberUsersAccessAllowed")}
-                              tooltip={I18n.t("service.nonMemberUsersAccessAllowedTooltip")}
-                              onChange={e => this.setState({non_member_users_access_allowed: e.target.checked})}
-                    />}
-
-                {!isServiceRequest && <CheckBox name="allow_restricted_orgs" value={allow_restricted_orgs}
-                                                info={I18n.t("service.allowRestrictedOrgs")}
-                                                tooltip={I18n.t("service.allowRestrictedOrgsTooltip")}
-                                                onChange={e => this.setState({allow_restricted_orgs: e.target.checked})}
+            {!isServiceRequest &&
+                <CheckBox name="non_member_users_access_allowed" value={non_member_users_access_allowed}
+                          info={I18n.t("service.nonMemberUsersAccessAllowed")}
+                          tooltip={I18n.t("service.nonMemberUsersAccessAllowedTooltip")}
+                          onChange={e => this.setState({non_member_users_access_allowed: e.target.checked})}
                 />}
 
-                <h2 className="section-separator">{I18n.t("service.policies")}</h2>
-                <div className="first-column">
+            {!isServiceRequest && <CheckBox name="allow_restricted_orgs" value={allow_restricted_orgs}
+                                            info={I18n.t("service.allowRestrictedOrgs")}
+                                            tooltip={I18n.t("service.allowRestrictedOrgsTooltip")}
+                                            onChange={e => this.setState({allow_restricted_orgs: e.target.checked})}
+            />}
 
-                    <InputField value={privacy_policy}
-                                name={I18n.t("service.privacy_policy")}
-                                placeholder={I18n.t("service.privacy_policyPlaceholder")}
-                                onChange={e => this.setState({
-                                    privacy_policy: e.target.value,
-                                    invalidInputs: {...invalidInputs, privacy_policy: false}
-                                })}
-                                toolTip={I18n.t("service.privacy_policyTooltip")}
-                                disabled={disableEverything}
-                                externalLink={true}
-                                onBlur={this.validateURI("privacy_policy")}
-                    />
-                    {
-                        invalidInputs["privacy_policy"] &&
-                        <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>
-                    }
-                </div>
-                <div className="second-column">
-                    <InputField value={accepted_user_policy}
-                                name={I18n.t("service.accepted_user_policy")}
-                                placeholder={I18n.t("service.accepted_user_policyPlaceholder")}
-                                classNamePostFix={"second-column"}
-                                onChange={e => this.setState({
-                                    accepted_user_policy: e.target.value,
-                                    invalidInputs: {...invalidInputs, accepted_user_policy: false}
-                                })}
-                                toolTip={I18n.t("service.accepted_user_policyTooltip")}
-                                disabled={disableEverything}
-                                externalLink={true}
-                                onBlur={this.validateURI("accepted_user_policy")}
-                    />
-                    {
-                        invalidInputs["accepted_user_policy"] &&
-                        <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>
-                    }
-                </div>
+            <h2 className="section-separator">{I18n.t("service.policies")}</h2>
+            <div className="first-column">
 
-                <h2 className="section-separator">{I18n.t("service.contactSupport")}</h2>
-                <div className="first-column">
+                <InputField value={privacy_policy}
+                            name={I18n.t("service.privacy_policy")}
+                            placeholder={I18n.t("service.privacy_policyPlaceholder")}
+                            onChange={e => this.setState({
+                                privacy_policy: e.target.value, invalidInputs: {...invalidInputs, privacy_policy: false}
+                            })}
+                            toolTip={I18n.t("service.privacy_policyTooltip")}
+                            disabled={disableEverything}
+                            externalLink={true}
+                            onBlur={this.validateURI("privacy_policy")}
+                />
+                {invalidInputs["privacy_policy"] &&
+                    <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
+            </div>
+            <div className="second-column">
+                <InputField value={accepted_user_policy}
+                            name={I18n.t("service.accepted_user_policy")}
+                            placeholder={I18n.t("service.accepted_user_policyPlaceholder")}
+                            classNamePostFix={"second-column"}
+                            onChange={e => this.setState({
+                                accepted_user_policy: e.target.value,
+                                invalidInputs: {...invalidInputs, accepted_user_policy: false}
+                            })}
+                            toolTip={I18n.t("service.accepted_user_policyTooltip")}
+                            disabled={disableEverything}
+                            externalLink={true}
+                            onBlur={this.validateURI("accepted_user_policy")}
+                />
+                {invalidInputs["accepted_user_policy"] &&
+                    <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
+            </div>
 
-                    <InputField value={uri_info}
-                                name={I18n.t("service.infoUri")}
-                                placeholder={I18n.t("service.infoUriPlaceholder")}
-                                onChange={e => this.setState({
-                                    uri_info: e.target.value,
-                                    invalidInputs: {...invalidInputs, uri_info: false}
-                                })}
-                                toolTip={I18n.t("service.infoUriTooltip")}
-                                disabled={disableEverything}
-                                externalLink={true}
-                                onBlur={this.validateURI("uri_info")}
-                    />
-                    {
-                        invalidInputs["uri_info"] &&
-                        <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>
-                    }
-                </div>
-                <div className="second-column">
+            <h2 className="section-separator">{I18n.t("service.contactSupport")}</h2>
+            <div className="first-column">
 
-                    <InputField value={contact_email}
-                                name={I18n.t("service.contact_email")}
-                                placeholder={I18n.t("service.contact_emailPlaceholder")}
-                                onChange={e => this.setState({
-                                    contact_email: e.target.value,
-                                    invalidInputs: !isEmpty(e.target.value) ? invalidInputs : {
-                                        ...invalidInputs,
-                                        email: false
-                                    }
-                                })}
-                                toolTip={I18n.t("service.contact_emailTooltip")}
-                                disabled={disableEverything}
-                                error={invalidInputs["email"] || (!initial && contactEmailRequired)}
-                                onBlur={this.validateEmail("email")}
-                                externalLink={validUrlRegExp.test(contact_email)}
-                                classNamePostFix={"second-column"}
-                    />
-                    {invalidInputs["email"] &&
-                        <ErrorIndicator
-                            msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
-                    {(!initial && contactEmailRequired && !isServiceRequest) &&
-                        <ErrorIndicator msg={I18n.t("service.contactEmailRequired")}/>}
-                    {(!initial && contactEmailRequired && isServiceRequest) &&
-                        <ErrorIndicator
-                            msg={I18n.t("service.required", {attribute: I18n.t("service.contact_email").toLowerCase()})}/>}
-                </div>
-                <div className="first-column">
+                <InputField value={uri_info}
+                            name={I18n.t("service.infoUri")}
+                            placeholder={I18n.t("service.infoUriPlaceholder")}
+                            onChange={e => this.setState({
+                                uri_info: e.target.value, invalidInputs: {...invalidInputs, uri_info: false}
+                            })}
+                            toolTip={I18n.t("service.infoUriTooltip")}
+                            disabled={disableEverything}
+                            externalLink={true}
+                            onBlur={this.validateURI("uri_info")}
+                />
+                {invalidInputs["uri_info"] &&
+                    <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
+            </div>
+            <div className="second-column">
 
-                    <InputField value={security_email}
-                                name={I18n.t("service.security_email")}
-                                placeholder={I18n.t("service.security_emailPlaceholder")}
-                                onChange={e => this.setState({
-                                    security_email: e.target.value,
-                                    invalidInputs: !isEmpty(e.target.value) ? invalidInputs : {
-                                        ...invalidInputs,
-                                        security_email: false
-                                    }
-                                })}
-                                toolTip={I18n.t("service.security_emailTooltip")}
-                                disabled={disableEverything}
-                                error={(!initial && isEmpty(security_email)) || invalidInputs["security_email"]}
-                                onBlur={this.validateEmail("security_email")}
-                                externalLink={validUrlRegExp.test(security_email)}
-                    />
+                <InputField value={contact_email}
+                            name={I18n.t("service.contact_email")}
+                            placeholder={I18n.t("service.contact_emailPlaceholder")}
+                            onChange={e => this.setState({
+                                contact_email: e.target.value,
+                                invalidInputs: !isEmpty(e.target.value) ? invalidInputs : {
+                                    ...invalidInputs, email: false
+                                }
+                            })}
+                            toolTip={I18n.t("service.contact_emailTooltip")}
+                            disabled={disableEverything}
+                            error={invalidInputs["email"] || (!initial && contactEmailRequired)}
+                            onBlur={this.validateEmail("email")}
+                            externalLink={validUrlRegExp.test(contact_email)}
+                            classNamePostFix={"second-column"}
+                />
+                {invalidInputs["email"] && <ErrorIndicator
+                    msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
+                {(!initial && contactEmailRequired && !isServiceRequest) &&
+                    <ErrorIndicator msg={I18n.t("service.contactEmailRequired")}/>}
+                {(!initial && contactEmailRequired && isServiceRequest) && <ErrorIndicator
+                    msg={I18n.t("service.required", {attribute: I18n.t("service.contact_email").toLowerCase()})}/>}
+            </div>
+            <div className="first-column">
 
-                    {invalidInputs["security_email"] &&
-                        <ErrorIndicator
-                            msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
+                <InputField value={security_email}
+                            name={I18n.t("service.security_email")}
+                            placeholder={I18n.t("service.security_emailPlaceholder")}
+                            onChange={e => this.setState({
+                                security_email: e.target.value,
+                                invalidInputs: !isEmpty(e.target.value) ? invalidInputs : {
+                                    ...invalidInputs, security_email: false
+                                }
+                            })}
+                            toolTip={I18n.t("service.security_emailTooltip")}
+                            disabled={disableEverything}
+                            error={(!initial && isEmpty(security_email)) || invalidInputs["security_email"]}
+                            onBlur={this.validateEmail("security_email")}
+                            externalLink={validUrlRegExp.test(security_email)}
+                />
 
-                    {(!initial && isEmpty(security_email)) &&
-                        <ErrorIndicator msg={I18n.t("service.securityEmailRequired")}/>}
-                </div>
-                <div className="second-column">
+                {invalidInputs["security_email"] && <ErrorIndicator
+                    msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
 
-                    <InputField value={support_email}
-                                name={I18n.t("service.support_email")}
-                                placeholder={I18n.t("service.support_emailPlaceholder")}
-                                onChange={e => this.setState({
-                                    support_email: e.target.value,
-                                    invalidInputs: !isEmpty(e.target.value) ? invalidInputs : {
-                                        ...invalidInputs,
-                                        support_email: false
-                                    }
-                                })}
-                                toolTip={I18n.t("service.support_emailTooltip")}
-                                disabled={disableEverything}
-                                error={invalidInputs["support_email"]}
-                                onBlur={this.validateEmail("support_email")}
-                                externalLink={validUrlRegExp.test(support_email)}
-                                classNamePostFix={"second-column"}
-                    />
-                    {invalidInputs["support_email"] &&
-                        <ErrorIndicator
-                            msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.contact")})}/>}
+                {(!initial && isEmpty(security_email)) &&
+                    <ErrorIndicator msg={I18n.t("service.securityEmailRequired")}/>}
+            </div>
+            <div className="second-column">
 
-                </div>
-                {!isServiceRequest && <div className="ldap">
-                    <h2 className="section-separator first">{I18n.t("service.ldap.section")}</h2>
+                <InputField value={support_email}
+                            name={I18n.t("service.support_email")}
+                            placeholder={I18n.t("service.support_emailPlaceholder")}
+                            onChange={e => this.setState({
+                                support_email: e.target.value,
+                                invalidInputs: !isEmpty(e.target.value) ? invalidInputs : {
+                                    ...invalidInputs, support_email: false
+                                }
+                            })}
+                            toolTip={I18n.t("service.support_emailTooltip")}
+                            disabled={disableEverything}
+                            error={invalidInputs["support_email"]}
+                            onBlur={this.validateEmail("support_email")}
+                            externalLink={validUrlRegExp.test(support_email)}
+                            classNamePostFix={"second-column"}
+                />
+                {invalidInputs["support_email"] && <ErrorIndicator
+                    msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.contact")})}/>}
 
-                    {
-                        this.renderIpNetworks(ip_networks, !isServiceRequest, isServiceAdmin)
-                    }
+            </div>
+            {!isServiceRequest && <div className="ldap">
+                <h2 className="section-separator first">{I18n.t("service.ldap.section")}</h2>
 
-                    <InputField value={config.ldap_url}
-                                name={I18n.t("service.ldap.url")}
-                                toolTip={I18n.t("service.ldap.urlTooltip")}
-                                copyClipBoard={true}
-                                disabled={true}/>
-                    <InputField value={ldapBindAccount.replace("entity_id", ldap_identifier)}
-                                name={I18n.t("service.ldap.username")}
-                                toolTip={I18n.t("service.ldap.usernameTooltip")}
-                                copyClipBoard={true}
-                                disabled={true}/>
-                    <InputField
-                        value={ldapBindAccount.substring(ldapBindAccount.indexOf(",") + 1).replace("entity_id", ldap_identifier)}
-                        name={I18n.t("service.ldap.basedn")}
-                        toolTip={I18n.t("service.ldap.basednTooltip")}
-                        copyClipBoard={true}
-                        disabled={true}/>
-                </div>}
+                {this.renderIpNetworks(ip_networks, !isServiceRequest, isServiceAdmin)}
 
-                {!isServiceRequest && <div className="tokens">
-                    <h2 className="section-separator first">{I18n.t("userTokens.tokens")}</h2>
+                <InputField value={config.ldap_url}
+                            name={I18n.t("service.ldap.url")}
+                            toolTip={I18n.t("service.ldap.urlTooltip")}
+                            copyClipBoard={true}
+                            disabled={true}/>
+                <InputField value={ldapBindAccount.replace("entity_id", ldap_identifier)}
+                            name={I18n.t("service.ldap.username")}
+                            toolTip={I18n.t("service.ldap.usernameTooltip")}
+                            copyClipBoard={true}
+                            disabled={true}/>
+                <InputField
+                    value={ldapBindAccount.substring(ldapBindAccount.indexOf(",") + 1).replace("entity_id", ldap_identifier)}
+                    name={I18n.t("service.ldap.basedn")}
+                    toolTip={I18n.t("service.ldap.basednTooltip")}
+                    copyClipBoard={true}
+                    disabled={true}/>
+            </div>}
+
+            {!isServiceRequest && <div className="tokens">
+                <h2 className="section-separator first">{I18n.t("userTokens.tokens")}</h2>
 
 
-                    <CheckBox name={"token_enabled"}
-                              value={token_enabled}
-                              tooltip={I18n.t("userTokens.tokenEnabledTooltip")}
-                              info={I18n.t("userTokens.tokenEnabled")}
-                              readOnly={isServiceRequest}
-                              onChange={() => this.setState({
-                                  token_enabled: !token_enabled,
-                                  token_validity_days: token_enabled ? "" : 1
-                              })}
-                    />
+                <CheckBox name={"token_enabled"}
+                          value={token_enabled}
+                          tooltip={I18n.t("userTokens.tokenEnabledTooltip")}
+                          info={I18n.t("userTokens.tokenEnabled")}
+                          readOnly={isServiceRequest}
+                          onChange={() => this.setState({
+                              token_enabled: !token_enabled, token_validity_days: token_enabled ? "" : 1
+                          })}
+                />
 
-                    <InputField value={token_validity_days}
-                                name={I18n.t("userTokens.tokenValidityDays")}
-                                maxLength={3}
-                                tooltip={I18n.t("userTokens.tokenValidityDaysTooltip")}
-                                onChange={e => this.setState({token_validity_days: e.target.value.replace(/\D/, '')})}
-                                disabled={!token_enabled}
-                    />
+                <InputField value={token_validity_days}
+                            name={I18n.t("userTokens.tokenValidityDays")}
+                            maxLength={3}
+                            tooltip={I18n.t("userTokens.tokenValidityDaysTooltip")}
+                            onChange={e => this.setState({token_validity_days: e.target.value.replace(/\D/, '')})}
+                            disabled={!token_enabled}
+                />
 
-                    <CheckBox name={"pam_web_sso_enabled"}
-                              value={pam_web_sso_enabled}
-                              onChange={() => this.setState({pam_web_sso_enabled: !pam_web_sso_enabled})}
-                              tooltip={I18n.t("userTokens.pamWebSSOEnabledTooltip")}
-                              info={I18n.t("userTokens.pamWebSSOEnabled")}
-                    />
+                <CheckBox name={"pam_web_sso_enabled"}
+                          value={pam_web_sso_enabled}
+                          onChange={() => this.setState({pam_web_sso_enabled: !pam_web_sso_enabled})}
+                          tooltip={I18n.t("userTokens.pamWebSSOEnabledTooltip")}
+                          info={I18n.t("userTokens.pamWebSSOEnabled")}
+                />
 
-                    <InputField value={config.introspect_endpoint}
-                                name={I18n.t("userTokens.introspectionEndpoint")}
-                                copyClipBoard={true}
-                                disabled={true}
-                    />
+                <InputField value={config.introspect_endpoint}
+                            name={I18n.t("userTokens.introspectionEndpoint")}
+                            copyClipBoard={true}
+                            disabled={true}
+                />
 
-                </div>}
-                {
-                    !isServiceRequest &&
-                    <div className="email-invitations">
-                        <h2 className="section-separator first last">{I18n.t("service.invitations")}</h2>
+            </div>}
+            {!isServiceRequest && <div className="email-invitations">
+                <h2 className="section-separator first last">{I18n.t("service.invitations")}</h2>
 
-                        <EmailField addEmails={this.addEmails}
-                                    removeMail={this.removeMail}
-                                    name={I18n.t("invitation.invitees")}
-                                    isAdmin={true}
-                                    emails={administrators}/>
-                    </div>
-                }
-                {
-                    !isServiceRequest && <InputField value={message}
-                                                     onChange={e => this.setState({message: e.target.value})}
-                                                     placeholder={I18n.t("collaboration.messagePlaceholder")}
-                                                     name={I18n.t("collaboration.message")}
-                                                     toolTip={I18n.t("collaboration.messageTooltip")}
-                                                     multiline={true}/>
-                }
-                {isServiceRequest &&
-                    <h2 className="section-separator first">{I18n.t("service.commentsHeader")}</h2>
-                }
-                {isServiceRequest &&
-                    <div className="first-column">
-                        <InputField value={comments}
-                                    onChange={e => this.setState({comments: e.target.value})}
-                                    placeholder={I18n.t("service.commentsPlaceholder")}
-                                    name={I18n.t("service.comments")}
-                                    toolTip={I18n.t("service.commentsTooltip")}
-                                    disabled={disableEverything}
-                                    multiline={true}/>
-                    </div>}
+                <EmailField addEmails={this.addEmails}
+                            removeMail={this.removeMail}
+                            name={I18n.t("invitation.invitees")}
+                            isAdmin={true}
+                            emails={administrators}/>
+            </div>}
+            {!isServiceRequest && <InputField value={message}
+                                              onChange={e => this.setState({message: e.target.value})}
+                                              placeholder={I18n.t("collaboration.messagePlaceholder")}
+                                              name={I18n.t("collaboration.message")}
+                                              toolTip={I18n.t("collaboration.messageTooltip")}
+                                              multiline={true}/>}
+            {isServiceRequest && <h2 className="section-separator first">{I18n.t("service.commentsHeader")}</h2>}
+            {isServiceRequest && <div className="first-column">
+                <InputField value={comments}
+                            onChange={e => this.setState({comments: e.target.value})}
+                            placeholder={I18n.t("service.commentsPlaceholder")}
+                            name={I18n.t("service.comments")}
+                            toolTip={I18n.t("service.commentsTooltip")}
+                            disabled={disableEverything}
+                            multiline={true}/>
+            </div>}
 
-                <section className="actions">
-                    {!isServiceRequestDetails && <Button cancelButton={true}
-                                                         txt={I18n.t("forms.cancel")}
-                                                         onClick={() => this.cancel()}/>}
-                    {!isServiceRequestDetails && <Button disabled={disabledSubmit}
-                                                         txt={I18n.t(`service.${!isServiceRequest ? "add" : "request"}`)}
-                                                         onClick={() => this.submit()}/>
-                    }
-                    {(isServiceRequestDetails && this.state.serviceRequest.status !== "open") &&
-                        <Button warningButton={true} onClick={this.deleteServiceRequest}/>}
-                </section>
-            </div>)
+            <section className="actions">
+                {!isServiceRequestDetails && <Button cancelButton={true}
+                                                     txt={I18n.t("forms.cancel")}
+                                                     onClick={() => this.cancel()}/>}
+                {!isServiceRequestDetails && <Button disabled={disabledSubmit}
+                                                     txt={I18n.t(`service.${!isServiceRequest ? "add" : "request"}`)}
+                                                     onClick={() => this.submit()}/>}
+                {(isServiceRequestDetails && this.state.serviceRequest.status !== "open") &&
+                    <Button warningButton={true} onClick={this.deleteServiceRequest}/>}
+            </section>
+        </div>)
     }
 
     renderHeader = (serviceRequest, disabledSubmit) => {
         const isOpen = serviceRequest.status === "open";
-        return (
-            <div className="service-request-header-container">
+        return (<div className="service-request-header-container">
                 <div className="service-request-header">
                     <div className="left">
                         <h2>{I18n.t("serviceRequest.request", {id: serviceRequest.id})}</h2>
@@ -1090,9 +997,8 @@ class Service extends React.Component {
                             <div className="header-keys">
                                 <span className="name">{I18n.t("serviceRequest.requester")}</span>
                                 <span className="name">{I18n.t("collaboration.motivation")}</span>
-                                {serviceRequest.status === "denied" &&
-                                    <span
-                                        className="name rejection-reason">{I18n.t("serviceRequest.rejectionReason")}</span>}
+                                {serviceRequest.status === "denied" && <span
+                                    className="name rejection-reason">{I18n.t("serviceRequest.rejectionReason")}</span>}
                             </div>
                             <div className="header-values">
                                 <span>{serviceRequest.requester.name}</span>
@@ -1113,9 +1019,8 @@ class Service extends React.Component {
                             {isOpen && <Button disabled={disabledSubmit}
                                                txt={I18n.t("serviceRequest.approve")}
                                                onClick={() => this.approve()}/>}
-                            {!isOpen &&
-                                <Chip label={I18n.t(`serviceRequest.statuses.${serviceRequest.status}`)}
-                                      type={chipTypeForStatus(serviceRequest)}/>}
+                            {!isOpen && <Chip label={I18n.t(`serviceRequest.statuses.${serviceRequest.status}`)}
+                                              type={chipTypeForStatus(serviceRequest)}/>}
                         </div>
                     </section>
                 </div>
@@ -1142,7 +1047,9 @@ class Service extends React.Component {
             isServiceRequestDetails,
             accepted_user_policy,
             privacy_policy,
-            contact_email, support_email, security_email,
+            contact_email,
+            support_email,
+            security_email,
             confirmationDialogAction,
             question,
             leavePage,
@@ -1188,32 +1095,24 @@ class Service extends React.Component {
         const title = isServiceRequest ? I18n.t("service.titleRequest") : I18n.t("service.titleNew");
         const contactEmailRequired = !hasAdministrators && isEmpty(contact_email);
         const disableEverything = isServiceRequest && (serviceRequest.status === "approved" || serviceRequest.status === "denied");
-        return (
-            <>
-                {!isServiceRequestDetails && <UnitHeader obj={({
-                    name: I18n.t(`models.services.${isServiceRequest ? "request" : "new"}`),
-                    svg: ServicesIcon
-                })}/>}
-                {isServiceRequestDetails && this.renderHeader(serviceRequest, disabledSubmit)}
-                <div className="mod-service">
-                    <ConfirmationDialog isOpen={confirmationDialogOpen}
-                                        cancel={cancelDialogAction}
-                                        confirm={confirmationDialogAction}
-                                        leavePage={leavePage}
-                                        isWarning={warning}
-                                        disabledConfirm={declineDialog && isEmpty(rejectionReason)}
-                                        question={question}>
-                        {declineDialog && this.getDeclineRejectionOptions(rejectionReason)}
-                    </ConfirmationDialog>
-                    {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
-                        access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, uri_info, privacy_policy,
-                        service, disabledSubmit, allow_restricted_orgs, token_enabled, pam_web_sso_enabled, token_validity_days, config, ip_networks,
-                        administrators, message, logo, isServiceAdmin, providing_organisation, connection_type, redirect_urls, grants, is_public_client,
-                        saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails, disableEverything, ldap_identifier,
-                        parsedSAMLMetaData, parsedSAMLMetaDataError, parsedSAMLMetaDataURLError, oidc_client_secret)}
-                </div>
-            </>)
-            ;
+        return (<>
+            {!isServiceRequestDetails && <UnitHeader obj={({
+                name: I18n.t(`models.services.${isServiceRequest ? "request" : "new"}`), svg: ServicesIcon
+            })}/>}
+            {isServiceRequestDetails && this.renderHeader(serviceRequest, disabledSubmit)}
+            <div className="mod-service">
+                <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                    cancel={cancelDialogAction}
+                                    confirm={confirmationDialogAction}
+                                    leavePage={leavePage}
+                                    isWarning={warning}
+                                    disabledConfirm={declineDialog && isEmpty(rejectionReason)}
+                                    question={question}>
+                    {declineDialog && this.getDeclineRejectionOptions(rejectionReason)}
+                </ConfirmationDialog>
+                {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed, access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, uri_info, privacy_policy, service, disabledSubmit, allow_restricted_orgs, token_enabled, pam_web_sso_enabled, token_validity_days, config, ip_networks, administrators, message, logo, isServiceAdmin, providing_organisation, connection_type, redirect_urls, grants, is_public_client, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails, disableEverything, ldap_identifier, parsedSAMLMetaData, parsedSAMLMetaDataError, parsedSAMLMetaDataURLError, oidc_client_secret)}
+            </div>
+        </>);
     }
 
 }

@@ -166,3 +166,13 @@ export const expiryDateCustomSort = (o1, o2, reverse) => {
 
 }
 
+export const joinSelectValuesArray = arr => {
+    return isEmpty(arr) ? null : arr
+                .map(option => option.value)
+                .join(",")
+}
+
+export const commaSeparatedArrayToSelectValues = str => {
+    return isEmpty(str) ? [] : str.split(",").map(s => ({value: s.trim(), label: s.trim()}));
+}
+
