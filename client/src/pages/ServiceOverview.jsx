@@ -1107,7 +1107,7 @@ class ServiceOverview extends React.Component {
                         error={invalidInputs.accepted_user_policy}
                         externalLink={true}
                         button={<Button txt={I18n.t("service.aup.title")}
-                                        disabled={!validAcceptedUserPolicy}
+                                        disabled={!validAcceptedUserPolicy || (!isAdmin && !isServiceAdmin)}
                                         onClick={() => this.resetAups(true)}/>}
                         onBlur={this.validateURI("accepted_user_policy")}
                         disabled={!isAdmin && !isServiceAdmin}/>
