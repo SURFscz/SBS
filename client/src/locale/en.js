@@ -492,6 +492,7 @@ const en = {
         service_requests: {
             title: "Service registration",
             requester: "Requester",
+            protocol: "Protocol",
             searchPlaceHolder: "Search for service registration...",
             noEntities: "No requests for registration",
         },
@@ -1085,6 +1086,9 @@ const en = {
             confirmation: "Resetting the AUP will require all user of this service '{{name}}' to accept its AUP again. Do you want that?",
             flash: "Acceptance of the AUP for service {{name}} has been reset for all users"
         },
+        pamWebSSO: {
+            pamWebSSODisclaimer: "PAM web login is disabled"
+        },
         contacts: "Contacts",
         leave: "Leave service",
         confirmation: {
@@ -1123,6 +1127,12 @@ const en = {
             saml2URL: "SAML2 URL",
             saml2File: "SAML2 file",
             none: "None, this service has no web interface"
+        },
+        protocolsShort: {
+            openIDConnect: "OIDC",
+            saml2URL: "SAML2",
+            saml2File: "SAML2",
+            none: "None"
         },
         openIDConnectRedirects: "OpenID Connect redirect URLs",
         openIDConnectRedirectsPlaceholder: "https://service.com/redirect",
@@ -1190,7 +1200,42 @@ const en = {
         oidc: {
             oidcClientSecretDisclaimer: "You can view this OIDC client secret only once. Copy it and store it somewhere safe. If the secret is lost, then you'll have to request a new one.",
             oidcClientSecret: "OpenID client secret",
-            oidcClientSecretTooltip: "The secret to use when requesting a OIDC token"
+            oidcClientSecretTooltip: "The secret to use when requesting a OIDC token",
+            preTitle: "For security reasons, the current OIDC client secret can not be displayed. ",
+            title: "Reset the OIDC client secret.",
+            confirmation: "Are you sure you want to reset the OIDC client secret for {{name}}?",
+            success: "OIDC client secret has been reset.",
+            info: "Copy and store the secret somewhere safe. You can not see this secret afterwards.",
+            copy: "Copy",
+            close: "Close",
+            section: "OIDC settings",
+            sectionTooltip: "The settings of the OIDC properties to enable OIDC login with this service.",
+            oidcClient: "OIDC protocol",
+            oidcEnabledTooltip: "Allow this service to login with the OIDC protocol",
+            oidcDisclaimer: "OIDC protocol is disabled",
+            oidcDisabledExclusivity: "OIDC protocol can not be enabled, because the SAML protocol is active"
+        },
+        saml: {
+            section: "SAML settings",
+            sectionTooltip: "The SAML protocol settings to enable SAML login with this service.",
+            samlClient: "SAML protocol",
+            samlEnabledTooltip: "Allow this service to login with the SAML protocol",
+            samlDisclaimer: "SAML protocol is disabled",
+            samlError: "Either the SAML metadata URL or a SAML metadata file are required",
+            samlDisabledExclusivity: "SAML protocol can not be enabled, because the OIDC protocol is active"
+        },
+        export: {
+            noExport: "This service will not be externally synced, as OIDC and SAML are both disabled.",
+            export: "This service will be externally synced after changes, as OIDC or SAML is enabled.",
+            lastExportDate: "Last synced on date",
+            notExported: "Not exported yet",
+            lastExportStatus: "Last sync status",
+            successful: "Successfully synced",
+            failure: "Sync failure",
+            externalIdentifier: "External identifier",
+            externalVersion: "External version",
+            externalLink: "External link",
+            externalLinkValue: "{{base_url}}/metadata/sram/{{external_identifier}}"
         }
     },
     organisation: {
@@ -2303,8 +2348,10 @@ const en = {
     },
     scim: {
         scimEnabled: "SCIM push to service",
-        scimEnabledTooltip: "Send this service SCIM events",
+        scimDisclaimer: "SCIM server is disabled",
+        scimEnabledTooltip: "Send this service SCIM event",
         scimClientEnabled: "SCIM pull by service",
+        scimClientDisclaimer: "SCIM client is disabled",
         scimClientEnabledTooltip: "Allow this service to call the SCIM endpoints",
         scimURL: "SCIM endpoint base URL",
         scimURLPlaceHolder: "https://service.com.scim",
@@ -2323,6 +2370,7 @@ const en = {
         tokens: "Tokens",
         tokenEnabled: "User token introspection",
         tokenEnabledTooltip: "Allow this service to call the introspection endpoint to receive user information",
+        userTokenDisclaimer: "User token introspection is disabled",
         pamWebSSOEnabled: "PAM web login",
         pamWebSSOEnabledTooltip: "Allow this service to call the PAM web login endpoints to log in an user on a terminal-based app (e.g., an SSH client)",
         tokenValue: "One-way hashed token",
@@ -2396,7 +2444,10 @@ const en = {
             tokens: "User introspection tokens",
             pamWebLogin: "PAM web login",
             SCIMServer: "SCIM push to service",
-            SCIMClient: "SCIM pull by service"
+            SCIMClient: "SCIM pull by service",
+            OIDC: "OpenID Connect",
+            SAML: "SAML2.0",
+            Export: "Export"
         },
         updateDisabled: "Some fields have invalid or are missing values in the sections {{invalid}}."
     },
@@ -2540,8 +2591,7 @@ const en = {
         neverBeenBeforeTitle: "Have you never logged on before?",
         neverBeenBefore: [
             "If someone pointed you to <strong>{{serviceName}}</strong>, reach out to them on how to gain access via a research collaboration.",
-            "Learn what <a href=\"https://surf.nl/sram\" target=\"_blank\" rel=\"noopener noreferrer\">SRAM is all about</a>."
-        ],
+            "Learn what <a href=\"https://surf.nl/sram\" target=\"_blank\" rel=\"noopener noreferrer\">SRAM is all about</a>."],
         ticketInfoTitle: "Session information"
     },
     collaborationsOverview: {

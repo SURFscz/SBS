@@ -492,6 +492,7 @@ const nl = {
         service_requests: {
             title: "Dienstregistratie",
             requester: "Aanvrager",
+            protocol: "Protocol",
             searchPlaceHolder: "Zoek dienstregistratie...",
             noEntities: "Geen aanvragen voor registratie",
         },
@@ -1085,6 +1086,9 @@ const nl = {
             confirmation: "Resetten zorgt ervoor dat alle gebruikers van deze dienst '{{name}}' de AUP opnieuw moeten accepteren. Wil je dat?",
             flash: "De acceptatie van de AUP voor dienst {{name}} is gereset voor alle gebruikers"
         },
+        pamWebSSO: {
+            pamWebSSODisclaimer: "PAM web login is uitgeschakeld"
+        },
         contacts: "Contact",
         leave: "Verlaat dienst",
         confirmation: {
@@ -1123,6 +1127,12 @@ const nl = {
             saml2URL: "SAML2 URL",
             saml2File: "SAML2-bestand",
             none: "Geen, de dienst heeft geen web interface"
+        },
+        protocolsShort: {
+            openIDConnect: "OIDC",
+            saml2URL: "SAML2",
+            saml2File: "SAML2",
+            none: "None"
         },
         openIDConnectRedirects: "OpenID Connect redirect URL's",
         openIDConnectRedirectsPlaceholder: "https://service.com/redirect",
@@ -1190,7 +1200,42 @@ const nl = {
         oidc: {
             oidcClientSecretDisclaimer: "Het secret wordt slechts eenmaal getoond. Sla het secret op en bewaar het veilig.Bij verlies zal je een nieuwe secret moeten aanvragen.",
             oidcClientSecret: "OpenID client secret",
-            oidcClientSecretTooltip: "Het secret wat je gebruikt om een OIDC token aan te vragen"
+            oidcClientSecretTooltip: "Het secret wat je gebruikt om een OIDC token aan te vragen",
+            preTitle: "Om veiligheidsredenen kan het huidige secret niet worden weergegeven. ",
+            title: "Reset OIDC-client secret..",
+            confirmation: "Weet je zeker dat je het OIDC-client secret wil resetten voor {{name}}?",
+            success: "OIDC-secret is gereset.",
+            info: "Sla het secret veilig op. Hierna is het secret niet meer te zien.",
+            copy: "Kopieer",
+            close: "Sluit",
+            section: "OIDC configuratie",
+            sectionTooltip: "De configuratie van de OIDC configuratie om OIDC login met deze service in te schakelen.",
+            oidcClient: "OIDC client",
+            oidcEnabledTooltip: "Configureer deze service in te loggen met het OIDC protocol",
+            oidcDisclaimer: "OIDC protocol is uitgeschakeld",
+            oidcDisabledExclusivity: "OIDC protocol kan niet worden aangezet, omdat het SAML protocol actief is"
+        },
+        saml: {
+            section: "SAML configuratie",
+            sectionTooltip: "De SAML protocol configuratie om SAML login in te schakelen voor deze dienst.",
+            samlClient: "SAML protocol",
+            samlEnabledTooltip: "Configureer deze service in te loggen met het SAML protocol",
+            samlDisclaimer: "SAML protocol is uitgeschakeld",
+            samlError: "Of de SAML metadata URL of een SAML metadata bestand zijn verplicht",
+            samlDisabledExclusivity: "SAML protocol kan niet worden aangezet, omdat het OIDC protocol actief is"
+        },
+        export: {
+            noExport: "Deze dienst zal niet worden extern worden gesynchroniseerd, omdat zowel OIDC als SAML uitgeschakeld zijn.",
+            export: "Deze dienst zal extern worden gesynchroniseerd, omdat OIDC of SAML ingeschakeld zijn.",
+            lastExportDate: "Laatse synchronisatie datum",
+            notExported: "Nog niet geëxporteerd",
+            lastExportStatus: "Laatse synchronisatie status",
+            successful: "Succesvol gesynchroniseerd",
+            failure: "Synchronisatie fout",
+            externalIdentifier: "Externe identifier",
+            externalVersion: "Externe versie",
+            externalLink: "Exerne link",
+            externalLinkValue: "{{base_url}}/metadata/sram/{{external_identifier}}"
         }
     },
     organisation: {
@@ -2303,8 +2348,10 @@ const nl = {
     },
     scim: {
         scimEnabled: "SCIM push naar dienst",
-        scimEnabledTooltip: "Stuur SCIM events aaar deze dinest",
+        scimDisclaimer: "SCIM server is uitgeschakeld",
+        scimEnabledTooltip: "Stuur SCIM events aaar deze dienst",
         scimClientEnabled: "SCIM pull door dienst",
+        scimClientDisclaimer: "SCIM client is uitgeschakeld",
         scimClientEnabledTooltip: "Deze dienst mag de SCIM endpoints aanroepen",
         scimURL: "SCIM-endpoints base URL",
         scimURLPlaceHolder: "https://service.com.scim",
@@ -2323,6 +2370,7 @@ const nl = {
         tokens: "Tokens",
         tokenEnabled: "Gebruikertoken introspectie",
         tokenEnabledTooltip: "Deze dienst mag het introspection endpoint aanroepen om gebruikersinformatie te ontvangen",
+        userTokenDisclaimer: "User token introspection is uitgeschakeld",
         pamWebSSOEnabled: "PAM web login",
         pamWebSSOEnabledTooltip: "Deze dienst mag de PAM web login endpoints aanroepen om een gebruiker in te loggen op een op een terminalgebaseerde app (bijvoorbeeld een SSH-client)",
         tokenValue: "One-way gehashte token",
@@ -2396,7 +2444,10 @@ const nl = {
             tokens: "User introspection tokens",
             pamWebLogin: "PAM web login",
             SCIMServer: "SCIM server",
-            SCIMClient: "SCIM client"
+            SCIMClient: "SCIM client",
+            OIDC: "OpenID Connect",
+            SAML: "SAML2.0",
+            Export: "Export"
         },
         updateDisabled: "Er zijn velden met ongeldige of ontbrekende waarden in de secties {{invalid}}."
     },
@@ -2540,8 +2591,7 @@ const nl = {
         neverBeenBeforeTitle: "Ben je nog nooit ingelogd?",
         neverBeenBefore: [
             "Als iemand je heeft gewezen op <strong>{{serviceName}}</strong>, neem dan contact met ze op om toegang te krijgen tot de juiste samenwerking.",
-            "Lees wat je met <a href=\"https://surf.nl/sram\" target=\"_blank\" rel=\"noopener noreferrer\">SRAM allemaal kan doen.</a>"
-        ],
+            "Lees wat je met <a href=\"https://surf.nl/sram\" target=\"_blank\" rel=\"noopener noreferrer\">SRAM allemaal kan doen.</a>"],
         ticketInfoTitle: "Sessieinformatie"
     },
     collaborationsOverview: {
