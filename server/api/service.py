@@ -643,6 +643,17 @@ def reset_ldap_password(service_id):
     return {"ldap_password": password}, 200
 
 
+@service_api.route("/reset_oidc_client_secret/<service_id>", strict_slashes=False)
+@json_endpoint
+def reset_oidc_client_secret(service_id):
+    confirm_service_admin(service_id)
+    service = db.session.get(Service, service_id)
+    hashed_oidc_client_secret, oidc_client_secret = generate_password_with_hash(rounds=5)
+    service.oidc_client_secret = hashed_oidc_client_secret
+    db.session.merge(service)
+    return {"oidc_client_secret": oidc_client_secret}, 200
+
+
 @service_api.route("/reset_scim_bearer_token/<service_id>", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def reset_scim_bearer_token(service_id):

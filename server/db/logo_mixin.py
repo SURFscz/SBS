@@ -4,6 +4,8 @@ from flask import current_app
 from sqlalchemy import text, bindparam, String
 from werkzeug.exceptions import NotFound, BadRequest
 
+from server.db.secret_mixin import secret_attributes
+
 uuid4_reg_exp = re.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$")
 
 login_mixins_classes = ["collaborations", "collaboration_requests", "organisations", "services", "service_requests"]
@@ -59,7 +61,7 @@ class LogoMixin(object):
             if not current_app.redis_client.exists(redis_key):
                 current_app.redis_client.set(redis_key, logo)
             return logo_url(object_type, sid)
-        elif name == "ldap_password" or name == "hashed_token":
+        elif name in secret_attributes:
             return None
         return object.__getattribute__(self, name)
 

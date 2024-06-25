@@ -513,6 +513,20 @@ class TestService(AbstractTest):
         service = self._find_by_name()
         self.assertIsNone(service.get("ldap_password"))
 
+    def test_reset_oidc_client_secret(self):
+        service_id = self.find_entity_by_name(Service, service_storage_name).id
+        res = self.get(f"/api/services/reset_oidc_client_secret/{service_id}")
+        self.assertEqual(32, len(res["oidc_client_secret"]))
+        with db.engine.connect() as conn:
+            with conn.begin():
+                rs = conn.execute(text(f"SELECT oidc_client_secret FROM services WHERE id = {service_id}"))
+        oidc_client_secret = next(rs, (0,))[0]
+        # Ensure we use rounds=5 to prevent performance loss in OIDC-NG
+        self.assertTrue(oidc_client_secret.startswith("$2b$05$"))
+        # Ensure the oidc_client_secret is not exposed in the API
+        service = self.get(f"api/services/{service_id}")
+        self.assertIsNone(service.get("oidc_client_secret"))
+
     def test_service_by_uuid4(self):
         cloud = self.find_entity_by_name(Service, service_cloud_name)
         cloud_uuid4 = cloud.uuid4
