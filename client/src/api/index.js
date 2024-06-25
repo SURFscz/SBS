@@ -326,6 +326,10 @@ export function resetLdapPassword(service) {
     return fetchJson(`/api/services/reset_ldap_password/${service.id}`);
 }
 
+export function resetOidcClientSecret(service) {
+    return fetchJson(`/api/services/reset_oidc_client_secret/${service.id}`);
+}
+
 export function resetScimBearerToken(service, scim_bearer_token) {
     const body = {scim_bearer_token: scim_bearer_token}
     return postPutJson(`/api/services/reset_scim_bearer_token/${service.id}`, body, "put");
@@ -372,7 +376,6 @@ export function parseSAMLMetaData(metaDataXML, metaDataURL) {
 export function generateOidcClientSecret() {
     return fetchJson("/api/service_requests/generate_oidc_client_secret");
 }
-
 
 //Collaborations
 export function collaborationByIdentifier(identifier) {

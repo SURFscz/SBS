@@ -6,6 +6,7 @@ import {
     ipNetworks,
     requestDeleteService,
     resetLdapPassword,
+    resetOidcClientSecret,
     resetScimBearerToken,
     serviceAbbreviationExists,
     serviceAupDelete,
@@ -24,7 +25,13 @@ import "./ServiceOverview.scss";
 import "../components/redesign/ApiKeys.scss";
 import Button from "../components/Button";
 import {setFlash} from "../utils/Flash";
-import {isEmpty, splitListSemantically, stopEvent} from "../utils/Utils";
+import {
+    commaSeparatedArrayToSelectValues,
+    isEmpty,
+    joinSelectValuesArray,
+    splitListSemantically,
+    stopEvent
+} from "../utils/Utils";
 import {
     CO_SHORT_NAME,
     sanitizeShortName,
@@ -46,12 +53,15 @@ import SelectField from "../components/SelectField";
 import {dateFromEpoch} from "../utils/Date";
 import {isUserServiceAdmin} from "../utils/UserRole";
 
-const toc = ["general", "contacts", "policy", "SCIMServer", "SCIMClient", "ldap", "pamWebLogin", "tokens"];
+const toc = ["general", "contacts", "policy", "SCIMServer", "SCIMClient", "ldap", "pamWebLogin", "tokens", "OIDC", "SAML"];
 
 class ServiceOverview extends React.Component {
 
     constructor(props, context) {
         super(props, context);
+        this.grantOptions = ["authorization_code", "implicit", "refresh_token", "client_credentials"]
+            .map(val => ({value: val, label: I18n.t(`service.grants.${val}`)}));
+
         this.state = {
             service: {ip_networks: []},
             required: ["name", "entity_id", "abbreviation", "logo", "security_email"],
@@ -98,6 +108,8 @@ class ServiceOverview extends React.Component {
         if (!toc.includes(tab)) {
             tab = this.state.currentTab;
         }
+        service.redirect_urls = commaSeparatedArrayToSelectValues(service.redirect_urls);
+        service.grants = commaSeparatedArrayToSelectValues(service.grants);
         this.validateService(service, () => {
             service.ip_networks = service.ip_networks.filter(ipNetwork => !isEmpty(ipNetwork.network_value));
             this.setState({
@@ -137,7 +149,8 @@ class ServiceOverview extends React.Component {
                 serviceElement = serviceElement.toLowerCase().replaceAll(CO_SHORT_NAME, "").replaceAll(SRAM_USERNAME, "");
             }
             invalidInputs[name] = !isEmpty(serviceElement) && !validUrlRegExp.test(serviceElement);
-        })
+        });
+        invalidInputs["redirect_urls"] = !isEmpty(service.redirect_urls) && service.redirect_urls.any(url => !validUrlRegExp.test(url));
         this.setState({invalidInputs: invalidInputs}, callback);
     }
 
@@ -221,6 +234,7 @@ class ServiceOverview extends React.Component {
                 scimTokenChange: false,
                 sweepSuccess: null,
                 ldapPassword: null,
+                oidcClientSecret: null,
                 confirmationHeader: I18n.t("confirmationDialog.title"),
                 confirmationDialogQuestion: I18n.t("service.ldap.confirmation", {name: service.name}),
                 confirmationTxt: I18n.t("confirmationDialog.confirm"),
@@ -248,6 +262,50 @@ class ServiceOverview extends React.Component {
         return (
             <div className="ldap-password">
                 <InputField copyClipBoard={true} disabled={true} value={ldapPassword}/>
+            </div>
+        );
+    }
+
+    oidcClientSecretResetAction = showConfirmation => {
+        const {service} = this.state;
+        if (showConfirmation) {
+            this.setState({
+                confirmationDialogOpen: true,
+                cancelDialogAction: this.cancelDialogAction,
+                confirmationDialogAction: () => this.oidcClientSecretResetAction(false),
+                warning: false,
+                lastAdminWarning: false,
+                scimTokenChange: false,
+                sweepSuccess: null,
+                ldapPassword: null,
+                oidcClientSecret: null,
+                confirmationHeader: I18n.t("confirmationDialog.title"),
+                confirmationDialogQuestion: I18n.t("service.oidc.confirmation", {name: service.name}),
+                confirmationTxt: I18n.t("confirmationDialog.confirm"),
+            });
+        } else {
+            resetOidcClientSecret(service).then(res => {
+                this.setState({
+                    confirmationDialogOpen: true,
+                    confirmationTxt: I18n.t("service.oidc.close"),
+                    confirmationHeader: I18n.t("service.oidc.copy"),
+                    cancelDialogAction: null,
+                    confirmationDialogQuestion: I18n.t("service.oidc.info"),
+                    oidcClientSecret: res.oidc_client_secret,
+                    scimTokenChange: false,
+                    sweepSuccess: null,
+                    tokenValue: null,
+                    loading: false,
+                    confirmationDialogAction: this.cancelDialogAction
+                });
+            })
+        }
+    }
+
+    renderOidcClientSecret = oidcClientSecret => {
+        return (
+            <div className="ldap-password">
+                <InputField copyClipBoard={true} disabled={true} value={oidcClientSecret}/>
             </div>
         );
     }
@@ -500,7 +558,10 @@ class ServiceOverview extends React.Component {
 
     isValidTab = tab => {
         const {alreadyExists, invalidInputs, hasAdministrators, service, initial} = this.state;
-        const {contact_email, ip_networks} = service;
+        const {
+            contact_email, ip_networks, redirect_urls, saml_metadata, saml_metadata_url, providing_organisation,
+            oidc_enabled, saml_enabled, grants
+        } = service;
         const contactEmailRequired = !hasAdministrators && isEmpty(contact_email);
         const invalidIpNetworks = ip_networks.some(ipNetwork => ipNetwork.error || (ipNetwork.version === 6 && !ipNetwork.global));
 
@@ -521,6 +582,10 @@ class ServiceOverview extends React.Component {
                 return true;
             case "pamWebLogin":
                 return true;
+            case "OIDC":
+                return initial || (!oidc_enabled || isEmpty(redirect_urls) || isEmpty(grants) || isEmpty(providing_organisation));
+            case "SAML":
+                return initial || !saml_enabled || (isEmpty(saml_metadata) && isEmpty(saml_metadata_url));
             default:
                 throw new Error(`unknown-tab: ${tab}`);
         }
@@ -576,7 +641,7 @@ class ServiceOverview extends React.Component {
                     });
                 } else {
                     this.setState({loading: true});
-                    const {name, ip_networks} = service;
+                    const {name, ip_networks, redirect_urls, grants} = service;
                     const strippedIpNetworks = ip_networks
                         .filter(network => network.network_value && network.network_value.trim())
                         .map(network => ({network_value: network.network_value, id: network.id}));
@@ -593,7 +658,9 @@ class ServiceOverview extends React.Component {
                         service: {
                             ...service,
                             ip_networks: strippedIpNetworks,
-                            sweep_scim_daily_rate: service.sweep_scim_daily_rate ? service.sweep_scim_daily_rate.value : 0
+                            sweep_scim_daily_rate: service.sweep_scim_daily_rate ? service.sweep_scim_daily_rate.value : 0,
+                            redirect_urls: joinSelectValuesArray(redirect_urls),
+                            grants: joinSelectValuesArray(grants)
                         }
                     }, () => {
                         updateService(this.state.service)
@@ -671,6 +738,22 @@ class ServiceOverview extends React.Component {
         });
     };
 
+    redirectUrlsChanged = (selectedOptions, service) => {
+        const newRedirectUrls = selectedOptions === null ? [] : Array.isArray(selectedOptions) ? [...selectedOptions] : [selectedOptions];
+        this.setState({
+            service: {
+                ...service, redirect_urls: newRedirectUrls
+            }
+        });
+    }
+    grantsChanged = (selectedOptions, service) => {
+        const newGrants = selectedOptions === null ? [] : Array.isArray(selectedOptions) ? [...selectedOptions] : [selectedOptions];
+        this.setState({
+            service: {
+                ...service, grants: newGrants
+            }
+        });
+    }
 
     renderButtons = (isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView, createNewServiceToken, service) => {
         const invalidTabsMsg = this.getInvalidTabs();
@@ -1078,6 +1161,77 @@ class ServiceOverview extends React.Component {
             </div>)
     }
 
+    renderOidc = (config, service, isAdmin, isServiceAdmin, initial) => {
+        const {redirect_urls, grants} = this.state.service;
+        return (
+            <div className={"oidc"}>
+                <CheckBox name={"oidc_enabled"}
+                          value={service.oidc_enabled || false}
+                          tooltip={I18n.t("service.oidc.oidcEnabledTooltip")}
+                          info={I18n.t("service.oidc.oidcClient")}
+                          readOnly={!isAdmin && !isServiceAdmin}
+                          onChange={e => this.setState({
+                              service: {
+                                  ...service,
+                                  oidc_enabled: e.target.checked,
+                                  grants: e.target.checked ? ["authorization_code"].map(val => ({
+                                      value: val,
+                                      label: I18n.t(`service.grants.${val}`)
+                                  })) : []
+                              }
+                          })}
+                />
+                {!service.oidc_enabled &&
+                    <div className={"input-field sds--text-field"}>
+                        <label>{I18n.t("service.oidc.section")}
+                            <Tooltip tip={I18n.t("service.oidc.sectionTooltip")}/>
+                        </label>
+                        <p>{I18n.t("service.oidc.oidcDisclaimer")}</p>
+                    </div>}
+                {service.oidc_enabled && <div>
+                    <InputField value={service.providing_organisation}
+                                name={I18n.t("service.providingOrganisation")}
+                                placeholder={I18n.t("service.providingOrganisationPlaceholder")}
+                                onChange={this.changeServiceProperty("providing_organisation")}
+                    />
+                    {(!initial && isEmpty(service.providing_organisation)) &&
+                        <ErrorIndicator msg={I18n.t("service.required", {
+                            attribute: I18n.t("service.providingOrganisation").toLowerCase()
+                        })}/>}
+
+                    <SelectField value={redirect_urls}
+                                 options={[]}
+                                 creatable={true}
+                                 onInputChange={val => val}
+                                 isMulti={true}
+                                 name={I18n.t("service.openIDConnectRedirects")}
+                                 placeholder={I18n.t("service.openIDConnectRedirectsPlaceholder")}
+                                 toolTip={I18n.t("service.openIDConnectRedirectsTooltip")}
+                                 onChange={selectedOptions => this.redirectUrlsChanged(selectedOptions, service)}/>
+                    <SelectField value={grants}
+                                 options={this.grantOptions.filter(option => Array.isArray(grants) && !grants.find(grant => grant.value === option.value))}
+                                 onInputChange={val => val}
+                                 isMulti={true}
+                                 name={I18n.t("service.openIDConnectGrants")}
+                                 placeholder={I18n.t("service.openIDConnectGrantsPlaceholder")}
+                                 toolTip={I18n.t("service.openIDConnectGrantsTooltip")}
+                                 onChange={selectedOptions => this.grantsChanged(selectedOptions, service)}/>
+                    <CheckBox name={"is_public_client"}
+                              value={service.is_public_client}
+                              onChange={() => this.setState({
+                                  service: {
+                                      ...service,
+                                      is_public_client: !service.is_public_client
+                                  }
+                              })}
+                              tooltip={I18n.t("service.isPublicClientTooltip")}
+                              info={I18n.t("service.isPublicClient")}
+                    />
+
+                </div>}
+            </div>)
+    }
+
     renderPolicy = (service, isAdmin, isServiceAdmin, invalidInputs, alreadyExists) => {
         const validAcceptedUserPolicy = validUrlRegExp.test(service.accepted_user_policy);
         return (<div className={"policy"}>
@@ -1294,6 +1448,10 @@ class ServiceOverview extends React.Component {
                 return this.renderTokens(config, service, isAdmin, isServiceAdmin, createNewServiceToken, "introspection");
             case "pamWebLogin":
                 return this.renderPamWebLogin(service, isAdmin, isServiceAdmin, createNewServiceToken, "pam");
+            case "OIDC":
+                return this.renderOidc(config, service, isAdmin, isServiceAdmin, initial);
+            case "SAML":
+                return this.renderSaml(config, service, isAdmin, isServiceAdmin);
             default:
                 throw new Error(`unknown-tab: ${currentTab}`);
         }

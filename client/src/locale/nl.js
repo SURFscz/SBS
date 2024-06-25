@@ -1190,7 +1190,20 @@ const nl = {
         oidc: {
             oidcClientSecretDisclaimer: "Het secret wordt slechts eenmaal getoond. Sla het secret op en bewaar het veilig.Bij verlies zal je een nieuwe secret moeten aanvragen.",
             oidcClientSecret: "OpenID client secret",
-            oidcClientSecretTooltip: "Het secret wat je gebruikt om een OIDC token aan te vragen"
+            oidcClientSecretTooltip: "Het secret wat je gebruikt om een OIDC token aan te vragen",
+            preTitle: "Om veiligheidsredenen kan het huidige secret niet worden weergegeven. ",
+            title: "Reset OIDC-client secret..",
+            confirmation: "Weet je zeker dat je het OIDC-client secret wil resetten voor {{name}}?",
+            success: "OIDC-secret is gereset.",
+            info: "Sla het secret veilig op. Hierna is het secret niet meer te zien.",
+            copy: "Kopieer",
+            close: "Sluit",
+            section: "OIDC configuratie",
+            sectionTooltip: "De configuratie van de OIDC configuratie om OIDC login met deze in te schakelen.",
+            oidcClient: "OIDC client",
+            oidcEnabledTooltip: "Configureer deze service in te loggen met het OIDC protocol",
+            oidcDisclaimer: "OIDC is uitgeschakeld",
+
         }
     },
     organisation: {
