@@ -1190,7 +1190,19 @@ const en = {
         oidc: {
             oidcClientSecretDisclaimer: "You can view this OIDC client secret only once. Copy it and store it somewhere safe. If the secret is lost, then you'll have to request a new one.",
             oidcClientSecret: "OpenID client secret",
-            oidcClientSecretTooltip: "The secret to use when requesting a OIDC token"
+            oidcClientSecretTooltip: "The secret to use when requesting a OIDC token",
+            preTitle: "For security reasons, the current OIDC client secret can not be displayed. ",
+            title: "Reset the OIDC client secret.",
+            confirmation: "Are you sure you want to reset the OIDC client secret for {{name}}?",
+            success: "OIDC client secret has been reset.",
+            info: "Copy and store the secret somewhere safe. You can not see this secret afterwards.",
+            copy: "Copy",
+            close: "Close",
+            section: "OIDC settings",
+            sectionTooltip: "The settings of the OIDC properties to enable OIDC login with this service.",
+            oidcClient: "OIDC client",
+            oidcEnabledTooltip: "Allow this service to login with the OIDC protocol",
+            oidcDisclaimer: "OIDC is disabled",
         }
     },
     organisation: {
@@ -2396,7 +2408,9 @@ const en = {
             tokens: "User introspection tokens",
             pamWebLogin: "PAM web login",
             SCIMServer: "SCIM server",
-            SCIMClient: "SCIM client"
+            SCIMClient: "SCIM client",
+            OIDC: "OpenID Connect",
+            SAML: "SAML2.0"
         },
         updateDisabled: "Some fields have invalid or are missing values in the sections {{invalid}}."
     },

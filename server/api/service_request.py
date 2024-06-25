@@ -37,7 +37,7 @@ def service_request_all():
 @service_request_api.route("/generate_oidc_client_secret", strict_slashes=False)
 @json_endpoint
 def generate_oidc_client_secret():
-    # The secret is checked with every login, and therefore we use only 5 rounds combined with a strong pasword
+    # The secret is checked with every login, and therefore we use only 5 rounds combined with a strong password
     oidc_client_secret = generate_random_password()
     session["oidc_client_secret"] = oidc_client_secret
     return {"value": oidc_client_secret}, 200

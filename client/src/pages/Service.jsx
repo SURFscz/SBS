@@ -704,9 +704,7 @@ class Service extends React.Component {
                                                                                     onChange={() => this.setState({is_public_client: !is_public_client})}
                                                                                     tooltip={I18n.t("service.isPublicClientTooltip")}
                                                                                     info={I18n.t("service.isPublicClient")}
-            />
-
-            }
+            />}
 
             {(isServiceRequest && connection_type === "saml2URL") && <div className="first-column">
 
