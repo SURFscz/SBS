@@ -141,3 +141,4 @@ LIBXML2.md
 login.svg
 .run
 server/cron/idp_metadata.json
+sql_snippets
