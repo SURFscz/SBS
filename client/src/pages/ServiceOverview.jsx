@@ -150,7 +150,7 @@ class ServiceOverview extends React.Component {
             }
             invalidInputs[name] = !isEmpty(serviceElement) && !validUrlRegExp.test(serviceElement);
         });
-        invalidInputs["redirect_urls"] = !isEmpty(service.redirect_urls) && service.redirect_urls.any(url => !validUrlRegExp.test(url));
+        invalidInputs["redirect_urls"] = !isEmpty(service.redirect_urls) && service.redirect_urls.some(url => !validUrlRegExp.test(url.value));
         this.setState({invalidInputs: invalidInputs}, callback);
     }
 
