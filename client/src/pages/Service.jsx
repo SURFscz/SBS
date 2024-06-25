@@ -84,6 +84,7 @@ class Service extends React.Component {
         alreadyExists: {},
         initial: true,
         invalidInputs: {},
+        invalidRedirectUrls: null,
         confirmationDialogOpen: false,
         leavePage: false,
         confirmationDialogAction: () => true,
@@ -278,10 +279,16 @@ class Service extends React.Component {
 
     redirectUrlsChanged = selectedOptions => {
         if (selectedOptions === null) {
-            this.setState({redirect_urls: []});
+            this.setState({redirect_urls: [], invalidRedirectUrls: null});
         } else {
-            const newRedirectUrls = Array.isArray(selectedOptions) ? [...selectedOptions] : [selectedOptions];
-            this.setState({redirect_urls: newRedirectUrls});
+            const validRedirectUrls = selectedOptions
+                .filter(option => validUrlRegExp.test(option.value));
+            const newRedirectUrls = Array.isArray(validRedirectUrls) ? [...validRedirectUrls] : [validRedirectUrls];
+            const invalidRedirectUrls = selectedOptions
+                .filter(option => !validUrlRegExp.test(option.value))
+                .map(option => option.value);
+
+            this.setState({redirect_urls: newRedirectUrls, invalidRedirectUrls: invalidRedirectUrls});
         }
     }
 
@@ -537,7 +544,20 @@ class Service extends React.Component {
         this.setState({administrators: uniqueEmails});
     };
 
-    serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed, access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, uri_info, privacy_policy, service, disabledSubmit, allow_restricted_orgs, token_enabled, pam_web_sso_enabled, token_validity_days, config, ip_networks, administrators, message, logo, isServiceAdmin, providing_organisation, connection_type, redirect_urls, grants, is_public_client, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails, disableEverything, ldap_identifier, parsedSAMLMetaData, parsedSAMLMetaDataError, parsedSAMLMetaDataURLError, oidc_client_secret) => {
+    clearSelectError = (val, errorAttributeName) => {
+        this.setState({[errorAttributeName]: null});
+        return val;
+    }
+
+    serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri,
+                        automatic_connection_allowed, access_allowed_for_all, non_member_users_access_allowed,
+                        contact_email, support_email, security_email, invalidInputs, contactEmailRequired,
+                        accepted_user_policy, uri_info, privacy_policy, service, disabledSubmit, allow_restricted_orgs,
+                        token_enabled, pam_web_sso_enabled, token_validity_days, config, ip_networks, administrators,
+                        message, logo, isServiceAdmin, providing_organisation, connection_type, redirect_urls,
+                        grants, is_public_client, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails,
+                        disableEverything, ldap_identifier, parsedSAMLMetaData, parsedSAMLMetaDataError, parsedSAMLMetaDataURLError,
+                        oidc_client_secret, invalidRedirectUrls) => {
         const ldapBindAccount = config.ldap_bind_account;
         const {isServiceRequest} = this.props;
         return (<div className="service">
@@ -665,38 +685,43 @@ class Service extends React.Component {
                 {(!initial && isEmpty(connection_type)) && <ErrorIndicator
                     msg={I18n.t("service.required", {attribute: I18n.t("service.protocol").toLowerCase()})}/>}
             </div>}
-            {(isServiceRequest && connection_type === "openIDConnect") && <SelectField value={redirect_urls}
-                                                                                       options={[]}
-                                                                                       creatable={true}
-                                                                                       onInputChange={val => val}
-                                                                                       isMulti={true}
-                                                                                       disabled={disableEverything}
-                                                                                       copyClipBoard={isServiceRequestDetails}
-                                                                                       name={I18n.t("service.openIDConnectRedirects")}
-                                                                                       placeholder={I18n.t("service.openIDConnectRedirectsPlaceholder")}
-                                                                                       toolTip={I18n.t("service.openIDConnectRedirectsTooltip")}
-                                                                                       onChange={this.redirectUrlsChanged}/>}
-            {(isServiceRequest && connection_type === "openIDConnect") && <SelectField value={grants}
-                                                                                       options={this.grantOptions.filter(option => Array.isArray(grants) && !grants.find(grant => grant.value === option.value))}
-                                                                                       creatable={false}
-                                                                                       onInputChange={val => val}
-                                                                                       isMulti={true}
-                                                                                       disabled={disableEverything}
-                                                                                       copyClipBoard={isServiceRequestDetails}
-                                                                                       name={I18n.t("service.openIDConnectGrants")}
-                                                                                       placeholder={I18n.t("service.openIDConnectGrantsPlaceholder")}
-                                                                                       toolTip={I18n.t("service.openIDConnectGrantsTooltip")}
-                                                                                       onChange={this.grantsChanged}/>}
+            {(isServiceRequest && connection_type === "openIDConnect") &&
+                <div>
+                <SelectField value={redirect_urls}
+                             options={[]}
+                             creatable={true}
+                             onInputChange={val => this.clearSelectError(val, "invalidRedirectUrls")}
+                             isMulti={true}
+                             disabled={disableEverything}
+                             copyClipBoard={isServiceRequestDetails}
+                             name={I18n.t("service.openIDConnectRedirects")}
+                             placeholder={I18n.t("service.openIDConnectRedirectsPlaceholder")}
+                             toolTip={I18n.t("service.openIDConnectRedirectsTooltip")}
+                             onChange={this.redirectUrlsChanged}/>
+                    {!isEmpty(invalidRedirectUrls) && <ErrorIndicator
+                    msg={I18n.t("forms.invalidInput", {name: `URL: ${invalidRedirectUrls.join(", ")}`})}/>}
+                </div>
+            }
+            {(isServiceRequest && connection_type === "openIDConnect") &&
+                <SelectField value={grants}
+                             options={this.grantOptions.filter(option => Array.isArray(grants) && !grants.find(grant => grant.value === option.value))}
+                             creatable={false}
+                             onInputChange={val => val}
+                             isMulti={true}
+                             disabled={disableEverything}
+                             copyClipBoard={isServiceRequestDetails}
+                             name={I18n.t("service.openIDConnectGrants")}
+                             placeholder={I18n.t("service.openIDConnectGrantsPlaceholder")}
+                             toolTip={I18n.t("service.openIDConnectGrantsTooltip")}
+                             onChange={this.grantsChanged}/>}
             {(isServiceRequest && connection_type === "openIDConnect" && !isServiceRequestDetails) &&
                 <div className="new-oidc-secret">
-
                     <InputField value={oidc_client_secret}
                                 name={I18n.t("service.oidc.oidcClientSecret")}
                                 toolTip={I18n.t("service.oidc.oidcClientSecretTooltip")}
                                 disabled={true}
                                 copyClipBoard={true}
                                 extraInfo={I18n.t("service.oidc.oidcClientSecretDisclaimer")}/>
-
                 </div>}
 
             {(isServiceRequest && connection_type === "openIDConnect") && <CheckBox name={"is_public_client"}
@@ -1070,6 +1095,7 @@ class Service extends React.Component {
             providing_organisation,
             connection_type,
             redirect_urls,
+            invalidRedirectUrls,
             grants,
             is_public_client,
             saml_metadata_url,
@@ -1108,7 +1134,14 @@ class Service extends React.Component {
                                     question={question}>
                     {declineDialog && this.getDeclineRejectionOptions(rejectionReason)}
                 </ConfirmationDialog>
-                {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed, access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, uri_info, privacy_policy, service, disabledSubmit, allow_restricted_orgs, token_enabled, pam_web_sso_enabled, token_validity_days, config, ip_networks, administrators, message, logo, isServiceAdmin, providing_organisation, connection_type, redirect_urls, grants, is_public_client, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails, disableEverything, ldap_identifier, parsedSAMLMetaData, parsedSAMLMetaDataError, parsedSAMLMetaDataURLError, oidc_client_secret)}
+                {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description,
+                    uri, automatic_connection_allowed, access_allowed_for_all, non_member_users_access_allowed, contact_email,
+                    support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, uri_info,
+                    privacy_policy, service, disabledSubmit, allow_restricted_orgs, token_enabled, pam_web_sso_enabled,
+                    token_validity_days, config, ip_networks, administrators, message, logo, isServiceAdmin, providing_organisation,
+                    connection_type, redirect_urls, grants, is_public_client, saml_metadata_url, samlMetaDataFile, comments,
+                    isServiceRequestDetails, disableEverything, ldap_identifier, parsedSAMLMetaData, parsedSAMLMetaDataError,
+                    parsedSAMLMetaDataURLError, oidc_client_secret, invalidRedirectUrls)}
             </div>
         </>);
     }
