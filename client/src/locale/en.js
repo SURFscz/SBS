@@ -492,6 +492,7 @@ const en = {
         service_requests: {
             title: "Service registration",
             requester: "Requester",
+            protocol: "Protocol",
             searchPlaceHolder: "Search for service registration...",
             noEntities: "No requests for registration",
         },
@@ -1123,6 +1124,12 @@ const en = {
             saml2URL: "SAML2 URL",
             saml2File: "SAML2 file",
             none: "None, this service has no web interface"
+        },
+        protocolsShort: {
+            openIDConnect: "OIDC",
+            saml2URL: "SAML2",
+            saml2File: "SAML2",
+            none: "None"
         },
         openIDConnectRedirects: "OpenID Connect redirect URLs",
         openIDConnectRedirectsPlaceholder: "https://service.com/redirect",

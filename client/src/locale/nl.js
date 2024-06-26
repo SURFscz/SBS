@@ -492,6 +492,7 @@ const nl = {
         service_requests: {
             title: "Dienstregistratie",
             requester: "Aanvrager",
+            protocol: "Protocol",
             searchPlaceHolder: "Zoek dienstregistratie...",
             noEntities: "Geen aanvragen voor registratie",
         },
@@ -1124,6 +1125,12 @@ const nl = {
             saml2File: "SAML2-bestand",
             none: "Geen, de dienst heeft geen web interface"
         },
+        protocolsShort: {
+            openIDConnect: "OIDC",
+            saml2URL: "SAML2",
+            saml2File: "SAML2",
+            none: "None"
+        },
         openIDConnectRedirects: "OpenID Connect redirect URL's",
         openIDConnectRedirectsPlaceholder: "https://service.com/redirect",
         openIDConnectRedirectsTooltip: "De redirect URL nadat de user is ingelogd; moet volledig overeenkomen.",
@@ -1203,7 +1210,6 @@ const nl = {
             oidcClient: "OIDC client",
             oidcEnabledTooltip: "Configureer deze service in te loggen met het OIDC protocol",
             oidcDisclaimer: "OIDC is uitgeschakeld",
-
         }
     },
     organisation: {
@@ -2409,7 +2415,9 @@ const nl = {
             tokens: "User introspection tokens",
             pamWebLogin: "PAM web login",
             SCIMServer: "SCIM server",
-            SCIMClient: "SCIM client"
+            SCIMClient: "SCIM client",
+            OIDC: "OpenID Connect",
+            SAML: "SAML2.0"
         },
         updateDisabled: "Er zijn velden met ongeldige of ontbrekende waarden in de secties {{invalid}}."
     },

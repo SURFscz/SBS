@@ -8,10 +8,22 @@ import ClipBoardCopy from "./redesign/ClipBoardCopy";
 import {isEmpty} from "../utils/Utils";
 
 export default function SelectField({
-                                        onChange, name, value, options, placeholder = "", disabled = false,
-                                        toolTip = null, searchable = false, small = false,
-                                        clearable = false, isMulti = false, creatable = false,
-                                        onInputChange = null, copyClipBoard = false, isOptionDisabled = () => false
+                                        onChange,
+                                        name,
+                                        value,
+                                        options,
+                                        placeholder = "",
+                                        disabled = false,
+                                        toolTip = null,
+                                        searchable = false,
+                                        small = false,
+                                        clearable = false,
+                                        isMulti = false,
+                                        creatable = false,
+                                        onInputChange = null,
+                                        copyClipBoard = false,
+                                        isOptionDisabled = () => false,
+    required=false
                                     }) {
     const styles = {
         multiValue: (base, state) => state.data.isFixed ? {
@@ -22,7 +34,7 @@ export default function SelectField({
     };
     return (
         <div className="select-field">
-            <label htmlFor={name}>{name}
+            <label htmlFor={name}>{name}{required && <sup className="required">*</sup>}
                 {toolTip && <Tooltip tip={toolTip}/>}
             </label>
             <div className="select-field-inner">

@@ -409,7 +409,9 @@ class OrganisationForm extends React.Component {
                                     placeholder={I18n.t("organisation.namePlaceHolder")}
                                     onBlur={this.validateOrganisationName}
                                     error={alreadyExists.name || (!initial && isEmpty(name))}
-                                    name={I18n.t("organisation.name")}/>
+                                    name={I18n.t("organisation.name")}
+                                    required={true}
+                        />
                         {alreadyExists.name && <ErrorIndicator msg={I18n.t("organisation.alreadyExists", {
                             attribute: I18n.t("organisation.name").toLowerCase(),
                             value: name
@@ -427,7 +429,9 @@ class OrganisationForm extends React.Component {
                                         alreadyExists: {...this.state.alreadyExists, short_name: false}
                                     })}
                                     error={alreadyExists.short_name || (!initial && isEmpty(short_name))}
-                                    toolTip={I18n.t("organisation.shortNameTooltip")}/>
+                                    toolTip={I18n.t("organisation.shortNameTooltip")}
+                                    required={true}
+                        />
                         {alreadyExists.short_name && <ErrorIndicator msg={I18n.t("organisation.alreadyExists", {
                             attribute: I18n.t("organisation.shortName").toLowerCase(),
                             value: short_name
@@ -536,7 +540,9 @@ class OrganisationForm extends React.Component {
                                             name={I18n.t("invitation.invitees")}
                                             isAdmin={true}
                                             error={!initial && isEmpty(administrators)}
-                                            emails={administrators}/>
+                                            emails={administrators}
+                                            required={true}
+                                />
                             </div>}
                         {(!initial && isEmpty(administrators) && isNew) &&
                             <ErrorIndicator msg={I18n.t("organisation.required", {

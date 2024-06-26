@@ -16,9 +16,9 @@ test("All translations exists in all bundles", () => {
         Object.keys(translation).forEach(key => {
             expect(translationToVerify).toContainKey(key);
             const value = translation[key];
-            keyCollection.push(parents+key);
+            keyCollection.push(parents + key);
             if (typeof value === "object") {
-                contains(value, translationToVerify[key], keyCollection, parents+key+".")
+                contains(value, translationToVerify[key], keyCollection, parents + key + ".")
             }
         });
     };

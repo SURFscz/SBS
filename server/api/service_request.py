@@ -22,6 +22,8 @@ from server.saml.sp_metadata_parser import parse_metadata_xml, parse_metadata_ur
 
 service_request_api = Blueprint("service_request_api", __name__, url_prefix="/api/service_requests")
 
+valid_connection_types = ["openIDConnect", "saml2URL", "saml2File", "none"]
+
 
 @service_request_api.route("/all", methods=["GET"], strict_slashes=False)
 @json_endpoint
@@ -83,8 +85,13 @@ def request_service():
     data["status"] = STATUS_OPEN
     cleanse_short_name(data, "abbreviation")
 
+    # Validate connection_type
+    connection_type = data.get("connection_type")
+    if connection_type not in valid_connection_types:
+        raise BadRequest(f"{connection_type} not valid. Valid connection_type: {valid_connection_types}")
+
     oidc_client_secret_posted = data.get("oidc_client_secret")
-    if oidc_client_secret_posted:
+    if oidc_client_secret_posted or connection_type == "openIDConnect":
         oidc_client_secret = session.get("oidc_client_secret")
         if oidc_client_secret != oidc_client_secret_posted:
             raise Forbidden("Tampering with oidc_client_secret token is not allowed")
@@ -140,9 +147,13 @@ def approve_request(service_request_id):
     if "id" in client_data:
         del client_data["id"]
 
+    # Need to bypass the SecretMixin
+    oidc_client_secret = object.__getattribute__(service_request, "oidc_client_secret")
+
     # If a ServiceRequest is approved then we want sensible values for the *_enabled fields
-    if client_data.get("oidc_client_secret") and client_data.get("redirect_urls") and client_data.get("grants"):
+    if oidc_client_secret and client_data.get("redirect_urls") and client_data.get("grants"):
         client_data["oidc_enabled"] = True
+        client_data["oidc_client_secret"] = oidc_client_secret
     if client_data.get("saml_metadata_url") or client_data.get("saml_metadata"):
         client_data["saml_enabled"] = True
 

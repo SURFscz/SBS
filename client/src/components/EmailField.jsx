@@ -14,7 +14,8 @@ export default function EmailField({
                                        isAdmin = false,
                                        pinnedEmails = [],
                                        error = false,
-                                       autoFocus = false
+                                       autoFocus = false,
+                                       required = false
                                    }) {
 
     const [emailErrors, setEmailErrors] = useState([]);
@@ -98,7 +99,7 @@ export default function EmailField({
 
     return (
         <div className={`email-field ${error ? "error" : ""}`}>
-            <label htmlFor={name}>{name}
+            <label htmlFor={name}>{name}{required && <sup className="required">*</sup>}
                 <Tooltip
                     tip={`${I18n.t("invitation.inviteesMessagesTooltip")}${isAdmin ? I18n.t("invitation.appendAdminNote") : ""}`}/>
             </label>

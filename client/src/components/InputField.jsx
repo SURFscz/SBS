@@ -34,7 +34,8 @@ export default function InputField({
                                        displayLabel = true,
                                        button = null,
                                        classNamePostFix = null,
-                                       extraInfo = null
+                                       extraInfo = null,
+                                       required = false
                                    }) {
     placeholder = disabled ? "" : placeholder;
     let className = "sds--text-field--input";
@@ -48,7 +49,7 @@ export default function InputField({
     return (
         <div
             className={`input-field sds--text-field ${error ? "sds--text-field--status-error" : ""} ${classNamePostFix ? classNamePostFix : ""}`}>
-            {(name && displayLabel) && <label htmlFor={name}>{name}
+            {(name && displayLabel) && <label htmlFor={name}>{name}{required && <sup className="required">*</sup>}
                 {toolTip && <Tooltip tip={toolTip}/>}
             </label>}
             {!isEmpty(fileName) && <em className="file-name">{fileName}</em>}
