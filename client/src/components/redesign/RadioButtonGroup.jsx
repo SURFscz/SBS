@@ -11,7 +11,8 @@ export default function RadioButtonGroup({
                                              values,
                                              labelResolver,
                                              disabled = false,
-                                        horizontal=true
+                                             horizontal = true,
+                                             required = false
                                          }) {
 
     const internalOnChange = e => {
@@ -28,5 +29,6 @@ export default function RadioButtonGroup({
                          isMultiple={true}
                          labelResolver={labelResolver}
                          tooltip={tooltip}
+                         required={required}
                          disabled={disabled}/>
 }

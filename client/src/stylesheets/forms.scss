@@ -38,3 +38,7 @@ svg.informational {
     overflow: hidden;
     word-break: break-word;
 }
+
+sup.required {
+    color: var(--sds--color--red--500);
+}

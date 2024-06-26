@@ -594,7 +594,9 @@ class Groups extends React.Component {
                             placeholder={I18n.t("groups.namePlaceholder")}
                             onBlur={this.validateGroupName}
                             name={I18n.t("groups.name")}
-                            disabled={!adminOfCollaboration || !isEmpty(selectedGroup?.service_group_id)}/>
+                            disabled={!adminOfCollaboration || !isEmpty(selectedGroup?.service_group_id)}
+                            required={true}
+                />
                 {alreadyExists.name && <ErrorIndicator msg={I18n.t("groups.alreadyExists", {
                     attribute: I18n.t("groups.name").toLowerCase(),
                     value: name
@@ -614,7 +616,9 @@ class Groups extends React.Component {
                             })}
                             error={alreadyExists.short_name || (!initial && isEmpty(short_name))}
                             toolTip={I18n.t("groups.shortNameTooltip")}
-                            disabled={(!createNewGroup && !user.admin) || !isEmpty(selectedGroup?.service_group_id)}/>
+                            disabled={(!createNewGroup && !user.admin) || !isEmpty(selectedGroup?.service_group_id)}
+                            required={true}
+                />
                 {alreadyExists.short_name && <ErrorIndicator msg={I18n.t("groups.alreadyExists", {
                     attribute: I18n.t("groups.short_name").toLowerCase(),
                     value: short_name
@@ -896,7 +900,8 @@ class Groups extends React.Component {
                     <a href={`/services/${group.service_group.service_id}`}
                        className={"neutral-appearance"}
                        onClick={this.openService(group.service_group)}>
-                        {group.service_group.service.name}</a> : group.service_group ? <span>{group.service_group.service.name}</span> : ""
+                        {group.service_group.service.name}</a> : group.service_group ?
+                        <span>{group.service_group.service.name}</span> : ""
             },
             {
                 key: "memberCount",
