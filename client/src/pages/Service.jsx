@@ -201,29 +201,31 @@ class Service extends React.Component {
     };
 
     renderSAMLMetaData = parsedSAMLMetaData => {
-        return (<div className="parsed-saml-meta-data">
-            <table>
-                <thead/>
-                <tbody>
-                <tr>
-                    <td className="attribute">{I18n.t("service.samlMetaData.acs_binding")}</td>
-                    <td className="value">{parsedSAMLMetaData.acs_binding || I18n.t("service.samlMetaData.unknown")}</td>
-                </tr>
-                <tr>
-                    <td className="attribute">{I18n.t("service.samlMetaData.acs_location")}</td>
-                    <td className="value">{parsedSAMLMetaData.acs_location || I18n.t("service.samlMetaData.unknown")}</td>
-                </tr>
-                <tr>
-                    <td className="attribute">{I18n.t("service.samlMetaData.entity_id")}</td>
-                    <td className="value">{parsedSAMLMetaData.entity_id || I18n.t("service.samlMetaData.unknown")}</td>
-                </tr>
-                {!isEmpty(parsedSAMLMetaData.organization_name) && <tr>
-                    <td className="attribute">{I18n.t("service.samlMetaData.organization_name")}</td>
-                    <td className="value">{parsedSAMLMetaData.organization_name}</td>
-                </tr>}
-                </tbody>
-            </table>
-        </div>);
+        return (
+            <div className="parsed-saml-meta-data first-column">
+                <table>
+                    <thead/>
+                    <tbody>
+                    <tr>
+                        <td className="attribute">{I18n.t("service.samlMetaData.acs_binding")}</td>
+                        <td className="value">{parsedSAMLMetaData.acs_binding || I18n.t("service.samlMetaData.unknown")}</td>
+                    </tr>
+                    <tr>
+                        <td className="attribute">{I18n.t("service.samlMetaData.acs_location")}</td>
+                        <td className="value">{parsedSAMLMetaData.acs_location || I18n.t("service.samlMetaData.unknown")}</td>
+                    </tr>
+                    <tr>
+                        <td className="attribute">{I18n.t("service.samlMetaData.entity_id")}</td>
+                        <td className="value">{parsedSAMLMetaData.entity_id || I18n.t("service.samlMetaData.unknown")}</td>
+                    </tr>
+                    {!isEmpty(parsedSAMLMetaData.organization_name) && <tr>
+                        <td className="attribute">{I18n.t("service.samlMetaData.organization_name")}</td>
+                        <td className="value">{parsedSAMLMetaData.organization_name}</td>
+                    </tr>}
+                    </tbody>
+                </table>
+            </div>
+        );
     }
 
     validateURI = name => e => {
@@ -359,7 +361,8 @@ class Service extends React.Component {
             const joinedGrants = joinSelectValuesArray(grants);
 
             approveServiceRequest({
-                ...serviceRequest, ...this.state,
+                ...serviceRequest,
+                ...this.state,
                 redirect_urls: joinedRedirectUrls,
                 grants: joinedGrants,
                 token_validity_days: null
@@ -394,13 +397,34 @@ class Service extends React.Component {
     }
 
     isValid = () => {
-        const {required, alreadyExists, invalidInputs, contact_email, hasAdministrators, ip_networks} = this.state;
+        const {
+            required,
+            alreadyExists,
+            invalidInputs,
+            contact_email,
+            hasAdministrators,
+            ip_networks,
+            connection_type,
+            redirect_urls,
+            grants, parsedSAMLMetaData
+        } = this.state;
         const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(this.state[attr])) || Object.keys(invalidInputs).some(key => invalidInputs[key]);
         const {user, isServiceRequest} = this.props;
         const isAdmin = user.admin;
         const contactEmailRequired = (isAdmin && !hasAdministrators && isEmpty(contact_email)) || (isEmpty(contact_email) && isServiceRequest);
         const invalidIpNetworks = !isAdmin && ip_networks.some(ipNetwork => ipNetwork.error || (ipNetwork.version === 6 && !ipNetwork.global));
-        return !inValid && !contactEmailRequired && !invalidIpNetworks;
+        let validConnectionTypeAttributes = true;
+        if (connection_type === "openIDConnect" && (isEmpty(redirect_urls) || isEmpty(grants))) {
+            validConnectionTypeAttributes = false;
+        } else if ((connection_type === "saml2URL" || connection_type === "saml2File") && isEmpty(parsedSAMLMetaData)) {
+            validConnectionTypeAttributes = false;
+        }
+
+        const result = !inValid && !contactEmailRequired && !invalidIpNetworks && validConnectionTypeAttributes;
+        if (!result) {
+            console.log("debugger")
+        }
+        return result;
     };
 
     submit = () => {
@@ -573,6 +597,7 @@ class Service extends React.Component {
                             error={alreadyExists.name || (!initial && isEmpty(name))}
                             name={I18n.t("service.name")}
                             disabled={disableEverything}
+                            required={true}
                 />
                 {alreadyExists.name && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
                     attribute: I18n.t("service.name").toLowerCase(), value: name
@@ -602,6 +627,7 @@ class Service extends React.Component {
                             toolTip={I18n.t("service.entity_idTooltip")}
                             error={alreadyExists.entity_id || (!initial && isEmpty(entity_id))}
                             copyClipBoard={true}
+                            required={true}
                             disabled={isServiceRequest && !isServiceRequestDetails}/>
                 {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
                     attribute: I18n.t("service.entity_id").toLowerCase(), value: entity_id
@@ -629,6 +655,7 @@ class Service extends React.Component {
                             toolTip={I18n.t("service.abbreviationTooltip")}
                             error={alreadyExists.abbreviation || (!initial && isEmpty(abbreviation))}
                             copyClipBoard={false}
+                            required={true}
                 />
                 {alreadyExists.abbreviation && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
                     attribute: I18n.t("service.abbreviation").toLowerCase(), value: abbreviation
@@ -643,6 +670,7 @@ class Service extends React.Component {
                         placeholder={I18n.t("service.descriptionPlaceholder")}
                         onChange={e => this.setState({description: e.target.value})}
                         multiline={true}
+                        required={true}
             />
 
             {isServiceRequest && <div className="first-column">
@@ -651,6 +679,7 @@ class Service extends React.Component {
                             disabled={disableEverything}
                             placeholder={I18n.t("service.providingOrganisationPlaceholder")}
                             onChange={e => this.setState({providing_organisation: e.target.value})}
+                            required={true}
                 />
                 {(!initial && isEmpty(providing_organisation)) && <ErrorIndicator msg={I18n.t("service.required", {
                     attribute: I18n.t("service.providingOrganisation").toLowerCase()
@@ -681,39 +710,51 @@ class Service extends React.Component {
                                   disabled={disableEverything}
                                   values={connectionTypes}
                                   onChange={this.onChangeConnectionType}
-                                  labelResolver={label => I18n.t(`service.protocols.${label}`)}/>
+                                  labelResolver={label => I18n.t(`service.protocols.${label}`)}
+                                  required={true}
+                />
                 {(!initial && isEmpty(connection_type)) && <ErrorIndicator
                     msg={I18n.t("service.required", {attribute: I18n.t("service.protocol").toLowerCase()})}/>}
             </div>}
             {(isServiceRequest && connection_type === "openIDConnect") &&
-                <div>
-                <SelectField value={redirect_urls}
-                             options={[]}
-                             creatable={true}
-                             onInputChange={val => this.clearSelectError(val, "invalidRedirectUrls")}
-                             isMulti={true}
-                             disabled={disableEverything}
-                             copyClipBoard={isServiceRequestDetails}
-                             name={I18n.t("service.openIDConnectRedirects")}
-                             placeholder={I18n.t("service.openIDConnectRedirectsPlaceholder")}
-                             toolTip={I18n.t("service.openIDConnectRedirectsTooltip")}
-                             onChange={this.redirectUrlsChanged}/>
-                    {!isEmpty(invalidRedirectUrls) && <ErrorIndicator
-                    msg={I18n.t("forms.invalidInput", {name: `URL: ${invalidRedirectUrls.join(", ")}`})}/>}
+                <div className="first-column">
+                    <SelectField value={redirect_urls}
+                                 options={[]}
+                                 creatable={true}
+                                 onInputChange={val => this.clearSelectError(val, "invalidRedirectUrls")}
+                                 isMulti={true}
+                                 disabled={disableEverything}
+                                 copyClipBoard={isServiceRequestDetails}
+                                 name={I18n.t("service.openIDConnectRedirects")}
+                                 placeholder={I18n.t("service.openIDConnectRedirectsPlaceholder")}
+                                 toolTip={I18n.t("service.openIDConnectRedirectsTooltip")}
+                                 required={true}
+                                 onChange={this.redirectUrlsChanged}
+                    />
+                    {(isEmpty(redirect_urls) && !initial) && <ErrorIndicator
+                        msg={I18n.t("service.required", {attribute: I18n.t("service.openIDConnectRedirects")})}/>}
+                    {(!isEmpty(invalidRedirectUrls) && !initial) && <ErrorIndicator
+                        msg={I18n.t("forms.invalidInput", {name: `URL: ${invalidRedirectUrls.join(", ")}`})}/>}
                 </div>
             }
             {(isServiceRequest && connection_type === "openIDConnect") &&
-                <SelectField value={grants}
-                             options={this.grantOptions.filter(option => Array.isArray(grants) && !grants.find(grant => grant.value === option.value))}
-                             creatable={false}
-                             onInputChange={val => val}
-                             isMulti={true}
-                             disabled={disableEverything}
-                             copyClipBoard={isServiceRequestDetails}
-                             name={I18n.t("service.openIDConnectGrants")}
-                             placeholder={I18n.t("service.openIDConnectGrantsPlaceholder")}
-                             toolTip={I18n.t("service.openIDConnectGrantsTooltip")}
-                             onChange={this.grantsChanged}/>}
+                <div className="first-column">
+                    <SelectField value={grants}
+                                 options={this.grantOptions.filter(option => Array.isArray(grants) && !grants.find(grant => grant.value === option.value))}
+                                 creatable={false}
+                                 onInputChange={val => val}
+                                 isMulti={true}
+                                 disabled={disableEverything}
+                                 copyClipBoard={isServiceRequestDetails}
+                                 name={I18n.t("service.openIDConnectGrants")}
+                                 placeholder={I18n.t("service.openIDConnectGrantsPlaceholder")}
+                                 toolTip={I18n.t("service.openIDConnectGrantsTooltip")}
+                                 required={true}
+                                 onChange={this.grantsChanged}/>
+                    {(isEmpty(grants) && !initial) && <ErrorIndicator
+                        msg={I18n.t("service.required", {attribute: I18n.t("service.openIDConnectGrants")})}/>}
+                </div>}
+
             {(isServiceRequest && connection_type === "openIDConnect" && !isServiceRequestDetails) &&
                 <div className="new-oidc-secret">
                     <InputField value={oidc_client_secret}
@@ -724,44 +765,50 @@ class Service extends React.Component {
                                 extraInfo={I18n.t("service.oidc.oidcClientSecretDisclaimer")}/>
                 </div>}
 
-            {(isServiceRequest && connection_type === "openIDConnect") && <CheckBox name={"is_public_client"}
-                                                                                    value={is_public_client}
-                                                                                    onChange={() => this.setState({is_public_client: !is_public_client})}
-                                                                                    tooltip={I18n.t("service.isPublicClientTooltip")}
-                                                                                    info={I18n.t("service.isPublicClient")}
-            />}
-
-            {(isServiceRequest && connection_type === "saml2URL") && <div className="first-column">
-
-                <InputField value={saml_metadata_url}
-                            name={I18n.t("service.samlMetadataURL")}
-                            placeholder={I18n.t("service.samlMetadataPlaceholder")}
-                            onChange={e => this.setState({
-                                saml_metadata_url: e.target.value,
-                                invalidInputs: {...invalidInputs, saml_metadata_url: false}
-                            })}
-                            disabled={disableEverything}
-                            externalLink={true}
-                            onBlur={this.validateURI("saml_metadata_url")}
-                />
-                {invalidInputs["saml_metadata_url"] && <ErrorIndicator
-                    msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
-                {(parsedSAMLMetaDataURLError && !invalidInputs["saml_metadata_url"]) && <ErrorIndicator
-                    msg={I18n.t("forms.invalidInput", {name: I18n.t("service.samlMetadataURL")})}/>}
-                {!isEmpty(parsedSAMLMetaData) && this.renderSAMLMetaData(parsedSAMLMetaData)}
-            </div>}
+            {(isServiceRequest && connection_type === "openIDConnect") &&
+                <CheckBox name={"is_public_client"}
+                          value={is_public_client}
+                          onChange={() => this.setState({is_public_client: !is_public_client})}
+                          tooltip={I18n.t("service.isPublicClientTooltip")}
+                          info={I18n.t("service.isPublicClient")}
+                />}
+            {(isServiceRequest && connection_type === "saml2URL") &&
+                <div className="first-column">
+                    <InputField value={saml_metadata_url}
+                                name={I18n.t("service.samlMetadataURL")}
+                                placeholder={I18n.t("service.samlMetadataPlaceholder")}
+                                onChange={e => this.setState({
+                                    saml_metadata_url: e.target.value,
+                                    invalidInputs: {...invalidInputs, saml_metadata_url: false}
+                                })}
+                                disabled={disableEverything}
+                                externalLink={true}
+                                required={true}
+                                onBlur={this.validateURI("saml_metadata_url")}
+                    />
+                    {(!initial && isEmpty(saml_metadata_url)) && <ErrorIndicator
+                        msg={I18n.t("service.required", {attribute: I18n.t("service.samlMetadata")})}/>}
+                    {invalidInputs["saml_metadata_url"] && <ErrorIndicator
+                        msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
+                    {(parsedSAMLMetaDataURLError && !invalidInputs["saml_metadata_url"]) && <ErrorIndicator
+                        msg={I18n.t("forms.invalidInput", {name: I18n.t("service.samlMetadataURL")})}/>}
+                    {!isEmpty(parsedSAMLMetaData) && this.renderSAMLMetaData(parsedSAMLMetaData)}
+                </div>}
             {(!disableEverything && isServiceRequest && connection_type === "saml2File" && !isServiceRequestDetails) &&
                 <div className="saml-meta-data">
                     <UploadButton name={I18n.t("service.samlMetadataUpload")}
                                   txt={I18n.t("service.samlMetadataUpload")}
                                   acceptFileFormat={".xml"}
                                   onFileUpload={this.onFileUpload}/>
+                    {(!initial && isEmpty(samlMetaDataFile)) && <ErrorIndicator
+                        msg={I18n.t("service.required", {attribute: I18n.t("service.samlMetadata")})}/>}
                     {(samlMetaDataFile && !isEmpty(parsedSAMLMetaData) && !isServiceRequestDetails && this.renderSAMLMetaData(parsedSAMLMetaData))}
                     {(parsedSAMLMetaDataError && !invalidInputs["saml_metadata"]) && <ErrorIndicator
                         msg={I18n.t("forms.invalidInput", {name: I18n.t("service.samlMetadata")})}/>}
 
                 </div>}
-            {((isServiceRequest && (connection_type === "saml2File" || connection_type === "saml2URL") && isServiceRequestDetails) && !isEmpty(parsedSAMLMetaData)) && this.renderSAMLMetaData(parsedSAMLMetaData)}
+            {((connection_type === "saml2File" && isServiceRequestDetails) && !isEmpty(parsedSAMLMetaData)) &&
+                this.renderSAMLMetaData(parsedSAMLMetaData)}
 
             {(isServiceRequest && connection_type === "none") &&
                 <label className="title">{I18n.t("service.noneInfo")}</label>}
@@ -858,6 +905,7 @@ class Service extends React.Component {
                             onBlur={this.validateEmail("email")}
                             externalLink={validUrlRegExp.test(contact_email)}
                             classNamePostFix={"second-column"}
+                            required={true}
                 />
                 {invalidInputs["email"] && <ErrorIndicator
                     msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
@@ -882,6 +930,7 @@ class Service extends React.Component {
                             error={(!initial && isEmpty(security_email)) || invalidInputs["security_email"]}
                             onBlur={this.validateEmail("security_email")}
                             externalLink={validUrlRegExp.test(security_email)}
+                            required={true}
                 />
 
                 {invalidInputs["security_email"] && <ErrorIndicator

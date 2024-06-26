@@ -1235,7 +1235,8 @@ const en = {
             externalIdentifier: "External identifier",
             externalVersion: "External version",
             externalLink: "External link",
-            externalLinkValue: "{{base_url}}/metadata/sram/{{external_identifier}}"
+            externalLinkValue: "{{base_url}}/metadata/sram/{{external_identifier}}",
+            oidcDisclaimer: "OIDC is disabled"
         }
     },
     organisation: {

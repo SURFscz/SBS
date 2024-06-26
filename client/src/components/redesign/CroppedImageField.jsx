@@ -51,7 +51,7 @@ export default class CroppedImageField extends React.PureComponent {
                                     value={value}
                                     includeLogoGallery={includeLogoGallery}
                                     title={title}/>
-                <label className="info" htmlFor="">{title}</label>
+                <label className="info" htmlFor="">{title}<sup className="required">*</sup></label>
                 <section className="file-upload">
                     {!value && <div className={`no-image ${imageRequired ? "error" : ""}`}>
                         {<NotFoundIcon/>}
