@@ -548,7 +548,9 @@ class CollaborationForm extends React.Component {
                                 placeholder={I18n.t("collaboration.namePlaceHolder")}
                                 error={alreadyExists.name || (!initial && isEmpty(name))}
                                 onBlur={this.validateCollaborationName}
-                                name={I18n.t("collaboration.name")}/>
+                                name={I18n.t("collaboration.name")}
+                                required={true}
+                    />
                     {alreadyExists.name && <ErrorIndicator msg={I18n.t("collaboration.alreadyExists", {
                         attribute: I18n.t("collaboration.name").toLowerCase(),
                         value: name,
@@ -581,7 +583,9 @@ class CollaborationForm extends React.Component {
                                 onBlur={this.validateCollaborationShortName}
                                 toolTip={I18n.t("collaboration.shortNameTooltip")}
                                 error={alreadyExists.short_name || (!initial && isEmpty(short_name))}
-                                name={I18n.t("collaboration.shortName")}/>
+                                name={I18n.t("collaboration.shortName")}
+                                required={true}
+                    />
                     {alreadyExists.short_name && <ErrorIndicator msg={I18n.t("collaboration.alreadyExists", {
                         attribute: I18n.t("collaboration.shortName").toLowerCase(),
                         value: short_name,
@@ -614,7 +618,9 @@ class CollaborationForm extends React.Component {
                                 onChange={e => this.setState({description: e.target.value})}
                                 error={alreadyExists.description || (!initial && isEmpty(description))}
                                 placeholder={I18n.t("collaboration.descriptionPlaceholder")} multiline={true}
-                                name={I18n.t("collaboration.description")}/>
+                                name={I18n.t("collaboration.description")}
+                                required={true}
+                    />
                     {(!initial && isEmpty(description)) && <ErrorIndicator msg={I18n.t("collaboration.required", {
                         attribute: I18n.t("collaboration.description").toLowerCase()
                     })}/>}
