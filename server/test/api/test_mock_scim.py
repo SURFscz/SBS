@@ -1,10 +1,8 @@
-from time import sleep
-
 from server.api.base import application_base_url
 from server.db.domain import User, Collaboration, Service
 from server.scim import EXTERNAL_ID_POST_FIX
-from server.scim.schema_template import SCIM_SCHEMA_SRAM_GROUP
 from server.scim.group_template import create_group_template, scim_member_object, update_group_template
+from server.scim.schema_template import SCIM_SCHEMA_SRAM_GROUP
 from server.scim.user_template import create_user_template
 from server.test.abstract_test import AbstractTest
 from server.test.seed import user_sarah_name, co_ai_computing_name, service_cloud_name
@@ -95,10 +93,9 @@ class TestMockScim(AbstractTest):
                        with_basic_auth=False)
         self.assertEqual(scim_id_group, res["Resources"][0]["id"])
 
-        # wait to make sure the mock database is updated otherwise the statistics are not there yet
-        sleep(2)
         # Need to be super admin
         self.login("urn:john")
+
         res = self.get("/api/scim_mock/statistics", with_basic_auth=False)
         print("debugging wonkey test")
         print(cloud_service_id)
@@ -110,8 +107,6 @@ class TestMockScim(AbstractTest):
         self.delete("/api/scim_mock/Users", primary_key=scim_id_user, with_basic_auth=False, headers=headers)
         self.delete("/api/scim_mock/Groups", primary_key=scim_id_group, with_basic_auth=False, headers=headers)
 
-        # wait to make sure the mock database is updated otherwise the statistics are not there yet
-        sleep(2)
         res = self.get("/api/scim_mock/statistics", with_basic_auth=False)
 
         self.assertEqual(0, len(res["database"][str(cloud_service_id)]["users"]))
@@ -123,20 +118,19 @@ class TestMockScim(AbstractTest):
         res = self.get("/api/scim_mock/statistics", with_basic_auth=False)
         self.assertEqual(0, len(res["database"]))
 
-    # TODO enable this again
-    # def test_mock_scim_authorization(self):
-    #     cloud_service_id = self.find_entity_by_name(Service, service_cloud_name).id
-    #     self.put(f"/api/services/reset_scim_bearer_token/{cloud_service_id}",
-    #              {"scim_bearer_token": "secret"})
-    #
-    #     self.post("/api/scim_mock/Users",
-    #               body={},
-    #               headers={"X-Service": str(cloud_service_id)},
-    #               with_basic_auth=False,
-    #               response_status_code=401)
-    #
-    #     self.post("/api/scim_mock/Users",
-    #               body={},
-    #               headers={"X-Service": str(cloud_service_id), "Authorization": "bearer nope"},
-    #               with_basic_auth=False,
-    #               response_status_code=401)
+    def test_mock_scim_authorization(self):
+        cloud_service_id = self.find_entity_by_name(Service, service_cloud_name).id
+        self.put(f"/api/services/reset_scim_bearer_token/{cloud_service_id}",
+                 {"scim_bearer_token": "secret"})
+
+        self.post("/api/scim_mock/Users",
+                  body={},
+                  headers={"X-Service": str(cloud_service_id)},
+                  with_basic_auth=False,
+                  response_status_code=401)
+
+        self.post("/api/scim_mock/Users",
+                  body={},
+                  headers={"X-Service": str(cloud_service_id), "Authorization": "bearer nope"},
+                  with_basic_auth=False,
+                  response_status_code=401)
