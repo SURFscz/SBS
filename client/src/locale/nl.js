@@ -833,11 +833,11 @@ const nl = {
         administrators: "Beheerders",
         administratorsPlaceholder: "Nodig beheerders uit per e-mail",
         administratorsTooltip: "Beheerders van een samenwerking kunnen de samenwerking aanpassen en leden uitnodigen. Voer e-mailadressen in, gescheiden door een komma, spatie of punt-komma, of druk enter na elk adres.",
-        members: "Gewone gebruikers",
+        members: "Gewone leden",
         selectRole: "Selecteer een rol.",
         manager: "Manager",
         admin: "Beheerder",
-        member: "Gewone gebruiker",
+        member: "Gewoon lid",
         status: {
             name: "Status",
             active: "Actief",

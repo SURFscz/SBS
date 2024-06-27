@@ -833,11 +833,11 @@ const en = {
         administrators: "Admins",
         administratorsPlaceholder: "Invite admins by email",
         administratorsTooltip: "Admins of a collaboration can edit their collaborations and invite members. Add email addresses separated by comma, space or semi-colon or one-by-one using the enter key.",
-        members: "Regular users",
+        members: "Regular members",
         selectRole: "Select a role...",
         manager: "Manager",
         admin: "Admin",
-        member: "Regular user",
+        member: "Regular member",
         status: {
             name: "Status",
             active: "Active",
