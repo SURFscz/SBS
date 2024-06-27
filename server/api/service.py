@@ -577,7 +577,7 @@ def update_service():
                 .filter(ServiceToken.token_type == token_type) \
                 .delete()
 
-    scim_url_changed = data.get("scim_url", None) != service.scim_url and bool(service.scim_bearer_token)
+    scim_url_changed = data.get("scim_url", None) != service.scim_url and bool(service.scim_bearer_token_db_value())
     # Before we update we need to get the unencrypted bearer_token
     if scim_url_changed:
         plain_bearer_token = decrypt_scim_bearer_token(service)
