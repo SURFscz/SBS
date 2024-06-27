@@ -600,6 +600,10 @@ class Service(Base, db.Model, LogoMixin, SecretMixin):
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.service_memberships))) > 0
 
+    def scim_bearer_token_db_value(self):
+        # The SecretMixin and LogoMixin prevent use from accessing the scim_bearer_token directly
+        return object.__getattribute__(self, "scim_bearer_token")
+
 
 class ServiceRequest(Base, db.Model, LogoMixin):
     __tablename__ = "service_requests"
@@ -633,6 +637,10 @@ class ServiceRequest(Base, db.Model, LogoMixin):
     rejection_reason = db.Column("rejection_reason", db.Text(), nullable=True)
     created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
+
+    def oidc_client_secret_db_value(self):
+        # The SecretMixin and LogoMixin prevent use from accessing the scim_bearer_token directly
+        return object.__getattribute__(self, "oidc_client_secret")
 
 
 class ServiceInvitation(Base, db.Model):
