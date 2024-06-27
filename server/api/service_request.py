@@ -148,7 +148,7 @@ def approve_request(service_request_id):
         del client_data["id"]
 
     # Need to bypass the SecretMixin
-    oidc_client_secret = object.__getattribute__(service_request, "oidc_client_secret")
+    oidc_client_secret = service_request.oidc_client_secret_db_value()
 
     # If a ServiceRequest is approved then we want sensible values for the *_enabled fields
     if oidc_client_secret and client_data.get("redirect_urls") and client_data.get("grants"):
