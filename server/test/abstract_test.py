@@ -41,7 +41,6 @@ class AbstractTest(TestCase):
         db = self.app.db
         with self.app.app_context():
             os.environ["SEEDING"] = "1"
-            self.app.redis_client.flushall(asynchronous=True)
             seed(db, self.app.app_config)
             del os.environ["SEEDING"]
 
