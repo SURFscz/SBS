@@ -14,7 +14,9 @@ def _service_context(service: Service):
 
 
 def _get_encryption_key(service: Service):
-    if not service.scim_bearer_token or not service.scim_url:
+    # The SecretMixin and LogoMixin prevent use from accessing the scim_bearer_token directly
+    scim_bearer_token = service.scim_bearer_token_db_value()
+    if not scim_bearer_token or not service.scim_url:
         raise BadRequest("encrypt_scim_bearer_token requires scim_bearer_token and scim_url")
     encryption_key = current_app.app_config.encryption_key
     return encryption_key
@@ -48,11 +50,15 @@ def validate_service_token(attr_enabled, token_type) -> Service:
 
 def encrypt_scim_bearer_token(service: Service):
     encryption_key = _get_encryption_key(service)
-    encrypted_bearer_token = encrypt_secret(encryption_key, service.scim_bearer_token, _service_context(service))
+    # The SecretMixin and LogoMixin prevent use from accessing the scim_bearer_token directly
+    scim_bearer_token = service.scim_bearer_token_db_value()
+    encrypted_bearer_token = encrypt_secret(encryption_key, scim_bearer_token, _service_context(service))
     service.scim_bearer_token = encrypted_bearer_token
     db.session.merge(service)
 
 
 def decrypt_scim_bearer_token(service: Service):
     encryption_key = _get_encryption_key(service)
-    return decrypt_secret(encryption_key, service.scim_bearer_token, _service_context(service))
+    # The SecretMixin and LogoMixin prevent use from accessing the scim_bearer_token directly
+    scim_bearer_token = service.scim_bearer_token_db_value()
+    return decrypt_secret(encryption_key, scim_bearer_token, _service_context(service))
