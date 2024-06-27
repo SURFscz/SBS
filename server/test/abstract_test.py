@@ -299,7 +299,8 @@ class AbstractTest(TestCase):
             .first()
 
     def add_bearer_token_to_services(self):
-        services = Service.query.options(load_only(Service.id)).filter(Service.scim_enabled == True).all()  # noqa: E712
+        services = Service.query.options(load_only(Service.id)) \
+            .filter(Service.scim_enabled == True).all()  # noqa: E712
         service_identifiers = [s.id for s in services]
         for identifier in service_identifiers:
             self.put(f"/api/services/reset_scim_bearer_token/{identifier}",
