@@ -592,6 +592,9 @@ class Service(Base, db.Model, LogoMixin, SecretMixin):
     is_public_client = db.Column("is_public_client", db.Boolean(), nullable=True, default=False)
     saml_enabled = db.Column("saml_enabled", db.Boolean(), nullable=True, default=False)
     oidc_enabled = db.Column("oidc_enabled", db.Boolean(), nullable=True, default=False)
+    exported_at = db.Column("exported_at", TZDateTime(), nullable=True)
+    export_successful = db.Column("export_successful", db.Boolean(), nullable=True, default=False)
+    export_external_identifier = db.Column("export_external_identifier", db.String(length=255), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
     created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
