@@ -1,3 +1,5 @@
+from time import sleep
+
 from server.api.base import application_base_url
 from server.db.domain import User, Collaboration, Service
 from server.scim import EXTERNAL_ID_POST_FIX
@@ -95,6 +97,8 @@ class TestMockScim(AbstractTest):
                        with_basic_auth=False)
         self.assertEqual(scim_id_group, res["Resources"][0]["id"])
 
+        # wait to make sure the mock database is updated otherwise the statistics are not there yet
+        sleep(2)
         # Need to be super admin
         self.login("urn:john")
         res = self.get("/api/scim_mock/statistics", with_basic_auth=False)
@@ -106,6 +110,8 @@ class TestMockScim(AbstractTest):
         self.delete("/api/scim_mock/Users", primary_key=scim_id_user, with_basic_auth=False, headers=headers)
         self.delete("/api/scim_mock/Groups", primary_key=scim_id_group, with_basic_auth=False, headers=headers)
 
+        # wait to make sure the mock database is updated otherwise the statistics are not there yet
+        sleep(2)
         res = self.get("/api/scim_mock/statistics", with_basic_auth=False)
 
         self.assertEqual(0, len(res["database"][str(cloud_service_id)]["users"]))
