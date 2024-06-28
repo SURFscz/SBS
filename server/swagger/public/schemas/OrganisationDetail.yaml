@@ -55,7 +55,7 @@ properties:
   identifier:
     type: string
     format: uuid
-    descriotion: "Unique generated identifier"
+    description: "Unique generated identifier"
     example: "42de0064-cddc-4c36-9e19-c0fd6e782956"
   collaborations:
     type: array

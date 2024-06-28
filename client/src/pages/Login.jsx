@@ -3,6 +3,7 @@ import "./Login.scss";
 import I18n from "../locale/I18n";
 import {health} from "../api";
 import HappyLogo from "../icons/landing/happy.svg";
+import BlackHole from "../icons/undraw_void_-3-ggu.svg";
 import Button from "../components/Button";
 import {login} from "../utils/Login";
 import ConfirmationDialog from "../components/ConfirmationDialog";
@@ -57,7 +58,7 @@ class Login extends React.Component {
                         <div className="header-right">
                             <img className={spin ? "spin" : ""}
                                  onClick={() => this.toggleSpin()}
-                                 src={HappyLogo}
+                                 src={user.suspended ? BlackHole : HappyLogo}
                                  alt="logo"/>
                         </div>
                     </div>

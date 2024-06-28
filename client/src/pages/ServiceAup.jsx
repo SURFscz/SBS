@@ -43,7 +43,7 @@ class ServiceAup extends React.Component {
                 service: res["service"],
                 collaborations: res["collaborations"],
                 serviceEmails: res["service_emails"],
-                agreed: isEmpty(res["service"].accepted_user_policy)
+                agreed: isEmpty(res["service"].accepted_user_policy),
             });
         })
     }
@@ -61,16 +61,16 @@ class ServiceAup extends React.Component {
         if (loading) {
             return <SpinnerField/>;
         }
-        const serviceName = {name: service.name}
+        const serviceName = {name: service.name};
         return (
             <div className="mod-service-aup">
                 <h1>{I18n.t("aup.service.title")}</h1>
                 <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("aup.service.info", serviceName))}}/>
                 {collaborations.length > 1 &&
-                <p className="multiple-collaborations">{I18n.t("aup.service.multipleCollaborations")}</p>
+                    <p className="multiple-collaborations">{I18n.t("aup.service.multipleCollaborations")}</p>
                 }
                 {collaborations.length === 0 &&
-                <p className="multiple-collaborations">{I18n.t("aup.service.organisationAccess")}</p>
+                    <p className="multiple-collaborations">{I18n.t("aup.service.organisationAccess")}</p>
                 }
                 <div>
                     {collaborations.map(collaboration => <div className="collaboration-detail">

@@ -20,7 +20,7 @@ import {setFlash} from "../../utils/Flash";
 import "./CollaborationAdmins.scss";
 import Select from "react-select";
 import {displayMembershipExpiryDate, isInvitationExpired, shortDateFromEpoch} from "../../utils/Date";
-import {isEmpty, stopEvent} from "../../utils/Utils";
+import {expiryDateCustomSort, isEmpty, stopEvent, userColumnsCustomSort} from "../../utils/Utils";
 import Button from "../Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ConfirmationDialog from "../ConfirmationDialog";
@@ -676,8 +676,9 @@ class CollaborationAdmins extends React.Component {
                 </div>
             },
             {
-                nonSortable: true,
+                nonSortable: false,
                 key: "name",
+                customSort: userColumnsCustomSort,
                 class: hideAdminColumns ? "no-admin-columns" : "",
                 header: I18n.t("models.users.name_email"),
                 mapper: entity => <UserColumn entity={entity} currentUser={currentUser}
@@ -696,8 +697,8 @@ class CollaborationAdmins extends React.Component {
                 mapper: entity => this.renderSelectRole(entity, isAdminOfCollaboration)
             },
             {
-                nonSortable: true,
                 key: "expiry_date",
+                customSort: expiryDateCustomSort,
                 header: I18n.t("organisationMembership.member"),
                 mapper: entity => {
                     if (isAdminOfCollaboration || entity.user.id === currentUser.id) {

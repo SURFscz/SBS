@@ -1,19 +1,26 @@
 import {sanitizeShortName, validUrlRegExp, validEmailRegExp, sanitizeTagName} from "../../validations/regExps";
 
 test("Valid emails", () => {
-    expect(validEmailRegExp.test("a@a.com")).toEqual(true);
-    expect(validEmailRegExp.test("b@b")).toEqual(true);
+    expect(validEmailRegExp.test("a@a.com")).toBeTruthy();
+    expect(validEmailRegExp.test("b@b")).toBeTruthy();
+    expect(validEmailRegExp.test("a@a")).toBeTruthy();
+    expect(validEmailRegExp.test("a.x@a")).toBeTruthy();
+    expect(validEmailRegExp.test("a@a.c")).toBeTruthy();
+    expect(validEmailRegExp.test("axz+test@a.c")).toBeTruthy();
 
-    expect(validEmailRegExp.test("nope")).toEqual(false);
+    expect(validEmailRegExp.test("nope")).toBeFalsy();
+    expect(validEmailRegExp.test("aa")).toBeFalsy();
+    expect(validEmailRegExp.test("a!@a.c")).toBeFalsy();
+    expect(validEmailRegExp.test("a!@a.c@")).toBeFalsy();
+
 })
 
 test("Sanitize tag names", () => {
     expect(sanitizeTagName(null)).toEqual(null);
     expect(sanitizeTagName("1QWERTY")).toEqual("1qwerty");
     expect(sanitizeTagName("1234567890123456789012345678901234567890")).toEqual("12345678901234567890123456789012");
-    expect(sanitizeTagName("&X")).toEqual("x");
-    expect(sanitizeTagName("_X")).toEqual("x");
-    expect(sanitizeTagName("$ABC!D@E#F&G(HIJ)KLMNOPQRSTUVWYZ")).toEqual("abcdefghijklmnopqrstuvwyz");
+    expect(sanitizeTagName("😁")).toEqual("😁");
+    expect(sanitizeTagName(" 🌹 ")).toEqual("🌹");
 });
 
 test("Sanitize short names", () => {

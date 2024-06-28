@@ -520,7 +520,7 @@ def service_invites():
                                        intended_role=intended_role,
                                        created_by=user.uid,
                                        expiry_date=default_expiry_date(json_dict=data))
-        invitation = db.session.merge(invitation)
+        db.session.add(invitation)
         mail_service_invitation({
             "salutation": "Dear",
             "invitation": invitation,
@@ -620,7 +620,7 @@ def trust_organisation(service_id, organisation_id):
 @json_endpoint
 def request_delete_service(service_id):
     confirm_service_admin(service_id)
-    service = Service.query.get(service_id)
+    service = db.session.get(Service, service_id)
     mail_delete_service_request(service)
     return {}, 204
 

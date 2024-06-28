@@ -12,6 +12,8 @@ from uuid import uuid4
 import MySQLdb
 from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
 from jsonschema import ValidationError
+from redis.exceptions import ConnectionError
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest, Forbidden, Conflict
 
@@ -237,7 +239,28 @@ def json_endpoint(f):
 @base_api.route("/health", strict_slashes=False)
 @json_endpoint
 def health():
-    return {"status": "UP"}, 200
+    database_status = False
+    try:
+        User.query.first()
+        database_status = True
+    except OperationalError:
+        db.session.rollback()
+        pass
+
+    redis_status = False
+    try:
+        redis_up = current_app.redis_client.set("status", "up")
+        if redis_up:
+            redis_status = True
+    except ConnectionError:
+        pass
+
+    response_status = 200 if database_status and redis_status else 400
+    return {"status": "UP" if response_status == 200 else "DOWN",
+            "components": {
+                "database": "UP" if database_status else "DOWN",
+                "redis": "UP" if redis_status else "DOWN"
+            }}, response_status
 
 
 @base_api.route("/config", strict_slashes=False)

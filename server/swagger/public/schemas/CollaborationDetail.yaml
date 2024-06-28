@@ -100,5 +100,13 @@ properties:
       $ref: '/swagger/schemas/Group.yaml'
   tags:
     type: array
+    description: "Tags (labels) for the collaboration"
     items:
-      $ref: '/swagger/schemas/Tag.yaml'
+      type: string
+      example: "label_test"
+  units:
+    type: array
+    description: "Units for this collaboration"
+    items:
+      type: string
+      example: "fac_wiskunde"

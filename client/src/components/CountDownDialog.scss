@@ -1,0 +1,20 @@
+.count-down-dialog {
+    @keyframes fade-out {
+        0% {
+            opacity: 0.95;
+        }
+        100% {
+            opacity: 0.01;
+        }
+    }
+
+    &.almost-there {
+        animation: fade-out 5s ease-in;
+    }
+
+    .count-down-content {
+        span.counter {
+            font-weight: 600;
+        }
+    }
+}

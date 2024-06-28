@@ -84,35 +84,36 @@ class CollaborationForm extends React.Component {
     componentDidMount = () => {
         const params = this.props.match.params;
         if (params.id) {
-            collaborationById(params.id).then(collaboration => {
-                const {user} = this.props;
-                const organisation = collaboration.organisation;
-                const orgOptions = this.mapOrganisationsToOptions([organisation])
-                this.updateBreadCrumb(orgOptions[0], collaboration, false, false);
-                if (user.admin) {
-                    allOrganisations().then(res => {
-                        const orgOptions = this.mapOrganisationsToOptions(res);
-                        this.setState({organisations: orgOptions});
+            collaborationById(params.id)
+                .then(collaboration => {
+                    const {user} = this.props;
+                    const organisation = collaboration.organisation;
+                    const orgOptions = this.mapOrganisationsToOptions([organisation])
+                    this.updateBreadCrumb(orgOptions[0], collaboration, false, false);
+                    if (user.admin) {
+                        allOrganisations().then(res => {
+                            const orgOptions = this.mapOrganisationsToOptions(res);
+                            this.setState({organisations: orgOptions});
+                        });
+                    }
+                    const expiryDate = collaboration.expiry_date ? moment(collaboration.expiry_date * 1000).toDate() : null;
+                    const tagOptions = collaboration.tags.map(tag => ({label: tag.tag_value, value: tag.id}));
+                    this.setState({
+                        ...collaboration,
+                        collaboration: collaboration,
+                        organisation: orgOptions[0],
+                        organisations: orgOptions,
+                        tags: tagOptions,
+                        tagsSelected: tagOptions,
+                        isNew: false,
+                        loading: false,
+                        expiry_date: expiryDate,
+                        allow_join_requests: !collaboration.disable_join_requests
+                    }, () => {
+                        this.updateUnits(organisation, collaboration);
+                        this.updateTags(organisation.id);
                     });
-                }
-                const expiryDate = collaboration.expiry_date ? moment(collaboration.expiry_date * 1000).toDate() : null;
-                const tagOptions = collaboration.tags.map(tag => ({label: tag.tag_value, value: tag.id}));
-                this.setState({
-                    ...collaboration,
-                    collaboration: collaboration,
-                    organisation: orgOptions[0],
-                    organisations: orgOptions,
-                    tags: tagOptions,
-                    tagsSelected: tagOptions,
-                    isNew: false,
-                    loading: false,
-                    expiry_date: expiryDate,
-                    allow_join_requests: !collaboration.disable_join_requests
-                }, () => {
-                    this.updateUnits(organisation, collaboration);
-                    this.updateTags(organisation.id);
-                });
-            });
+                }).catch(() => this.props.history.push("/404"));
         } else {
             myOrganisationsLite().then(json => {
                 if (json.length === 0) {

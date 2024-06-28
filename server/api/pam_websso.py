@@ -5,6 +5,7 @@ import uuid
 from datetime import timedelta
 
 import qrcode
+import base64
 from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app, session
 from werkzeug.exceptions import NotFound, Forbidden, HTTPException
@@ -51,13 +52,25 @@ def _validate_pam_sso_session(pam_sso_session: PamSSOSession, pin, validate_pin,
     def include_service(s: Service, m: CollaborationMembership):
         return s in m.collaboration.services or s in m.collaboration.organisation.services
 
-    groups = [{"short_name": m.collaboration.short_name, "name": m.collaboration.name} for m in
-              user.collaboration_memberships if include_service(service, m)]
+    groups = [
+        {
+            "short_name": m.collaboration.short_name,
+            "name": m.collaboration.name,
+            "id": m.collaboration.identifier
+        } for m in user.collaboration_memberships if include_service(service, m)
+    ]
     sorted_groups = sorted(groups, key=lambda group: group["name"].lower())
     return {"result": "SUCCESS",
             "username": user.username,
             "groups": sorted_groups,
             "info": f"User {user.uid} has authenticated successfully"}
+
+
+@pam_websso_api.route("/status/success/<session_id>", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def success_by_session_id(session_id):
+    pam_sso_session = PamSSOSession.query.filter(PamSSOSession.session_id == session_id).first()
+    return False if pam_sso_session else True, 200
 
 
 # This is the challenge URL
@@ -138,19 +151,29 @@ def start():
     logger.debug(f"PamWebSSO user {user.uid if user else None} new session")
     url = f"{current_app.app_config.base_url}/weblogin/{service.abbreviation}/{pam_sso_session.session_id}"
 
-    qr = qrcode.QRCode()
+    qr = qrcode.QRCode(border=1)
     qr.add_data(url)
 
+    # ASCII QRCode
     f = io.StringIO()
     qr.print_ascii(out=f, invert=True)
     f.seek(0)
+    qr_code_ascii = f.read()
 
-    qr_code = f.read()
+    # Base64 PNG QRCode
+    png = io.BytesIO()
+    qr.make_image().save(png, format="PNG")
+    qr_code_png = base64.b64encode(png.getvalue()).decode()
 
-    return {"result": "OK",
-            "session_id": pam_sso_session.session_id,
-            "challenge": f"Please sign in to: {url}\n{qr_code}",
-            "cached": False}, 201
+    return {
+        "result": "OK",
+        "cached": False,
+        "session_id": pam_sso_session.session_id,
+        "challenge": f"{qr_code_ascii}\nGet a verification code via: {url}\n(or scan the QR code)",
+        "url": f"{url}",
+        "qr_code_ascii": f"{qr_code_ascii}",
+        "qr_code_png": f"{qr_code_png}"
+    }, 201
 
 
 @pam_websso_api.route("/check-pin", methods=["POST"], strict_slashes=False)

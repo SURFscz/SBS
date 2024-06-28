@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision d3dab70506fe (head)
+-- Dump of empty SBS database, alembic revision 02350ca4274c (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('d3dab70506fe');
+INSERT INTO `alembic_version` VALUES ('02350ca4274c');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_keys`;
@@ -253,6 +253,21 @@ UNLOCK TABLES;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 /*!50003 CREATE*/ /*!50017 DEFINER=`sbs`@`%`*/ /*!50003 TRIGGER collaboration_organisation_id_tags        BEFORE INSERT ON collaboration_tags FOR EACH ROW        BEGIN            IF (SELECT c.organisation_id FROM collaborations c WHERE c.id = NEW.collaboration_id)             <>            (SELECT t.organisation_id FROM `tags` t WHERE t.id = NEW.tag_id)            THEN                SIGNAL SQLSTATE '45000'                SET MESSAGE_TEXT = 'The collaboration must be part of the organisation';            END IF ;        END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`sbs`@`%`*/ /*!50003 TRIGGER collaboration_organisation_id_tags_before_update        BEFORE UPDATE ON collaboration_tags FOR EACH ROW        BEGIN            IF (SELECT c.organisation_id FROM collaborations c WHERE c.id = NEW.collaboration_id)             <>            (SELECT t.organisation_id FROM `tags` t WHERE t.id = NEW.tag_id)            THEN                SIGNAL SQLSTATE '45000'                SET MESSAGE_TEXT = 'The collaboration must be part of the organisation';            END IF ;        END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -556,6 +571,7 @@ CREATE TABLE `organisations` (
   `uuid4` varchar(255) NOT NULL,
   `service_connection_requires_approval` tinyint(1) DEFAULT '0',
   `accepted_user_policy` varchar(255) DEFAULT NULL,
+  `crm_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `organisations_unique_name` (`name`),
   UNIQUE KEY `organisations_uuid4` (`uuid4`),
@@ -790,6 +806,8 @@ CREATE TABLE `service_requests` (
   `status` varchar(255) DEFAULT NULL,
   `uuid4` varchar(255) NOT NULL,
   `rejection_reason` text,
+  `grants` text,
+  `is_public_client` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `service_requests_uuid4` (`uuid4`),
   KEY `requester_id` (`requester_id`),
@@ -868,6 +886,15 @@ CREATE TABLE `services` (
   `connection_setting` varchar(255) DEFAULT NULL,
   `override_access_allowed_all_connections` tinyint(1) DEFAULT '0',
   `ldap_identifier` varchar(255) NOT NULL,
+  `redirect_urls` text,
+  `saml_metadata` text,
+  `saml_metadata_url` varchar(255) DEFAULT NULL,
+  `oidc_client_secret` varchar(255) DEFAULT NULL,
+  `providing_organisation` varchar(255) DEFAULT NULL,
+  `grants` text,
+  `is_public_client` tinyint(1) DEFAULT '0',
+  `saml_enabled` tinyint(1) DEFAULT '0',
+  `oidc_enabled` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `services_unique_entity_id` (`entity_id`),
   UNIQUE KEY `services_uuid4` (`uuid4`),

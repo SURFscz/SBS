@@ -138,8 +138,8 @@ const nl = {
         invalidInput: "Ongeldig{{name}}",
         attributes: {
             email: " e-mailadres",
-            uri: "een URL (begin met bijvoorbeeld 'https://')",
-            contact: "contact (een e-mailadres of een URL)"
+            uri: "e URL (begin met bijvoorbeeld 'https://')",
+            contact: " contact (een e-mailadres of een URL)"
         },
         back: "Terug",
         reset: "Herstel",
@@ -811,7 +811,7 @@ const nl = {
         websiteUrlPlaceholder: "De URL van de website is zichtbaar voor leden",
         currentUserAdmin: "Maak mijzelf beheerder van deze samenwerking",
         currentUserAdminTooltip: "Indien aangevinkt wordt je toegevoegd als beheerder van de samenwerking",
-        message: "Bericht",
+        message: "Optioneel bericht",
         messagePlaceholder: "Persoonlijk bericht aan de beheerders",
         messageTooltip: "De tekst nemen we op in de  e-mail aan de beheerders.",
         motivation: "Motivatie",
@@ -833,11 +833,11 @@ const nl = {
         administrators: "Beheerders",
         administratorsPlaceholder: "Nodig beheerders uit per e-mail",
         administratorsTooltip: "Beheerders van een samenwerking kunnen de samenwerking aanpassen en leden uitnodigen. Voer e-mailadressen in, gescheiden door een komma, spatie of punt-komma, of druk enter na elk adres.",
-        members: "Gewone gebruikers",
+        members: "Leden",
         selectRole: "Selecteer een rol.",
         manager: "Manager",
         admin: "Beheerder",
-        member: "Gewone gebruiker",
+        member: "Lid",
         status: {
             name: "Status",
             active: "Actief",
@@ -1018,15 +1018,15 @@ const nl = {
         allowedOrganisationsTooltip: "Als er een organisatie wordt toegevoegd dan zijn alle andere organisaties automatisch uitgesloten van het gebruik van deze dienst. Als deze dienst door alle samenwerkingen mag worden gebruikt voeg dan geen organisaties toe.",
         contact_email: "Administratief e-mailadres",
         contact_emailPlaceholder: "Het administratieve e-mailadres van de contactpersoon van deze dienst",
-        contact_emailTooltip: "Dit e-mailadres wordt gebruikt om met de contactpersoon van de dienst te communiceren. Idealiter is dit een functioneel e-mailadres, zoals dienst_A_support@sp.org.",
+        contact_emailTooltip: "Dit e-mailadres wordt gebruikt om met de contactpersoon van de dienst te communiceren. Idealiter is dit een functioneel e-mailadres, zoals dienst_A_support@service.example.com.",
         contactEmailRequired: "Een administratief e-mailadres is verplicht als er geen dienstbeheerders zijn",
         security_email: "Security e-mailadres",
         security_emailPlaceholder: "Het e-mailadres van de security-contactpersoon",
-        security_emailTooltip: "Het security e-mailadres wordt gecontacteerd als er security-vragen zijn. Idealiter is dit een functioneel e-mailadres, zoals dienst_A_security@sp.org.",
+        security_emailTooltip: "Het security e-mailadres wordt gecontacteerd als er security-vragen zijn. Idealiter is dit een functioneel e-mailadres, zoals dienst_A_security@service.example.com.",
         securityEmailRequired: "Security e-mailadres is verplicht",
         support_email: "Helpdesk voor eindgebruikers",
         support_emailPlaceholder: "Het e-mailadres of de website van de helpdesk voor deze dienst",
-        support_emailTooltip: "Het support e-mailadres wordt gecontacteerd als er functionale vragen zijn over deze dienst. Idealiter is dit een functioneel e-mailadres, zoals dienst_A_support@sp.org.",
+        support_emailTooltip: "Het support e-mailadres wordt gecontacteerd als er functionale vragen zijn over deze dienst. Idealiter is dit een functioneel e-mailadres, zoals dienst_A_support@service.example.com.",
         invitations: "Nodig dienstbeheerders uit",
         status: {
             name: "Status",
@@ -1077,7 +1077,7 @@ const nl = {
             basedn: "Base DN",
             basednTooltip: "De base DN van de LDAP-server van het platform",
             ldapClient: "LDAP client",
-            ldapEnabledTooltip: "Mag deze dienst de SRAM LDAP server bevragen?",
+            ldapEnabledTooltip: "Deze dienst mag de SRAM LDAP server bevragen",
             ldapDisclaimer: "LDAP is uitgeschakeld",
         },
         aup: {
@@ -1132,7 +1132,7 @@ const nl = {
         samlMetadataUpload: "Upload SAML metadata",
         noneInfo: "Andere protocollen kunnen later worden toegevoegd",
         commentsTooltip: "Je opmerkingen aan de beheerders die je aanvraag behandelen",
-        comments: "Je motivatie",
+        comments: "Optionele opmerkingen",
         commentsPlaceholder: "Opmerkingen",
         commentsHeader: "Opmerkingen over dit verzoek",
         commentsAttribute: "motivatie",
@@ -1165,6 +1165,18 @@ const nl = {
             response: "Antwoord van het SCIM endpoint:",
             saveBeforeTest: "Wijzigen dienst",
             saveBeforeTestQuestion: "Je hebt wijzigingen gemaakt in de SCIM configuratie. Wil je deze wijzigingen eerst opslaan voordat je de SCIM connectie gaat testen?"
+        },
+        openIDConnectGrants: "OpenID Connect grants",
+        openIDConnectGrantsPlaceholder: "Choose grant(s)",
+        openIDConnectGrantsTooltip: "Grant types are the way to specify how a Relying Party will interact with the OIDC server",
+        isPublicClient: "Public client",
+        isPublicClientTooltip: "Public clients are not required to authenticate, but must use the Proof key for Code Exchange (PKCE) authorisation",
+        grants: {
+            authorization_code: "Authorization code",
+            implicit: "Implicit (deprecated)",
+            refresh_token: "Refresh token",
+            client_credentials: "Client credentials",
+            device_code: "Device code"
         }
     },
     organisation: {
@@ -1199,6 +1211,8 @@ const nl = {
         serviceConnectionRequiresApprovalTooltip: "Indien geselecteerd, dan moet een verzoek voor een dienst koppeling eerst worden goedgekeurd door de organisatie beheerder",
         accepted_user_policyPlaceholder: "De acceptable use policy (AUP) van de organisatie.",
         accepted_user_policyTooltip: "Gebruikers van buiten de organsatie moeten deze AUP accepteren wanneer ze voor het eerste lid worden van een samenwerking van deze organisatie.",
+        crmId: "CRM ID",
+        crmIdPlaceholder: "CRM identifier, e.g. A80A11E8-1998-4206-9F83-24ECA6336615",
         collaborationCreationLabel: "Gebruikers van deze domeinen",
         collaborationCreationIsAllowed: "Kunnen samenwerkingen aanmaken",
         collaborationCreationNotAllowed: "Kunnen samenwerkingen aanvragen",
@@ -1207,7 +1221,7 @@ const nl = {
         invalidSchacHome: "{{schac}} is niet een valide domein naam",
         duplicateSchacHome: "Organisatie domein namen moeten uniek zijn",
         created: "Aangemaakt op",
-        message: "Bericht",
+        message: "Optioneel bericht",
         messagePlaceholder: "Bericht voor de beheerders",
         messageTooltip: "Deze tekst voegen we in de e-mail toe waarmee we de beheerders uitnodigen.",
         alreadyExists: "Er bestaat al een organisatie met {{attribute}} {{value}}.",
@@ -1445,7 +1459,7 @@ const nl = {
         existingInvitations: "Er zijn al bestaande uitnodigingen voor: {{emails}}",
         requiredRole: "Je moet een rol kiezen voor het uit te nodigen lid.",
         requiredExpiryDate: "De geldigheidsdatum van de uitnodiging is verplicht",
-        message: "Bericht",
+        message: "Optioneel bericht",
         messagePlaceholder: "Bericht aan de beheerders",
         messageTooltip: "De boodschap nemen we op in de e-mail waarmee beheerders worden uitgenodigd.",
         inviteesMessagesTooltip: "Voer e-mailadressen in, gescheiden door een komma, spatie of puntkomma of voer ze stuk voor stuk in met een enter. Je kunt ook een csv-bestand plakken met daarin regelgescheiden e-mailadressen.",
@@ -1665,6 +1679,7 @@ const nl = {
             info: "Je staat op het punt om in te loggen op <strong>{{name}}</strong>. Voordat je verder kunt gaan, moet je het beleid voor acceptabel gebruik (AUP) en het privacyverklaring van de service lezen. Bevestig hieronder of je ze accepteert.",
             noPrivacyPolicy: "Geen privacyverklaring verstrekt",
             noAup: "Geen AUP verstrekt",
+            noContact: "Geen contact verstrekt",
             agreeWithTerms: "Ik verklaar dat ik deze voorwaarden heb gelezen en accepteer",
             firstLogin: "Inloggen. Daarna kom je hier terug om de voorwaarden van {{name}} te bekijken.",
             login: "Inloggen",
@@ -2293,9 +2308,9 @@ const nl = {
         actionTitle: "Nieuwe API-token",
         tokens: "Tokens",
         tokenEnabled: "Gebruikertoken introspectie",
-        tokenEnabledTooltip: "Mag deze dienst het introspection endpoint aanroepen om gebruikersinformatie te ontvangen?",
+        tokenEnabledTooltip: "Deze dienst mag het introspection endpoint aanroepen om gebruikersinformatie te ontvangen",
         pamWebSSOEnabled: "PAM web login",
-        pamWebSSOEnabledTooltip: "Mag deze dienst de PAM web login endpoints aanroepen om een gebruiker in te loggen op een op een terminalgebaseerde app (bijvoorbeeld een SSH-client)?",
+        pamWebSSOEnabledTooltip: "Deze dienst mag de PAM web login endpoints aanroepen om een gebruiker in te loggen op een op een terminalgebaseerde app (bijvoorbeeld een SSH-client)",
         tokenValue: "One-way gehashte token",
         tokenValidityDays: "Geldigheidsduur gebruikertoken (dagen)",
         tokenValidityDaysTooltip: "Het aantal dagen dat de gebruikerstokens geldig zijn",
@@ -2324,7 +2339,10 @@ const nl = {
         proceed: "Inloggen",
         enterPin: "Je verificatiecode",
         enterPinInfo: "Voer de code in op de command line interface van {{service}}.",
-        afterPin: "Na het invoeren van de code kun je dit scherm sluiten.",
+        success: "Helemaal klaar",
+        successInfo: "Je kan dit scherm sluiten.",
+        timeOut: "Je sessie is verlopen",
+        timeOutInfo: " Ga terug naar de service waar je probeert in te loggen en probeer het opnieuw.",
         denied: "Toegang geweigerd",
         deniedInfo: "Helaas heb je geen toegang tot de deze dienst.",
         contact: "Neem contact op met <a href='mailto:{{support}}'>{{support}}</a> voor toegang tot deze dienst."
@@ -2359,7 +2377,7 @@ const nl = {
         toc: {
             general: "Algemeen",
             contacts: "Contact",
-            policy: "Policy & compliance",
+            policy: "Policy",
             ldap: "LDAP",
             tokens: "User introspection tokens",
             pamWebLogin: "PAM web login",
@@ -2519,6 +2537,11 @@ const nl = {
         create: "Nieuwe samenwerking aanmaken",
         viewRequests: "bekijk verzoeken",
         open: "Open"
+    },
+    countDownDialog: {
+        title: "Toegang tot {{name}}",
+        subTitle: "Om toegang te krijgen tot de service {{name}} moet je worden geadministreerd. Dit duurt helaas even, neem een kop ☕️.",
+        info: "Over <span class='counter'>{{counter}}</span> seconden zal je worden doorgestuurd."
     }
 };
 

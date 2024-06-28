@@ -56,6 +56,7 @@ import {SUBSCRIPTION_ID_COOKIE_NAME} from "../utils/SocketIO";
 import MissingAttributes from "./MissingAttributes";
 import CollaborationsOverview from "./CollaborationsOverview";
 import MyRequests from "../components/redesign/MyRequests";
+import Delay from "./Delay";
 
 addIcons();
 
@@ -460,6 +461,10 @@ class App extends React.Component {
                                        currentUser={currentUser}
                                        Component={ServiceAup}
                                        config={config}
+                                       {...props}/>}/>
+
+                            <Route path="/delay"
+                                   render={props => <Delay
                                        {...props}/>}/>
 
                             <Route path="/missing-service-aup"

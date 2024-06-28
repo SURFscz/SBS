@@ -96,6 +96,19 @@ def _get_collaboration_membership(co_identifier, user_uid) -> CollaborationMembe
     return membership
 
 
+def _tag_identifiers(collaboration_id):
+    collaboration = Collaboration.query.filter(Collaboration.id == int(collaboration_id)).one()
+    return [tag.id for tag in collaboration.tags]
+
+
+def _delete_orphan_tags(tag_identifiers):
+    # We delete orphan tags, but need to look them up to prevent Parent instance is not bound to a Session
+    for tag_pk in tag_identifiers:
+        tag = Tag.query.filter(Tag.id == tag_pk).first()
+        if tag and not tag.collaborations:
+            db.session.delete(tag)
+
+
 @collaboration_api.route("/admins/<service_id>", strict_slashes=False)
 @json_endpoint
 def collaboration_admins(service_id):
@@ -164,8 +177,15 @@ def delete_collaboration_api(co_identifier):
     collaboration = confirm_organisation_api_collaboration(co_identifier)
     collaboration_id = collaboration.id
 
+    tag_identifiers = [tag.id for tag in collaboration.tags]
+
     broadcast_collaboration_deleted(collaboration_id)
-    return delete(Collaboration, collaboration_id)
+    res = delete(Collaboration, collaboration_id)
+
+    _delete_orphan_tags(tag_identifiers)
+
+    broadcast_collaboration_deleted(collaboration_id)
+    return res
 
 
 @collaboration_api.route("/v1/<co_identifier>/members", methods=["PUT"], strict_slashes=False)
@@ -467,7 +487,7 @@ def collaboration_invites():
                                 intended_role=intended_role, expiry_date=default_expiry_date(json_dict=data),
                                 membership_expiry_date=membership_expiry_date, created_by=user.uid,
                                 external_identifier=str(uuid.uuid4()))
-        invitation = db.session.merge(invitation)
+        db.session.add(invitation)
         invitation.groups.extend(groups)
         db.session.commit()
         mail_collaboration_invitation({
@@ -786,6 +806,11 @@ def update_collaboration():
 @json_endpoint
 def delete_collaboration(collaboration_id):
     confirm_collaboration_admin(collaboration_id)
+    tag_identifiers = _tag_identifiers(collaboration_id)
 
     broadcast_collaboration_deleted(collaboration_id)
-    return delete(Collaboration, collaboration_id)
+    res = delete(Collaboration, collaboration_id)
+
+    _delete_orphan_tags(tag_identifiers)
+
+    return res
