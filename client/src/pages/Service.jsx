@@ -38,6 +38,7 @@ import RadioButtonGroup from "../components/redesign/RadioButtonGroup";
 import SelectField from "../components/SelectField";
 import UploadButton from "../components/UploadButton";
 import {chipTypeForStatus} from "../utils/UserRole";
+import {SAMLMetaData} from "../components/SAMLMetaData";
 
 const connectionTypes = ["openIDConnect", "saml2URL", "saml2File", "none"];
 
@@ -201,31 +202,7 @@ class Service extends React.Component {
     };
 
     renderSAMLMetaData = parsedSAMLMetaData => {
-        return (
-            <div className="parsed-saml-meta-data first-column">
-                <table>
-                    <thead/>
-                    <tbody>
-                    <tr>
-                        <td className="attribute">{I18n.t("service.samlMetaData.acs_binding")}</td>
-                        <td className="value">{parsedSAMLMetaData.acs_binding || I18n.t("service.samlMetaData.unknown")}</td>
-                    </tr>
-                    <tr>
-                        <td className="attribute">{I18n.t("service.samlMetaData.acs_location")}</td>
-                        <td className="value">{parsedSAMLMetaData.acs_location || I18n.t("service.samlMetaData.unknown")}</td>
-                    </tr>
-                    <tr>
-                        <td className="attribute">{I18n.t("service.samlMetaData.entity_id")}</td>
-                        <td className="value">{parsedSAMLMetaData.entity_id || I18n.t("service.samlMetaData.unknown")}</td>
-                    </tr>
-                    {!isEmpty(parsedSAMLMetaData.organization_name) && <tr>
-                        <td className="attribute">{I18n.t("service.samlMetaData.organization_name")}</td>
-                        <td className="value">{parsedSAMLMetaData.organization_name}</td>
-                    </tr>}
-                    </tbody>
-                </table>
-            </div>
-        );
+        return <SAMLMetaData parsedSAMLMetaData={parsedSAMLMetaData}/>;
     }
 
     validateURI = name => e => {
@@ -236,10 +213,16 @@ class Service extends React.Component {
         if (name === "saml_metadata_url") {
             parseSAMLMetaData(null, uri)
                 .then(metaData => this.setState({
-                    parsedSAMLMetaData: metaData, entity_id: metaData.entity_id, parsedSAMLMetaDataURLError: false
+                    parsedSAMLMetaData: metaData.result,
+                    saml_metadata: metaData.xml,
+                    entity_id: metaData.result.entity_id,
+                    parsedSAMLMetaDataURLError: false
                 }))
                 .catch(() => this.setState({
-                    parsedSAMLMetaData: null, entity_id: null, parsedSAMLMetaDataURLError: true
+                    parsedSAMLMetaData: null,
+                    saml_metadata: null,
+                    entity_id: null,
+                    parsedSAMLMetaDataURLError: true
                 }))
         }
     };
@@ -419,12 +402,7 @@ class Service extends React.Component {
         } else if ((connection_type === "saml2URL" || connection_type === "saml2File") && isEmpty(parsedSAMLMetaData)) {
             validConnectionTypeAttributes = false;
         }
-
-        const result = !inValid && !contactEmailRequired && !invalidIpNetworks && validConnectionTypeAttributes;
-        if (!result) {
-            console.log("debugger")
-        }
-        return result;
+        return !inValid && !contactEmailRequired && !invalidIpNetworks && validConnectionTypeAttributes;
     };
 
     submit = () => {
@@ -491,7 +469,7 @@ class Service extends React.Component {
                         parsedSAMLMetaData: metaData, entity_id: metaData.entity_id, parsedSAMLMetaDataError: false
                     }))
                     .catch(() => this.setState({
-                        parsedSAMLMetaData: null, entity_id: null, parsedSAMLMetaDataError: true
+                        parsedSAMLMetaData: null, entity_id: null, parsedSAMLMetaDataError: true, saml_metadata: null
                     }))
             };
             reader.readAsText(file);

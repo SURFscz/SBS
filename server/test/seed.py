@@ -392,7 +392,7 @@ def seed(db, app_config, skip_seed=False):
                       accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org",
                       scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock",
                       token_enabled=False, token_validity_days=0,
-                      redirect_urls="https://redirect.com/url1,https://redirect.com/url1",
+                      redirect_urls="https://redirect.com/url1,https://redirect.com/url2",
                       saml_metadata=None, saml_metadata_url=None, oidc_client_secret="secret",
                       providing_organisation="SURFconext", grants="authorization_code, refresh_token",
                       is_public_client=True, saml_enabled=False, oidc_enabled=True)

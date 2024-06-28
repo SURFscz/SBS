@@ -6,15 +6,15 @@ import requests
 
 
 def parse_metadata_xml(xml: string):
-    return _do_parse(BytesIO(xml.encode("UTF-8")))
+    return _do_parse(BytesIO(xml.encode("UTF-8")), xml)
 
 
 def parse_metadata_url(metadata_url):
-    response = requests.get(metadata_url)
-    return _do_parse(BytesIO(response.text.encode("UTF-8")))
+    raw_xml = requests.get(metadata_url).text
+    return _do_parse(BytesIO(raw_xml.encode("UTF-8")), raw_xml)
 
 
-def _do_parse(xml: string):
+def _do_parse(xml: BytesIO, raw_xml: str):
     result = {}
     for event, element in ET.iterparse(xml, events=("start", "end")):
         if "}" in element.tag:
@@ -34,4 +34,4 @@ def _do_parse(xml: string):
             lang = {**stripped_attribs, **element.attrib}.get("lang")
             if lang == "en":
                 result["organization_name"] = element.text
-    return result
+    return {"result": result, "xml": raw_xml}
