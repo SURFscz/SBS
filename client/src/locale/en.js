@@ -1086,6 +1086,9 @@ const en = {
             confirmation: "Resetting the AUP will require all user of this service '{{name}}' to accept its AUP again. Do you want that?",
             flash: "Acceptance of the AUP for service {{name}} has been reset for all users"
         },
+        pamWebSSO: {
+            pamWebSSODisclaimer: "PAM web login is disabled"
+        },
         contacts: "Contacts",
         leave: "Leave service",
         confirmation: {
@@ -1207,9 +1210,19 @@ const en = {
             close: "Close",
             section: "OIDC settings",
             sectionTooltip: "The settings of the OIDC properties to enable OIDC login with this service.",
-            oidcClient: "OIDC client",
+            oidcClient: "OIDC protocol",
             oidcEnabledTooltip: "Allow this service to login with the OIDC protocol",
-            oidcDisclaimer: "OIDC is disabled",
+            oidcDisclaimer: "OIDC protocol is disabled",
+            oidcDisabledExclusivity: "OIDC protocol can not be enabled, because the SAML protocol is active"
+        },
+        saml: {
+            section: "SAML settings",
+            sectionTooltip: "The SAML protocol settings to enable SAML login with this service.",
+            samlClient: "SAML protocol",
+            samlEnabledTooltip: "Allow this service to login with the SAML protocol",
+            samlDisclaimer: "SAML protocol is disabled",
+            samlError: "Eitehr the SAML metadata URL or a SAML metadata file are required",
+            samlDisabledExclusivity: "SAML protocol can not be enabled, because the OIDC protocol is active"
         }
     },
     organisation: {
@@ -2322,8 +2335,10 @@ const en = {
     },
     scim: {
         scimEnabled: "SCIM server provisioning",
+        scimDisclaimer: "SCIM server is disabled",
         scimEnabledTooltip: "Send this service SCIM messages",
         scimClientEnabled: "SCIM client",
+        scimClientDisclaimer: "SCIM client is disabled",
         scimClientEnabledTooltip: "Allow this service to call the SCIM endpoints",
         scimURL: "SCIM endpoint base URL",
         scimURLPlaceHolder: "https://service.com.scim",
@@ -2342,6 +2357,7 @@ const en = {
         tokens: "Tokens",
         tokenEnabled: "User token introspection",
         tokenEnabledTooltip: "Allow this service to call the introspection endpoint to receive user information",
+        userTokenDisclaimer: "User token introspection is disabled",
         pamWebSSOEnabled: "PAM web login",
         pamWebSSOEnabledTooltip: "Allow this service to call the PAM web login endpoints to log in an user on a terminal-based app (e.g., an SSH client)",
         tokenValue: "One-way hashed token",

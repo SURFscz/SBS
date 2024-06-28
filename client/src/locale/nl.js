@@ -1086,6 +1086,9 @@ const nl = {
             confirmation: "Resetten zorgt ervoor dat alle gebruikers van deze dienst '{{name}}' de AUP opnieuw moeten accepteren. Wil je dat?",
             flash: "De acceptatie van de AUP voor dienst {{name}} is gereset voor alle gebruikers"
         },
+        pamWebSSO: {
+            pamWebSSODisclaimer: "PAM web login is uitgeschakeld"
+        },
         contacts: "Contact",
         leave: "Verlaat dienst",
         confirmation: {
@@ -1206,10 +1209,20 @@ const nl = {
             copy: "Kopieer",
             close: "Sluit",
             section: "OIDC configuratie",
-            sectionTooltip: "De configuratie van de OIDC configuratie om OIDC login met deze in te schakelen.",
+            sectionTooltip: "De configuratie van de OIDC configuratie om OIDC login met deze service in te schakelen.",
             oidcClient: "OIDC client",
             oidcEnabledTooltip: "Configureer deze service in te loggen met het OIDC protocol",
-            oidcDisclaimer: "OIDC is uitgeschakeld",
+            oidcDisclaimer: "OIDC protocol is uitgeschakeld",
+            oidcDisabledExclusivity: "OIDC protocol kan niet worden aangezet, omdat het SAML protocol actief is"
+        },
+        saml: {
+            section: "SAML configuratie",
+            sectionTooltip: "De SAML protocol configuratie om SAML login in te schakelen voor deze dienst.",
+            samlClient: "SAML protocol",
+            samlEnabledTooltip: "Configureer deze service in te loggen met het SAML protocol",
+            samlDisclaimer: "SAML protocol is uitgeschakeld",
+            samlError: "Of de SAML metadata URL of een SAML metadata bestand zijn verplicht",
+            samlDisabledExclusivity: "SAML protocol kan niet worden aangezet, omdat het OIDC protocol actief is"
         }
     },
     organisation: {
@@ -2322,8 +2335,10 @@ const nl = {
     },
     scim: {
         scimEnabled: "SCIM server provisioning",
+        scimDisclaimer: "SCIM server is uitgeschakeld",
         scimEnabledTooltip: "Sta deze service toe om SCIM-berichten te ontvangen?",
         scimClientEnabled: "SCIM client",
+        scimClientDisclaimer: "SCIM client is uitgeschakeld",
         scimClientEnabledTooltip: "Sta deze service toe om de SCIM-eindpunten aan te roepen?",
         scimURL: "SCIM-endpoints base URL",
         scimURLPlaceHolder: "https://service.com.scim",
@@ -2342,6 +2357,7 @@ const nl = {
         tokens: "Tokens",
         tokenEnabled: "Gebruikertoken introspectie",
         tokenEnabledTooltip: "Deze dienst mag het introspection endpoint aanroepen om gebruikersinformatie te ontvangen",
+        userTokenDisclaimer: "User token introspection is uitgeschakeld",
         pamWebSSOEnabled: "PAM web login",
         pamWebSSOEnabledTooltip: "Deze dienst mag de PAM web login endpoints aanroepen om een gebruiker in te loggen op een op een terminalgebaseerde app (bijvoorbeeld een SSH-client)",
         tokenValue: "One-way gehashte token",
