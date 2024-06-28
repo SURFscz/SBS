@@ -443,6 +443,7 @@ class Organisation(Base, db.Model, LogoMixin):
     services_restricted = db.Column("services_restricted", db.Boolean(), nullable=True, default=False)
     service_connection_requires_approval = db.Column("service_connection_requires_approval", db.Boolean(),
                                                      nullable=True, default=False)
+    crm_id = db.Column("crm_id", db.String(length=255), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
@@ -582,6 +583,15 @@ class Service(Base, db.Model, LogoMixin, SecretMixin):
     sweep_remove_orphans = db.Column("sweep_remove_orphans", db.Boolean(), nullable=True, default=False)
     sweep_scim_daily_rate = db.Column("sweep_scim_daily_rate", db.Integer(), nullable=True, default=0)
     sweep_scim_last_run = db.Column("sweep_scim_last_run", TZDateTime(), nullable=True)
+    redirect_urls = db.Column("redirect_urls", db.Text(), nullable=True)
+    saml_metadata = db.Column("saml_metadata", db.Text(), nullable=True)
+    saml_metadata_url = db.Column("saml_metadata_url", db.String(length=255), nullable=True)
+    oidc_client_secret = db.Column("oidc_client_secret", db.String(length=255), nullable=True)
+    providing_organisation = db.Column("providing_organisation", db.String(length=255), nullable=True)
+    grants = db.Column("grants", db.Text(), nullable=True)
+    is_public_client = db.Column("is_public_client", db.Boolean(), nullable=True, default=False)
+    saml_enabled = db.Column("saml_enabled", db.Boolean(), nullable=True, default=False)
+    oidc_enabled = db.Column("oidc_enabled", db.Boolean(), nullable=True, default=False)
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
     created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
@@ -612,6 +622,8 @@ class ServiceRequest(Base, db.Model, LogoMixin):
     comments = db.Column("comments", db.Text(), nullable=True)
     connection_type = db.Column("connection_type", db.String(length=255), nullable=True)
     redirect_urls = db.Column("redirect_urls", db.Text(), nullable=True)
+    grants = db.Column("grants", db.Text(), nullable=True)
+    is_public_client = db.Column("is_public_client", db.Boolean(), nullable=True, default=False)
     saml_metadata = db.Column("saml_metadata", db.Text(), nullable=True)
     saml_metadata_url = db.Column("saml_metadata_url", db.String(length=255), nullable=True)
     requester_id = db.Column(db.Integer(), db.ForeignKey("users.id"))

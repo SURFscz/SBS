@@ -5,6 +5,7 @@ from werkzeug.exceptions import TooManyRequests
 
 from server.db.db import db
 from server.db.domain import User
+from server.mail import mail_error
 from server.tools import dt_now
 
 
@@ -14,7 +15,10 @@ def check_rate_limit(user):
         db.session.merge(user)
         db.session.commit()
         session.clear()
-        raise TooManyRequests(f"Suspended user {user.name} for rate limiting TOTP")
+        mail_conf = current_app.app_config.mail
+        tb = f"TOTP rate limit reached, user suspended: name={user.name}, uid={user.uid}, email={user.email}"
+        mail_error(mail_conf.environment, user.id, mail_conf.send_exceptions_recipients, tb)
+        raise TooManyRequests(f"Suspended user {user.name}, uid={user.uid}, email={user.email} for rate limiting TOTP")
 
 
 def rate_limit_reached(user: User):

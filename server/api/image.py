@@ -15,5 +15,5 @@ def get_logo(object_type, sid):
     res = send_file(io.BytesIO(decoded_logo), mimetype='image/jpeg')
     res.headers.add('Access-Control-Allow-Origin', '*')
     res.cache_control.clear()
-    res.cache_control.max_age = 1209600
+    res.cache_control.max_age = 31536000
     return res

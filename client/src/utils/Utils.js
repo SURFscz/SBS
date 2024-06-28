@@ -134,3 +134,35 @@ export const statusCustomSort = (o1, o2, reverse) => {
     return reverse ? comparison * -1 : comparison;
 };
 
+export const userColumnsCustomSort = (o1, o2, reverse) => {
+    let comparison;
+    if (o1.invite && !o2.invite) {
+        comparison = 1;
+    } else if (!o1.invite && o2.invite) {
+        comparison = -1;
+    } else if (o1.invite && o2.invite) {
+        comparison = o1.invitee_email.localeCompare(o2.invitee_email);
+    } else if (!o1.invite && !o2.invite) {
+        comparison = (o1.user || {name: ""}).name.localeCompare((o2.user || {name: ""}).name);
+    }
+    return reverse ? comparison * -1 : comparison;
+
+}
+
+export const expiryDateCustomSort = (o1, o2, reverse) => {
+    let comparison;
+    if (o1.invite && !o2.invite) {
+        comparison = 1;
+    } else if (!o1.invite && o2.invite) {
+        comparison = -1;
+    } else if (o1.invite && o2.invite) {
+        comparison = (o1.expiry_date || 0) - (o2.expiry_date || 0);
+    } else if (!o1.invite && !o2.invite && o1.organisation_id && o2.organisation_id) {
+        comparison = 0;
+    } else if (!o1.invite && !o2.invite) {
+        comparison = (o1.expiry_date || 0) - (o2.expiry_date || 0);
+    }
+    return reverse ? comparison * -1 : comparison;
+
+}
+

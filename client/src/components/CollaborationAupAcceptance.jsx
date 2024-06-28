@@ -31,7 +31,7 @@ export default function CollaborationAupAcceptance({
                             <div className="service">
                                 <span className="service-name">{service.name}</span>
                                 <div className="policies">
-                                    <div className="border-right">
+                                    <div className="policy">
                                         {service.accepted_user_policy ?
                                             <a href={service.accepted_user_policy}
                                                rel="noopener noreferrer"
@@ -39,7 +39,7 @@ export default function CollaborationAupAcceptance({
                                             <span className="no-link">{I18n.t("aup.service.noAup")}</span>
                                         }
                                     </div>
-                                    <div className="border-right">
+                                    <div className="policy">
                                         {service.privacy_policy ?
                                             <a href={service.privacy_policy}
                                                rel="noopener noreferrer"
@@ -47,11 +47,11 @@ export default function CollaborationAupAcceptance({
                                             <span className="no-link">{I18n.t("aup.service.noPrivacyPolicy")}</span>
                                         }
                                     </div>
-                                    <div className="contact">
-                                        {mails && <a href={`mailto:${mails}`} rel="noopener noreferrer">
+                                    <div className="policy contact">
+                                        {mails ? <a href={`mailto:${mails}`} rel="noopener noreferrer">
                                             <FontAwesomeIcon
                                                 icon="envelope"/><span>{I18n.t("aup.service.contact")}</span>
-                                        </a>}
+                                        </a> : <span className="no-link">{I18n.t("aup.service.noContact")}</span>}
                                     </div>
                                 </div>
                             </div>

@@ -330,6 +330,23 @@ class TestUser(AbstractTest):
         finally:
             self.app.app_config.mail.send_js_exceptions = False
 
+    def test_error_mail_rate_limit(self):
+        try:
+            self.app.app_config.mail.send_js_exceptions = True
+            self.login("urn:sarah")
+            me = self.get("/api/users/me", with_basic_auth=False)
+            for i in range(1, 10):
+                self.post("/api/users/error",
+                          body={"weird": "msg"},
+                          headers={CSRF_TOKEN: me[CSRF_TOKEN]},
+                          response_status_code=201)
+            self.post("/api/users/error",
+                      body={"weird": "msg"},
+                      headers={CSRF_TOKEN: me[CSRF_TOKEN]},
+                      response_status_code=422)
+        finally:
+            self.app.app_config.mail.send_js_exceptions = False
+
     def test_update_date_bug(self):
         roger = self.find_entity_by_name(User, user_roger_name)
         roger_id = roger.id

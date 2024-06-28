@@ -1,7 +1,8 @@
-
 from server.cron.idp_metadata_parser import idp_display_name, idp_schac_home_by_entity_id, parse_idp_metadata
 from server.test.abstract_test import AbstractTest
 from server.cron import idp_metadata_parser
+from sqlalchemy import text
+from sqlalchemy.orm import sessionmaker
 
 
 class TestIdpMetadataParser(AbstractTest):
@@ -42,3 +43,24 @@ class TestIdpMetadataParser(AbstractTest):
 
         self.assertEqual(len(idp_metadata_parser.idp_metadata["schac_home_organizations"]), 4)
         self.assertEqual(len(idp_metadata_parser.idp_metadata["entity_ids"]), 2)
+
+        idp_metadata_parser.idp_metadata = None
+        # Use the cache
+        display_name_nl = idp_display_name("uni-franeker.nl", "nl")
+        self.assertEqual("Universiteit van Franeker", display_name_nl)
+        with self.app.app_context():
+            with sessionmaker(self.app.db.engine).begin() as session:
+                lock_name = idp_metadata_parser.idp_metadata_lock_name
+                try:
+                    result = session.execute(text(f"SELECT GET_LOCK('{lock_name}', 0)"))
+                    lock_obtained = next(result, (0,))[0]
+                    self.assertTrue(bool(lock_obtained))
+                    # Now we have the lock, and we assert the idp_metadata_parser.idp_metadata is reset
+                    result = parse_idp_metadata(self.app)
+                    self.assertIsNone(result)
+                    self.assertIsNone(idp_metadata_parser.idp_metadata)
+
+                    display_name_nl = idp_display_name("uni-franeker.nl", "nl")
+                    self.assertEqual("Universiteit van Franeker", display_name_nl)
+                finally:
+                    session.execute(text(f"SELECT RELEASE_LOCK('{lock_name}')"))

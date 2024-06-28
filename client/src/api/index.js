@@ -1050,7 +1050,11 @@ export function tagsByOrganisation(organisationId) {
 
 //pam-weblogin
 export function pamWebSSOSession(serviceAbbreviation, sessionId) {
-    return fetchJson(`/pam-weblogin/${serviceAbbreviation}/${sessionId}`, {}, {}, false)
+    return fetchJson(`/pam-weblogin/${serviceAbbreviation}/${sessionId}`, {}, {}, false);
+}
+
+export function pollPamWebSSO(sessionId) {
+    return fetchJson(`/pam-weblogin/status/success/${sessionId}`, {}, {}, false);
 }
 
 //ServiceTokens

@@ -38,6 +38,7 @@ def _do_suspend_collaboration(app):
             .filter(Collaboration.last_activity_date < notification_end_date).all()  # noqa: E712
 
         for coll in collaborations_warned:
+            logger.info(f"Sending suspension warning for CO {coll.global_urn} ({coll.name})")
             mail_collaboration_suspension_notification(coll, True)
 
         threshold_for_deletion = cfq.collaboration_inactivity_days_threshold + cfq.collaboration_deletion_days_threshold
@@ -46,6 +47,7 @@ def _do_suspend_collaboration(app):
             .filter(Collaboration.status == STATUS_SUSPENDED) \
             .filter(Collaboration.last_activity_date < deletion_date).all()  # noqa: E712
         for coll in collaborations_deleted:
+            logger.info(f"Deleting suspensed CO {coll.global_urn} ({coll.name})")
             db.session.delete(coll)
 
         suspension_end_date = now - datetime.timedelta(days=cfq.collaboration_inactivity_days_threshold - 1)
@@ -53,6 +55,7 @@ def _do_suspend_collaboration(app):
             .filter(Collaboration.status == STATUS_ACTIVE) \
             .filter(Collaboration.last_activity_date < suspension_end_date).all()  # noqa: E712
         for coll in collaborations_suspended:
+            logger.info(f"Sending suspension notification for CO {coll.global_urn} ({coll.name})")
             mail_collaboration_suspension_notification(coll, False)
             coll.status = STATUS_SUSPENDED
             # Need to mark this field dirty otherwise the DB default kicks in

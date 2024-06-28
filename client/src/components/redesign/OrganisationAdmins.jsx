@@ -29,7 +29,7 @@ import SpinnerField from "./SpinnerField";
 import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
 import {Chip, ChipType, Tooltip} from "@surfnet/sds";
 import InstituteColumn from "./InstituteColumn";
-import {isEmpty, stopEvent} from "../../utils/Utils";
+import {expiryDateCustomSort, isEmpty, stopEvent, userColumnsCustomSort} from "../../utils/Utils";
 import {emitImpersonation} from "../../utils/Impersonation";
 import SelectField from "../SelectField";
 import {InvitationsUnits} from "../InvitationsUnits";
@@ -543,8 +543,9 @@ class OrganisationAdmins extends React.Component {
                 </div>
             },
             {
-                nonSortable: true,
+                nonSortable: false,
                 key: "name",
+                customSort: userColumnsCustomSort,
                 header: I18n.t("models.users.name_email"),
                 mapper: entity => <UserColumn entity={entity} currentUser={currentUser}/>
             },
@@ -572,7 +573,7 @@ class OrganisationAdmins extends React.Component {
                 mapper: entity => this.renderSelectRole(entity, isAdmin, oneAdminLeft, noMoreAdminsToCheck, selectedMembers)
             },
             {
-                nonSortable: true,
+                customSort: expiryDateCustomSort,
                 key: "status",
                 header: I18n.t("models.orgMembers.status"),
                 mapper: entity => {

@@ -26,6 +26,18 @@ class TestServiceMembership(AbstractTest):
         self.delete("/api/service_memberships", primary_key=f"{service.id}/{user.id}", with_basic_auth=False,
                     response_status_code=403)
 
+    def test_delete_own_service_membership_by_manager(self):
+        service_id = self.find_entity_by_name(Service, service_cloud_name).id
+        user_id = self.find_entity_by_name(User, "betty").id
+
+        self.login("urn:betty")
+        self.delete("/api/service_memberships", primary_key=f"{service_id}/{user_id}", with_basic_auth=False)
+        membership = ServiceMembership.query \
+            .filter(ServiceMembership.service_id == service_id) \
+            .filter(ServiceMembership.user_id == user_id) \
+            .first()
+        self.assertIsNone(membership)
+
     def test_create_service_membership(self):
         self.login("urn:john")
         service = self.find_entity_by_name(Service, service_cloud_name)

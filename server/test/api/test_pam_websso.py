@@ -32,6 +32,14 @@ class TestPamWebSSO(AbstractTest):
         # Second time is not allowed
         self.get(f"/pam-weblogin/storage/{pam_session_id}", with_basic_auth=False, response_status_code=403)
 
+    def test_get_status(self):
+        self.login("urn:peter")
+        res = self.get(f"/pam-weblogin/status/success/{pam_session_id}", with_basic_auth=False)
+        self.assertFalse(res)
+        PamSSOSession.query.filter(PamSSOSession.session_id == pam_session_id).delete()
+        res = self.get(f"/pam-weblogin/status/success/{pam_session_id}", with_basic_auth=False)
+        self.assertTrue(res)
+
     def test_get_session_different_user(self):
         self.login("urn:sarah")
         res = self.get(f"/pam-weblogin/storage/{pam_session_id}", with_basic_auth=False)
@@ -56,8 +64,8 @@ class TestPamWebSSO(AbstractTest):
 
         self.assertEqual(res["result"], "OK")
         self.assertEqual(res["cached"], False)
-        prefix = f"Please sign in to: {self.app.app_config.base_url}/weblogin/storage/{res['session_id']}\n"
-        self.assertTrue(res["challenge"].startswith(prefix))
+        challenge = f"Get a verification code via: {self.app.app_config.base_url}/weblogin/storage/{res['session_id']}"
+        self.assertTrue(challenge in res["challenge"])
 
         res = self.get(f"/pam-weblogin/storage/{res['session_id']}", with_basic_auth=False)
         self.assertEqual(res["service"]["name"], service_storage_name)
@@ -70,8 +78,8 @@ class TestPamWebSSO(AbstractTest):
 
         self.assertEqual(res["result"], "OK")
         self.assertEqual(res["cached"], False)
-        prefix = f"Please sign in to: {self.app.app_config.base_url}/weblogin/storage/{res['session_id']}\n"
-        self.assertTrue(res["challenge"].startswith(prefix))
+        challenge = f"Get a verification code via: {self.app.app_config.base_url}/weblogin/storage/{res['session_id']}"
+        self.assertTrue(challenge in res["challenge"])
 
         res = self.get(f"/pam-weblogin/storage/{res['session_id']}", with_basic_auth=False)
         self.assertEqual(res["service"]["name"], service_storage_name)

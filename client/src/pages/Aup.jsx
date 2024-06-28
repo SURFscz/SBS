@@ -18,9 +18,11 @@ class Aup extends React.Component {
 
     componentDidMount = () => {
         const {currentUser} = this.props;
-        if (currentUser.guest) {
+        if (currentUser.suspended) {
+            this.props.history.push("/");
+        } else if (currentUser.guest) {
             setTimeout(login, 5);
-        } else if (currentUser.user_accepted_aup && 1!=1) {
+        } else if (currentUser.user_accepted_aup) {
             this.props.history.push("/home");
         } else {
             this.setState({loading: false})
@@ -31,11 +33,11 @@ class Aup extends React.Component {
         this.props.refreshUser(() => {
             const url = new URL(res.location);
 
-             /* if the location is a trusted url, redirect to that url,
-              * otherwise only use the local part of the url */
+            /* if the location is a trusted url, redirect to that url,
+             * otherwise only use the local part of the url */
             const urlTrusted = config.continue_eduteams_redirect_uri;
             if (res.location.toLowerCase().startsWith(urlTrusted.toLowerCase())) {
-               window.location.href = res.location;
+                window.location.href = res.location;
             } else {
                 this.props.history.push(url.pathname + url.search);
             }

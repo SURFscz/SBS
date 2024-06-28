@@ -13,6 +13,7 @@ class TestImage(AbstractTest):
         res = self.client.get(f"/api/images/services/{service.uuid4}")
 
         self.assertEqual("*", res.headers["Access-Control-Allow-Origin"])
+        self.assertEqual("max-age=31536000", res.headers["Cache-control"])
         self.assertIsNotNone(res.data)
 
     def test_logo_url(self):

@@ -113,6 +113,7 @@ def service_users():
 @swag_from("../swagger/public/paths/get_user_by_external_id.yml")
 @json_endpoint
 def service_user_by_external_id(user_external_id: str):
+    validate_service_token("scim_client_enabled", SERVICE_TOKEN_SCIM)
     stripped_external_id = user_external_id.replace(EXTERNAL_ID_POST_FIX, "")
     user = User.query.filter(User.external_id == stripped_external_id).one()
     return find_user_by_id_template(user), _add_etag_header(user)
@@ -131,6 +132,7 @@ def service_groups():
 @swag_from("../swagger/public/paths/get_group_by_external_id.yml")
 @json_endpoint
 def service_group_by_identifier(group_external_id: str):
+    validate_service_token("scim_client_enabled", SERVICE_TOKEN_SCIM)
     stripped_group_identifier = group_external_id.replace(EXTERNAL_ID_POST_FIX, "")
     group = Collaboration.query.filter(Collaboration.identifier == stripped_group_identifier).first()
     if not group:
@@ -156,12 +158,12 @@ def sweep():
         results["scim_url"] = service.scim_url
         return results, 201
     except BadRequest as bad_request:
-        logger.warn(f"Error from remote SCIM server for {service.entity_id}: {bad_request.description}")
+        logger.warning(f"Error from remote SCIM server for {service.entity_id}: {bad_request.description}")
         return {"error": f"Error from remote scim server: {bad_request.description}",
                 "scim_url": service.scim_url}, 400
     except requests.RequestException as request_exception:
-        logger.warn(f"Could not connect to remote SCIM server {service.scim_url} for {service.entity_id}:"
-                    f" {type(request_exception).__name__}")
+        logger.warning(f"Could not connect to remote SCIM server {service.scim_url} for {service.entity_id}:"
+                       f" {type(request_exception).__name__}")
         return {"error": f"Could not connect to remote SCIM server ({type(request_exception).__name__})"
                          f"{': ' + request_exception.response.text if request_exception.response else ''}",
                 "scim_url": service.scim_url}, 400

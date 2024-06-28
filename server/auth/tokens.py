@@ -8,6 +8,8 @@ from server.logger.context_logger import ctx_logger
 
 
 def _service_context(service: Service):
+    if not service.scim_url or not service.id:
+        raise BadRequest(f"scim_url and id need to be set for service to encrypt secret: {service}")
     return {"scim_url": service.scim_url, "identifier": service.id, "table_name": "services"}
 
 

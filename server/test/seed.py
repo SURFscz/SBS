@@ -378,7 +378,11 @@ def seed(db, app_config, skip_seed=False):
                     logo=read_image("cloud.png"),
                     allowed_organisations=[uuc, ufra], abbreviation="cloud",
                     token_enabled=True, token_validity_days=1, security_email="sec@org.nl", scim_client_enabled=True,
-                    scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock")
+                    scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock",
+                    redirect_urls=None, saml_metadata=None,
+                    saml_metadata_url="https://engine.test.surfconext.nl/authentication/sp/metadata",
+                    oidc_client_secret=None, providing_organisation="SURFconext", grants=None, is_public_client=False,
+                    saml_enabled=True, oidc_enabled=False)
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, ufra],
                       description="SURF Storage Service", logo=read_image("storage.png"), abbreviation="storage",
                       override_access_allowed_all_connections=False, automatic_connection_allowed=True,
@@ -387,7 +391,11 @@ def seed(db, app_config, skip_seed=False):
                       pam_web_sso_enabled=True, security_email="sec@org.nl",
                       accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org",
                       scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock",
-                      token_enabled=False, token_validity_days=0)
+                      token_enabled=False, token_validity_days=0,
+                      redirect_urls="https://redirect.com/url1,https://redirect.com/url1",
+                      saml_metadata=None, saml_metadata_url=None, oidc_client_secret="secret",
+                      providing_organisation="SURFconext", grants="authorization_code, refresh_token",
+                      is_public_client=True, saml_enabled=False, oidc_enabled=True)
     wiki = Service(entity_id=service_wiki_entity_id, name=service_wiki_name, description="No more wiki's please",
                    uri="https://servicedesk.surf.nl/wiki/",
                    override_access_allowed_all_connections=False, automatic_connection_allowed=False,
@@ -461,7 +469,9 @@ def seed(db, app_config, skip_seed=False):
                               privacy_policy="https://privacy.org", accepted_user_policy="https://example.nl/aup",
                               contact_email="admin@exmaple.nl", security_email="sec@example.nl",
                               ldap_password="$2b$12$GLjC5hK59aeDcEe.tHHJMO.SQQjFgIIpZ7VaKTIsBn05z/gE7JQny",
-                              ldap_enabled=True, scim_enabled=True)
+                              ldap_enabled=True,
+                              scim_url="https://scim-monitor.sram.surf.nl/scim/tst",
+                              scim_client_enabled=True, scim_enabled=True)
     service_monitor.ldap_identifier = service_monitor.entity_id
 
     service_token_monitor_scim = ServiceToken(hashed_token=secure_hash("Axyz_geheim"), description="Monitor token",
@@ -475,9 +485,6 @@ def seed(db, app_config, skip_seed=False):
     encrypted_bearer_token = encrypt_secret(app_config.encryption_key, "server_token",
                                             _service_context(service_monitor))
     service_monitor.scim_bearer_token = encrypted_bearer_token
-    service_monitor.scim_url = "https://scim-monitor.sram.surf.nl/scim/tst",
-    service_monitor.scim_client_enabled = True
-
     persist_instance(db, service_monitor)
 
     service_group_mail = ServiceGroup(name=service_group_mail_name,

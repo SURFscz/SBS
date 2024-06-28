@@ -43,7 +43,7 @@ def _do_orphan_users(app):
         user_uids = []
         if users:
             for user in users:
-                logger.info(f"Deleting orphan user {user.uid} {user.email}")
+                logger.info(f"Deleting orphaned user {user.uid} {user.email}")
                 user_uids.append(user.uid)
                 db.session.delete(user)
             mail_membership_orphan_users_deleted(user_uids)
