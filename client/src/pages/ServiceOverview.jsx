@@ -4,6 +4,7 @@ import {
     deleteService,
     deleteServiceToken,
     ipNetworks,
+    parseSAMLMetaData,
     requestDeleteService,
     resetLdapPassword,
     resetOidcClientSecret,
@@ -52,6 +53,8 @@ import CheckBox from "../components/CheckBox";
 import SelectField from "../components/SelectField";
 import {dateFromEpoch} from "../utils/Date";
 import {isUserServiceAdmin} from "../utils/UserRole";
+import {SAMLMetaData} from "../components/SAMLMetaData";
+import UploadButton from "../components/UploadButton";
 
 const toc = ["general", "contacts", "policy", "SCIMServer", "SCIMClient", "ldap", "pamWebLogin", "tokens", "OIDC", "SAML"];
 
@@ -90,7 +93,10 @@ class ServiceOverview extends React.Component {
             sweepResults: null,
             originalSCIMConfiguration: {},
             scimBearerToken: null,
-            scimTokenChange: false
+            scimTokenChange: false,
+            parsedSAMLMetaData: null,
+            parsedSAMLMetaDataError: false,
+            parsedSAMLMetaDataURLError: false
         }
     }
 
@@ -121,7 +127,7 @@ class ServiceOverview extends React.Component {
                 originalSCIMConfiguration: {scim_bearer_token: service.scim_bearer_token, scim_url: service.scim_url},
                 loading: false
             }, () => {
-                const {ip_networks} = this.state.service;
+                const {ip_networks, saml_enabled, saml_metadata, saml_metadata_url} = this.state.service;
                 if (isEmpty(ip_networks)) {
                     this.addIpAddress();
                 } else {
@@ -130,6 +136,20 @@ class ServiceOverview extends React.Component {
                             const currentService = this.state.service;
                             this.setState({"service": {...currentService, "ip_networks": res}});
                         });
+                }
+                if (saml_enabled && (!isEmpty(saml_metadata) || !isEmpty(saml_metadata_url))) {
+                    parseSAMLMetaData(saml_metadata, saml_metadata_url)
+                        .then(metaData => this.setState({
+                            parsedSAMLMetaData: metaData,
+                            parsedSAMLMetaDataError: false,
+                            parsedSAMLMetaDataURLError: false
+                        }))
+                        .catch(() => this.setState({
+                            parsedSAMLMetaData: null,
+                            parsedSAMLMetaDataError: !isEmpty(saml_metadata_url),
+                            parsedSAMLMetaDataURLError: !isEmpty(saml_metadata)
+                        }))
+
                 }
             });
         })
@@ -371,10 +391,22 @@ class ServiceOverview extends React.Component {
 
     validateURI = (name, acceptPlaceholders = false) => e => {
         const uri = e.target.value;
-        const {invalidInputs} = this.state;
+        const {invalidInputs, service} = this.state;
         const removedPlaceholders = acceptPlaceholders ? uri.toLowerCase().replaceAll(CO_SHORT_NAME, "").replaceAll(SRAM_USERNAME, "") : uri;
         const inValid = !isEmpty(uri) && !validUrlRegExp.test(removedPlaceholders);
         this.setState({invalidInputs: {...invalidInputs, [name]: inValid}});
+        if (name === "saml_metadata_url" && !inValid && !isEmpty(uri)) {
+            parseSAMLMetaData(null, uri)
+                .then(metaData => this.setState({
+                    service: {...service, saml_metadata: metaData.xml},
+                    parsedSAMLMetaData: metaData.result,
+                    parsedSAMLMetaDataURLError: false
+                }))
+                .catch(() => this.setState({
+                    parsedSAMLMetaData: null,
+                    parsedSAMLMetaDataURLError: true
+                }))
+        }
     };
 
     validateIpAddress = index => e => {
@@ -411,6 +443,28 @@ class ServiceOverview extends React.Component {
         ip_networks.splice(index, 1);
         this.setState({...this.state.service, ip_networks: [...ip_networks]});
     }
+
+    onFileUpload = e => {
+        const files = e.target.files;
+        if (!isEmpty(files)) {
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onload = () => {
+                const metaData = reader.result.toString();
+                this.setState({service: {...this.state.service, saml_metadata: metaData}});
+                parseSAMLMetaData(metaData, null)
+                    .then(metaData => this.setState({
+                        parsedSAMLMetaData: metaData,
+                        parsedSAMLMetaDataError: false
+                    }))
+                    .catch(() => this.setState({
+                        parsedSAMLMetaData: null,
+                        parsedSAMLMetaDataError: true
+                    }))
+            };
+            reader.readAsText(file);
+        }
+    };
 
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
 
@@ -495,6 +549,10 @@ class ServiceOverview extends React.Component {
         const valid = !inValid && !contactEmailRequired && !invalidIpNetworks && !validatingNetwork && !scimInvalid;
         return valid;
     };
+
+    renderSAMLMetaData = parsedSAMLMetaData => {
+        return <SAMLMetaData parsedSAMLMetaData={parsedSAMLMetaData}/>;
+    }
 
     doSweep = (service, override) => {
         const {originalSCIMConfiguration} = this.state;
@@ -583,13 +641,13 @@ class ServiceOverview extends React.Component {
             case "pamWebLogin":
                 return true;
             case "OIDC":
-                return initial || (!oidc_enabled || isEmpty(redirect_urls) || isEmpty(grants) || isEmpty(providing_organisation));
+                return !oidc_enabled || (!isEmpty(redirect_urls) && !isEmpty(grants) && !isEmpty(providing_organisation));
             case "SAML":
-                return initial || !saml_enabled || (isEmpty(saml_metadata) && isEmpty(saml_metadata_url));
+                return !saml_enabled || (!isEmpty(saml_metadata) || !isEmpty(saml_metadata_url));
             default:
                 throw new Error(`unknown-tab: ${tab}`);
         }
-    };
+    }
 
     submit = (override, sweepAfterwards = false) => {
         this.setState({initial: false}, () => {
@@ -797,7 +855,9 @@ class ServiceOverview extends React.Component {
                           tooltip={I18n.t("userTokens.pamWebSSOEnabledTooltip")}
                           info={I18n.t("userTokens.pamWebSSOEnabled")}
                 />
-                {this.renderServiceTokens(service, isServiceAdmin, service.pam_web_sso_enabled, tokenType, I18n.t("userTokens.pamWebSSOEnabled"))}
+                {!service.pam_web_sso_enabled && <p>{I18n.t("service.pamWebSSO.pamWebSSODisclaimer")}</p>}
+                {service.pam_web_sso_enabled &&
+                    this.renderServiceTokens(service, isServiceAdmin, service.pam_web_sso_enabled, tokenType, I18n.t("userTokens.pamWebSSOEnabled"))}
             </div>
         )
     }
@@ -806,20 +866,26 @@ class ServiceOverview extends React.Component {
         if (createNewServiceToken) {
             return this.renderNewServiceTokenForm();
         }
-        return (<div className={"scim"}>
-            <CheckBox name={"scim_client_enabled"}
-                      value={service.scim_client_enabled || false}
-                      tooltip={I18n.t("scim.scimClientEnabledTooltip")}
-                      info={I18n.t("scim.scimClientEnabled")}
-                      readOnly={!isAdmin || showServiceAdminView}
-                      onChange={e => this.setState({
-                          "service": {
-                              ...service, scim_client_enabled: e.target.checked
-                          }
-                      })}
-            />
-            {this.renderServiceTokens(service, isServiceAdmin, service.scim_client_enabled, tokenType, I18n.t("scim.scimClientEnabled"))}
-        </div>)
+        return (
+            <div className="scim">
+                <CheckBox name={"scim_client_enabled"}
+                          value={service.scim_client_enabled || false}
+                          tooltip={I18n.t("scim.scimClientEnabledTooltip")}
+                          info={I18n.t("scim.scimClientEnabled")}
+                          readOnly={!isAdmin || showServiceAdminView}
+                          onChange={e => this.setState({
+                              "service": {
+                                  ...service, scim_client_enabled: e.target.checked
+                              }
+                          })}
+                />
+                {!service.scim_client_enabled &&
+                    <p>{I18n.t("scim.scimClientDisclaimer")}</p>
+                }
+                {service.scim_client_enabled &&
+                    this.renderServiceTokens(service, isServiceAdmin, service.scim_client_enabled, tokenType, I18n.t("scim.scimClientEnabled"))}
+            </div>
+        )
     }
 
     renderScimResults = (service, sweepSuccess, sweepResults) => {
@@ -845,39 +911,41 @@ class ServiceOverview extends React.Component {
                 label: service.sweep_scim_daily_rate, value: parseInt(service.sweep_scim_daily_rate, 10)
             }
         }
-        return (<div className={"scim"}>
-            <CheckBox name={"scim_enabled"}
-                      value={service.scim_enabled || false}
-                      tooltip={I18n.t("scim.scimEnabledTooltip")}
-                      info={I18n.t("scim.scimEnabled")}
-                      readOnly={!isAdmin || showServiceAdminView}
-                      onChange={e => this.setState({"service": {...service, scim_enabled: e.target.checked}})}
-            />
+        return (
+            <div className={"scim"}>
+                <CheckBox name={"scim_enabled"}
+                          value={service.scim_enabled || false}
+                          tooltip={I18n.t("scim.scimEnabledTooltip")}
+                          info={I18n.t("scim.scimEnabled")}
+                          readOnly={!isAdmin || showServiceAdminView}
+                          onChange={e => this.setState({"service": {...service, scim_enabled: e.target.checked}})}
+                />
+                {!service.scim_enabled && <p>{I18n.t("scim.scimDisclaimer")}</p>}
+                {service.scim_enabled && <>
+                    <InputField value={service.scim_url}
+                                name={I18n.t("scim.scimURL")}
+                                placeholder={I18n.t("scim.scimURLPlaceHolder")}
+                                onChange={e => this.changeServiceProperty("scim_url", false, alreadyExists, {
+                                    ...invalidInputs,
+                                    scim_url: false
+                                })(e)}
+                                toolTip={I18n.t("scim.scimURLTooltip")}
+                                error={invalidInputs.scim_url || (!initial && isEmpty(service.scim_url) && service.scim_enabled)}
+                                onBlur={this.validateURI("scim_url")}
+                                disabled={!service.scim_enabled || (!isAdmin && !isServiceAdmin)}/>
+                    {invalidInputs.scim_url &&
+                        <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
+                    {(!initial && isEmpty(service.scim_url) && service.scim_enabled) &&
+                        <ErrorIndicator msg={I18n.t("models.userTokens.required", {
+                            attribute: I18n.t("scim.scimURL")
+                        })}/>}
 
-            <InputField value={service.scim_url}
-                        name={I18n.t("scim.scimURL")}
-                        placeholder={I18n.t("scim.scimURLPlaceHolder")}
-                        onChange={e => this.changeServiceProperty("scim_url", false, alreadyExists, {
-                            ...invalidInputs,
-                            scim_url: false
-                        })(e)}
-                        toolTip={I18n.t("scim.scimURLTooltip")}
-                        error={invalidInputs.scim_url || (!initial && isEmpty(service.scim_url) && service.scim_enabled)}
-                        onBlur={this.validateURI("scim_url")}
-                        disabled={!service.scim_enabled || (!isAdmin && !isServiceAdmin)}/>
-            {invalidInputs.scim_url &&
-                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
-            {(!initial && isEmpty(service.scim_url) && service.scim_enabled) &&
-                <ErrorIndicator msg={I18n.t("models.userTokens.required", {
-                    attribute: I18n.t("scim.scimURL")
-                })}/>}
-
-            {(service.scim_enabled && (isAdmin || isServiceAdmin)) &&
-                <div className="input-field sds--text-field">
-                    <label htmlFor="">{I18n.t("scim.scimBearerToken")}
-                        <Tooltip tip={I18n.t("scim.scimBearerTokenTooltip")}/>
-                    </label>
-                    <div className="scim-token-link">
+                    {(service.scim_enabled && (isAdmin || isServiceAdmin)) &&
+                        <div className="input-field sds--text-field">
+                            <label htmlFor="">{I18n.t("scim.scimBearerToken")}
+                                <Tooltip tip={I18n.t("scim.scimBearerTokenTooltip")}/>
+                            </label>
+                            <div className="scim-token-link">
                                 <span>{I18n.t("service.scim_token.preTitle")}
                                     {(isAdmin || isServiceAdmin) && <a href="/scim"
                                                                        onClick={e => {
@@ -885,48 +953,50 @@ class ServiceOverview extends React.Component {
                                                                            this.scimTokenChangeAction(true)
                                                                        }}>{I18n.t("service.scim_token.title")}</a>}
                                     </span>
-                    </div>
-                </div>}
+                            </div>
+                        </div>}
 
-            <CheckBox name={"sweep_scim_enabled"}
-                      value={service.sweep_scim_enabled || false}
-                      tooltip={I18n.t("scim.sweepScimEnabledTooltip")}
-                      info={I18n.t("scim.sweepScimEnabled")}
-                      readOnly={!service.scim_enabled || (!isAdmin && !isServiceAdmin)}
-                      onChange={e => this.setState({
-                          "service": {
-                              ...service,
-                              sweep_scim_enabled: e.target.checked,
-                              sweep_scim_daily_rate: e.target.checked ? {label: 1, value: 1} : null
-                          }
-                      })}
-            />
+                    <CheckBox name={"sweep_scim_enabled"}
+                              value={service.sweep_scim_enabled || false}
+                              tooltip={I18n.t("scim.sweepScimEnabledTooltip")}
+                              info={I18n.t("scim.sweepScimEnabled")}
+                              readOnly={!service.scim_enabled || (!isAdmin && !isServiceAdmin)}
+                              onChange={e => this.setState({
+                                  "service": {
+                                      ...service,
+                                      sweep_scim_enabled: e.target.checked,
+                                      sweep_scim_daily_rate: e.target.checked ? {label: 1, value: 1} : null
+                                  }
+                              })}
+                    />
 
-            <CheckBox name={"sweep_remove_orphans"}
-                      value={(service.sweep_remove_orphans && service.sweep_scim_enabled) || false}
-                      tooltip={I18n.t("scim.scimSweepDeleteOrphansTooltip")}
-                      info={I18n.t("scim.scimSweepDeleteOrphans")}
-                      readOnly={!service.scim_enabled || !service.sweep_scim_enabled || (!isAdmin && !isServiceAdmin)}
-                      onChange={e => this.setState({
-                          "service": {
-                              ...service, sweep_remove_orphans: e.target.checked
-                          }
-                      })}
-            />
+                    <CheckBox name={"sweep_remove_orphans"}
+                              value={(service.sweep_remove_orphans && service.sweep_scim_enabled) || false}
+                              tooltip={I18n.t("scim.scimSweepDeleteOrphansTooltip")}
+                              info={I18n.t("scim.scimSweepDeleteOrphans")}
+                              readOnly={!service.scim_enabled || !service.sweep_scim_enabled || (!isAdmin && !isServiceAdmin)}
+                              onChange={e => this.setState({
+                                  "service": {
+                                      ...service, sweep_remove_orphans: e.target.checked
+                                  }
+                              })}
+                    />
 
-            <SelectField value={sweepScimDailyRate}
-                         options={[...Array(25).keys()].filter(i => i % 4 === 0).map(i => ({
-                             label: i === 0 ? 1 : i, value: i === 0 ? 1 : i
-                         }))}
-                         name={I18n.t("scim.sweepScimDailyRate")}
-                         toolTip={I18n.t("scim.sweepScimDailyRateTooltip")}
-                         disabled={!service.scim_enabled || !service.sweep_scim_enabled || (!isAdmin && !isServiceAdmin)}
-                         onChange={item => this.setState({
-                             "service": {
-                                 ...service, sweep_scim_daily_rate: item
-                             }
-                         })}/>
-        </div>)
+                    <SelectField value={sweepScimDailyRate}
+                                 options={[...Array(25).keys()].filter(i => i % 4 === 0).map(i => ({
+                                     label: i === 0 ? 1 : i, value: i === 0 ? 1 : i
+                                 }))}
+                                 name={I18n.t("scim.sweepScimDailyRate")}
+                                 toolTip={I18n.t("scim.sweepScimDailyRateTooltip")}
+                                 disabled={!service.scim_enabled || !service.sweep_scim_enabled || (!isAdmin && !isServiceAdmin)}
+                                 onChange={item => this.setState({
+                                     "service": {
+                                         ...service, sweep_scim_daily_rate: item
+                                     }
+                                 })}/>
+                </>}
+            </div>
+        )
     }
 
     renderNewServiceTokenForm = () => {
@@ -977,40 +1047,45 @@ class ServiceOverview extends React.Component {
             return this.renderNewServiceTokenForm();
         }
 
-        return (<div className={"tokens"}>
-            <CheckBox name={"token_enabled"}
-                      value={service.token_enabled || false}
-                      tooltip={I18n.t("userTokens.tokenEnabledTooltip")}
-                      info={I18n.t("userTokens.tokenEnabled")}
-                      readOnly={!isAdmin && !isServiceAdmin}
-                      onChange={e => this.setState({
-                          "service": {
-                              ...service,
-                              token_enabled: e.target.checked,
-                              token_validity_days: e.target.checked ? 1 : ""
-                          }
-                      })}
-            />
+        return (
+            <div className={"tokens"}>
+                <CheckBox name={"token_enabled"}
+                          value={service.token_enabled || false}
+                          tooltip={I18n.t("userTokens.tokenEnabledTooltip")}
+                          info={I18n.t("userTokens.tokenEnabled")}
+                          readOnly={!isAdmin && !isServiceAdmin}
+                          onChange={e => this.setState({
+                              "service": {
+                                  ...service,
+                                  token_enabled: e.target.checked,
+                                  token_validity_days: e.target.checked ? 1 : ""
+                              }
+                          })}
+                />
+                {!service.token_enabled && <p>{I18n.t("userTokens.userTokenDisclaimer")}</p>}
+                {service.token_enabled &&
+                    <>
+                        <InputField value={config.introspect_endpoint}
+                                    name={I18n.t("userTokens.introspectionEndpoint")}
+                                    copyClipBoard={true}
+                                    disabled={true}/>
 
-            <InputField value={config.introspect_endpoint}
-                        name={I18n.t("userTokens.introspectionEndpoint")}
-                        copyClipBoard={true}
-                        disabled={true}/>
+                        <InputField value={service.token_validity_days}
+                                    name={I18n.t("userTokens.tokenValidityDays")}
+                                    maxLength={3}
+                                    tooltip={I18n.t("userTokens.tokenValidityDaysTooltip")}
+                                    onChange={e => this.setState({
+                                        "service": {
+                                            ...service, token_validity_days: e.target.value.replace(/\D/, "")
+                                        }
+                                    })}
+                                    disabled={!service.token_enabled || (!isAdmin && !isServiceAdmin)}/>
 
-            <InputField value={service.token_validity_days}
-                        name={I18n.t("userTokens.tokenValidityDays")}
-                        maxLength={3}
-                        tooltip={I18n.t("userTokens.tokenValidityDaysTooltip")}
-                        onChange={e => this.setState({
-                            "service": {
-                                ...service, token_validity_days: e.target.value.replace(/\D/, "")
-                            }
-                        })}
-                        disabled={!service.token_enabled || (!isAdmin && !isServiceAdmin)}/>
-
-            {this.renderServiceTokens(service, isServiceAdmin, service.token_enabled, tokenType,
-                I18n.t("userTokens.tokenEnabled").toLowerCase())}
-        </div>)
+                        {this.renderServiceTokens(service, isServiceAdmin, service.token_enabled, tokenType,
+                            I18n.t("userTokens.tokenEnabled").toLowerCase())}
+                    </>}
+            </div>
+        )
     }
 
     renderServiceTokens = (service, isServiceAdmin, enabled, tokenType, action) => {
@@ -1087,12 +1162,8 @@ class ServiceOverview extends React.Component {
                           })}
                 />
                 {!service.ldap_enabled &&
-                    <div className={"input-field sds--text-field"}>
-                        <label>{I18n.t("service.ldap.section")}
-                            <Tooltip tip={I18n.t("service.ldap.sectionTooltip")}/>
-                        </label>
-                        <p>{I18n.t("service.ldap.ldapDisclaimer")}</p>
-                    </div>}
+                    <p>{I18n.t("service.ldap.ldapDisclaimer")}</p>
+                }
                 {service.ldap_enabled && <div>
                     <InputField value={config.ldap_url}
                                 name={I18n.t("service.ldap.section")}
@@ -1161,19 +1232,20 @@ class ServiceOverview extends React.Component {
             </div>)
     }
 
-    renderOidc = (config, service, isAdmin, isServiceAdmin, initial) => {
+    renderOidc = (config, service, isAdmin, isServiceAdmin) => {
         const {redirect_urls, grants} = this.state.service;
         return (
-            <div className={"oidc"}>
+            <div className="oidc">
                 <CheckBox name={"oidc_enabled"}
                           value={service.oidc_enabled || false}
                           tooltip={I18n.t("service.oidc.oidcEnabledTooltip")}
                           info={I18n.t("service.oidc.oidcClient")}
-                          readOnly={!isAdmin && !isServiceAdmin}
+                          readOnly={!isAdmin && !service.saml_enabled}
                           onChange={e => this.setState({
                               service: {
                                   ...service,
                                   oidc_enabled: e.target.checked,
+                                  saml_enabled: e.target.checked ? false : service.saml_enabled,
                                   grants: e.target.checked ? ["authorization_code"].map(val => ({
                                       value: val,
                                       label: I18n.t(`service.grants.${val}`)
@@ -1181,55 +1253,131 @@ class ServiceOverview extends React.Component {
                               }
                           })}
                 />
-                {!service.oidc_enabled &&
-                    <div className={"input-field sds--text-field"}>
-                        <label>{I18n.t("service.oidc.section")}
-                            <Tooltip tip={I18n.t("service.oidc.sectionTooltip")}/>
-                        </label>
-                        <p>{I18n.t("service.oidc.oidcDisclaimer")}</p>
-                    </div>}
-                {service.oidc_enabled && <div>
-                    <InputField value={service.providing_organisation}
-                                name={I18n.t("service.providingOrganisation")}
-                                placeholder={I18n.t("service.providingOrganisationPlaceholder")}
-                                onChange={this.changeServiceProperty("providing_organisation")}
-                    />
-                    {(!initial && isEmpty(service.providing_organisation)) &&
-                        <ErrorIndicator msg={I18n.t("service.required", {
-                            attribute: I18n.t("service.providingOrganisation").toLowerCase()
-                        })}/>}
+                {(!service.oidc_enabled && !service.saml_enabled) &&
+                    <p>{I18n.t("service.oidc.oidcDisclaimer")}</p>
+                }
+                {(!service.oidc_enabled && service.saml_enabled) &&
+                    <p>{I18n.t("service.oidc.oidcDisabledExclusivity")}</p>}
+                {service.oidc_enabled &&
+                    <>
+                        <InputField value={service.providing_organisation}
+                                    name={I18n.t("service.providingOrganisation")}
+                                    placeholder={I18n.t("service.providingOrganisationPlaceholder")}
+                                    onChange={this.changeServiceProperty("providing_organisation")}
+                        />
+                        {isEmpty(service.providing_organisation) &&
+                            <ErrorIndicator msg={I18n.t("service.required", {
+                                attribute: I18n.t("service.providingOrganisation").toLowerCase()
+                            })}/>}
 
-                    <SelectField value={redirect_urls}
-                                 options={[]}
-                                 creatable={true}
-                                 onInputChange={val => val}
-                                 isMulti={true}
-                                 name={I18n.t("service.openIDConnectRedirects")}
-                                 placeholder={I18n.t("service.openIDConnectRedirectsPlaceholder")}
-                                 toolTip={I18n.t("service.openIDConnectRedirectsTooltip")}
-                                 onChange={selectedOptions => this.redirectUrlsChanged(selectedOptions, service)}/>
-                    <SelectField value={grants}
-                                 options={this.grantOptions.filter(option => Array.isArray(grants) && !grants.find(grant => grant.value === option.value))}
-                                 onInputChange={val => val}
-                                 isMulti={true}
-                                 name={I18n.t("service.openIDConnectGrants")}
-                                 placeholder={I18n.t("service.openIDConnectGrantsPlaceholder")}
-                                 toolTip={I18n.t("service.openIDConnectGrantsTooltip")}
-                                 onChange={selectedOptions => this.grantsChanged(selectedOptions, service)}/>
-                    <CheckBox name={"is_public_client"}
-                              value={service.is_public_client}
-                              onChange={() => this.setState({
-                                  service: {
-                                      ...service,
-                                      is_public_client: !service.is_public_client
-                                  }
-                              })}
-                              tooltip={I18n.t("service.isPublicClientTooltip")}
-                              info={I18n.t("service.isPublicClient")}
-                    />
+                        <SelectField value={redirect_urls}
+                                     options={[]}
+                                     creatable={true}
+                                     onInputChange={val => val}
+                                     isMulti={true}
+                                     name={I18n.t("service.openIDConnectRedirects")}
+                                     placeholder={I18n.t("service.openIDConnectRedirectsPlaceholder")}
+                                     toolTip={I18n.t("service.openIDConnectRedirectsTooltip")}
+                                     onChange={selectedOptions => this.redirectUrlsChanged(selectedOptions, service)}/>
+                        {isEmpty(redirect_urls) &&
+                            <ErrorIndicator msg={I18n.t("service.required", {
+                                attribute: I18n.t("service.openIDConnectRedirects").toLowerCase()
+                            })}/>}
 
-                </div>}
+                        <SelectField value={grants}
+                                     options={this.grantOptions.filter(option => Array.isArray(grants) && !grants.find(grant => grant.value === option.value))}
+                                     onInputChange={val => val}
+                                     isMulti={true}
+                                     name={I18n.t("service.openIDConnectGrants")}
+                                     placeholder={I18n.t("service.openIDConnectGrantsPlaceholder")}
+                                     toolTip={I18n.t("service.openIDConnectGrantsTooltip")}
+                                     onChange={selectedOptions => this.grantsChanged(selectedOptions, service)}/>
+                        {isEmpty(grants) &&
+                            <ErrorIndicator msg={I18n.t("service.required", {
+                                attribute: I18n.t("service.openIDConnectGrants").toLowerCase()
+                            })}/>}
+
+                        <CheckBox name={"is_public_client"}
+                                  value={service.is_public_client}
+                                  onChange={() => this.setState({
+                                      service: {
+                                          ...service,
+                                          is_public_client: !service.is_public_client
+                                      }
+                                  })}
+                                  tooltip={I18n.t("service.isPublicClientTooltip")}
+                                  info={I18n.t("service.isPublicClient")}
+                        />
+                        <div className="add-token-link">
+                        <span>{I18n.t("service.oidc.preTitle")}
+                            {(isAdmin || isServiceAdmin) && <a href="/secret"
+                                                               onClick={e => {
+                                                                   stopEvent(e);
+                                                                   this.oidcClientSecretResetAction(true)
+                                                               }}>{I18n.t("service.oidc.title")}</a>}
+                                    </span>
+                        </div>
+                    </>}
             </div>)
+    }
+
+    renderSAML = (config, service, isAdmin, isServiceAdmin, invalidInputs) => {
+        const {parsedSAMLMetaData, parsedSAMLMetaDataError, parsedSAMLMetaDataURLError} = this.state;
+        return (
+            <div className="saml">
+                <CheckBox name={"saml_enabled"}
+                          value={service.saml_enabled || false}
+                          tooltip={I18n.t("service.saml.samlEnabledTooltip")}
+                          info={I18n.t("service.saml.samlClient")}
+                          readOnly={service.oidc_enabled || (!isAdmin && !isServiceAdmin)}
+                          onChange={e => this.setState({
+                              service: {
+                                  ...service,
+                                  saml_enabled: e.target.checked,
+                                  oidc_enabled: e.target.checked ? false : service.oidc_enabled
+                              }
+                          })}
+                />
+                {(!service.saml_enabled && !service.oidc_enabled) &&
+                    <p>{I18n.t("service.saml.samlDisclaimer")}</p>}
+                {(!service.saml_enabled && service.oidc_enabled) &&
+                    <p>{I18n.t("service.saml.samlDisabledExclusivity")}</p>}
+                {service.saml_enabled &&
+                    <div>
+                        <div className="meta-data-section">
+                            <div>
+                                <InputField value={service.saml_metadata_url}
+                                            name={I18n.t("service.samlMetadataURL")}
+                                            placeholder={I18n.t("service.samlMetadataPlaceholder")}
+                                            onChange={e => this.setState({
+                                                service: {...service, saml_metadata_url: e.target.value},
+                                                invalidInputs: {...invalidInputs, saml_metadata_url: false},
+                                                parsedSAMLMetaDataURLError: false
+                                            })}
+                                            disabled={!isAdmin && !isServiceAdmin}
+                                            externalLink={true}
+                                            onBlur={this.validateURI("saml_metadata_url")}
+                                />
+                                {invalidInputs["saml_metadata_url"] && <ErrorIndicator
+                                    msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
+                                {(parsedSAMLMetaDataURLError && !invalidInputs["saml_metadata_url"]) && <ErrorIndicator
+                                    msg={I18n.t("forms.invalidInput", {name: I18n.t("service.samlMetadataURL")})}/>}
+                            </div>
+                            <UploadButton name={I18n.t("service.samlMetadataUpload")}
+                                          txt={I18n.t("service.samlMetadataUpload")}
+                                          acceptFileFormat={".xml"}
+                                          onFileUpload={this.onFileUpload}/>
+                        </div>
+                        {parsedSAMLMetaDataError && <ErrorIndicator
+                            msg={I18n.t("forms.invalidInput", {name: I18n.t("service.samlMetadata")})}/>}
+                        {(isEmpty(service.saml_metadata_url) && isEmpty(service.saml_metadata)) &&
+                            <ErrorIndicator msg={I18n.t("service.saml.samlError")}/>}
+                        {!isEmpty(parsedSAMLMetaData) &&
+                            this.renderSAMLMetaData(parsedSAMLMetaData)}
+                    </div>}
+
+            </div>
+        );
     }
 
     renderPolicy = (service, isAdmin, isServiceAdmin, invalidInputs, alreadyExists) => {
@@ -1449,9 +1597,9 @@ class ServiceOverview extends React.Component {
             case "pamWebLogin":
                 return this.renderPamWebLogin(service, isAdmin, isServiceAdmin, createNewServiceToken, "pam");
             case "OIDC":
-                return this.renderOidc(config, service, isAdmin, isServiceAdmin, initial);
+                return this.renderOidc(config, service, isAdmin, isServiceAdmin);
             case "SAML":
-                return this.renderSaml(config, service, isAdmin, isServiceAdmin);
+                return this.renderSAML(config, service, isAdmin, isServiceAdmin, invalidInputs);
             default:
                 throw new Error(`unknown-tab: ${currentTab}`);
         }
@@ -1481,8 +1629,8 @@ class ServiceOverview extends React.Component {
             sweepResults,
             sweepSuccess,
             scimTokenChange,
-            scimBearerToken
-
+            scimBearerToken,
+            oidcClientSecret
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -1502,6 +1650,7 @@ class ServiceOverview extends React.Component {
                                 confirm={confirmationDialogAction}
                                 question={confirmationDialogQuestion}>
                 {ldapPassword && this.renderLdapPassword(ldapPassword)}
+                {oidcClientSecret && this.renderOidcClientSecret(oidcClientSecret)}
                 {!isEmpty(sweepSuccess) && this.renderScimResults(service, sweepSuccess, sweepResults)}
                 {scimTokenChange && this.renderScimTokenChange(scimBearerToken)}
             </ConfirmationDialog>

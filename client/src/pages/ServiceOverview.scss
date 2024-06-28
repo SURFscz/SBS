@@ -17,11 +17,13 @@ section.dialog-content {
             height: auto;
             margin-right: 8px;
         }
+
         &.success {
             svg {
                 color: var(--sds--color--green--400);
             }
         }
+
         &.failure {
             svg {
                 color: var(--sds--color--red--400);
@@ -74,6 +76,7 @@ section.dialog-content {
         width: 100%;
         display: grid;
         grid-template-columns: [first] 16fr [second] 4fr;
+        grid-auto-rows: min-content;
         column-gap: 50px;
 
         &.no-grid {
@@ -214,6 +217,12 @@ section.dialog-content {
             @media (max-width: $tablet-max) {
                 padding: 0;
             }
+        }
+
+        .meta-data-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
     }
