@@ -4,6 +4,7 @@ import nl from "../../locale/nl";
 import fs from 'fs';
 import path from 'path';
 
+
 expect.extend({
     equalLineNumber(enTranslation, nlTranslation, index) {
         const indexOf = enTranslation.indexOf(": ");
