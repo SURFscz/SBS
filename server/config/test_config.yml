@@ -89,7 +89,7 @@ mail:
 manage:
   base_url: "http://localhost:9001"
   user: "sram"
-  secret: "secret"
+  password: "secret"
 
 aup:
   version: 1
