@@ -86,6 +86,11 @@ mail:
   send_exceptions_recipients: [ "sram-support@surf.nl" ]
   environment: local
 
+manage:
+  base_url: "http://localhost:9001"
+  user: "sram"
+  secret: "secret"
+
 aup:
   version: 1
   url_aup_en: https://edu.nl/6wb63
