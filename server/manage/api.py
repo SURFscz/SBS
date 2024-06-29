@@ -1,13 +1,28 @@
-# from requests.auth import HTTPBasicAuth
+from requests.auth import HTTPBasicAuth
+
+from server.db.domain import Service
+
+manage_basic_auth = None
+manage_base_url = None
+
+
+def initialize(manage_conf):
+    global manage_basic_auth
+    global manage_base_url
+
+    manage_basic_auth = HTTPBasicAuth(manage_conf.user, manage_conf.password)
+    manage_base_url = manage_conf.base_url[:-1] if manage_conf.base_url.endswith("/") else manage_conf.base_url
+
+
+def save_service(service: Service):
+    pass
+
+
+def update_service(service: Service):
+    pass
+
 #
 #
-# def _replace_none_values(d: dict):
-#     for k, v in d.items():
-#         if isinstance(v, dict):
-#             _replace_none_values(v)
-#         elif not v:
-#             del d[k]
-#     return d
 #
 #
 # # Get the headers with the basic authentication
