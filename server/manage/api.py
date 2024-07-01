@@ -1,41 +1,70 @@
+import logging
+
+import requests
+from requests import RequestException
 from requests.auth import HTTPBasicAuth
 
+from server.db.db import db
 from server.db.domain import Service
-
-manage_basic_auth = None
-manage_base_url = None
-
-
-def initialize(manage_conf):
-    global manage_basic_auth
-    global manage_base_url
-
-    manage_basic_auth = HTTPBasicAuth(manage_conf.user, manage_conf.password)
-    manage_base_url = manage_conf.base_url[:-1] if manage_conf.base_url.endswith("/") else manage_conf.base_url
+from server.manage.service_template import create_service_template
+from server.tools import dt_now
 
 
-def save_service(service: Service):
-    pass
+def _parse_manage_config(manage_conf):
+    base_url = manage_conf.base_url[:-1] if manage_conf.base_url.endswith("/") else manage_conf.base_url
+    return base_url, HTTPBasicAuth(manage_conf.user, manage_conf.password)
 
 
-def update_service(service: Service):
-    pass
+def service_applies_for_external_sync(service: Service):
+    if service.saml_enabled and not service.saml_metadata and not service.saml_metadata_url:
+        return False
+    if service.oidc_enabled and (not service.grants or not service.redirect_urls):
+        return False
+    if not service.saml_enabled and not service.oidc_enabled:
+        return False
+    return True
 
-#
-#
-#
-#
-# # Get the headers with the basic authentication
-# def scim_headers(service: Service, is_delete=False):
-#     plain_bearer_token = decrypt_scim_bearer_token(service)
-#     headers = {"Authorization": f"Bearer {plain_bearer_token}",
-#                "X-Service": str(service.id)}
-#     if not is_delete:
-#         headers["Accept"] = "application/scim+json"
-#         headers["Content-Type"] = "application/scim+json"
-#     return headers
-#
-# request_method = requests.put if scim_object else requests.post
-# url = f"{service.scim_url}{postfix}"
-# basic = HTTPBasicAuth('user', 'pass')
-# return request_method(url, json=replace_none_values(scim_dict), headers=scim_headers(service), timeout=10)
+
+def save_service(app, service: Service):
+    _do_save_or_update(app, service)
+
+
+def update_service(app, service: Service):
+    _do_save_or_update(app, service)
+
+
+def delete_service(app, service_export_external_identifier: str):
+    with app.app_context():
+        manage_base_url, manage_basic_auth = _parse_manage_config(app.app_config.manage)
+        url = f"{manage_base_url}/manage/api/internal/metadata/sram/${service_export_external_identifier}"
+        requests.delete(url, auth=manage_basic_auth, timeout=10)
+
+
+def _do_save_or_update(app, service: Service):
+    if not service_applies_for_external_sync(service):
+        return
+
+    with app.app_context():
+        manage_base_url, manage_basic_auth = _parse_manage_config(app.app_config.manage)
+
+        service_template = create_service_template(service)
+        request_method = requests.put if service.export_external_identifier else requests.post
+        url = f"{manage_base_url}/manage/api/internal/metadata"
+        service.exported_at = dt_now()
+        try:
+            res = request_method(url, json=service_template,
+                                 headers={"Accept": "application/json", "Content-Type": "application/son"},
+                                 auth=manage_basic_auth,
+                                 timeout=10)
+            service_json = res.json()
+            service.export_external_identifier = service_json.get("id")
+            # Manage applies optimistic locking, soo we store the new version number
+            service.export_external_version = service_json.get("version")
+            service.export_successful = True
+        except RequestException:
+            logger = logging.getLogger("manage")
+            logger.error("Error in manage API", exc_info=1)
+            service.export_successful = False
+
+        db.session.merge(service)
+        db.session.commit()
