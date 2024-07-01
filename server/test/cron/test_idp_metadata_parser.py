@@ -1,4 +1,7 @@
-from server.cron.idp_metadata_parser import idp_display_name, idp_schac_home_by_entity_id, parse_idp_metadata
+import os
+
+from server.cron.idp_metadata_parser import idp_display_name, idp_schac_home_by_entity_id, parse_idp_metadata, \
+    idp_metadata_file
 from server.test.abstract_test import AbstractTest
 from server.cron import idp_metadata_parser
 from sqlalchemy import text
@@ -8,16 +11,21 @@ from sqlalchemy.orm import sessionmaker
 class TestIdpMetadataParser(AbstractTest):
 
     def test_idp_displayname(self):
+        if os.path.isfile(idp_metadata_file):
+            os.remove(idp_metadata_file)
+
         idp_metadata_parser.idp_metadata = None
 
         display_name_nl = idp_display_name("uni-franeker.nl", "nl")
         self.assertEqual("Universiteit van Franeker", display_name_nl)
 
+        idp_metadata_parser.idp_metadata = None
+
         display_name_en = idp_display_name("uni-franeker.nl", "en")
         self.assertEqual("Academy of Franeker", display_name_en)
 
-        display_name_pt = idp_display_name("uni-franeker.nl", "qq")
-        self.assertEqual("Academy of Franeker", display_name_pt)
+        display_name_qq = idp_display_name("uni-franeker.nl", "qq")
+        self.assertEqual("Academy of Franeker", display_name_qq)
 
         display_none = idp_display_name("nope")
         self.assertEqual("nope", display_none)
@@ -41,8 +49,9 @@ class TestIdpMetadataParser(AbstractTest):
         idp_metadata_parser.idp_metadata = None
         parse_idp_metadata(self.app)
 
-        self.assertEqual(len(idp_metadata_parser.idp_metadata["schac_home_organizations"]), 4)
-        self.assertEqual(len(idp_metadata_parser.idp_metadata["entity_ids"]), 2)
+        self.assertEqual(len(idp_metadata_parser.idp_metadata["schac_home_organizations"]), 5)
+        self.assertEqual(len(idp_metadata_parser.idp_metadata["reg_exp_schac_home_organizations"]), 1)
+        self.assertEqual(len(idp_metadata_parser.idp_metadata["entity_ids"]), 3)
 
         idp_metadata_parser.idp_metadata = None
         # Use the cache
@@ -64,3 +73,10 @@ class TestIdpMetadataParser(AbstractTest):
                     self.assertEqual("Universiteit van Franeker", display_name_nl)
                 finally:
                     session.execute(text(f"SELECT RELEASE_LOCK('{lock_name}')"))
+
+    def test_idp_display_name_wildcard(self):
+        if os.path.isfile(idp_metadata_file):
+            os.remove(idp_metadata_file)
+
+        display_name_en = idp_display_name("test.knaw.nl", "nl")
+        self.assertEqual("Koninklijke Nederlandse Akademie van Wetenschappen (NL)", display_name_en)

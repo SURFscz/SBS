@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 import time
 import xml.etree.ElementTree as ET
 from urllib import request
@@ -31,9 +32,12 @@ def _do_parse_idp_metadata(app, write_result_to_file=True):
 
         pre = request.urlopen(metadata.idp_url)
         results_by_scope = {}
+        results_by_reg_exp_scope = {}
         results_by_entity_id = {}
-        display_name_nl = display_name_en = None
+        display_name_nl = None
+        display_name_en = None
         scopes = []
+        reg_exp_scopes = []
         for event, element in ET.iterparse(pre, events=("start", "end")):
             if "}" in element.tag:
                 element.tag = element.tag.split("}", 1)[1]
@@ -44,27 +48,38 @@ def _do_parse_idp_metadata(app, write_result_to_file=True):
             elif event == "start" and element.tag == "Scope":
                 scope = element.text
                 if scope is not None and len(scope.strip()) > 0:
-                    scopes.append(scope)
+                    regexp = {**stripped_attribs, **element.attrib}.get("regexp", "false")
+                    if regexp == "1" or regexp == "true":
+                        reg_exp_scopes.append(scope.strip())
+                    else:
+                        scopes.append(scope.strip())
 
             elif event == "start" and element.tag == "DisplayName":
                 stripped_attribs = {k.split("}", 1)[1]: v for k, v in element.attrib.items() if "}" in k}
                 # better safe than sorry - namespaces can change
                 lang = {**stripped_attribs, **element.attrib}.get("lang", "en")
                 if lang == "nl":
-                    display_name_nl = element.text
+                    display_name_nl = element.text.strip()
                 elif lang == "en":
-                    display_name_en = element.text
+                    display_name_en = element.text.strip()
 
             elif event == "end" and element.tag == "EntityDescriptor" and (display_name_nl or display_name_en):
                 for scope in scopes:
                     results_by_scope[scope] = {"nl": display_name_nl or display_name_en,
                                                "en": display_name_en or display_name_nl}
+                for reg_exp_scope in reg_exp_scopes:
+                    results_by_reg_exp_scope[reg_exp_scope] = {"nl": display_name_nl or display_name_en,
+                                                               "en": display_name_en or display_name_nl}
                 results_by_entity_id[entity_id] = scopes
                 display_name_nl = display_name_en = None
                 scopes = []
 
         end = int(time.time() * 1000.0)
-        idp_metadata = {"schac_home_organizations": results_by_scope, "entity_ids": results_by_entity_id}
+        idp_metadata = {
+            "reg_exp_schac_home_organizations": results_by_reg_exp_scope,
+            "schac_home_organizations": results_by_scope,
+            "entity_ids": results_by_entity_id
+        }
 
         logger.info(f"Finished running parse_idp_metadata job in {end - start} ms")
 
@@ -90,11 +105,15 @@ def parse_idp_metadata(app):
                        _reset_idp_meta_data)
 
 
-def idp_display_name(schac_home_organization, lang="en", use_default=True):
+def idp_display_name(schac_home, lang="en", use_default=True):
     if not idp_metadata:
         _do_parse_idp_metadata(current_app, False)
-    names = idp_metadata["schac_home_organizations"].get(schac_home_organization,
-                                                         {"en": schac_home_organization if use_default else None})
+    names = idp_metadata["schac_home_organizations"].get(schac_home)
+    if not names:
+        # Fallback to the regular expressions in the scopes of the metadata feed
+        reg_exp_names = [names for rx, names in idp_metadata["reg_exp_schac_home_organizations"].items() if
+                         re.compile(rx).match(schac_home)]
+        names = reg_exp_names[0] if reg_exp_names else {"en": schac_home if use_default else None}
     return names.get(lang, names["en"])
 
 
