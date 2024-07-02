@@ -25,25 +25,9 @@ def service_applies_for_external_sync(service: Service):
     return True
 
 
-def save_service(app, service: Service):
-    _do_save_or_update(app, service)
-
-
-def update_service(app, service: Service):
-    _do_save_or_update(app, service)
-
-
-def delete_service(app, service_export_external_identifier: str):
-    with app.app_context():
-        manage_base_url, manage_basic_auth = _parse_manage_config(app.app_config.manage)
-        url = f"{manage_base_url}/manage/api/internal/metadata/sram/${service_export_external_identifier}"
-        requests.delete(url, auth=manage_basic_auth, timeout=10)
-
-
-def _do_save_or_update(app, service: Service):
-    if not service_applies_for_external_sync(service):
-        return
-
+def sync_external_service(app, service: Service):
+    if not app.app_config.manage.enabled or not service_applies_for_external_sync(service):
+        return None
     with app.app_context():
         manage_base_url, manage_basic_auth = _parse_manage_config(app.app_config.manage)
 
@@ -51,20 +35,47 @@ def _do_save_or_update(app, service: Service):
         request_method = requests.put if service.export_external_identifier else requests.post
         url = f"{manage_base_url}/manage/api/internal/metadata"
         service.exported_at = dt_now()
+        logger = logging.getLogger("manage")
         try:
-            res = request_method(url, json=service_template,
+            res = request_method(url,
+                                 json=service_template,
                                  headers={"Accept": "application/json", "Content-Type": "application/son"},
                                  auth=manage_basic_auth,
                                  timeout=10)
             service_json = res.json()
-            service.export_external_identifier = service_json.get("id")
-            # Manage applies optimistic locking, soo we store the new version number
-            service.export_external_version = service_json.get("version")
-            service.export_successful = True
+            if str(res.status_code).startswith("2"):
+                service.export_external_identifier = service_json.get("id")
+                # Manage applies optimistic locking, soo we store the new version number
+                service.export_external_version = service_json.get("version")
+                service.export_successful = True
+                logger.debug(f"Saved service {service.name} to {url}")
+            else:
+                logger.error(f"Error in manage API {service_json}")
+                service.export_successful = False
         except RequestException:
-            logger = logging.getLogger("manage")
             logger.error("Error in manage API", exc_info=1)
             service.export_successful = False
 
         db.session.merge(service)
         db.session.commit()
+        return service
+
+
+def delete_external_service(app, service_export_external_identifier: str):
+    if not app.app_config.manage.enabled:
+        return None
+    with app.app_context():
+        manage_base_url, manage_basic_auth = _parse_manage_config(app.app_config.manage)
+        url = f"{manage_base_url}/manage/api/internal/metadata/sram/{service_export_external_identifier}"
+        logger = logging.getLogger("manage")
+        try:
+            res = requests.delete(url, auth=manage_basic_auth, timeout=10)
+            if str(res.status_code).startswith("2"):
+                logger.debug(f"Deleted service {service_export_external_identifier} to {url}")
+            else:
+                logger.error(f"Error in manage API {res.status_code} for delete {service_export_external_identifier}."
+                             f"Response {res.json()}")
+            return res.status_code
+        except RequestException:
+            logger.error("Error in manage API", exc_info=1)
+            return 500
