@@ -1,3 +1,7 @@
+import os
+
+from server.cron import idp_metadata_parser
+from server.cron.idp_metadata_parser import idp_metadata_file
 from server.db.db import db
 from server.db.domain import Organisation, OrganisationInvitation, User, JoinRequest
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
@@ -7,6 +11,12 @@ from server.test.seed import (unihard_name, unifra_name, schac_home_organisation
 
 
 class TestOrganisation(AbstractTest):
+
+    def _reset_idp(self):
+        if os.path.isfile(idp_metadata_file):
+            os.remove(idp_metadata_file)
+
+        idp_metadata_parser.idp_metadata = None
 
     def test_search(self):
         organisations = self.get("/api/organisations/search", query_data={"q": "urba"})
@@ -42,12 +52,16 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(4, organisation["organisation_memberships_count"])
 
     def test_identity_provider_display_name(self):
+        self._reset_idp()
+
         self.login("urn:roger", "uni-franeker.nl")
         res = self.get("/api/organisations/identity_provider_display_name",
                        with_basic_auth=False)
         self.assertEqual("Academy of Franeker", res["display_name"])
 
     def test_identity_provider_display_name_other(self):
+        self._reset_idp()
+
         self.login("urn:john")
         user = User.query.filter(User.uid == "urn:james").one()
         res = self.get("/api/organisations/identity_provider_display_name",
@@ -56,6 +70,8 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(unihard_name, res["display_name"])
 
     def test_identity_provider_display_name_no_schac_home(self):
+        self._reset_idp()
+
         self.login("urn:harry")
         res = self.get("/api/organisations/identity_provider_display_name",
                        with_basic_auth=False)
