@@ -192,6 +192,7 @@
         <md:IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
             <md:Extensions>
                 <shibmd:Scope regexp="1">.*\.knaw\.nl$</shibmd:Scope>
+                <shibmd:Scope regexp="1">[</shibmd:Scope>
                 <shibmd:Scope regexp="false">knaw.nl</shibmd:Scope>
                 <mdui:UIInfo>
                     <mdui:DisplayName xml:lang="nl">Koninklijke Nederlandse Akademie van Wetenschappen (NL)
