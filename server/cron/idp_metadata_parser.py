@@ -78,7 +78,7 @@ def _do_parse_idp_metadata(app, write_result_to_file=True):
                         results_by_scope[scope] = {"nl": display_name_nl or display_name_en,
                                                    "en": display_name_en or display_name_nl}
                 for reg_exp_scope in reg_exp_scopes:
-                    if display_name_nl or display_name_en and _compile_valid(reg_exp_scope):
+                    if (display_name_nl or display_name_en) and _compile_valid(reg_exp_scope):
                         results_by_reg_exp_scope[reg_exp_scope] = {"nl": display_name_nl or display_name_en,
                                                                    "en": display_name_en or display_name_nl}
                 results_by_entity_id[entity_id] = scopes
