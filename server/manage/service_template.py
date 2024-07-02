@@ -7,6 +7,9 @@ def _get_assertion_consumer_url(s: Service):
     assertion_consumer_service = "https://trusted.proxy.acs.location.rules"
     if s.saml_enabled:
         metadata = parse_metadata_xml(s.saml_metadata) if s.saml_metadata else parse_metadata_url(s.saml_metadata_url)
+        if not s.saml_metadata:
+            # Should not be required, mainly for corner-cases and tests
+            s.saml_metadata = metadata["xml"]
         assertion_consumer_service = metadata["result"]["acs_location"]
     return assertion_consumer_service
 
@@ -17,16 +20,16 @@ def _add_contacts(service: Service, service_template):
                 "support": service.support_email,
                 "technical": service.security_email}
     for contact_type, email in {k: v for k, v in contacts.items() if v is not None}.items():
-        service_template["data"]["metaDataFields"][f"contacts:{contact_index}:contactType"] = type
+        service_template["data"]["metaDataFields"][f"contacts:{contact_index}:contactType"] = contact_type
         service_template["data"]["metaDataFields"][f"contacts:{contact_index}:emailAddress"] = email
         contact_index += 1
 
 
 def _replace_none_values(d: dict):
-    for k, v in d.items():
-        if isinstance(v, dict):
-            _replace_none_values(v)
-        elif not v:
+    for k in list(d.keys()):
+        if isinstance(d[k], dict):
+            _replace_none_values(d[k])
+        elif not d[k]:
             del d[k]
     return d
 

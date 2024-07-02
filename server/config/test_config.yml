@@ -87,6 +87,7 @@ mail:
   environment: local
 
 manage:
+  enabled: True
   base_url: "http://localhost:9002"
   user: "sram"
   password: "secret"
