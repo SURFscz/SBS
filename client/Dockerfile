@@ -1,5 +1,5 @@
 # Stage 1. - Client build environment
-FROM node:16 as yarn-deps
+FROM node:22 as yarn-deps
 
 WORKDIR /opt/app
 
@@ -8,8 +8,8 @@ RUN yarn
 RUN yarn build
 
 # Stage 2. - Client build
-FROM nginx
+FROM ghcr.io/surfscz/sram-sbs-server:main
 
 WORKDIR /opt/app
 
-COPY --from=yarn-deps /opt/app/build /var/www
+COPY --from=yarn-deps /opt/app/build /var/www/html
