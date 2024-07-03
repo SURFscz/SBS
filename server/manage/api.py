@@ -39,7 +39,7 @@ def sync_external_service(app, service: Service):
         try:
             res = request_method(url,
                                  json=service_template,
-                                 headers={"Accept": "application/json", "Content-Type": "application/son"},
+                                 headers={"Accept": "application/json", "Content-Type": "application/json"},
                                  auth=manage_basic_auth,
                                  timeout=10)
             service_json = res.json()
@@ -62,7 +62,7 @@ def sync_external_service(app, service: Service):
 
 
 def delete_external_service(app, service_export_external_identifier: str):
-    if not app.app_config.manage.enabled:
+    if not app.app_config.manage.enabled or not service_export_external_identifier:
         return None
     with app.app_context():
         manage_base_url, manage_basic_auth = _parse_manage_config(app.app_config.manage)
