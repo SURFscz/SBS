@@ -1981,7 +1981,7 @@ const en = {
             failed: "Failed",
         },
         scim: {
-            info: "If enabled there is a mock remote SCIM client available to test the SCIM messages." +
+            info: "If enabled there is a mock remote SCIM client available to test the SCIM events." +
                 "Configure a Service with the following SCIM URL to start testing the SCIM functionality",
             services: "SCIM enabled Services",
             stats: "All API calls and state updates send to the mock SCIM endpoints are stored in an in-memory database.",
@@ -2288,9 +2288,9 @@ const en = {
         intendedRoleTooltip: "The service manager role is limited to managing collaboration connections"
     },
     scim: {
-        scimEnabled: "SCIM server provisioning",
-        scimEnabledTooltip: "Send this service SCIM messages",
-        scimClientEnabled: "SCIM client",
+        scimEnabled: "SCIM push to service",
+        scimEnabledTooltip: "Send this service SCIM events",
+        scimClientEnabled: "SCIM pull by service",
         scimClientEnabledTooltip: "Allow this service to call the SCIM endpoints",
         scimURL: "SCIM endpoint base URL",
         scimURLPlaceHolder: "https://service.com.scim",
@@ -2302,7 +2302,7 @@ const en = {
         scimSweepDeleteOrphans: "Sweep deletes orphaned users, and empty collaborations and groups",
         scimSweepDeleteOrphansTooltip: "While sweeping, delete users without memberships, and collaboration and groups without members",
         sweepScimDailyRate: "Sweeps per day",
-        sweepScimDailyRateTooltip: "The number of times within 24 hours remote SCIM data is sweeped"
+        sweepScimDailyRateTooltip: "How often within 24 hours the remote SCIM data is sweeped"
     },
     userTokens: {
         actionTitle: "New organisation API token",
@@ -2381,8 +2381,8 @@ const en = {
             ldap: "LDAP",
             tokens: "User introspection tokens",
             pamWebLogin: "PAM web login",
-            SCIMServer: "SCIM server",
-            SCIMClient: "SCIM client"
+            SCIMServer: "SCIM push to service",
+            SCIMClient: "SCIM pull by service"
         },
         updateDisabled: "Some fields have invalid or are missing values in the sections {{invalid}}."
     },
