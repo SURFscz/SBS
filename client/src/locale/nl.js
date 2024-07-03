@@ -1026,7 +1026,7 @@ const nl = {
         securityEmailRequired: "Security e-mailadres is verplicht",
         support_email: "Helpdesk voor eindgebruikers",
         support_emailPlaceholder: "Het e-mailadres of de website van de helpdesk voor deze dienst",
-        support_emailTooltip: "Het support e-mailadres wordt gecontacteerd als er functionale vragen zijn over deze dienst. Idealiter is dit een functioneel e-mailadres, zoals dienst_A_support@service.example.com.",
+        support_emailTooltip: "Het support e-mailadres of URL wordt getoond aan gebruikers van de dienst",
         invitations: "Nodig dienstbeheerders uit",
         status: {
             name: "Status",
