@@ -612,6 +612,7 @@ class Service(Base, db.Model, LogoMixin, SecretMixin):
         # The SecretMixin and LogoMixin prevent use from accessing the oidc_client_secret directly
         return object.__getattribute__(self, "oidc_client_secret")
 
+
 class ServiceRequest(Base, db.Model, LogoMixin):
     __tablename__ = "service_requests"
     metadata = metadata
