@@ -1225,6 +1225,7 @@ const nl = {
             samlDisabledExclusivity: "SAML protocol kan niet worden aangezet, omdat het OIDC protocol actief is"
         },
         export: {
+            exportDisabled: "TDeze dienst zal niet worden extern worden gesynchroniseerd, omdat deze feature uitgeschakeld is in deze omgeving",
             noExport: "Deze dienst zal niet worden extern worden gesynchroniseerd, omdat zowel OIDC als SAML uitgeschakeld zijn.",
             export: "Deze dienst zal extern worden gesynchroniseerd, omdat OIDC of SAML ingeschakeld zijn.",
             lastExportDate: "Laatse synchronisatie datum",

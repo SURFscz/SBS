@@ -1386,6 +1386,7 @@ class ServiceOverview extends React.Component {
 
     renderExport = (config, service) => {
         const syncActivated = service.oidc_enabled || service.saml_enabled;
+        const manageEnabled = config.manage_enabled;
         return (
             <div className="export">
                 <CheckBox name={"oidc_enabled"}
@@ -1400,8 +1401,9 @@ class ServiceOverview extends React.Component {
                           info={I18n.t("service.saml.samlClient")}
                           readOnly={true}
                 />
-                <p>{I18n.t(`service.export.${syncActivated ? "export" : "noExport"}`)}</p>
-                {syncActivated && <>
+                {!manageEnabled && <p>{I18n.t("service.export.exportDisabled")}</p>}
+                {manageEnabled && <p>{I18n.t(`service.export.${syncActivated ? "export" : "noExport"}`)}</p>}
+                {(syncActivated && manageEnabled) &&<>
                     <InputField
                         value={service.exported_at ? dateFromEpoch(service.exported_at) : I18n.t("service.export.notExported")}
                         name={I18n.t("service.export.lastExportDate")}
