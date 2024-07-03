@@ -56,7 +56,8 @@ import {isUserServiceAdmin} from "../utils/UserRole";
 import {SAMLMetaData} from "../components/SAMLMetaData";
 import UploadButton from "../components/UploadButton";
 
-const toc = ["general", "contacts", "policy", "SCIMServer", "SCIMClient", "ldap", "pamWebLogin", "tokens", "OIDC", "SAML"];
+const toc = ["general", "contacts", "policy", "SCIMServer", "SCIMClient", "ldap", "pamWebLogin", "tokens",
+    "OIDC", "SAML", "Export"];
 
 class ServiceOverview extends React.Component {
 
@@ -644,6 +645,8 @@ class ServiceOverview extends React.Component {
                 return !oidc_enabled || (!isEmpty(redirect_urls) && !isEmpty(grants) && !isEmpty(providing_organisation));
             case "SAML":
                 return !saml_enabled || (!isEmpty(saml_metadata) || !isEmpty(saml_metadata_url));
+            case "Export":
+                return true;
             default:
                 throw new Error(`unknown-tab: ${tab}`);
         }
@@ -757,15 +760,16 @@ class ServiceOverview extends React.Component {
         return null;
     }
 
-    sidebar = currentTab => {
+    sidebar = (currentTab, isAdmin) => {
         return (<div className={"side-bar"}>
             <h3>{I18n.t("serviceDetails.details")}</h3>
             <ul>
-                {toc.map(item => <li key={item}>
-                    <a href={`/${item}`}
-                       className={`${item === currentTab ? "active" : ""} ${this.isValidTab(item) ? "" : "error"}`}
-                       onClick={this.changeTab(item)}>{I18n.t(`serviceDetails.toc.${item}`)}</a>
-                </li>)}
+                {toc.filter(tab => isAdmin || tab !== "Export")
+                    .map(item => <li key={item}>
+                        <a href={`/${item}`}
+                           className={`${item === currentTab ? "active" : ""} ${this.isValidTab(item) ? "" : "error"}`}
+                           onClick={this.changeTab(item)}>{I18n.t(`serviceDetails.toc.${item}`)}</a>
+                    </li>)}
             </ul>
         </div>);
     }
@@ -1240,7 +1244,7 @@ class ServiceOverview extends React.Component {
                           value={service.oidc_enabled || false}
                           tooltip={I18n.t("service.oidc.oidcEnabledTooltip")}
                           info={I18n.t("service.oidc.oidcClient")}
-                          readOnly={!isAdmin && !service.saml_enabled}
+                          readOnly={service.saml_enabled || !isAdmin}
                           onChange={e => this.setState({
                               service: {
                                   ...service,
@@ -1329,7 +1333,7 @@ class ServiceOverview extends React.Component {
                           value={service.saml_enabled || false}
                           tooltip={I18n.t("service.saml.samlEnabledTooltip")}
                           info={I18n.t("service.saml.samlClient")}
-                          readOnly={service.oidc_enabled || (!isAdmin && !isServiceAdmin)}
+                          readOnly={service.oidc_enabled || !isAdmin}
                           onChange={e => this.setState({
                               service: {
                                   ...service,
@@ -1376,6 +1380,61 @@ class ServiceOverview extends React.Component {
                             this.renderSAMLMetaData(parsedSAMLMetaData)}
                     </div>}
 
+            </div>
+        );
+    }
+
+    renderExport = (config, service) => {
+        const syncActivated = service.oidc_enabled || service.saml_enabled;
+        return (
+            <div className="export">
+                <CheckBox name={"oidc_enabled"}
+                          value={service.oidc_enabled || false}
+                          tooltip={I18n.t("service.oidc.oidcEnabledTooltip")}
+                          info={I18n.t("service.oidc.oidcClient")}
+                          readOnly={true}
+                />
+                <CheckBox name={"saml_enabled"}
+                          value={service.saml_enabled || false}
+                          tooltip={I18n.t("service.saml.samlEnabledTooltip")}
+                          info={I18n.t("service.saml.samlClient")}
+                          readOnly={true}
+                />
+                <p>{I18n.t(`service.export.${syncActivated ? "export" : "noExport"}`)}</p>
+                {syncActivated && <>
+                    <InputField
+                        value={service.exported_at ? dateFromEpoch(service.exported_at) : I18n.t("service.export.notExported")}
+                        name={I18n.t("service.export.lastExportDate")}
+                        disabled={true}
+                        externalLink={false}/>
+                    {service.exported_at &&
+                        <InputField
+                            value={I18n.t(`service.export.${service.export_successful ? "successful" : "failure"}`)}
+                            name={I18n.t("service.export.lastExportStatus")}
+                            disabled={true}
+                            externalLink={false}/>}
+                    {service.export_external_identifier &&
+                        <>
+                            <InputField
+                                value={service.export_external_identifier}
+                                name={I18n.t("service.export.externalIdentifier")}
+                                disabled={true}
+                                externalLink={false}/>
+                            <InputField
+                                value={service.export_external_version.toString()}
+                                name={I18n.t("service.export.externalVersion")}
+                                disabled={true}
+                                externalLink={false}/>
+                            <InputField
+                                value={I18n.t("service.export.externalLinkValue", {
+                                    base_url: config.manage_base_url,
+                                    external_identifier: service.export_external_identifier
+                                })}
+                                name={I18n.t("service.export.externalLink")}
+                                disabled={true}
+                                externalLink={true}/>
+                        </>}
+                </>}
             </div>
         );
     }
@@ -1600,6 +1659,8 @@ class ServiceOverview extends React.Component {
                 return this.renderOidc(config, service, isAdmin, isServiceAdmin);
             case "SAML":
                 return this.renderSAML(config, service, isAdmin, isServiceAdmin, invalidInputs);
+            case "Export":
+                return this.renderExport(config, service);
             default:
                 throw new Error(`unknown-tab: ${currentTab}`);
         }
@@ -1655,7 +1716,7 @@ class ServiceOverview extends React.Component {
                 {scimTokenChange && this.renderScimTokenChange(scimBearerToken)}
             </ConfirmationDialog>
 
-            {this.sidebar(currentTab)}
+            {this.sidebar(currentTab, isAdmin)}
             <div className={`service ${createNewServiceToken ? "no-grid" : ""}`}>
                 <h2 className="section-separator">{I18n.t(`serviceDetails.toc.${currentTab}`)}</h2>
                 {this.renderCurrentTab(config, currentTab, service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit, invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken, initial)}
