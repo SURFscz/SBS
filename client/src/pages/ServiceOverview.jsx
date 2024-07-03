@@ -141,7 +141,7 @@ class ServiceOverview extends React.Component {
                 if (saml_enabled && (!isEmpty(saml_metadata) || !isEmpty(saml_metadata_url))) {
                     parseSAMLMetaData(saml_metadata, saml_metadata_url)
                         .then(metaData => this.setState({
-                            parsedSAMLMetaData: metaData,
+                            parsedSAMLMetaData: metaData.result,
                             parsedSAMLMetaDataError: false,
                             parsedSAMLMetaDataURLError: false
                         }))
@@ -455,7 +455,7 @@ class ServiceOverview extends React.Component {
                 this.setState({service: {...this.state.service, saml_metadata: metaData}});
                 parseSAMLMetaData(metaData, null)
                     .then(metaData => this.setState({
-                        parsedSAMLMetaData: metaData,
+                        parsedSAMLMetaData: metaData.result,
                         parsedSAMLMetaDataError: false
                     }))
                     .catch(() => this.setState({
