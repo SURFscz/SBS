@@ -2227,7 +2227,7 @@ const nl = {
         info4: "<p>Je bent ingelogd via SURF Research Access Management, maar geen van de samenwerking(en) waar je lid van bent geven toegang tot <i>{{name}}</i>.</p><p>Neem contact op met de beheerders voor toegang tot deze dienst.</p>",
         info5: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i> omdat de samenwerking(en) waarvan je lid bent niet actief zijn.</p><p>Neem contact op met de beheerders van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
         info6: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. Je lidmaatschap van de samenwerking(en) waar je momenteel lid van bent zijn verlopen.</p><p>Neem contact op met de beheerders van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
-        ticket: "Als je wilt kan je contact opnemen met SRAM support " +
+        ticket: "Als je wil, kun je contact opnemen met SRAM support " +
             "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a> voor hulp.",
         subject: "Geen toegang tot dienst {{name}}",
         entityId: "Entity ID",
@@ -2516,17 +2516,17 @@ const nl = {
         unitRequired: "Je moet minstens één unit selecteren"
     },
     serviceDenied: {
-        loginPrevTitle: "Kon je eerst wel inloggen?",
+        loginPrevTitle: "Kon je eerder wel inloggen?",
         loginPrev: [
             "Zorg dat je het juiste account gebruikt.",
             "Controleer of je nog steeds lid bent van de juiste samenwerking.",
             "Als er iets anders niet juist is, neem dan contact op " +
             "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a>."
         ],
-        neverBeenBeforeTitle: "Ben je hier nog nooit geweest?",
+        neverBeenBeforeTitle: "Ben je nog nooit ingelogd?",
         neverBeenBefore: [
-            "Lees wat je met <a href=\"https://surf.nl/sram\" target=\"_blank\" rel=\"noopener noreferrer\">SRAM allemaal kan doen.</a>",
-            "Als iemand je heeft gewezen op <strong>{{serviceName}}</strong>, neem dan contact met hen op om toegang te krijgen tot de juiste samenwerking, of neem contact op met je instelling."
+            "Als iemand je heeft gewezen op <strong>{{serviceName}}</strong>, neem dan contact met ze op om toegang te krijgen tot de juiste samenwerking.",
+            "Lees wat je met <a href=\"https://surf.nl/sram\" target=\"_blank\" rel=\"noopener noreferrer\">SRAM allemaal kan doen.</a>"
         ],
         ticketInfoTitle: "Sessieinformatie"
     },
