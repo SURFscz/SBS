@@ -1225,6 +1225,7 @@ const en = {
             samlDisabledExclusivity: "SAML protocol can not be enabled, because the OIDC protocol is active"
         },
         export: {
+            exportDisabled: "This service will not be externally synced, as this feature is disabled in this environment.",
             noExport: "This service will not be externally synced, as OIDC and SAML are both disabled.",
             export: "This service will be externally synced after changes, as OIDC or SAML is enabled.",
             lastExportDate: "Last synced on date",
