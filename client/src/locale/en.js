@@ -1026,7 +1026,7 @@ const en = {
         securityEmailRequired: "Security email is required",
         support_email: "User support contact",
         support_emailPlaceholder: "The email address or the website of the support department for this service",
-        support_emailTooltip: "The support email address can be contacted if users have questions about the service. Ideally this is a functional email address, like service_A_support@service.example.com.",
+        support_emailTooltip: "The support email address or URL is shown to the users",
         invitations: "Invite service admins",
         status: {
             name: "Status",
