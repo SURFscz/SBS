@@ -2523,10 +2523,10 @@ const en = {
             "If something else is going wrong, please contact us at " +
             "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a>."
         ],
-        neverBeenBeforeTitle: "Have you never been here before?",
+        neverBeenBeforeTitle: "Have you never logged on before?",
         neverBeenBefore: [
-            "Learn what <a href=\"https://surf.nl/sram\" target=\"_blank\" rel=\"noopener noreferrer\">SRAM is all about</a>.",
-            "If someone pointed you to <strong>{{serviceName}}</strong>, reach out to them on how to gain access via a research collaboration, or reach out to your institution."
+            "If someone pointed you to <strong>{{serviceName}}</strong>, reach out to them on how to gain access via a research collaboration.",
+            "Learn what <a href=\"https://surf.nl/sram\" target=\"_blank\" rel=\"noopener noreferrer\">SRAM is all about</a>."
         ],
         ticketInfoTitle: "Session information"
     },
