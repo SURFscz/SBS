@@ -1,5 +1,6 @@
 import itertools
 import json
+import os
 import subprocess
 import tempfile
 import unicodedata
@@ -732,7 +733,7 @@ def error():
 
     # We don't want to fill the logs and more so, don't want to reach queue limits for mail
     error_count = session["error_count"] = int(session.get("error_count", 0)) + 1
-    if error_count > 9:
+    if error_count > 9 and not os.environ.get("PROFILE"):
         # We've got the message, no need for env specific configuration
         return {"message": "Overload error posting"}, 422
     js_dump = json.dumps(request_json, indent=4, default=str)

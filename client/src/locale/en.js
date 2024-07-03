@@ -1221,8 +1221,21 @@ const en = {
             samlClient: "SAML protocol",
             samlEnabledTooltip: "Allow this service to login with the SAML protocol",
             samlDisclaimer: "SAML protocol is disabled",
-            samlError: "Eitehr the SAML metadata URL or a SAML metadata file are required",
+            samlError: "Either the SAML metadata URL or a SAML metadata file are required",
             samlDisabledExclusivity: "SAML protocol can not be enabled, because the OIDC protocol is active"
+        },
+        export: {
+            noExport: "This service will not be externally synced, as OIDC and SAML are both disabled.",
+            export: "This service will be externally synced after changes, as OIDC or SAML is enabled.",
+            lastExportDate: "Last synced on date",
+            notExported: "Not exported yet",
+            lastExportStatus: "Last sync status",
+            successful: "Successfully synced",
+            failure: "Sync failure",
+            externalIdentifier: "External identifier",
+            externalVersion: "External version",
+            externalLink: "External link",
+            externalLinkValue: "{{base_url}}/metadata/sram/{{external_identifier}}"
         }
     },
     organisation: {
@@ -2433,7 +2446,8 @@ const en = {
             SCIMServer: "SCIM server",
             SCIMClient: "SCIM client",
             OIDC: "OpenID Connect",
-            SAML: "SAML2.0"
+            SAML: "SAML2.0",
+            Export: "Export"
         },
         updateDisabled: "Some fields have invalid or are missing values in the sections {{invalid}}."
     },

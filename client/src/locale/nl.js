@@ -1223,6 +1223,19 @@ const nl = {
             samlDisclaimer: "SAML protocol is uitgeschakeld",
             samlError: "Of de SAML metadata URL of een SAML metadata bestand zijn verplicht",
             samlDisabledExclusivity: "SAML protocol kan niet worden aangezet, omdat het OIDC protocol actief is"
+        },
+        export: {
+            noExport: "Deze dienst zal niet worden extern worden gesynchroniseerd, omdat zowel OIDC als SAML uitgeschakeld zijn.",
+            export: "Deze dienst zal extern worden gesynchroniseerd, omdat OIDC of SAML ingeschakeld zijn.",
+            lastExportDate: "Laatse synchronisatie datum",
+            notExported: "Nog niet geëxporteerd",
+            lastExportStatus: "Laatse synchronisatie status",
+            successful: "Succesvol gesynchroniseerd",
+            failure: "Synchronisatie fout",
+            externalIdentifier: "Externe identifier",
+            externalVersion: "Externe versie",
+            externalLink: "Exerne link",
+            externalLinkValue: "{{base_url}}/metadata/sram/{{external_identifier}}"
         }
     },
     organisation: {
@@ -2433,7 +2446,8 @@ const nl = {
             SCIMServer: "SCIM server",
             SCIMClient: "SCIM client",
             OIDC: "OpenID Connect",
-            SAML: "SAML2.0"
+            SAML: "SAML2.0",
+            Export: "Export"
         },
         updateDisabled: "Er zijn velden met ongeldige of ontbrekende waarden in de secties {{invalid}}."
     },

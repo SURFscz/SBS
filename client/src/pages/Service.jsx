@@ -140,8 +140,8 @@ class Service extends React.Component {
                     if (isServiceRequestDetails && (res.saml_metadata_url || res.saml_metadata)) {
                         parseSAMLMetaData(res.saml_metadata, res.saml_metadata_url)
                             .then(metaData => this.setState({
-                                parsedSAMLMetaData: metaData,
-                                entity_id: metaData.entity_id,
+                                parsedSAMLMetaData: metaData.result,
+                                entity_id: metaData.result.entity_id,
                                 parsedSAMLMetaDataError: false,
                                 parsedSAMLMetaDataURLError: false
                             }))
@@ -466,7 +466,9 @@ class Service extends React.Component {
                 this.setState({samlMetaDataFile: file.name, saml_metadata: metaData});
                 parseSAMLMetaData(metaData, null)
                     .then(metaData => this.setState({
-                        parsedSAMLMetaData: metaData, entity_id: metaData.entity_id, parsedSAMLMetaDataError: false
+                        parsedSAMLMetaData: metaData.result,
+                        entity_id: metaData.result.entity_id,
+                        parsedSAMLMetaDataError: false
                     }))
                     .catch(() => this.setState({
                         parsedSAMLMetaData: null, entity_id: null, parsedSAMLMetaDataError: true, saml_metadata: null
