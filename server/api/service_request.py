@@ -18,6 +18,7 @@ from server.db.logo_mixin import logo_from_cache
 from server.db.models import save, delete
 from server.mail import mail_accepted_declined_service_request, \
     mail_service_request
+from server.manage.api import sync_external_service
 from server.saml.sp_metadata_parser import parse_metadata_xml, parse_metadata_url
 
 service_request_api = Blueprint("service_request_api", __name__, url_prefix="/api/service_requests")
@@ -159,6 +160,8 @@ def approve_request(service_request_id):
 
     res = save(Service, custom_json=client_data)
     service = res[0]
+
+    sync_external_service(current_app, service)
 
     user = service_request.requester
     admin_service_membership = ServiceMembership(role="admin", user_id=user.id,

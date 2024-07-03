@@ -21,6 +21,7 @@ from server.db.domain import Service, Collaboration, CollaborationMembership, Or
     User, ServiceInvitation, ServiceMembership, ServiceToken
 from server.db.models import update, save, delete, unique_model_objects
 from server.mail import mail_platform_admins, mail_service_invitation, mail_delete_service_request
+from server.manage.api import sync_external_service, delete_external_service
 
 URI_ATTRIBUTES = ["uri", "uri_info", "privacy_policy", "accepted_user_policy", "scim_url"]
 
@@ -385,6 +386,8 @@ def save_service():
     res = save(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]
 
+    sync_external_service(current_app, service)
+
     user = db.session.get(User, current_user_id())
     for administrator in administrators:
         invitation = ServiceInvitation(hash=generate_token(), message=message, invitee_email=administrator,
@@ -584,6 +587,9 @@ def update_service():
 
     res = update(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]
+
+    sync_external_service(current_app, service)
+
     if scim_url_changed and service.scim_enabled:
         service.scim_bearer_token = plain_bearer_token
         encrypt_scim_bearer_token(service)
@@ -629,6 +635,10 @@ def request_delete_service(service_id):
 @json_endpoint
 def delete_service(service_id):
     confirm_write_access()
+
+    service = db.session.get(Service, service_id)
+    delete_external_service(current_app, service.export_external_identifier)
+
     return delete(Service, service_id)
 
 
