@@ -1981,7 +1981,7 @@ const nl = {
             failed: "Failed",
         },
         scim: {
-            info: "If enabled there is a mock remote SCIM client available to test the SCIM messages." +
+            info: "If enabled there is a mock remote SCIM client available to test the SCIM events." +
                 "Configure a Service with the following SCIM URL to start testing the SCIM functionality",
             services: "SCIM enabled Services",
             stats: "All API calls and state updates send to the mock SCIM endpoints are stored in an in-memory database.",
@@ -2288,10 +2288,10 @@ const nl = {
         intendedRoleTooltip: "De dienstmanager rol is gelimiteerd tot het beheren van koppelingen met samenwerkingen"
     },
     scim: {
-        scimEnabled: "SCIM server provisioning",
-        scimEnabledTooltip: "Sta deze service toe om SCIM-berichten te ontvangen?",
-        scimClientEnabled: "SCIM client",
-        scimClientEnabledTooltip: "Sta deze service toe om de SCIM-eindpunten aan te roepen?",
+        scimEnabled: "SCIM push naar dienst",
+        scimEnabledTooltip: "Stuur SCIM events aaar deze dinest",
+        scimClientEnabled: "SCIM pull door dienst",
+        scimClientEnabledTooltip: "Deze dienst mag de SCIM endpoints aanroepen",
         scimURL: "SCIM-endpoints base URL",
         scimURLPlaceHolder: "https://service.com.scim",
         scimURLTooltip: "De base URL van het SCIM endpoint waarnaar alle SCIM event worden verzonden.",
@@ -2302,7 +2302,7 @@ const nl = {
         scimSweepDeleteOrphans: "Sweep verwijdert weesgebruikers en lege samenwerkingen en groepen",
         scimSweepDeleteOrphansTooltip: "Verwijder met een sweep gebruikers zonder lidmaatschappen en samenwerkingen en groepen zonder leden",
         sweepScimDailyRate: "Sweeps per dag",
-        sweepScimDailyRateTooltip: "Aantal maal per 24 uur dat de SCIM data op de service gesweept wordt"
+        sweepScimDailyRateTooltip: "Hoe vaakt binnen 24 uur de SCIM data op de service gesweept wordt"
     },
     userTokens: {
         actionTitle: "Nieuwe API-token",
