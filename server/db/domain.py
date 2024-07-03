@@ -608,6 +608,9 @@ class Service(Base, db.Model, LogoMixin, SecretMixin):
         # The SecretMixin and LogoMixin prevent use from accessing the scim_bearer_token directly
         return object.__getattribute__(self, "scim_bearer_token")
 
+    def oidc_client_secret_db_value(self):
+        # The SecretMixin and LogoMixin prevent use from accessing the oidc_client_secret directly
+        return object.__getattribute__(self, "oidc_client_secret")
 
 class ServiceRequest(Base, db.Model, LogoMixin):
     __tablename__ = "service_requests"

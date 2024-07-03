@@ -25,11 +25,14 @@ def _add_contacts(service: Service, service_template):
         contact_index += 1
 
 
+allowed_bool_false_fields = ["version"]
+
+
 def _replace_none_values(d: dict):
     for k in list(d.keys()):
         if isinstance(d[k], dict):
             _replace_none_values(d[k])
-        elif not d[k]:
+        elif not d[k] and k not in allowed_bool_false_fields:
             del d[k]
     return d
 
@@ -38,8 +41,6 @@ def create_service_template(service: Service):
     assertion_consumer_service = _get_assertion_consumer_url(service)
 
     service_template = {
-        "id": service.export_external_identifier,
-        "version": service.export_external_version,
         "type": "sram",
         "data": {
             "allowedall": True,
@@ -48,7 +49,6 @@ def create_service_template(service: Service):
                 "enabled": True,
                 "attributes": arp_attributes()
             },
-            "description:en": service.description,
             "entityid": service.entity_id,
             "metadataurl": service.saml_metadata_url,
             "state": "prodaccepted",
@@ -67,15 +67,22 @@ def create_service_template(service: Service):
                 "logo:0:height": 348,
                 "NameIDFormat": "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent",
                 "name:en": service.name,
+                "description:en": service.description,
                 "OrganizationName:en": service.providing_organisation,
                 "redirectUrls": service.redirect_urls.split(",") if service.redirect_urls else [],
                 "accessTokenValidity": 3600,
-                "refreshTokenValidity": 3600,
-                "secret": service.oidc_client_secret,
+                "secret": service.oidc_client_secret_db_value(),
                 "url:nl": service.uri_info
             }
         }
     }
+    if service.oidc_enabled and "refresh_token" in service.grants:
+        service_template["data"]["metaDataFields"]["refreshTokenValidity"] = 3600
+
     _add_contacts(service, service_template)
+
+    if service.export_external_identifier:
+        service_template["id"] = service.export_external_identifier
+        service_template["version"] = service.export_external_version
 
     return _replace_none_values(service_template)
