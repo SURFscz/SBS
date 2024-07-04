@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision 02350ca4274c (head)
+-- Dump of empty SBS database, alembic revision 973353b0a394 (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('02350ca4274c');
+INSERT INTO `alembic_version` VALUES ('973353b0a394');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_keys`;
@@ -808,6 +808,8 @@ CREATE TABLE `service_requests` (
   `rejection_reason` text,
   `grants` text,
   `is_public_client` tinyint(1) DEFAULT '0',
+  `oidc_client_secret` varchar(255) DEFAULT NULL,
+  `entity_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `service_requests_uuid4` (`uuid4`),
   KEY `requester_id` (`requester_id`),
@@ -895,6 +897,10 @@ CREATE TABLE `services` (
   `is_public_client` tinyint(1) DEFAULT '0',
   `saml_enabled` tinyint(1) DEFAULT '0',
   `oidc_enabled` tinyint(1) DEFAULT '0',
+  `export_successful` tinyint(1) DEFAULT '0',
+  `exported_at` datetime DEFAULT NULL,
+  `export_external_identifier` varchar(255) DEFAULT NULL,
+  `export_external_version` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `services_unique_entity_id` (`entity_id`),
   UNIQUE KEY `services_uuid4` (`uuid4`),
