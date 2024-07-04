@@ -122,9 +122,8 @@ def idp_display_name(schac_home, lang="en", use_default=True):
     names = idp_metadata["schac_home_organizations"].get(schac_home)
     if not names:
         # Fallback to the regular expressions in the scopes of the metadata feed
-        reg_exp_names = [names for rx, names in idp_metadata["reg_exp_schac_home_organizations"].items() if
-                         schac_home and re.compile(rx).match(schac_home)]
-        names = reg_exp_names[0] if reg_exp_names else {"en": schac_home if use_default else None}
+        names = next((names for rx, names in idp_metadata["reg_exp_schac_home_organizations"].items() if
+                      schac_home and re.compile(rx).match(schac_home)), {"en": schac_home if use_default else None})
     return names.get(lang, names["en"])
 
 
