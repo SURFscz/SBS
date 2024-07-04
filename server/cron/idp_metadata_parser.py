@@ -84,6 +84,7 @@ def _do_parse_idp_metadata(app, write_result_to_file=True):
                 results_by_entity_id[entity_id] = scopes
                 display_name_nl = display_name_en = None
                 scopes = []
+                reg_exp_scopes = []
 
         end = int(time.time() * 1000.0)
         idp_metadata = {
