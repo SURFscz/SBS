@@ -54,12 +54,12 @@ def add_collaborations_services():
 def delete_organisations_services(organisation_id, service_id):
     confirm_organisation_admin_or_manager(organisation_id)
 
-    organisation = db.session.get(Organisation, organisation_id)
+    organisation = Organisation.query.filter(Organisation.id == organisation_id).one()
+    service = Service.query.filter(Service.id == service_id).one()
 
-    service = db.session.get(Service, service_id)
     organisation.services.remove(service)
+
     db.session.merge(organisation)
-    db.session.commit()
 
     emit_socket(f"organisation_{organisation_id}")
     broadcast_organisation_service_deleted(organisation_id, service_id)
