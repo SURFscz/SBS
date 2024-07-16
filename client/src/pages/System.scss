@@ -107,6 +107,9 @@
                         &.invitation-reminders {
                             width: 33%;
                         }
+                        &.invitation-expirations {
+                            width: 25%;
+                        }
                     }
                 }
 
@@ -319,7 +322,7 @@
             }
         }
 
-        .invitation_reminders {
+        .invitation_reminders, .invitation_expirations  {
             display: flex;
             flex-direction: column;
         }

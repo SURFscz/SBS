@@ -113,6 +113,16 @@ def do_invitation_reminders():
     return invitation_reminders(current_app), 201
 
 
+@system_api.route("/invitation_expirations", strict_slashes=False, methods=["PUT"])
+@json_endpoint
+def do_invitation_expirations():
+    confirm_write_access()
+
+    from server.cron.invitation_expirations import invitation_expirations
+
+    return invitation_expirations(current_app), 201
+
+
 @system_api.route("/open_requests", strict_slashes=False, methods=["GET"])
 @json_endpoint
 def do_open_requests():

@@ -13,6 +13,7 @@ full_text_search_autocomplete_limit = 16
 
 STATUS_ACTIVE = "active"
 STATUS_EXPIRED = "expired"
+STATUS_ACCEPTED = "accepted"
 STATUS_SUSPENDED = "suspended"
 
 STATUS_OPEN = "open"

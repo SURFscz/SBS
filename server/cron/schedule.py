@@ -3,15 +3,16 @@ import threading
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from server.cron.invitation_reminders import invitation_reminders
 from server.cron.cleanup_non_open_requests import cleanup_non_open_requests
 from server.cron.collaboration_expiration import expire_collaborations
 from server.cron.collaboration_inactivity_suspension import suspend_collaborations
 from server.cron.idp_metadata_parser import parse_idp_metadata
+from server.cron.invitation_expirations import invitation_expirations
+from server.cron.invitation_reminders import invitation_reminders
 from server.cron.membership_expiration import expire_memberships
+from server.cron.open_requests import open_requests
 from server.cron.orphan_users import delete_orphan_users
 from server.cron.outstanding_requests import outstanding_requests
-from server.cron.open_requests import open_requests
 from server.cron.scim_sweep_services import scim_sweep_services
 from server.cron.user_suspending import suspend_users
 
@@ -45,6 +46,8 @@ def start_scheduling(app):
         scheduler.add_job(func=invitation_reminders, hour=cfg.invitation_reminders.cron_hour_of_day, **options)
     if cfg.open_requests.enabled:
         scheduler.add_job(func=open_requests, day_of_week=cfg.open_requests.cron_day_of_week, **options)
+    if cfg.invitation_expirations.enabled:
+        scheduler.add_job(func=invitation_expirations, hour=cfg.invitation_expirations.cron_hour_of_day, **options)
 
     if cfg.metadata.get("parse_at_startup", False):
         threading.Thread(target=parse_idp_metadata, args=(app,)).start()
