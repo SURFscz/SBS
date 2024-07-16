@@ -43,7 +43,7 @@ export default function ServiceCard({
 
     const renderAbout = () => {
         return (
-            <div className={"service-metadata"}>
+            <div key={service.id} className="service-metadata">
                 <div className={"policies"}>
                     <dt>{I18n.t("service.description")}</dt>
                     <dd>{service.description}</dd>

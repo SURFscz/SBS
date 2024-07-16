@@ -405,6 +405,7 @@ class UsedServices extends React.Component {
             <div>
                 {usedServices.map(service =>
                     <ServiceCard service={service}
+                                 key={service.id}
                                  nameLinkAction={e => this.openService(service, e)}
                                  status={this.getServiceStatus(service)}
                                  message={this.getServiceStatus(service)}
