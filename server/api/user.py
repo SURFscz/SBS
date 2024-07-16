@@ -101,6 +101,7 @@ def _user_query():
         .options(joinedload(User.aups)) \
         .options(joinedload(User.organisation_aups)) \
         .options(joinedload(User.service_requests)) \
+        .options(joinedload(User.service_aups)) \
         .options(joinedload(User.collaboration_requests)
                  .subqueryload(CollaborationRequest.organisation))
 

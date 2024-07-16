@@ -27,7 +27,12 @@ export default function CollaborationWelcomeDialog({
 
     const [disabled, setDisabled] = useState(hasServices);
     const [organisationDisabled, setOrganisationDisabled] = useState(requiresOrganisationAup);
-
+    /**
+     * TODO - filter out the serviecs where ther eis already an service_aup, but do displauy them, only do not show the
+     * checkbox. Different variations: no services connected, not true, accpept new services, do not hav to accept nexisting
+     * servies
+     *
+     */
 
     const content = () => {
         return (<section className={"welcome-dialog-content"}>
