@@ -16,7 +16,7 @@ from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call, \
     confirm_organisation_api_collaboration
 from server.db.activity import update_last_activity_date
-from server.db.defaults import default_expiry_date, STATUS_OPEN
+from server.db.defaults import default_expiry_date, STATUS_OPEN, STATUS_EXPIRED
 from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, JoinRequest, Group, \
     OrganisationAup
 from server.db.models import delete
@@ -248,8 +248,8 @@ def invitations_accept():
         raise Conflict(f"The invitation has status {invitation.status}")
 
     if invitation.expiry_date and invitation.expiry_date < dt_now():
-        if invitation.created_by == "system":
-            invitation.status = "expired"
+        if invitation.created_by == CREATED_BY_SYSTEM:
+            invitation.status = STATUS_EXPIRED
             db.session.merge(invitation)
             db.session.commit()
         else:
@@ -269,7 +269,7 @@ def invitations_accept():
                                                        expiry_date=invitation.membership_expiry_date,
                                                        created_by=invitation.user.uid,
                                                        updated_by=invitation.user.uid)
-    if invitation.created_by == "system":
+    if invitation.created_by == CREATED_BY_SYSTEM:
         collaboration_membership.invitation_id = invitation.id
     try:
         collaboration_membership = db.session.merge(collaboration_membership)
@@ -302,7 +302,7 @@ def invitations_accept():
         .one()
     collaboration_id = invitation.collaboration.id
     # We need the persistent identifier of the collaboration_membership which will be generated after the delete-commit
-    if invitation.created_by == "system":
+    if invitation.created_by == CREATED_BY_SYSTEM:
         invitation.status = "accepted"
         db.session.merge(invitation)
     else:

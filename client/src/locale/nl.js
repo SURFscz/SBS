@@ -1974,6 +1974,7 @@ const nl = {
         runSuspendedCollaborations: "Run the job to suspend collaborations that have had no activity for X days",
         runOrphanUsers: "Run the job to delete orphan users (e.g. no membership, join request and collaboration requests)",
         runInvitationReminders: "Run the job to send reminder mails to all invitations that expire in X days",
+        runInvitationExpirations: "Run the job to delete invitations that have expired X days",
         runDailyJobs: "Trigger",
         showDailyJobs: "Show",
         showDailyJobsInfo: "Toon alle ingeplande Cron jobs",
@@ -2069,6 +2070,12 @@ const nl = {
             invitations: "CO invitations resend",
             serviceInvitations: "Service invitations resend",
             organisationInvitations: "ORG invitations resend",
+        },
+        invitationExpirations: {
+            invitations: "Invitations deleted",
+            apiInvitations: "API invitations deleted",
+            serviceInvitations: "Service invitations deleted",
+            organisationInvitations: "Organisation invitations deleted",
         },
         openRequests: {
             recipient: "Recipient",

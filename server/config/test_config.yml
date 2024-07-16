@@ -197,6 +197,15 @@ invitation_reminders:
   # How long before expiration of an invitation do we remind the user?
   invitation_reminders_threshold: 5
 
+invitation_expirations:
+  # Do we daily check for invitations that are expired / accepted and are eligible for deletion ?
+  enabled: True
+  cron_hour_of_day: 10
+  # How long after expiration of an invitation do we delete the invitation?
+  nbr_days_remove_expired_invitations: 10
+  # How long after expiration of an API created invitation do we delete the invitation?
+  nbr_days_remove_api_expired_invitations: 30
+
 orphan_users:
   # Do we daily check for users that are orphans?
   enabled: True
