@@ -1,7 +1,7 @@
 from uuid import uuid4
 
 from flask import current_app
-from sqlalchemy import select, func
+from sqlalchemy import select, func, and_
 from sqlalchemy.orm import column_property
 
 from server.db.audit_mixin import Base, metadata
@@ -596,10 +596,15 @@ class Service(Base, db.Model, LogoMixin, SecretMixin):
     export_successful = db.Column("export_successful", db.Boolean(), nullable=True, default=False)
     export_external_identifier = db.Column("export_external_identifier", db.String(length=255), nullable=True)
     export_external_version = db.Column("export_external_version", db.Integer(), nullable=True)
+    crm_id = db.Column("crm_id", db.String(length=255), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
     created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
+    organisation_name = column_property(select(Organisation.name)
+                                        .where(and_(crm_id != None, Organisation.crm_id == crm_id))  # noqa: E711
+                                        .correlate_except(Organisation)
+                                        .scalar_subquery())
 
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.service_memberships))) > 0
