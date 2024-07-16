@@ -49,7 +49,7 @@ class UnitHeader extends React.Component {
     render() {
         const {
             obj, history, auditLogPath, name, breadcrumbName, svgClick, firstTime, actions, children, customAction,
-            displayDescription, labels, displayShortName
+            displayDescription, labels, displayShortName, subName
         } = this.props;
         const {showDropDown} = this.state;
         const queryParam = `name=${encodeURIComponent(breadcrumbName || name)}&back=${encodeURIComponent(window.location.pathname)}`;
@@ -68,6 +68,7 @@ class UnitHeader extends React.Component {
                         <div className="meta-info-container">
                             <div className="meta-info">
                                 {obj.name && <h1>{obj.name}</h1>}
+                                {subName && <h6>{subName}</h6>}
                                 {obj.organisation &&
                                     <span className="name">
                                         {`${obj.organisation.name}${isEmpty(obj.units) ? "" : " – " + splitListSemantically(obj.units.map(unit => unit.name), I18n.t("service.compliancySeparator"))}`}
@@ -121,6 +122,7 @@ UnitHeader.propTypes = {
     history: PropTypes.any,
     auditLogPath: PropTypes.string,
     name: PropTypes.string,
+    subName: PropTypes.string,
     breadcrumbName: PropTypes.string,
     svgClick: PropTypes.func,
     firstTime: PropTypes.func,

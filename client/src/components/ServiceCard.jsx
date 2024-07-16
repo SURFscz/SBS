@@ -112,9 +112,10 @@ export default function ServiceCard({
                 <div className="sds--content-card--textual">
                     <div className="sds--content-card--text-and-actions">
                         <div>
-                            <h4 className="sds--space--bottom--1">
+                            <h4 className={`${service.organisation_name ? "":"sds--space--bottom--1"}`}>
                                 {service.name}
                             </h4>
+                            {service.organisation_name && <h6 className="sds--space--bottom--1">{service.organisation_name}</h6>}
                             {!showAboutInformation && <p><MoreLessText txt={service.description}/></p>}
                             {message && <p className={chipType ? chipType : ""}>{message}</p>}
                             {(launchLink && service.uri) &&

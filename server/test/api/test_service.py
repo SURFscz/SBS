@@ -62,7 +62,8 @@ class TestService(AbstractTest):
     def test_find_by_id_service_admin(self):
         service = self.find_entity_by_name(Service, service_cloud_name)
         self.login("urn:james")
-        self.get(f"api/services/{service.id}", response_status_code=200, with_basic_auth=False)
+        service_details = self.get(f"api/services/{service.id}", response_status_code=200, with_basic_auth=False)
+        self.assertEqual(unihard_name, service_details["organisation_name"])
 
     def test_find_by_id_api_call(self):
         service = self.find_entity_by_name(Service, service_scheduler_name)

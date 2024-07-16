@@ -780,6 +780,9 @@ class ServiceOverview extends React.Component {
         if (name === "abbreviation") {
             value = sanitizeShortName(value);
         }
+        if (typeof value === "string" && isEmpty(value)) {
+            value = null;
+        }
         this.setState({alreadyExists, invalidInputs, "service": {...service, [name]: value}});
     }
 
@@ -1403,7 +1406,7 @@ class ServiceOverview extends React.Component {
                 />
                 {!manageEnabled && <p>{I18n.t("service.export.exportDisabled")}</p>}
                 {manageEnabled && <p>{I18n.t(`service.export.${syncActivated ? "export" : "noExport"}`)}</p>}
-                {(syncActivated && manageEnabled) &&<>
+                {(syncActivated && manageEnabled) && <>
                     <InputField
                         value={service.exported_at ? dateFromEpoch(service.exported_at) : I18n.t("service.export.notExported")}
                         name={I18n.t("service.export.lastExportDate")}
@@ -1635,7 +1638,11 @@ class ServiceOverview extends React.Component {
             {isEmpty(service.entity_id) && <ErrorIndicator msg={I18n.t("service.required", {
                 attribute: I18n.t("service.entity_id").toLowerCase()
             })}/>}
-
+            {(isAdmin && !showServiceAdminView) && <InputField value={service.crm_id}
+                                    placeholder={I18n.t("organisation.crmIdPlaceholder")}
+                                    name={I18n.t("organisation.crmId")}
+                                    onChange={e => this.changeServiceProperty("crm_id")(e)}
+            />}
         </>
     }
 

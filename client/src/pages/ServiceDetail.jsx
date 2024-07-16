@@ -552,6 +552,7 @@ class ServiceDetail extends React.Component {
                             auditLogPath={`services/${service.id}`}
                             breadcrumbName={I18n.t("breadcrumb.service", {name: service.name})}
                             name={service.name}
+                            subName={service.organisation_name}
                             firstTime={(user.admin && !showServiceAdminView) ? this.onBoarding : undefined}
                             actions={this.getActions(user, service, showServiceAdminView)}>
                     {!isInvitation && this.getIconListItems(iconListItems)}

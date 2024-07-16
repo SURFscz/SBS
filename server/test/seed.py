@@ -298,7 +298,7 @@ def seed(db, app_config, skip_seed=False):
                                        "\n- Wiki\n- Cloud\n- Awesome things...\n\nIf you want to join one of our "
                                        "collaborations, please send a mail to [support@uuc.nl](mailto:support@uuc.nl)."
                                        "\n<br/><br/>\nHappy researching,\n\n*UUC support*",
-                       collaboration_creation_allowed=True)
+                       collaboration_creation_allowed=True, crm_id="A2D02C9E-EA1D-434F-B893-A6413A01AFCB")
     ufra = Organisation(name=unifra_name, description=unifra_name,
                         identifier="7c60a022-ab09-438c-8603-c361bc1a088d", created_by="urn:admin",
                         updated_by="urn:admin", short_name="ufra", logo=read_image("uni-franeker.png"),
@@ -382,7 +382,7 @@ def seed(db, app_config, skip_seed=False):
                     redirect_urls=None, saml_metadata=None,
                     saml_metadata_url="https://engine.test.surfconext.nl/authentication/sp/metadata",
                     oidc_client_secret=None, providing_organisation="SURFconext", grants=None, is_public_client=False,
-                    saml_enabled=True, oidc_enabled=False)
+                    saml_enabled=True, oidc_enabled=False, crm_id="A2D02C9E-EA1D-434F-B893-A6413A01AFCB")
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, ufra],
                       description="SURF Storage Service", logo=read_image("storage.png"), abbreviation="storage",
                       override_access_allowed_all_connections=False, automatic_connection_allowed=True,
