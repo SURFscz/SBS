@@ -16,7 +16,7 @@ export default class Flash extends React.PureComponent {
         this.callback = flash => {
             this.setState({flash: flash});
             if ((flash && flash.message) && (!flash.type || flash.type === "info")) {
-                setTimeout(() => this.setState({flash: {}}), 5000);
+                setTimeout(() => this.setState({flash: {}}), flash.duration === 42 ? 18500 : 5000);
             }
         };
     }
@@ -29,6 +29,8 @@ export default class Flash extends React.PureComponent {
     componentWillUnmount() {
         emitter.removeListener("flash", this.callback);
     }
+
+    close = () => this.setState({flash: {}})
 
     render() {
         const {flash} = this.state;
@@ -45,7 +47,8 @@ export default class Flash extends React.PureComponent {
             return (
                 <ToasterContainer>
                     <Toaster message={flash.message}
-                             toasterType={ToasterType.Success}/>
+                             toasterType={ToasterType.Success}
+                             close={flash.duration === 42 ? this.close : null}/>
                 </ToasterContainer>);
         }
         return null;

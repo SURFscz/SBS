@@ -1047,7 +1047,7 @@ const en = {
         cancel: "Cancel",
         flash: {
             created: "Service {{name}} was created",
-            createdServiceRequest: "Registration for service {{name}} was requested",
+            createdServiceRequest: "Thank you for registering service {{name}}. We will look into your request and you'll hear from us the next working day.<br/><br/>The SURF Research Access Management support team",
             updated: "Service {{name}} was updated",
             deleted: "Service {{name}} was deleted",
             requestDeleted: "Request to delete service {{name}} is sent",

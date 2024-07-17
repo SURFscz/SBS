@@ -1047,7 +1047,7 @@ const nl = {
         cancel: "Annuleren",
         flash: {
             created: "Dienst {{name}} is aangemaakt.",
-            createdServiceRequest: "Verzoek voor dienstregistratie {{name}} aangemaakt.",
+            createdServiceRequest: "Bedankt voor de dienstregistratie van {{name}}. We zullen je verzoek bekijken en bij je terug komen binnen één werkdag.<br/><br/>Het SURF Research Access Management support team",
             updated: "Dienst {{name}} is bijgewerkt.",
             deleted: "Dienst {{name}} is verwijderd.",
             requestDeleted: "Verzoek om dienst {{name}} te verwijderen is verzonden",
