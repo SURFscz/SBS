@@ -452,7 +452,9 @@ class Service extends React.Component {
     };
 
     afterUpdate = (name, res, isServiceRequest) => {
-        setFlash(I18n.t(`service.flash.${isServiceRequest ? "createdServiceRequest" : "created"}`, {name: name}));
+        setFlash(
+            I18n.t(`service.flash.${isServiceRequest ? "createdServiceRequest" : "created"}`, {name: name}),
+            null, null, null, isServiceRequest ? 42 : null);
         this.props.history.push(isServiceRequest ? "/home/service_requests?refresh=true" : "/services/" + res.id);
     };
 
