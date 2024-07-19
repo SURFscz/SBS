@@ -2357,10 +2357,10 @@ const nl = {
     },
     scim: {
         scimEnabled: "SCIM push naar dienst",
-        scimDisclaimer: "SCIM server is uitgeschakeld",
+        scimDisclaimer: "SCIM push naar dienst is uitgeschakeld",
         scimEnabledTooltip: "Stuur SCIM events aaar deze dienst",
         scimClientEnabled: "SCIM pull door dienst",
-        scimClientDisclaimer: "SCIM client is uitgeschakeld",
+        scimClientDisclaimer: "SCIM pull door dienst is uitgeschakeld",
         scimClientEnabledTooltip: "Deze dienst mag de SCIM endpoints aanroepen",
         scimURL: "SCIM-endpoints base URL",
         scimURLPlaceHolder: "https://service.com.scim",
