@@ -35,6 +35,8 @@ class SecondFactorAuthentication extends React.Component {
             totp: Array(6).fill(""),
             newTotp: Array(6).fill(""),
             qrCode: null,
+            secret: null,
+            showSecret: false,
             busy: false,
             loading: true,
             error: null,
@@ -76,6 +78,7 @@ class SecondFactorAuthentication extends React.Component {
                             resetRequested: false,
                             secondFaUuid: second_fa_uuid,
                             qrCode: res.qr_code_base64,
+                            secret: res.secret,
                             idp_name: res.idp_name || I18n.t("mfa.register.unknownIdp"),
                             continueUrl: continueUrl
                         }, this.focusCode);
@@ -88,6 +91,7 @@ class SecondFactorAuthentication extends React.Component {
                 this.setState({
                     qrCode: res.qr_code_base64,
                     idp_name: res.idp_name || I18n.t("mfa.register.unknownIdp"),
+                    secret: res.secret,
                     loading: false,
                     resetRequested: false,
                 }, this.focusCode);
@@ -417,6 +421,24 @@ class SecondFactorAuthentication extends React.Component {
         );
     }
 
+    toggleShowSecret = e => {
+        stopEvent(e);
+        this.setState({showSecret: !this.state.showSecret});
+    }
+
+    renderShowSecret = () => {
+        const {secret, showSecret} = this.state;
+        return (
+            <div className={`shared-secret ${showSecret ? "with-secret" : ""}`}>
+                {showSecret && <p>{secret}</p>}
+                {!showSecret && <a href="/#" onClick={this.toggleShowSecret}>
+                    {I18n.t("mfa.register.showSecret")}
+                </a>}
+            </div>
+        );
+
+    }
+
     renderRegistration = (qrCode, totp, newTotp, idp_name, busy, error, newError, update) => {
         const verifyDisabled = isEmpty(totp[5]) || busy;
         const updateDisabled = isEmpty(totp[5]) || isEmpty(newTotp[5]) || busy;
@@ -442,7 +464,9 @@ class SecondFactorAuthentication extends React.Component {
                     </ul>
                     <div className="qr-code-container">
                         <img alt="QR code" src={`data:image/png;base64,${qrCode}`}/>
+                        {this.renderShowSecret()}
                     </div>
+
                 </div>}
                 {update &&
                     <div className="step">
@@ -465,7 +489,9 @@ class SecondFactorAuthentication extends React.Component {
                     </ul>
                     <div className="qr-code-container">
                         <img alt="QR code" src={`data:image/png;base64,${qrCode}`}/>
+                        {this.renderShowSecret()}
                     </div>
+
                 </div>}
 
                 <div className="step">

@@ -2223,6 +2223,7 @@ const nl = {
             addSRAM: "Klik op het plusje (+) in de app",
             scan: "Scan de QR-code met de camera van je apparaat",
             scanInfo: "Open de authenticator-app en:",
+            showSecret: "Toon het gedeelde secret",
             verificationCode: "2. Voer verificatiecode in",
             verificationCodeUpdate: "3. Voer verificatiecode die de app weergeeft in",
             verificationCodeInfo: "Voer verificatiecode die de app weergeeft in",
