@@ -810,6 +810,8 @@ const nl = {
         descriptionPlaceholder: "Beschrijf duidelijk wat het doel van de samenwerking is, waaruit blijkt dat de verwerking van persoonsgegevens gerechtvaardigd is",
         websiteUrl: "Website URL",
         websiteUrlPlaceholder: "De URL van de website is zichtbaar voor leden",
+        support_emailPlaceholder: "Het e-mailadres of de website van de helpdesk voor deze samenwerking",
+        supportShort: "Support",
         currentUserAdmin: "Maak mijzelf beheerder van deze samenwerking",
         currentUserAdminTooltip: "Indien aangevinkt wordt je toegevoegd als beheerder van de samenwerking",
         message: "Optioneel bericht",

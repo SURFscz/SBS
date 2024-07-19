@@ -20,7 +20,7 @@ import Button from "../components/Button";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
-import {sanitizeShortName, sanitizeTagName, validUrlRegExp} from "../validations/regExps";
+import {sanitizeShortName, sanitizeTagName, validEmailRegExp, validUrlRegExp} from "../validations/regExps";
 import SelectField from "../components/SelectField";
 import {getParameterByName} from "../utils/QueryParameters";
 import CheckBox from "../components/CheckBox";
@@ -221,6 +221,13 @@ class CollaborationForm extends React.Component {
 
     existingCollaborationName = attr => this.state.isNew ? null : this.state.collaboration[attr];
 
+    validateEmail = (name, allowWebsite = false) => e => {
+        const email = e.target.value;
+        const {invalidInputs} = this.state;
+        const valid = isEmpty(email) || validEmailRegExp.test(email) || (allowWebsite && validUrlRegExp.test(email));
+        this.setState({invalidInputs: {...invalidInputs, [name]: !valid}});
+    };
+
     validateCollaborationName = e =>
         collaborationNameExists(e.target.value, this.state.organisation.value, this.existingCollaborationName("name"))
             .then(json => {
@@ -300,6 +307,7 @@ class CollaborationForm extends React.Component {
                 description,
                 logo,
                 website_url,
+                support_email,
                 administrators,
                 message,
                 expiry_date,
@@ -319,6 +327,7 @@ class CollaborationForm extends React.Component {
                 description,
                 logo,
                 website_url,
+                support_email,
                 administrators,
                 units,
                 message,
@@ -365,6 +374,7 @@ class CollaborationForm extends React.Component {
                 short_name,
                 description,
                 website_url,
+                support_email,
                 logo,
                 collaboration,
                 administrators,
@@ -384,6 +394,7 @@ class CollaborationForm extends React.Component {
                 short_name,
                 description,
                 website_url,
+                support_email,
                 tags: tagsSelected.map(tag => tag.label),
                 units,
                 logo,
@@ -473,6 +484,7 @@ class CollaborationForm extends React.Component {
             short_name,
             description,
             website_url,
+            support_email,
             administrators,
             message,
             expiry_date,
@@ -633,6 +645,24 @@ class CollaborationForm extends React.Component {
                                 onBlur={this.validateURI("website_url")}/>
                     {invalidInputs["website_url"] &&
                         <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
+
+                    <InputField value={support_email}
+                                name={I18n.t("service.support_email")}
+                                placeholder={I18n.t("collaboration.support_emailPlaceholder")}
+                                onChange={e => this.setState({
+                                    support_email: e.target.value,
+                                    invalidInputs: !isEmpty(e.target.value) ? invalidInputs : {
+                                        ...invalidInputs, support_email: false
+                                    }
+                                })}
+                                toolTip={I18n.t("service.support_emailTooltip")}
+                                error={invalidInputs["support_email"]}
+                                onBlur={this.validateEmail("support_email", true)}
+                                externalLink={validUrlRegExp.test(support_email)}
+                                classNamePostFix={"second-column"}
+                    />
+                    {invalidInputs["support_email"] && <ErrorIndicator
+                        msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.contact")})}/>}
 
                     {!isCollaborationRequest && <DateField value={expiry_date}
                                                            onChange={e => this.setState({expiry_date: e})}

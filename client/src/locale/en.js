@@ -810,6 +810,8 @@ const en = {
         descriptionPlaceholder: "Provide a clear description of the purpose of the collaboration, such that the processing of personal data can be justified",
         websiteUrl: "Website URL",
         websiteUrlPlaceholder: "The URL of the website is visible for members",
+        support_emailPlaceholder: "The email address or the website of the support department for this collaboration",
+        supportShort: "Support",
         currentUserAdmin: "Make me admin of this collaboration",
         currentUserAdminTooltip: "If checked you will be added as an admin of this collaboration",
         message: "Optional message",
