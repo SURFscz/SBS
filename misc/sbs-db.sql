@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision eb9f270e3e6f (head)
+-- Dump of empty SBS database, alembic revision 91a1b640e465 (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('eb9f270e3e6f');
+INSERT INTO `alembic_version` VALUES ('91a1b640e465');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_keys`;
@@ -317,6 +317,7 @@ CREATE TABLE `collaborations` (
   `status` varchar(255) NOT NULL DEFAULT 'active',
   `last_activity_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `expiry_date` datetime DEFAULT NULL,
+  `support_email` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `collaborations_unique_name` (`name`,`organisation_id`),
   UNIQUE KEY `collaborations_unique_short_name` (`short_name`,`organisation_id`),
