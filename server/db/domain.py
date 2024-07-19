@@ -553,7 +553,7 @@ class Service(Base, db.Model, LogoMixin, SecretMixin):
                                      back_populates="services")
     allowed_organisations = db.relationship("Organisation", secondary=organisations_services_association, lazy="select")
     organisations = db.relationship("Organisation", secondary=services_organisations_association, lazy="select",
-                                    back_populates="services", passive_deletes=True, viewonly=True)
+                                    back_populates="services", viewonly=True)
     automatic_connection_allowed_organisations = \
         db.relationship("Organisation",
                         secondary=automatic_connection_allowed_organisations_services_association,
