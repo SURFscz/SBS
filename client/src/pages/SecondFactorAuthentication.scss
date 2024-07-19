@@ -154,6 +154,20 @@
         margin-top: 20px;
     }
 
+    .shared-secret {
+        display: flex;
+        width: 225px;
+        margin-left: 50px;
+
+        &.with-secret {
+            margin-left: 25px;
+        }
+
+        a, p {
+            margin: 0 auto;
+        }
+    }
+
     .explain {
         display: flex;
         flex-direction: column;

@@ -2223,6 +2223,7 @@ const en = {
             addSRAM: "Tap the '+' icon in the app",
             scan: "Scan the QR code using your devices's camera",
             scanInfo: "Open the authenticator app and:",
+            showSecret: "Show the shared secret",
             verificationCode: "2. Enter verification code",
             verificationCodeUpdate: "3. Enter verification code",
             verificationCodeInfo: "Enter the verification code you see in the app",
