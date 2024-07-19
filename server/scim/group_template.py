@@ -43,7 +43,7 @@ def create_group_template(group: Union[Group, Collaboration], membership_scim_ob
             links.append(link(name, value))
 
     if len(links) > 0:
-        scim_sram_extension['links'] = links         
+        scim_sram_extension['links'] = links
 
     sorted_members = sorted(membership_scim_objects, key=lambda m: m["value"])
 
