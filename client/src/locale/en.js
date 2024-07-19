@@ -2357,10 +2357,10 @@ const en = {
     },
     scim: {
         scimEnabled: "SCIM push to service",
-        scimDisclaimer: "SCIM server is disabled",
+        scimDisclaimer: "SCIM push to service is disabled",
         scimEnabledTooltip: "Send this service SCIM event",
         scimClientEnabled: "SCIM pull by service",
-        scimClientDisclaimer: "SCIM client is disabled",
+        scimClientDisclaimer: "SCIM pull by service is disabled",
         scimClientEnabledTooltip: "Allow this service to call the SCIM endpoints",
         scimURL: "SCIM endpoint base URL",
         scimURLPlaceHolder: "https://service.com.scim",
