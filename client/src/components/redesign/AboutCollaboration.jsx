@@ -2,7 +2,7 @@ import React from "react";
 import I18n from "../../locale/I18n";
 import "./AboutCollaboration.scss";
 import {isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
-import {CO_SHORT_NAME, SRAM_USERNAME} from "../../validations/regExps";
+import {CO_SHORT_NAME, SRAM_USERNAME, validUrlRegExp} from "../../validations/regExps";
 import ServiceCard from "../ServiceCard";
 
 import {ReactComponent as WebsiteIcon} from "../../icons/network-information.svg";
@@ -50,6 +50,7 @@ class AboutCollaboration extends React.Component {
             .filter(m => m.role === "admin")
             .sort((m1, m2) => m1.role.localeCompare(m2.role));
         const enabledServiceToken = services.filter(service => service.token_enabled).length > 0 && !isJoinRequest;
+        const supportEmailValidURL = validUrlRegExp.test(collaboration.support_email);
         return (
             <div className="collaboration-about-mod">
                 <div className={"about"}>
@@ -118,19 +119,33 @@ class AboutCollaboration extends React.Component {
                                        target="_blank">{I18n.t("coPageHeaders.visit")}</a>
                                 </div>
                             </div>}
-                        <div className="meta-section">
+                        {!isEmpty(collaboration.support_email) && <div className="meta-section">
                             <div className="header">
                                 <EmailActionIcon/>
-                                <p>{I18n.t("models.collaboration.memberInformation")}</p>
+                                <p>{I18n.t("collaboration.supportShort")}</p>
                             </div>
                             <div className="values">
-                                {memberships
-                                    .sort((m1, m2) => m1.user.name.localeCompare(m2.user.name))
-                                    .map(m => <p key={m.id}><a href={`mailto:${m.user.email}`}>{m.user.name}</a></p>)}
+                                <p>
+                                    <a href={supportEmailValidURL ? collaboration.support_email : `mailto:${collaboration.support_email}`}
+                                        target={supportEmailValidURL ? "_blank" : "_self"}>
+                                        {collaboration.support_email}
+                                    </a>
+                                </p>
                             </div>
-                        </div>
-
-
+                        </div>}
+                        {(isEmpty(collaboration.support_email) && !isEmpty(memberships)) &&
+                            <div className="meta-section">
+                                <div className="header">
+                                    <EmailActionIcon/>
+                                    <p>{I18n.t("models.collaboration.memberInformation")}</p>
+                                </div>
+                                <div className="values">
+                                    {memberships
+                                        .sort((m1, m2) => m1.user.name.localeCompare(m2.user.name))
+                                        .map(m => <p key={m.id}><a href={`mailto:${m.user.email}`}>{m.user.name}</a>
+                                        </p>)}
+                                </div>
+                            </div>}
                         {!showMembers &&
                             <div className={"member-disclaimer"}>
                                 <p>{I18n.t("models.collaboration.discloseNoMemberInformation")}</p>
