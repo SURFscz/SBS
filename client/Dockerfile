@@ -1,5 +1,5 @@
 # Stage 1. - Client build environment
-FROM node:22 as yarn-deps
+FROM node:20 as yarn-deps
 
 WORKDIR /opt/app
 
