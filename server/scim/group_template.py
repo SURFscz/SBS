@@ -3,9 +3,9 @@ from typing import Union, List
 from server.api.base import application_base_url
 from server.db.domain import Group, Collaboration, CollaborationMembership
 from server.scim import SCIM_URL_PREFIX, EXTERNAL_ID_POST_FIX
-from server.scim.user_template import version_value, date_time_format, replace_none_values
 from server.scim.schema_template import \
     SCIM_SCHEMA_CORE_GROUP, SCIM_SCHEMA_SRAM_GROUP, SCIM_API_MESSAGES
+from server.scim.user_template import version_value, date_time_format, replace_none_values
 
 
 def _meta_info(group: Union[Group, Collaboration]):
@@ -17,10 +17,32 @@ def _meta_info(group: Union[Group, Collaboration]):
 
 
 def create_group_template(group: Union[Group, Collaboration], membership_scim_objects):
+    def link(name: str, value: str):
+        return {
+            'name': name,
+            'value': value
+        }
+
+    scim_sram_extension = {
+        "description": group.description,
+        "urn": group.global_urn
+    }
 
     labels = [
         t.tag_value for t in group.tags
     ] if hasattr(group, 'tags') else []
+
+    if len(labels) > 0:
+        scim_sram_extension['labels'] = sorted(labels)
+
+    links = []
+    for name in ['logo', 'website_url']:
+        value = getattr(group, name, None)
+        if value:
+            links.append(link(name, value))
+
+    if len(links) > 0:
+        scim_sram_extension['links'] = links
 
     sorted_members = sorted(membership_scim_objects, key=lambda m: m["value"])
 
@@ -32,11 +54,7 @@ def create_group_template(group: Union[Group, Collaboration], membership_scim_ob
         "externalId": f"{group.identifier}{EXTERNAL_ID_POST_FIX}",
         "displayName": group.name,
         "members": sorted_members,
-        SCIM_SCHEMA_SRAM_GROUP: {
-            "description": group.description,
-            "urn": group.global_urn,
-            "labels": sorted(labels)
-        }
+        SCIM_SCHEMA_SRAM_GROUP: scim_sram_extension
     })
 
 
