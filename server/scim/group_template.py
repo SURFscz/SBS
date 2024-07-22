@@ -3,9 +3,9 @@ from typing import Union, List
 from server.api.base import application_base_url
 from server.db.domain import Group, Collaboration, CollaborationMembership
 from server.scim import SCIM_URL_PREFIX, EXTERNAL_ID_POST_FIX
-from server.scim.user_template import version_value, date_time_format, replace_none_values
 from server.scim.schema_template import \
     SCIM_SCHEMA_CORE_GROUP, SCIM_SCHEMA_SRAM_GROUP, SCIM_API_MESSAGES
+from server.scim.user_template import version_value, date_time_format, replace_none_values
 
 
 def _meta_info(group: Union[Group, Collaboration]):
@@ -17,7 +17,6 @@ def _meta_info(group: Union[Group, Collaboration]):
 
 
 def create_group_template(group: Union[Group, Collaboration], membership_scim_objects):
-
     def link(name: str, value: str):
         return {
             'name': name,
@@ -25,8 +24,8 @@ def create_group_template(group: Union[Group, Collaboration], membership_scim_ob
         }
 
     scim_sram_extension = {
-            "description": group.description,
-            "urn": group.global_urn
+        "description": group.description,
+        "urn": group.global_urn
     }
 
     labels = [
@@ -43,7 +42,7 @@ def create_group_template(group: Union[Group, Collaboration], membership_scim_ob
             links.append(link(name, value))
 
     if len(links) > 0:
-        scim_sram_extension['links'] = links         
+        scim_sram_extension['links'] = links
 
     sorted_members = sorted(membership_scim_objects, key=lambda m: m["value"])
 
