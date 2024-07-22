@@ -335,6 +335,7 @@ class Collaboration(Base, db.Model, LogoMixin):
     disclose_member_information = db.Column("disclose_member_information", db.Boolean(), nullable=True, default=False)
     disclose_email_information = db.Column("disclose_email_information", db.Boolean(), nullable=True, default=False)
     website_url = db.Column("website_url", db.String(length=512), nullable=True)
+    support_email = db.Column("support_email", db.String(length=255), nullable=True)
     invitations_count = column_property(select(func.count(Invitation.id))
                                         .where(Invitation.collaboration_id == id)
                                         .correlate_except(Invitation)
@@ -553,7 +554,7 @@ class Service(Base, db.Model, LogoMixin, SecretMixin):
                                      back_populates="services")
     allowed_organisations = db.relationship("Organisation", secondary=organisations_services_association, lazy="select")
     organisations = db.relationship("Organisation", secondary=services_organisations_association, lazy="select",
-                                    back_populates="services", passive_deletes=True, viewonly=True)
+                                    back_populates="services", viewonly=True)
     automatic_connection_allowed_organisations = \
         db.relationship("Organisation",
                         secondary=automatic_connection_allowed_organisations_services_association,
