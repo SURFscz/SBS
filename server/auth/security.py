@@ -12,7 +12,7 @@ CSRF_TOKEN = "CSRFToken"
 def is_admin_user(user):
     admin_users = current_app.app_config.admin_users
     uid = user.uid if isinstance(user, User) else user["uid"]
-    return len(list(filter(lambda u: u.uid == uid, admin_users))) == 1
+    return uid in (u.uid for u in admin_users)
 
 
 def _get_impersonated_session():
