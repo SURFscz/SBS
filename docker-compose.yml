@@ -7,7 +7,7 @@ volumes:
 
 services:
   redis:
-    image: redis
+    image: "docker.io/redis"
     container_name: redis
 
   client:
@@ -16,7 +16,7 @@ services:
     links:
       - server
     ports:
-      - 8080:80
+      - "8080:80"
     volumes:
       - ${PWD}/etc/apache.conf:/etc/apache2/sites-enabled/sbs.conf:ro
 
@@ -40,16 +40,16 @@ services:
       REDIS_URI: redis://redis:6379/
       BASE_URL: http://localhost:8080
       SOCKET_URL: 0.0.0.0:8080/
-      SECRET: ${SECRET}
-      CLIENT_ID: ${CLIENT_ID}
-      CLIENT_SECRET: ${CLIENT_SECRET}
-      AUDIENCE: ${AUDIENCE}
-      ADMIN: ${ADMIN}
-      LDAP_URL: ${LDAP_URL}
-      LDAP_BIND: ${LDAP_BIND}
+      SECRET: ${SECRET:-geheim}
+      CLIENT_ID: ${CLIENT_ID:-foo}
+      CLIENT_SECRET: ${CLIENT_SECRET:-echtgeheim}
+      AUDIENCE: ${AUDIENCE:-http://localhost:9001}
+      ADMIN: ${ADMIN:-urn:john}
+      LDAP_URL: ${LDAP_URL:-ldap://localhost:1389/dc=example,dc=org}
+      LDAP_BIND: ${LDAP_BIND:-cn=admin,dc=example,dc=org}
 
   db:
-    image: mariadb:11
+    image: "docker.io/mariadb:11"
     restart: always
     environment:
       MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-sbs}
