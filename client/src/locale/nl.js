@@ -2454,8 +2454,8 @@ const nl = {
             ldap: "LDAP",
             tokens: "User introspection tokens",
             pamWebLogin: "PAM web login",
-            SCIMServer: "SCIM server",
-            SCIMClient: "SCIM client",
+            SCIMServer: "SCIM push naar dienst",
+            SCIMClient: "SCIM pull door dienst",
             OIDC: "OpenID Connect",
             SAML: "SAML2.0",
             Export: "Export"
