@@ -879,7 +879,7 @@ class ServiceOverview extends React.Component {
                           value={service.scim_client_enabled || false}
                           tooltip={I18n.t("scim.scimClientEnabledTooltip")}
                           info={I18n.t("scim.scimClientEnabled")}
-                          readOnly={!isAdmin || showServiceAdminView}
+                          readOnly={false}
                           onChange={e => this.setState({
                               "service": {
                                   ...service, scim_client_enabled: e.target.checked
@@ -924,7 +924,7 @@ class ServiceOverview extends React.Component {
                           value={service.scim_enabled || false}
                           tooltip={I18n.t("scim.scimEnabledTooltip")}
                           info={I18n.t("scim.scimEnabled")}
-                          readOnly={!isAdmin || showServiceAdminView}
+                          readOnly={false}
                           onChange={e => this.setState({"service": {...service, scim_enabled: e.target.checked}})}
                 />
                 {!service.scim_enabled && <p>{I18n.t("scim.scimDisclaimer")}</p>}

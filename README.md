@@ -202,8 +202,9 @@ PYTHONUNBUFFERED=1
 For localhost deployment you can make use of **docker**. You can take existing **docker-compose.yml** as your starting point. The docker-compose file makes use of environment variables that you can adjust via a local **.env** file. To create your own **.env** file, copy the provided **.env.example** file:
 
 ```bash
-$ cp .env.example .env
+$ cp env.example .env
 ```
+and edit the values to some sane values.
 
 Now adjust the contents of this **.env** file to match your desired configuration.
 

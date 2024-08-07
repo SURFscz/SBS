@@ -149,6 +149,29 @@ class TestService(AbstractTest):
         row = next(rows)
         self.assertIsNone(row[0])
 
+    def test_service_update_disallowed(self):
+        disallowed_fields = ["allow_restricted_orgs", "non_member_users_access_allowed", "entity_id", "abbreviation"]
+        immutable_fields = ["sweep_scim_last_run", "ldap_password", "scim_bearer_token", "oidc_client_secret"]
+
+        service = self._find_by_name(service_cloud_name)
+        orig_service = service.copy()
+
+        service["allow_restricted_orgs"] = True
+        service["non_member_users_access_allowed"] = True
+        service["entity_id"] = "https://changed"
+        service["abbreviation"] = "changed"
+        service["sweep_scim_last_run"] = "2063-04-05:12:00:00"
+        service["ldap_password"] = "changed"
+        service["scim_bearer_token"] = "changed"
+        service["oidc_client_secret"] = "changed"
+
+        self.login("urn:james")  # regular service admin
+        self.put("/api/services", body=service, with_basic_auth=False)
+
+        service = self._find_by_name(service_cloud_name)
+        for field in immutable_fields + disallowed_fields:
+            self.assertEqual(orig_service[field], service[field])
+
     def test_service_update_delete_service_tokens(self):
         service = self.find_entity_by_name(Service, service_network_name)
         self.login("urn:john")
@@ -509,7 +532,7 @@ class TestService(AbstractTest):
         with db.engine.connect() as conn:
             with conn.begin():
                 rs = conn.execute(text(f"SELECT ldap_password FROM services WHERE id = {service['id']}"))
-        ldap_password = next(rs, (0,))[0]
+        ldap_password = str(next(rs, (0,))[0])
         self.assertTrue(ldap_password.startswith("$2b$12$"))
         service = self._find_by_name()
         self.assertIsNone(service.get("ldap_password"))
@@ -521,7 +544,7 @@ class TestService(AbstractTest):
         with db.engine.connect() as conn:
             with conn.begin():
                 rs = conn.execute(text(f"SELECT oidc_client_secret FROM services WHERE id = {service_id}"))
-        oidc_client_secret = next(rs, (0,))[0]
+        oidc_client_secret = str(next(rs, (0,))[0])
         # Ensure we use rounds=5 to prevent performance loss in OIDC-NG
         self.assertTrue(oidc_client_secret.startswith("$2b$05$"))
         # Ensure the oidc_client_secret is not exposed in the API
