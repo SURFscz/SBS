@@ -1,7 +1,6 @@
 FROM python:3.11
 
-RUN apt-get update
-RUN apt-get install -y libxmlsec1-dev gettext
+RUN apt-get update && apt-get install -y libxmlsec1-dev gettext && rm -rf /var/lib/apt/ /var/cache/apt/
 
 WORKDIR /opt
 
