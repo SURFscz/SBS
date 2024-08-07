@@ -56,8 +56,8 @@ http://0.0.0.0:8025/ when you have the following configuration in you config fil
 
 ```yaml
 mail:
-  host: 0.0.0.0
-  port: 1025
+    host: 0.0.0.0
+    port: 1025
 ```
 
 #### [Client](#client)
@@ -130,6 +130,7 @@ cd server
 pytest --cov=server --cov-report html:htmlcov test
 open htmlcov/index.html
 ```
+
 Within PyCharm you must mark the `SBS/server/test` directory as Test sources root in order to execute `conftest.py`
 before tests are run. See https://intellij-support.jetbrains.com/hc/en-us/community/posts/12897247432338-PyCharm-unable-to-find-fixtures-in-conftest-py
 
@@ -183,6 +184,7 @@ CONFIG='config/test_config.yml' FLASK_APP='__main__.py' flask shell
 ```
 
 ### [PyCharm](#pycharm)
+
 Because of eventlet the debugger in PyCharm sometimes crashes. Use the following environment properties to resolve this:
 
 ```
@@ -209,8 +211,9 @@ Now adjust the contents of this **.env** file to match your desired configuratio
 Then build the docker images and launch the containers:
 
 ```bash
-$ docker-compose build
-$ docker-compose up -d
+$ export DOCKER_DEFAULT_PLATFORM=linux/amd64
+$ docker compose build
+$ docker compose up -d
 ```
 
 Now open your browser at: http://localhost:8080
