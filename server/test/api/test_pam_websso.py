@@ -156,7 +156,8 @@ class TestPamWebSSO(AbstractTest):
                         headers={"Authorization": f"bearer {service_storage_token}"})
         self.assertEqual("SUCCESS", res["result"])
         self.assertEqual("peter", res["username"])
-        self.assertEqual(1, len(res["groups"]))
+        self.assertEqual(1, len(res["collaborations"]))
+        self.assertEqual(2, len(res["groups"]))
         # The session must be removed
         self.get(f"/pam-weblogin/{pam_session_id}", with_basic_auth=False, response_status_code=404)
         peter = self.find_entity_by_name(User, "urn:peter")
