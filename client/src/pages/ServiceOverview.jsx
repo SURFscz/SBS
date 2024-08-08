@@ -760,11 +760,12 @@ class ServiceOverview extends React.Component {
         return null;
     }
 
-    sidebar = (currentTab, isAdmin) => {
+    sidebar = (currentTab, isManageEnabled, isAdmin) => {
         return (<div className={"side-bar"}>
             <h3>{I18n.t("serviceDetails.details")}</h3>
             <ul>
                 {toc.filter(tab => isAdmin || tab !== "Export")
+                    .filter(tab => isManageEnabled || (tab !== "OIDC" && tab !== "SAML") )
                     .map(item => <li key={item}>
                         <a href={`/${item}`}
                            className={`${item === currentTab ? "active" : ""} ${this.isValidTab(item) ? "" : "error"}`}
@@ -1725,7 +1726,7 @@ class ServiceOverview extends React.Component {
                 {scimTokenChange && this.renderScimTokenChange(scimBearerToken)}
             </ConfirmationDialog>
 
-            {this.sidebar(currentTab, isAdmin)}
+            {this.sidebar(currentTab, config.manage_enabled, isAdmin)}
             <div className={`service ${createNewServiceToken ? "no-grid" : ""}`}>
                 <h2 className="section-separator">{I18n.t(`serviceDetails.toc.${currentTab}`)}</h2>
                 {this.renderCurrentTab(config, currentTab, service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit, invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken, initial)}
