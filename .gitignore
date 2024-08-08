@@ -144,3 +144,4 @@ login.svg
 .run
 server/cron/idp_metadata.json
 sql_snippets
+privkey.json
