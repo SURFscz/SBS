@@ -149,6 +149,15 @@ class TestService(AbstractTest):
         row = next(rows)
         self.assertIsNone(row[0])
 
+    def test_service_update_manager_disallowed(self):
+        service = self._find_by_name(service_cloud_name)
+        service["name"] = "changed"
+        service["ip_networks"] = [{"network_value": "82.217.86.55/24"}]
+        service["ldap_enabled"] = False
+
+        self.login("urn:betty")  # service manager
+        self.put("/api/services", body=service, with_basic_auth=False, response_status_code=403)
+
     def test_service_update_disallowed(self):
         disallowed_fields = ["allow_restricted_orgs", "non_member_users_access_allowed", "entity_id", "abbreviation"]
         immutable_fields = ["sweep_scim_last_run", "ldap_password", "scim_bearer_token", "oidc_client_secret"]
