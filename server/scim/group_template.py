@@ -36,7 +36,26 @@ def create_group_template(group: Union[Group, Collaboration], membership_scim_ob
         scim_sram_extension['labels'] = sorted(labels)
 
     links = []
-    for name in ['logo', 'website_url']:
+
+    # This group object is either a Group or a Collaboration (since this is a Union)
+    # Now I need to make a link reference only in case this object is a Collaboration
+    # Maybe that can be determined anyway smarter than this...
+    collaboration = None
+    try:
+        # Will not throw exception if this object is actually a group with a
+        # foreign key reference to the collaboration...
+        _ = group.collaboration
+    except Exception:
+        # Ok, Exception was thrown, this object was actually a collaboration !
+        collaboration = group
+
+    if collaboration:
+        links.append(
+            link('sbs_url', f"{application_base_url()}/collaborations/{collaboration.identifier}")
+        )
+
+    # Add additional links, at this moment only 'logo'
+    for name in ['logo', ]:
         value = getattr(group, name, None)
         if value:
             links.append(link(name, value))
