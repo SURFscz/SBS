@@ -197,6 +197,24 @@ PYDEVD_USE_FRAME_EVAL=NO;
 PYTHONUNBUFFERED=1
 ```
 
+### [MySQL](#mysql)
+
+When you encounter the following error after upgrading mySQL
+
+```
+E   ImportError: dlopen(/Users/okkeharsta/projects/SBS/.venv/lib/python3.9/site-packages/MySQLdb/_mysql.cpython-39-darwin.so, 0x0002): Library not loaded: /usr/local/opt/mysql/lib/libmysqlclient.23.dylib
+```
+
+then re-install the `mysqlclient` library with force
+
+```
+source .venv/bin/activate
+pip uninstall mysqlclient
+export MYSQLCLIENT_LDFLAGS=$(pkg-config --libs mysqlclient)
+export MYSQLCLIENT_CFLAGS=$(pkg-config --cflags mysqlclient)
+pip install mysqlclient --no-cache-dir
+```
+
 ### [docker](#docker)
 
 For localhost deployment you can make use of **docker**. You can take existing **docker-compose.yml** as your starting point. The docker-compose file makes use of environment variables that you can adjust via a local **.env** file. To create your own **.env** file, copy the provided **.env.example** file:
