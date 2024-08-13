@@ -41,12 +41,9 @@ def create_group_template(group: Union[Group, Collaboration], membership_scim_ob
         links.append(
             link('sbs_url', f"{application_base_url()}/collaborations/{group.identifier}")
         )
-
-    # Add additional links, at this moment only 'logo'
-    for name in ['logo', ]:
-        value = getattr(group, name, None)
-        if value:
-            links.append(link(name, value))
+        links.append(
+            link('logo', group.logo)
+        )
 
     if len(links) > 0:
         scim_sram_extension['links'] = links
