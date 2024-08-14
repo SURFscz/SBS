@@ -164,6 +164,12 @@ class TestSweep(AbstractTest):
         collaboration.tags = []
         self.assertTrue(_group_changed(collaboration, remote_group, remote_scim_users))
 
+    def test_group_changed_links(self):
+        collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
+        remote_group, remote_scim_users = self._construct_group_changed_parameters(collaboration)
+        collaboration.identifier = 'changed'
+        self.assertTrue(_group_changed(collaboration, remote_group, remote_scim_users))
+
     def test_group_not_changed(self):
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         remote_group, remote_scim_users = self._construct_group_changed_parameters(collaboration)
