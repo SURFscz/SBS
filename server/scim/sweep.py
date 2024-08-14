@@ -63,6 +63,15 @@ def _user_changed(user: User, remote_user: dict):
 
 
 def _group_changed(group: Union[Group, Collaboration], remote_group: dict, remote_scim_users: List[dict]):
+    def link_is_different(name: str, value: str):
+        for link in remote_group[SCIM_SCHEMA_SRAM_GROUP].get("links", []):
+            if link.get('name', '') != name:
+                continue
+            if link.get('value', '') != value:
+                return True
+            return False
+        return True
+
     remote_group = _replace_empty_string_values(remote_group)
     if _compare_with_none_equals_empty(remote_group.get("displayName"), group.name):
         return True
@@ -79,6 +88,14 @@ def _group_changed(group: Union[Group, Collaboration], remote_group: dict, remot
         if _compare_with_none_equals_empty(remote_group[SCIM_SCHEMA_SRAM_GROUP].get("description"), group.description):
             return True
         if _compare_with_none_equals_empty(remote_group[SCIM_SCHEMA_SRAM_GROUP].get("urn"), group.global_urn):
+            return True
+
+        if isinstance(group, Collaboration):
+            if link_is_different('sbs_url', f"{application_base_url()}/collaborations/{group.identifier}"):
+                return True
+            if link_is_different('logo', group.logo):
+                return True
+        elif remote_group[SCIM_SCHEMA_SRAM_GROUP].get("links", []) != []:
             return True
 
         labels = [t.tag_value for t in group.tags] if hasattr(group, "tags") else []
