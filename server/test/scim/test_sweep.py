@@ -8,6 +8,7 @@ from server.db.domain import Service, Group, User, Collaboration
 from server.scim import SCIM_GROUPS
 from server.scim.group_template import create_group_template, scim_member_object
 from server.scim.repo import all_scim_groups_by_service
+from server.scim.schema_template import SCIM_SCHEMA_SRAM_GROUP
 from server.scim.sweep import perform_sweep, _all_remote_scim_objects, _group_changed, _user_changed
 from server.scim.user_template import create_user_template, find_user_by_id_template
 from server.test.abstract_test import AbstractTest
@@ -167,8 +168,31 @@ class TestSweep(AbstractTest):
     def test_group_changed_links(self):
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         remote_group, remote_scim_users = self._construct_group_changed_parameters(collaboration)
+
+        # existing links have changed
         collaboration.identifier = 'changed'
         self.assertTrue(_group_changed(collaboration, remote_group, remote_scim_users))
+
+        # remote has other links
+        remote_group[SCIM_SCHEMA_SRAM_GROUP]['links'] = [{'name': 'Het Paard van Sinterklaas', 'value': 'Ohzosnel'}]
+        self.assertTrue(_group_changed(collaboration, remote_group, remote_scim_users))
+
+    def test_group_changed_links_logo(self):
+        collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
+        remote_group, remote_scim_users = self._construct_group_changed_parameters(collaboration)
+
+        # remote has different logo
+        for link in remote_group[SCIM_SCHEMA_SRAM_GROUP]['links']:
+            if link['name'] == 'logo':
+                link['value'] = 'https://expample.com/sinterklaas.jpg'
+        self.assertTrue(_group_changed(collaboration, remote_group, remote_scim_users))
+
+    def test_group_changed_links_group(self):
+        group = self.find_entity_by_name(Group, group_ai_researchers)
+        remote_group, remote_scim_users = self._construct_group_changed_parameters(group)
+
+        remote_group[SCIM_SCHEMA_SRAM_GROUP]['links'] = [{'name': 'changed', 'value': 'changed'}]
+        self.assertTrue(_group_changed(group, remote_group, remote_scim_users))
 
     def test_group_not_changed(self):
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
