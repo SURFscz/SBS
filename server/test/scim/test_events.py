@@ -9,6 +9,8 @@ from server.scim.events import broadcast_user_changed, broadcast_user_deleted, b
     broadcast_organisation_deleted, broadcast_group_changed, broadcast_service_added, \
     broadcast_service_deleted, broadcast_group_deleted, broadcast_organisation_service_added, \
     broadcast_organisation_service_deleted
+import server.scim.scim
+import server.scim.events
 from server.test.abstract_test import AbstractTest
 from server.test.seed import user_sarah_name, co_research_name, group_ai_researchers, unifra_name, service_cloud_name
 from server.tools import read_file
@@ -275,3 +277,25 @@ class TestEvents(AbstractTest):
                      status=201)
             res = broadcast_service_deleted(collaboration.id, service.id)
             self.assertTrue(res)
+
+    @responses.activate
+    def test_broadcast_error_response(self):
+        class MockException(Exception):
+            pass
+
+        @server.scim.scim.apply_change
+        def raise_exception(*args):
+            raise MockException("Mock error")
+
+        future = self.app.executor.submit(raise_exception, server.scim.scim.ASYNC_MODE)
+
+        # noinspection PyBroadException
+        try:
+            future.result()
+        except MockException as e:
+            print(f"Caught exception {e}")
+            self.assertEqual("Mock error", str(e))
+        except Exception as e:
+            self.fail(f"Expected Mock exception, got {e}")
+        else:
+            self.fail("Expected exception not raised")
