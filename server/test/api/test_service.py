@@ -133,7 +133,16 @@ class TestService(AbstractTest):
         mail = "admin@cloud.org"
         res = self.put("/api/services/invites", body={"service_id": service_id, "administrators": [mail]},
                        response_status_code=400)
-        self.assertTrue(mail in res["message"])
+        self.assertIn(mail, res["message"])
+
+    def test_service_invites_invalid_role(self):
+        self.login("urn:john")
+        service_id = self.find_entity_by_name(Service, service_cloud_name).id
+        mail = "othermail@example.org"
+        res = self.put("/api/services/invites",
+                       body={"service_id": service_id, "administrators": [mail], "intended_role": "koffieleut"},
+                       response_status_code=400)
+        self.assertIn("Invalid intended role", res["message"])
 
     def test_service_update(self):
         service = self._find_by_name(service_cloud_name)
@@ -260,6 +269,14 @@ class TestService(AbstractTest):
 
         service = self.find_entity_by_name(Service, service_cloud_name)
         self.assertTrue(service.non_member_users_access_allowed)
+
+        self.put(f"/api/services/toggle_access_property/{service.id}",
+                 body={"non_member_users_access_allowed": False},
+                 with_basic_auth=False)
+
+        service = self.find_entity_by_name(Service, service_cloud_name)
+        self.assertFalse(service.non_member_users_access_allowed)
+        self.assertFalse(service.override_access_allowed_all_connections)
 
     def test_toggle_override_access_allowed_all_connections(self):
         service = self.find_entity_by_name(Service, service_sram_demo_sp)
@@ -653,3 +670,16 @@ class TestService(AbstractTest):
         rows = db.session.execute(text(f"SELECT scim_bearer_token FROM services where id = {service['id']}"))
         new_scim_bearer_token = next(rows)[0]
         self.assertNotEqual(scim_bearer_token, new_scim_bearer_token)
+
+    def test_service_update_scim_secret_exception(self):
+        # unset the scim url directly in the database; this should invalidate the scim token
+        service = self._find_by_name(service_cloud_name)
+        db.session.execute(text(f"UPDATE services SET scim_url=NULL WHERE id = {service['id']}"))
+        db.session.commit()
+
+        self.login("urn:john")
+
+        with self.assertLogs() as cm:
+            self.put(f"/api/services/reset_scim_bearer_token/{service['id']}",
+                     {"scim_bearer_token": "somethingelse"}, response_status_code=400)
+        self.assertIn('"encrypt_scim_bearer_token requires scim_bearer_token and scim_url"', "\n".join(cm.output))

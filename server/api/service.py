@@ -85,6 +85,7 @@ def member_access_to_service(service_id):
     count = services_from_collaboration_memberships(user_id, service_id, True)
     if count > 0:
         return True
+    # TODO: to be removed (see #421)
     count = services_from_organisation_collaboration_memberships(user_id, service_id, True)
     if count > 0:
         return True

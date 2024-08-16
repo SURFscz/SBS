@@ -5,8 +5,10 @@ from sqlalchemy import text
 from sqlalchemy.orm import sessionmaker
 
 from server.cron.user_suspending import suspend_users, suspend_users_lock_name
+from server.db.db import db
 from server.db.domain import User, UserNameHistory
 from server.test.abstract_test import AbstractTest
+from server.test.seed import user_james_name
 from server.tools import dt_now
 
 
@@ -143,3 +145,13 @@ class TestUserSuspending(AbstractTest):
                 self.assertListEqual(["user_gets_suspended@example.org"], results["warning_deleted_notifications"])
                 self.assertListEqual(["user_deletion_warning@example.org"], results["deleted_notifications"])
                 self.assertEqual(4, len(outbox))
+
+    def test_schedule_exception(self):
+        # lookup user james and set her to suspended
+        james = self.find_entity_by_name(User, user_james_name)
+        james.suspended = True
+        james.last_login_date = dt_now() - timedelta(days=3650)
+        db.session.merge(james)
+        db.session.commit()
+
+        self.assertRaisesRegex(Exception, "is suspended but has no suspension notification", suspend_users, self.app)

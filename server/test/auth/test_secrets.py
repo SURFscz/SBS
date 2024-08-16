@@ -2,6 +2,8 @@ import base64
 import os
 from unittest import TestCase
 
+from cryptography.exceptions import InvalidTag
+
 from server.auth.secrets import secure_hash, generate_token, generate_password_with_hash, decrypt_secret, \
     encrypt_secret
 
@@ -37,3 +39,7 @@ class TestSecret(TestCase):
 
         decrypted_secret = decrypt_secret(encryption_key, encrypted_value, context)
         self.assertEqual(plain_secret, decrypted_secret)
+
+        context["database_name"] = "sbs_evil"
+        with self.assertRaisesRegex(InvalidTag, "Invalid value..sbs_test. for database_name, expected sbs_evil"):
+            decrypt_secret(encryption_key, encrypted_value, context)

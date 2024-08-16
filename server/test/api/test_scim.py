@@ -4,7 +4,9 @@ import urllib.parse
 import mock
 import requests
 import responses
+from sqlalchemy import text
 
+from server.db.db import db
 from server.db.domain import User, Collaboration, Group, Service
 from server.scim import EXTERNAL_ID_POST_FIX
 from server.scim.resource_type_template import resource_type_template
@@ -166,6 +168,14 @@ class TestScim(AbstractTest):
                            with_basic_auth=False, response_status_code=500)
             self.assertTrue("error" in res)
             self.assertEqual(res["error"], "Unknown error while connecting to remote SCIM server")
+
+        # test token decryption error
+        # adjust scim_url so decryption context won't match
+        db.session.execute(text(f"UPDATE services SET scim_url='https://other.example.com' WHERE id = {service_id}"))
+        res = self.put("/api/scim/v2/sweep", headers={"Authorization": f"bearer {service_network_token}"},
+                       with_basic_auth=False, response_status_code=400)
+        self.assertTrue("error" in res)
+        self.assertEqual(res["error"], "Could not decrypt SCIM bearer secret")
 
     def test_scim_services(self):
         self.login("urn:john")
