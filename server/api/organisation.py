@@ -117,6 +117,21 @@ def find_org_names():
     return res, 201
 
 
+@organisation_api.route("/crm_organisations", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def find_crm_organisations():
+    confirm_write_access()
+    organisations = Organisation.query \
+        .options(load_only(Organisation.id, Organisation.name, Organisation.crm_id)) \
+        .filter(Organisation.crm_id != None) \
+        .all()  # noqa: E711
+
+    def organisation_result(organisation: Organisation):
+        return {"id": organisation.id, "name": organisation.name, "crm_id": organisation.crm_id}
+
+    return [organisation_result(org) for org in organisations], 200
+
+
 @organisation_api.route("/all", strict_slashes=False)
 @json_endpoint
 def organisation_all():

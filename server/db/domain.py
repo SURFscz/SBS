@@ -597,13 +597,15 @@ class Service(Base, db.Model, LogoMixin, SecretMixin):
     export_successful = db.Column("export_successful", db.Boolean(), nullable=True, default=False)
     export_external_identifier = db.Column("export_external_identifier", db.String(length=255), nullable=True)
     export_external_version = db.Column("export_external_version", db.Integer(), nullable=True)
-    crm_id = db.Column("crm_id", db.String(length=255), nullable=True)
+    crm_organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"), nullable=True)
+    crm_organisation = db.relationship("Organisation")
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
     created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
     organisation_name = column_property(select(Organisation.name)
-                                        .where(and_(crm_id != None, Organisation.crm_id == crm_id))  # noqa: E711
+                                        .where(and_(crm_organisation_id != None,  # noqa: E711
+                                                    Organisation.id == crm_organisation_id))
                                         .correlate_except(Organisation)
                                         .scalar_subquery())
 

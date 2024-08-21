@@ -303,7 +303,8 @@ def seed(db, app_config, skip_seed=False):
                         identifier="7c60a022-ab09-438c-8603-c361bc1a088d", created_by="urn:admin",
                         updated_by="urn:admin", short_name="ufra", logo=read_image("uni-franeker.png"),
                         category="University", service_connection_requires_approval=True,
-                        accepted_user_policy="https://uni-franeker/aup/v1", )
+                        accepted_user_policy="https://uni-franeker/aup/v1",
+                        crm_id="851A2D0A-75B3-4897-9839-8C3E010BF241")
     pekela = Organisation(name=umcpekela_name, description=umcpekela_name,
                           identifier="65fadfcb-71fd-4962-8428-0ecd15970f8d",
                           created_by="urn:admin", updated_by="urn:admin", short_name="pekela",
@@ -382,7 +383,7 @@ def seed(db, app_config, skip_seed=False):
                     redirect_urls=None, saml_metadata=None,
                     saml_metadata_url="https://engine.test.surfconext.nl/authentication/sp/metadata",
                     oidc_client_secret=None, providing_organisation="SURFconext", grants=None, is_public_client=False,
-                    saml_enabled=True, oidc_enabled=False, crm_id="A2D02C9E-EA1D-434F-B893-A6413A01AFCB")
+                    saml_enabled=True, oidc_enabled=False, crm_organisation=uuc)
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, ufra],
                       description="SURF Storage Service", logo=read_image("storage.png"), abbreviation="storage",
                       override_access_allowed_all_connections=False, automatic_connection_allowed=True,
