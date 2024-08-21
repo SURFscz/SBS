@@ -16,8 +16,22 @@ ACTION_CREATE = 1
 ACTION_UPDATE = 2
 ACTION_DELETE = 3
 
-ignore_attributes = ["logo", "created_by", "updated_by", "created_at", "updated_at", "last_login_date",
-                     "sweep_scim_last_run", "last_activity_date", "saml_metadata", "second_fa_uuid", "uuid4"]
+ignore_attributes = [
+    "created_at",
+    "created_by",
+    "last_accessed_date",
+    "last_activity_date",
+    "last_login_date",
+    "last_used_date",
+    "logo",
+    "pam_last_login_date",
+    "saml_metadata",
+    "second_fa_uuid",
+    "sweep_scim_last_run",
+    "updated_at",
+    "updated_by",
+    "uuid4"
+]
 
 relationship_configuration = {
     "groups": ["collaboration_memberships", "invitations"],
