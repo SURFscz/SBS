@@ -219,7 +219,10 @@ def user_search():
 def user_query():
     confirm_write_access()
     wildcard = f"%{query_param('q')}%"
-    conditions = [User.name.ilike(wildcard), User.username.ilike(wildcard), User.uid.ilike(wildcard),
+    conditions = [User.name.ilike(wildcard),
+                  User.username.ilike(wildcard),
+                  User.uid.ilike(wildcard),
+                  User.eduperson_principal_name.ilike(wildcard),
                   User.email.ilike(wildcard)]
     return User.query.filter(or_(*conditions)).all(), 200
 
