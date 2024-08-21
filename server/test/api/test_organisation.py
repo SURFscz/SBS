@@ -457,6 +457,12 @@ class TestOrganisation(AbstractTest):
         for attr in "last_accessed_date", "second_fa_uuid", "user_ip_networks", "second_factor_auth":
             self.assertTrue(attr in res[0])
 
+    def test_search_users_eppn(self):
+        self.login("urn:paul")
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
+        res = self.get(f"/api/organisations/{organisation.id}/users", query_data={"q": "woods.io"}, with_basic_auth=False)
+        self.assertEqual(1, len(res))
+
     def test_search_invitations(self):
         self.login("urn:harry")
         organisation = self.find_entity_by_name(Organisation, unihard_name)

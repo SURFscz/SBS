@@ -474,7 +474,10 @@ def delete_organisation(organisation_id):
 def search_users(organisation_id):
     confirm_organisation_admin_or_manager(organisation_id)
     wildcard = f"%{query_param('q')}%"
-    conditions = [User.name.ilike(wildcard), User.username.ilike(wildcard), User.email.ilike(wildcard)]
+    conditions = [User.name.ilike(wildcard),
+                  User.username.ilike(wildcard),
+                  User.eduperson_principal_name.ilike(wildcard),
+                  User.email.ilike(wildcard)]
     users = User.query \
         .join(User.collaboration_memberships) \
         .join(CollaborationMembership.collaboration) \

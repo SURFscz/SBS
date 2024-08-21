@@ -465,6 +465,10 @@ class TestUser(AbstractTest):
         res = self.get("/api/users/query", query_data={"q": "@"})
         self.assertEqual(18, len(res))
 
+        res = self.get("/api/users/query", query_data={"q": "dtrh.io"})
+        self.assertEqual(1, len(res))
+
+
     def test_aup_agreed(self):
         sarah = self.find_entity_by_name(User, user_sarah_name)
         aups = Aup.query.filter(Aup.user == sarah).all()

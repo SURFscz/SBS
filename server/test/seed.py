@@ -191,7 +191,7 @@ def seed(db, app_config, skip_seed=False):
                  external_id="100ae6f1-930f-459c-bf1a-f28facfe5834",
                  last_login_date=yesterday)
     sarah = User(uid="urn:sarah", name=user_sarah_name, email="sarah@uni-franeker.nl",
-                 application_uid="sarah_application_uid",
+                 application_uid="sarah_application_uid", eduperson_principal_name="sarah@woods.io",
                  username="sarah", external_id="8297d8a5-a2a4-4208-9fb6-100a5865f022",
                  last_login_date=yesterday)
     betty = User(uid="urn:betty", name="betty", email="betty@uuc.org", username="betty",
@@ -202,7 +202,7 @@ def seed(db, app_config, skip_seed=False):
                 last_login_date=yesterday)
     paul = User(uid="urn:paul", name="Paul Doe", email="paul@ucc.org", username="paul",
                 schac_home_organisation="example.org", external_id="0cb73fdf-3fe1-4e99-afe1-597d6226d030",
-                last_login_date=yesterday)
+                last_login_date=yesterday, eduperson_principal_name="paul@dtrh.io")
     hannibal = User(uid="urn:hannibal", name=None, email="hannibal@example.org", username="hlector",
                     schac_home_organisation="example.org", external_id="9527f225-d8d1-4410-8c2e-ed2548db908d",
                     last_login_date=yesterday)
