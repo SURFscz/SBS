@@ -137,6 +137,12 @@ class TestOrganisation(AbstractTest):
         names = self.post("/api/organisations/names/", body=body, with_basic_auth=False)
         self.assertEqual(4, len(names))
 
+    def test_crm_organisations(self):
+        self.login("urn:john")
+        crm_organisations = self.get("/api/organisations/crm_organisations", with_basic_auth=False)
+        self.assertEqual(2, len(crm_organisations))
+        self.assertIsNotNone(crm_organisations[0]["crm_id"])
+
     def test_organisation_by_id(self):
         self.login()
         organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
@@ -460,7 +466,8 @@ class TestOrganisation(AbstractTest):
     def test_search_users_eppn(self):
         self.login("urn:paul")
         organisation = self.find_entity_by_name(Organisation, unihard_name)
-        res = self.get(f"/api/organisations/{organisation.id}/users", query_data={"q": "woods.io"}, with_basic_auth=False)
+        res = self.get(f"/api/organisations/{organisation.id}/users", query_data={"q": "woods.io"},
+                       with_basic_auth=False)
         self.assertEqual(1, len(res))
 
     def test_search_invitations(self):

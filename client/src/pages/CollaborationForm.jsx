@@ -59,6 +59,8 @@ class CollaborationForm extends React.Component {
             alreadyExists: {},
             organisation: {},
             organisations: [],
+            crmOrganisations: [],
+            crm_organisation: {},
             invalidInputs: {},
             tags: [],
             tagsSelected: [],
@@ -93,7 +95,8 @@ class CollaborationForm extends React.Component {
                     if (user.admin) {
                         allOrganisations().then(res => {
                             const orgOptions = this.mapOrganisationsToOptions(res);
-                            this.setState({organisations: orgOptions});
+                            const crmOrganisations = this.mapOrganisationsToOptions(res.filter(org => org.crm_id !== null));
+                            this.setState({organisations: orgOptions, crmOrganisations: crmOrganisations});
                         });
                     }
                     const expiryDate = collaboration.expiry_date ? moment(collaboration.expiry_date * 1000).toDate() : null;
