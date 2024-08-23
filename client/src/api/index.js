@@ -505,6 +505,10 @@ export function organisationNames(joinRequests) {
     return postPutJson("/api/organisations/names", body, "POST");
 }
 
+export function allCRMOrganisations() {
+    return fetchJson("/api/organisations/crm_organisations");
+}
+
 export function allOrganisations() {
     return fetchJson("/api/organisations/all");
 }
