@@ -119,7 +119,7 @@ class TestCaseDefaults(TestCase):
         self.assertTrue(bool(uri_re.match("https://localhost/api/scim_mock")))
         self.assertTrue(bool(uri_re.match("http://localhost:8080/api/scim_mock")))
         self.assertTrue(bool(uri_re.match("https://demo-sp.sram.surf.nl/test")))
-        self.assertTrue(bool(uri_re.match("https://google.nl")))
+        self.assertTrue(bool(uri_re.match("HTTPS://GOOGLE.NL")))
         self.assertTrue(bool(uri_re.match("https://google")))
         self.assertTrue(bool(uri_re.match("https://google")))
         self.assertTrue(bool(uri_re.match("ssh://user;key=value;key=value@hostname.com:port")))

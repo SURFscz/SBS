@@ -99,14 +99,14 @@ def cleanse_short_name(data, attr="short_name"):
     return not is_modified
 
 
-uri_re = re.compile("^(https?|ssh|ftp)://(.+)$")
+uri_re = re.compile("^(https?|ssh|ftp)://(.+)$", re.IGNORECASE)
 
 
 def valid_uri_attributes(data, uri_attributes):
     for uri_attr in uri_attributes:
         uri = data.get(uri_attr)
         if uri:
-            data[uri_attr] = uri.lower().strip()
+            data[uri_attr] = uri.strip()
             uri = data[uri_attr]
             if uri_attr == "uri":
                 uri = uri.replace("{co_short_name}", "").replace("{username}", "")
