@@ -10,11 +10,10 @@ from werkzeug.exceptions import BadRequest
 from server.auth.security import CSRF_TOKEN
 from server.db.db import db
 from server.db.domain import Organisation, Collaboration, User, Aup
-from server.tools import dt_now, read_file
-
 from server.test.abstract_test import AbstractTest
 from server.test.seed import (unihard_name, co_ai_computing_name, user_roger_name, user_john_name, user_james_name,
                               co_research_name, co_ai_computing_uuid, user_sarah_name)
+from server.tools import dt_now, read_file
 
 
 class TestUser(AbstractTest):
@@ -46,7 +45,8 @@ class TestUser(AbstractTest):
         self.mark_user_suspended(user_john_name)
         self.login("urn:john")
         res = self.client.get("/api/users/me")
-        self.assertEqual(409, res.status_code)
+        self.assertEqual(200, res.status_code)
+        self.assertTrue(res.json["suspended"])
 
     def test_me_user_with_suspend_notifications(self):
         self.login("urn:user_gets_suspended")

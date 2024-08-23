@@ -59,7 +59,7 @@ const en = {
         title: "Research Access Management",
         subTitle: "Please log in...",
         suspended: "Your profile has been suspended. Please contact sram-support@surf.nl to resolve this",
-        rateLimited: "You have attempted the TOTP verification too many times, and therefore you are logged out and your profile has been suspended. Contact your admin to resolve this",
+        rateLimited: "You have attempted the TOTP verification too many times, and therefore you are logged out and your TOTP has been disabled. Contact your admin to resolve this",
         successfullyActivated: "You have re-activated your profile",
         closeBrowser: "To finish your logout you'll have to close your browser.",
         closeBrowserAfterDelete: "To finish the deletion of your profile you'll have to close your browser."
@@ -2254,7 +2254,9 @@ const en = {
             problems: "Can't log in?",
             invalid: "Invalid verification code",
             resetRequest: "Reset your verfication code",
-            resetToken: "Use a reset code"
+            resetToken: "Use a reset code",
+            rateLimited: "You were rate-limited",
+            rateLimitedInfo: "You have attempted the TOTP verification too many times, and therefore your TOTP has been disabled. Use a reset code to have your TOTP reset. Please contact sram-support@surf.nl for a reset code if you have not received one."
         },
         profile: {
             name: "Two-factor authentication",

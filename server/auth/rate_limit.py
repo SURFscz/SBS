@@ -3,22 +3,28 @@ from datetime import datetime, timedelta
 from flask import current_app, session
 from werkzeug.exceptions import TooManyRequests
 
+from server.auth.secrets import generate_token
 from server.db.db import db
 from server.db.domain import User
 from server.mail import mail_error
 from server.tools import dt_now
 
 
-def check_rate_limit(user):
+def check_rate_limit(user: User):
+    if user.rate_limited:
+        raise TooManyRequests(f"{user.name} was TOTP rate limited. Not allowed to verify 2FA.")
+
     if rate_limit_reached(user):
-        user.suspended = True
+        user.mfa_reset_token = generate_token()
+        user.second_factor_auth = None
+        user.rate_limited = True
         db.session.merge(user)
         db.session.commit()
         session.clear()
         mail_conf = current_app.app_config.mail
-        tb = f"TOTP rate limit reached, user suspended: name={user.name}, uid={user.uid}, email={user.email}"
+        tb = f"TOTP rate limit reached, user TOTP has been reset: name={user.name}, uid={user.uid}, email={user.email}"
         mail_error(mail_conf.environment, user.id, mail_conf.send_exceptions_recipients, tb)
-        raise TooManyRequests(f"Suspended user {user.name}, uid={user.uid}, email={user.email} for rate limiting TOTP")
+        raise TooManyRequests(f"Reset TOTP user {user.name}, uid={user.uid}, email={user.email} for rate limiting TOTP")
 
 
 def rate_limit_reached(user: User):
