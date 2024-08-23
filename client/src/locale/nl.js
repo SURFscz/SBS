@@ -204,7 +204,7 @@ const nl = {
             and: " en ",
             organisation: "Alle gebruikers in de samenwerkingen van deze organisatie",
             title: "Gebruikers",
-            last_login_date: "Datum laatste inlog",
+            last_login_date: "Datum laatste activiteit",
             affiliation: "Affiliatie",
             username: "Username",
             uid: "Uid",
