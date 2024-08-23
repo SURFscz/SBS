@@ -133,7 +133,8 @@ class TestMfa(AbstractTest):
         self.assertTrue(res["guest"])
 
         mary = User.query.filter(User.uid == "urn:mary").first()
-        self.assertTrue(mary.suspended)
+        self.assertTrue(mary.rate_limited)
+        self.assertIsNone(mary.second_factor_auth)
 
         config.rate_limit_totp_guesses_per_30_seconds = 10
 
@@ -269,7 +270,8 @@ class TestMfa(AbstractTest):
         self.assertTrue(res["guest"])
 
         mary = User.query.filter(User.uid == "urn:mary").first()
-        self.assertTrue(mary.suspended)
+        self.assertTrue(mary.rate_limited)
+        self.assertIsNone(mary.second_factor_auth)
 
         config.rate_limit_totp_guesses_per_30_seconds = 10
 

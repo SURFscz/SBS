@@ -48,7 +48,8 @@ def store_user_in_session(user, second_factor_confirmed, user_accepted_aup):
         "second_factor_confirmed": second_factor_confirmed,
         "user_accepted_aup": user_accepted_aup,
         "name": user.name,
-        "email": user.email
+        "email": user.email,
+        "rate_limited": user.rate_limited
     }
     session["user"] = {**session_data, **res}
     if CSRF_TOKEN not in session:

@@ -20,7 +20,6 @@ def create_suspend_notification(user, retention, app, is_warning, is_suspension)
                                                is_warning=is_warning,
                                                is_suspension=is_suspension)
     db.session.add(suspend_notification)
-    # user.suspend_notifications.append(suspend_notification)
     db.session.merge(user)
 
     logger = logging.getLogger("scheduler")

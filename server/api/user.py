@@ -480,11 +480,6 @@ def me():
 
         if user_from_db is None:
             return {"uid": "anonymous", "guest": True, "admin": False}, 200
-        if user_from_db.suspended:
-            logger = ctx_logger("user")
-            logger.info(
-                f"Returning error for user {user_from_db.uid} as user is suspended")
-            return {"error": f"user {user_from_db.uid} is suspended"}, 409
 
         # Do not expose the actual secret of second_factor_auth
         user_from_session["second_factor_auth"] = bool(user_from_db.second_factor_auth)

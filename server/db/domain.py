@@ -79,6 +79,7 @@ class User(Base, db.Model):
     mfa_reset_token = db.Column("mfa_reset_token", db.String(length=512), nullable=True)
     second_fa_uuid = db.Column("second_fa_uuid", db.String(length=512), nullable=True)
     ssid_required = db.Column("ssid_required", db.Boolean(), nullable=True, default=False)
+    rate_limited = db.Column("rate_limited", db.Boolean(), nullable=True, default=False)
     user_mails = db.relationship("UserMail", back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
 
     def has_agreed_with_aup(self):

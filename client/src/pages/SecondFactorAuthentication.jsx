@@ -51,7 +51,8 @@ class SecondFactorAuthentication extends React.Component {
             resetRequested: false,
             continueUrl: null,
             secondFaUuid: null,
-            showFeedBack: false
+            showFeedBack: false,
+            rate_limited: false
         };
         this.totpRefs = Array(6).fill("");
         this.totpNewRefs = Array(6).fill("");
@@ -86,6 +87,8 @@ class SecondFactorAuthentication extends React.Component {
             } else {
                 this.props.history.push("/landing");
             }
+        } else if (user.rate_limited) {
+            this.setState({rate_limited: true, loading: false});
         } else if (!user.second_factor_auth || update) {
             get2fa().then(res => {
                 this.setState({
@@ -368,6 +371,22 @@ class SecondFactorAuthentication extends React.Component {
         )
     }
 
+    renderRateLimited = () => {
+        return (
+            <div>
+                <section className="register-header">
+                    <h1>{I18n.t("mfa.verify.rateLimited")}</h1>
+                    <p dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(`${I18n.t("mfa.verify.rateLimitedInfo")}`)
+                    }}/>
+                </section>
+                <div className="explain">
+                    <a href="/enter-reset" onClick={this.enterResetToken}>{I18n.t("mfa.verify.resetToken")}</a>
+                </div>
+            </div>
+        )
+    }
+
     renderEnterResetCode = (resetCode, resetCodeError, busy) => {
         const submitDisabled = resetCode.length === 0 || busy;
         return (
@@ -531,7 +550,7 @@ class SecondFactorAuthentication extends React.Component {
         const {update} = this.props;
         const {
             loading, totp, qrCode, idp_name, busy, showExplanation, error, respondents, message,
-            newTotp, newError, showEnterToken, resetCode, resetCodeError, showFeedBack
+            newTotp, newError, showEnterToken, resetCode, resetCodeError, showFeedBack, rate_limited
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -544,9 +563,10 @@ class SecondFactorAuthentication extends React.Component {
                 <FeedbackDialog isOpen={showFeedBack}
                                 close={() => this.setState({showFeedBack: false})}
                                 initialMessage={I18n.t("mfa.register.feedback", {name: idpFeedbackName})}/>
-                {(qrCode && !showExplanation && !showEnterToken) && this.renderRegistration(qrCode, totp, newTotp, idp_name, busy, error, newError, update)}
-                {(!qrCode && !showExplanation && !showEnterToken) && this.renderVerificationCode(totp, busy, showExplanation, error, showEnterToken)}
-                {(showExplanation && !showEnterToken) && this.renderLostCode(respondents, message)}
+                {(rate_limited && !showEnterToken)&& this.renderRateLimited()}
+                {(!rate_limited && qrCode && !showExplanation && !showEnterToken) && this.renderRegistration(qrCode, totp, newTotp, idp_name, busy, error, newError, update)}
+                {(!rate_limited && !qrCode && !showExplanation && !showEnterToken) && this.renderVerificationCode(totp, busy, showExplanation, error, showEnterToken)}
+                {(!rate_limited && showExplanation && !showEnterToken) && this.renderLostCode(respondents, message)}
                 {(!showExplanation && showEnterToken) && this.renderEnterResetCode(resetCode, resetCodeError, busy)}
             </div>
         )

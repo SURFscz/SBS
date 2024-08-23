@@ -59,7 +59,7 @@ const nl = {
         title: "Research Access Management",
         subTitle: "Inloggen...",
         suspended: "Je profiel is geschorst. Neem contact op sram-support@surf.nl om dit op te lossen",
-        rateLimited: "Je hebt de TOTP-verificatie te vaak geprobeerd en daarom ben je uitgelogd en is je profiel geschorst. Neem contact op met uw beheerder om dit op te lossen",
+        rateLimited: "Je hebt de TOTP-verificatie te vaak geprobeerd en daarom ben je uitgelogd en is je TOTP uitgeschakeld. Neem contact op met uw beheerder om dit op te lossen",
         successfullyActivated: "Gelukt: je profiel is geheractiveerd",
         closeBrowser: "Om volledig uit te loggen, moet je je browser sluiten",
         closeBrowserAfterDelete: "Om het verwijderen van je profiel te voltooien, moet je je browser sluiten."
@@ -2254,7 +2254,9 @@ const nl = {
             problems: "Problemen met inloggen?",
             invalid: "Onjuiste verificatiecode",
             resetRequest: "Reset je verificatiecode",
-            resetToken: "Gebruik een resetcode"
+            resetToken: "Gebruik een resetcode",
+            rateLimited: "Je bent rate-limited",
+            rateLimitedInfo: "Je hebt de TOTP-verificatie te vaak geprobeerd en daarom is je TOTP uitgeschakeld. Gebruik een resetcode om je TOTP te resetten. Neem contact op sram-support@surf.nl voor een resetcode als je deze niet ontvangen hebt."
         },
         profile: {
             name: "Tweefactorauthenticatie",
