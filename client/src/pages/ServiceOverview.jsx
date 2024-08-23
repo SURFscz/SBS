@@ -1,5 +1,6 @@
 import React from "react";
 import {
+    allCRMOrganisations,
     createServiceToken,
     deleteService,
     deleteServiceToken,
@@ -97,7 +98,8 @@ class ServiceOverview extends React.Component {
             scimTokenChange: false,
             parsedSAMLMetaData: null,
             parsedSAMLMetaDataError: false,
-            parsedSAMLMetaDataURLError: false
+            parsedSAMLMetaDataURLError: false,
+            crmOrganisations: []
         }
     }
 
@@ -109,7 +111,7 @@ class ServiceOverview extends React.Component {
     }
 
     componentDidMount = nextProps => {
-        const {service, serviceAdmin, serviceManager} = nextProps ? nextProps : this.props;
+        const {service, serviceAdmin, serviceManager, showServiceAdminView, user} = nextProps ? nextProps : this.props;
         const {params} = this.props.match;
         let tab = params.subTab || this.state.currentTab;
         if (!toc.includes(tab)) {
@@ -129,6 +131,14 @@ class ServiceOverview extends React.Component {
                 loading: false
             }, () => {
                 const {ip_networks, saml_enabled, saml_metadata, saml_metadata_url} = this.state.service;
+                if (user.admin && !showServiceAdminView) {
+                    allCRMOrganisations().then(organisations => this.setState({
+                        crmOrganisations: organisations.map(org => ({
+                            label: `${org.name} (${org.crm_id})`,
+                            value: org.id
+                        }))
+                    }))
+                }
                 if (isEmpty(ip_networks)) {
                     this.addIpAddress();
                 } else {
@@ -150,7 +160,6 @@ class ServiceOverview extends React.Component {
                             parsedSAMLMetaDataError: !isEmpty(saml_metadata_url),
                             parsedSAMLMetaDataURLError: !isEmpty(saml_metadata)
                         }))
-
                 }
             });
         })
@@ -765,7 +774,7 @@ class ServiceOverview extends React.Component {
             <h3>{I18n.t("serviceDetails.details")}</h3>
             <ul>
                 {toc.filter(tab => isAdmin || tab !== "Export")
-                    .filter(tab => isManageEnabled || (tab !== "OIDC" && tab !== "SAML") )
+                    .filter(tab => isManageEnabled || (tab !== "OIDC" && tab !== "SAML"))
                     .map(item => <li key={item}>
                         <a href={`/${item}`}
                            className={`${item === currentTab ? "active" : ""} ${this.isValidTab(item) ? "" : "error"}`}
@@ -1029,6 +1038,7 @@ class ServiceOverview extends React.Component {
                             error={(!initial && isEmpty(description))}
                             name={I18n.t("serviceDetails.description")}
                             toolTip={I18n.t("serviceDetails.descriptionTooltip")}
+                            required={true}
                 />
                 {(!initial && isEmpty(description)) && <ErrorIndicator
                     msg={I18n.t("models.userTokens.required", {
@@ -1208,6 +1218,7 @@ class ServiceOverview extends React.Component {
                                                 this.validateIpAddress(i);
                                                 e.target.blur()
                                             }}
+                                            required={true}
                                 />
                                 {(isAdmin || isServiceAdmin) &&
                                     <span className="trash" onClick={() => this.deleteIpAddress(i)}>
@@ -1272,6 +1283,7 @@ class ServiceOverview extends React.Component {
                                     name={I18n.t("service.providingOrganisation")}
                                     placeholder={I18n.t("service.providingOrganisationPlaceholder")}
                                     onChange={this.changeServiceProperty("providing_organisation")}
+                                    required={true}
                         />
                         {isEmpty(service.providing_organisation) &&
                             <ErrorIndicator msg={I18n.t("service.required", {
@@ -1286,6 +1298,7 @@ class ServiceOverview extends React.Component {
                                      name={I18n.t("service.openIDConnectRedirects")}
                                      placeholder={I18n.t("service.openIDConnectRedirectsPlaceholder")}
                                      toolTip={I18n.t("service.openIDConnectRedirectsTooltip")}
+                                     required={true}
                                      onChange={selectedOptions => this.redirectUrlsChanged(selectedOptions, service)}/>
                         {isEmpty(redirect_urls) &&
                             <ErrorIndicator msg={I18n.t("service.required", {
@@ -1299,6 +1312,7 @@ class ServiceOverview extends React.Component {
                                      name={I18n.t("service.openIDConnectGrants")}
                                      placeholder={I18n.t("service.openIDConnectGrantsPlaceholder")}
                                      toolTip={I18n.t("service.openIDConnectGrantsTooltip")}
+                                     required={true}
                                      onChange={selectedOptions => this.grantsChanged(selectedOptions, service)}/>
                         {isEmpty(grants) &&
                             <ErrorIndicator msg={I18n.t("service.required", {
@@ -1497,6 +1511,7 @@ class ServiceOverview extends React.Component {
                         toolTip={I18n.t("service.contact_emailTooltip")}
                         error={invalidInputs["email"] || contactEmailRequired}
                         onBlur={this.validateEmail("email")}
+                        required={contactEmailRequired}
                         disabled={!isAdmin && !isServiceAdmin}/>
             {invalidInputs["email"] &&
                 <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
@@ -1509,6 +1524,7 @@ class ServiceOverview extends React.Component {
                             ...invalidInputs,
                             security_email: false
                         })(e)}
+                        required={true}
                         toolTip={I18n.t("service.security_emailTooltip")}
                         error={isEmpty(service.security_email) || invalidInputs["security_email"]}
                         onBlur={this.validateEmail("security_email", true)}
@@ -1535,7 +1551,7 @@ class ServiceOverview extends React.Component {
         </div>)
     }
 
-    renderGeneral = (config, service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs, showServiceAdminView) => {
+    renderGeneral = (config, service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs, showServiceAdminView, crmOrganisations) => {
         return <>
             <InputField value={service.name}
                         onChange={this.changeServiceProperty("name", false, {...alreadyExists, name: false})}
@@ -1543,6 +1559,7 @@ class ServiceOverview extends React.Component {
                         onBlur={this.validateServiceName}
                         error={alreadyExists.name}
                         name={I18n.t("service.name")}
+                        required={true}
                         disabled={!isAdmin && !isServiceAdmin}/>
             {alreadyExists.name && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
                 attribute: I18n.t("service.name").toLowerCase(), value: service.name
@@ -1568,6 +1585,7 @@ class ServiceOverview extends React.Component {
                         onBlur={this.validateServiceAbbreviation}
                         name={I18n.t("service.abbreviation")}
                         toolTip={I18n.t("service.abbreviationTooltip")}
+                        required={true}
                         error={alreadyExists.abbreviation || isEmpty(service.abbreviation)}
                         copyClipBoard={false}
                         disabled={!isAdmin || showServiceAdminView}/>
@@ -1630,6 +1648,7 @@ class ServiceOverview extends React.Component {
                         onBlur={this.validateServiceEntityId}
                         name={I18n.t("service.entity_id")}
                         toolTip={I18n.t("service.entity_idTooltip")}
+                        required={true}
                         error={alreadyExists.entity_id || isEmpty(service.entity_id)}
                         copyClipBoard={true}
                         disabled={!isAdmin || showServiceAdminView}/>
@@ -1639,18 +1658,28 @@ class ServiceOverview extends React.Component {
             {isEmpty(service.entity_id) && <ErrorIndicator msg={I18n.t("service.required", {
                 attribute: I18n.t("service.entity_id").toLowerCase()
             })}/>}
-            {(isAdmin && !showServiceAdminView) && <InputField value={service.crm_id}
-                                    placeholder={I18n.t("organisation.crmIdPlaceholder")}
-                                    name={I18n.t("organisation.crmId")}
-                                    onChange={e => this.changeServiceProperty("crm_id")(e)}
-            />}
+
+            {(isAdmin && !showServiceAdminView) &&
+                <SelectField
+                    value={crmOrganisations.find(org => org.value === service.crm_organisation_id)}
+                    options={crmOrganisations}
+                    clearable={true}
+                    placeholder={I18n.t("organisation.crmIdPlaceholder")}
+                    name={I18n.t("organisation.crmId")}
+                    toolTip={I18n.t("organisation.crmIdTooltip")}
+                    onChange={item => this.setState({
+                        "service": {...service, crm_organisation_id: item ? item.value : null}
+                    })}/>
+            }
         </>
     }
 
-    renderCurrentTab = (config, currentTab, service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit, invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken, initial) => {
+    renderCurrentTab = (config, currentTab, service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit,
+                        invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken, initial,
+                        crmOrganisations) => {
         switch (currentTab) {
             case "general":
-                return this.renderGeneral(config, service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs, showServiceAdminView);
+                return this.renderGeneral(config, service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs, showServiceAdminView, crmOrganisations);
             case "contacts":
                 return this.renderContacts(service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs, hasAdministrators);
             case "policy":
@@ -1701,7 +1730,8 @@ class ServiceOverview extends React.Component {
             sweepSuccess,
             scimTokenChange,
             scimBearerToken,
-            oidcClientSecret
+            oidcClientSecret,
+            crmOrganisations
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -1729,7 +1759,8 @@ class ServiceOverview extends React.Component {
             {this.sidebar(currentTab, config.manage_enabled, isAdmin)}
             <div className={`service ${createNewServiceToken ? "no-grid" : ""}`}>
                 <h2 className="section-separator">{I18n.t(`serviceDetails.toc.${currentTab}`)}</h2>
-                {this.renderCurrentTab(config, currentTab, service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit, invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken, initial)}
+                {this.renderCurrentTab(config, currentTab, service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit,
+                    invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken, initial, crmOrganisations)}
                 {this.renderButtons(isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView, createNewServiceToken, service)}
             </div>
         </div>);
