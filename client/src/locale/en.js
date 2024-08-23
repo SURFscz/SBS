@@ -204,7 +204,7 @@ const en = {
             and: " and ",
             organisation: "All collaboration users",
             title: "Users",
-            last_login_date: "Last login date",
+            last_login_date: "Last activity date",
             affiliation: "Affiliation",
             username: "Username",
             uid: "Uid",
