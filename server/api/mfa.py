@@ -4,7 +4,7 @@ from io import BytesIO
 import pyotp
 import qrcode
 from flask import Blueprint, current_app, session, request as current_request
-from werkzeug.exceptions import Forbidden, BadRequest, TooManyRequests
+from werkzeug.exceptions import Forbidden, BadRequest
 
 from server.api.base import query_param, json_endpoint
 from server.auth.mfa import store_user_in_session, eligible_users_to_reset_token
