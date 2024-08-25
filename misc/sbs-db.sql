@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision 91a1b640e465 (head)
+-- Dump of empty SBS database, alembic revision 952aef5395fa (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('91a1b640e465');
+INSERT INTO `alembic_version` VALUES ('952aef5395fa');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_keys`;
@@ -902,12 +902,14 @@ CREATE TABLE `services` (
   `exported_at` datetime DEFAULT NULL,
   `export_external_identifier` varchar(255) DEFAULT NULL,
   `export_external_version` int(11) DEFAULT NULL,
-  `crm_id` varchar(255) DEFAULT NULL,
+  `crm_organisation_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `services_unique_entity_id` (`entity_id`),
   UNIQUE KEY `services_uuid4` (`uuid4`),
   UNIQUE KEY `services_unique_abbreviation` (`abbreviation`),
-  FULLTEXT KEY `ft_services_search` (`name`,`entity_id`,`description`)
+  KEY `services_ibfk_1` (`crm_organisation_id`),
+  FULLTEXT KEY `ft_services_search` (`name`,`entity_id`,`description`),
+  CONSTRAINT `services_ibfk_1` FOREIGN KEY (`crm_organisation_id`) REFERENCES `organisations` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1188,6 +1190,7 @@ CREATE TABLE `users` (
   `ssid_required` tinyint(1) DEFAULT '0',
   `pam_last_login_date` datetime DEFAULT NULL,
   `external_id` varchar(255) NOT NULL,
+  `rate_limited` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_unique_uid` (`uid`),
   UNIQUE KEY `users_unique_external_id` (`external_id`),
