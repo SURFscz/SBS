@@ -43,6 +43,7 @@ def _do_invitation_reminders(app):
 
         for invitation in invitations:
             invitation.reminder_send = True
+            service_names = [service.name for service in invitation.collaboration.services]
             db.session.merge(invitation)
 
             results["invitations"].append(invitation.invitee_email)
@@ -54,7 +55,7 @@ def _do_invitation_reminders(app):
                 "base_url": app.app_config.base_url,
                 "wiki_link": app.app_config.wiki_link,
                 "recipient": invitation.invitee_email
-            }, invitation.collaboration, [invitation.invitee_email], reminder=True,
+            }, invitation.collaboration, [invitation.invitee_email], service_names, reminder=True,
                 preview=False, working_outside_of_request_context=True)
 
         organisation_invitations = OrganisationInvitation.query \

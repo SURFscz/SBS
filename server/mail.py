@@ -227,14 +227,15 @@ def mail_organisation_invitation(context, organisation, recipients, reminder=Fal
     )
 
 
-def mail_collaboration_invitation(context, collaboration, recipients, reminder=False, preview=False,
+def mail_collaboration_invitation(context, collaboration, recipients, service_names, reminder=False, preview=False,
                                   working_outside_of_request_context=False):
     if not preview:
         _store_mail(None, COLLABORATION_INVITATION_MAIL, recipients)
     invitation = context["invitation"]
     message = invitation.message.replace("\n", "<br/>") if invitation.message else None
     context = {**context, "expiry_period": calculate_expiry_period(invitation),
-               "collaboration": collaboration, "message": message, "reminder": reminder}
+               "collaboration": collaboration, "message": message, "reminder": reminder,
+               "service_names": service_names}
     reminder_part = "Reminder - " if reminder else ""
     return _do_send_mail(
         subject=f"{reminder_part}Invitation to join collaboration {collaboration.name}",
