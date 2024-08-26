@@ -1103,3 +1103,31 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(400, response.status_code)
         response_json = response.json
         self.assertTrue("Invalid emails" in response_json["message"])
+
+    @responses.activate
+    def test_api_call_with_exception_logo_url(self):
+        file = f"{os.path.dirname(os.path.realpath(__file__))}/../images/nope.png"
+        with open(file, "rb") as f:
+            body = f.read()
+            logo_url = "http://localhost:8081/nope.png"
+            responses.add(method=responses.GET,
+                          url=logo_url,
+                          body=body,
+                          status=200,
+                          content_type="image/jpeg",
+                          stream=True)
+            response = self.client.post("/api/collaborations/v1",
+                                        headers={"Authorization": f"Bearer {unihard_secret}"},
+                                        data=json.dumps({
+                                            "name": "new_collaboration",
+                                            "description": "new_collaboration",
+                                            "administrators": ["the@ex.org", "that@ex.org"],
+                                            "short_name": "new_short_name",
+                                            "disable_join_requests": True,
+                                            "disclose_member_information": True,
+                                            "disclose_email_information": True,
+                                            "logo": logo_url
+                                        }),
+                                        content_type="application/json")
+            self.assertEqual(400, response.status_code)
+            self.assertTrue("Invalid Logo: cannot identify image file" in response.json.get("message"))

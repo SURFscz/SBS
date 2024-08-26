@@ -57,18 +57,6 @@ def services_from_collaboration_memberships(user_id, service_id=None, count_only
     return _services_from_query(count_only, query, service_id)
 
 
-# Services connected to a organisation which has a collaboration where the user is a member of
-def services_from_organisation_collaboration_memberships(user_id, service_id=None, count_only=False):
-    query = Service.query \
-        .join(Service.organisations) \
-        .join(Organisation.collaborations) \
-        .join(Collaboration.collaboration_memberships) \
-        .join(CollaborationMembership.user) \
-        .filter(User.id == user_id)
-
-    return _services_from_query(count_only, query, service_id)
-
-
 # Services connected to a organisation where the user is a member of
 def services_from_organisation_memberships(user_id, service_id=None, count_only=False):
     query = Service.query \
@@ -83,10 +71,6 @@ def services_from_organisation_memberships(user_id, service_id=None, count_only=
 def member_access_to_service(service_id):
     user_id = current_user_id()
     count = services_from_collaboration_memberships(user_id, service_id, True)
-    if count > 0:
-        return True
-    # TODO: to be removed (see #421)
-    count = services_from_organisation_collaboration_memberships(user_id, service_id, True)
     if count > 0:
         return True
     count = services_from_organisation_memberships(user_id, service_id, True)
@@ -360,7 +344,6 @@ def user_services(user_id):
         raise Forbidden(f"User {user_id} is not a member of a collaboration in the {organisation.name} organisation")
 
     services = services_from_organisation_memberships(user_id)
-    services += services_from_organisation_collaboration_memberships(user_id)
     services += services_from_collaboration_memberships(user_id)
     return [convert_service(service) for service in unique_model_objects(services)], 200
 
