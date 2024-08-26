@@ -10,30 +10,21 @@
 
     </div>
     <div class="mail-end" style="padding: 30px 0 0 60px;background-color: white;">
-        <p>{{ salutation }},</p>
-        <p>According to our information, it's been {{ days_ago }} days since you last used SURF Research Access
-            Management.
-            Because we do not want to store your information longer than necessary,
-            your profile has been marked inactive.
-            This means non-web services might not work anymore. On {{ deletion_date }}, your profile will be
-            deleted.</p>
+        <p>It's been {{ days_ago }} days since you last used SURF Research Access Management.
+            Your profile has been marked inactive, because we do not want to store your information longer than necessary. This means some services might not work anymore.
+            On {{ deletion_date }}, your profile will be deleted.</p>
 
         {% include "personal_information.html" %}
 
         <p>If you want to keep using the services available through SURF Research Access Management,
             simply login using the link below or by going to <a href="{{ base_url }}/login">{{ base_url }}/login</a>.
         </p>
-        <p>If you want to delete your profile right away, please go
-            to <a href="{{ base_url }}/profile?delete=true">{{ base_url }}/profile?delete=true</a>.
-        </p>
 
         <a class="button" href="{{ base_url }}/login"
            style="border-radius: 4px;color: white;background-color: #0077c8;text-decoration: none;display: inline-block;margin: 15px 0;cursor:pointer;padding: 14px 26px;font-size: 18px;">
             Login to prevent suspension</a>
 
-        <p>If you have any questions, please let us know by sending a mail to <a href="mailto:{{ support_address }}">{{ support_address }}</a>.</p>
-        <p>Kind regards,</p>
-        <p>SURF Research Access Management support</p>
+        <p>If you have any questions, please let us know by sending an email to <a href="mailto:{{ support_address }}">{{ support_address }}</a>.</p>
     </div>
 
 {% endblock %}
