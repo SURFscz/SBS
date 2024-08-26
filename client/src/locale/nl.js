@@ -1760,7 +1760,9 @@ const nl = {
             singleInfo: "Een dienst gebruikt binnen deze samenwerking vereist dat je akkoord gaat met een acceptable use policy.",
             multipleInfo: "Diensten gebruikt binnen deze samenwerking vereisen dat je akkoord gaat met de acceptable use policies.",
             singleCheck: "Ik ga akkoord met de hierboven genoemde acceptable use policy",
-            multipleCheck: "Ik ga akkoord met de hierboven genoemde acceptable use policies"
+            multipleCheck: "Ik ga akkoord met de hierboven genoemde acceptable use policies",
+            singleInfoAccepted: "Je bent al akkoord gegaan met de acceptable use policy van de dienst gebruikt door deze samenwerking.",
+            multipleInfoAccepted: "Je bent al akkoord gegaan met de acceptable use policies van de diensten gebruikt door deze samenwerking.",
         },
         organisation: {
             title: "Organisatie AUP",

@@ -24,16 +24,11 @@ export default function CollaborationWelcomeDialog({
     const requiresOrganisationAup = !isEmpty(organisation.accepted_user_policy) &&
         !(user.organisation_aups || []).some(aup => aup.organisation_id === organisation.id) &&
         !(organisation.schac_home_organisations || []).some(home => home.name === user.schac_home_organisation);
+    const allServiceAupsAgreedOn = services
+        .every(service => (user.service_aups || []).some(serviceAup => serviceAup.service_id === service.id));
 
-    const [disabled, setDisabled] = useState(hasServices);
+    const [disabled, setDisabled] = useState(hasServices && !allServiceAupsAgreedOn);
     const [organisationDisabled, setOrganisationDisabled] = useState(requiresOrganisationAup);
-    /**
-     * TODO - filter out the serviecs where ther eis already an service_aup, but do displauy them, only do not show the
-     * checkbox. Different variations: no services connected, not true, accpept new services, do not hav to accept nexisting
-     * servies
-     *
-     */
-
     const content = () => {
         return (<section className={"welcome-dialog-content"}>
                 {services.length > 0 &&
@@ -48,6 +43,7 @@ export default function CollaborationWelcomeDialog({
                                             disabled={disabled}
                                             serviceEmails={serviceEmails}
                                             setDisabled={setDisabled}
+                                            allServiceAupsAgreedOn={allServiceAupsAgreedOn}
                                             children={services.length > 0 ?
                                                 <h4 className="aup-services">{I18n.t("models.collaboration.services", {nbr: services.length})}</h4> :
                                                 <h4 className="aup-services">{I18n.t("models.collaboration.noServicesYet")}</h4>}

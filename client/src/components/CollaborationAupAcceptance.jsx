@@ -12,6 +12,7 @@ export default function CollaborationAupAcceptance({
                                                        disabled,
                                                        serviceEmails,
                                                        setDisabled,
+                                                       allServiceAupsAgreedOn,
                                                        children
                                                    }) {
     const renderServiceAup = service => {
@@ -73,16 +74,23 @@ export default function CollaborationAupAcceptance({
             {services.length === 0 && <div className="services">
                 <span>{I18n.t("welcomeDialog.noServices")}</span>
             </div>}
-            {servicesWithAups.length > 0 &&
-            <div className="terms">
-                <p className="aup-info">
-                    {I18n.t(`aup.service.${singleServiceWithAup ? "singleInfo" : "multipleInfo"}`)}
-                </p>
-                <CheckBox name="aup"
-                          value={!disabled}
-                          info={I18n.t(`aup.service.${singleServiceWithAup ? "singleCheck" : "multipleCheck"}`)}
-                          onChange={() => setDisabled(!disabled)}/>
-            </div>}
+            {(servicesWithAups.length > 0 && !allServiceAupsAgreedOn) &&
+                <div className="terms">
+                    <p className="aup-info">
+                        {I18n.t(`aup.service.${singleServiceWithAup ? "singleInfo" : "multipleInfo"}`)}
+                    </p>
+                    <CheckBox name="aup"
+                              value={!disabled}
+                              info={I18n.t(`aup.service.${singleServiceWithAup ? "singleCheck" : "multipleCheck"}`)}
+                              onChange={() => setDisabled(!disabled)}/>
+                </div>}
+
+            {(servicesWithAups.length > 0 && allServiceAupsAgreedOn) &&
+                <div className="terms">
+                    <p className="aup-info">
+                        {I18n.t(`aup.service.${singleServiceWithAup ? "singleInfoAccepted" : "multipleInfoAccepted"}`)}
+                    </p>
+                </div>}
         </div>);
 
 }
