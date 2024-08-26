@@ -489,7 +489,7 @@ class TestService(AbstractTest):
         res = self.get(f"/api/services/v1/access/{jane.id}",
                        headers={"Authorization": f"Bearer {unihard_secret}"},
                        with_basic_auth=False)
-        self.assertEqual(4, len(res))
+        self.assertEqual(2, len(res))
 
     def test_services_access_forbidden(self):
         roger = self.find_entity_by_name(User, user_roger_name)

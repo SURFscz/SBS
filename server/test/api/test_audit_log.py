@@ -2,13 +2,12 @@ from flask import jsonify
 
 from server.db.audit_mixin import ACTION_DELETE, ACTION_CREATE, ACTION_UPDATE, AuditLog
 from server.db.domain import User, Collaboration, Service, Organisation, Group
-from server.tools import dt_now
-
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_cloud_name, co_ai_computing_name, \
     service_mail_name, invitation_hash_curious, unihard_invitation_hash, unihard_name, group_science_name, \
     user_sarah_name, \
-    user_james_name, co_teachers_name
+    user_james_name, co_teachers_name, co_monitoring_name
+from server.tools import dt_now
 
 
 class TestAuditLog(AbstractTest):
@@ -158,3 +157,29 @@ class TestAuditLog(AbstractTest):
         res = self.get(f"/api/audit_logs/info/{collaboration.organisation_id}/organisations")
         collaboration_audit_logs = [log for log in res["audit_logs"] if log["target_type"] == "collaborations"]
         self.assertEqual(0, len(collaboration_audit_logs))
+
+    def test_filter_collaborations_audit_logs_admin(self):
+        collaboration = self.find_entity_by_name(Collaboration, co_monitoring_name)
+        collaboration.name = "changed"
+        self.save_entity(collaboration)
+        self.login("urn:extra_admin")
+        res = self.get(f"/api/audit_logs/info/{collaboration.id}/collaborations")
+        collaboration_audit_logs = [log for log in res["audit_logs"] if log["target_type"] == "collaborations"]
+        self.assertEqual(1, len(collaboration_audit_logs))
+
+    def test_filter_collaborations_audit_logs_no_access(self):
+        collaboration = self.find_entity_by_name(Collaboration, co_monitoring_name)
+        collaboration.name = "changed"
+        self.save_entity(collaboration)
+        self.login("urn:james")
+        self.get(f"/api/audit_logs/info/{collaboration.id}/collaborations", response_status_code=403)
+
+    def test_filter_organisation_audit_logs_admin(self):
+        collaboration = self.find_entity_by_name(Collaboration, "Monitoring CO numero 2")
+        organisation_id = collaboration.organisation_id
+        collaboration.name = "changed"
+        self.save_entity(collaboration)
+        self.login("urn:mary")
+        res = self.get(f"/api/audit_logs/info/{organisation_id}/organisations")
+        organisation_audit_logs = [log for log in res["audit_logs"] if log["target_type"] == "collaborations"]
+        self.assertEqual(1, len(organisation_audit_logs))

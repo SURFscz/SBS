@@ -333,7 +333,13 @@ class CollaborationDetail extends React.Component {
 
     toggleAdminMemberView = () => {
         health().then(() => {
-            const {showMemberView, collaboration, schacHomeOrganisations, userTokens, adminOfCollaboration} = this.state;
+            const {
+                showMemberView,
+                collaboration,
+                schacHomeOrganisations,
+                userTokens,
+                adminOfCollaboration
+            } = this.state;
             const {config, user} = this.props;
             const newTab = "about";
             this.tabChanged(newTab, collaboration.id);
@@ -553,11 +559,13 @@ class CollaborationDetail extends React.Component {
     }
 
     collaborationJoinRequestAction = (collaboration, alreadyMember) => {
-        return (<div className="join-request-action">
-            <Button txt={I18n.t("registration.joinRequest", {name: collaboration.name})}
-                    disabled={alreadyMember}
-                    onClick={() => this.setState({joinRequestDialogOpen: true})}/>
-        </div>);
+        return (
+            <div className="join-request-action">
+                <Button txt={I18n.t("registration.joinRequest", {name: collaboration.name})}
+                        disabled={alreadyMember}
+                        onClick={() => this.setState({joinRequestDialogOpen: true})}/>
+            </div>
+        );
     }
 
     getIconListItems = iconListItems => {

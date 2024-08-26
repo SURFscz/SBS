@@ -134,7 +134,13 @@ class TestMfa(AbstractTest):
 
         mary = User.query.filter(User.uid == "urn:mary").first()
         self.assertTrue(mary.rate_limited)
+        self.assertIsNotNone(mary.mfa_reset_token)
         self.assertIsNone(mary.second_factor_auth)
+
+        # Need to log in again to set up session
+        self.login("urn:mary")
+        # The user is rate limited and can't try again
+        self.post("/api/mfa/verify2fa", {"totp": "123456"}, with_basic_auth=False, response_status_code=429)
 
         config.rate_limit_totp_guesses_per_30_seconds = 10
 

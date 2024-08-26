@@ -135,13 +135,6 @@ metadata:
   idp_url: "file://data/idps-metadata.xml"
   parse_at_startup: False
 
-service_bus:
-  enabled: False
-  host: "localhost"
-  client_id: "sbs"
-  user: "sbs"
-  password: "changethispassword"
-
 # note: all cron hours below are in UTC
 platform_admin_notifications:
   # Do we daily check for CO join_requests and CO requests and send a summary mail to beheer_email?

@@ -181,16 +181,8 @@ def perform_sweep(service: Service):
                                    remote_scim_users}
 
     for user in all_users:
-        # A User with no memberships is deleted in the external SCIM database
-        if not user.collaboration_memberships and service.sweep_remove_orphans:
-            remote_user = remote_users_by_external_id.get(user.external_id)
-            if remote_user and "meta" in remote_user and "location" in remote_user['meta']:
-                url = f"{service.scim_url}{remote_user['meta']['location']}"
-                response = requests.delete(url, headers=scim_headers(service, is_delete=True), timeout=10)
-                if validate_response(response, service, outside_user_context=True, extra_logging="SCIM user delete"):
-                    sync_results["groups"]["deleted"].append(url)
         # Add all SRAM users that are not present in the remote SCIM database
-        elif user.external_id not in remote_users_by_external_id:
+        if user.external_id not in remote_users_by_external_id:
             scim_dict = create_user_template(user)
             url = f"{service.scim_url}/{SCIM_USERS}"
             scim_dict_cleansed = replace_none_values(scim_dict)
