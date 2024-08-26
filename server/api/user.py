@@ -48,7 +48,7 @@ def _add_counts(user: dict):
 
 def _add_schac_home_organisations(user: dict, user_from_db: User):
     organisations = organisation_by_user_schac_home(user_from_db)
-    user["organisation_from_user_schac_home"] = organisations[0] if organisations else None
+    user["organisations_from_user_schac_home"] = organisations
 
 
 def _add_service_aups(user: dict, user_from_db: User):
@@ -382,7 +382,7 @@ def resume_session():
 
 def redirect_to_client(cfg, second_factor_confirmed, user):
     logger = ctx_logger("redirect")
-
+    user.suspended = False
     user = db.session.merge(user)
     db.session.commit()
     user_accepted_aup = user.has_agreed_with_aup()

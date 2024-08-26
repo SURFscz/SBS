@@ -51,6 +51,7 @@ def _do_verify_2fa(user: User, secret):
         if not user.second_factor_auth:
             user.second_factor_auth = secret
         user.last_login_date = dt_now()
+        user.suspended = False
         user = db.session.merge(user)
         db.session.commit()
         store_user_in_session(user, True, user.has_agreed_with_aup())

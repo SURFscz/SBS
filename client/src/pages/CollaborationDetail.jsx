@@ -60,7 +60,7 @@ class CollaborationDetail extends React.Component {
             serviceEmails: {},
             adminEmails: [],
             collaboration: null,
-            schacHomeOrganisation: null,
+            schacHomeOrganisations: null,
             userTokens: null,
             adminOfCollaboration: false,
             collaborationJoinRequest: false,
@@ -112,7 +112,7 @@ class CollaborationDetail extends React.Component {
                     loading: false,
                     firstTime: true,
                     adminOfCollaboration: false,
-                    schacHomeOrganisation: "",
+                    schacHomeOrganisations: [],
                     confirmationDialogOpen: false,
                     tab: "about",
                     isInvitation: true,
@@ -139,7 +139,7 @@ class CollaborationDetail extends React.Component {
                             const tab = params.tab || (adminOfCollaboration ? this.state.tab : "about");
                             const collaboration = res[0];
                             const userTokens = res[1];
-                            const schacHomeOrganisation = adminOfCollaboration ? null : user.organisation_from_user_schac_home;
+                            const schacHomeOrganisations = adminOfCollaboration ? null : user.organisations_from_user_schac_home;
                             const orgManager = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id, null);
                             const firstTime = getParameterByName("first", window.location.search) === "true";
                             this.showExpiryDateFlash(user, collaboration, config, true);
@@ -148,12 +148,12 @@ class CollaborationDetail extends React.Component {
                                 collaboration: collaboration,
                                 userTokens: userTokens,
                                 adminOfCollaboration: adminOfCollaboration,
-                                schacHomeOrganisation: schacHomeOrganisation,
+                                schacHomeOrganisations: schacHomeOrganisations,
                                 loading: false,
                                 orgManager: orgManager,
                                 confirmationDialogOpen: false,
                                 firstTime: firstTime,
-                                tabs: this.getTabs(collaboration, userTokens, schacHomeOrganisation, adminOfCollaboration, false),
+                                tabs: this.getTabs(collaboration, userTokens, schacHomeOrganisations, adminOfCollaboration, false),
                                 tab: tab,
                             }, () => {
                                 callback && callback();
@@ -196,7 +196,7 @@ class CollaborationDetail extends React.Component {
                                 collaborationJoinRequest: true,
                                 alreadyMember: alreadyMember,
                                 adminOfCollaboration: false,
-                                schacHomeOrganisation: null,
+                                schacHomeOrganisations: [],
                                 loading: false,
                                 confirmationDialogOpen: false,
                                 tabs: this.getTabs(collaboration, null, null, false, false, true),
@@ -333,14 +333,14 @@ class CollaborationDetail extends React.Component {
 
     toggleAdminMemberView = () => {
         health().then(() => {
-            const {showMemberView, collaboration, schacHomeOrganisation, userTokens, adminOfCollaboration} = this.state;
+            const {showMemberView, collaboration, schacHomeOrganisations, userTokens, adminOfCollaboration} = this.state;
             const {config, user} = this.props;
             const newTab = "about";
             this.tabChanged(newTab, collaboration.id);
             this.showExpiryDateFlash(user, collaboration, config, !showMemberView);
             this.setState({
                 showMemberView: !showMemberView,
-                tabs: this.getTabs(collaboration, userTokens, schacHomeOrganisation, adminOfCollaboration, showMemberView),
+                tabs: this.getTabs(collaboration, userTokens, schacHomeOrganisations, adminOfCollaboration, showMemberView),
                 tab: newTab
             });
         });
@@ -350,7 +350,7 @@ class CollaborationDetail extends React.Component {
         this.setState({firstTime: true});
     }
 
-    getTabs = (collaboration, userTokens, schacHomeOrganisation, adminOfCollaboration, showMemberView, isJoinRequest = false) => {
+    getTabs = (collaboration, userTokens, schacHomeOrganisations, adminOfCollaboration, showMemberView, isJoinRequest = false) => {
         const {user} = this.props;
         if (!isJoinRequest && !isUserAllowed(ROLES.COLL_MEMBER, user, collaboration.organisation_id, collaboration.id)) {
             return [];

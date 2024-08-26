@@ -16,7 +16,7 @@ class Welcome extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            organisation: {},
+            organisations: [],
             idpDisplayName: I18n.t("welcome.unknown"),
             loading: true,
             requests: []
@@ -34,7 +34,7 @@ class Welcome extends React.Component {
         identityProviderDisplayName()
             .then(res => {
                 this.setState({
-                    organisation: user.organisation_from_user_schac_home,
+                    organisations: user.organisations_from_user_schac_home || [],
                     idpDisplayName: res ? res.display_name : this.state.idpDisplayName,
                     loading: false
                 });
@@ -46,8 +46,8 @@ class Welcome extends React.Component {
             });
     }
 
-    knownOrganisation = (idpDisplayName, organisation, requests) => {
-        const canCreate = organisation.collaboration_creation_allowed_entitlement || organisation.collaboration_creation_allowed;
+    knownOrganisation = (idpDisplayName, organisations, requests) => {
+        const canCreate = organisations.some(org => org.collaboration_creation_allowed_entitlement || org.collaboration_creation_allowed);
         return (
             <div>
                 <h2>{I18n.t("welcome.creating")}</h2>
@@ -89,13 +89,13 @@ class Welcome extends React.Component {
 
     render() {
         const {user} = this.props;
-        const {organisation, loading, idpDisplayName, requests} = this.state;
+        const {organisations, loading, idpDisplayName, requests} = this.state;
 
         if (loading) {
             return <SpinnerField/>;
         }
 
-        const orphanUser = isEmpty(organisation) || !organisation.has_members;
+        const orphanUser = isEmpty(organisations) || organisations.every(org => !org.has_members);
         return (
             <>
                 <div className="mod-welcome-container">
@@ -105,7 +105,7 @@ class Welcome extends React.Component {
                         <h2>{I18n.t("welcome.joining")}</h2>
                         <p>{I18n.t("welcome.invited")}</p>
                         {orphanUser && this.unknownOrganisation(idpDisplayName, requests)}
-                        {!orphanUser && this.knownOrganisation(idpDisplayName, organisation, requests)}
+                        {!orphanUser && this.knownOrganisation(idpDisplayName, organisations, requests)}
 
                     </div>
                 </div>

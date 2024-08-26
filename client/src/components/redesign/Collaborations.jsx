@@ -235,10 +235,11 @@ export default class Collaborations extends React.PureComponent {
 
         const {user} = this.props;
         const isOrgManager = isUserAllowed(ROLES.ORG_MANAGER, user);
-        const organisationFromUserSchacHome = user.organisation_from_user_schac_home || {};
-        const mayCreateCollaborations = isOrgManager || organisationFromUserSchacHome.collaboration_creation_allowed ||
-            organisationFromUserSchacHome.collaboration_creation_allowed_entitlement
-        const mayRequestCollaboration = !isEmpty(organisationFromUserSchacHome);
+        const organisationsFromUserSchacHome = user.organisations_from_user_schac_home || [];
+        const createFromSchacHome = organisationsFromUserSchacHome
+            .some(org => org.collaboration_creation_allowed || org.collaboration_creation_allowed_entitlement)
+        const mayCreateCollaborations = isOrgManager || createFromSchacHome;
+        const mayRequestCollaboration = !isEmpty(organisationsFromUserSchacHome);
         const organisationQueryParam = organisation ? `?organisationId=${organisation.id}` : "";
         const newLabel = I18n.t(`models.${mayCreateCollaborations ? "collaborations" : "memberCollaborations"}.new`);
 
