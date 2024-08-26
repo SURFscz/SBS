@@ -17,10 +17,10 @@ organisation_invitations_api = Blueprint("organisation_invitations_api", __name_
 
 def _organisation_invitation_query():
     return OrganisationInvitation.query \
-        .options(joinedload(OrganisationInvitation.organisation)
-                 .subqueryload(Organisation.organisation_memberships)
-                 .subqueryload(OrganisationMembership.user)) \
-        .options(joinedload(OrganisationInvitation.user))
+        .options(joinedload(OrganisationInvitation.organisation, innerjoin=True)
+                 .selectinload(Organisation.organisation_memberships)
+                 .joinedload(OrganisationMembership.user, innerjoin=True)) \
+        .options(joinedload(OrganisationInvitation.user, innerjoin=True))
 
 
 def do_resend(organisation_invitation_id):

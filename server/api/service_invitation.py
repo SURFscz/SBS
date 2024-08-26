@@ -17,10 +17,10 @@ service_invitations_api = Blueprint("service_invitations_api", __name__,
 
 def _service_invitation_query():
     return ServiceInvitation.query \
-        .options(joinedload(ServiceInvitation.service)
-                 .subqueryload(Service.service_memberships)
-                 .subqueryload(ServiceMembership.user)) \
-        .options(joinedload(ServiceInvitation.user))
+        .options(joinedload(ServiceInvitation.service, innerjoin=True)
+                 .selectinload(Service.service_memberships)
+                 .joinedload(ServiceMembership.user, innerjoin=True)) \
+        .options(joinedload(ServiceInvitation.user, innerjoin=True))
 
 
 def do_resend(service_invitation_id):
