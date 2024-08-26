@@ -51,6 +51,16 @@
             </div>
         </div>
     </div>
+    {% if service_names is defined and service_names != None and service_names|length %}
+    <div class="services" style="margin-top: 25px">
+        <p>Via this collaboration you will have access to:</p>
+        <ul style="margin: 25px 0 0 0">
+            {% for name in service_names %}
+                <li style="font-weight: bold">{{ name }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
 
     <div class="mail-end" style="padding-top: 30px;margin-left: 10px;width: 100%">
         <p style="margin: 0;">

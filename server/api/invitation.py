@@ -49,6 +49,7 @@ def do_resend(invitation_id):
     confirm_collaboration_admin(invitation.collaboration_id)
     invitation.expiry_date = default_expiry_date() if invitation.is_expired() else invitation.expiry_date
     invitation.created_at = dt_now() if invitation.is_expired() else invitation.created_at
+    service_names = [service.name for service in invitation.collaboration.services]
     db.session.merge(invitation)
     mail_collaboration_invitation({
         "salutation": "Dear",
@@ -56,7 +57,7 @@ def do_resend(invitation_id):
         "base_url": current_app.app_config.base_url,
         "wiki_link": current_app.app_config.wiki_link,
         "recipient": invitation.invitee_email
-    }, invitation.collaboration, [invitation.invitee_email])
+    }, invitation.collaboration, [invitation.invitee_email], service_names)
 
 
 def parse_date(val, default_date=None):
@@ -210,7 +211,7 @@ def collaboration_invites_api():
         if not group:
             raise BadRequest(f"Invalid group identifier: {group_identifier}")
         groups.append(group)
-
+    service_names = [service.name for service in collaboration.services]
     for email in invites:
         invitation = Invitation(hash=generate_token(), message=message, invitee_email=email,
                                 collaboration_id=collaboration.id, user=user, intended_role=intended_role,
@@ -231,7 +232,7 @@ def collaboration_invites_api():
             "base_url": current_app.app_config.base_url,
             "wiki_link": current_app.app_config.wiki_link,
             "recipient": email
-        }, collaboration, [email])
+        }, collaboration, [email], service_names)
 
     emit_socket(f"collaboration_{collaboration.id}")
 

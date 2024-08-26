@@ -489,6 +489,7 @@ def collaboration_invites():
                                 external_identifier=str(uuid.uuid4()))
         db.session.add(invitation)
         invitation.groups.extend(groups)
+        service_names = [service.name for service in invitation.collaboration.services]
         db.session.commit()
         mail_collaboration_invitation({
             "salutation": "Dear",
@@ -496,7 +497,7 @@ def collaboration_invites():
             "base_url": current_app.app_config.base_url,
             "wiki_link": current_app.app_config.wiki_link,
             "recipient": administrator
-        }, collaboration, [administrator])
+        }, collaboration, [administrator], service_names)
 
     update_last_activity_date(collaboration_id)
 
@@ -553,13 +554,14 @@ def collaboration_invites_preview():
         "hash": generate_token(),
         "expiry_date": default_expiry_date(data)
     })
+    service_names = [service.name for service in invitation.collaboration.services]
     html = mail_collaboration_invitation({
         "salutation": "Dear",
         "invitation": invitation,
         "base_url": current_app.app_config.base_url,
         "wiki_link": current_app.app_config.wiki_link,
 
-    }, collaboration, [], preview=True)
+    }, collaboration, [], service_names, preview=True)
     return {"html": html}, 201
 
 
@@ -682,6 +684,7 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True, sav
         _reconcile_tags(collaboration, tags)
 
     administrators = list(filter(lambda admin: admin != user.email, administrators))
+    service_names = [service.name for service in collaboration.services]
     for administrator in administrators:
         invitation = Invitation(hash=generate_token(), message=message, invitee_email=administrator,
                                 collaboration_id=collaboration.id, user=user, intended_role="admin",
@@ -694,7 +697,7 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True, sav
             "base_url": current_app.app_config.base_url,
             "wiki_link": current_app.app_config.wiki_link,
             "recipient": administrator
-        }, collaboration, [administrator])
+        }, collaboration, [administrator], service_names)
 
     if current_user_admin:
         admin_collaboration_membership = CollaborationMembership(role="admin", user_id=user.id,
