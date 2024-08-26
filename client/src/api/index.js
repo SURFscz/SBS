@@ -103,8 +103,8 @@ export function me(config) {
     if (config.local && 1 == 1) {
         let sub = "urn:service_admin";
         sub = "urn:john";
-        // sub = "urn:harry";
-        const second_factor_confirmed = false;
+        sub = "urn:james";
+        const second_factor_confirmed = true;
         // const second_factor_confirmed = false;
         // sub = "urn:unknown";
         // Need to mock a login

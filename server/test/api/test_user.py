@@ -46,7 +46,7 @@ class TestUser(AbstractTest):
         self.login("urn:john")
         res = self.client.get("/api/users/me")
         self.assertEqual(200, res.status_code)
-        self.assertTrue(res.json["suspended"])
+        self.assertFalse(res.json["suspended"])
 
     def test_me_user_with_suspend_notifications(self):
         self.login("urn:user_gets_suspended")

@@ -52,7 +52,8 @@ class Home extends React.Component {
             const nbrOrganisations = user.organisation_memberships.length;
             const nbrCollaborations = user.collaboration_memberships.length;
             const nbrServices = user.service_memberships.length;
-            const canStayInHome = nbrServices > 0 || (user.organisation_from_user_schac_home && redirect);
+            const userRequests = getUserRequests(user);
+            const canStayInHome = nbrServices > 0 || (!isEmpty(user.organisations_from_user_schac_home) && redirect) || !isEmpty(userRequests);
             let hasAnyRoles = true;
             switch (role) {
                 case ROLES.PLATFORM_ADMIN:
@@ -97,10 +98,10 @@ class Home extends React.Component {
             if (isUserServiceAdmin(user) && !user.admin) {
                 if (nbrCollaborations > 0 && !collaborationTabPresent) {
                     tabs.push(this.getCollaborationsTab());
-                } else if (!isEmpty(user.organisation_from_user_schac_home) && !collaborationTabPresent) {
+                } else if (!isEmpty(user.organisations_from_user_schac_home) && !collaborationTabPresent) {
                     tabs.push(this.getEmptyCollaborationsTab());
                 }
-                if (nbrServices === 1 && tabs.length === 0 && !redirect) {
+                if (nbrServices === 1 && tabs.length === 0 && !redirect && isEmpty(userRequests)) {
                     setTimeout(() => this.props.history.push(`/services/${user.service_memberships[0].service_id}`), 50);
                     return;
                 } else {
@@ -113,7 +114,7 @@ class Home extends React.Component {
 
                 }
             }
-            const tabSuggestion = this.addRequestsTabs(user, this.refreshUserHook, tabs, tab);
+            const tabSuggestion = this.addRequestsTabs(user, this.refreshUserHook, tabs, tab, userRequests);
             if (role === ROLES.USER) {
                 tab = tabSuggestion;
             }
@@ -141,10 +142,9 @@ class Home extends React.Component {
         refreshUser(() => this.componentDidMount(callback));
     }
 
-    addRequestsTabs = (user, refreshUserHook, tabs, tab) => {
-        const requests = getUserRequests(user);
-        if (!isEmpty(requests)) {
-            tabs.push(this.getMyRequestsTab(requests, refreshUserHook));
+    addRequestsTabs = (user, refreshUserHook, tabs, tab, userRequests) => {
+        if (!isEmpty(userRequests)) {
+            tabs.push(this.getMyRequestsTab(userRequests, refreshUserHook));
             return "my_requests";
         }
         return tab;

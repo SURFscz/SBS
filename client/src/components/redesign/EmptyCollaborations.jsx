@@ -13,12 +13,14 @@ export default class EmptyCollaborations extends React.PureComponent {
     render() {
         const {user} = this.props;
         const isOrgManager = isUserAllowed(ROLES.ORG_MANAGER, user);
-        const organisationFromUserSchacHome = user.organisation_from_user_schac_home || {};
-        const mayCreateCollaborations = isOrgManager || organisationFromUserSchacHome.collaboration_creation_allowed ||
-            organisationFromUserSchacHome.collaboration_creation_allowed_entitlement;
-        const organisationQueryParam = isEmpty(organisationFromUserSchacHome) ? "" : `?organisationId=${organisationFromUserSchacHome.id}`;
+        const organisationsFromUserSchacHome = user.organisations_from_user_schac_home || [];
+        const createFromSchacHome = organisationsFromUserSchacHome
+            .some(org => org.collaboration_creation_allowed || org.collaboration_creation_allowed_entitlement)
+
+        const mayCreateCollaborations = isOrgManager || createFromSchacHome;
+        const organisationsQueryParam = isEmpty(organisationsFromUserSchacHome) ? "" : `?organisationId=${organisationsFromUserSchacHome.map(org => org.id).join(",")}`;
         const newLabel = I18n.t(`models.${mayCreateCollaborations ? "collaborations" : "memberCollaborations"}.new`);
-        const newPath = `/new-collaboration${organisationQueryParam}`;
+        const newPath = `/new-collaboration${organisationsQueryParam}`;
         const info = isOrgManager ? I18n.t("models.collaborations.noCollaborations"):
             I18n.t(`models.collaborations.noCollaborations${mayCreateCollaborations ? "" : "Request"}User`);
         return (

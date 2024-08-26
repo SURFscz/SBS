@@ -40,10 +40,10 @@ export default function CollaborationsOverview(props) {
     }
 
     const {user} = props;
-    const organisationFromUserSchacHome = user.organisation_from_user_schac_home || {};
-    const mayCreateCollaborations = organisationFromUserSchacHome.collaboration_creation_allowed ||
-        organisationFromUserSchacHome.collaboration_creation_allowed_entitlement;
-    const mayRequestCollaboration = !isEmpty(organisationFromUserSchacHome);
+    const organisationsFromUserSchacHome = user.organisations_from_user_schac_home || [];
+    const mayCreateCollaborations = organisationsFromUserSchacHome.some(org => org.collaboration_creation_allowed ||
+        org.collaboration_creation_allowed_entitlement);
+    const mayRequestCollaboration = !isEmpty(organisationsFromUserSchacHome);
     const newLabel = I18n.t(`collaborationsOverview.${mayCreateCollaborations ? "create" : "request"}`);
     return (
         <div className="mod-collaborations-overview">

@@ -118,11 +118,11 @@ class CollaborationForm extends React.Component {
             myOrganisationsLite().then(json => {
                 if (json.length === 0) {
                     const {user} = this.props;
-                    if (isEmpty(user.organisation_from_user_schac_home)) {
+                    if (isEmpty(user.organisations_from_user_schac_home)) {
                         this.updateBreadCrumb(null, null, false, false);
                         this.setState({noOrganisations: true, loading: false});
                     } else {
-                        const organisations = this.mapOrganisationsToOptions([user.organisation_from_user_schac_home]);
+                        const organisations = this.mapOrganisationsToOptions(user.organisations_from_user_schac_home);
                         const organisationId = getParameterByName("organisationId", window.location.search);
                         const organisation = organisations.find(org => org.value === parseInt(organisationId, 10)) || organisations[0];
                         const autoCreateCollaborationRequest = organisation.collaboration_creation_allowed || organisation.collaboration_creation_allowed_entitlement;
@@ -141,12 +141,15 @@ class CollaborationForm extends React.Component {
                         });
                     }
                 } else {
+                    const {user} = this.props;
                     const organisationId = getParameterByName("organisationId", window.location.search);
                     const organisations = this.mapOrganisationsToOptions(json);
-                    const organisation = organisations.find(org => org.value === parseInt(organisationId, 10)) || organisations[0];
+                    const organisationsFromSchacHome = this.mapOrganisationsToOptions(user.organisations_from_user_schac_home || []);
+                    const allOrganisations = organisations.concat(organisationsFromSchacHome)
+                    const organisation = allOrganisations.find(org => org.value === parseInt(organisationId, 10)) || allOrganisations[0];
                     this.updateBreadCrumb(organisation, null, false, false);
                     this.setState({
-                        organisations: organisations,
+                        organisations: allOrganisations,
                         organisation: organisation,
                         loading: false
                     }, () => {
@@ -703,12 +706,17 @@ class CollaborationForm extends React.Component {
                                      () => {
                                          this.validateCollaborationName({target: {value: this.state.name}});
                                          this.validateCollaborationShortName({target: {value: this.state.short_name}});
+                                         const autoCreateCo = selectedOption.collaboration_creation_allowed || selectedOption.collaboration_creation_allowed_entitlement;
                                          this.updateBreadCrumb(selectedOption,
                                              this.state.collaboration,
-                                             false,
-                                             false);
+                                             autoCreateCo,
+                                             !autoCreateCo);
                                          this.updateTags(selectedOption.value);
                                          this.updateUnits(selectedOption, {units: []});
+                                         this.setState({
+                                             autoCreateCollaborationRequest: autoCreateCo || isUserAllowed(ROLES.ORG_ADMIN, user, selectedOption.id),
+                                             isCollaborationRequest: !autoCreateCo && !isUserAllowed(ROLES.ORG_ADMIN, user, selectedOption.id)
+                                         })
                                      })}
                                  searchable={false}
                                  disabled={organisations.length === 1}
