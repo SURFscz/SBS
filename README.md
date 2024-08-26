@@ -99,6 +99,11 @@ curl -H "Accept: application/json" -H "Content-type: application/json" -H "Autho
 curl -H "Accept: application/json" -H "Content-type: application/json" -H "Authorization: bearer {api_key}" "http://localhost:8080/api/collaborations/v1/{co_identifier}" | jq .
 ```
 
+### [Performance](#performance)
+When lazy loading other relationship data, the general rule-of-thumb leverages the best results:
+
+Load child collections with `selectinload` and load single element relationships with `joinedload`.
+
 ### [Routes](#routes)
 
 To see all routes:
