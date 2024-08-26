@@ -435,15 +435,18 @@ class CollaborationDetail extends React.Component {
     }
 
     getUserTokensTab = (userTokens, collaboration, services) => {
-        return (<div key="tokens" name="tokens"
-                     label={I18n.t("home.tabs.userTokens", {count: (userTokens || []).length})}
-                     icon={<UserTokensIcon/>}>
-            {<UserTokens {...this.props}
-                         collaboration={collaboration}
-                         services={services}
-                         userTokens={userTokens}
-                         refresh={callback => this.componentDidMount(callback)}/>}
-        </div>)
+        return (
+            <div key="tokens"
+                 name="tokens"
+                 label={I18n.t("home.tabs.userTokens", {count: (userTokens || []).length})}
+                 icon={<UserTokensIcon/>}>
+                {<UserTokens {...this.props}
+                             collaboration={collaboration}
+                             services={services}
+                             userTokens={userTokens}
+                             refresh={callback => this.componentDidMount(callback)}/>}
+            </div>
+        );
     }
 
     getJoinRequestsTab = (collaboration) => {

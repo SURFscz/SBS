@@ -170,6 +170,7 @@ class UserTokens extends React.Component {
                             })}
                             error={(!initial && isEmpty(name))}
                             placeholder={I18n.t("models.userTokens.namePlaceholder")}
+                            required={true}
                             name={I18n.t("models.userTokens.name")}
                 />
                 {(!initial && isEmpty(name)) && <ErrorIndicator
