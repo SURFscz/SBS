@@ -7,7 +7,8 @@ from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app, g as request_context, jsonify
 from sqlalchemy import or_, func
 from sqlalchemy.exc import DatabaseError
-from sqlalchemy.orm import joinedload, load_only
+from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy.orm import load_only
 from werkzeug.exceptions import Conflict, Forbidden, BadRequest
 
 from server.api.base import json_endpoint, query_param, emit_socket
@@ -33,13 +34,13 @@ email_re = re.compile("^\\S+@\\S+$")
 
 def _invitation_query():
     return Invitation.query \
-        .options(joinedload(Invitation.collaboration)
-                 .subqueryload(Collaboration.collaboration_memberships)
-                 .subqueryload(CollaborationMembership.user)) \
-        .options(joinedload(Invitation.collaboration)
-                 .subqueryload(Collaboration.organisation)) \
-        .options(joinedload(Invitation.user)) \
-        .options(joinedload(Invitation.groups))
+        .options(joinedload(Invitation.collaboration, innerjoin=True)
+                 .selectinload(Collaboration.collaboration_memberships)
+                 .joinedload(CollaborationMembership.user, innerjoin=True)) \
+        .options(joinedload(Invitation.collaboration, innerjoin=True)
+                 .joinedload(Collaboration.organisation, innerjoin=True)) \
+        .options(joinedload(Invitation.user, innerjoin=True)) \
+        .options(selectinload(Invitation.groups))
 
 
 def do_resend(invitation_id):

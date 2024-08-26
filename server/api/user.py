@@ -13,7 +13,7 @@ from flask import request as current_request, session, jsonify
 from onelogin.saml2.constants import OneLogin_Saml2_Constants
 from onelogin.saml2.utils import OneLogin_Saml2_Utils
 from sqlalchemy import text, or_, bindparam, String
-from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy.orm import selectinload
 from werkzeug.exceptions import InternalServerError, Forbidden
 
 from server.api.base import json_endpoint, query_param, organisation_by_user_schac_home
@@ -87,23 +87,24 @@ def _add_service_aups(user: dict, user_from_db: User):
 
 
 def _user_query():
+    # Use selectinload for Many-To-One relationships and joinedload for One-to-Many/ Many-to-Many.
     return User.query \
-        .options(joinedload(User.organisation_memberships)
-                 .subqueryload(OrganisationMembership.organisation)) \
-        .options(joinedload(User.collaboration_memberships)
-                 .subqueryload(CollaborationMembership.collaboration)) \
-        .options(joinedload(User.service_memberships)
-                 .subqueryload(ServiceMembership.service)) \
-        .options(joinedload(User.join_requests)
-                 .subqueryload(JoinRequest.collaboration)) \
-        .options(joinedload(User.service_connection_requests)
-                 .subqueryload(ServiceConnectionRequest.service)) \
-        .options(joinedload(User.aups)) \
-        .options(joinedload(User.organisation_aups)) \
-        .options(joinedload(User.service_requests)) \
-        .options(joinedload(User.service_aups)) \
-        .options(joinedload(User.collaboration_requests)
-                 .subqueryload(CollaborationRequest.organisation))
+        .options(selectinload(User.organisation_memberships)
+                 .joinedload(OrganisationMembership.organisation, innerjoin=True)) \
+        .options(selectinload(User.collaboration_memberships)
+                 .joinedload(CollaborationMembership.collaboration, innerjoin=True)) \
+        .options(selectinload(User.service_memberships)
+                 .joinedload(ServiceMembership.service, innerjoin=True)) \
+        .options(selectinload(User.join_requests)
+                 .joinedload(JoinRequest.collaboration, innerjoin=True)) \
+        .options(selectinload(User.service_connection_requests)
+                 .joinedload(ServiceConnectionRequest.service, innerjoin=True)) \
+        .options(selectinload(User.aups)) \
+        .options(selectinload(User.organisation_aups)) \
+        .options(selectinload(User.service_requests)) \
+        .options(selectinload(User.service_aups)) \
+        .options(selectinload(User.collaboration_requests)
+                 .joinedload(CollaborationRequest.organisation, innerjoin=True))
 
 
 def _user_json_response(user, auto_set_second_factor_confirmed):
@@ -507,10 +508,10 @@ def me():
 @json_endpoint
 def personal():
     user_from_db = User.query \
-        .options(joinedload(User.service_aups)) \
-        .options(joinedload(User.ssh_keys)) \
-        .options(joinedload(User.user_ip_networks)) \
-        .options(joinedload(User.aups)) \
+        .options(selectinload(User.service_aups)) \
+        .options(selectinload(User.ssh_keys)) \
+        .options(selectinload(User.user_ip_networks)) \
+        .options(selectinload(User.aups)) \
         .filter(User.id == current_user_id()).first()
     user_json = jsonify(user_from_db).json
     for attr in ["second_factor_auth", "mfa_reset_token", "second_fa_uuid"]:
@@ -648,7 +649,8 @@ def other():
 def find_by_id():
     confirm_organisation_admin_or_manager(organisation_id=None)
     user = _user_query() \
-        .options(joinedload(User.service_aups).subqueryload(ServiceAup.service)) \
+        .options(selectinload(User.service_aups)
+                 .joinedload(ServiceAup.service, innerjoin=True)) \
         .filter(User.id == query_param("id")) \
         .one()
 

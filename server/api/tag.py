@@ -1,5 +1,5 @@
 from flask import Blueprint
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import selectinload
 from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint, query_param
@@ -27,7 +27,11 @@ def all_organisation_tags():
 @json_endpoint
 def all_tags():
     confirm_write_access()
-    return Tag.query.options(joinedload(Tag.collaborations).subqueryload(Collaboration.organisation)).all(), 200
+    tags = Tag.query \
+        .options(selectinload(Tag.collaborations)
+                 .joinedload(Collaboration.organisation, innerjoin=True)) \
+        .all()
+    return tags, 200
 
 
 @tag_api.route("/<organisation_id>/<id>", methods=["DELETE"], strict_slashes=False)

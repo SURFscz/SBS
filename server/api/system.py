@@ -262,8 +262,8 @@ def validations():
     services_without_admins = Service.query.filter(services_subquery).all()
 
     organisation_invitations = OrganisationInvitation.query \
-        .options(joinedload(OrganisationInvitation.organisation)) \
-        .options(joinedload(OrganisationInvitation.user)) \
+        .options(joinedload(OrganisationInvitation.organisation, innerjoin=True)) \
+        .options(joinedload(OrganisationInvitation.user, innerjoin=True)) \
         .all()
 
     return {
