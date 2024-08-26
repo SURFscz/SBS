@@ -1760,7 +1760,9 @@ const en = {
             singleInfo: "A service used by this collaboration requires that you agree to their acceptable use policy.",
             multipleInfo: "Services used by this collaboration require that you agree to their acceptable use policies.",
             singleCheck: "I agree to the service's acceptable use policy",
-            multipleCheck: "I agree to the services' acceptable use policies"
+            multipleCheck: "I agree to the services' acceptable use policies",
+            singleInfoAccepted: "You have already agreed to the acceptable use policy for the service used by this collaboration.",
+            multipleInfoAccepted: "You have already agreed to all of the acceptable use policies for the services used by this collaboration.",
         },
         organisation: {
             title: "Organisation AUP",
