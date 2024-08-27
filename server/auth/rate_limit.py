@@ -22,7 +22,8 @@ def check_rate_limit(user: User):
         db.session.commit()
         session.clear()
         mail_conf = current_app.app_config.mail
-        tb = f"TOTP rate limit reached, user TOTP has been reset: name={user.name}, uid={user.uid}, email={user.email}"
+        tb = (f"TOTP rate limit reached, user TOTP has been reset: name={user.name}, uid={user.uid},"
+              f" email={user.email}. The reset code for this user: {user.mfa_reset_token}")
         mail_error(mail_conf.environment, user.id, mail_conf.send_exceptions_recipients, tb)
         raise TooManyRequests(f"Reset TOTP user {user.name}, uid={user.uid}, email={user.email} for rate limiting TOTP")
 

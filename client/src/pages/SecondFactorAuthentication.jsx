@@ -381,6 +381,7 @@ class SecondFactorAuthentication extends React.Component {
                     }}/>
                 </section>
                 <div className="explain">
+                    <a href="/reset-token" onClick={this.openResetRequest}>{I18n.t("mfa.verify.resetRequest")}</a>
                     <a href="/enter-reset" onClick={this.enterResetToken}>{I18n.t("mfa.verify.resetToken")}</a>
                 </div>
             </div>
@@ -563,10 +564,10 @@ class SecondFactorAuthentication extends React.Component {
                 <FeedbackDialog isOpen={showFeedBack}
                                 close={() => this.setState({showFeedBack: false})}
                                 initialMessage={I18n.t("mfa.register.feedback", {name: idpFeedbackName})}/>
-                {(rate_limited && !showEnterToken)&& this.renderRateLimited()}
+                {(rate_limited && !showEnterToken && !showExplanation) && this.renderRateLimited()}
                 {(!rate_limited && qrCode && !showExplanation && !showEnterToken) && this.renderRegistration(qrCode, totp, newTotp, idp_name, busy, error, newError, update)}
                 {(!rate_limited && !qrCode && !showExplanation && !showEnterToken) && this.renderVerificationCode(totp, busy, showExplanation, error, showEnterToken)}
-                {(!rate_limited && showExplanation && !showEnterToken) && this.renderLostCode(respondents, message)}
+                {(showExplanation && !showEnterToken) && this.renderLostCode(respondents, message)}
                 {(!showExplanation && showEnterToken) && this.renderEnterResetCode(resetCode, resetCodeError, busy)}
             </div>
         )
