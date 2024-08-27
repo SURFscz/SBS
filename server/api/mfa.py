@@ -222,6 +222,7 @@ def reset2fa_other():
 
     user.second_factor_auth = None
     user.mfa_reset_token = None
+    user.rate_limited = 0
     db.session.merge(user)
     db.session.commit()
     return {}, 201

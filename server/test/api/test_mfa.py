@@ -326,6 +326,7 @@ class TestMfa(AbstractTest):
         betty = self.find_entity_by_name(User, "betty")
         self.assertIsNone(betty.mfa_reset_token)
         self.assertIsNone(betty.second_factor_auth)
+        self.assertFalse(betty.rate_limited)
 
     def test_reset2fa_other_manager_not_allowed(self):
         betty = self.find_entity_by_name(User, "betty")
