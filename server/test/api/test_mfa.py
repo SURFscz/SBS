@@ -190,10 +190,11 @@ class TestMfa(AbstractTest):
         self.post("/api/mfa/token_reset_request", body={"email": "john@example.org", "message": "please"},
                   with_basic_auth=False)
         mary = User.query.filter(User.uid == "urn:mary").one()
-        self.post("/api/mfa/reset2fa", body={"token": " " + mary.mfa_reset_token + " "})
+        self.post("/api/mfa/reset2fa", body={"token": f" {mary.mfa_reset_token} "})
         mary = User.query.filter(User.uid == "urn:mary").one()
         self.assertIsNone(mary.mfa_reset_token)
         self.assertIsNone(mary.second_factor_auth)
+        self.assertFalse(mary.rate_limited)
 
     def test_reset2fa_anonymous(self):
         mary = self.add_second_fa_uuid_to_user("urn:mary")
