@@ -228,6 +228,7 @@ def check_pin():
     if success:
         db.session.delete(pam_sso_session)
         user.pam_last_login_date = dt_now()
+        user.suspended = False
         db.session.merge(user)
         # We also update the activity date of linked collaboration
         collaborations = [cm.collaboration for cm in user.collaboration_memberships if

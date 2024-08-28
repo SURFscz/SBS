@@ -18,9 +18,7 @@ class Aup extends React.Component {
 
     componentDidMount = () => {
         const {currentUser} = this.props;
-        if (currentUser.suspended) {
-            this.props.history.push("/");
-        } else if (currentUser.guest) {
+        if (currentUser.guest) {
             setTimeout(login, 5);
         } else if (currentUser.user_accepted_aup) {
             this.props.history.push("/home");

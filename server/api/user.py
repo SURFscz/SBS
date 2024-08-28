@@ -377,6 +377,7 @@ def resume_session():
     second_factor_confirmed = (no_mfa_required or not fallback_required) and not user.ssid_required
     if second_factor_confirmed:
         user.last_login_date = dt_now()
+        user.suspended = False
 
     return redirect_to_client(cfg, second_factor_confirmed, user)
 
@@ -460,6 +461,7 @@ def acs():
     if second_factor_confirmed:
         user.ssid_required = False
         user.last_login_date = dt_now()
+        user.suspended = False
     else:
         return redirect(
             location=f"{cfg.base_url}/error?reason=ssid_failed&code={status.get('code')}&msg={status.get('msg')}")
@@ -554,8 +556,8 @@ def activate():
 
     user = db.session.get(User, int(body["user_id"]))
 
-    user.suspended = False
     user.last_login_date = dt_now()
+    user.suspended = False
     user.suspend_notifications = []
     db.session.merge(user)
     return {}, 201
