@@ -5,7 +5,8 @@ import {authorizationUrl, logoutUser} from "../api";
 export function login(e, currentUrl = window.location.href) {
     stopEvent(e);
     const state = getParameterByName("state", window.location.search) || currentUrl;
-    authorizationUrl(state).then(res => {
+    const noSecondRateLimitState = state.replace("rate-limited=true", "")
+    authorizationUrl(noSecondRateLimitState).then(res => {
         window.location.href = res.authorization_endpoint
     });
 }

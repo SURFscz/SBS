@@ -18,6 +18,8 @@ def check_rate_limit(user: User):
         user.mfa_reset_token = generate_token()
         user.second_factor_auth = None
         user.rate_limited = True
+        # Prevent MFA SSO
+        user.last_login_date = None
         db.session.merge(user)
         db.session.commit()
         session.clear()
