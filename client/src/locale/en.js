@@ -456,6 +456,7 @@ const en = {
             multipleAdminsHeader: "Organised by <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong> and <strong>{{nbr}} others</strong></a>",
             about: "What our collaboration is about",
             services: "We collaborate in {{nbr}} services",
+            joinRequestServices: "{{name}} collaborates in {{nbr}} services",
             noServicesYet: "Where we collaborate",
             noServices: "There are no services connected to your collaboration. ",
             connectFirstService: "Why don't you connect one?",

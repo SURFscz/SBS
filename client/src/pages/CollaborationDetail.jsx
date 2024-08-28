@@ -890,6 +890,9 @@ class CollaborationDetail extends React.Component {
             }
             <JoinRequestDialog collaboration={collaboration}
                                isOpen={joinRequestDialogOpen}
+                               user={user}
+                               serviceEmails={serviceEmails}
+                                            adminEmails={adminEmails}
                                refresh={callback => refreshUser(callback)}
                                history={this.props.history}
                                close={() => this.setState({joinRequestDialogOpen: false})}/>

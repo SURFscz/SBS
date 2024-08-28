@@ -5,8 +5,8 @@ import "./WelcomeDialog.scss";
 import "./welcome/welcome.scss";
 import {ROLES} from "../utils/UserRole";
 import CollaborationAupAcceptance from "./CollaborationAupAcceptance";
-import {isEmpty} from "../utils/Utils";
 import OrganisationAupAcceptance from "./OrganisationAupAcceptance";
+import {aupData} from "../utils/Aups";
 
 export default function CollaborationWelcomeDialog({
                                                        name,
@@ -18,14 +18,13 @@ export default function CollaborationWelcomeDialog({
                                                        user,
                                                        collaboration
                                                    }) {
-    const organisation = collaboration.organisation;
-    const services = [...new Map(collaboration.services.concat(organisation.services).map((s) => [s["id"], s])).values()];
-    const hasServices = services.filter(service => !isEmpty(service.accepted_user_policy)).length > 0;
-    const requiresOrganisationAup = !isEmpty(organisation.accepted_user_policy) &&
-        !(user.organisation_aups || []).some(aup => aup.organisation_id === organisation.id) &&
-        !(organisation.schac_home_organisations || []).some(home => home.name === user.schac_home_organisation);
-    const allServiceAupsAgreedOn = services
-        .every(service => (user.service_aups || []).some(serviceAup => serviceAup.service_id === service.id));
+    const {
+        organisation,
+        services,
+        hasServices,
+        requiresOrganisationAup,
+        allServiceAupsAgreedOn
+    } = aupData(user, collaboration);
 
     const [disabled, setDisabled] = useState(hasServices && !allServiceAupsAgreedOn);
     const [organisationDisabled, setOrganisationDisabled] = useState(requiresOrganisationAup);

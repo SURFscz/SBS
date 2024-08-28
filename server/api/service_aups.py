@@ -9,8 +9,7 @@ service_aups_api = Blueprint("service_aups_api", __name__, url_prefix="/api/serv
 
 def add_user_aups(collaboration, user_id):
     user = db.session.get(User, user_id)
-    services = collaboration.services + collaboration.organisation.services
-    for service in services:
+    for service in collaboration.services:
         if not has_agreed_with(user, service):
             db.session.merge(ServiceAup(aup_url=service.accepted_user_policy, user_id=user_id, service_id=service.id))
     return user
