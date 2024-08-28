@@ -216,6 +216,7 @@ def _do_attributes(user, uid, service, service_entity_id, not_authorized_func, a
 
     user.last_accessed_date = now
     user.last_login_date = now
+    user.suspended = False
     user.suspend_notifications = []
 
     user = db.session.merge(user)
