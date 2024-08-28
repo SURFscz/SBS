@@ -75,7 +75,7 @@ def _group_changed(group: Union[Group, Collaboration], remote_group: dict, remot
     remote_group = _replace_empty_string_values(remote_group)
     if _compare_with_none_equals_empty(remote_group.get("displayName"), group.name):
         return True
-    sram_members = sorted([member.user.external_id for member in group.collaboration_memberships if member.is_active])
+    sram_members = sorted([member.user.external_id for member in group.collaboration_memberships if member.is_active()])
     remote_users_by_id = {u["id"]: u for u in remote_scim_users}
     remote_members = []
     for remote_member in remote_group.get("members", []):
@@ -125,7 +125,7 @@ def _all_remote_scim_objects(service: Service, scim_type):
 def _memberships(group: Union[Group, Collaboration], remote_users_by_external_id: dict):
     base_url = application_base_url()
     result = []
-    active_members = [member for member in group.collaboration_memberships if member.is_active]
+    active_members = [member for member in group.collaboration_memberships if member.is_active()]
     for member in active_members:
         scim_object = remote_users_by_external_id.get(member.user.external_id)
         result.append(scim_member_object(base_url, member, scim_object))

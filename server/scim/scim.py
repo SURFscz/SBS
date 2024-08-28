@@ -114,7 +114,7 @@ def _provision_group(scim_object, service: Service, group: Union[Group, Collabor
 def membership_user_scim_objects(service: Service, group: Union[Group, Collaboration]):
     base_url = application_base_url()
 
-    members = [member for member in group.collaboration_memberships if member.is_active]
+    members = [member for member in group.collaboration_memberships if member.is_active()]
     result = []
     for member in members:
         user = member.user
@@ -146,7 +146,7 @@ def _do_apply_user_change(user: User, service: Union[None, Service], deletion: b
         scim_services = [service]
     else:
         # We need all services that are accessible for this user
-        collaborations = [member.collaboration for member in user.collaboration_memberships if member.is_active]
+        collaborations = [member.collaboration for member in user.collaboration_memberships if member.is_active()]
         scim_services = _all_unique_scim_services_of_collaborations(collaborations)
     for service in scim_services:
         response = None
