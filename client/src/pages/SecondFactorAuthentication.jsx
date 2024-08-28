@@ -381,8 +381,8 @@ class SecondFactorAuthentication extends React.Component {
                     }}/>
                 </section>
                 <div className="explain">
-                    <a href="/reset-token" onClick={this.openResetRequest}>{I18n.t("mfa.verify.resetRequest")}</a>
-                    <a href="/enter-reset" onClick={this.enterResetToken}>{I18n.t("mfa.verify.resetToken")}</a>
+                    <a href="/reset-token" onClick={this.openResetRequest}>{I18n.t("mfa.verify.rateLimitedResetRequest")}</a>
+                    <a href="/enter-reset" onClick={this.enterResetToken}>{I18n.t("mfa.verify.rateLimitedResetToken")}</a>
                 </div>
             </div>
         )
