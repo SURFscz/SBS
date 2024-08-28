@@ -80,7 +80,7 @@ def scim_member_object(base_url, membership: CollaborationMembership, scim_objec
 
 def find_group_by_id_template(group: Union[Group, Collaboration]):
     base_url = application_base_url()
-    members = [scim_member_object(base_url, m) for m in group.collaboration_memberships if m.is_active]
+    members = [scim_member_object(base_url, m) for m in group.collaboration_memberships if m.is_active()]
     group_template = update_group_template(group, members, f"{group.identifier}{EXTERNAL_ID_POST_FIX}")
     group_template["meta"] = _meta_info(group)
     return group_template
