@@ -2259,7 +2259,9 @@ const en = {
             resetRequest: "Reset your verfication code",
             resetToken: "Use a reset code",
             rateLimited: "You were rate-limited",
-            rateLimitedInfo: "You have attempted the TOTP verification too many times, and therefore your TOTP has been disabled. Use a reset code to have your TOTP reset. Please contact sram-support@surf.nl for a reset code if you have not received one or request a new reset code."
+            rateLimitedInfo: "You have attempted the TOTP verification too many times, and therefore your TOTP has been disabled. Use a reset code to have your TOTP reset. Please contact sram-support@surf.nl for a reset code if you have not received one or request a new reset code.",
+            rateLimitedResetRequest: "Reset your verfication code",
+            rateLimitedResetToken: "Use a reset code",
         },
         profile: {
             name: "Two-factor authentication",
