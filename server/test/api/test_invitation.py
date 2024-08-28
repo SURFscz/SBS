@@ -39,7 +39,7 @@ class TestInvitation(AbstractTest):
             .one()
         self.assertEqual("admin", collaboration_membership.role)
         user_id = self.find_entity_by_name(User, "urn:james").id
-        self.assertEqual(4, ServiceAup.query.filter(ServiceAup.user_id == user_id).count())
+        self.assertEqual(2, ServiceAup.query.filter(ServiceAup.user_id == user_id).count())
 
     def test_collaboration_expired_invitation(self):
         self.expire_invitation(invitation_hash_curious)
