@@ -32,7 +32,7 @@ import Login from "./Login";
 import {ProtectedRoute} from "./ProtectedRoute";
 import Profile from "./Profile";
 import CollaborationRequest from "./CollaborationRequest";
-import {setFlash} from "../utils/Flash";
+import {clearFlash, setFlash} from "../utils/Flash";
 import System from "./System";
 import {BreadCrumb} from "../components/BreadCrumb";
 import Impersonating from "../components/Impersonating";
@@ -131,7 +131,8 @@ class App extends React.Component {
                         // eslint-disable-next-line no-import-assign
                         setCsrfToken(results.CSRFToken);
                         if (currentUser.successfully_activated) {
-                            setFlash(I18n.t("login.successfullyActivated"))
+                            setFlash(I18n.t("login.successfullyActivated"));
+                            setTimeout(() => clearFlash(), 7500);
                         }
                     } else {
                         this.handleBackendDown();
@@ -190,6 +191,10 @@ class App extends React.Component {
         refreshUser().then(json => {
             const {impersonator} = this.state;
             this.setState({currentUser: json, impersonator: impersonator}, () => callback && callback(json));
+            if (json.successfully_activated) {
+                setFlash(I18n.t("login.successfullyActivated"));
+                setTimeout(() => clearFlash(), 7500);
+            }
         });
     };
 
