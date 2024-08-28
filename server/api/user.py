@@ -86,6 +86,18 @@ def _add_service_aups(user: dict, user_from_db: User):
         user["service_collaborations"] = jsonify(list({c["id"]: c for c in collaborations}.values())).json
 
 
+def _add_reference_data(user: dict, user_from_db: User):
+    _add_counts(user)
+    _add_service_aups(user, user_from_db)
+    _add_schac_home_organisations(user, user_from_db)
+    if len(user_from_db.suspend_notifications) > 0:
+        user["successfully_activated"] = True
+        user_from_db.suspended = False
+        user_from_db.suspend_notifications = []
+        db.session.merge(user_from_db)
+        db.session.commit()
+
+
 def _user_query():
     # Use selectinload for Many-To-One relationships and joinedload for One-to-Many/ Many-to-Many.
     return User.query \
@@ -114,9 +126,7 @@ def _user_json_response(user, auto_set_second_factor_confirmed):
                 "user_accepted_aup": user.has_agreed_with_aup(),
                 "guest": False}
     json_user = jsonify(user).json
-    _add_counts(json_user)
-    _add_service_aups(json_user, user)
-    _add_schac_home_organisations(json_user, user)
+    _add_reference_data(json_user, user)
     return {**json_user, **is_admin}, 200
 
 
@@ -493,14 +503,7 @@ def me():
 
         user = {**jsonify(user_from_db).json, **user_from_session, **csrf_token}
 
-        if len(user_from_db.suspend_notifications) > 0:
-            user["successfully_activated"] = True
-            user_from_db.suspend_notifications = []
-            db.session.merge(user_from_db)
-            db.session.commit()
-        _add_counts(user)
-        _add_service_aups(user, user_from_db)
-        _add_schac_home_organisations(user, user_from_db)
+        _add_reference_data(user, user_from_db)
         return user, 200
     else:
         return {"uid": "anonymous", "guest": True, "admin": False}, 200
