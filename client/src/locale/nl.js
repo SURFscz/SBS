@@ -456,6 +456,7 @@ const nl = {
             multipleAdminsHeader: "Georganiseerd door <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong> en <strong>{{nbr}} anderen</strong></a>",
             about: "Over onze samenwerking",
             services: "We werken samen in {{nbr}} diensten",
+            joinRequestServices: "{{name}} werkt samen in {{nbr}} diensten",
             noServicesYet: "Waar we samenwerken",
             noServices: "Er zijn geen diensten gekoppeld aan je samenwerking. ",
             connectFirstService: "Wil je de eerste koppelen?",

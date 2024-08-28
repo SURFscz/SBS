@@ -3,6 +3,7 @@ from sqlalchemy.orm import contains_eager
 from werkzeug.exceptions import Conflict, BadRequest
 
 from server.api.base import json_endpoint, emit_socket
+from server.api.invitation import add_organisation_aups
 from server.db.defaults import STATUS_OPEN, STATUS_DENIED, STATUS_APPROVED
 from server.api.service_aups import add_user_aups
 from server.auth.secrets import generate_token
@@ -77,7 +78,8 @@ def new_join_request():
                                hash=generate_token())
     join_request = db.session.merge(join_request)
 
-    add_user_aups(collaboration, user_id)
+    user = add_user_aups(collaboration, user_id)
+    add_organisation_aups(collaboration, user)
 
     update_last_activity_date(collaboration_id)
 

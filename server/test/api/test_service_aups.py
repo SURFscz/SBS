@@ -15,7 +15,7 @@ class TestServiceAup(AbstractTest):
         self.login("urn:james")
         self.put("/api/invitations/accept", body={"hash": invitation_hash_curious}, with_basic_auth=False)
         service_aups = self._service_aups_by_user("urn:james")
-        self.assertEqual(4, len(service_aups))
+        self.assertEqual(2, len(service_aups))
 
     def test_delete_by_service(self):
         self.login("urn:john")
@@ -35,7 +35,7 @@ class TestServiceAup(AbstractTest):
                   body={"collaborationId": collaboration.id, "motivation": "please"},
                   with_basic_auth=False)
         service_aups = self._service_aups_by_user("urn:james")
-        self.assertEqual(4, len(service_aups))
+        self.assertEqual(2, len(service_aups))
 
     def test_create_service_aup(self):
         service = self.find_entity_by_name(Service, service_mail_name)

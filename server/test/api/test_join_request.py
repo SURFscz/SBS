@@ -2,9 +2,9 @@ import uuid
 
 from sqlalchemy.orm import joinedload
 
-from server.db.defaults import STATUS_DENIED, STATUS_APPROVED
 from server.db.db import db
-from server.db.domain import JoinRequest, User, Collaboration
+from server.db.defaults import STATUS_DENIED, STATUS_APPROVED
+from server.db.domain import JoinRequest, User, Collaboration, OrganisationAup
 from server.test.abstract_test import AbstractTest
 from server.test.seed import co_ai_computing_uuid, co_robotics_disabled_join_request_name, co_research_name, \
     co_ai_computing_name
@@ -17,8 +17,10 @@ class TestJoinRequest(AbstractTest):
         return User.query.options(joinedload(User.join_requests)).filter(User.uid == uid).one().join_requests[0]
 
     def test_new_join_request(self):
-        collaboration_id = Collaboration.query \
-            .filter(Collaboration.identifier == co_ai_computing_uuid).one().id
+        collaboration = Collaboration.query \
+            .filter(Collaboration.identifier == co_ai_computing_uuid).one()
+        organisation_id = collaboration.organisation_id
+        collaboration_id = collaboration.id
         self.login("urn:james")
         mail = self.app.mail
         with mail.record_messages() as outbox:
@@ -32,7 +34,11 @@ class TestJoinRequest(AbstractTest):
             mail_msg = outbox[0]
 
             self.assertListEqual(["boss@example.org"], mail_msg.to)
-            self.assertTrue(f"{self.app.app_config.base_url}/collaborations/{collaboration_id}/joinrequests" in mail_msg.html)
+            link = f"{self.app.app_config.base_url}/collaborations/{collaboration_id}/joinrequests"
+            self.assertTrue(link in mail_msg.html)
+            org_aup = OrganisationAup.query \
+                .filter(OrganisationAup.organisation_id == organisation_id).one()
+            self.assertIsNotNone(org_aup)
 
     def test_new_join_request_already_member(self):
         collaboration_id = Collaboration.query \
