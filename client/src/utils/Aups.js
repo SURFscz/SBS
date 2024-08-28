@@ -1,8 +1,8 @@
 import {isEmpty} from "./Utils";
 
 export function aupData(user, collaboration) {
-    const organisation = collaboration.organisation;
-    const services = collaboration.services;
+    const organisation = (collaboration.organisation || {});
+    const services = (collaboration.services || []);
     const hasServices = services.some(service => !isEmpty(service.accepted_user_policy));
     const requiresOrganisationAup = !isEmpty(organisation.accepted_user_policy) &&
         !(user.organisation_aups || []).some(aup => aup.organisation_id === organisation.id) &&
