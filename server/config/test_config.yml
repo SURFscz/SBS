@@ -105,7 +105,7 @@ admin_users:
   - uid: "urn:john"
   - uid: "urn:rocky"
   - uid: "urn:mike"
-  - uid: "900613f87a9c8539b15729264ccc50af20c865ba@acc.sram.eduteams.org"
+  - uid: "6f5e346b55f6b732930591ab88859773ef48e3ba@acc.sram.eduteams.org""
 
 organisation_categories:
   - "Research"
