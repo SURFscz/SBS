@@ -11,7 +11,7 @@ services:
   client:
     build: "client"
     container_name: "sbs-client"
-    restart: "always"
+    restart: "no"
     links:
       - "server"
     ports:
@@ -22,7 +22,7 @@ services:
   server:
     build: "server"
     container_name: "sbs-server"
-    restart: "always"
+    restart: "no"
     links:
       - "db"
       - "redis"
@@ -51,7 +51,7 @@ services:
   db:
     image: "docker.io/mariadb:11"
     container_name: "sbs-db"
-    restart: "always"
+    restart: "no"
     environment:
       MARIADB_ROOT_PASSWORD: "${DB_ROOT_PASSWORD:-sbs}"
       MARIADB_DATABASE: "sbs"
