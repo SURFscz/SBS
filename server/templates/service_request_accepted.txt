@@ -1,12 +1,12 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SURF new service request accepted{% endblock %}
+{% block title %}SURF new application request accepted{% endblock %}
 {% block content %}
 
 {{ salutation }},
-Your request to create service {{ service.name }} has been accepted by the
+Your request to create application {{ service.name }} has been accepted by the
     administrator of the SRAM platform.
 
-Login to view the service:
+Login to view the application:
 
 {{ base_url }}/services/{{ service.id }}
 
