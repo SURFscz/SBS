@@ -6,29 +6,31 @@ volumes:
 services:
   redis:
     image: "docker.io/redis"
-    container_name: redis
+    container_name: "sbs-redis"
 
   client:
     build: "client"
-    restart: "always"
+    container_name: "sbs-client"
+    restart: "no"
     links:
       - "server"
     ports:
-      - "8080:80"
+      - "3000:3000"
     volumes:
-      - "${PWD}/etc/apache.conf:/etc/apache2/sites-enabled/sbs.conf:ro"
+      - "${PWD}/client:/opt/app/client"
 
   server:
     build: "server"
-    restart: "always"
+    container_name: "sbs-server"
+    restart: "no"
     links:
       - "db"
       - "redis"
+    ports:
+      - "8080:8080"
     volumes:
       - "${PWD}/etc/config.yml:/etc/config.yml"
       - "${PWD}/server:/opt/server"
-    ports:
-      - "8080"
     environment:
       CONFIG_TEMPLATE: "/etc/config.yml"
       TESTING: 1
@@ -48,7 +50,8 @@ services:
 
   db:
     image: "docker.io/mariadb:11"
-    restart: "always"
+    container_name: "sbs-db"
+    restart: "no"
     environment:
       MARIADB_ROOT_PASSWORD: "${DB_ROOT_PASSWORD:-sbs}"
       MARIADB_DATABASE: "sbs"
