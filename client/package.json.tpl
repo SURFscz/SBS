@@ -8,7 +8,7 @@
         "@fortawesome/free-solid-svg-icons": "^6.6.0",
         "@fortawesome/react-fontawesome": "^0.2.2",
         "@surfnet/sds": "^0.0.111",
-        "core-js": "^3.38.1",
+        "core-js": "^3.38.0",
         "detect-browser": "^5.3.0",
         "dompurify": "^3.1.6",
         "es6-promise": "^4.2.8",
@@ -63,7 +63,7 @@
         "test": "DANGEROUSLY_DISABLE_HOST_CHECK=true GENERATE_SOURCEMAP=false react-scripts test --transformIgnorePatterns 'node_modules/(?!i18n-js)/'",
         "analyze": "source-map-explorer build/static/js/main.*.js "
     },
-    "proxy": "http://localhost:8080/",
+    "proxy": "http://${SBS_SERVER}:8080/",
     "eslintConfig": {
         "extends": "react-app"
     },

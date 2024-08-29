@@ -1,15 +1,10 @@
 # Stage 1. - Client build environment
-FROM node:20 as yarn-deps
+FROM node:20
+
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install gettext-base -y
 
 WORKDIR /opt/app
 
-COPY . .
-RUN yarn
-RUN yarn build
-
-# Stage 2. - Client build
-FROM ghcr.io/surfscz/sram-sbs-server:main
-
-WORKDIR /opt/app
-
-COPY --from=yarn-deps /opt/app/build /var/www/html
+ENTRYPOINT [ "/opt/app/client/run.sh" ]
