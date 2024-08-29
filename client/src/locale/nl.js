@@ -1729,7 +1729,7 @@ const nl = {
         email: "E-mailadres",
         title: "Acceptable use policy",
         multiple: "Dienst acceptable use policies",
-        disclaimer: "Dit is de eerste keer dat je inlogt. Om een profiel voor je te kunnen aanmaken, moet je de <a href=\"{{url}}\" target=\"_blank\">acceptable use policy</a> accepteren.",
+        disclaimer: "Je moet de <a href=\"{{url}}\" target=\"_blank\">acceptable use policy</a> accepteren.",
         agreeWithTerms: "Hierbij verklaar ik dat ik de acceptable use policy heb gelezen en deze accepteer",
         onward: "Verder",
         agreedFlash: "Je akkoord met {{name}} is opgeslagen.",
