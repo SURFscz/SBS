@@ -1571,8 +1571,8 @@ const nl = {
         motivationPlaceholder: "Je motivatie om deze applicatie te gebruiken",
         send: "Verzenden",
         flash: {
-            added: "{{service}} is toegevoegd aan samenwerking {{name}}.",
-            deleted: "{{service}} is verwijderd van samenwerking {{name}}.",
+            added: "Applicatie {{service}} is gekoppeld aan samenwerking {{name}}.",
+            deleted: "Applicatie {{service}} is ontkoppeld van samenwerking {{name}}.",
             send: "Applicatiekoppelverzoek voor {{service}} is verzonden.",
         },
         service: {
