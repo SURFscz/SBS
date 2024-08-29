@@ -1729,7 +1729,7 @@ const en = {
         email: "Email address",
         title: "Acceptable use policy",
         multiple: "Service acceptable use policies",
-        disclaimer: "This is the first time you log in. To create your profile, you need to agree with the <a href=\"{{url}}\" target=\"_blank\">acceptable use policy</a>.",
+        disclaimer: "TYou need to agree with the <a href=\"{{url}}\" target=\"_blank\">acceptable use policy</a>.",
         agreeWithTerms: "I hereby certify that I have read the acceptable use policy and that I accept it",
         onward: "Onwards",
         agreedFlash: "Your agreement with {{name}} has been saved.",
