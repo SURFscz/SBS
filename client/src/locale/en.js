@@ -916,15 +916,15 @@ const en = {
         addMe: "Add me to this collaboration"
     },
     organisations: {
-        title: "My applications ({{nbr}})",
+        title: "My organisations ({{nbr}})",
         noOrganisations: "You are not a member of any organisation",
         members: "Members",
         collaborations: "Collaborations",
         invitations: "Invitations",
         collaborationRequests: "Collaboration requests",
-        add: "Create new application",
+        add: "Create new organisation",
         searchPlaceHolder: "Search for all organisations",
-        deleteConfirmation: "Are you sure you want to delete application {{name}}? This cannot be undone."
+        deleteConfirmation: "Are you sure you want to delete organisation {{name}}? This cannot be undone."
     },
     services: {
         title: "Applications",
@@ -1055,9 +1055,9 @@ const en = {
             updated: "Application {{name}} was updated",
             deleted: "Application {{name}} was deleted",
             requestDeleted: "Request to delete application {{name}} is sent",
-            tokenAdded: "New token for {{name}} was created",
-            tokenUpdated: "Token of {{name}} was updated",
-            tokenDeleted: "Token of {{name}} was deleted",
+            tokenAdded: "New token for application {{name}} was created",
+            tokenUpdated: "Token of application {{name}} was updated",
+            tokenDeleted: "Token of application {{name}} was deleted",
         },
         scim_token: {
             preTitle: "For security reasons, the current SCIM token can not be displayed. ",
