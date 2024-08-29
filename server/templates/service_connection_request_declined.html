@@ -1,23 +1,23 @@
 {% extends "mail_layout.html" %}
-{% block title %}SURF new service connection request declined{% endblock %}
+{% block title %}SURF new application connection request declined{% endblock %}
 {% block content %}
 
 <div class="mail-head" style="background-color: #f5f5f5;padding: 30px 0 20px 60px;">
     <p class="title" style="font-weight: 600;font-size: 38px;line-height: 38px; margin: 0;">
-        Denied connection service request
+        Denied connection application request
     </p>
     <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
-        Your connection service request for service {{ service.name }} is denied.</p>
+        Your connection application request for application {{ service.name }} is denied.</p>
     <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
         Click the button below to view {{ collaboration.name }}.</p>
     <a class="button" href="{{ base_url }}/collaborations/{{ collaboration.id }}"
        style="border-radius: 4px;color: white;background-color: #0077c8;text-decoration: none;display: inline-block;margin: 15px 0;cursor:pointer;padding: 14px 26px;font-size: 18px;">Login</a>
 </div>
 <div class="mail-end" style="padding: 30px 0 0 60px;">
-    <p>Your request to have access to service {{ service.name }} for collaboration
+    <p>Your request to have access to application {{ service.name }} for collaboration
         <a href="{{ base_url }}/collaborations/{{ collaboration.id }}" style="color:#0088CC;">
             {{ collaboration.name }}</a> has been declined by the
-        contact person <a href="mailto:{{ contact }}">{{ contact }}</a> of the service.</p>
+        contact person <a href="mailto:{{ contact }}">{{ contact }}</a> of the application.</p>
 
     </p>
 </div>
