@@ -88,8 +88,8 @@ class TestService(AbstractTest):
         mail = self.app.mail
         with mail.record_messages() as outbox:
             service = self.post("/api/services", body={
-                "entity_id": "https://new_service",
-                "name": "new_service",
+                "entity_id": "https://new_application",
+                "name": "new_application",
                 "token_validity_days": "",
                 "privacy_policy": "https://privacy.com",
                 "administrators": ["the@ex.org"],
@@ -99,10 +99,10 @@ class TestService(AbstractTest):
             })
 
             self.assertTrue(
-                "John Doe invited you to become an admin for service new_service" in outbox[0].html)
+                "John Doe invited you to become an admin for applications new_service" in outbox[0].html)
 
             self.assertIsNotNone(service["id"])
-            self.assertEqual("new_service", service["name"])
+            self.assertEqual("new_application", service["name"])
             self.assertEqual("qwoookaaaaaaaaaa", service["abbreviation"])
             self.assertEqual(2, len(service["ip_networks"]))
             self.assertEqual("2001:1c02:2b2f:be00:1cf0:fd5a:a548:1a16/128", service["ip_networks"][0]["network_value"])
