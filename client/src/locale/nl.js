@@ -1611,8 +1611,8 @@ const nl = {
         notEnabledOrganisation: "Deze applicatie kan niet worden verplicht voor alle samenwerkingen omdat deze applicatie toegang voor deze organisatie niet toestaat.",
         serviceRestrictedOrganisation: "Deze applicatie kan niet worden verplicht voor alle samenwerkingen omdat deze organisatie alleen SURF-applicaties mag koppelen.",
         flash: {
-            added: "{{service}} is toegevoegd aan organisatie {{name}}.",
-            deleted: "{{service}} is onbeschikbaar gemaakt voor organisatie {{name}}.",
+            added: "Applicatie {{service}} is toegevoegd aan organisatie {{name}}.",
+            deleted: "Applicatie {{service}} is onbeschikbaar gemaakt voor organisatie {{name}}.",
         },
         service: {
             open: "",
@@ -1908,8 +1908,8 @@ const nl = {
         requester: "Aanvrager",
         approved: "Goedgekeurd",
         rejectionReason: "Reden voor afwijzing",
-        denyConfirmation: "Weet je zeker dat je deze registratie wil afkeuren?",
-        deleteConfirmation: "Weet je zeker dat je deze registratie wil verwijderen?",
+        denyConfirmation: "Weet je zeker dat je deze applicatieregistratie wil afkeuren?",
+        deleteConfirmation: "Weet je zeker dat je deze applicatieregistratie wil verwijderen?",
         approve: "Goedkeuren",
         deny: "Afkeuren",
         metaData: "De SAML metadata",
@@ -2354,7 +2354,7 @@ const nl = {
         downgradeYourselfMemberConfirmation: "Weet je zeker dat je geen beheerder meer wil zijn? Je kan dit niet terugdraaien.",
         flash: {
             entitiesDeleted: "Leden en uitnodigingen zijn verwijderd",
-            invitesResend: "Uitnodigingen voor organisatie {{name}} zijn opnieuw verzonden.",
+            invitesResend: "Uitnodigingen voor applicatie {{name}} zijn opnieuw verzonden.",
             memberUpdated: "De rol of lidmaatschap van {{name}} is bijgewerkt naar {{role}}.",
         },
         gone: {
@@ -2440,8 +2440,8 @@ const nl = {
         hashedToken: "Hashed token",
         tokenValue: "**** **** ****",
         tokenType: "Type",
-        tokenTypeTooltip: "Je kan dit token alleen gebruiken voor {{tokenType}} verzoeken",
-        tokenDeleteConfirmation: "Weet je zeker dat je dit token wilt verwijderen?",
+        tokenTypeTooltip: "Je kan dit applicatietoken alleen gebruiken voor {{tokenType}} verzoeken",
+        tokenDeleteConfirmation: "Weet je zeker dat je dit applicatietoken wilt verwijderen?",
         disableTokenConfirmation: "Weet je zeker dat je de {{type}} functionaliteit voor deze applicatie wilt uitzetten? {{count}} bestaande {{tokens}} zal worden verwijderd.",
         multipleTokens: "tokens",
         singleTokens: "token",
