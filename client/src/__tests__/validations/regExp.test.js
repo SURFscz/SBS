@@ -59,6 +59,7 @@ test("Valid urls", () => {
 test("Valid redirect urls", () => {
     expect(validRedirectUrlRegExp.test("https://localhost/api/scim_mock")).toEqual(true);
     expect(validRedirectUrlRegExp.test("http://localhost/redirect")).toEqual(true);
+    expect(validRedirectUrlRegExp.test("http://localhost")).toEqual(true);
     expect(validRedirectUrlRegExp.test("http://localhost:8080/redirect/extra")).toEqual(true);
     expect(validRedirectUrlRegExp.test("https://demo-sp.sram.surf.nl/redirect")).toEqual(true);
 

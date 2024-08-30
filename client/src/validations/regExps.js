@@ -6,7 +6,7 @@ export const validSchacHomeRegExp = /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9]
 
 export const validUrlRegExp = /(https?|ssh|ftp):\/\/(.+)/i
 
-export const validRedirectUrlRegExp = /(https:\/\/|http:\/\/localhost)(.+)/i
+export const validRedirectUrlRegExp = /(https:\/\/(.+)|http:\/\/localhost(.*))/i
 
 const validPrefixes = [
     "---- BEGIN SSH2 PUBLIC KEY ----",
