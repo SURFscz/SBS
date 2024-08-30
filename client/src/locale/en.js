@@ -136,6 +136,7 @@ const en = {
         today: "Today",
         manage: "Configure",
         invalidInput: "Invalid {{name}}",
+        invalidRedirectUrl: "Non-localhost redirect URL's must be https protocol",
         attributes: {
             email: "email address",
             uri: "URL (start with 'https://', for example)",

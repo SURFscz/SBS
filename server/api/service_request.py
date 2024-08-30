@@ -92,7 +92,8 @@ def request_service():
         raise BadRequest(f"{connection_type} not valid. Valid connection_type: {valid_connection_types}")
 
     oidc_client_secret_posted = data.get("oidc_client_secret")
-    if oidc_client_secret_posted or connection_type == "openIDConnect":
+    manage_enabled = current_app.app_config.manage.enabled
+    if manage_enabled and (oidc_client_secret_posted or connection_type == "openIDConnect"):
         oidc_client_secret = session.get("oidc_client_secret")
         if oidc_client_secret != oidc_client_secret_posted:
             raise Forbidden("Tampering with oidc_client_secret token is not allowed")

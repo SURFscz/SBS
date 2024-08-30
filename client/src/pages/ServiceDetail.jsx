@@ -95,14 +95,16 @@ class ServiceDetail extends React.Component {
             const {user} = this.props;
             const userServiceAdmin = isUserServiceManager(user, {id: parseInt(params.id, 10)}) || user.admin;
             if (userServiceAdmin) {
-                Promise.all([serviceById(params.id), searchOrganisations("*"),
-                    allServiceConnectionRequests(params.id)])
-                    .then(res => {
-                        const service = res[0];
-                        const organisations = res[1];
-                        const serviceConnectionRequests = res[2];
-                        this.afterFetch(params, service, organisations, serviceConnectionRequests);
-                    }).catch(() => this.props.history.push("/"));
+                Promise.all([
+                    serviceById(params.id),
+                    searchOrganisations("*"),
+                    allServiceConnectionRequests(params.id)
+                ]).then(res => {
+                    const service = res[0];
+                    const organisations = res[1];
+                    const serviceConnectionRequests = res[2];
+                    this.afterFetch(params, service, organisations, serviceConnectionRequests);
+                }).catch(() => this.props.history.push("/"));
             } else {
                 this.props.history.push("/404");
             }

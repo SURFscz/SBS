@@ -542,7 +542,7 @@ export function createOrganisation(organisation) {
 }
 
 export function updateOrganisation(organisation) {
-    //We need to limit the size so we delete the relations-ships that are not used server-side
+    //We need to limit the size soo we delete the relations-ships that are not used server-side
     ["organisation_invitations", "organisation_memberships", "collaboration_requests", "services", "collaborations", "organisation_invitations",
         "organisation_memberships"]
         .forEach(relation => delete organisation[relation])

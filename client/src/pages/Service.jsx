@@ -23,7 +23,7 @@ import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {commaSeparatedArrayToSelectValues, isEmpty, joinSelectValuesArray, stopEvent} from "../utils/Utils";
-import {sanitizeShortName, validEmailRegExp, validUrlRegExp} from "../validations/regExps";
+import {sanitizeShortName, validEmailRegExp, validRedirectUrlRegExp, validUrlRegExp} from "../validations/regExps";
 import CheckBox from "../components/CheckBox";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Chip, Tooltip} from "@surfnet/sds";
@@ -86,6 +86,7 @@ class Service extends React.Component {
         initial: true,
         invalidInputs: {},
         invalidRedirectUrls: null,
+        invalidRedirectUrlHttpNonLocalHost: false,
         confirmationDialogOpen: false,
         leavePage: false,
         confirmationDialogAction: () => true,
@@ -264,16 +265,20 @@ class Service extends React.Component {
 
     redirectUrlsChanged = selectedOptions => {
         if (selectedOptions === null) {
-            this.setState({redirect_urls: [], invalidRedirectUrls: null});
+            this.setState({redirect_urls: [], invalidRedirectUrls: null, invalidRedirectUrlHttpNonLocalHost: false});
         } else {
             const validRedirectUrls = selectedOptions
-                .filter(option => validUrlRegExp.test(option.value));
+                .filter(option => validRedirectUrlRegExp.test(option.value));
             const newRedirectUrls = Array.isArray(validRedirectUrls) ? [...validRedirectUrls] : [validRedirectUrls];
             const invalidRedirectUrls = selectedOptions
-                .filter(option => !validUrlRegExp.test(option.value))
+                .filter(option => !validRedirectUrlRegExp.test(option.value))
                 .map(option => option.value);
 
-            this.setState({redirect_urls: newRedirectUrls, invalidRedirectUrls: invalidRedirectUrls});
+            this.setState({
+                redirect_urls: newRedirectUrls,
+                invalidRedirectUrls: invalidRedirectUrls,
+                invalidRedirectUrlHttpNonLocalHost: !isEmpty(invalidRedirectUrls) && invalidRedirectUrls[0].startsWith("http://")
+            });
         }
     }
 
@@ -516,13 +521,10 @@ class Service extends React.Component {
         </div>);
     }
 
-    fetchNewOidcClientSecretValue = () => {
-
-    };
-
     onChangeConnectionType = value => {
         this.setState({connection_type: value});
-        if ("openIDConnect" === value) {
+        const {manage_enabled} = this.props.config;
+        if ("openIDConnect" === value && manage_enabled) {
             generateOidcClientSecret()
                 .then(res => this.setState({
                     oidc_client_secret: res.value
@@ -530,11 +532,6 @@ class Service extends React.Component {
         } else {
             this.setState({oidc_client_secret: null});
         }
-    }
-
-    toggleSamlMetadataModal = e => {
-        stopEvent(e);
-        this.setState({showMetaData: !this.state.showMetaData})
     }
 
     removeMail = email => e => {
@@ -550,11 +547,6 @@ class Service extends React.Component {
         this.setState({administrators: uniqueEmails});
     };
 
-    clearSelectError = (val, errorAttributeName) => {
-        this.setState({[errorAttributeName]: null});
-        return val;
-    }
-
     serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri,
                         automatic_connection_allowed, access_allowed_for_all, non_member_users_access_allowed,
                         contact_email, support_email, security_email, invalidInputs, contactEmailRequired,
@@ -563,7 +555,7 @@ class Service extends React.Component {
                         message, logo, isServiceAdmin, providing_organisation, connection_type, redirect_urls,
                         grants, is_public_client, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails,
                         disableEverything, ldap_identifier, parsedSAMLMetaData, parsedSAMLMetaDataError, parsedSAMLMetaDataURLError,
-                        oidc_client_secret, invalidRedirectUrls) => {
+                        oidc_client_secret, invalidRedirectUrls, invalidRedirectUrlHttpNonLocalHost) => {
         const ldapBindAccount = config.ldap_bind_account;
         const {isServiceRequest} = this.props;
         return (<div className="service">
@@ -703,7 +695,6 @@ class Service extends React.Component {
                     <SelectField value={redirect_urls}
                                  options={[]}
                                  creatable={true}
-                                 onInputChange={val => this.clearSelectError(val, "invalidRedirectUrls")}
                                  isMulti={true}
                                  disabled={disableEverything}
                                  copyClipBoard={isServiceRequestDetails}
@@ -715,8 +706,11 @@ class Service extends React.Component {
                     />
                     {(isEmpty(redirect_urls) && !initial) && <ErrorIndicator
                         msg={I18n.t("service.required", {attribute: I18n.t("service.openIDConnectRedirects")})}/>}
-                    {(!isEmpty(invalidRedirectUrls) && !initial) && <ErrorIndicator
+                    {!isEmpty(invalidRedirectUrls) && <ErrorIndicator
                         msg={I18n.t("forms.invalidInput", {name: `URL: ${invalidRedirectUrls.join(", ")}`})}/>}
+                    {invalidRedirectUrlHttpNonLocalHost &&
+                        <span className="error-indication">{I18n.t("forms.invalidRedirectUrl")}</span>
+                    }
                 </div>
             }
             {(isServiceRequest && connection_type === "openIDConnect") &&
@@ -737,7 +731,8 @@ class Service extends React.Component {
                         msg={I18n.t("service.required", {attribute: I18n.t("service.openIDConnectGrants")})}/>}
                 </div>}
 
-            {(isServiceRequest && connection_type === "openIDConnect" && !isServiceRequestDetails) &&
+            {(isServiceRequest && connection_type === "openIDConnect" && !isServiceRequestDetails
+                && config.manage_enabled) &&
                 <div className="new-oidc-secret">
                     <InputField value={oidc_client_secret}
                                 name={I18n.t("service.oidc.oidcClientSecret")}
@@ -1127,6 +1122,7 @@ class Service extends React.Component {
             connection_type,
             redirect_urls,
             invalidRedirectUrls,
+            invalidRedirectUrlHttpNonLocalHost,
             grants,
             is_public_client,
             saml_metadata_url,
@@ -1172,7 +1168,7 @@ class Service extends React.Component {
                     token_validity_days, config, ip_networks, administrators, message, logo, isServiceAdmin, providing_organisation,
                     connection_type, redirect_urls, grants, is_public_client, saml_metadata_url, samlMetaDataFile, comments,
                     isServiceRequestDetails, disableEverything, ldap_identifier, parsedSAMLMetaData, parsedSAMLMetaDataError,
-                    parsedSAMLMetaDataURLError, oidc_client_secret, invalidRedirectUrls)}
+                    parsedSAMLMetaDataURLError, oidc_client_secret, invalidRedirectUrls, invalidRedirectUrlHttpNonLocalHost)}
             </div>
         </>);
     }
