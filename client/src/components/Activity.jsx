@@ -100,7 +100,6 @@ export default class Activity extends React.PureComponent {
         try {
             return JSON.parse(state);
         } catch (e) {
-            console.log("Error parsing JSON " + state)
             return {};
         }
     }

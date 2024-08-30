@@ -136,6 +136,7 @@ const nl = {
         today: "Vandaag",
         manage: "Beheren",
         invalidInput: "Ongeldig{{name}}",
+        invalidRedirectUrl: "Niet-localhost redirect URL's moeten het https protocol hebben",
         attributes: {
             email: " e-mailadres",
             uri: "e URL (begin met bijvoorbeeld 'https://')",

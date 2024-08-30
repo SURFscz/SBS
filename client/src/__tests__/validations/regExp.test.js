@@ -1,4 +1,10 @@
-import {sanitizeShortName, validUrlRegExp, validEmailRegExp, sanitizeTagName} from "../../validations/regExps";
+import {
+    sanitizeShortName,
+    validUrlRegExp,
+    validEmailRegExp,
+    sanitizeTagName,
+    validRedirectUrlRegExp
+} from "../../validations/regExps";
 
 test("Valid emails", () => {
     expect(validEmailRegExp.test("a@a.com")).toBeTruthy();
@@ -48,4 +54,19 @@ test("Valid urls", () => {
 
     expect(validUrlRegExp.test("ssh://")).toEqual(false);
     expect(validUrlRegExp.test("nope")).toEqual(false);
+});
+
+test("Valid redirect urls", () => {
+    expect(validRedirectUrlRegExp.test("https://localhost/api/scim_mock")).toEqual(true);
+    expect(validRedirectUrlRegExp.test("http://localhost/redirect")).toEqual(true);
+    expect(validRedirectUrlRegExp.test("http://localhost:8080/redirect/extra")).toEqual(true);
+    expect(validRedirectUrlRegExp.test("https://demo-sp.sram.surf.nl/redirect")).toEqual(true);
+
+    expect(validRedirectUrlRegExp.test("https://google.nl:433/redirect")).toEqual(true);
+
+    expect(validRedirectUrlRegExp.test("http://google")).toEqual(false);
+    expect(validRedirectUrlRegExp.test("ssh://")).toEqual(false);
+    expect(validRedirectUrlRegExp.test("nope")).toEqual(false);
+    expect(validRedirectUrlRegExp.test("ssh://demo-sp.sram.surf.nl:8080")).toEqual(false);
+    expect(validRedirectUrlRegExp.test("ftp://demo-sp.sram.surf.nl:8080")).toEqual(false);
 });

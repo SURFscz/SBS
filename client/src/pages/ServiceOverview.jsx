@@ -39,6 +39,7 @@ import {
     sanitizeShortName,
     SRAM_USERNAME,
     validEmailRegExp,
+    validRedirectUrlRegExp,
     validUrlRegExp
 } from "../validations/regExps";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -99,6 +100,8 @@ class ServiceOverview extends React.Component {
             parsedSAMLMetaData: null,
             parsedSAMLMetaDataError: false,
             parsedSAMLMetaDataURLError: false,
+            invalidRedirectUrls: null,
+            invalidRedirectUrlHttpNonLocalHost: false,
             crmOrganisations: []
         }
     }
@@ -180,7 +183,7 @@ class ServiceOverview extends React.Component {
             }
             invalidInputs[name] = !isEmpty(serviceElement) && !validUrlRegExp.test(serviceElement);
         });
-        invalidInputs["redirect_urls"] = !isEmpty(service.redirect_urls) && service.redirect_urls.some(url => !validUrlRegExp.test(url.value));
+        invalidInputs["redirect_urls"] = !isEmpty(service.redirect_urls) && service.redirect_urls.some(url => !validRedirectUrlRegExp.test(url.value));
         this.setState({invalidInputs: invalidInputs}, callback);
     }
 
@@ -551,12 +554,22 @@ class ServiceOverview extends React.Component {
             validatingNetwork,
             initial
         } = this.state;
-        const {contact_email, ip_networks, scim_enabled, scim_url} = service;
+        const {manage_enabled} = this.props.config;
+        const {
+            contact_email, ip_networks, scim_enabled, scim_url, saml_enabled, saml_metadata, saml_metadata_url,
+            oidc_enabled, redirect_urls, grants, providing_organisation
+        } = service;
         const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(service[attr])) || Object.keys(invalidInputs).some(key => invalidInputs[key]);
         const contactEmailRequired = !hasAdministrators && isEmpty(contact_email);
         const invalidIpNetworks = ip_networks.some(ipNetwork => ipNetwork.error || (ipNetwork.version === 6 && !ipNetwork.global));
-        const scimInvalid = scim_enabled && isEmpty(scim_url) && !initial;
-        const valid = !inValid && !contactEmailRequired && !invalidIpNetworks && !validatingNetwork && !scimInvalid;
+        const scimInvalid = scim_enabled && !initial && isEmpty(scim_url);
+        const oidcValid = !manage_enabled || !oidc_enabled ||
+            (!isEmpty(redirect_urls) && !isEmpty(grants) && !isEmpty(providing_organisation));
+        const samlValid = !manage_enabled || !saml_enabled ||
+            (!isEmpty(saml_metadata) || !isEmpty(saml_metadata_url));
+
+        const valid = !inValid && !contactEmailRequired && !invalidIpNetworks && !validatingNetwork && !scimInvalid &&
+            oidcValid && samlValid;
         return valid;
     };
 
@@ -814,13 +827,27 @@ class ServiceOverview extends React.Component {
     };
 
     redirectUrlsChanged = (selectedOptions, service) => {
-        const newRedirectUrls = selectedOptions === null ? [] : Array.isArray(selectedOptions) ? [...selectedOptions] : [selectedOptions];
-        this.setState({
-            service: {
-                ...service, redirect_urls: newRedirectUrls
-            }
-        });
+        if (selectedOptions === null) {
+            this.setState({
+                invalidRedirectUrls: null, invalidRedirectUrlHttpNonLocalHost: false,
+                service: {...service, redirect_urls: []}
+            });
+        } else {
+            const validRedirectUrls = selectedOptions
+                .filter(option => validRedirectUrlRegExp.test(option.value));
+            const newRedirectUrls = Array.isArray(validRedirectUrls) ? [...validRedirectUrls] : [validRedirectUrls];
+            const invalidRedirectUrls = selectedOptions
+                .filter(option => !validRedirectUrlRegExp.test(option.value))
+                .map(option => option.value);
+
+            this.setState({
+                invalidRedirectUrls: invalidRedirectUrls,
+                invalidRedirectUrlHttpNonLocalHost: !isEmpty(invalidRedirectUrls) && invalidRedirectUrls[0].startsWith("http://"),
+                service: {...service, redirect_urls: newRedirectUrls}
+            });
+        }
     }
+
     grantsChanged = (selectedOptions, service) => {
         const newGrants = selectedOptions === null ? [] : Array.isArray(selectedOptions) ? [...selectedOptions] : [selectedOptions];
         this.setState({
@@ -1252,6 +1279,7 @@ class ServiceOverview extends React.Component {
     }
 
     renderOidc = (config, service, isAdmin, isServiceAdmin) => {
+        const {invalidRedirectUrls, invalidRedirectUrlHttpNonLocalHost} = this.state;
         const {redirect_urls, grants} = this.state.service;
         return (
             <div className="oidc">
@@ -1285,7 +1313,7 @@ class ServiceOverview extends React.Component {
                                     onChange={this.changeServiceProperty("providing_organisation")}
                                     required={true}
                         />
-                        {isEmpty(service.providing_organisation) &&
+                        {(isEmpty(service.providing_organisation)) &&
                             <ErrorIndicator msg={I18n.t("service.required", {
                                 attribute: I18n.t("service.providingOrganisation").toLowerCase()
                             })}/>}
@@ -1293,17 +1321,20 @@ class ServiceOverview extends React.Component {
                         <SelectField value={redirect_urls}
                                      options={[]}
                                      creatable={true}
-                                     onInputChange={val => val}
                                      isMulti={true}
                                      name={I18n.t("service.openIDConnectRedirects")}
                                      placeholder={I18n.t("service.openIDConnectRedirectsPlaceholder")}
                                      toolTip={I18n.t("service.openIDConnectRedirectsTooltip")}
                                      required={true}
                                      onChange={selectedOptions => this.redirectUrlsChanged(selectedOptions, service)}/>
-                        {isEmpty(redirect_urls) &&
-                            <ErrorIndicator msg={I18n.t("service.required", {
-                                attribute: I18n.t("service.openIDConnectRedirects").toLowerCase()
-                            })}/>}
+
+                        {isEmpty(redirect_urls) && <ErrorIndicator
+                            msg={I18n.t("service.required", {attribute: I18n.t("service.openIDConnectRedirects")})}/>}
+                        {!isEmpty(invalidRedirectUrls) && <ErrorIndicator
+                            msg={I18n.t("forms.invalidInput", {name: `URL: ${invalidRedirectUrls.join(", ")}`})}/>}
+                        {invalidRedirectUrlHttpNonLocalHost &&
+                            <span className="error-indication">{I18n.t("forms.invalidRedirectUrl")}</span>
+                        }
 
                         <SelectField value={grants}
                                      options={this.grantOptions.filter(option => Array.isArray(grants) && !grants.find(grant => grant.value === option.value))}
