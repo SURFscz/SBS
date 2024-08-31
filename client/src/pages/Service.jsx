@@ -647,18 +647,20 @@ class Service extends React.Component {
                         required={true}
             />
 
-            {isServiceRequest && <div className="first-column">
-                <InputField value={providing_organisation}
-                            name={I18n.t("service.providingOrganisation")}
-                            disabled={disableEverything}
-                            placeholder={I18n.t("service.providingOrganisationPlaceholder")}
-                            onChange={e => this.setState({providing_organisation: e.target.value})}
-                            required={true}
-                />
-                {(!initial && isEmpty(providing_organisation)) && <ErrorIndicator msg={I18n.t("service.required", {
-                    attribute: I18n.t("service.providingOrganisation").toLowerCase()
-                })}/>}
-            </div>}
+            {isServiceRequest &&
+                <div className="first-column">
+                    <InputField value={providing_organisation}
+                                name={I18n.t("service.providingOrganisation")}
+                                disabled={disableEverything}
+                                placeholder={I18n.t("service.providingOrganisationPlaceholder")}
+                                onChange={e => this.setState({providing_organisation: e.target.value})}
+                                error={!initial && isEmpty(providing_organisation)}
+                                required={true}
+                    />
+                    {(!initial && isEmpty(providing_organisation)) && <ErrorIndicator msg={I18n.t("service.required", {
+                        attribute: I18n.t("service.providingOrganisation").toLowerCase()
+                    })}/>}
+                </div>}
 
             <h2 className="section-separator">{I18n.t("service.connectionDetails")}</h2>
             <div className="first-column">
@@ -702,14 +704,17 @@ class Service extends React.Component {
                                  placeholder={I18n.t("service.openIDConnectRedirectsPlaceholder")}
                                  toolTip={I18n.t("service.openIDConnectRedirectsTooltip")}
                                  required={true}
+                                 error={(isEmpty(redirect_urls) && !initial) || !isEmpty(invalidRedirectUrls)}
                                  onChange={this.redirectUrlsChanged}
                     />
-                    {(isEmpty(redirect_urls) && !initial) && <ErrorIndicator
-                        msg={I18n.t("service.required", {attribute: I18n.t("service.openIDConnectRedirects")})}/>}
-                    {!isEmpty(invalidRedirectUrls) && <ErrorIndicator
-                        msg={I18n.t("forms.invalidInput", {name: `URL: ${invalidRedirectUrls.join(", ")}`})}/>}
-                    {invalidRedirectUrlHttpNonLocalHost &&
-                        <span className="error-indication">{I18n.t("forms.invalidRedirectUrl")}</span>
+                    {(isEmpty(redirect_urls) && !initial) &&
+                        <ErrorIndicator
+                            msg={I18n.t("service.required", {attribute: I18n.t("service.openIDConnectRedirects")})}/>}
+                    {!isEmpty(invalidRedirectUrls) &&
+                        <ErrorIndicator
+                            msg={I18n.t("forms.invalidInput", {name: `URL: ${invalidRedirectUrls.join(", ")}`})}
+                            subMsg={invalidRedirectUrlHttpNonLocalHost ? I18n.t("forms.invalidRedirectUrl") : null}
+                        />
                     }
                 </div>
             }
@@ -726,13 +731,14 @@ class Service extends React.Component {
                                  placeholder={I18n.t("service.openIDConnectGrantsPlaceholder")}
                                  toolTip={I18n.t("service.openIDConnectGrantsTooltip")}
                                  required={true}
+                                 error={isEmpty(grants) && !initial}
                                  onChange={this.grantsChanged}/>
                     {(isEmpty(grants) && !initial) && <ErrorIndicator
                         msg={I18n.t("service.required", {attribute: I18n.t("service.openIDConnectGrants")})}/>}
                 </div>}
 
             {(isServiceRequest && connection_type === "openIDConnect" && !isServiceRequestDetails
-                && config.manage_enabled) &&
+                    && config.manage_enabled) &&
                 <div className="new-oidc-secret">
                     <InputField value={oidc_client_secret}
                                 name={I18n.t("service.oidc.oidcClientSecret")}

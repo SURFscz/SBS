@@ -23,7 +23,8 @@ export default function SelectField({
                                         onInputChange = null,
                                         copyClipBoard = false,
                                         isOptionDisabled = () => false,
-    required=false
+                                        required = false,
+                                        error = false
                                     }) {
     const styles = {
         multiValue: (base, state) => state.data.isFixed ? {
@@ -40,7 +41,7 @@ export default function SelectField({
             <div className="select-field-inner">
                 {creatable &&
                     <CreatableSelect
-                        className={`input-select-inner creatable`}
+                        className={`input-select-inner creatable ${error ? "error" : ""}`}
                         classNamePrefix={"select-inner"}
                         value={value}
                         isMulti={true}
@@ -52,20 +53,21 @@ export default function SelectField({
                         onChange={onChange}
                         options={options}
                     />}
-                {!creatable && <Select
-                    className={`input-select-inner ${small ? " small" : ""}`}
-                    classNamePrefix={"select-inner"}
-                    value={value}
-                    placeholder={placeholder}
-                    isDisabled={disabled}
-                    onChange={onChange}
-                    styles={isMulti ? styles : undefined}
-                    isMulti={isMulti}
-                    options={options}
-                    isSearchable={searchable}
-                    isClearable={clearable}
-                    isOptionDisabled={isOptionDisabled}
-                />}
+                {!creatable &&
+                    <Select
+                        className={`input-select-inner ${small ? " small" : ""}  ${error ? "error" : ""}`}
+                        classNamePrefix={"select-inner"}
+                        value={value}
+                        placeholder={placeholder}
+                        isDisabled={disabled}
+                        onChange={onChange}
+                        styles={isMulti ? styles : undefined}
+                        isMulti={isMulti}
+                        options={options}
+                        isSearchable={searchable}
+                        isClearable={clearable}
+                        isOptionDisabled={isOptionDisabled}
+                    />}
                 {copyClipBoard && <ClipBoardCopy
                     txt={isEmpty(value) ? "" : Array.isArray(value) ? value.map(v => v.label).join(", ") : value}
                     right={true}/>}
