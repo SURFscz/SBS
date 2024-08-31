@@ -183,8 +183,10 @@ class ServiceOverview extends React.Component {
             }
             invalidInputs[name] = !isEmpty(serviceElement) && !validUrlRegExp.test(serviceElement);
         });
-        invalidInputs["redirect_urls"] = !isEmpty(service.redirect_urls) && service.redirect_urls.some(url => !validRedirectUrlRegExp.test(url.value));
-        this.setState({invalidInputs: invalidInputs}, callback);
+        const invalidRedirectUrls = isEmpty(service.redirect_urls) ? null : service.redirect_urls
+            .filter(url => !validRedirectUrlRegExp.test(url.value))
+            .map(url => url.value);
+        this.setState({invalidInputs: invalidInputs, invalidRedirectUrls: invalidRedirectUrls}, callback);
     }
 
     cancelDialogAction = () => {
@@ -552,7 +554,8 @@ class ServiceOverview extends React.Component {
             hasAdministrators,
             service,
             validatingNetwork,
-            initial
+            initial,
+            invalidRedirectUrls
         } = this.state;
         const {manage_enabled} = this.props.config;
         const {
@@ -564,7 +567,7 @@ class ServiceOverview extends React.Component {
         const invalidIpNetworks = ip_networks.some(ipNetwork => ipNetwork.error || (ipNetwork.version === 6 && !ipNetwork.global));
         const scimInvalid = scim_enabled && !initial && isEmpty(scim_url);
         const oidcValid = !manage_enabled || !oidc_enabled ||
-            (!isEmpty(redirect_urls) && !isEmpty(grants) && !isEmpty(providing_organisation));
+            (!isEmpty(redirect_urls) && isEmpty(invalidRedirectUrls) && !isEmpty(grants) && !isEmpty(providing_organisation));
         const samlValid = !manage_enabled || !saml_enabled ||
             (!isEmpty(saml_metadata) || !isEmpty(saml_metadata_url));
 
@@ -638,7 +641,7 @@ class ServiceOverview extends React.Component {
     }
 
     isValidTab = tab => {
-        const {alreadyExists, invalidInputs, hasAdministrators, service, initial} = this.state;
+        const {alreadyExists, invalidInputs, hasAdministrators, service, initial, invalidRedirectUrls} = this.state;
         const {
             contact_email, ip_networks, redirect_urls, saml_metadata, saml_metadata_url, providing_organisation,
             oidc_enabled, saml_enabled, grants
@@ -664,7 +667,8 @@ class ServiceOverview extends React.Component {
             case "pamWebLogin":
                 return true;
             case "OIDC":
-                return !oidc_enabled || (!isEmpty(redirect_urls) && !isEmpty(grants) && !isEmpty(providing_organisation));
+                return !oidc_enabled ||
+                    (!isEmpty(redirect_urls) && isEmpty(invalidRedirectUrls) && !isEmpty(grants) && !isEmpty(providing_organisation));
             case "SAML":
                 return !saml_enabled || (!isEmpty(saml_metadata) || !isEmpty(saml_metadata_url));
             case "Export":
@@ -1326,15 +1330,16 @@ class ServiceOverview extends React.Component {
                                      placeholder={I18n.t("service.openIDConnectRedirectsPlaceholder")}
                                      toolTip={I18n.t("service.openIDConnectRedirectsTooltip")}
                                      required={true}
+                                     error={isEmpty(redirect_urls) || !isEmpty(invalidRedirectUrls)}
                                      onChange={selectedOptions => this.redirectUrlsChanged(selectedOptions, service)}/>
 
                         {isEmpty(redirect_urls) && <ErrorIndicator
                             msg={I18n.t("service.required", {attribute: I18n.t("service.openIDConnectRedirects")})}/>}
-                        {!isEmpty(invalidRedirectUrls) && <ErrorIndicator
-                            msg={I18n.t("forms.invalidInput", {name: `URL: ${invalidRedirectUrls.join(", ")}`})}/>}
-                        {invalidRedirectUrlHttpNonLocalHost &&
-                            <span className="error-indication">{I18n.t("forms.invalidRedirectUrl")}</span>
-                        }
+                        {!isEmpty(invalidRedirectUrls) &&
+                            <ErrorIndicator
+                            msg={I18n.t("forms.invalidInput", {name: `URL: ${invalidRedirectUrls.join(", ")}`})}
+                            subMsg={invalidRedirectUrlHttpNonLocalHost ? I18n.t("forms.invalidRedirectUrl") : null}
+                            />}
 
                         <SelectField value={grants}
                                      options={this.grantOptions.filter(option => Array.isArray(grants) && !grants.find(grant => grant.value === option.value))}
@@ -1344,6 +1349,7 @@ class ServiceOverview extends React.Component {
                                      placeholder={I18n.t("service.openIDConnectGrantsPlaceholder")}
                                      toolTip={I18n.t("service.openIDConnectGrantsTooltip")}
                                      required={true}
+                                     error={isEmpty(grants)}
                                      onChange={selectedOptions => this.grantsChanged(selectedOptions, service)}/>
                         {isEmpty(grants) &&
                             <ErrorIndicator msg={I18n.t("service.required", {
@@ -1453,6 +1459,7 @@ class ServiceOverview extends React.Component {
                 {!manageEnabled && <p>{I18n.t("service.export.exportDisabled")}</p>}
                 {manageEnabled && <p>{I18n.t(`service.export.${syncActivated ? "export" : "noExport"}`)}</p>}
                 {(syncActivated && manageEnabled) && <>
+                    <p>{service.exported_at}</p>
                     <InputField
                         value={service.exported_at ? dateFromEpoch(service.exported_at) : I18n.t("service.export.notExported")}
                         name={I18n.t("service.export.lastExportDate")}
