@@ -522,14 +522,12 @@ class CollaborationForm extends React.Component {
             return <SpinnerField/>
         }
         const disabledSubmit = !initial && !this.isValid();
-        const {user, config} = this.props;
+        const {user} = this.props;
         if (noOrganisations) {
             return this.renderNoOrganisations(user);
         }
         const unitHeaderName = (!isCollaborationRequest || autoCreateCollaborationRequest) ? I18n.t("models.collaborations.new") :
             I18n.t("models.collaborations.newCollaborationRequest")
-        const joinRequestUrl = (isNew || !allow_join_requests) ? I18n.t("collaboration.joinRequestUrlDisabled") :
-            `${config.base_url}/registration?collaboration=${collaboration.identifier}`;
         const accessAllowedToOrg = organisation && isUserAllowed(ROLES.ORG_MANAGER, user, organisation.id);
         const unitsRequired = !isCollaborationRequest && organisation && !isUserAllowed(ROLES.ORG_ADMIN, user, organisation.id)
             && !isEmpty((user.organisation_memberships.filter(member => member.organisation_id === organisation.id && member.role === "manager")[0] || {}).units);
@@ -614,13 +612,6 @@ class CollaborationForm extends React.Component {
                                 copyClipBoard={true}
                                 toolTip={I18n.t("collaboration.globalUrnTooltip")}
                                 disabled={true}/>
-
-                    {(!isCollaborationRequest && !isNew) &&
-                        <InputField value={joinRequestUrl}
-                                    name={I18n.t("collaboration.joinRequests")}
-                                    copyClipBoard={true}
-                                    toolTip={I18n.t("collaboration.joinRequestUrlTooltip")}
-                                    disabled={true}/>}
 
                     {(!isCollaborationRequest && !isNew) &&
                         <InputField value={collaboration.identifier}

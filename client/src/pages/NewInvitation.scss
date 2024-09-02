@@ -31,6 +31,30 @@
 
     }
 
+    .link-invitation-container {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        margin: 20px 0;
+
+        a {
+            display: flex;
+
+            svg {
+                width: 22px;
+            }
+        }
+
+        button {
+            max-width: 140px;
+        }
+
+        span.divider {
+            padding-top: 10px;
+            border-top: 1px solid $lighter-grey;
+        }
+    }
+
     .invitation-form {
         width: 80%;
 
@@ -40,7 +64,4 @@
 
     }
 
-    .preview-mail {
-        padding-top: 20px;
-    }
 }
