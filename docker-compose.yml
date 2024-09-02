@@ -2,6 +2,8 @@
 volumes:
   data:
     driver: "local"
+  cloudbeaver:
+    driver: "local"
 
 services:
   redis:
@@ -71,4 +73,4 @@ services:
     ports:
       - "8978:8978"
     volumes:
-      - "${PWD}/cloudbeaver:/opt/cloudbeaver/workspace"
+      - "cloudbeaver:/opt/cloudbeaver/workspace"
