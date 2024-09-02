@@ -30,7 +30,7 @@ const nl = {
         collaborationRequest: "Samenwerkingsaanvraag '{{name}}'",
         services: "Applicaties",
         service: "{{name}}",
-        serviceRequest: "Applicatie verzoek",
+        serviceRequest: "Applicatieregistratie",
         group: "Groep '{{name}}'",
         newGroup: "Nieuwe groep",
         profile: "Profiel",
@@ -161,7 +161,7 @@ const nl = {
         title: "Uitleg {{subject}}",
         impersonate: "Imitatie",
         services: "Applicaties",
-        serviceRequest: "Applicatieverzoek",
+        serviceRequest: "Applicatieregistratie",
         apiKeys: "Organisatie-API-tokens",
         tokens: "Applicatietokens",
         serviceGroups: "Applicatiegroepen"
@@ -958,7 +958,7 @@ const nl = {
         abbreviationPlaceHolder: "De korte naam van de applicatie",
         abbreviationTooltip: "De korte naam van een applicatie wordt gebruikt als prefix voor groepen aangemaakt door de applicatiegroepen van deze applicatie.<br/><br/>" +
             "Alleen getallen, alfanumerieke karakers en de lage streep zijn toegstaan.",
-        service_request: "Link voor applicatieverzoek",
+        service_request: "Link voor applicatieregistratie",
         service_requestTooltip: "De URL om een koppeling met de applicatie aan te vragen door een lid van samenwerking",
         service_requestError: "Vereist een valide URI en samenwerkingen moeten kunnen koppelen zonder toestemming",
         description: "Omschrijving",
