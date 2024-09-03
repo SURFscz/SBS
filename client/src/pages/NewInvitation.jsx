@@ -3,15 +3,17 @@ import moment from "moment";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-import {collaborationById, collaborationInvitations, collaborationInvitationsPreview, invitationExists} from "../api";
+import {collaborationById, collaborationInvitations, invitationExists} from "../api";
 import I18n from "../locale/I18n";
 import InputField from "../components/InputField";
+import {CopyToClipboard} from "react-copy-to-clipboard";
 import Button from "../components/Button";
 import {isEmpty, splitListSemantically, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {validEmailRegExp} from "../validations/regExps";
-
+import {ReactComponent as ChevronRight} from "../icons/chevron-right.svg";
+import {ReactComponent as ChevronLeft} from "../icons/chevron-left.svg";
 import "./NewInvitation.scss"
 import DateField from "../components/DateField";
 import {collaborationRoles} from "../forms/constants";
@@ -39,10 +41,6 @@ class NewInvitation extends React.Component {
             administrators: administrators,
             groups: [],
             selectedGroup: [],
-            fileName: null,
-            fileEmails: [],
-            fileTypeError: false,
-            fileInputKey: new Date().getMilliseconds(),
             intended_role: "member",
             message: "",
             membership_expiry_date: null,
@@ -57,7 +55,8 @@ class NewInvitation extends React.Component {
             loading: true,
             isAdminView: false,
             existingInvitations: [],
-            validating: false
+            validating: false,
+            showInviteByLink: false
         };
     }
 
@@ -103,8 +102,8 @@ class NewInvitation extends React.Component {
     };
 
     isValid = () => {
-        const {administrators, fileEmails, intended_role, expiry_date, existingInvitations, validating} = this.state;
-        return (!isEmpty(administrators) || !isEmpty(fileEmails)) && !isEmpty(intended_role) && !isEmpty(expiry_date)
+        const {administrators, intended_role, expiry_date, existingInvitations, validating} = this.state;
+        return !isEmpty(administrators) && !isEmpty(intended_role) && !isEmpty(expiry_date)
             && isEmpty(existingInvitations) && !validating;
     };
 
@@ -114,7 +113,6 @@ class NewInvitation extends React.Component {
             message,
             collaboration,
             expiry_date,
-            fileEmails,
             intended_role,
             selectedGroup,
             membership_expiry_date,
@@ -123,7 +121,7 @@ class NewInvitation extends React.Component {
         if (this.isValid()) {
             this.setState({loading: true});
             collaborationInvitations({
-                administrators: administrators.concat(fileEmails),
+                administrators: administrators,
                 message,
                 membership_expiry_date: membership_expiry_date ? membership_expiry_date.getTime() / 1000 : null,
                 intended_role: intended_role,
@@ -182,6 +180,11 @@ class NewInvitation extends React.Component {
         return membershipExpiryDate;
     }
 
+    toggleShowInviteByLink = e => {
+        stopEvent(e);
+        this.setState({showInviteByLink: !this.state.showInviteByLink});
+    }
+
     setInvitationExpiryDate = e => {
         const {membership_expiry_date} = this.state;
         this.setState({expiry_date: e}, () => {
@@ -190,29 +193,6 @@ class NewInvitation extends React.Component {
             }
         })
     }
-
-    tabChanged = activeTab => {
-        this.setState({activeTab: activeTab});
-        if (activeTab === "invitation_preview") {
-            this.setState({loading: true});
-            const {administrators, message, collaboration, intended_role, expiry_date, fileEmails} = this.state;
-            collaborationInvitationsPreview({
-                administrators: administrators.concat(fileEmails),
-                message,
-                intended_role: intended_role,
-                expiry_date: expiry_date.getTime() / 1000,
-                collaboration_id: collaboration.id
-            }).then(res => {
-                const htmlPreview = res.html.replace(/class="button" href/g, "nope");
-                this.setState({htmlPreview: htmlPreview, loading: false});
-            });
-        }
-    };
-
-    preview = disabledSubmit => (<div>
-        <div className={"preview-mail"} dangerouslySetInnerHTML={{__html: this.state.htmlPreview}}/>
-        {this.renderActions(disabledSubmit)}
-    </div>);
 
     selectedGroupsChanged = selectedOptions => {
         if (selectedOptions === null) {
@@ -223,72 +203,96 @@ class NewInvitation extends React.Component {
         }
     }
 
-    invitationForm = (fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, intended_role, message, expiry_date, disabledSubmit, groups, selectedGroup, membership_expiry_date, existingInvitations) =>
-        <div className={"invitation-form"}>
+    invitationForm = (initial, administrators, intended_role,
+                      message, expiry_date, disabledSubmit, groups, selectedGroup, membership_expiry_date, existingInvitations,
+                      showInviteByLink, collaboration) => {
+        return (
+            <div className="new-collaboration-invitation">
+                {!collaboration.disable_join_requests && <div className="link-invitation-container">
+                    <a href="/"
+                       onClick={this.toggleShowInviteByLink}>{I18n.t("collaborationInvitations.inviteWithLinkToggle")}
+                        {showInviteByLink ? <ChevronLeft/> : <ChevronRight/>}
+                    </a>
+                    {showInviteByLink && <>
+                        <p>{I18n.t("collaborationInvitations.inviteWithLinkInfo")}</p>
+                        <CopyToClipboard
+                            text={`${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`}>
+                            <Button txt={I18n.t("collaborationInvitations.inviteWithLinkCopy")}/>
+                        </CopyToClipboard>
+                        <span className="divider"/>
+                    </>}
+                </div>}
+                <p>{I18n.t("collaborationInvitations.inviteWithEmailInfo")}</p>
+                <div className="invitation-form">
+                    <EmailField addEmails={this.addEmails}
+                                removeMail={this.removeMail}
+                                name={I18n.t("invitation.invitees")}
+                                emails={administrators}
+                                error={!initial && isEmpty(administrators)}
+                                autoFocus={true}/>
+                    {(!initial && isEmpty(administrators)) &&
+                        <ErrorIndicator msg={I18n.t("invitation.requiredEmail")}/>}
 
-            <EmailField addEmails={this.addEmails}
-                        removeMail={this.removeMail}
-                        name={I18n.t("invitation.invitees")}
-                        emails={administrators}
-                        error={!initial && isEmpty(administrators) && isEmpty(fileEmails)}
-                        autoFocus={true}/>
-            {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) &&
-                <ErrorIndicator msg={I18n.t("invitation.requiredEmail")}/>}
+                    {!isEmpty(existingInvitations) && <ErrorIndicator
+                        msg={I18n.t(`invitation.${existingInvitations.length === 1 ? "existingInvitation" : "existingInvitations"}`,
+                            {emails: splitListSemantically(existingInvitations, I18n.t("service.compliancySeparator"))})}/>}
 
-            {!isEmpty(existingInvitations) && <ErrorIndicator
-                msg={I18n.t(`invitation.${existingInvitations.length === 1 ? "existingInvitation" : "existingInvitations"}`,
-                    {emails: splitListSemantically(existingInvitations, I18n.t("service.compliancySeparator"))})}/>}
+                    <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
+                                 options={this.intendedRolesOptions}
+                                 name={I18n.t("invitation.intendedRole")}
+                                 small={true}
+                                 toolTip={I18n.t("invitation.intendedRoleTooltip")}
+                                 placeholder={I18n.t("collaboration.selectRole")}
+                                 onChange={selectedOption => this.setState({intended_role: selectedOption ? selectedOption.value : null})}/>
 
-            <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
-                         options={this.intendedRolesOptions}
-                         name={I18n.t("invitation.intendedRole")}
-                         small={true}
-                         toolTip={I18n.t("invitation.intendedRoleTooltip")}
-                         placeholder={I18n.t("collaboration.selectRole")}
-                         onChange={selectedOption => this.setState({intended_role: selectedOption ? selectedOption.value : null})}/>
+                    <SelectField value={selectedGroup}
+                                 options={groups
+                                     .filter(group => !selectedGroup.find(selectedGroup => selectedGroup.value === group.value))}
+                                 name={I18n.t("invitation.groups")}
+                                 toolTip={I18n.t("invitation.groupsTooltip")}
+                                 isMulti={true}
+                                 placeholder={I18n.t("invitation.groupsPlaceHolder")}
+                                 onChange={this.selectedGroupsChanged}/>
 
-            <SelectField value={selectedGroup}
-                         options={groups
-                             .filter(group => !selectedGroup.find(selectedGroup => selectedGroup.value === group.value))}
-                         name={I18n.t("invitation.groups")}
-                         toolTip={I18n.t("invitation.groupsTooltip")}
-                         isMulti={true}
-                         placeholder={I18n.t("invitation.groupsPlaceHolder")}
-                         onChange={this.selectedGroupsChanged}/>
+                    <DateField value={membership_expiry_date}
+                               onChange={e => this.setState({membership_expiry_date: e})}
+                               allowNull={true}
+                               showYearDropdown={true}
+                               pastDatesAllowed={this.props.config.past_dates_allowed}
+                               minDate={this.getMembershipExpiryDate()}
+                               name={I18n.t("invitation.membershipExpiryDate")}
+                               toolTip={I18n.t("invitation.membershipExpiryDateTooltip")}/>
 
-            <DateField value={membership_expiry_date}
-                       onChange={e => this.setState({membership_expiry_date: e})}
-                       allowNull={true}
-                       showYearDropdown={true}
-                       pastDatesAllowed={this.props.config.past_dates_allowed}
-                       minDate={this.getMembershipExpiryDate()}
-                       name={I18n.t("invitation.membershipExpiryDate")}
-                       toolTip={I18n.t("invitation.membershipExpiryDateTooltip")}/>
+                    <InputField value={message} onChange={e => this.setState({message: e.target.value})}
+                                placeholder={I18n.t("invitation.inviteesMessagePlaceholder")}
+                                name={I18n.t("collaboration.message")}
+                                large={true}
+                                toolTip={I18n.t("invitation.inviteesTooltip")}
+                                multiline={true}/>
 
-            <InputField value={message} onChange={e => this.setState({message: e.target.value})}
-                        placeholder={I18n.t("invitation.inviteesMessagePlaceholder")}
-                        name={I18n.t("collaboration.message")}
-                        large={true}
-                        toolTip={I18n.t("invitation.inviteesTooltip")}
-                        multiline={true}/>
+                    <DateField value={expiry_date}
+                               onChange={this.setInvitationExpiryDate}
+                               allowNull={true}
+                               pastDatesAllowed={this.props.config.past_dates_allowed}
+                               maxDate={moment().add(31, "day").toDate()}
+                               name={I18n.t("invitation.expiryDate")}
+                               toolTip={I18n.t("invitation.expiryDateTooltip")}/>
+                    {(!initial && isEmpty(expiry_date)) &&
+                        <ErrorIndicator msg={I18n.t("invitation.requiredExpiryDate")}/>}
+                </div>
+            </div>
+        )
+    };
 
-            <DateField value={expiry_date}
-                       onChange={this.setInvitationExpiryDate}
-                       allowNull={true}
-                       pastDatesAllowed={this.props.config.past_dates_allowed}
-                       maxDate={moment().add(31, "day").toDate()}
-                       name={I18n.t("invitation.expiryDate")}
-                       toolTip={I18n.t("invitation.expiryDateTooltip")}/>
-            {(!initial && isEmpty(expiry_date)) && <ErrorIndicator msg={I18n.t("invitation.requiredExpiryDate")}/>}
-
-            {this.renderActions(disabledSubmit)}
-        </div>;
-
-    renderActions = disabledSubmit => (<section className="actions">
-        <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-        <Button disabled={disabledSubmit} txt={I18n.t("invitation.invite")}
-                onClick={this.submit}/>
-    </section>);
+    renderActions = disabledSubmit => {
+        return (
+            <section className="actions">
+                <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+                <Button disabled={disabledSubmit} txt={I18n.t("invitation.invite")}
+                        onClick={this.submit}/>
+            </section>
+        )
+    };
 
     render() {
         const {
@@ -303,14 +307,11 @@ class NewInvitation extends React.Component {
             cancelDialogAction,
             leavePage,
             message,
-            fileName,
-            fileInputKey,
-            fileTypeError,
-            fileEmails,
             groups,
             selectedGroup,
             loading,
-            existingInvitations
+            existingInvitations,
+            showInviteByLink
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -324,10 +325,10 @@ class NewInvitation extends React.Component {
                                 confirm={confirmationDialogAction}
                                 leavePage={leavePage}/>
             <div className="mod-new-collaboration-invitation">
-                <h2>{I18n.t("tabs.invitation_form")}</h2>
-                <div className="new-collaboration-invitation">
-                    {this.invitationForm(fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, intended_role, message, expiry_date, disabledSubmit, groups, selectedGroup, membership_expiry_date, existingInvitations)}
-                </div>
+                <h2>{I18n.t("collaborationInvitations.inviteWithEmail")}</h2>
+                {this.invitationForm(initial, administrators, intended_role, message, expiry_date, disabledSubmit,
+                    groups, selectedGroup, membership_expiry_date, existingInvitations, showInviteByLink, collaboration)}
+                {this.renderActions(disabledSubmit)}
             </div>
         </>);
     }
