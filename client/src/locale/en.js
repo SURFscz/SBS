@@ -2626,6 +2626,14 @@ const en = {
         title: "Access to {{name}}",
         subTitle: "To access application {{name}} you will have to be provisioned. This unfortunately takes some time, grab a cup of ☕️.",
         info: "You will be redirected in <span class='counter'>{{counter}}</span> seconds."
+    },
+    collaborationInvitations: {
+        inviteWithLink: "Invite with link",
+        inviteWithLinkToggle: "Or invite users with a link",
+        inviteWithLinkInfo: "Share the link with which membership can be requested. You can approve or reject these requests.",
+        inviteWithLinkCopy: "Copy link",
+        inviteWithEmail: "Invite with email",
+        inviteWithEmailInfo: "Send an invtiation to one or more emails. Users can become a member directly with the link in the email.",
     }
 };
 

@@ -7,7 +7,8 @@ import {
     collaborationIdByIdentifier,
     collaborationLiteById,
     createCollaborationMembershipRole,
-    deleteCollaborationMembership, deleteInvitationByHash,
+    deleteCollaborationMembership,
+    deleteInvitationByHash,
     health,
     invitationAccept,
     invitationByHash,
@@ -24,7 +25,6 @@ import {ReactComponent as ServicesIcon} from "../icons/services.svg";
 import {ReactComponent as MemberIcon} from "../icons/groups.svg";
 import {ReactComponent as TimerIcon} from "../icons/streamline/timer2.svg";
 import {ReactComponent as GroupsIcon} from "../icons/ticket-group.svg";
-import {ReactComponent as CopyIcon} from "../icons/duplicate.svg";
 import {ReactComponent as UserTokensIcon} from "../icons/connections.svg";
 import {ReactComponent as MemberStatusIcon} from "@surfnet/sds/icons/functional-icons/id-1.svg";
 import {ReactComponent as JoinRequestsIcon} from "../icons/single-neutral-question.svg";
@@ -798,18 +798,9 @@ class CollaborationDetail extends React.Component {
     }
 
     getUnitHeader = (user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration) => {
-        const joinRequestUrl = `${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`;
         const iconListItems = [
             this.getMemberIconListItem(collaboration)
         ];
-        if (!collaboration.disable_join_requests) {
-            iconListItems.push({
-                Icon: <CopyIcon/>,
-                value: <a href={joinRequestUrl} target="_blank" rel="noopener noreferrer">
-                    {I18n.t("collaboration.joinRequestsHeader")}
-                </a>
-            });
-        }
         const collaborationStatus = this.getCollaborationStatus(collaboration);
         if (collaborationStatus) {
             iconListItems.push({
@@ -892,7 +883,7 @@ class CollaborationDetail extends React.Component {
                                isOpen={joinRequestDialogOpen}
                                user={user}
                                serviceEmails={serviceEmails}
-                                            adminEmails={adminEmails}
+                               adminEmails={adminEmails}
                                refresh={callback => refreshUser(callback)}
                                history={this.props.history}
                                close={() => this.setState({joinRequestDialogOpen: false})}/>
