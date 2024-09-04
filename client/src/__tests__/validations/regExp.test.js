@@ -57,17 +57,24 @@ test("Valid urls", () => {
 });
 
 test("Valid redirect urls", () => {
-    expect(validRedirectUrlRegExp.test("https://localhost/api/scim_mock")).toEqual(true);
-    expect(validRedirectUrlRegExp.test("http://localhost/redirect")).toEqual(true);
-    expect(validRedirectUrlRegExp.test("http://localhost")).toEqual(true);
-    expect(validRedirectUrlRegExp.test("http://localhost:8080/redirect/extra")).toEqual(true);
-    expect(validRedirectUrlRegExp.test("https://demo-sp.sram.surf.nl/redirect")).toEqual(true);
-
-    expect(validRedirectUrlRegExp.test("https://google.nl:433/redirect")).toEqual(true);
-
-    expect(validRedirectUrlRegExp.test("http://google")).toEqual(false);
-    expect(validRedirectUrlRegExp.test("ssh://")).toEqual(false);
-    expect(validRedirectUrlRegExp.test("nope")).toEqual(false);
-    expect(validRedirectUrlRegExp.test("ssh://demo-sp.sram.surf.nl:8080")).toEqual(false);
-    expect(validRedirectUrlRegExp.test("ftp://demo-sp.sram.surf.nl:8080")).toEqual(false);
+    const redirectURLs = {
+        "https://localhost/api/scim_mock": true,
+        "http://localhost/redirect": true,
+        "http://localhost": true,
+        "http://localhost:8080/redirect/ports": true,
+        "https://demo-sp.sram.surf.nl/redirect": true,
+        "http://127.0.0.0": true,
+        "http://127.0.0.0:9/test": true,
+        "http://127.255.255.255": true,
+        "http://127.255.255.255:999": true,
+        //Good luck to you, let's keep the regexp simple
+        "http://127.nope": true,
+        "http://google": false,
+        "ssh://": false,
+        "ssh://demo-sp.sram.surf.nl:8080": false,
+        "http://127n": false,
+        "http://128.0.0.1": false,
+    }
+    Object.entries(redirectURLs)
+        .forEach((arr) => expect(validRedirectUrlRegExp.test(arr[0])).toEqual(arr[1]));
 });
