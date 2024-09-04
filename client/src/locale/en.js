@@ -2591,7 +2591,7 @@ const en = {
         unitsPlaceHolder: "Select an unit",
         collaborationRequest: "Organisational units (optional)",
         filter: "All units",
-        invitationLabel: "COs of which units to be managed",
+        invitationLabel: "Collaborations of which units to be managed",
         invitationTooltip: "Select the organisation units to scope the responsibilities of the organisation manager",
         all: "All units",
         specify: "Specify units",
@@ -2604,7 +2604,7 @@ const en = {
         loginPrevTitle: "Could you login previously?",
         loginPrev: [
             "Make sure you are using the correct account.",
-            "Check if you are still a member of the CO that organised your permission.",
+            "Check if you are still a member of the collaboration that organised your permission.",
             "If something else is going wrong, please contact us at " +
             "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a>."
         ],
