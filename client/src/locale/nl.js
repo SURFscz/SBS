@@ -2635,7 +2635,6 @@ const nl = {
         inviteWithEmail: "Uitnodigen via e-mail",
         inviteWithEmailInfo: "Verstuur een uitnodiging naar éém of meerder e-mailadressen. Met de link in de e-mail kan een gebruiker direct lid worden.",
     }
-
 };
 
 export default nl;

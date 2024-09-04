@@ -1051,7 +1051,7 @@ class ServiceOverview extends React.Component {
         const {description, hashedToken, initial, tokenType} = this.state;
         return (<div className="api-key-container">
             <div>
-                <a href={"/cancel"} className={"back-to-api-keys"} onClick={this.cancelSideScreen}>
+                <a href={"/#cancel"} className={"back-to-api-keys"} onClick={this.cancelSideScreen}>
                     <ChevronLeft/>{I18n.t("serviceDetails.backToApiKeys")}
                 </a>
             </div>
@@ -1446,20 +1446,17 @@ class ServiceOverview extends React.Component {
             <div className="export">
                 <CheckBox name={"oidc_enabled"}
                           value={service.oidc_enabled || false}
-                          tooltip={I18n.t("service.oidc.oidcEnabledTooltip")}
                           info={I18n.t("service.oidc.oidcClient")}
                           readOnly={true}
                 />
                 <CheckBox name={"saml_enabled"}
                           value={service.saml_enabled || false}
-                          tooltip={I18n.t("service.saml.samlEnabledTooltip")}
                           info={I18n.t("service.saml.samlClient")}
                           readOnly={true}
                 />
                 {!manageEnabled && <p>{I18n.t("service.export.exportDisabled")}</p>}
                 {manageEnabled && <p>{I18n.t(`service.export.${syncActivated ? "export" : "noExport"}`)}</p>}
                 {(syncActivated && manageEnabled) && <>
-                    <p>{service.exported_at}</p>
                     <InputField
                         value={service.exported_at ? dateFromEpoch(service.exported_at) : I18n.t("service.export.notExported")}
                         name={I18n.t("service.export.lastExportDate")}
