@@ -1087,7 +1087,7 @@ const en = {
         },
         aup: {
             title: "Reset AUP",
-            confirmation: "Resetting the AUP will require all user of this application '{{name}}' to accept its AUP again. Do you want that?",
+            confirmation: "Resetting the AUP will require all users of this application '{{name}}' to accept its AUP again. Do you want that?",
             flash: "Acceptance of the AUP for application {{name}} has been reset for all users"
         },
         pamWebSSO: {
