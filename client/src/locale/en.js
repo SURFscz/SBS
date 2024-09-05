@@ -1814,8 +1814,8 @@ const en = {
         declineConfirmation: "Are you sure you want to decline this request?",
         deleteConfirmation: "Are you sure you want to delete this request?",
         flash: {
-            declined: "Application Connect request for application {{name}} was declined",
-            accepted: "Application Connect request for application {{name}} was accepted",
+            declined: "Application connection request for application {{name}} was declined",
+            accepted: "Application connection request for application {{name}} was accepted",
             deleted: "Application Connect request for application {{name}} was deleted",
             notFound: "This request has already been accepted / declined."
         }
