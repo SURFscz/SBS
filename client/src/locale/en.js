@@ -2562,7 +2562,7 @@ const en = {
         availableMultiple: " & available for {{count}} organisations",
         all: "all",
         launch: "Open the application",
-        visit: "visit the website"
+        visit: "Visit the website"
     },
     myRequests: {
         requestType: "Request type",
