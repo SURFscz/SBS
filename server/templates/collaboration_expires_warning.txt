@@ -10,5 +10,5 @@ Click the link below to view this collaboration.
 {{ salutation }},
 
 Please login and change the end date of {{ collaboration.name }} to avoid that users of this collaboration
-        can not login anymore on the applications of this collaboration.
+        can not login anymore to the applications of this collaboration.
 {% endblock %}

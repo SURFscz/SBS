@@ -1139,7 +1139,7 @@ const nl = {
             none: "None"
         },
         openIDConnectRedirects: "OpenID Connect redirect URL's",
-        openIDConnectRedirectsPlaceholder: "https://application.com/redirect",
+        openIDConnectRedirectsPlaceholder: "https://applicatie.com/redirect",
         openIDConnectRedirectsTooltip: "De redirect URL nadat de user is ingelogd; moet volledig overeenkomen.",
         samlMetadata: "SAML metadata",
         samlMetadataURL: "SAML metadata URL",
@@ -1229,7 +1229,7 @@ const nl = {
             samlDisabledExclusivity: "SAML protocol kan niet worden aangezet, omdat het OIDC protocol actief is"
         },
         export: {
-            exportDisabled: "TDeze applicatie zal niet worden extern worden gesynchroniseerd, omdat deze feature uitgeschakeld is in deze omgeving",
+            exportDisabled: "Deze applicatie zal niet worden extern worden gesynchroniseerd, omdat deze feature uitgeschakeld is in deze omgeving",
             noExport: "Deze applicatie zal niet worden extern worden gesynchroniseerd, omdat zowel OIDC als SAML uitgeschakeld zijn.",
             export: "Deze applicatie zal extern worden gesynchroniseerd, omdat OIDC of SAML ingeschakeld zijn.",
             lastExportDate: "Laatse synchronisatie datum",
@@ -1990,7 +1990,7 @@ const nl = {
         jobName: "Naam",
         jobNextRun: "Geplande run-time",
         runOutdatedRequestsInfo: "Voer de cron-taak uit om alle verouderde open join-verzoeken en nieuwe samenwerkingsverzoeken voor de geconfigureerde drempel te rapporteren",
-        runOpenRequestsInfo: "Run the weekly cron job to report all open requests for CO, Org and application admins",
+        runOpenRequestsInfo: "Run the weekly cron job to report all open requests for CO, Org and Application admins",
         runOutdatedRequests: "Run",
         runCleanedRequestsInfo: "Voer de cron-taak uit om alle verouderde goedgekeurde / geweigerde aanmeldingsverzoeken en samenwerkingsverzoeken voor de geconfigureerde drempel te verwijderen",
         runCleanedRequests: "Verwijder",
@@ -2050,7 +2050,7 @@ const nl = {
         },
         scim: {
             info: "If enabled there is a mock remote SCIM client available to test the SCIM events." +
-                "Configure a applicatie with the following SCIM URL to start testing the SCIM functionality",
+                "Configure an application with the following SCIM URL to start testing the SCIM functionality",
             services: "SCIM enabled applicaties",
             stats: "All API calls and state updates send to the mock SCIM endpoints are stored in an in-memory database.",
             retrieveStats: "Fetch stats",

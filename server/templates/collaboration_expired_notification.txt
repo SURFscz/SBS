@@ -10,5 +10,5 @@ Click the link below to view this collaboration.
 {{ salutation }},
 
 Please login and change the end date of {{ collaboration.name }} if you want users of this collaboration
-        to login again on the applications of this collaboration.
+        to login again to the applications of this collaboration.
 {% endblock %}
