@@ -1601,7 +1601,7 @@ const en = {
         serviceConnectionRequestResendConfirmation: "Are you sure you want to resend this application connection request?",
     },
     organisationServices: {
-        title: "Applications for application {{name}}",
+        title: "Applications for organisation {{name}}",
         connectedServices: "Connected applications to {{name}}",
         noServices: "This organisation has no applications connected.",
         searchServices: "Search, select and add applications to the available applications within organisation {{name}}.",
