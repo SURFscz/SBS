@@ -1,11 +1,11 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SURF service admin invite{% endblock %}
+{% block title %}SURF application admin invite{% endblock %}
 {% block content %}
 
-{{ invitation.user.name }} invited you as an admin for service
+{{ invitation.user.name }} invited you as an admin for application
 {{ invitation.service.name }}.
 
-As a service admin you can manage service properties, manage which organisations can use this service, and invite other service admins for this service.
+As an application admin you can manage application properties, manage which organisations can use this application, and invite other application admins for this application.
 
 {% if invitation.message is defined and invitation.message != None and invitation.message|length %}
 
@@ -16,7 +16,7 @@ Personal Message from {{ invitation.user.name }}:
 {% endif %}
 
 To accept this invitation, please click 'Login to accept this invitation'. After logging in you can review and
-accept the invitation and become an admin of the service.
+accept the invitation and become an admin of the application.
 
 If you do not want to accept this invitation, please click 'Decline this invitation' or simply ignore this email.
 The invitation automatically will be suspended after {{ expiry_period }}.

@@ -1,15 +1,15 @@
 {% extends "mail_layout.html" %}
-{% block title %}SURF service registration{% endblock %}
+{% block title %}SURF application registration{% endblock %}
 {% block content %}
 
 <div class="mail-head" style="background-color: #f5f5f5;padding: 30px 0 20px 60px;">
     <p class="title" style="font-weight: 600;font-size: 38px;line-height: 38px; margin: 0;">
-        Service registration
+        Application registration
     </p>
     <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
-        {{ user.name }} has requested to register a service {{ service_request.name }}.</p>
+        {{ user.name }} has requested to register an application {{ service_request.name }}.</p>
     <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
-        Follow the link to view this service request:
+        Follow the link to view this application request:
         <a href="{{base_url}}/service-request/{{service_request.id}}">{{base_url}}/service-request/{{service_request.id}}</a>
     </p>
 </div>
@@ -21,7 +21,7 @@
 </div>
 <div class="mail-end" style="padding: 30px 0 0 60px;">
 <p style="margin: 0;">{{ salutation }},</p>
-<p style="margin: 0;">The user {{ user.name }} has requested to register a service {{ service_request.name }}.</p>
+<p style="margin: 0;">The user {{ user.name }} has requested to register an application {{ service_request.name }}.</p>
 </div>
 
 
