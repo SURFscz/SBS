@@ -516,7 +516,7 @@ const en = {
         deleted_collaboration_requests: {
             title: "Deleted requests for collaborations",
             searchPlaceHolder: "Search for requests...",
-            noEntities: "No outdated denied / approved requests for collaborations",
+            noEntities: "No outdated declined / approved requests for collaborations",
         },
         invitation: {
             welcome: "Welcome to SURF Research Access Management. Here access to research applications for research collaborations is managed.",
@@ -570,7 +570,7 @@ const en = {
         deletedJoinRequests: {
             title: "Deleted collaboration join requests",
             searchPlaceHolder: "Search for requests...",
-            noEntities: "No outdated approved / denied join requests",
+            noEntities: "No outdated approved / declined join requests",
         },
         serviceConnectionRequests: {
             backToServiceConnectionRequests: "Back to all connection requests",
@@ -1440,10 +1440,10 @@ const en = {
         projectMember: "I am a member of this project",
         other: "Other, please explain",
         flash: {
-            declined: "Join request for collaboration {{name}} was denied.",
+            declined: "Join request for collaboration {{name}} was declined.",
             accepted: "Join request for collaboration {{name}} was accepted.",
             deleted: "Join request for collaboration {{name}} was deleted.",
-            notFound: "This join request has already been accepted / denied.",
+            notFound: "This join request has already been accepted / declined.",
             alreadyMember: "You are already a member of collaboration {{name}} and can therefore not accept this invitation"
         }
     },
@@ -1591,7 +1591,7 @@ const en = {
             created_at: "Created",
             message: "Message"
         },
-        actionsTooltip: "Delete the application connection request. The request can henceforth not be approved or denied anymore.",
+        actionsTooltip: "Delete the application connection request. The request can henceforth not be approved or declined anymore.",
         serviceConnectionRequests: "Application connection Requests",
         serviceConnectionRequestDeleted: "Deleted request to connect application {{service}} to collaboration {{collaboration}}.",
         serviceConnectionRequestResend: "Resent request to connect application {{service}} to collaboration {{collaboration}}.",
@@ -1776,26 +1776,26 @@ const en = {
         title: {
             open: "{{requester}} has requested to create a new collaboration '{{name}}'.",
             approved: "{{requester}} collaboration request was approved.",
-            denied: "{{requester}} collaboration request was denied."
+            denied: "{{requester}} collaboration request was declined."
         },
         request: "Request {{id}}",
         requester: "Requester",
         approved: "Approved",
-        rejectionReason: "Denied reason",
-        denyConfirmation: "Are you sure you want to deny this collaboration request?",
+        rejectionReason: "Declined reason",
+        denyConfirmation: "Are you sure you want to decline this collaboration request?",
         deleteConfirmation: "Are you sure you want to delete this collaboration request?",
         approve: "Approve",
-        deny: "Deny",
+        deny: "Decline",
         status: "Status",
         statuses: {
             all: "All ({{nbr}})",
             open: "Open",
-            denied: "Denied",
+            denied: "Declined",
             approved: "Approved"
         },
         flash: {
             approved: "Collaboration {{name}} has been created and the collaboration Request has been deleted",
-            denied: "Collaboration Request for {{name}} has been denied",
+            denied: "Collaboration Request for {{name}} has been declined",
             deleted: "Collaboration Request for {{name}} has been deleted",
         }
     },
@@ -1839,7 +1839,7 @@ const en = {
             "2": "Updated",
             "3": "Deleted",
             approved: "Approved",
-            denied: "Denied"
+            denied: "Declined"
         },
         overview: "{{action}} {{collection}}{{name}}",
         none: "No history to display",
@@ -1902,28 +1902,28 @@ const en = {
         title: {
             open: "{{requester}} has requested to register the application '{{name}}'.",
             approved: "{{requester}} application registration was approved.",
-            denied: "{{requester}} application registration was denied."
+            denied: "{{requester}} application registration was declined."
         },
         request: "Request {{id}}",
         requester: "Requester",
         approved: "Approved",
-        rejectionReason: "Denied reason",
-        denyConfirmation: "Are you sure you want to deny this application registration?",
+        rejectionReason: "Declined reason",
+        denyConfirmation: "Are you sure you want to decline this application registration?",
         deleteConfirmation: "Are you sure you want to delete this application registration?",
         approve: "Approve",
-        deny: "Deny",
+        deny: "Decline",
         metaData: "The SAML metadata",
         showMetaData: "Show the SAML metadata",
         status: "Status",
         statuses: {
             all: "All ({{nbr}})",
             open: "Open",
-            denied: "Denied",
+            denied: "Declined",
             approved: "Approved"
         },
         flash: {
             approved: "Application {{name}} has been created",
-            denied: "Application registration request for {{name}} has been denied",
+            denied: "Application registration request for {{name}} has been declined",
             deleted: "Application registration request for {{name}} has been deleted",
         }
     },
@@ -1992,7 +1992,7 @@ const en = {
         runOutdatedRequestsInfo: "Run the cron job to report all open outdated join requests and new collaboration requests for the configured threshold",
         runOpenRequestsInfo: "Run the weekly cron job to report all open requests for CO, Org and Application admins",
         runOutdatedRequests: "Run",
-        runCleanedRequestsInfo: "Run the cron job to delete all outdated approved / denied join requests and collaboration requests for the configured threshold",
+        runCleanedRequestsInfo: "Run the cron job to delete all outdated approved / declined join requests and collaboration requests for the configured threshold",
         runCleanedRequests: "Delete",
         runSweepResults: "Run the cron job to sweep all SCIM enabled applications",
         runSweep: "Run",
@@ -2425,7 +2425,7 @@ const en = {
         successInfo: "You can close this window.",
         timeOut: "Your session has expired",
         timeOutInfo: " Please go back to the application you were trying to log in to and try again.",
-        denied: "Permission denied",
+        denied: "Permission declined",
         deniedInfo: "Unfortunately, you don't have access to this application.",
         contact: "Please contact <a href='mailto:{{support}}'>{{support}}</a> to arrange access to this application."
     },
