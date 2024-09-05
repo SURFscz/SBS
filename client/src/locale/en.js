@@ -636,7 +636,7 @@ const en = {
         },
         scimServices: {
             searchPlaceHolder: "Search for SCIM applications..",
-            noEntities: "There are no application configured with the mock SCIM endpoint",
+            noEntities: "There are no applications configured with the mock SCIM endpoint",
         }
     },
     user: {
