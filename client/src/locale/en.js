@@ -2206,7 +2206,7 @@ const en = {
     notFound: {
         invitationNotFound: "This invitation does not exist (anymore). The invitation has probably already been used.</br>" +
             "Ask the person who invited you to send you a new one.",
-        invalidSecondFactorUUID: "The link has expired. Please go back to the application where you we're trying to log in and try again.",
+        invalidSecondFactorUUID: "The link has expired. Please go back to the application where you were trying to log in and try again.",
         invalidPamWebSSO: "Your session has expired. Please go back to the application you were trying to log in to and try again.",
         msg: "We can't seem to find that page. Sorry for that.</br></br>" +
             "Start over on the <a href='{{base_url}}'>homepage</a> or contact us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
