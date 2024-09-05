@@ -1,12 +1,12 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SRAM request to delete service{% endblock %}
+{% block title %}SRAM request to delete application{% endblock %}
 {% block content %}
 
 Hi,
 User {{ current_user.name }} ({{ current_user.email }}") has requested
-    to delete service {{ service.name }} on environment {{ environment }}
+    to delete application {{ service.name }} on environment {{ environment }}
     at {{ date }}:
 
-Vist {{ url }} to see if this requested can be granted. After deletion do not forget to delete the service in eduTeams.
+Vist {{ url }} to see if this requested can be granted. After deletion do not forget to delete the application in eduTeams.
 
 {% endblock %}

@@ -22,7 +22,7 @@
         {% endif %}
 
         {% if service_connection_requests|length -%}
-            The following {{ service_connection_requests|length }} service connection requests are outstanding:
+            The following {{ service_connection_requests|length }} application connection requests are outstanding:
                 {% for scr in service_connection_requests %}
                     {% if scr.pending_organisation_approval == True %}
                         {{ scr.collaboration.name }}: {{ base_url }}/organisations/{{ scr.collaboration.organisation_id }}/serviceConnectionRequests
@@ -34,7 +34,7 @@
         {% endif %}
 
         {% if service_requests|length -%}
-            The following {{ service_requests|length }} service requests are outstanding:
+            The following {{ service_requests|length }} application requests are outstanding:
                 {% for sr in service_requests %}
                         {{ sr.name }}: {{ base_url }}/home/service_requests
                 {% endfor %}
