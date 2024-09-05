@@ -1,5 +1,5 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SURF application Connection request{% endblock %}
+{% block title %}SURF application connection request{% endblock %}
 {% block content %}
 
 {{ salutation }},
