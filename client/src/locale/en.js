@@ -2106,8 +2106,8 @@ const en = {
         orgManager: "organisation manager",
         coAdmin: "admin",
         coMember: "member",
-        serviceAdmin: "application admin",
-        serviceManager: "application manager",
+        serviceAdmin: "Application admin",
+        serviceManager: "Application manager",
         user: "user"
     },
     actionRoles: {
