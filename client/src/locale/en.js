@@ -1606,7 +1606,7 @@ const en = {
         noServices: "This organisation has no applications connected.",
         searchServices: "Search, select and add applications to the available applications within organisation {{name}}.",
         deleteServiceTooltip: "Make this application unavailable in the organisation {{name}}. <strong>Note</strong>: the application itself is NOT deleted. It is only not available anymore for the members of the collaborations on this organisation",
-        noAccessAllowed: "This application cannot be enabled for all collaborations, because none collaborations can connect.",
+        noAccessAllowed: "This application cannot be enabled for all collaborations, because no collaborations can connect.",
         notAllowedOrganisation: "This application cannot be enabled for all collaborations, because it does not allow automatic connections. Connections can still be requested by individual collaborations in your organisation.",
         notEnabledOrganisation: "This application cannot be enabled for all collaborations, because the application does not allow access for this organisation.",
         serviceRestrictedOrganisation: "This application cannot be made mandatory for all collaborations, because this organisation can only link SURF applications.",
