@@ -1816,7 +1816,7 @@ const en = {
         flash: {
             declined: "Application connection request for application {{name}} was declined",
             accepted: "Application connection request for application {{name}} was accepted",
-            deleted: "Application Connect request for application {{name}} was deleted",
+            deleted: "Application connection request for application {{name}} was deleted",
             notFound: "This request has already been accepted / declined."
         }
     },
