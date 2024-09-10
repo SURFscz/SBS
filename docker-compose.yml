@@ -66,7 +66,7 @@ services:
       - "${PWD}/etc/init.sql:/docker-entrypoint-initdb.d/init.sql:ro"
 
   beaver:
-    image: "dbeaver/cloudbeaver:latest"
+    image: "docker.io/dbeaver/cloudbeaver:latest"
     restart: "always"
     links:
       - db
