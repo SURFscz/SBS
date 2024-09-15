@@ -10,8 +10,9 @@ from server.auth.security import confirm_write_access, current_user_id, confirm_
 from server.cron.scim_sweep_services import scim_sweep_services
 from server.db.audit_mixin import metadata
 from server.db.db import db
+from server.db.defaults import SERVICE_TOKEN_PAM
 from server.db.domain import Service, ServiceMembership, User, Organisation, OrganisationMembership, \
-    OrganisationInvitation, Collaboration, CollaborationMembership, Group
+    OrganisationInvitation, Collaboration, CollaborationMembership, Group, ServiceToken
 from server.mail import mail_feedback
 from server.test.seed import seed
 
@@ -216,6 +217,20 @@ def composition():
     check_seed_allowed("composition")
 
     return current_app.app_config, 200
+
+
+@system_api.route("/pam-services", strict_slashes=False, methods=["GET"])
+@json_endpoint
+def pam_services():
+    confirm_write_access()
+
+    services = Service.query \
+        .join(Service.service_tokens) \
+        .filter(Service.pam_web_sso_enabled == True) \
+        .filter(ServiceToken.token_type == SERVICE_TOKEN_PAM) \
+        .all()  # noqa: E712
+
+    return services, 200
 
 
 @system_api.route("/clear-audit-logs", strict_slashes=False, methods=["DELETE"])

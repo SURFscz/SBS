@@ -63,7 +63,7 @@
         "test": "DANGEROUSLY_DISABLE_HOST_CHECK=true GENERATE_SOURCEMAP=false react-scripts test --transformIgnorePatterns 'node_modules/(?!i18n-js)/'",
         "analyze": "source-map-explorer build/static/js/main.*.js "
     },
-    "proxy": "http://sbs-server:8080/",
+    "proxy": "http://localhost:8080/",
     "eslintConfig": {
         "extends": "react-app"
     },
