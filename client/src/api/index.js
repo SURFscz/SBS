@@ -369,7 +369,7 @@ export function deleteServiceRequest(id) {
 }
 
 export function parseSAMLMetaData(metaDataXML, metaDataURL) {
-    const body = { meta_data_xml: metaDataXML, meta_data_url: metaDataURL};
+    const body = {meta_data_xml: metaDataXML, meta_data_url: metaDataURL};
     return postPutJson("/api/service_requests/metadata/parse", body, "post", false);
 }
 
@@ -1070,12 +1070,28 @@ export function tagsByOrganisation(organisationId) {
 }
 
 //pam-weblogin
+export function pamServices() {
+    return fetchJson("/api/system/pam-services");
+}
+
+export function pamStart(token, userAttribute, userIdentifier) {
+    const headers = {Authorization: `bearer ${token}`};
+    const body = {user_id: userIdentifier, attribute: userAttribute};
+    return postPutJson("/pam-weblogin/start", body, "POST", false, headers);
+}
+
 export function pamWebSSOSession(serviceAbbreviation, sessionId) {
     return fetchJson(`/pam-weblogin/${serviceAbbreviation}/${sessionId}`, {}, {}, false);
 }
 
 export function pollPamWebSSO(sessionId) {
     return fetchJson(`/pam-weblogin/status/success/${sessionId}`, {}, {}, false);
+}
+
+export function checkPamPin(token, sessionId, pin) {
+    const headers = {Authorization: `bearer ${token}`};
+    const body = {session_id: sessionId, pin: pin};
+    return postPutJson("/pam-weblogin/check-pin", body, "POST", true, headers);
 }
 
 //ServiceTokens

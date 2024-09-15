@@ -59,6 +59,7 @@ import Scim from "./Scim";
 import CheckBox from "../components/CheckBox";
 import ClipBoardCopy from "../components/redesign/ClipBoardCopy";
 import Stats from "./Stats";
+import PAM from "./PAM";
 
 const options = [25, 50, 100, 150, 200, 250, 500].map(nbr => ({value: nbr, label: nbr}));
 
@@ -413,6 +414,17 @@ class System extends React.Component {
             <div className="mod-system">
                 <section className={"info-block-container"}>
                     <Stats {...this.props}/>
+                </section>
+            </div>
+        </div>)
+    }
+
+    getPamTab = () => {
+        return (<div key="pam" name="pam" label={I18n.t("home.tabs.pam")}
+                     icon={<FontAwesomeIcon icon="parachute-box"/>}>
+            <div className="mod-system">
+                <section className={"info-block-container"}>
+                    <PAM {...this.props}/>
                 </section>
             </div>
         </div>)
@@ -1426,7 +1438,8 @@ class System extends React.Component {
             this.getSuspendedUsersTab(currentlySuspendedUsers, resetTOTPRequestedUsers),
             this.getUserLoginTab(userLoginStats),
             this.getScimTab(),
-            this.getStatsTab()
+            this.getStatsTab(),
+            this.getPamTab()
         ]
 
         return (

@@ -118,7 +118,8 @@ const en = {
             details: "Details & settings",
             orgUsers: "Users",
             scim: "SCIM",
-            stats: "Stats"
+            stats: "Stats",
+            pam: "PAM"
         }
     },
     forms: {
@@ -2094,6 +2095,28 @@ const en = {
             requester: "Requester",
             organisation_name: "ORG name",
             service_name: "Application name",
+        },
+        pam: {
+            service: "PAM services",
+            serviceTooltip: "All PAM-enabled services with a PAM token",
+            pamToken: "PAM token",
+            pamTokenTooltip: "The raw / unhashed PAM token you just (?) created for the selected service",
+            userAttribute: "User attribute",
+            userAttributeTooltip: "The user attribute is provided by the PAM web-module to uniquely identify the user by this attribute",
+            userIdentifier: "User identifier",
+            userIdentifierTooltip: "The user identifier is the value to lookup the user by the chosen User attribute",
+            start: "Start",
+            reset: "Reset",
+            steps: "PAM weblogin steps",
+            startSessionResults: "Start PAM session results",
+            startSessionResultsCached: "PAM session successfully cached",
+            startSessionErrors: "Start PAM session errors",
+            sessionResult: "PAM session details",
+            pin: "Pin",
+            info: "Info",
+            pollResult: "Pol session results",
+            validatePinResult: "Validate PIN code results",
+            memberships: "Memberships"
         }
     },
     access: {
