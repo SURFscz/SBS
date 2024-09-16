@@ -1,3 +1,4 @@
+import base64
 import io
 import random
 import string
@@ -5,14 +6,13 @@ import uuid
 from datetime import timedelta
 
 import qrcode
-import base64
 from flasgger import swag_from
-from flask import Blueprint, request as current_request, current_app, session
+from flask import Blueprint, request as current_request, current_app, session, jsonify
 from werkzeug.exceptions import NotFound, Forbidden, HTTPException
 
 from server.api.base import json_endpoint
-from server.api.service import user_service
 from server.auth.security import current_user_id
+from server.auth.service_access import has_user_access_to_service
 from server.auth.tokens import validate_service_token
 from server.db.db import db
 from server.db.defaults import PAM_WEB_LOGIN, SERVICE_TOKEN_PAM
@@ -43,7 +43,7 @@ def _validate_pam_sso_session(pam_sso_session: PamSSOSession, pin, validate_pin,
     if validate_user and ("user" not in session or user.id != current_user_id()):
         return {"result": "FAIL", "info": f"User {user.uid} is not authenticated"}
 
-    if validate_user and not user_service(service.id, False):
+    if validate_user and not has_user_access_to_service(service, user):
         return {"result": "FAIL", "info": f"User {user.uid} has no access to service {service.name}"}
 
     if validate_pin and pam_sso_session.pin != pin:
@@ -102,8 +102,8 @@ def find_by_session_id(service_shortname, session_id):
         raise Forbidden("PIN already shown")
     if pam_sso_session.service.abbreviation.lower() != service_shortname.lower():
         raise Forbidden(f"Short name {service_shortname} is not correct")
-
-    res = {"service": pam_sso_session.service}
+    service_json = jsonify(pam_sso_session.service).json
+    res = {"service": service_json}
     if "user" in session and not session["user"]["guest"]:
         if not pam_sso_session.user:
             pam_sso_session.user = db.session.get(User, current_user_id())
@@ -142,7 +142,7 @@ def start():
 
         # The user validations expect a logged in user
         session["user"] = {"id": user.id, "admin": False}
-        if not user_service(service.id, False):
+        if not has_user_access_to_service(service, user):
             log_user_login(PAM_WEB_LOGIN, False, user, user.uid, service, service.entity_id,
                            status="No access to service")
 
