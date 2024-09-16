@@ -1,9 +1,10 @@
-from abstract_test import AbstractTest
-from seed import service_cloud_name
+import datetime
+
+from server.test.seed import service_cloud_name
 from server.auth.service_access import has_user_access_to_service
 from server.db.domain import User, Service
+from server.test.abstract_test import AbstractTest
 from server.tools import dt_now
-import datetime
 
 
 class TestServiceAccess(AbstractTest):
