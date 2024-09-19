@@ -204,7 +204,7 @@ class ServiceGroups extends React.Component {
                                     isWarning={true}
                                     question={confirmationDialogQuestion}/>
                 <div>
-                    <a className={"back-to-groups"} onClick={this.cancelSideScreen} href={"/cancel"}>
+                    <a className={"back-to-groups"} onClick={this.cancelSideScreen} href={"/#cancel"}>
                         <ChevronLeft/>{I18n.t("models.serviceGroups.backToGroups")}
                     </a>
                 </div>
