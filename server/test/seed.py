@@ -408,8 +408,8 @@ def seed(db, app_config, skip_seed=False):
                    token_enabled=True, scim_client_enabled=True, token_validity_days=365, security_email="sec@org.nl")
     sweep_scim_last_run = dt_now() - datetime.timedelta(days=1)
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
-                      description="Network enabling service SSH access", address="Some address",
-                      uri="https://uri.net", identity_type="SSH KEY", accepted_user_policy="https://aup.org",
+                      description="Network enabling service SSH access",
+                      uri="https://uri.net", accepted_user_policy="https://aup.org",
                       logo=read_image("network.png"), automatic_connection_allowed=False, abbreviation="network",
                       allowed_organisations=[uuc], privacy_policy="https://privacy.org",
                       token_enabled=True, token_validity_days=365, security_email="sec@org.nl",
@@ -418,7 +418,7 @@ def seed(db, app_config, skip_seed=False):
                       sweep_remove_orphans=True, scim_client_enabled=True)
     service_ssh = Service(entity_id="service_ssh_ufra", name=service_ssh_name,
                           description="Franeker SSH access",
-                          uri="https://uri.com/ssh", identity_type="SSH KEY", accepted_user_policy="https://ssh",
+                          uri="https://uri.com/ssh", accepted_user_policy="https://ssh",
                           contact_email="help@ssh.com", logo=read_image("ssh.png"),
                           automatic_connection_allowed=False,
                           access_allowed_for_all=True, abbreviation="service_ssh",
