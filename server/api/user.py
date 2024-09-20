@@ -18,7 +18,6 @@ from werkzeug.exceptions import InternalServerError, Forbidden
 
 from server.api.base import json_endpoint, query_param, organisation_by_user_schac_home
 from server.api.base import replace_full_text_search_boolean_mode_chars
-from server.api.ipaddress import validate_ip_networks
 from server.auth.mfa import ACR_VALUES, store_user_in_session, mfa_idp_allowed, \
     surf_secure_id_required, has_valid_mfa, decode_jwt_token
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
@@ -29,8 +28,7 @@ from server.auth.user_claims import add_user_claims, valid_user_attributes
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit, SBS_LOGIN
 from server.db.domain import User, OrganisationMembership, CollaborationMembership, JoinRequest, CollaborationRequest, \
-    UserNameHistory, SshKey, ServiceMembership, ServiceAup, UserIpNetwork, \
-    ServiceRequest, ServiceConnectionRequest
+    UserNameHistory, SshKey, ServiceMembership, ServiceAup, ServiceRequest, ServiceConnectionRequest
 from server.db.models import log_user_login
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error, mail_account_deletion
@@ -515,7 +513,6 @@ def personal():
     user_from_db = User.query \
         .options(selectinload(User.service_aups)) \
         .options(selectinload(User.ssh_keys)) \
-        .options(selectinload(User.user_ip_networks)) \
         .options(selectinload(User.aups)) \
         .filter(User.id == current_user_id()).first()
     user_json = jsonify(user_from_db).json
@@ -578,22 +575,6 @@ def update_user():
 
     user = db.session.get(User, user_id)
     user_json = current_request.get_json()
-
-    validate_ip_networks(user_json, networks_name="user_ip_networks")
-
-    ip_networks_json = [nw for nw in user_json["user_ip_networks"]] if "user_ip_networks" in user_json else []
-    user_ip_network_ids = [network["id"] for network in ip_networks_json if "id" in network and network["id"]]
-    for network in user.user_ip_networks:
-        if network.id not in user_ip_network_ids:
-            db.session.delete(network)
-        else:
-            existing_network = next(n for n in ip_networks_json if int(n.get("id", -1)) == network.id)
-            network.network_value = existing_network["network_value"]
-            db.session.merge(network)
-    new_networks = [network for network in ip_networks_json if "id" not in network or not network["id"]]
-    audit_trail = {"created_by": user.uid, "updated_by": user.uid}
-    for network in new_networks:
-        db.session.merge(UserIpNetwork(**{**network, **{"user_id": user.id}, **audit_trail}))
 
     ssh_keys_json = [ssh_key for ssh_key in user_json["ssh_keys"] if
                      ssh_key["ssh_value"]] if "ssh_keys" in user_json else []

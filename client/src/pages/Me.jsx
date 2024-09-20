@@ -30,7 +30,6 @@ class Me extends React.Component {
             nameConfirmation: "",
             isWarning: false,
             ssh_keys: [],
-            user_ip_networks: [],
             invalidInputs: {},
             updateVisible: false,
             initial: true,
@@ -158,7 +157,7 @@ class Me extends React.Component {
         this.setState({ssh_keys: [...ssh_keys], updateVisible: true});
     }
 
-    renderForm = (user, ssh_keys, user_ip_networks, disabledSubmit, config, updateVisible) => {
+    renderForm = (user, ssh_keys, disabledSubmit, config, updateVisible) => {
         const createdAt = user.created_at;
         const d = new Date(0);
         d.setUTCSeconds(createdAt);
@@ -315,7 +314,7 @@ class Me extends React.Component {
     render() {
         const {
             confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, confirmationQuestion,
-            initial, ssh_keys, user_ip_networks, nameConfirmation, updateVisible
+            initial, ssh_keys, nameConfirmation, updateVisible
         } = this.state;
         const {user, config} = this.props;
         const disabledSubmit = !initial && !this.isValid();
@@ -340,7 +339,7 @@ class Me extends React.Component {
                     </div>
                 </ConfirmationDialog>
 
-                {this.renderForm(user, ssh_keys, user_ip_networks, disabledSubmit, config, updateVisible)}
+                {this.renderForm(user, ssh_keys, disabledSubmit, config, updateVisible)}
             </div>
         );
     }

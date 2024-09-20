@@ -102,7 +102,6 @@ parent_configuration = {
     "collaboration_requests": ("organisation_id", "organisations"),
     "service_connection_requests": ("collaboration_id", "collaborations"),
     "ip_networks": ("service_id", "services"),
-    "user_ip_networks": ("user_id", "users"),
     "service_groups": ("service_id", "services"),
     "service_tokens": ("service_id", "services"),
     "service_aups": ("service_id", "services")

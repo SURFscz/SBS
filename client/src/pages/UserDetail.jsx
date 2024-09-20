@@ -4,7 +4,6 @@ import {
     auditLogsUser,
     deleteOtherUser,
     findUserById,
-    ipNetworks,
     organisationNameById, reset2faOther
 } from "../api";
 import I18n from "../locale/I18n";
@@ -46,8 +45,7 @@ class UserDetail extends React.Component {
             tab: "details",
             tabs: [],
             query: "",
-            showSshKeys: false,
-            user_ip_networks: []
+            showSshKeys: false
         }
     }
 
@@ -93,12 +91,6 @@ class UserDetail extends React.Component {
                     user: user,
                     tab: tab
                 });
-                if (currentUser.admin && !isEmpty(res[0].user_ip_networks)) {
-                    Promise.all(res[0].user_ip_networks.map(n => ipNetworks(n.network_value, n.id)))
-                        .then(res => {
-                            this.setState({"user_ip_networks": res});
-                        });
-                }
             })
     };
 
@@ -225,14 +217,6 @@ class UserDetail extends React.Component {
                                 <Link
                                     to={`/services/${sm.service.id}`}>{`${sm.service.name} (${I18n.t('profile.' + sm.role)})`}</Link>
                             </li>)}
-                    </ul>}
-                </div>}
-                {currentUser.admin && <div className="input-field">
-                    <label>{I18n.t("profile.network")}</label>
-                    {isEmpty(user.user_ip_networks) && "-"}
-                    {!isEmpty(user.user_ip_networks) && <ul>
-                        {user.user_ip_networks.map(n =>
-                            <li key={`user_ip_networks_${n.id}`}>{n.network_value}</li>)}
                     </ul>}
                 </div>}
                 {currentUser.admin && <div className="input-field">
