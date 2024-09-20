@@ -14,7 +14,7 @@ from server.db.domain import (User, Organisation, OrganisationMembership, Servic
                               CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey,
                               CollaborationRequest, ServiceConnectionRequest, SuspendNotification, Aup,
                               SchacHomeOrganisation, SshKey, ServiceGroup, ServiceInvitation, ServiceMembership,
-                              ServiceAup, UserToken, UserIpNetwork, Tag, PamSSOSession, IpNetwork, ServiceToken,
+                              ServiceAup, UserToken, Tag, PamSSOSession, IpNetwork, ServiceToken,
                               ServiceRequest, Unit)
 from server.tools import dt_now, dt_today
 
@@ -284,10 +284,6 @@ def seed(db, app_config, skip_seed=False):
                                                  "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
     ssh_key_sarah = SshKey(user=sarah, ssh_value="some-lame-key")
     persist_instance(db, ssh_key_john, ssh_key_james, ssh_key_sarah)
-
-    sarah_user_ip_network = UserIpNetwork(network_value="255.0.0.1/32", user=sarah)
-    sarah_other_user_ip_network = UserIpNetwork(network_value="255.0.0.9/24", user=sarah)
-    persist_instance(db, sarah_user_ip_network, sarah_other_user_ip_network)
 
     uuc = Organisation(name=unihard_name, short_name=unihard_short_name,
                        identifier="95306a5f-0a16-4461-b358-8442e09dab20",

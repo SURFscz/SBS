@@ -1880,7 +1880,6 @@ const nl = {
             "service_requests": "Applicatieregistratie",
             "users": "Gebruiker",
             "ip_networks": "IP-netwerk",
-            "user_ip_networks": "Gebruiker IP adressen",
             "suspend_notifications": "Loginnotificatie",
             "schac_home_organisations": "Schac home organisations",
             "user_names_history": "Username history",

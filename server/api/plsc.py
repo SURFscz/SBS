@@ -130,9 +130,6 @@ def internal_sync():
                         "status": "suspended" if row[10] else "active"}
             rs_ssh_keys = conn.execute(text(f"SELECT ssh_value FROM ssh_keys WHERE user_id = {row[0]}"))
             user_row["ssh_keys"] = [r[0] for r in rs_ssh_keys]
-            user_ip_networks = conn.execute(text(f"SELECT network_value FROM user_ip_networks "
-                                                 f"WHERE user_id = {row[0]}"))
-            user_row["user_ip_networks"] = [r[0] for r in user_ip_networks]
             service_aups = conn.execute(text(f"SELECT aup_url, service_id, agreed_at FROM service_aups "
                                              f"WHERE user_id = {row[0]}"))
             user_row["accepted_aups"] = [{"url": r[0], "service_id": r[1], "agreed_at": str(r[2])} for r in

@@ -7,7 +7,7 @@ from werkzeug.exceptions import BadRequest
 from server.auth.security import current_user_uid
 from server.db.db import db
 from server.db.domain import User, CollaborationMembership, OrganisationMembership, JoinRequest, Collaboration, \
-    Invitation, Service, Aup, IpNetwork, Group, SchacHomeOrganisation, ServiceMembership, UserIpNetwork, UserLogin, Unit
+    Invitation, Service, Aup, IpNetwork, Group, SchacHomeOrganisation, ServiceMembership, UserLogin, Unit
 from server.db.logo_mixin import evict_from_cache
 
 deserialization_mapping = {"users": User, "collaboration_memberships": CollaborationMembership,
@@ -16,7 +16,7 @@ deserialization_mapping = {"users": User, "collaboration_memberships": Collabora
                            "organisation_memberships": OrganisationMembership, "invitations": Invitation,
                            "service_memberships": ServiceMembership,
                            "services": Service, "aups": Aup, "ip_networks": IpNetwork, "groups": Group,
-                           "units": Unit, "user_ip_networks": UserIpNetwork}
+                           "units": Unit}
 
 forbidden_fields = ["created_at", "updated_at"]
 date_fields = ["start_date", "end_date", "created_at", "updated_at", "last_accessed_date", "last_login_date",

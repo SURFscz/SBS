@@ -44,9 +44,6 @@ class TestPlsc(AbstractTest):
         self.assertEqual("sarah@uni-franeker.nl", sarah["email"])
         self.assertEqual("sarah", sarah["username"])
         self.assertEqual("some-lame-key", sarah["ssh_keys"][0])
-        self.assertEqual(2, len(sarah["user_ip_networks"]))
-        self.assertListEqual(["255.0.0.1/32", "255.0.0.9/24"],
-                             sarah["user_ip_networks"])
         # Edge case due to the seed data - just ensure it does not break
         # Nobody has a last_login_date == None anymore
         # self.assertEqual("None", sarah["last_login_date"])

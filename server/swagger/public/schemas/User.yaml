@@ -74,7 +74,3 @@ properties:
     type: array
     items:
       $ref: '/swagger/schemas/SSHKey.yaml'
-  user_ip_networks:
-    type: array
-    items:
-      $ref: '/swagger/schemas/UserIPNetwork.yaml'

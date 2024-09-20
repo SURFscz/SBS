@@ -1880,7 +1880,6 @@ const en = {
             "service_requests": "Application registration requests",
             "users": "User",
             "ip_networks": "IP network",
-            "user_ip_networks": "User IP addresses",
             "suspend_notifications": "Suspend notifications",
             "schac_home_organisations": "Schac home organisations",
             "user_names_history": "Username history",
