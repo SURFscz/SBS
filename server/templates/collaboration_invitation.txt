@@ -1,7 +1,7 @@
 {% extends "mail_layout.txt" %}
 {% block title %}SURF collaboration invite{% endblock %}
 {% block content %}
-{{ invitation.user.name }} invited you to join collaboration
+{{ sender_name }} invited you to join collaboration
 {{ invitation.collaboration.name }} as{{ invitation_role(invitation.intended_role) }}.
 {% if invitation.intended_role == "admin" %}
 As an administrator you are responsible for managing members and authorizations for this collaboration.
@@ -9,7 +9,7 @@ More information about administrative duties can be found at the {{ wiki_link }}
 {% endif %}
 Please read below what steps you must take to accept this invitation.
 {% if invitation.message is defined and invitation.message != None and invitation.message|length %}
-Personal Message from {{ invitation.user.name }}:
+Personal Message from {{ sender_name }}:
 "{{ invitation.message }}"
 {% endif %}
 Accept invitation:
@@ -27,7 +27,7 @@ Deny link:
 
 Need help?
 
-{{ invitation.user.name }} invited you to join this collaboration.
+{{ sender_name }} invited you to join this collaboration.
 Please contact {{ invitation.user.email }}
     if you have any questions about this invitation.
 {% endblock %}

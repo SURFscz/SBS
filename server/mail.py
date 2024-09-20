@@ -232,10 +232,11 @@ def mail_collaboration_invitation(context, collaboration, recipients, service_na
     if not preview:
         _store_mail(None, COLLABORATION_INVITATION_MAIL, recipients)
     invitation = context["invitation"]
+    sender_name = invitation.sender_name if invitation.sender_name else invitation.user.name
     message = invitation.message.replace("\n", "<br/>") if invitation.message else None
     context = {**context, "expiry_period": calculate_expiry_period(invitation),
                "collaboration": collaboration, "message": message, "reminder": reminder,
-               "service_names": service_names}
+               "service_names": service_names, "sender_name": sender_name}
     reminder_part = "Reminder - " if reminder else ""
     return _do_send_mail(
         subject=f"{reminder_part}Invitation to join collaboration {collaboration.name}",
