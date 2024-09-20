@@ -232,7 +232,8 @@ def mail_collaboration_invitation(context, collaboration, recipients, service_na
     if not preview:
         _store_mail(None, COLLABORATION_INVITATION_MAIL, recipients)
     invitation = context["invitation"]
-    sender_name = invitation.sender_name if invitation.sender_name else invitation.user.name
+    has_sender_name = hasattr(invitation, "sender_name") and invitation.sender_name
+    sender_name = invitation.sender_name if has_sender_name else invitation.user.name
     message = invitation.message.replace("\n", "<br/>") if invitation.message else None
     context = {**context, "expiry_period": calculate_expiry_period(invitation),
                "collaboration": collaboration, "message": message, "reminder": reminder,
