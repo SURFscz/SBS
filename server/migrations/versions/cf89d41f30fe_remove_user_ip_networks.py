@@ -6,9 +6,6 @@ Create Date: 2024-09-20 13:50:55.001588
 
 """
 from alembic import op
-import sqlalchemy as sa
-from sqlalchemy import text
-
 
 # revision identifiers, used by Alembic.
 revision = 'cf89d41f30fe'
@@ -19,8 +16,7 @@ depends_on = None
 
 def upgrade():
     op.drop_table("user_ip_networks")
-    conn = op.get_bind()
-    conn.execute(text("ALTER TABLE users DROP COLUMN user_ip_networks"))
+
 
 def downgrade():
     pass
