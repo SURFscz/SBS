@@ -60,8 +60,6 @@ class Service extends React.Component {
         logo: "",
         entity_id: "",
         description: "",
-        address: "",
-        identity_type: "",
         uri: "",
         uri_info: "",
         accepted_user_policy: "",
@@ -1085,7 +1083,6 @@ class Service extends React.Component {
     }
 
     render() {
-        //status,address, identity_type
         const {
             alreadyExists,
             service,

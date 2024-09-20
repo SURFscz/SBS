@@ -964,11 +964,6 @@ const nl = {
         service_requestError: "Vereist een valide URI en samenwerkingen moeten kunnen koppelen zonder toestemming",
         description: "Omschrijving",
         descriptionPlaceholder: "De omschrijving van de applicatie",
-        address: "Adres",
-        addressPlaceholder: "Het adres van de applicatie",
-        identity_type: "Identiteitsoort",
-        identity_typePlaceholder: "De identiteitsoort van een applicatie",
-        identity_typeTooltip: "De primaire manier om bij deze deze applicatie te identificeren.",
         uri: "Inlog-URL",
         uriPlaceholder: "De URL waar gebruikers inloggen",
         uriTooltip: "URL waarop gebruikers zich dienen aan te melden bij de applicatie. Wordt duidelijk getoond aan leden van samenwerkingen.<br/><br/>" +
