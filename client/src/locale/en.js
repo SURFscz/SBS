@@ -964,11 +964,6 @@ const en = {
         service_requestError: "Requires a valid URI and collaborations must be allowed to connect without approval",
         description: "Description",
         descriptionPlaceholder: "The description of the application",
-        address: "Address",
-        addressPlaceholder: "The address of the application",
-        identity_type: "Identity type",
-        identity_typePlaceholder: "The identity type of the application",
-        identity_typeTooltip: "The primary way of identification for this application",
         uri: "Login URL for users",
         uriPlaceholder: "The URL where users log in to the application",
         uriTooltip: "URL where users can log in to your application, displayed prominently to collaboration members.<br/><br/>" +

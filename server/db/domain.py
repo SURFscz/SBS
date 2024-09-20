@@ -529,8 +529,6 @@ class Service(Base, db.Model, LogoMixin, SecretMixin):
     description = db.Column("description", db.Text(), nullable=True)
     logo = db.Column("logo", db.Text(), nullable=True)
     uuid4 = db.Column("uuid4", db.String(length=255), nullable=False, default=gen_uuid4)
-    address = db.Column("address", db.Text(), nullable=True)
-    identity_type = db.Column("identity_type", db.String(length=255), nullable=True)
     abbreviation = db.Column("abbreviation", db.String(length=255), nullable=False)
     uri = db.Column("uri", db.String(length=255), nullable=True)
     uri_info = db.Column("uri_info", db.String(length=255), nullable=True)
