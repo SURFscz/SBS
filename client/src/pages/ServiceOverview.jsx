@@ -750,7 +750,8 @@ class ServiceOverview extends React.Component {
                             grants: joinSelectValuesArray(grants)
                         }
                     }, () => {
-                        updateService(this.state.service)
+                        const updatedService = this.state.service;
+                        updateService(updatedService)
                             .then(() => this.afterUpdate(name, "updated", sweepAfterwards))
                             .catch(() => this.setState({loading: false}));
                     });
@@ -1337,8 +1338,8 @@ class ServiceOverview extends React.Component {
                             msg={I18n.t("service.required", {attribute: I18n.t("service.openIDConnectRedirects")})}/>}
                         {!isEmpty(invalidRedirectUrls) &&
                             <ErrorIndicator
-                            msg={I18n.t("forms.invalidInput", {name: `URL: ${invalidRedirectUrls.join(", ")}`})}
-                            subMsg={invalidRedirectUrlHttpNonLocalHost ? I18n.t("forms.invalidRedirectUrl") : null}
+                                msg={I18n.t("forms.invalidInput", {name: `URL: ${invalidRedirectUrls.join(", ")}`})}
+                                subMsg={invalidRedirectUrlHttpNonLocalHost ? I18n.t("forms.invalidRedirectUrl") : null}
                             />}
 
                         <SelectField value={grants}
@@ -1583,6 +1584,14 @@ class ServiceOverview extends React.Component {
                         disabled={!isAdmin && !isServiceAdmin}/>
             {invalidInputs["support_email"] &&
                 <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.email")})}/>}
+            {!isEmpty(service.support_email) &&
+                <CheckBox name="support_email_unauthorized_users"
+                          value={service.support_email_unauthorized_users || false}
+                          info={I18n.t("service.support_email_unauthorized_users")}
+                          readOnly={!isAdmin && !isServiceAdmin}
+                          tooltip={I18n.t("service.support_email_unauthorized_usersPlaceholder")}
+                          onChange={this.changeServiceProperty("support_email_unauthorized_users", true)}/>
+            }
         </div>)
     }
 
