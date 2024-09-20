@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision 952aef5395fa (head)
+-- Dump of empty SBS database, alembic revision ba54557dbe47 (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('952aef5395fa');
+INSERT INTO `alembic_version` VALUES ('ba54557dbe47');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_keys`;
@@ -402,6 +402,7 @@ CREATE TABLE `invitations` (
   `external_identifier` varchar(255) DEFAULT NULL,
   `status` varchar(255) NOT NULL,
   `reminder_send` tinyint(1) DEFAULT '0',
+  `sender_name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `collaboration_id` (`collaboration_id`),
   KEY `user_id` (`user_id`),
