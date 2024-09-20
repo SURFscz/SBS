@@ -1028,6 +1028,8 @@ const en = {
         support_email: "User support contact",
         support_emailPlaceholder: "The email address or the website of the support department for this application",
         support_emailTooltip: "The support email address or URL is shown to the users",
+        support_email_unauthorized_users: "Show to unauthorized users",
+        support_email_unauthorized_usersPlaceholder: "This email address or URL will be shown to users when they try to log in to your application without authorization, typically because the have no membership of a connected collaboration.",
         invitations: "Invite application admins",
         status: {
             name: "Status",
@@ -2618,18 +2620,23 @@ const en = {
         unitRequired: "You need to select at least one unit"
     },
     serviceDenied: {
-        loginPrevTitle: "Could you login previously?",
-        loginPrev: [
-            "Make sure you are using the correct account.",
-            "Check if you are still a member of the collaboration that organised your permission.",
-            "If something else is going wrong, please contact us at " +
-            "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a>."
+        invitationsTitle: "Invitations and accounts",
+        invitationsSubTitles: ["Access to <i>{{serviceName}}</i> is granted by membership of a collaboration."],
+        invitationsBullets: [
+            "Have you been invited? Use the link in the email.",
+            "You are logged in via <strong>{{schacHome}}</strong>. Do you perhaps have acccess via a different account?",
         ],
-        neverBeenBeforeTitle: "Have you never logged on before?",
+        gainingAccessTitle: "Gaining access",
         neverBeenBefore: [
-            "If someone pointed you to <strong>{{serviceName}}</strong>, reach out to them on how to gain access via a research collaboration.",
-            "Learn what <a href=\"https://surf.nl/sram\" target=\"_blank\" rel=\"noopener noreferrer\">SRAM is all about</a>."],
-        ticketInfoTitle: "Session information"
+            "If someone pointed you to <strong>{{serviceName}}</strong>, ask them for help.",
+            "You can create "
+        ],
+        supportTitle: "Get support",
+        supportSubTitle: "Make sure to include the information below.",
+        supportBullets: [
+            "If you have tried the solutions above, or think you should have access already, you can contact SRAM support at <a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a> for help."
+        ],
+
     },
     collaborationsOverview: {
         welcome: "Welcome {{name}}",

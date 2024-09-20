@@ -536,6 +536,8 @@ class Service(Base, db.Model, LogoMixin, SecretMixin):
     ldap_identifier = db.Column("ldap_identifier", db.String(length=255), nullable=False, default=gen_uuid4)
     contact_email = db.Column("contact_email", db.String(length=255), nullable=True)
     support_email = db.Column("support_email", db.String(length=255), nullable=True)
+    support_email_unauthorized_users = db.Column("support_email_unauthorized_users", db.Boolean(), nullable=True,
+                                                 default=False)
     security_email = db.Column("security_email", db.String(length=255), nullable=True)
     override_access_allowed_all_connections = db.Column("override_access_allowed_all_connections", db.Boolean(),
                                                         nullable=True, default=False)
