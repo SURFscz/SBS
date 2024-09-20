@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision ba54557dbe47 (head)
+-- Dump of empty SBS database, alembic revision cf89d41f30fe (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('ba54557dbe47');
+INSERT INTO `alembic_version` VALUES ('cf89d41f30fe');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_keys`;
@@ -854,8 +854,6 @@ CREATE TABLE `services` (
   `entity_id` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `description` text,
-  `address` text,
-  `identity_type` varchar(255) DEFAULT NULL,
   `uri` varchar(255) DEFAULT NULL,
   `accepted_user_policy` varchar(255) DEFAULT NULL,
   `contact_email` varchar(255) DEFAULT NULL,
@@ -1048,27 +1046,6 @@ CREATE TABLE `units_organisation_invitations` (
 LOCK TABLES `units_organisation_invitations` WRITE;
 /*!40000 ALTER TABLE `units_organisation_invitations` DISABLE KEYS */;
 /*!40000 ALTER TABLE `units_organisation_invitations` ENABLE KEYS */;
-UNLOCK TABLES;
-DROP TABLE IF EXISTS `user_ip_networks`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `user_ip_networks` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `network_value` text NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `created_by` varchar(255) NOT NULL,
-  `updated_by` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `user_ip_networks_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-LOCK TABLES `user_ip_networks` WRITE;
-/*!40000 ALTER TABLE `user_ip_networks` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user_ip_networks` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `user_logins`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
