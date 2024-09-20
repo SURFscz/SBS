@@ -246,6 +246,7 @@ class Invitation(Base, db.Model):
     message = db.Column("message", db.Text(), nullable=True)
     invitee_email = db.Column("invitee_email", db.String(length=255), nullable=False)
     status = db.Column("status", db.String(length=255), nullable=False)
+    sender_name = db.Column("sender_name", db.String(length=255), nullable=True)
     collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
     collaboration = db.relationship("Collaboration", back_populates="invitations")
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))

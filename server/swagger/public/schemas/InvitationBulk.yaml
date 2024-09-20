@@ -17,6 +17,10 @@ properties:
     type: string
     description: "The intended role of the inviter in the collaboration"
     example: "member"
+  sender_name:
+    type: string
+    description: "The name of the sender. Defaults to the name of the organisation admin"
+    example: "Organisation XYZ"
   invitation_expiry_date:
     type: number
     description: "The expiry date of the invitation in epoch milliseconds"

@@ -245,6 +245,7 @@ class TestInvitation(AbstractTest):
                            "intended_role": "bogus",
                            "invitation_expiry_date": (int(time.time()) * 1000) + 60 * 60 * 25 * 15,
                            "invites": ["joe@test.com"],
+                           "sender_name": "Organisation XYZ",
                            "groups": [group_ai_researchers_short_name, group_ai_dev_identifier]
                        },
                        headers={"Authorization": f"Bearer {unihard_secret}"},
@@ -260,6 +261,7 @@ class TestInvitation(AbstractTest):
 
         invitation = Invitation.query.filter(Invitation.external_identifier == invitation_id).first()
         self.assertEqual("member", invitation.intended_role)
+        self.assertEqual("Organisation XYZ", invitation.sender_name)
 
         self.login("urn:james")
         self.put("/api/invitations/accept", body={"hash": invitation.hash}, with_basic_auth=False)
