@@ -50,7 +50,6 @@ class CollaborationForm extends React.Component {
             description: "",
             website_url: "",
             administrators: [],
-            message: "",
             expiry_date: null,
             disclose_email_information: true,
             disclose_member_information: true,
@@ -135,7 +134,6 @@ class CollaborationForm extends React.Component {
                             autoCreateCollaborationRequest: autoCreateCollaborationRequest,
                             current_user_admin: true,
                             loading: false,
-                            required: autoCreateCollaborationRequest ? this.state.required : this.state.required.concat("message")
                         }, () => {
                             this.updateUnits(organisation, {units: []});
                         });
@@ -312,7 +310,6 @@ class CollaborationForm extends React.Component {
                 website_url,
                 support_email,
                 administrators,
-                message,
                 expiry_date,
                 tagsSelected,
                 units,
@@ -333,7 +330,6 @@ class CollaborationForm extends React.Component {
                 support_email,
                 administrators,
                 units,
-                message,
                 expiry_date: expiry_date ? expiry_date.getTime() / 1000 : null,
                 organisation_id: organisation.value,
                 disable_join_requests: !allow_join_requests,
@@ -381,7 +377,6 @@ class CollaborationForm extends React.Component {
                 logo,
                 collaboration,
                 administrators,
-                message,
                 units,
                 tagsSelected,
                 expiry_date,
@@ -404,7 +399,6 @@ class CollaborationForm extends React.Component {
                 identifier: collaboration.identifier,
                 administrators,
                 expiry_date: expiry_date ? expiry_date.getTime() / 1000 : null,
-                message,
                 organisation_id: organisation.value,
                 disable_join_requests: !allow_join_requests,
                 current_user_admin,
@@ -489,7 +483,6 @@ class CollaborationForm extends React.Component {
             website_url,
             support_email,
             administrators,
-            message,
             expiry_date,
             organisation,
             organisations,
@@ -551,6 +544,32 @@ class CollaborationForm extends React.Component {
                 <div className="new-collaboration">
 
                     <h2 className="section-separator">{I18n.t("collaboration.about")}</h2>
+
+                    <SelectField value={organisation}
+                                 options={organisations}
+                                 name={I18n.t("collaboration.organisation_name")}
+                                 placeholder={I18n.t("collaboration.organisationPlaceholder")}
+                                 toolTip={I18n.t("collaboration.organisationTooltip")}
+                                 required={true}
+                                 onChange={selectedOption => this.setState({organisation: selectedOption},
+                                     () => {
+                                         this.validateCollaborationName({target: {value: this.state.name}});
+                                         this.validateCollaborationShortName({target: {value: this.state.short_name}});
+                                         const autoCreateCo = selectedOption.collaboration_creation_allowed || selectedOption.collaboration_creation_allowed_entitlement;
+                                         this.updateBreadCrumb(selectedOption,
+                                             this.state.collaboration,
+                                             autoCreateCo,
+                                             !autoCreateCo);
+                                         this.updateTags(selectedOption.value);
+                                         this.updateUnits(selectedOption, {units: []});
+                                         this.setState({
+                                             autoCreateCollaborationRequest: autoCreateCo || isUserAllowed(ROLES.ORG_ADMIN, user, selectedOption.id),
+                                             isCollaborationRequest: !autoCreateCo && !isUserAllowed(ROLES.ORG_ADMIN, user, selectedOption.id)
+                                         })
+                                     })}
+                                 searchable={false}
+                                 disabled={organisations.length === 1}
+                    />
 
                     <InputField value={name} onChange={e => {
                         this.setState({
@@ -658,60 +677,7 @@ class CollaborationForm extends React.Component {
                     {invalidInputs["support_email"] && <ErrorIndicator
                         msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.contact")})}/>}
 
-                    {!isCollaborationRequest && <DateField value={expiry_date}
-                                                           onChange={e => this.setState({expiry_date: e})}
-                                                           allowNull={true}
-                                                           pastDatesAllowed={this.props.config.past_dates_allowed}
-                                                           showYearDropdown={true}
-                                                           name={I18n.t("collaboration.expiryDate")}
-                                                           toolTip={I18n.t("collaboration.expiryDateTooltip")}/>}
 
-                    {!isCollaborationRequest && <CheckBox name="allow_join_requests"
-                                                          value={allow_join_requests}
-                                                          info={I18n.t("collaboration.allowJoinRequests")}
-                                                          tooltip={I18n.t("collaboration.allowJoinRequestsTooltip")}
-                                                          onChange={() => this.setState({allow_join_requests: !allow_join_requests})}/>}
-
-                    {!isCollaborationRequest && <CheckBox name="disclose_member_information"
-                                                          value={disclose_member_information}
-                                                          info={I18n.t("collaboration.discloseMemberInformation")}
-                                                          tooltip={I18n.t("collaboration.discloseMemberInformationTooltip")}
-                                                          onChange={() => this.setState({
-                                                              disclose_member_information: !disclose_member_information,
-                                                              disclose_email_information: disclose_email_information && !disclose_member_information
-                                                          })}/>}
-
-                    {!isCollaborationRequest && <CheckBox name="disclose_email_information"
-                                                          value={disclose_member_information && disclose_email_information}
-                                                          info={I18n.t("collaboration.discloseEmailInformation")}
-                                                          readOnly={!disclose_member_information}
-                                                          tooltip={I18n.t("collaboration.discloseEmailInformationTooltip")}
-                                                          onChange={() => this.setState({disclose_email_information: !disclose_email_information})}/>}
-
-                    <SelectField value={organisation}
-                                 options={organisations}
-                                 name={I18n.t("collaboration.organisation_name")}
-                                 placeholder={I18n.t("collaboration.organisationPlaceholder")}
-                                 toolTip={I18n.t("collaboration.organisationTooltip")}
-                                 onChange={selectedOption => this.setState({organisation: selectedOption},
-                                     () => {
-                                         this.validateCollaborationName({target: {value: this.state.name}});
-                                         this.validateCollaborationShortName({target: {value: this.state.short_name}});
-                                         const autoCreateCo = selectedOption.collaboration_creation_allowed || selectedOption.collaboration_creation_allowed_entitlement;
-                                         this.updateBreadCrumb(selectedOption,
-                                             this.state.collaboration,
-                                             autoCreateCo,
-                                             !autoCreateCo);
-                                         this.updateTags(selectedOption.value);
-                                         this.updateUnits(selectedOption, {units: []});
-                                         this.setState({
-                                             autoCreateCollaborationRequest: autoCreateCo || isUserAllowed(ROLES.ORG_ADMIN, user, selectedOption.id),
-                                             isCollaborationRequest: !autoCreateCo && !isUserAllowed(ROLES.ORG_ADMIN, user, selectedOption.id)
-                                         })
-                                     })}
-                                 searchable={false}
-                                 disabled={organisations.length === 1}
-                    />
                     {!isEmpty(allUnits) &&
                         <CollaborationUnits selectedUnits={units}
                                             allUnits={allUnits}
@@ -737,9 +703,36 @@ class CollaborationForm extends React.Component {
                                                              placeholder={I18n.t("collaboration.tagsPlaceholder")}
                                                              toolTip={I18n.t("collaboration.tagsTooltip")}
                                                              onChange={this.tagsSelectedChanged}/>}
-                    {(!initial && isEmpty(organisation)) && <ErrorIndicator msg={I18n.t("collaboration.required", {
-                        attribute: I18n.t("collaboration.organisation_name").toLowerCase()
-                    })}/>}
+
+                    {!isCollaborationRequest && <DateField value={expiry_date}
+                                                           onChange={e => this.setState({expiry_date: e})}
+                                                           allowNull={true}
+                                                           pastDatesAllowed={this.props.config.past_dates_allowed}
+                                                           showYearDropdown={true}
+                                                           name={I18n.t("collaboration.expiryDate")}
+                                                           toolTip={I18n.t("collaboration.expiryDateTooltip")}/>}
+                    {!isCollaborationRequest && <CheckBox name="allow_join_requests"
+                                                          value={allow_join_requests}
+                                                          info={I18n.t("collaboration.allowJoinRequests")}
+                                                          tooltip={I18n.t("collaboration.allowJoinRequestsTooltip")}
+                                                          onChange={() => this.setState({allow_join_requests: !allow_join_requests})}/>}
+
+                    {!isCollaborationRequest && <CheckBox name="disclose_member_information"
+                                                          value={disclose_member_information}
+                                                          info={I18n.t("collaboration.discloseMemberInformation")}
+                                                          tooltip={I18n.t("collaboration.discloseMemberInformationTooltip")}
+                                                          onChange={() => this.setState({
+                                                              disclose_member_information: !disclose_member_information,
+                                                              disclose_email_information: disclose_email_information && !disclose_member_information
+                                                          })}/>}
+
+                    {!isCollaborationRequest && <CheckBox name="disclose_email_information"
+                                                          value={disclose_member_information && disclose_email_information}
+                                                          info={I18n.t("collaboration.discloseEmailInformation")}
+                                                          readOnly={!disclose_member_information}
+                                                          tooltip={I18n.t("collaboration.discloseEmailInformationTooltip")}
+                                                          onChange={() => this.setState({disclose_email_information: !disclose_email_information})}/>}
+
                     {(!isCollaborationRequest && isNew) &&
                         <div>
                             <h2 className="section-separator">{I18n.t("collaboration.invitations")}</h2>
@@ -752,25 +745,14 @@ class CollaborationForm extends React.Component {
                                         emails={administrators}/>
                         </div>}
 
-                    {isNew && <CheckBox name={I18n.t("collaboration.currentUserAdmin")}
-                                        value={current_user_admin}
-                                        onChange={this.flipCurrentUserAdmin}
-                                        readOnly={isCollaborationRequest}
-                                        info={I18n.t("collaboration.currentUserAdmin")}
-                                        tooltip={I18n.t("collaboration.currentUserAdminTooltip")}/>}
+                    {(isNew && !isCollaborationRequest && isUserAllowed(ROLES.ORG_MANAGER, user)) &&
+                        <CheckBox name={I18n.t("collaboration.currentUserAdmin")}
+                                  value={current_user_admin}
+                                  onChange={this.flipCurrentUserAdmin}
+                                  readOnly={isCollaborationRequest}
+                                  info={I18n.t("collaboration.currentUserAdmin")}
+                                  tooltip={I18n.t("collaboration.currentUserAdminTooltip")}/>}
 
-                    {(isNew && !autoCreateCollaborationRequest) &&
-                        <InputField value={message}
-                                    onChange={e => this.setState({message: e.target.value})}
-                                    placeholder={isCollaborationRequest ? I18n.t("collaboration.motivationPlaceholder") : I18n.t("collaboration.messagePlaceholder")}
-                                    name={isCollaborationRequest ? I18n.t("collaboration.motivation") : I18n.t("collaboration.message")}
-                                    error={!initial && isEmpty(message) && isCollaborationRequest}
-                                    toolTip={isCollaborationRequest ? I18n.t("collaboration.motivationTooltip") : I18n.t("collaboration.messageTooltip")}
-                                    multiline={true}/>}
-                    {(!initial && isEmpty(message) && isCollaborationRequest && !autoCreateCollaborationRequest) &&
-                        <ErrorIndicator msg={I18n.t("collaboration.required", {
-                            attribute: I18n.t("collaboration.motivation").toLowerCase()
-                        })}/>}
                     <section className="actions">
                         {!isNew &&
                             <Button warningButton={true}
