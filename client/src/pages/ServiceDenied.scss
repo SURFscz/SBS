@@ -9,12 +9,19 @@
     background-color: $background;
 
     .content-container {
+        background-color: white;
         @media (max-width: $tablet-max) {
             padding: 0 15px;
         }
-        background-color: white;
 
     }
+
+    div.actions {
+        margin-top: 25px;
+        display: flex;
+        gap: 40px;
+    }
+
 
     .content {
         max-width: $compact-medium;

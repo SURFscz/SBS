@@ -383,7 +383,7 @@ def seed(db, app_config, skip_seed=False):
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, ufra],
                       description="SURF Storage Service", logo=read_image("storage.png"), abbreviation="storage",
                       override_access_allowed_all_connections=False, automatic_connection_allowed=True,
-                      allow_restricted_orgs=True,
+                      allow_restricted_orgs=True, support_email_unauthorized_users=True,
                       uri="https://storage.net", support_email="support@storage.net",
                       pam_web_sso_enabled=True, security_email="sec@org.nl",
                       accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org",

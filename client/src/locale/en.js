@@ -2621,22 +2621,30 @@ const en = {
     },
     serviceDenied: {
         invitationsTitle: "Invitations and accounts",
-        invitationsSubTitles: ["Access to <i>{{serviceName}}</i> is granted by membership of a collaboration."],
-        invitationsBullets: [
-            "Have you been invited? Use the link in the email.",
-            "You are logged in via <strong>{{schacHome}}</strong>. Do you perhaps have acccess via a different account?",
-        ],
+        invitationsSubTitle: "Access to <i>{{serviceName}}</i> is granted by membership of a collaboration.",
+        invitationsBullets: {
+            invited : "Have you been invited? Use the link in the email.",
+            login: "You are logged in via <strong>{{schacHome}}</strong>. Do you perhaps have access via a different account?"
+        },
         gainingAccessTitle: "Gaining access",
-        neverBeenBefore: [
-            "If someone pointed you to <strong>{{serviceName}}</strong>, ask them for help.",
-            "You can create "
-        ],
+        gainingAccessBullets: {
+            pointed: "If someone pointed you to <strong>{{serviceName}}</strong>, ask them for help.",
+            request: "You can {{action}} a collaboration via <strong>{{schacHome}}</strong> and connect the application.",
+            contact: "You can {{contact}} the application admin, they can help you"
+        },
+        create: "<a href='/new-collaboration'>create</a>",
+        request: "<a href='/new-collaboration'>request</a>",
+        contactUrl: "<a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{supportEmail}}\">contact</a>.",
+        contactEmail: "<a href='mailto:{{supportEmail}}?subject=Request access to {{serviceName}}&body=Hi,%0D%0A%0D%0APlease help me get access to the {{serviceName}}} application.%0D%0AName: {{userName}}%0D%0AEmail: {{userEmail}}%0D%0AOrganisation: {{schacHome}}%0D%0AReason:%0D%0A%0D%0AThanks!'>contact</a>",
+        createCollaboration: "Create collaboration",
+        requestCollaboration: "Request collaboration",
+        requestAccess: "Request access",
         supportTitle: "Get support",
         supportSubTitle: "Make sure to include the information below.",
-        supportBullets: [
-            "If you have tried the solutions above, or think you should have access already, you can contact SRAM support at <a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a> for help."
-        ],
-
+        supportBullets: {
+            solutions: "If you have tried the solutions above, or think you should have access already, you can contact SRAM support at " +
+                "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a> for help."
+        }
     },
     collaborationsOverview: {
         welcome: "Welcome {{name}}",

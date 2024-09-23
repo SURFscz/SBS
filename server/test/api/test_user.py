@@ -12,7 +12,7 @@ from server.db.db import db
 from server.db.domain import Organisation, Collaboration, User, Aup
 from server.test.abstract_test import AbstractTest
 from server.test.seed import (unihard_name, co_ai_computing_name, user_roger_name, user_john_name, user_james_name,
-                              co_research_name, co_ai_computing_uuid, user_sarah_name)
+                              co_research_name, co_ai_computing_uuid, user_sarah_name, service_storage_entity_id)
 from server.tools import dt_now, read_file
 
 
@@ -260,6 +260,14 @@ class TestUser(AbstractTest):
         res = self.get("/api/users/authorization", with_basic_auth=False)
         query_dict = dict(parse.parse_qs(parse.urlsplit(res["authorization_endpoint"]).query))
         self.assertListEqual([redirect_uri], query_dict["state"])
+
+    def test_service_info(self):
+        res = self.get("/api/users/service_info",
+                       query_data={"uid": "urn:roger", "entity_id": service_storage_entity_id},
+                       with_basic_auth=False)
+        self.assertEqual([{"co_creation": False}], res["organisations"])
+        self.assertEqual("example.org", res["schac_home_organisation"])
+        self.assertEqual("support@storage.net", res["support_email"])
 
     def test_resume_session_dead_end(self):
         res = self.get("/api/users/resume-session", response_status_code=302)
