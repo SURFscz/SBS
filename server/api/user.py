@@ -28,7 +28,8 @@ from server.auth.user_claims import add_user_claims, valid_user_attributes
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit, SBS_LOGIN
 from server.db.domain import User, OrganisationMembership, CollaborationMembership, JoinRequest, CollaborationRequest, \
-    UserNameHistory, SshKey, ServiceMembership, ServiceAup, ServiceRequest, ServiceConnectionRequest
+    UserNameHistory, SshKey, ServiceMembership, ServiceAup, ServiceRequest, ServiceConnectionRequest, Service, \
+    SchacHomeOrganisation
 from server.db.models import log_user_login
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error, mail_account_deletion
@@ -252,6 +253,25 @@ def authorization():
     state = query_param("state", required=False, default=None)
     authorization_endpoint = _get_authorization_url(state)
     return {"authorization_endpoint": authorization_endpoint}, 200
+
+
+@user_api.route("/service_info", strict_slashes=False)
+@json_endpoint
+def service_info():
+    uid = query_param("uid")
+    entity_id = query_param("entity_id")
+
+    res = {}
+    user = User.query.filter(User.uid == uid).one()
+    res["user_name"] = user.name
+    res["user_email"] = user.email
+    res["schac_home_organisation"] = user.schac_home_organisation
+    organisations = SchacHomeOrganisation.organisations_by_user_schac_home(user)
+    res["organisations"] = [{"co_creation": o.collaboration_creation_allowed} for o in organisations]
+    service = Service.query.filter(Service.entity_id == entity_id).first()
+    if service.support_email_unauthorized_users:
+        res["support_email"] = service.support_email
+    return res, 200
 
 
 @user_api.route("/resume-session", strict_slashes=False)

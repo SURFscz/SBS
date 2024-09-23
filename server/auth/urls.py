@@ -16,6 +16,7 @@ noauth_listing = [
     "/api/users/authorization",
     "/api/users/me",
     "/api/users/resume-session",
+    "/api/users/service_info",
     "/config",
     "/health",
     "/info",

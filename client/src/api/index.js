@@ -159,6 +159,10 @@ export function activateUserForOrganisation(organisationId, userId) {
     return postPutJson("/api/users/activate", {organisation_id: organisationId, user_id: userId}, "put");
 }
 
+export function serviceInfo(entityId, uid) {
+    return fetchJson(`/api/users/service_info?uid=${encodeURIComponent(uid)}&entity_id=${encodeURIComponent(entityId)}`);
+}
+
 export function logoutUser() {
     return fetchJson("/api/users/logout");
 }
