@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision cf89d41f30fe (head)
+-- Dump of empty SBS database, alembic revision a815a442f70d (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('cf89d41f30fe');
+INSERT INTO `alembic_version` VALUES ('a815a442f70d');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_keys`;
@@ -902,6 +902,7 @@ CREATE TABLE `services` (
   `export_external_identifier` varchar(255) DEFAULT NULL,
   `export_external_version` int(11) DEFAULT NULL,
   `crm_organisation_id` int(11) DEFAULT NULL,
+  `support_email_unauthorized_users` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `services_unique_entity_id` (`entity_id`),
   UNIQUE KEY `services_uuid4` (`uuid4`),
