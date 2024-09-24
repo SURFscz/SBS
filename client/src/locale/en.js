@@ -2630,7 +2630,7 @@ const en = {
         gainingAccessBullets: {
             pointed: "If someone pointed you to <strong>{{serviceName}}</strong>, ask them for help.",
             request: "You can {{action}} a collaboration via <strong>{{schacHome}}</strong> and connect the application.",
-            contact: "You can {{contact}} the application admin, they can help you"
+            contact: "You can {{contact}} the application admin, they can help you."
         },
         create: "<a href='/new-collaboration'>create</a>",
         request: "<a href='/new-collaboration'>request</a>",
