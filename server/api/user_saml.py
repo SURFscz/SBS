@@ -162,13 +162,15 @@ def _do_attributes(user, uid, service, service_entity_id, not_authorized_func, a
 
     memberships = collaboration_memberships_for_service(user, service)
     connected_collaborations = [cm.collaboration for cm in memberships]
+    crm_organisation_allowed = service.access_allowed_by_crm_organisation(user)
 
-    if not connected_collaborations and not free_ride:
+    if not connected_collaborations and not free_ride and not crm_organisation_allowed:
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
                      f" as the service is not connected to any of the user's collaborations")
         return not_authorized_func(service.name, SERVICE_NOT_CONNECTED)
 
-    if all(coll.status != STATUS_ACTIVE for coll in connected_collaborations) and not free_ride:
+    no_active_co = all(coll.status != STATUS_ACTIVE for coll in connected_collaborations)
+    if no_active_co and not free_ride and not crm_organisation_allowed:
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
                      f" as the service is not connected to any active collaborations")
         return not_authorized_func(service.name, COLLABORATION_NOT_ACTIVE)

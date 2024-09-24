@@ -293,6 +293,11 @@ export function toggleNonMemberUsersAccessAllowed(serviceId, nonMemberUsersAcces
         {non_member_users_access_allowed: nonMemberUsersAccessAllowed}, "put")
 }
 
+export function toggleCRMOrganisationUsersAccessAllowed(serviceId, access_allowed_for_crm_organisation) {
+    return postPutJson(`/api/services/toggle_access_property/${serviceId}`,
+        {access_allowed_for_crm_organisation: access_allowed_for_crm_organisation}, "put")
+}
+
 export function toggleOverrideAccessAllowedAllConnections(serviceId, overrideAccessAllowedAllConnections) {
     return postPutJson(`/api/services/toggle_access_property/${serviceId}`,
         {override_access_allowed_all_connections: overrideAccessAllowedAllConnections}, "put")

@@ -400,7 +400,7 @@ def toggle_access_property(service_id):
     attribute = list(json_dict.keys())[0]
     if attribute not in ["reset", "non_member_users_access_allowed", "access_allowed_for_all",
                          "automatic_connection_allowed", "connection_setting",
-                         "override_access_allowed_all_connections"]:
+                         "override_access_allowed_all_connections", "access_allowed_for_crm_organisation"]:
         raise BadRequest(f"attribute {attribute} not allowed")
     enabled = json_dict.get(attribute)
     if attribute in ["non_member_users_access_allowed"] and enabled:
@@ -409,6 +409,9 @@ def toggle_access_property(service_id):
         confirm_service_admin(service_id)
     with db.session.no_autoflush:
         service = db.session.get(Service, service_id)
+
+        if attribute == "access_allowed_for_crm_organisation" and enabled and not service.crm_organisation:
+            raise BadRequest("access_allowed_for_crm_organisation requires crm_organisation")
 
         if attribute == "reset":
             service.automatic_connection_allowed = False
@@ -443,7 +446,7 @@ def toggle_access_property(service_id):
                     filtered_organisations = [org for org in not_connected_organisations if
                                               org not in service.allowed_organisations]
                     service.allowed_organisations += filtered_organisations
-        if attribute == "override_access_allowed_all_connections":
+        elif attribute == "override_access_allowed_all_connections":
             service.access_allowed_for_all = False
             if enabled:
                 service.automatic_connection_allowed = False
@@ -451,7 +454,7 @@ def toggle_access_property(service_id):
                 service.organisations.clear()
                 service.automatic_connection_allowed_organisations.clear()
                 service.collaborations.clear()
-        if attribute == "automatic_connection_allowed":
+        elif attribute == "automatic_connection_allowed":
             if enabled:
                 service.connection_setting = None
                 filtered_organisations = [org for org in service.allowed_organisations if
@@ -466,9 +469,15 @@ def toggle_access_property(service_id):
                                               org not in service.allowed_organisations]
                     service.allowed_organisations += filtered_organisations
                     service.automatic_connection_allowed_organisations = []
-        if attribute == "non_member_users_access_allowed":
+        elif attribute == "non_member_users_access_allowed":
             service.connection_setting = None
             if not enabled:
+                service.access_allowed_for_crm_organisation = False
+                service.override_access_allowed_all_connections = False
+        elif attribute == "access_allowed_for_crm_organisation":
+            service.connection_setting = None
+            if not enabled:
+                service.non_member_users_access_allowed = False
                 service.override_access_allowed_all_connections = False
         db.session.merge(service)
 

@@ -1,13 +1,13 @@
 import React from "react";
 import "./ServiceOrganisations.scss";
-import {removeDuplicates, stopEvent} from "../../utils/Utils";
+import {isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
 import I18n from "../../locale/I18n";
 import Entities from "./Entities";
 import {
     disallowOrganisation,
     onRequestOrganisation,
     toggleAccessAllowedForAll,
-    toggleAutomaticConnectionAllowed,
+    toggleAutomaticConnectionAllowed, toggleCRMOrganisationUsersAccessAllowed,
     toggleNonMemberUsersAccessAllowed,
     toggleOverrideAccessAllowedAllConnections,
     toggleReset,
@@ -33,7 +33,7 @@ import {
     MANUALLY_APPROVE,
     NO_ONE_ALLOWED,
     NONE_INSTITUTIONS,
-    SELECTED_INSTITUTION,
+    SELECTED_INSTITUTION, SELECTED_INSTITUTION_AND_ORGANISATION,
     SOME_INSTITUTIONS
 } from "../../utils/ServiceConnectionSettings";
 
@@ -185,6 +185,16 @@ class ServiceOrganisations extends React.Component {
                     )
                 break;
             }
+            case SELECTED_INSTITUTION_AND_ORGANISATION: {
+                toggleCRMOrganisationUsersAccessAllowed(service.id, true)
+                    .then(() =>
+                        this.props.refresh(() => {
+                            this.componentDidMount(() => this.setState({connectionAllowedValue: value}));
+                            setFlash(I18n.t("service.flash.updated", {name: service.name}));
+                        })
+                    )
+                break;
+            }
             case NO_ONE_ALLOWED: {
                 this.doDisallow(organisations, true, true);
                 break;
@@ -301,13 +311,20 @@ class ServiceOrganisations extends React.Component {
                 text: I18n.t("service.connectionSettings.institutionSelection"),
                 icon: <ConnectionAllowedIcon/>
             },
+            !isEmpty(service.organisation_name) && {
+                value: SELECTED_INSTITUTION_AND_ORGANISATION,
+                title: I18n.t("service.connectionSettings.crmOrganisationMembers"),
+                text: service.organisation_name,
+                icon: <ConnectionAllowedIcon/>
+            },
             {
                 value: NO_ONE_ALLOWED,
                 title: I18n.t("service.connectionSettings.noOne"),
                 text: I18n.t("service.connectionSettings.later"),
                 icon: <NoConnectionIcon/>
             }
-        ]
+        ].filter(choice => choice !== false)
+
         if (userAdmin || connectionAllowedValue === ALL_ALLOWED) {
             connectionAllowedChoices.push({
                 value: ALL_ALLOWED,

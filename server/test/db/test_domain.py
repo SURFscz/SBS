@@ -1,9 +1,9 @@
 from sqlalchemy.exc import IntegrityError
 
 from server.db.db import db
-from server.db.domain import Collaboration, CollaborationMembership, Invitation, OrganisationInvitation, User
+from server.db.domain import Collaboration, CollaborationMembership, Invitation, OrganisationInvitation, User, Service
 from server.test.abstract_test import AbstractTest
-from server.test.seed import co_ai_computing_name, user_boss_name
+from server.test.seed import co_ai_computing_name, user_boss_name, service_cloud_name
 
 
 class TestModels(AbstractTest):
@@ -48,3 +48,17 @@ class TestModels(AbstractTest):
             db.session.commit()
 
         self.assertRaises(IntegrityError, duplicate_member_raises_error)
+
+    def test_service(self):
+        service = self.find_entity_by_name(Service, service_cloud_name)
+        self.assertFalse(service.access_allowed_by_crm_organisation(User()))
+        user = User.query.filter(User.uid == "urn:james").one()
+        crm_organisation_id = service.crm_organisation_id
+        service.crm_organisation_id = None
+        self.assertFalse(service.access_allowed_by_crm_organisation(user))
+        service.access_allowed_for_crm_organisation = False
+        service.crm_organisation_id = crm_organisation_id
+        self.assertFalse(service.access_allowed_by_crm_organisation(user))
+
+        service.access_allowed_for_crm_organisation = True
+        self.assertTrue(service.access_allowed_by_crm_organisation(user))
