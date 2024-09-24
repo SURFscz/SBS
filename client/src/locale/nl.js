@@ -2620,18 +2620,31 @@ const nl = {
         unitRequired: "Je moet minstens één unit selecteren"
     },
     serviceDenied: {
-        loginPrevTitle: "Kon je eerder wel inloggen?",
-        loginPrev: [
-            "Zorg dat je het juiste account gebruikt.",
-            "Controleer of je nog steeds lid bent van de juiste samenwerking.",
-            "Als er iets anders niet juist is, neem dan contact op " +
-            "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a>."
-        ],
-        neverBeenBeforeTitle: "Ben je nog nooit ingelogd?",
-        neverBeenBefore: [
-            "Als iemand je heeft gewezen op <strong>{{serviceName}}</strong>, neem dan contact met ze op om toegang te krijgen tot de juiste samenwerking.",
-            "Lees wat je met <a href=\"https://surf.nl/sram\" target=\"_blank\" rel=\"noopener noreferrer\">SRAM allemaal kan doen.</a>"],
-        ticketInfoTitle: "Sessieinformatie"
+        invitationsTitle: "Uitnodigingen en accounts",
+        invitationsSubTitle: "Toegang tot <i>{{serviceName}}</i> wordt toegekend op basis van het lidmaatschap van een samenwerking.",
+        invitationsBullets: {
+            invited : "Ben je uitgenodigd? Gebruik dan de link in de e-mail.",
+            login: "Je bent ingelogd via <strong>{{schacHome}}</strong>. Heb je wellicht ook toegang met een ander account?"
+        },
+        gainingAccessTitle: "Toegang krijgen",
+        gainingAccessBullets: {
+            pointed: "Als iemand je hebt gewezen op <strong>{{serviceName}}</strong>, vraag diegene dan om hulp.",
+            request: "Je kan een samenwerking {{action}} via <strong>{{schacHome}}</strong> en de applicatie koppelen.",
+            contact: "Je kan {{contact}} opnemen met de applicatie admin, zij kunnen je helpen."
+        },
+        create: "<a href='/new-collaboration'>aanmaken</a>",
+        request: "<a href='/new-collaboration'>aanvragen</a>",
+        contactUrl: "<a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{supportEmail}}\">contact</a>.",
+        contactEmail: "<a href='mailto:{{supportEmail}}?subject=Toegang aanvragen voor {{serviceName}}&body=Hi,%0D%0A%0D%0AKunt u me helpen om toegang te krijgen tot {{serviceName}}}.%0D%0ANaam: {{userName}}%0D%0AEmail: {{userEmail}}%0D%0AOrganisatie: {{schacHome}}%0D%0AReason:%0D%0A%0D%0ABedankt!'>contact</a>",
+        createCollaboration: "Samennwerking aanmaken",
+        requestCollaboration: "Samennwerking aanvragen",
+        requestAccess: "Toegang aanvragen",
+        supportTitle: "Krijg ondersteuning",
+        supportSubTitle: "Zorg ervoor dat je onderstaande informatie vermeldt.",
+        supportBullets: {
+            solutions: "Als je de bovenstaande oplossingen al hebt geprobeerd, of denkt dat je al toegang zou moeten hebben, kan je contact opnemen met SRAM-ondersteuning voor hulp via " +
+                "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a>."
+        }
     },
     collaborationsOverview: {
         welcome: "Welkom {{name}}",
