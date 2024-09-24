@@ -682,3 +682,28 @@ class TestService(AbstractTest):
             self.put(f"/api/services/reset_scim_bearer_token/{service['id']}",
                      {"scim_bearer_token": "somethingelse"}, response_status_code=400)
         self.assertIn('"encrypt_scim_bearer_token requires scim_bearer_token and scim_url"', "\n".join(cm.output))
+
+    def test_access_allowed_for_crm_organisation(self):
+        service = self.find_entity_by_name(Service, service_cloud_name)
+        self.assertTrue(service.access_allowed_for_crm_organisation)
+        service.non_member_users_access_allowed = True
+        service.override_access_allowed_all_connections = True
+        self.save_entity(service)
+
+        self.login("urn:john")
+        self.put(f"/api/services/toggle_access_property/{service.id}",
+                 body={"access_allowed_for_crm_organisation": False},
+                 with_basic_auth=False)
+        service = self.find_entity_by_name(Service, service_cloud_name)
+        self.assertFalse(service.non_member_users_access_allowed)
+        self.assertFalse(service.override_access_allowed_all_connections)
+        self.assertFalse(service.access_allowed_for_crm_organisation)
+
+    def test_access_allowed_for_crm_organisation_not_allowed(self):
+        service = self.find_entity_by_name(Service, service_wiki_name)
+
+        self.login("urn:john")
+        self.put(f"/api/services/toggle_access_property/{service.id}",
+                 body={"access_allowed_for_crm_organisation": True},
+                 with_basic_auth=False,
+                 response_status_code=400)
