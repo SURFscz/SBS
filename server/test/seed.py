@@ -376,7 +376,7 @@ def seed(db, app_config, skip_seed=False):
                     allowed_organisations=[uuc, ufra], abbreviation="cloud",
                     token_enabled=True, token_validity_days=1, security_email="sec@org.nl", scim_client_enabled=True,
                     scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock",
-                    redirect_urls=None, saml_metadata=None,
+                    redirect_urls=None, saml_metadata=None, access_allowed_for_crm_organisation=True,
                     saml_metadata_url="https://engine.test.surfconext.nl/authentication/sp/metadata",
                     oidc_client_secret=None, providing_organisation="SURFconext", grants=None, is_public_client=False,
                     saml_enabled=True, oidc_enabled=False, crm_organisation=uuc)

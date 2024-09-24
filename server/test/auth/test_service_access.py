@@ -22,6 +22,10 @@ class TestServiceAccess(AbstractTest):
         user = self.find_entity_by_name(User, "betty")
         self.assertFalse(has_user_access_to_service(service, user))
 
+        # based on the schac_home and crm_organisation of cloud
+        user = self.find_entity_by_name(User, "James Byrd")
+        self.assertTrue(has_user_access_to_service(service, user))
+
     def test_has_user_access_to_service_hygiene(self):
         user = User()
         service = Service()

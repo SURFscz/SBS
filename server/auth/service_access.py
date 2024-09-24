@@ -6,6 +6,7 @@ def has_user_access_to_service(service: Service, user: User):
         return False
     if service.non_member_users_access_allowed:
         return True
-
+    if service.access_allowed_by_crm_organisation(user):
+        return True
     collaboration_identifiers = [m.collaboration.id for m in user.collaboration_memberships if m.is_active()]
     return any([c for c in service.collaborations if c.id in collaboration_identifiers])

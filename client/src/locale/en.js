@@ -1153,6 +1153,7 @@ const en = {
             connectQuestion: "1. Who can log in to the application?",
             coMembers: "Connected collaborations",
             institutionSelection: "I'll select who may connect below",
+            crmOrganisationMembers: "Collaborations & My organisation",
             none: "None",
             noneText: "Collaborations cannot connect",
             noOne: "No one",

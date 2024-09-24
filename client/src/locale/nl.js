@@ -1153,6 +1153,7 @@ const nl = {
             connectQuestion: "1. Wie mag inloggen op de applicatie?",
             coMembers: "Gekoppelde samenwerkingen",
             institutionSelection: "Ik kies hieronder wie mag koppelen",
+            crmOrganisationMembers: "Samenwerkingen & mijn organisatie",
             none: "Geen",
             noneText: "Samenwerkingen mogen niet koppelen",
             noOne: "Niemand",

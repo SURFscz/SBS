@@ -2,6 +2,7 @@ import {isEmpty} from "./Utils";
 
 //Question: Who can log in to this service?
 export const SELECTED_INSTITUTION = "SELECTED_INSTITUTION";
+export const SELECTED_INSTITUTION_AND_ORGANISATION = "SELECTED_INSTITUTION_AND_ORGANISATION";
 export const NO_ONE_ALLOWED = "NO_ONE_ALLOWED";
 export const ALL_ALLOWED = "ALL_ALLOWED";
 
@@ -24,6 +25,9 @@ export const connectionAllowed = service => {
     if (!service.automatic_connection_allowed && !service.access_allowed_for_all
         && hasOrganisations && hasAutomaticOrganisations && service.connection_setting === NO_ONE_ALLOWED) {
         return NO_ONE_ALLOWED;
+    }
+    if (!isEmpty(service.organisation_name) && service.access_allowed_for_crm_organisation) {
+        return SELECTED_INSTITUTION_AND_ORGANISATION;
     }
     return SELECTED_INSTITUTION;
 }

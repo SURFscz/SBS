@@ -599,6 +599,8 @@ class Service(Base, db.Model, LogoMixin, SecretMixin):
     export_external_version = db.Column("export_external_version", db.Integer(), nullable=True)
     crm_organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"), nullable=True)
     crm_organisation = db.relationship("Organisation")
+    access_allowed_for_crm_organisation = db.Column("access_allowed_for_crm_organisation", db.Boolean(), nullable=True,
+                                                    default=False)
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
     created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
@@ -608,6 +610,16 @@ class Service(Base, db.Model, LogoMixin, SecretMixin):
                                                     Organisation.id == crm_organisation_id))
                                         .correlate_except(Organisation)
                                         .scalar_subquery())
+
+    def access_allowed_by_crm_organisation(self, user: User):
+        schac = user.schac_home_organisation
+        if not schac or not self.crm_organisation_id or not self.access_allowed_for_crm_organisation:
+            return False
+        schac_homes = SchacHomeOrganisation.query \
+            .filter(SchacHomeOrganisation.organisation_id == self.crm_organisation_id) \
+            .all()
+        hits = [sho for sho in schac_homes if sho.name == schac or schac.endswith(f".{sho.name}")]
+        return bool(hits)
 
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.service_memberships))) > 0
