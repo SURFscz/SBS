@@ -32,7 +32,7 @@ from server.db.domain import Collaboration, CollaborationMembership, JoinRequest
     Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag, ServiceGroup, ServiceMembership, Unit
 from server.db.image import transform_image
 from server.db.logo_mixin import logo_url
-from server.db.models import update, save, delete, flatten, unique_model_objects
+from server.db.models import update, save, delete, unique_model_objects
 from server.mail import mail_collaboration_invitation
 from server.scim.events import broadcast_collaboration_changed, broadcast_collaboration_deleted
 from server.tools import dt_now
