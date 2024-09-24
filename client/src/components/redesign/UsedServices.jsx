@@ -449,7 +449,7 @@ class UsedServices extends React.Component {
     }
 
 
-    sidebar = (currentTab, usedServices, availableServices) => {
+    sidebar = currentTab => {
         return (
             <div className={"side-bar"}>
                 <h3>{I18n.t("services.title")}</h3>
@@ -458,14 +458,14 @@ class UsedServices extends React.Component {
                         <a href={`/connections`}
                            className={CONNECTIONS === currentTab ? "active" : ""}
                            onClick={this.changeTab(CONNECTIONS)}>
-                            {I18n.t("services.toc.connections", {count: usedServices.length})}
+                            {I18n.t("services.toc.connections")}
                         </a>
                     </li>
                     <li>
                         <a href={`/available`}
                            className={AVAILABLE === currentTab ? "active" : ""}
                            onClick={this.changeTab(AVAILABLE)}>
-                            {I18n.t("services.toc.available", {count: availableServices.length})}
+                            {I18n.t("services.toc.available")}
                         </a>
                     </li>
                 </ul>
@@ -506,7 +506,7 @@ class UsedServices extends React.Component {
                                         question={confirmationDialogQuestion}
                                         children={confirmationChildren ?
                                             this.renderConfirmationChildren(selectedService, disabledConfirm) : null}/>
-                    {this.sidebar(currentTab, usedServices, services)}
+                    {this.sidebar(currentTab)}
                     <div className={"used-service-main"}>
                         <div className={"service-header"}>
                             <h2 className="section-separator">{I18n.t(`services.toc.${currentTab}`)}</h2>

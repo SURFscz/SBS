@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 
 import "./CollaborationsOverview.scss"
 import SpinnerField from "../components/redesign/SpinnerField";
-import {allCollaborations, myCollaborations} from "../api";
+import {allCollaborationsOptimized, myCollaborationsOptimized} from "../api";
 import {AppStore} from "../stores/AppStore";
 import I18n from "../locale/I18n";
 import {ReactComponent as TreeSwing} from "../images/tree_swing_static.svg";
@@ -17,7 +17,7 @@ export default function CollaborationsOverview(props) {
     const [requests, setRequests] = useState([]);
 
     useEffect(() => {
-        const promise = props.user.admin ? allCollaborations() : myCollaborations()
+        const promise = props.user.admin ? allCollaborationsOptimized() : myCollaborationsOptimized()
         promise.then(res => {
             setCollaborations(res);
             setLoading(false);
