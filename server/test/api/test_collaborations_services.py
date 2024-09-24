@@ -347,3 +347,15 @@ class TestCollaborationsServices(AbstractTest):
         self.assertEqual(res.status_code, 409)
         error_dict = res.json
         self.assertTrue("is not connected to collaboration" in error_dict["message"])
+
+    def test_add_collaborations_services_override_access_allowed_all_connections(self):
+        self.login("urn:john")
+        collaboration_id = self.find_entity_by_name(Collaboration, co_ai_computing_name).id
+        service_cloud_id = self.find_entity_by_name(Service, "SRAM Demo SP").id
+
+        res = self.put("/api/collaborations_services/", body={
+            "collaboration_id": collaboration_id,
+            "service_id": service_cloud_id
+        }, response_status_code=400)
+        self.assertTrue(res["error"])
+        self.assertTrue("Connection not allowed" in res["message"])

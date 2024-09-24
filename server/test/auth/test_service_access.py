@@ -32,3 +32,5 @@ class TestServiceAccess(AbstractTest):
         self.assertFalse(has_user_access_to_service(None, None))
         self.assertFalse(has_user_access_to_service(None, user))
         self.assertFalse(has_user_access_to_service(service, None))
+        service.non_member_users_access_allowed = True
+        self.assertTrue(has_user_access_to_service(service, user))
