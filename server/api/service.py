@@ -35,7 +35,7 @@ service_api = Blueprint("service_api", __name__, url_prefix="/api/services")
 base_service_query = """
     SELECT s.id, s.name, s.uuid4 ,
     (SELECT COUNT(scr.id) FROM service_connection_requests scr WHERE scr.service_id = s.id
-    AND scr.status = 'open' AND scr.pending_organisation_approval = 1) AS req_count,
+    AND scr.status = 'open' AND scr.pending_organisation_approval = 0) AS req_count,
     (SELECT COUNT(sc.id) FROM services_collaborations sc WHERE sc.service_id = s.id) AS c_count
     FROM services s
 """
