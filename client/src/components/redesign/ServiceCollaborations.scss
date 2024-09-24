@@ -47,7 +47,7 @@ table.serviceCollaborations {
             }
 
             &.organisation__name {
-                width: 15%;
+                width: 25%;
             }
 
             &.short_name {
@@ -59,12 +59,8 @@ table.serviceCollaborations {
             }
 
             &.role {
-                width: 15%;
+                width: 20%;
                 text-align: center;
-            }
-
-            &.fromCollaboration {
-                width: 15%;
             }
 
             &.action-icons {

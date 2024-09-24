@@ -264,9 +264,18 @@ export function allServices(includeCounts) {
     return fetchJson(`/api/services/all${query}`, {}, {}, false);
 }
 
+export function allServicesOptimized() {
+    return fetchJson("/api/services/all_optimized", {}, {}, false);
+}
+
+export function mineServicesOptimized() {
+    return fetchJson("/api/services/mine_optimized");
+}
+
 export function mineServices() {
     return fetchJson("/api/services/mine");
 }
+
 
 export function createService(service) {
     return postPutJson("/api/services", service, "post", false);
@@ -410,6 +419,10 @@ export function collaborationLiteById(id) {
 export function myCollaborations(includeServices = false) {
     const query = includeServices ? "?includeServices=true" : "";
     return fetchJson(`/api/collaborations${query}`);
+}
+
+export function myCollaborationsOptimized() {
+    return fetchJson(`/api/collaborations/mine_optimized`);
 }
 
 export function allCollaborations() {

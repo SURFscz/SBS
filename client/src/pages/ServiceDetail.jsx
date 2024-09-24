@@ -25,7 +25,7 @@ import {ReactComponent as UserAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ConnectedIcon} from "../icons/groups.svg";
 import ServiceOrganisations from "../components/redesign/ServiceOrganisations";
 import SpinnerField from "../components/redesign/SpinnerField";
-import {capitalize, isEmpty, removeDuplicates, stopEvent} from "../utils/Utils";
+import {capitalize, isEmpty, stopEvent} from "../utils/Utils";
 import {actionMenuUserRole, isUserServiceAdmin, isUserServiceManager} from "../utils/UserRole";
 import ServiceConnectionRequests from "../components/redesign/ServiceConnectionRequests";
 import {ReactComponent as GroupsIcon} from "../icons/ticket-group.svg";
@@ -279,7 +279,7 @@ class ServiceDetail extends React.Component {
     }
 
     getCollaborationsTab = (service, userServiceAdmin, showServiceAdminView) => {
-        const collaborations = this.allCollaborationsForService(service);
+        const collaborations = service.collaborations || [];
         return (
             <div key="collaborations" name="collaborations"
                  label={I18n.t("home.tabs.serviceCollaborations", {count: collaborations.length})}
@@ -294,15 +294,6 @@ class ServiceDetail extends React.Component {
                     modelName={"serviceCollaborations"}
                     {...this.props} />
             </div>);
-    }
-
-    allCollaborationsForService = service => {
-        const collaborations = service.collaborations || [];
-        collaborations.forEach(coll => coll.fromCollaboration = true);
-        const collFromOrganisations = service.service_organisation_collaborations || [];
-        collFromOrganisations.forEach(coll => coll.fromCollaboration = false);
-        const colls = removeDuplicates(collaborations.concat(collFromOrganisations), "id");
-        return colls;
     }
 
     getAboutTab = service => {
@@ -418,7 +409,7 @@ class ServiceDetail extends React.Component {
     }
 
     getCollaborationHeaderInfo = service => {
-        const collaborations = this.allCollaborationsForService(service);
+        const collaborations = service.collaborations || [];
         const notConnected = isEmpty(collaborations);
         if (notConnected) {
             return (

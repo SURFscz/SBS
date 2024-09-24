@@ -53,8 +53,6 @@ class TestService(AbstractTest):
 
         self.login("urn:john")
         service = self.get(f"api/services/{service.id}", with_basic_auth=False)
-        self.assertEqual(1, len(service["organisations"]))
-        self.assertEqual(3, len(service["service_organisation_collaborations"]))
 
         logo_data = self.client.get(service["logo"]).data
         self.assertEqual(logo, logo_data)

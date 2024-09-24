@@ -19,6 +19,7 @@ from server.db.defaults import STATUS_ACTIVE, cleanse_short_name, default_expiry
     service_token_options, generate_short_name
 from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, \
     User, ServiceInvitation, ServiceMembership, ServiceToken
+from server.db.logo_mixin import logo_url
 from server.db.models import update, save, delete, unique_model_objects
 from server.mail import mail_platform_admins, mail_service_invitation, mail_delete_service_request
 from server.manage.api import sync_external_service, delete_external_service
@@ -30,6 +31,20 @@ ON_REQUEST = "ON_REQUEST"
 ALWAYS = "ALWAYS"
 
 service_api = Blueprint("service_api", __name__, url_prefix="/api/services")
+
+base_service_query = """
+    SELECT s.id, s.name, s.uuid4 ,
+    (SELECT COUNT(scr.id) FROM service_connection_requests scr WHERE scr.service_id = s.id
+    AND scr.status = 'open' AND scr.pending_organisation_approval = 1) AS req_count,
+    (SELECT COUNT(sc.id) FROM services_collaborations sc WHERE sc.service_id = s.id) AS c_count
+    FROM services s
+"""
+
+
+def _result_set_to_services(result_set):
+    return [{"id": row[0], "name": row[1], "logo": f"{logo_url('services', row[2])}",
+             "connection_requests_count": row[3],
+             "collaborations_count": row[4]} for row in result_set]
 
 
 def _is_org_member():
@@ -99,8 +114,7 @@ def _do_get_services(restrict_for_current_user=False, include_counts=False):
     query = Service.query \
         .options(selectinload(Service.allowed_organisations)) \
         .options(selectinload(Service.automatic_connection_allowed_organisations)) \
-        .options(selectinload(Service.service_connection_requests)) \
-        .options(selectinload(Service.ip_networks))
+        .options(selectinload(Service.service_connection_requests))
 
     if restrict_for_current_user:
         query = query.join(Service.service_memberships) \
@@ -273,7 +287,6 @@ def service_by_id(service_id):
         query = query \
             .options(selectinload(Service.collaborations).selectinload(Collaboration.organisation)) \
             .options(selectinload(Service.service_memberships).selectinload(ServiceMembership.user)) \
-            .options(selectinload(Service.organisations)) \
             .options(selectinload(Service.service_invitations).selectinload(ServiceInvitation.user)) \
             .options(selectinload(Service.allowed_organisations)) \
             .options(selectinload(Service.automatic_connection_allowed_organisations)) \
@@ -281,18 +294,7 @@ def service_by_id(service_id):
             .options(selectinload(Service.service_tokens)) \
             .options(selectinload(Service.service_groups))
         service = query.filter(Service.id == service_id).one()
-        res = jsonify(service).json
-        res["service_organisation_collaborations"] = []
-        # To prevent circular references value error
-        if len(res["organisations"]) > 0:
-            collaborations = Collaboration.query \
-                .options(selectinload(Collaboration.organisation)) \
-                .join(Collaboration.organisation) \
-                .join(Organisation.services) \
-                .filter(Service.id == service_id) \
-                .all()
-            res["service_organisation_collaborations"] = jsonify(collaborations).json
-        return res, 200
+        return service, 200
     if api_call:
         query = query \
             .options(selectinload(Service.ip_networks))
@@ -309,6 +311,26 @@ def service_by_id(service_id):
 def all_services():
     include_counts = query_param("include_counts", required=False)
     return _do_get_services(include_counts=include_counts)
+
+
+@service_api.route("/all_optimized", strict_slashes=False)
+@json_endpoint
+def all_optimized_services():
+    sql = text(base_service_query)
+    with db.engine.connect() as conn:
+        result_set = conn.execute(sql)
+        return _result_set_to_services(result_set), 200
+
+
+@service_api.route("/mine_optimized", strict_slashes=False)
+@json_endpoint
+def mine_optimized_services():
+    values = {"user_id": current_user_id()}
+    join_sql = " INNER JOIN service_memberships sm_mine ON sm_mine.service_id = s.id WHERE sm_mine.user_id = :user_id"
+    clean_sql = text(base_service_query + join_sql)
+    with db.engine.connect() as conn:
+        result_set = conn.execute(clean_sql, values)
+        return _result_set_to_services(result_set), 200
 
 
 @service_api.route("/mine", strict_slashes=False)

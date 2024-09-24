@@ -11,8 +11,6 @@ import Logo from "./Logo";
 import CheckBox from "../CheckBox";
 import {Chip, Tooltip} from "@surfnet/sds";
 import ConfirmationDialog from "../ConfirmationDialog";
-
-import {ReactComponent as InformationCircle} from "@surfnet/sds/icons/functional-icons/info.svg";
 import {ReactComponent as EmailIcon} from "../../icons/email_new.svg";
 import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 import {clearFlash, setFlash} from "../../utils/Flash";
@@ -183,22 +181,12 @@ export default class ServiceCollaborations extends React.PureComponent {
                                   hide={true}
                                   onChange={() => false}/>,
 
-                mapper: entity => {
-                    if (entity.fromCollaboration) {
-                        return (
-                            <div className="check">
-                                <CheckBox name={entity.name}
-                                          onChange={this.onCheck(entity)}
-                                          value={(selectedCollaborations[entity.id]) || false}/>
-                            </div>)
-                    } else {
-                        return (
-                            <Tooltip standalone={true}
-                                     children={<InformationCircle/>}
-                                     tip={I18n.t("models.serviceCollaborations.organisationWarningTooltip")}/>
-                        )
-                    }
-                }
+                mapper: entity =>
+                    <div className="check">
+                        <CheckBox name={entity.name}
+                                  onChange={this.onCheck(entity)}
+                                  value={(selectedCollaborations[entity.id]) || false}/>
+                    </div>
             },
             {
                 nonSortable: true,
@@ -240,12 +228,6 @@ export default class ServiceCollaborations extends React.PureComponent {
                     }
                     return null;
                 }
-            },
-            {
-                key: "fromCollaboration",
-                header: I18n.t("models.serviceCollaborations.origin"),
-                mapper: collaboration => collaboration.fromCollaboration ?
-                    I18n.t("models.serviceCollaborations.fromCollaboration") : I18n.t("models.serviceCollaborations.fromOrganisation")
             },
             {
                 nonSortable: true,

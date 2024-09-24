@@ -1,5 +1,5 @@
 import React from "react";
-import {allServices, mineServices} from "../../api";
+import {allServicesOptimized, mineServicesOptimized} from "../../api";
 import "./Services.scss";
 import {stopEvent} from "../../utils/Utils";
 import I18n from "../../locale/I18n";
@@ -23,20 +23,16 @@ class Services extends React.Component {
         const {user} = this.props;
         let promise;
         if (user.admin) {
-            promise = allServices(true);
+            promise = allServicesOptimized(true);
         } else if (isUserServiceAdmin(user)) {
-            promise = mineServices()
+            promise = mineServicesOptimized()
         } else {
             this.props.history.push("/404");
             return;
         }
-        promise.then(services => {
-            services.forEach(s => s.connection_requests_count = s.service_connection_requests
-                .filter(scr => !scr.pending_organisation_approval)
-                .filter(scr => scr.status === "open")
-                .length)
+        promise.then(services =>
             this.setState({services: services, loading: false})
-        });
+        );
     }
 
     openService = service => e => {
@@ -73,10 +69,6 @@ class Services extends React.Component {
                 header: I18n.t("models.services.connectionRequestCount")
             },
             {
-                key: "organisations_count",
-                header: I18n.t("models.services.organisationCount")
-            },
-            {
                 key: "collaborations_count",
                 header: I18n.t("models.services.collaborationCount")
             }];
@@ -90,7 +82,7 @@ class Services extends React.Component {
                       inputFocus={true}
                       newLabel={user.admin ? I18n.t("models.services.new") : I18n.t("header.links.requestService")}
                       showNew={user.admin || userServiceAdmin}
-                      newEntityPath={user.admin ? "/new-service": "/new-service-request"}
+                      newEntityPath={user.admin ? "/new-service" : "/new-service-request"}
                       loading={loading}
                       title={`${I18n.t("home.tabs.services")} (${services.length})`}
                       rowLinkMapper={() => this.openService}

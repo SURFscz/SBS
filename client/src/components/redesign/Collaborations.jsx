@@ -6,7 +6,7 @@ import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "../../locale/I18n";
 import Entities from "./Entities";
 import Button from "../Button";
-import {allCollaborations, collaborationAdmins, myCollaborations} from "../../api";
+import {allCollaborationsOptimized, collaborationAdmins, myCollaborationsOptimized} from "../../api";
 import SpinnerField from "./SpinnerField";
 import {chipType, isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
@@ -48,7 +48,7 @@ export default class Collaborations extends React.PureComponent {
         const {collaborations, user, service, organisation} = this.props;
         const promises = [collaborationAdmins(service)];
         if (collaborations === undefined) {
-            Promise.all(promises.concat([user.admin ? allCollaborations() : myCollaborations()])).then(res => {
+            Promise.all(promises.concat([user.admin ? allCollaborationsOptimized() : myCollaborationsOptimized()])).then(res => {
                 const allFilterOptions = this.allLabelFilterOptions(res[1]);
                 const allUnitFilterOptions = this.allUnitFilterOptions(res[1]);
                 this.addRoleInformation(user, res[1]);
@@ -128,17 +128,17 @@ export default class Collaborations extends React.PureComponent {
             unitOptions = organisation.units
                 .map(unit => ({
                     val: unit.name, nbr: collaborations
-                        .filter(coll => coll.units.some(u => u.id === unit.id)).length
+                        .filter(coll => coll.units.some(u => u.name === unit.name)).length
                 }));
 
         } else {
             unitOptions = collaborations.reduce((acc, coll) => {
                 coll.units.forEach(unit => {
-                    const option = acc.find(opt => opt.id === unit.id);
+                    const option = acc.find(opt => opt.name === unit.name);
                     if (option) {
                         ++option.nbr;
                     } else {
-                        acc.push({id: unit.id, val: unit.name, nbr: 1})
+                        acc.push({id: unit.name, val: unit.name, nbr: 1})
                     }
                 })
                 return acc;
@@ -186,17 +186,17 @@ export default class Collaborations extends React.PureComponent {
             <div className={"collaboration-label-filter-container"}>
                 {(!organisation || unitFilterOptions.length > 1) &&
                     <div className="collaboration-label-filter">
-                    <Select
-                        className={"collaboration-label-filter-select"}
-                        value={unitFilterValue}
-                        classNamePrefix={"filter-select"}
-                        onChange={option => this.setState({unitFilterValue: option})}
-                        options={unitFilterOptions}
-                        isSearchable={false}
-                        isClearable={false}
-                    />
-                </div>}
-                {(!organisation || filterOptions.length > 1) &&<div className="collaboration-label-filter">
+                        <Select
+                            className={"collaboration-label-filter-select"}
+                            value={unitFilterValue}
+                            classNamePrefix={"filter-select"}
+                            onChange={option => this.setState({unitFilterValue: option})}
+                            options={unitFilterOptions}
+                            isSearchable={false}
+                            isClearable={false}
+                        />
+                    </div>}
+                {(!organisation || filterOptions.length > 1) && <div className="collaboration-label-filter">
                     <Select
                         className={"collaboration-label-filter-select"}
                         value={filterValue}
