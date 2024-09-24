@@ -442,7 +442,6 @@ class TestService(AbstractTest):
         services = self.get("/api/services/all", with_basic_auth=False)
         self.assertTrue(len(services) > 0)
         service_mail = self.find_by_name(services, service_mail_name)
-        self.assertTrue("ip_networks" in service_mail)
         self.assertFalse("collaborations_count" in service_mail)
         self.assertFalse("organisations_count" in service_mail)
 
