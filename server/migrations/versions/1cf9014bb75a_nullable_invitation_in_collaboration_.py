@@ -18,7 +18,7 @@ depends_on = None
 def upgrade():
     conn = op.get_bind()
     conn.execute(text("ALTER TABLE collaboration_memberships DROP FOREIGN KEY collaboration_memberships_ibfk_3"))
-    conn.execute(text("ALTER TABLE collaboration_memberships ADD FOREIGN KEY col_membership_invitation(invitation_id) "
+    conn.execute(text("ALTER TABLE collaboration_memberships ADD FOREIGN KEY collaboration_memberships_ibfk_3(invitation_id) "
                       "REFERENCES invitations(id) ON DELETE SET NULL"))
 
 
