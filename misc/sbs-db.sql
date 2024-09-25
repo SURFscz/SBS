@@ -129,7 +129,8 @@ CREATE TABLE `collaboration_memberships` (
   KEY `col_membership_invitation` (`invitation_id`),
   CONSTRAINT `col_membership_invitation` FOREIGN KEY (`invitation_id`) REFERENCES `invitations` (`id`),
   CONSTRAINT `collaboration_memberships_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `collaboration_memberships_ibfk_2` FOREIGN KEY (`collaboration_id`) REFERENCES `collaborations` (`id`) ON DELETE CASCADE
+  CONSTRAINT `collaboration_memberships_ibfk_2` FOREIGN KEY (`collaboration_id`) REFERENCES `collaborations` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `collaboration_memberships_ibfk_3` FOREIGN KEY (`invitation_id`) REFERENCES `invitations` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
