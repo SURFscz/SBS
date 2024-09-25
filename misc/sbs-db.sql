@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision a2eca2f5ffeb (head)
+-- Dump of empty SBS database, alembic revision 1cf9014bb75a (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('a2eca2f5ffeb');
+INSERT INTO `alembic_version` VALUES ('1cf9014bb75a');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_keys`;
@@ -130,7 +130,7 @@ CREATE TABLE `collaboration_memberships` (
   CONSTRAINT `col_membership_invitation` FOREIGN KEY (`invitation_id`) REFERENCES `invitations` (`id`),
   CONSTRAINT `collaboration_memberships_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `collaboration_memberships_ibfk_2` FOREIGN KEY (`collaboration_id`) REFERENCES `collaborations` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `collaboration_memberships_ibfk_3` FOREIGN KEY (`invitation_id`) REFERENCES `invitations` (`id`)
+  CONSTRAINT `collaboration_memberships_ibfk_3` FOREIGN KEY (`invitation_id`) REFERENCES `invitations` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
