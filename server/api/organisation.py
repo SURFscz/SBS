@@ -24,6 +24,7 @@ from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import Organisation, OrganisationMembership, OrganisationInvitation, User, \
     CollaborationRequest, SchacHomeOrganisation, Collaboration, CollaborationMembership, Invitation, \
     ServiceConnectionRequest
+from server.db.logo_mixin import logo_url
 from server.db.models import update, save, delete
 from server.mail import mail_organisation_invitation, mail_platform_admins
 from server.scim.events import broadcast_organisation_deleted
@@ -135,7 +136,7 @@ def find_crm_organisations():
 @organisation_api.route("/all", strict_slashes=False)
 @json_endpoint
 def organisation_all():
-    confirm_read_access()
+    confirm_read_access(override_func=is_service_admin_or_manager)
     organisations = Organisation.query.all()
     return organisations, 200
 
@@ -148,7 +149,7 @@ def organisation_search():
     res = []
     q = query_param("q")
     if q and len(q):
-        base_query = "SELECT id, name, description, category, logo, short_name, services_restricted FROM organisations "
+        base_query = "SELECT id, name, description, category, uuid4, short_name, services_restricted FROM organisations "
         not_wild_card = "*" not in q
         if not_wild_card:
             q = replace_full_text_search_boolean_mode_chars(q)
@@ -160,7 +161,8 @@ def organisation_search():
         with db.engine.connect() as conn:
             result_set = conn.execute(sql, {"q": f"{q}*"}) if not_wild_card else conn.execute(sql)
 
-        res = [{"id": row[0], "name": row[1], "description": row[2], "category": row[3], "logo": row[4],
+        res = [{"id": row[0], "name": row[1], "description": row[2], "category": row[3],
+                "logo": logo_url("organisations", row[4]),
                 "short_name": row[5], "services_restricted": row[6]} for row in result_set]
     return res, 200
 
