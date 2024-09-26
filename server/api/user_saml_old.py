@@ -6,16 +6,13 @@ from werkzeug.exceptions import InternalServerError
 
 from server.api.base import json_endpoint, send_error_mail
 from server.api.service_aups import has_agreed_with
-from server.auth.service_access import has_user_access_to_service
-from server.auth.user_codes import USER_UNKNOWN, USER_IS_SUSPENDED, SERVICE_UNKNOWN, SERVICE_NOT_CONNECTED, \
-    COLLABORATION_NOT_ACTIVE, NEW_FREE_RIDE_USER, MISSING_ATTRIBUTES, AUP_NOT_AGREED, SECOND_FA_REQUIRED, \
-    status_to_string
 from server.auth.mfa import mfa_idp_allowed, surf_secure_id_required, has_valid_mfa
 from server.auth.security import confirm_read_access
 from server.auth.user_claims import user_memberships, collaboration_memberships_for_service, co_tags, \
     valid_user_attributes
+from server.cron.idp_metadata_parser import idp_schac_home_by_entity_id
 from server.db.db import db
-from server.db.defaults import STATUS_ACTIVE, PROXY_AUTHZ
+from server.db.defaults import STATUS_ACTIVE, PROXY_AUTHZ, PROXY_AUTHZ_SBS
 from server.db.domain import User, Service
 from server.db.models import log_user_login
 from server.logger.context_logger import ctx_logger
@@ -23,6 +20,39 @@ from server import tools
 import urllib.parse
 
 user_saml_api = Blueprint("user_saml_api", __name__, url_prefix="/api/users")
+
+USER_UNKNOWN = 1
+USER_IS_SUSPENDED = 2
+SERVICE_UNKNOWN = 3
+SERVICE_NOT_CONNECTED = 4
+COLLABORATION_NOT_ACTIVE = 5
+NEW_FREE_RIDE_USER = 97
+MISSING_ATTRIBUTES = 98
+AUP_NOT_AGREED = 99
+SECOND_FA_REQUIRED = 100
+
+
+def status_to_string(status):
+    if status == USER_UNKNOWN:
+        return "USER_UNKNOWN"
+    elif status == USER_IS_SUSPENDED:
+        return "USER_IS_SUSPENDED"
+    elif status == SERVICE_UNKNOWN:
+        return "SERVICE_UNKNOWN"
+    elif status == SERVICE_NOT_CONNECTED:
+        return "SERVICE_NOT_CONNECTED"
+    elif status == COLLABORATION_NOT_ACTIVE:
+        return "COLLABORATION_NOT_ACTIVE"
+    elif status == NEW_FREE_RIDE_USER:
+        return "NEW_FREE_RIDE_USER"
+    elif status == AUP_NOT_AGREED:
+        return "AUP_NOT_AGREED"
+    elif status == SECOND_FA_REQUIRED:
+        return "SECOND_FA_REQUIRED"
+    else:
+        return "UNKNOWN_STATUS"
+
+
 
 
 def _do_attributes(user, uid, service, service_entity_id, not_authorized_func, authorized_func,
@@ -39,8 +69,7 @@ def _do_attributes(user, uid, service, service_entity_id, not_authorized_func, a
     free_ride = service.non_member_users_access_allowed
     if user is None:
         if free_ride:
-            logger.debug(
-                f"Returning interrupt for new user {uid} and service_entity_id {service_entity_id} to provision user")
+            logger.debug(f"Returning interrupt for new user {uid} and service_entity_id {service_entity_id} to provision user")
             return not_authorized_func(service, NEW_FREE_RIDE_USER)
         else:
             logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
@@ -132,103 +161,21 @@ def proxy_authz():
     uid = json_dict["user_id"]
     service_entity_id = json_dict["service_id"].lower()
     issuer_id = json_dict["issuer_id"]
-    # Client URL for direct error message
-    base_url = current_app.app_config.base_url
-    # New interrupt endpoint server-side to decide where to go next
-    base_server_url = current_app.app_config.base_server_url
+    # We need these two to validate the completeness of the user when provisioning in _perform_sram_login is performed
+    user_name = json_dict.get("user_name", None)
+    user_email = json_dict.get("user_email", None)
 
     logger = ctx_logger("user_api")
     logger.debug(f"proxy_authz called with {json_dict}")
 
+    service = Service.query.filter(Service.entity_id == service_entity_id).first()
+    user = User.query.filter(User.uid == uid).first()
+
     # user who log in to SBS itself can continue here; their attributes are checked in user.py/resume_session()
     if service_entity_id == current_app.app_config.oidc.sram_service_entity_id.lower():
-        logger.debug("Return authorized to start SBS login flow")
+        logger.debug("SBS login flow")
         return {"status": {"result": "authorized"}}, 200
 
-    parameters = urlencode({"service_name": service_entity_id, "entity_id": service_entity_id, "issuer_id": issuer_id,
-                            "user_id": uid})
-
-    service = Service.query.filter(Service.entity_id == service_entity_id).first()
-    # Unknown service returns unauthorized
-    if not service:
-        msg = f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id} " \
-              f"as the service is unknown"
-        logger.error(msg)
-        send_error_mail(tb=msg)
-        parameters = urlencode({**parameters, "error_status": SERVICE_UNKNOWN})
-        return {
-            "status": {
-                "result": "unauthorized",
-                "redirect_url": f"{base_url}/service-denied?{parameters}",
-                "error_status": SERVICE_UNKNOWN
-            }
-        }, 200
-    parameters = {**parameters, "service_id": service.uuid4, "service_name": service.name}
-    user = User.query.filter(User.uid == uid).first()
-    if not user:
-        parameters = urlencode({**parameters, "error_status": USER_UNKNOWN})
-        return {
-            "status": {
-                "result": "interrupt",
-                "redirect_url": f"{base_server_url}/interrupt?{parameters}",
-                "error_status": USER_UNKNOWN
-            }
-        }, 200
-
-    if user.suspended:
-        parameters = urlencode({**parameters, "error_status": USER_UNKNOWN})
-        return {
-            "status": {
-                "result": "interrupt",
-                "redirect_url": f"{base_server_url}/interrupt?{parameters}",
-                "error_status": USER_IS_SUSPENDED
-            }
-        }, 200
-
-    idp_allowed = mfa_idp_allowed(user, issuer_id)
-    fallback_required = not idp_allowed and current_app.app_config.mfa_fallback_enabled
-    # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
-    # also skip if user has already recently performed MFA
-    if not idp_allowed and fallback_required and not has_valid_mfa(user):
-        logger.debug(f"Returning interrupt for user {uid} from issuer {issuer_id} to perform 2fa")
-        user.second_factor_confirmed = False
-        user.second_fa_uuid = str(uuid.uuid4())
-        db.session.merge(user)
-        db.session.commit()
-        parameters = urlencode({**parameters, "error_status": SECOND_FA_REQUIRED,
-                                "second_fa_uuid": user.second_fa_uuid})
-        return {
-            "status": {
-                "result": "interrupt",
-                "redirect_url": f"{base_server_url}/interrupt?{parameters}",
-                "error_status": SECOND_FA_REQUIRED
-            }
-        }, 200
-    # if CO's are not active, then this is the same as the CO is not connected to the Service
-    if not has_user_access_to_service(service, user):
-        logger.debug(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id} "
-                     "because the service is not connected to any active CO's")
-        parameters = urlencode({**parameters, "error_status": SERVICE_NOT_CONNECTED})
-        return {
-            "status": {
-                "result": "unauthorized",
-                "redirect_url": f"{base_url}/service-denied?{parameters}",
-                "error_status": SERVICE_NOT_CONNECTED
-            }
-        }, 200
-
-    if not has_agreed_with(user, service):
-        logger.debug(f"Returning interrupt for user {uid} and service_entity_id {service_entity_id} to accept AUP")
-        parameters = urlencode({**parameters, "error_status": AUP_NOT_AGREED})
-        return {
-            "status": {
-                "result": "unauthorized",
-                "redirect_url": f"{base_server_url}/interrupt?{parameters}",
-                "error_status": AUP_NOT_AGREED
-            }
-        }, 200
-
-        return not_authorized_func(service, AUP_NOT_AGREED)
     # users who log in to services should have a complete set of attributes (because they have logged in to SBS
     # itself before),
     # but users who are not provisioned at all are caught below (with an AUP_NOT_AGREED interrupt)

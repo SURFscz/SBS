@@ -11,11 +11,9 @@ from server.auth.mfa import store_user_in_session, eligible_users_to_reset_token
 from server.auth.rate_limit import clear_rate_limit, check_rate_limit
 from server.auth.secrets import generate_token
 from server.auth.security import current_user_id, is_admin_user, is_application_admin
-from server.auth.ssid import redirect_to_surf_secure_id
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
 from server.db.domain import User
-from server.logger.context_logger import ctx_logger
 from server.mail import mail_reset_token
 from server.tools import dt_now
 
@@ -131,26 +129,6 @@ def verify2fa():
         return {"new_totp": False}, 400
 
 
-@mfa_api.route("/verify2fa_proxy_authz", methods=["POST"], strict_slashes=False)
-@json_endpoint
-def verify2fa_proxy_authz():
-    data = current_request.get_json()
-    second_fa_uuid = data["second_fa_uuid"]
-    user = _get_user_by_second_fa_uuid(second_fa_uuid)
-    check_rate_limit(user)
-
-    secret = user.second_factor_auth if user.second_factor_auth else session["second_factor_auth"]
-    valid_totp = _do_verify_2fa(user, secret)
-    if valid_totp:
-        clear_rate_limit(user)
-        continue_url = data["continue_url"]
-        if not continue_url.lower().startswith(current_app.app_config.oidc.continue_eduteams_redirect_uri):
-            raise Forbidden(f"Invalid continue_url: {continue_url}")
-        return {"location": continue_url}, 201
-    else:
-        return {"new_totp": False}, 400
-
-
 @mfa_api.route("/pre-update2fa", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def pre_update2fa():
@@ -227,25 +205,3 @@ def reset2fa_other():
     db.session.merge(user)
     db.session.commit()
     return {}, 201
-
-
-@mfa_api.route("/ssid_start/<second_fa_uuid>", strict_slashes=False)
-def do_ssid_redirect(second_fa_uuid):
-    logger = ctx_logger("2fa")
-
-    continue_url = query_param("continue_url", required=True)
-    session["ssid_original_destination"] = continue_url
-    user = _get_user_by_second_fa_uuid(second_fa_uuid)
-
-    if user.home_organisation_uid and user.schac_home_organisation:
-        logger.debug(f"do_ssid_redirect: continue_url={continue_url}, user={user}")
-        user = db.session.merge(user)
-        db.session.commit()
-        return redirect_to_surf_secure_id(user)
-
-    logger.warning(f"user {user.id} marked as ssid_required has no home_organisation_uid {user.home_organisation_uid}"
-                   f" or no schac_home_organisation {user.schac_home_organisation}")
-
-    from server.api.user import redirect_to_client
-
-    return redirect_to_client(current_app.app_config, False, user)

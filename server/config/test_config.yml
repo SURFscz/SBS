@@ -246,8 +246,6 @@ ssid_identity_providers:
   - schac_home: "erroridp.example.edu"
     entity_id: "https://erroridp.example.edu"
 
-ssid_config_folder: saml_test
-
 pam_web_sso:
   session_timeout_seconds: 300
 
