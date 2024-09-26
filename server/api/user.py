@@ -351,7 +351,7 @@ def resume_session():
 
     # we're repeating some of the logic of _perform_sram_login() here
     # at least until EduTEAMS has transitioned to inserting a call to proxy_authz in the login flow for SBS itself
-    #
+    # TODO cleanup
     # no need to repeat this logic if we already have made a decision before
     if not idp_mfa and not user.ssid_required and not has_valid_mfa(user):
         schac_home_organisation = user.schac_home_organisation
@@ -460,41 +460,6 @@ def _do_delete_user(user_id, send_mail_account_deletion=True):
     db.session.commit()
     broadcast_user_deleted(user.external_id, collaboration_identifiers)
     return user
-
-
-# This is the SAML redirect-url after step-up in surf secure ID
-@user_api.route("/acs", methods=["POST"], strict_slashes=False)
-def acs():
-    logger = ctx_logger("acl")
-
-    request_id = session.get(AUTHN_REQUEST_ID, None)
-    auth = saml_auth()
-    auth.process_response(request_id=request_id)
-
-    cfg = current_app.app_config
-
-    user_uid = session.get(USER_UID, None)
-    user = User.query.filter(User.uid == user_uid).first()
-
-    # There is no other way to get the status back
-    status = OneLogin_Saml2_Utils.get_status(auth._last_response)
-    second_factor_confirmed = OneLogin_Saml2_Constants.STATUS_SUCCESS == status.get("code")
-
-    if not user:
-        return redirect(
-            location=f"{cfg.base_url}/error?reason=ssid_failed&code={status.get('code')}&msg={status.get('msg')}")
-
-    logger.debug(f"User {user_uid} got SSID response (status={status})")
-
-    if second_factor_confirmed:
-        user.ssid_required = False
-        user.last_login_date = dt_now()
-        user.suspended = False
-    else:
-        return redirect(
-            location=f"{cfg.base_url}/error?reason=ssid_failed&code={status.get('code')}&msg={status.get('msg')}")
-
-    return redirect_to_client(cfg, second_factor_confirmed, user)
 
 
 def _redirect_with_error(logger, error_msg):

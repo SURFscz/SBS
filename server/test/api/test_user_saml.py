@@ -1,8 +1,8 @@
 import uuid
 from urllib.parse import urlencode
 
-from server.api.user_saml import SERVICE_UNKNOWN, USER_UNKNOWN, SERVICE_NOT_CONNECTED, SECOND_FA_REQUIRED, \
-    status_to_string, MISSING_ATTRIBUTES
+from server.auth.user_codes import USER_UNKNOWN, SERVICE_UNKNOWN, SERVICE_NOT_CONNECTED, MISSING_ATTRIBUTES, \
+    SECOND_FA_REQUIRED, status_to_string
 from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED
 from server.db.domain import Collaboration, Service, User, UserLogin

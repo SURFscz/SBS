@@ -9,10 +9,9 @@ from jwt import algorithms
 from server.auth.secrets import generate_token
 from server.auth.security import is_admin_user, CSRF_TOKEN
 from server.db.db import db
-from server.db.domain import Organisation, SchacHomeOrganisation
+from server.db.domain import Organisation, SchacHomeOrganisation, User
 from server.logger.context_logger import ctx_logger
 from server.tools import dt_now
-
 
 ACR_VALUES = "https://refeds.org/profile/mfa"
 
@@ -97,29 +96,6 @@ def eligible_users_to_reset_token(user):
     return user_info
 
 
-def _idp_configured(identity_providers, action, schac_home=None, entity_id=None):
-    entity_id_allowed = entity_id and [
-        idp for idp in identity_providers if "entity_id" in idp and idp.entity_id == entity_id.lower()
-    ]
-
-    def schac_match(configured_schac_home, schac_home):
-        schac_home_lower = schac_home.lower()
-        return configured_schac_home == schac_home_lower or schac_home_lower.endswith(f".{configured_schac_home}")
-
-    schac_home_allowed = schac_home and [
-        idp for idp in identity_providers if "schac_home" in idp and schac_match(idp.schac_home, schac_home)
-    ]
-
-    result = entity_id_allowed or schac_home_allowed
-
-    logger = ctx_logger("user_api")
-    logger.debug(f"{action}: {result} (entity_id_allowed={bool(entity_id_allowed)}, "
-                 f"schac_home_allowed={bool(schac_home_allowed)}, "
-                 f"entity_id={entity_id}, schac_home={schac_home}")
-
-    return bool(result)
-
-
 def has_valid_mfa(user):
     last_login_date = user.last_login_date
     login_sso_cutoff = timedelta(hours=0, minutes=int(current_app.app_config.mfa_sso_time_in_minutes))
@@ -131,11 +107,21 @@ def has_valid_mfa(user):
     return valid_mfa_sso
 
 
-def mfa_idp_allowed(schac_home=None, entity_id=None):
-    allowed_identity_providers = current_app.app_config.mfa_idp_allowed
-    return _idp_configured(allowed_identity_providers, "mfa_idp_allowed", schac_home, entity_id)
+def mfa_idp_allowed(user: User, entity_id : str=None):
+    mfa_id_providers = current_app.app_config.mfa_idp_allowed
+    entity_id_allowed = bool([idp for idp in mfa_id_providers if entity_id and idp.entity_id == entity_id.lower()])
 
+    def schac_match(configured_schac_home, user_schac_home):
+        schac_home_lower = user_schac_home.lower()
+        return configured_schac_home == schac_home_lower or schac_home_lower.endswith(f".{configured_schac_home}")
 
-def surf_secure_id_required(schac_home=None, entity_id=None):
-    ssid_identity_providers = current_app.app_config.ssid_identity_providers
-    return _idp_configured(ssid_identity_providers, "surf_secure_id_required", schac_home, entity_id)
+    schac_home = user.schac_home_organisation
+    schac_allowed = bool([idp for idp in mfa_id_providers if schac_home and schac_match(idp.schac_home, schac_home)])
+    result = entity_id_allowed or schac_allowed
+
+    logger = ctx_logger("user_api")
+    logger.debug(f"mfa_idp_allowed: {result} (entity_id_allowed={entity_id_allowed}, "
+                 f"schac_home_allowed={schac_allowed}, "
+                 f"entity_id={entity_id}, schac_home={schac_home}")
+
+    return result
