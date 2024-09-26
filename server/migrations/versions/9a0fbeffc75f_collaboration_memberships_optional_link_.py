@@ -18,7 +18,7 @@ depends_on = None
 def upgrade():
     conn = op.get_bind()
     conn.execute(text("ALTER TABLE collaboration_memberships ADD COLUMN invitation_id INT(11), "
-                      "ADD FOREIGN KEY col_membership_invitation(invitation_id) REFERENCES invitations(id)"))
+                      "ADD FOREIGN KEY collaboration_memberships_ibfk_3(invitation_id) REFERENCES invitations(id)"))
 
 
 def downgrade():
