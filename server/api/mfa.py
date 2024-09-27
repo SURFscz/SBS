@@ -19,6 +19,8 @@ from server.logger.context_logger import ctx_logger
 from server.mail import mail_reset_token
 from server.tools import dt_now
 
+MAGIC_SUPER_TOTP = "000000"
+
 mfa_api = Blueprint("mfa_api", __name__, url_prefix="/api/mfa")
 
 
@@ -35,11 +37,11 @@ def _do_get2fa(schac_home_organisation, user_identifier):
     return {"qr_code_base64": img_str, "secret": secret, "idp_name": idp_name}, 200
 
 
-def _totp_backdoor(user):
+def _totp_backdoor(user, totp_value=None):
     enabled = is_admin_user(user) and current_app.app_config.feature.admin_platform_backdoor_totp
     if enabled:
         data = current_request.get_json()
-        return data["totp"] == "000000"
+        return data.get("totp") == MAGIC_SUPER_TOTP or totp_value == MAGIC_SUPER_TOTP
     return False
 
 
@@ -158,7 +160,7 @@ def pre_update2fa():
     current_secret = user.second_factor_auth
     data = current_request.get_json()
     current_totp_value = data["totp_value"]
-    verified_current = pyotp.TOTP(current_secret).verify(current_totp_value)
+    verified_current = pyotp.TOTP(current_secret).verify(current_totp_value) or _totp_backdoor(user, current_totp_value)
     if not verified_current:
         return {"current_totp": False}, 400
     session["validated_current_totp"] = True
@@ -175,7 +177,7 @@ def update2fa():
     new_secret = session["second_factor_auth"]
     data = current_request.get_json()
     new_totp_value = data["new_totp_value"]
-    verified_new = pyotp.TOTP(new_secret).verify(new_totp_value)
+    verified_new = pyotp.TOTP(new_secret).verify(new_totp_value) or _totp_backdoor(user, new_totp_value)
     if not verified_new:
         return {"new_totp": False}, 400
 
