@@ -53,6 +53,85 @@ def status_to_string(status):
         return "UNKNOWN_STATUS"
 
 
+# Independent mapping, so different attribute names can be sent back
+custom_saml_mapping = {
+    "multi_value_attributes": ["edu_members", "affiliation", "scoped_affiliation", "entitlement"],
+    "attribute_saml_mapping": {
+        "uid": "cuid",
+        "username": "uid"
+    },
+    "custom_attribute_saml_mapping": {
+        "memberships": "eduPersonEntitlement",
+    }
+}
+
+
+# See https://github.com/SURFscz/SBS/issues/152
+def _perform_sram_login(uid, service, service_entity_id, user_email, user_name, home_organisation_uid,
+                        schac_home_organisation, issuer_id, require_2fa=True):
+    logger = ctx_logger("user_api")
+
+    logger.debug("SBS login flow")
+
+    user = User.query.filter(User.uid == uid).first()
+    if not user:
+        logger.debug("Creating new user in sram_login")
+        user = User(uid=uid, name=user_name, email=user_email, external_id=str(uuid.uuid4()), created_by="system",
+                    updated_by="system")
+
+    if home_organisation_uid:
+        user.home_organisation_uid = home_organisation_uid
+    if schac_home_organisation:
+        user.schac_home_organisation = schac_home_organisation
+
+    # TODO: lots of duplicated code below
+    if require_2fa:
+        idp_allowed = mfa_idp_allowed(schac_home_organisation, issuer_id)
+        ssid_required = surf_secure_id_required(schac_home_organisation, issuer_id)
+        fallback_required = not idp_allowed and not ssid_required and current_app.app_config.mfa_fallback_enabled
+
+        # this is a configuration conflict and should never happen!
+        if idp_allowed and ssid_required:
+            raise InternalServerError("Both IdP-based MFA and SSID-based MFA configured "
+                                      f"for IdP '{schac_home_organisation}'")
+
+        # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
+        # also skip if user has already recently performed MFA
+        if not idp_allowed and (ssid_required or fallback_required) and not has_valid_mfa(user):
+            base_url = current_app.app_config.base_url
+            base_server_url = current_app.app_config.base_server_url
+            if ssid_required:
+                user.ssid_required = True
+                if home_organisation_uid:
+                    user.home_organisation_uid = home_organisation_uid
+                if schac_home_organisation:
+                    user.schac_home_organisation = schac_home_organisation
+                redirect_base_url = f"{base_server_url}/api/mfa/ssid_start"
+            else:
+                redirect_base_url = f"{base_url}/2fa"
+
+            user.second_fa_uuid = str(uuid.uuid4())
+            user = db.session.merge(user)
+            db.session.commit()
+
+            logger.debug(f"Returning interrupt for user {uid} from issuer {issuer_id} to perform 2fa "
+                         f"(ssid={ssid_required})")
+
+            log_user_login(PROXY_AUTHZ_SBS, False, user, uid, service, service_entity_id, status="SECOND_FA_REQUIRED")
+
+            return {
+                "status": {
+                    "result": "interrupt",
+                    "redirect_url": f"{redirect_base_url}/{user.second_fa_uuid}",
+                    "error_status": SECOND_FA_REQUIRED
+                }
+            }, 200
+
+    log_user_login(PROXY_AUTHZ_SBS, True, user, uid, service, service_entity_id, status="AUTHORIZED")
+
+    db.session.merge(user)
+    db.session.commit()
+    return {"status": {"result": "authorized"}}, 200
 
 
 def _do_attributes(user, uid, service, service_entity_id, not_authorized_func, authorized_func,
@@ -159,11 +238,15 @@ def _do_attributes(user, uid, service, service_entity_id, not_authorized_func, a
 def proxy_authz():
     json_dict = current_request.get_json()
     uid = json_dict["user_id"]
-    service_entity_id = json_dict["service_id"].lower()
+    service_entity_id = json_dict["service_id"]
     issuer_id = json_dict["issuer_id"]
-    # We need these two to validate the completeness of the user when provisioning in _perform_sram_login is performed
+    # We need these two to validate the completeness of the user when provisioning in _perform_sram_login
     user_name = json_dict.get("user_name", None)
     user_email = json_dict.get("user_email", None)
+    # These are optional; they are only used to check for logins that should do SSID-SFO
+    # If the proxy doesn't send these, we can safely assume the user shouldn't be sent to SSID
+    home_organisation_uid = json_dict.get("uid", None)
+    schac_home_organisation = json_dict.get("homeorganization", idp_schac_home_by_entity_id(issuer_id))
 
     logger = ctx_logger("user_api")
     logger.debug(f"proxy_authz called with {json_dict}")
@@ -172,12 +255,12 @@ def proxy_authz():
     user = User.query.filter(User.uid == uid).first()
 
     # user who log in to SBS itself can continue here; their attributes are checked in user.py/resume_session()
-    if service_entity_id == current_app.app_config.oidc.sram_service_entity_id.lower():
-        logger.debug("SBS login flow")
-        return {"status": {"result": "authorized"}}, 200
+    if service_entity_id.lower() == current_app.app_config.oidc.sram_service_entity_id.lower():
+        return _perform_sram_login(uid, service, service_entity_id, user_email, user_name, home_organisation_uid,
+                                   schac_home_organisation, issuer_id)
 
     # users who log in to services should have a complete set of attributes (because they have logged in to SBS
-    # itself before),
+    # itself before)
     # but users who are not provisioned at all are caught below (with an AUP_NOT_AGREED interrupt)
     if user is not None and not valid_user_attributes({"sub": user.uid, "name": user.name, "email": user.email}):
         args = urllib.parse.urlencode({"aud": service_entity_id,

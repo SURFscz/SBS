@@ -109,6 +109,28 @@ class SecondFactorAuthentication extends React.Component {
         }
     }
 
+    onPasteTotp = (index, attributeName, refs, onLastEntryVerify) => e => {
+        if (index === 0 && refs) {
+            const data = e.clipboardData.getData('text/plain');
+            if (/[0-9]{6}/.test(data)) {
+                const newValue = data.split("");
+                const {update} = this.props;
+                this.setState({[attributeName]: newValue}, () => {
+                    if (onLastEntryVerify) {
+                        refs[5].focus();
+                        this.verify();
+                    } else if (update) {
+                        this.preUpdateVerify();
+                    } else {
+                        this.totpNewRefs[0].focus();
+                    }
+                });
+                return false;
+            }
+        }
+        return true;
+    }
+
     onKeyDownTotp = (index, refs) => e => {
         if ((e.key === "Delete" || e.key === "Backspace") && index > 0 && e.target.value === "") {
             refs[index - 1].focus();
@@ -381,8 +403,10 @@ class SecondFactorAuthentication extends React.Component {
                     }}/>
                 </section>
                 <div className="explain">
-                    <a href="/reset-token" onClick={this.openResetRequest}>{I18n.t("mfa.verify.rateLimitedResetRequest")}</a>
-                    <a href="/enter-reset" onClick={this.enterResetToken}>{I18n.t("mfa.verify.rateLimitedResetToken")}</a>
+                    <a href="/reset-token"
+                       onClick={this.openResetRequest}>{I18n.t("mfa.verify.rateLimitedResetRequest")}</a>
+                    <a href="/enter-reset"
+                       onClick={this.enterResetToken}>{I18n.t("mfa.verify.rateLimitedResetToken")}</a>
                 </div>
             </div>
         )
@@ -432,6 +456,7 @@ class SecondFactorAuthentication extends React.Component {
                            value={totp[index] || ""}
                            onChange={this.onChangeTotp(index, attributeName, refs, onLastEntryVerify)}
                            onKeyDown={this.onKeyDownTotp(index, refs)}
+                           onPaste={this.onPasteTotp(index, attributeName, refs, onLastEntryVerify)}
                            maxLength={1}
                            ref={ref => refs[index] = ref}
                            className="totp-value"/>

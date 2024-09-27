@@ -10,20 +10,18 @@ import uuid
 import requests
 from flask import Blueprint, current_app, redirect
 from flask import request as current_request, session, jsonify
-from onelogin.saml2.constants import OneLogin_Saml2_Constants
-from onelogin.saml2.utils import OneLogin_Saml2_Utils
 from sqlalchemy import text, or_, bindparam, String
 from sqlalchemy.orm import selectinload
-from werkzeug.exceptions import InternalServerError, Forbidden
+from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint, query_param, organisation_by_user_schac_home
 from server.api.base import replace_full_text_search_boolean_mode_chars
 from server.auth.mfa import ACR_VALUES, store_user_in_session, mfa_idp_allowed, \
-    surf_secure_id_required, has_valid_mfa, decode_jwt_token
+    has_valid_mfa, decode_jwt_token
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
     confirm_collaboration_admin, confirm_organisation_admin, current_user, confirm_write_access, \
     confirm_organisation_admin_or_manager, is_application_admin, CSRF_TOKEN
-from server.auth.ssid import AUTHN_REQUEST_ID, saml_auth, redirect_to_surf_secure_id, USER_UID
+from server.auth.ssid import redirect_to_surf_secure_id
 from server.auth.user_claims import add_user_claims, valid_user_attributes
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit, SBS_LOGIN
@@ -357,35 +355,21 @@ def resume_session():
         schac_home_organisation = user.schac_home_organisation
         home_organisation_uid = user_info_json.get('uid', None)
 
-        idp_allowed = mfa_idp_allowed(schac_home=schac_home_organisation)
-        ssid_required = surf_secure_id_required(schac_home=schac_home_organisation)
-        fallback_required = not idp_allowed and not ssid_required and current_app.app_config.mfa_fallback_enabled
+        idp_allowed = mfa_idp_allowed(user)
+        fallback_required = not idp_allowed and current_app.app_config.mfa_fallback_enabled
 
         logger.debug(f"SBS login for user {uid} MFA check: "
-                     f"idp_allowed={idp_allowed}, ssid={ssid_required}, fallback={fallback_required} "
+                     f"idp_allowed={idp_allowed}, fallback={fallback_required} "
                      f"(sho={schac_home_organisation},uid={home_organisation_uid}")
-
-        # this is a configuration conflict and should never happen!
-        if idp_allowed and ssid_required:
-            raise InternalServerError(
-                f"Both IdP-based MFA and SSID-based MFA configured for IdP '{schac_home_organisation}'")
 
         # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
         # also skip if user has already recently performed MFA
-        if not idp_allowed and (ssid_required or fallback_required) and not has_valid_mfa(user):
-            if ssid_required:
-                user.ssid_required = True
-                if home_organisation_uid:
-                    user.home_organisation_uid = home_organisation_uid[0] if isinstance(home_organisation_uid,
-                                                                                        list) else home_organisation_uid
-                if schac_home_organisation:
-                    user.schac_home_organisation = schac_home_organisation
-
+        if not idp_allowed and fallback_required and not has_valid_mfa(user):
             user.second_fa_uuid = str(uuid.uuid4())
             user = db.session.merge(user)
             db.session.commit()
 
-            logger.debug(f"Setting 2fa required for SBS login for user {uid} (ssid={ssid_required})")
+            logger.debug(f"Setting 2fa required for SBS login for user {uid}")
     else:
         fallback_required = False
 
