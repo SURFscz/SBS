@@ -10,7 +10,7 @@ from server.api.service_aups import has_agreed_with
 from server.auth.mfa import mfa_idp_allowed, has_valid_mfa
 from server.auth.security import confirm_read_access
 from server.auth.service_access import has_user_access_to_service
-from server.auth.user_claims import user_memberships, collaboration_memberships_for_service, co_tags, \
+from server.auth.user_claims import user_memberships, co_tags, \
     valid_user_attributes
 from server.auth.user_codes import USER_UNKNOWN, USER_IS_SUSPENDED, SERVICE_UNKNOWN, SERVICE_NOT_CONNECTED, \
     COLLABORATION_NOT_ACTIVE, NEW_FREE_RIDE_USER, MISSING_ATTRIBUTES, AUP_NOT_AGREED, SECOND_FA_REQUIRED, \
@@ -107,7 +107,7 @@ def proxy_authz():
             }
         }, 200
 
-    # if CO's are not active, then this is the same as the CO is not connected to the Service
+    # if CO's are not active, then this is the same as the CO is not connected to the Service?
     if not has_user_access_to_service(service, user):
         logger.debug(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id} "
                      "because the service is not connected to any active CO's")
@@ -162,7 +162,7 @@ def proxy_authz():
 
     all_memberships = user_memberships(user, connected_collaborations)
     all_tags = co_tags(connected_collaborations)
-    all_attributes, http_status = authorized_func(user, all_memberships | all_tags)
+    all_attributes, http_status = authorized_func(user, )
 
     eppn_scope = current_app.app_config.eppn_scope.strip()
 
@@ -173,7 +173,7 @@ def proxy_authz():
             "result": "authorized",
         },
         "attributes": {
-            "eduPersonEntitlement": list(memberships),
+            "eduPersonEntitlement": list(all_memberships),
             "eduPersonPrincipalName": [f"{user.username}@{eppn_scope}"],
             "uid": [user.username],
             "sshkey": [ssh_key.ssh_value for ssh_key in user.ssh_keys]
