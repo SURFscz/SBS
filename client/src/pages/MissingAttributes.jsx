@@ -17,6 +17,7 @@ export default function MissingAttributes() {
         setUserId(urlSearchParams.get("sub"));
     }, [])
 
+    const timeStamp = new Date().toUTCString();
     return (
         <div className="mod-missing-attributes">
             <div className="content">
@@ -26,10 +27,17 @@ export default function MissingAttributes() {
                          className={"no-access"}
                          alt="No Access"/>
                 </div>
-                <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("missingAttributes.contact"))}}/>
                 {(entityId || issuerId || userId) &&
-                    <div className={"ticket"}>
-                        <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("sfo.ticket"))}}/>
+                    <div className="ticket">
+                        <p dangerouslySetInnerHTML={{
+                            __html: DOMPurify.sanitize(I18n.t("sfo.ticket", {
+                                subject: I18n.t("sfo.subject", {name: entityId}),
+                                entityId: entityId,
+                                issuerId: issuerId,
+                                userId: userId,
+                                timestamp: timeStamp
+                            }))
+                        }}/>
                         {entityId && <span>{I18n.t("sfo.entityId")}</span>}
                         {entityId && <span className={"value"}>{entityId}</span>}
                         {issuerId && <span>{I18n.t("sfo.issuerId")}</span>}
@@ -37,7 +45,7 @@ export default function MissingAttributes() {
                         {userId && <span>{I18n.t("sfo.userId")}</span>}
                         {userId && <span className={"value"}>{userId}</span>}
                         <span>{I18n.t("sfo.timestamp")}</span>
-                        <span className={"value"}>{new Date().toUTCString()}</span>
+                        <span className={"value"}>{timeStamp}</span>
                     </div>}
 
             </div>

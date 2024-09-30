@@ -5,7 +5,7 @@ from flask import Blueprint, current_app, request as current_request
 from server import tools
 from server.api.base import json_endpoint, send_error_mail
 from server.api.service_aups import has_agreed_with
-from server.auth.mfa import mark_user_second_factor_confirmation
+from server.auth.mfa import user_requires_sram_mfa
 from server.auth.service_access import has_user_access_to_service, collaboration_memberships_for_service
 from server.auth.user_claims import user_memberships, co_tags
 from server.auth.user_codes import USER_UNKNOWN, USER_IS_SUSPENDED, SERVICE_UNKNOWN, SERVICE_NOT_CONNECTED, \
@@ -81,7 +81,9 @@ def proxy_authz():
             }
         }, 200
 
-    if mark_user_second_factor_confirmation(user, issuer_id):
+    # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
+    # also skip if user has already recently performed MFA
+    if user_requires_sram_mfa(user, issuer_id):
         logger.debug(f"Returning interrupt for user {uid} from issuer {issuer_id} to perform 2fa")
         # Do not expose second_fa_uuid if not necessary
         new_parameters = {**parameters, "error_status": SECOND_FA_REQUIRED, "second_fa_uuid": user.second_fa_uuid}
@@ -92,10 +94,8 @@ def proxy_authz():
                 "error_status": SECOND_FA_REQUIRED
             }
         }, 200
-    else:
-        user.second_factor_confirmed = True
 
-    # if CO's are not active, then this is the same as the CO is not connected to the Service
+    # if none of CO's are not active, then this is the same as none of the CO's are not connected to the Service
     if not has_user_access_to_service(service, user):
         logger.debug(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id} "
                      "because the service is not connected to any active CO's")

@@ -6,15 +6,12 @@ import re
 import string
 import unicodedata
 import uuid
-from typing import Iterator
 
 from flask import current_app
 
-from server.db.defaults import STATUS_SUSPENDED
 from server.db.domain import User, UserNameHistory, Collaboration
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error
-from server.tools import dt_now
 
 claim_attribute_mapping_value = [
     {"sub": "uid"},
@@ -88,15 +85,6 @@ def add_user_claims(user_info_json, uid, user):
             mail_error(mail_conf.environment, uid, mail_conf.send_exceptions_recipients, msg)
 
 
-# return all active (non-expired/suspended) collaboration from the list
-def _active_collaborations(collaborations: Iterator[Collaboration]) -> Iterator[Collaboration]:
-    now = dt_now()
-    for collaboration in collaborations:
-        not_expired = not collaboration.expiry_date or collaboration.expiry_date > now
-        if not_expired and collaboration.status != STATUS_SUSPENDED:
-            yield collaboration
-
-
 def user_memberships(user, connected_collaborations):
     cfg = current_app.app_config
     namespace = cfg.get("entitlement_group_namespace", "urn:bla")
@@ -113,7 +101,7 @@ def user_memberships(user, connected_collaborations):
     # Also, we omit the GROUP-AUTHORITY (and are therefore not completely compliant), as it complicates parsing the
     # entitlement, will confuse Services, and the spec fails to make clear what the usecase is, exactly.
     memberships = set()
-    for collaboration in _active_collaborations(connected_collaborations):
+    for collaboration in connected_collaborations:
         # add the CO itself, the Organisation this CO belongs to, and the groups within the CO
         org_short_name = collaboration.organisation.short_name
         coll_short_name = collaboration.short_name
@@ -131,7 +119,7 @@ def co_tags(connected_collaborations: list[Collaboration]) -> set[str]:
     namespace = cfg.get("entitlement_group_namespace", "urn:bla")
 
     tags = set()
-    for collaboration in _active_collaborations(connected_collaborations):
+    for collaboration in connected_collaborations:
         co_name = collaboration.short_name
         org_name = collaboration.organisation.short_name
         for tag in collaboration.tags:

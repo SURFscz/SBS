@@ -16,12 +16,10 @@ from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint, query_param, organisation_by_user_schac_home
 from server.api.base import replace_full_text_search_boolean_mode_chars
-from server.auth.mfa import ACR_VALUES, store_user_in_session, mfa_idp_allowed, \
-    has_valid_mfa, decode_jwt_token
+from server.auth.mfa import ACR_VALUES, store_user_in_session, decode_jwt_token, user_requires_sram_mfa
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
     confirm_collaboration_admin, confirm_organisation_admin, current_user, confirm_write_access, \
     confirm_organisation_admin_or_manager, is_application_admin, CSRF_TOKEN
-from server.auth.ssid import redirect_to_surf_secure_id
 from server.auth.user_claims import add_user_claims, valid_user_attributes
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit, SBS_LOGIN
@@ -271,6 +269,7 @@ def service_info():
         res["support_email"] = service.support_email
     return res, 200
 
+
 # Called by eduTeams as this is the redirect URL of SRAM oidc client
 @user_api.route("/resume-session", strict_slashes=False)
 def resume_session():
@@ -326,7 +325,7 @@ def resume_session():
     id_token = decode_jwt_token(encoded_id_token)
 
     if not user:
-        # Ensure we don't provision users who have not the mandatory attributes
+        # Ensure we don't provision users who have not all the mandatory attributes
         if not valid_user_attributes(user_info_json):
             args = urllib.parse.urlencode({"aud": id_token.get("aud", ""),
                                            "iss": id_token.get("iss", ""),
@@ -343,48 +342,23 @@ def resume_session():
         logger.info(f"Updating user {user.uid} with new claims / updated at")
         add_user_claims(user_info_json, uid, user)
 
+    # Check if we need a second factor for the user
     idp_mfa = id_token.get("acr") == ACR_VALUES
     if idp_mfa:
         logger.debug(f"user {uid}: idp_mfa={idp_mfa} (ACR = '{id_token.get('acr')}')")
-
-    # we're repeating some of the logic of _perform_sram_login() here
-    # at least until EduTEAMS has transitioned to inserting a call to proxy_authz in the login flow for SBS itself
-    # TODO cleanup
-    # no need to repeat this logic if we already have made a decision before
-    if not idp_mfa and not has_valid_mfa(user):
-        schac_home_organisation = user.schac_home_organisation
-        home_organisation_uid = user_info_json.get('uid', None)
-
-        idp_allowed = mfa_idp_allowed(user)
-        fallback_required = not idp_allowed and current_app.app_config.mfa_fallback_enabled
-
-        logger.debug(f"SBS login for user {uid} MFA check: "
-                     f"idp_allowed={idp_allowed}, fallback={fallback_required} "
-                     f"(sho={schac_home_organisation},uid={home_organisation_uid}")
-
-        # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
-        # also skip if user has already recently performed MFA
-        if not idp_allowed and fallback_required and not has_valid_mfa(user):
-            user.second_fa_uuid = str(uuid.uuid4())
-            user = db.session.merge(user)
-            db.session.commit()
-
-            logger.debug(f"Setting 2fa required for SBS login for user {uid}")
-    else:
-        fallback_required = False
-
-    no_mfa_required = not oidc_config.second_factor_authentication_required
-    second_factor_confirmed = (no_mfa_required or not fallback_required)
-    if second_factor_confirmed:
+    mfa_is_required = user_requires_sram_mfa(user, issuer_id=id_token.get("iss"), override_mfa_allowed=idp_mfa)
+    logger.debug(f"SBS login for user {uid} MFA check is required: {mfa_is_required}")
+    if not mfa_is_required:
         user.last_login_date = dt_now()
         user.suspended = False
 
-    return redirect_to_client(cfg, second_factor_confirmed, user)
+    return redirect_to_client(cfg, not mfa_is_required, user)
 
 
 def redirect_to_client(cfg, second_factor_confirmed, user):
     logger = ctx_logger("redirect")
     user.suspended = False
+    user.suspend_notifications = []
     user = db.session.merge(user)
     db.session.commit()
     user_accepted_aup = user.has_agreed_with_aup()
@@ -405,9 +379,6 @@ def get_redirect(cfg, user_accepted_aup, second_factor_confirmed):
     elif not second_factor_confirmed:
         location = f"{cfg.base_url}/2fa"
         status = "MFA_REQUIRED"
-    elif "ssid_original_destination" in session:
-        location = session.pop("ssid_original_destination")
-        status = "SSID_ORIGINAL_DESTINATION"
     elif "original_destination" in session:
         location = session.pop("original_destination")
         status = "ORIGINAL_DESTINATION"
