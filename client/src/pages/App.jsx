@@ -57,6 +57,7 @@ import MissingAttributes from "./MissingAttributes";
 import CollaborationsOverview from "./CollaborationsOverview";
 import MyRequests from "../components/redesign/MyRequests";
 import Delay from "./Delay";
+import Interrupt from "./Interrupt";
 
 addIcons();
 
@@ -469,6 +470,13 @@ class App extends React.Component {
                                    render={props => <ProtectedRoute
                                        currentUser={currentUser}
                                        Component={ServiceAup}
+                                       config={config}
+                                       {...props}/>}/>
+
+                            <Route path="/interrupt"
+                                   render={props => <ProtectedRoute
+                                       currentUser={currentUser}
+                                       Component={Interrupt}
                                        config={config}
                                        {...props}/>}/>
 

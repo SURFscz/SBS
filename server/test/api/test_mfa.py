@@ -1,14 +1,9 @@
-import uuid
-
 import pyotp
 from flask import current_app
 
 from server.auth.secrets import generate_token
-from server.auth.ssid import saml_auth
-from server.db.db import db
 from server.db.domain import User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import service_mail_entity_id, user_sarah_name
 
 
 class TestMfa(AbstractTest):
@@ -34,78 +29,6 @@ class TestMfa(AbstractTest):
 
         mary = User.query.filter(User.uid == "urn:mary").first()
         self.assertEqual(secret, mary.second_factor_auth)
-
-    def test_ssid_scenario(self):
-        # initiate proxy_authz call to initialize 2fa
-        self.post("/api/users/proxy_authz", response_status_code=200,
-                  body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
-                        "uid": "sarah", "homeorganization": "ssid.org", "user_email": "sarah@ex.com",
-                        "user_name": "sarah p"})
-        sarah = self.find_entity_by_name(User, user_sarah_name)
-
-        # start the ssid
-        res = self.get(f"/api/mfa/ssid_start/{sarah.second_fa_uuid}", query_data={"continue_url": "https://foo.bar"},
-                       response_status_code=302)
-        saml_sso_url = saml_auth().get_sso_url()
-        self.assertTrue(res.location.startswith(saml_sso_url))
-
-        # ssid response
-        # Commented out by oharsta because of Fatal Python error: Segmentation fault
-        # in onelogin/saml2/utils.py", line 738 in add_sign
-        # xml_authn_b64 = self.get_authn_response("response.ok.xml")
-        # res = self.client.post("/api/users/acs", headers={},
-        #                        data={"SAMLResponse": xml_authn_b64,
-        #                              "RelayState": "http://localhost:8080/api/users/acs"},
-        #                        content_type="application/x-www-form-urlencoded")
-        #
-        # self.assertEqual(302, res.status_code)
-        # self.assertEqual("https://foo.bar", res.location)
-
-    def test_ssid_scenario_new_user(self):
-        # initiate proxy_authz call to provision user and initialize 2fa
-        res = self.post("/api/users/proxy_authz", response_status_code=200,
-                        body={"user_id": "urn:new_user", "service_id": self.app.app_config.oidc.sram_service_entity_id,
-                              "issuer_id": "issuer.com", "uid": "new_user", "homeorganization": "ssid.org",
-                              "user_email": "new_user@example.edu", "user_name": "sarah p"})
-        # check that result is interrupt
-        self.assertEqual(res["status"]["result"], "interrupt")
-        self.assertIn(self.app.app_config.base_server_url + '/api/mfa/ssid_start/', res["status"]["redirect_url"])
-
-        # check provisioning of new user
-        new_user = User.query.filter(User.uid == "urn:new_user").first()
-        self.assertIsNotNone(new_user)
-        self.assertIsNotNone(new_user.name)
-        self.assertIsNotNone(new_user.email)
-        self.assertIsNotNone(new_user.second_fa_uuid)
-
-        # start the ssid
-        # note that the continue_url here should be end up in the final call after the user accepts the AUP
-        self.get(f"/api/mfa/ssid_start/{new_user.second_fa_uuid}", query_data={"continue_url": "https://foo.bar"},
-                 response_status_code=302)
-
-        # ssid response
-        # Commented out by oharsta because of Fatal Python error: Segmentation fault
-        # in onelogin/saml2/utils.py", line 738 in add_sign
-        # xml_authn_b64 = self.get_authn_response("response.ok.xml")
-        # res = self.client.post("/api/users/acs", headers={},
-        #                        data={"SAMLResponse": xml_authn_b64,
-        #                              "RelayState": "http://localhost:8080/api/users/acs"},
-        #                        content_type="application/x-www-form-urlencoded")
-        #
-        # self.assertEqual(302, res.status_code)
-        # self.assertEqual(self.app.app_config.base_url + "/aup", res.location)
-        #
-        # res = self.post("/api/aup/agree", with_basic_auth=False)
-        # self.assertEqual("https://foo.bar", res["location"])
-
-    def test_ssid_scenario_invalid_home_organisation_uid(self):
-        sarah = self.find_entity_by_name(User, user_sarah_name)
-        sarah.second_fa_uuid = str(uuid.uuid4())
-        db.session.merge(sarah)
-
-        res = self.get(f"/api/mfa/ssid_start/{sarah.second_fa_uuid}", query_data={"continue_url": "https://foo.bar"},
-                       response_status_code=302)
-        self.assertEqual(self.app.app_config.base_url + "/2fa", res.headers["Location"])
 
     def test_2fa_invalid_totp(self):
         AbstractTest.set_second_factor_auth("urn:mary")
