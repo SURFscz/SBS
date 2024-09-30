@@ -1,4 +1,5 @@
 import json
+import uuid
 from datetime import timedelta
 
 import jwt
@@ -125,3 +126,19 @@ def mfa_idp_allowed(user: User, entity_id : str=None):
                  f"entity_id={entity_id}, schac_home={schac_home}")
 
     return result
+
+
+def mark_user_second_factor_confirmation(user: User, issuer_id: str):
+    idp_mfa_allowed = mfa_idp_allowed(user, issuer_id)
+    fallback_required = not idp_mfa_allowed and current_app.app_config.mfa_fallback_enabled
+    # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
+    # also skip if user has already recently performed MFA
+    res = idp_mfa_allowed and fallback_required and not has_valid_mfa(user)
+    if res:
+        user.second_factor_confirmed = False
+        user.second_fa_uuid = str(uuid.uuid4())
+    else:
+        user.second_factor_confirmed = True
+    db.session.merge(user)
+    db.session.commit()
+    return res

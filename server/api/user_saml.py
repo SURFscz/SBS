@@ -1,5 +1,3 @@
-import urllib.parse
-import uuid
 from urllib.parse import urlencode
 
 from flask import Blueprint, current_app, request as current_request
@@ -7,16 +5,13 @@ from flask import Blueprint, current_app, request as current_request
 from server import tools
 from server.api.base import json_endpoint, send_error_mail
 from server.api.service_aups import has_agreed_with
-from server.auth.mfa import mfa_idp_allowed, has_valid_mfa
-from server.auth.security import confirm_read_access
-from server.auth.service_access import has_user_access_to_service
-from server.auth.user_claims import user_memberships, co_tags, \
-    valid_user_attributes
+from server.auth.mfa import mark_user_second_factor_confirmation
+from server.auth.service_access import has_user_access_to_service, collaboration_memberships_for_service
+from server.auth.user_claims import user_memberships, co_tags
 from server.auth.user_codes import USER_UNKNOWN, USER_IS_SUSPENDED, SERVICE_UNKNOWN, SERVICE_NOT_CONNECTED, \
-    COLLABORATION_NOT_ACTIVE, NEW_FREE_RIDE_USER, MISSING_ATTRIBUTES, AUP_NOT_AGREED, SECOND_FA_REQUIRED, \
-    status_to_string
+    NEW_FREE_RIDE_USER, AUP_NOT_AGREED, SECOND_FA_REQUIRED, SERVICE_AUP_NOT_AGREED
 from server.db.db import db
-from server.db.defaults import STATUS_ACTIVE, PROXY_AUTHZ
+from server.db.defaults import PROXY_AUTHZ
 from server.db.domain import User, Service
 from server.db.models import log_user_login
 from server.logger.context_logger import ctx_logger
@@ -32,17 +27,15 @@ def proxy_authz():
     uid = json_dict["user_id"]
     service_entity_id = json_dict["service_id"].lower()
     issuer_id = json_dict["issuer_id"]
-    # Client URL for direct error message
-    base_url = current_app.app_config.base_url
-    # New interrupt endpoint server-side to decide where to go next
-    base_server_url = current_app.app_config.base_server_url
+    # Client URL for direct error message in case of unauthorized and interrupt endpoint to decide what to do
+    client_base_url = current_app.app_config.base_url
 
     logger = ctx_logger("user_api")
     logger.debug(f"proxy_authz called with {json_dict}")
 
     # user who log in to SBS itself can continue here; their attributes are checked in user.py/resume_session()
     if service_entity_id == current_app.app_config.oidc.sram_service_entity_id.lower():
-        logger.debug("Return authorized to start SBS login flow")
+        logger.debug(f"Return authorized to start SBS login flow, service_entity_id={service_entity_id}")
         return {"status": {"result": "authorized"}}, 200
 
     parameters = {"service_name": service_entity_id, "entity_id": service_entity_id, "issuer_id": issuer_id,
@@ -59,21 +52,22 @@ def proxy_authz():
         return {
             "status": {
                 "result": "unauthorized",
-                "redirect_url": f"{base_url}/service-denied?{urlencode(parameters)}",
+                "redirect_url": f"{client_base_url}/service-denied?{urlencode(parameters)}",
                 "error_status": SERVICE_UNKNOWN
             }
         }, 200
     # Add the uuid4 and name of the service, which is used in some interrupt flows
-    parameters["service_id"]= service.uuid4
-    parameters["service_name"]= service.name
+    parameters["service_id"] = service.uuid4
+    parameters["service_name"] = service.name
     user = User.query.filter(User.uid == uid).first()
+
     if not user:
-        parameters["error_status"] = USER_UNKNOWN
+        parameters["error_status"] = USER_UNKNOWN if service.non_member_users_access_allowed else NEW_FREE_RIDE_USER
         return {
             "status": {
                 "result": "interrupt",
-                "redirect_url": f"{base_server_url}/interrupt?{urlencode(parameters)}",
-                "error_status": USER_UNKNOWN
+                "redirect_url": f"{client_base_url}/interrupt?{urlencode(parameters)}",
+                "error_status": parameters["error_status"]
             }
         }, 200
 
@@ -82,32 +76,26 @@ def proxy_authz():
         return {
             "status": {
                 "result": "interrupt",
-                "redirect_url": f"{base_server_url}/interrupt?{urlencode(parameters)}",
+                "redirect_url": f"{client_base_url}/interrupt?{urlencode(parameters)}",
                 "error_status": USER_IS_SUSPENDED
             }
         }, 200
 
-    idp_mfa_allowed = mfa_idp_allowed(user, issuer_id)
-    fallback_required = not idp_mfa_allowed and current_app.app_config.mfa_fallback_enabled
-    # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
-    # also skip if user has already recently performed MFA
-    if not idp_mfa_allowed and fallback_required and not has_valid_mfa(user):
+    if mark_user_second_factor_confirmation(user, issuer_id):
         logger.debug(f"Returning interrupt for user {uid} from issuer {issuer_id} to perform 2fa")
-        user.second_factor_confirmed = False
-        user.second_fa_uuid = str(uuid.uuid4())
-        db.session.merge(user)
-        db.session.commit()
         # Do not expose second_fa_uuid if not necessary
-        new_parameters = {**parameters, "error_status": SECOND_FA_REQUIRED,"second_fa_uuid": user.second_fa_uuid}
+        new_parameters = {**parameters, "error_status": SECOND_FA_REQUIRED, "second_fa_uuid": user.second_fa_uuid}
         return {
             "status": {
                 "result": "interrupt",
-                "redirect_url": f"{base_server_url}/interrupt?{urlencode(new_parameters)}",
+                "redirect_url": f"{client_base_url}/interrupt?{urlencode(new_parameters)}",
                 "error_status": SECOND_FA_REQUIRED
             }
         }, 200
+    else:
+        user.second_factor_confirmed = True
 
-    # if CO's are not active, then this is the same as the CO is not connected to the Service?
+    # if CO's are not active, then this is the same as the CO is not connected to the Service
     if not has_user_access_to_service(service, user):
         logger.debug(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id} "
                      "because the service is not connected to any active CO's")
@@ -115,7 +103,7 @@ def proxy_authz():
         return {
             "status": {
                 "result": "unauthorized",
-                "redirect_url": f"{base_url}/service-denied?{urlencode(parameters)}",
+                "redirect_url": f"{client_base_url}/service-denied?{urlencode(parameters)}",
                 "error_status": SERVICE_NOT_CONNECTED
             }
         }, 200
@@ -123,12 +111,12 @@ def proxy_authz():
     if not has_agreed_with(user, service):
         logger.debug(f"Returning interrupt for user {uid} and service_entity_id {service_entity_id} to accept "
                      f"Service AUP")
-        parameters["error_status"] = AUP_NOT_AGREED
+        parameters["error_status"] = SERVICE_AUP_NOT_AGREED
         return {
             "status": {
                 "result": "interrupt",
-                "redirect_url": f"{base_server_url}/interrupt?{urlencode(parameters)}",
-                "error_status": AUP_NOT_AGREED
+                "redirect_url": f"{client_base_url}/interrupt?{urlencode(parameters)}",
+                "error_status": SERVICE_AUP_NOT_AGREED
             }
         }, 200
 
@@ -139,12 +127,21 @@ def proxy_authz():
         return {
             "status": {
                 "result": "interrupt",
-                "redirect_url": f"{base_server_url}/interrupt?{urlencode(parameters)}",
+                "redirect_url": f"{client_base_url}/interrupt?{urlencode(parameters)}",
                 "error_status": AUP_NOT_AGREED
             }
         }, 200
 
+    # All is well, we collect all memberships and return authorized
     now = tools.dt_now()
+
+    user.last_accessed_date = now
+    user.last_login_date = now
+    user.suspended = False
+    user.suspend_notifications = []
+    user.second_factor_confirmed = True
+
+    user = db.session.merge(user)
 
     memberships = collaboration_memberships_for_service(user, service)
     connected_collaborations = [cm.collaboration for cm in memberships]
@@ -153,18 +150,9 @@ def proxy_authz():
         coll.last_activity_date = now
         db.session.merge(coll)
 
-    user.last_accessed_date = now
-    user.last_login_date = now
-    user.suspended = False
-    user.suspend_notifications = []
-
-    user = db.session.merge(user)
-
     all_memberships = user_memberships(user, connected_collaborations)
     all_tags = co_tags(connected_collaborations)
-    all_attributes, http_status = authorized_func(user, )
-
-    eppn_scope = current_app.app_config.eppn_scope.strip()
+    all_attributes = all_memberships.union(all_tags)
 
     log_user_login(PROXY_AUTHZ, True, user, uid, service, service_entity_id, "AUTHORIZED")
 
@@ -173,10 +161,9 @@ def proxy_authz():
             "result": "authorized",
         },
         "attributes": {
-            "eduPersonEntitlement": list(all_memberships),
-            "eduPersonPrincipalName": [f"{user.username}@{eppn_scope}"],
+            "eduPersonEntitlement": list(all_attributes),
+            "eduPersonPrincipalName": [f"{user.username}@{current_app.app_config.eppn_scope.strip()}"],
             "uid": [user.username],
             "sshkey": [ssh_key.ssh_value for ssh_key in user.ssh_keys]
         }
     }, 200
-

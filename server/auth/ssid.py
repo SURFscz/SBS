@@ -21,11 +21,3 @@ def saml_auth():
     return auth
 
 
-def redirect_to_surf_secure_id(user):
-    auth = saml_auth()
-    return_to = auth.get_settings().get_sp_data()['assertionConsumerService']['url']
-    name_id = f"urn:collab:person:{user.schac_home_organisation}:{user.home_organisation_uid}"
-    sso_built_url = auth.login(return_to=return_to, name_id_value_req=name_id)
-    session[AUTHN_REQUEST_ID] = auth.get_last_request_id()
-    session[USER_UID] = user.uid
-    return redirect(sso_built_url)

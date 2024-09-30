@@ -271,7 +271,7 @@ def service_info():
         res["support_email"] = service.support_email
     return res, 200
 
-
+# Called by eduTeams as this is the redirect URL of SRAM oidc client
 @user_api.route("/resume-session", strict_slashes=False)
 def resume_session():
     logger = ctx_logger("resume-session/oidc")
@@ -351,7 +351,7 @@ def resume_session():
     # at least until EduTEAMS has transitioned to inserting a call to proxy_authz in the login flow for SBS itself
     # TODO cleanup
     # no need to repeat this logic if we already have made a decision before
-    if not idp_mfa and not user.ssid_required and not has_valid_mfa(user):
+    if not idp_mfa and not has_valid_mfa(user):
         schac_home_organisation = user.schac_home_organisation
         home_organisation_uid = user_info_json.get('uid', None)
 
@@ -373,20 +373,8 @@ def resume_session():
     else:
         fallback_required = False
 
-    # If we don't have a UID or SHO then we must not send the user to surf_secure_id
-    if user.ssid_required:
-        if user.home_organisation_uid and user.schac_home_organisation:
-            logger.debug(f"Redirecting user {uid} to ssid")
-            user = db.session.merge(user)
-            db.session.commit()
-            return redirect_to_surf_secure_id(user)
-        else:
-            logger.warning(f"user {user.id} marked as ssid_required has no "
-                           f"home_organisation_uid {user.home_organisation_uid} "
-                           f"or no schac_home_organisation {user.schac_home_organisation}")
-
     no_mfa_required = not oidc_config.second_factor_authentication_required
-    second_factor_confirmed = (no_mfa_required or not fallback_required) and not user.ssid_required
+    second_factor_confirmed = (no_mfa_required or not fallback_required)
     if second_factor_confirmed:
         user.last_login_date = dt_now()
         user.suspended = False

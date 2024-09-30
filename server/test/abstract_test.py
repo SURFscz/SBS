@@ -249,15 +249,6 @@ class AbstractTest(TestCase):
         xml_authn_signed = OneLogin_Saml2_Utils.add_sign(xml_response, key, cert)
         return b64encode(xml_authn_signed)
 
-    def mark_user_ssid_required(self, name=user_sarah_name, home_organisation_uid=None, schac_home_organisation=None):
-        user = self.find_entity_by_name(User, name)
-        user.ssid_required = True
-        if home_organisation_uid:
-            user.home_organisation_uid = home_organisation_uid
-        if schac_home_organisation:
-            user.schac_home_organisation = schac_home_organisation
-        return AbstractTest._merge_user(user)
-
     @staticmethod
     def expire_pam_session(session_id):
         pam_websso = PamSSOSession.query.filter(PamSSOSession.session_id == session_id).first()

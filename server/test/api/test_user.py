@@ -423,24 +423,6 @@ class TestUser(AbstractTest):
             self.assertTrue("organisation_memberships" in user)
 
     @responses.activate
-    def test_resume_session_with_ssid_idp(self):
-        responses.add(responses.POST, current_app.app_config.oidc.token_endpoint,
-                      json={"access_token": "some_token", "id_token": self.sign_jwt({"acr": "nope"})},
-                      status=200)
-        responses.add(responses.GET, current_app.app_config.oidc.userinfo_endpoint,
-                      json={"sub": "urn:john", "voperson_external_id": "test@ssid.org", "uid": "johnnie",
-                            "name": "John Doe"},
-                      status=200)
-        responses.add(responses.GET, current_app.app_config.oidc.jwks_endpoint,
-                      read_file("test/data/public.json"), status=200)
-        with requests.Session():
-            res = self.client.get("/api/users/resume-session?code=123456")
-            self.assertTrue(res.location.startswith(
-                "https://sa-gw.test.surfconext.nl/second-factor-only/single-sign-on?"))
-            john = self.find_entity_by_name(User, "John Doe")
-            self.assertTrue(john.ssid_required)
-
-    @responses.activate
     def test_resume_session_with_invalid_idp(self):
         responses.add(responses.POST, current_app.app_config.oidc.token_endpoint,
                       json={"access_token": "some_token", "id_token": self.sign_jwt({"acr": "nope"})},
@@ -497,79 +479,6 @@ class TestUser(AbstractTest):
 
         james = User.query.filter(User.uid == "urn:james").one()
         self.assertEqual("AA😡C", james.ssh_keys[0].ssh_value)
-
-    def test_login_with_ssid_required(self):
-        self.mark_user_ssid_required(name=user_sarah_name, home_organisation_uid="admin",
-                                     schac_home_organisation="ssid.org")
-
-        self.login("urn:sarah", schac_home_organisation="ssid.org")
-
-        user = self.client.get("/api/users/me").json
-
-        self.assertEqual(user["guest"], True)
-        self.assertEqual(user["admin"], False)
-
-    def test_login_with_ssid_required_missing_attributes(self):
-        self.mark_user_ssid_required()
-
-        self.login("urn:sarah", schac_home_organisation="ssid.org")
-
-        user = self.client.get("/api/users/me").json
-        self.assertFalse(user["second_factor_auth"])
-        self.assertFalse(user["second_factor_confirmed"])
-
-    def test_acs(self):
-        self.mark_user_ssid_required(name=user_sarah_name, home_organisation_uid="admin",
-                                     schac_home_organisation="ssid.org")
-        self.login("urn:sarah", schac_home_organisation="ssid.org")
-
-        # Commented out by oharsta because of Fatal Python error: Segmentation fault
-        # in onelogin/saml2/utils.py", line 738 in add_sign
-        # xml_authn_b64 = self.get_authn_response("response.ok.xml")
-        # res = self.client.post("/api/users/acs", headers={},
-        #                        data={"SAMLResponse": xml_authn_b64,
-        #                              "RelayState": "http://localhost:8080/api/users/acs"},
-        #                        content_type="application/x-www-form-urlencoded")
-        #
-        # self.assertEqual(302, res.status_code)
-        # self.assertEqual(self.app.app_config.base_url, res.location)
-        #
-        # sarah = User.query.filter(User.uid == "urn:sarah").one()
-        # self.assertFalse(sarah.ssid_required)
-
-    def test_acs_error_no_user(self):
-        self.mark_user_ssid_required()
-
-        # Commented out by oharsta because of Fatal Python error: Segmentation fault
-        # in onelogin/saml2/utils.py", line 738 in add_sign
-        # xml_authn_b64 = self.get_authn_response("response.ok.xml")
-        # res = self.client.post("/api/users/acs", headers={},
-        #                        data={"SAMLResponse": xml_authn_b64,
-        #                              "RelayState": "http://localhost:8080/api/users/acs"},
-        #                        content_type="application/x-www-form-urlencoded")
-        #
-        # self.assertEqual(302, res.status_code)
-        # path = "/error?reason=ssid_failed&code=urn:oasis:names:tc:SAML:2.0:status:Success&msg="
-        # self.assertEqual(self.app.app_config.base_url + path, res.location)
-
-    def test_acs_error_saml_error(self):
-        self.mark_user_ssid_required(name=user_sarah_name, home_organisation_uid="admin",
-                                     schac_home_organisation="ssid.org")
-        self.login("urn:sarah", schac_home_organisation="ssid.org")
-
-        # Commented out by oharsta because of Fatal Python error: Segmentation fault
-        # in onelogin/saml2/utils.py", line 738 in add_sign
-        # xml_authn_b64 = self.get_authn_response("response.no_authn.xml")
-        #
-        # res = self.client.post("/api/users/acs", headers={},
-        #                        data={"SAMLResponse": xml_authn_b64,
-        #                              "RelayState": "http://localhost:8080/api/users/acs"},
-        #                        content_type="application/x-www-form-urlencoded")
-        #
-        # self.assertEqual(302, res.status_code)
-        # path = "/error?reason=ssid_failed&code=urn:oasis:names:tc:SAML:2.0:status:Responder&" \
-        #        "msg=urn:oasis:names:tc:SAML:2.0:status:NoAuthnContext"
-        # self.assertEqual(self.app.app_config.base_url + path, res.location)
 
     def test_invalid_user_login(self):
         try:

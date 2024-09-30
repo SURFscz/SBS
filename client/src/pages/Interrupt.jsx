@@ -1,7 +1,7 @@
 import React from "react";
 import {withRouter} from "react-router-dom";
 import I18n from "../locale/I18n";
-import "./ServiceAup.scss";
+import "./Interrupt.scss";
 import Button from "../components/Button";
 import {serviceAupCreate, serviceByUuid4} from "../api";
 import SpinnerField from "../components/redesign/SpinnerField";
@@ -9,8 +9,9 @@ import CollaborationAupAcceptance from "../components/CollaborationAupAcceptance
 import DOMPurify from "dompurify";
 import {isEmpty} from "../utils/Utils";
 
+//TODO - have one pllace for interrupt logic. Check continue URL and make  this available
 
-class ServiceAup extends React.Component {
+export default function Interrupt({history}) {
 
     constructor(props, context) {
         super(props, context);
@@ -96,4 +97,4 @@ class ServiceAup extends React.Component {
     }
 }
 
-export default withRouter(ServiceAup);
+export default withRouter(Interrupt);
