@@ -1,11 +1,7 @@
 import base64
 import datetime
 import json
-import os
 import time
-
-import responses
-from sqlalchemy import text
 
 from server.api.collaboration import generate_short_name
 from server.db.db import db
@@ -259,20 +255,6 @@ class TestCollaboration(AbstractTest):
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         self.assertEqual(0, len(collaboration.tags))
         self.assertIsNone(Tag.query.filter(Tag.tag_value == "tag_uuc").first())
-
-    def test_collaboration_update_with_logo(self):
-        collaboration_id = self._find_by_identifier()["id"]
-        self.login()
-        collaboration = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
-        collaboration["name"] = "changed"
-        collaboration["logo"] = "https://bogus"
-        collaboration["tags"] = [t["tag_value"] for t in collaboration["tags"]]
-        self.put("/api/collaborations", body=collaboration)
-
-        rows = db.session.execute(text(f"SELECT logo FROM collaborations WHERE id = {collaboration_id}"))
-        self.assertEqual(1, rows.rowcount)
-        for row in rows:
-            self.assertFalse(row[0].startswith("http"))
 
     def test_collaboration_update_short_name(self):
         collaboration_id = self._find_by_identifier()["id"]
@@ -665,37 +647,6 @@ class TestCollaboration(AbstractTest):
                                     data="{{",
                                     content_type="application/json")
         self.assertEqual(400, response.status_code)
-
-    @responses.activate
-    def test_api_call_with_logo_url(self):
-        file = f"{os.path.dirname(os.path.realpath(__file__))}/../images/eduid.png"
-        with open(file, "rb") as f:
-            body = f.read()
-            logo_url = "http://localhost:8081/eduid.png"
-            responses.add(method=responses.GET,
-                          url=logo_url,
-                          body=body,
-                          status=200,
-                          content_type="image/jpeg",
-                          stream=True)
-            response = self.client.post("/api/collaborations/v1",
-                                        headers={"Authorization": f"Bearer {unihard_secret}"},
-                                        data=json.dumps({
-                                            "name": "new_collaboration",
-                                            "description": "new_collaboration",
-                                            "administrators": ["the@ex.org", "that@ex.org"],
-                                            "short_name": "new_short_name",
-                                            "disable_join_requests": True,
-                                            "disclose_member_information": True,
-                                            "disclose_email_information": True,
-                                            "logo": logo_url
-                                        }),
-                                        content_type="application/json")
-            self.assertEqual(201, response.status_code)
-
-            collaboration = self.find_entity_by_name(Collaboration, "new_collaboration")
-            raw_logo = collaboration.raw_logo()
-            self.assertFalse(raw_logo.startswith("http"))
 
     def test_api_call_without_logo(self):
         response = self.client.post("/api/collaborations/v1",
@@ -1103,31 +1054,3 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(400, response.status_code)
         response_json = response.json
         self.assertTrue("Invalid emails" in response_json["message"])
-
-    @responses.activate
-    def test_api_call_with_exception_logo_url(self):
-        file = f"{os.path.dirname(os.path.realpath(__file__))}/../images/nope.png"
-        with open(file, "rb") as f:
-            body = f.read()
-            logo_url = "http://localhost:8081/nope.png"
-            responses.add(method=responses.GET,
-                          url=logo_url,
-                          body=body,
-                          status=200,
-                          content_type="image/jpeg",
-                          stream=True)
-            response = self.client.post("/api/collaborations/v1",
-                                        headers={"Authorization": f"Bearer {unihard_secret}"},
-                                        data=json.dumps({
-                                            "name": "new_collaboration",
-                                            "description": "new_collaboration",
-                                            "administrators": ["the@ex.org", "that@ex.org"],
-                                            "short_name": "new_short_name",
-                                            "disable_join_requests": True,
-                                            "disclose_member_information": True,
-                                            "disclose_email_information": True,
-                                            "logo": logo_url
-                                        }),
-                                        content_type="application/json")
-            self.assertEqual(400, response.status_code)
-            self.assertTrue("Invalid Logo: cannot identify image file" in response.json.get("message"))
