@@ -2,7 +2,6 @@ import base64
 import uuid
 from datetime import datetime, timedelta, timezone
 
-import requests
 from flasgger import swag_from
 from flask import Blueprint, jsonify, request as current_request, current_app, g as request_context
 from munch import munchify
@@ -26,7 +25,7 @@ from server.auth.security import confirm_collaboration_admin, current_user_id, c
 from server.db.activity import update_last_activity_date
 from server.db.db import db
 from server.db.defaults import (default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name,
-                                STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED, valid_uri_attributes, uri_re,
+                                STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED, valid_uri_attributes,
                                 generate_short_name, valid_tag_label)
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
     Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag, ServiceGroup, ServiceMembership, Unit
@@ -620,14 +619,7 @@ def save_collaboration_api():
         User.uid == current_app.app_config.admin_users[0].uid).one()
     data["organisation_id"] = organisation.id
     logo = data.get("logo")
-    if logo and logo.startswith("http") and bool(uri_re.match(logo)):
-        try:
-            res = requests.get(logo, stream=True)
-            if res.status_code == 200:
-                data["logo"] = transform_image(res.raw.read())
-        except Exception as e:
-            raise APIBadRequest(f"Invalid Logo: {str(e)}")
-    elif logo:
+    if logo:
         try:
             decoded_bytes = base64.decodebytes(logo.encode())
             data["logo"] = transform_image(decoded_bytes)
@@ -815,7 +807,7 @@ def update_collaboration():
         data["short_name"] = collaboration.short_name
 
     if "tags" in data:
-        _reconcile_tags(collaboration, data["tags"])
+        _reconcile_tags(collaboration, data.get("tags", []))
 
     # For updating references like services, groups, memberships there are more fine-grained API methods
     res = update(Collaboration, custom_json=data, allow_child_cascades=False, allowed_child_collections=["units"])
