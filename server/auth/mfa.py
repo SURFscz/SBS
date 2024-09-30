@@ -108,7 +108,7 @@ def has_valid_mfa(user):
     return valid_mfa_sso
 
 
-def mfa_idp_allowed(user: User, entity_id : str=None):
+def mfa_idp_allowed(user: User, entity_id: str = None):
     mfa_id_providers = current_app.app_config.mfa_idp_allowed
     entity_id_allowed = bool([idp for idp in mfa_id_providers if entity_id and idp.entity_id == entity_id.lower()])
 
@@ -128,17 +128,15 @@ def mfa_idp_allowed(user: User, entity_id : str=None):
     return result
 
 
-def mark_user_second_factor_confirmation(user: User, issuer_id: str):
+def user_requires_sram_mfa(user: User, issuer_id: str = None, override_mfa_allowed=False):
     idp_mfa_allowed = mfa_idp_allowed(user, issuer_id)
-    fallback_required = not idp_mfa_allowed and current_app.app_config.mfa_fallback_enabled
-    # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
-    # also skip if user has already recently performed MFA
-    res = idp_mfa_allowed and fallback_required and not has_valid_mfa(user)
-    if res:
+    fallback_required = current_app.app_config.mfa_fallback_enabled
+    mfa_is_required = not idp_mfa_allowed and fallback_required and not has_valid_mfa(user)
+    if mfa_is_required and not override_mfa_allowed:
         user.second_factor_confirmed = False
         user.second_fa_uuid = str(uuid.uuid4())
     else:
         user.second_factor_confirmed = True
     db.session.merge(user)
     db.session.commit()
-    return res
+    return mfa_is_required

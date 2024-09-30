@@ -7,7 +7,7 @@ from sqlalchemy.orm import column_property
 from server.db.audit_mixin import Base, metadata
 from server.db.datetime import TZDateTime
 from server.db.db import db
-from server.db.defaults import STATUS_ACTIVE, STATUS_OPEN
+from server.db.defaults import STATUS_ACTIVE, STATUS_OPEN, STATUS_SUSPENDED
 from server.db.logo_mixin import LogoMixin
 from server.db.secret_mixin import SecretMixin
 from server.tools import dt_now
@@ -206,7 +206,8 @@ class CollaborationMembership(Base, db.Model):
         now = dt_now()
         not_expired = not self.expiry_date or self.expiry_date > now
         co_not_expired = not self.collaboration.expiry_date or self.collaboration.expiry_date > now
-        return not_expired and co_not_expired and not self.user.suspended
+        co_suspended = self.collaboration.status == STATUS_SUSPENDED
+        return not_expired and co_not_expired and not self.user.suspended and not co_suspended
 
     def allowed_attr_view(self):
         return {
