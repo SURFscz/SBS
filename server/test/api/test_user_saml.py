@@ -1,7 +1,7 @@
 import datetime
 
 from server.auth.user_codes import USER_UNKNOWN, SERVICE_UNKNOWN, SERVICE_NOT_CONNECTED, SECOND_FA_REQUIRED, \
-    status_to_string, NEW_FREE_RIDE_USER, USER_IS_SUSPENDED
+    NEW_FREE_RIDE_USER, USER_IS_SUSPENDED, AUP_NOT_AGREED
 from server.db.db import db
 from server.db.domain import Collaboration, Service, User, UserLogin
 from server.test.abstract_test import AbstractTest
@@ -277,8 +277,17 @@ class TestUserSaml(AbstractTest):
                         body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
                               "uid": "sarah"})
         status = res["status"]
-        self.assertEqual(4, status["error_status"])
+        self.assertEqual(SERVICE_NOT_CONNECTED, status["error_status"])
         self.assertEqual("unauthorized", status["result"])
 
-    def test_status_to_string(self):
-        self.assertEqual("UNKNOWN_STATUS", status_to_string("nope"))
+    def test_proxy_authz_no_aup_agreed(self):
+        self.remove_aup_from_user("urn:sarah")
+        self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
+        self.login_user_2fa("urn:sarah")
+
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
+                              "uid": "sarah"})
+        status = res["status"]
+        self.assertEqual(AUP_NOT_AGREED, status["error_status"])
+        self.assertEqual("interrupt", status["result"])

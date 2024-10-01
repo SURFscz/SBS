@@ -9,8 +9,7 @@ import {
     tokenResetRequest,
     tokenResetRespondents,
     update2fa,
-    verify2fa,
-    verify2faProxyAuthz
+    verify2fa
 } from "../api";
 import SpinnerField from "../components/redesign/SpinnerField";
 import I18n from "../locale/I18n";
@@ -250,7 +249,7 @@ class SecondFactorAuthentication extends React.Component {
 
     verify = () => {
         this.setState({busy: true});
-        const {totp, newTotp, secondFaUuid, continueUrl} = this.state;
+        const {totp, newTotp} = this.state;
         const {update} = this.props;
         if (update) {
             update2fa(newTotp.join("")).then(() => {
@@ -261,17 +260,6 @@ class SecondFactorAuthentication extends React.Component {
                 newError: true,
                 newTotp: Array(6).fill("")
             }, () => this.totpNewRefs[0].focus()));
-        } else if (secondFaUuid && continueUrl) {
-            verify2faProxyAuthz(totp.join(""), secondFaUuid, continueUrl).then(r => {
-                window.location.href = r.location;
-            }).catch(e => {
-                if (e.response && e.response.status === 429) {
-                    this.props.history.push("/landing?rate-limited=true");
-                } else {
-                    this.setState({busy: false, error: true, totp: Array(6).fill("")},
-                        () => this.totpRefs[0].focus());
-                }
-            });
         } else {
             verify2fa(totp.join("")).then(r => {
                 this.props.refreshUser(() => {

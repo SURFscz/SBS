@@ -24,7 +24,7 @@ from server.auth.secrets import secure_hash
 from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, User, Service, ServiceAup, UserToken, Invitation, \
-    PamSSOSession, Group, CollaborationMembership
+    PamSSOSession, Group, CollaborationMembership, Aup
 from server.test.seed import seed
 from server.tools import dt_now
 from server.tools import read_file
@@ -201,6 +201,12 @@ class AbstractTest(TestCase):
         user = User.query.filter(User.uid == user_uid).one()
         service = Service.query.filter(Service.entity_id == service_entity_id).one()
         db.session.merge(ServiceAup(aup_url=service.accepted_user_policy, user_id=user.id, service_id=service.id))
+        db.session.commit()
+
+    @staticmethod
+    def remove_aup_from_user(user_uid):
+        user = User.query.filter(User.uid == user_uid).one()
+        Aup.query.filter(Aup.user_id == user.id).delete()
         db.session.commit()
 
     @staticmethod
