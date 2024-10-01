@@ -15,10 +15,10 @@ paho-mqtt==2.1.0
 python2-secrets==1.0.5
 pytz==2024.2
 requests==2.32.3
-uWSGI==2.0.26
+uWSGI==2.0.27
 urllib3==2.2.3
 websockets==13.1
-redis==5.0.8
+redis==5.1.0
 pyotp==2.9.0
 qrcode==7.4.2
 Pillow==10.4.0
