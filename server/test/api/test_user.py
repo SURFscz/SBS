@@ -253,7 +253,7 @@ class TestUser(AbstractTest):
 
         res = self.get("/api/users/authorization", with_basic_auth=False)
         query_dict = self.url_to_query_dict(res["authorization_endpoint"])
-        self.assertListEqual([redirect_uri], query_dict["state"])
+        self.assertEqual(redirect_uri, query_dict["state"])
 
     def test_service_info(self):
         res = self.get("/api/users/service_info",
@@ -266,7 +266,7 @@ class TestUser(AbstractTest):
     def test_resume_session_dead_end(self):
         res = self.get("/api/users/resume-session", response_status_code=302)
         query_dict = self.url_to_query_dict(res.location)
-        self.assertListEqual([self.app.app_config.base_url], query_dict["state"])
+        self.assertEqual(self.app.app_config.base_url, query_dict["state"])
 
     @responses.activate
     def test_resume_session_token_error(self):
