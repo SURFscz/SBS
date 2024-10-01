@@ -1,7 +1,7 @@
 import datetime
 
 from server.test.seed import service_cloud_name
-from server.auth.service_access import has_user_access_to_service
+from server.auth.service_access import has_user_access_to_service, collaboration_memberships_for_service
 from server.db.domain import User, Service
 from server.test.abstract_test import AbstractTest
 from server.tools import dt_now
@@ -34,3 +34,7 @@ class TestServiceAccess(AbstractTest):
         self.assertFalse(has_user_access_to_service(service, None))
         service.non_member_users_access_allowed = True
         self.assertTrue(has_user_access_to_service(service, user))
+
+    def test_collaboration_memberships_for_service_hygiene(self):
+        self.assertFalse(collaboration_memberships_for_service(None, None))
+        self.assertFalse(collaboration_memberships_for_service(None, User(suspended=True)))
