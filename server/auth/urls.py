@@ -5,7 +5,6 @@ noauth_listing = [
     "/api/mfa/sfo",
     "/api/mfa/reset2fa",
     "/api/mfa/token_reset_request",
-    "/api/mfa/verify2fa_proxy_authz",
     "/api/mock",
     "/api/organisation_invitations/find_by_hash",
     "/api/tokens/introspect",

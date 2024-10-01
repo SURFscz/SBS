@@ -196,11 +196,6 @@ export function verify2fa(totp) {
     return postPutJson("/api/mfa/verify2fa", {totp}, "POST", false);
 }
 
-export function verify2faProxyAuthz(totp, second_fa_uuid, continue_url) {
-    const body = {totp, second_fa_uuid, continue_url};
-    return postPutJson("/api/mfa/verify2fa_proxy_authz", body, "POST", false);
-}
-
 export function preUpdate2fa(totp_value) {
     return postPutJson("/api/mfa/pre-update2fa", {totp_value: totp_value}, "POST", false);
 }

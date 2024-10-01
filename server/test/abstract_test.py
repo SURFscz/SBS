@@ -6,6 +6,7 @@ import uuid
 from base64 import b64encode
 from time import time
 from typing import Union
+from urllib import parse
 from uuid import uuid4
 
 import jwt
@@ -24,9 +25,9 @@ from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, User, Service, ServiceAup, UserToken, Invitation, \
     PamSSOSession, Group, CollaborationMembership
-from server.test.seed import seed, user_sarah_name
-from server.tools import read_file
+from server.test.seed import seed
 from server.tools import dt_now
+from server.tools import read_file
 
 # See api_users in config/test_config.yml
 BASIC_AUTH_HEADER = {"Authorization": f"Basic {b64encode(b'sysadmin:secret').decode('ascii')}"}
@@ -89,9 +90,11 @@ class AbstractTest(TestCase):
     def change_collaboration(user_name, do_change):
         user = AbstractTest.find_entity_by_name(User, user_name)
         connected_collaborations = [cm.collaboration for cm in user.collaboration_memberships]
+        new_connected_collaborations = []
         for collaboration in connected_collaborations:
-            do_change(collaboration)
-            db.session.merge(collaboration)
+            changed_co = do_change(collaboration)
+            new_connected_collaborations.append(changed_co)
+            db.session.merge(changed_co)
             db.session.commit()
         return connected_collaborations
 
@@ -99,6 +102,7 @@ class AbstractTest(TestCase):
     def expire_collaborations(user_name):
         def do_change(collaboration):
             collaboration.expiry_date = dt_now() - datetime.timedelta(days=50)
+            return collaboration
 
         return AbstractTest.change_collaboration(user_name, do_change)
 
@@ -106,6 +110,7 @@ class AbstractTest(TestCase):
     def suspend_collaborations(user_name):
         def do_change(collaboration):
             collaboration.status = STATUS_SUSPENDED
+            return collaboration
 
         return AbstractTest.change_collaboration(user_name, do_change)
 
@@ -287,6 +292,12 @@ class AbstractTest(TestCase):
             .filter(Collaboration.identifier == collaboration_identifier) \
             .filter(User.uid == user_uid) \
             .first()
+
+    @staticmethod
+    def url_to_query_dict(url):
+        query_dict = dict(parse.parse_qs(parse.urlsplit(url).query))
+        # Rebuild to have single values for keys
+        return {k: v[0] for k, v in query_dict.items()}
 
     def add_bearer_token_to_services(self):
         services = Service.query.options(load_only(Service.id)) \

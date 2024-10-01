@@ -46,10 +46,12 @@ def _add_schac_home_organisations(user: dict, user_from_db: User):
     user["organisations_from_user_schac_home"] = organisations
 
 
+# TODO see https://github.com/SURFscz/SBS/issues/1559
 def _add_service_aups(user: dict, user_from_db: User):
     # Find all services available for this user and then see if there are missing ServiceAup's
     services = []
     for cm in user_from_db.collaboration_memberships:
+        # TODO we longer support organisation.services see https://github.com/SURFscz/SBS/issues/421
         services += [s for s in cm.collaboration.services] + [s for s in cm.collaboration.organisation.services]
 
     service_identifiers = [aup.service_id for aup in user_from_db.service_aups]
@@ -333,6 +335,8 @@ def resume_session():
             return redirect(f"{cfg.base_url}/missing-attributes?{args}")
 
         user = User(uid=uid, external_id=str(uuid.uuid4()), created_by="system", updated_by="system")
+        # We need to avoid an auto-insert after flushing a query
+        user = db.session.merge(user)
         add_user_claims(user_info_json, uid, user)
 
         # last_login_date is set later in this method

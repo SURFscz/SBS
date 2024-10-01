@@ -1,5 +1,4 @@
 import pyotp
-from flask import current_app
 
 from server.auth.secrets import generate_token
 from server.db.domain import User
@@ -168,60 +167,6 @@ class TestMfa(AbstractTest):
         self.post("/api/mfa/pre-update2fa", body={"totp_value": pyotp.TOTP(second_factor_auth).now()})
         res = self.post("/api/mfa/update2fa", body={"new_totp_value": "123456"}, response_status_code=400)
         self.assertFalse(res["new_totp"])
-
-    def test_verify2fa_proxy_authz(self):
-        sarah = self.add_totp_to_user("urn:sarah")
-
-        continue_url = current_app.app_config.oidc.continue_eduteams_redirect_uri
-        totp = pyotp.TOTP(sarah.second_factor_auth)
-        body = {"totp": totp.now(), "second_fa_uuid": sarah.second_fa_uuid, "continue_url": continue_url}
-
-        res = self.post("/api/mfa/verify2fa_proxy_authz", body, with_basic_auth=False)
-        self.assertEqual(continue_url, res["location"])
-
-    def test_verify2fa_proxy_authz_rate_limit(self):
-        config = self.app.app_config
-        config.rate_limit_totp_guesses_per_30_seconds = 1
-
-        AbstractTest.set_second_factor_auth("urn:mary")
-        mary = self.add_totp_to_user("urn:mary")
-        totp = pyotp.TOTP(mary.second_factor_auth)
-        error_totp = "{:06d}".format((int(totp.now()) + 1) % 1_000_000)
-
-        payload = {
-            "totp": error_totp,
-            "second_fa_uuid": mary.second_fa_uuid,
-            "continue_url": current_app.app_config.oidc.continue_eduteams_redirect_uri + "hallo_foo",
-        }
-        self.post("/api/mfa/verify2fa_proxy_authz", payload, with_basic_auth=False, response_status_code=400)
-        self.post("/api/mfa/verify2fa_proxy_authz", payload, with_basic_auth=False, response_status_code=429)
-
-        res = self.get("/api/users/me", with_basic_auth=False)
-        self.assertTrue(res["guest"])
-
-        mary = User.query.filter(User.uid == "urn:mary").first()
-        self.assertTrue(mary.rate_limited)
-        self.assertIsNone(mary.second_factor_auth)
-
-        config.rate_limit_totp_guesses_per_30_seconds = 10
-
-    def test_verify2fa_wrong_totp(self):
-        sarah = self.add_totp_to_user("urn:sarah")
-        body = {"totp": "123456", "second_fa_uuid": sarah.second_fa_uuid, }
-        res = self.post("/api/mfa/verify2fa_proxy_authz", body, response_status_code=400, with_basic_auth=False)
-
-        self.assertEqual(False, res["new_totp"])
-
-    def test_verify2fa_not_allowed_continue_url(self):
-        sarah = self.add_totp_to_user("urn:sarah")
-
-        totp = pyotp.TOTP(sarah.second_factor_auth)
-        body = {"totp": totp.now(), "second_fa_uuid": sarah.second_fa_uuid, "continue_url": "https://middleman.org"}
-        self.post("/api/mfa/verify2fa_proxy_authz", body, response_status_code=403, with_basic_auth=False)
-
-    def test_verify2fa_user_not_found(self):
-        body = {"totp": "N/A", "second_fa_uuid": "nope", "continue_url": "N/A"}
-        self.post("/api/mfa/verify2fa_proxy_authz", body, response_status_code=404, with_basic_auth=False)
 
     def test_get2fa_proxy_authz_new_user(self):
         sarah = self.add_second_fa_uuid_to_user("urn:sarah")

@@ -43,15 +43,15 @@ def introspect():
     if user_token.created_at < expiry_date:
         return failed_login("token-expired", service, user_token)
 
-    # If there is a user_token, then there is a user, cause of DB constraints
+    # If there is a user_token, then there is a user, mandated by DB constraints
     user = user_token.user
     if user.suspended:
-        return failed_login("token-suspended", service, user_token)
+        return failed_login("user-suspended", service, user_token)
 
     if not has_user_access_to_service(service, user):
         return failed_login("token-not-connected", service, user_token)
 
-    memberships = collaboration_memberships_for_service(user_token.user, service)
+    memberships = collaboration_memberships_for_service(service, user_token.user)
     connected_collaborations = [cm.collaboration for cm in memberships]
 
     for collaboration in connected_collaborations:

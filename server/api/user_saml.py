@@ -62,7 +62,7 @@ def proxy_authz():
     user = User.query.filter(User.uid == uid).first()
 
     if not user:
-        parameters["error_status"] = USER_UNKNOWN if service.non_member_users_access_allowed else NEW_FREE_RIDE_USER
+        parameters["error_status"] = NEW_FREE_RIDE_USER if service.non_member_users_access_allowed else USER_UNKNOWN
         return {
             "status": {
                 "result": "interrupt",
@@ -143,7 +143,7 @@ def proxy_authz():
 
     user = db.session.merge(user)
 
-    memberships = collaboration_memberships_for_service(user, service)
+    memberships = collaboration_memberships_for_service(service, user)
     connected_collaborations = [cm.collaboration for cm in memberships]
 
     for coll in connected_collaborations:
