@@ -109,34 +109,39 @@ def has_valid_mfa(user):
 
 
 def mfa_idp_allowed(user: User, entity_id: str = None):
-    mfa_id_providers = current_app.app_config.mfa_idp_allowed
-    entity_id_allowed = bool([idp for idp in mfa_id_providers if entity_id and idp.entity_id == entity_id.lower()])
+    identity_providers = current_app.app_config.mfa_idp_allowed
+    entity_id_allowed = entity_id and [
+        idp for idp in identity_providers if "entity_id" in idp and idp.entity_id == entity_id.lower()
+    ]
 
     def schac_match(configured_schac_home, user_schac_home):
         schac_home_lower = user_schac_home.lower()
         return configured_schac_home == schac_home_lower or schac_home_lower.endswith(f".{configured_schac_home}")
 
     schac_home = user.schac_home_organisation
-    schac_allowed = bool([idp for idp in mfa_id_providers if schac_home and schac_match(idp.schac_home, schac_home)])
-    result = entity_id_allowed or schac_allowed
+    schac_home_allowed = schac_home and [
+        idp for idp in identity_providers if "schac_home" in idp and schac_match(idp.schac_home, schac_home)
+    ]
+    result = bool(entity_id_allowed or schac_home_allowed)
 
     logger = ctx_logger("user_api")
     logger.debug(f"mfa_idp_allowed: {result} (entity_id_allowed={entity_id_allowed}, "
-                 f"schac_home_allowed={schac_allowed}, "
+                 f"schac_home_allowed={schac_home_allowed}, "
                  f"entity_id={entity_id}, schac_home={schac_home}")
 
     return result
 
 
 def user_requires_sram_mfa(user: User, issuer_id: str = None, override_mfa_allowed=False):
-    idp_mfa_allowed = mfa_idp_allowed(user, issuer_id)
+    # If the IdP already performed MFA proven by the ACR value
+    idp_mfa_allowed = not override_mfa_allowed and mfa_idp_allowed(user, issuer_id)
     fallback_required = current_app.app_config.mfa_fallback_enabled
-    mfa_is_required = not idp_mfa_allowed and fallback_required and not has_valid_mfa(user)
-    if mfa_is_required and not override_mfa_allowed:
+    mfa_required = not override_mfa_allowed and fallback_required and not has_valid_mfa(user) and not idp_mfa_allowed
+    if mfa_required:
         user.second_factor_confirmed = False
         user.second_fa_uuid = str(uuid.uuid4())
     else:
         user.second_factor_confirmed = True
     db.session.merge(user)
     db.session.commit()
-    return mfa_is_required
+    return mfa_required
