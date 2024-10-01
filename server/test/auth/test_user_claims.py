@@ -106,7 +106,10 @@ class TestUserClaims(AbstractTest):
         memberships = user_memberships(user, connected_collaborations)
         self.assertEqual(3, len(memberships))
 
-        connected_collaborations = self.expire_collaborations(user_jane_name)
+        self.expire_collaborations(user_jane_name)
+        user = self.find_entity_by_name(User, user_jane_name)
+        connected_collaborations = [cm.collaboration for cm in user.collaboration_memberships]
+
         memberships = user_memberships(user, connected_collaborations)
         self.assertEqual(0, len(memberships))
 

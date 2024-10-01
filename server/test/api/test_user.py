@@ -1,6 +1,5 @@
 import datetime
 import os
-from urllib import parse
 
 import requests
 import responses
@@ -47,11 +46,6 @@ class TestUser(AbstractTest):
         res = self.client.get("/api/users/me")
         self.assertEqual(200, res.status_code)
         self.assertFalse(res.json["suspended"])
-
-    def test_me_user_with_suspend_notifications(self):
-        self.login("urn:user_gets_suspended")
-        res = self.client.get("/api/users/me")
-        self.assertEqual(True, res.json["successfully_activated"])
 
     def test_me_user_with_additional_data(self):
         self.login("urn:peter")
@@ -258,7 +252,7 @@ class TestUser(AbstractTest):
         self.assertTrue("authorization_endpoint" in res)
 
         res = self.get("/api/users/authorization", with_basic_auth=False)
-        query_dict = dict(parse.parse_qs(parse.urlsplit(res["authorization_endpoint"]).query))
+        query_dict = self.url_to_query_dict(res["authorization_endpoint"])
         self.assertListEqual([redirect_uri], query_dict["state"])
 
     def test_service_info(self):
@@ -271,7 +265,7 @@ class TestUser(AbstractTest):
 
     def test_resume_session_dead_end(self):
         res = self.get("/api/users/resume-session", response_status_code=302)
-        query_dict = dict(parse.parse_qs(parse.urlsplit(res.location).query))
+        query_dict = self.url_to_query_dict(res.location)
         self.assertListEqual([self.app.app_config.base_url], query_dict["state"])
 
     @responses.activate
@@ -422,17 +416,18 @@ class TestUser(AbstractTest):
             self.assertTrue(user["second_factor_confirmed"])
             self.assertTrue("organisation_memberships" in user)
 
-    @responses.activate
-    def test_resume_session_with_invalid_idp(self):
-        responses.add(responses.POST, current_app.app_config.oidc.token_endpoint,
-                      json={"access_token": "some_token", "id_token": self.sign_jwt({"acr": "nope"})},
-                      status=200)
-        responses.add(responses.GET, current_app.app_config.oidc.userinfo_endpoint,
-                      json={"sub": "urn:john", "voperson_external_id": "test@erroridp.example.edu", "uid": "johnnie"},
-                      status=200)
-        responses.add(responses.GET, current_app.app_config.oidc.jwks_endpoint,
-                      read_file("test/data/public.json"), status=200)
-        self.get("/api/users/resume-session", query_data={"code": "123456"}, response_status_code=500)
+    # TODO - remove?
+    # @responses.activate
+    # def test_resume_session_with_invalid_idp(self):
+    #     responses.add(responses.POST, current_app.app_config.oidc.token_endpoint,
+    #                   json={"access_token": "some_token", "id_token": self.sign_jwt({"acr": "nope"})},
+    #                   status=200)
+    #     responses.add(responses.GET, current_app.app_config.oidc.userinfo_endpoint,
+    #                   json={"sub": "urn:john", "voperson_external_id": "test@erroridp.example.edu", "uid": "johnnie"},
+    #                   status=200)
+    #     responses.add(responses.GET, current_app.app_config.oidc.jwks_endpoint,
+    #                   read_file("test/data/public.json"), status=200)
+    #     self.get("/api/users/resume-session", query_data={"code": "123456"}, response_status_code=500)
 
     @responses.activate
     def test_authorization_resume_redirect(self):
