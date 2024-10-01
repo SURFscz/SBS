@@ -1,9 +1,9 @@
 import datetime
 
-from server.test.seed import service_cloud_name
 from server.auth.service_access import has_user_access_to_service, collaboration_memberships_for_service
 from server.db.domain import User, Service
 from server.test.abstract_test import AbstractTest
+from server.test.seed import service_cloud_name
 from server.tools import dt_now
 
 
