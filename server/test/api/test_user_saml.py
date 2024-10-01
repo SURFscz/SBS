@@ -64,7 +64,7 @@ class TestUserSaml(AbstractTest):
                                                         "homeorganization": "example.com",
                                                         "user_email": "sarah@ex.com", "user_name": "sarah p"},
                         response_status_code=200)
-        self.assertEqual(res["status"]["result"], "suspended")
+        self.assertEqual(res["status"]["result"], "interrupt")
         self.assertEqual(res["status"]["error_status"], USER_IS_SUSPENDED)
 
     def test_proxy_authz_not_active_collaborations(self):
