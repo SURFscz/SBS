@@ -347,10 +347,13 @@ def mail_suspend_notification(context, recipients, is_warning, is_suspension):
     _store_mail(user, SUSPEND_NOTIFICATION_MAIL, recipients)
     if is_suspension and is_warning:
         template = "suspend_suspend_warning_notification"
+        subject = "SURF SRAM: suspension warning"
     elif is_suspension and not is_warning:
         template = "suspend_suspend_notification"
+        subject = "SURF SRAM: suspension notification"
     elif not is_suspension and is_warning:
         template = "suspend_delete_warning_notification"
+        subject = "SURF SRAM: deletion warning"
     else:
         raise Exception("We don't send mails on account deletion")
     collaborations = [m.collaboration for m in user.collaboration_memberships]
@@ -358,7 +361,7 @@ def mail_suspend_notification(context, recipients, is_warning, is_suspension):
     context = {**context, "affiliations": split_user_affiliations(user),
                "collaborations": collaborations, "services": services}
     return _do_send_mail(
-        subject="SURF SRAM: suspend notification",
+        subject=subject,
         recipients=recipients,
         template=template,
         context=context,
