@@ -585,6 +585,28 @@ class TestCollaboration(AbstractTest):
         count = Invitation.query.filter(Invitation.collaboration_id == collaboration.id).count()
         self.assertEqual(2, count)
 
+    def test_api_call_with_logo_prefix(self):
+        response = self.client.post("/api/collaborations/v1",
+                                    headers={"Authorization": f"Bearer {unihard_secret}"},
+                                    data=json.dumps({
+                                        "name": "new_collaboration",
+                                        "description": "new_collaboration",
+                                        "accepted_user_policy": "https://aup.org",
+                                        "administrators": ["the@ex.org"],
+                                        "administrator": "urn:sarah",
+                                        "short_name": "new_short_name",
+                                        "disable_join_requests": True,
+                                        "disclose_member_information": True,
+                                        "disclose_email_information": True,
+                                        "logo": "data:image/png;base64," + read_image("robot.png"),
+                                        "tags": ["label_1", "label_2", "1234567890123456789012345678901234"],
+                                        "units": ["Research", "Support"]
+                                    }),
+                                    content_type="application/json")
+        self.assertEqual(201, response.status_code)
+        collaboration = self.find_entity_by_name(Collaboration, "new_collaboration")
+        self.assertIsNotNone(collaboration.logo)
+
     def test_api_create_collaboration_generate_short_name(self):
         response = self.client.post("/api/collaborations/v1",
                                     headers={"Authorization": f"Bearer {unihard_secret}"},
