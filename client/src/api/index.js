@@ -104,7 +104,7 @@ export function me(config) {
         let sub = "urn:service_admin";
         sub = "urn:john";
         //sub = "urn:paul";
-        const second_factor_confirmed = false;
+        const second_factor_confirmed = true;
         // const second_factor_confirmed = false;
         // sub = "urn:unknown";
         // Need to mock a login
@@ -160,7 +160,8 @@ export function activateUserForOrganisation(organisationId, userId) {
 }
 
 export function serviceInfo(entityId, uid) {
-    return fetchJson(`/api/users/service_info?uid=${encodeURIComponent(uid)}&entity_id=${encodeURIComponent(entityId)}`);
+    return fetchJson(`/api/users/service_info?uid=${encodeURIComponent(uid)}&entity_id=${encodeURIComponent(entityId)}`,
+        {}, {}, false);
 }
 
 export function logoutUser() {
@@ -969,6 +970,11 @@ export function sweepAllServices() {
 
 export function plscSync() {
     return fetchJson("/api/plsc/syncing");
+}
+
+export function proxyAuthz(userUid, serviceEntityId, idpEntityId) {
+    const body = {user_id: userUid.trim(), service_id: serviceEntityId.trim(), issuer_id: idpEntityId.trim()};
+    return postPutJson("/api/users/proxy_authz", body, "post", false);
 }
 
 //Service groups

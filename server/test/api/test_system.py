@@ -162,3 +162,7 @@ class TestSystem(AbstractTest):
     def test_open_requests(self):
         res = self.get("/api/system/open_requests")
         self.assertEqual(6, len(res))
+
+    def test_pam_services(self):
+        res = self.get("/api/system/pam-services")
+        self.assertEqual(1, len(res))

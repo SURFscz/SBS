@@ -267,7 +267,7 @@ def service_info():
     organisations = SchacHomeOrganisation.organisations_by_user_schac_home(user)
     res["organisations"] = [{"co_creation": o.collaboration_creation_allowed} for o in organisations]
     service = Service.query.filter(Service.entity_id == entity_id).first()
-    if service.support_email_unauthorized_users:
+    if service and service.support_email_unauthorized_users:
         res["support_email"] = service.support_email
     return res, 200
 
@@ -352,15 +352,14 @@ def resume_session():
         logger.debug(f"user {uid}: idp_mfa={idp_mfa} (ACR = '{id_token.get('acr')}')")
     mfa_is_required = user_requires_sram_mfa(user, issuer_id=id_token.get("iss"), override_mfa_allowed=idp_mfa)
     logger.debug(f"SBS login for user {uid} MFA check is required: {mfa_is_required}")
-    if not mfa_is_required:
-        user.last_login_date = dt_now()
-        user.suspended = False
 
     return redirect_to_client(cfg, not mfa_is_required, user)
 
 
 def redirect_to_client(cfg, second_factor_confirmed, user):
     logger = ctx_logger("redirect")
+    if second_factor_confirmed:
+        user.last_login_date = dt_now()
     user.suspended = False
     user.suspend_notifications = []
     user = db.session.merge(user)

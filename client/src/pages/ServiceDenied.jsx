@@ -35,14 +35,16 @@ export default function ServiceDenied(props) {
         setEntityId(escape(entity_id));
         setIssuerId(escape(urlSearchParams.get("issuer_id")));
         setStatus(urlSearchParams.get("error_status"));
-        serviceInfo(entity_id, user_id).then(res => {
-            setOrganisations(res.organisations);
-            setUserName(res.user__name);
-            setUserEmail(res.user_email)
-            setSchacHomeOrganisation(res.schac_home_organisation || I18n.t("welcome.unknown"));
-            setSupportEmail(res.support_email);
-            setLoading(false);
-        })
+        serviceInfo(entity_id, user_id)
+            .then(res => {
+                setOrganisations(res.organisations);
+                setUserName(res.user_name);
+                setUserEmail(res.user_email)
+                setSchacHomeOrganisation(res.schac_home_organisation || I18n.t("welcome.unknown"));
+                setSupportEmail(res.support_email);
+                setLoading(false);
+            })
+            .catch(() => props.history.push("/404"));
     }, []);
 
     const invitationsBlock = () => {

@@ -287,7 +287,8 @@ def config():
             "mock_scim_enabled": cfg.feature.mock_scim_enabled,
             "threshold_for_collaboration_inactivity_warning": threshold_for_warning,
             "manage_enabled": cfg.manage.enabled,
-            "manage_base_url": cfg.manage.base_url
+            "manage_base_url": cfg.manage.base_url,
+            "sram_service_entity_id": cfg.oidc.sram_service_entity_id.lower()
             }, 200
 
 
