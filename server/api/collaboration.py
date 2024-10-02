@@ -1,4 +1,5 @@
 import base64
+import re
 import uuid
 from datetime import datetime, timedelta, timezone
 
@@ -621,8 +622,9 @@ def save_collaboration_api():
     logo = data.get("logo")
     if logo:
         try:
-            if "data:image/png;base64," in logo:
-                logo = logo[len("data:image/png;base64,"):]
+            groups = re.search(r"data:image/.*;base64,((.|\n)*)", logo)
+            if groups:
+                logo = groups[1]
             decoded_bytes = base64.decodebytes(logo.encode())
             data["logo"] = transform_image(decoded_bytes)
         except Exception as e:
