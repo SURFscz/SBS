@@ -598,7 +598,7 @@ class TestCollaboration(AbstractTest):
                                         "disable_join_requests": True,
                                         "disclose_member_information": True,
                                         "disclose_email_information": True,
-                                        "logo": "data:image/png;base64," + read_image("robot.png"),
+                                        "logo": "data:image/WHATEVER;base64," + read_image("robot.png"),
                                         "tags": ["label_1", "label_2", "1234567890123456789012345678901234"],
                                         "units": ["Research", "Support"]
                                     }),
