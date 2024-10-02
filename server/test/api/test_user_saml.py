@@ -1,7 +1,6 @@
 import datetime
 
-from server.auth.user_codes import USER_UNKNOWN, SERVICE_UNKNOWN, SERVICE_NOT_CONNECTED, SECOND_FA_REQUIRED, \
-    NEW_FREE_RIDE_USER, USER_IS_SUSPENDED, AUP_NOT_AGREED
+from server.auth.user_codes import UserCode
 from server.db.db import db
 from server.db.domain import Collaboration, Service, User, UserLogin
 from server.test.abstract_test import AbstractTest
@@ -65,7 +64,7 @@ class TestUserSaml(AbstractTest):
                                                         "user_email": "sarah@ex.com", "user_name": "sarah p"},
                         response_status_code=200)
         self.assertEqual(res["status"]["result"], "interrupt")
-        self.assertEqual(res["status"]["error_status"], USER_IS_SUSPENDED)
+        self.assertEqual(res["status"]["error_status"], UserCode.USER_IS_SUSPENDED.value)
 
     def test_proxy_authz_not_active_collaborations(self):
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
@@ -80,9 +79,9 @@ class TestUserSaml(AbstractTest):
                               "uid": "sarah"})
         self.assertEqual(res["status"]["result"], "unauthorized")
 
-        self.assertEqual(SERVICE_NOT_CONNECTED, res["status"]["error_status"])
+        self.assertEqual(UserCode.SERVICE_NOT_CONNECTED.value, res["status"]["error_status"])
         query_dict = self.url_to_query_dict(res["status"]["redirect_url"])
-        self.assertEqual(query_dict["error_status"], str(SERVICE_NOT_CONNECTED))
+        self.assertEqual(query_dict["error_status"], str(UserCode.SERVICE_NOT_CONNECTED.value))
 
     def test_proxy_authz_no_aup(self):
         network_service = Service.query.filter(Service.entity_id == service_network_entity_id).one()
@@ -119,7 +118,7 @@ class TestUserSaml(AbstractTest):
         self.assertTrue(redirect_url.startswith(f"{self.app.app_config.base_url}/interrupt"))
 
         query_dict = self.url_to_query_dict(redirect_url)
-        self.assertEqual(str(NEW_FREE_RIDE_USER), query_dict["error_status"])
+        self.assertEqual(str(UserCode.NEW_FREE_RIDE_USER.value), query_dict["error_status"])
         self.assertEqual(network_service.uuid4, query_dict["service_id"])
 
     def test_proxy_authz_no_user(self):
@@ -130,7 +129,7 @@ class TestUserSaml(AbstractTest):
             "uid": "nope"},
                         response_status_code=200)
         self.assertEqual("interrupt", res["status"]["result"])
-        self.assertEqual(USER_UNKNOWN, res["status"]["error_status"])
+        self.assertEqual(UserCode.USER_UNKNOWN.value, res["status"]["error_status"])
 
     def test_proxy_authz_no_service(self):
         res = self.post("/api/users/proxy_authz", body={"user_id": "urn:john", "service_id": "https://nope",
@@ -138,7 +137,7 @@ class TestUserSaml(AbstractTest):
                                                         "user_email": "sarah@ex.com", "user_name": "sarah p"},
                         response_status_code=200)
         self.assertEqual("unauthorized", res["status"]["result"])
-        self.assertEqual(SERVICE_UNKNOWN, res["status"]["error_status"])
+        self.assertEqual(UserCode.SERVICE_UNKNOWN.value, res["status"]["error_status"])
 
     def test_proxy_authz_service_not_connected(self):
         res = self.post("/api/users/proxy_authz", body={"user_id": "urn:james", "service_id": service_network_entity_id,
@@ -146,7 +145,7 @@ class TestUserSaml(AbstractTest):
                                                         "user_email": "sarah@ex.com", "user_name": "sarah p"},
                         response_status_code=200)
         self.assertEqual("unauthorized", res["status"]["result"])
-        self.assertEqual(SERVICE_NOT_CONNECTED, res["status"]["error_status"])
+        self.assertEqual(UserCode.SERVICE_NOT_CONNECTED.value, res["status"]["error_status"])
 
     #
     # MFA scenarios:
@@ -257,7 +256,7 @@ class TestUserSaml(AbstractTest):
                               "issuer_id": "nope"})
         sarah = self.find_entity_by_name(User, user_sarah_name)
         self.assertEqual(res["status"]["result"], "interrupt")
-        self.assertEqual(SECOND_FA_REQUIRED, res["status"]["error_status"])
+        self.assertEqual(UserCode.SECOND_FA_REQUIRED.value, res["status"]["error_status"])
 
         query_dict = self.url_to_query_dict(res["status"]["redirect_url"])
         self.assertEqual(query_dict["second_fa_uuid"], sarah.second_fa_uuid)
@@ -277,7 +276,7 @@ class TestUserSaml(AbstractTest):
                         body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
                               "uid": "sarah"})
         status = res["status"]
-        self.assertEqual(SERVICE_NOT_CONNECTED, status["error_status"])
+        self.assertEqual(UserCode.SERVICE_NOT_CONNECTED.value, status["error_status"])
         self.assertEqual("unauthorized", status["result"])
 
     def test_proxy_authz_no_aup_agreed(self):
@@ -289,5 +288,5 @@ class TestUserSaml(AbstractTest):
                         body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
                               "uid": "sarah"})
         status = res["status"]
-        self.assertEqual(AUP_NOT_AGREED, status["error_status"])
+        self.assertEqual(UserCode.AUP_NOT_AGREED.value, status["error_status"])
         self.assertEqual("interrupt", status["result"])
