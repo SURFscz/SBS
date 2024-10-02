@@ -621,6 +621,8 @@ def save_collaboration_api():
     logo = data.get("logo")
     if logo:
         try:
+            if "data:image/png;base64," in logo:
+                logo = logo[len("data:image/png;base64,"):]
             decoded_bytes = base64.decodebytes(logo.encode())
             data["logo"] = transform_image(decoded_bytes)
         except Exception as e:
