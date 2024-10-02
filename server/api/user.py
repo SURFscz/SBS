@@ -269,7 +269,7 @@ def service_info():
     organisations = SchacHomeOrganisation.organisations_by_user_schac_home(user)
     res["organisations"] = [{"co_creation": o.collaboration_creation_allowed} for o in organisations]
     service = Service.query.filter(Service.entity_id == entity_id).first()
-    if service.support_email_unauthorized_users:
+    if service and service.support_email_unauthorized_users:
         res["support_email"] = service.support_email
     return res, 200
 

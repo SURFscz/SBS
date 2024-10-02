@@ -2636,7 +2636,7 @@ const en = {
         create: "<a href='/new-collaboration'>create</a>",
         request: "<a href='/new-collaboration'>request</a>",
         contactUrl: "<a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{supportEmail}}\">contact</a>.",
-        contactEmail: "<a href='mailto:{{supportEmail}}?subject=Request access to {{serviceName}}&body=Hi,%0D%0A%0D%0APlease help me get access to the {{serviceName}}} application.%0D%0AName: {{userName}}%0D%0AEmail: {{userEmail}}%0D%0AOrganisation: {{schacHome}}%0D%0AReason:%0D%0A%0D%0AThanks!'>contact</a>",
+        contactEmail: "<a href='mailto:{{supportEmail}}?subject=Request access to {{serviceName}}&body=Hi,%0D%0A%0D%0APlease help me get access to the {{serviceName}} application.%0D%0AName: {{userName}}%0D%0AEmail: {{userEmail}}%0D%0AOrganisation: {{schacHome}}%0D%0AReason:%0D%0A%0D%0AThanks!'>contact</a>",
         createCollaboration: "Create collaboration",
         requestCollaboration: "Request collaboration",
         requestAccess: "Request access",
