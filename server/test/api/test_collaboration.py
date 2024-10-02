@@ -319,6 +319,11 @@ class TestCollaboration(AbstractTest):
         collaborations = self.get("/api/collaborations/all_optimized")
         self.assertEqual(6, len(collaborations))
 
+    def test_collaboration_mine_optimized(self):
+        self.login("urn:peter")
+        collaborations = self.get("/api/collaborations/mine_optimized", with_basic_auth=False)
+        self.assertEqual(1, len(collaborations))
+
     def test_collaboration_by_id(self):
         collaboration_id = self._find_by_identifier()["id"]
         self.login()

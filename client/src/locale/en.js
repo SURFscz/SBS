@@ -119,7 +119,8 @@ const en = {
             orgUsers: "Users",
             scim: "SCIM",
             stats: "Stats",
-            pam: "PAM"
+            pam: "PAM",
+            proxy: "Proxy"
         }
     },
     forms: {
@@ -2114,6 +2115,16 @@ const en = {
             pollResult: "Pol session results",
             validatePinResult: "Validate PIN code results",
             memberships: "Memberships"
+        },
+        proxy: {
+            userUid: "User UID",
+            serviceEntityId: "Service entity ID",
+            useSRAMServiceEntityId: "Use SRAM service entity ID",
+            idpEntityId: "IdP entity ID",
+            start: "Submit",
+            reset: "Reset",
+            results: "Results",
+            errors: "Errors",
         }
     },
     access: {
@@ -2624,7 +2635,7 @@ const en = {
         invitationsTitle: "Invitations and accounts",
         invitationsSubTitle: "Access to <i>{{serviceName}}</i> is granted by membership of a collaboration.",
         invitationsBullets: {
-            invited : "Have you been invited? Use the link in the email.",
+            invited: "Have you been invited? Use the link in the email.",
             login: "You are logged in via <strong>{{schacHome}}</strong>. Do you perhaps have access via a different account?"
         },
         gainingAccessTitle: "Gaining access",
@@ -2636,7 +2647,7 @@ const en = {
         create: "<a href='/new-collaboration'>create</a>",
         request: "<a href='/new-collaboration'>request</a>",
         contactUrl: "<a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{supportEmail}}\">contact</a>.",
-        contactEmail: "<a href='mailto:{{supportEmail}}?subject=Request access to {{serviceName}}&body=Hi,%0D%0A%0D%0APlease help me get access to the {{serviceName}}} application.%0D%0AName: {{userName}}%0D%0AEmail: {{userEmail}}%0D%0AOrganisation: {{schacHome}}%0D%0AReason:%0D%0A%0D%0AThanks!'>contact</a>",
+        contactEmail: "<a href='mailto:{{supportEmail}}?subject=Request access to {{serviceName}}&body=Hi,%0D%0A%0D%0APlease help me get access to the {{serviceName}} application.%0D%0AName: {{userName}}%0D%0AEmail: {{userEmail}}%0D%0AOrganisation: {{schacHome}}%0D%0AReason:%0D%0A%0D%0AThanks!'>contact</a>",
         createCollaboration: "Create collaboration",
         requestCollaboration: "Request collaboration",
         requestAccess: "Request access",

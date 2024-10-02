@@ -119,7 +119,8 @@ const nl = {
             orgUsers: "Gebruikers",
             scim: "SCIM",
             stats: "Stats",
-            pam: "PAM"
+            pam: "PAM",
+            proxy: "Proxy"
         }
     },
     forms: {
@@ -2114,6 +2115,16 @@ const nl = {
             pollResult: "Pol session results",
             validatePinResult: "Validate PIN code results",
             memberships: "Memberships"
+        },
+        proxy: {
+            userUid: "User UID",
+            serviceEntityId: "Service entity ID",
+            useSRAMServiceEntityId: "Use SRAM service entity ID",
+            idpEntityId: "IdP entity ID",
+            start: "Submit",
+            reset: "Reset",
+            results: "Results",
+            errors: "Errors"
         }
     },
     access: {
@@ -2624,7 +2635,7 @@ const nl = {
         invitationsTitle: "Uitnodigingen en accounts",
         invitationsSubTitle: "Toegang tot <i>{{serviceName}}</i> wordt toegekend op basis van het lidmaatschap van een samenwerking.",
         invitationsBullets: {
-            invited : "Ben je uitgenodigd? Gebruik dan de link in de e-mail.",
+            invited: "Ben je uitgenodigd? Gebruik dan de link in de e-mail.",
             login: "Je bent ingelogd via <strong>{{schacHome}}</strong>. Heb je wellicht ook toegang met een ander account?"
         },
         gainingAccessTitle: "Toegang krijgen",
@@ -2636,7 +2647,7 @@ const nl = {
         create: "<a href='/new-collaboration'>aanmaken</a>",
         request: "<a href='/new-collaboration'>aanvragen</a>",
         contactUrl: "<a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{supportEmail}}\">contact</a>.",
-        contactEmail: "<a href='mailto:{{supportEmail}}?subject=Toegang aanvragen voor {{serviceName}}&body=Hi,%0D%0A%0D%0AKunt u me helpen om toegang te krijgen tot {{serviceName}}}.%0D%0ANaam: {{userName}}%0D%0AEmail: {{userEmail}}%0D%0AOrganisatie: {{schacHome}}%0D%0AReason:%0D%0A%0D%0ABedankt!'>contact</a>",
+        contactEmail: "<a href='mailto:{{supportEmail}}?subject=Toegang aanvragen voor {{serviceName}}&body=Hi,%0D%0A%0D%0AKunt u me helpen om toegang te krijgen tot {{serviceName}}.%0D%0ANaam: {{userName}}%0D%0AEmail: {{userEmail}}%0D%0AOrganisatie: {{schacHome}}%0D%0AReason:%0D%0A%0D%0ABedankt!'>contact</a>",
         createCollaboration: "Samenwerking aanmaken",
         requestCollaboration: "Samenwerking aanvragen",
         requestAccess: "Toegang aanvragen",

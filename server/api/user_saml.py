@@ -8,8 +8,7 @@ from server.api.service_aups import has_agreed_with
 from server.auth.mfa import user_requires_sram_mfa
 from server.auth.service_access import has_user_access_to_service, collaboration_memberships_for_service
 from server.auth.user_claims import user_memberships, co_tags
-from server.auth.user_codes import USER_UNKNOWN, USER_IS_SUSPENDED, SERVICE_UNKNOWN, SERVICE_NOT_CONNECTED, \
-    NEW_FREE_RIDE_USER, AUP_NOT_AGREED, SECOND_FA_REQUIRED, SERVICE_AUP_NOT_AGREED
+from server.auth.user_codes import UserCode
 from server.db.db import db
 from server.db.defaults import PROXY_AUTHZ
 from server.db.domain import User, Service
@@ -48,12 +47,13 @@ def proxy_authz():
               f"as the service is unknown"
         logger.error(msg)
         send_error_mail(tb=msg)
-        parameters["error_status"] = SERVICE_UNKNOWN
+        parameters["error_status"] = UserCode.SERVICE_UNKNOWN.value
         return {
             "status": {
                 "result": "unauthorized",
                 "redirect_url": f"{client_base_url}/service-denied?{urlencode(parameters)}",
-                "error_status": SERVICE_UNKNOWN
+                "error_status": UserCode.SERVICE_UNKNOWN.value,
+                "info": UserCode.SERVICE_UNKNOWN.name
             }
         }, 200
     # Add the uuid4 and name of the service, which is used in some interrupt flows
@@ -62,22 +62,26 @@ def proxy_authz():
     user = User.query.filter(User.uid == uid).first()
 
     if not user:
-        parameters["error_status"] = NEW_FREE_RIDE_USER if service.non_member_users_access_allowed else USER_UNKNOWN
+        free_rider = service.non_member_users_access_allowed
+        user_code = UserCode.NEW_FREE_RIDE_USER if free_rider else UserCode.USER_UNKNOWN
+        parameters["error_status"] = user_code.value
         return {
             "status": {
                 "result": "interrupt",
                 "redirect_url": f"{client_base_url}/interrupt?{urlencode(parameters)}",
-                "error_status": parameters["error_status"]
+                "error_status": user_code.value,
+                "info": user_code.value.name
             }
         }, 200
 
     if user.suspended:
-        parameters["error_status"] = USER_IS_SUSPENDED
+        parameters["error_status"] = UserCode.USER_IS_SUSPENDED.value
         return {
             "status": {
                 "result": "interrupt",
                 "redirect_url": f"{client_base_url}/interrupt?{urlencode(parameters)}",
-                "error_status": USER_IS_SUSPENDED
+                "error_status": UserCode.USER_IS_SUSPENDED.value,
+                "info": UserCode.USER_IS_SUSPENDED.name
             }
         }, 200
 
@@ -86,12 +90,15 @@ def proxy_authz():
     if user_requires_sram_mfa(user, issuer_id):
         logger.debug(f"Returning interrupt for user {uid} from issuer {issuer_id} to perform 2fa")
         # Do not expose second_fa_uuid if not necessary
-        new_parameters = {**parameters, "error_status": SECOND_FA_REQUIRED, "second_fa_uuid": user.second_fa_uuid}
+        new_parameters = {**parameters,
+                          "error_status": UserCode.SECOND_FA_REQUIRED.value,
+                          "second_fa_uuid": user.second_fa_uuid}
         return {
             "status": {
                 "result": "interrupt",
                 "redirect_url": f"{client_base_url}/interrupt?{urlencode(new_parameters)}",
-                "error_status": SECOND_FA_REQUIRED
+                "error_status": UserCode.SECOND_FA_REQUIRED.value,
+                "info": UserCode.SECOND_FA_REQUIRED.name
             }
         }, 200
 
@@ -99,36 +106,39 @@ def proxy_authz():
     if not has_user_access_to_service(service, user):
         logger.debug(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id} "
                      "because the service is not connected to any active CO's")
-        parameters["error_status"] = SERVICE_NOT_CONNECTED
+        parameters["error_status"] = UserCode.SERVICE_NOT_CONNECTED.value
         return {
             "status": {
                 "result": "unauthorized",
                 "redirect_url": f"{client_base_url}/service-denied?{urlencode(parameters)}",
-                "error_status": SERVICE_NOT_CONNECTED
+                "error_status": UserCode.SERVICE_NOT_CONNECTED.value,
+                "info": UserCode.SERVICE_NOT_CONNECTED.name
             }
         }, 200
 
     if not has_agreed_with(user, service):
         logger.debug(f"Returning interrupt for user {uid} and service_entity_id {service_entity_id} to accept "
                      f"Service AUP")
-        parameters["error_status"] = SERVICE_AUP_NOT_AGREED
+        parameters["error_status"] = UserCode.SERVICE_AUP_NOT_AGREED.value
         return {
             "status": {
                 "result": "interrupt",
                 "redirect_url": f"{client_base_url}/interrupt?{urlencode(parameters)}",
-                "error_status": SERVICE_AUP_NOT_AGREED
+                "error_status": UserCode.SERVICE_AUP_NOT_AGREED.value,
+                "info": UserCode.SERVICE_AUP_NOT_AGREED.name
             }
         }, 200
 
     if not user.has_agreed_with_aup():
         logger.debug(f"Returning interrupt for user {uid} and service_entity_id {service_entity_id} to accept"
                      f"SRAM general AUP")
-        parameters["error_status"] = AUP_NOT_AGREED
+        parameters["error_status"] = UserCode.AUP_NOT_AGREED.value
         return {
             "status": {
                 "result": "interrupt",
                 "redirect_url": f"{client_base_url}/interrupt?{urlencode(parameters)}",
-                "error_status": AUP_NOT_AGREED
+                "error_status": UserCode.AUP_NOT_AGREED.value,
+                "info": UserCode.AUP_NOT_AGREED.name
             }
         }, 200
 
