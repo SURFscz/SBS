@@ -160,7 +160,8 @@ export function activateUserForOrganisation(organisationId, userId) {
 }
 
 export function serviceInfo(entityId, uid) {
-    return fetchJson(`/api/users/service_info?uid=${encodeURIComponent(uid)}&entity_id=${encodeURIComponent(entityId)}`);
+    return fetchJson(`/api/users/service_info?uid=${encodeURIComponent(uid)}&entity_id=${encodeURIComponent(entityId)}`,
+        {}, {}, false);
 }
 
 export function logoutUser() {

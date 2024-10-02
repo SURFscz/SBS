@@ -2636,7 +2636,7 @@ const nl = {
         create: "<a href='/new-collaboration'>aanmaken</a>",
         request: "<a href='/new-collaboration'>aanvragen</a>",
         contactUrl: "<a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{supportEmail}}\">contact</a>.",
-        contactEmail: "<a href='mailto:{{supportEmail}}?subject=Toegang aanvragen voor {{serviceName}}&body=Hi,%0D%0A%0D%0AKunt u me helpen om toegang te krijgen tot {{serviceName}}}.%0D%0ANaam: {{userName}}%0D%0AEmail: {{userEmail}}%0D%0AOrganisatie: {{schacHome}}%0D%0AReason:%0D%0A%0D%0ABedankt!'>contact</a>",
+        contactEmail: "<a href='mailto:{{supportEmail}}?subject=Toegang aanvragen voor {{serviceName}}&body=Hi,%0D%0A%0D%0AKunt u me helpen om toegang te krijgen tot {{serviceName}}.%0D%0ANaam: {{userName}}%0D%0AEmail: {{userEmail}}%0D%0AOrganisatie: {{schacHome}}%0D%0AReason:%0D%0A%0D%0ABedankt!'>contact</a>",
         createCollaboration: "Samenwerking aanmaken",
         requestCollaboration: "Samenwerking aanvragen",
         requestAccess: "Toegang aanvragen",
