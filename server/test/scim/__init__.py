@@ -1,0 +1,4 @@
+TEST_SCIM_SERVER = "http://localhost:8080/api/scim_mock"
+
+TEST_SCIM_USERS_ENDPOINT = f"{TEST_SCIM_SERVER}/Users"
+TEST_SCIM_GROUPS_ENDPOINT = f"{TEST_SCIM_SERVER}/Groups"
