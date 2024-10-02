@@ -70,7 +70,7 @@ def proxy_authz():
                 "result": "interrupt",
                 "redirect_url": f"{client_base_url}/interrupt?{urlencode(parameters)}",
                 "error_status": user_code.value,
-                "info": user_code.value.name
+                "info": user_code.name
             }
         }, 200
 
