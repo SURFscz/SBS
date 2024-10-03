@@ -416,19 +416,6 @@ class TestUser(AbstractTest):
             self.assertTrue(user["second_factor_confirmed"])
             self.assertTrue("organisation_memberships" in user)
 
-    # TODO - remove?
-    # @responses.activate
-    # def test_resume_session_with_invalid_idp(self):
-    #     responses.add(responses.POST, current_app.app_config.oidc.token_endpoint,
-    #                   json={"access_token": "some_token", "id_token": self.sign_jwt({"acr": "nope"})},
-    #                   status=200)
-    #     responses.add(responses.GET, current_app.app_config.oidc.userinfo_endpoint,
-    #                   json={"sub": "urn:john", "voperson_external_id": "test@erroridp.example.edu", "uid": "johnnie"},
-    #                   status=200)
-    #     responses.add(responses.GET, current_app.app_config.oidc.jwks_endpoint,
-    #                   read_file("test/data/public.json"), status=200)
-    #     self.get("/api/users/resume-session", query_data={"code": "123456"}, response_status_code=500)
-
     @responses.activate
     def test_authorization_resume_redirect(self):
         redirect_uri = "http://example.org/redirect_test"
