@@ -1,8 +1,12 @@
 import pyotp
-
+from flask import current_app
+import requests
 from server.auth.secrets import generate_token
 from server.db.domain import User
 from server.test.abstract_test import AbstractTest
+import responses
+
+from server.tools import read_file
 
 
 class TestMfa(AbstractTest):
@@ -204,3 +208,17 @@ class TestMfa(AbstractTest):
                  body={"user_id": betty.id},
                  with_basic_auth=False,
                  response_status_code=403)
+
+    @responses.activate
+    def test_2fa_scenario_no_mfa(self):
+        responses.add(responses.POST, current_app.app_config.oidc.token_endpoint,
+                      json={"access_token": "some_token", "id_token": self.sign_jwt({"acr": "nope"})},
+                      status=200)
+        responses.add(responses.GET, current_app.app_config.oidc.userinfo_endpoint,
+                      json={"sub": "urn:john"}, status=200)
+        responses.add(responses.GET, current_app.app_config.oidc.jwks_endpoint,
+                      read_file("test/data/public.json"), status=200)
+        with requests.Session():
+            self.client.get("/api/users/resume-session?code=123456")
+            res = self.get("/api/mfa/get2fa", with_basic_auth=False)
+            self.assertIsNotNone(res.get("qr_code_base64"))
