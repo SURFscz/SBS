@@ -232,9 +232,8 @@ def organisation_by_id(organisation_id):
         .filter(Organisation.id == organisation_id)
 
     api_call = request_context.is_authorized_api_call
-    if not api_call:
-        is_admin = is_application_admin()
-        if not is_admin:
+    is_admin = is_application_admin()
+    if not api_call and not is_admin:
             user_id = current_user_id()
             query = query \
                 .join(Organisation.organisation_memberships) \
@@ -242,28 +241,26 @@ def organisation_by_id(organisation_id):
                 .filter(OrganisationMembership.user_id == user_id)
 
     organisation = query.one()
-    if not api_call and not is_application_admin() and organisation.units and not is_organisation_admin(
-            organisation_id):
+    if not api_call and not is_admin and organisation.units:
         user_id = current_user_id()
-        optional_managers = list(filter(lambda m: m.user_id == user_id, organisation.organisation_memberships))
-        if not optional_managers:
-            raise Forbidden()
-        manager_unit_identifiers = [unit.id for unit in optional_managers[0].units]
-        organisation_json = jsonify(organisation).json
+        organisation_membership = next(m for m in organisation.organisation_memberships if m.user_id == user_id)
+        if organisation_membership.role != "admin":
+            manager_unit_identifiers = [unit.id for unit in organisation_membership.units]
+            organisation_json = jsonify(organisation).json
 
-        def collaboration_allowed(collaboration):
-            if manager_unit_identifiers:
-                collaboration_has_units = "units" in collaboration and collaboration["units"]
-                # one of units of the manager has to match one of the units of the collaboration
-                co_units = [unit["id"] for unit in collaboration["units"]] if collaboration_has_units else []
-                return bool([id for id in manager_unit_identifiers if id in co_units])
-            return True
+            def collaboration_allowed(collaboration):
+                if manager_unit_identifiers:
+                    collaboration_has_units = "units" in collaboration and collaboration["units"]
+                    # one of units of the manager has to match one of the units of the collaboration
+                    co_units = [unit["id"] for unit in collaboration["units"]] if collaboration_has_units else []
+                    return bool([id for id in manager_unit_identifiers if id in co_units])
+                return True
 
-        collaborations = [co for co in organisation_json["collaborations"] if collaboration_allowed(co)]
-        collaboration_requests = [co for co in organisation_json["collaboration_requests"] if collaboration_allowed(co)]
-        organisation_json["collaborations"] = collaborations
-        organisation_json["collaboration_requests"] = collaboration_requests
-        return organisation_json, 200
+            collaborations = [co for co in organisation_json["collaborations"] if collaboration_allowed(co)]
+            collaboration_requests = [co for co in organisation_json["collaboration_requests"] if collaboration_allowed(co)]
+            organisation_json["collaborations"] = collaborations
+            organisation_json["collaboration_requests"] = collaboration_requests
+            return organisation_json, 200
 
     return organisation, 200
 

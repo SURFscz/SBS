@@ -17,8 +17,7 @@ class TestUserSaml(AbstractTest):
 
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
-                              "uid": "sarah", "user_email": "sarah@ex.com",
-                              "user_name": "sarah p"})
+                              "uid": "sarah"})
         attrs = res["attributes"]
         entitlements = attrs["eduPersonEntitlement"]
         self.assertListEqual([
@@ -40,9 +39,7 @@ class TestUserSaml(AbstractTest):
 
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:jane", "service_id": service_network_entity_id,
-                              "issuer_id": "https://idp.uni-franeker.nl/", "uid": "sarah",
-                              "user_email": "sarah@ex.com", "user_name": "sarah p"
-                              })
+                              "issuer_id": "https://idp.uni-franeker.nl/", "uid": "sarah"})
         attrs = res["attributes"]
         entitlements = attrs["eduPersonEntitlement"]
         self.assertListEqual([
@@ -59,9 +56,8 @@ class TestUserSaml(AbstractTest):
         self.mark_user_suspended(user_john_name)
 
         res = self.post("/api/users/proxy_authz", body={"user_id": "urn:john", "service_id": "https://network",
-                                                        "issuer_id": "issuer.com", "uid": "sarah",
-                                                        "homeorganization": "example.com",
-                                                        "user_email": "sarah@ex.com", "user_name": "sarah p"},
+                                                        "issuer_id": "issuer.com", "uid": "urn:john",
+                                                        "homeorganization": "example.com"},
                         response_status_code=200)
         self.assertEqual(res["status"]["result"], "interrupt")
         self.assertEqual(res["status"]["error_status"], UserCode.USER_IS_SUSPENDED.value)
@@ -91,8 +87,7 @@ class TestUserSaml(AbstractTest):
         self.login_user_2fa("urn:jane")
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:jane", "service_id": service_network_entity_id,
-                              "issuer_id": "issuer.com", "uid": "sarah",
-                              "user_email": "sarah@ex.com", "user_name": "sarah p"})
+                              "issuer_id": "issuer.com", "uid": "sarah"})
         self.assertEqual(res["status"]["result"], "interrupt")
 
         network_service = Service.query.filter(Service.entity_id == service_network_entity_id).one()
@@ -109,8 +104,7 @@ class TestUserSaml(AbstractTest):
         # user unknown is SBS
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:gandalf", "service_id": service_network_entity_id,
-                              "issuer_id": "issuer.com", "uid": "gandalf",
-                              "user_email": "gandalf@lothlorien.middleearth"})
+                              "issuer_id": "issuer.com", "uid": "gandalf"})
         self.assertEqual(res["status"]["result"], "interrupt")
 
         network_service = Service.query.filter(Service.entity_id == service_network_entity_id).one()
@@ -133,16 +127,14 @@ class TestUserSaml(AbstractTest):
 
     def test_proxy_authz_no_service(self):
         res = self.post("/api/users/proxy_authz", body={"user_id": "urn:john", "service_id": "https://nope",
-                                                        "issuer_id": "https://idp.test", "uid": "sarah",
-                                                        "user_email": "sarah@ex.com", "user_name": "sarah p"},
+                                                        "issuer_id": "https://idp.test", "uid": "sarah", },
                         response_status_code=200)
         self.assertEqual("unauthorized", res["status"]["result"])
         self.assertEqual(UserCode.SERVICE_UNKNOWN.value, res["status"]["error_status"])
 
     def test_proxy_authz_service_not_connected(self):
         res = self.post("/api/users/proxy_authz", body={"user_id": "urn:james", "service_id": service_network_entity_id,
-                                                        "issuer_id": "https://idp.test", "uid": "james",
-                                                        "user_email": "sarah@ex.com", "user_name": "sarah p"},
+                                                        "issuer_id": "https://idp.test", "uid": "james"},
                         response_status_code=200)
         self.assertEqual("unauthorized", res["status"]["result"])
         self.assertEqual(UserCode.SERVICE_NOT_CONNECTED.value, res["status"]["error_status"])
@@ -155,8 +147,7 @@ class TestUserSaml(AbstractTest):
                         body={"user_id": "urn:sarah",
                               "service_id": self.app.app_config.oidc.sram_service_entity_id,
                               "issuer_id": "idp",
-                              "uid": "sarah",
-                              "user_email": "sarah@ex.com", "user_name": "sarah p"})
+                              "uid": "sarah"})
         status_ = res["status"]
         self.assertEqual(status_["result"], "authorized")
 
@@ -165,9 +156,7 @@ class TestUserSaml(AbstractTest):
                         body={"user_id": "urn:new_user",
                               "service_id": self.app.app_config.oidc.sram_service_entity_id,
                               "issuer_id": "idp",
-                              "uid": "sarah",
-                              "user_email": "sarah@example.com",
-                              "user_name": "sarah p"})
+                              "uid": "sarah"})
         self.assertEqual(res["status"]["result"], "authorized")
 
     def test_proxy_authz_mfa_sbs_totp_sso(self):
@@ -177,8 +166,7 @@ class TestUserSaml(AbstractTest):
                         body={"user_id": "urn:sarah",
                               "service_id": self.app.app_config.oidc.sram_service_entity_id,
                               "issuer_id": "idp",
-                              "uid": "sarah",
-                              "user_email": "sarah@ex.com", "user_name": "sarah p"})
+                              "uid": "sarah"})
         status_ = res["status"]
         self.assertEqual("authorized", status_["result"])
 
@@ -189,8 +177,7 @@ class TestUserSaml(AbstractTest):
                         body={"user_id": "urn:sarah",
                               "service_id": service_mail_entity_id,
                               "issuer_id": "nope",
-                              "uid": "sarah",
-                              "user_email": "sarah@ex.com", "user_name": "sarah p"})
+                              "uid": "sarah"})
         self.assertEqual(res["status"]["result"], "interrupt")
         self.assertTrue(res["status"]["redirect_url"].startswith(f"{self.app.app_config.base_url}/interrupt"))
 
@@ -201,8 +188,7 @@ class TestUserSaml(AbstractTest):
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:sarah",
                               "service_id": service_mail_entity_id,
-                              "issuer_id": "nope",
-                              "user_email": "sarah@ex.com", "user_name": "sarah p"})
+                              "issuer_id": "nope"})
         self.assertEqual("authorized", res["status"]["result"], )
 
     def test_proxy_authz_mfa_service_ssid_sso(self):

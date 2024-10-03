@@ -3,7 +3,7 @@ import os
 from server.cron import idp_metadata_parser
 from server.cron.idp_metadata_parser import idp_metadata_file
 from server.db.db import db
-from server.db.domain import Organisation, OrganisationInvitation, User, JoinRequest
+from server.db.domain import Organisation, OrganisationInvitation, User, JoinRequest, OrganisationMembership
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import (unihard_name, unifra_name, schac_home_organisation_unihar,
                               schac_home_organisation_example,
@@ -203,9 +203,11 @@ class TestOrganisation(AbstractTest):
         organisation = self.get(f"/api/organisations/{organisation_id}", with_basic_auth=False)
         organisation["short_name"] = "changed!!!!"
         organisation["services_restricted"] = False
+        organisation["service_connection_requires_approval"] = True
         organisation = self.put("/api/organisations", body=organisation)
         self.assertEqual("changed", organisation["short_name"])
         self.assertTrue(organisation["services_restricted"])
+        self.assertFalse(organisation["service_connection_requires_approval"])
 
         collaborations = self.find_entity_by_name(Organisation, unihard_name).collaborations
 
@@ -326,6 +328,21 @@ class TestOrganisation(AbstractTest):
         organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
         organisation = self.get(f"/api/organisations/{organisation_id}")
         self.assertTrue(len(organisation["organisation_memberships"]) > 0)
+
+    def test_organisation_by_id_manager_without_units(self):
+        mary_admin = OrganisationMembership.query \
+            .join(OrganisationMembership.user) \
+            .join(OrganisationMembership.organisation) \
+            .filter(Organisation.name == unihard_name) \
+            .filter(User.uid == "urn:mary")\
+            .one()
+        mary_admin.role = "manager"
+        self.save_entity(mary_admin)
+
+        self.login("urn:mary")
+        organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
+        organisation = self.get(f"/api/organisations/{organisation_id}")
+        self.assertEqual(3, len(organisation["collaborations"]))
 
     def test_organisation_update_admin(self):
         self.login("urn:mary")
