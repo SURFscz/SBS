@@ -1,4 +1,5 @@
 from server.api.base import application_base_url
+from server.api.mock_scim import HTTP_CALLS_KEY, DATABASE_KEY
 from server.db.domain import User, Collaboration, Service
 from server.scim import EXTERNAL_ID_POST_FIX
 from server.scim.group_template import create_group_template, scim_member_object, update_group_template
@@ -6,6 +7,7 @@ from server.scim.schema_template import SCIM_SCHEMA_SRAM_GROUP
 from server.scim.user_template import create_user_template
 from server.test.abstract_test import AbstractTest
 from server.test.seed import user_sarah_name, co_ai_computing_name, service_cloud_name
+from flask import current_app
 
 
 class TestMockScim(AbstractTest):
@@ -13,6 +15,10 @@ class TestMockScim(AbstractTest):
     # Very lengthy flow test, but we need the ordering right
     def test_mock_scim_flow(self):
         self.delete("/api/scim_mock/clear")
+
+        current_app.redis_client.set(HTTP_CALLS_KEY, "")
+        current_app.redis_client.set(DATABASE_KEY, "")
+
         cloud_service_id = self.find_entity_by_name(Service, service_cloud_name).id
         self.put(f"/api/services/reset_scim_bearer_token/{cloud_service_id}",
                  {"scim_bearer_token": "secret"})

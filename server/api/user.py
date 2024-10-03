@@ -87,12 +87,6 @@ def _add_reference_data(user: dict, user_from_db: User):
     _add_counts(user)
     _add_service_aups(user, user_from_db)
     _add_schac_home_organisations(user, user_from_db)
-    if user_from_db.suspended or len(user_from_db.suspend_notifications) > 0:
-        user["successfully_activated"] = True
-        user_from_db.suspended = False
-        user_from_db.suspend_notifications = []
-        db.session.merge(user_from_db)
-        db.session.commit()
 
 
 def _user_query():
