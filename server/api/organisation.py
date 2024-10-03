@@ -7,7 +7,7 @@ from sqlalchemy import or_
 from sqlalchemy import text, func, bindparam, String
 from sqlalchemy.orm import load_only
 from sqlalchemy.orm import selectinload
-from werkzeug.exceptions import Forbidden, BadRequest
+from werkzeug.exceptions import BadRequest
 
 from server.api.base import emit_socket, organisation_by_user_schac_home
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
@@ -16,7 +16,7 @@ from server.api.unit import validate_units
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_write_access, current_user_id, is_application_admin, \
     confirm_organisation_admin, confirm_external_api_call, confirm_read_access, \
-    confirm_organisation_admin_or_manager, is_organisation_admin, is_service_admin_or_manager
+    confirm_organisation_admin_or_manager, is_service_admin_or_manager
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
 from server.db.defaults import default_expiry_date, cleanse_short_name
@@ -234,11 +234,11 @@ def organisation_by_id(organisation_id):
     api_call = request_context.is_authorized_api_call
     is_admin = is_application_admin()
     if not api_call and not is_admin:
-            user_id = current_user_id()
-            query = query \
-                .join(Organisation.organisation_memberships) \
-                .join(OrganisationMembership.user) \
-                .filter(OrganisationMembership.user_id == user_id)
+        user_id = current_user_id()
+        query = query \
+            .join(Organisation.organisation_memberships) \
+            .join(OrganisationMembership.user) \
+            .filter(OrganisationMembership.user_id == user_id)
 
     organisation = query.one()
     if not api_call and not is_admin and organisation.units:
@@ -257,7 +257,8 @@ def organisation_by_id(organisation_id):
                 return True
 
             collaborations = [co for co in organisation_json["collaborations"] if collaboration_allowed(co)]
-            collaboration_requests = [co for co in organisation_json["collaboration_requests"] if collaboration_allowed(co)]
+            collaboration_requests = [co for co in organisation_json["collaboration_requests"] if
+                                      collaboration_allowed(co)]
             organisation_json["collaborations"] = collaborations
             organisation_json["collaboration_requests"] = collaboration_requests
             return organisation_json, 200
