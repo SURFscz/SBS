@@ -264,6 +264,7 @@ class SecondFactorAuthentication extends React.Component {
             verify2fa(totp.join("")).then(r => {
                 this.props.refreshUser(() => {
                     const url = new URL(r.location)
+                    //TODO - do this only when the continue_url is not present
                     this.props.history.push(url.pathname + url.search);
                 });
             }).catch(e => {

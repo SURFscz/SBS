@@ -403,7 +403,6 @@ class App extends React.Component {
 
                             <Route exact path="/collaboration-requests/:id"
                                    render={props => <ProtectedRoute currentUser={currentUser}
-                                                                    redirectToLogin={true}
                                                                     Component={CollaborationRequest}
                                                                     {...props}/>}/>
 

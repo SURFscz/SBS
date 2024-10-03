@@ -3,7 +3,7 @@ import {Redirect, Route} from "react-router-dom";
 import {login} from "../utils/Login";
 import {isEmpty} from "../utils/Utils";
 
-export function ProtectedRoute({currentUser, Component, redirectToLogin = true, ...res}) {
+export function ProtectedRoute({currentUser, Component, ...res}) {
     if (!currentUser.guest) {
         if (!currentUser.user_accepted_aup) {
             return <Redirect to="/aup"/>
@@ -16,7 +16,7 @@ export function ProtectedRoute({currentUser, Component, redirectToLogin = true, 
             return <Redirect to={`/missing-service-aup?state=${encodeURIComponent(res.location.pathname)}`}/>;
         }
         return <Route render={props => <Component user={currentUser} {...res} {...props}/>}/>;
-    } else if (redirectToLogin) {
+    } else {
         setTimeout(login, 5);
         return null;
     }
