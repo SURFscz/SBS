@@ -1,6 +1,5 @@
 noauth_listing = [
     "/api/invitations/find_by_hash",
-    "/api/mfa/get2fa_proxy_authz",
     "/api/mfa/jwks",
     "/api/mfa/sfo",
     "/api/mfa/reset2fa",

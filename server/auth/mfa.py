@@ -1,5 +1,4 @@
 import json
-import uuid
 from datetime import timedelta
 
 import jwt
@@ -100,7 +99,7 @@ def eligible_users_to_reset_token(user):
 def has_valid_mfa(user):
     last_login_date = user.last_login_date
     login_sso_cutoff = timedelta(hours=0, minutes=int(current_app.app_config.mfa_sso_time_in_minutes))
-    valid_mfa_sso = last_login_date and dt_now() - user.last_login_date < login_sso_cutoff
+    valid_mfa_sso = last_login_date and (dt_now() - last_login_date < login_sso_cutoff)
 
     logger = ctx_logger("user_api")
     logger.debug(f"has_valid_mfa: {valid_mfa_sso} (user={user}, last_login={last_login_date}")
@@ -137,11 +136,7 @@ def user_requires_sram_mfa(user: User, issuer_id: str = None, override_mfa_allow
     idp_mfa_allowed = not override_mfa_allowed and mfa_idp_allowed(user, issuer_id)
     fallback_required = current_app.app_config.mfa_fallback_enabled
     mfa_required = not override_mfa_allowed and fallback_required and not has_valid_mfa(user) and not idp_mfa_allowed
-    if mfa_required:
-        user.second_factor_confirmed = False
-        user.second_fa_uuid = str(uuid.uuid4())
-    else:
-        user.second_factor_confirmed = True
+    user.second_factor_confirmed = mfa_required
     db.session.merge(user)
     db.session.commit()
     return mfa_required

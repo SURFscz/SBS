@@ -4,9 +4,9 @@ from io import BytesIO
 import pyotp
 import qrcode
 from flask import Blueprint, current_app, session, request as current_request
-from werkzeug.exceptions import Forbidden, BadRequest
+from werkzeug.exceptions import Forbidden
 
-from server.api.base import query_param, json_endpoint
+from server.api.base import json_endpoint
 from server.auth.mfa import store_user_in_session, eligible_users_to_reset_token
 from server.auth.rate_limit import clear_rate_limit, check_rate_limit
 from server.auth.secrets import generate_token
@@ -63,11 +63,7 @@ def _do_verify_2fa(user: User, secret):
 @mfa_api.route("/token_reset_request", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def token_reset_request():
-    second_fa_uuid = query_param("second_fa_uuid", required=False)
-    if second_fa_uuid:
-        user = _get_user_by_second_fa_uuid(second_fa_uuid)
-    else:
-        user = User.query.filter(User.id == current_user_id()).one()
+    user = User.query.filter(User.id == current_user_id()).one()
     return eligible_users_to_reset_token(user), 200
 
 
@@ -76,11 +72,7 @@ def token_reset_request():
 def token_reset_request_post():
     data = current_request.get_json()
     email = data["email"]
-    second_fa_uuid = data.get("second_fa_uuid", None)
-    if second_fa_uuid:
-        user = _get_user_by_second_fa_uuid(second_fa_uuid)
-    else:
-        user = User.query.filter(User.id == current_user_id()).one()
+    user = User.query.filter(User.id == current_user_id()).one()
     admins = eligible_users_to_reset_token(user)
     if len(list(filter(lambda admin: admin["email"] == email, admins))) == 0:
         raise Forbidden()
@@ -96,22 +88,6 @@ def token_reset_request_post():
 def get2fa():
     user = User.query.filter(User.id == current_user_id()).one()
     return _do_get2fa(user.schac_home_organisation, user.email)
-
-
-@mfa_api.route("/get2fa_proxy_authz", methods=["GET"], strict_slashes=False)
-@json_endpoint
-def get2fa_proxy_authz():
-    second_fa_uuid = query_param("second_fa_uuid")
-    user = _get_user_by_second_fa_uuid(second_fa_uuid)
-    if user.second_factor_auth:
-        return {}, 200
-    return _do_get2fa(user.schac_home_organisation, user.email)
-
-
-def _get_user_by_second_fa_uuid(second_fa_uuid):
-    if not second_fa_uuid:
-        raise BadRequest("second_fa_uuid is empty")
-    return User.query.filter(User.second_fa_uuid == second_fa_uuid).one()
 
 
 @mfa_api.route("/verify2fa", methods=["POST"], strict_slashes=False)
@@ -170,11 +146,7 @@ def update2fa():
 @json_endpoint
 def reset2fa():
     data = current_request.get_json()
-    second_fa_uuid = data.get("second_fa_uuid", None)
-    if second_fa_uuid:
-        user = _get_user_by_second_fa_uuid(second_fa_uuid)
-    else:
-        user = User.query.filter(User.id == current_user_id()).one()
+    user = User.query.filter(User.id == current_user_id()).one()
     token = data["token"]
     if not token or token.strip() != user.mfa_reset_token:
         raise Forbidden()

@@ -249,11 +249,12 @@ class App extends React.Component {
                                        }
                                        return <Redirect to={decodeURIComponent(state)}/>
                                    }}/>
-                            <Route path="/2fa/:second_fa_uuid?"
-                                   render={props => <SecondFactorAuthentication config={config}
-                                                                                user={currentUser}
-                                                                                refreshUser={this.refreshUserMemberships}
-                                                                                {...props}/>}/>
+                            <Route path="/2fa"
+                                   render={props =>
+                                       <SecondFactorAuthentication config={config}
+                                                                   user={currentUser}
+                                                                   refreshUser={this.refreshUserMemberships}
+                                                                   {...props}/>}/>
                             <Route path="/2fa-update"
                                    render={props => <ProtectedRoute config={config}
                                                                     currentUser={currentUser}

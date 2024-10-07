@@ -1,27 +1,19 @@
 import React from "react";
 import {withRouter} from "react-router-dom";
 import "./SecondFactorAuthentication.scss";
-import {
-    get2fa,
-    get2faProxyAuthz,
-    preUpdate2fa,
-    reset2fa,
-    tokenResetRequest,
-    tokenResetRespondents,
-    update2fa,
-    verify2fa
-} from "../api";
+import {get2fa, preUpdate2fa, reset2fa, tokenResetRequest, tokenResetRespondents, update2fa, verify2fa} from "../api";
 import SpinnerField from "../components/redesign/SpinnerField";
 import I18n from "../locale/I18n";
 import Button from "../components/Button";
 import InputField from "../components/InputField";
 import {setFlash} from "../utils/Flash";
 import CheckBox from "../components/CheckBox";
-import {ErrorOrigins, isEmpty, pseudoGuid, stopEvent} from "../utils/Utils";
+import {isEmpty, pseudoGuid, stopEvent} from "../utils/Utils";
 import DOMPurify from "dompurify";
 import {Toaster, ToasterType} from "@surfnet/sds";
 import FeedbackDialog from "../components/Feedback";
 import {ReactComponent as ResetTokenIcon} from "../icons/reset-token.svg";
+import {redirectToProxyLocation} from "../utils/ProxyAuthz";
 
 const TOTP_ATTRIBUTE_NAME = "totp";
 const NEW_TOTP_ATTRIBUTE_NAME = "newTotp";
@@ -48,8 +40,6 @@ class SecondFactorAuthentication extends React.Component {
             resetCode: "",
             resetCodeError: null,
             resetRequested: false,
-            continueUrl: null,
-            secondFaUuid: null,
             showFeedBack: false,
             rate_limited: false
         };
@@ -58,35 +48,8 @@ class SecondFactorAuthentication extends React.Component {
     }
 
     componentDidMount() {
-        const {config, user, update, match} = this.props;
-        const {resetRequested} = this.state;
-        const urlSearchParams = new URLSearchParams(window.location.search);
-        const second_fa_uuid = match.params.second_fa_uuid;
-
-        const continueUrl = urlSearchParams.get("continue_url");
-        const continueUrlTrusted = config.continue_eduteams_redirect_uri;
-        if (continueUrl && !continueUrl.toLowerCase().startsWith(continueUrlTrusted.toLowerCase())) {
-            throw new Error(`Invalid continue url: '${continueUrl}'`)
-        }
-        if (user.guest || resetRequested) {
-            if (second_fa_uuid && continueUrl) {
-                //We need to know if this is a new user. We use the second_fa_uuid for this
-                get2faProxyAuthz(second_fa_uuid)
-                    .then(res => {
-                        this.setState({
-                            loading: false,
-                            resetRequested: false,
-                            secondFaUuid: second_fa_uuid,
-                            qrCode: res.qr_code_base64,
-                            secret: res.secret,
-                            idp_name: res.idp_name || I18n.t("mfa.register.unknownIdp"),
-                            continueUrl: continueUrl
-                        }, this.focusCode);
-                    }).catch(() => this.props.history.push(`/404?eo=${ErrorOrigins.invalidSecondFactorUUID}`))
-            } else {
-                this.props.history.push("/landing");
-            }
-        } else if (user.rate_limited) {
+        const {user, update} = this.props;
+        if (user.rate_limited) {
             this.setState({rate_limited: true, loading: false});
         } else if (!user.second_factor_auth || update) {
             get2fa().then(res => {
@@ -100,8 +63,6 @@ class SecondFactorAuthentication extends React.Component {
             });
         } else {
             this.setState({
-                secondFaUuid: second_fa_uuid,
-                continueUrl: continueUrl,
                 resetRequested: false,
                 loading: false
             }, this.focusCode);
@@ -174,10 +135,10 @@ class SecondFactorAuthentication extends React.Component {
 
     openResetRequest = e => {
         stopEvent(e);
-        const {respondents, secondFaUuid} = this.state;
+        const {respondents} = this.state;
         if (respondents.length === 0) {
             this.setState({loading: true});
-            tokenResetRespondents(secondFaUuid).then(res => {
+            tokenResetRespondents().then(res => {
                 const selectedMail = res[0].email;
                 res.forEach(respondent => respondent.selected = respondent.email === selectedMail);
                 this.setState({respondents: res, loading: false, showExplanation: true});
@@ -209,9 +170,9 @@ class SecondFactorAuthentication extends React.Component {
     }
 
     sendResetRequest = () => {
-        const {respondents, message, secondFaUuid} = this.state;
+        const {respondents, message} = this.state;
         const admin = respondents.find(respondent => respondent.selected);
-        tokenResetRequest(admin, message, secondFaUuid).then(() => {
+        tokenResetRequest(admin, message).then(() => {
             setFlash(I18n.t("mfa.lost.flash"));
             this.setState({showExplanation: false, message: ""});
         });
@@ -219,18 +180,13 @@ class SecondFactorAuthentication extends React.Component {
 
     submitResetCode = () => {
         this.setState({loading: true});
-        const {resetCode, secondFaUuid} = this.state;
-        reset2fa(resetCode, secondFaUuid)
+        const {resetCode} = this.state;
+        reset2fa(resetCode)
             .then(() => {
-                if (secondFaUuid) {
+                this.props.refreshUser(() => {
                     this.setState({resetCode: false, showEnterToken: false, resetRequested: true},
                         () => this.componentDidMount());
-                } else {
-                    this.props.refreshUser(() => {
-                        this.setState({resetCode: false, showEnterToken: false, resetRequested: true},
-                            () => this.componentDidMount());
-                    });
-                }
+                });
             }).catch(() => {
             this.setState({resetCodeError: true, loading: false});
         });
@@ -250,7 +206,7 @@ class SecondFactorAuthentication extends React.Component {
     verify = () => {
         this.setState({busy: true});
         const {totp, newTotp} = this.state;
-        const {update} = this.props;
+        const {update, config} = this.props;
         if (update) {
             update2fa(newTotp.join("")).then(() => {
                 this.props.history.push("/profile");
@@ -263,9 +219,7 @@ class SecondFactorAuthentication extends React.Component {
         } else {
             verify2fa(totp.join("")).then(r => {
                 this.props.refreshUser(() => {
-                    const url = new URL(r.location)
-                    //TODO - do this only when the continue_url is not present
-                    this.props.history.push(url.pathname + url.search);
+                    redirectToProxyLocation(r.location, this.props.history, config);
                 });
             }).catch(e => {
                 if (e.response && e.response.status === 429) {

@@ -1,11 +1,10 @@
 import pyotp
-from flask import current_app
 import requests
-from server.auth.secrets import generate_token
+import responses
+from flask import current_app
+
 from server.db.domain import User
 from server.test.abstract_test import AbstractTest
-import responses
-
 from server.tools import read_file
 
 
@@ -76,13 +75,6 @@ class TestMfa(AbstractTest):
         self.assertEqual(1, len(res))
         self.assertEqual("john@example.org", res[0]["email"])
 
-    def test_token_reset_request_anonymous(self):
-        mary = self.add_second_fa_uuid_to_user("urn:mary")
-        res = self.get("/api/mfa/token_reset_request", query_data={"second_fa_uuid": mary.second_fa_uuid},
-                       with_basic_auth=False)
-        self.assertEqual(1, len(res))
-        self.assertEqual("john@example.org", res[0]["email"])
-
     def test_token_reset_request_post(self):
         mail = self.app.mail
         with mail.record_messages() as outbox:
@@ -94,17 +86,6 @@ class TestMfa(AbstractTest):
             self.assertTrue("please" in mail_msg.html)
             mary = User.query.filter(User.uid == "urn:mary").one()
             self.assertTrue(mary.mfa_reset_token in mail_msg.html)
-
-    def test_token_reset_request_post_anonymous(self):
-        mary = self.add_second_fa_uuid_to_user("urn:mary")
-        self.assertIsNone(mary.mfa_reset_token)
-
-        self.post("/api/mfa/token_reset_request",
-                  body={"email": "john@example.org", "message": "please", "second_fa_uuid": mary.second_fa_uuid},
-                  with_basic_auth=False)
-
-        mary = User.query.filter(User.uid == "urn:mary").one()
-        self.assertIsNotNone(mary.mfa_reset_token)
 
     def test_token_reset_request_post_invalid_email(self):
         self.login("urn:mary")
@@ -121,19 +102,6 @@ class TestMfa(AbstractTest):
         self.assertIsNone(mary.mfa_reset_token)
         self.assertIsNone(mary.second_factor_auth)
         self.assertFalse(mary.rate_limited)
-
-    def test_reset2fa_anonymous(self):
-        mary = self.add_second_fa_uuid_to_user("urn:mary")
-        mary.mfa_reset_token = generate_token()
-        AbstractTest._merge_user(mary)
-
-        self.post("/api/mfa/reset2fa",
-                  body={"second_fa_uuid": mary.second_fa_uuid,
-                        "token": mary.mfa_reset_token},
-                  with_basic_auth=False)
-        mary = User.query.filter(User.uid == "urn:mary").one()
-        self.assertIsNone(mary.mfa_reset_token)
-        self.assertIsNone(mary.second_factor_auth)
 
     def test_reset2fa_invalid_token(self):
         self.login("urn:mary")
@@ -171,22 +139,6 @@ class TestMfa(AbstractTest):
         self.post("/api/mfa/pre-update2fa", body={"totp_value": pyotp.TOTP(second_factor_auth).now()})
         res = self.post("/api/mfa/update2fa", body={"new_totp_value": "123456"}, response_status_code=400)
         self.assertFalse(res["new_totp"])
-
-    def test_get2fa_proxy_authz_new_user(self):
-        sarah = self.add_second_fa_uuid_to_user("urn:sarah")
-        res = self.get("/api/mfa/get2fa_proxy_authz", query_data={"second_fa_uuid": sarah.second_fa_uuid},
-                       with_basic_auth=False)
-        self.assertIsNotNone(res["qr_code_base64"])
-
-    def test_get2fa_proxy_authz_missing_second_fa_uuid(self):
-        self.get("/api/mfa/get2fa_proxy_authz", query_data={"second_fa_uuid": ""},
-                 with_basic_auth=False, response_status_code=400)
-
-    def test_get2fa_proxy_authz(self):
-        sarah = self.add_totp_to_user("urn:sarah")
-        res = self.get("/api/mfa/get2fa_proxy_authz", query_data={"second_fa_uuid": sarah.second_fa_uuid},
-                       with_basic_auth=False)
-        self.assertFalse("qr_code_base64" in res)
 
     def test_reset2fa_other(self):
         betty = self.find_entity_by_name(User, "betty")

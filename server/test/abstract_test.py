@@ -2,7 +2,6 @@ import datetime
 import json
 import os
 import pathlib
-import uuid
 from base64 import b64encode
 from time import time
 from typing import Union
@@ -234,16 +233,7 @@ class AbstractTest(TestCase):
     def add_totp_to_user(user_uid):
         user = User.query.filter(User.uid == user_uid).one()
         secret = pyotp.random_base32()
-        second_fa_uuid = str(uuid.uuid4())
         user.second_factor_auth = secret
-        user.second_fa_uuid = second_fa_uuid
-        return AbstractTest._merge_user(user)
-
-    @staticmethod
-    def add_second_fa_uuid_to_user(user_uid):
-        user = User.query.filter(User.uid == user_uid).one()
-        second_fa_uuid = str(uuid.uuid4())
-        user.second_fa_uuid = second_fa_uuid
         return AbstractTest._merge_user(user)
 
     @staticmethod

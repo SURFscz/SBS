@@ -89,10 +89,8 @@ def proxy_authz():
     # also skip if user has already recently performed MFA
     if user_requires_sram_mfa(user, issuer_id):
         logger.debug(f"Returning interrupt for user {uid} from issuer {issuer_id} to perform 2fa")
-        # Do not expose second_fa_uuid if not necessary
         new_parameters = {**parameters,
-                          "error_status": UserCode.SECOND_FA_REQUIRED.value,
-                          "second_fa_uuid": user.second_fa_uuid}
+                          "error_status": UserCode.SECOND_FA_REQUIRED.value}
         return {
             "status": {
                 "result": "interrupt",
