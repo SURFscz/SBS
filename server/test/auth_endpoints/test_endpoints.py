@@ -1,6 +1,6 @@
 import re
 
-from auth_endpoints.endpoints import endpoints
+from server.test.auth_endpoints.endpoints import endpoints
 from server.test.abstract_test import AbstractTest
 
 
