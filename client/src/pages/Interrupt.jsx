@@ -1,27 +1,32 @@
 import "./Interrupt.scss";
+import {useEffect} from "react";
+import {doRedirectToProxyLocation, saveContinueURL} from "../utils/ProxyAuthz";
 
-//TODO - have one place for interrupt logic. Check continue URL and make this available
-//This needs to be behind a protected route, which means that AUP, MFA and Service AUPS are handled automatically
-//store the continue url in the user session, and finally when we arrive here, then redirect
-//Remove all other notions of continue_url and also combine service-aup, missing-service-aup
-//Remove the second_fa_uuid of the user, we don't need this anymore, as we only perform mfa for logged in users
-export default function Interrupt({history}) {
-    console.log(history);
+/**
+ * This is the route where we end up if a user tries to log in at another service and is interrupted because:
+ * 2fa is required
+ * general app-aup needs to be agreed with
+ * service-aup needs to be agreed with
+ * new user has to be provisioned JIT
+ */
+export default function Interrupt({config, history}) {
 
-    /**
-     *
-     * const continueUrl = urlSearchParams.get("continue_url");
-     * const continueUrlTrusted = config.continue_eduteams_redirect_uri;
-     * if (continueUrl && !continueUrl.toLowerCase().startsWith(continueUrlTrusted.toLowerCase())) {
-     *     throw new Error(`Invalid continue url: '${continueUrl}'`)
-     * }
-     *
-     *
-     * interrupt:
-     * "error_status"
-     *
-     * "2fa/{user.second_fa_uuid}" 101
-     * "service-aup" 1, 2
-     * "delay" 97
-     */
+    useEffect(() => {
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const continueUrl = urlSearchParams.get("continue_url");
+        saveContinueURL(config, continueUrl);
+        const errorStatus = parseInt( urlSearchParams.get("error_status"), 10);
+        // The user is already logged in, so mfa and aup are taken care of
+        switch (errorStatus) {
+            case 97:
+               history.push(`/delay${window.location.search}`);
+               break;
+            case 100:
+               history.push(`/service-aup${window.location.search}`);
+               break;
+            default:
+                doRedirectToProxyLocation();
+        }
+    }, [])
+
 }

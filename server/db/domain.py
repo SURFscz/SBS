@@ -75,7 +75,6 @@ class User(Base, db.Model):
     suspend_notifications = db.relationship("SuspendNotification", back_populates="user", cascade="all, delete-orphan",
                                             passive_deletes=True)
     mfa_reset_token = db.Column("mfa_reset_token", db.String(length=512), nullable=True)
-    second_fa_uuid = db.Column("second_fa_uuid", db.String(length=512), nullable=True)
     rate_limited = db.Column("rate_limited", db.Boolean(), nullable=True, default=False)
     user_mails = db.relationship("UserMail", back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
 

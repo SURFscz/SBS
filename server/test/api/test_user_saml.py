@@ -240,12 +240,8 @@ class TestUserSaml(AbstractTest):
                         body={"user_id": "urn:sarah",
                               "service_id": service_mail_entity_id,
                               "issuer_id": "nope"})
-        sarah = self.find_entity_by_name(User, user_sarah_name)
         self.assertEqual(res["status"]["result"], "interrupt")
         self.assertEqual(UserCode.SECOND_FA_REQUIRED.value, res["status"]["error_status"])
-
-        query_dict = self.url_to_query_dict(res["status"]["redirect_url"])
-        self.assertEqual(query_dict["second_fa_uuid"], sarah.second_fa_uuid)
 
     def test_proxy_authz_mfa_no_attr(self):
         res = self.post("/api/users/proxy_authz", response_status_code=500,

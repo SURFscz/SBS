@@ -100,7 +100,7 @@ export function authorizationUrl(state) {
 }
 
 export function me(config) {
-    if (config.local && 1 == 1) {
+    if (config.local && 1 != 1) {
         let sub = "urn:service_admin";
         sub = "urn:john";
         //sub = "urn:paul";
@@ -189,10 +189,6 @@ export function get2fa() {
     return fetchJson("/api/mfa/get2fa");
 }
 
-export function get2faProxyAuthz(second_fa_uuid) {
-    return fetchJson(`/api/mfa/get2fa_proxy_authz?second_fa_uuid=${second_fa_uuid}`);
-}
-
 export function verify2fa(totp) {
     return postPutJson("/api/mfa/verify2fa", {totp}, "POST", false);
 }
@@ -205,21 +201,17 @@ export function update2fa(new_totp_value) {
     return postPutJson("/api/mfa/update2fa", {new_totp_value: new_totp_value}, "POST", false);
 }
 
-export function tokenResetRespondents(second_fa_uuid) {
-    const queryPart = second_fa_uuid ? `?second_fa_uuid=${second_fa_uuid}` : ""
-    return fetchJson(`/api/mfa/token_reset_request${queryPart}`);
+export function tokenResetRespondents() {
+    return fetchJson(`/api/mfa/token_reset_request`);
 }
 
-export function tokenResetRequest(admin, message, second_fa_uuid) {
+export function tokenResetRequest(admin, message) {
     const body = {email: admin.email, message};
-    if (second_fa_uuid) {
-        body.second_fa_uuid = second_fa_uuid;
-    }
     return postPutJson("/api/mfa/token_reset_request", body, "POST", false);
 }
 
-export function reset2fa(token, second_fa_uuid) {
-    return postPutJson("/api/mfa/reset2fa", {token: token, second_fa_uuid: second_fa_uuid}, "POST", false);
+export function reset2fa(token) {
+    return postPutJson("/api/mfa/reset2fa", {token: token}, "POST", false);
 }
 
 export function reset2faOther(userId) {

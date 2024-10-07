@@ -130,7 +130,6 @@ def _audit_trail():
         body = current_request.json if method != "DELETE" and current_request.is_json else {}
         if isinstance(body, dict):
             body.pop("logo", None)
-            body.pop("second_fa_uuid", None)
         ctx_logger("base").info(f"Path {current_request.path} {method} {json.dumps(body, default=str)}")
 
 
