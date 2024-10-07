@@ -105,7 +105,7 @@ class TestMfa(AbstractTest):
 
     def test_reset2fa_invalid_token(self):
         self.login("urn:mary")
-        self.post("/api/mfa/reset2fa", body={"token": "nope"}, response_status_code=403)
+        self.post("/api/mfa/reset2fa", body={"token": "nope"}, response_status_code=401)
 
     def test_update2fa(self):
         self.login("urn:mary")
