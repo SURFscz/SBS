@@ -127,7 +127,7 @@ class TestMfa(AbstractTest):
     def test_update2fa_invalid_current_totp_value(self):
         self.set_second_factor_auth("urn:mary")
         self.login("urn:mary")
-        res = self.post("/api/mfa/pre-update2fa", body={"totp_value": "123456"}, response_status_code=400)
+        res = self.post("/api/mfa/pre-update2fa", body={"totp_value": "xxxxxx"}, response_status_code=400)
         self.assertEqual(res["current_totp"], False)
 
     def test_update2fa_invalid_totp(self):
@@ -137,7 +137,7 @@ class TestMfa(AbstractTest):
         second_factor_auth = AbstractTest.set_second_factor_auth("urn:mary")
 
         self.post("/api/mfa/pre-update2fa", body={"totp_value": pyotp.TOTP(second_factor_auth).now()})
-        res = self.post("/api/mfa/update2fa", body={"new_totp_value": "123456"}, response_status_code=400)
+        res = self.post("/api/mfa/update2fa", body={"new_totp_value": "xxxxxx"}, response_status_code=400)
         self.assertFalse(res["new_totp"])
 
     def test_reset2fa_other(self):
