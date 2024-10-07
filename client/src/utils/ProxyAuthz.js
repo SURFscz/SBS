@@ -1,4 +1,4 @@
-export const CONTINUE_URL = "continue_url";
+const CONTINUE_URL = "continue_url";
 
 export function saveContinueURL(config, continueUrl) {
     const continueUrlTrusted = config.continue_eduteams_redirect_uri;
