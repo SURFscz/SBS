@@ -276,7 +276,8 @@ endpoints = [
     {
         "name": "collaborations_services_api.add_collaborations_services",
         "method": "PUT",
-        "path": "/api/collaborations_services/"
+        "path": "/api/collaborations_services/",
+        "body": {"collaboration_id": 0}
     },
     {
         "name": "collaborations_services_api.connect_collaboration_service_api",
@@ -432,7 +433,9 @@ endpoints = [
     {
         "name": "invitations_api.invitations_by_hash",
         "method": "GET",
-        "path": "/api/invitations/find_by_hash"
+        "path": "/api/invitations/find_by_hash",
+        "status_code": 404,
+        "query_data": {"hash": "nope"}
     },
     {
         "name": "invitations_api.invitations_decline",
@@ -662,7 +665,9 @@ endpoints = [
     {
         "name": "organisation_invitations_api.organisation_invitations_by_hash",
         "method": "GET",
-        "path": "/api/organisation_invitations/find_by_hash"
+        "path": "/api/organisation_invitations/find_by_hash",
+        "status_code": 404,
+        "query_data": {"hash": "nope"}
     },
     {
         "name": "organisation_invitations_api.organisation_invitations_decline",
@@ -688,7 +693,7 @@ endpoints = [
         "name": "organisations_services_api.add_collaborations_services",
         "method": "PUT",
         "path": "/api/organisations_services/",
-        "body": {"collaboration_id", 0}
+        "body": {"organisation_id": 0, "service_id": 0}
     },
     {
         "name": "organisations_services_api.delete_organisations_services",
@@ -703,7 +708,8 @@ endpoints = [
     {
         "name": "pam_weblogin_api.find_by_session_id",
         "method": "GET",
-        "path": "/pam-weblogin/<service_shortname>/<session_id>"
+        "path": "/pam-weblogin/<service_shortname>/<session_id>",
+        "status_code": 404
     },
     {
         "name": "pam_weblogin_api.ssh_keys",
@@ -813,7 +819,9 @@ endpoints = [
     {
         "name": "scim_api.sweep",
         "method": "PUT",
-        "path": "/api/scim/v2/sweep"
+        "path": "/api/scim/v2/sweep",
+        "status_code": 403,
+        "body": {"service_id": 0}
     },
     {
         "name": "scim_mock_api.clear",
@@ -1090,7 +1098,9 @@ endpoints = [
     {
         "name": "service_invitations_api.service_invitations_by_hash",
         "method": "GET",
-        "path": "/api/service_invitations/find_by_hash"
+        "path": "/api/service_invitations/find_by_hash",
+        "query_data": {"hash": "nope"},
+        "status_code": 404
     },
     {
         "name": "service_invitations_api.service_invitations_decline",
@@ -1386,7 +1396,8 @@ endpoints = [
     {
         "name": "user_api.service_info",
         "method": "GET",
-        "path": "/api/users/service_info"
+        "path": "/api/users/service_info",
+        "query_data": {"uid": "nope", "entity_id": "nope"}
     },
     {
         "name": "user_api.suspended",
