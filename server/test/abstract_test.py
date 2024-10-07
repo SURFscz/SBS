@@ -14,7 +14,6 @@ import requests
 import responses
 from flask import current_app
 from flask_testing import TestCase
-from onelogin.saml2.utils import OneLogin_Saml2_Utils
 from sqlalchemy import text
 from sqlalchemy.orm import sessionmaker, load_only
 
@@ -241,14 +240,6 @@ class AbstractTest(TestCase):
         db.session.merge(user)
         db.session.commit()
         return user
-
-    @staticmethod
-    def get_authn_response(file):
-        xml_response = read_file(f"test/saml2/{file}")
-        key = read_file("config/saml_test/certs/sp.key")
-        cert = read_file("config/saml_test/certs/sp.crt")
-        xml_authn_signed = OneLogin_Saml2_Utils.add_sign(xml_response, key, cert)
-        return b64encode(xml_authn_signed)
 
     @staticmethod
     def expire_pam_session(session_id):
