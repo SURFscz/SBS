@@ -187,6 +187,16 @@ def schema_sram_user_template():
             "mutability": "readOnly",
             "returned": "default",
             "uniqueness": "none"
+        },
+        {
+            "name": "sramInactiveDays",
+            "type": "int",
+            "multiValued": False,
+            "required": False,
+            "caseExact": False,
+            "mutability": "readOnly",
+            "returned": "default",
+            "uniqueness": "none"
         }
     ])
 
