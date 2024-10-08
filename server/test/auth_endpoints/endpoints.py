@@ -1,3 +1,19 @@
+from enum import Enum
+
+
+class Roles(Enum):
+    APPLICATION_PLATFORM = 1
+    ORGANISATION_ADMIN = 2
+    ORGANISATION_MANAGER = 3
+    COLLABORATION_ADMIN = 4
+    COLLABORATION_MEMBER = 5
+    SERVICE_ADMIN = 6
+    SERVICE_MANAGER = 7
+
+    def lower_authority_roles(self):
+        return [r for r in list(Roles) if r.value > self.value]
+
+
 endpoints = [
     {
         "name": "api_key_api.delete_api_key",
@@ -17,12 +33,15 @@ endpoints = [
     {
         "name": "api_tag.all_organisation_tags",
         "method": "GET",
-        "path": "/api/tags/"
+        "path": "/api/tags/",
+        "query_data": {"organisation_id": 0},
+        # "access_role": Roles.ORGANISATION_MANAGER,
     },
     {
         "name": "api_tag.all_tags",
         "method": "GET",
-        "path": "/api/tags/all"
+        "path": "/api/tags/all",
+        "access_role": Roles.APPLICATION_PLATFORM
     },
     {
         "name": "api_tag.delete_tag",
