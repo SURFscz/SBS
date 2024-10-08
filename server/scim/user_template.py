@@ -42,7 +42,7 @@ def inactive_days(date_at):
 
 
 def create_user_template(user: User):
-  
+
     return replace_none_values({
         "schemas": [
             SCIM_SCHEMA_CORE_USER,
