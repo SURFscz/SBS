@@ -1,5 +1,7 @@
 import base64
 import hashlib
+import datetime
+
 from typing import List, Union
 
 from server.db.domain import User, Group, Collaboration
@@ -33,7 +35,14 @@ def _meta_info(user: User):
             "location": f"/Users/{user.external_id}{EXTERNAL_ID_POST_FIX}"}
 
 
+def inactive_days(date_at):
+    today = datetime.date.today()
+    delta = today - date_at.date()
+    return delta.days
+
+
 def create_user_template(user: User):
+
     return replace_none_values({
         "schemas": [
             SCIM_SCHEMA_CORE_USER,
@@ -54,7 +63,8 @@ def create_user_template(user: User):
             "eduPersonScopedAffiliation": user.affiliation,
             "eduPersonUniqueId": user.uid,
             "voPersonExternalAffiliation": user.scoped_affiliation,
-            "voPersonExternalId": user.eduperson_principal_name
+            "voPersonExternalId": user.eduperson_principal_name,
+            "sramInactiveDays": inactive_days(user.last_login_date)
         }
     })
 
