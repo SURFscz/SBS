@@ -35,8 +35,7 @@ def _meta_info(user: User):
 
 
 def inactive_days(date_at):
-    today = dt_now()
-    delta = today - date_at.date()
+    delta = dt_now().date() - date_at.date()
     return delta.days
 
 
