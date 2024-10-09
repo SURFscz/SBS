@@ -11,7 +11,8 @@ from server.scim.group_template import create_group_template, update_group_templ
 from server.scim.repo import all_scim_groups_by_service, all_scim_users_by_service
 from server.scim.schema_template import SCIM_SCHEMA_SRAM_USER, SCIM_SCHEMA_SRAM_GROUP
 from server.scim.scim import scim_headers, validate_response
-from server.scim.user_template import create_user_template, replace_none_values, update_user_template
+from server.scim.user_template import create_user_template, replace_none_values, update_user_template, \
+    inactive_days
 
 
 def _replace_empty_string_values(d: dict):
@@ -58,6 +59,9 @@ def _user_changed(user: User, remote_user: dict):
             return True
         vo_person_external_id = remote_user[SCIM_SCHEMA_SRAM_USER].get("voPersonExternalId")
         if _compare_with_none_equals_empty(vo_person_external_id, user.eduperson_principal_name):
+            return True
+        sramInactiveDays = remote_user[SCIM_SCHEMA_SRAM_USER].get("sramInactiveDays")
+        if _compare_with_none_equals_empty(sramInactiveDays, inactive_days(user.last_login_date)):
             return True
     return False
 

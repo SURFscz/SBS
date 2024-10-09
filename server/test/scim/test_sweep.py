@@ -1,6 +1,7 @@
 import json
-
 import responses
+
+from datetime import timedelta
 from werkzeug.exceptions import BadRequest
 
 from server.api.base import application_base_url
@@ -218,6 +219,10 @@ class TestSweep(AbstractTest):
             setattr(user, attr, "changed")
             self.assertTrue(_user_changed(user, remote_user))
             setattr(user, attr, stored_attr)
+
+        user.last_login_date -= timedelta(hours=24)
+        self.assertTrue(_user_changed(user, remote_user))
+        user.last_login_date += timedelta(hours=24)
         user.suspended = True
         self.assertTrue(_user_changed(user, remote_user))
         user.suspended = False
