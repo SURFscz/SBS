@@ -6,7 +6,9 @@ from flask import g as request_context
 from munch import munchify
 
 from server.api.base import send_error_mail
+from server.db.domain import Organisation
 from server.test.abstract_test import AbstractTest
+from server.test.seed import unihard_name
 
 
 class TestBase(AbstractTest):
@@ -40,6 +42,20 @@ class TestBase(AbstractTest):
         finally:
             self.app.app_config.mail.send_exceptions = False
 
+    def test_send_error_mail_with_external_api_organisation(self):
+        try:
+            self.app.app_config.mail.send_exceptions = True
+            with self.app.app_context():
+                mail = self.app.mail
+                with mail.record_messages() as outbox:
+                    request_context.external_api_organisation = munchify({"name": "external_organisation"})
+                    send_error_mail("tb")
+                    html = outbox[0].html
+                    self.assertTrue("external_organisation" in html)
+
+        finally:
+            self.app.app_config.mail.send_exceptions = False
+
     def test_health(self):
         res = self.client.get("/health")
         self.assertDictEqual({"components": {"database": "UP", "redis": "UP"}, "status": "UP"}, res.json)
@@ -68,3 +84,19 @@ class TestBase(AbstractTest):
 
     def test_401(self):
         self.get("/api/users/search", with_basic_auth=False, response_status_code=401)
+
+    def test_invalid_csrf(self):
+        try:
+            os.environ["TESTING"] = ""
+
+            organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
+            self.login("urn:mary")
+            secret = self.get("/api/api_keys", with_basic_auth=False)["value"]
+            self.post("/api/api_keys",
+                      body={"organisation_id": organisation_id, "hashed_secret": secret,
+                            "description": "Test"},
+                      response_status_code=401,
+                      with_basic_auth=False)
+
+        finally:
+            os.environ["TESTING"] = "1"

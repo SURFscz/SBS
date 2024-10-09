@@ -140,20 +140,6 @@ def co_tags(connected_collaborations: list[Collaboration]) -> set[str]:
     return tags
 
 
-def collaboration_memberships_for_service(user, service):
-    memberships = []
-    now = dt_now()
-    if user and service:
-        for cm in user.collaboration_memberships:
-            co_expired = cm.collaboration.expiry_date and cm.collaboration.expiry_date < now
-            cm_expired = cm.expiry_date and cm.expiry_date < now
-            if not co_expired and not cm_expired:
-                connected = list(filter(lambda s: s.id == service.id, cm.collaboration.services))
-                if connected or list(filter(lambda s: s.id == service.id, cm.collaboration.organisation.services)):
-                    memberships.append(cm)
-    return memberships
-
-
 def valid_user_attributes(attributes):
     missing_attributes = []
     if "name" not in attributes and "given_name" in attributes and "family_name" in attributes:

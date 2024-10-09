@@ -119,7 +119,8 @@ const nl = {
             orgUsers: "Gebruikers",
             scim: "SCIM",
             stats: "Stats",
-            pam: "PAM"
+            pam: "PAM",
+            proxy: "Proxy"
         }
     },
     forms: {
@@ -2114,6 +2115,16 @@ const nl = {
             pollResult: "Pol session results",
             validatePinResult: "Validate PIN code results",
             memberships: "Memberships"
+        },
+        proxy: {
+            userUid: "User UID",
+            serviceEntityId: "Service entity ID",
+            useSRAMServiceEntityId: "Use SRAM service entity ID",
+            idpEntityId: "IdP entity ID",
+            start: "Submit",
+            reset: "Reset",
+            results: "Results",
+            errors: "Errors"
         }
     },
     access: {
@@ -2624,7 +2635,7 @@ const nl = {
         invitationsTitle: "Uitnodigingen en accounts",
         invitationsSubTitle: "Toegang tot <i>{{serviceName}}</i> wordt toegekend op basis van het lidmaatschap van een samenwerking.",
         invitationsBullets: {
-            invited : "Ben je uitgenodigd? Gebruik dan de link in de e-mail.",
+            invited: "Ben je uitgenodigd? Gebruik dan de link in de e-mail.",
             login: "Je bent ingelogd via <strong>{{schacHome}}</strong>. Heb je wellicht ook toegang met een ander account?"
         },
         gainingAccessTitle: "Toegang krijgen",

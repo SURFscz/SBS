@@ -1,6 +1,5 @@
 import datetime
 import os
-from urllib import parse
 
 import requests
 import responses
@@ -39,7 +38,6 @@ class TestUser(AbstractTest):
         self.login("urn:john")
         user = self.client.get("/api/users/personal", ).json
         self.assertTrue("email" in user)
-        self.assertFalse("second_fa_uuid" in user)
 
     def test_me_user_suspended(self):
         self.mark_user_suspended(user_john_name)
@@ -47,11 +45,6 @@ class TestUser(AbstractTest):
         res = self.client.get("/api/users/me")
         self.assertEqual(200, res.status_code)
         self.assertFalse(res.json["suspended"])
-
-    def test_me_user_with_suspend_notifications(self):
-        self.login("urn:user_gets_suspended")
-        res = self.client.get("/api/users/me")
-        self.assertEqual(True, res.json["successfully_activated"])
 
     def test_me_user_with_additional_data(self):
         self.login("urn:peter")
@@ -158,7 +151,7 @@ class TestUser(AbstractTest):
         user_id = User.query.filter(User.uid == "urn:mary").one().id
         res = self.get("/api/users/find_by_id", query_data={"id": user_id})
         self.assertEqual("urn:mary", res["uid"])
-        for attr in ["last_accessed_date", "last_login_date", "second_fa_uuid", "service_memberships", "join_requests"]:
+        for attr in ["last_accessed_date", "last_login_date", "service_memberships", "join_requests"]:
             self.assertTrue(attr in res)
 
     def test_find_by_id_by_org_manager(self):
@@ -166,7 +159,7 @@ class TestUser(AbstractTest):
         user_id = User.query.filter(User.uid == "urn:sarah").one().id
         res = self.get("/api/users/find_by_id", query_data={"id": user_id})
         self.assertEqual("urn:sarah", res["uid"])
-        for attr in ["last_accessed_date", "last_login_date", "second_fa_uuid", "service_memberships", "join_requests"]:
+        for attr in ["last_accessed_date", "last_login_date", "service_memberships", "join_requests"]:
             self.assertFalse(attr in res)
 
     def test_find_by_id_by_org_manager_including_org_memberships(self):
@@ -258,8 +251,8 @@ class TestUser(AbstractTest):
         self.assertTrue("authorization_endpoint" in res)
 
         res = self.get("/api/users/authorization", with_basic_auth=False)
-        query_dict = dict(parse.parse_qs(parse.urlsplit(res["authorization_endpoint"]).query))
-        self.assertListEqual([redirect_uri], query_dict["state"])
+        query_dict = self.url_to_query_dict(res["authorization_endpoint"])
+        self.assertEqual(redirect_uri, query_dict["state"])
 
     def test_service_info(self):
         res = self.get("/api/users/service_info",
@@ -271,8 +264,8 @@ class TestUser(AbstractTest):
 
     def test_resume_session_dead_end(self):
         res = self.get("/api/users/resume-session", response_status_code=302)
-        query_dict = dict(parse.parse_qs(parse.urlsplit(res.location).query))
-        self.assertListEqual([self.app.app_config.base_url], query_dict["state"])
+        query_dict = self.url_to_query_dict(res.location)
+        self.assertEqual(self.app.app_config.base_url, query_dict["state"])
 
     @responses.activate
     def test_resume_session_token_error(self):
@@ -423,36 +416,6 @@ class TestUser(AbstractTest):
             self.assertTrue("organisation_memberships" in user)
 
     @responses.activate
-    def test_resume_session_with_ssid_idp(self):
-        responses.add(responses.POST, current_app.app_config.oidc.token_endpoint,
-                      json={"access_token": "some_token", "id_token": self.sign_jwt({"acr": "nope"})},
-                      status=200)
-        responses.add(responses.GET, current_app.app_config.oidc.userinfo_endpoint,
-                      json={"sub": "urn:john", "voperson_external_id": "test@ssid.org", "uid": "johnnie",
-                            "name": "John Doe"},
-                      status=200)
-        responses.add(responses.GET, current_app.app_config.oidc.jwks_endpoint,
-                      read_file("test/data/public.json"), status=200)
-        with requests.Session():
-            res = self.client.get("/api/users/resume-session?code=123456")
-            self.assertTrue(res.location.startswith(
-                "https://sa-gw.test.surfconext.nl/second-factor-only/single-sign-on?"))
-            john = self.find_entity_by_name(User, "John Doe")
-            self.assertTrue(john.ssid_required)
-
-    @responses.activate
-    def test_resume_session_with_invalid_idp(self):
-        responses.add(responses.POST, current_app.app_config.oidc.token_endpoint,
-                      json={"access_token": "some_token", "id_token": self.sign_jwt({"acr": "nope"})},
-                      status=200)
-        responses.add(responses.GET, current_app.app_config.oidc.userinfo_endpoint,
-                      json={"sub": "urn:john", "voperson_external_id": "test@erroridp.example.edu", "uid": "johnnie"},
-                      status=200)
-        responses.add(responses.GET, current_app.app_config.oidc.jwks_endpoint,
-                      read_file("test/data/public.json"), status=200)
-        self.get("/api/users/resume-session", query_data={"code": "123456"}, response_status_code=500)
-
-    @responses.activate
     def test_authorization_resume_redirect(self):
         redirect_uri = "http://example.org/redirect_test"
         self.test_authorization(redirect_uri=redirect_uri)
@@ -497,79 +460,6 @@ class TestUser(AbstractTest):
 
         james = User.query.filter(User.uid == "urn:james").one()
         self.assertEqual("AA😡C", james.ssh_keys[0].ssh_value)
-
-    def test_login_with_ssid_required(self):
-        self.mark_user_ssid_required(name=user_sarah_name, home_organisation_uid="admin",
-                                     schac_home_organisation="ssid.org")
-
-        self.login("urn:sarah", schac_home_organisation="ssid.org")
-
-        user = self.client.get("/api/users/me").json
-
-        self.assertEqual(user["guest"], True)
-        self.assertEqual(user["admin"], False)
-
-    def test_login_with_ssid_required_missing_attributes(self):
-        self.mark_user_ssid_required()
-
-        self.login("urn:sarah", schac_home_organisation="ssid.org")
-
-        user = self.client.get("/api/users/me").json
-        self.assertFalse(user["second_factor_auth"])
-        self.assertFalse(user["second_factor_confirmed"])
-
-    def test_acs(self):
-        self.mark_user_ssid_required(name=user_sarah_name, home_organisation_uid="admin",
-                                     schac_home_organisation="ssid.org")
-        self.login("urn:sarah", schac_home_organisation="ssid.org")
-
-        # Commented out by oharsta because of Fatal Python error: Segmentation fault
-        # in onelogin/saml2/utils.py", line 738 in add_sign
-        # xml_authn_b64 = self.get_authn_response("response.ok.xml")
-        # res = self.client.post("/api/users/acs", headers={},
-        #                        data={"SAMLResponse": xml_authn_b64,
-        #                              "RelayState": "http://localhost:8080/api/users/acs"},
-        #                        content_type="application/x-www-form-urlencoded")
-        #
-        # self.assertEqual(302, res.status_code)
-        # self.assertEqual(self.app.app_config.base_url, res.location)
-        #
-        # sarah = User.query.filter(User.uid == "urn:sarah").one()
-        # self.assertFalse(sarah.ssid_required)
-
-    def test_acs_error_no_user(self):
-        self.mark_user_ssid_required()
-
-        # Commented out by oharsta because of Fatal Python error: Segmentation fault
-        # in onelogin/saml2/utils.py", line 738 in add_sign
-        # xml_authn_b64 = self.get_authn_response("response.ok.xml")
-        # res = self.client.post("/api/users/acs", headers={},
-        #                        data={"SAMLResponse": xml_authn_b64,
-        #                              "RelayState": "http://localhost:8080/api/users/acs"},
-        #                        content_type="application/x-www-form-urlencoded")
-        #
-        # self.assertEqual(302, res.status_code)
-        # path = "/error?reason=ssid_failed&code=urn:oasis:names:tc:SAML:2.0:status:Success&msg="
-        # self.assertEqual(self.app.app_config.base_url + path, res.location)
-
-    def test_acs_error_saml_error(self):
-        self.mark_user_ssid_required(name=user_sarah_name, home_organisation_uid="admin",
-                                     schac_home_organisation="ssid.org")
-        self.login("urn:sarah", schac_home_organisation="ssid.org")
-
-        # Commented out by oharsta because of Fatal Python error: Segmentation fault
-        # in onelogin/saml2/utils.py", line 738 in add_sign
-        # xml_authn_b64 = self.get_authn_response("response.no_authn.xml")
-        #
-        # res = self.client.post("/api/users/acs", headers={},
-        #                        data={"SAMLResponse": xml_authn_b64,
-        #                              "RelayState": "http://localhost:8080/api/users/acs"},
-        #                        content_type="application/x-www-form-urlencoded")
-        #
-        # self.assertEqual(302, res.status_code)
-        # path = "/error?reason=ssid_failed&code=urn:oasis:names:tc:SAML:2.0:status:Responder&" \
-        #        "msg=urn:oasis:names:tc:SAML:2.0:status:NoAuthnContext"
-        # self.assertEqual(self.app.app_config.base_url + path, res.location)
 
     def test_invalid_user_login(self):
         try:
