@@ -1,13 +1,12 @@
 import base64
 import hashlib
-import datetime
-
 from typing import List, Union
 
 from server.db.domain import User, Group, Collaboration
 from server.scim import EXTERNAL_ID_POST_FIX
 from server.scim.schema_template import \
     SCIM_SCHEMA_CORE_USER, SCIM_SCHEMA_SRAM_USER, SCIM_API_MESSAGES
+from server.tools import dt_now
 
 
 def replace_none_values(d: dict):
@@ -36,13 +35,12 @@ def _meta_info(user: User):
 
 
 def inactive_days(date_at):
-    today = datetime.date.today()
+    today = dt_now()
     delta = today - date_at.date()
     return delta.days
 
 
 def create_user_template(user: User):
-
     return replace_none_values({
         "schemas": [
             SCIM_SCHEMA_CORE_USER,
