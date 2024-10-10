@@ -39,7 +39,7 @@ properties:
   logo:
     type: string
     description: "Base64 encoded binary image. Static URL's are not allowed"
-    example: "https://i.pickadummy.com/600x400"
+    example: "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAg...."
   message:
     type: string
     description: "Message included in the invitation email"
