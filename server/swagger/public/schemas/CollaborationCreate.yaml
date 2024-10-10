@@ -38,7 +38,7 @@ properties:
     example: 1644015600
   logo:
     type: string
-    description: "Base64 encoded binary image or a statis image URL"
+    description: "Base64 encoded binary image. Static URL's are not allowed"
     example: "https://i.pickadummy.com/600x400"
   message:
     type: string
