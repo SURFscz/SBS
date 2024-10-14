@@ -314,6 +314,7 @@ class TestInvitation(AbstractTest):
         invitation_id = res[0]["invitation_id"]
         invitation = Invitation.query.filter(Invitation.external_identifier == invitation_id).one()
         self.assertIsNotNone(invitation)
+        self.assertEqual(unihard_name, invitation.sender_name)
 
         self.delete(f"/api/invitations/v1/{invitation_id}",
                     headers={"Authorization": f"Bearer {unihard_secret}"},

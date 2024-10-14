@@ -224,12 +224,12 @@ class Groups extends React.Component {
         this.setState({groupResultAfterSearch: groupResultAfterSearch});
     }
 
-    actionIcons = (membership, collaboration, selectedGroup) => {
+    actionIcons = (membership, collaboration, selectedGroup, mayCreateGroups) => {
         const hrefValue = encodeURI(membership.user.email);
         const bcc = (collaboration.disclose_email_information && collaboration.disclose_member_information) ? "" : "?bcc=";
         return (
             <div className="admin-icons">
-                {!selectedGroup.auto_provision_members && <div
+                {(!selectedGroup.auto_provision_members && mayCreateGroups) && <div
                     onClick={() => this.removeMember(selectedGroup, membership)}>
                     <Tooltip standalone={true}
                              tip={I18n.t("models.orgMembers.removeMemberTooltip")}
@@ -307,7 +307,7 @@ class Groups extends React.Component {
                                     isWarning={true}
                                     question={confirmationDialogQuestion}/>
                 <div>
-                    <a className={"back-to-groups"} onClick={this.cancelSideScreen} href={"/cancel"}>
+                    <a className={"back-to-groups"} onClick={this.cancelSideScreen} href={"/#cancel"}>
                         <ChevronLeft/>{I18n.t("models.groups.backToGroups")}
                     </a>
                 </div>
@@ -370,7 +370,7 @@ class Groups extends React.Component {
             {(selected.length > 0 && (selectedGroup.collaboration_memberships || []).length > 0) &&
                 <div className={`actions-header admin-actions ${memberCanBeAdded ? "adjust-top" : ""}`}>
 
-                    {!selectedGroup.auto_provision_members && <div>
+                    {(!selectedGroup.auto_provision_members && mayCreateGroups) && <div>
                         <Tooltip standalone={true}
                                  tip={disabled ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}
                                  children={<Button onClick={() => this.removeMembers(selectedGroup)}
@@ -473,16 +473,13 @@ class Groups extends React.Component {
                 showHeader: true,
                 mapper: membership => <InstituteColumn entity={membership} currentUser={currentUser}/>
             },
-        ];
-
-        if (mayCreateGroups) {
-            columns.push({
+            {
                 nonSortable: true,
                 key: selectedGroup.auto_provision_members ? "trash_disabled" : "trash",
                 header: "",
-                mapper: membership => this.actionIcons(membership, collaboration, selectedGroup)
-            });
-        }
+                mapper: membership => this.actionIcons(membership, collaboration, selectedGroup, mayCreateGroups)
+            }
+        ];
 
         const membersNotInGroup = isEmpty(selectedGroup.collaboration_memberships) ? collaboration.collaboration_memberships :
             collaboration.collaboration_memberships.filter(m => selectedGroup.collaboration_memberships.every(c => c.id !== m.id));
