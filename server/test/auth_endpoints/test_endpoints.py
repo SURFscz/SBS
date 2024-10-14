@@ -47,7 +47,6 @@ class TestEndPoints(AbstractTest):
             try:
                 uid = self.roles[role.name]
                 self.login(uid)
-                # TODO how to get meaningfully query params and bodies
                 path = re.sub(r'<int:.*?>', '0', endpoint["path"])
                 self.do_access(endpoint, path, response_status_code)
             except Exception as e:
