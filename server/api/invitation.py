@@ -213,7 +213,7 @@ def collaboration_invites_api():
             raise BadRequest(f"Invalid group identifier: {group_identifier}")
         groups.append(group)
     service_names = [service.name for service in collaboration.services]
-    sender_name = data.get("sender_name", user.name)
+    sender_name = data.get("sender_name", organisation.name)
     for email in invites:
         invitation = Invitation(hash=generate_token(), message=message, invitee_email=email, sender_name=sender_name,
                                 collaboration_id=collaboration.id, user=user, intended_role=intended_role,
