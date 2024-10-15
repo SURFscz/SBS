@@ -38,8 +38,8 @@ properties:
     example: 1644015600
   logo:
     type: string
-    description: "Base64 encoded binary image. Static URL's are not allowed"
-    example: "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAg...."
+    description: "Base64 encoded binary image."
+    example: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAQAQMAAABNzu8aAAAABlBMVEUAAAD///+l2Z/dAAAANUlEQVQI12M4wMD+n6GBgRFKzF1fCCTWJv5naF0PJOa8dYTLMvxn+P//Rz2Q+McII/6jEc0Apj0ocj5hnEcAAAAASUVORK5CYII="
   message:
     type: string
     description: "Message included in the invitation email"
