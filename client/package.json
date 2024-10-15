@@ -37,7 +37,7 @@
         "react-router-dom": "^5.2.0",
         "react-select": "^5.8.1",
         "react-tooltip": "^5.28.0",
-        "recharts": "^2.12.6",
+        "recharts": "^2.13.0",
         "scroll-into-view": "^1.15.0",
         "serialize-javascript": "^6.0.2",
         "showdown": "^2.1.0",
@@ -50,7 +50,7 @@
         "eslint-plugin-risxss": "^2.1.0",
         "http-proxy-middleware": "^3.0.3",
         "react-scripts": "^5.0.1",
-        "sass": "^1.79.4"
+        "sass": "^1.79.5"
     },
     "resolutions": {
         "minimatch": "^9.0.4",
