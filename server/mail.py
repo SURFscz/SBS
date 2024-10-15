@@ -390,7 +390,7 @@ def mail_feedback(environment, message, current_user, recipients):
 def mail_service_request(service_request, context):
     mail_cfg = current_app.app_config.mail
     return _do_send_mail(
-        subject=f"Request for new service {service_request.name}",
+        subject=f"Request for new application {service_request.name}",
         recipients=[mail_cfg.ticket_email],
         cc=[context["requester_email"]],
         template="service_request",
