@@ -41,7 +41,7 @@ class TestServiceRequest(AbstractTest):
             service_request = db.session.get(ServiceRequest, res["id"])
             self.assertEqual("urn:roger", service_request.requester.uid)
             mail_msg = outbox[0]
-            self.assertEqual("Request for new service New Service (local)", mail_msg.subject)
+            self.assertEqual("Request for new application New Service (local)", mail_msg.subject)
             self.assertIn("no-reply@surf.nl", mail_msg.from_email)
             self.assertIn("sram-support@surf.nl", mail_msg.to)
             self.assertIn("roger@example.org", mail_msg.cc)
