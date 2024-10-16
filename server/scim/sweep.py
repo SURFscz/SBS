@@ -14,8 +14,9 @@ from server.scim.scim import scim_headers, validate_response
 from server.scim.user_template import create_user_template, replace_none_values, update_user_template, \
     inactive_days
 
-TIMEOUT = 3
-
+CONNECTION_TIMEOUT = 3.05  # seconds
+READ_TIMEOUT = 10  # seconds
+TIMEOUT = (CONNECTION_TIMEOUT, READ_TIMEOUT)
 
 def _replace_empty_string_values(d: dict):
     for k, v in d.items():
