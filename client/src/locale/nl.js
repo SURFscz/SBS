@@ -355,7 +355,7 @@ const nl = {
             availableForAll: "Maak automatisch beschikbaar voor alle organisaties",
             notAvailableForAll: "Maak niet automatisch beschikbaar voor alle organisaties",
             disableAccessConfirmation: "Weet je zeker dat je voor deze applicatie de toegang wil verbieden?",
-            disableAccessConsequences: "De volgende organisaties en samenwerkingen gebruiken deze applicatie en zullen hierdoor de applicatie niet meer kunnen gebruiken.",
+            disableAccessConsequences: "De volgende samenwerkingen gebruiken deze applicatie en zullen hierdoor de applicatie niet meer kunnen gebruiken.",
             collaboration: "samenwerking",
             organisation: "organisatie",
             noEntities: "Er zijn geen organisaties die deze applicatie gebruiken",
