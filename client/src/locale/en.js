@@ -354,7 +354,7 @@ const en = {
             availableForAll: "Make available for all organisations",
             notAvailableForAll: "Do not make available for all organisations",
             disableAccessConfirmation: "Are you sure you want disable access for this application?",
-            disableAccessConsequences: "The following organisations and collaborations are using this application and won't be able to use it anymore.",
+            disableAccessConsequences: "The following collaborations are using this application and won't be able to use it anymore.",
             collaboration: "collaboration",
             organisation: "organisation",
             noEntities: "There are no organisations using this application",
