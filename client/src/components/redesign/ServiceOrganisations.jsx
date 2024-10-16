@@ -117,8 +117,8 @@ class ServiceOrganisations extends React.Component {
 
     doDisallow = (organisation, showConfirmation = true, accessToNone = false) => {
         const {service} = this.props;
-        const {collAffected, orgAffected} = this.getAffectedEntities(organisation, service);
-        if (showConfirmation && (collAffected.length > 0 || orgAffected.length > 0)) {
+        const collAffected = this.getAffectedEntities(organisation, service);
+        if (showConfirmation && collAffected.length > 0) {
             this.setState({
                 confirmationDialogOpen: true,
                 confirmationDialogAction: () => {
@@ -138,7 +138,7 @@ class ServiceOrganisations extends React.Component {
     }
 
     renderConfirmation = (service, disallowedOrganisation) => {
-        const {collAffected, orgAffected} = this.getAffectedEntities(disallowedOrganisation, service);
+        const collAffected= this.getAffectedEntities(disallowedOrganisation, service);
         const collAffectedUnique = removeDuplicates(collAffected, "id");
         return (
             <div className="allowed-organisations-confirmation">
@@ -146,10 +146,6 @@ class ServiceOrganisations extends React.Component {
                 <ul>
                     {collAffectedUnique.map(coll => <li key={coll.id}>{coll.name}
                         <span>{` - ${I18n.t("models.serviceOrganisations.collaboration")}`}</span>
-                    </li>)
-                    }
-                    {orgAffected.map(org => <li key={org.id}>{org.name}
-                        <span>{`- ${I18n.t("models.serviceOrganisations.organisation")}`}</span>
                     </li>)
                     }
                 </ul>
@@ -167,9 +163,7 @@ class ServiceOrganisations extends React.Component {
     getAffectedEntities = (organisations, service) => {
         organisations = Array.isArray(organisations) ? organisations : [organisations];
         const organisationIdentifiers = organisations.map(org => org.id);
-        const collAffected = service.collaborations.filter(coll => organisationIdentifiers.includes(coll.organisation_id));
-        const orgAffected = service.organisations.filter(org => organisationIdentifiers.includes(org.id));
-        return {collAffected, orgAffected};
+        return service.collaborations.filter(coll => organisationIdentifiers.includes(coll.organisation_id));
     }
 
     setConnectionAccessValue = value => {
@@ -226,8 +220,8 @@ class ServiceOrganisations extends React.Component {
             }
             case NONE_INSTITUTIONS: {
                 const organisations = (service.automatic_connection_allowed_organisations || []).concat(service.allowed_organisations || []);
-                const {collAffected, orgAffected} = this.getAffectedEntities(organisations, service);
-                if (collAffected.length > 0 || orgAffected.length > 0) {
+                const collAffected = this.getAffectedEntities(organisations, service);
+                if (collAffected.length > 0) {
                     this.setState({
                         confirmationDialogOpen: true,
                         confirmationDialogAction: () => {
