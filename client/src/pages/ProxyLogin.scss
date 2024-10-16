@@ -1,0 +1,31 @@
+@import "../stylesheets/vars.scss";
+
+.mod-proxy-container {
+    .form {
+        display: flex;
+        flex-direction: column;
+        max-width: 50%;
+    }
+
+    .sds--checkbox-container {
+        margin-top: 15px;
+    }
+
+    button.sds--btn {
+        margin-top: 40px;
+        max-width: 160px;
+    }
+
+    .proxy-weblogin-results {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 2px solid var(--sds--color--gray--200);
+        display: flex;
+        flex-direction: column;
+
+        h6 {
+            margin: 15px 0 15px 0;
+        }
+
+    }
+}

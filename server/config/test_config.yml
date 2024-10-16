@@ -224,8 +224,7 @@ ldap:
 # A MFA login in a different flow is valid for X minutes
 mfa_sso_time_in_minutes: 10
 
-# whether to require TOTP for users form IdPs that match neither mfa_idp_allowed
-# nor ssid_identity_providers
+# whether to require TOTP for users form IdPs that do not match mfa_idp_allowed
 mfa_fallback_enabled: true
 
 # Lower case schachome organisations / entity ID's allowed skipping MFA;
@@ -237,16 +236,6 @@ mfa_idp_allowed:
     entity_id: "https://erroridp.example.edu"
   - schac_home: "only_sho"
   - entity_id: "https://only_entityid"
-
-# Lower case schachome organisations / entity ID's where SURFSecure ID is used for step-up
-# If this feature is no longer needed, just replace the value with an empty list []
-ssid_identity_providers:
-  - schac_home: "ssid.org"
-    entity_id: "https://ssid.org"
-  - schac_home: "erroridp.example.edu"
-    entity_id: "https://erroridp.example.edu"
-
-ssid_config_folder: saml_test
 
 pam_web_sso:
   session_timeout_seconds: 300

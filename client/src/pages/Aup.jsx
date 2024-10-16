@@ -8,6 +8,7 @@ import CheckBox from "../components/CheckBox";
 import {login} from "../utils/Login";
 import SpinnerField from "../components/redesign/SpinnerField";
 import DOMPurify from "dompurify";
+import {redirectToProxyLocation} from "../utils/ProxyAuthz";
 
 class Aup extends React.Component {
 
@@ -27,18 +28,9 @@ class Aup extends React.Component {
         }
     }
 
-    agreeWith = (config) => agreeAup().then(res => {
+    agreeWith = config => agreeAup().then(res => {
         this.props.refreshUser(() => {
-            const url = new URL(res.location);
-
-            /* if the location is a trusted url, redirect to that url,
-             * otherwise only use the local part of the url */
-            const urlTrusted = config.continue_eduteams_redirect_uri;
-            if (res.location.toLowerCase().startsWith(urlTrusted.toLowerCase())) {
-                window.location.href = res.location;
-            } else {
-                this.props.history.push(url.pathname + url.search);
-            }
+            redirectToProxyLocation(res.location, this.props.history, config);
         });
     });
 

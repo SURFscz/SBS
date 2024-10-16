@@ -2,10 +2,10 @@ import datetime
 import json
 import os
 import pathlib
-import uuid
 from base64 import b64encode
 from time import time
 from typing import Union
+from urllib import parse
 from uuid import uuid4
 
 import jwt
@@ -14,7 +14,6 @@ import requests
 import responses
 from flask import current_app
 from flask_testing import TestCase
-from onelogin.saml2.utils import OneLogin_Saml2_Utils
 from sqlalchemy import text
 from sqlalchemy.orm import sessionmaker, load_only
 
@@ -23,10 +22,10 @@ from server.auth.secrets import secure_hash
 from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, User, Service, ServiceAup, UserToken, Invitation, \
-    PamSSOSession, Group, CollaborationMembership
-from server.test.seed import seed, user_sarah_name
-from server.tools import read_file
+    PamSSOSession, Group, CollaborationMembership, Aup
+from server.test.seed import seed
 from server.tools import dt_now
+from server.tools import read_file
 
 # See api_users in config/test_config.yml
 BASIC_AUTH_HEADER = {"Authorization": f"Basic {b64encode(b'sysadmin:secret').decode('ascii')}"}
@@ -89,9 +88,11 @@ class AbstractTest(TestCase):
     def change_collaboration(user_name, do_change):
         user = AbstractTest.find_entity_by_name(User, user_name)
         connected_collaborations = [cm.collaboration for cm in user.collaboration_memberships]
+        new_connected_collaborations = []
         for collaboration in connected_collaborations:
-            do_change(collaboration)
-            db.session.merge(collaboration)
+            changed_co = do_change(collaboration)
+            new_connected_collaborations.append(changed_co)
+            db.session.merge(changed_co)
             db.session.commit()
         return connected_collaborations
 
@@ -99,6 +100,7 @@ class AbstractTest(TestCase):
     def expire_collaborations(user_name):
         def do_change(collaboration):
             collaboration.expiry_date = dt_now() - datetime.timedelta(days=50)
+            return collaboration
 
         return AbstractTest.change_collaboration(user_name, do_change)
 
@@ -106,8 +108,13 @@ class AbstractTest(TestCase):
     def suspend_collaborations(user_name):
         def do_change(collaboration):
             collaboration.status = STATUS_SUSPENDED
+            return collaboration
 
         return AbstractTest.change_collaboration(user_name, do_change)
+
+    def logout(self):
+        with requests.Session():
+            return self.client.get("/api/users/logout")
 
     @responses.activate
     def login(self, uid="urn:john", schac_home_organisation=None, user_info={}, add_default_attributes=True):
@@ -199,6 +206,12 @@ class AbstractTest(TestCase):
         db.session.commit()
 
     @staticmethod
+    def remove_aup_from_user(user_uid):
+        user = User.query.filter(User.uid == user_uid).one()
+        Aup.query.filter(Aup.user_id == user.id).delete()
+        db.session.commit()
+
+    @staticmethod
     def expire_user_token(raw_token):
         user_token = UserToken.query.filter(UserToken.hashed_token == secure_hash(raw_token)).first()
         user_token.created_at = dt_now() - datetime.timedelta(days=500)
@@ -223,16 +236,7 @@ class AbstractTest(TestCase):
     def add_totp_to_user(user_uid):
         user = User.query.filter(User.uid == user_uid).one()
         secret = pyotp.random_base32()
-        second_fa_uuid = str(uuid.uuid4())
         user.second_factor_auth = secret
-        user.second_fa_uuid = second_fa_uuid
-        return AbstractTest._merge_user(user)
-
-    @staticmethod
-    def add_second_fa_uuid_to_user(user_uid):
-        user = User.query.filter(User.uid == user_uid).one()
-        second_fa_uuid = str(uuid.uuid4())
-        user.second_fa_uuid = second_fa_uuid
         return AbstractTest._merge_user(user)
 
     @staticmethod
@@ -240,23 +244,6 @@ class AbstractTest(TestCase):
         db.session.merge(user)
         db.session.commit()
         return user
-
-    @staticmethod
-    def get_authn_response(file):
-        xml_response = read_file(f"test/saml2/{file}")
-        key = read_file("config/saml_test/certs/sp.key")
-        cert = read_file("config/saml_test/certs/sp.crt")
-        xml_authn_signed = OneLogin_Saml2_Utils.add_sign(xml_response, key, cert)
-        return b64encode(xml_authn_signed)
-
-    def mark_user_ssid_required(self, name=user_sarah_name, home_organisation_uid=None, schac_home_organisation=None):
-        user = self.find_entity_by_name(User, name)
-        user.ssid_required = True
-        if home_organisation_uid:
-            user.home_organisation_uid = home_organisation_uid
-        if schac_home_organisation:
-            user.schac_home_organisation = schac_home_organisation
-        return AbstractTest._merge_user(user)
 
     @staticmethod
     def expire_pam_session(session_id):
@@ -296,6 +283,12 @@ class AbstractTest(TestCase):
             .filter(Collaboration.identifier == collaboration_identifier) \
             .filter(User.uid == user_uid) \
             .first()
+
+    @staticmethod
+    def url_to_query_dict(url):
+        query_dict = dict(parse.parse_qs(parse.urlsplit(url).query))
+        # Rebuild to have single values for keys
+        return {k: v[0] for k, v in query_dict.items()}
 
     def add_bearer_token_to_services(self):
         services = Service.query.options(load_only(Service.id)) \

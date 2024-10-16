@@ -57,8 +57,8 @@ class TestMFA(AbstractTest):
             self.assertEqual(unihard_name, user["unit"])
 
     def test_mfa_idp_allowed(self):
-        self.assertTrue(mfa_idp_allowed(schac_home="idp.test", entity_id=None))
-        self.assertTrue(mfa_idp_allowed(schac_home="SUB.IDP.TEST", entity_id=None))
-        self.assertTrue(mfa_idp_allowed(schac_home="nope", entity_id="HTTPS://IDP.TEST"))
+        self.assertTrue(mfa_idp_allowed(User(schac_home_organisation="idp.test"), entity_id=None))
+        self.assertTrue(mfa_idp_allowed(User(schac_home_organisation="SUB.IDP.TEST"), entity_id=None))
+        self.assertTrue(mfa_idp_allowed(User(schac_home_organisation="nope"), entity_id="HTTPS://IDP.TEST"))
 
-        self.assertFalse(mfa_idp_allowed(schac_home="nope", entity_id="nope"))
+        self.assertFalse(mfa_idp_allowed(User(schac_home_organisation="nope"), entity_id="nope"))

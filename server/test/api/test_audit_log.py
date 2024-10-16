@@ -6,7 +6,7 @@ from server.test.abstract_test import AbstractTest
 from server.test.seed import service_cloud_name, co_ai_computing_name, \
     service_mail_name, invitation_hash_curious, unihard_invitation_hash, unihard_name, group_science_name, \
     user_sarah_name, \
-    user_james_name, co_teachers_name, co_monitoring_name
+    user_james_name, co_teachers_name, co_monitoring_name, unifra_name
 from server.tools import dt_now
 
 
@@ -183,3 +183,23 @@ class TestAuditLog(AbstractTest):
         res = self.get(f"/api/audit_logs/info/{organisation_id}/organisations")
         organisation_audit_logs = [log for log in res["audit_logs"] if log["target_type"] == "collaborations"]
         self.assertEqual(1, len(organisation_audit_logs))
+
+    def test_user_no_access(self):
+        self.login("urn:james")
+        self.get("/api/audit_logs/info/1/services", response_status_code=403)
+
+    def test_organisation_api_key_history(self):
+        self.login("urn:james")
+        self.get("/api/audit_logs/info/1/services", response_status_code=403)
+
+    def test_organisation_access_non_collaborations(self):
+        organisation_id = self.find_entity_by_name(Organisation, unifra_name).id
+
+        secret = self.get("/api/api_keys")["value"]
+        self.post("/api/api_keys",
+                            body={"organisation_id": organisation_id, "hashed_secret": secret, "description": "Test"})
+
+        self.login("urn:jane")
+        res = self.get(f"/api/audit_logs/info/{organisation_id}/organisations", with_basic_auth=False)
+        target_type = res["audit_logs"][0]["target_type"]
+        self.assertEqual("api_keys", target_type)

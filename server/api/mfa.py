@@ -4,18 +4,16 @@ from io import BytesIO
 import pyotp
 import qrcode
 from flask import Blueprint, current_app, session, request as current_request
-from werkzeug.exceptions import Forbidden, BadRequest
+from werkzeug.exceptions import Forbidden, Unauthorized
 
-from server.api.base import query_param, json_endpoint
+from server.api.base import json_endpoint
 from server.auth.mfa import store_user_in_session, eligible_users_to_reset_token
 from server.auth.rate_limit import clear_rate_limit, check_rate_limit
 from server.auth.secrets import generate_token
 from server.auth.security import current_user_id, is_admin_user, is_application_admin
-from server.auth.ssid import redirect_to_surf_secure_id
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
 from server.db.domain import User
-from server.logger.context_logger import ctx_logger
 from server.mail import mail_reset_token
 from server.tools import dt_now
 
@@ -65,11 +63,9 @@ def _do_verify_2fa(user: User, secret):
 @mfa_api.route("/token_reset_request", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def token_reset_request():
-    second_fa_uuid = query_param("second_fa_uuid", required=False)
-    if second_fa_uuid:
-        user = _get_user_by_second_fa_uuid(second_fa_uuid)
-    else:
-        user = User.query.filter(User.id == current_user_id()).one()
+    user = User.query.filter(User.id == current_user_id()).first()
+    if not user:
+        raise Unauthorized("Invalid user")
     return eligible_users_to_reset_token(user), 200
 
 
@@ -77,13 +73,11 @@ def token_reset_request():
 @json_endpoint
 def token_reset_request_post():
     data = current_request.get_json()
-    email = data["email"]
-    second_fa_uuid = data.get("second_fa_uuid", None)
-    if second_fa_uuid:
-        user = _get_user_by_second_fa_uuid(second_fa_uuid)
-    else:
-        user = User.query.filter(User.id == current_user_id()).one()
+    user = User.query.filter(User.id == current_user_id()).first()
+    if not user:
+        raise Unauthorized("Invalid user")
     admins = eligible_users_to_reset_token(user)
+    email = data["email"]
     if len(list(filter(lambda admin: admin["email"] == email, admins))) == 0:
         raise Forbidden()
     user.mfa_reset_token = generate_token()
@@ -100,22 +94,6 @@ def get2fa():
     return _do_get2fa(user.schac_home_organisation, user.email)
 
 
-@mfa_api.route("/get2fa_proxy_authz", methods=["GET"], strict_slashes=False)
-@json_endpoint
-def get2fa_proxy_authz():
-    second_fa_uuid = query_param("second_fa_uuid")
-    user = _get_user_by_second_fa_uuid(second_fa_uuid)
-    if user.second_factor_auth:
-        return {}, 200
-    return _do_get2fa(user.schac_home_organisation, user.email)
-
-
-def _get_user_by_second_fa_uuid(second_fa_uuid):
-    if not second_fa_uuid:
-        raise BadRequest("second_fa_uuid is empty")
-    return User.query.filter(User.second_fa_uuid == second_fa_uuid).one()
-
-
 @mfa_api.route("/verify2fa", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def verify2fa():
@@ -129,26 +107,6 @@ def verify2fa():
         location = session.get("original_destination", current_app.app_config.base_url)
         clear_rate_limit(user)
         return {"location": location}, 201
-    else:
-        return {"new_totp": False}, 400
-
-
-@mfa_api.route("/verify2fa_proxy_authz", methods=["POST"], strict_slashes=False)
-@json_endpoint
-def verify2fa_proxy_authz():
-    data = current_request.get_json()
-    second_fa_uuid = data["second_fa_uuid"]
-    user = _get_user_by_second_fa_uuid(second_fa_uuid)
-    check_rate_limit(user)
-
-    secret = user.second_factor_auth if user.second_factor_auth else session["second_factor_auth"]
-    valid_totp = _do_verify_2fa(user, secret)
-    if valid_totp:
-        clear_rate_limit(user)
-        continue_url = data["continue_url"]
-        if not continue_url.lower().startswith(current_app.app_config.oidc.continue_eduteams_redirect_uri):
-            raise Forbidden(f"Invalid continue_url: {continue_url}")
-        return {"location": continue_url}, 201
     else:
         return {"new_totp": False}, 400
 
@@ -192,14 +150,10 @@ def update2fa():
 @json_endpoint
 def reset2fa():
     data = current_request.get_json()
-    second_fa_uuid = data.get("second_fa_uuid", None)
-    if second_fa_uuid:
-        user = _get_user_by_second_fa_uuid(second_fa_uuid)
-    else:
-        user = User.query.filter(User.id == current_user_id()).one()
-    token = data["token"]
-    if not token or token.strip() != user.mfa_reset_token:
-        raise Forbidden()
+    user = User.query.filter(User.id == current_user_id()).first()
+    token = data.get("token")
+    if not user or not token or token.strip() != user.mfa_reset_token:
+        raise Unauthorized()
     user.second_factor_auth = None
     user.mfa_reset_token = None
     user.rate_limited = False
@@ -229,25 +183,3 @@ def reset2fa_other():
     db.session.merge(user)
     db.session.commit()
     return {}, 201
-
-
-@mfa_api.route("/ssid_start/<second_fa_uuid>", strict_slashes=False)
-def do_ssid_redirect(second_fa_uuid):
-    logger = ctx_logger("2fa")
-
-    continue_url = query_param("continue_url", required=True)
-    session["ssid_original_destination"] = continue_url
-    user = _get_user_by_second_fa_uuid(second_fa_uuid)
-
-    if user.home_organisation_uid and user.schac_home_organisation:
-        logger.debug(f"do_ssid_redirect: continue_url={continue_url}, user={user}")
-        user = db.session.merge(user)
-        db.session.commit()
-        return redirect_to_surf_secure_id(user)
-
-    logger.warning(f"user {user.id} marked as ssid_required has no home_organisation_uid {user.home_organisation_uid}"
-                   f" or no schac_home_organisation {user.schac_home_organisation}")
-
-    from server.api.user import redirect_to_client
-
-    return redirect_to_client(current_app.app_config, False, user)

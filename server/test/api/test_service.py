@@ -445,6 +445,24 @@ class TestService(AbstractTest):
         self.assertFalse("collaborations_count" in service_mail)
         self.assertFalse("organisations_count" in service_mail)
 
+    def test_services_all_optimized(self):
+        self.login("urn:john")
+        services = self.get("/api/services/all_optimized", with_basic_auth=False)
+        self.assertTrue(len(services) > 0)
+        mail = [s for s in services if s["name"] == service_mail_name][0]
+        self.assertTrue("collaborations_count" in mail)
+        self.assertTrue("connection_requests_count" in mail)
+        self.assertTrue(mail["logo"].startswith("http://"))
+
+    def test_services_mine_optimized(self):
+        self.login("urn:service_admin")
+        services = self.get("/api/services/mine_optimized", with_basic_auth=False)
+        self.assertEqual(5, len(services))
+        mail = [s for s in services if s["name"] == service_storage_name][0]
+        self.assertTrue("collaborations_count" in mail)
+        self.assertTrue("connection_requests_count" in mail)
+        self.assertTrue(mail["logo"].startswith("http://"))
+
     def test_services_all_include_counts(self):
         self.login("urn:sarah")
         services = self.get("/api/services/all", query_data={"include_counts": True}, with_basic_auth=False)

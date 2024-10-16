@@ -149,7 +149,7 @@ def sweep():
     try:
         service = validate_service_token("scim_enabled", SERVICE_TOKEN_SCIM)
     except Unauthorized:
-        service_id = query_param("service_id")
+        service_id = query_param("service_id", required=False, default=0)
         confirm_write_access(service_id, override_func=is_service_admin)
         service = db.session.get(Service, service_id)
 

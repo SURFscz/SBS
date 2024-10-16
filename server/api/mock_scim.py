@@ -85,8 +85,6 @@ def _get_database_service():
 def _save_database_service(collection_name, service_data, new_id):
     database = _get_redis(DATABASE_KEY)
     service = _ensure_service_exists(database)
-    if collection_name not in service:
-        service[collection_name] = {}
     service[collection_name][new_id] = service_data
     _set_redis(DATABASE_KEY, database)
 

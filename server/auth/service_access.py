@@ -1,6 +1,12 @@
 from server.db.domain import Service, User
 
 
+def collaboration_memberships_for_service(service: Service, user: User):
+    if user is None or user.suspended or service is None:
+        return []
+    return [m for m in user.collaboration_memberships if m.is_active() and m.collaboration in service.collaborations]
+
+
 def has_user_access_to_service(service: Service, user: User):
     if user is None or user.suspended or service is None:
         return False
@@ -8,5 +14,4 @@ def has_user_access_to_service(service: Service, user: User):
         return True
     if service.access_allowed_by_crm_organisation(user):
         return True
-    collaboration_identifiers = [m.collaboration.id for m in user.collaboration_memberships if m.is_active()]
-    return any([c for c in service.collaborations if c.id in collaboration_identifiers])
+    return bool(collaboration_memberships_for_service(service, user))

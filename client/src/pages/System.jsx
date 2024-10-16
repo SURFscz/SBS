@@ -19,8 +19,8 @@ import {
     getResetTOTPRequestedUsers,
     getSuspendedUsers,
     health,
-    invitationReminders,
     invitationExpirations,
+    invitationReminders,
     openRequests,
     outstandingRequests,
     parseMetaData,
@@ -60,6 +60,7 @@ import CheckBox from "../components/CheckBox";
 import ClipBoardCopy from "../components/redesign/ClipBoardCopy";
 import Stats from "./Stats";
 import PAM from "./PAM";
+import ProxyLogin from "./ProxyLogin";
 
 const options = [25, 50, 100, 150, 200, 250, 500].map(nbr => ({value: nbr, label: nbr}));
 
@@ -164,8 +165,7 @@ class System extends React.Component {
 
     getCronTab = (suspendedUsers, outstandingRequests, openRequests, cleanedRequests, expiredCollaborations, suspendedCollaborations,
                   expiredMemberships, invitationReminders, invitationExpirations, deletedUsers, sweepResults, cronJobs, parsedMetaData, parsedMetaDataView) => {
-        return (<div key="cron" name="cron" label={I18n.t("home.tabs.cron")}
-                     icon={<FontAwesomeIcon icon="clock"/>}>
+        return (<div key="cron" name="cron" label={I18n.t("home.tabs.cron")}>
             <div className="mod-system">
                 <section className={"info-block-container"}>
                     {this.renderDailyCron()}
@@ -237,8 +237,7 @@ class System extends React.Component {
 
     getActivityTab = (filteredAuditLogs, limit, query, config, selectedTables, serverQuery) => {
         return (
-            <div key="activity" name="activity" label={I18n.t("home.tabs.activity")}
-                 icon={<FontAwesomeIcon icon="code-branch"/>}>
+            <div key="activity" name="activity" label={I18n.t("home.tabs.activity")}>
                 <div className="mod-system">
                     <section className={"info-block-container"}>
                         <section className="search-activity">
@@ -304,8 +303,7 @@ class System extends React.Component {
 
     getPlscTab = (plscData, plscView) => {
         const plscJson = JSON.stringify(plscData);
-        return (<div key="plsc" name="plsc" label={I18n.t("home.tabs.plsc")}
-                     icon={<FontAwesomeIcon icon="table"/>}>
+        return (<div key="plsc" name="plsc" label={I18n.t("home.tabs.plsc")}>
             <div className="mod-system">
                 <section className="info-block-container">
                     <div className={"toggle-json"}>
@@ -327,8 +325,7 @@ class System extends React.Component {
     }
 
     getCompositionTab = compositionData => {
-        return (<div key="composition" name="composition" label={I18n.t("home.tabs.composition")}
-                     icon={<FontAwesomeIcon icon="book-open"/>}>
+        return (<div key="composition" name="composition" label={I18n.t("home.tabs.composition")}>
             <div className="mod-system">
                 <section className="info-block-container">
                     <ReactJson src={compositionData} collapsed={1}/>
@@ -346,8 +343,7 @@ class System extends React.Component {
         const organisation_invitations = validationData.organisation_invitations;
         const organisations = validationData.organisations;
         const services = validationData.services;
-        return (<div key="validations" name="validations" label={I18n.t("home.tabs.validation")}
-                     icon={<FontAwesomeIcon icon="calendar-check"/>}>
+        return (<div key="validations" name="validations" label={I18n.t("home.tabs.validation")}>
             <div className="mod-system">
                 <section className="info-block-container">
                     <OrganisationInvitations organisation_invitations={organisation_invitations}
@@ -369,8 +365,7 @@ class System extends React.Component {
     }
 
     getDatabaseTab = (databaseStats, config) => {
-        return (<div key="database" name="database" label={I18n.t("home.tabs.database")}
-                     icon={<FontAwesomeIcon icon="database"/>}>
+        return (<div key="database" name="database" label={I18n.t("home.tabs.database")}>
             <div className="mod-system">
                 <section className={"info-block-container"}>
                     {this.renderDbStats()}
@@ -386,8 +381,7 @@ class System extends React.Component {
     }
 
     getUserLoginTab = userLoginStats => {
-        return (<div key="userlogins" name="userlogins" label={I18n.t("home.tabs.userlogins")}
-                     icon={<FontAwesomeIcon icon="users"/>}>
+        return (<div key="userlogins" name="userlogins" label={I18n.t("home.tabs.userlogins")}>
             <div className="mod-system">
                 <section className={"info-block-container"}>
                     {this.renderUserLoginStats()}
@@ -398,8 +392,7 @@ class System extends React.Component {
     }
 
     getScimTab = () => {
-        return (<div key="scim" name="scim" label={I18n.t("home.tabs.scim")}
-                     icon={<FontAwesomeIcon icon="snowflake"/>}>
+        return (<div key="scim" name="scim" label={I18n.t("home.tabs.scim")}>
             <div className="mod-system">
                 <section className={"info-block-container"}>
                     <Scim {...this.props}/>
@@ -409,8 +402,7 @@ class System extends React.Component {
     }
 
     getStatsTab = () => {
-        return (<div key="stats" name="stats" label={I18n.t("home.tabs.stats")}
-                     icon={<FontAwesomeIcon icon="parachute-box"/>}>
+        return (<div key="stats" name="stats" label={I18n.t("home.tabs.stats")}>
             <div className="mod-system">
                 <section className={"info-block-container"}>
                     <Stats {...this.props}/>
@@ -420,11 +412,20 @@ class System extends React.Component {
     }
 
     getPamTab = () => {
-        return (<div key="pam" name="pam" label={I18n.t("home.tabs.pam")}
-                     icon={<FontAwesomeIcon icon="parachute-box"/>}>
+        return (<div key="pam" name="pam" label={I18n.t("home.tabs.pam")}>
             <div className="mod-system">
                 <section className={"info-block-container"}>
                     <PAM {...this.props}/>
+                </section>
+            </div>
+        </div>)
+    }
+
+    getProxyTab = () => {
+        return (<div key="proxy" name="proxy" label={I18n.t("home.tabs.proxy")}>
+            <div className="mod-system">
+                <section className={"info-block-container"}>
+                    <ProxyLogin {...this.props}/>
                 </section>
             </div>
         </div>)
@@ -447,8 +448,7 @@ class System extends React.Component {
         const zeroState = currentlySuspendedUsers.length === 0;
         return (<div key="suspended-users"
                      name="suspended-users"
-                     label={I18n.t("home.tabs.suspendedUsers")}
-                     icon={<FontAwesomeIcon icon="user-lock"/>}>
+                     label={I18n.t("home.tabs.suspendedUsers")}>
             <div className="mod-system  sds--table">
                 <section className={"info-block-container"}>
                     <p className={"title"}>{I18n.t(`system.suspendedUsers.${zeroState ? "titleZeroState" : "title"}`)}</p>
@@ -505,8 +505,7 @@ class System extends React.Component {
     }
 
     getSeedTab = (seedResult, demoSeedResult) => {
-        return (<div key="seed" name="seed" label={I18n.t("home.tabs.seed")}
-                     icon={<FontAwesomeIcon icon="seedling"/>}>
+        return (<div key="seed" name="seed" label={I18n.t("home.tabs.seed")}>
             <div className="mod-system">
                 <section className={"info-block-container"}>
                     {this.renderDbSeed()}
@@ -1439,7 +1438,8 @@ class System extends React.Component {
             this.getUserLoginTab(userLoginStats),
             this.getScimTab(),
             this.getStatsTab(),
-            this.getPamTab()
+            this.getPamTab(),
+            this.getProxyTab()
         ]
 
         return (
