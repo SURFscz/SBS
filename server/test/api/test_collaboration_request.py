@@ -20,7 +20,6 @@ class TestCollaborationRequest(AbstractTest):
         data = {
             "name": "New Collaboration",
             "short_name": "new_collaboration_short",
-            "message": "pretty please",
             "organisation_id": organisation.id
         }
         with self.app.mail.record_messages() as outbox:
