@@ -57,6 +57,7 @@ import MissingAttributes from "./MissingAttributes";
 import CollaborationsOverview from "./CollaborationsOverview";
 import MyRequests from "../components/redesign/MyRequests";
 import Delay from "./Delay";
+import Interrupt from "./Interrupt";
 
 addIcons();
 
@@ -248,11 +249,12 @@ class App extends React.Component {
                                        }
                                        return <Redirect to={decodeURIComponent(state)}/>
                                    }}/>
-                            <Route path="/2fa/:second_fa_uuid?"
-                                   render={props => <SecondFactorAuthentication config={config}
-                                                                                user={currentUser}
-                                                                                refreshUser={this.refreshUserMemberships}
-                                                                                {...props}/>}/>
+                            <Route path="/2fa"
+                                   render={props =>
+                                       <SecondFactorAuthentication config={config}
+                                                                   user={currentUser}
+                                                                   refreshUser={this.refreshUserMemberships}
+                                                                   {...props}/>}/>
                             <Route path="/2fa-update"
                                    render={props => <ProtectedRoute config={config}
                                                                     currentUser={currentUser}
@@ -402,7 +404,6 @@ class App extends React.Component {
 
                             <Route exact path="/collaboration-requests/:id"
                                    render={props => <ProtectedRoute currentUser={currentUser}
-                                                                    redirectToLogin={true}
                                                                     Component={CollaborationRequest}
                                                                     {...props}/>}/>
 
@@ -469,6 +470,13 @@ class App extends React.Component {
                                    render={props => <ProtectedRoute
                                        currentUser={currentUser}
                                        Component={ServiceAup}
+                                       config={config}
+                                       {...props}/>}/>
+
+                            <Route path="/interrupt"
+                                   render={props => <ProtectedRoute
+                                       currentUser={currentUser}
+                                       Component={Interrupt}
                                        config={config}
                                        {...props}/>}/>
 

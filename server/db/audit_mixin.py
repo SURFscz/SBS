@@ -26,7 +26,6 @@ ignore_attributes = [
     "logo",
     "pam_last_login_date",
     "saml_metadata",
-    "second_fa_uuid",
     "sweep_scim_last_run",
     "updated_at",
     "updated_by",
