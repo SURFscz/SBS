@@ -69,7 +69,7 @@ def request_collaboration():
 
     cleanse_short_name(data)
 
-    message = data["message"]
+    message = data.get("message")
     auto_create = organisation.collaboration_creation_allowed
     entitlement = current_app.app_config.collaboration_creation_allowed_entitlement
     auto_aff = user.entitlement and entitlement in user.entitlement
