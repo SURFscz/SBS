@@ -45,6 +45,10 @@ def _do_scim_sweep_services(app):
                 db.session.merge(service)
                 db.session.commit()
             except BaseException as e:
+                logger.error(
+                    f"scim_sweep for service {service.abbreviation} ({service.entity_id})"
+                    f", exception: {str(e)}"
+                )
                 aggregated_results["services"].append({"name": service.name, "sync_results": str(e)})
                 # Ensure the sweep for the remaining services continues
                 pass
