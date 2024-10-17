@@ -18,6 +18,7 @@ CONNECTION_TIMEOUT = 3.05  # seconds
 READ_TIMEOUT = 10  # seconds
 TIMEOUT = (CONNECTION_TIMEOUT, READ_TIMEOUT)
 
+
 def _replace_empty_string_values(d: dict):
     for k, v in d.items():
         if isinstance(v, dict):
