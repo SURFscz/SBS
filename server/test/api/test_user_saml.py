@@ -243,6 +243,26 @@ class TestUserSaml(AbstractTest):
         self.assertEqual(res["status"]["result"], "interrupt")
         self.assertEqual(UserCode.SECOND_FA_REQUIRED.value, res["status"]["error_status"])
 
+        sarah = self.find_entity_by_name(User, user_sarah_name)
+        # This will ensure SSO will work
+        sarah.successful_login()
+        self.save_entity(sarah)
+
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:sarah",
+                              "service_id": service_mail_entity_id,
+                              "issuer_id": "nope"})
+        self.assertEqual(res["status"]["result"], "interrupt")
+        self.assertEqual(UserCode.SERVICE_AUP_NOT_AGREED.value, res["status"]["error_status"])
+
+        self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
+
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:sarah",
+                              "service_id": service_mail_entity_id,
+                              "issuer_id": "nope"})
+        self.assertEqual(res["status"]["result"], "authorized")
+
     def test_proxy_authz_mfa_no_attr(self):
         res = self.post("/api/users/proxy_authz", response_status_code=500,
                         body={"user_id": "urn:sarah",

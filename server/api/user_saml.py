@@ -141,21 +141,14 @@ def proxy_authz():
         }, 200
 
     # All is well, we collect all memberships and return authorized
-    now = tools.dt_now()
-
-    user.last_accessed_date = now
-    user.last_login_date = now
-    user.suspended = False
-    user.suspend_notifications = []
-    user.second_factor_confirmed = True
-
+    user.successful_login()
     user = db.session.merge(user)
 
     memberships = collaboration_memberships_for_service(service, user)
     connected_collaborations = [cm.collaboration for cm in memberships]
 
     for coll in connected_collaborations:
-        coll.last_activity_date = now
+        coll.last_activity_date = tools.dt_now()
         db.session.merge(coll)
 
     all_memberships = user_memberships(user, connected_collaborations)
