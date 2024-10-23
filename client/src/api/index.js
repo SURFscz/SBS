@@ -100,7 +100,7 @@ export function authorizationUrl(state) {
 }
 
 export function me(config) {
-    if (config.local && 1 != 1) {
+    if (config.local && 1 == 1) {
         let sub = "urn:service_admin";
         sub = "urn:john";
         //sub = "urn:paul";
@@ -337,7 +337,10 @@ export function resetOidcClientSecret(service) {
 }
 
 export function resetScimBearerToken(service, scim_bearer_token) {
-    const body = {scim_bearer_token: scim_bearer_token}
+    const body = {
+        scim_bearer_token: scim_bearer_token,
+        scim_url: service.scim_url
+    };
     return postPutJson(`/api/services/reset_scim_bearer_token/${service.id}`, body, "put");
 }
 
