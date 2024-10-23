@@ -1059,7 +1059,9 @@ const en = {
         },
         scim_token: {
             preTitle: "For security reasons, the current SCIM token can not be displayed. ",
+            preTitleNoToken: "The SCIM push requires a bearer security token. ",
             title: "Change the SCIM token.",
+            titleNoToken: "Add a SCIM token.",
             confirmation: "Please enter the SCIM token for {{name}}. It will be stored encrypted.",
             success: "SCIM token has been updated.",
         },

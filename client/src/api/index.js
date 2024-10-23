@@ -350,7 +350,10 @@ export function resetOidcClientSecret(service) {
 }
 
 export function resetScimBearerToken(service, scim_bearer_token) {
-    const body = {scim_bearer_token: scim_bearer_token}
+    const body = {
+        scim_bearer_token: scim_bearer_token,
+        scim_url: service.scim_url
+    };
     return postPutJson(`/api/services/reset_scim_bearer_token/${service.id}`, body, "put");
 }
 

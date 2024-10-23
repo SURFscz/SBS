@@ -10,7 +10,7 @@ from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_network_entity_id, unihard_name, \
     service_network_name, service_scheduler_name, service_wiki_name, service_storage_name, \
     service_cloud_name, service_storage_entity_id, service_ssh_name, unifra_name, unihard_secret, \
-    user_jane_name, user_roger_name, service_sram_demo_sp, umcpekela_name
+    user_jane_name, user_roger_name, service_sram_demo_sp, umcpekela_name, service_monitor_name
 
 
 class TestService(AbstractTest):
@@ -62,6 +62,12 @@ class TestService(AbstractTest):
         self.login("urn:james")
         service_details = self.get(f"api/services/{service.id}", response_status_code=200, with_basic_auth=False)
         self.assertEqual(unihard_name, service_details["organisation_name"])
+
+    def test_find_by_id_service_admin_has_bearer_token(self):
+        service = self.find_entity_by_name(Service, service_monitor_name)
+        self.login("urn:service_admin")
+        service_details = self.get(f"api/services/{service.id}", response_status_code=200, with_basic_auth=False)
+        self.assertTrue(service_details["has_scim_bearer_token"])
 
     def test_find_by_id_api_call(self):
         service = self.find_entity_by_name(Service, service_scheduler_name)
@@ -678,7 +684,7 @@ class TestService(AbstractTest):
         with self.assertLogs() as cm:
             self.put(f"/api/services/reset_scim_bearer_token/{service['id']}",
                      {"scim_bearer_token": "somethingelse"}, response_status_code=400)
-        self.assertIn('"encrypt_scim_bearer_token requires scim_bearer_token and scim_url"', "\n".join(cm.output))
+            self.assertIn('"encrypt_scim_bearer_token requires scim_bearer_token and scim_url"', "\n".join(cm.output))
 
     def test_access_allowed_for_crm_organisation(self):
         service = self.find_entity_by_name(Service, service_cloud_name)

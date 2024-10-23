@@ -1059,7 +1059,9 @@ const nl = {
         },
         scim_token: {
             preTitle: "Om veiligheidsredenen kan het huidige SCIM token niet worden weergegeven. ",
+            preTitleNoToken: "Een SCIM push vereist een bearer security token. ",
             title: "Verander het SCIM token.",
+            titleNoToken: "Voeg een SCIM token toe.",
             confirmation: "Voer het SCIM token in voor {{name}}. Het zal encrypted worden opgeslagen.",
             success: "SCIM token is veranderd.",
         },
