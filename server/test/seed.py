@@ -85,6 +85,7 @@ service_wiki_entity_id = "https://wiki"
 service_storage_entity_id = "https://storage"
 service_cloud_entity_id = "https://cloud"
 service_scheduler_entity_id = "uuc_scheduler_entity_id"
+service_monitor_name = "LDAP/SCIM Monitor Service"
 
 service_storage_name = "Storage"
 service_wireless_name = "Wireless"
@@ -458,7 +459,7 @@ def seed(db, app_config, skip_seed=False):
     persist_instance(db, mail, wireless, cloud, storage, wiki, network, service_ssh, uuc_scheduler,
                      service_empty, demo_sp, demo_rp)
 
-    service_monitor = Service(entity_id="https://ldap-monitor.example.org", name="LDAP/SCIM Monitor Service",
+    service_monitor = Service(entity_id="https://ldap-monitor.example.org", name=service_monitor_name,
                               description="Used for monitoring LDAP and SCIM.  NIET AANKOMEN.",
                               override_access_allowed_all_connections=False, automatic_connection_allowed=True,
                               logo=read_image("ldap.png"),
