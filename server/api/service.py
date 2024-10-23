@@ -294,7 +294,8 @@ def service_by_id(service_id):
             .options(selectinload(Service.service_tokens)) \
             .options(selectinload(Service.service_groups))
         service = query.filter(Service.id == service_id).one()
-        return service, 200
+    else:
+        service = query.filter(Service.id == service_id).one()
     if api_call:
         query = query \
             .options(selectinload(Service.ip_networks))
@@ -303,7 +304,9 @@ def service_by_id(service_id):
         del res["logo"]
         return res, 200
 
-    return query.filter(Service.id == service_id).one(), 200
+    res = jsonify(service).json
+    res["has_scim_bearer_token"] = service.scim_bearer_token_db_value() is not None
+    return res, 200
 
 
 @service_api.route("/all", strict_slashes=False)
@@ -580,7 +583,7 @@ def update_service():
         for attr in [fb for fb in forbidden if fb in data]:
             data[attr] = getattr(service, attr)
 
-    for attr in ["sweep_scim_last_run", "ldap_password", "scim_bearer_token", "oidc_client_secret"]:
+    for attr in ["sweep_scim_last_run", "ldap_password", "scim_bearer_token", "oidc_client_secret", "exported_at"]:
         if attr in data:
             del data[attr]
 
@@ -596,15 +599,24 @@ def update_service():
 
     scim_url_changed = data.get("scim_url", None) != service.scim_url and bool(service.scim_bearer_token_db_value())
     # Before we update we need to get the unencrypted bearer_token
-    if scim_url_changed:
+    scim_enabled = data.get("scim_enabled", False)
+    if scim_url_changed and scim_enabled:
         plain_bearer_token = decrypt_scim_bearer_token(service)
+
+    if not scim_enabled:
+        # Clean up the Scim related attributes
+        data["scim_url"] = None
+        data["scim_bearer_token"] = None
+        data["sweep_scim_enabled"] = False
+        data["sweep_remove_orphans"] = False
+        data["sweep_scim_daily_rate"] = None
 
     res = update(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]
 
     sync_external_service(current_app, service)
 
-    if scim_url_changed and service.scim_enabled:
+    if scim_url_changed and scim_enabled:
         service.scim_bearer_token = plain_bearer_token
         encrypt_scim_bearer_token(service)
 
@@ -683,7 +695,9 @@ def reset_oidc_client_secret(service_id):
 def reset_scim_bearer_token(service_id):
     confirm_service_admin(service_id)
     service = db.session.get(Service, service_id)
-    # Ensure we only change the scim_bearer_token
-    service.scim_bearer_token = current_request.get_json()["scim_bearer_token"]
+    # Ensure we only change the scim_bearer_token and optional the url
+    data = current_request.get_json()
+    service.scim_bearer_token = data.get("scim_bearer_token")
+    service.scim_url = data.get("scim_url", service.scim_url)
     encrypt_scim_bearer_token(service)
     return {}, 201
