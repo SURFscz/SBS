@@ -136,7 +136,7 @@ def user_requires_sram_mfa(user: User, issuer_id: str = None, override_mfa_allow
     idp_mfa_allowed = not override_mfa_allowed and mfa_idp_allowed(user, issuer_id)
     fallback_required = current_app.app_config.mfa_fallback_enabled
     mfa_required = not override_mfa_allowed and fallback_required and not has_valid_mfa(user) and not idp_mfa_allowed
-    user.second_factor_confirmed = mfa_required
+    user.second_factor_confirmed = not mfa_required
     db.session.merge(user)
     db.session.commit()
     return mfa_required
