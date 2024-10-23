@@ -371,17 +371,19 @@ class ServiceOverview extends React.Component {
                 confirmationDialogQuestion: I18n.t("service.scim_token.confirmation", {name: service.name}),
                 confirmationTxt: I18n.t("confirmationDialog.confirm"),
             });
-
         } else {
             const {scimBearerToken} = this.state;
-            resetScimBearerToken(service, scimBearerToken).then(() => {
-                setFlash(I18n.t("service.scim_token.success"));
-                this.setState({
-                    confirmationDialogOpen: false,
-                    scimTokenChange: false,
-                    loading: false
-                });
-            })
+            resetScimBearerToken(service, scimBearerToken)
+                .then(() => {
+                    setFlash(I18n.t("service.scim_token.success"));
+                    this.setState({
+                        confirmationDialogOpen: false,
+                        scimTokenChange: false,
+                        loading: false,
+                        scimBearerToken: null,
+                        "service": {...service, has_scim_bearer_token: true}
+                    });
+                })
         }
     }
 
@@ -862,7 +864,8 @@ class ServiceOverview extends React.Component {
         });
     }
 
-    renderButtons = (isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView, createNewServiceToken, service) => {
+    renderButtons = (isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView, createNewServiceToken,
+                     service, invalidInputs) => {
         const invalidTabsMsg = this.getInvalidTabs();
         return <>
             {!createNewServiceToken && <div className={"actions-container"}>
@@ -875,7 +878,7 @@ class ServiceOverview extends React.Component {
                     {currentTab === "SCIMServer" &&
                         <Tooltip tip={I18n.t("service.sweep.testTooltip")} children={
                             <Button txt={I18n.t("service.sweep.test")}
-                                    disabled={!service.scim_enabled || (!isAdmin && !isServiceAdmin)}
+                                    disabled={!service.scim_enabled || (!isAdmin && !isServiceAdmin) || isEmpty(service.scim_url) || invalidInputs.scim_url}
                                     onClick={() => this.doSweep(service)}/>
                         }/>}
                     <Button disabled={disabledSubmit || (!isAdmin && !isServiceAdmin)}
@@ -995,13 +998,16 @@ class ServiceOverview extends React.Component {
                                 <Tooltip tip={I18n.t("scim.scimBearerTokenTooltip")}/>
                             </label>
                             <div className="scim-token-link">
-                                <span>{I18n.t("service.scim_token.preTitle")}
-                                    {(isAdmin || isServiceAdmin) && <a href="/scim"
-                                                                       onClick={e => {
-                                                                           stopEvent(e);
-                                                                           this.scimTokenChangeAction(true)
-                                                                       }}>{I18n.t("service.scim_token.title")}</a>}
-                                    </span>
+                                <span>{I18n.t(`service.scim_token.preTitle${service.has_scim_bearer_token ? "" : "NoToken"}`)}
+                                    {(isAdmin || isServiceAdmin) &&
+                                        <a href="/scim"
+                                           onClick={e => {
+                                               stopEvent(e);
+                                               this.scimTokenChangeAction(true)
+                                           }}>
+                                            {I18n.t(`service.scim_token.title${service.has_scim_bearer_token ? "" : "NoToken"}`)}
+                                        </a>}
+                                </span>
                             </div>
                         </div>}
 
@@ -1805,7 +1811,8 @@ class ServiceOverview extends React.Component {
                 <h2 className="section-separator">{I18n.t(`serviceDetails.toc.${currentTab}`)}</h2>
                 {this.renderCurrentTab(config, currentTab, service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit,
                     invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken, initial, crmOrganisations)}
-                {this.renderButtons(isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView, createNewServiceToken, service)}
+                {this.renderButtons(isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView,
+                    createNewServiceToken, service, invalidInputs)}
             </div>
         </div>);
     }
