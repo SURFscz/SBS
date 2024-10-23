@@ -4,6 +4,7 @@ from flask import current_app
 from sqlalchemy import select, func, and_
 from sqlalchemy.orm import column_property
 
+from server import tools
 from server.db.audit_mixin import Base, metadata
 from server.db.datetime import TZDateTime
 from server.db.db import db
@@ -103,6 +104,16 @@ class User(Base, db.Model):
                                                   self.organisation_memberships if
                                                   om.organisation_id in organisation_identifiers]
         return result
+
+    def successful_login(self, second_factor_confirmed=True):
+        if second_factor_confirmed:
+            now = tools.dt_now()
+
+            self.last_accessed_date = now
+            self.last_login_date = now
+
+        self.suspended = False
+        self.suspend_notifications = []
 
 
 services_organisations_association = db.Table(

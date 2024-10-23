@@ -15,7 +15,6 @@ from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
 from server.db.domain import User
 from server.mail import mail_reset_token
-from server.tools import dt_now
 
 MAGIC_SUPER_TOTP = "000000"
 
@@ -50,8 +49,7 @@ def _do_verify_2fa(user: User, secret):
     if totp.verify(totp_value, valid_window=1) or _totp_backdoor(user):
         if not user.second_factor_auth:
             user.second_factor_auth = secret
-        user.last_login_date = dt_now()
-        user.suspended = False
+        user.successful_login()
         user = db.session.merge(user)
         db.session.commit()
         store_user_in_session(user, True, user.has_agreed_with_aup())

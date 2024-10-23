@@ -224,7 +224,7 @@ ldap:
 # A MFA login in a different flow is valid for X minutes
 mfa_sso_time_in_minutes: 10
 
-# whether to require TOTP for users form IdPs that do not match mfa_idp_allowed
+# whether to require TOTP for users from IdPs that do not match mfa_idp_allowed
 mfa_fallback_enabled: true
 
 # Lower case schachome organisations / entity ID's allowed skipping MFA;

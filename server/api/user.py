@@ -341,10 +341,13 @@ def resume_session():
         add_user_claims(user_info_json, uid, user)
 
     # Check if we need a second factor for the user
-    idp_mfa = id_token.get("acr") == ACR_VALUES
-    if idp_mfa:
-        logger.debug(f"user {uid}: idp_mfa={idp_mfa} (ACR = '{id_token.get('acr')}')")
-    mfa_is_required = user_requires_sram_mfa(user, issuer_id=id_token.get("iss"), override_mfa_allowed=idp_mfa)
+    idp_performed_mfa = id_token.get("acr") == ACR_VALUES
+    if idp_performed_mfa:
+        logger.debug(f"user {uid}: idp_mfa={idp_performed_mfa} (ACR = '{id_token.get('acr')}')")
+
+    mfa_is_required = user_requires_sram_mfa(user,
+                                             issuer_id=id_token.get("iss"),
+                                             override_mfa_required=idp_performed_mfa)
     logger.debug(f"SBS login for user {uid} MFA check is required: {mfa_is_required}")
 
     return redirect_to_client(cfg, not mfa_is_required, user)
@@ -352,12 +355,11 @@ def resume_session():
 
 def redirect_to_client(cfg, second_factor_confirmed, user):
     logger = ctx_logger("redirect")
-    if second_factor_confirmed:
-        user.last_login_date = dt_now()
-    user.suspended = False
-    user.suspend_notifications = []
+
+    user.successful_login(second_factor_confirmed=second_factor_confirmed)
     user = db.session.merge(user)
     db.session.commit()
+
     user_accepted_aup = user.has_agreed_with_aup()
     store_user_in_session(user, second_factor_confirmed, user_accepted_aup)
 
@@ -419,14 +421,19 @@ def me():
 
         # Do not expose the actual secret of second_factor_auth
         user_from_session["second_factor_auth"] = bool(user_from_db.second_factor_auth)
-        # Do not send all information if second_factor is required
         csrf_token = {CSRF_TOKEN: session.get(CSRF_TOKEN)}
+
         if not user_from_session["second_factor_confirmed"]:
+            # Do not send all information if second_factor is required
             return {**user_from_session, **csrf_token}, 200
+
+        # Successful /me call, need to update the last_login for SSO to work with other services
+        user_from_db.successful_login()
 
         user = {**jsonify(user_from_db).json, **user_from_session, **csrf_token}
 
         _add_reference_data(user, user_from_db)
+        db.session.merge(user_from_db)
         return user, 200
     else:
         return {"uid": "anonymous", "guest": True, "admin": False}, 200
@@ -480,11 +487,8 @@ def activate():
         confirm_write_access()
 
     user = db.session.get(User, int(body["user_id"]))
-
-    user.last_login_date = dt_now()
-    user.suspended = False
-    user.suspend_notifications = []
-    db.session.merge(user)
+    user.successful_login()
+    user = db.session.merge(user)
     return {}, 201
 
 
