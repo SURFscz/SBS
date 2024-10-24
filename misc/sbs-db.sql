@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision 1cf9014bb75a (head)
+-- Dump of empty SBS database, alembic revision da18d412fb32 (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('1cf9014bb75a');
+INSERT INTO `alembic_version` VALUES ('da18d412fb32');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_keys`;
@@ -1166,9 +1166,7 @@ CREATE TABLE `users` (
   `suspended` tinyint(1) DEFAULT '0',
   `second_factor_auth` varchar(255) DEFAULT NULL,
   `mfa_reset_token` varchar(512) DEFAULT NULL,
-  `second_fa_uuid` varchar(255) DEFAULT NULL,
   `home_organisation_uid` varchar(512) DEFAULT NULL,
-  `ssid_required` tinyint(1) DEFAULT '0',
   `pam_last_login_date` datetime DEFAULT NULL,
   `external_id` varchar(255) NOT NULL,
   `rate_limited` tinyint(1) DEFAULT '0',
