@@ -4,7 +4,7 @@ from io import BytesIO
 import pyotp
 import qrcode
 from flask import Blueprint, current_app, session, request as current_request
-from werkzeug.exceptions import Forbidden
+from werkzeug.exceptions import Forbidden, Unauthorized
 
 from server.api.base import json_endpoint
 from server.auth.mfa import store_user_in_session, eligible_users_to_reset_token
@@ -61,7 +61,9 @@ def _do_verify_2fa(user: User, secret):
 @mfa_api.route("/token_reset_request", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def token_reset_request():
-    user = User.query.filter(User.id == current_user_id()).one()
+    user = User.query.filter(User.id == current_user_id()).first()
+    if not user:
+        raise Unauthorized("Invalid user")
     return eligible_users_to_reset_token(user), 200
 
 
@@ -69,9 +71,11 @@ def token_reset_request():
 @json_endpoint
 def token_reset_request_post():
     data = current_request.get_json()
-    email = data["email"]
-    user = User.query.filter(User.id == current_user_id()).one()
+    user = User.query.filter(User.id == current_user_id()).first()
+    if not user:
+        raise Unauthorized("Invalid user")
     admins = eligible_users_to_reset_token(user)
+    email = data["email"]
     if len(list(filter(lambda admin: admin["email"] == email, admins))) == 0:
         raise Forbidden()
     user.mfa_reset_token = generate_token()
@@ -144,10 +148,10 @@ def update2fa():
 @json_endpoint
 def reset2fa():
     data = current_request.get_json()
-    user = User.query.filter(User.id == current_user_id()).one()
-    token = data["token"]
-    if not token or token.strip() != user.mfa_reset_token:
-        raise Forbidden()
+    user = User.query.filter(User.id == current_user_id()).first()
+    token = data.get("token")
+    if not user or not token or token.strip() != user.mfa_reset_token:
+        raise Unauthorized()
     user.second_factor_auth = None
     user.mfa_reset_token = None
     user.rate_limited = False

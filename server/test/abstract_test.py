@@ -112,6 +112,10 @@ class AbstractTest(TestCase):
 
         return AbstractTest.change_collaboration(user_name, do_change)
 
+    def logout(self):
+        with requests.Session():
+            return self.client.get("/api/users/logout")
+
     @responses.activate
     def login(self, uid="urn:john", schac_home_organisation=None, user_info={}, add_default_attributes=True):
         responses.add(responses.POST, current_app.app_config.oidc.token_endpoint,
