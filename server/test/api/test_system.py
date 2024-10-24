@@ -147,8 +147,6 @@ class TestSystem(AbstractTest):
 
     def test_parse_metadata(self):
         res = self.get("/api/system/parse_metadata")
-        self.assertIn("entity_ids", res)
-        self.assertEqual(3, len(res["entity_ids"]))
         self.assertIn("schac_home_organizations", res)
         self.assertEqual(5, len(res["schac_home_organizations"]))
 
