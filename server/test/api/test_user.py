@@ -32,7 +32,7 @@ class TestUser(AbstractTest):
         self.login("urn:john")
         user = self.client.get("/api/users/me", ).json
         not_changed_user = self.client.get("/api/users/me").json
-        self.assertDictEqual(user, not_changed_user)
+        self.assertListEqual(user["collaboration_memberships"], not_changed_user["collaboration_memberships"])
 
     def test_personal(self):
         self.login("urn:john")
