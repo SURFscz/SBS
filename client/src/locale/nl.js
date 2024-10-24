@@ -1065,7 +1065,7 @@ const nl = {
             titleNoToken: "Voeg een SCIM token toe.",
             confirmation: "Voer het SCIM token in voor {{name}}. Het zal encrypted worden opgeslagen.",
             success: "SCIM token is veranderd.",
-            scimUrlRequired: "Een SCIM url is vereist voordat er een SCIM token kan worden toegevoegd"
+            scimUrlRequired: "Een valide SCIM url is vereist voordat er een SCIM token kan worden toegevoegd"
         },
         ldap: {
             preTitle: "Om veiligheidsredenen kan het huidige wachtwoord niet worden weergegeven. ",

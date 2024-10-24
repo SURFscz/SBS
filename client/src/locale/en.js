@@ -1065,7 +1065,7 @@ const en = {
             titleNoToken: "Add a SCIM token.",
             confirmation: "Please enter the SCIM token for {{name}}. It will be stored encrypted.",
             success: "SCIM token has been updated.",
-            scimUrlRequired: "A SCIM url is required before a SCIM token can be added"
+            scimUrlRequired: "A valid SCIM url is required before a SCIM token can be added"
         },
         ldap: {
             preTitle: "For security reasons, the current password can not be displayed. ",
