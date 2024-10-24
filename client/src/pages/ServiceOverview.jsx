@@ -357,7 +357,22 @@ class ServiceOverview extends React.Component {
 
     scimTokenChangeAction = showConfirmation => {
         const {service} = this.state;
-        if (showConfirmation) {
+        const {scim_url} = service;
+        if (isEmpty(scim_url)) {
+            this.setState({
+                confirmationDialogOpen: true,
+                cancelDialogAction: null,
+                confirmationDialogAction: this.cancelDialogAction,
+                warning: false,
+                lastAdminWarning: false,
+                scimTokenChange: false,
+                sweepSuccess: null,
+                ldapPassword: null,
+                confirmationHeader: I18n.t("confirmationDialog.warning"),
+                confirmationDialogQuestion: I18n.t("service.scim_token.scimUrlRequired"),
+                confirmationTxt: I18n.t("confirmationDialog.ok"),
+            });
+        } else if (showConfirmation) {
             this.setState({
                 confirmationDialogOpen: true,
                 cancelDialogAction: this.cancelDialogAction,
