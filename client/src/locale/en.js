@@ -1065,6 +1065,7 @@ const en = {
             titleNoToken: "Add a SCIM token.",
             confirmation: "Please enter the SCIM token for {{name}}. It will be stored encrypted.",
             success: "SCIM token has been updated.",
+            scimUrlRequired: "A SCIM url is required before a SCIM token can be added"
         },
         ldap: {
             preTitle: "For security reasons, the current password can not be displayed. ",
@@ -1945,7 +1946,8 @@ const en = {
         leavePage: "Do you really want to leave this page?",
         leavePageSub: "Changes that you made will not be saved.",
         stay: "Stay",
-        leave: "Leave"
+        leave: "Leave",
+        warning: "Warning"
     },
     tabs: {
         invitation_form: "Invitation details",
