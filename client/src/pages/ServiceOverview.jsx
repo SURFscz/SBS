@@ -356,9 +356,9 @@ class ServiceOverview extends React.Component {
     }
 
     scimTokenChangeAction = showConfirmation => {
-        const {service} = this.state;
+        const {service, invalidInputs} = this.state;
         const {scim_url} = service;
-        if (isEmpty(scim_url)) {
+        if (isEmpty(scim_url) || invalidInputs.scim_url) {
             this.setState({
                 confirmationDialogOpen: true,
                 cancelDialogAction: null,
