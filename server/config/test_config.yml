@@ -134,7 +134,8 @@ retention:
 metadata:
   idp_url: "file://data/idps-metadata.xml"
   parse_at_startup: False
-
+  scope_override:
+    test.nl: "Koninklijke Nederlandse Test"
 # note: all cron hours below are in UTC
 platform_admin_notifications:
   # Do we daily check for CO join_requests and CO requests and send a summary mail to beheer_email?
