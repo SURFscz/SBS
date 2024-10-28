@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision da18d412fb32 (head)
+-- Dump of empty SBS database, alembic revision 9078513615f6 (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('da18d412fb32');
+INSERT INTO `alembic_version` VALUES ('9078513615f6');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_keys`;
@@ -927,6 +927,7 @@ CREATE TABLE `services_collaborations` (
   `service_id` int(11) NOT NULL,
   `collaboration_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `services_collaborations_unique` (`collaboration_id`,`service_id`),
   KEY `service_id` (`service_id`),
   KEY `collaboration_id` (`collaboration_id`),
   CONSTRAINT `services_collaborations_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE,
