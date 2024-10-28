@@ -6,9 +6,7 @@ Create Date: 2024-10-28 12:34:13.664140
 
 """
 from alembic import op
-import sqlalchemy as sa
 from sqlalchemy import text
-
 
 # revision identifiers, used by Alembic.
 revision = '9078513615f6'
@@ -32,7 +30,6 @@ def upgrade():
 
     conn.execute(text("ALTER TABLE `services_collaborations` "
                       "ADD UNIQUE INDEX services_collaborations_unique(collaboration_id, service_id)"))
-    pass
 
 
 def downgrade():
