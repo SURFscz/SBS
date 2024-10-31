@@ -50,7 +50,7 @@
         "eslint-plugin-risxss": "^2.1.0",
         "http-proxy-middleware": "^3.0.3",
         "react-scripts": "^5.0.1",
-        "sass": "^1.80.3"
+        "sass": "^1.80.4"
     },
     "resolutions": {
         "minimatch": "^9.0.4",
