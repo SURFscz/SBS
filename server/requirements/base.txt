@@ -17,7 +17,7 @@ requests==2.32.3
 uWSGI==2.0.27
 urllib3==2.2.3
 websockets==13.1
-redis==5.1.1
+redis==5.2.0
 pyotp==2.9.0
 qrcode==8.0
 Pillow==11.0.0
