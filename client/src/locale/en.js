@@ -2623,7 +2623,7 @@ const en = {
         collaborations: "Collaborations",
         organisation_memberships: "Memberships",
         collaboration: "Relevant units (e.g. department or project)",
-        unitsPlaceHolder: "Select an unit",
+        unitsPlaceHolder: "Optionally, select a unit",
         collaborationRequest: "Organisational units (optional)",
         filter: "All units",
         invitationLabel: "Collaborations of which units to be managed",

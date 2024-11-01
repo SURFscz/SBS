@@ -2623,7 +2623,7 @@ const nl = {
         collaborations: "Samenwerkingen",
         organisation_memberships: "Lidmaatschappen",
         collaboration: "Relevante units (bijv. afdeling of project)",
-        unitsPlaceHolder: "Selecteer een unit",
+        unitsPlaceHolder: "Optioneel: kies een unit",
         collaborationRequest: "Organisatieunits (optioneel)",
         filter: "Alle units",
         invitationLabel: "Managet samenwerkingen van de units",
