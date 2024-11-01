@@ -117,6 +117,9 @@ CONFIG='config/test_config.yml' FLASK_APP='__main__.py' flask routes
 ### [Testing](#testing)
 
 To run the tests, you need a functioning Redis server on localhost:6379.
+```bash
+docker run -p 6379:6379 redis
+```
 
 To run all Python tests and validate syntax / formatting:
 
