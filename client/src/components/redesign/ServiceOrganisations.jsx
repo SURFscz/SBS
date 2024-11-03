@@ -33,7 +33,8 @@ import {
     MANUALLY_APPROVE,
     NO_ONE_ALLOWED,
     NONE_INSTITUTIONS,
-    SELECTED_INSTITUTION, SELECTED_INSTITUTION_AND_ORGANISATION,
+    SELECTED_INSTITUTION,
+    SELECTED_INSTITUTION_AND_ORGANISATION,
     SOME_INSTITUTIONS
 } from "../../utils/ServiceConnectionSettings";
 
@@ -319,12 +320,12 @@ class ServiceOrganisations extends React.Component {
             }
         ].filter(choice => choice !== false)
 
-        if (userAdmin || connectionAllowedValue === ALL_ALLOWED) {
+        if ((userAdmin && !showServiceAdminView) || connectionAllowedValue === ALL_ALLOWED) {
             connectionAllowedChoices.push({
                 value: ALL_ALLOWED,
                 title: I18n.t("service.connectionSettings.everyOne"),
                 text: I18n.t("service.connectionSettings.everyOneText"),
-                icon: null //<ConfigIcon/>
+                icon: null
             })
         }
         const institutionAccessChoices = [
