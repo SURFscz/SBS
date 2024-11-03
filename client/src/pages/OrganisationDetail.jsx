@@ -234,6 +234,7 @@ class OrganisationDetail extends React.Component {
             })
             .flat()
             .filter(scr => scr.pending_organisation_approval);
+
         if (serviceConnectionRequests.length === 0) {
             return null;
         }
@@ -243,7 +244,7 @@ class OrganisationDetail extends React.Component {
             <div key="serviceConnectionRequests" name="serviceConnectionRequests"
                  label={I18n.t("home.tabs.serviceConnectionRequests")}
                  icon={<ServiceConnectionRequestsIcon/>}
-                 notifier={serviceConnectionRequests.length > 0 ? nbr : null}>
+                 notifier={serviceConnectionRequests.filter(scr => scr.status === "open").length > 0 ? nbr : null}>
                 <ServiceConnectionRequests
                     refresh={callback => this.componentDidMount(callback)}
                     serviceConnectionRequests={serviceConnectionRequests}
