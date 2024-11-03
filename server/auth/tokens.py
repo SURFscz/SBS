@@ -17,7 +17,8 @@ def _get_encryption_key(service: Service):
     # The SecretMixin and LogoMixin prevent use from accessing the scim_bearer_token directly
     scim_bearer_token = service.scim_bearer_token_db_value()
     if not scim_bearer_token or not service.scim_url:
-        raise BadRequest("encrypt_scim_bearer_token requires scim_bearer_token and scim_url")
+        name = service.name
+        raise BadRequest(f"encrypt_scim_bearer_token for service {name} requires scim_bearer_token and scim_url")
     encryption_key = current_app.app_config.encryption_key
     return encryption_key
 
