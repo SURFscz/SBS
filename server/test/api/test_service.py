@@ -702,7 +702,8 @@ class TestService(AbstractTest):
         with self.assertLogs() as cm:
             self.put(f"/api/services/reset_scim_bearer_token/{service['id']}",
                      {"scim_bearer_token": "somethingelse"}, response_status_code=400)
-            self.assertIn('"encrypt_scim_bearer_token requires scim_bearer_token and scim_url"', "\n".join(cm.output))
+            self.assertIn("encrypt_scim_bearer_token for service Cloud requires scim_bearer_token "
+                          "(somethingelse) and scim_url (None)", "\n".join(cm.output))
 
     def test_access_allowed_for_crm_organisation(self):
         service = self.find_entity_by_name(Service, service_cloud_name)
