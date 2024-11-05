@@ -7,23 +7,23 @@ table.serviceConnectionRequests {
     thead {
         th {
             &.collaboration__name {
-                width: 20%;
+                width: 17%;
                 padding-left: 15px;
 
                 &.has-service {
-                    width: 35%;
+                    width: 32%;
                 }
             }
 
             &.service__name {
-                width: 20%;
+                width: 17%;
             }
 
             &.requester__name {
-                width: 20%;
+                width: 26%;
 
                 &.has-service {
-                    width: 30%;
+                    width: 26%;
                 }
             }
 

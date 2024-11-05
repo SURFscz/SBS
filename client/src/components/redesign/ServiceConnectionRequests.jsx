@@ -198,8 +198,9 @@ class ServiceConnectionRequests extends React.Component {
                     {declineDialog && this.getDeclineRejectionOptions(rejectionReason)}
                 </ConfirmationDialog>
                 <div>
-                    <a className={"back-to-service-connection-requests"} onClick={this.cancelSideScreen}
-                       href={"/cancel"}>
+                    <a className={"back-to-service-connection-requests"}
+                       onClick={this.cancelSideScreen}
+                       href={"/#cancel"}>
                         <ChevronLeft/>{I18n.t("models.serviceConnectionRequests.backToServiceConnectionRequests")}
                     </a>
                 </div>
