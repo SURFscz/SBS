@@ -1,5 +1,4 @@
 import json
-from datetime import timedelta
 
 import jwt
 import requests
@@ -11,7 +10,6 @@ from server.auth.security import is_admin_user, CSRF_TOKEN
 from server.db.db import db
 from server.db.domain import Organisation, SchacHomeOrganisation, User
 from server.logger.context_logger import ctx_logger
-from server.tools import dt_now
 
 ACR_VALUES = "https://refeds.org/profile/mfa"
 
@@ -96,17 +94,6 @@ def eligible_users_to_reset_token(user):
     return user_info
 
 
-def has_valid_mfa(user):
-    last_login_date = user.last_login_date
-    login_sso_cutoff = timedelta(hours=0, minutes=int(current_app.app_config.mfa_sso_time_in_minutes))
-    valid_mfa_sso = last_login_date and (dt_now() - last_login_date < login_sso_cutoff)
-
-    logger = ctx_logger("user_api")
-    logger.debug(f"has_valid_mfa: {valid_mfa_sso} (user={user}, last_login={last_login_date}")
-
-    return valid_mfa_sso
-
-
 def mfa_idp_allowed(user: User, entity_id: str = None):
     identity_providers = current_app.app_config.mfa_idp_allowed
     entity_id_allowed = entity_id and [
@@ -135,5 +122,5 @@ def user_requires_sram_mfa(user: User, issuer_id: str = None, override_mfa_requi
     # If the IdP already performed MFA proven by the ACR value
     idp_mfa_allowed = not override_mfa_required and mfa_idp_allowed(user, issuer_id)
     fallback_required = current_app.app_config.mfa_fallback_enabled
-    mfa_required = not override_mfa_required and fallback_required and not has_valid_mfa(user) and not idp_mfa_allowed
+    mfa_required = not override_mfa_required and fallback_required and not idp_mfa_allowed
     return mfa_required
