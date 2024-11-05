@@ -88,9 +88,12 @@ service_wiki_entity_id = "https://wiki"
 service_storage_entity_id = "https://storage"
 service_cloud_entity_id = "https://cloud"
 service_scheduler_entity_id = "uuc_scheduler_entity_id"
-service_monitor_name = "LDAP/SCIM Monitor Service"
+service_demo_sp_entity_id = "https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/test"
+service_ssh_ufra_entity_id = "service_ssh_ufra"
+service_empty_entity_id = "urn:x-test:empty"
 
 service_storage_name = "Storage"
+service_monitor_name = "LDAP/SCIM Monitor Service"
 service_wireless_name = "Wireless"
 service_cloud_name = "Cloud"
 service_wiki_name = "Wiki"
@@ -416,7 +419,7 @@ def seed(db, app_config, skip_seed=False):
                       scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock",
                       sweep_scim_last_run=sweep_scim_last_run, sweep_scim_daily_rate=1, sweep_scim_enabled=True,
                       sweep_remove_orphans=True, scim_client_enabled=True)
-    service_ssh = Service(entity_id="service_ssh_ufra", name=service_ssh_name,
+    service_ssh = Service(entity_id=service_ssh_ufra_entity_id, name=service_ssh_name,
                           description="Franeker SSH access",
                           uri="https://uri.com/ssh", accepted_user_policy="https://ssh",
                           contact_email="help@ssh.com", logo=read_image("ssh.png"),
@@ -434,13 +437,13 @@ def seed(db, app_config, skip_seed=False):
                             allowed_organisations=[uuc],
                             privacy_policy="https://privacy.org", security_email="sec@org.nl", ldap_enabled=False)
 
-    service_empty = Service(entity_id="urn:x-test:empty", name="Test service",
+    service_empty = Service(entity_id=service_empty_entity_id, name="Test service",
                             accepted_user_policy="https://google.nl", abbreviation="empty",
                             description="Test Service for Unit tests", logo=read_image("testbeeld.png"),
                             contact_email="help@example.com", automatic_connection_allowed=False,
                             privacy_policy="https://privacy.org", security_email="sec@org.nl", ldap_enabled=False)
 
-    demo_sp = Service(entity_id="https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/test",
+    demo_sp = Service(entity_id=service_demo_sp_entity_id,
                       name="SRAM Demo SP", abbreviation="sram_demosp", description="Generic SRAM demo sp",
                       logo=read_image("test.png"), uri="https://demo-sp.sram.surf.nl/",
                       privacy_policy="https://edu.nl/fcgbd",

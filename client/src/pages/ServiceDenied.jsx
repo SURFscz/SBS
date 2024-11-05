@@ -19,6 +19,7 @@ export default function ServiceDenied(props) {
     const [entityId, setEntityId] = useState("");
     const [issuerId, setIssuerId] = useState("");
     const [status, setStatus] = useState(null);
+    const [serviceConnectionAllowed, setServiceConnectionAllowed] = useState(true);
     const [loading, setLoading] = useState(true);
     const [organisations, setOrganisations] = useState([]);
     const [schacHomeOrganisation, setSchacHomeOrganisation] = useState("");
@@ -42,6 +43,7 @@ export default function ServiceDenied(props) {
                 setUserEmail(res.user_email)
                 setSchacHomeOrganisation(res.schac_home_organisation || I18n.t("welcome.unknown"));
                 setSupportEmail(res.support_email);
+                setServiceConnectionAllowed(res.service_connection_allowed);
                 setLoading(false);
             })
             .catch(() => props.history.push("/404"));
@@ -92,8 +94,8 @@ export default function ServiceDenied(props) {
     };
 
     const gainingAccessBlock = () => {
-        const mayCreateOrRequest = !isEmpty(organisations);
-        const mayCreate = organisations.some(org => org.co_creation);
+        const mayCreateOrRequest = !isEmpty(organisations) &&  serviceConnectionAllowed;
+        const mayCreate = organisations.some(org => org.co_creation) &&  serviceConnectionAllowed;
         return (
             <div className="service-denied-info">
                 <HappyIcon/>
