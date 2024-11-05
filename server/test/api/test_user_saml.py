@@ -16,7 +16,7 @@ class TestUserSaml(AbstractTest):
         self.login_user_2fa("urn:sarah")
 
         res = self.post("/api/users/proxy_authz", response_status_code=200,
-                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "mfa_idp_allowed.com",
+                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
                               "uid": "sarah"})
         attrs = res["attributes"]
         entitlements = attrs["eduPersonEntitlement"]
@@ -39,7 +39,7 @@ class TestUserSaml(AbstractTest):
 
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:jane", "service_id": service_network_entity_id,
-                              "issuer_id": "mfa_idp_allowed.com", "uid": "sarah"})
+                              "issuer_id": "https://idp.uni-franeker.nl/", "uid": "sarah"})
         attrs = res["attributes"]
         entitlements = attrs["eduPersonEntitlement"]
         self.assertListEqual([
@@ -188,7 +188,7 @@ class TestUserSaml(AbstractTest):
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:sarah",
                               "service_id": service_mail_entity_id,
-                              "issuer_id": "mfa_idp_allowed.com"})
+                              "issuer_id": "nope"})
         self.assertEqual("authorized", res["status"]["result"], )
 
     def test_proxy_authz_mfa_service_ssid_sso(self):
@@ -198,7 +198,7 @@ class TestUserSaml(AbstractTest):
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:sarah",
                               "service_id": service_mail_entity_id,
-                              "issuer_id": "mfa_idp_allowed.com"})
+                              "issuer_id": "https://ssid.org"})
         self.assertEqual("authorized", res["status"]["result"])
 
     def test_proxy_authz_mfa_service_idp(self):
@@ -220,7 +220,7 @@ class TestUserSaml(AbstractTest):
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:sarah",
                               "service_id": service_mail_entity_id,
-                              "issuer_id": "mfa_idp_allowed.com"})
+                              "issuer_id": "https://only_entityid"})
         self.assertEqual(res["status"]["result"], "authorized")
         attrs = res["attributes"]
         self.assertListEqual(["sarah"], attrs["uid"])
@@ -229,7 +229,7 @@ class TestUserSaml(AbstractTest):
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:sarah",
                               "service_id": service_mail_entity_id,
-                              "issuer_id": "mfa_idp_allowed.com",
+                              "issuer_id": "https://unknown_value.org",
                               "uid": "sarah"})
         self.assertEqual(res["status"]["result"], "authorized")
         attrs = res["attributes"]
@@ -251,7 +251,7 @@ class TestUserSaml(AbstractTest):
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:sarah",
                               "service_id": service_mail_entity_id,
-                              "issuer_id": "mfa_idp_allowed.com"})
+                              "issuer_id": "nope"})
         self.assertEqual(res["status"]["result"], "interrupt")
         self.assertEqual(UserCode.SERVICE_AUP_NOT_AGREED.value, res["status"]["error_status"])
 
@@ -260,7 +260,7 @@ class TestUserSaml(AbstractTest):
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:sarah",
                               "service_id": service_mail_entity_id,
-                              "issuer_id": "mfa_idp_allowed.com"})
+                              "issuer_id": "nope"})
         self.assertEqual(res["status"]["result"], "authorized")
 
     def test_proxy_authz_mfa_no_attr(self):
@@ -275,7 +275,7 @@ class TestUserSaml(AbstractTest):
         self.login_user_2fa("urn:sarah")
 
         res = self.post("/api/users/proxy_authz", response_status_code=200,
-                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "mfa_idp_allowed.com",
+                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
                               "uid": "sarah"})
         status = res["status"]
         self.assertEqual(UserCode.SERVICE_NOT_CONNECTED.value, status["error_status"])
@@ -287,9 +287,7 @@ class TestUserSaml(AbstractTest):
         self.login_user_2fa("urn:sarah")
 
         res = self.post("/api/users/proxy_authz", response_status_code=200,
-                        body={"user_id": "urn:sarah",
-                              "service_id": service_mail_entity_id,
-                              "issuer_id": "mfa_idp_allowed.com",
+                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
                               "uid": "sarah"})
         status = res["status"]
         self.assertEqual(UserCode.AUP_NOT_AGREED.value, status["error_status"])
