@@ -11,7 +11,9 @@ from server.db.db import db
 from server.db.domain import Organisation, Collaboration, User, Aup
 from server.test.abstract_test import AbstractTest
 from server.test.seed import (unihard_name, co_ai_computing_name, user_roger_name, user_john_name, user_james_name,
-                              co_research_name, co_ai_computing_uuid, user_sarah_name, service_storage_entity_id)
+                              co_research_name, co_ai_computing_uuid, user_sarah_name, service_storage_entity_id,
+                              service_demo_sp_entity_id, service_ssh_ufra_entity_id, service_scheduler_entity_id,
+                              service_empty_entity_id)
 from server.tools import dt_now, read_file
 
 
@@ -261,6 +263,53 @@ class TestUser(AbstractTest):
         self.assertEqual([{"co_creation": False}], res["organisations"])
         self.assertEqual("example.org", res["schac_home_organisation"])
         self.assertEqual("support@storage.net", res["support_email"])
+        self.assertTrue(res["service_connection_allowed"])
+
+    def test_service_info_override_access_allowed_all_connections(self):
+        res = self.get("/api/users/service_info",
+                       query_data={"uid": "urn:roger",
+                                   "entity_id": service_demo_sp_entity_id},
+                       with_basic_auth=False)
+        self.assertEqual([{"co_creation": False}], res["organisations"])
+        self.assertEqual("example.org", res["schac_home_organisation"])
+        self.assertFalse(res["service_connection_allowed"])
+
+    def test_service_info_no_schac_home(self):
+        res = self.get("/api/users/service_info",
+                       query_data={"uid": "urn:sarah",
+                                   "entity_id": service_ssh_ufra_entity_id},
+                       with_basic_auth=False)
+        self.assertEqual(0, len(res["organisations"]))
+        self.assertIsNone(res["schac_home_organisation"])
+        self.assertTrue(res["service_connection_allowed"])
+
+    def test_service_info_no_connection_allowed(self):
+        res = self.get("/api/users/service_info",
+                       query_data={"uid": "urn:roger",
+                                   "entity_id": service_empty_entity_id},
+                       with_basic_auth=False)
+        self.assertFalse(res["service_connection_allowed"])
+
+    def test_service_info_no_service(self):
+        res = self.get("/api/users/service_info",
+                       query_data={"uid": "urn:roger",
+                                   "entity_id": "nope"},
+                       with_basic_auth=False)
+        self.assertFalse(res["service_connection_allowed"])
+
+    def test_service_info_access_allowed_for_all(self):
+        res = self.get("/api/users/service_info",
+                       query_data={"uid": "urn:roger",
+                                   "entity_id": service_ssh_ufra_entity_id},
+                       with_basic_auth=False)
+        self.assertTrue(res["service_connection_allowed"])
+
+    def test_service_info_automatic_connection_allowed_organisations(self):
+        res = self.get("/api/users/service_info",
+                       query_data={"uid": "urn:roger",
+                                   "entity_id": service_scheduler_entity_id},
+                       with_basic_auth=False)
+        self.assertTrue(res["service_connection_allowed"])
 
     def test_resume_session_dead_end(self):
         res = self.get("/api/users/resume-session", response_status_code=302)

@@ -263,8 +263,18 @@ def service_info():
     organisations = SchacHomeOrganisation.organisations_by_user_schac_home(user)
     res["organisations"] = [{"co_creation": o.collaboration_creation_allowed} for o in organisations]
     service = Service.query.filter(Service.entity_id == entity_id).first()
+    res["service_connection_allowed"] = False
     if service and service.support_email_unauthorized_users:
         res["support_email"] = service.support_email
+    if service:
+        not_restricted = service.allow_restricted_orgs or not all([org.services_restricted for org in organisations])
+        if not service.override_access_allowed_all_connections and (not_restricted or not organisations):
+            if service.access_allowed_for_all:
+                res["service_connection_allowed"] = True
+            elif bool([org for org in organisations if org in service.allowed_organisations]):
+                res["service_connection_allowed"] = True
+            elif bool([org for org in organisations if org in service.automatic_connection_allowed_organisations]):
+                res["service_connection_allowed"] = True
     return res, 200
 
 
