@@ -7,14 +7,14 @@ properties:
   short_name:
     type: string
     example: "cumulusgrp"
-    description: >
+    description: >-
       Short, human readable name/identifier for the collaboration.
       Must be unique within the organisation.
       Will be automatically generated if not provided."
   description:
     type: string
-    example: >
-      Cumulus research group of the University of Harderwijk. Members can collaborate in the connected cloud service and contact eachother by email.
+    example: >-
+      Cumulus research group of the University of Harderwijk. Members can collaborate in the connected cloud service and contact each other by email.
   website_url:
     type: string
     format: uri
