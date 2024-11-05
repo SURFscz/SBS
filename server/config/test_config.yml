@@ -222,9 +222,6 @@ ldap:
   url: "ldap://ldap.example.com/dc=example,dc=com"
   bind_account: "cn=admin,dc=entity_id,dc=services,dc=sram-tst,dc=surf,dc=nl"
 
-# A MFA login in a different flow is valid for X minutes
-mfa_sso_time_in_minutes: 10
-
 # whether to require TOTP for users from IdPs that do not match mfa_idp_allowed
 mfa_fallback_enabled: true
 
@@ -233,8 +230,8 @@ mfa_fallback_enabled: true
 mfa_idp_allowed:
   - schac_home: "idp.test"
     entity_id: "https://idp.test"
-  - schac_home: "erroridp.example.edu"
-    entity_id: "https://erroridp.example.edu"
+  - schac_home: "mfa_idp_allowed.com"
+    entity_id: "mfa_idp_allowed.com"
   - schac_home: "only_sho"
   - entity_id: "https://only_entityid"
 
