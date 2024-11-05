@@ -238,13 +238,13 @@ class OrganisationDetail extends React.Component {
         if (serviceConnectionRequests.length === 0) {
             return null;
         }
-        const nbr = serviceConnectionRequests.length;
-
+        const nbr = serviceConnectionRequests.filter(scr => scr.status === "open").length;
         return (
-            <div key="serviceConnectionRequests" name="serviceConnectionRequests"
+            <div key="serviceConnectionRequests"
+                 name="serviceConnectionRequests"
                  label={I18n.t("home.tabs.serviceConnectionRequests")}
                  icon={<ServiceConnectionRequestsIcon/>}
-                 notifier={serviceConnectionRequests.filter(scr => scr.status === "open").length > 0 ? nbr : null}>
+                 notifier={nbr > 0 ? nbr : null}>
                 <ServiceConnectionRequests
                     refresh={callback => this.componentDidMount(callback)}
                     serviceConnectionRequests={serviceConnectionRequests}
