@@ -5,7 +5,7 @@ set -e
 if [ $UID -ne 0 ]
 then
     echo "This container need to run as root"
-    echo "Use USER environment variable to specify the user to run as"
+    echo "Use USER/GROUP environment variables to specify the uid/gid to run as"
 
     exit 1
 fi
@@ -30,20 +30,22 @@ fi
 PRIVDROP=
 if [ -n "$USER" ]
 then
-    echo "Switching to user $USER"
     if [ -n "$GROUP" ]
     then
-        PRIVDROP="setpriv --reuid=$USER --regid=$GROUP"
+        echo "Switching to user $USER and group $GROUP"
+        PRIVDROP="setpriv --reuid=$USER --regid=$GROUP --clear-groups"
     else
+        echo "Switching to user $USER"
         PRIVDROP="setpriv --reuid=$USER"
     fi
+    echo "New id is $($PRIVDROP id -u):$($PRIVDROP id -g)"
 fi
 
 
 cd /opt/sbs
 
 # Run migrations
-_RUN_MIGRATIONS=${RUN_MIGRATIONS:-1}
+_RUN_MIGRATIONS=${RUN_MIGRATIONS:-0}
 if [ "$_RUN_MIGRATIONS" -eq 1 ]; then
     echo "Running migrations"
     cd /opt/sbs/server
@@ -52,4 +54,4 @@ fi
 
 
 # Hand off to the CMD
-exec ${PRIVDROP} "$@"
+exec ${PRIVDROP} $@
