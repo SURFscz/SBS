@@ -1,5 +1,5 @@
 -r base.txt
-blinker==1.8.2
+blinker==1.9.0
 flake8==7.1.1
 flask-testing==0.8.1
 flask-webtest==0.1.6
