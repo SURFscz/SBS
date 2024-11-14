@@ -263,6 +263,14 @@ class TestUserSaml(AbstractTest):
                               "issuer_id": "nope"})
         self.assertEqual(res["status"]["result"], "authorized")
 
+    def test_proxy_authz_authorization(self):
+        self.post("/api/users/proxy_authz",
+                  body={"user_id": "urn:sarah",
+                        "service_id": service_mail_entity_id,
+                        "issuer_id": "nope"},
+                  response_status_code=401,
+                  with_basic_auth=False)
+
     def test_proxy_authz_mfa_no_attr(self):
         res = self.post("/api/users/proxy_authz", response_status_code=500,
                         body={"user_id": "urn:sarah",
@@ -292,3 +300,17 @@ class TestUserSaml(AbstractTest):
         status = res["status"]
         self.assertEqual(UserCode.AUP_NOT_AGREED.value, status["error_status"])
         self.assertEqual("interrupt", status["result"])
+
+    def test_interrupt_eb(self):
+        # from lxml import etree
+        # from signxml import XMLSigner, XMLVerifier
+        # import xml.etree.ElementTree as ET
+        #
+        # data_to_sign = '<User user_id="6f5e346b55f6b732930591ab88859773ef48e3ba@acc.sram.eduteams.org"/>'
+        # cert = open("cert.pem").read()
+        # key = open("privkey.pem").read()
+        # root = etree.fromstring(data_to_sign)
+        # signed_root = XMLSigner().sign(root, key=key, cert=cert)
+        # verified_data = XMLVerifier().verify(signed_root, x509_cert=cert).signed_xml
+        # verified_data.attrib.get("user_id")
+        pass
