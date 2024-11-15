@@ -338,3 +338,24 @@ class TestInvitation(AbstractTest):
         self.delete(f"/api/invitations/delete_by_hash/{invitation_hash_no_way}")
         self.get("/api/invitations/find_by_hash", query_data={"hash": invitation_hash_no_way},
                  response_status_code=404)
+
+    def test_resend_api_invite(self):
+        res = self.put("/api/invitations/v1/collaboration_invites",
+                       body={
+                           "collaboration_identifier": co_ai_computing_uuid,
+                           "invites": ["q@demo.com"]
+                       },
+                       headers={"Authorization": f"Bearer {unihard_secret}"},
+                       with_basic_auth=False)
+        external_identifier = res[0].get("invitation_id")
+        self.expire_invitation_api(external_identifier)
+        with self.app.mail.record_messages() as outbox:
+            res = self.put(f"/api/invitations/v1/resend/{external_identifier}",
+                           body={},
+                           headers={"Authorization": f"Bearer {unihard_secret}"},
+                           with_basic_auth=False)
+            self.assertEqual(1, len(outbox))
+            expiry_date = datetime.datetime.fromtimestamp(res["invitation"]["expiry_date"])
+            diff = expiry_date - datetime.datetime.now()
+            self.assertTrue(diff.days >= 14)
+            self.assertTrue("Reminder: you have been invited by" in outbox[0].html)
