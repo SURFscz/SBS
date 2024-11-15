@@ -220,7 +220,16 @@ class AbstractTest(TestCase):
 
     @staticmethod
     def expire_invitation(hash):
-        invitation = Invitation.query.filter(Invitation.hash == hash).first()
+        invitation = Invitation.query.filter(Invitation.hash == hash).one()
+        AbstractTest._do_expire_invitation(invitation)
+
+    @staticmethod
+    def expire_invitation_api(external_identifier):
+        invitation = Invitation.query.filter(Invitation.external_identifier == external_identifier).one()
+        AbstractTest._do_expire_invitation(invitation)
+
+    @staticmethod
+    def _do_expire_invitation(invitation):
         invitation.expiry_date = dt_now() - datetime.timedelta(days=500)
         invitation.created_by = "not_system"
         db.session.merge(invitation)
