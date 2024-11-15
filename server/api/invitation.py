@@ -394,6 +394,29 @@ def external_invitation(external_identifier):
     return res, 200
 
 
+@invitations_api.route("/v1/resend/<external_identifier>", methods=["PUT"], strict_slashes=False)
+@swag_from("../swagger/public/paths/resend_invitation_by_identifier.yml")
+@json_endpoint
+def resend_external_invitation(external_identifier):
+    confirm_external_api_call()
+    invitation = Invitation.query.filter(Invitation.external_identifier == external_identifier).one()
+    if invitation.is_expired():
+        invitation.expiry_date = default_expiry_date()
+        invitation.created_at = dt_now()
+        db.session.merge(invitation)
+
+    service_names = [service.name for service in invitation.collaboration.services]
+    mail_collaboration_invitation({
+        "salutation": "Dear",
+        "invitation": invitation,
+        "base_url": current_app.app_config.base_url,
+        "wiki_link": current_app.app_config.wiki_link,
+        "recipient": invitation.invitee_email
+    }, invitation.collaboration, [invitation.invitee_email], service_names, reminder=True, preview=False,
+        working_outside_of_request_context=True)
+    return invitation_to_dict(invitation, include_expiry_date=True), 201
+
+
 @invitations_api.route("/v1/<external_identifier>", methods=["DELETE"], strict_slashes=False)
 @swag_from("../swagger/public/paths/delete_invitation_by_identifier.yml")
 @json_endpoint
