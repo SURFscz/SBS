@@ -414,7 +414,7 @@ def resend_external_invitation(external_identifier):
         "recipient": invitation.invitee_email
     }, invitation.collaboration, [invitation.invitee_email], service_names, reminder=True, preview=False,
         working_outside_of_request_context=True)
-    return invitation_to_dict(invitation,include_expiry_date=True), 201
+    return invitation_to_dict(invitation, include_expiry_date=True), 201
 
 
 @invitations_api.route("/v1/<external_identifier>", methods=["DELETE"], strict_slashes=False)

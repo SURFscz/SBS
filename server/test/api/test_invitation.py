@@ -359,5 +359,3 @@ class TestInvitation(AbstractTest):
             diff = expiry_date - datetime.datetime.now()
             self.assertEqual(14, diff.days)
             self.assertTrue("Reminder: you have been invited by" in outbox[0].html)
-
-
