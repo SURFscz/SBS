@@ -1,5 +1,5 @@
 # First build SRAM SBS image
-FROM python:3.11-slim-bookworm AS sram-sbs
+FROM python:3.11-slim-bookworm AS sram-sbs-server
 
 # Do an initial clean up and general upgrade of the distribution
 ENV DEBIAN_FRONTEND noninteractive
