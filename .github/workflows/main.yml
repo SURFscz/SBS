@@ -18,6 +18,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME_SBS: surfscz/sram-sbs
   IMAGE_NAME_SERVER: surfscz/sram-sbs-server
+  IMAGE_NAME_CLIENT: surfscz/sram-sbs-client
 
 jobs:
   Server_tests:
@@ -317,15 +318,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # The SBS image
-      - name: Extract metadata (tags, labels) for SBS image
+      # The SBS (apache) image
+      - name: Extract metadata (tags, labels) for SBS-server image
         id: meta-sbs
         uses: docker/metadata-action@v5
         with:
           images: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_SBS }}
 
-      - name: Build and push Docker SBS image
+      - name: Build and push Docker SBS-server image
         uses: docker/build-push-action@v5
         with:
           context: "."
@@ -335,15 +336,15 @@ jobs:
           tags: ${{ steps.meta-sbs.outputs.tags }}
           labels: ${{ steps.meta-sbs.outputs.labels }}
 
-      # The SBS (apache) server image
-      - name: Extract metadata (tags, labels) for SBS-server image
+      # The SBS server image
+      - name: Extract metadata (tags, labels) for SBS image
         id: meta-sbs-server
         uses: docker/metadata-action@v5
         with:
           images: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_SERVER }}
 
-      - name: Build and push Docker SBS-server image
+      - name: Build and push Docker SBS image
         uses: docker/build-push-action@v5
         with:
           context: "."
@@ -352,6 +353,15 @@ jobs:
           push: true
           tags: ${{ steps.meta-sbs-server.outputs.tags }}
           labels: ${{ steps.meta-sbs-server.outputs.labels }}
+
+
+      # The SBS client image
+      - name: Extract metadata (tags, labels) for SBS-server image
+        id: meta-sbs-client
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_CLIENT }}
 
       - name: Build and push Docker SBS-client image
         uses: docker/build-push-action@v5
