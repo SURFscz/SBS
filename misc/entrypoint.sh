@@ -18,7 +18,7 @@ rm -rf /opt/sbs/server/config/saml/saml
 cp /opt/sbs/config/config.yml      /opt/sbs/server/config/config.yml
 cp /opt/sbs/config/alembic.ini     /opt/sbs/server/migrations/alembic.ini
 cp /opt/sbs/config/disclaimer.css  /opt/sbs/client/build/static/disclaimer.css
-cp -r /opt/sbs/config/saml            /opt/sbs/server/config/saml
+cp -rf /opt/sbs/config/saml        /opt/sbs/server/config
 
 if [ -e "/opt/sbs/cert/frontend.crt" ]
 then
