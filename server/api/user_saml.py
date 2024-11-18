@@ -52,6 +52,7 @@ def do_authz_proxy(is_edu_teams: bool):
     if service_entity_id == current_app.app_config.oidc.sram_service_entity_id.lower():
         logger.debug(f"Return authorized to start SBS login flow, service_entity_id={service_entity_id}")
         return {"status": {"result": "authorized"}}, 200
+
     parameters = {"service_name": service_entity_id, "entity_id": service_entity_id, "issuer_id": issuer_id,
                   "user_id": uid}
     service = Service.query.filter(Service.entity_id == service_entity_id).first()
@@ -85,13 +86,13 @@ def do_authz_proxy(is_edu_teams: bool):
                     "attributes": {}
                 }
             else:
-                parameters["error_status"] = UserCode.SERVICE_NOT_CONNECTED.value
+                parameters["error_status"] = UserCode.USER_UNKNOWN.value
                 return {
                     "status": {
                         "result": "unauthorized",
                         "redirect_url": f"{client_base_url}/service-denied?{urlencode(parameters)}",
-                        "error_status": UserCode.SERVICE_NOT_CONNECTED.value,
-                        "info": UserCode.SERVICE_NOT_CONNECTED.name
+                        "error_status": UserCode.USER_UNKNOWN.value,
+                        "info": UserCode.USER_UNKNOWN.name
                     }
                 }
         user_code = UserCode.NEW_FREE_RIDE_USER if free_rider else UserCode.USER_UNKNOWN
@@ -114,6 +115,7 @@ def do_authz_proxy(is_edu_teams: bool):
                 "info": UserCode.USER_IS_SUSPENDED.name
             }
         }, 200
+
     # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
     # also skip if user has already recently performed MFA
     if user_requires_sram_mfa(user, issuer_id):
@@ -128,6 +130,7 @@ def do_authz_proxy(is_edu_teams: bool):
                 "info": UserCode.SECOND_FA_REQUIRED.name
             }
         }, 200
+    
     # if none of CO's are not active, then this is the same as none of the CO's are not connected to the Service
     if not has_user_access_to_service(service, user):
         logger.debug(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id} "
