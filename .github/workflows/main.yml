@@ -326,7 +326,7 @@ jobs:
           images: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_SBS }}
 
-      - name: Build and push Docker SBS-server image
+      - name: Build and push Docker SBS image
         uses: docker/build-push-action@v5
         with:
           context: "."
@@ -344,7 +344,7 @@ jobs:
           images: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_SERVER }}
 
-      - name: Build and push Docker SBS image
+      - name: Build and push Docker SBS-server image
         uses: docker/build-push-action@v5
         with:
           context: "."
@@ -356,7 +356,7 @@ jobs:
 
 
       # The SBS client image
-      - name: Extract metadata (tags, labels) for SBS-server image
+      - name: Extract metadata (tags, labels) for SBS-client image
         id: meta-sbs-client
         uses: docker/metadata-action@v5
         with:
