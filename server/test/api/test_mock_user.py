@@ -36,3 +36,9 @@ class TestMockUser(AbstractTest):
 
         user = self.find_entity_by_name(User, "Boa Dee")
         self.assertEqual("boa@example.org", user.email)
+
+    @allow_for_mock_user_api
+    def test_eb_interrupt_data(self):
+        self.login()
+        res = self.get("/api/mock/interrupt_data", query_data={"user_uid": "urn:sarah"}, with_basic_auth=False)
+        self.assertEqual("boa@example.org", "")

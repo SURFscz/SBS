@@ -91,6 +91,7 @@ service_scheduler_entity_id = "uuc_scheduler_entity_id"
 service_demo_sp_entity_id = "https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/test"
 service_ssh_ufra_entity_id = "service_ssh_ufra"
 service_empty_entity_id = "urn:x-test:empty"
+service_wireless_entity_id = "https://wireless"
 
 service_storage_name = "Storage"
 service_monitor_name = "LDAP/SCIM Monitor Service"
@@ -370,7 +371,7 @@ def seed(db, app_config, skip_seed=False):
                    logo=read_image("email.png"),
                    accepted_user_policy="https://google.nl", allowed_organisations=[uuc, ufra], abbreviation="mail",
                    privacy_policy="https://privacy.org", security_email="sec@org.nl")
-    wireless = Service(entity_id="https://wireless", name=service_wireless_name, description="Network Wireless Service",
+    wireless = Service(entity_id=service_wireless_entity_id, name=service_wireless_name, description="Network Wireless Service",
                        override_access_allowed_all_connections=False, automatic_connection_allowed=True,
                        contact_email=john.email,
                        logo=read_image("wireless.png"), accepted_user_policy="https://google.nl", abbreviation="wire",
