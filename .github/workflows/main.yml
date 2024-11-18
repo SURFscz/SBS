@@ -353,6 +353,16 @@ jobs:
           tags: ${{ steps.meta-sbs-server.outputs.tags }}
           labels: ${{ steps.meta-sbs-server.outputs.labels }}
 
+      - name: Build and push Docker SBS-client image
+        uses: docker/build-push-action@v5
+        with:
+          context: "."
+          file: "Dockerfile.sbs-client"
+          pull: true
+          push: true
+          tags: ${{ steps.meta-sbs-client.outputs.tags }}
+          labels: ${{ steps.meta-sbs-client.outputs.labels }}
+
   Schema_pr:
     name: Update schema cache
 
