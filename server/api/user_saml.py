@@ -2,7 +2,7 @@ import base64
 from urllib import request
 from urllib.parse import urlencode
 
-from flask import Blueprint, current_app, request as current_request, redirect
+from flask import Blueprint, current_app, request as current_request, redirect, session
 from lxml import etree
 from signxml import XMLVerifier
 
@@ -11,6 +11,7 @@ from server.api.base import json_endpoint, send_error_mail, query_param
 from server.api.service_aups import has_agreed_with
 from server.auth.mfa import user_requires_sram_mfa, store_user_in_session
 from server.auth.service_access import has_user_access_to_service, collaboration_memberships_for_service
+from server.auth.surf_conext import surf_public_signing_certificate
 from server.auth.user_claims import user_memberships, co_tags
 from server.auth.user_codes import UserCode
 from server.db.db import db
@@ -77,14 +78,14 @@ def do_authz_proxy(is_edu_teams: bool):
     user = User.query.filter(User.uid == uid).first()
     if not user:
         free_rider = service.non_member_users_access_allowed
-        if is_edu_teams:
+        if not is_edu_teams:
             if free_rider:
                 return {
                     "status": {
                         "result": "authorized",
                     },
                     "attributes": {}
-                }
+                }, 200
             else:
                 parameters["error_status"] = UserCode.USER_UNKNOWN.value
                 return {
@@ -94,7 +95,7 @@ def do_authz_proxy(is_edu_teams: bool):
                         "error_status": UserCode.USER_UNKNOWN.value,
                         "info": UserCode.USER_UNKNOWN.name
                     }
-                }
+                }, 200
         user_code = UserCode.NEW_FREE_RIDE_USER if free_rider else UserCode.USER_UNKNOWN
         parameters["error_status"] = user_code.value
         return {
@@ -144,6 +145,7 @@ def do_authz_proxy(is_edu_teams: bool):
                 "info": UserCode.SERVICE_NOT_CONNECTED.name
             }
         }, 200
+
     if not has_agreed_with(user, service):
         logger.debug(f"Returning interrupt for user {uid} and service_entity_id {service_entity_id} to accept "
                      f"Service AUP")
@@ -179,7 +181,9 @@ def do_authz_proxy(is_edu_teams: bool):
     all_memberships = user_memberships(user, connected_collaborations)
     all_tags = co_tags(connected_collaborations)
     all_attributes = all_memberships.union(all_tags)
+
     log_user_login(PROXY_AUTHZ, True, user, uid, service, service_entity_id, "AUTHORIZED")
+
     return {
         "status": {
             "result": "authorized",
@@ -198,10 +202,7 @@ def interrupt():
     base64_encoded_xml = current_request.form.get("signed_user")
     xml = base64.b64decode(base64_encoded_xml).decode()
     doc = etree.fromstring(xml)
-    eb_config = current_app.app_config.engine_block
-    cert = eb_config.public_key
-    if not eb_config.public_key.strip():
-        cert = request.urlopen(eb_config.public_key_url).read()
+    cert = surf_public_signing_certificate(current_app)
     verified_data = XMLVerifier().verify(doc, x509_cert=cert).signed_xml
     user_uid = verified_data.attrib.get("user_id")
     user = User.query.filter(User.uid == user_uid).one()
@@ -209,8 +210,9 @@ def interrupt():
     user_accepted_aup = user.has_agreed_with_aup()
     # Put the user in the session, and pass control back to the GUI
     store_user_in_session(user, False, user_accepted_aup)
-
-    client_base_url = current_app.app_config.base_url
     continue_url = current_request.form.get("continue_url")
+    # The original destination is returned from both 2mfa endpoint and agree_aup endpoint
+    session["original_destination"] = continue_url
+    client_base_url = current_app.app_config.base_url
     error_status = query_param("error_status")
     return redirect(f"{client_base_url}/interrupt?error_status{error_status}=&continue_url={continue_url}")

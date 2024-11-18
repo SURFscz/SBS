@@ -123,6 +123,16 @@ export function me(config) {
     }
 }
 
+// Mock
+export function ebInterruptData() {
+    return fetchJson("/api/mock/interrupt_data")
+}
+
+// Mock
+export function ebStopInterruptFlow() {
+    return fetchDelete("/api/mock/stop_interrupt_flow")
+}
+
 export function refreshUser() {
     return fetchJson("/api/users/refresh");
 }
@@ -967,7 +977,12 @@ export function plscSync() {
     return fetchJson("/api/plsc/syncing");
 }
 
-export function proxyAuthz(userUid, serviceEntityId, idpEntityId) {
+export function proxyAuthzEngineBlock(userUid, serviceEntityId, idpEntityId) {
+    const body = {user_id: userUid.trim(), service_id: serviceEntityId.trim(), issuer_id: idpEntityId.trim()};
+    return postPutJson("/api/users/proxy_authz_eb", body, "post", false);
+}
+
+export function proxyAuthzEduTeams(userUid, serviceEntityId, idpEntityId) {
     const body = {user_id: userUid.trim(), service_id: serviceEntityId.trim(), issuer_id: idpEntityId.trim()};
     return postPutJson("/api/users/proxy_authz", body, "post", false);
 }

@@ -250,7 +250,7 @@ excluded_user_accounts:
 
 engine_block:
   # Either one is required, if specified both then the public_key is used
-  public_key_url: https://engine.test.surfconext.nl/authentication/idp/certificate
+  public_key_url: http://engine.local/idp/certificate
   public_key: |
     -----BEGIN CERTIFICATE-----
     MIIC/zCCAeegAwIBAgIUSeIpDb3Txu37YHhbbUVHiA3s/q4wDQYJKoZIhvcNAQEL
