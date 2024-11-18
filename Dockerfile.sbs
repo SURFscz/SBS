@@ -10,7 +10,7 @@ RUN apt -y upgrade && apt -y dist-upgrade
 RUN apt autoremove -y && apt clean && apt autoclean && rm -rf /var/lib/apt/lists/*
 
 RUN rm -f /etc/apache2/sites-enabled/*.conf
-COPY client/apache-dev.conf /etc/apache2/sites-enabled/apache.conf
+COPY etc/apache-dev.conf /etc/apache2/sites-enabled/apache.conf
 
 # Set the default workdir
 WORKDIR /opt
