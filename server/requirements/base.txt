@@ -16,7 +16,7 @@ pytz==2024.2
 requests==2.32.3
 uWSGI==2.0.28
 urllib3==2.2.3
-websockets==14.0
+websockets==14.1
 redis==5.2.0
 pyotp==2.9.0
 qrcode==8.0
