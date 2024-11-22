@@ -1,0 +1,112 @@
+---
+type: object
+properties:
+  id:
+    type: number
+    readOnly: true
+    example: 999
+  identifier:
+    type: string
+    format: uuid
+    readOnly: true
+    description: "Unique generated identifier of the collaboration"
+    example: "12035254-E1F1-4190-9E60-EDAEE8DEE72A"
+  name:
+    type: string
+    example: "Cumulus research group"
+  short_name:
+    type: string
+    example: "cumulusgrp"
+  description:
+    type: string
+    example: "Cumulus research group of the University of Harderwijk. Members can collaborate in the connected cloud service and contact eachother by email."
+  global_urn:
+    type: string
+    description: "The unique collaboration urn within the organisation"
+    example: "uva:researchers"
+  status:
+    type: string
+    description: "The status of the new collaboration"
+    example: "active"
+  organisation_id:
+    type: number
+    example: 666
+  uuid4:
+    type: string
+    format: uuid
+    readOnly: true
+    description: "Unique generated uuid for the cached image"
+    example: "12035254-E1F1-4190-9E60-EDAEE8DEE72A"
+  website_url:
+    type: string
+    format: uri
+    example: "https://research.uniharderwijk.nl/cumulusgrp"
+  disable_join_requests:
+    type: boolean
+    description: "If true users cannot request to become a member of this collaboration"
+    example: true
+  disclose_member_information:
+    type: boolean
+    description: "If true the names of members are disclosed to other members"
+    example: true
+  disclose_email_information:
+    type: boolean
+    description: "If true the email addresses of members are disclosed to other members"
+    example: true
+  expiry_date:
+    type: number
+    description: "The expiry date of the collaboration in epoch seconds"
+    example: 1644015600
+  logo:
+    type: string
+    format: uri
+    description: "URL for the logo"
+    example: "http://sram.surf.nl/api/images/collaborations/b7f621e3-de98-4de4-aca0-1573f4eb8339"
+  created_at:
+    type: number
+    description: "The date of the created at in epoch seconds"
+    example: 1644015600
+  created_by:
+    type: string
+    description: "UID of the user who created this CO"
+    example: "urn:admin"
+  updated_by:
+    type: string
+    description: "UID of the user who updated this CO"
+    example: "urn:admin"
+  collaboration_memberships_count:
+    type: number
+    description: "The number of memberships e.g. 0"
+    example: 0
+  invitations_count:
+    type: number
+    description: "The number of invitations e.g. 1 or more"
+    example: 3
+  last_activity_date:
+    type: number
+    description: "The date of the last activity at in epoch seconds"
+    example: 1642947278
+  collaboration_memberships:
+    type: array
+    items:
+      $ref: '/swagger/schemas/CollaborationMembership.yaml'
+  services:
+    type: array
+    items:
+      $ref: '/swagger/schemas/Service.yaml'
+  groups:
+    type: array
+    items:
+      $ref: '/swagger/schemas/GroupOverview.yaml'
+  tags:
+    type: array
+    description: "Tags (labels) for the collaboration"
+    items:
+      type: string
+      example: "label_test"
+  units:
+    type: array
+    description: "Units for this collaboration"
+    items:
+      type: string
+      example: "fac_wiskunde"

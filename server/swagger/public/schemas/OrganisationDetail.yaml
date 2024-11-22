@@ -60,7 +60,7 @@ properties:
   collaborations:
     type: array
     items:
-      $ref: '/swagger/schemas/CollaborationCreateResponse.yaml'
+      $ref: '/swagger/schemas/CollaborationOverview.yaml'
   schac_home_organisations:
     type: array
     items:

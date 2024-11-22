@@ -1,0 +1,50 @@
+---
+type: object
+properties:
+  id:
+    type: number
+    readOnly: true
+    example: 999
+  name:
+    type: string
+    example: "AI researchers"
+  description:
+    type: string
+    example: "AI researchers"
+  short_name:
+    type: string
+    example: "ai_researchers"
+  global_urn:
+    type: string
+    example: "uniharderwijk:cumulusgrp:ai_researchers"
+  identifier:
+    type: string
+    format: uuid
+    readOnly: true
+    description: "Unique generated identifier of the group"
+    example: "12035254-E1F1-4190-9E60-EDAEE8DEE72A"
+  auto_provision_members:
+    type: boolean
+    description: "If true then make every member member of this group"
+    example: true
+  collaboration_id:
+    type: number
+    readOnly: true
+    example: 999
+  created_at:
+    type: number
+    description: "The date of the created at in epoch seconds"
+    example: 1644015600
+  created_by:
+    type: string
+    description: "UID of the user who created this"
+    example: "urn:jdoe"
+  updated_by:
+    type: string
+    description: "UID of the user who updated this"
+    example: "urn:jdoe"
+  collaboration_memberships:
+    type: array
+    description: "Identifiers (e.g. id) of the users that are member of this group"
+    items:
+      type: int
