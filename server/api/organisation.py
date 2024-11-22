@@ -199,7 +199,16 @@ def api_organisation_details():
         collaboration.groups
         collaboration.tags
         collaboration.services
+        collaboration.collaboration_memberships
+        for collaboration_membership in collaboration.collaboration_memberships:
+            collaboration_membership.user
+        for group in collaboration.groups:
+            group.collaboration_memberships
+
     json_organisation = jsonify(organisation).json
+    for json_collaboration in json_organisation.get("collaborations", []):
+        for group in json_collaboration.get("groups", []):
+            group["collaboration_memberships"] = [cm["user_id"] for cm in group.get("collaboration_memberships", [])]
     json_organisation["units"] = [unit.name for unit in organisation.units]
     for collaboration in json_organisation["collaborations"]:
         collaboration["units"] = [unit["name"] for unit in collaboration["units"]]
