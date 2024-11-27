@@ -10,5 +10,5 @@ pytest-xdist==3.6.1
 responses==0.25.3
 alembic==1.14.0
 freezegun==1.5.1
-coverage==7.6.7
+coverage==7.6.8
 mock==5.1.0
