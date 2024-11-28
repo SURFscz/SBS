@@ -11,7 +11,7 @@ SURF Research Access Management (SRAM) Platform
 -   MySQL v5.7.x or MariaDB 10.x
 -   Redis v6.x
 -   Yarn 1.x
--   node
+-   node 20+
 -   libxmlsec1 (pre-1.3.0 see https://github.com/xmlsec/python-xmlsec/issues/254 and see https://github.com/xmlsec/python-xmlsec/issues/254#issuecomment-1511135314 for a workaround)
 
 ### [Getting started](#getting-started)
