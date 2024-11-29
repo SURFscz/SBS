@@ -113,9 +113,12 @@ def mfa_idp_allowed(user: User, entity_id: str = None):
         idp for idp in identity_providers if "entity_id" in idp and idp.entity_id == entity_id.lower()
     ]
 
-    def schac_match(configured_schac_home, user_schac_home):
+    def schac_match(configured_schac_homes: list[str], user_schac_home: str) -> bool:
         schac_home_lower = user_schac_home.lower()
-        return configured_schac_home == schac_home_lower or schac_home_lower.endswith(f".{configured_schac_home}")
+        for configured_schac_home in configured_schac_homes:
+            if configured_schac_home == schac_home_lower or schac_home_lower.endswith(f".{configured_schac_home}"):
+                return True
+        return False
 
     schac_home = user.schac_home_organisation
     schac_home_allowed = schac_home and [
