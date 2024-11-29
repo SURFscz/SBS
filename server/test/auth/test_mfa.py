@@ -58,6 +58,9 @@ class TestMFA(AbstractTest):
 
     def test_mfa_idp_allowed(self):
         self.assertTrue(mfa_idp_allowed(User(schac_home_organisation="idp.test"), entity_id=None))
+        self.assertTrue(mfa_idp_allowed(User(schac_home_organisation="idp2.test"), entity_id=None))
+        self.assertFalse(mfa_idp_allowed(User(schac_home_organisation="idp3.test"), entity_id=None))
+
         self.assertTrue(mfa_idp_allowed(User(schac_home_organisation="SUB.IDP.TEST"), entity_id=None))
         self.assertTrue(mfa_idp_allowed(User(schac_home_organisation="nope"), entity_id="HTTPS://IDP.TEST"))
 
