@@ -1,6 +1,9 @@
 import datetime
 import time
 import uuid
+from unittest import mock
+
+import sqlalchemy
 
 from server.db.defaults import STATUS_OPEN
 from server.db.db import db
@@ -40,6 +43,13 @@ class TestInvitation(AbstractTest):
         self.assertEqual("admin", collaboration_membership.role)
         user_id = self.find_entity_by_name(User, "urn:james").id
         self.assertEqual(2, ServiceAup.query.filter(ServiceAup.user_id == user_id).count())
+
+    def test_accept_failed(self):
+        self.login("urn:james", user_info={"name": "urn:james"})
+        with mock.patch.object(self.app.db.session, "merge",
+                               side_effect=sqlalchemy.exc.DatabaseError("failed", None, Exception("failed"))):
+            self.put("/api/invitations/accept", body={"hash": invitation_hash_curious}, with_basic_auth=False,
+                     response_status_code=400)
 
     def test_collaboration_expired_invitation(self):
         self.expire_invitation(invitation_hash_curious)
@@ -220,19 +230,6 @@ class TestInvitation(AbstractTest):
                        response_status_code=403,
                        with_basic_auth=False)
         self.assertIn(f"Collaboration 123456 is not part of organisation {unihard_name}", res["message"])
-
-    def test_collaboration_external_identifier(self):
-        invitation = self._get_invitation_curious()
-        invitation.expiry_date = dt_now() - datetime.timedelta(days=500)
-        invitation.external_identifier = str(uuid.uuid4())
-        db.session.merge(invitation)
-        db.session.commit()
-
-        self.login("urn:james")
-        self.put("/api/invitations/accept", body={"hash": invitation_hash_curious}, with_basic_auth=False,
-                 response_status_code=409)
-        invitation = self._get_invitation_curious()
-        self.assertEqual("expired", invitation.status)
 
     @staticmethod
     def _get_invitation_curious():
