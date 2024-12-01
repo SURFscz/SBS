@@ -2,6 +2,10 @@ import json
 import os
 from pathlib import Path
 
+from unittest import mock
+
+import redis
+import sqlalchemy
 from flask import g as request_context
 from munch import munchify
 
@@ -59,6 +63,22 @@ class TestBase(AbstractTest):
     def test_health(self):
         res = self.client.get("/health")
         self.assertDictEqual({"components": {"database": "UP", "redis": "UP"}, "status": "UP"}, res.json)
+
+    def test_health_mysql_down(self):
+        with mock.patch("sqlalchemy.engine.base.Connection.execute",
+                        side_effect=sqlalchemy.exc.OperationalError("failed", "failed", "failed")):
+            res = self.client.get("/health")
+        self.assertDictEqual({"components": {"database": "DOWN", "redis": "UP"}, "status": "DOWN"}, res.json)
+
+    def test_health_redis_down(self):
+        with mock.patch.object(self.app.redis_client, "set", return_value=False):
+            res = self.client.get("/health")
+        self.assertDictEqual({"components": {"database": "UP", "redis": "DOWN"}, "status": "DOWN"}, res.json)
+
+    def test_health_redis_error(self):
+        with mock.patch.object(self.app.redis_client, "set", side_effect=redis.exceptions.ConnectionError):
+            res = self.client.get("/health")
+        self.assertDictEqual({"components": {"database": "UP", "redis": "DOWN"}, "status": "DOWN"}, res.json)
 
     def test_config(self):
         res = self.client.get("/config").json
