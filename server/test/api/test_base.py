@@ -4,6 +4,7 @@ from pathlib import Path
 
 from unittest import mock
 
+import MySQLdb
 import redis
 import sqlalchemy
 from flask import g as request_context
@@ -69,6 +70,15 @@ class TestBase(AbstractTest):
                         side_effect=sqlalchemy.exc.OperationalError("failed", "failed", "failed")):
             res = self.client.get("/health")
         self.assertDictEqual({"components": {"database": "DOWN", "redis": "UP"}, "status": "DOWN"}, res.json)
+
+    def test_health_mysql_error_nomail(self):
+        with self.app.mail.record_messages() as outbox:
+            with mock.patch("sqlalchemy.engine.base.Connection.execute",
+                            side_effect=MySQLdb.IntegrityError("error: an error occured")):
+                res = self.client.get("/health")
+                self.assert500(res)
+
+            self.assertEqual(0, len(outbox))
 
     def test_health_redis_down(self):
         with mock.patch.object(self.app.redis_client, "set", return_value=False):
