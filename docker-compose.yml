@@ -7,7 +7,7 @@ volumes:
 
 services:
   redis:
-    image: "docker.io/redis"
+    image: "redis"
     container_name: "sbs-redis"
 
   client:
@@ -74,3 +74,4 @@ services:
       - "8978:8978"
     volumes:
       - "cloudbeaver:/opt/cloudbeaver/workspace"
+
