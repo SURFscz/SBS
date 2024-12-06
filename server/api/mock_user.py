@@ -67,8 +67,9 @@ def eb_interrupt_data():
     signed_root = XMLSigner().sign(root, key=private_key, cert=cert)
     signed_root_str = etree.tostring(signed_root)
     b64encoded_signed_root = base64.b64encode(signed_root_str)
+    client_base_url = current_app.app_config.base_url
     data = {"signed_user": b64encoded_signed_root.decode(),
-            "continue_url": "https://eb.com"}
+            "continue_url": f"{client_base_url}/mock-eb"}
     # in this flow, we don't want to create a mock-user
     session["eb_interrupt_flow"] = True
     return data, 200
@@ -79,6 +80,5 @@ def eb_interrupt_data():
 def eb_stop_interrupt_flow():
     if not os.environ.get("ALLOW_MOCK_USER_API", None):
         raise Forbidden()
-    confirm_write_access()
     session["eb_interrupt_flow"] = None
     return {}, 200

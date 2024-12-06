@@ -2124,11 +2124,21 @@ const nl = {
             userUid: "User UID",
             serviceEntityId: "Service entity ID",
             useSRAMServiceEntityId: "Use SRAM service entity ID",
+            mimic: "Choose integration backend",
+            mimicTooltip: "The integration backend is either eduTeams or EB.<br><br> The main difference is that EB will POST " +
+                "to the server <code>interrupt</code> endpoint and implicitely login the user. <br><br>EduTeams will redirect to the " +
+                "client <code>interrupt</code> page which will trigger an explicit authentication login.",
+            eduTeams: "EduTeams",
+            engineBlock: "SURFconext / EngineBlock",
             idpEntityId: "IdP entity ID",
             start: "Submit",
             reset: "Reset",
+            redirect: "Redirect",
+            hi: "Hi there, this is the mock EB",
+            stop: "Stop EB interrupt flow",
+            stopped: "Interrupt flow is stopped. Refresh will make you platform admin again.",
             results: "Results",
-            errors: "Errors"
+            errors: "Errors",
         }
     },
     access: {

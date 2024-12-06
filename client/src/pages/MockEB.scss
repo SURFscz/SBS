@@ -1,0 +1,28 @@
+@import "../stylesheets/vars.scss";
+
+.mod-mock-eb {
+
+    max-width: $medium;
+    width: 100%;
+    margin: 40px auto;
+    display: flex;
+    flex-direction: column;
+
+    .mod-inner-mock-eb {
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+
+        @media (max-width: $compact-medium) {
+            margin: 0 10px;
+        }
+
+        p {
+            font-size: 18px;
+            line-height: 22px;
+            margin-bottom: 25px;
+        }
+    }
+
+
+}

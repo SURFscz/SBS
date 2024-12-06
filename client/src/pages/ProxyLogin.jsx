@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import "./ProxyLogin.scss";
 import {Loader} from "@surfnet/sds";
 import I18n from "../locale/I18n";
-import {proxyAuthzEduTeams, proxyAuthzEngineBlock} from "../api";
+import {ebInterruptData, proxyAuthzEduTeams, proxyAuthzEngineBlock} from "../api";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
 import {isEmpty} from "../utils/Utils";
@@ -16,8 +16,8 @@ export default function ProxyLogin({config}) {
         I18n.t("system.proxy.engineBlock")
     ].map(backend => ({label: backend, value: backend}));
 
-    const [userUid, setUserUid] = useState(" ");
-    const [serviceEntityId, setServiceEntityId] = useState(" ");
+    const [userUid, setUserUid] = useState("");
+    const [serviceEntityId, setServiceEntityId] = useState("");
     const [idpEntityId, setIdpEntityId] = useState("");
     const [useSRAMServiceEntityId, setUseSRAMServiceEntityId] = useState(false);
     const [integrationBackend, setIntegrationBackend] = useState(integrationBackendOptions[0]);
@@ -41,6 +41,25 @@ export default function ProxyLogin({config}) {
                     });
                 }
             })
+    }
+
+    const doRedirect = () => {
+        setLoading(true);
+        //First get the signed XML that we need to post
+        ebInterruptData(userUid).then(res => {
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = proxyAuthzResult.status.redirect_url;
+            Object.entries(res).forEach(field => {
+                const hiddenField = document.createElement("input");
+                hiddenField.type = "hidden";
+                hiddenField.name = field[0];
+                hiddenField.value = field[1];
+                form.appendChild(hiddenField);
+            });
+            document.body.appendChild(form);
+            form.submit();
+        });
     }
 
     const resetForm = () => {
@@ -112,13 +131,23 @@ export default function ProxyLogin({config}) {
 
             </div>
             {(!isEmpty(proxyAuthzResult) || !isEmpty(proxyAuthzError)) &&
-                    <div className="proxy-weblogin-results">
-                        <h6>{I18n.t(`system.proxy.${isEmpty(proxyAuthzError) ? "results" : "errors"}`)}</h6>
-                        <InputField value={JSON.stringify(isEmpty(proxyAuthzError) ? proxyAuthzResult : proxyAuthzError,
+                <div className="proxy-weblogin-results">
+                    <h6>{I18n.t(`system.proxy.${isEmpty(proxyAuthzError) ? "results" : "errors"}`)}</h6>
+                    <InputField
+                        value={JSON.stringify(isEmpty(proxyAuthzError) ? proxyAuthzResult : proxyAuthzError,
                             undefined, 4)}
-                                    disabled={true}
-                                    cols={14}
-                                    multiline={true}/>
-                    </div>}
-        </div>);
+                        disabled={true}
+                        cols={14}
+                        multiline={true}/>
+                </div>}
+            <div className="actions">
+                {(!isEmpty(proxyAuthzResult) && isEmpty(proxyAuthzResult.attributes)) && <div className="form">
+                    <Button txt={I18n.t("system.proxy.redirect")}
+                            onClick={doRedirect}
+                            small={true}
+                    />
+                </div>}
+            </div>
+        </div>
+    );
 }

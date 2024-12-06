@@ -2133,6 +2133,10 @@ const en = {
             idpEntityId: "IdP entity ID",
             start: "Submit",
             reset: "Reset",
+            redirect: "Redirect",
+            hi: "Hi there, this is the mock EB",
+            stop: "Stop EB interrupt flow",
+            stopped: "Interrupt flow is stopped. Refresh will make you platform admin again.",
             results: "Results",
             errors: "Errors",
         }
