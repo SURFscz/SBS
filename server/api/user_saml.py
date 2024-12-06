@@ -1,5 +1,4 @@
 import base64
-from urllib import request
 from urllib.parse import urlencode
 
 from flask import Blueprint, current_app, request as current_request, redirect, session
@@ -131,7 +130,7 @@ def do_authz_proxy(is_edu_teams: bool):
                 "info": UserCode.SECOND_FA_REQUIRED.name
             }
         }, 200
-    
+
     # if none of CO's are not active, then this is the same as none of the CO's are not connected to the Service
     if not has_user_access_to_service(service, user):
         logger.debug(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id} "

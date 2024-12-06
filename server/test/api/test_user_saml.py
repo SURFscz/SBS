@@ -2,9 +2,10 @@ import base64
 import datetime
 
 import requests
+import responses
 from lxml import etree
 from signxml import XMLSigner
-import responses
+
 from server.auth.user_codes import UserCode
 from server.db.db import db
 from server.db.domain import Collaboration, Service, User, UserLogin
@@ -338,7 +339,7 @@ class TestUserSaml(AbstractTest):
         self.assertTrue(res["status"]["redirect_url"].startswith("http://localhost:8080/api/users/interrupt"))
 
     def test_interrupt_eb(self):
-        data_to_sign = f"<User user_id='urn:sarah'/>"
+        data_to_sign = "<User user_id='urn:sarah'/>"
         cert = self.app.app_config.engine_block.public_key
         private_key = read_file("test/data/privkey.pem")
         root = etree.fromstring(data_to_sign)
@@ -367,7 +368,7 @@ class TestUserSaml(AbstractTest):
         public_key = self.app.app_config.engine_block.public_key
         try:
             self.app.app_config.engine_block.public_key = None
-            data_to_sign = f"<User user_id='urn:sarah'/>"
+            data_to_sign = "<User user_id='urn:sarah'/>"
             cert = self.app.app_config.engine_block.public_key
             private_key = read_file("test/data/privkey.pem")
             root = etree.fromstring(data_to_sign)

@@ -1,15 +1,16 @@
+import base64
 import os
 import uuid
-import base64
+
 from flask import Blueprint, current_app
 from flask import request as current_request, session
-from werkzeug.exceptions import Forbidden
-from signxml import XMLSigner, XMLVerifier
-import xml.etree.ElementTree as ET
 from lxml import etree
+from signxml import XMLSigner
+from werkzeug.exceptions import Forbidden
+
 from server.api.base import json_endpoint, query_param
 from server.auth.secrets import generate_token
-from server.auth.security import is_admin_user, CSRF_TOKEN, confirm_allow_impersonation, confirm_write_access
+from server.auth.security import is_admin_user, CSRF_TOKEN, confirm_write_access
 from server.auth.surf_conext import surf_public_signing_certificate
 from server.auth.user_claims import add_user_claims
 from server.db.db import db
@@ -73,7 +74,7 @@ def eb_interrupt_data():
     return data, 200
 
 
-@mock_user_api.route("stop_interrupt_flow", methods=["DLETE"], strict_slashes=False)
+@mock_user_api.route("stop_interrupt_flow", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def eb_stop_interrupt_flow():
     if not os.environ.get("ALLOW_MOCK_USER_API", None):
