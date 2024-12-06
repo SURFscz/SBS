@@ -231,11 +231,15 @@ mfa_fallback_enabled: true
 # Lower case schachome organisations / entity ID's allowed skipping MFA;
 # MFA is supposed to be handled at the IdP for these entities
 mfa_idp_allowed:
-  - schac_home: "idp.test"
-    entity_id: "https://idp.test"
-  - schac_home: "erroridp.example.edu"
-    entity_id: "https://erroridp.example.edu"
-  - schac_home: "only_sho"
+  - entity_id: "https://idp.test"
+    schac_home:
+      - "idp.test"
+      - "idp2.test"
+  - entity_id: "https://erroridp.example.edu"
+    schac_home:
+      - "erroridp.example.edu"
+  - schac_home:
+      - "only_sho"
   - entity_id: "https://only_entityid"
 
 pam_web_sso:
