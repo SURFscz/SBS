@@ -63,61 +63,62 @@ export default function ProxyLogin({config}) {
         }
     }
 
-    return (<div className={"mod-proxy-container"}>
-        <div className="form">
-            <InputField value={userUid}
-                        onChange={e => setUserUid(e.target.value)}
-                        name={I18n.t("system.proxy.userUid")}
-                        required={true}/>
+    return (
+        <div className={"mod-proxy-container"}>
+            <div className="form">
+                <InputField value={userUid}
+                            onChange={e => setUserUid(e.target.value)}
+                            name={I18n.t("system.proxy.userUid")}
+                            required={true}/>
 
-            <InputField value={serviceEntityId}
-                        onChange={e => {
-                            setServiceEntityId(e.target.value)
-                            setUseSRAMServiceEntityId(false);
-                        }}
-                        name={I18n.t("system.proxy.serviceEntityId")}
-                        required={true}/>
+                <InputField value={serviceEntityId}
+                            onChange={e => {
+                                setServiceEntityId(e.target.value)
+                                setUseSRAMServiceEntityId(false);
+                            }}
+                            name={I18n.t("system.proxy.serviceEntityId")}
+                            required={true}/>
 
-            <CheckBox name="userSRAM"
-                      value={useSRAMServiceEntityId}
-                      info={I18n.t("system.proxy.useSRAMServiceEntityId")}
-                      onChange={toggleUseSRAMServiceEntityId}/>
+                <CheckBox name="userSRAM"
+                          value={useSRAMServiceEntityId}
+                          info={I18n.t("system.proxy.useSRAMServiceEntityId")}
+                          onChange={toggleUseSRAMServiceEntityId}/>
 
-            <SelectField value={integrationBackend}
-                         options={integrationBackendOptions}
-                         name={I18n.t("system.proxy.mimic")}
-                         toolTip={I18n.t("system.proxy.mimicTooltip")}
-                         required={true}
-                         searchable={false}
-                         onChange={val => setIntegrationBackend(val)}/>
+                <SelectField value={integrationBackend}
+                             options={integrationBackendOptions}
+                             name={I18n.t("system.proxy.mimic")}
+                             toolTip={I18n.t("system.proxy.mimicTooltip")}
+                             required={true}
+                             searchable={false}
+                             onChange={val => setIntegrationBackend(val)}/>
 
-            <InputField value={idpEntityId}
-                        onChange={e => setIdpEntityId(e.target.value)}
-                        name={I18n.t("system.proxy.idpEntityId")}
-                        required={true}/>
+                <InputField value={idpEntityId}
+                            onChange={e => setIdpEntityId(e.target.value)}
+                            name={I18n.t("system.proxy.idpEntityId")}
+                            required={true}/>
 
-            <div className="actions">
-                <Button txt={I18n.t("system.proxy.reset")}
-                        onClick={resetForm}
-                        cancelButton={true}
-                        small={true}
-                />
-                <Button txt={I18n.t("system.proxy.start")}
-                        onClick={doProxyAuthz}
-                        small={true}
-                        disabled={isEmpty(userUid) || isEmpty(serviceEntityId) || isEmpty(idpEntityId)}
-                />
+                <div className="actions">
+                    <Button txt={I18n.t("system.proxy.reset")}
+                            onClick={resetForm}
+                            cancelButton={true}
+                            small={true}
+                    />
+                    <Button txt={I18n.t("system.proxy.start")}
+                            onClick={doProxyAuthz}
+                            small={true}
+                            disabled={isEmpty(userUid) || isEmpty(serviceEntityId) || isEmpty(idpEntityId)}
+                    />
+                </div>
+
             </div>
-
-            {!isEmpty(proxyAuthzResult) && <div className="proxy-weblogin-results">
-                <h6>{I18n.t("system.proxy.results")}</h6>
-                <pre>{JSON.stringify(proxyAuthzResult, undefined, 4)}</pre>
-            </div>}
-            {!isEmpty(proxyAuthzError) && <div className="proxy-weblogin-results">
-                <h6>{I18n.t("system.proxy.errors")}</h6>
-                <pre>{JSON.stringify(proxyAuthzResult, undefined, 4)}</pre>
-            </div>}
-
-        </div>
-    </div>);
+            {(!isEmpty(proxyAuthzResult) || !isEmpty(proxyAuthzError)) &&
+                    <div className="proxy-weblogin-results">
+                        <h6>{I18n.t(`system.proxy.${isEmpty(proxyAuthzError) ? "results" : "errors"}`)}</h6>
+                        <InputField value={JSON.stringify(isEmpty(proxyAuthzError) ? proxyAuthzResult : proxyAuthzError,
+                            undefined, 4)}
+                                    disabled={true}
+                                    cols={14}
+                                    multiline={true}/>
+                    </div>}
+        </div>);
 }
