@@ -1,9 +1,10 @@
-from urllib import request
+import requests
 
 
 def surf_public_signing_certificate(current_app):
     eb_config = current_app.app_config.engine_block
     cert = eb_config.public_key
-    if not eb_config.public_key or not eb_config.public_key.strip():
-        cert = request.urlopen(eb_config.public_key_url).read().decode()
+    url = eb_config.public_key_url
+    if not cert or not cert.strip():
+        cert = requests.get(url).content
     return cert

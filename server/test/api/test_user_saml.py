@@ -369,20 +369,21 @@ class TestUserSaml(AbstractTest):
         try:
             self.app.app_config.engine_block.public_key = None
             data_to_sign = "<User user_id='urn:sarah'/>"
-            cert = self.app.app_config.engine_block.public_key
             private_key = read_file("test/data/privkey.pem")
             root = etree.fromstring(data_to_sign)
-            signed_root = XMLSigner().sign(root, key=private_key, cert=cert)
+            signed_root = XMLSigner().sign(root, key=private_key, cert=public_key)
             signed_root_str = etree.tostring(signed_root)
             b64encoded_signed_root = base64.b64encode(signed_root_str)
+            url = self.app.app_config.engine_block.public_key_url
+            # responses.add(responses.GET,
+            #               url,
+            #               body=cert,
+            #               status=200,
+            #               content_type="application/x-pem-file")
+            responses.add(responses.GET, url, body=public_key, status=200, content_type="application/x-pem-file")
             with requests.Session():
-                responses.add(responses.GET,
-                              self.app.app_config.engine_block.public_key_url,
-                              body=cert,
-                              status=200,
-                              content_type="application/x-pem-file")
                 self.client.post(f"/api/users/interrupt?error_status={UserCode.SECOND_FA_REQUIRED.value}",
-                                 headers=BASIC_AUTH_HEADER,
+                                 headers={},
                                  data={"signed_user": b64encoded_signed_root.decode(),
                                        "continue_url": "https://eb.com"},
                                  content_type="application/x-www-form-urlencoded")
