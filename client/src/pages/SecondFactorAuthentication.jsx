@@ -218,7 +218,8 @@ class SecondFactorAuthentication extends React.Component {
             }, () => this.totpNewRefs[0].focus()));
         } else {
             verify2fa(totp.join("")).then(r => {
-                this.props.refreshUser(() => {
+                this.props.refreshUser(user => { // eslint-disable-line no-unused-vars
+                    debugger; // eslint-disable-line no-debugger
                     redirectToProxyLocation(r.location, this.props.history, config);
                 });
             }).catch(e => {

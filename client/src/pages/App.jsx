@@ -58,6 +58,7 @@ import CollaborationsOverview from "./CollaborationsOverview";
 import MyRequests from "../components/redesign/MyRequests";
 import Delay from "./Delay";
 import Interrupt from "./Interrupt";
+import MockEB from "./MockEB";
 
 addIcons();
 
@@ -501,6 +502,8 @@ class App extends React.Component {
                                    render={props => <MissingAttributes config={config}
                                                                        currentUser={currentUser} {...props}/>}/>
 
+                            <Route path="/mock-eb"
+                                   render={props => <MockEB {...props}/>}/>
                             <Route render={props => <NotFound config={config} currentUser={currentUser} {...props}/>}/>
                         </Switch>}
                     <Footer/>

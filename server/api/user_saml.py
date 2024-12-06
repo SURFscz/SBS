@@ -203,7 +203,7 @@ def interrupt():
     doc = etree.fromstring(xml)
     cert = surf_public_signing_certificate(current_app)
     verified_data = XMLVerifier().verify(doc, x509_cert=cert).signed_xml
-    user_uid = verified_data.attrib.get("user_id")
+    user_uid = verified_data.attrib.get("user_id").strip()
     user = User.query.filter(User.uid == user_uid).one()
 
     user_accepted_aup = user.has_agreed_with_aup()
