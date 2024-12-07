@@ -8,10 +8,10 @@ const INTERRUPT_PATH_NAMES = ["/service-aup", "/interrupt", "/delay"]
 export function ProtectedRoute({currentUser, Component, ...res}) {
     if (!currentUser.guest) {
         if (!currentUser.user_accepted_aup) {
-            return <Redirect to="/aup"/>
+            return <Redirect to={`/aup?state=${encodeURIComponent(window.location.href)}`}/>
         }
         if (!currentUser.second_factor_confirmed) {
-            return <Redirect to="/2fa"/>;
+            return <Redirect to={`/2fa?state=${encodeURIComponent(window.location.href)}`}/>;
         }
         //Ensure that we are not heading to a page which is initiated by the Interrupt page
         if (!isEmpty(currentUser.services_without_aup) && !INTERRUPT_PATH_NAMES.includes(window.location.pathname)) {
