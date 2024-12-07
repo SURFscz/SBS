@@ -17,6 +17,8 @@ export default function Interrupt({config, history}) {
         saveContinueURL(config, continueUrl);
         const errorStatus = parseInt( urlSearchParams.get("error_status"), 10);
         // The user is already logged in, so mfa and aup are taken care of
+        debugger; // eslint-disable-line no-debugger
+
         switch (errorStatus) {
             case 97:
                history.push(`/delay${window.location.search}`);

@@ -206,9 +206,11 @@ def interrupt():
     user_uid = verified_data.attrib.get("user_id").strip()
     user = User.query.filter(User.uid == user_uid).one()
 
-    user_accepted_aup = user.has_agreed_with_aup()
-    # Put the user in the session, and pass control back to the GUI
-    store_user_in_session(user, False, user_accepted_aup)
+    # Put the user in the session if there is none or a different user, and pass control back to the GUI
+    user_from_session = session.get("user", {})
+    if user_from_session.get("guest", True) or not user.id == user_from_session.get("id"):
+        user_accepted_aup = user.has_agreed_with_aup()
+        store_user_in_session(user, False, user_accepted_aup)
     continue_url = current_request.form.get("continue_url")
     # The original destination is returned from both 2mfa endpoint and agree_aup endpoint
     session["original_destination"] = continue_url
