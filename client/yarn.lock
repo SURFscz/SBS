@@ -1969,10 +1969,10 @@
   resolved "https://registry.yarnpkg.com/@socket.io/component-emitter/-/component-emitter-3.1.2.tgz#821f8442f4175d8f0467b9daf26e3a18e2d02af2"
   integrity sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA==
 
-"@surfnet/sds@^0.0.118":
-  version "0.0.118"
-  resolved "https://registry.yarnpkg.com/@surfnet/sds/-/sds-0.0.118.tgz#10178c59940c01fdb0f8ad7400a5e392cdfebed9"
-  integrity sha512-HxCUT5jmdYBkRFD2ve4cI79zfl431EOTPjYXbe4KEYE+P55/YtcChN/GfWlyy5yF9zqK1w/Plmj2A5uxHnrjKg==
+"@surfnet/sds@^0.0.119":
+  version "0.0.119"
+  resolved "https://registry.yarnpkg.com/@surfnet/sds/-/sds-0.0.119.tgz#0e66f7f3c8f8de4d0e4d74f29d6a02c30fa2b19c"
+  integrity sha512-h69Gb9fX5i7zw1Vf7hBCTn4HAQis4e6EcsA6FKCZnJ8DRzviK3jzhqWFuievqg8yteNey3VeB734t4Dx1ceP2A==
 
 "@surma/rollup-plugin-off-main-thread@^2.2.3":
   version "2.2.3"
@@ -4294,7 +4294,7 @@ domhandler@^4.0.0, domhandler@^4.2.0, domhandler@^4.3.1:
   dependencies:
     domelementtype "^2.2.0"
 
-dompurify@^3.2.1, dompurify@^3.2.2:
+dompurify@^3.2.2:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-3.2.2.tgz#6c0518745e81686c74a684f5af1e5613e7cc0246"
   integrity sha512-YMM+erhdZ2nkZ4fTNRTSI94mb7VG7uVF5vj5Zde7tImgnhZE3R6YW/IACGIHb2ux+QkEXMhe591N+5jWOmL4Zw==
