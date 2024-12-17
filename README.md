@@ -7,7 +7,7 @@ SURF Research Access Management (SRAM) Platform
 
 ### [Overview Requirements](#system-requirements)
 
--   Python 3.9.x
+-   Python >3.9
 -   MySQL v5.7.x or MariaDB 10.x
 -   Redis v6.x
 -   Yarn 1.x
