@@ -303,6 +303,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -335,6 +341,9 @@ jobs:
           push: true
           tags: ${{ steps.meta-sbs.outputs.tags }}
           labels: ${{ steps.meta-sbs.outputs.labels }}
+          platforms: linux/amd64,linux/arm64
+          cache-from: "type=gha"
+          cache-to: "type=gha,mode=max"
 
       # The SBS server image
       - name: Extract metadata (tags, labels) for SBS image
@@ -353,6 +362,9 @@ jobs:
           push: true
           tags: ${{ steps.meta-sbs-server.outputs.tags }}
           labels: ${{ steps.meta-sbs-server.outputs.labels }}
+          platforms: linux/amd64,linux/arm64
+          cache-from: "type=gha"
+          cache-to: "type=gha,mode=max"
 
 
       # The SBS client image
@@ -372,6 +384,9 @@ jobs:
           push: true
           tags: ${{ steps.meta-sbs-client.outputs.tags }}
           labels: ${{ steps.meta-sbs-client.outputs.labels }}
+          platforms: linux/amd64,linux/arm64
+          cache-from: "type=gha"
+          cache-to: "type=gha,mode=max"
 
       # Setup tmate session
       - name: Setup tmate session
