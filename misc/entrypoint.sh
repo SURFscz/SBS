@@ -41,8 +41,6 @@ then
     echo "New id is $($PRIVDROP id -u):$($PRIVDROP id -g)"
 fi
 
-cd /opt/sbs
-
 # Run migrations
 _RUN_MIGRATIONS=${RUN_MIGRATIONS:-0}
 _MIGRATIONS_ONLY=${MIGRATIONS_ONLY:-0}
@@ -58,6 +56,8 @@ then
         exit 0
     fi
 fi
+
+cd /opt/sbs
 
 # Hand off to the CMD
 exec ${PRIVDROP} $@
