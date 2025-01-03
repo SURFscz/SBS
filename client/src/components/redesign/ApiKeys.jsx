@@ -16,11 +16,14 @@ import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import DOMPurify from "dompurify";
 import {dateFromEpoch} from "../../utils/Date";
 import ErrorIndicator from "./ErrorIndicator";
+import {CollaborationUnits} from "../CollaborationUnits";
 
 class ApiKeys extends React.Component {
 
     constructor(props, context) {
         super(props, context);
+        const {organisation} = this.props;
+        const allUnits = (organisation?.units || []).map(unit => ({...unit, label: unit.name, value: unit.id}));
         this.state = {
             createNewApiKey: false,
             hashedSecret: "",
@@ -30,12 +33,18 @@ class ApiKeys extends React.Component {
             confirmationDialogAction: () => true,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             loading: true,
-            initial: true
+            initial: true,
+            units: [],
+            allUnits: allUnits
         }
     }
 
     componentDidMount = () => {
         this.setState({loading: false});
+    }
+
+    setUnits = newUnits => {
+        this.setState({units: newUnits})
     }
 
     fetchNewApiValue = () => {
@@ -74,7 +83,7 @@ class ApiKeys extends React.Component {
     }
 
     submit = () => {
-        const {hashedSecret, description} = this.state;
+        const {hashedSecret, description, units} = this.state;
         const {organisation} = this.props;
         if (isEmpty(description)) {
             this.setState({initial: false});
@@ -82,14 +91,16 @@ class ApiKeys extends React.Component {
             this.refreshAndFlash(createApiKey({
                     organisation_id: organisation.id,
                     hashed_secret: hashedSecret,
-                    description: description
+                    description: description,
+                    units: units
                 }), I18n.t("apiKeys.flash.created", {name: organisation.name}),
                 () => this.setState({createNewApiKey: false, initial: true}));
         }
     };
 
     renderNewApiKeyForm = () => {
-        const {description, hashedSecret, initial} = this.state;
+        const {description, hashedSecret, initial, units, allUnits} = this.state;
+        const {organisation, user} = this.props;
         return (
             <div className="api-key-container">
                 <div>
@@ -117,6 +128,17 @@ class ApiKeys extends React.Component {
                         msg={I18n.t("apiKeys.required", {
                             attribute: I18n.t("apiKeys.description").toLowerCase()
                         })}/>}
+
+                    {!isEmpty(allUnits) &&
+                        <CollaborationUnits selectedUnits={units}
+                                            allUnits={allUnits}
+                                            setUnits={this.setUnits}
+                                            user={user}
+                                            organisation={organisation}
+                                            label={I18n.t("units.collaboration")}
+                                            toolTip={I18n.t("units.apiKeysTooltip")}
+                        />
+                    }
 
                     <section className="actions">
                         <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancelSideScreen}/>
@@ -148,20 +170,36 @@ class ApiKeys extends React.Component {
         if (createNewApiKey) {
             return this.renderNewApiKeyForm();
         }
+        const displayUnitColumn = !isEmpty(organisation?.units);
+
         const columns = [
             {
                 key: "secret",
                 header: I18n.t("apiKeys.secret"),
+                class: displayUnitColumn ? "with-units" : "",
                 mapper: () => I18n.t("apiKeys.secretValue"),
             },
             {
                 key: "description",
                 header: I18n.t("apiKeys.description"),
+                class: displayUnitColumn ? "with-units" : "",
                 mapper: apiKey => <span className={"cut-of-lines"}>{apiKey.description}</span>
             },
+            displayUnitColumn ? {
+                key: "units",
+                class: "units",
+                header: I18n.t("units.column"),
+                mapper: apiKey => <div className="unit-container">
+                    {(apiKey.units || [])
+                        .sort((u1, u2) => u1.name.localeCompare(u2.name))
+                        .map((unit, index) => <span key={index} className="chip-container">
+                        {unit.name}</span>)}
+                </div>
+            } : null,
             {
                 key: "created_at",
                 header: I18n.t("models.userTokens.createdAt"),
+                class: displayUnitColumn ? "with-units" : "",
                 mapper: apiKey => dateFromEpoch(apiKey.created_at)
             },
             {
@@ -185,7 +223,7 @@ class ApiKeys extends React.Component {
                           modelName="apiKeys"
                           searchAttributes={["description"]}
                           defaultSort="description"
-                          columns={columns}
+                          columns={columns.filter(col => !isEmpty(col))}
                           inputFocus={true}
                           loading={false}
                           showNew={isUserAllowed(ROLES.ORG_ADMIN, user, organisation.id)}

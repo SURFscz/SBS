@@ -28,7 +28,7 @@ def save_api_key():
     if not hashed_secret or hashed_secret != data["hashed_secret"]:
         raise Forbidden("Tampering with generated api secret is not allowed")
     data = hash_secret_key(data)
-    return save(ApiKey, custom_json=data)
+    return save(ApiKey, custom_json=data, allowed_child_collections=["units"])
 
 
 @api_key_api.route("/<api_key_id>", methods=["DELETE"], strict_slashes=False)

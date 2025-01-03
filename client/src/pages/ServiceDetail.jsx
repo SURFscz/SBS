@@ -12,23 +12,16 @@ import {
 import "./ServiceDetail.scss";
 import I18n from "../locale/I18n";
 import Tabs from "../components/Tabs";
-import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
-import {ReactComponent as DetailsIcon} from "../icons/services.svg";
-import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
 import {ReactComponent as WebsiteIcon} from "../icons/network-information.svg";
 import {ReactComponent as ShortNameIcon} from "../icons/short-name.svg";
-import {ReactComponent as ServiceConnectionRequestsIcon} from "../icons/connections.svg";
-import {ReactComponent as AboutIcon} from "../icons/common-file-text-home.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
-import {ReactComponent as UserAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ConnectedIcon} from "../icons/groups.svg";
 import ServiceOrganisations from "../components/redesign/ServiceOrganisations";
 import SpinnerField from "../components/redesign/SpinnerField";
 import {capitalize, isEmpty, stopEvent} from "../utils/Utils";
 import {actionMenuUserRole, isUserServiceAdmin, isUserServiceManager} from "../utils/UserRole";
 import ServiceConnectionRequests from "../components/redesign/ServiceConnectionRequests";
-import {ReactComponent as GroupsIcon} from "../icons/ticket-group.svg";
 import ServiceGroups from "../components/redesign/ServiceGroups";
 import ServiceAdmins from "../components/redesign/ServiceAdmins";
 import {setFlash} from "../utils/Flash";
@@ -226,8 +219,7 @@ class ServiceDetail extends React.Component {
 
     getDetailsTab = (service, user, serviceAdmin, serviceManager, showServiceAdminView) => {
         return (<div key="details" name="details"
-                     label={I18n.t("home.tabs.details")}
-                     icon={<DetailsIcon/>}>
+                     label={I18n.t("home.tabs.details")}>
             <ServiceOverview {...this.props}
                              refresh={this.refresh}
                              service={service}
@@ -243,8 +235,7 @@ class ServiceDetail extends React.Component {
         const availableOrganisations = service.allow_restricted_orgs ? organisations : organisations.filter(org => !org.services_restricted);
         return (<div key="organisations"
                      name="organisations"
-                     label={I18n.t("home.tabs.serviceOrganisations", {count: availableOrganisations.length})}
-                     icon={<OrganisationsIcon/>}>
+                     label={I18n.t("home.tabs.serviceOrganisations", {count: availableOrganisations.length})}>
             <ServiceOrganisations {...this.props}
                                   refresh={this.refresh}
                                   service={service}
@@ -259,7 +250,6 @@ class ServiceDetail extends React.Component {
         const expiredInvitations = (service.service_invitations || []).some(inv => isInvitationExpired(inv));
         return (<div key="admins" name="admins"
                      label={I18n.t("home.tabs.serviceAdmins", {count: service.service_memberships.length})}
-                     icon={<UserAdminIcon/>}
                      notifier={expiredInvitations}>
             <ServiceAdmins {...this.props}
                            service={service}
@@ -269,8 +259,7 @@ class ServiceDetail extends React.Component {
 
     getServiceGroupsTab = (service, userServiceAdmin) => {
         return (<div key="groups" name="groups"
-                     label={I18n.t("home.tabs.groups", {count: (service.service_groups || []).length})}
-                     icon={<GroupsIcon/>}>
+                     label={I18n.t("home.tabs.groups", {count: (service.service_groups || []).length})}>
             {<ServiceGroups {...this.props}
                             service={service}
                             userServiceAdmin={userServiceAdmin}
@@ -282,8 +271,7 @@ class ServiceDetail extends React.Component {
         const collaborations = service.collaborations || [];
         return (
             <div key="collaborations" name="collaborations"
-                 label={I18n.t("home.tabs.serviceCollaborations", {count: collaborations.length})}
-                 icon={<CollaborationsIcon/>}>
+                 label={I18n.t("home.tabs.serviceCollaborations", {count: collaborations.length})}>
                 <ServiceCollaborations
                     service={service}
                     showServiceAdminView={showServiceAdminView}
@@ -297,11 +285,14 @@ class ServiceDetail extends React.Component {
     }
 
     getAboutTab = service => {
-        return (<div key="about" name="about" label={I18n.t("home.tabs.about")} icon={<AboutIcon/>}>
-            <AboutService service={service}
-                          tabChanged={this.tabChanged}
-                          {...this.props} />
-        </div>);
+        return (
+            <div key="about"
+                 name="about"
+                 label={I18n.t("home.tabs.about")}>
+                <AboutService service={service}
+                              tabChanged={this.tabChanged}
+                              {...this.props} />
+            </div>);
     }
 
     getServiceConnectionRequestTab = (service, serviceConnectionRequests) => {
@@ -311,7 +302,6 @@ class ServiceDetail extends React.Component {
         return (
             <div key="serviceConnectionRequests" name="serviceConnectionRequests"
                  label={I18n.t("home.tabs.serviceConnectionRequests")}
-                 icon={<ServiceConnectionRequestsIcon/>}
                  notifier={nbr > 0 ? nbr : null}>
                 <ServiceConnectionRequests
                     service={service}

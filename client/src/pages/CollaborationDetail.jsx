@@ -20,15 +20,9 @@ import I18n from "../locale/I18n";
 import {AppStore} from "../stores/AppStore";
 import UnitHeader from "../components/redesign/UnitHeader";
 import Tabs from "../components/Tabs";
-import {ReactComponent as CoAdminIcon} from "../icons/users.svg";
-import {ReactComponent as ServicesIcon} from "../icons/services.svg";
 import {ReactComponent as MemberIcon} from "../icons/groups.svg";
 import {ReactComponent as TimerIcon} from "../icons/streamline/timer2.svg";
-import {ReactComponent as GroupsIcon} from "../icons/ticket-group.svg";
-import {ReactComponent as UserTokensIcon} from "../icons/connections.svg";
 import {ReactComponent as MemberStatusIcon} from "@surfnet/sds/icons/functional-icons/id-1.svg";
-import {ReactComponent as JoinRequestsIcon} from "../icons/single-neutral-question.svg";
-import {ReactComponent as AboutIcon} from "../icons/common-file-text-home.svg";
 import CollaborationAdmins from "../components/redesign/CollaborationAdmins";
 import SpinnerField from "../components/redesign/SpinnerField";
 import UsedServices from "../components/redesign/UsedServices";
@@ -398,7 +392,6 @@ class CollaborationDetail extends React.Component {
         return (<div key="admins"
                      name="admins"
                      label={I18n.t("home.tabs.coAdmins")}
-                     icon={<CoAdminIcon/>}
                      notifier={expiredInvitations}>
             <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={true}
                                  refresh={callback => this.componentDidMount(callback)}/>
@@ -412,7 +405,6 @@ class CollaborationDetail extends React.Component {
         const expiredInvitations = (collaboration.invitations || []).some(inv => isInvitationExpired(inv));
         return (<div key="members" name="members"
                      label={I18n.t("home.tabs.members")}
-                     icon={<MemberIcon/>}
                      readOnly={isJoinRequest}
                      notifier={expiredInvitations && !showMemberView}>
             {!isJoinRequest && <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={false}
@@ -428,7 +420,7 @@ class CollaborationDetail extends React.Component {
         return (<div key="groups" name="groups"
                      label={I18n.t("home.tabs.groups", {count: (collaboration.groups || []).length})}
                      readOnly={isJoinRequest}
-                     icon={<GroupsIcon/>}>
+        >
             {!isJoinRequest && <Groups {...this.props} collaboration={collaboration} showMemberView={showMemberView}
                                        refresh={callback => this.componentDidMount(callback)}/>}
         </div>)
@@ -438,8 +430,7 @@ class CollaborationDetail extends React.Component {
         return (
             <div key="tokens"
                  name="tokens"
-                 label={I18n.t("home.tabs.userTokens", {count: (userTokens || []).length})}
-                 icon={<UserTokensIcon/>}>
+                 label={I18n.t("home.tabs.userTokens", {count: (userTokens || []).length})}>
                 {<UserTokens {...this.props}
                              collaboration={collaboration}
                              services={services}
@@ -457,7 +448,6 @@ class CollaborationDetail extends React.Component {
         return (<div key="joinrequests"
                      name="joinrequests"
                      label={I18n.t("home.tabs.joinRequests", {count: (collaboration.join_requests || []).length})}
-                     icon={<JoinRequestsIcon/>}
                      notifier={openJoinRequests > 0 ? openJoinRequests : null}>
             <JoinRequests collaboration={collaboration}
                           refresh={callback => this.componentDidMount(callback)}
@@ -470,9 +460,9 @@ class CollaborationDetail extends React.Component {
         const openServiceConnectionRequests = (collaboration.service_connection_requests || [])
             .filter(r => r.status === "open")
             .length;
-        return (<div key="services" name="services"
+        return (<div key="services"
+                     name="services"
                      label={I18n.t("home.tabs.coServices", {count: usedServices.length})}
-                     icon={<ServicesIcon/>}
                      notifier={openServiceConnectionRequests > 0 ? openServiceConnectionRequests : null}>
             <UsedServices collaboration={collaboration}
                           user={user}
@@ -482,7 +472,9 @@ class CollaborationDetail extends React.Component {
     }
 
     getAboutTab = (collaboration, showMemberView, isJoinRequest = false) => {
-        return (<div key="about" name="about" label={I18n.t("home.tabs.about")} icon={<AboutIcon/>}>
+        return (<div key="about"
+                     name="about"
+                     label={I18n.t("home.tabs.about")}>
             <AboutCollaboration showMemberView={showMemberView}
                                 collaboration={collaboration}
                                 isJoinRequest={isJoinRequest}

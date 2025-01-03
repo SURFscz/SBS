@@ -330,7 +330,7 @@ def seed(db, app_config, skip_seed=False):
     persist_instance(db, sho_uuc, sho_ufra)
 
     api_key_uuc = ApiKey(hashed_secret=unihard_hashed_secret, organisation=uuc, description="API access",
-                         created_by="urn:admin", updated_by="urn:admin")
+                         created_by="urn:admin", updated_by="urn:admin", units=[uuc_unit_research])
     api_key_ufra = ApiKey(hashed_secret=unifra_hashed_secret, organisation=ufra, description="API access",
                           created_by="urn:admin", updated_by="urn:admin")
     persist_instance(db, api_key_uuc, api_key_ufra)

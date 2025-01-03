@@ -12,7 +12,8 @@ export const CollaborationUnits = ({
                                        user,
                                        organisation,
                                        label = I18n.t("units.collaboration"),
-                                       readOnly = false
+                                       readOnly = false,
+                                       toolTip = null
                                    }) => {
 
 
@@ -44,6 +45,7 @@ export const CollaborationUnits = ({
                      name={label}
                      disabled={readOnly}
                      searchable={false}
+                     toolTip={toolTip}
                      isClearable={true}
                      isMulti={true}
                      placeholder={I18n.t("units.unitsPlaceHolder")}

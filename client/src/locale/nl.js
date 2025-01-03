@@ -2622,6 +2622,8 @@ const nl = {
         invitations: "Organisatie-uitnodigingen",
         collaborations: "Samenwerkingen",
         organisation_memberships: "Lidmaatschappen",
+        api_keys: "API tokens",
+        apiKeysTooltip: "Een API token verbonden met 1 of meer units kan alleen worden gebruikt om entiteiten te bewerken die ook zijn gekoppeld aan dezelfde units",
         collaboration: "Relevante units (bijv. afdeling of project)",
         unitsPlaceHolder: "Optioneel: kies een unit",
         collaborationRequest: "Organisatieunits (optioneel)",

@@ -9,12 +9,6 @@ import "./OrganisationDetail.scss";
 import I18n from "../locale/I18n";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import Tabs from "../components/Tabs";
-import {ReactComponent as ServiceConnectionRequestsIcon} from "../icons/connections.svg";
-import {ReactComponent as PlatformAdminIcon} from "../icons/users.svg";
-import {ReactComponent as ServicesIcon} from "../icons/services.svg";
-import {ReactComponent as ApiKeysIcon} from "../icons/security.svg";
-import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
-import {ReactComponent as CollaborationRequestsIcon} from "../icons/faculty.svg";
 import {ReactComponent as LeaveIcon} from "../icons/safety-exit-door-left.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import OrganisationAdmins from "../components/redesign/OrganisationAdmins";
@@ -30,7 +24,6 @@ import {getParameterByName} from "../utils/QueryParameters";
 import {setFlash} from "../utils/Flash";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../utils/SocketIO";
-import {ReactComponent as MembersIcon} from "../icons/single-neutral.svg";
 import Users from "../components/redesign/Users";
 import {ButtonType} from "@surfnet/sds";
 import {isInvitationExpired} from "../utils/Date";
@@ -166,8 +159,7 @@ class OrganisationDetail extends React.Component {
 
     getUsersTab = organisation => {
         return (<div key="users" name="users"
-                     label={I18n.t("home.tabs.orgUsers")}
-                     icon={<MembersIcon/>}>
+                     label={I18n.t("home.tabs.orgUsers")}>
             <Users {...this.props}
                    organisation={organisation}
                    adminSearch={false}/>
@@ -179,7 +171,6 @@ class OrganisationDetail extends React.Component {
         const isOrgAdmin = isUserAllowed(ROLES.ORG_ADMIN, user, organisation.id);
         return (<div key="admins" name="admins"
                      label={I18n.t("home.tabs.orgAdmins", {count: organisation.organisation_memberships.length})}
-                     icon={<PlatformAdminIcon/>}
                      notifier={expiredInvitations && isOrgAdmin}>
             <OrganisationAdmins {...this.props} organisation={organisation}
                                 refresh={callback => this.componentDidMount(callback)}/>
@@ -188,8 +179,7 @@ class OrganisationDetail extends React.Component {
 
     getServicesTab = organisation => {
         return (<div key="services" name="services"
-                     label={I18n.t("home.tabs.orgServices", {count: organisation.services.length})}
-                     icon={<ServicesIcon/>}>
+                     label={I18n.t("home.tabs.orgServices", {count: organisation.services.length})}>
             <OrganisationServices {...this.props} organisation={organisation}
                                   refresh={callback => this.componentDidMount(callback)}/>
         </div>);
@@ -197,8 +187,7 @@ class OrganisationDetail extends React.Component {
 
     getAPIKeysTab = (organisation, user) => {
         return (<div key="keys" name="keys"
-                     label={I18n.t("home.tabs.apikeys", {count: (organisation.api_keys || []).length})}
-                     icon={<ApiKeysIcon/>}>
+                     label={I18n.t("home.tabs.apikeys", {count: (organisation.api_keys || []).length})}>
             <ApiKeys {...this.props} organisation={organisation} user={user}
                      refresh={callback => this.componentDidMount(callback)}/>
         </div>);
@@ -206,8 +195,7 @@ class OrganisationDetail extends React.Component {
 
     getCollaborationsTab = organisation => {
         return (<div key="collaborations" name="collaborations"
-                     label={I18n.t("home.tabs.orgCollaborations", {count: (organisation.collaborations || []).length})}
-                     icon={<CollaborationsIcon/>}>
+                     label={I18n.t("home.tabs.orgCollaborations", {count: (organisation.collaborations || []).length})}>
             <Collaborations {...this.props}
                             collaborations={organisation.collaborations}
                             organisation={organisation}/>
@@ -219,8 +207,7 @@ class OrganisationDetail extends React.Component {
         const tabLabel = I18n.t("home.tabs.collaborationRequests", {count: (organisation.collaboration_requests || []).length});
         return (<div key="collaboration_requests" name="collaboration_requests"
                      label={tabLabel}
-                     notifier={crl > 0 ? crl : null}
-                     icon={<CollaborationRequestsIcon/>}>
+                     notifier={crl > 0 ? crl : null}>
             <CollaborationRequests {...this.props} organisation={organisation}/>
         </div>)
 
@@ -243,7 +230,6 @@ class OrganisationDetail extends React.Component {
             <div key="serviceConnectionRequests"
                  name="serviceConnectionRequests"
                  label={I18n.t("home.tabs.serviceConnectionRequests")}
-                 icon={<ServiceConnectionRequestsIcon/>}
                  notifier={nbr > 0 ? nbr : null}>
                 <ServiceConnectionRequests
                     refresh={callback => this.componentDidMount(callback)}
