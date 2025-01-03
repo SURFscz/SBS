@@ -18,15 +18,11 @@
         thead {
             th {
                 &.name {
-                    width: 25%;
+                    width: 20%;
                 }
 
                 &.schac_home_organisation {
                     width: 15%;
-                }
-
-                &.affiliation {
-                    width: 20%;
                 }
 
                 &.username {
@@ -35,6 +31,20 @@
 
                 &.uid {
                     width: 25%;
+                }
+
+                &.collaborations {
+                    width: 20%;
+                }
+            }
+        }
+
+        tbody {
+            ul {
+                list-style: initial;
+
+                li {
+                    margin-left: 15px;
                 }
             }
         }

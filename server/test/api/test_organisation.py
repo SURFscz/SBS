@@ -335,7 +335,7 @@ class TestOrganisation(AbstractTest):
             .join(OrganisationMembership.user) \
             .join(OrganisationMembership.organisation) \
             .filter(Organisation.name == unihard_name) \
-            .filter(User.uid == "urn:mary")\
+            .filter(User.uid == "urn:mary") \
             .one()
         mary_admin.role = "manager"
         self.save_entity(mary_admin)
@@ -485,8 +485,7 @@ class TestOrganisation(AbstractTest):
         self.login("urn:john")
         organisation = self.find_entity_by_name(Organisation, unihard_name)
         res = self.get(f"/api/organisations/{organisation.id}/users", query_data={"q": "jane"}, with_basic_auth=False)
-        for attr in "last_accessed_date", "second_factor_auth":
-            self.assertTrue(attr in res[0])
+        self.assertEqual(1, len(res))
 
     def test_search_users_eppn(self):
         self.login("urn:paul")
@@ -500,7 +499,9 @@ class TestOrganisation(AbstractTest):
         organisation = self.find_entity_by_name(Organisation, unihard_name)
         res = self.get(f"/api/organisations/{organisation.id}/invites", query_data={"q": "iou"}, with_basic_auth=False)
         self.assertEqual(1, len(res))
-        self.assertEqual(res[0]["invitee_email"], "curious@ex.org")
+        invitation = res[0]
+        self.assertEqual(invitation["invitee_email"], "curious@ex.org")
+        self.assertEqual(invitation["collaboration_memberships"][0]["collaboration"]["name"], co_ai_computing_name)
 
     def test_name_by_id(self):
         self.login("urn:harry")

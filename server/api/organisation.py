@@ -496,6 +496,7 @@ def delete_organisation(organisation_id):
 @organisation_api.route("/<organisation_id>/users", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def search_users(organisation_id):
+    organisation_id = int(organisation_id)
     confirm_organisation_admin_or_manager(organisation_id)
     wildcard = f"%{query_param('q')}%"
     conditions = [User.name.ilike(wildcard),
@@ -509,10 +510,7 @@ def search_users(organisation_id):
         .filter(Organisation.id == organisation_id) \
         .filter(or_(*conditions)) \
         .all()
-    if is_application_admin():
-        return users, 200
-    else:
-        return [user.allowed_attr_view([organisation_id], False) for user in users], 200
+    return [user.allowed_attr_view([organisation_id], False) for user in users], 200
 
 
 @organisation_api.route("/<organisation_id>/invites", methods=["GET"], strict_slashes=False)
@@ -520,9 +518,14 @@ def search_users(organisation_id):
 def search_invites(organisation_id):
     confirm_organisation_admin_or_manager(organisation_id)
     wildcard = f"%{query_param('q')}%"
-    return Invitation.query \
-        .join(Invitation.collaboration) \
-        .join(Collaboration.organisation) \
+    invitations = Invitation \
+        .query \
+        .join(Invitation.collaboration).join(Collaboration.organisation) \
         .filter(Organisation.id == organisation_id) \
         .filter(Invitation.invitee_email.ilike(wildcard)) \
-        .all(), 200
+        .all()
+    invitations_json = jsonify(invitations).json
+    for invitation_json in invitations_json:
+        co = [invitation for invitation in invitations if invitation.id == invitation_json["id"]][0].collaboration
+        invitation_json["collaboration_memberships"] = [{"collaboration": {"id": co.id, "name": co.name}}]
+    return invitations_json, 200

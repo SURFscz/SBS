@@ -94,12 +94,12 @@ class User(Base, db.Model):
             "affiliation": self.affiliation,
             "scoped_affiliation": self.scoped_affiliation,
             "eduperson_principal_name": self.eduperson_principal_name,
-            "mfa_reset_token": self.mfa_reset_token
+            "mfa_reset_token": self.mfa_reset_token,
+            "collaboration_memberships": [cm.allowed_attr_view() for cm in
+                                          self.collaboration_memberships if
+                                          cm.collaboration.organisation_id in organisation_identifiers]
         }
         if include_details:
-            result["collaboration_memberships"] = [cm.allowed_attr_view() for cm in
-                                                   self.collaboration_memberships if
-                                                   cm.collaboration.organisation_id in organisation_identifiers]
             result["organisation_memberships"] = [om.allowed_attr_view() for om in
                                                   self.organisation_memberships if
                                                   om.organisation_id in organisation_identifiers]

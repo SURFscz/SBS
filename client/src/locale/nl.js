@@ -223,7 +223,8 @@ const nl = {
             showSsh: "Toon",
             ssh: {
                 title: "Publieke SSH-sleutels van {{name}}"
-            }
+            },
+            collaborations: "Samenwerkingen"
         },
         orgMembers: {
             title: "Organisatiebeheerders & -managers",
