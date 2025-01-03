@@ -76,7 +76,7 @@ class Groups extends React.Component {
     }
 
     componentDidMount = callback => {
-        const {groupId} = this.props.match.params;
+        const groupId = this.props.match.params.groupId || this.props.groupId;
         let selectedGroup = this.getSelectedGroup();
         const {collaboration} = this.props;
 

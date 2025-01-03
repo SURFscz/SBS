@@ -2372,6 +2372,7 @@ const nl = {
         update: "Opslaan",
         alreadyMember: "je bent al een lid van deze samenwerking en je hoeft geen nieuwe uitnodiging te accepteren.",
         alreadyMemberHeader: "Reeds lid",
+        groups: "Groepen",
         status: {
             name: "Je lidmaatschap",
             active: "Actief",

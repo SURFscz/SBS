@@ -2372,6 +2372,7 @@ const en = {
         update: "Update",
         alreadyMember: "You are already a member of this CO and do not need to accept a new invitation.",
         alreadyMemberHeader: "Already member",
+        groups: "Groups",
         status: {
             name: "Your membership",
             active: "Active",

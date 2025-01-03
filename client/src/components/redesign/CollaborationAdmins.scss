@@ -73,10 +73,10 @@
                 }
 
                 &.name {
-                    width: 35%;
+                    width: 25%;
 
                     &.no-admin-columns {
-                        width: 50%;
+                        width: 40%;
                     }
                 }
 
@@ -94,8 +94,12 @@
                 }
 
                 &.expiry_date {
-                    width: 25%;
+                    width: 20%;
                     padding-left: calc(var(--sds--space--2) + 5px);
+                }
+
+                &.groups {
+                    width: 15%;
                 }
 
                 &.impersonate {
