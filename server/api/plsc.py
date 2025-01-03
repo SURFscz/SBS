@@ -1,3 +1,6 @@
+import datetime
+
+import pytz
 from flask import Blueprint, jsonify, Response, current_app, stream_with_context
 from sqlalchemy import text
 
@@ -6,6 +9,7 @@ from server.auth.security import confirm_read_access, confirm_ipaddress_access
 from server.db.db import db
 from server.db.domain import IpNetwork
 from server.db.logo_mixin import logo_url
+from server.tools import dt_today, inactivity
 
 plsc_api = Blueprint("plsc_api", __name__, url_prefix="/api/plsc")
 
@@ -123,10 +127,14 @@ def internal_sync():
         result["services"] = services
         rs = conn.execute(text("SELECT id, uid, name, given_name, family_name, email, scoped_affiliation, "
                                "eduperson_principal_name, username, last_login_date, suspended FROM users"))
+        today = dt_today()
         for row in rs:
+            last_login_date = pytz.utc.localize(row[9] if row[9] else datetime.datetime(2000, 1, 1, 0, 0, 0, 0))
+            inactive_days = today - last_login_date
+            rounded_inactive_days_nbr = inactivity(inactive_days.days)
             user_row = {"id": row[0], "uid": row[1], "name": row[2], "given_name": row[3], "family_name": row[4],
                         "email": row[5], "scoped_affiliation": row[6], "eduperson_principal_name": row[7],
-                        "username": row[8], "last_login_date": str(row[9]),
+                        "username": row[8], "sram_inactive_days": rounded_inactive_days_nbr,
                         "status": "suspended" if row[10] else "active"}
             rs_ssh_keys = conn.execute(text(f"SELECT ssh_value FROM ssh_keys WHERE user_id = {row[0]}"))
             user_row["ssh_keys"] = [r[0] for r in rs_ssh_keys]
