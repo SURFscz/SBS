@@ -411,11 +411,11 @@ class CollaborationAdmins extends React.Component {
                     </a>
                 </div>
                 {showResendInvite &&
-                <div onClick={this.resendFromActionMenu(entity.id, true)}>
-                    <Tooltip tip={I18n.t("models.orgMembers.resendInvitationTooltip")}
-                             standalone={true}
-                             children={<FontAwesomeIcon icon="voicemail"/>}/>
-                </div>}
+                    <div onClick={this.resendFromActionMenu(entity.id, true)}>
+                        <Tooltip tip={I18n.t("models.orgMembers.resendInvitationTooltip")}
+                                 standalone={true}
+                                 children={<FontAwesomeIcon icon="voicemail"/>}/>
+                    </div>}
             </div>);
     }
 
@@ -437,43 +437,43 @@ class CollaborationAdmins extends React.Component {
         return (
             <div className="admin-actions">
                 {(any && isAdminOfCollaboration && !disabled) &&
-                <div>
-                    <Tooltip standalone={true}
-                             tip={disabled ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}
-                             children={<Button onClick={this.remove(true)}
-                                               small={true}
-                                               txt={I18n.t("models.orgMembers.remove")}
-                                               icon={<ThrashIcon/>}/>}/>
-                </div>}
+                    <div>
+                        <Tooltip standalone={true}
+                                 tip={disabled ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}
+                                 children={<Button onClick={this.remove(true)}
+                                                   small={true}
+                                                   txt={I18n.t("models.orgMembers.remove")}
+                                                   icon={<ThrashIcon/>}/>}/>
+                    </div>}
                 {(any && (isAdminOfCollaboration || collaboration.disclose_email_information) && !disabled)
-                &&
-                <div>
-                    <Tooltip standalone={true}
-                             tip={disabled ? I18n.t("models.orgMembers.mailTooltipDisabled") : I18n.t("models.orgMembers.mailTooltip")}
-                             children={<a href={`${disabled ? "" : "mailto:"}${bcc}${hrefValue}`}
-                                          className="sds--btn sds--btn--primary sds--btn--small"
-                                          style={{border: "none", cursor: "default"}}
-                                          rel="noopener noreferrer" onClick={e => {
-                                 if (disabled) {
-                                     stopEvent(e);
-                                 } else {
-                                     return true;
-                                 }
-                             }}>
-                                 {I18n.t("models.orgMembers.mail")}<EmailIcon/>
-                             </a>}/>
+                    &&
+                    <div>
+                        <Tooltip standalone={true}
+                                 tip={disabled ? I18n.t("models.orgMembers.mailTooltipDisabled") : I18n.t("models.orgMembers.mailTooltip")}
+                                 children={<a href={`${disabled ? "" : "mailto:"}${bcc}${hrefValue}`}
+                                              className="sds--btn sds--btn--primary sds--btn--small"
+                                              style={{border: "none", cursor: "default"}}
+                                              rel="noopener noreferrer" onClick={e => {
+                                     if (disabled) {
+                                         stopEvent(e);
+                                     } else {
+                                         return true;
+                                     }
+                                 }}>
+                                     {I18n.t("models.orgMembers.mail")}<EmailIcon/>
+                                 </a>}/>
 
-                </div>}
+                    </div>}
                 {(any && isAdminOfCollaboration && showResendInvite) &&
-                <div>
-                    <Tooltip
-                        tip={disabled ? I18n.t("models.orgMembers.resendTooltipDisabled") : I18n.t("models.orgMembers.resendTooltip")}
-                        standalone={true}
-                        children={<Button onClick={this.resend(true)}
-                                          small={true}
-                                          txt={I18n.t("models.orgMembers.resend")}
-                                          icon={<FontAwesomeIcon icon="voicemail"/>}/>}/>
-                </div>}
+                    <div>
+                        <Tooltip
+                            tip={disabled ? I18n.t("models.orgMembers.resendTooltipDisabled") : I18n.t("models.orgMembers.resendTooltip")}
+                            standalone={true}
+                            children={<Button onClick={this.resend(true)}
+                                              small={true}
+                                              txt={I18n.t("models.orgMembers.resend")}
+                                              icon={<FontAwesomeIcon icon="voicemail"/>}/>}/>
+                    </div>}
 
             </div>);
     }
@@ -558,6 +558,28 @@ class CollaborationAdmins extends React.Component {
         return selectedMembers;
     }
 
+    gotoGroup = (e, collaborationId, groupId) => {
+        if (e.metaKey || e.ctrlKey) {
+            return;
+        }
+        stopEvent(e);
+        const {tabChanged} = this.props;
+        tabChanged("groups", collaborationId, groupId);
+    };
+
+    renderGroups = (collaborationMembership, collaboration) => {
+        const groups = collaboration.groups
+            .filter(group => group.collaboration_memberships.some(cm => cm.user_id === collaborationMembership.user_id));
+        return (
+            <ul>
+                {groups.map((group, index) => <li key={index}>
+                    <a href={`/collaborations/${collaboration.id}/groups/${group.id}`}
+                       onClick={e => this.gotoGroup(e, collaboration.id, group.id)}>{group.name}</a>
+                </li>)}
+            </ul>
+        );
+    }
+
     searchCallback = resultAfterSearch => {
         this.setState({resultAfterSearch: resultAfterSearch});
     }
@@ -609,15 +631,15 @@ class CollaborationAdmins extends React.Component {
         const isOpen = openExpirationFields[this.getIdentifier(entity)]
         return (<div className="date-field-container">
             {!isOpen &&
-            <div className="expiration-toggle" onClick={() => this.toggleExpirationDateField(entity)}>
-                <div className="text-container">
-                    {entity.expiry_date && <span className={`status ${className}`}>{status}</span>}
-                    <span className="msg">{msg}</span>
-                </div>
-                <div className="chevron-container" onClick={() => this.toggleExpirationDateField(entity)}>
-                    <ChevronDown/>
-                </div>
-            </div>}
+                <div className="expiration-toggle" onClick={() => this.toggleExpirationDateField(entity)}>
+                    <div className="text-container">
+                        {entity.expiry_date && <span className={`status ${className}`}>{status}</span>}
+                        <span className="msg">{msg}</span>
+                    </div>
+                    <div className="chevron-container" onClick={() => this.toggleExpirationDateField(entity)}>
+                        <ChevronDown/>
+                    </div>
+                </div>}
             {isOpen && <DateField value={expiryDate}
                                   disabled={!adminOfCollaboration}
                                   onChange={e => this.updateExpiryDate(entity, e, true)}
@@ -650,7 +672,7 @@ class CollaborationAdmins extends React.Component {
         invites.forEach(invite => invite.invite = true);
         const hideAdminColumns = !isAdminOfCollaboration || showMemberView;
         let i = 0;
-        let columns = [
+        const columns = [
             {
                 nonSortable: true,
                 key: "check",
@@ -667,11 +689,11 @@ class CollaborationAdmins extends React.Component {
                 header: "",
                 mapper: entity => <div className="member-icon">
                     {entity.invite &&
-                    <Tooltip children={<InviteIcon/>} tip={I18n.t("tooltips.invitations")} standalone={true}/>}
+                        <Tooltip children={<InviteIcon/>} tip={I18n.t("tooltips.invitations")} standalone={true}/>}
                     {(!entity.invite && entity.role === "admin") &&
-                    <Tooltip children={<UserIcon/>} standalone={true} tip={I18n.t("tooltips.admin")}/>}
+                        <Tooltip children={<UserIcon/>} standalone={true} tip={I18n.t("tooltips.admin")}/>}
                     {(!entity.invite && entity.role !== "admin") &&
-                    <Tooltip children={<MembersIcon/>} standalone={true} tip={I18n.t("tooltips.user")}/>}
+                        <Tooltip children={<MembersIcon/>} standalone={true} tip={I18n.t("tooltips.user")}/>}
 
                 </div>
             },
@@ -696,7 +718,7 @@ class CollaborationAdmins extends React.Component {
                 header: I18n.t("models.users.role"),
                 mapper: entity => this.renderSelectRole(entity, isAdminOfCollaboration)
             },
-            {
+            hideAdminColumns ? null : {
                 key: "expiry_date",
                 customSort: expiryDateCustomSort,
                 header: I18n.t("organisationMembership.member"),
@@ -705,9 +727,10 @@ class CollaborationAdmins extends React.Component {
                         const isExpired = entity.invite && isInvitationExpired(entity);
                         return entity.invite ?
                             <div className={"chip-container"}>
-                                <Chip label={isExpired ? I18n.t("models.orgMembers.expiredAt", {date: shortDateFromEpoch(entity.expiry_date)}) :
-                                I18n.t("models.orgMembers.inviteSend", {date: shortDateFromEpoch(entity.created_at)})}
-                                  type={isExpired ? ChipType.Status_error: ChipType.Status_info}/>
+                                <Chip
+                                    label={isExpired ? I18n.t("models.orgMembers.expiredAt", {date: shortDateFromEpoch(entity.expiry_date)}) :
+                                        I18n.t("models.orgMembers.inviteSend", {date: shortDateFromEpoch(entity.created_at)})}
+                                    type={isExpired ? ChipType.Status_error : ChipType.Status_info}/>
                             </div>
                             : this.renderExpiryDate(entity, openExpirationFields, isAdminOfCollaboration);
                     }
@@ -715,15 +738,19 @@ class CollaborationAdmins extends React.Component {
                 }
             },
             {
+                key: "groups",
+                nonSortable: true,
+                hasLink: true,
+                header: I18n.t("organisationMembership.groups"),
+                mapper: entity => entity.invite ? null : this.renderGroups(entity, collaboration)
+            },
+            hideAdminColumns ? null : {
                 nonSortable: true,
                 key: "impersonate",
                 header: "",
                 mapper: this.getImpersonateMapper
             },
-        ];
-        if (hideAdminColumns) {
-            columns = columns.filter(col => col.key !== "impersonate" && col.key !== "expiry_date");
-        }
+        ].filter(column => !isEmpty(column));
         const doHideInvitees = hideInvitees || showMemberView;
         const filteredEntities = this.filterEntities(isAdminView, members, filterValue, collaboration, doHideInvitees,
             invites);

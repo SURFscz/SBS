@@ -71,7 +71,8 @@ class CollaborationDetail extends React.Component {
             confirmationQuestion: "",
             lastAdminWarning: "",
             joinRequestDialogOpen: false,
-            socketSubscribed: false
+            socketSubscribed: false,
+            groupId: null
         }
     }
 
@@ -393,7 +394,10 @@ class CollaborationDetail extends React.Component {
                      name="admins"
                      label={I18n.t("home.tabs.coAdmins")}
                      notifier={expiredInvitations}>
-            <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={true}
+            <CollaborationAdmins {...this.props}
+                                 collaboration={collaboration}
+                                 isAdminView={true}
+                                 tabChanged={this.tabChanged}
                                  refresh={callback => this.componentDidMount(callback)}/>
         </div>)
     }
@@ -407,7 +411,10 @@ class CollaborationDetail extends React.Component {
                      label={I18n.t("home.tabs.members")}
                      readOnly={isJoinRequest}
                      notifier={expiredInvitations && !showMemberView}>
-            {!isJoinRequest && <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={false}
+            {!isJoinRequest && <CollaborationAdmins {...this.props}
+                                                    collaboration={collaboration}
+                                                    isAdminView={false}
+                                                    tabChanged={this.tabChanged}
                                                     showMemberView={showMemberView}
                                                     refresh={callback => this.componentDidMount(callback)}/>}
         </div>)
@@ -417,11 +424,15 @@ class CollaborationDetail extends React.Component {
         if (isJoinRequest) {
             return null;
         }
+        const {groupId} = this.state;
         return (<div key="groups" name="groups"
                      label={I18n.t("home.tabs.groups", {count: (collaboration.groups || []).length})}
                      readOnly={isJoinRequest}
         >
-            {!isJoinRequest && <Groups {...this.props} collaboration={collaboration} showMemberView={showMemberView}
+            {!isJoinRequest && <Groups {...this.props}
+                                       collaboration={collaboration}
+                                       groupId={groupId}
+                                       showMemberView={showMemberView}
                                        refresh={callback => this.componentDidMount(callback)}/>}
         </div>)
     }
@@ -521,16 +532,17 @@ class CollaborationDetail extends React.Component {
         }
     };
 
-    tabChanged = (name, id) => {
+    tabChanged = (name, id, groupIdentifier = null) => {
         const collId = id || this.state.collaboration.id;
         const {collaboration, adminOfCollaboration, orgManager} = this.state;
         const {user, config} = this.props;
         if (collaboration) {
             this.updateAppStore(user, config, collaboration, adminOfCollaboration, orgManager);
         }
-        const {groupId} = this.props.match.params;
+        const groupId = groupIdentifier || this.props.match.params.groupId;
         const groupIdPart = !isEmpty(groupId) && name === "groups" ? `/${groupId}` : "";
-        this.setState({tab: name}, () => this.props.history.replace(`/collaborations/${collId}/${name}${groupIdPart}`));
+        this.setState({tab: name, groupId: groupId}, () => this.props.history.replace(`/collaborations/${collId}/${name}${groupIdPart}`,
+            {groupId: groupId}));
     }
 
 
