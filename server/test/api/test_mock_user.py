@@ -54,3 +54,14 @@ class TestMockUser(AbstractTest):
         verified_data = XMLVerifier().verify(doc, x509_cert=cert).signed_xml
         user_uid = verified_data.attrib.get("user_id")
         self.assertEqual("urn:sarah", user_uid)
+
+    @allow_for_mock_user_api
+    def test_eb_stop_interrupt_flow(self):
+        self.login()
+        self.delete("/api/mock/stop_interrupt_flow", with_basic_auth=False)
+        user = self.client.get("/api/users/me").json
+        self.assertEqual(user["guest"], True)
+
+    def test_eb_stop_interrupt_flow_forbidden(self):
+        self.login()
+        self.delete("/api/mock/stop_interrupt_flow", with_basic_auth=False, response_status_code=403)

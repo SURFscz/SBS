@@ -80,5 +80,5 @@ def eb_interrupt_data():
 def eb_stop_interrupt_flow():
     if not os.environ.get("ALLOW_MOCK_USER_API", None):
         raise Forbidden()
-    session["eb_interrupt_flow"] = None
-    return {}, 200
+    session.clear()
+    return {}, 204
