@@ -32,6 +32,16 @@ class TestPlsc(AbstractTest):
         self.assertListEqual([user_sarah_name, "user_deletion_warning", "user_gets_deleted"], suspended_user_names)
         self.assertEqual(15, len([user["name"] for user in users if user["status"] == "active"]))
 
+    def test_sram_inactive_days(self):
+        sarah = self.find_entity_by_name(User, user_sarah_name)
+        sarah.last_login_date = None
+        self.save_entity(sarah)
+
+        res = self.get("/api/plsc/syncing")
+        users_ = res["users"]
+        sarah = next(u for u in users_ if u["name"] == user_sarah_name)
+        self.assertTrue(sarah["sram_inactive_days"] > (24 * 365))
+
     def assert_sync_result(self, res):
         self.assertEqual(4, len(res["organisations"]))
         logo = res["organisations"][0]["logo"]
@@ -44,13 +54,11 @@ class TestPlsc(AbstractTest):
         self.assertEqual("sarah@uni-franeker.nl", sarah["email"])
         self.assertEqual("sarah", sarah["username"])
         self.assertEqual("some-lame-key", sarah["ssh_keys"][0])
-        # Edge case due to the seed data - just ensure it does not break
-        # Nobody has a last_login_date == None anymore
-        # self.assertEqual("None", sarah["last_login_date"])
+        self.assertEqual(1, sarah["sram_inactive_days"])
         boss = next(u for u in users_ if u["name"] == user_boss_name)
         self.assertEqual(2, len(boss["accepted_aups"]))
         user_gets_deleted = next(u for u in users_ if u["name"] == "user_gets_deleted")
-        self.assertIsNotNone(user_gets_deleted["last_login_date"])
+        self.assertEqual(365, user_gets_deleted["sram_inactive_days"])
         services_ = res["services"]
         self.assertEqual(12, len(services_))
         wiki = next(s for s in services_ if s["entity_id"] == service_wiki_entity_id)
