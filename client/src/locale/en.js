@@ -223,7 +223,8 @@ const en = {
             showSsh: "Show",
             ssh: {
                 title: "Public SSH keys of {{name}}"
-            }
+            },
+            collaborations: "Collaborations"
         },
         orgMembers: {
             title: "Organisation admins & managers",

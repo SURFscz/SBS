@@ -226,7 +226,14 @@ def user_query():
                   User.uid.ilike(wildcard),
                   User.eduperson_principal_name.ilike(wildcard),
                   User.email.ilike(wildcard)]
-    return User.query.filter(or_(*conditions)).all(), 200
+    users = User.query.filter(or_(*conditions)).all()
+    users_json = jsonify(users).json
+    for user_json in users_json:
+        memberships = [u for u in users if u.id == user_json["id"]][0].collaboration_memberships
+        memberships_json = [{"collaboration": {"id": m.collaboration.id, "name": m.collaboration.name}} for m in
+                            memberships]
+        user_json["collaboration_memberships"] = memberships_json
+    return users_json, 200
 
 
 @user_api.route("/platform_admins", strict_slashes=False)

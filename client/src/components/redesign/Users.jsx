@@ -98,6 +98,13 @@ class Users extends React.Component {
         this.props.history.push(`/collaborations/${invitation.collaboration_id}`);
     };
 
+    gotoCollaboration = (e, collaborationId) => {
+        if (e.metaKey || e.ctrlKey) {
+            return;
+        }
+        stopEvent(e);
+        this.props.history.push(`/collaborations/${collaborationId}`);
+    };
 
     render() {
         const {searching, users, invitations, moreToShow, noResults} = this.state;
@@ -127,11 +134,6 @@ class Users extends React.Component {
                 mapper: user => user.isUser && <InstituteColumn entity={{user: user}} currentUser={currentUser}/>
             },
             {
-                key: "affiliation",
-                header: I18n.t("models.allUsers.affiliation"),
-                mapper: user => user.isUser ? user.affiliation : "-"
-            },
-            {
                 key: "username",
                 header: I18n.t("models.allUsers.username"),
                 mapper: user => user.isUser ? user.username : "-"
@@ -140,7 +142,20 @@ class Users extends React.Component {
                 key: "uid",
                 header: I18n.t("models.allUsers.uid"),
                 mapper: user => user.isUser ? user.uid : "-"
-            }];
+            },
+            {
+                key: "collaborations",
+                nonSortable: true,
+                hasLink: true,
+                header: I18n.t("models.allUsers.collaborations"),
+                mapper: user => <ul>
+                    {user.collaboration_memberships.map((cm, index) => <li key={index}>
+                        <a href={`/collaborations/${cm.collaboration.id}`}
+                           onClick={e => this.gotoCollaboration(e, cm.collaboration.id)}>{cm.collaboration.name}</a>
+                    </li>)}
+                </ul>
+            }
+        ];
         const showImpersonation = currentUser.admin && this.props.config.impersonation_allowed;
         if (showImpersonation) {
             columns.push({
@@ -180,7 +195,7 @@ class Users extends React.Component {
                       modelName="allUsers"
                       defaultSort="name"
                       filters={moreToShow && this.moreResultsAvailable()}
-                      columns={columns}
+                      columns={columns.filter(coll => !isEmpty(coll))}
                       title={title}
                       customNoEntities={" "}
                       loading={false}
