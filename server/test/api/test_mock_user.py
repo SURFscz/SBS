@@ -55,6 +55,11 @@ class TestMockUser(AbstractTest):
         user_uid = verified_data.attrib.get("user_id")
         self.assertEqual("urn:sarah", user_uid)
 
+    def test_eb_interrupt_data_forbidden(self):
+        self.login()
+        self.get("/api/mock/interrupt_data", query_data={"user_uid": "urn:sarah"}, with_basic_auth=False,
+                 response_status_code=403)
+
     @allow_for_mock_user_api
     def test_eb_stop_interrupt_flow(self):
         self.login()
