@@ -14,7 +14,6 @@ import {Toaster, ToasterType} from "@surfnet/sds";
 import FeedbackDialog from "../components/Feedback";
 import {ReactComponent as ResetTokenIcon} from "../icons/reset-token.svg";
 import {redirectToProxyLocation} from "../utils/ProxyAuthz";
-import {getParameterByName} from "../utils/QueryParameters";
 
 const TOTP_ATTRIBUTE_NAME = "totp";
 const NEW_TOTP_ATTRIBUTE_NAME = "newTotp";
@@ -49,9 +48,6 @@ class SecondFactorAuthentication extends React.Component {
     }
 
     componentDidMount() {
-        const state = getParameterByName("state", window.location.search);
-        debugger; // eslint-disable-line no-debugger
-        console.log(state);
         const {user, update} = this.props;
         if (user.rate_limited) {
             this.setState({rate_limited: true, loading: false});
@@ -223,7 +219,6 @@ class SecondFactorAuthentication extends React.Component {
         } else {
             verify2fa(totp.join("")).then(r => {
                 this.props.refreshUser(user => { // eslint-disable-line no-unused-vars
-                    debugger; // eslint-disable-line no-debugger
                     redirectToProxyLocation(r.location, this.props.history, config);
                 });
             }).catch(e => {

@@ -375,11 +375,6 @@ class TestUserSaml(AbstractTest):
             signed_root_str = etree.tostring(signed_root)
             b64encoded_signed_root = base64.b64encode(signed_root_str)
             url = self.app.app_config.engine_block.public_key_url
-            # responses.add(responses.GET,
-            #               url,
-            #               body=cert,
-            #               status=200,
-            #               content_type="application/x-pem-file")
             responses.add(responses.GET, url, body=public_key, status=200, content_type="application/x-pem-file")
             with requests.Session():
                 self.client.post(f"/api/users/interrupt?error_status={UserCode.SECOND_FA_REQUIRED.value}",
