@@ -2622,6 +2622,8 @@ const en = {
         invitations: "Organisation invitations",
         collaborations: "Collaborations",
         organisation_memberships: "Memberships",
+        api_keys: "API tokens",
+        apiKeysTooltip: "An API token linked to one or more units can only be used to access entities that are also linked to the same unit(s)",
         collaboration: "Relevant units (e.g. department or project)",
         unitsPlaceHolder: "Optionally, select a unit",
         collaborationRequest: "Organisational units (optional)",

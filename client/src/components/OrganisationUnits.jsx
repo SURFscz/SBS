@@ -55,7 +55,7 @@ export const OrganisationUnits = ({units, setUnits, setDuplicated}) => {
 
     const hasReferences = res => {
         return !isEmpty(res.collaborations) || !isEmpty(res.invitations)
-            || !isEmpty(res.collaboration_requests);
+            || !isEmpty(res.collaboration_requests) || !isEmpty(res.api_keys);
     }
 
     const removeAfterConfirmation = () => {
@@ -97,7 +97,7 @@ export const OrganisationUnits = ({units, setUnits, setDuplicated}) => {
                 <p>{I18n.t("units.used")}</p>
                 <ul>
                     {
-                        ["collaborations", "invitations", "collaboration_requests", "organisation_memberships"]
+                        ["collaborations", "invitations", "collaboration_requests", "organisation_memberships", "api_keys"]
                             .filter(name => !isEmpty(references[name]))
                             .map((name, index) =>
                                 <li key={index}>

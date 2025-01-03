@@ -15,8 +15,13 @@ class TestApiKey(AbstractTest):
         organisation = self.find_entity_by_name(Organisation, unihard_name)
 
         api_key = self.post("/api/api_keys",
-                            body={"organisation_id": organisation.id, "hashed_secret": secret, "description": "Test"})
+                            body={"organisation_id": organisation.id,
+                                  "hashed_secret": secret,
+                                  "description": "Test",
+                                  "units": [{"id": organisation.units[0].id, "organisation_id": organisation.id}]
+                                  })
         self.assertIsNotNone(api_key["id"])
+        self.assertIsNotNone(api_key["units"][0]["id"])
         organisation = self.find_entity_by_name(Organisation, unihard_name)
         self.assertEqual(organisation.id, api_key["organisation_id"])
         self.assertNotEqual(secret, api_key["hashed_secret"])

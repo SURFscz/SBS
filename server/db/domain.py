@@ -166,6 +166,14 @@ collaboration_units_association = db.Table(
     db.Column("unit_id", db.Integer(), db.ForeignKey("units.id", ondelete="CASCADE"), primary_key=True),
 )
 
+api_key_units_association = db.Table(
+    "api_key_units",
+    metadata,
+    db.Column("api_key_id", db.Integer(), db.ForeignKey("api_keys.id", ondelete="CASCADE"),
+              primary_key=True),
+    db.Column("unit_id", db.Integer(), db.ForeignKey("units.id", ondelete="CASCADE"), primary_key=True),
+)
+
 organisation_membership_units_association = db.Table(
     "organisation_membership_units",
     metadata,
@@ -431,6 +439,7 @@ class Unit(Base, db.Model):
     collaboration_requests = db.relationship("CollaborationRequest",
                                              secondary=collaboration_requests_units_association, lazy="select",
                                              back_populates="units")
+    api_keys = db.relationship("ApiKey", secondary=api_key_units_association, lazy="select", back_populates="units")
 
     audit_log_exclude = True
 
@@ -473,8 +482,7 @@ class Organisation(Base, db.Model, LogoMixin):
     organisation_invitations = db.relationship("OrganisationInvitation", back_populates="organisation",
                                                cascade="all, delete-orphan",
                                                passive_deletes=True)
-    api_keys = db.relationship("ApiKey", back_populates="organisation",
-                               cascade="delete, delete-orphan",
+    api_keys = db.relationship("ApiKey", back_populates="organisation", cascade="delete, delete-orphan",
                                passive_deletes=True)
     tags = db.relationship("Tag", back_populates="organisation", cascade="delete, delete-orphan", passive_deletes=True)
     organisation_aups = db.relationship("OrganisationAup", back_populates="organisation", cascade="all, delete-orphan",
@@ -781,6 +789,7 @@ class ApiKey(Base, db.Model, SecretMixin):
     description = db.Column("description", db.Text(), nullable=True)
     organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"))
     organisation = db.relationship("Organisation", back_populates="api_keys")
+    units = db.relationship("Unit", secondary=api_key_units_association, back_populates="api_keys", lazy="selectin")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)

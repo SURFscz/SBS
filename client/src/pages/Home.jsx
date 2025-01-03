@@ -2,10 +2,6 @@ import React from "react";
 import "./Home.scss";
 import I18n from "../locale/I18n";
 import {ReactComponent as Logo} from "../icons/ram.svg";
-import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
-import {ReactComponent as MembersIcon} from "../icons/single-neutral.svg";
-import {ReactComponent as PlatformAdminIcon} from "../icons/users.svg";
-import {ReactComponent as ServicesIcon} from "../icons/services.svg";
 import {AppStore} from "../stores/AppStore";
 import {getUserRequests, isUserServiceAdmin, rawGlobalUserRole, ROLES} from "../utils/UserRole";
 import Tabs from "../components/Tabs";
@@ -14,10 +10,8 @@ import UnitHeader from "../components/redesign/UnitHeader";
 import PlatformAdmins from "../components/redesign/PlatformAdmins";
 import Services from "../components/redesign/Services";
 import SpinnerField from "../components/redesign/SpinnerField";
-import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
 import Collaborations from "../components/redesign/Collaborations";
 import {isEmpty} from "../utils/Utils";
-import {ReactComponent as JoinRequestsIcon} from "../icons/single-neutral-question.svg";
 import Users from "../components/redesign/Users";
 import ServiceRequests from "../components/redesign/ServiceRequests";
 import EmptyCollaborations from "../components/redesign/EmptyCollaborations";
@@ -152,14 +146,14 @@ class Home extends React.Component {
 
     getOrganisationsTab = () =>
         <div key="organisations" name="organisations" label={I18n.t("home.tabs.organisations")}
-             icon={<OrganisationsIcon/>}>
+        >
             <Organisations {...this.props}/>
         </div>
 
     getPlatformAdminsTab = () => {
         return (<div key="platformAdmins" name="platformAdmins"
                      label={I18n.t("home.tabs.platformAdmins")}
-                     icon={<PlatformAdminIcon/>}>
+        >
             <PlatformAdmins {...this.props}/>
         </div>)
     }
@@ -167,7 +161,7 @@ class Home extends React.Component {
     getUsersTab = () => {
         return (<div key="users" name="users"
                      label={I18n.t("home.tabs.users")}
-                     icon={<MembersIcon/>}>
+        >
             <Users {...this.props}
                    adminSearch={true}/>
         </div>)
@@ -176,7 +170,7 @@ class Home extends React.Component {
     getServicesTab = () => {
         return (<div key="services" name="services"
                      label={I18n.t("home.tabs.services")}
-                     icon={<ServicesIcon/>}>
+        >
             <Services {...this.props}/>
         </div>)
     }
@@ -185,7 +179,7 @@ class Home extends React.Component {
         return (<div key="collaborations"
                      name="collaborations"
                      label={I18n.t("home.tabs.collaborations")}
-                     icon={<CollaborationsIcon/>}>
+        >
             <Collaborations {...this.props}/>
         </div>)
     }
@@ -193,7 +187,7 @@ class Home extends React.Component {
     getEmptyCollaborationsTab = () => {
         return (<div key="collaborations" name="collaborations"
                      label={I18n.t("home.tabs.collaborations", {count: 0})}
-                     icon={<CollaborationsIcon/>}>
+        >
             <EmptyCollaborations {...this.props}/>
         </div>)
     }
@@ -202,7 +196,7 @@ class Home extends React.Component {
         return (<div key="my_requests"
                      name="my_requests"
                      label={I18n.t("home.tabs.myRequests", {count: requests.length})}
-                     icon={<JoinRequestsIcon/>}>
+        >
             <MyRequests requests={requests}
                         standAlone={false}
                         refreshUserHook={refreshUserHook} {...this.props} />
@@ -213,8 +207,7 @@ class Home extends React.Component {
         return (<div key="service_requests"
                      name="service_requests"
                      label={I18n.t("home.tabs.serviceRequests", {count: serviceRequestCount ? serviceRequestCount : (service_requests || []).length})}
-                     notifier={openCount > 0 && !personal}
-                     icon={<ServicesIcon/>}>
+                     notifier={openCount > 0 && !personal}>
             <ServiceRequests {...this.props}
                              refreshUserHook={refreshUserHook}
                              personal={personal}

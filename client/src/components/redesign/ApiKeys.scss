@@ -11,10 +11,22 @@ table.apiKeys {
 
             &.description {
                 width: 40%;
+
+                &.with-units {
+                    width: 30%;
+                }
+            }
+
+            &.units {
+                width: 20%;
             }
 
             &.created_at {
                 width: 25%;
+
+                &.with-units {
+                    width: 15%;
+                }
             }
 
             &.trash {
@@ -29,6 +41,7 @@ table.apiKeys {
             &.trash {
                 text-align: right;
                 cursor: pointer;
+
                 &:hover {
                     color: var(--sds--color--red--400);
                 }
