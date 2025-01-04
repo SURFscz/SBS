@@ -94,6 +94,7 @@ def auth_filter(app_config):
         if not api_key:
             raise Unauthorized(description="Invalid API key")
         request_context.external_api_organisation = api_key.organisation
+        request_context.external_api_key = api_key
         logger = logging.getLogger("external_api")
         logger.info(f"Authorized API call for organisation {api_key.organisation.name} with key {api_key.description}")
 
