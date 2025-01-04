@@ -541,8 +541,10 @@ class CollaborationDetail extends React.Component {
         }
         const groupId = groupIdentifier || this.props.match.params.groupId;
         const groupIdPart = !isEmpty(groupId) && name === "groups" ? `/${groupId}` : "";
-        this.setState({tab: name, groupId: groupId}, () => this.props.history.replace(`/collaborations/${collId}/${name}${groupIdPart}`,
-            {groupId: groupId}));
+        this.props.history.push(`/collaborations/${collId}/${name}${groupIdPart}`, {groupId: groupId});
+        //Otherwise the changed history.location.state is not picked up in Groups.jsx
+        setTimeout(() => this.setState({tab: name}), isEmpty(groupIdPart) ? 0 : 175);
+
     }
 
 
