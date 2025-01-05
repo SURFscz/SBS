@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision 9078513615f6 (head)
+-- Dump of empty SBS database, alembic revision e3c5852cb374 (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,8 +21,27 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('9078513615f6');
+INSERT INTO `alembic_version` VALUES ('e3c5852cb374');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `api_key_units`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `api_key_units` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `api_key_id` int(11) NOT NULL,
+  `unit_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `api_key_id` (`api_key_id`),
+  KEY `unit_id` (`unit_id`),
+  CONSTRAINT `api_key_units_ibfk_1` FOREIGN KEY (`api_key_id`) REFERENCES `api_keys` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `api_key_units_ibfk_2` FOREIGN KEY (`unit_id`) REFERENCES `units` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+LOCK TABLES `api_key_units` WRITE;
+/*!40000 ALTER TABLE `api_key_units` DISABLE KEYS */;
+/*!40000 ALTER TABLE `api_key_units` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_keys`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
