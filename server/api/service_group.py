@@ -31,6 +31,17 @@ def create_service_groups(service: Service, collaboration: Collaboration):
         create_service_group(service, collaboration, service_group)
 
 
+@service_group_api.route("/find_by_service_uuid/<service_uuid4>", strict_slashes=False)
+@json_endpoint
+def find_by_service_uuid(service_uuid4):
+    service_groups = ServiceGroup.query \
+        .options(load_only(ServiceGroup.name, ServiceGroup.description)) \
+        .join(ServiceGroup.service) \
+        .filter(Service.uuid4 == service_uuid4) \
+        .all()
+    return service_groups, 200
+
+
 @service_group_api.route("/name_exists", strict_slashes=False)
 @json_endpoint
 def service_group_name_exists():

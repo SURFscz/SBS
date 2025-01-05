@@ -2,12 +2,13 @@ import React, {useState} from "react";
 
 import "./ServiceCard.scss";
 import Logo from "./redesign/Logo";
-import {Chip, ChipType} from "@surfnet/sds";
+import {Chip, ChipType, Loader} from "@surfnet/sds";
 import {MoreLessText} from "./MoreLessText";
 import {ReactComponent as ArrowDown} from "@surfnet/sds/icons/functional-icons/arrow-down-2.svg";
 import {ReactComponent as ArrowUp} from "@surfnet/sds/icons/functional-icons/arrow-up-2.svg";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import I18n from "../locale/I18n";
+import {serviceGroupsByServiceUuid4} from "../api";
 
 export default function ServiceCard({
                                         service,
@@ -24,11 +25,15 @@ export default function ServiceCard({
                                     }) {
     const [showPolicies, setShowPolicies] = useState(false);
     const [showAbout, setShowAbout] = useState(false);
+    const [showGroups, setShowGroups] = useState(false);
+    const [groupsLoaded, setGroupsLoaded] = useState(false);
+    const [serviceGroups, setServiceGroups] = useState([]);
 
     const toggleShowPolicies = e => {
         stopEvent(e);
         if (!showPolicies) {
             setShowAbout(false);
+            setShowGroups(false);
         }
         setShowPolicies(!showPolicies);
     }
@@ -37,8 +42,24 @@ export default function ServiceCard({
         stopEvent(e);
         if (!showAbout) {
             setShowPolicies(false);
+            setShowGroups(false);
         }
         setShowAbout(!showAbout);
+    }
+
+    const toggleShowGroups = e => {
+        stopEvent(e);
+        if (!showGroups) {
+            setShowPolicies(false);
+            setShowAbout(false);
+        }
+        setShowGroups(!showGroups);
+        if (!groupsLoaded) {
+            serviceGroupsByServiceUuid4(service.uuid4).then(res => {
+                setServiceGroups(res);
+                setGroupsLoaded(true);
+            });
+        }
     }
 
     const renderAbout = () => {
@@ -47,6 +68,31 @@ export default function ServiceCard({
                 <div className={"policies"}>
                     <dt>{I18n.t("service.description")}</dt>
                     <dd>{service.description}</dd>
+                </div>
+            </div>
+        );
+    }
+
+    const renderServiceGroups = () => {
+        return (
+            <div className="service-metadata">
+                <div className={"service-groups"}>
+                    {!groupsLoaded && <Loader/>}
+                    {(groupsLoaded && isEmpty(serviceGroups)) && <p>{I18n.t("service.noGroups")}</p>}
+                    {(groupsLoaded && !isEmpty(serviceGroups)) &&
+                        <div>
+                            <ul>
+                                {serviceGroups.map((group, index) =>
+                                    <li key={index}>
+                                            <span className="service-group">
+                                                {group.name}
+                                            </span>
+                                        {group.description && <span>{`: ${group.description}`}</span>}
+                                    </li>
+                                )}
+                            </ul>
+                        </div>}
+
                 </div>
             </div>
         );
@@ -112,10 +158,11 @@ export default function ServiceCard({
                 <div className="sds--content-card--textual">
                     <div className="sds--content-card--text-and-actions">
                         <div>
-                            <h4 className={`${service.organisation_name ? "":"sds--space--bottom--1"}`}>
+                            <h4 className={`${service.organisation_name ? "" : "sds--space--bottom--1"}`}>
                                 {service.name}
                             </h4>
-                            {service.organisation_name && <h6 className="sds--space--bottom--1">{service.organisation_name}</h6>}
+                            {service.organisation_name &&
+                                <h6 className="sds--space--bottom--1">{service.organisation_name}</h6>}
                             {!showAboutInformation && <p><MoreLessText txt={service.description}/></p>}
                             {message && <p className={chipType ? chipType : ""}>{message}</p>}
                             {(launchLink && service.uri) &&
@@ -147,12 +194,19 @@ export default function ServiceCard({
                                 <ArrowUp/> :
                                 <ArrowDown/>}</a>
                         </li>
+                        <li>
+                            <a className={"more-link"} href="/groups"
+                               onClick={toggleShowGroups}>{I18n.t("service.groups")}{showGroups ?
+                                <ArrowUp/> :
+                                <ArrowDown/>}</a>
+                        </li>
                         {(tokenAction && service.token_enabled) && <li>
                             <a href={`/tokens`} onClick={tokenAction}>{I18n.t("service.tokens")}</a>
                         </li>}
                     </ul>
                     {showPolicies && renderPolicies()}
                     {(showAbout && !isEmpty(service.description)) && renderAbout()}
+                    {showGroups && renderServiceGroups()}
                 </nav>
             </div>
         </div>)

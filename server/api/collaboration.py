@@ -376,25 +376,6 @@ def members():
     return users, 200
 
 
-@collaboration_api.route("/", strict_slashes=False)
-@json_endpoint
-def my_collaborations_lite():
-    include_services = query_param("includeServices", False)
-    user_id = current_user_id()
-    query = Collaboration.query \
-        .join(Collaboration.collaboration_memberships) \
-        .options(selectinload(Collaboration.organisation)) \
-        .options(selectinload(Collaboration.tags))
-    if include_services:
-        query = query \
-            .options(selectinload(Collaboration.services).selectinload(Service.allowed_organisations))
-
-    collaborations = query \
-        .filter(CollaborationMembership.user_id == user_id) \
-        .all()
-    return collaborations, 200
-
-
 @collaboration_api.route("/lite/<collaboration_id>", strict_slashes=False)
 @json_endpoint
 def collaboration_lite_by_id(collaboration_id):

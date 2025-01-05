@@ -417,11 +417,6 @@ export function collaborationLiteById(id) {
     return fetchJson(`/api/collaborations/lite/${id}`, {}, {}, false);
 }
 
-export function myCollaborations(includeServices = false) {
-    const query = includeServices ? "?includeServices=true" : "";
-    return fetchJson(`/api/collaborations${query}`);
-}
-
 export function myCollaborationsOptimized() {
     return fetchJson(`/api/collaborations/mine_optimized`);
 }
@@ -988,6 +983,10 @@ export function proxyAuthzEduTeams(userUid, serviceEntityId, idpEntityId) {
 }
 
 //Service groups
+export function serviceGroupsByServiceUuid4(serviceUuid4) {
+    return fetchJson(`/api/servicegroups/find_by_service_uuid/${serviceUuid4}`);
+}
+
 export function serviceGroupNameExists(name, serviceId, existingGroup = null) {
     return fetchJson(`/api/servicegroups/name_exists?name=${encodeURIComponent(name)}&service_id=${serviceId}&existing_service_group=${encodeURIComponent(existingGroup)}`);
 }
