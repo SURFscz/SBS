@@ -1,7 +1,7 @@
 import React from "react";
 import I18n from "../../locale/I18n";
 import "./AboutCollaboration.scss";
-import {isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
+import {isEmpty, stopEvent} from "../../utils/Utils";
 import {CO_SHORT_NAME, SRAM_USERNAME, validUrlRegExp} from "../../validations/regExps";
 import ServiceCard from "../ServiceCard";
 
@@ -43,7 +43,7 @@ class AboutCollaboration extends React.Component {
 
     render() {
         const {collaboration, user, isJoinRequest} = this.props;
-        const services = removeDuplicates(collaboration.services.concat(collaboration.organisation.services), "id");
+        const services = collaboration.services;
         const {collaboration_memberships} = collaboration
         const showMembers = !isJoinRequest;
         let memberships = isJoinRequest ? [] : collaboration_memberships
@@ -127,7 +127,7 @@ class AboutCollaboration extends React.Component {
                             <div className="values">
                                 <p>
                                     <a href={supportEmailValidURL ? collaboration.support_email : `mailto:${collaboration.support_email}`}
-                                        target={supportEmailValidURL ? "_blank" : "_self"}>
+                                       target={supportEmailValidURL ? "_blank" : "_self"}>
                                         {collaboration.support_email}
                                     </a>
                                 </p>

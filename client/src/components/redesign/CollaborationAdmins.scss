@@ -110,6 +110,15 @@
         }
 
         tbody {
+
+            ul {
+                list-style: initial;
+
+                li {
+                    margin-left: 15px;
+                }
+            }
+
             td {
                 &.status {
                     text-align: center;

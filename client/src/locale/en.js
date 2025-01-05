@@ -1108,6 +1108,8 @@ const en = {
         access: "Access",
         policies: "Policies",
         policiesSupport: "Policies & Support",
+        groups: "Application groups",
+        noGroups: "This application has no groups",
         tokens: "My Tokens",
         policyCompliance: "Compliant policies",
         login: "Log in",

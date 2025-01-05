@@ -43,6 +43,12 @@ class TestServiceGroup(AbstractTest):
                                    "service_id": service_id})
         self.assertEqual(False, res)
 
+    def test_find_by_service_uuid(self):
+        service_uui4 = self.find_entity_by_name(Service, service_mail_name).uuid4
+
+        res = self.get(f"/api/servicegroups/find_by_service_uuid/{service_uui4}")
+        self.assertEqual(1, len(res))
+
     def test_save_service_group(self):
         self.login("urn:john")
         service_cloud = self.find_entity_by_name(Service, service_cloud_name)

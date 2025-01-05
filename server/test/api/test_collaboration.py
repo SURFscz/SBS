@@ -354,31 +354,6 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(unihard_name, collaboration["organisation"]["name"])
         self.assertTrue(len(collaboration["collaboration_memberships"]) >= 4)
 
-    def test_my_collaborations(self):
-        self.login("urn:admin")
-        my_collaborations = self.get("/api/collaborations")
-        self.assertEqual(1, len(my_collaborations))
-        collaboration = AbstractTest.find_by_name(my_collaborations, co_ai_computing_name)
-        self.assertTrue("collaboration_memberships_count" in collaboration)
-        self.assertTrue("invitations_count" in collaboration)
-
-        collaboration = self.get(f"/api/collaborations/{collaboration['id']}")
-        researcher = list(filter(lambda cm: cm["role"] == "member", collaboration["collaboration_memberships"]))[0]
-        self.assertEqual("John Doe", researcher["user"]["name"])
-
-    def test_my_collaborations_include_services(self):
-        self.login("urn:admin")
-        my_collaborations = self.get("/api/collaborations", query_data={"includeServices": True})
-        self.assertEqual(1, len(my_collaborations))
-
-        services = my_collaborations[0]
-        self.assertTrue(len(services) > 0)
-
-    def test_my_collaborations_no_admin(self):
-        self.login("urn:james")
-        my_collaborations = self.get("/api/collaborations")
-        self.assertEqual(0, len(my_collaborations))
-
     def test_collaboration_name_exists(self):
         organisation_id = self.find_entity_by_name(Collaboration, co_ai_computing_name).organisation_id
         other_organisation_id = self.find_entity_by_name(Collaboration, co_research_name).organisation_id

@@ -47,6 +47,27 @@
             }
         }
 
+        .service-groups {
+            margin: 20px 0;
+            .sds--loading {
+                position: initial;
+                margin-left: 235px;
+            }
+        }
+
+        ul {
+            list-style: initial;
+
+            li {
+                margin-left: 15px;
+
+                span.service-group {
+                    font-weight: 600;
+                }
+            }
+        }
+
+
         div.support {
             max-width: 220px;
         }
