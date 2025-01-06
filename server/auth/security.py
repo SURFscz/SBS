@@ -70,11 +70,9 @@ def confirm_api_key_unit_access(api_key: ApiKey, collaboration: Collaboration):
     # If an ApiKey is not scoped, then we can't enforce anything
     if not api_key.units:
         return
-    api_key_unit_names = [unit.name for unit in api_key.units]
     # For an ApiKey with a unit, it is not allowed to request information about a CO that does not have a unit
-    if not collaboration.units:
-        raise Forbidden(f"ApiKey with units ({api_key_unit_names}) has no access to collaboration {collaboration.name}")
-    if not all(unit in api_key.units for unit in collaboration.units):
+    if not collaboration.units or not all(unit in api_key.units for unit in collaboration.units):
+        api_key_unit_names = [unit.name for unit in api_key.units]
         raise Forbidden(f"ApiKey with units ({api_key_unit_names}) has no access to collaboration {collaboration.name}")
 
 
