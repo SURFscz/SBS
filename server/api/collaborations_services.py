@@ -4,7 +4,8 @@ from werkzeug.exceptions import BadRequest, Forbidden, Conflict
 
 from server.api.base import json_endpoint, emit_socket
 from server.api.service_group import create_service_groups
-from server.auth.security import confirm_collaboration_admin, confirm_external_api_call, confirm_service_manager
+from server.auth.security import confirm_collaboration_admin, confirm_external_api_call, confirm_service_manager, \
+    confirm_api_key_unit_access
 from server.db.activity import update_last_activity_date
 from server.db.db import db
 from server.db.domain import Service, Collaboration, Organisation
@@ -89,6 +90,9 @@ def connect_collaboration_service_api():
         raise Forbidden(f"Collaboration {coll_short_name} is not part of organisation {organisation.name}")
 
     collaboration = collaborations[0]
+    api_key = request_context.get("external_api_key")
+    confirm_api_key_unit_access(api_key, collaboration)
+
     service_entity_id = data["service_entity_id"]
     service = Service.query.filter(Service.entity_id == service_entity_id).one()
 
@@ -131,6 +135,9 @@ def disconnect_collaboration_service_api():
         raise Forbidden(f"Collaboration {coll_short_name} is not part of organisation {organisation.name}")
 
     collaboration = collaborations[0]
+    api_key = request_context.get("external_api_key")
+    confirm_api_key_unit_access(api_key, collaboration)
+
     collaboration_id = collaboration.id
     service_entity_id = data["service_entity_id"]
     service = Service.query.filter(Service.entity_id == service_entity_id).one()

@@ -177,9 +177,16 @@ cd server
 pip-upgrade requirements/test.txt --dry-run
 ```
 
-### [SURFSecureID](#surfsecureid)
+### [Dependency tree](#pipdeptree)
 
-See the /config/saml_test configuration and the https://github.com/SURFscz/SCZ-deploy project
+To list the dependency tree use the following commands:
+
+```bash
+source .venv/bin/activate
+cd server
+pipdeptree > pipdeptree.txt
+cat pipdeptree.txt 
+```
 
 ### [flask](#flask)
 

@@ -72,7 +72,7 @@ def services_from_collaboration_memberships(user_id, service_id=None, count_only
     return _services_from_query(count_only, query, service_id)
 
 
-# Services connected to a organisation where the user is a member of
+# Services connected to an organisation where the user is a member of
 def services_from_organisation_memberships(user_id, service_id=None, count_only=False):
     query = Service.query \
         .join(Service.organisations) \

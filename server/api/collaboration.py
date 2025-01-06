@@ -22,7 +22,7 @@ from server.auth.security import confirm_collaboration_admin, current_user_id, c
     confirm_allow_impersonation, confirm_organisation_admin_or_manager, confirm_external_api_call, \
     is_organisation_admin_or_manager, is_application_admin, confirm_organisation_api_collaboration, \
     confirm_write_access, has_org_manager_unit_access, is_admin_user, \
-    confirm_service_manager
+    confirm_service_manager, confirm_api_key_unit_access
 from server.db.activity import update_last_activity_date
 from server.db.db import db
 from server.db.defaults import (default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name,
@@ -179,10 +179,11 @@ def api_collaboration_by_identifier(co_identifier):
                      .selectinload(CollaborationMembership.user)) \
             .filter(Collaboration.identifier == co_identifier) \
             .one()
+        api_key = request_context.get("external_api_key")
+        confirm_api_key_unit_access(api_key, collaboration)
     except NoResultFound:
         raise NotFound
 
-    confirm_organisation_api_collaboration(co_identifier, collaboration)
     json_collaboration = jsonify(collaboration).json
     json_collaboration["units"] = [unit.name for unit in collaboration.units]
     json_collaboration["tags"] = [tag.tag_value for tag in collaboration.tags]
@@ -193,7 +194,10 @@ def api_collaboration_by_identifier(co_identifier):
 @swag_from("../swagger/public/paths/delete_collaboration.yml")
 @json_endpoint
 def delete_collaboration_api(co_identifier):
-    collaboration = confirm_organisation_api_collaboration(co_identifier)
+    api_key = request_context.get("external_api_key")
+    collaboration = Collaboration.query.filter(Collaboration.identifier == co_identifier).one()
+    confirm_api_key_unit_access(api_key, collaboration)
+
     collaboration_id = collaboration.id
 
     tag_identifiers = [tag.id for tag in collaboration.tags]
@@ -211,7 +215,9 @@ def delete_collaboration_api(co_identifier):
 @swag_from("../swagger/public/paths/update_collaboration_membership.yml")
 @json_endpoint
 def api_update_user_from_collaboration(co_identifier):
-    confirm_external_api_call()
+    api_key = request_context.get("external_api_key")
+    collaboration = Collaboration.query.filter(Collaboration.identifier == co_identifier).one()
+    confirm_api_key_unit_access(api_key, collaboration)
 
     data = current_request.get_json()
     user_uid = data["uid"]
@@ -235,7 +241,9 @@ def api_update_user_from_collaboration(co_identifier):
 @swag_from("../swagger/public/paths/delete_collaboration_membership.yml")
 @json_endpoint
 def api_delete_user_from_collaboration(co_identifier, user_uid):
-    confirm_external_api_call()
+    api_key = request_context.get("external_api_key")
+    collaboration = Collaboration.query.filter(Collaboration.identifier == co_identifier).one()
+    confirm_api_key_unit_access(api_key, collaboration)
 
     membership = _get_collaboration_membership(co_identifier, user_uid)
 
@@ -628,11 +636,18 @@ def save_collaboration_api():
     # Ensure to skip current_user is CO admin check
     request_context.skip_collaboration_admin_confirmation = True
     # units - if present - need to be transformed to dict objects
-    if "units" in data:
+    api_key = request_context.get("external_api_key")
+    if api_key.units:
+        data["units"] = [
+            {"id": unit.id,
+             "organisation_id": organisation.id,
+             "name": unit.name} for unit in api_key.units]
+    elif "units" in data:
         data["units"] = [
             {"id": Unit.query.filter(Unit.name == unit).first().id,
              "organisation_id": organisation.id,
              "name": unit} for unit in data["units"]]
+
     res = do_save_collaboration(data, organisation, user, current_user_admin=False, save_tags=False)
     collaboration = res[0]
 
@@ -823,7 +838,7 @@ def delete_collaboration(collaboration_id):
 def api_update_collaboration_units(co_identifier):
     collaboration = confirm_organisation_api_collaboration(co_identifier)
 
-    api_key = request_context.external_api_key
+    api_key = request_context.get("external_api_key")
     if api_key.units:
         raise Forbidden("API key is scoped with units. Update collaboration units not allowed")
     units = current_request.get_json()

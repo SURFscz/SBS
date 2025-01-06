@@ -9,7 +9,7 @@ from werkzeug.exceptions import Forbidden, Conflict, BadRequest
 from server.api.base import json_endpoint, query_param, emit_socket
 from server.api.group_members import do_add_group_members
 from server.auth.security import confirm_collaboration_admin, confirm_external_api_call, \
-    confirm_organisation_api_collaboration
+    confirm_api_key_unit_access
 from server.db.activity import update_last_activity_date
 from server.db.db import db
 from server.db.defaults import cleanse_short_name
@@ -113,11 +113,12 @@ def save_group():
 @json_endpoint
 @swag_from("../swagger/public/paths/post_new_group.yml")
 def create_group_api():
-    confirm_external_api_call()
-
     data = current_request.get_json()
-    collaboration_identifier = data["collaboration_identifier"]
-    collaboration = confirm_organisation_api_collaboration(collaboration_identifier)
+    collaboration_identifier = data.get("collaboration_identifier")
+
+    api_key = request_context.get("external_api_key")
+    collaboration = Collaboration.query.filter(Collaboration.identifier == collaboration_identifier).one()
+    confirm_api_key_unit_access(api_key, collaboration)
 
     data["collaboration_id"] = collaboration.id
     # Ensure to skip current_user is CO admin check
@@ -135,7 +136,8 @@ def create_group_api():
 def delete_group_api(group_identifier):
     group = Group.query.filter(Group.identifier == group_identifier).one()
 
-    confirm_organisation_api_collaboration(None, group.collaboration)
+    api_key = request_context.get("external_api_key")
+    confirm_api_key_unit_access(api_key, group.collaboration)
 
     collaboration_id = group.collaboration_id
     group_id = group.id
@@ -215,7 +217,8 @@ def update_group():
 def update_group_api(group_identifier):
     group = Group.query.filter(Group.identifier == group_identifier).one()
 
-    confirm_organisation_api_collaboration(None, group.collaboration)
+    api_key = request_context.get("external_api_key")
+    confirm_api_key_unit_access(api_key, group.collaboration)
 
     data = current_request.get_json()
     # check the input; we can only change name, description, auto_provision_members
@@ -267,15 +270,12 @@ def delete_group(group_id):
 @swag_from("../swagger/public/paths/add_group_membership.yml")
 @json_endpoint
 def api_add_group_membership(group_identifier):
-    confirm_external_api_call()
-
-    organisation = request_context.external_api_organisation
     group = Group.query \
         .filter(Group.identifier == group_identifier) \
         .one()
 
-    if organisation.id != group.collaboration.organisation_id:
-        raise Forbidden()
+    api_key = request_context.get("external_api_key")
+    confirm_api_key_unit_access(api_key, group.collaboration)
 
     user = User.query \
         .filter(User.uid == current_request.get_json().get("uid")) \
@@ -302,9 +302,6 @@ def api_add_group_membership(group_identifier):
 @swag_from("../swagger/public/paths/delete_group_membership.yml")
 @json_endpoint
 def api_delete_group_membership(group_identifier, user_uid):
-    confirm_external_api_call()
-
-    organisation = request_context.external_api_organisation
     group_membership = CollaborationMembership.query \
         .join(CollaborationMembership.groups) \
         .join(CollaborationMembership.user) \
@@ -312,8 +309,8 @@ def api_delete_group_membership(group_identifier, user_uid):
         .filter(User.uid == user_uid) \
         .one()
 
-    if not organisation or organisation.id != group_membership.collaboration.organisation_id:
-        raise Forbidden()
+    api_key = request_context.get("external_api_key")
+    confirm_api_key_unit_access(api_key, group_membership.collaboration)
 
     group = Group.query.filter(Group.identifier == group_identifier).one()
     group.collaboration_memberships.remove(group_membership)
