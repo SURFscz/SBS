@@ -4,9 +4,10 @@ from server.db.db import db
 from server.db.domain import Service, Collaboration
 from server.test.abstract_test import AbstractTest, BASIC_AUTH_HEADER
 from server.test.seed import service_mail_name, co_ai_computing_name, service_cloud_name, co_research_name, \
-    service_network_name, service_wiki_name, unihard_secret, service_group_wiki_name1, service_group_wiki_name2, \
-    co_robotics_disabled_join_request_name, unifra_secret, service_ssh_name, service_storage_name, service_scheduler_name, \
-    unihard_name
+    service_network_name, service_wiki_name, service_group_wiki_name1, service_group_wiki_name2, \
+    co_robotics_disabled_join_request_name, unifra_secret, service_ssh_name, service_storage_name, \
+    service_scheduler_name, \
+    unihard_name, unihard_secret_unit_support
 
 
 # there are a number of cases to test here:
@@ -210,7 +211,7 @@ class TestCollaborationsServices(AbstractTest):
 
         service_cloud = self.find_entity_by_name(Service, service_cloud_name)
         res = self.client.put("/api/collaborations_services/v1/connect_collaboration_service",
-                              headers={"Authorization": f"Bearer {unihard_secret}"},
+                              headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                               data=json.dumps({
                                   "short_name": collaboration["short_name"],
                                   "service_entity_id": service_cloud.entity_id
@@ -242,7 +243,7 @@ class TestCollaborationsServices(AbstractTest):
         service_cloud = self.find_entity_by_name(Service, service_cloud_name)
 
         res = self.client.put("/api/collaborations_services/v1/connect_collaboration_service",
-                              headers={"Authorization": f"Bearer {unihard_secret}"},
+                              headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                               data=json.dumps({
                                   "short_name": collaboration.short_name,
                                   "service_entity_id": service_cloud.entity_id
@@ -269,7 +270,7 @@ class TestCollaborationsServices(AbstractTest):
         collaboration = self.get(f"/api/collaborations/{collaboration_id}")
 
         res = self.client.put("/api/collaborations_services/v1/connect_collaboration_service",
-                              headers={"Authorization": f"Bearer {unihard_secret}"},
+                              headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                               data=json.dumps({
                                   "short_name": collaboration["short_name"],
                                   "service_entity_id": service_entity_id
@@ -291,7 +292,7 @@ class TestCollaborationsServices(AbstractTest):
         db.session.commit()
 
         res = self.client.put("/api/collaborations_services/v1/connect_collaboration_service",
-                              headers={"Authorization": f"Bearer {unihard_secret}"},
+                              headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                               data=json.dumps({
                                   "short_name": short_name,
                                   "service_entity_id": service_entity_id
@@ -323,7 +324,7 @@ class TestCollaborationsServices(AbstractTest):
         service_cloud = self.find_entity_by_name(Service, service_cloud_name)
 
         res = self.client.put("/api/collaborations_services/v1/disconnect_collaboration_service",
-                              headers={"Authorization": f"Bearer {unihard_secret}"},
+                              headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                               data=json.dumps({
                                   "short_name": collaboration.short_name,
                                   "service_entity_id": service_cloud.entity_id

@@ -15,7 +15,7 @@ from server.test.seed import (co_ai_computing_uuid, co_ai_computing_name, co_res
                               service_group_wiki_name1,
                               service_storage_name, unifra_secret, unifra_name, unihard_short_name,
                               unifra_unit_cloud_name, unifra_unit_infra_name, unihard_secret_unit_support)
-from server.test.seed import unihard_secret, unihard_name
+from server.test.seed import unihard_name
 from server.tools import dt_now
 
 
@@ -531,7 +531,7 @@ class TestCollaboration(AbstractTest):
 
     def test_api_call(self):
         response = self.client.post("/api/collaborations/v1",
-                                    headers={"Authorization": f"Bearer {unihard_secret}"},
+                                    headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                                     data=json.dumps({
                                         "name": "new_collaboration",
                                         "description": "new_collaboration",
@@ -550,7 +550,7 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(201, response.status_code)
         collaboration_json = response.json
         self.assertEqual(2, len(collaboration_json["tags"]))
-        self.assertEqual(2, len(collaboration_json["units"]))
+        self.assertEqual(1, len(collaboration_json["units"]))
 
         collaboration = self.find_entity_by_name(Collaboration, "new_collaboration")
         self.assertEqual(1, len(collaboration.collaboration_memberships))
@@ -558,7 +558,7 @@ class TestCollaboration(AbstractTest):
         self.assertIsNone(collaboration.accepted_user_policy)
         self.assertIsNotNone(collaboration.logo)
         self.assertEqual(2, len(collaboration.tags))
-        self.assertEqual(2, len(collaboration.units))
+        self.assertEqual(1, len(collaboration.units))
 
         one_day_ago = dt_now() - datetime.timedelta(days=1)
         self.assertTrue(collaboration.last_activity_date > one_day_ago)
@@ -568,7 +568,7 @@ class TestCollaboration(AbstractTest):
 
     def test_api_call_with_logo_prefix(self):
         response = self.client.post("/api/collaborations/v1",
-                                    headers={"Authorization": f"Bearer {unihard_secret}"},
+                                    headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                                     data=json.dumps({
                                         "name": "new_collaboration",
                                         "description": "new_collaboration",
@@ -590,7 +590,7 @@ class TestCollaboration(AbstractTest):
 
     def test_api_create_collaboration_generate_short_name(self):
         response = self.client.post("/api/collaborations/v1",
-                                    headers={"Authorization": f"Bearer {unihard_secret}"},
+                                    headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                                     data=json.dumps({
                                         "name": "monitor1",
                                         "description": "new_collaboration",
@@ -611,7 +611,7 @@ class TestCollaboration(AbstractTest):
 
     def test_api_call_invalid_logo(self):
         response = self.client.post("/api/collaborations/v1",
-                                    headers={"Authorization": f"Bearer {unihard_secret}"},
+                                    headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                                     data=json.dumps({
                                         "name": "new_collaboration",
                                         "description": "new_collaboration",
@@ -629,7 +629,7 @@ class TestCollaboration(AbstractTest):
     def test_api_call_invalid_logo_bytes(self):
         logo = base64.encodebytes("Not a valid file".encode()).decode()
         response = self.client.post("/api/collaborations/v1",
-                                    headers={"Authorization": f"Bearer {unihard_secret}"},
+                                    headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                                     data=json.dumps({
                                         "name": "new_collaboration",
                                         "description": "new_collaboration",
@@ -646,14 +646,14 @@ class TestCollaboration(AbstractTest):
 
     def test_api_call_invalid_json(self):
         response = self.client.post("/api/collaborations/v1",
-                                    headers={"Authorization": f"Bearer {unihard_secret}"},
+                                    headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                                     data="{{",
                                     content_type="application/json")
         self.assertEqual(400, response.status_code)
 
     def test_api_call_without_logo(self):
         response = self.client.post("/api/collaborations/v1",
-                                    headers={"Authorization": f"Bearer {unihard_secret}"},
+                                    headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                                     data=json.dumps({
                                         "name": "new_collaboration",
                                         "description": "new_collaboration",
@@ -671,7 +671,7 @@ class TestCollaboration(AbstractTest):
 
     def test_api_call_existing_name(self):
         response = self.client.post("/api/collaborations/v1",
-                                    headers={"Authorization": f"Bearer {unihard_secret}"},
+                                    headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                                     data=json.dumps({
                                         "name": co_ai_computing_name,
                                         "description": "new_collaboration",
@@ -691,7 +691,7 @@ class TestCollaboration(AbstractTest):
 
     def test_api_call_existing_short_name(self):
         response = self.client.post("/api/collaborations/v1",
-                                    headers={"Authorization": f"Bearer {unihard_secret}"},
+                                    headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                                     data=json.dumps({
                                         "name": "new_collaboration",
                                         "administrators": ["the@ex.org"],
@@ -724,7 +724,7 @@ class TestCollaboration(AbstractTest):
 
     def test_api_call_missing_required_attributes(self):
         response = self.client.post("/api/collaborations/v1",
-                                    headers={"Authorization": f"Bearer {unihard_secret}"},
+                                    headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                                     data=json.dumps({
                                     }),
                                     content_type="application/json")
@@ -736,7 +736,7 @@ class TestCollaboration(AbstractTest):
 
     def test_api_call_with_invalid_short_name(self):
         response = self.client.post("/api/collaborations/v1",
-                                    headers={"Authorization": f"Bearer {unihard_secret}"},
+                                    headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                                     data=json.dumps({
                                         "name": "new_collaboration",
                                         "description": "new_collaboration",
@@ -753,7 +753,7 @@ class TestCollaboration(AbstractTest):
 
     def test_api_call_with_invalid_short_name_2(self):
         response = self.client.post("/api/collaborations/v1",
-                                    headers={"Authorization": f"Bearer {unihard_secret}"},
+                                    headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                                     data=json.dumps({
                                         "name": "new_collaboration",
                                         "description": "new_collaboration",
@@ -770,7 +770,7 @@ class TestCollaboration(AbstractTest):
 
     def test_api_call_with_invalid_short_name_3(self):
         response = self.client.post("/api/collaborations/v1",
-                                    headers={"Authorization": f"Bearer {unihard_secret}"},
+                                    headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                                     data=json.dumps({
                                         "name": "new_collaboration",
                                         "description": "new_collaboration",
@@ -883,20 +883,19 @@ class TestCollaboration(AbstractTest):
 
     def test_find_by_identifier_api(self):
         res = self.get(f"/api/collaborations/v1/{co_ai_computing_uuid}",
-                       headers={"Authorization": f"Bearer {unihard_secret}"},
+                       headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                        with_basic_auth=False)
         self.assertIsNotNone(res["groups"][0]["collaboration_memberships"][0]["user"]["email"])
         self.assertListEqual(res["tags"], ["tag_uuc"])
 
     def test_find_by_identifier_api_not_allowed(self):
-        result = self.get(f"/api/collaborations/v1/{co_research_uuid}",
-                          headers={"Authorization": f"Bearer {unihard_secret}"},
-                          with_basic_auth=False, response_status_code=404)
-        self.assertIn("The requested URL was not found", result["message"])
+        self.get(f"/api/collaborations/v1/{co_research_uuid}",
+                          headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
+                          with_basic_auth=False, response_status_code=403)
 
     def test_find_by_identifier_api_not_exist(self):
         result = self.get("/api/collaborations/v1/invalid_uuid",
-                          headers={"Authorization": f"Bearer {unihard_secret}"},
+                          headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                           with_basic_auth=False, response_status_code=404)
         self.assertIn("The requested URL was not found", result["message"])
 
@@ -904,7 +903,7 @@ class TestCollaboration(AbstractTest):
         try:
             self.app.app_config.feature.past_dates_allowed = False
             response = self.client.post("/api/collaborations/v1",
-                                        headers={"Authorization": f"Bearer {unihard_secret}"},
+                                        headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                                         data=json.dumps({
                                             "name": "new_collaboration",
                                             "description": "new_collaboration",
@@ -933,7 +932,7 @@ class TestCollaboration(AbstractTest):
         self.assertIsNotNone(self.find_collaboration_membership(co_ai_computing_uuid, 'urn:jane'))
 
         self.delete(f"/api/collaborations/v1/{co_ai_computing_uuid}/members/{'urn:jane'}",
-                    headers={"Authorization": f"Bearer {unihard_secret}"},
+                    headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                     with_basic_auth=False)
 
         self.assertIsNone(self.find_collaboration_membership(co_ai_computing_uuid, 'urn:jane'))
@@ -949,7 +948,7 @@ class TestCollaboration(AbstractTest):
         self.assertEqual("member", membership.role)
 
         self.put(f"/api/collaborations/v1/{co_ai_computing_uuid}/members",
-                 headers={"Authorization": f"Bearer {unihard_secret}"},
+                 headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                  body={"uid": "urn:jane", "role": "admin"},
                  with_basic_auth=False)
 
@@ -958,7 +957,7 @@ class TestCollaboration(AbstractTest):
 
     def test_update_membership_wrong_role_api(self):
         self.put(f"/api/collaborations/v1/{co_ai_computing_uuid}/members",
-                 headers={"Authorization": f"Bearer {unihard_secret}"},
+                 headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                  body={"uid": "urn:jane", "role": "nope"},
                  with_basic_auth=False,
                  response_status_code=400)
@@ -968,7 +967,7 @@ class TestCollaboration(AbstractTest):
         self.assertIsNotNone(tag)
 
         self.delete(f"/api/collaborations/v1/{co_ai_computing_uuid}",
-                    headers={"Authorization": f"Bearer {unihard_secret}"},
+                    headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                     with_basic_auth=False)
 
         self.assertIsNone(self.find_entity_by_name(Collaboration, co_ai_computing_name))
@@ -979,7 +978,7 @@ class TestCollaboration(AbstractTest):
         self.delete(f"/api/collaborations/v1/{co_ai_computing_uuid}",
                     headers={"Authorization": f"Bearer {unifra_secret}"},
                     with_basic_auth=False,
-                    response_status_code=404)
+                    response_status_code=403)
 
     def test_collaboration_with_units(self):
         organisation = Organisation.query.filter(Organisation.name == unihard_name).one()
@@ -1040,7 +1039,7 @@ class TestCollaboration(AbstractTest):
 
     def test_api_call_invalid_emails(self):
         response = self.client.post("/api/collaborations/v1",
-                                    headers={"Authorization": f"Bearer {unihard_secret}"},
+                                    headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                                     data=json.dumps({
                                         "name": "new_collaboration",
                                         "description": "new_collaboration",

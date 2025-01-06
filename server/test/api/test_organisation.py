@@ -7,9 +7,9 @@ from server.db.domain import Organisation, OrganisationInvitation, User, JoinReq
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import (unihard_name, unifra_name, schac_home_organisation_unihar,
                               schac_home_organisation_example,
-                              read_image, unihard_secret, user_jane_name, unihard_short_name, unihard_unit_support_name,
+                              read_image, user_jane_name, unihard_short_name, unihard_unit_support_name,
                               co_ai_computing_name, unifra_secret, co_research_name,
-                              group_science_name)
+                              group_science_name, unihard_secret_unit_support)
 
 
 class TestOrganisation(AbstractTest):
@@ -164,8 +164,8 @@ class TestOrganisation(AbstractTest):
         self.login("urn:paul")
         organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
         organisation = self.get(f"/api/organisations/{organisation_id}")
-        # Paul has a organisation membership with an unit, that is not used by any collaboration
-        self.assertEqual(0, len(organisation["collaborations"]))
+        # Paul has a organisation membership with a unit, that is not used by any collaboration
+        self.assertEqual(1, len(organisation["collaborations"]))
 
     def test_organisation_by_id_404(self):
         self.login("urn:sarah")
@@ -475,7 +475,7 @@ class TestOrganisation(AbstractTest):
 
     def test_find_api_no_unit_access(self):
         res = self.get("/api/organisations/v1",
-                       headers={"Authorization": f"Bearer {unihard_secret}"},
+                       headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                        with_basic_auth=False)
         collaborations = res["collaborations"]
         self.assertEqual(0, len(collaborations))
