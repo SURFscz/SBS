@@ -15,7 +15,7 @@ from server.api.base import json_endpoint, query_param, emit_socket
 from server.api.service_aups import add_user_aups
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call, \
-    confirm_organisation_api_collaboration
+    confirm_api_key_unit_access
 from server.db.activity import update_last_activity_date
 from server.db.defaults import default_expiry_date, STATUS_OPEN, STATUS_EXPIRED
 from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, JoinRequest, Group, \
@@ -177,6 +177,10 @@ def collaboration_invites_api():
                         f"organisation {organisation.name}")
 
     collaboration = collaborations[0]
+
+    api_key = request_context.get("external_api_key")
+    confirm_api_key_unit_access(api_key, collaboration)
+
     collaboration_admins = list(filter(lambda cm: cm.role == "admin", collaboration.collaboration_memberships))
 
     if len(collaboration_admins) > 0:
@@ -377,8 +381,11 @@ def delete_by_hash(hash):
 @swag_from("../swagger/public/paths/get_invitation_by_identifier.yml")
 @json_endpoint
 def external_invitation(external_identifier):
-    confirm_external_api_call()
     invitation = Invitation.query.filter(Invitation.external_identifier == external_identifier).one()
+
+    api_key = request_context.get("external_api_key")
+    confirm_api_key_unit_access(api_key, invitation.collaboration)
+
     res = invitation_to_dict(invitation)
     if invitation.status == "accepted":
         cm = CollaborationMembership.query.filter(CollaborationMembership.invitation_id == invitation.id).one()
@@ -398,8 +405,11 @@ def external_invitation(external_identifier):
 @swag_from("../swagger/public/paths/resend_invitation_by_identifier.yml")
 @json_endpoint
 def resend_external_invitation(external_identifier):
-    confirm_external_api_call()
     invitation = Invitation.query.filter(Invitation.external_identifier == external_identifier).one()
+
+    api_key = request_context.get("external_api_key")
+    confirm_api_key_unit_access(api_key, invitation.collaboration)
+
     if invitation.is_expired():
         invitation.expiry_date = default_expiry_date()
         invitation.created_at = dt_now()
@@ -421,8 +431,11 @@ def resend_external_invitation(external_identifier):
 @swag_from("../swagger/public/paths/delete_invitation_by_identifier.yml")
 @json_endpoint
 def delete_external_invitation(external_identifier):
-    confirm_external_api_call()
     invitation = Invitation.query.filter(Invitation.external_identifier == external_identifier).one()
+
+    api_key = request_context.get("external_api_key")
+    confirm_api_key_unit_access(api_key, invitation.collaboration)
+
     db.session.delete(invitation)
     return None, 204
 
@@ -431,7 +444,9 @@ def delete_external_invitation(external_identifier):
 @swag_from("../swagger/public/paths/get_open_invitations.yml")
 @json_endpoint
 def get_open_invitations(co_identifier):
-    collaboration = confirm_organisation_api_collaboration(co_identifier)
+    api_key = request_context.get("external_api_key")
+    collaboration = Collaboration.query.filter(Collaboration.identifier == co_identifier).one()
+    confirm_api_key_unit_access(api_key, collaboration)
 
     invitations = Invitation.query \
         .filter(Invitation.collaboration == collaboration) \

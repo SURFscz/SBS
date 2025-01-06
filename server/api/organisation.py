@@ -195,7 +195,7 @@ def organisation_name_by_id(organisation_id):
 def api_organisation_details():
     confirm_external_api_call()
     organisation = request_context.external_api_organisation
-    api_key = request_context.external_api_key
+    api_key = request_context.get("external_api_key")
     for collaboration in organisation.collaborations:
         collaboration.groups
         collaboration.tags

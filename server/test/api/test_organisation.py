@@ -8,7 +8,7 @@ from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import (unihard_name, unifra_name, schac_home_organisation_unihar,
                               schac_home_organisation_example,
                               read_image, unihard_secret, user_jane_name, unihard_short_name, unihard_unit_support_name,
-                              co_ai_computing_name, group_ai_researchers, unifra_secret, co_research_name,
+                              co_ai_computing_name, unifra_secret, co_research_name,
                               group_science_name)
 
 
