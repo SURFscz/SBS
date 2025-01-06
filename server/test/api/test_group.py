@@ -3,10 +3,12 @@ from flask import jsonify
 from server.db.domain import Collaboration, Group, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import (group_ai_researchers, co_ai_computing_name, group_ai_researchers_short_name,
-                              service_group_mail_name, group_ai_dev_identifier, unihard_secret, user_john_name, unifra_secret,
+                              service_group_mail_name, group_ai_dev_identifier, user_john_name,
+                              unifra_secret,
                               co_ai_computing_uuid,
-                              co_research_name, unihard_short_name, group_science_identifier, group_ai_researchers_identifier,
-                              co_research_uuid)
+                              co_research_name, unihard_short_name, group_science_identifier,
+                              group_ai_researchers_identifier,
+                              co_research_uuid, unihard_secret_unit_support)
 
 
 class TestGroup(AbstractTest):
@@ -149,7 +151,7 @@ class TestGroup(AbstractTest):
 
         self.post(f"/api/groups/v1/{group_ai_dev_identifier}",
                   body={"uid": "urn:jane"},
-                  headers={"Authorization": f"Bearer {unihard_secret}"},
+                  headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                   with_basic_auth=False)
 
         self.assertIsNotNone(self.find_group_membership(group_ai_dev_identifier, "urn:jane"))
@@ -167,7 +169,7 @@ class TestGroup(AbstractTest):
 
         self.post(f"/api/groups/v1/{group_ai_dev_identifier}",
                   body={"uid": "urn:peter"},
-                  headers={"Authorization": f"Bearer {unihard_secret}"},
+                  headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                   response_status_code=409,
                   with_basic_auth=False)
 
@@ -177,7 +179,7 @@ class TestGroup(AbstractTest):
 
         self.post(f"/api/groups/v1/{group_ai_dev_identifier}",
                   body={"uid": "urn:john"},
-                  headers={"Authorization": f"Bearer {unihard_secret}"},
+                  headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                   response_status_code=409,
                   with_basic_auth=False)
 
@@ -185,7 +187,7 @@ class TestGroup(AbstractTest):
         self.assertIsNotNone(self.find_group_membership(group_ai_dev_identifier, "urn:john"))
 
         self.delete(f"/api/groups/v1/{group_ai_dev_identifier}/members/urn:john",
-                    headers={"Authorization": f"Bearer {unihard_secret}"},
+                    headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                     with_basic_auth=False)
 
         self.assertIsNone(self.find_group_membership(group_ai_dev_identifier, "urn:john"))
@@ -209,7 +211,7 @@ class TestGroup(AbstractTest):
                             "auto_provision_members": True,
                             "collaboration_identifier": collaboration.identifier
                         },
-                        headers={"Authorization": f"Bearer {unihard_secret}"},
+                        headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                         with_basic_auth=False)
 
         self.assertIsNotNone(res["identifier"])
@@ -228,9 +230,9 @@ class TestGroup(AbstractTest):
                       "auto_provision_members": False,
                       "collaboration_identifier": collaboration.identifier
                   },
-                  headers={"Authorization": f"Bearer {unihard_secret}"},
+                  headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                   with_basic_auth=False,
-                  response_status_code=404)
+                  response_status_code=403)
 
     def test_update_group_api(self):
         res = self.put(f"/api/groups/v1/{group_ai_researchers_identifier}",
@@ -239,7 +241,7 @@ class TestGroup(AbstractTest):
                            "description": "a different description",
                            "auto_provision_members": True,
                        },
-                       headers={"Authorization": f"Bearer {unihard_secret}"},
+                       headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                        with_basic_auth=False)
 
         self.assertEqual(res["identifier"], group_ai_researchers_identifier)
@@ -285,9 +287,9 @@ class TestGroup(AbstractTest):
                      "description": "optional",
                      "auto_provision_members": False,
                  },
-                 headers={"Authorization": f"Bearer {unihard_secret}"},
+                 headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                  with_basic_auth=False,
-                 response_status_code=404)
+                 response_status_code=403)
 
     def test_update_group_wrong_attribute_api(self):
         self.put(f"/api/groups/v1/{group_ai_researchers_identifier}",
@@ -297,7 +299,7 @@ class TestGroup(AbstractTest):
                      "auto_provision_members": True,
                      "invalid_attribute": "invalid value"
                  },
-                 headers={"Authorization": f"Bearer {unihard_secret}"},
+                 headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                  with_basic_auth=False,
                  response_status_code=400)
 
@@ -306,7 +308,7 @@ class TestGroup(AbstractTest):
                      "name": "a different name",
                      "short_name": "very_short"
                  },
-                 headers={"Authorization": f"Bearer {unihard_secret}"},
+                 headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                  with_basic_auth=False,
                  response_status_code=400)
 
@@ -325,7 +327,7 @@ class TestGroup(AbstractTest):
     def test_delete_group_api(self):
         group = self.find_entity_by_name(Group, group_ai_researchers)
         self.delete("/api/groups/v1", primary_key=group.identifier,
-                    headers={"Authorization": f"Bearer {unihard_secret}"},
+                    headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                     with_basic_auth=False)
         self.assertIsNone(self.find_entity_by_name(Group, group_ai_researchers))
 
@@ -334,4 +336,4 @@ class TestGroup(AbstractTest):
         self.delete("/api/groups/v1", primary_key=group.identifier,
                     headers={"Authorization": f"Bearer {unifra_secret}"},
                     with_basic_auth=False,
-                    response_status_code=404)
+                    response_status_code=403)
