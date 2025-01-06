@@ -42,6 +42,8 @@ unihard_name = "Universiteit van Harderwijk"
 unihard_short_name = "uniharderwijk"
 unihard_secret = generate_token()
 unihard_hashed_secret = secure_hash(unihard_secret)
+unihard_secret_unit_support = generate_token()
+unihard_hashed_secret_unit_support = secure_hash(unihard_secret_unit_support)
 unihard_unit_research_name = "Research"
 unihard_unit_support_name = "Support"
 unihard_invitation_hash = generate_token()  # uuc
@@ -50,6 +52,8 @@ unihard_invitation_expired_hash = generate_token()  # uuc
 unifra_name = "Academia Franekerensis"
 unifra_secret = generate_token()
 unifra_hashed_secret = secure_hash(unifra_secret)
+unifra_unit_cloud_name = "Cloud Unit"
+unifra_unit_infra_name = "Infra Unit"
 
 umcpekela_name = "Universitair Medisch Centrum Zuid-Pekela"
 
@@ -321,7 +325,9 @@ def seed(db, app_config, skip_seed=False):
 
     uuc_unit_research = Unit(name=unihard_unit_research_name, organisation=uuc)
     uuc_unit_support = Unit(name=unihard_unit_support_name, organisation=uuc)
-    persist_instance(db, uuc_unit_research, uuc_unit_support)
+    ufra_unit_cloud = Unit(name=unifra_unit_cloud_name, organisation=ufra)
+    ufra_unit_infra = Unit(name=unifra_unit_infra_name, organisation=ufra)
+    persist_instance(db, uuc_unit_research, uuc_unit_support, ufra_unit_cloud, ufra_unit_infra)
 
     sho_uuc = SchacHomeOrganisation(name=schac_home_organisation_unihar, organisation=uuc, created_by="urn:admin",
                                     updated_by="urn:admin")
@@ -331,9 +337,12 @@ def seed(db, app_config, skip_seed=False):
 
     api_key_uuc = ApiKey(hashed_secret=unihard_hashed_secret, organisation=uuc, description="API access",
                          created_by="urn:admin", updated_by="urn:admin", units=[uuc_unit_research])
+    api_key_uuc_unit_support = ApiKey(hashed_secret=unihard_hashed_secret_unit_support, organisation=uuc,
+                                      description="API access unit scoped", created_by="urn:admin",
+                                      updated_by="urn:admin", units=[uuc_unit_support])
     api_key_ufra = ApiKey(hashed_secret=unifra_hashed_secret, organisation=ufra, description="API access",
                           created_by="urn:admin", updated_by="urn:admin")
-    persist_instance(db, api_key_uuc, api_key_ufra)
+    persist_instance(db, api_key_uuc, api_key_uuc_unit_support, api_key_ufra)
 
     organisation_invitation_roger = OrganisationInvitation(message="Please join", hash=unihard_invitation_hash,
                                                            expiry_date=dt_today() + datetime.timedelta(days=14),
@@ -371,7 +380,8 @@ def seed(db, app_config, skip_seed=False):
                    logo=read_image("email.png"),
                    accepted_user_policy="https://google.nl", allowed_organisations=[uuc, ufra], abbreviation="mail",
                    privacy_policy="https://privacy.org", security_email="sec@org.nl")
-    wireless = Service(entity_id=service_wireless_entity_id, name=service_wireless_name, description="Network Wireless Service",
+    wireless = Service(entity_id=service_wireless_entity_id, name=service_wireless_name,
+                       description="Network Wireless Service",
                        override_access_allowed_all_connections=False, automatic_connection_allowed=True,
                        contact_email=john.email,
                        logo=read_image("wireless.png"), accepted_user_policy="https://google.nl", abbreviation="wire",
@@ -614,6 +624,7 @@ def seed(db, app_config, skip_seed=False):
                                  logo=read_image("teachers.png"),
                                  organisation=uuc, services=[],
                                  join_requests=[], invitations=[],
+                                 units=[uuc_unit_research],
                                  short_name="uuc_teachers_short_name",
                                  accepted_user_policy="https://www.uuc.nl/teachers")
 

@@ -54,6 +54,11 @@ class TestMockUser(AbstractTest):
         verified_data = XMLVerifier().verify(doc, x509_cert=cert).signed_xml
         user_uid = verified_data.attrib.get("user_id")
         self.assertEqual("urn:sarah", user_uid)
+        # In this flow, we don't want to create a mock-user
+        self.put("/api/mock", body={"sub": "urn:peter", "name": "Doe Ba", "email": "peter@example.org"},
+                 with_basic_auth=False)
+        user = self.find_entity_by_name(User, "Doe Ba")
+        self.assertIsNone(user)
 
     def test_eb_interrupt_data_forbidden(self):
         self.login()
