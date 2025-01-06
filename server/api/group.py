@@ -8,8 +8,7 @@ from werkzeug.exceptions import Forbidden, Conflict, BadRequest
 
 from server.api.base import json_endpoint, query_param, emit_socket
 from server.api.group_members import do_add_group_members
-from server.auth.security import confirm_collaboration_admin, confirm_external_api_call, \
-    confirm_api_key_unit_access
+from server.auth.security import confirm_collaboration_admin, confirm_api_key_unit_access
 from server.db.activity import update_last_activity_date
 from server.db.db import db
 from server.db.defaults import cleanse_short_name
