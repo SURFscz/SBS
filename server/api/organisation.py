@@ -195,9 +195,11 @@ def organisation_name_by_id(organisation_id):
 def api_organisation_details():
     confirm_external_api_call()
     organisation = request_context.external_api_organisation
+    api_key = request_context.external_api_key
     for collaboration in organisation.collaborations:
         collaboration.groups
         collaboration.tags
+        collaboration.units
         collaboration.services
         collaboration.collaboration_memberships
         for collaboration_membership in collaboration.collaboration_memberships:
@@ -206,6 +208,20 @@ def api_organisation_details():
             group.collaboration_memberships
 
     json_organisation = jsonify(organisation).json
+    if api_key.units:
+        api_key_unit_identifiers = [unit.id for unit in api_key.units]
+
+        # remove the collaborations without units or no matching units
+        def valid_co(collaboration_json):
+            co_unit_identifiers = [unit["id"] for unit in collaboration_json.get("units", [])]
+            if not co_unit_identifiers:
+                return False
+            if not all(api_key_unit_id in api_key_unit_identifiers for api_key_unit_id in co_unit_identifiers):
+                return False
+
+        valid_collaborations = [co for co in json_organisation.get("collaborations", []) if valid_co(co)]
+        json_organisation["collaborations"] = valid_collaborations
+
     for json_collaboration in json_organisation.get("collaborations", []):
         for group in json_collaboration.get("groups", []):
             group["collaboration_memberships"] = [cm["user_id"] for cm in group.get("collaboration_memberships", [])]

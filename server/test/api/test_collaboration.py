@@ -13,7 +13,8 @@ from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import (co_ai_computing_uuid, co_ai_computing_name, co_research_name, user_john_name,
                               co_ai_computing_short_name, co_teachers_name, read_image, co_research_uuid,
                               service_group_wiki_name1,
-                              service_storage_name, unifra_secret, unifra_name, unihard_short_name)
+                              service_storage_name, unifra_secret, unifra_name, unihard_short_name,
+                              unifra_unit_cloud_name, unifra_unit_infra_name, unihard_secret_unit_support)
 from server.test.seed import unihard_secret, unihard_name
 from server.tools import dt_now
 
@@ -1056,3 +1057,29 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(400, response.status_code)
         response_json = response.json
         self.assertTrue("Invalid emails" in response_json["message"])
+
+    def test_api_update_collaboration_units(self):
+        collaboration = self.find_entity_by_name(Collaboration, co_research_name)
+        self.assertEqual(0, len(collaboration.units))
+        response = self.put(f"/api/collaborations/v1/{collaboration.identifier}/units",
+                            headers={"Authorization": f"Bearer {unifra_secret}"},
+                            body=[unifra_unit_cloud_name, unifra_unit_infra_name],
+                            with_basic_auth=False)
+        self.assertTrue("units" in response)
+        collaboration = self.find_entity_by_name(Collaboration, co_research_name)
+        self.assertEqual(2, len(collaboration.units))
+
+        self.put(f"/api/collaborations/v1/{collaboration.identifier}/units",
+                 headers={"Authorization": f"Bearer {unifra_secret}"},
+                 body=[],
+                 with_basic_auth=False)
+        collaboration = self.find_entity_by_name(Collaboration, co_research_name)
+        self.assertEqual(0, len(collaboration.units))
+
+    def test_api_update_collaboration_units_forbidden(self):
+        collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
+        self.put(f"/api/collaborations/v1/{collaboration.identifier}/units",
+                 headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
+                 body=[],
+                 response_status_code=403,
+                 with_basic_auth=False)

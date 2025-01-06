@@ -30,7 +30,7 @@ class TestApiKey(AbstractTest):
         self.assertEqual(pre_count, post_count - 1)
 
         organisation = self.get(f"/api/organisations/{organisation.id}")
-        self.assertEqual(2, len(organisation["api_keys"]))
+        self.assertEqual(3, len(organisation["api_keys"]))
 
         secret = self.get("/api/api_keys")["value"]
         api_key["hashed_secret"] = secret

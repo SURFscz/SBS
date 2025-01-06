@@ -4,7 +4,7 @@ from werkzeug.exceptions import Forbidden, NotFound
 
 from server.db.db import db
 from server.db.domain import (CollaborationMembership, OrganisationMembership, Collaboration, User,
-                              ServiceMembership)
+                              ServiceMembership, ApiKey)
 
 CSRF_TOKEN = "CSRFToken"
 
@@ -56,6 +56,26 @@ def has_org_manager_unit_access(user_id, collaboration, org_manager_allowed=True
     if membership.units:
         unit_allowed = collaboration.is_allowed_unit_organisation_membership(membership)
     return unit_allowed
+
+
+def confirm_api_key_unit_access(api_key: ApiKey, collaboration: Collaboration):
+    if not api_key:
+        raise Forbidden("ApiKey is None")
+    if not collaboration:
+        raise Forbidden("Collaboration is None")
+    # The ApiKey must be for the same Organisation as the Organisation of the Collaboration
+    if api_key.organisation_id != collaboration.organisation_id:
+        raise Forbidden(f"ApiKey Organisation({api_key.organisation.name}) does not equals the "
+                        f"Organisation({collaboration.organisation.name}) of the Collaboration({collaboration.name})")
+    # If an ApiKey is not scoped, then we can't enforce anything
+    if not api_key.units:
+        return
+    api_key_unit_names = [unit.name for unit in api_key.units]
+    # For an ApiKey with a unit, it is not allowed to request information about a CO that does not have a unit
+    if not collaboration.units:
+        raise Forbidden(f"ApiKey with units ({api_key_unit_names}) has no access to collaboration {collaboration.name}")
+    if not all(unit in api_key.units for unit in collaboration.units):
+        raise Forbidden(f"ApiKey with units ({api_key_unit_names}) has no access to collaboration {collaboration.name}")
 
 
 def is_application_admin():

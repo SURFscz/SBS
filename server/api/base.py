@@ -57,6 +57,7 @@ def auth_filter(app_config):
             hashed_secret = get_authorization_header(True, ignore_missing_auth_header=True)
             api_key = ApiKey.query.filter(ApiKey.hashed_secret == hashed_secret).first()
             request_context.external_api_organisation = api_key.organisation if api_key else None
+            request_context.external_api_key = api_key
             return
 
     if "user" in session and not session["user"].get("guest"):

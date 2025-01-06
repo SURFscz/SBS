@@ -815,3 +815,25 @@ def delete_collaboration(collaboration_id):
     _delete_orphan_tags(tag_identifiers)
 
     return res
+
+
+@collaboration_api.route("/v1/<co_identifier>/units", methods=["PUT"], strict_slashes=False)
+@swag_from("../swagger/public/paths/update_collaboration_units.yml")
+@json_endpoint
+def api_update_collaboration_units(co_identifier):
+    collaboration = confirm_organisation_api_collaboration(co_identifier)
+
+    api_key = request_context.external_api_key
+    if api_key.units:
+        raise Forbidden("API key is scoped with units. Update collaboration units not allowed")
+    units = current_request.get_json()
+    org_id = collaboration.organisation_id
+    new_units = [Unit.query.filter(Unit.name == unit, Unit.organisation_id == org_id).one() for unit in units]
+    collaboration.units = new_units
+
+    db.session.merge(collaboration)
+    db.session.commit()
+
+    emit_socket(f"collaboration_{collaboration.id}")
+
+    return collaboration, 201
