@@ -213,11 +213,6 @@ endpoints = [
         "path": "/api/collaborations/members"
     },
     {
-        "name": "collaboration_api.my_collaborations_lite",
-        "method": "GET",
-        "path": "/api/collaborations/"
-    },
-    {
         "name": "collaboration_api.name_exists",
         "method": "GET",
         "path": "/api/collaborations/name_exists"
@@ -1078,6 +1073,11 @@ endpoints = [
         "name": "service_group_api.save_service_group",
         "method": "POST",
         "path": "/api/servicegroups/"
+    },
+    {
+        "name": "service_group_api.find_by_service_uuid",
+        "method": "GET",
+        "path": "/api/servicegroups/find_by_service_uuid/<service_uuid4>"
     },
     {
         "name": "service_group_api.service_group_name_exists",
