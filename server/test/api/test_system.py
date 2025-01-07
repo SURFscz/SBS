@@ -25,7 +25,7 @@ class TestSystem(AbstractTest):
         # convert list to proper dict:
         stats = {r["name"]: r["count"] for r in res}
         self.assertEqual(len(res), len(stats.keys()))
-    
+
     def test_db_seed(self):
         self.get("/api/system/seed", response_status_code=201)
 
