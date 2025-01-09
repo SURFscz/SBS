@@ -3,13 +3,13 @@ import os
 from server.cron import idp_metadata_parser
 from server.cron.idp_metadata_parser import idp_metadata_file
 from server.db.db import db
-from server.db.domain import Organisation, OrganisationInvitation, User, JoinRequest, OrganisationMembership
+from server.db.domain import Organisation, OrganisationInvitation, User, JoinRequest, OrganisationMembership, ApiKey
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import (unihard_name, unifra_name, schac_home_organisation_unihar,
                               schac_home_organisation_example,
                               read_image, user_jane_name, unihard_short_name, unihard_unit_support_name,
                               co_ai_computing_name, unifra_secret, co_research_name,
-                              group_science_name, unihard_secret_unit_support)
+                              group_science_name, unihard_secret_unit_support, unihard_hashed_secret_unit_support)
 
 
 class TestOrganisation(AbstractTest):
@@ -479,6 +479,12 @@ class TestOrganisation(AbstractTest):
                        with_basic_auth=False)
         collaborations = res["collaborations"]
         self.assertEqual(1, len(collaborations))
+        self.assertEqual(co_ai_computing_name, collaborations[0]["name"])
+        # Test logic that determined the filtering of CO's with no units or other units than the used ApiKey
+        api_key = ApiKey.query.filter(ApiKey.hashed_secret == unihard_hashed_secret_unit_support).one()
+        self.assertEqual(1, len(api_key.units))
+        self.assertEqual(1, len(collaborations[0]["units"]))
+        self.assertEqual(collaborations[0]["units"][0], api_key.units[0].name)
 
     def test_search_users(self):
         self.login("urn:harry")
