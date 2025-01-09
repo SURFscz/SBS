@@ -210,11 +210,12 @@ def delete_collaboration_api(co_identifier):
     tag_identifiers = [tag.id for tag in collaboration.tags]
 
     broadcast_collaboration_deleted(collaboration_id)
+    emit_socket(f"organisation_{collaboration.organisation_id}")
+
     res = delete(Collaboration, collaboration_id)
 
     _delete_orphan_tags(tag_identifiers)
 
-    broadcast_collaboration_deleted(collaboration_id)
     return res
 
 
@@ -831,7 +832,10 @@ def delete_collaboration(collaboration_id):
     confirm_collaboration_admin(collaboration_id)
     tag_identifiers = _tag_identifiers(collaboration_id)
 
+    collaboration = Collaboration.query.filter(Collaboration.id == int(collaboration_id)).one()
+    emit_socket(f"organisation_{collaboration.organisation_id}")
     broadcast_collaboration_deleted(collaboration_id)
+
     res = delete(Collaboration, collaboration_id)
 
     _delete_orphan_tags(tag_identifiers)
