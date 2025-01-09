@@ -129,6 +129,12 @@ def _delete_orphan_tags(tag_identifiers):
             db.session.delete(tag)
 
 
+def _unit_from_name(unit_name: str, organisation_id: int):
+    unit = Unit.query.filter(Unit.name == unit_name, Unit.organisation_id == organisation_id).first()
+    if not unit:
+        raise BadRequest(f"Unit with name {unit_name} and organisation {organisation_id} does not exists")
+    return unit
+
 @collaboration_api.route("/admins/<service_id>", strict_slashes=False)
 @json_endpoint
 def collaboration_admins(service_id):
@@ -644,7 +650,7 @@ def save_collaboration_api():
              "name": unit.name} for unit in api_key.units]
     elif "units" in data:
         data["units"] = [
-            {"id": Unit.query.filter(Unit.name == unit).first().id,
+            {"id": _unit_from_name(unit, organisation.id).id,
              "organisation_id": organisation.id,
              "name": unit} for unit in data["units"]]
 
@@ -842,8 +848,7 @@ def api_update_collaboration_units(co_identifier):
     if api_key.units:
         raise Forbidden("API key is scoped with units. Update collaboration units not allowed")
     units = current_request.get_json()
-    org_id = collaboration.organisation_id
-    new_units = [Unit.query.filter(Unit.name == unit, Unit.organisation_id == org_id).one() for unit in units]
+    new_units = [_unit_from_name(unit, collaboration.organisation_id) for unit in units]
     collaboration.units = new_units
 
     db.session.merge(collaboration)
