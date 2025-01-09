@@ -135,6 +135,7 @@ def _unit_from_name(unit_name: str, organisation_id: int):
         raise BadRequest(f"Unit with name {unit_name} and organisation {organisation_id} does not exists")
     return unit
 
+
 @collaboration_api.route("/admins/<service_id>", strict_slashes=False)
 @json_endpoint
 def collaboration_admins(service_id):
