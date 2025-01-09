@@ -566,6 +566,28 @@ class TestCollaboration(AbstractTest):
         count = Invitation.query.filter(Invitation.collaboration_id == collaboration.id).count()
         self.assertEqual(2, count)
 
+    def test_api_call_not_existing_unit(self):
+        response = self.client.post("/api/collaborations/v1",
+                                    headers={"Authorization": f"Bearer {unifra_secret}"},
+                                    data=json.dumps({
+                                        "name": "new_collaboration",
+                                        "description": "new_collaboration",
+                                        "accepted_user_policy": "https://aup.org",
+                                        "administrators": ["the@ex.org", "that@ex.org"],
+                                        "administrator": "urn:sarah",
+                                        "short_name": "new_short_name",
+                                        "disable_join_requests": True,
+                                        "disclose_member_information": True,
+                                        "disclose_email_information": True,
+                                        "logo": read_image("robot.png"),
+                                        "units": ["Nope"]
+                                    }),
+                                    content_type="application/json")
+        self.assertEqual(400, response.status_code)
+        error_message = response.json.get("message")
+        self.assertTrue("Unit with name Nope" in error_message)
+        self.assertTrue("does not exists" in error_message)
+
     def test_api_call_with_logo_prefix(self):
         response = self.client.post("/api/collaborations/v1",
                                     headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
