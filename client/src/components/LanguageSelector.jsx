@@ -12,7 +12,7 @@ export default class LanguageSelector extends React.PureComponent {
     handleChooseLocale = locale => e => {
         stopEvent(e);
         if (locale !== I18n.locale) {
-            Cookies.set("lang", locale, {expires: 356, secure: document.location.protocol.endsWith("https")});
+            Cookies.set("lang", locale, {expires: 356, secure: document.location.protocol.startsWith("https")});
             I18n.locale = locale;
             moment.locale(locale);
             languageSwitched();

@@ -473,12 +473,12 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(1, len(group["collaboration_memberships"]))
         self.assertTrue(isinstance(group["collaboration_memberships"][0], int))
 
-    def test_find_api_no_unit_access(self):
+    def test_find_api_unit_access(self):
         res = self.get("/api/organisations/v1",
                        headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                        with_basic_auth=False)
         collaborations = res["collaborations"]
-        self.assertEqual(0, len(collaborations))
+        self.assertEqual(1, len(collaborations))
 
     def test_search_users(self):
         self.login("urn:harry")

@@ -216,8 +216,7 @@ def api_organisation_details():
             co_unit_identifiers = [unit["id"] for unit in collaboration_json.get("units", [])]
             if not co_unit_identifiers:
                 return False
-            if not all(api_key_unit_id in api_key_unit_identifiers for api_key_unit_id in co_unit_identifiers):
-                return False
+            return all(api_key_unit_id in api_key_unit_identifiers for api_key_unit_id in co_unit_identifiers)
 
         valid_collaborations = [co for co in json_organisation.get("collaborations", []) if valid_co(co)]
         json_organisation["collaborations"] = valid_collaborations
