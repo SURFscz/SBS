@@ -1,0 +1,28 @@
+name: Story
+description: Use this template for new user stories.
+title: "[Story] "
+labels: ["story", "backlog"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Description**
+        Provide a brief description of the story.
+
+  - type: textarea
+    attributes:
+      label: User Story
+      description: As a [role], I want to [goal] so that [reason].
+
+  - type: textarea
+    attributes:
+      label: Acceptance Criteria
+      description: List the criteria to consider this story complete.
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+
+  - type: textarea
+    attributes:
+      label: Notes
+      description: Any additional notes or context.
