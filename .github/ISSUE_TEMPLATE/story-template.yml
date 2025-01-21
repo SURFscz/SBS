@@ -1,18 +1,16 @@
-name: Story
+name: User Story
 description: Use this template for new user stories.
-title: "[Story] "
-labels: ["story", "backlog"]
+title: "As a [role], I want to [goal] so that [reason]"
+
 body:
   - type: markdown
     attributes:
-      value: |
-        **Description**
-        Provide a brief description of the story.
+      value: Please use the title field to name the story and the below fields to provide necessary details.
 
   - type: textarea
     attributes:
-      label: User Story
-      description: As a [role], I want to [goal] so that [reason].
+      label: Description
+      description: Provide a brief description of the story.
 
   - type: textarea
     attributes:
