@@ -1,0 +1,63 @@
+name: Bug Report
+description: Use this template to report a bug in the system.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Bug Report**
+
+        Please provide as much detail as possible to help us address the issue.
+
+  - type: textarea
+    attributes:
+      label: Description
+      description: Describe the bug and its impact.
+
+  - type: dropdown
+    attributes:
+      label: Severity
+      description: How severe is the issue?
+      options:
+        - Critical
+        - High
+        - Medium
+        - Low
+
+  - type: textarea
+    attributes:
+      label: Steps to Reproduce
+      description: Provide the steps to reproduce the issue.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll to '...'
+        4. See error
+
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+
+  - type: textarea
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+
+  - type: textarea
+    attributes:
+      label: Screenshots or Logs
+      description: Add any relevant screenshots or error logs.
+      placeholder: Provide a screenshot, console log, or error stack trace.
+
+  - type: input
+    attributes:
+      label: Environment
+      description: Specify the environment where the bug occurred.
+      placeholder: OS, browser, or application version.
+
+  - type: textarea
+    attributes:
+      label: Additional Context
+      description: Add any other details that might help us understand the issue.
