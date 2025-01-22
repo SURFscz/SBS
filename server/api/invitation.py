@@ -125,7 +125,6 @@ def invitations_by_hash():
     invitation.collaboration.groups
     invitation.collaboration.services
     invitation.collaboration.organisation
-    invitation.collaboration.organisation.services
 
     for member in invitation.collaboration.collaboration_memberships:
         member.user
@@ -134,6 +133,11 @@ def invitations_by_hash():
         return invitation, 200
 
     invitation_json = jsonify(invitation).json
+    # Sanitize user information
+    for cm in invitation_json["collaboration"]["collaboration_memberships"]:
+        cm["user"] = User.sanitize_user(cm["user"])
+    invitation_json["user"] = User.sanitize_user(invitation_json["user"])
+
     service_emails = invitation.collaboration.service_emails()
     admin_emails = invitation.collaboration.organisation.admin_emails()
     return {"invitation": invitation_json, "service_emails": service_emails, "admin_emails": admin_emails}, 200
