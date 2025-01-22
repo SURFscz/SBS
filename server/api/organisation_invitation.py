@@ -1,4 +1,4 @@
-from flask import Blueprint, request as current_request, current_app
+from flask import Blueprint, request as current_request, current_app, jsonify
 from sqlalchemy import func
 from sqlalchemy.orm import joinedload, load_only
 from werkzeug.exceptions import Conflict
@@ -6,7 +6,7 @@ from werkzeug.exceptions import Conflict
 from server.api.base import json_endpoint, query_param, emit_socket
 from server.auth.security import confirm_organisation_admin, current_user_id
 from server.db.defaults import default_expiry_date
-from server.db.domain import OrganisationInvitation, Organisation, OrganisationMembership, db
+from server.db.domain import OrganisationInvitation, Organisation, OrganisationMembership, db, User
 from server.db.models import delete
 from server.mail import mail_organisation_invitation
 from server.tools import dt_now
@@ -47,11 +47,16 @@ def organisation_invitations_by_hash():
     organisation_invitation = invitation_query \
         .filter(OrganisationInvitation.hash == hash_value) \
         .one()
-    # To avoid conflict: Loader strategies for ORM Path[Mapper
-    organisation_invitation.organisation.services
     for member in organisation_invitation.organisation.organisation_memberships:
         member.user
-    return organisation_invitation, 200
+
+    invitation_json = jsonify(organisation_invitation).json
+    # Sanitize user information
+    for om in invitation_json["organisation"]["organisation_memberships"]:
+        om["user"] = User.sanitize_user(om["user"])
+    invitation_json["user"] = User.sanitize_user(invitation_json["user"])
+
+    return invitation_json, 200
 
 
 @organisation_invitations_api.route("/accept", methods=["PUT"], strict_slashes=False)

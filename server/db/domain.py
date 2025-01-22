@@ -115,6 +115,10 @@ class User(Base, db.Model):
         self.suspended = False
         self.suspend_notifications = []
 
+    @staticmethod
+    def sanitize_user(user_json: dict):
+        return {"name": user_json.get("name"), "email": user_json.get("email")}
+
 
 services_organisations_association = db.Table(
     "services_organisations",
