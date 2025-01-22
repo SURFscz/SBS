@@ -129,14 +129,14 @@ def invitations_by_hash():
     for member in invitation.collaboration.collaboration_memberships:
         member.user
 
-    if not query_param("expand", required=False):
-        return invitation, 200
-
     invitation_json = jsonify(invitation).json
     # Sanitize user information
     for cm in invitation_json["collaboration"]["collaboration_memberships"]:
         cm["user"] = User.sanitize_user(cm["user"])
     invitation_json["user"] = User.sanitize_user(invitation_json["user"])
+
+    if not query_param("expand", required=False):
+        return invitation_json, 200
 
     service_emails = invitation.collaboration.service_emails()
     admin_emails = invitation.collaboration.organisation.admin_emails()
