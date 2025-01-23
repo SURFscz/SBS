@@ -1,7 +1,7 @@
 name: User Story
 description: Use this template for new user stories.
 title: "As a [role], I want to [goal] so that [reason]"
-
+type: "feature"
 body:
   - type: markdown
     attributes:

@@ -1,7 +1,7 @@
 name: Bug Report
 description: Use this template to report a bug in the system.
 title: "[Bug] "
-labels: ["bug"]
+type: "bug"
 body:
   - type: markdown
     attributes:
