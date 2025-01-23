@@ -1931,10 +1931,10 @@
   resolved "https://registry.yarnpkg.com/@socket.io/component-emitter/-/component-emitter-3.1.2.tgz#821f8442f4175d8f0467b9daf26e3a18e2d02af2"
   integrity sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA==
 
-"@surfnet/sds@^0.0.120":
-  version "0.0.120"
-  resolved "https://registry.yarnpkg.com/@surfnet/sds/-/sds-0.0.120.tgz#aafc94933fbf55f0f25ea7b3878ff4b21f506d3c"
-  integrity sha512-MgofTmsO0hX9CPc1jxWoNuptoqbcdZJ0fet6O8ftQ2i0qr4FFBAS/tQtB/Awguq9NQdY/oEYDnw50cDbM13g5A==
+"@surfnet/sds@^0.0.127":
+  version "0.0.127"
+  resolved "https://registry.yarnpkg.com/@surfnet/sds/-/sds-0.0.127.tgz#90c600768e75896d80136b50fbb540fe18f833dd"
+  integrity sha512-SY08iJOhcghlUV2iGDjfch+s+rFlHg3gSQ5pj/uZQfATRawXDkELjxTxnL37FAjnixJhTdoXhBu3uJVmBx/CMg==
 
 "@surma/rollup-plugin-off-main-thread@^2.2.3":
   version "2.2.3"
@@ -9058,10 +9058,10 @@ sass-loader@^12.3.0:
     klona "^2.0.4"
     neo-async "^2.6.2"
 
-sass@^1.83.1:
-  version "1.83.1"
-  resolved "https://registry.yarnpkg.com/sass/-/sass-1.83.1.tgz#dee1ab94b47a6f9993d3195d36f556bcbda64846"
-  integrity sha512-EVJbDaEs4Rr3F0glJzFSOvtg2/oy2V/YrGFPqPY24UqcLDWcI9ZY5sN+qyO3c/QCZwzgfirvhXvINiJCE/OLcA==
+sass@^1.83.4:
+  version "1.83.4"
+  resolved "https://registry.yarnpkg.com/sass/-/sass-1.83.4.tgz#5ccf60f43eb61eeec300b780b8dcb85f16eec6d1"
+  integrity sha512-B1bozCeNQiOgDcLd33e2Cs2U60wZwjUUXzh900ZyQF5qUasvMdDZYbQ566LJu7cqR+sAHlAfO6RMkaID5s6qpA==
   dependencies:
     chokidar "^4.0.0"
     immutable "^5.0.2"
