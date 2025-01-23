@@ -105,7 +105,10 @@ export function escapeDeep(obj) {
 }
 
 export const removeDuplicates = (arr, attr) => arr
-    .filter((obj, pos, arr) => arr.map(mapObj => mapObj[attr]).indexOf(obj[attr]) === pos);
+    .filter((obj, pos, arr) => arr
+        .filter(filObj => !isEmpty(filObj))
+        .map(mapObj => mapObj[attr])
+        .indexOf((obj || {})[attr]) === pos);
 
 export const ErrorOrigins = {
     invitationNotFound: "invitationNotFound",
