@@ -46,6 +46,18 @@ test("Remove duplicates", () => {
     ]);
 });
 
+test("Remove duplicates with undefined", () => {
+    const arr = [
+        {id: 1, name: "one"},
+        {id: 1, name: "one"},
+        undefined
+    ];
+    const unique = removeDuplicates(arr, "id");
+    expect(unique).toEqual([
+        {id: 1, name: "one"},
+    ]);
+});
+
 test("splitListSemantically", () => {
     const arr = ["1", "2", "3", "4"]
     expect(splitListSemantically(arr, "and")).toEqual("1, 2, 3 and 4");
