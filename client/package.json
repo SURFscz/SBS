@@ -35,7 +35,7 @@
         "react-md-spinner": "^1.0.0",
         "react-mde": "^11.0.0",
         "react-router-dom": "^5.2.0",
-        "react-select": "^5.9.0",
+        "react-select": "^5.10.0",
         "react-tooltip": "^5.28.0",
         "recharts": "^2.15.0",
         "scroll-into-view": "^1.15.0",
