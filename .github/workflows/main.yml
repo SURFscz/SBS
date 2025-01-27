@@ -227,6 +227,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Fix docker setup
+        run: |
+          echo '{"features": { "containerd-snapshotter": true }}' > /etc/docker/daemon.json
+          systemctl restart docker
+          docker info -f '{{ .DriverStatus }}'
+
       - name: Checkout
         uses: actions/checkout@v4
 
