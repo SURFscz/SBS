@@ -137,22 +137,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "DIR=$(yarn cache dir)" >> $GITHUB_OUTPUT
-
-      - uses: actions/cache@v4
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.DIR }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
       - name: Use Node.js 20
         uses: actions/setup-node@v4
         with:
-#          node-version: "16.20.0"
           node-version: "20.8.0"
           cache: "yarn"
           cache-dependency-path: '**/yarn.lock'
