@@ -10,7 +10,9 @@ RUN \
     apt-get -y install                                   \
         curl                                             \
         git                                              \
-        build-essential                                  \
+        clang                                            \
+        xz-utils                                         \
+        bzip2                                            \
         pkgconf                                          \
         python3-dev                                      \
         default-libmysqlclient-dev                       \
@@ -20,6 +22,9 @@ RUN \
 
 # Set the default workdir
 WORKDIR /opt
+
+# set default C compiler
+ENV CC clang
 
 # Install SBS
 COPY sbs.tar.xz /opt/sbs.tar.xz
