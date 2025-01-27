@@ -257,6 +257,7 @@ jobs:
           file: "Dockerfile.sbs"
           pull: true
           push: false
+          load: true
           tags: ${{ steps.meta-sbs.outputs.tags }}
           labels: ${{ steps.meta-sbs.outputs.labels }}
           platforms: linux/amd64,linux/arm64
@@ -284,6 +285,7 @@ jobs:
           file: "Dockerfile.sbs-server"
           pull: true
           push: false
+          load: true
           tags: ${{ steps.meta-sbs-server.outputs.tags }}
           labels: ${{ steps.meta-sbs-server.outputs.labels }}
           platforms: linux/amd64,linux/arm64
@@ -311,6 +313,7 @@ jobs:
           file: "Dockerfile.sbs-client"
           pull: true
           push: false
+          load: true
           tags: ${{ steps.meta-sbs-client.outputs.tags }}
           labels: ${{ steps.meta-sbs-client.outputs.labels }}
           platforms: linux/amd64,linux/arm64
