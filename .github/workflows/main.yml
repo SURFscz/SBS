@@ -229,8 +229,9 @@ jobs:
 
       - name: Fix docker setup
         run: |
-          echo '{"features": { "containerd-snapshotter": true }}' > /etc/docker/daemon.json
-          systemctl restart docker
+          cat /etc/docker/daemon.json
+          echo '{"features": { "containerd-snapshotter": true }}' | tee  /etc/docker/daemon.json
+          sudo systemctl restart docker
           docker info -f '{{ .DriverStatus }}'
 
       - name: Checkout
