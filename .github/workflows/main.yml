@@ -323,7 +323,8 @@ jobs:
       - name: Setup tmate session
         env:
           ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG}}
-        if: ${{ failure() && env.ACTIONS_STEP_DEBUG == 'true' }}
+        #if: ${{ failure() && env.ACTIONS_STEP_DEBUG == 'true' }}
+        if: always()
         uses: mxschmitt/action-tmate@v3
         with:
           limit-access-to-actor: true
