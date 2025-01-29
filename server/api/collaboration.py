@@ -206,11 +206,12 @@ def delete_collaboration_api(co_identifier):
     confirm_api_key_unit_access(api_key, collaboration)
 
     collaboration_id = collaboration.id
+    organisation_id = collaboration.organisation_id
 
     tag_identifiers = [tag.id for tag in collaboration.tags]
 
     broadcast_collaboration_deleted(collaboration_id)
-    emit_socket(f"organisation_{collaboration.organisation_id}")
+    emit_socket(f"organisation_{organisation_id}")
 
     res = delete(Collaboration, collaboration_id)
 
