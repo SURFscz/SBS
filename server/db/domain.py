@@ -125,6 +125,7 @@ class User(Base, db.Model):
             del user_json["mfa_reset_token"]
         if "second_factor_auth" in user_json:
             user_json["second_factor_auth"] = bool(user_json["second_factor_auth"])
+        return user_json
 
 
 services_organisations_association = db.Table(
