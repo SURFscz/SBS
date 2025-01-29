@@ -229,8 +229,6 @@ def api_organisation_details():
     for collaboration in json_organisation["collaborations"]:
         collaboration["units"] = [unit["name"] for unit in collaboration["units"]]
         collaboration["tags"] = [tag["tag_value"] for tag in collaboration["tags"]]
-        for collaboration_membership in collaboration.get("collaboration_memberships", []):
-            User.translate_user_mfa_attributes(collaboration_membership.get("user"))
     return json_organisation, 200
 
 

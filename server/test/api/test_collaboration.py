@@ -908,6 +908,12 @@ class TestCollaboration(AbstractTest):
                        headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                        with_basic_auth=False)
         self.assertIsNotNone(res["groups"][0]["collaboration_memberships"][0]["user"]["email"])
+        users = [cm.get("user") for cm in res.get("collaboration_memberships")]
+        self.assertEqual(5, len(users))
+        for user in users:
+            self.assertFalse("mfa_reset_token" in user)
+            self.assertTrue(isinstance(user.get("second_factor_auth"), bool))
+
         self.assertListEqual(res["tags"], ["tag_uuc"])
 
     def test_find_by_identifier_api_not_allowed(self):
