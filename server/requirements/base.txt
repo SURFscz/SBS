@@ -14,7 +14,6 @@ munch==4.0.0
 python2-secrets==1.0.5
 pytz==2024.2
 requests==2.32.3
-uWSGI==2.0.28
 urllib3==2.3.0
 websockets==14.2
 redis==5.2.1
@@ -32,10 +31,10 @@ Flask-Cors==5.0.0
 dnspython==2.7.0
 signxml==4.0.3
 bcrypt==4.2.1
-
+gunicorn==23.0.0
 git+https://github.com/SURFscz/flasgger@surf/main#egg=flasgger
 # We are using gunicorn as WSGI server, but eventlet changed the ALREADY_HANDLED API in 0.30.2 -> 0.30.3
 # This was fixed with https://github.com/benoitc/gunicorn/commit/6a8ebb4844b2f28596ffe7421eb9f7d08c8dc4d8
 # ... but never released.
 # @96ab8ba05af472b0ae3595c2a597955b4645696 is the last known-good gunicorn commit
-git+https://github.com/benoitc/gunicorn.git@96ab8ba05af472b0ae3595c2a597955b46456962
+# git+https://github.com/benoitc/gunicorn.git@96ab8ba05af472b0ae3595c2a597955b46456962
