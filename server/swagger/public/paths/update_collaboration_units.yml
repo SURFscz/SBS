@@ -36,6 +36,7 @@ parameters:
     schema:
       type: array
       description: "Unit names"
+      example: ["Research", "Support"]
       items:
         type: string
         example: "Research"
