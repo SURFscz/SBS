@@ -119,6 +119,13 @@ class User(Base, db.Model):
     def sanitize_user(user_json: dict):
         return {"name": user_json.get("name"), "email": user_json.get("email")}
 
+    @staticmethod
+    def translate_user_mfa_attributes(user_json: dict):
+        if "mfa_reset_token" in user_json:
+            del user_json["mfa_reset_token"]
+        if "second_factor_auth" in user_json:
+            user_json["second_factor_auth"] = bool(user_json["second_factor_auth"])
+
 
 services_organisations_association = db.Table(
     "services_organisations",

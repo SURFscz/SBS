@@ -480,12 +480,18 @@ class TestOrganisation(AbstractTest):
         collaborations = res["collaborations"]
         self.assertEqual(1, len(collaborations))
         self.assertEqual(1, res["collaborations_count"])
-        self.assertEqual(co_ai_computing_name, collaborations[0]["name"])
+        collaboration = collaborations[0]
+        self.assertEqual(co_ai_computing_name, collaboration["name"])
         # Test logic that determined the filtering of CO's with no units or other units than the used ApiKey
         api_key = ApiKey.query.filter(ApiKey.hashed_secret == unihard_hashed_secret_unit_support).one()
         self.assertEqual(1, len(api_key.units))
-        self.assertEqual(1, len(collaborations[0]["units"]))
-        self.assertEqual(collaborations[0]["units"][0], api_key.units[0].name)
+        self.assertEqual(1, len(collaboration["units"]))
+        self.assertEqual(collaboration["units"][0], api_key.units[0].name)
+        users = [cm.get("user") for cm in collaboration.get("collaboration_memberships")]
+        self.assertEqual(5, len(users))
+        for user in users:
+            self.assertFalse("mfa_reset_token" in user)
+            self.assertTrue(isinstance(user.get("second_factor_auth"), bool))
 
     def test_search_users(self):
         self.login("urn:harry")
