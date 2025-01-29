@@ -54,6 +54,7 @@ properties:
     example: 1644015600
   second_factor_auth:
     type: boolean
+    description: "Indicator if the user has setup MFA in SRAM"
     example: false
   suspended:
     type: boolean
