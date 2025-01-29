@@ -33,6 +33,7 @@ def login_user():
                                                               external_id=str(uuid.uuid4()))
     user.successful_login()
     add_user_claims(data, sub, user)
+    user.rate_limited = data.get("rate_limited", False)
 
     db.session.merge(user)
 

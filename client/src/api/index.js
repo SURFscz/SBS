@@ -105,6 +105,7 @@ export function me(config) {
         sub = "urn:john";
         sub = "urn:paul";
         const second_factor_confirmed = false;
+        const rate_limited = false;
         // const second_factor_confirmed = false;
         // sub = "urn:unknown";
         // Need to mock a login
@@ -115,6 +116,7 @@ export function me(config) {
             "email": `${part}@example.org`,
             "given_name": "Doe",
             "second_factor_confirmed": second_factor_confirmed,
+            "rate_limited": rate_limited
             // "voperson_external_id": "john@example.com"
         }, "PUT")
             .then(() => fetchJson("/api/users/me", {}, {}, false));
