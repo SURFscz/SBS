@@ -220,6 +220,7 @@ def api_organisation_details():
 
         valid_collaborations = [co for co in json_organisation.get("collaborations", []) if valid_co(co)]
         json_organisation["collaborations"] = valid_collaborations
+        json_organisation["collaborations_count"] = len(valid_collaborations)
 
     for json_collaboration in json_organisation.get("collaborations", []):
         for group in json_collaboration.get("groups", []):

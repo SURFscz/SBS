@@ -479,6 +479,7 @@ class TestOrganisation(AbstractTest):
                        with_basic_auth=False)
         collaborations = res["collaborations"]
         self.assertEqual(1, len(collaborations))
+        self.assertEqual(1, res["collaborations_count"])
         self.assertEqual(co_ai_computing_name, collaborations[0]["name"])
         # Test logic that determined the filtering of CO's with no units or other units than the used ApiKey
         api_key = ApiKey.query.filter(ApiKey.hashed_secret == unihard_hashed_secret_unit_support).one()
