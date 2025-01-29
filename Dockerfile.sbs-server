@@ -4,7 +4,7 @@ FROM python:3.11-slim-bookworm AS sram-sbs-server
 # Do an initial clean up and general upgrade of the distribution
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN \
+RUN --mount=type=cache,target=/var/cache/apt \
     apt-get update                                    && \
     apt-get -y dist-upgrade                           && \
     apt-get -y install                                   \
@@ -17,8 +17,8 @@ RUN \
         python3-dev                                      \
         default-libmysqlclient-dev                       \
         libxmlsec1-dev                                && \
-    apt-get -y autoremove                             && \
-    rm -rf /var/cache/apt /var/lib/apt/lists/*
+    apt-get -y autoclean                              && \
+    apt-get -y autoremove
 
 # Set the default workdir
 WORKDIR /opt
@@ -33,9 +33,9 @@ COPY sbs.tar.xz /opt/sbs.tar.xz
 RUN tar -Jxf sbs.tar.xz
 
 # Create venv dir
-#RUN virtualenv /opt/sbs
-
-RUN pip install -r /opt/sbs/server/requirements/test.txt
+RUN pip cache dir
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install -r /opt/sbs/server/requirements/test.txt
 
 # Copy entrypoint
 COPY misc/entrypoint.sh /entrypoint.sh
