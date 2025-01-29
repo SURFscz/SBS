@@ -264,6 +264,7 @@ class TestService(AbstractTest):
     def test_toggle_non_member_users_access_allowed(self):
         service = self.find_entity_by_name(Service, service_cloud_name)
         self.assertFalse(service.non_member_users_access_allowed)
+        self.assertTrue(service.access_allowed_for_crm_organisation)
 
         self.login("urn:john")
         self.put(f"/api/services/toggle_access_property/{service.id}",
@@ -272,6 +273,7 @@ class TestService(AbstractTest):
 
         service = self.find_entity_by_name(Service, service_cloud_name)
         self.assertTrue(service.non_member_users_access_allowed)
+        self.assertFalse(service.access_allowed_for_crm_organisation)
 
         self.put(f"/api/services/toggle_access_property/{service.id}",
                  body={"non_member_users_access_allowed": False},
@@ -720,6 +722,13 @@ class TestService(AbstractTest):
         self.assertFalse(service.non_member_users_access_allowed)
         self.assertFalse(service.override_access_allowed_all_connections)
         self.assertFalse(service.access_allowed_for_crm_organisation)
+
+        self.put(f"/api/services/toggle_access_property/{service.id}",
+                 body={"access_allowed_for_crm_organisation": True},
+                 with_basic_auth=False)
+        service = self.find_entity_by_name(Service, service_cloud_name)
+        self.assertTrue(service.access_allowed_for_crm_organisation)
+        self.assertFalse(service.non_member_users_access_allowed)
 
     def test_access_allowed_for_crm_organisation_not_allowed(self):
         service = self.find_entity_by_name(Service, service_wiki_name)
