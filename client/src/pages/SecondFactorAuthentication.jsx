@@ -39,7 +39,7 @@ class SecondFactorAuthentication extends React.Component {
             message: "",
             resetCode: "",
             resetCodeError: null,
-            resetRequested: false,
+            resetSuccessful: false,
             showFeedBack: false,
             rate_limited: false
         };
@@ -49,7 +49,8 @@ class SecondFactorAuthentication extends React.Component {
 
     componentDidMount() {
         const {user, update} = this.props;
-        if (user.rate_limited) {
+        const {resetSuccessful} = this.state;
+        if (user.rate_limited && !resetSuccessful) {
             this.setState({rate_limited: true, loading: false});
         } else if (!user.second_factor_auth || update) {
             get2fa().then(res => {
@@ -58,12 +59,12 @@ class SecondFactorAuthentication extends React.Component {
                     idp_name: res.idp_name || I18n.t("mfa.register.unknownIdp"),
                     secret: res.secret,
                     loading: false,
-                    resetRequested: false,
+                    resetSuccessful: false,
                 }, this.focusCode);
             });
         } else {
             this.setState({
-                resetRequested: false,
+                resetSuccessful: false,
                 loading: false
             }, this.focusCode);
         }
@@ -184,7 +185,10 @@ class SecondFactorAuthentication extends React.Component {
         reset2fa(resetCode)
             .then(() => {
                 this.props.refreshUser(() => {
-                    this.setState({resetCode: false, showEnterToken: false, resetRequested: true},
+                    this.setState({
+                            resetCode: false, showEnterToken: false, resetSuccessful: true,
+                            rate_limited: false
+                        },
                         () => this.componentDidMount());
                 });
             }).catch(() => {
