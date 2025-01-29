@@ -467,8 +467,8 @@ def personal():
         .options(selectinload(User.aups)) \
         .filter(User.id == current_user_id()).first()
     user_json = jsonify(user_from_db).json
-    for attr in ["second_factor_auth", "mfa_reset_token"]:
-        del user_json[attr]
+    for attribute in [attr for attr in ["second_factor_auth", "mfa_reset_token"] if attr in user_json]:
+        del user_json[attribute]
     return user_json, 200
 
 
