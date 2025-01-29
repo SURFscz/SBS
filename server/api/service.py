@@ -496,13 +496,14 @@ def toggle_access_property(service_id):
                     service.automatic_connection_allowed_organisations = []
         elif attribute == "non_member_users_access_allowed":
             service.connection_setting = None
+            service.access_allowed_for_crm_organisation = False
             if not enabled:
-                service.access_allowed_for_crm_organisation = False
                 service.override_access_allowed_all_connections = False
+
         elif attribute == "access_allowed_for_crm_organisation":
             service.connection_setting = None
+            service.non_member_users_access_allowed = False
             if not enabled:
-                service.non_member_users_access_allowed = False
                 service.override_access_allowed_all_connections = False
         db.session.merge(service)
 
