@@ -59,7 +59,7 @@ const en = {
         title: "Research Access Management",
         subTitle: "Please log in...",
         suspended: "Your profile has been suspended. Please contact sram-support@surf.nl to resolve this",
-        rateLimited: "You have attempted the TOTP verification too many times, and therefore you are logged out and your TOTP has been disabled. Contact your admin to resolve this",
+        rateLimited: "You have entered an invalid verification code too often, so it has been blocked. Contact your admin to resolve this",
         successfullyActivated: "You have re-activated your profile",
         closeBrowser: "To finish your logout you'll have to close your browser.",
         closeBrowserAfterDelete: "To finish the deletion of your profile you'll have to close your browser."
@@ -2278,14 +2278,14 @@ const en = {
                 "Thanks for your feedback! Feel free to add anything else."
         },
         update: {
-            info1: "To update your two-factor authentication, please follow the steps below.",
+            info1: "To update your verification code, please follow the steps below.",
             info2: "You will need to have access to the authenticator app that you are currently using to sign in to SURF Research Access Management, as well as to the new authenticator app that you wish to use for future logins.",
             currentCode: "1. Enter current verification code",
             currentCodeInfo: "Enter the 6-digit verification code from your current authenticator app.",
             scanInfo: "Open your new authenticator app and:",
             verificationCodeInfo: "Once the QR-code above is scanned, enter the 6-digit verification code from your new authenticator app.",
             verify: "Verify and update",
-            flash: "Your two-factor authentication has been updated to use your new authenticator app",
+            flash: "Your verification code has been updated to use your new authenticator app",
             preValidatedFlash: "Correct!"
         },
         verify: {
@@ -2297,9 +2297,9 @@ const en = {
             invalid: "Invalid verification code",
             resetRequest: "Reset your verfication code",
             resetToken: "Use a reset code",
-            rateLimited: "You were rate-limited",
-            rateLimitedInfo: "You have attempted the TOTP verification too many times, and therefore your TOTP has been disabled. Use a reset code to have your TOTP reset. Please contact sram-support@surf.nl for a reset code if you have not received one or request a new reset code.",
-            rateLimitedResetRequest: "Reset your verfication code",
+            rateLimited: "Verification code blocked",
+            rateLimitedInfo: "You have entered an invalid verification code too often, so it has been blocked. Please request a reset code so you can log in again.",
+            rateLimitedResetRequest: "Request a reset code",
             rateLimitedResetToken: "Use a reset code",
         },
         profile: {
@@ -2314,25 +2314,25 @@ const en = {
         lost: {
             title: "Request a reset code",
             how: "How this works",
-            info1: "You must ask an admin to reset your verification code",
-            info2: "<strong>We will send them an email</strong> with your request",
+            info1: "Ask an admin for a reset code",
+            info2: "<strong>The admin will receive an email</strong> with your request",
             info3: "They will confirm you are you",
-            info4: "They will send you a <strong>reset token</strong>",
-            info5: "With that token you can reconfigure your two factor authentication",
-            select: "Select who to ask for a reset token:",
+            info4: "Then you will receive a <strong>reset code</strong>",
+            info5: "With the reset code you can configure your verification code again",
+            select: "Who do you want to ask for a reset code?",
             organisationNamePlatformAdmin: "",
             displayNamePlatformAdmin: "SRAM support",
             respondent: "Your request will be sent to:",
             message: "Message to the admin(s)",
-            sendMail: "Request a reset token",
-            flash: "Your request for a reset token has been sent"
+            sendMail: "Request a reset code",
+            flash: "Your request for a reset code has been sent"
         },
         reset: {
             title: "Reset your verification code",
-            info1: "Enter your received reset token",
+            info1: "Enter your received reset code",
             submit: "Reset",
-            resetCodePlaceholder: "Reset token",
-            invalid: "Invalid reset token",
+            resetCodePlaceholder: "Reset code",
+            invalid: "Invalid reset code",
         }
     },
     sfo: {

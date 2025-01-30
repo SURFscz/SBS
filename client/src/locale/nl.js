@@ -59,7 +59,7 @@ const nl = {
         title: "Research Access Management",
         subTitle: "Inloggen...",
         suspended: "Je profiel is geschorst. Neem contact op sram-support@surf.nl om dit op te lossen",
-        rateLimited: "Je hebt de TOTP-verificatie te vaak geprobeerd en daarom ben je uitgelogd en is je TOTP uitgeschakeld. Neem contact op met uw beheerder om dit op te lossen",
+        rateLimited: "Je hebt te vaak een ongeldige verificatiecode ingevoerd, daarom is deze geblokkeerd. Neem contact op met je beheerder om dit op te lossen",
         successfullyActivated: "Gelukt: je profiel is geheractiveerd",
         closeBrowser: "Om volledig uit te loggen, moet je je browser sluiten",
         closeBrowserAfterDelete: "Om het verwijderen van je profiel te voltooien, moet je je browser sluiten."
@@ -993,7 +993,7 @@ const nl = {
         automaticConnectionAllowed: "Samenwerkingen mogen koppelen zonder jouw toestemming",
         automaticConnectionAllowedTooltip: "Indien ingeschakeld mag een samenwerking deze applicatie koppelen zonder toestemming van de applicatieeigenaar (jou). Er wordt dan geen koppelaanvraag ter goedkeuring voorgelegd.",
         automaticConnectionAllowedOrganisations: "Vertrouwde / je eigen organisaties",
-        automaticConnectionAllowedOrganisationsTooltip: "Als samenwerkingen geen koppeling mogen maken zonder toestemming, kan je organisaties selecteren die je vertrouwt of waarvan u eigenaar bent, en de samenwerkingen van die organisaties kunnen alsnog koppelen zonder toestemming.",
+        automaticConnectionAllowedOrganisationsTooltip: "Als samenwerkingen geen koppeling mogen maken zonder toestemming, kan je organisaties selecteren die je vertrouwt of waarvan je eigenaar bent, en de samenwerkingen van die organisaties kunnen alsnog koppelen zonder toestemming.",
         automaticConnectionAllowedOrganisationsPlaceHolder: "Selecteer organisaties...",
         accessAllowedForAll: "Beschikbaar voor alle organisaties",
         accessAllowedForAllTooltip: "Is deze applicatie voor alle huidige en toekomstige organisaties standaard beschikbaar?",
@@ -2278,7 +2278,7 @@ const nl = {
                 "Bedankt voor je bericht! Je kunt informatie toevoegen, als je wil."
         },
         update: {
-            info1: "Volg de onderstaande stappen om je tweefactorauthenticatie bij te werken.",
+            info1: "Volg de onderstaande stappen om je verificatiecode bij te werken.",
             info2: "Je moet toegang hebben tot de authenticator-app die je momenteel gebruikt om in te loggen bij SURF Research Access Management, evenals tot de nieuwe authenticator-app die je wil gebruiken voor toekomstige logins.",
             currentCode: "Voer de huidige verificatiecode in",
             currentCodeInfo: "Voer de 6-cijferige verificatiecode van je huidige authenticator-app in.",
@@ -2297,8 +2297,8 @@ const nl = {
             invalid: "Onjuiste verificatiecode",
             resetRequest: "Reset je verificatiecode",
             resetToken: "Gebruik een resetcode",
-            rateLimited: "Je bent rate-limited",
-            rateLimitedInfo: "Je hebt de TOTP-verificatie te vaak geprobeerd en daarom is je TOTP uitgeschakeld. Gebruik een resetcode om je TOTP te resetten. Neem contact op sram-support@surf.nl voor een resetcode als je deze niet ontvangen hebt of vraag een nieuwe restcode aan.",
+            rateLimited: "Inloggen geblokkeerd",
+            rateLimitedInfo: "Je hebt de TOTP-verificatie te vaak geprobeerd en daarom is je TOTP uitgeschakeld. Gebruik een resetcode om je TOTP te resetten. Neem contact op sram-support@surf.nl voor een resetcode als je deze niet ontvangen hebt of vraag een nieuwe resetcode aan.",
             rateLimitedResetRequest: "Reset je verificatiecode",
             rateLimitedResetToken: "Gebruik een resetcode",
         },
@@ -2312,27 +2312,27 @@ const nl = {
             edit: "Aanpassen"
         },
         lost: {
-            title: "Vraag een reset code aan",
-            how: "Hoe werkt dit",
-            info1: "Je moet een beheerder vragen om je verificatie-code te restten",
-            info2: "<strong>We zullen ze een email sturen</strong> met je aanvraag",
-            info3: "Ze zullen bevestigen dat jij jij bent",
-            info4: "Ze zullen je een <strong>reset token</strong> sturen",
-            info5: "Met dat token kan je je tweefactorauthenticatie opnieuw instellen",
-            select: "Selecteer aan wie de reset te vragen:",
+            title: "Vraag een resetcode aan",
+            how: "Hoe dit werkt",
+            info1: "Vraag een beheerder om een resetcode",
+            info2: "<strong>De beheerder krijgt een e-mail</strong> met je aanvraag",
+            info3: "Ze zullen bevestigen dat jij het bent",
+            info4: "Dan krijg je een <strong>resetcode</strong>",
+            info5: "Met de resetcode kun je je verificatiecode opnieuw instellen",
+            select: "Wie wil je om een resetcode vragen?",
             organisationNamePlatformAdmin: "",
             displayNamePlatformAdmin: "SRAM support",
             respondent: "Je aanvraag wordt verzonden naar:",
             message: "Bericht voor de beheerder(s)",
-            sendMail: "Vraag reset aan",
-            flash: "Je aanvraag om een reset is verzonden"
+            sendMail: "Vraag resetcode aan",
+            flash: "Je hebt een resetcode aangevraagd"
         },
         reset: {
             title: "Reset je verificatiecode",
-            info1: "Voer je ontvangen resettoken in",
+            info1: "Voer je ontvangen resetcode in",
             submit: "Reset",
-            resetCodePlaceholder: "Resettoken",
-            invalid: "Ongeldig resettoken",
+            resetCodePlaceholder: "Resetcode",
+            invalid: "Ongeldig resetcode",
         }
     },
     sfo: {
