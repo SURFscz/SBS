@@ -191,6 +191,26 @@ class TestInvitation(AbstractTest):
                        with_basic_auth=False, response_status_code=400)
         self.assertTrue(mail in res["message"])
 
+    def test_collaboration_invites_api_invalid_invites(self):
+        res = self.put("/api/invitations/v1/collaboration_invites",
+                       body={
+                           "short_name": co_ai_computing_short_name,
+                           "invites": "test@surf.nl"
+                       },
+                       headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
+                       with_basic_auth=False, response_status_code=400)
+        self.assertTrue("Invites must be an array" in res["message"])
+
+    def test_collaboration_invites_api_invalid_emails(self):
+        res = self.put("/api/invitations/v1/collaboration_invites",
+                       body={
+                           "short_name": co_ai_computing_short_name,
+                           "invites": ["nope"]
+                       },
+                       headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
+                       with_basic_auth=False, response_status_code=400)
+        self.assertTrue("No valid email in invites" in res["message"])
+
     def _do_test_collaboration_invites_api(self):
         mail = self.app.mail
         with mail.record_messages() as outbox:

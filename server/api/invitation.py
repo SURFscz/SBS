@@ -202,7 +202,13 @@ def collaboration_invites_api():
 
     expiry_date = parse_date(data.get("invitation_expiry_date"), default_expiry_date())
     membership_expiry_date = parse_date(data.get("membership_expiry_date"))
-    invites = list(filter(lambda recipient: bool(email_re.match(recipient)), data["invites"]))
+    invites_data = data["invites"]
+    if not isinstance(invites_data, list):
+        raise BadRequest(f"Invites must be an array, not {invites_data}")
+
+    invites = list(filter(lambda recipient: bool(email_re.match(recipient)), invites_data))
+    if not invites:
+        raise BadRequest(f"No valid email in invites: {invites_data}")
 
     duplicate_invitations = [i.invitee_email for i in invitations_by_email(collaboration.id, invites)]
     if duplicate_invitations:
