@@ -12,7 +12,7 @@ export default function ServiceNl(role) {
         "De LDAP-informatie bekijken en het bind password instellen",
         "Applicatiebeheerders van deze applicatie beheren"
     ] : [
-        "Koppelverzoeken beheren",
+        "Koppelaanvraag beheren",
         "Samenwerkingen ontkoppelen"
     ]
     return (
