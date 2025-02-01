@@ -101,6 +101,12 @@ class SecondFactorAuthentication extends React.Component {
 
     onChangeTotp = (index, attributeName, refs, onLastEntryVerify) => e => {
         const {update} = this.props;
+        const inputType = e.nativeEvent.inputType;
+        //Bugfix for FireFox
+        if (inputType === "insertFromPaste") {
+            e.preventDefault();
+            return false;
+        }
         const val = e.target.value;
         if (isNaN(val)) {
             return;
