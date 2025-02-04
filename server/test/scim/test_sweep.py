@@ -220,9 +220,9 @@ class TestSweep(AbstractTest):
             self.assertTrue(_user_changed(user, remote_user))
             setattr(user, attr, stored_attr)
 
-        user.last_login_date -= timedelta(hours=24)
+        user.last_login_date -= timedelta(days=24)
         self.assertTrue(_user_changed(user, remote_user))
-        user.last_login_date += timedelta(hours=24)
+        user.last_login_date += timedelta(days=24)
         user.suspended = True
         self.assertTrue(_user_changed(user, remote_user))
         user.suspended = False
