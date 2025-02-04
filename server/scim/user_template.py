@@ -6,7 +6,7 @@ from server.db.domain import User, Group, Collaboration
 from server.scim import EXTERNAL_ID_POST_FIX
 from server.scim.schema_template import \
     SCIM_SCHEMA_CORE_USER, SCIM_SCHEMA_SRAM_USER, SCIM_API_MESSAGES
-from server.tools import dt_now
+from server.tools import dt_now, inactivity
 
 
 def replace_none_values(d: dict):
@@ -36,7 +36,7 @@ def _meta_info(user: User):
 
 def inactive_days(date_at):
     delta = dt_now().date() - date_at.date()
-    return delta.days
+    return inactivity(delta.days)
 
 
 def create_user_template(user: User):
