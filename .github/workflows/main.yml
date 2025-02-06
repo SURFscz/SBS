@@ -272,8 +272,8 @@ jobs:
         id: meta-sbs-server
         uses: docker/metadata-action@v5
         with:
-          images: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_SERVER }}
+          images: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME_SERVER }}"
+          flavor: "suffix=-${{ matrix.arch }}"
 
       - name: Build and push Docker SBS-server image
         uses: docker/build-push-action@v5
@@ -300,8 +300,8 @@ jobs:
         id: meta-sbs-client
         uses: docker/metadata-action@v5
         with:
-          images: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_CLIENT }}
+          images: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME_CLIENT }}"
+          flavor: "suffix=-${{ matrix.arch }}"
 
       - name: Build and push Docker SBS-client image
         uses: docker/build-push-action@v5
