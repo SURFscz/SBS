@@ -323,15 +323,14 @@ jobs:
           image: "${{ steps.meta-sbs-client.outputs.tags }}"
 
       # Setup tmate session
-      - name: Setup tmate session
-        env:
-          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG}}
-        #if: ${{ failure() && env.ACTIONS_STEP_DEBUG == 'true' }}
-        if: always()
-        uses: mxschmitt/action-tmate@v3
-        with:
-          limit-access-to-actor: true
-        timeout-minutes: 60
+#      - name: Setup tmate session
+#        env:
+#          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG}}
+#        if: ${{ failure() && env.ACTIONS_STEP_DEBUG == 'true' }}
+#        uses: mxschmitt/action-tmate@v3
+#        with:
+#          limit-access-to-actor: true
+#        timeout-minutes: 60
 
   Create_release:
     name: Create release
