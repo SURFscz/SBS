@@ -196,6 +196,7 @@ jobs:
           name: "sbs-build"
           path: "/tmp/sbs.tar.xz"
 
+
   Docker_image:
     name: Create image
     if: >
@@ -205,12 +206,14 @@ jobs:
     needs:
       - "Client_build"
 
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [ 'amd64', 'arm64' ]
+
+    runs-on: "ubuntu-24.04${{ matrix.arch == 'arm64' && '-arm' || '' }}"
 
     steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -254,7 +257,7 @@ jobs:
           load: true
           tags: ${{ steps.meta-sbs.outputs.tags }}
           labels: ${{ steps.meta-sbs.outputs.labels }}
-          platforms: linux/amd64,linux/arm64
+          platforms: "linux/${{ matrix.arch }}"
           cache-from: "type=gha"
           cache-to: "type=gha,mode=max"
 
@@ -282,7 +285,7 @@ jobs:
           load: true
           tags: ${{ steps.meta-sbs-server.outputs.tags }}
           labels: ${{ steps.meta-sbs-server.outputs.labels }}
-          platforms: linux/amd64,linux/arm64
+          platforms: "linux/${{ matrix.arch }}"
           cache-from: "type=gha"
           cache-to: "type=gha,mode=max"
 
@@ -310,7 +313,7 @@ jobs:
           load: true
           tags: ${{ steps.meta-sbs-client.outputs.tags }}
           labels: ${{ steps.meta-sbs-client.outputs.labels }}
-          platforms: linux/amd64,linux/arm64
+          platforms: "linux/${{ matrix.arch }}"
           cache-from: "type=gha"
           cache-to: "type=gha,mode=max"
 
