@@ -157,7 +157,7 @@ jobs:
         env:
           VNM_DIR: ~/.nvm
 
-      - name: Run tests
+      - name: Run tests and create production build
         shell: bash
         run: |
           cd client
@@ -244,8 +244,8 @@ jobs:
         id: meta-sbs
         uses: docker/metadata-action@v5
         with:
-          images: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_SBS }}
+          images: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME_SBS }}"
+          flavor: "suffix=${{ matrix.arch }}"
 
       - name: Build and push Docker SBS image
         uses: docker/build-push-action@v5
