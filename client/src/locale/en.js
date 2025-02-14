@@ -2687,7 +2687,7 @@ const en = {
         inviteWithLinkInfo: "Share the link with which membership can be requested. You can approve or reject these requests.",
         inviteWithLinkCopy: "Copy link",
         inviteWithEmail: "Invite with email",
-        inviteWithEmailInfo: "Send an invtiation to one or more emails. Users can become a member directly with the link in the email.",
+        inviteWithEmailInfo: "Send an invitation to one or more emails. Users can become a member directly with the link in the email.",
     }
 };
 
