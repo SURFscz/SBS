@@ -60,6 +60,7 @@ const nl = {
         subTitle: "Inloggen...",
         suspended: "Je profiel is geschorst. Neem contact op sram-support@surf.nl om dit op te lossen",
         rateLimited: "Je hebt te vaak een ongeldige verificatiecode ingevoerd, daarom is deze geblokkeerd. Neem contact op met je beheerder om dit op te lossen",
+        excessiveReset: "Je hebt te vaak een MFA reset aangevraagd, daarom is je account geblokkeerd. Neem contact op met je beheerder om dit op te lossen",
         successfullyActivated: "Gelukt: je profiel is geheractiveerd",
         closeBrowser: "Om volledig uit te loggen, moet je je browser sluiten",
         closeBrowserAfterDelete: "Om het verwijderen van je profiel te voltooien, moet je je browser sluiten."

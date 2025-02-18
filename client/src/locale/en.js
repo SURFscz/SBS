@@ -60,6 +60,7 @@ const en = {
         subTitle: "Please log in...",
         suspended: "Your profile has been suspended. Please contact sram-support@surf.nl to resolve this",
         rateLimited: "You have entered an invalid verification code too often, so it has been blocked. Contact your admin to resolve this",
+        excessiveReset: "You have requested a MFA reset too often, so your account has been blocked. Contact your admin to resolve this",
         successfullyActivated: "You have re-activated your profile",
         closeBrowser: "To finish your logout you'll have to close your browser.",
         closeBrowserAfterDelete: "To finish the deletion of your profile you'll have to close your browser."
