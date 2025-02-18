@@ -1,9 +1,8 @@
 import base64
 import io
 
-from flask import Blueprint, session
+from flask import Blueprint
 from flask import send_file
-from werkzeug.exceptions import NotFound
 
 from server.db.logo_mixin import logo_from_cache
 
