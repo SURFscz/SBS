@@ -16,7 +16,7 @@ SVG_FORBIDDEN_TAGS = {"script", "iframe", "object", "embed", "javascript"}
 
 def validate_base64_image(base64_str):
     try:
-        image_data = base64.b64decode(base64_str, validate=True)
+        image_data = base64.b64decode(base64_str)
         image_format = imghdr.what(None, image_data)
 
         if image_format is None:

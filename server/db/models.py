@@ -38,8 +38,14 @@ def validate(cls, json_dict, is_new_instance=True):
     missing_attributes = [k for k in required_attributes if k not in json_dict]
     if missing_attributes:
         raise BadRequest(f"Missing attributes '{', '.join(missing_attributes)}' for {cls.__name__}")
-    if json_dict.get("logo"):
-        valid, message = validate_base64_image(json_dict.get("logo"))
+    logo = json_dict.get("logo")
+    if logo:
+        # TODO find out why this is necessary when we validate=True in validate_base64_image
+        # if isinstance(logo, bytes):
+        #     logo = logo.decode("utf-8")
+        # logo = logo.replace("\n", "")
+        # json_dict["logo"] = logo
+        valid, message = validate_base64_image(logo)
         if not valid:
             raise BadRequest(f"Invalid image:{message}")
 
