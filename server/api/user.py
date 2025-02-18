@@ -8,7 +8,7 @@ import urllib.parse
 import uuid
 
 import requests
-from flask import Blueprint, current_app, redirect
+from flask import Blueprint, current_app, redirect, make_response
 from flask import request as current_request, session, jsonify
 from sqlalchemy import text, or_, bindparam, String
 from sqlalchemy.orm import selectinload
@@ -632,7 +632,13 @@ def attribute_aggregation():
 @user_api.route("/logout", strict_slashes=False)
 def logout():
     session.clear()
-    return {}, 200
+    response = make_response({}, 200)
+
+    # Delete all cookies
+    for cookie in current_request.cookies:
+        response.set_cookie(cookie, "", expires=0)
+
+    return response
 
 
 @user_api.route("/", strict_slashes=False, methods=["DELETE"])
