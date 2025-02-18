@@ -207,12 +207,13 @@ def json_endpoint(f):
                 skip_email = True
             elif isinstance(e, Conflict):
                 skip_email = True
-            elif isinstance(e, MySQLdb.IntegrityError):
-                skip_email = True
             elif hasattr(e, "description"):
                 e.description = f"{e.__class__.__name__}: {current_request.url}." \
                                 f" IP: {_remote_address()}. " + e.description
                 skip_email = "sent a request that this server could not understand" in e.description
+            elif isinstance(e, MySQLdb.IntegrityError):
+                e.description = "Database integrity error"
+                skip_email = True
             response = jsonify(message=e.description if isinstance(e, HTTPException) else str(e),
                                error=True)
             response.status_code = 500
