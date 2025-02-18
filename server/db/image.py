@@ -1,5 +1,5 @@
 import base64
-import imghdr
+import filetype
 import io
 import xml.etree.ElementTree as ET
 from io import BytesIO
@@ -13,19 +13,21 @@ ALLOWED_MIME_TYPES = {"jpeg", "png", "gif", "bmp", "webp", "svg+xml", "svg"}
 # SVG security checks
 SVG_FORBIDDEN_TAGS = {"script", "iframe", "object", "embed", "javascript"}
 
+#TODO consider using https://pypi.org/project/puremagic/ 
 
 def validate_base64_image(base64_str):
     try:
         image_data = base64.b64decode(base64_str)
-        image_format = imghdr.what(None, image_data)
+        image_format = filetype.guess(image_data)
 
         if image_format is None:
             return False, "Invalid image format"
 
-        if image_format not in ALLOWED_MIME_TYPES:
+        extension = image_format.extension
+        if extension not in ALLOWED_MIME_TYPES:
             return False, f"Unsupported image format: {image_format}"
 
-        if image_format == "svg+xml" or image_format == "svg":
+        if extension == "svg+xml" or image_format == "svg":
             return validate_svg(image_data)
 
         # Validate raster image using PIL

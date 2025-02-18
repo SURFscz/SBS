@@ -6,7 +6,8 @@ from unittest import TestCase
 
 from PIL import UnidentifiedImageError, Image
 
-from server.db.image import transform_image
+from seed import read_image
+from server.db.image import transform_image, validate_base64_image
 
 
 class TestImage(TestCase):
@@ -37,3 +38,28 @@ class TestImage(TestCase):
             transform_image("test".encode())
 
         self.assertRaises(UnidentifiedImageError, assert_invalid_image)
+
+    def test_validate_base64_image(self):
+        image = read_image("test.png")
+        valid, _ = validate_base64_image(image)
+        self.assertTrue(valid)
+
+
+    def test_validate_base64_image_svg(self):
+        image = read_image("collaborations.svg")
+        valid, _ = validate_base64_image(image)
+        self.assertTrue(valid)
+
+    def test_validate_base64_image_corrupt(self):
+        image = read_image("corrupt.png")
+        valid, _ = validate_base64_image(image)
+        self.assertFalse(valid)
+
+    def test_validate_base64_image_invalid_ype(self):
+        image = read_image("favicon.ico")
+        valid, _ = validate_base64_image(image)
+        self.assertFalse(valid)
+
+    def test_validate_base64_image_invalid_base64(self):
+        valid, _ = validate_base64_image("😔")
+        self.assertFalse(valid)
