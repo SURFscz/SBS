@@ -112,7 +112,6 @@ const nl = {
             database: "Database",
             activity: "Activiteit",
             validation: "Acties",
-<<<<<<< HEAD
             plsc: "LDAP",
             composition: "Config",
             suspendedUsers: "Users",
@@ -124,10 +123,6 @@ const nl = {
             pam: "PAM",
             proxy: "Proxy"
         }
-=======
-            plsc: "LDAP sync",
-            composition: "Config"        }
->>>>>>> 7c2676b33 (Added organisation UID to the user)
     },
     forms: {
         submit: "Toevoegen",

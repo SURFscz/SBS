@@ -335,18 +335,6 @@ class System extends React.Component {
 
     }
 
-    getCompositionTab = compositionData => {
-        return (<div key="composition" name="composition" label={I18n.t("home.tabs.composition")}
-                     icon={<FontAwesomeIcon icon="book-open"/>}>
-            <div className="mod-system">
-                <section className="info-block-container">
-                    <ReactJson src={compositionData}/>
-                </section>
-            </div>
-        </div>)
-
-    }
-
     toggleShowOrganisationsWithoutAdmin = show => this.setState({showOrganisationsWithoutAdmin: show});
 
     toggleShowServicesWithoutAdmin = show => this.setState({showServicesWithoutAdmin: show});
@@ -1430,7 +1418,7 @@ class System extends React.Component {
             deletedUsers,
             serverQuery,
             demoSeedResult,
-            plscView,
+            plscView
         } = this.state;
         const {config} = this.props;
 
@@ -1451,10 +1439,7 @@ class System extends React.Component {
             this.getScimTab(),
             this.getStatsTab(),
             this.getPamTab(),
-            this.getProxyTab(),
-            this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables),
-            this.getPlscTab(plscData),
-            this.getCompositionTab(compositionData)
+            this.getProxyTab()
         ]
 
         return (
