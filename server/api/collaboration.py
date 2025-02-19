@@ -230,7 +230,7 @@ def api_update_user_from_collaboration(co_identifier):
     if user_role not in ["member", "admin"]:
         raise BadRequest(f"{user_role} is not a valid role")
 
-    membership = _get_collaboration_membership(co_identifier, user_uid)
+    membership = _get_collaboration_membership(collaboration, user_uid)
     membership.role = user_role
 
     db.session.merge(membership)
