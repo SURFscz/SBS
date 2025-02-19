@@ -1,14 +1,15 @@
 from flask import session, g as request_context
-from werkzeug.exceptions import Forbidden
+from werkzeug.exceptions import Forbidden, NotFound
 
 from server.auth.security import is_admin_user, is_application_admin, confirm_allow_impersonation, \
     confirm_write_access, \
     confirm_collaboration_admin, confirm_collaboration_member, confirm_organisation_admin, current_user_name, \
-    is_current_user_organisation_admin_or_manager, has_org_manager_unit_access, confirm_api_key_unit_access
+    is_current_user_organisation_admin_or_manager, has_org_manager_unit_access, confirm_api_key_unit_access, \
+    confirm_organisation_api_collaboration
 from server.db.domain import CollaborationMembership, Collaboration, User, OrganisationMembership, Organisation, ApiKey, \
     Unit
 from server.test.abstract_test import AbstractTest
-from server.test.seed import co_ai_computing_name, user_boss_name, unihard_name, co_monitoring_name
+from server.test.seed import co_ai_computing_name, user_boss_name, unihard_name, co_monitoring_name, co_research_name
 
 
 class TestSecurity(AbstractTest):
@@ -164,3 +165,12 @@ class TestSecurity(AbstractTest):
         api_key.units.append(unit2)
         # The ApiKey has all the units of the Collaboration
         confirm_api_key_unit_access(api_key, collaboration)
+
+    def test_confirm_organisation_api_collaboration(self):
+        with self.app.app_context():
+            def assert_not_found():
+                request_context.external_api_organisation = self.find_entity_by_name(Organisation, unihard_name)
+                collaboration = self.find_entity_by_name(Collaboration, co_research_name)
+                confirm_organisation_api_collaboration(None, collaboration)
+
+            self.assertRaises(NotFound, assert_not_found)

@@ -3,7 +3,7 @@ import os
 import urllib.request
 from io import BytesIO
 from unittest import TestCase
-
+from unittest import mock
 from PIL import UnidentifiedImageError, Image
 
 from server.test.seed import read_image
@@ -43,6 +43,13 @@ class TestImage(TestCase):
         image = read_image("test.png")
         valid, _ = validate_base64_image(image)
         self.assertTrue(valid)
+
+    def test_validate_base64_image_verification(self):
+        with mock.patch("PIL.PngImagePlugin.PngImageFile.verify",
+                        side_effect=UnidentifiedImageError("failed")):
+            image = read_image("test.png")
+            valid, _ = validate_base64_image(image)
+            self.assertFalse(valid)
 
     def test_validate_base64_image_svg(self):
         image = read_image("ok.svg")

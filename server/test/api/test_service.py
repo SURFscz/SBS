@@ -10,7 +10,7 @@ from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_network_entity_id, unihard_name, \
     service_network_name, service_scheduler_name, service_wiki_name, service_storage_name, \
     service_cloud_name, service_storage_entity_id, service_ssh_name, unifra_name, unihard_secret, \
-    user_jane_name, user_roger_name, service_sram_demo_sp, umcpekela_name, service_monitor_name
+    user_jane_name, user_roger_name, service_sram_demo_sp, umcpekela_name, service_monitor_name, read_image
 
 
 class TestService(AbstractTest):
@@ -109,6 +109,19 @@ class TestService(AbstractTest):
             self.assertEqual("qwoookaaaaaaaaaa", service["abbreviation"])
             self.assertEqual(2, len(service["ip_networks"]))
             self.assertEqual("2001:1c02:2b2f:be00:1cf0:fd5a:a548:1a16/128", service["ip_networks"][0]["network_value"])
+
+    def test_service_new_invalid_logo(self):
+        self.login()
+
+        res = self.post("/api/services", body={
+            "entity_id": "https://new_application",
+            "name": "new_application",
+            "logo": read_image("invalid.svg"),
+            "privacy_policy": "https://privacy.com",
+            "administrators": ["the@ex.org"],
+            "abbreviation": "testy"
+        }, response_status_code=400)
+        self.assertTrue("Invalid SVG format" in res["message"])
 
     def test_service_invites(self):
         pre_count = ServiceInvitation.query.count()

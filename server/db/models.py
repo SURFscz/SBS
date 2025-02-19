@@ -40,14 +40,9 @@ def validate(cls, json_dict, is_new_instance=True):
         raise BadRequest(f"Missing attributes '{', '.join(missing_attributes)}' for {cls.__name__}")
     logo = json_dict.get("logo")
     if logo:
-        # TODO find out why this is necessary when we validate=True in validate_base64_image
-        # if isinstance(logo, bytes):
-        #     logo = logo.decode("utf-8")
-        # logo = logo.replace("\n", "")
-        # json_dict["logo"] = logo
         valid, message = validate_base64_image(logo)
         if not valid:
-            raise BadRequest(f"Invalid image:{message}")
+            raise BadRequest(f"Invalid image: {message}")
 
 
 def _merge(cls, d):

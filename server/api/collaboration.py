@@ -103,17 +103,13 @@ def _reconcile_tags(collaboration: Collaboration, tags, is_external_api=False):
     return tags
 
 
-def _get_collaboration_membership(co_identifier, user_uid) -> CollaborationMembership:
-    organisation = request_context.external_api_organisation
-    membership = CollaborationMembership.query \
+def _get_collaboration_membership(collaboration: Collaboration, user_uid: str) -> CollaborationMembership:
+    return CollaborationMembership.query \
         .join(CollaborationMembership.user) \
         .join(CollaborationMembership.collaboration) \
-        .filter(Collaboration.identifier == co_identifier) \
+        .filter(CollaborationMembership.collaboration_id == collaboration.id) \
         .filter(User.uid == user_uid) \
         .one()
-    if not organisation or organisation.id != membership.collaboration.organisation_id:
-        raise Forbidden()
-    return membership
 
 
 def _tag_identifiers(collaboration_id):
@@ -254,7 +250,7 @@ def api_delete_user_from_collaboration(co_identifier, user_uid):
     collaboration = Collaboration.query.filter(Collaboration.identifier == co_identifier).one()
     confirm_api_key_unit_access(api_key, collaboration)
 
-    membership = _get_collaboration_membership(co_identifier, user_uid)
+    membership = _get_collaboration_membership(collaboration, user_uid)
 
     db.session.delete(membership)
     db.session.commit()
