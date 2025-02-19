@@ -44,7 +44,6 @@ class TestImage(TestCase):
         valid, _ = validate_base64_image(image)
         self.assertTrue(valid)
 
-
     def test_validate_base64_image_svg(self):
         image = read_image("ok.svg")
         valid, _ = validate_base64_image(image)
