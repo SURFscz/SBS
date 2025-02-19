@@ -692,6 +692,7 @@ class CollaborationDetail extends React.Component {
     }
 
     getActions = (user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration) => {
+        const historyIsShownInChevron = this.showHistory(user, collaboration);
         const actions = [];
         if (allowedToEdit && showMemberView) {
             actions.push({
@@ -708,7 +709,7 @@ class CollaborationDetail extends React.Component {
                 perform: () => this.toggleAdminMemberView()
             });
         }
-        if (adminOfCollaboration && !user.admin && showMemberView) {
+        if (adminOfCollaboration && !user.admin && showMemberView && !historyIsShownInChevron) {
             const queryParam = `name=${encodeURIComponent(collaboration.name)}&back=${encodeURIComponent(window.location.pathname)}`;
             actions.push({
                 buttonType: ButtonType.Secondary,
@@ -717,7 +718,7 @@ class CollaborationDetail extends React.Component {
             });
         }
         const isMember = collaboration.collaboration_memberships.some(m => m.user_id === user.id);
-        if (!isMember && user.admin && showMemberView) {
+        if (!isMember && adminOfCollaboration && showMemberView) {
             actions.push({
                 buttonType: ButtonType.Chevron, name: I18n.t("collaborationDetail.addMe"),
                 perform: this.addMe
@@ -731,10 +732,11 @@ class CollaborationDetail extends React.Component {
         const {collaboration} = this.state;
         this.setState({loading: true});
         createCollaborationMembershipRole(collaboration.id).then(() => {
-            this.componentDidMount(() => {
-                this.setState({loading: false});
-                setFlash(I18n.t("collaborationDetail.flash.meAdded", {name: collaboration.name}));
-            });
+            this.props.refreshUser(() =>
+                this.componentDidMount(() => {
+                    this.setState({loading: false});
+                    setFlash(I18n.t("collaborationDetail.flash.meAdded", {name: collaboration.name}));
+                }));
         })
     }
 
@@ -803,6 +805,18 @@ class CollaborationDetail extends React.Component {
         return <span>{I18n.t("collaboration.status.expired")}</span>
     }
 
+    showHistory = (user, collaboration) => {
+        /**
+         * If the user is an organisation admin / manager and not a member of the collaboration, then the option
+         * "Add me to this collaboration" is added. To show this in the drop-down we add this to the chevron, but we need
+         * to hide the normal 'show history' button. We have a max of three buttons, but we don't want an "Other options"
+         * dropdown with only one option.
+         */
+        return user.organisation_memberships.some(om => om.organisation_id === collaboration.organisation_id) &&
+            !user.collaboration_memberships.some(cm => cm.collaboration_id === collaboration.id);
+
+    }
+
     getUnitHeader = (user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration) => {
         const iconListItems = [
             this.getMemberIconListItem(collaboration)
@@ -813,10 +827,11 @@ class CollaborationDetail extends React.Component {
                 Icon: <TimerIcon/>, value: collaborationStatus
             })
         }
+
         return (
             <UnitHeader obj={collaboration}
                         firstTime={user.admin ? this.onBoarding : undefined}
-                        history={(user.admin && allowedToEdit) && this.props.history}
+                        history={((user.admin || this.showHistory(user, collaboration)) && allowedToEdit) && this.props.history}
                         auditLogPath={`collaborations/${collaboration.id}`}
                         breadcrumbName={I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
                         name={collaboration.name}
@@ -864,8 +879,10 @@ class CollaborationDetail extends React.Component {
         }
 
         return (<>
-            {(adminOfCollaboration && showMemberView) && this.getUnitHeader(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}
-            {(!showMemberView || !adminOfCollaboration) && this.getUnitHeaderForMemberNew(user, config, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember, adminOfCollaboration)}
+            {(adminOfCollaboration && showMemberView) &&
+                this.getUnitHeader(user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration)}
+            {(!showMemberView || !adminOfCollaboration) &&
+                this.getUnitHeaderForMemberNew(user, config, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember, adminOfCollaboration)}
 
             {(!collaborationJoinRequest && !alreadyCollaborationMembership) &&
                 <CollaborationWelcomeDialog name={collaboration.name}
