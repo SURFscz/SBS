@@ -6,7 +6,7 @@ from unittest import TestCase
 
 from PIL import UnidentifiedImageError, Image
 
-from seed import read_image
+from server.test.seed import read_image
 from server.db.image import transform_image, validate_base64_image
 
 
