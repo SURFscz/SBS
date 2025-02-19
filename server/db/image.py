@@ -1,5 +1,5 @@
 import base64
-import filetype
+import puremagic
 import io
 import xml.etree.ElementTree as ET
 from io import BytesIO
@@ -13,25 +13,23 @@ ALLOWED_MIME_TYPES = {"jpeg", "png", "gif", "bmp", "webp", "svg+xml", "svg"}
 # SVG security checks
 SVG_FORBIDDEN_TAGS = {"script", "iframe", "object", "embed", "javascript"}
 
-#TODO consider using https://pypi.org/project/puremagic/ 
 
 def validate_base64_image(base64_str):
     try:
         image_data = base64.b64decode(base64_str)
-        image_format = filetype.guess(image_data)
+        extension = puremagic.from_string(image_data)[1:]
 
-        if image_format is None:
-            return False, "Invalid image format"
-
-        extension = image_format.extension
         if extension not in ALLOWED_MIME_TYPES:
-            return False, f"Unsupported image format: {image_format}"
+            return False, f"Unsupported image format: {extension}"
 
-        if extension == "svg+xml" or image_format == "svg":
+        if extension == "svg+xml" or extension == "svg":
             return validate_svg(image_data)
 
         # Validate raster image using PIL
         return validate_raster_image(image_data)
+
+    except puremagic.main.PureError as e:
+        return False, f"Invalid image format: {str(e)}"
 
     except (base64.binascii.Error, ValueError) as e:
         return False, f"Base64 decoding error: {str(e)}"
@@ -48,9 +46,9 @@ def validate_raster_image(image_data):
 
 def validate_svg(image_data):
     try:
-        svg_content = image_data.decode("utf-8")
+        svg_content = image_data.decode("utf-8").lower()
         for tag in SVG_FORBIDDEN_TAGS:
-            if f"<{tag}" in svg_content.lower():
+            if f"<{tag}" in svg_content:
                 return False, f"SVG contains forbidden tag: <{tag}>"
 
         ET.ElementTree(ET.fromstring(svg_content))

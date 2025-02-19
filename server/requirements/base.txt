@@ -32,7 +32,7 @@ dnspython==2.7.0
 signxml==4.0.3
 bcrypt==4.2.1
 gunicorn==23.0.0
-filetype==1.2.0
+puremagic==1.28
 git+https://github.com/SURFscz/flasgger@surf/main#egg=flasgger
 # We are using gunicorn as WSGI server, but eventlet changed the ALREADY_HANDLED API in 0.30.2 -> 0.30.3
 # This was fixed with https://github.com/benoitc/gunicorn/commit/6a8ebb4844b2f28596ffe7421eb9f7d08c8dc4d8

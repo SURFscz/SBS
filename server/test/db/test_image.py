@@ -46,9 +46,19 @@ class TestImage(TestCase):
 
 
     def test_validate_base64_image_svg(self):
-        image = read_image("collaborations.svg")
+        image = read_image("ok.svg")
         valid, _ = validate_base64_image(image)
         self.assertTrue(valid)
+
+    def test_validate_base64_image_svg_xxs(self):
+        image = read_image("xss.svg")
+        valid, _ = validate_base64_image(image)
+        self.assertFalse(valid)
+
+    def test_validate_base64_image_svg_invalid(self):
+        image = read_image("invalid.svg")
+        valid, _ = validate_base64_image(image)
+        self.assertFalse(valid)
 
     def test_validate_base64_image_corrupt(self):
         image = read_image("corrupt.png")
