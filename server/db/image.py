@@ -8,7 +8,7 @@ from PIL import Image
 from PIL import UnidentifiedImageError
 
 # Allowed image MIME types
-ALLOWED_MIME_TYPES = {"jpeg", "png", "gif", "bmp", "webp", "svg+xml", "svg"}
+ALLOWED_MIME_TYPES = {"jpeg", "png", "gif", "bmp", "webp", "svg+xml", "svg", "jfif"}
 
 # SVG security checks
 SVG_FORBIDDEN_TAGS = {"script", "iframe", "object", "embed", "javascript"}
