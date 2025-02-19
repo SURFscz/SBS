@@ -58,7 +58,7 @@ class TestApiKey(AbstractTest):
                                     content_type="application/json")
         self.assertEqual(401, response.status_code)
 
-    def test_api_key_integrity_error(self):
+    def test_api_key_prevent_reply(self):
         secret = self.get("/api/api_keys")["value"]
         organisation = self.find_entity_by_name(Organisation, unihard_name)
         organisation_id = organisation.id
@@ -68,6 +68,5 @@ class TestApiKey(AbstractTest):
                                                    "description": "test"})
         self.assertIsNotNone(api_key["id"])
 
-        res = self.post("/api/api_keys", body={"organisation_id": organisation_id, "hashed_secret": secret,
-                                               "description": "test"}, response_status_code=400)
-        self.assertEqual("Database error", res["message"])
+        self.post("/api/api_keys", body={"organisation_id": organisation_id, "hashed_secret": secret,
+                                         "description": "test"}, response_status_code=403)

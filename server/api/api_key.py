@@ -28,6 +28,9 @@ def save_api_key():
     if not hashed_secret or hashed_secret != data["hashed_secret"]:
         raise Forbidden("Tampering with generated api secret is not allowed")
     data = hash_secret_key(data)
+    # Prevent replay
+    session.pop("hashed_secret", None)
+
     return save(ApiKey, custom_json=data, allowed_child_collections=["units"])
 
 
