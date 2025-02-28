@@ -1276,7 +1276,7 @@ const en = {
         schacHomeOrganisationTooltip: "The domain names users of this organisation log in with. These users can request or create collaborations with your organisation.",
         collaborationCreationAllowed: "Users can create collaborations straightaway",
         collaborationCreationAllowedTooltip: "Allows users from your organisation to create a collaboration without requiring approval from an organisation admin or manager",
-        serviceConnectionRequiresApproval: "Application connection request must be approved by the Organisation admin",
+        serviceConnectionRequiresApproval: "Application connection request must be approved by the Organisation admin or manager",
         serviceConnectionRequiresApprovalTooltip: "If checked then application connection requests must first be approved by an Organisation admin",
         accepted_user_policyPlaceholder: "The acceptable use policy (AUP) of the organisation",
         accepted_user_policyTooltip: "Users outside your organisation must accept this AUP before joining one of this organisation's collaboration for the first time.",

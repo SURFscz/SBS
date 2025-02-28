@@ -1276,7 +1276,7 @@ const nl = {
         schacHomeOrganisationTooltip: "De domeinnamen waarmee gebruikers van deze organisatie inloggen. Deze gebruikers kunnen samenwerkingen aanmaken of aanvragen bij je organisatie.",
         collaborationCreationAllowed: "Gebruikers kunnen zonder goedkeuring een samenwerking aanmaken",
         collaborationCreationAllowedTooltip: "Sta toe dat gebruikers van de organisatie samenwerkingen aanmaken zonder goedkeuring van de organisatiebeheerder of -manager",
-        serviceConnectionRequiresApproval: "Aanvraag voor applicatie koppeling moet worden goedgekeurd door de organisatie beheerder",
+        serviceConnectionRequiresApproval: "Aanvraag voor applicatie koppeling moet worden goedgekeurd door de organisatiebeheerder of -manager",
         serviceConnectionRequiresApprovalTooltip: "Indien geselecteerd, dan moet een aanvraag voor een applicatie koppeling eerst worden goedgekeurd door de organisatie beheerder",
         accepted_user_policyPlaceholder: "De acceptable use policy (AUP) van de organisatie.",
         accepted_user_policyTooltip: "Gebruikers van buiten de organsatie moeten deze AUP accepteren wanneer ze voor het eerste lid worden van een samenwerking van deze organisatie.",
