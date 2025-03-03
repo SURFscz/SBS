@@ -28,6 +28,7 @@ import Users from "../components/redesign/Users";
 import {ButtonType} from "@surfnet/sds";
 import {isInvitationExpired} from "../utils/Date";
 import ServiceConnectionRequests from "../components/redesign/ServiceConnectionRequests";
+import OrganisationOverview from "./OrganisationOverview";
 
 class OrganisationDetail extends React.Component {
 
@@ -37,7 +38,7 @@ class OrganisationDetail extends React.Component {
             invitation: null,
             organisation: {},
             loading: true,
-            tab: "collaborations",
+            tab: "overview",
             tabs: [],
             firstTime: false,
             confirmationDialogOpen: false,
@@ -147,6 +148,7 @@ class OrganisationDetail extends React.Component {
         const tabs = isInvite ? [
             this.getCollaborationsTab(organisation),
         ] : [
+            this.getOrganisationOverviewTab(organisation),
             this.getCollaborationsTab(organisation),
             this.getCollaborationRequestsTab(organisation),
             this.getOrganisationAdminsTab(organisation, user),
@@ -193,6 +195,16 @@ class OrganisationDetail extends React.Component {
         </div>);
     }
 
+    getOrganisationOverviewTab = organisation => {
+        return (
+            <div key="overview" name="overview"
+                 label={I18n.t("home.tabs.orgOverview")}>
+                <OrganisationOverview {...this.props}
+                                      organisation={organisation}/>
+            </div>
+        );
+
+    }
     getCollaborationsTab = organisation => {
         return (<div key="collaborations" name="collaborations"
                      label={I18n.t("home.tabs.orgCollaborations", {count: (organisation.collaborations || []).length})}>

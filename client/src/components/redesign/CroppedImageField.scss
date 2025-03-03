@@ -7,7 +7,11 @@
     grid-column-start: second;
     grid-row-start: 1;
     grid-row-end: 99;
-
+    height: 296px;
+    width: 274px;
+    padding: 0 16px;
+    background-color: $background;
+    border-radius: $br;
     &.second-row {
         grid-row-start: 2;
     }
@@ -36,9 +40,9 @@
     }
 
     .no-image svg {
-        width: 240px;
+        width: 166px;
         height: auto;
-        padding: 50px;
+        padding: 28px;
         border: .0625rem dashed var(--sds--color--gray--300);
         fill: $lighter-grey;
     }

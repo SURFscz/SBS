@@ -226,7 +226,8 @@ class App extends React.Component {
                                 const rateLimited = getParameterByName("rate-limited", window.location.search);
                                 const excessiveReset = getParameterByName("excessive-reset", window.location.search);
                                 if (rateLimited || excessiveReset || currentUser.guest) {
-                                    return <Login user={currentUser} {...props} rateLimited={rateLimited} excessiveReset={excessiveReset}/>;
+                                    return <Login user={currentUser} {...props} rateLimited={rateLimited}
+                                                  excessiveReset={excessiveReset}/>;
                                 }
                                 const state = getParameterByName("state", window.location.search);
                                 const redirect = getParameterByName("redirect", window.location.search);
@@ -314,7 +315,7 @@ class App extends React.Component {
                                                                     requests={getUserRequests(currentUser)}
                                                                     Component={MyRequests} {...props}/>}/>
 
-                            <Route exact path="/organisations/:id/:tab?"
+                            <Route exact path="/organisations/:id/:tab?/:subTab?"
                                    render={props => <ProtectedRoute
                                        currentUser={currentUser}
                                        refreshUser={this.refreshUserMemberships}

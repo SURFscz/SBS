@@ -1,9 +1,9 @@
 import base64
-import puremagic
 import io
 import xml.etree.ElementTree as ET
 from io import BytesIO
 
+import puremagic
 from PIL import Image
 from PIL import UnidentifiedImageError
 

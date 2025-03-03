@@ -90,6 +90,7 @@ const en = {
             orgAdmins: "Organisation admins",
             orgServices: "Applications",
             serviceAdmins: "Admins",
+            orgOverview: "Details & settings",
             orgCollaborations: "Collaborations",
             coServices: "Applications",
             coAdmins: "Admins",
@@ -287,7 +288,7 @@ const en = {
             memberCount: "Admins",
             collaborationCount: "Collaborations",
             schacHomeOrganisations: "Org domains",
-            category: "Category",
+            category: "Type of institution",
             leave: "Leave organisation"
         },
         services: {
@@ -1256,7 +1257,7 @@ const en = {
         name: "Name",
         namePlaceHolder: "The unique name of an organisation",
         invitations: "Invite organisation admins",
-        category: "Category",
+        category: "Type of institution",
         categoryTooltip: "Type of institution",
         tenantPlaceHolder: "The unique tenant / organisation identifier linking the organisation to an institute",
         shortName: "Short name",
@@ -1267,7 +1268,7 @@ const en = {
         identifierTooltip: "Generated, unique and immutable identifier of a organisation which used as identifier for external systems",
         description: "Description",
         descriptionPlaceholder: "The description of the organisation is visible to anyone",
-        servicesRestricted: "SURF organisation",
+        servicesRestricted: "This is a SURF organisation",
         servicesRestrictedTooltip: "Collaborations from SURF organisation can only link SURF applications.",
         schacHomeOrganisationShortName: "Organisation domain",
         schacHomeOrganisationShortNames: "Organisation domains",
@@ -2689,6 +2690,39 @@ const en = {
         inviteWithLinkCopy: "Copy link",
         inviteWithEmail: "Invite with email",
         inviteWithEmailInfo: "Send an invitation to one or more emails. Users can become a member directly with the link in the email.",
+    },
+    organisationDetails: {
+        details: "Organisation details",
+        toc: {
+            about: "About the organisation",
+            units: "Units",
+            labels: "Labels",
+            messaging: "Messaging",
+            settings: "Settings"
+        },
+        headers: {
+            about: "About the organisation",
+            units: "Manage units",
+            labels: "Manage labels",
+            messaging: "Messaging settingss",
+            settings: "Settings"
+        },
+        units: {
+            info: "Create units to organize departments or projects within your organization. Managers can be assigned to specific units to oversee their activities.",
+        },
+        labels: {
+            info: "Create labels to define overall properties for collaborations within your organisation. Labels are shared with the connected applications, helping you manage and organize your members.",
+            name: "Label name",
+            defaultFor: "Default for",
+            defaultForPlaceholder: "All co's within all units"
+        },
+        messaging: {
+            newCoMessage: "Message for new collaborations",
+            newCoMessageInfo: "This message is shown to users from your organisation when they request or create a collaboration",
+            defaultInviteMessage: "Default message for invites",
+            defaultInviteMessageInfo: "When filled this message is used in all invitation",
+        },
+        permissions: "Permissions"
     }
 };
 

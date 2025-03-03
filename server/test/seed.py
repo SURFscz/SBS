@@ -1,4 +1,3 @@
-import base64
 import datetime
 import os
 import uuid
@@ -144,9 +143,10 @@ def read_image(file_name, directory="images"):
         return image_cache.get(file)
     with open(file, "rb") as f:
         c = f.read()
-        decoded = base64.encodebytes(c).decode("utf-8")
-        image_cache[file] = decoded
-        return decoded
+        from server.db.image import transform_image
+        image = transform_image(c)
+        image_cache[file] = image
+        return image
 
 
 def persist_instance(db, *objs):

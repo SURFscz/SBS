@@ -55,13 +55,19 @@ section.dialog-content {
 
 
             li {
-                margin-bottom: 8px;
+                padding: 2px 0;
+                margin-bottom: 4px;
+
+                &.active {
+                    background-color: $background;
+                }
 
                 a {
                     white-space: nowrap;
+                    font-weight: 400;
 
                     &.active {
-                        font-weight: bold;
+                        font-weight: 600;
                     }
 
                     &.error {

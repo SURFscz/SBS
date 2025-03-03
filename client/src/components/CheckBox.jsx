@@ -31,6 +31,7 @@ CheckBox.propTypes = {
     onChange: PropTypes.func,
     readOnly: PropTypes.bool,
     hide: PropTypes.bool,
+    bold: PropTypes.bool,
     info: PropTypes.string,
     tooltip: PropTypes.string,
     className: PropTypes.string,

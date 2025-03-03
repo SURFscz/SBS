@@ -405,7 +405,7 @@ export default class CroppedImageDialog extends React.PureComponent {
         return (
             <div className={"cropped-image-dialog-container"}>
                 <div className={`cropped-image-dialog ${includeLogoGallery ? "large" : ""}`}>
-                    {(!src) && <div className="no-image">
+                    {!src && <div className="no-image">
                         {<NotFoundIcon/>}
                     </div>}
                     {src && <div className="preview">
