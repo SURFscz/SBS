@@ -11,5 +11,5 @@ responses==0.25.6
 alembic==1.14.1
 freezegun==1.5.1
 coverage==7.6.12
-mock==5.1.0
+mock==5.2.0
 pipdeptree==2.25.0
