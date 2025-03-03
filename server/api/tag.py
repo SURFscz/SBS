@@ -3,7 +3,7 @@ from sqlalchemy.orm import selectinload
 from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint, query_param
-from server.auth.security import confirm_organisation_admin_or_manager, confirm_write_access, confirm_organisation_admin
+from server.auth.security import confirm_organisation_admin_or_manager, confirm_write_access
 from server.db.db import db
 from server.db.domain import Tag, Collaboration
 from server.db.models import delete
@@ -48,7 +48,6 @@ def delete_tag(organisation_id, id):
 @json_endpoint
 def orphan_tags():
     confirm_write_access()
-
     return Tag.query.filter(~Tag.collaborations.any()).all(), 200
 
 
