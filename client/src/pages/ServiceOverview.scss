@@ -55,20 +55,17 @@ section.dialog-content {
 
 
             li {
-                padding: 2px 0;
-                margin-bottom: 4px;
+                padding: 6px 22px 6px 6px;
 
                 &.active {
                     background-color: $background;
+                    border-radius: $br;
                 }
 
                 a {
                     white-space: nowrap;
                     font-weight: 400;
-
-                    &.active {
-                        font-weight: 600;
-                    }
+                    text-decoration: none;
 
                     &.error {
                         color: $error-red;
@@ -76,7 +73,7 @@ section.dialog-content {
                 }
             }
         }
-    }
+        }
 
     .service {
         width: 100%;

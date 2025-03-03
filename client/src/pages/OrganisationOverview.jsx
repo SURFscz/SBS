@@ -13,7 +13,6 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {sanitizeShortName, validSchacHomeRegExp, validUrlRegExp} from "../validations/regExps";
 import SpinnerField from "../components/redesign/SpinnerField";
-import {isUserAllowed, ROLES} from "../utils/UserRole";
 import Button from "../components/Button";
 import InputField from "../components/InputField";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
@@ -22,6 +21,7 @@ import SelectField from "../components/SelectField";
 import CheckBox from "../components/CheckBox";
 import CreatableField from "../components/CreatableField";
 import CroppedImageField from "../components/redesign/CroppedImageField";
+import {OrganisationTags} from "../components/OrganisationTags";
 
 const toc = ["about", "units", "labels", "messaging", "settings"];
 
@@ -36,6 +36,7 @@ class OrganisationOverview extends React.Component {
             invalidInputs: {},
             alreadyExists: {},
             duplicatedUnit: false,
+            duplicatedTag: false,
             initial: true,
             isNew: true,
             organisation: null,
@@ -77,7 +78,7 @@ class OrganisationOverview extends React.Component {
         this.setState({invalidInputs: invalidInputs}, callback);
     }
 
-    existingOrganisationAttribute = attr => this.state.isNew ? null : this.state.organisation[attr];
+    existingOrganisationAttribute = attr => this.props.organisation[attr];
 
     validateOrganisationName = e =>
         organisationNameExists(e.target.value, this.existingOrganisationAttribute("name")).then(json => {
@@ -181,19 +182,21 @@ class OrganisationOverview extends React.Component {
     };
 
     isValid = () => {
-        const {required, alreadyExists, administrators, isNew, duplicatedUnit, invalidInputs} = this.state;
-        const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(this.state[attr]))
-            || duplicatedUnit || Object.keys(invalidInputs).some(key => invalidInputs[key]);
-        return !inValid && (!isNew || !isEmpty(administrators));
+        const {required, alreadyExists, duplicatedUnit, duplicateTag, invalidInputs, organisation} = this.state;
+        const inValid = Object.values(alreadyExists).some(val => val) ||
+            required.some(attr => isEmpty(organisation[attr])) ||
+            duplicatedUnit ||
+            duplicateTag ||
+            Object.keys(invalidInputs).some(key => invalidInputs[key]);
+        return !inValid;
     };
 
     submit = () => {
-        const {initial, isNew} = this.state;
-        const action = isNew ? this.doSubmit : this.doUpdate;
+        const {initial} = this.state;
         if (initial) {
-            this.setState({initial: false}, action)
+            this.setState({initial: false}, this.doUpdate)
         } else {
-            action()
+            this.doUpdate()
         }
     };
 
@@ -206,8 +209,8 @@ class OrganisationOverview extends React.Component {
             organisation.units = organisation.units.filter(unit => !isEmpty(unit.name));
             updateOrganisation(organisation)
                 .then(() => {
-                    this.props.history.goBack();
-                    setFlash(I18n.t("organisationDetails.flash.updated", {name: name}));
+                    this.setState({loading: false});
+                    setFlash(I18n.t("organisationDetail.flash.updated", {name: name}));
                 })
                 .catch(() => this.setState({loading: false}));
         } else {
@@ -323,11 +326,21 @@ class OrganisationOverview extends React.Component {
         );
     }
 
-    renderLabels = () => {
+    renderLabels = organisation => {
+        const allTags = organisation.tags.filter(tag => tag.is_default);
         return (
             <>
                 <h3 className="section-separator">{I18n.t("organisationDetails.headers.labels")}</h3>
-                <p>TODO</p>
+                <p>{I18n.t("organisationDetails.labels.info")}</p>
+                <OrganisationTags allUnits={organisation.units}
+                                  setTags={newTags => this.setState({
+                                      organisation: {
+                                          ...this.state.tags,
+                                          tags: newTags
+                                      }
+                                  })}
+                                  tags={allTags}
+                                  setDuplicated={duplicate => this.setState({duplicatedTag: duplicate})}/>
             </>
         );
     }
@@ -345,18 +358,18 @@ class OrganisationOverview extends React.Component {
         return (
             <>
                 <h3 className="section-separator">{I18n.t("organisationDetails.headers.settings")}</h3>
-                {user.admin && <SelectField value={organisation.category}
+                {user.admin && <SelectField value={organisation.category ? {value: organisation.category, label: organisation.category} : this.categoryOptions[0]}
                                             small={true}
                                             options={this.categoryOptions}
                                             name={I18n.t("organisation.category")}
                                             onChange={e => this.setState({
                                                 organisation: {
                                                     ...this.state.organisation,
-                                                    category: e
+                                                    category: e.value
                                                 }
                                             })}/>}
-
-                <CheckBox name={"services_restricted"}
+                <div className={"input-section"}>
+                    <CheckBox name={"services_restricted"}
                           value={organisation.services_restricted}
                           tooltip={I18n.t("organisation.servicesRestrictedTooltip")}
                           onChange={() => this.setState({
@@ -368,6 +381,8 @@ class OrganisationOverview extends React.Component {
                           info={I18n.t("organisation.servicesRestricted")}
                           readOnly={!user.admin}
                 />
+                </div>
+
 
                 {user.admin && <InputField value={organisation.crm_id}
                                            onChange={e => this.setState({
@@ -523,17 +538,16 @@ class OrganisationOverview extends React.Component {
     }
 
 
-    renderButtons = (isAdmin, disabledSubmit, currentTab) => {
+    renderButtons = (disabledSubmit, currentTab) => {
         const invalidTabsMsg = this.getInvalidTabs();
         return <>
             <div className={"actions-container"}>
                 {invalidTabsMsg && <span className={"error"}>{invalidTabsMsg}</span>}
                 <section className="actions">
-                    {(currentTab === "general") &&
+                    {(currentTab === "about") &&
                         <Button warningButton={true}
-                                disabled={!isAdmin}
                                 onClick={this.delete}/>}
-                    <Button disabled={disabledSubmit || !isAdmin}
+                    <Button disabled={disabledSubmit}
                             txt={I18n.t("service.update")}
                             onClick={this.submit}/>
                 </section>
@@ -562,7 +576,6 @@ class OrganisationOverview extends React.Component {
         }
         const disabledSubmit = !initial && !this.isValid();
         const {user} = this.props;
-        const isAdmin = isUserAllowed(ROLES.ORG_ADMIN, user, organisation.id);
         return (
             <div className="organisation-overview">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -570,10 +583,10 @@ class OrganisationOverview extends React.Component {
                                     confirm={confirmationDialogAction}
                                     isWarning={warning}
                                     question={I18n.t("organisation.deleteConfirmation")}/>
-                {this.sidebar(currentTab, isAdmin)}
+                {this.sidebar(currentTab)}
                 <div className={`organisation`}>
                     {this.renderCurrentTab(currentTab, user, organisation, disabledSubmit, invalidInputs, initial, alreadyExists, schac_home_organisation, invalid_schac_home_organisation)}
-                    {this.renderButtons(isAdmin, disabledSubmit, currentTab, organisation, invalidInputs)}
+                    {this.renderButtons(disabledSubmit, currentTab)}
                 </div>
 
             </div>

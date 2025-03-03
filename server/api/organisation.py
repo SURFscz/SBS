@@ -23,7 +23,7 @@ from server.db.defaults import default_expiry_date, cleanse_short_name
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import Organisation, OrganisationMembership, OrganisationInvitation, User, \
     CollaborationRequest, SchacHomeOrganisation, Collaboration, CollaborationMembership, Invitation, \
-    ServiceConnectionRequest
+    ServiceConnectionRequest, Tag
 from server.db.logo_mixin import logo_url
 from server.db.models import update, save, delete
 from server.mail import mail_organisation_invitation, mail_platform_admins
@@ -243,6 +243,8 @@ def organisation_by_id(organisation_id):
         .options(selectinload(Organisation.organisation_invitations)
                  .selectinload(OrganisationInvitation.units)) \
         .options(selectinload(Organisation.api_keys)) \
+        .options(selectinload(Organisation.tags)
+                 .selectinload(Tag.units)) \
         .options(selectinload(Organisation.services)) \
         .options(selectinload(Organisation.collaboration_requests)
                  .selectinload(CollaborationRequest.requester)) \

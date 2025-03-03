@@ -42,3 +42,11 @@ class TestTag(AbstractTest):
         self.login("urn:john")
         tags = self.get("/api/tags/all", with_basic_auth=False)
         self.assertEqual(3, len(tags))
+
+    def test_usages(self):
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
+        tag = Tag.query.filter(Tag.tag_value == "tag_uuc").one()
+        self.login("urn:mary")
+        res = self.get(f"/api/tags/usages/{organisation.id}/{tag.id}", with_basic_auth=False)
+
+        self.assertListEqual([co_ai_computing_name], res["collaborations"])

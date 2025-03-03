@@ -306,7 +306,8 @@ def seed(db, app_config, skip_seed=False):
                                        "\n- Wiki\n- Cloud\n- Awesome things...\n\nIf you want to join one of our "
                                        "collaborations, please send a mail to [support@uuc.nl](mailto:support@uuc.nl)."
                                        "\n<br/><br/>\nHappy researching,\n\n*UUC support*",
-                       collaboration_creation_allowed=True, crm_id="A2D02C9E-EA1D-434F-B893-A6413A01AFCB")
+                       collaboration_creation_allowed=True, crm_id="A2D02C9E-EA1D-434F-B893-A6413A01AFCB",
+                       invitation_sender_name="Info at UUC", invitation_message="Please join UUC CO")
     ufra = Organisation(name=unifra_name, description=unifra_name,
                         identifier="7c60a022-ab09-438c-8603-c361bc1a088d", created_by="urn:admin",
                         updated_by="urn:admin", short_name="ufra", logo=read_image("uni-franeker.png"),

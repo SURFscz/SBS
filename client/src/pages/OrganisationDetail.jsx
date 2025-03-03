@@ -145,10 +145,11 @@ class OrganisationDetail extends React.Component {
     }
 
     getTabs = (organisation, config, isInvite, user) => {
+        const isAdmin = isUserAllowed(ROLES.ORG_ADMIN, user, organisation.id);
         const tabs = isInvite ? [
             this.getCollaborationsTab(organisation),
         ] : [
-            this.getOrganisationOverviewTab(organisation),
+            isAdmin ? this.getOrganisationOverviewTab(organisation) : null,
             this.getCollaborationsTab(organisation),
             this.getCollaborationRequestsTab(organisation),
             this.getOrganisationAdminsTab(organisation, user),

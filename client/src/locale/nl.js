@@ -2620,7 +2620,7 @@ const nl = {
     },
     units: {
         column: "Units",
-        label: "Units (bijv. afdeling of project)",
+        label: "Unit name",
         add: "+ Voeg unit toe",
         confirmation: "Weet je zeker dat je unit {{name}} wilt verwijderen?",
         used: "Het wordt gebruikt door:",
@@ -2690,6 +2690,44 @@ const nl = {
         inviteWithLinkCopy: "Kopiëer koppeling",
         inviteWithEmail: "Uitnodigen via e-mail",
         inviteWithEmailInfo: "Verstuur een uitnodiging naar éém of meerder e-mailadressen. Met de link in de e-mail kan een gebruiker direct lid worden.",
+    },
+    organisationDetails: {
+        details: "Organisation details",
+        toc: {
+            about: "About the organisation",
+            units: "Units",
+            labels: "Labels",
+            messaging: "Messaging",
+            settings: "Settings"
+        },
+        headers: {
+            about: "About the organisation",
+            units: "Manage units",
+            labels: "Manage labels",
+            messaging: "Messaging settingss",
+            settings: "Organisation settings"
+        },
+        units: {
+            info: "Create units to organize departments or projects within your organization. Managers can be assigned to specific units to oversee their activities.",
+        },
+        labels: {
+            info: "Create labels to define overall properties for collaborations within your organisation. Labels are shared with the connected applications, helping you manage and organize your members.",
+            name: "Label name",
+            defaultFor: "Default for",
+            defaultForPlaceholder: "All co's within all units"
+        },
+        messaging: {
+            newCoMessage: "Message for new collaborations",
+            newCoMessageInfo: "This message is shown to users from your organisation when they request or create a collaboration",
+            defaultInviteMessage: "Default message for invites",
+            defaultInviteMessageInfo: "When filled this message is used in all invitation",
+        },
+        permissions: "Permissions"
+    },
+    tags: {
+        label: "Label name",
+        add: "+ Add label",
+        confirmation: "Are you sure you want to remove label {{name}}?",
     }
 };
 

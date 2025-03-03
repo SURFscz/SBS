@@ -24,21 +24,17 @@
 
 
             li {
-                padding: 3px;
-                margin-bottom: 2px;
+                padding: 6px 22px 6px 6px;
 
                 &.active {
                     background-color: $background;
+                    border-radius: $br;
                 }
 
                 a {
                     white-space: nowrap;
                     font-weight: 400;
                     text-decoration: none;
-
-                    &.active {
-                        font-weight: 600;
-                    }
 
                     &.error {
                         color: $error-red;
@@ -66,7 +62,7 @@
 
         .input-field, .radio-button-container, .actions, div.checkbox, .select-field, .ip-networks, span.error,
         div.email-invitations, div.compliance, div.ldap, div.contacts, div.tokens, div.actions-container, p.label,
-        div.creatable-field {
+        div.creatable-field, div.organisation-units, div.organisation-tags, div.input-section {
             grid-column-start: first;
         }
 
@@ -93,7 +89,7 @@
             }
         }
 
-        div.input-field, div.select-field, div.creatable-field  {
+        div.input-field, div.select-field, div.creatable-field {
             margin-top: 15px;
         }
 
@@ -116,6 +112,10 @@
         color: black;
         position: relative;
         font-weight: 600;
+    }
+
+    .input-section {
+        margin-top: 20px;
     }
 
 }

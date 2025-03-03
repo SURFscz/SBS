@@ -2620,7 +2620,7 @@ const en = {
     },
     units: {
         column: "Units",
-        label: "Units (e.g. department or project)",
+        label: "Unit name",
         add: "+ Add unit",
         confirmation: "Are you sure you want to remove unit {{name}}?",
         used: "It is being used by:",
@@ -2704,8 +2704,8 @@ const en = {
             about: "About the organisation",
             units: "Manage units",
             labels: "Manage labels",
-            messaging: "Messaging settingss",
-            settings: "Settings"
+            messaging: "Messaging settings",
+            settings: "Organisation settings"
         },
         units: {
             info: "Create units to organize departments or projects within your organization. Managers can be assigned to specific units to oversee their activities.",
@@ -2723,6 +2723,11 @@ const en = {
             defaultInviteMessageInfo: "When filled this message is used in all invitation",
         },
         permissions: "Permissions"
+    },
+    tags: {
+        label: "Label name",
+        add: "+ Add label",
+        confirmation: "Are you sure you want to remove label {{name}}?",
     }
 };
 
