@@ -7,7 +7,8 @@ div.organisation-tags {
     display: grid;
     grid-template-columns: [first] 8fr [second] 8fr [third] 1fr;
     grid-auto-rows: min-content;
-    column-gap: 20px;
+    column-gap: 12px;
+    row-gap: 14px;
     align-items: center;
 
     div.units-inner__control, div.input-units-inner {
@@ -23,7 +24,6 @@ div.organisation-tags {
         font-size: 20px;
         color: var(--sds--color--gray--400);
         cursor: pointer;
-        margin-left: 10px;
         display: flex;
         border-radius: 4px;
 

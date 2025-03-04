@@ -7,7 +7,7 @@ from werkzeug.exceptions import BadRequest
 from server.auth.security import current_user_uid
 from server.db.db import db
 from server.db.domain import User, CollaborationMembership, OrganisationMembership, JoinRequest, Collaboration, \
-    Invitation, Service, Aup, IpNetwork, Group, SchacHomeOrganisation, ServiceMembership, UserLogin, Unit
+    Invitation, Service, Aup, IpNetwork, Group, SchacHomeOrganisation, ServiceMembership, UserLogin, Unit, Tag
 from server.db.image import validate_base64_image
 from server.db.logo_mixin import evict_from_cache
 
@@ -17,7 +17,7 @@ deserialization_mapping = {"users": User, "collaboration_memberships": Collabora
                            "organisation_memberships": OrganisationMembership, "invitations": Invitation,
                            "service_memberships": ServiceMembership,
                            "services": Service, "aups": Aup, "ip_networks": IpNetwork, "groups": Group,
-                           "units": Unit}
+                           "units": Unit, "tags": Tag}
 
 forbidden_fields = ["created_at", "updated_at"]
 date_fields = ["start_date", "end_date", "created_at", "updated_at", "last_accessed_date", "last_login_date",
@@ -62,10 +62,11 @@ def add_audit_trail_data(cls, json_dict):
             json_dict["updated_by"] = user_name
 
     # Also process all relationship children
-    relationship_keys = list(filter(lambda k: k in deserialization_mapping, json_dict.keys()))
-    for rel in relationship_keys:
-        for child in json_dict[rel]:
-            add_audit_trail_data(deserialization_mapping[rel], child)
+    if isinstance(json_dict, dict):
+        relationship_keys = list(filter(lambda k: k in deserialization_mapping, json_dict.keys()))
+        for rel in relationship_keys:
+            for child in json_dict[rel]:
+                add_audit_trail_data(deserialization_mapping[rel], child)
 
 
 def save(cls, custom_json=None, allow_child_cascades=True, allowed_child_collections=[]):
@@ -130,7 +131,7 @@ def cleanse_json(json_dict, cls=None, allow_child_cascades=True, allowed_child_c
             child_cls = deserialization_mapping[k] if k in deserialization_mapping else None
             for item in v:
                 cleanse_json(item, cls=child_cls, allow_child_cascades=allow_child_cascades,
-                             allowed_child_collections=[])
+                             allowed_child_collections=allowed_child_collections)
 
 
 def parse_date_fields(json_dict):

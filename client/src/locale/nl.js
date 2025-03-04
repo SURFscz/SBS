@@ -2720,7 +2720,11 @@ const nl = {
             newCoMessage: "Message for new collaborations",
             newCoMessageInfo: "This message is shown to users from your organisation when they request or create a collaboration",
             defaultInviteMessage: "Default message for invites",
-            defaultInviteMessageInfo: "When filled this message is used in all invitation",
+            defaultInviteMessagePlaceholder: "Please join us, at this new CO",
+            defaultInviteMessageInfo: "When filled this message is used in all new invitations for the collaborations of this organisation",
+            defaultSenderName: "Default sender name for invites",
+            defaultSenderNamePlaceholder: "Organisational department of info mail",
+            defaultSenderNameInfo: "When filled this name is used as the sender in all new invitations for the collaborations of this organisation",
         },
         permissions: "Permissions"
     },
@@ -2728,6 +2732,7 @@ const nl = {
         label: "Label name",
         add: "+ Add label",
         confirmation: "Are you sure you want to remove label {{name}}?",
+        duplicated: "There is already an label named {{name}} for this organisation"
     }
 };
 

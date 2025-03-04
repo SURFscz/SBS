@@ -588,10 +588,11 @@ def seed(db, app_config, skip_seed=False):
     uuc.services.append(uuc_scheduler)
     uuc.services.append(wiki)
 
-    tag_uuc = Tag(tag_value="tag_uuc", organisation=uuc)
+    tag_uuc = Tag(tag_value="tag_uuc", organisation=uuc, is_default=True)
+    tag_default_uuc = Tag(tag_value="tag_default_uuc", is_default=True, organisation=uuc, units=[uuc_unit_support])
     tag_ufra = Tag(tag_value="tag_ufra", organisation=ufra)
     tag_orphan = Tag(tag_value="tag_orphan", organisation=uuc)
-    persist_instance(db, tag_uuc, tag_ufra, tag_orphan)
+    persist_instance(db, tag_uuc, tag_default_uuc, tag_ufra, tag_orphan)
 
     ai_computing = Collaboration(name=co_ai_computing_name,
                                  identifier=co_ai_computing_uuid,

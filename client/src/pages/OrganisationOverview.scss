@@ -62,7 +62,7 @@
 
         .input-field, .radio-button-container, .actions, div.checkbox, .select-field, .ip-networks, span.error,
         div.email-invitations, div.compliance, div.ldap, div.contacts, div.tokens, div.actions-container, p.label,
-        div.creatable-field, div.organisation-units, div.organisation-tags, div.input-section {
+        div.creatable-field, div.organisation-units, div.organisation-tags, div.input-section, p.info {
             grid-column-start: first;
         }
 
@@ -114,9 +114,18 @@
         font-weight: 600;
     }
 
+    p.info {
+        color: #5d6872;
+        margin-top: 5px;
+    }
+
     .input-section {
         margin-top: 20px;
     }
 
+    span.error-indication {
+        grid-column: 1 / span 3;
+
+    }
 }
 

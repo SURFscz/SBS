@@ -28,13 +28,13 @@ export default class OrganisationOnBoarding extends React.Component {
 
     render() {
         const {selectedTab} = this.state;
-        const {on_boarding_msg, tooltip, title} = this.props;
+        const {on_boarding_msg, tooltip, title, hideTooltip} = this.props;
         return (
             <div className="organisation-onboarding">
                 <label className="label">{title || I18n.t("organisation.onBoarding.label")}</label>
-                <span className="tool-tip-section">
+                {!hideTooltip && <span className="tool-tip-section">
                     <Tooltip tip={I18n.t(tooltip || "organisation.onBoarding.tooltip")}/>
-                    </span>
+                    </span>}
                 <div className="container">
                     <ReactMde
                         toolbarCommands={[

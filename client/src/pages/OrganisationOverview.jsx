@@ -22,6 +22,7 @@ import CheckBox from "../components/CheckBox";
 import CreatableField from "../components/CreatableField";
 import CroppedImageField from "../components/redesign/CroppedImageField";
 import {OrganisationTags} from "../components/OrganisationTags";
+import OrganisationOnBoarding from "../components/OrganisationOnBoarding";
 
 const toc = ["about", "units", "labels", "messaging", "settings"];
 
@@ -44,6 +45,7 @@ class OrganisationOverview extends React.Component {
             warning: false,
             invalid_schac_home_organisation: null,
             schac_home_organisation: "",
+            on_boarding_changed: false,
             confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             loading: true
@@ -182,11 +184,11 @@ class OrganisationOverview extends React.Component {
     };
 
     isValid = () => {
-        const {required, alreadyExists, duplicatedUnit, duplicateTag, invalidInputs, organisation} = this.state;
+        const {required, alreadyExists, duplicatedUnit, duplicatedTag, invalidInputs, organisation} = this.state;
         const inValid = Object.values(alreadyExists).some(val => val) ||
             required.some(attr => isEmpty(organisation[attr])) ||
             duplicatedUnit ||
-            duplicateTag ||
+            duplicatedTag ||
             Object.keys(invalidInputs).some(key => invalidInputs[key]);
         return !inValid;
     };
@@ -209,8 +211,13 @@ class OrganisationOverview extends React.Component {
             organisation.units = organisation.units.filter(unit => !isEmpty(unit.name));
             updateOrganisation(organisation)
                 .then(() => {
-                    this.setState({loading: false});
-                    setFlash(I18n.t("organisationDetail.flash.updated", {name: name}));
+                    //If labels have changed this must be updated in the collaborations tab #tester-proof
+                    this.props.refresh(() => {
+                        this.componentDidMount();
+                        this.setState({loading: false});
+                        setFlash(I18n.t("organisationDetail.flash.updated", {name: name}));
+
+                    });
                 })
                 .catch(() => this.setState({loading: false}));
         } else {
@@ -320,8 +327,6 @@ class OrganisationOverview extends React.Component {
                                        }
                                    })}
                                    setDuplicated={duplicate => this.setState({duplicatedUnit: duplicate})}/>
-
-
             </>
         );
     }
@@ -332,24 +337,60 @@ class OrganisationOverview extends React.Component {
             <>
                 <h3 className="section-separator">{I18n.t("organisationDetails.headers.labels")}</h3>
                 <p>{I18n.t("organisationDetails.labels.info")}</p>
-                <OrganisationTags allUnits={organisation.units}
+                <OrganisationTags tags={allTags}
                                   setTags={newTags => this.setState({
                                       organisation: {
-                                          ...this.state.tags,
+                                          ...this.state.organisation,
                                           tags: newTags
                                       }
                                   })}
-                                  tags={allTags}
-                                  setDuplicated={duplicate => this.setState({duplicatedTag: duplicate})}/>
+                                  setDuplicated={duplicate => this.setState({duplicatedTag: duplicate})}
+                                  allUnits={organisation.units}
+                />
             </>
         );
     }
 
-    renderMessaging = () => {
+    renderMessaging = (organisation, on_boarding_changed) => {
         return (
             <>
                 <h3 className="section-separator">{I18n.t("organisationDetails.headers.messaging")}</h3>
-                <p>TODO</p>
+                <OrganisationOnBoarding
+                    on_boarding_msg={(isEmpty(organisation.on_boarding_msg) && !on_boarding_changed) ? I18n.t("organisation.onBoarding.template") : organisation.on_boarding_msg}
+                    saveOnBoarding={val => this.setState({
+                        organisation: {
+                            ...organisation,
+                            on_boarding_msg: val,
+                            on_boarding_changed: true
+                        }
+                    })}
+                    hideTooltip={true}
+                    title={I18n.t("organisationDetails.messaging.newCoMessage")}
+                />
+                <p className={"info"}>{I18n.t("organisationDetails.messaging.newCoMessageInfo")}</p>
+                <InputField value={organisation.invitation_message}
+                            name={I18n.t("organisationDetails.messaging.defaultInviteMessage")}
+                            onChange={e => this.setState({
+                                organisation: {
+                                    ...organisation,
+                                    invitation_message: e.target.value
+                                }
+                            })}
+                            placeholder={I18n.t("organisationDetails.messaging.defaultInviteMessagePlaceholder")}
+                            multiline={true}
+                />
+                <p className={"info"}>{I18n.t("organisationDetails.messaging.defaultInviteMessageInfo")}</p>
+                <InputField value={organisation.invitation_sender_name}
+                            name={I18n.t("organisationDetails.messaging.defaultSenderName")}
+                            onChange={e => this.setState({
+                                organisation: {
+                                    ...organisation,
+                                    invitation_sender_name: e.target.value
+                                }
+                            })}
+                            placeholder={I18n.t("organisationDetails.messaging.defaultSenderNamePlaceholder")}
+                />
+                <p className={"info"}>{I18n.t("organisationDetails.messaging.defaultSenderNameInfo")}</p>
             </>
         );
     }
@@ -358,7 +399,10 @@ class OrganisationOverview extends React.Component {
         return (
             <>
                 <h3 className="section-separator">{I18n.t("organisationDetails.headers.settings")}</h3>
-                {user.admin && <SelectField value={organisation.category ? {value: organisation.category, label: organisation.category} : this.categoryOptions[0]}
+                {user.admin && <SelectField value={organisation.category ? {
+                    value: organisation.category,
+                    label: organisation.category
+                } : this.categoryOptions[0]}
                                             small={true}
                                             options={this.categoryOptions}
                                             name={I18n.t("organisation.category")}
@@ -370,17 +414,17 @@ class OrganisationOverview extends React.Component {
                                             })}/>}
                 <div className={"input-section"}>
                     <CheckBox name={"services_restricted"}
-                          value={organisation.services_restricted}
-                          tooltip={I18n.t("organisation.servicesRestrictedTooltip")}
-                          onChange={() => this.setState({
-                              organisation: {
-                                  ...this.state.organisation,
-                                  services_restricted: !organisation.services_restricted
-                              }
-                          })}
-                          info={I18n.t("organisation.servicesRestricted")}
-                          readOnly={!user.admin}
-                />
+                              value={organisation.services_restricted}
+                              tooltip={I18n.t("organisation.servicesRestrictedTooltip")}
+                              onChange={() => this.setState({
+                                  organisation: {
+                                      ...this.state.organisation,
+                                      services_restricted: !organisation.services_restricted
+                                  }
+                              })}
+                              info={I18n.t("organisation.servicesRestricted")}
+                              readOnly={!user.admin}
+                    />
                 </div>
 
 
@@ -449,7 +493,8 @@ class OrganisationOverview extends React.Component {
         );
     }
 
-    renderCurrentTab = (currentTab, user, organisation, disabledSubmit, invalidInputs, initial, alreadyExists, schac_home_organisation, invalid_schac_home_organisation) => {
+    renderCurrentTab = (currentTab, user, organisation, disabledSubmit, invalidInputs, initial, alreadyExists,
+                        schac_home_organisation, invalid_schac_home_organisation, on_boarding_changed) => {
         switch (currentTab) {
             case "about":
                 return this.renderAbout(user, organisation, disabledSubmit, invalidInputs, initial, alreadyExists);
@@ -458,26 +503,13 @@ class OrganisationOverview extends React.Component {
             case "labels":
                 return this.renderLabels(organisation);
             case "messaging":
-                return this.renderMessaging(user, organisation, disabledSubmit, invalidInputs, initial);
+                return this.renderMessaging(organisation, on_boarding_changed);
             case "settings":
                 return this.renderSettings(user, organisation, disabledSubmit, invalidInputs, initial, alreadyExists, schac_home_organisation, invalid_schac_home_organisation);
             default:
                 throw new Error(`unknown-tab: ${currentTab}`);
         }
     }
-
-    removeMail = email => e => {
-        stopEvent(e);
-        const {administrators} = this.state;
-        const newAdministrators = administrators.filter(currentMail => currentMail !== email);
-        this.setState({administrators: newAdministrators});
-    };
-
-    addEmails = emails => {
-        const {administrators} = this.state;
-        const uniqueEmails = [...new Set(administrators.concat(emails))];
-        this.setState({administrators: uniqueEmails});
-    };
 
     validateURI = name => e => {
         const uri = e.target.value;
@@ -564,6 +596,7 @@ class OrganisationOverview extends React.Component {
             currentTab,
             schac_home_organisation,
             invalid_schac_home_organisation,
+            on_boarding_changed,
             initial,
             invalidInputs,
             alreadyExists,
@@ -585,7 +618,8 @@ class OrganisationOverview extends React.Component {
                                     question={I18n.t("organisation.deleteConfirmation")}/>
                 {this.sidebar(currentTab)}
                 <div className={`organisation`}>
-                    {this.renderCurrentTab(currentTab, user, organisation, disabledSubmit, invalidInputs, initial, alreadyExists, schac_home_organisation, invalid_schac_home_organisation)}
+                    {this.renderCurrentTab(currentTab, user, organisation, disabledSubmit, invalidInputs, initial, alreadyExists,
+                        schac_home_organisation, invalid_schac_home_organisation, on_boarding_changed)}
                     {this.renderButtons(disabledSubmit, currentTab)}
                 </div>
 

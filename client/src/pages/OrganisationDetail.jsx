@@ -201,6 +201,7 @@ class OrganisationDetail extends React.Component {
             <div key="overview" name="overview"
                  label={I18n.t("home.tabs.orgOverview")}>
                 <OrganisationOverview {...this.props}
+                                      refresh={callback => this.componentDidMount(callback)}
                                       organisation={organisation}/>
             </div>
         );

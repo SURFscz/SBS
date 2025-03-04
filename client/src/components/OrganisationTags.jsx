@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {Fragment, useRef, useState} from "react";
 import "./OrganisationTags.scss";
 import {isEmpty, splitListSemantically, stopEvent} from "../utils/Utils";
 import I18n from "../locale/I18n";
@@ -30,9 +30,17 @@ export const OrganisationTags = ({tags, setTags, setDuplicated, allUnits}) => {
         setRemovalIndex(-1);
     }
 
+    const internalOnChangeUnit = index => val => {
+        const newTags = [...tags];
+        const tag = newTags[index];
+        tag.units = val;
+        newTags.splice(index, 1, tag);
+        setTags(newTags);
+    }
+
     const internalOnChange = index => e => {
         const value = e.target.value;
-        if (tags.filter(tag => tag.name.toLowerCase() === value.toLowerCase()).length > 0) {
+        if (tags.filter(tag => tag.tag_value.toLowerCase() === value.toLowerCase()).length > 0) {
             setDuplicateIndex(index);
             setDuplicated(true);
         } else {
@@ -41,17 +49,23 @@ export const OrganisationTags = ({tags, setTags, setDuplicated, allUnits}) => {
         }
         const newTags = [...tags];
         const tag = newTags[index];
-        tag.name = value;
+        tag.tag_value = value;
         newTags.splice(index, 1, tag);
         setTags(newTags);
     }
 
     const doRemoveTag = index => {
         tags.splice(index, 1);
-        setTags([...tags]);
-        if (tags.length === 0) {
+        const newTags = [...tags];
+        setTags(newTags);
+        if (newTags.length === 0) {
             setDeletedAll(true);
         }
+        if (newTags.length === new Set(newTags.map(tag => tag.tag_value.toLowerCase())).size) {
+            setDuplicateIndex(-1);
+            setDuplicated(false);
+        }
+
     }
 
     const hasReferences = res => {
@@ -67,7 +81,7 @@ export const OrganisationTags = ({tags, setTags, setDuplicated, allUnits}) => {
     const removeTag = index => e => {
         stopEvent(e);
         const tag = tags[index];
-        if (tag.organisation_id && tag.id) {
+        if (tag.id) {
             setLoading(true);
             tagUsage(tag).then(res => {
                 setReferences(res);
@@ -87,8 +101,13 @@ export const OrganisationTags = ({tags, setTags, setDuplicated, allUnits}) => {
 
     const addTag = e => {
         stopEvent(e);
-        setTags([...tags.concat({tag_value: "", is_default: true})]);
+        setTags([...tags.concat({tag_value: "", units: [], is_default: true})]);
         setTimeout(() => focusAfterAdd(), 250);
+    }
+
+
+    const unitOptions = tag => {
+        return allUnits.filter(unit => !tag.units.find(u => u.id === unit.id));
     }
 
     const renderConfirmation = () => {
@@ -116,7 +135,7 @@ export const OrganisationTags = ({tags, setTags, setDuplicated, allUnits}) => {
     }
 
     if (!deletedAll) {
-        tags = tags.length > 0 ? tags : [{tag_value: ""}]
+        tags = tags.length > 0 ? tags : [{tag_value: "", units: [], is_default: true}]
     }
 
     const tagValue = removalIndex !== -1 ? (tags[removalIndex] || {}).tag_value : "";
@@ -144,35 +163,38 @@ export const OrganisationTags = ({tags, setTags, setDuplicated, allUnits}) => {
             {tags.map((tag, index) => {
                 const refProps = (index + 1) === tags.length ? {ref: inputRef} : {};
                 return (
-                    <>
-                            <input type="text"
-                                   value={tag.tag_value}
-                                   onChange={internalOnChange(index)}
-                                   className={`sds--text-field--input`}
-                                   {...refProps}
-                            />
-                            <Select
-                                className={`input-units-inner`}
-                                classNamePrefix={"units-inner"}
-                                value={tag.units}
-                                placeholder={I18n.t("organisationDetails.labels.defaultForPlaceholder")}
-                                onChange={val => alert(JSON.stringify(val))}
-                                styles={styles}
-                                isMulti={true}
-                                options={allUnits.map(unit => ({name: unit.name, label: unit.name}))}
-                                isSearchable={false}
-                                isClearable={false}
-                            />
-                            <div className={`input-field-link input-field-delete`}>
-                                <a href={"#"} onClick={removeTag(index)}>
-                                    <TrashIcon/>
-                                </a>
-                            </div>
+                    <Fragment key={index}>
+                        <input type="text"
+                               value={tag.tag_value}
+                               onChange={internalOnChange(index)}
+                               className={`sds--text-field--input`}
+                               {...refProps}
+                        />
+                        <Select
+                            className={`input-units-inner`}
+                            classNamePrefix={"units-inner"}
+                            value={tag.units}
+                            isDisabled={isEmpty(tag.tag_value)}
+                            placeholder={I18n.t("organisationDetails.labels.defaultForPlaceholder")}
+                            onChange={internalOnChangeUnit(index)}
+                            styles={styles}
+                            getOptionValue={option => option.name}
+                            getOptionLabel={option => option.name}
+                            isMulti={true}
+                            options={unitOptions(tag)}
+                            isSearchable={false}
+                            isClearable={false}
+                        />
+                        <div className={`input-field-link input-field-delete`}>
+                            <a href={"#"} onClick={removeTag(index)}>
+                                <TrashIcon/>
+                            </a>
+                        </div>
                         {duplicateIndex === index &&
-                            <ErrorIndicator msg={I18n.t("units.duplicated", {name: tag.tag_value})}
+                            <ErrorIndicator msg={I18n.t("tags.duplicated", {name: tag.tag_value})}
                                             standalone={true}/>
                         }
-                    </>)
+                    </Fragment>)
             })
             }
             <a className={"add-tag"} href="#" onClick={addTag}>

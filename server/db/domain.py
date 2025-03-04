@@ -189,8 +189,9 @@ api_key_units_association = db.Table(
 tag_units_association = db.Table(
     "tag_units",
     metadata,
-    db.Column("tag_id", db.Integer(), db.ForeignKey("tags.id", ondelete="CASCADE"), primary_key=True),
-    db.Column("unit_id", db.Integer(), db.ForeignKey("units.id", ondelete="CASCADE"), primary_key=True),
+    db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True),
+    db.Column("tag_id", db.Integer(), db.ForeignKey("tags.id", ondelete="CASCADE")),
+    db.Column("unit_id", db.Integer(), db.ForeignKey("units.id", ondelete="CASCADE")),
 )
 
 organisation_membership_units_association = db.Table(
@@ -508,7 +509,7 @@ class Organisation(Base, db.Model, LogoMixin):
                                                passive_deletes=True)
     api_keys = db.relationship("ApiKey", back_populates="organisation", cascade="delete, delete-orphan",
                                passive_deletes=True)
-    tags = db.relationship("Tag", back_populates="organisation", cascade="delete, delete-orphan", passive_deletes=True)
+    tags = db.relationship("Tag", back_populates="organisation", cascade="all, delete-orphan", passive_deletes=True)
     organisation_aups = db.relationship("OrganisationAup", back_populates="organisation", cascade="all, delete-orphan",
                                         passive_deletes=True)
     collaborations_count = column_property(select(func.count(Collaboration.id))

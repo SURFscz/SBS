@@ -47,9 +47,14 @@ export const OrganisationUnits = ({units, setUnits, setDuplicated}) => {
 
     const doRemoveUnit = index => {
         units.splice(index, 1);
-        setUnits([...units]);
-        if (units.length === 0) {
+        const newUnits = [...units];
+        setUnits(newUnits);
+        if (newUnits.length === 0) {
             setDeletedAll(true);
+        }
+        if (newUnits.length === new Set(newUnits.map(unit => unit.name.toLowerCase())).size) {
+            setDuplicateIndex(-1);
+            setDuplicated(false);
         }
     }
 
