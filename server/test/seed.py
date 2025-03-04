@@ -1,3 +1,4 @@
+import base64
 import datetime
 import os
 import uuid
@@ -136,7 +137,7 @@ pam_invalid_service_session_id = str(uuid.uuid4())
 image_cache = {}
 
 
-def read_image(file_name, directory="images"):
+def read_image(file_name, directory="images", transform=True):
     file = f"{os.path.dirname(os.path.realpath(__file__))}/{directory}/{file_name}"
     global image_cache
     if file in image_cache:
@@ -144,7 +145,7 @@ def read_image(file_name, directory="images"):
     with open(file, "rb") as f:
         c = f.read()
         from server.db.image import transform_image
-        image = transform_image(c)
+        image = transform_image(c) if transform else base64.encodebytes(c).decode("utf-8")
         image_cache[file] = image
         return image
 

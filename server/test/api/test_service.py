@@ -116,7 +116,7 @@ class TestService(AbstractTest):
         res = self.post("/api/services", body={
             "entity_id": "https://new_application",
             "name": "new_application",
-            "logo": read_image("invalid.svg"),
+            "logo": read_image("invalid.svg", transform=False),
             "privacy_policy": "https://privacy.com",
             "administrators": ["the@ex.org"],
             "abbreviation": "testy"

@@ -4,10 +4,11 @@ import urllib.request
 from io import BytesIO
 from unittest import TestCase
 from unittest import mock
+
 from PIL import UnidentifiedImageError, Image
 
-from server.test.seed import read_image
 from server.db.image import transform_image, validate_base64_image
+from server.test.seed import read_image
 
 
 class TestImage(TestCase):
@@ -52,7 +53,7 @@ class TestImage(TestCase):
             self.assertFalse(valid)
 
     def test_validate_base64_image_svg(self):
-        image = read_image("ok.svg")
+        image = read_image("ok.svg", transform=False)
         valid, _ = validate_base64_image(image)
         self.assertTrue(valid)
 
@@ -64,22 +65,22 @@ class TestImage(TestCase):
             self.assertTrue(valid)
 
     def test_validate_base64_image_svg_xxs(self):
-        image = read_image("xss.svg")
+        image = read_image("xss.svg", transform=False)
         valid, _ = validate_base64_image(image)
         self.assertFalse(valid)
 
     def test_validate_base64_image_svg_invalid(self):
-        image = read_image("invalid.svg")
+        image = read_image("invalid.svg", transform=False)
         valid, _ = validate_base64_image(image)
         self.assertFalse(valid)
 
     def test_validate_base64_image_corrupt(self):
-        image = read_image("corrupt.png")
+        image = read_image("corrupt.png", transform=False)
         valid, _ = validate_base64_image(image)
         self.assertFalse(valid)
 
     def test_validate_base64_image_invalid_ype(self):
-        image = read_image("favicon.ico")
+        image = read_image("favicon.ico", transform=False)
         valid, _ = validate_base64_image(image)
         self.assertFalse(valid)
 
