@@ -48,7 +48,7 @@ def delete_tag(organisation_id, id):
 @json_endpoint
 def orphan_tags():
     confirm_write_access()
-    return Tag.query.filter(~Tag.collaborations.any()).all(), 200
+    return Tag.query.filter(Tag.is_default == False).filter(~Tag.collaborations.any()).all(), 200  # noqa: E712
 
 
 @tag_api.route("/usages/<organisation_id>/<tag_id>", strict_slashes=False)
