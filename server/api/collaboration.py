@@ -119,11 +119,6 @@ def _get_collaboration_membership(collaboration: Collaboration, user_uid: str) -
         .one()
 
 
-def _tag_identifiers(collaboration_id):
-    collaboration = Collaboration.query.filter(Collaboration.id == int(collaboration_id)).one()
-    return [tag.id for tag in collaboration.tags]
-
-
 def _delete_orphan_tags(tag_identifiers):
     # We delete orphan tags, but need to look them up to prevent Parent instance is not bound to a Session
     for tag_pk in tag_identifiers:
@@ -211,7 +206,7 @@ def delete_collaboration_api(co_identifier):
     collaboration_id = collaboration.id
     organisation_id = collaboration.organisation_id
 
-    tag_identifiers = [tag.id for tag in collaboration.tags]
+    tag_identifiers = [tag.id for tag in collaboration.tags if not tag.is_default]
 
     broadcast_collaboration_deleted(collaboration_id)
     emit_socket(f"organisation_{organisation_id}")
@@ -838,9 +833,10 @@ def update_collaboration():
 @json_endpoint
 def delete_collaboration(collaboration_id):
     confirm_collaboration_admin(collaboration_id)
-    tag_identifiers = _tag_identifiers(collaboration_id)
 
     collaboration = Collaboration.query.filter(Collaboration.id == int(collaboration_id)).one()
+    tag_identifiers = [tag.id for tag in collaboration.tags if not tag.is_default]
+
     emit_socket(f"organisation_{collaboration.organisation_id}")
     broadcast_collaboration_deleted(collaboration_id)
 
