@@ -3,18 +3,21 @@ import datetime
 import json
 import time
 
+from flask import jsonify
+
 from server.api.collaboration import generate_short_name
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, Organisation, Invitation, CollaborationMembership, User, Group, \
-    ServiceGroup, Tag, Service
+    ServiceGroup, Tag, Service, Unit
 from server.db.models import flatten
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import (co_ai_computing_uuid, co_ai_computing_name, co_research_name, user_john_name,
                               co_ai_computing_short_name, co_teachers_name, read_image, co_research_uuid,
                               service_group_wiki_name1,
                               service_storage_name, unifra_secret, unifra_name, unihard_short_name,
-                              unifra_unit_cloud_name, unifra_unit_infra_name, unihard_secret_unit_support)
+                              unifra_unit_cloud_name, unifra_unit_infra_name, unihard_secret_unit_support,
+                              unihard_unit_support_name)
 from server.test.seed import unihard_name
 from server.tools import dt_now
 
@@ -68,6 +71,7 @@ class TestCollaboration(AbstractTest):
         self.login("urn:john")
         mail = self.app.mail
         with mail.record_messages() as outbox:
+            unit = self.find_entity_by_name(Unit, unihard_unit_support_name)
             collaboration = self.post("/api/collaborations",
                                       body={
                                           "name": "new_collaboration",
@@ -75,7 +79,8 @@ class TestCollaboration(AbstractTest):
                                           "organisation_id": organisation_id,
                                           "administrators": ["the@ex.org", "that@ex.org"],
                                           "short_name": "new_short_name",
-                                          "current_user_admin": False
+                                          "current_user_admin": False,
+                                          "units": jsonify([unit]).json
                                       }, with_basic_auth=False)
 
             self.assertIsNotNone(collaboration["id"])
@@ -86,6 +91,10 @@ class TestCollaboration(AbstractTest):
 
             count = self._collaboration_membership_count(collaboration)
             self.assertEqual(0, count)
+
+            collaboration_db = self.find_entity_by_name(Collaboration, collaboration["name"])
+            tags = collaboration_db.tags
+            self.assertListEqual(sorted(["tag_default_uuc", "tag_uuc"]), sorted([t.tag_value for t in tags]))
 
     def test_collaboration_new_with_current_user_admin(self):
         wiki_service_group = self.find_entity_by_name(ServiceGroup, service_group_wiki_name1)
@@ -557,7 +566,7 @@ class TestCollaboration(AbstractTest):
         self.assertEqual("urn:sarah", collaboration.collaboration_memberships[0].user.uid)
         self.assertIsNone(collaboration.accepted_user_policy)
         self.assertIsNotNone(collaboration.logo)
-        self.assertEqual(2, len(collaboration.tags))
+        self.assertEqual(4, len(collaboration.tags))
         self.assertEqual(1, len(collaboration.units))
 
         one_day_ago = dt_now() - datetime.timedelta(days=1)
@@ -918,8 +927,8 @@ class TestCollaboration(AbstractTest):
 
     def test_find_by_identifier_api_not_allowed(self):
         self.get(f"/api/collaborations/v1/{co_research_uuid}",
-                          headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
-                          with_basic_auth=False, response_status_code=403)
+                 headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
+                 with_basic_auth=False, response_status_code=403)
 
     def test_find_by_identifier_api_not_exist(self):
         result = self.get("/api/collaborations/v1/invalid_uuid",

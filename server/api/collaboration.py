@@ -71,7 +71,7 @@ def _del_non_disclosure_info(collaboration, json_collaboration):
             _del_non_disclosure_info(collaboration, gr)
 
 
-def _reconcile_tags(collaboration: Collaboration, tags, is_external_api=False):
+def _reconcile_tags(collaboration: Collaboration, tags, is_external_api=False, is_update=False):
     # tags is a list of strings
     if is_external_api or is_application_admin() or is_organisation_admin_or_manager(collaboration.organisation_id):
         # find delta, e.g. which tags to remove and which tags to add
@@ -100,6 +100,13 @@ def _reconcile_tags(collaboration: Collaboration, tags, is_external_api=False):
             new_tag = save(Tag, {"tag_value": tag, "organisation_id": collaboration.organisation_id},
                            allow_child_cascades=False)[0]
             new_tag.collaborations.append(collaboration)
+    if not is_update:
+        for tag in org_tags:
+            add_tag = tag.is_default and tag not in collaboration.tags
+            # The units of the organisation tags must match if present
+            if add_tag and (not tag.units or set(tag.units) & set(collaboration.units)):
+                tag.collaborations.append(collaboration)
+
     return tags
 
 
@@ -693,15 +700,16 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True, sav
     if invalid_emails:
         raise BadRequest(f"Invalid emails {invalid_emails}")
     message = data.get("message", None)
-    tags = data.get("tags", None)
+    tags = data.get("tags", [])
 
     valid_uri_attributes(data, ["accepted_user_policy", "website_url"])
 
     data["identifier"] = str(uuid.uuid4())
-    res = save(Collaboration, custom_json=data, allow_child_cascades=False, allowed_child_collections=["units"])
+    res = save(Collaboration, custom_json=data, allow_child_cascades=False,
+               allowed_child_collections=["units"])
     collaboration = res[0]
 
-    if tags and save_tags:
+    if save_tags:
         _reconcile_tags(collaboration, tags)
 
     administrators = list(filter(lambda admin: admin != user.email, administrators))
@@ -815,7 +823,7 @@ def update_collaboration():
         data["short_name"] = collaboration.short_name
 
     if "tags" in data:
-        _reconcile_tags(collaboration, data.get("tags", []))
+        _reconcile_tags(collaboration, data.get("tags", []), is_update=True)
 
     # For updating references like services, groups, memberships there are more fine-grained API methods
     res = update(Collaboration, custom_json=data, allow_child_cascades=False, allowed_child_collections=["units"])
