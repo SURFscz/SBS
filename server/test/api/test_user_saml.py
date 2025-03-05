@@ -27,11 +27,12 @@ class TestUserSaml(AbstractTest):
                               "uid": "sarah"})
         attrs = res["attributes"]
         entitlements = attrs["eduPersonEntitlement"]
-        self.assertListEqual([
+        self.assertListEqual(sorted([
             f"urn:example:sbs:group:{unihard_short_name}",
             f"urn:example:sbs:group:{unihard_short_name}:ai_computing",
-            f"urn:example:sbs:label:{unihard_short_name}:ai_computing:tag_uuc"
-        ], sorted(entitlements))
+            f"urn:example:sbs:label:{unihard_short_name}:ai_computing:tag_uuc",
+            f"urn:example:sbs:label:{unihard_short_name}:ai_computing:tag_uuc_2"
+        ]), sorted(entitlements))
         self.assertListEqual(["sarah@test.sram.surf.nl"], attrs["eduPersonPrincipalName"])
         self.assertListEqual(["sarah"], attrs["uid"])
         self.assertIsNotNone(attrs["sshkey"][0])
@@ -49,12 +50,13 @@ class TestUserSaml(AbstractTest):
                               "issuer_id": "https://idp.uni-franeker.nl/", "uid": "sarah"})
         attrs = res["attributes"]
         entitlements = attrs["eduPersonEntitlement"]
-        self.assertListEqual([
+        self.assertListEqual(sorted([
             f"urn:example:sbs:group:{unihard_short_name}",
             f"urn:example:sbs:group:{unihard_short_name}:ai_computing",
             f"urn:example:sbs:group:{unihard_short_name}:ai_computing:ai_res",
-            f"urn:example:sbs:label:{unihard_short_name}:ai_computing:tag_uuc"
-        ], sorted(entitlements))
+            f"urn:example:sbs:label:{unihard_short_name}:ai_computing:tag_uuc",
+            f"urn:example:sbs:label:{unihard_short_name}:ai_computing:tag_uuc_2"
+        ]), sorted(entitlements))
         self.assertListEqual(["jane@test.sram.surf.nl"], attrs["eduPersonPrincipalName"])
         self.assertListEqual(["jane"], attrs["uid"])
         self.assertEqual(0, len(attrs["sshkey"]))

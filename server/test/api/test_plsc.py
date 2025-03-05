@@ -80,7 +80,7 @@ class TestPlsc(AbstractTest):
         self.assertEqual("https://www.google.nl", ai_computing["website_url"])
         self.assertEqual(f"http://localhost:3000/collaborations/{ai_computing['identifier']}",
                          ai_computing["sbs_url"])
-        self.assertListEqual(["tag_uuc"], ai_computing["tags"])
+        self.assertListEqual(sorted(["tag_uuc", "tag_uuc_2"]), sorted(ai_computing["tags"]))
         logo = ai_computing["logo"]
         self.assertTrue(logo.startswith("http://localhost:8080/api/images/collaborations/"))
         res_image = self.client.get(logo.replace("http://localhost:8080", ""))

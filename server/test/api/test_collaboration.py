@@ -275,11 +275,11 @@ class TestCollaboration(AbstractTest):
         self.put("/api/collaborations", body=collaboration)
 
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
-        self.assertEqual(1, len(collaboration.tags))
+        self.assertEqual(2, len(collaboration.tags))
         for group in collaboration.groups:
             self.assertTrue("changed" in group.global_urn)
 
-    def test_collaboration_update_short_name_not_allowd(self):
+    def test_collaboration_update_short_name_not_allowed(self):
         collaboration_id = self._find_by_identifier()["id"]
         self.login("urn:admin")
         collaboration = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
@@ -920,7 +920,7 @@ class TestCollaboration(AbstractTest):
             self.assertFalse("mfa_reset_token" in user)
             self.assertTrue(isinstance(user.get("second_factor_auth"), bool))
 
-        self.assertListEqual(res["tags"], ["tag_uuc"])
+        self.assertListEqual(sorted(["tag_uuc", "tag_uuc_2"]), sorted(res["tags"]))
 
     def test_find_by_identifier_api_not_allowed(self):
         self.get(f"/api/collaborations/v1/{co_research_uuid}",
