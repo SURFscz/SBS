@@ -1,24 +1,5 @@
 # First build SRAM SBS image
-FROM python:3.11-slim-bookworm AS sram-sbs-server
-
-# Do an initial clean up and general upgrade of the distribution
-ENV DEBIAN_FRONTEND noninteractive
-
-RUN \
-    apt-get update                                    && \
-    apt-get -y dist-upgrade                           && \
-    apt-get -y install                                   \
-        curl                                             \
-        git                                              \
-        clang                                            \
-        xz-utils                                         \
-        bzip2                                            \
-        pkgconf                                          \
-        python3-dev                                      \
-        default-libmysqlclient-dev                       \
-        libxmlsec1-dev                                && \
-    apt-get -y autoremove                             && \
-    rm -rf /var/cache/apt /var/lib/apt/lists/*
+FROM ghcr.io/openconext/openconext-basecontainers/python3:latest
 
 # Set the default workdir
 WORKDIR /opt
