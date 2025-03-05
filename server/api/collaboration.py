@@ -101,7 +101,7 @@ def _reconcile_tags(collaboration: Collaboration, tags, is_external_api=False, i
                            allow_child_cascades=False)[0]
             new_tag.collaborations.append(collaboration)
     if not is_update:
-        for tag in org_tags:
+        for tag in collaboration.organisation.tags:
             add_tag = tag.is_default and tag not in collaboration.tags
             # The units of the organisation tags must match if present
             if add_tag and (not tag.units or set(tag.units) & set(collaboration.units)):
