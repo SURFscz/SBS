@@ -1,7 +1,10 @@
 # First build SRAM SBS image
 FROM ghcr.io/openconext/openconext-basecontainers/python3:latest
 
-RUN apt-get -y install clang
+RUN \
+    apt-get update                                    && \
+    apt-get -y install                                   \
+        clang
 
 # Set the default workdir
 WORKDIR /opt
