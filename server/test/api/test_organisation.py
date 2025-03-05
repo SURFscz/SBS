@@ -545,6 +545,6 @@ class TestOrganisation(AbstractTest):
         self.put("/api/organisations", body=organisation)
 
         tags = self.find_entity_by_name(Organisation, unihard_name).tags
-        self.assertEqual(5, len(tags))
-        self.assertListEqual(sorted(["changed", "extra", "tag_default_uuc", "tag_orphan", "tag_ufra"]),
+        self.assertEqual(6, len(tags))
+        self.assertListEqual(sorted(["changed", "extra", "tag_default_uuc", "tag_orphan", "tag_ufra", "tag_uuc_2"]),
                              sorted([tag.tag_value for tag in tags]))
