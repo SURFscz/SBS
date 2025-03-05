@@ -1,11 +1,13 @@
 # First build SRAM SBS image
 FROM ghcr.io/openconext/openconext-basecontainers/python3:latest
 
+RUN apt-get -y install clang
+
 # Set the default workdir
 WORKDIR /opt
 
 # set default C compiler
-ENV CC clang
+ENV CC=clang
 
 # Install SBS
 COPY sbs.tar.xz /opt/sbs.tar.xz
