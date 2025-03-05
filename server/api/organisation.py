@@ -497,14 +497,16 @@ def update_organisation():
                     transient_unit["id"] = persistent_unit.id
 
     # Corner case: user removed label and added the exact same name again, prevent duplicate entry
+    replaced_tags = []
     if "tags" in data:
         for persistent_tag in organisation.tags:
             for transient_tag in data["tags"]:
                 if not transient_tag.get("id") and transient_tag["tag_value"] == persistent_tag.tag_value:
                     transient_tag["id"] = persistent_tag.id
+                    replaced_tags.append(persistent_tag.id)
         # We need to ensure the tags that are not default, are not deleted
-        non_default_tags = jsonify([tag for tag in organisation.tags if not tag.is_default]).json
-        data["tags"] += non_default_tags
+        non_default = jsonify([t for t in organisation.tags if not t.is_default and t.id not in replaced_tags]).json
+        data["tags"] += non_default
 
     emit_socket(f"organisation_{organisation.id}", include_current_user_id=True)
 

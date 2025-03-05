@@ -539,11 +539,12 @@ class TestOrganisation(AbstractTest):
         tags[0]["tag_value"] = "changed"  # change name of first tag
         del tags[1]["id"]  # remove id of second tag, so it will be added with an identical name (should be discarded)
         tags.append({"tag_value": "extra", "is_default": True, "units": []})  # add a new tag
+        tags.append({"tag_value": "tag_ufra", "is_default": True, "units": []})  # add a new existing non-default tag
         organisation["tags"] = tags
 
         self.put("/api/organisations", body=organisation)
 
         tags = self.find_entity_by_name(Organisation, unihard_name).tags
-        self.assertEqual(4, len(tags))
-        self.assertListEqual(sorted(["changed", "extra", "tag_default_uuc", "tag_orphan"]),
+        self.assertEqual(5, len(tags))
+        self.assertListEqual(sorted(["changed", "extra", "tag_default_uuc", "tag_orphan", "tag_ufra"]),
                              sorted([tag.tag_value for tag in tags]))
