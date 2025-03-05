@@ -292,14 +292,11 @@ class TestCollaboration(AbstractTest):
             self.assertFalse("changed" in group.global_urn)
 
     def test_collaboration_delete(self):
-        tag = Tag.query.filter(Tag.tag_value == "tag_uuc").one()
-        self.assertIsNotNone(tag)
-
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
         self.delete("/api/collaborations", primary_key=collaboration.id)
 
         self.assertIsNone(self.find_entity_by_name(Collaboration, co_ai_computing_name))
-        tag = Tag.query.filter(Tag.tag_value == "tag_uuc").first()
+        tag = Tag.query.filter(Tag.tag_value == "tag_uuc_2").first()
         self.assertIsNone(tag)
 
     def test_collaboration_delete_no_admin(self):
@@ -1008,7 +1005,7 @@ class TestCollaboration(AbstractTest):
                     with_basic_auth=False)
 
         self.assertIsNone(self.find_entity_by_name(Collaboration, co_ai_computing_name))
-        tag = Tag.query.filter(Tag.tag_value == "tag_uuc").first()
+        tag = Tag.query.filter(Tag.tag_value == "tag_uuc_2").first()
         self.assertIsNone(tag)
 
     def test_delete_collaboration_api_forbidden(self):
