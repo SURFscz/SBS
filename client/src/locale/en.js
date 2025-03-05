@@ -73,6 +73,7 @@ const en = {
         unsuspend: "Revert suspension",
         avoidSuspending: "Avoid suspension",
         resetLastActivity: "Reset activity",
+        options: "Options",
         otherOptions: "Other options",
         details: "Details",
         backToHome: "Back to home",

@@ -325,15 +325,8 @@ class OrganisationDetail extends React.Component {
         return actions;
     }
 
-    getActions = (user, organisation, adminOfOrganisation) => {
+    getActions = (user, organisation) => {
         const actions = [];
-        if (adminOfOrganisation) {
-            actions.push({
-                buttonType: ButtonType.Primary,
-                name: I18n.t("home.edit"),
-                perform: () => this.props.history.push("/edit-organisation/" + organisation.id)
-            });
-        }
         if (!user.admin) {
             const queryParam = `name=${encodeURIComponent(organisation.name)}&back=${encodeURIComponent(window.location.pathname)}`;
             actions.push({
@@ -377,14 +370,14 @@ class OrganisationDetail extends React.Component {
                                     isWarning={true}
                                     question={confirmationQuestion}/>
                 <UnitHeader obj={organisation}
-                            mayEdit={adminOfOrganisation}
+                            mayEdit={true}
                             displayDescription={true}
                             history={user.admin ? this.props.history : null}
                             auditLogPath={`organisations/${organisation.id}`}
                             breadcrumbName={I18n.t("breadcrumb.organisation", {name: organisation.name})}
                             firstTime={user.admin ? this.onBoarding : undefined}
                             name={organisation.name}
-                            actions={this.getActions(user, organisation, adminOfOrganisation)}>
+                            actions={this.getActions(user, organisation)}>
                     {organisation.accepted_user_policy &&
                         <a target="_blank" rel="noopener noreferrer" href={organisation.accepted_user_policy}>
                             {I18n.t("aup.title")}

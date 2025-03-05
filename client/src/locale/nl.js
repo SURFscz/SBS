@@ -73,6 +73,7 @@ const nl = {
         unsuspend: "Schorsing ongedaan maken",
         avoidSuspending: "Voorkom schorsing",
         resetLastActivity: "Reset activiteit",
+        options: "Opties",
         otherOptions: "Meer opties",
         details: "Details",
         backToHome: "Terug naar home",
