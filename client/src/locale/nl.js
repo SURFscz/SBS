@@ -12,6 +12,7 @@ const nl = {
             createCollaboration: "Nieuwe samenwerking",
             requestCollaboration: "Samenwerking aanvragen",
             requestService: "Applicatie registreren",
+            bulkUpload: "Uitnodiging bulk-upload",
             help: "Help",
             profile: "Profiel",
             logout: "Uitloggen",
@@ -2737,7 +2738,16 @@ const nl = {
         add: "+ Add label",
         confirmation: "Are you sure you want to remove label {{name}}?",
         duplicated: "There is already an label named {{name}} for this organisation"
+    },
+    bulkUpload: {
+        title: "Upload your invitations",
+        breadcrumb: "bulk-upload",
+        main: "Upload",
+        docs: "Documentation",
+        dragDrop: "Drag and drop CSV file or",
+        click: " click to upload"
     }
+
 };
 
 export default nl;

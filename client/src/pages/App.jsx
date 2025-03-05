@@ -59,6 +59,7 @@ import MyRequests from "../components/redesign/MyRequests";
 import Delay from "./Delay";
 import Interrupt from "./Interrupt";
 import MockEB from "./MockEB";
+import BulkUpload from "./BulkUpload";
 
 addIcons();
 
@@ -443,12 +444,21 @@ class App extends React.Component {
                                                                         impersonator={impersonator} {...props}/>}/>}
 
                             <Route path="/profile"
-                                   render={props => <ProtectedRoute
-                                       currentUser={currentUser}
-                                       Component={Profile}
-                                       config={config}
-                                       refreshUser={this.refreshUserMemberships}
-                                       {...props}/>}/>
+                                   render={props =>
+                                       <ProtectedRoute
+                                           currentUser={currentUser}
+                                           Component={Profile}
+                                           config={config}
+                                           refreshUser={this.refreshUserMemberships}
+                                           {...props}/>}/>
+
+                            <Route path="/bulk-upload"
+                                   render={props =>
+                                       <ProtectedRoute
+                                           currentUser={currentUser}
+                                           Component={BulkUpload}
+                                           config={config}
+                                           {...props}/>}/>
 
                             {isUserAllowed(ROLES.ORG_MANAGER, currentUser) &&
                                 <Route exact path="/users/:id/:tab?/:org_id?"

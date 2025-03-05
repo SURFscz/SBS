@@ -1,0 +1,26 @@
+@import "../stylesheets/vars.scss";
+@import "../stylesheets/forms";
+
+.mod-bulk-upload-container {
+
+    .mod-bulk-upload {
+        max-width: $medium;
+        margin: 0 auto;
+        width: 100%;
+        padding-top: 25px;
+    }
+
+    input[type="file"] {
+        opacity: 0;
+    }
+
+    .sds--file-upload {
+        position: relative;
+    }
+
+    label {
+        position: absolute;
+        z-index: 3;
+    }
+
+}
