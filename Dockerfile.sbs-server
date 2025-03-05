@@ -1,47 +1,24 @@
 # First build SRAM SBS image
-FROM python:3.11-slim-bookworm AS sram-sbs-server
+FROM ghcr.io/openconext/openconext-basecontainers/python3:latest AS sram-sbs-server
 
-# Do an initial clean up and general upgrade of the distribution
-ENV DEBIAN_FRONTEND noninteractive
-
-RUN --mount=type=cache,target=/var/cache/apt \
-    apt-get update                                    && \
-    apt-get -y dist-upgrade                           && \
-    apt-get -y install                                   \
-        curl                                             \
-        git                                              \
-        xz-utils                                         \
-        bzip2                                            \
-        pkgconf                                          \
-        python3-dev                                      \
-        default-libmysqlclient-dev                       \
-        libxmlsec1-dev                                && \
-    apt-get -y autoclean                              && \
-    apt-get -y autoremove
-
-# Set the default workdir
-WORKDIR /opt
+# Copy init script
+COPY --chmod=0755 misc/container-init-pre.sh  /container-init/sbs_prepare.sh
+COPY --chmod=0755 misc/container-init-post.sh /container-init-post/sbs_migrations.sh
 
 # Install SBS
-COPY sbs.tar.xz /opt/sbs.tar.xz
+COPY sbs.tar.xz /sbs.tar.xz
 
 # Untar sbs
-RUN tar -Jxf sbs.tar.xz
+RUN tar -xJ -C /opt -f /sbs.tar.xz
 
 # Create venv dir
 RUN pip cache dir
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install -r /opt/sbs/server/requirements/test.txt
 
-# Copy entrypoint
-COPY misc/entrypoint.sh /entrypoint.sh
-RUN chmod 755 /entrypoint.sh
-
 # Set the default workdir
 WORKDIR /opt/sbs
 
 EXPOSE 8080
 
-ENTRYPOINT ["/entrypoint.sh"]
-#CMD ["bash"]
 CMD ["/usr/local/bin/gunicorn --worker-class eventlet --workers 8 --bind 0.0.0.0:8080 server.__main__:app"]
