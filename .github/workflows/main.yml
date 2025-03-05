@@ -137,22 +137,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "DIR=$(yarn cache dir)" >> $GITHUB_OUTPUT
-
-      - uses: actions/cache@v4
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.DIR }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
       - name: Use Node.js 20
         uses: actions/setup-node@v4
         with:
-#          node-version: "16.20.0"
           node-version: "20.8.0"
           cache: "yarn"
           cache-dependency-path: '**/yarn.lock'
@@ -170,7 +157,7 @@ jobs:
         env:
           VNM_DIR: ~/.nvm
 
-      - name: Run tests
+      - name: Run tests and create production build
         shell: bash
         run: |
           cd client
@@ -210,7 +197,80 @@ jobs:
           path: "/tmp/sbs.tar.xz"
 
 
-  Artifact_upload:
+  Docker_image:
+    name: Create image
+    if: >
+      github.actor!='dependabot[bot]' &&
+      github.event_name!='pull_request' &&
+      ( github.ref_type=='tag' || github.ref_type=='branch' )
+    needs:
+      - "Client_build"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [ 'amd64', 'arm64' ]
+        image: [ 'sbs', 'sbs-server', 'sbs-client' ]
+
+    runs-on: "ubuntu-24.04${{ matrix.arch == 'arm64' && '-arm' || '' }}"
+
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Fix docker setup
+        run: |
+          cat /etc/docker/daemon.json || true
+          echo '{"features": { "containerd-snapshotter": true }}' | sudo tee  /etc/docker/daemon.json
+          sudo systemctl restart docker
+          docker info -f '{{ .DriverStatus }}'
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch build
+        uses: actions/download-artifact@v4
+        with:
+          name: "sbs-build"
+
+      # The SBS (apache) image
+      - name: "Extract metadata (tags, labels) for ${{matrix.image}} image"
+        id: meta-sbs
+        uses: docker/metadata-action@v5
+        with:
+          images: "${{ matrix.image }}"
+          flavor: "suffix=-${{ matrix.arch }}"
+
+      - name: Build and push Docker SBS image
+        uses: docker/build-push-action@v5
+        with:
+          context: "."
+          file: "Dockerfile.${{ matrix.image }}"
+          pull: true
+          push: false
+          load: true
+          tags: ${{ steps.meta-sbs.outputs.tags }}
+          labels: ${{ steps.meta-sbs.outputs.labels }}
+          platforms: "linux/${{ matrix.arch }}"
+          cache-from: "type=gha"
+          cache-to: "type=gha,mode=max"
+
+      - name: Upload SBS image
+        uses: "ishworkh/container-image-artifact-upload@v2.0.0"
+        with:
+          image: "${{ steps.meta-sbs.outputs.tags }}"
+
+      # Setup tmate session
+#      - name: Setup tmate session
+#        env:
+#          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG}}
+#        if: ${{ failure() && env.ACTIONS_STEP_DEBUG == 'true' }}
+#        uses: mxschmitt/action-tmate@v3
+#        with:
+#          limit-access-to-actor: true
+#        timeout-minutes: 60
+
+  Create_release:
     name: Create release
     if: >
       github.actor!='dependabot[bot]' &&
@@ -219,12 +279,20 @@ jobs:
     needs:
       - "Client_build"
       - "Server_tests"
+      - "Docker_image"
 
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Fetch build
         id: fetch_artifact
@@ -290,113 +358,6 @@ jobs:
               ref: 'main'
             })
 
-  Docker_image:
-    name: Create image
-    if: >
-      github.actor!='dependabot[bot]' &&
-      github.event_name!='pull_request' &&
-      ( github.ref_type=='tag' || github.ref_type=='branch' )
-    needs:
-      - "Client_build"
-      - "Server_tests"
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Fetch build
-        uses: actions/download-artifact@v4
-        with:
-          name: "sbs-build"
-
-      - name: Log in to the Container registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      # The SBS (apache) image
-      - name: Extract metadata (tags, labels) for SBS-server image
-        id: meta-sbs
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_SBS }}
-
-      - name: Build and push Docker SBS image
-        uses: docker/build-push-action@v5
-        with:
-          context: "."
-          file: "Dockerfile.sbs"
-          pull: true
-          push: true
-          tags: ${{ steps.meta-sbs.outputs.tags }}
-          labels: ${{ steps.meta-sbs.outputs.labels }}
-          platforms: linux/amd64,linux/arm64
-          cache-from: "type=gha"
-          cache-to: "type=gha,mode=max"
-
-      # The SBS server image
-      - name: Extract metadata (tags, labels) for SBS image
-        id: meta-sbs-server
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_SERVER }}
-
-      - name: Build and push Docker SBS-server image
-        uses: docker/build-push-action@v5
-        with:
-          context: "."
-          file: "Dockerfile.sbs-server"
-          pull: true
-          push: true
-          tags: ${{ steps.meta-sbs-server.outputs.tags }}
-          labels: ${{ steps.meta-sbs-server.outputs.labels }}
-          platforms: linux/amd64,linux/arm64
-          cache-from: "type=gha"
-          cache-to: "type=gha,mode=max"
-
-
-      # The SBS client image
-      - name: Extract metadata (tags, labels) for SBS-client image
-        id: meta-sbs-client
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_CLIENT }}
-
-      - name: Build and push Docker SBS-client image
-        uses: docker/build-push-action@v5
-        with:
-          context: "."
-          file: "Dockerfile.sbs-client"
-          pull: true
-          push: true
-          tags: ${{ steps.meta-sbs-client.outputs.tags }}
-          labels: ${{ steps.meta-sbs-client.outputs.labels }}
-          platforms: linux/amd64,linux/arm64
-          cache-from: "type=gha"
-          cache-to: "type=gha,mode=max"
-
-      # Setup tmate session
-      - name: Setup tmate session
-        env:
-          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG}}
-        if: ${{ failure() && env.ACTIONS_STEP_DEBUG == 'true' }}
-        uses: mxschmitt/action-tmate@v3
-        with:
-          limit-access-to-actor: true
-        timeout-minutes: 60
 
   Schema_pr:
     name: Update schema cache
