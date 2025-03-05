@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision e3c5852cb374 (head)
+-- Dump of empty SBS database, alembic revision c66a3d65d328 (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('e3c5852cb374');
+INSERT INTO `alembic_version` VALUES ('c66a3d65d328');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_key_units`;
@@ -594,6 +594,8 @@ CREATE TABLE `organisations` (
   `service_connection_requires_approval` tinyint(1) DEFAULT '0',
   `accepted_user_policy` varchar(255) DEFAULT NULL,
   `crm_id` varchar(255) DEFAULT NULL,
+  `invitation_sender_name` varchar(255) DEFAULT NULL,
+  `invitation_message` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `organisations_unique_name` (`name`),
   UNIQUE KEY `organisations_uuid4` (`uuid4`),
@@ -1016,6 +1018,25 @@ LOCK TABLES `suspend_notifications` WRITE;
 /*!40000 ALTER TABLE `suspend_notifications` DISABLE KEYS */;
 /*!40000 ALTER TABLE `suspend_notifications` ENABLE KEYS */;
 UNLOCK TABLES;
+DROP TABLE IF EXISTS `tag_units`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `tag_units` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `tag_id` int(11) NOT NULL,
+  `unit_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `tag_id` (`tag_id`),
+  KEY `unit_id` (`unit_id`),
+  CONSTRAINT `tag_units_ibfk_1` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `tag_units_ibfk_2` FOREIGN KEY (`unit_id`) REFERENCES `units` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+LOCK TABLES `tag_units` WRITE;
+/*!40000 ALTER TABLE `tag_units` DISABLE KEYS */;
+/*!40000 ALTER TABLE `tag_units` ENABLE KEYS */;
+UNLOCK TABLES;
 DROP TABLE IF EXISTS `tags`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -1023,6 +1044,7 @@ CREATE TABLE `tags` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `tag_value` varchar(255) NOT NULL,
   `organisation_id` int(11) NOT NULL,
+  `is_default` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `tag_organisation_unique_tag` (`tag_value`,`organisation_id`),
   KEY `tags_ibfk_1` (`organisation_id`),

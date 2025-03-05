@@ -74,6 +74,9 @@ def token_reset_request_post():
     user = User.query.filter(User.id == current_user_id()).first()
     if not user:
         raise Unauthorized("Invalid user")
+    # Prevent mail spamming
+    check_rate_limit(user)
+
     admins = eligible_users_to_reset_token(user)
     email = data["email"]
     if len(list(filter(lambda admin: admin["email"] == email, admins))) == 0:
@@ -157,6 +160,8 @@ def reset2fa():
     user.rate_limited = False
     db.session.merge(user)
     db.session.commit()
+
+    clear_rate_limit(user)
     return {}, 201
 
 

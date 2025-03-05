@@ -23,7 +23,7 @@ from server.db.defaults import default_expiry_date, cleanse_short_name
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import Organisation, OrganisationMembership, OrganisationInvitation, User, \
     CollaborationRequest, SchacHomeOrganisation, Collaboration, CollaborationMembership, Invitation, \
-    ServiceConnectionRequest
+    ServiceConnectionRequest, Tag
 from server.db.logo_mixin import logo_url
 from server.db.models import update, save, delete
 from server.mail import mail_organisation_invitation, mail_platform_admins
@@ -243,6 +243,8 @@ def organisation_by_id(organisation_id):
         .options(selectinload(Organisation.organisation_invitations)
                  .selectinload(OrganisationInvitation.units)) \
         .options(selectinload(Organisation.api_keys)) \
+        .options(selectinload(Organisation.tags)
+                 .selectinload(Tag.units)) \
         .options(selectinload(Organisation.services)) \
         .options(selectinload(Organisation.collaboration_requests)
                  .selectinload(CollaborationRequest.requester)) \
@@ -480,24 +482,37 @@ def update_organisation():
     if not is_application_admin() and approval_changed:
         data["service_connection_requires_approval"] = organisation.service_connection_requires_approval
 
-    # Corner case: user removed name and added the exact same name again, prevent duplicate entry
+    # Corner case: user removed schac_home_organisation and added the exact same name again, prevent duplicate entry
     if "schac_home_organisations" in data:
-        existing_names = [sho.name for sho in organisation.schac_home_organisations]
-        if len([sho for sho in data["schac_home_organisations"] if
-                not sho.get("id") and sho["name"] in existing_names]) > 0:
-            organisation.schac_home_organisations.clear()
+        for persistent_sho in organisation.schac_home_organisations:
+            for transient_sho in data["schac_home_organisations"]:
+                if not transient_sho.get("id") and transient_sho["name"] == persistent_sho.name:
+                    transient_sho["id"] = persistent_sho.id
 
-    # Corner case: user removed name and added the exact same name again, prevent duplicate entry
+    # Corner case: user removed unit and added the exact same name again, prevent duplicate entry
     if "units" in data:
-        existing_names = [unit.name for unit in organisation.units]
-        if len([unit for unit in data["units"] if
-                not unit.get("id") and unit["name"] in existing_names]) > 0:
-            organisation.units.clear()
+        for persistent_unit in organisation.units:
+            for transient_unit in data["units"]:
+                if not transient_unit.get("id") and transient_unit["name"] == persistent_unit.name:
+                    transient_unit["id"] = persistent_unit.id
+
+    # Corner case: user removed label and added the exact same name again, prevent duplicate entry
+    replaced_tags = []
+    if "tags" in data:
+        for persistent_tag in organisation.tags:
+            for transient_tag in data["tags"]:
+                if not transient_tag.get("id") and transient_tag["tag_value"] == persistent_tag.tag_value:
+                    transient_tag["id"] = persistent_tag.id
+                    replaced_tags.append(persistent_tag.id)
+        # We need to ensure the tags that are not default, are not deleted
+        non_default = jsonify([t for t in organisation.tags if not t.is_default and t.id not in replaced_tags]).json
+        data["tags"] += non_default
 
     emit_socket(f"organisation_{organisation.id}", include_current_user_id=True)
 
-    return update(Organisation, custom_json=data, allow_child_cascades=False,
-                  allowed_child_collections=["schac_home_organisations", "units"])
+    organisation, status = update(Organisation, custom_json=data, allow_child_cascades=False,
+                                  allowed_child_collections=["schac_home_organisations", "units", "tags"])
+    return organisation, status
 
 
 @organisation_api.route("/<organisation_id>", methods=["DELETE"], strict_slashes=False)

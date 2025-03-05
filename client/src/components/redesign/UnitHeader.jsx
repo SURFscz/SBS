@@ -91,24 +91,24 @@ class UnitHeader extends React.Component {
                         }
                         {children}
                     </div>
-                    {!isEmpty(actions) &&
-                        <div className="action-menu-container">
-                            {nonChevronActions.map((action, index) =>
-                                <Button key={index}
-                                        onClick={() => !action.disabled && action.perform()}
-                                        txt={action.name}
-                                        cancelButton={action.buttonType === ButtonType.Secondary}/>)
-                            }
-                            {showChevronAction &&
-                                <div tabIndex={1}
-                                     onBlur={() => setTimeout(() => this.setState({showDropDown: false}), 250)}>
-                                    <MenuButton txt={I18n.t("home.otherOptions")}
-                                                isOpen={showDropDown}
-                                                toggle={() => this.setState({showDropDown: !showDropDown})}
-                                                buttonType={ButtonType.Secondary}
-                                                children={this.otherOptions(chevronActions, firstTime, auditLogPath, history, queryParam)}/>
-                                </div>}
-                        </div>}
+                    <div className="action-menu-container">
+                        {nonChevronActions.map((action, index) =>
+                            <Button key={index}
+                                    onClick={() => !action.disabled && action.perform()}
+                                    txt={action.name}
+                                    cancelButton={action.buttonType === ButtonType.Secondary}/>)
+                        }
+                        {showChevronAction &&
+                            <div tabIndex={1}
+                                 className={isEmpty(actions) ? "options" : "otherOptions"}
+                                 onBlur={() => setTimeout(() => this.setState({showDropDown: false}), 250)}>
+                                <MenuButton txt={I18n.t(`home.${isEmpty(actions) ? "options" : "otherOptions"}`)}
+                                            isOpen={showDropDown}
+                                            toggle={() => this.setState({showDropDown: !showDropDown})}
+                                            buttonType={ButtonType.Secondary}
+                                            children={this.otherOptions(chevronActions, firstTime, auditLogPath, history, queryParam)}/>
+                            </div>}
+                    </div>
                     {customAction && customAction}
                 </div>
             </div>

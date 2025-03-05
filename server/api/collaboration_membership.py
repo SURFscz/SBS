@@ -15,6 +15,18 @@ collaboration_membership_api = Blueprint("collaboration_membership_api", __name_
                                          url_prefix="/api/collaboration_memberships")
 
 
+def do_auto_provision_groups(collaboration, collaboration_id, collaboration_membership):
+    auto_provision_groups = [group for group in collaboration.groups if group.auto_provision_members]
+    for group in auto_provision_groups:
+        group.collaboration_memberships.append(collaboration_membership)
+        db.session.merge(group)
+    db.session.commit()
+    for group in auto_provision_groups:
+        broadcast_group_changed(group.id)
+    emit_socket(f"collaboration_{collaboration_id}", include_current_user_id=True)
+    broadcast_collaboration_changed(collaboration_id)
+
+
 @collaboration_membership_api.route("/<int:collaboration_id>/<int:user_id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_collaboration_membership(collaboration_id, user_id):
@@ -118,16 +130,6 @@ def create_collaboration_membership_role():
     collaboration_membership = db.session.merge(collaboration_membership)
     collaboration_membership_json = jsonify(collaboration_membership).json
 
-    auto_provision_groups = [group for group in collaboration.groups if group.auto_provision_members]
-    for group in auto_provision_groups:
-        group.collaboration_memberships.append(collaboration_membership)
-        db.session.merge(group)
-
-    db.session.commit()
-    for group in auto_provision_groups:
-        broadcast_group_changed(group.id)
-
-    emit_socket(f"collaboration_{collaboration_id}", include_current_user_id=True)
-    broadcast_collaboration_changed(collaboration_id)
+    do_auto_provision_groups(collaboration, collaboration_id, collaboration_membership)
 
     return collaboration_membership_json, 201

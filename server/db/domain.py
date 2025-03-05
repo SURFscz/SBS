@@ -186,6 +186,14 @@ api_key_units_association = db.Table(
     db.Column("unit_id", db.Integer(), db.ForeignKey("units.id", ondelete="CASCADE"), primary_key=True),
 )
 
+tag_units_association = db.Table(
+    "tag_units",
+    metadata,
+    db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True),
+    db.Column("tag_id", db.Integer(), db.ForeignKey("tags.id", ondelete="CASCADE")),
+    db.Column("unit_id", db.Integer(), db.ForeignKey("units.id", ondelete="CASCADE")),
+)
+
 organisation_membership_units_association = db.Table(
     "organisation_membership_units",
     metadata,
@@ -313,10 +321,12 @@ class Tag(Base, db.Model):
     metadata = metadata
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     tag_value = db.Column("tag_value", db.String(length=255), nullable=False)
+    is_default = db.Column("is_default", db.Boolean(), nullable=True, default=False)
     collaborations = db.relationship("Collaboration", secondary=collaboration_tags_association, lazy="select",
                                      back_populates="tags")
     organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"))
     organisation = db.relationship("Organisation", back_populates="tags")
+    units = db.relationship("Unit", secondary=tag_units_association, back_populates="tags", lazy="selectin")
 
     audit_log_exclude = True
 
@@ -452,6 +462,7 @@ class Unit(Base, db.Model):
                                              secondary=collaboration_requests_units_association, lazy="select",
                                              back_populates="units")
     api_keys = db.relationship("ApiKey", secondary=api_key_units_association, lazy="select", back_populates="units")
+    tags = db.relationship("Tag", secondary=tag_units_association, lazy="select", back_populates="units")
 
     audit_log_exclude = True
 
@@ -476,6 +487,8 @@ class Organisation(Base, db.Model, LogoMixin):
     service_connection_requires_approval = db.Column("service_connection_requires_approval", db.Boolean(),
                                                      nullable=True, default=False)
     crm_id = db.Column("crm_id", db.String(length=255), nullable=True)
+    invitation_sender_name = db.Column("invitation_sender_name", db.String(length=255), nullable=True)
+    invitation_message = db.Column("invitation_message", db.Text(), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
@@ -496,7 +509,7 @@ class Organisation(Base, db.Model, LogoMixin):
                                                passive_deletes=True)
     api_keys = db.relationship("ApiKey", back_populates="organisation", cascade="delete, delete-orphan",
                                passive_deletes=True)
-    tags = db.relationship("Tag", back_populates="organisation", cascade="delete, delete-orphan", passive_deletes=True)
+    tags = db.relationship("Tag", back_populates="organisation", cascade="all, delete-orphan", passive_deletes=True)
     organisation_aups = db.relationship("OrganisationAup", back_populates="organisation", cascade="all, delete-orphan",
                                         passive_deletes=True)
     collaborations_count = column_property(select(func.count(Collaboration.id))

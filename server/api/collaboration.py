@@ -71,7 +71,7 @@ def _del_non_disclosure_info(collaboration, json_collaboration):
             _del_non_disclosure_info(collaboration, gr)
 
 
-def _reconcile_tags(collaboration: Collaboration, tags, is_external_api=False):
+def _reconcile_tags(collaboration: Collaboration, tags, is_external_api=False, is_update=False):
     # tags is a list of strings
     if is_external_api or is_application_admin() or is_organisation_admin_or_manager(collaboration.organisation_id):
         # find delta, e.g. which tags to remove and which tags to add
@@ -100,25 +100,23 @@ def _reconcile_tags(collaboration: Collaboration, tags, is_external_api=False):
             new_tag = save(Tag, {"tag_value": tag, "organisation_id": collaboration.organisation_id},
                            allow_child_cascades=False)[0]
             new_tag.collaborations.append(collaboration)
+    if not is_update:
+        for tag in collaboration.organisation.tags:
+            add_tag = tag.is_default and tag not in collaboration.tags
+            # The units of the organisation tags must match if present
+            if add_tag and (not tag.units or set(tag.units) & set(collaboration.units)):
+                tag.collaborations.append(collaboration)
+
     return tags
 
 
-def _get_collaboration_membership(co_identifier, user_uid) -> CollaborationMembership:
-    organisation = request_context.external_api_organisation
-    membership = CollaborationMembership.query \
+def _get_collaboration_membership(collaboration: Collaboration, user_uid: str) -> CollaborationMembership:
+    return CollaborationMembership.query \
         .join(CollaborationMembership.user) \
         .join(CollaborationMembership.collaboration) \
-        .filter(Collaboration.identifier == co_identifier) \
+        .filter(CollaborationMembership.collaboration_id == collaboration.id) \
         .filter(User.uid == user_uid) \
         .one()
-    if not organisation or organisation.id != membership.collaboration.organisation_id:
-        raise Forbidden()
-    return membership
-
-
-def _tag_identifiers(collaboration_id):
-    collaboration = Collaboration.query.filter(Collaboration.id == int(collaboration_id)).one()
-    return [tag.id for tag in collaboration.tags]
 
 
 def _delete_orphan_tags(tag_identifiers):
@@ -208,7 +206,7 @@ def delete_collaboration_api(co_identifier):
     collaboration_id = collaboration.id
     organisation_id = collaboration.organisation_id
 
-    tag_identifiers = [tag.id for tag in collaboration.tags]
+    tag_identifiers = [tag.id for tag in collaboration.tags if not tag.is_default]
 
     broadcast_collaboration_deleted(collaboration_id)
     emit_socket(f"organisation_{organisation_id}")
@@ -234,7 +232,7 @@ def api_update_user_from_collaboration(co_identifier):
     if user_role not in ["member", "admin"]:
         raise BadRequest(f"{user_role} is not a valid role")
 
-    membership = _get_collaboration_membership(co_identifier, user_uid)
+    membership = _get_collaboration_membership(collaboration, user_uid)
     membership.role = user_role
 
     db.session.merge(membership)
@@ -254,7 +252,7 @@ def api_delete_user_from_collaboration(co_identifier, user_uid):
     collaboration = Collaboration.query.filter(Collaboration.identifier == co_identifier).one()
     confirm_api_key_unit_access(api_key, collaboration)
 
-    membership = _get_collaboration_membership(co_identifier, user_uid)
+    membership = _get_collaboration_membership(collaboration, user_uid)
 
     db.session.delete(membership)
     db.session.commit()
@@ -500,12 +498,15 @@ def collaboration_invites():
     if duplicate_invitations:
         raise BadRequest(f"Duplicate email invitations: {duplicate_invitations}")
 
+    sender_name = data.get("invitation_sender_name", user.name)
+
     for administrator in administrators:
         invitation = Invitation(hash=generate_token(), message=message, invitee_email=administrator,
                                 collaboration=collaboration, user=user, status="open",
                                 intended_role=intended_role, expiry_date=default_expiry_date(json_dict=data),
                                 membership_expiry_date=membership_expiry_date, created_by=user.uid,
-                                external_identifier=str(uuid.uuid4()), sender_name=user.name)
+                                external_identifier=str(uuid.uuid4()),
+                                sender_name=sender_name if sender_name else user.name)
         db.session.add(invitation)
         invitation.groups.extend(groups)
         service_names = [service.name for service in invitation.collaboration.services]
@@ -694,15 +695,16 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True, sav
     if invalid_emails:
         raise BadRequest(f"Invalid emails {invalid_emails}")
     message = data.get("message", None)
-    tags = data.get("tags", None)
+    tags = data.get("tags", [])
 
     valid_uri_attributes(data, ["accepted_user_policy", "website_url"])
 
     data["identifier"] = str(uuid.uuid4())
-    res = save(Collaboration, custom_json=data, allow_child_cascades=False, allowed_child_collections=["units"])
+    res = save(Collaboration, custom_json=data, allow_child_cascades=False,
+               allowed_child_collections=["units"])
     collaboration = res[0]
 
-    if tags and save_tags:
+    if save_tags:
         _reconcile_tags(collaboration, tags)
 
     administrators = list(filter(lambda admin: admin != user.email, administrators))
@@ -816,7 +818,7 @@ def update_collaboration():
         data["short_name"] = collaboration.short_name
 
     if "tags" in data:
-        _reconcile_tags(collaboration, data.get("tags", []))
+        _reconcile_tags(collaboration, data.get("tags", []), is_update=True)
 
     # For updating references like services, groups, memberships there are more fine-grained API methods
     res = update(Collaboration, custom_json=data, allow_child_cascades=False, allowed_child_collections=["units"])
@@ -831,9 +833,10 @@ def update_collaboration():
 @json_endpoint
 def delete_collaboration(collaboration_id):
     confirm_collaboration_admin(collaboration_id)
-    tag_identifiers = _tag_identifiers(collaboration_id)
 
     collaboration = Collaboration.query.filter(Collaboration.id == int(collaboration_id)).one()
+    tag_identifiers = [tag.id for tag in collaboration.tags if not tag.is_default]
+
     emit_socket(f"organisation_{collaboration.organisation_id}")
     broadcast_collaboration_deleted(collaboration_id)
 

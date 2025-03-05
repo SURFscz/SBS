@@ -7,7 +7,8 @@ from werkzeug.exceptions import BadRequest
 from server.auth.security import current_user_uid
 from server.db.db import db
 from server.db.domain import User, CollaborationMembership, OrganisationMembership, JoinRequest, Collaboration, \
-    Invitation, Service, Aup, IpNetwork, Group, SchacHomeOrganisation, ServiceMembership, UserLogin, Unit
+    Invitation, Service, Aup, IpNetwork, Group, SchacHomeOrganisation, ServiceMembership, UserLogin, Unit, Tag
+from server.db.image import validate_base64_image
 from server.db.logo_mixin import evict_from_cache
 
 deserialization_mapping = {"users": User, "collaboration_memberships": CollaborationMembership,
@@ -16,7 +17,7 @@ deserialization_mapping = {"users": User, "collaboration_memberships": Collabora
                            "organisation_memberships": OrganisationMembership, "invitations": Invitation,
                            "service_memberships": ServiceMembership,
                            "services": Service, "aups": Aup, "ip_networks": IpNetwork, "groups": Group,
-                           "units": Unit}
+                           "units": Unit, "tags": Tag}
 
 forbidden_fields = ["created_at", "updated_at"]
 date_fields = ["start_date", "end_date", "created_at", "updated_at", "last_accessed_date", "last_login_date",
@@ -37,6 +38,11 @@ def validate(cls, json_dict, is_new_instance=True):
     missing_attributes = [k for k in required_attributes if k not in json_dict]
     if missing_attributes:
         raise BadRequest(f"Missing attributes '{', '.join(missing_attributes)}' for {cls.__name__}")
+    logo = json_dict.get("logo")
+    if logo:
+        valid, message = validate_base64_image(logo)
+        if not valid:
+            raise BadRequest(f"Invalid image: {message}")
 
 
 def _merge(cls, d):
@@ -56,10 +62,11 @@ def add_audit_trail_data(cls, json_dict):
             json_dict["updated_by"] = user_name
 
     # Also process all relationship children
-    relationship_keys = list(filter(lambda k: k in deserialization_mapping, json_dict.keys()))
-    for rel in relationship_keys:
-        for child in json_dict[rel]:
-            add_audit_trail_data(deserialization_mapping[rel], child)
+    if isinstance(json_dict, dict):
+        relationship_keys = list(filter(lambda k: k in deserialization_mapping, json_dict.keys()))
+        for rel in relationship_keys:
+            for child in json_dict[rel]:
+                add_audit_trail_data(deserialization_mapping[rel], child)
 
 
 def save(cls, custom_json=None, allow_child_cascades=True, allowed_child_collections=[]):
@@ -124,7 +131,7 @@ def cleanse_json(json_dict, cls=None, allow_child_cascades=True, allowed_child_c
             child_cls = deserialization_mapping[k] if k in deserialization_mapping else None
             for item in v:
                 cleanse_json(item, cls=child_cls, allow_child_cascades=allow_child_cascades,
-                             allowed_child_collections=[])
+                             allowed_child_collections=allowed_child_collections)
 
 
 def parse_date_fields(json_dict):
@@ -141,14 +148,14 @@ def transform_json(cls, json_dict, allow_child_cascades=True, allowed_child_coll
     def _contains_list(coll):
         return len(list(filter(lambda item: isinstance(item, list), coll))) > 0
 
-    def _do_transform(items):
-        return dict(map(_parse, items))
-
     def _parse(item):
         if isinstance(item[1], list):
             cls_child = deserialization_mapping[item[0]]
             return item[0], list(map(lambda i: cls_child(**_do_transform(i.items())), item[1]))
         return item
+
+    def _do_transform(items):
+        return dict(map(_parse, items))
 
     cleanse_json(json_dict, cls=cls, allow_child_cascades=allow_child_cascades,
                  allowed_child_collections=allowed_child_collections)

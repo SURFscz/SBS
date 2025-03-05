@@ -806,11 +806,11 @@ class ServiceOverview extends React.Component {
 
     sidebar = (currentTab, isManageEnabled, isAdmin) => {
         return (<div className={"side-bar"}>
-            <h3>{I18n.t("serviceDetails.details")}</h3>
+            {/*<h3>{I18n.t("serviceDetails.details")}</h3>*/}
             <ul>
                 {toc.filter(tab => isAdmin || tab !== "Export")
                     .filter(tab => isManageEnabled || (tab !== "OIDC" && tab !== "SAML"))
-                    .map(item => <li key={item}>
+                    .map(item => <li key={item} className={`${item === currentTab ? "active" : ""}`}>
                         <a href={`/${item}`}
                            className={`${item === currentTab ? "active" : ""} ${this.isValidTab(item) ? "" : "error"}`}
                            onClick={this.changeTab(item)}>{I18n.t(`serviceDetails.toc.${item}`)}</a>
@@ -1804,7 +1804,8 @@ class ServiceOverview extends React.Component {
         const disabledSubmit = !this.isValid();
         const {user, config, showServiceAdminView} = this.props;
         const isAdmin = user.admin;
-        return (<div className="service-overview">
+        return (
+            <div className="service-overview">
             <ConfirmationDialog isOpen={confirmationDialogOpen}
                                 cancel={cancelDialogAction}
                                 cancelButtonLabel={cancelButtonLabel}

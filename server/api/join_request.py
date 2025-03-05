@@ -4,16 +4,15 @@ from werkzeug.exceptions import Conflict, BadRequest
 
 from server.api.base import json_endpoint, emit_socket
 from server.api.invitation import add_organisation_aups
-from server.db.defaults import STATUS_OPEN, STATUS_DENIED, STATUS_APPROVED
 from server.api.service_aups import add_user_aups
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, current_user, \
     current_user_name, current_user_uid
 from server.db.activity import update_last_activity_date
+from server.db.defaults import STATUS_OPEN, STATUS_DENIED, STATUS_APPROVED
 from server.db.domain import CollaborationMembership, Collaboration, JoinRequest, db
 from server.db.models import delete
 from server.mail import mail_collaboration_join_request, mail_accepted_declined_join_request
-from server.scim.events import broadcast_collaboration_changed, broadcast_group_changed
 
 join_request_api = Blueprint("join_request_api", __name__, url_prefix="/api/join_requests")
 
@@ -132,17 +131,8 @@ def approve_join_request():
     collaboration_membership = db.session.merge(collaboration_membership)
     db.session.merge(join_request)
 
-    auto_provision_groups = [group for group in collaboration.groups if group.auto_provision_members]
-    for group in auto_provision_groups:
-        group.collaboration_memberships.append(collaboration_membership)
-        db.session.merge(group)
-
-    db.session.commit()
-    for group in auto_provision_groups:
-        broadcast_group_changed(group.id)
-
-    emit_socket(f"collaboration_{collaboration_id}", include_current_user_id=True)
-    broadcast_collaboration_changed(collaboration_id)
+    from server.api.collaboration_membership import do_auto_provision_groups
+    do_auto_provision_groups(collaboration, collaboration_id, collaboration_membership)
 
     return {'collaboration_id': collaboration_id, 'user_id': user_id}, 201
 

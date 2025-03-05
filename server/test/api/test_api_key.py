@@ -1,3 +1,6 @@
+from unittest import mock
+
+import sqlalchemy
 from werkzeug.exceptions import SecurityError
 
 from server.auth.secrets import hash_secret_key
@@ -57,3 +60,28 @@ class TestApiKey(AbstractTest):
                                     data="",
                                     content_type="application/json")
         self.assertEqual(401, response.status_code)
+
+    def test_api_key_prevent_reply(self):
+        secret = self.get("/api/api_keys")["value"]
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
+        organisation_id = organisation.id
+
+        api_key = self.post("/api/api_keys", body={"organisation_id": organisation_id,
+                                                   "hashed_secret": secret,
+                                                   "description": "test"})
+        self.assertIsNotNone(api_key["id"])
+
+        self.post("/api/api_keys", body={"organisation_id": organisation_id, "hashed_secret": secret,
+                                         "description": "test"}, response_status_code=403)
+
+    def test_database_info_leakage(self):
+        secret = self.get("/api/api_keys")["value"]
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
+        organisation_id = organisation.id
+
+        with mock.patch("sqlalchemy.engine.base.Connection.execute",
+                        side_effect=sqlalchemy.exc.OperationalError("failed", "failed", "failed")):
+            res = self.post("/api/api_keys", body={"organisation_id": organisation_id,
+                                                   "hashed_secret": secret,
+                                                   "description": "test"}, response_status_code=400)
+            self.assertEqual("Database error", res["message"])

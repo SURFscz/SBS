@@ -60,6 +60,7 @@ const nl = {
         subTitle: "Inloggen...",
         suspended: "Je profiel is geschorst. Neem contact op sram-support@surf.nl om dit op te lossen",
         rateLimited: "Je hebt te vaak een ongeldige verificatiecode ingevoerd, daarom is deze geblokkeerd. Neem contact op met je beheerder om dit op te lossen",
+        excessiveReset: "Je hebt te vaak een MFA reset aangevraagd, daarom is je account geblokkeerd. Neem contact op met je beheerder om dit op te lossen",
         successfullyActivated: "Gelukt: je profiel is geheractiveerd",
         closeBrowser: "Om volledig uit te loggen, moet je je browser sluiten",
         closeBrowserAfterDelete: "Om het verwijderen van je profiel te voltooien, moet je je browser sluiten."
@@ -72,6 +73,7 @@ const nl = {
         unsuspend: "Schorsing ongedaan maken",
         avoidSuspending: "Voorkom schorsing",
         resetLastActivity: "Reset activiteit",
+        options: "Opties",
         otherOptions: "Meer opties",
         details: "Details",
         backToHome: "Terug naar home",
@@ -89,6 +91,7 @@ const nl = {
             orgAdmins: "Org.beheerders",
             orgServices: "Applicaties",
             serviceAdmins: "Beheerders",
+            orgOverview: "Details & configuratie",
             orgCollaborations: "Samenwerkingen",
             coServices: "Applicaties",
             coAdmins: "Beheerders",
@@ -820,6 +823,7 @@ const nl = {
         currentUserAdmin: "Maak mijzelf beheerder van deze samenwerking",
         currentUserAdminTooltip: "Indien aangevinkt wordt je toegevoegd als beheerder van de samenwerking",
         message: "Optioneel bericht",
+        invitationSenderName: "Optioneel naam uitnodiger",
         messagePlaceholder: "Persoonlijk bericht aan de beheerders",
         messageTooltip: "De tekst nemen we op in de  e-mail aan de beheerders.",
         motivation: "Motivatie",
@@ -1255,7 +1259,7 @@ const nl = {
         name: "Naam",
         namePlaceHolder: "De unieke naam van de organisatie",
         invitations: "Organisatiebeheerders uitnodigen",
-        category: "Categorie",
+        category: "Type instelling",
         categoryTooltip: "Type instelling",
         tenantPlaceHolder: "De unieke tenant-/organisatie-identifier die de organisatie verbindt met een instelling",
         shortName: "Korte naam",
@@ -1266,7 +1270,7 @@ const nl = {
         identifierTooltip: "Gegenereerde, unieke en niet aanpasbare identifier van een organisatie die wordt gebruikt als identifier voor externe systemen",
         description: "Omschrijving",
         descriptionPlaceholder: "De omschrijving van de organisatie is zichtbaar voor iedereen",
-        servicesRestricted: "SURF-organisatie",
+        servicesRestricted: "Dit is een SURF-organisatie",
         servicesRestrictedTooltip: "Samenwerkingen van een SURF-organisatie kunnen alleen SURF-applicaties koppelen.",
         schacHomeOrganisationShortName: "Organisatiedomein",
         schacHomeOrganisationShortNames: "Organisatiedomeinen",
@@ -1275,7 +1279,7 @@ const nl = {
         schacHomeOrganisationTooltip: "De domeinnamen waarmee gebruikers van deze organisatie inloggen. Deze gebruikers kunnen samenwerkingen aanmaken of aanvragen bij je organisatie.",
         collaborationCreationAllowed: "Gebruikers kunnen zonder goedkeuring een samenwerking aanmaken",
         collaborationCreationAllowedTooltip: "Sta toe dat gebruikers van de organisatie samenwerkingen aanmaken zonder goedkeuring van de organisatiebeheerder of -manager",
-        serviceConnectionRequiresApproval: "Aanvraag voor applicatie koppeling moet worden goedgekeurd door de organisatie beheerder",
+        serviceConnectionRequiresApproval: "Aanvraag voor applicatie koppeling moet worden goedgekeurd door de organisatiebeheerder of -manager",
         serviceConnectionRequiresApprovalTooltip: "Indien geselecteerd, dan moet een aanvraag voor een applicatie koppeling eerst worden goedgekeurd door de organisatie beheerder",
         accepted_user_policyPlaceholder: "De acceptable use policy (AUP) van de organisatie.",
         accepted_user_policyTooltip: "Gebruikers van buiten de organsatie moeten deze AUP accepteren wanneer ze voor het eerste lid worden van een samenwerking van deze organisatie.",
@@ -1510,6 +1514,7 @@ const nl = {
         invitees: "Genodigden",
         inviteesPlaceholder: "Voer e-mailadressen in, gescheiden door een komma, spatie of puntkomma of voer ze stuk voor stuk in met een enter. Je kunt ook een csv-bestand plakken met daarin regelgescheiden e-mailadressen.",
         inviteesTooltip: "Deze tekst nemen we op in de e-mail waarmee we deelnemers uitnodigen",
+        invitationSenderNameTooltip: "De naam van de uitnodiger nemen we op in de e-mail waarmee we deelnemers uitnodigen. Default is dit je naam",
         intendedRole: "Rol",
         intendedRoleTooltip: "De rechten die alle genodigden krijgen. Beheerders kunnen de gegevens van de samenwerking wijzigen, applicaties koppelen en leden uitnodigen.",
         intendedRoleOrganisation: "Rol",
@@ -1530,6 +1535,7 @@ const nl = {
         invalidEmails: "Ongeldige e-mailadressen verwijderd: {{emails}}.",
         appendAdminNote: "Let op: de genodigen zullen <strong>beheerder</strong> worden na het accepteren van de uitnodiging.",
         inviteesMessagePlaceholder: "Bericht aan genodigden",
+        invitationSenderNamePlaceholder: "De naam van de uitnodiger",
         inviter: "Uitnodiger",
         decline: "Afslaan",
         accept: "Accepteren",
@@ -2618,7 +2624,7 @@ const nl = {
     },
     units: {
         column: "Units",
-        label: "Units (bijv. afdeling of project)",
+        label: "Unit name",
         add: "+ Voeg unit toe",
         confirmation: "Weet je zeker dat je unit {{name}} wilt verwijderen?",
         used: "Het wordt gebruikt door:",
@@ -2688,6 +2694,49 @@ const nl = {
         inviteWithLinkCopy: "Kopiëer koppeling",
         inviteWithEmail: "Uitnodigen via e-mail",
         inviteWithEmailInfo: "Verstuur een uitnodiging naar éém of meerder e-mailadressen. Met de link in de e-mail kan een gebruiker direct lid worden.",
+    },
+    organisationDetails: {
+        details: "Organisation details",
+        toc: {
+            about: "About the organisation",
+            units: "Units",
+            labels: "Labels",
+            messaging: "Messaging",
+            settings: "Settings"
+        },
+        headers: {
+            about: "About the organisation",
+            units: "Manage units",
+            labels: "Manage labels",
+            messaging: "Messaging settingss",
+            settings: "Organisation settings"
+        },
+        units: {
+            info: "Create units to organize departments or projects within your organization. Managers can be assigned to specific units to oversee their activities.",
+        },
+        labels: {
+            info: "Create labels to define overall properties for collaborations within your organisation. Labels are shared with the connected applications, helping you manage and organize your members.",
+            name: "Label name",
+            defaultFor: "Default for",
+            defaultForPlaceholder: "All co's within all units"
+        },
+        messaging: {
+            newCoMessage: "Message for new collaborations",
+            newCoMessageInfo: "This message is shown to users from your organisation when they request or create a collaboration",
+            defaultInviteMessage: "Default message for invites",
+            defaultInviteMessagePlaceholder: "Please join us, at this new CO",
+            defaultInviteMessageInfo: "When filled this message is used in all new invitations for the collaborations of this organisation",
+            defaultSenderName: "Default sender name for invites",
+            defaultSenderNamePlaceholder: "Organisational department of info mail",
+            defaultSenderNameInfo: "When filled this name is used as the sender in all new invitations for the collaborations of this organisation",
+        },
+        permissions: "Permissions"
+    },
+    tags: {
+        label: "Label name",
+        add: "+ Add label",
+        confirmation: "Are you sure you want to remove label {{name}}?",
+        duplicated: "There is already an label named {{name}} for this organisation"
     }
 };
 

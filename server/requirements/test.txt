@@ -1,15 +1,15 @@
 -r base.txt
 blinker==1.9.0
-flake8==7.1.1
+flake8==7.1.2
 flask-testing==0.8.1
 flask-webtest==0.1.6
 hbmqtt2==0.9.7
-pytest==8.3.4
+pytest==8.3.5
 pytest-cov==6.0.0
 pytest-xdist==3.6.1
 responses==0.25.6
 alembic==1.14.1
 freezegun==1.5.1
-coverage==7.6.10
-mock==5.1.0
+coverage==7.6.12
+mock==5.2.0
 pipdeptree==2.25.0

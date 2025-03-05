@@ -23,9 +23,12 @@ class Login extends React.Component {
     }
 
     componentDidMount = () => health().then(() => {
-        const {rateLimited} = this.props;
+        const {rateLimited, excessiveReset} = this.props;
         if (rateLimited) {
             setFlash(I18n.t("login.rateLimited"), "error");
+        }
+        if (excessiveReset) {
+            setFlash(I18n.t("login.excessiveReset"), "error");
         }
     });
 

@@ -60,6 +60,7 @@ const en = {
         subTitle: "Please log in...",
         suspended: "Your profile has been suspended. Please contact sram-support@surf.nl to resolve this",
         rateLimited: "You have entered an invalid verification code too often, so it has been blocked. Contact your admin to resolve this",
+        excessiveReset: "You have requested a MFA reset too often, so your account has been blocked. Contact your admin to resolve this",
         successfullyActivated: "You have re-activated your profile",
         closeBrowser: "To finish your logout you'll have to close your browser.",
         closeBrowserAfterDelete: "To finish the deletion of your profile you'll have to close your browser."
@@ -72,6 +73,7 @@ const en = {
         unsuspend: "Revert suspension",
         avoidSuspending: "Avoid suspension",
         resetLastActivity: "Reset activity",
+        options: "Options",
         otherOptions: "Other options",
         details: "Details",
         backToHome: "Back to home",
@@ -89,6 +91,7 @@ const en = {
             orgAdmins: "Organisation admins",
             orgServices: "Applications",
             serviceAdmins: "Admins",
+            orgOverview: "Details & settings",
             orgCollaborations: "Collaborations",
             coServices: "Applications",
             coAdmins: "Admins",
@@ -286,7 +289,7 @@ const en = {
             memberCount: "Admins",
             collaborationCount: "Collaborations",
             schacHomeOrganisations: "Org domains",
-            category: "Category",
+            category: "Type of institution",
             leave: "Leave organisation"
         },
         services: {
@@ -820,6 +823,7 @@ const en = {
         currentUserAdmin: "Make me admin of this collaboration",
         currentUserAdminTooltip: "If checked you will be added as an admin of this collaboration",
         message: "Optional message",
+        invitationSenderName: "Optional inviter name",
         messagePlaceholder: "Personal message to the admins",
         messageTooltip: "The message will be included in the email to the admins.",
         motivation: "Motivation",
@@ -1255,7 +1259,7 @@ const en = {
         name: "Name",
         namePlaceHolder: "The unique name of an organisation",
         invitations: "Invite organisation admins",
-        category: "Category",
+        category: "Type of institution",
         categoryTooltip: "Type of institution",
         tenantPlaceHolder: "The unique tenant / organisation identifier linking the organisation to an institute",
         shortName: "Short name",
@@ -1266,7 +1270,7 @@ const en = {
         identifierTooltip: "Generated, unique and immutable identifier of a organisation which used as identifier for external systems",
         description: "Description",
         descriptionPlaceholder: "The description of the organisation is visible to anyone",
-        servicesRestricted: "SURF organisation",
+        servicesRestricted: "This is a SURF organisation",
         servicesRestrictedTooltip: "Collaborations from SURF organisation can only link SURF applications.",
         schacHomeOrganisationShortName: "Organisation domain",
         schacHomeOrganisationShortNames: "Organisation domains",
@@ -1275,7 +1279,7 @@ const en = {
         schacHomeOrganisationTooltip: "The domain names users of this organisation log in with. These users can request or create collaborations with your organisation.",
         collaborationCreationAllowed: "Users can create collaborations straightaway",
         collaborationCreationAllowedTooltip: "Allows users from your organisation to create a collaboration without requiring approval from an organisation admin or manager",
-        serviceConnectionRequiresApproval: "Application connection request must be approved by the Organisation admin",
+        serviceConnectionRequiresApproval: "Application connection request must be approved by the Organisation admin or manager",
         serviceConnectionRequiresApprovalTooltip: "If checked then application connection requests must first be approved by an Organisation admin",
         accepted_user_policyPlaceholder: "The acceptable use policy (AUP) of the organisation",
         accepted_user_policyTooltip: "Users outside your organisation must accept this AUP before joining one of this organisation's collaboration for the first time.",
@@ -1510,6 +1514,7 @@ const en = {
         invitees: "Invitees",
         inviteesPlaceholder: "Add email addresses separated by comma, space or semi-colon or one-by-one using the enter key. You can also copy & paste a csv file with line-separated email addresses.",
         inviteesTooltip: "This personal message is included in the email sent to the persons you invite",
+        invitationSenderNameTooltip: "The name of the inviter is included in the email sent to the persons you invite. Default this is your name.",
         intendedRole: "Role",
         intendedRoleTooltip: "The permissions granted to all invitees. Admins can edit the collaboration, connect applications and invite members.",
         intendedRoleOrganisation: "Role",
@@ -1530,6 +1535,7 @@ const en = {
         invalidEmails: "Invalid email addresses removed: {{emails}}.",
         appendAdminNote: "Note: the invitees will become <strong>admin</strong> after accepting the invite.",
         inviteesMessagePlaceholder: "Personal message to the invitees",
+        invitationSenderNamePlaceholder: "Sender name of the invitation",
         inviter: "Inviter",
         decline: "Decline",
         accept: "Accept",
@@ -2618,7 +2624,7 @@ const en = {
     },
     units: {
         column: "Units",
-        label: "Units (e.g. department or project)",
+        label: "Unit name",
         add: "+ Add unit",
         confirmation: "Are you sure you want to remove unit {{name}}?",
         used: "It is being used by:",
@@ -2687,7 +2693,50 @@ const en = {
         inviteWithLinkInfo: "Share the link with which membership can be requested. You can approve or reject these requests.",
         inviteWithLinkCopy: "Copy link",
         inviteWithEmail: "Invite with email",
-        inviteWithEmailInfo: "Send an invtiation to one or more emails. Users can become a member directly with the link in the email.",
+        inviteWithEmailInfo: "Send an invitation to one or more emails. Users can become a member directly with the link in the email.",
+    },
+    organisationDetails: {
+        details: "Organisation details",
+        toc: {
+            about: "About the organisation",
+            units: "Units",
+            labels: "Labels",
+            messaging: "Messaging",
+            settings: "Settings"
+        },
+        headers: {
+            about: "About the organisation",
+            units: "Manage units",
+            labels: "Manage labels",
+            messaging: "Messaging settings",
+            settings: "Organisation settings"
+        },
+        units: {
+            info: "Create units to organize departments or projects within your organization. Managers can be assigned to specific units to oversee their activities.",
+        },
+        labels: {
+            info: "Create labels to define overall properties for collaborations within your organisation. Labels are shared with the connected applications, helping you manage and organize your members.",
+            name: "Label name",
+            defaultFor: "Default for",
+            defaultForPlaceholder: "All co's within all units"
+        },
+        messaging: {
+            newCoMessage: "Message for new collaborations",
+            newCoMessageInfo: "This message is shown to users from your organisation when they request or create a collaboration",
+            defaultInviteMessage: "Default message for invites",
+            defaultInviteMessagePlaceholder: "Please join us, at this new CO",
+            defaultInviteMessageInfo: "When filled this message is used in all new invitations for the collaborations of this organisation",
+            defaultSenderName: "Default sender name for invites",
+            defaultSenderNamePlaceholder: "Organisational department of info mail",
+            defaultSenderNameInfo: "When filled this name is used as the sender in all new invitations for the collaborations of this organisation",
+        },
+        permissions: "Permissions"
+    },
+    tags: {
+        label: "Label name",
+        add: "+ Add label",
+        confirmation: "Are you sure you want to remove label {{name}}?",
+        duplicated: "There is already an label named {{name}} for this organisation"
     }
 };
 

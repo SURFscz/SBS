@@ -22,6 +22,7 @@
 
     .icon-list-items {
         margin-top: 15px;
+
         .icon-list-item {
             display: flex;
             align-items: center;
@@ -115,6 +116,10 @@
             }
         }
 
+    }
+
+    div.options button.sds--btn-chevron {
+        justify-content: left;
     }
 
     .action-menu-container {

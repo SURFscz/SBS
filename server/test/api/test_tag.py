@@ -10,7 +10,7 @@ class TestTag(AbstractTest):
 
         self.login("urn:harry")
         tags = self.get("/api/tags", query_data={"organisation_id": organisation.id}, with_basic_auth=False)
-        self.assertEqual(2, len(tags))
+        self.assertEqual(4, len(tags))
 
     def test_tags_not_allowed(self):
         organisation = self.find_entity_by_name(Organisation, unihard_name)
@@ -29,8 +29,8 @@ class TestTag(AbstractTest):
         self.login("urn:john")
         tag = Tag.query.filter(Tag.tag_value == "tag_uuc").one()
         self.delete(f"/api/tags/{tag.collaborations[0].organisation_id}/{tag.id}")
-        self.assertEqual(2, Tag.query.count())
-        self.assertEqual(0, len(self.find_entity_by_name(Collaboration, co_ai_computing_name).tags))
+        self.assertEqual(4, Tag.query.count())
+        self.assertEqual(1, len(self.find_entity_by_name(Collaboration, co_ai_computing_name).tags))
 
     def test_delete_tag_forbidden(self):
         self.login("urn:john")
@@ -41,4 +41,12 @@ class TestTag(AbstractTest):
     def test_all_tags(self):
         self.login("urn:john")
         tags = self.get("/api/tags/all", with_basic_auth=False)
-        self.assertEqual(3, len(tags))
+        self.assertEqual(5, len(tags))
+
+    def test_usages(self):
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
+        tag = Tag.query.filter(Tag.tag_value == "tag_uuc").one()
+        self.login("urn:mary")
+        res = self.get(f"/api/tags/usages/{organisation.id}/{tag.id}", with_basic_auth=False)
+
+        self.assertListEqual([co_ai_computing_name], res["collaborations"])

@@ -1146,6 +1146,10 @@ export function unitUsage(unit) {
     return fetchJson(`/api/units/usages/${unit.organisation_id}/${unit.id}`)
 }
 
+export function tagUsage(tag) {
+    return fetchJson(`/api/tags/usages/${tag.organisation_id}/${tag.id}`)
+}
+
 //Mock-SCIM
 export function allMockScimServices() {
     return fetchJson("/api/scim/v2/scim-services")

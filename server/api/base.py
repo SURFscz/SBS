@@ -9,11 +9,10 @@ from pathlib import Path
 from urllib.parse import urlparse
 from uuid import uuid4
 
-import MySQLdb
 from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
 from jsonschema import ValidationError
 from redis.exceptions import ConnectionError
-from sqlalchemy.exc import OperationalError
+from sqlalchemy.exc import OperationalError, DatabaseError
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest, Forbidden, Conflict
 
@@ -207,12 +206,13 @@ def json_endpoint(f):
                 skip_email = True
             elif isinstance(e, Conflict):
                 skip_email = True
-            elif isinstance(e, MySQLdb.IntegrityError):
-                skip_email = True
             elif hasattr(e, "description"):
                 e.description = f"{e.__class__.__name__}: {current_request.url}." \
                                 f" IP: {_remote_address()}. " + e.description
                 skip_email = "sent a request that this server could not understand" in e.description
+            elif isinstance(e, DatabaseError):
+                e = BadRequest("Database error")
+                skip_email = True
             response = jsonify(message=e.description if isinstance(e, HTTPException) else str(e),
                                error=True)
             response.status_code = 500

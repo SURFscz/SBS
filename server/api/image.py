@@ -1,7 +1,8 @@
 import base64
 import io
 
-from flask import Blueprint, send_file
+from flask import Blueprint
+from flask import send_file
 
 from server.db.logo_mixin import logo_from_cache
 

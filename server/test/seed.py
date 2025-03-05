@@ -137,16 +137,17 @@ pam_invalid_service_session_id = str(uuid.uuid4())
 image_cache = {}
 
 
-def read_image(file_name, directory="images"):
+def read_image(file_name, directory="images", transform=True):
     file = f"{os.path.dirname(os.path.realpath(__file__))}/{directory}/{file_name}"
     global image_cache
     if file in image_cache:
         return image_cache.get(file)
     with open(file, "rb") as f:
         c = f.read()
-        decoded = base64.encodebytes(c).decode("utf-8")
-        image_cache[file] = decoded
-        return decoded
+        from server.db.image import transform_image
+        image = transform_image(c) if transform else base64.encodebytes(c).decode("utf-8")
+        image_cache[file] = image
+        return image
 
 
 def persist_instance(db, *objs):
@@ -306,7 +307,8 @@ def seed(db, app_config, skip_seed=False):
                                        "\n- Wiki\n- Cloud\n- Awesome things...\n\nIf you want to join one of our "
                                        "collaborations, please send a mail to [support@uuc.nl](mailto:support@uuc.nl)."
                                        "\n<br/><br/>\nHappy researching,\n\n*UUC support*",
-                       collaboration_creation_allowed=True, crm_id="A2D02C9E-EA1D-434F-B893-A6413A01AFCB")
+                       collaboration_creation_allowed=True, crm_id="A2D02C9E-EA1D-434F-B893-A6413A01AFCB",
+                       invitation_sender_name="Info at UUC", invitation_message="Please join UUC CO")
     ufra = Organisation(name=unifra_name, description=unifra_name,
                         identifier="7c60a022-ab09-438c-8603-c361bc1a088d", created_by="urn:admin",
                         updated_by="urn:admin", short_name="ufra", logo=read_image("uni-franeker.png"),
@@ -586,10 +588,12 @@ def seed(db, app_config, skip_seed=False):
     uuc.services.append(uuc_scheduler)
     uuc.services.append(wiki)
 
-    tag_uuc = Tag(tag_value="tag_uuc", organisation=uuc)
+    tag_uuc = Tag(tag_value="tag_uuc", organisation=uuc, is_default=True)
+    tag_default_uuc = Tag(tag_value="tag_default_uuc", is_default=True, organisation=uuc, units=[uuc_unit_support])
     tag_ufra = Tag(tag_value="tag_ufra", organisation=ufra)
+    tag_uuc_2 = Tag(tag_value="tag_uuc_2", organisation=uuc)
     tag_orphan = Tag(tag_value="tag_orphan", organisation=uuc)
-    persist_instance(db, tag_uuc, tag_ufra, tag_orphan)
+    persist_instance(db, tag_uuc, tag_default_uuc, tag_ufra, tag_uuc_2, tag_orphan)
 
     ai_computing = Collaboration(name=co_ai_computing_name,
                                  identifier=co_ai_computing_uuid,
@@ -598,7 +602,7 @@ def seed(db, app_config, skip_seed=False):
                                  logo=read_image("computing.png"),
                                  organisation=uuc, services=[mail, network],
                                  join_requests=[], invitations=[],
-                                 tags=[tag_uuc],
+                                 tags=[tag_uuc, tag_uuc_2],
                                  units=[uuc_unit_support],
                                  short_name=co_ai_computing_short_name,
                                  website_url="https://www.google.nl",

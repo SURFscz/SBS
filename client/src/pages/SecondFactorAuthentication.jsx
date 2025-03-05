@@ -179,9 +179,15 @@ class SecondFactorAuthentication extends React.Component {
     sendResetRequest = () => {
         const {respondents, message} = this.state;
         const admin = respondents.find(respondent => respondent.selected);
-        tokenResetRequest(admin, message).then(() => {
-            setFlash(I18n.t("mfa.lost.flash"));
-            this.setState({showExplanation: false, message: ""});
+        tokenResetRequest(admin, message)
+            .then(() => {
+                this.setState({showExplanation: false, message: ""});
+            }).catch(e => {
+            if (e.response && e.response.status === 429) {
+                this.props.history.push("/landing?excessive-reset=true");
+            } else {
+                throw e;
+            }
         });
     }
 
@@ -228,7 +234,7 @@ class SecondFactorAuthentication extends React.Component {
             }, () => this.totpNewRefs[0].focus()));
         } else {
             verify2fa(totp.join("")).then(r => {
-                this.props.refreshUser(user => { // eslint-disable-line no-unused-vars
+                this.props.refreshUser(() => {
                     redirectToProxyLocation(r.location, this.props.history, config);
                 });
             }).catch(e => {

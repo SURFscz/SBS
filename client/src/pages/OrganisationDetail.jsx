@@ -28,6 +28,7 @@ import Users from "../components/redesign/Users";
 import {ButtonType} from "@surfnet/sds";
 import {isInvitationExpired} from "../utils/Date";
 import ServiceConnectionRequests from "../components/redesign/ServiceConnectionRequests";
+import OrganisationOverview from "./OrganisationOverview";
 
 class OrganisationDetail extends React.Component {
 
@@ -37,7 +38,7 @@ class OrganisationDetail extends React.Component {
             invitation: null,
             organisation: {},
             loading: true,
-            tab: "collaborations",
+            tab: "overview",
             tabs: [],
             firstTime: false,
             confirmationDialogOpen: false,
@@ -144,9 +145,11 @@ class OrganisationDetail extends React.Component {
     }
 
     getTabs = (organisation, config, isInvite, user) => {
+        const isAdmin = isUserAllowed(ROLES.ORG_ADMIN, user, organisation.id);
         const tabs = isInvite ? [
             this.getCollaborationsTab(organisation),
         ] : [
+            isAdmin ? this.getOrganisationOverviewTab(organisation) : null,
             this.getCollaborationsTab(organisation),
             this.getCollaborationRequestsTab(organisation),
             this.getOrganisationAdminsTab(organisation, user),
@@ -193,6 +196,17 @@ class OrganisationDetail extends React.Component {
         </div>);
     }
 
+    getOrganisationOverviewTab = organisation => {
+        return (
+            <div key="overview" name="overview"
+                 label={I18n.t("home.tabs.orgOverview")}>
+                <OrganisationOverview {...this.props}
+                                      refresh={callback => this.componentDidMount(callback)}
+                                      organisation={organisation}/>
+            </div>
+        );
+
+    }
     getCollaborationsTab = organisation => {
         return (<div key="collaborations" name="collaborations"
                      label={I18n.t("home.tabs.orgCollaborations", {count: (organisation.collaborations || []).length})}>
@@ -311,15 +325,8 @@ class OrganisationDetail extends React.Component {
         return actions;
     }
 
-    getActions = (user, organisation, adminOfOrganisation) => {
+    getActions = (user, organisation) => {
         const actions = [];
-        if (adminOfOrganisation) {
-            actions.push({
-                buttonType: ButtonType.Primary,
-                name: I18n.t("home.edit"),
-                perform: () => this.props.history.push("/edit-organisation/" + organisation.id)
-            });
-        }
         if (!user.admin) {
             const queryParam = `name=${encodeURIComponent(organisation.name)}&back=${encodeURIComponent(window.location.pathname)}`;
             actions.push({
@@ -363,14 +370,14 @@ class OrganisationDetail extends React.Component {
                                     isWarning={true}
                                     question={confirmationQuestion}/>
                 <UnitHeader obj={organisation}
-                            mayEdit={adminOfOrganisation}
+                            mayEdit={true}
                             displayDescription={true}
                             history={user.admin ? this.props.history : null}
                             auditLogPath={`organisations/${organisation.id}`}
                             breadcrumbName={I18n.t("breadcrumb.organisation", {name: organisation.name})}
                             firstTime={user.admin ? this.onBoarding : undefined}
                             name={organisation.name}
-                            actions={this.getActions(user, organisation, adminOfOrganisation)}>
+                            actions={this.getActions(user, organisation)}>
                     {organisation.accepted_user_policy &&
                         <a target="_blank" rel="noopener noreferrer" href={organisation.accepted_user_policy}>
                             {I18n.t("aup.title")}

@@ -1,0 +1,131 @@
+@import "../stylesheets/vars.scss";
+@import "../stylesheets/forms";
+
+.organisation-overview {
+    max-width: $medium;
+    margin: 40px auto 25px auto;
+    width: 100%;
+    display: flex;
+
+    div.side-bar {
+        margin-right: 80px;
+        @media (max-width: $tablet-max) {
+            margin-left: 15px;
+        }
+
+        h3 {
+            font-weight: bold;
+            margin-bottom: 20px;
+            white-space: nowrap;
+        }
+
+        ul {
+            list-style: none;
+
+
+            li {
+                padding: 6px 22px 6px 6px;
+
+                &.active {
+                    background-color: $background;
+                    border-radius: $br;
+                }
+
+                a {
+                    white-space: nowrap;
+                    font-weight: 400;
+                    text-decoration: none;
+
+                    &.error {
+                        color: $error-red;
+                    }
+                }
+            }
+        }
+    }
+
+    .organisation {
+        width: 100%;
+        display: grid;
+        grid-template-columns: [first] 16fr [second] 4fr;
+        grid-auto-rows: min-content;
+        column-gap: 50px;
+
+        @media (max-width: $tablet-max) {
+            padding: 0 15px;
+        }
+
+        @media (max-width: $compact-medium) {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-field, .radio-button-container, .actions, div.checkbox, .select-field, .ip-networks, span.error,
+        div.email-invitations, div.compliance, div.ldap, div.contacts, div.tokens, div.actions-container, p.label,
+        div.creatable-field, div.organisation-units, div.organisation-tags, div.input-section, p.info {
+            grid-column-start: first;
+        }
+
+        label.organisation-details-tokens {
+            font-weight: 600;
+        }
+
+        span.error {
+            display: block;
+            color: $error-red;
+            margin-top: 20px;
+        }
+
+        .section-separator {
+            grid-column: 1/-1;
+            padding-bottom: 5px;
+
+            &.first {
+                margin-bottom: 10px;
+
+                &.last {
+                    margin-top: 10px
+                }
+            }
+        }
+
+        div.input-field, div.select-field, div.creatable-field {
+            margin-top: 15px;
+        }
+
+        .required-marker {
+            color: var(--sds--color--red--400);
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        div.checkbox {
+            margin: 10px 0;
+        }
+
+    }
+
+    p.label {
+        display: inline-block;
+        margin: 25px 0 1px 0;
+        min-width: 210px;
+        color: black;
+        position: relative;
+        font-weight: 600;
+    }
+
+    p.info {
+        color: #5d6872;
+        margin-top: 5px;
+    }
+
+    .input-section {
+        margin-top: 20px;
+    }
+
+    span.error-indication {
+        grid-column: 1 / span 3;
+
+    }
+}
+

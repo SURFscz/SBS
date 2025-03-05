@@ -75,6 +75,14 @@ class TestMfa(AbstractTest):
         self.assertEqual(1, len(res))
         self.assertEqual("john@example.org", res[0]["email"])
 
+    def test_token_reset_request_rate_limit(self):
+        self.login("urn:mary")
+        for i in range(10):
+            self.post("/api/mfa/token_reset_request", body={"email": "john@example.org", "message": "test"},
+                      response_status_code=201, with_basic_auth=False)
+        self.post("/api/mfa/token_reset_request", body={"email": "john@example.org", "message": "test"},
+                  response_status_code=429, with_basic_auth=False)
+
     def test_token_reset_request_post(self):
         mail = self.app.mail
         with mail.record_messages() as outbox:
