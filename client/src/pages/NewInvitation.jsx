@@ -43,6 +43,7 @@ class NewInvitation extends React.Component {
             selectedGroup: [],
             intended_role: "member",
             message: "",
+            invitation_sender_name: "",
             membership_expiry_date: null,
             expiry_date: moment().add(16, "days").toDate(),
             initial: true,
@@ -67,9 +68,13 @@ class NewInvitation extends React.Component {
         if (collaborationId) {
             collaborationById(collaborationId)
                 .then(collaboration => {
+                    const organisation = collaboration.organisation;
+                    const {user} = this.props;
                     this.setState({
                         collaboration: collaboration,
                         loading: false,
+                        message: organisation.invitation_message || "",
+                        invitation_sender_name: organisation.invitation_sender_name || user.name,
                         intended_role: isAdminView ? "admin" : "member",
                         isAdminView: isAdminView,
                         groups: collaboration.groups.map(ag => ({value: ag.id, label: ag.name})),
@@ -111,6 +116,7 @@ class NewInvitation extends React.Component {
         const {
             administrators,
             message,
+            invitation_sender_name,
             collaboration,
             expiry_date,
             intended_role,
@@ -123,6 +129,7 @@ class NewInvitation extends React.Component {
             collaborationInvitations({
                 administrators: administrators,
                 message,
+                invitation_sender_name,
                 membership_expiry_date: membership_expiry_date ? membership_expiry_date.getTime() / 1000 : null,
                 intended_role: intended_role,
                 collaboration_id: collaboration.id,
@@ -203,8 +210,8 @@ class NewInvitation extends React.Component {
         }
     }
 
-    invitationForm = (initial, administrators, intended_role,
-                      message, expiry_date, disabledSubmit, groups, selectedGroup, membership_expiry_date, existingInvitations,
+    invitationForm = (initial, administrators, intended_role, message, invitation_sender_name, expiry_date,
+                      disabledSubmit, groups, selectedGroup, membership_expiry_date, existingInvitations,
                       showInviteByLink, collaboration) => {
         return (
             <div className="new-collaboration-invitation">
@@ -263,12 +270,20 @@ class NewInvitation extends React.Component {
                                name={I18n.t("invitation.membershipExpiryDate")}
                                toolTip={I18n.t("invitation.membershipExpiryDateTooltip")}/>
 
-                    <InputField value={message} onChange={e => this.setState({message: e.target.value})}
+                    <InputField value={message}
+                                onChange={e => this.setState({message: e.target.value})}
                                 placeholder={I18n.t("invitation.inviteesMessagePlaceholder")}
                                 name={I18n.t("collaboration.message")}
                                 large={true}
                                 toolTip={I18n.t("invitation.inviteesTooltip")}
                                 multiline={true}/>
+
+                    <InputField value={invitation_sender_name}
+                                onChange={e => this.setState({invitation_sender_name: e.target.value})}
+                                placeholder={I18n.t("invitation.invitationSenderNamePlaceholder")}
+                                name={I18n.t("collaboration.invitationSenderName")}
+                                large={true}
+                                toolTip={I18n.t("invitation.invitationSenderNameTooltip")}/>
 
                     <DateField value={expiry_date}
                                onChange={this.setInvitationExpiryDate}
@@ -307,6 +322,7 @@ class NewInvitation extends React.Component {
             cancelDialogAction,
             leavePage,
             message,
+            invitation_sender_name,
             groups,
             selectedGroup,
             loading,
@@ -326,8 +342,9 @@ class NewInvitation extends React.Component {
                                 leavePage={leavePage}/>
             <div className="mod-new-collaboration-invitation">
                 <h2>{I18n.t("collaborationInvitations.inviteWithEmail")}</h2>
-                {this.invitationForm(initial, administrators, intended_role, message, expiry_date, disabledSubmit,
-                    groups, selectedGroup, membership_expiry_date, existingInvitations, showInviteByLink, collaboration)}
+                {this.invitationForm(initial, administrators, intended_role, message, invitation_sender_name,
+                    expiry_date, disabledSubmit, groups, selectedGroup, membership_expiry_date, existingInvitations,
+                    showInviteByLink, collaboration)}
                 {this.renderActions(disabledSubmit)}
             </div>
         </>);

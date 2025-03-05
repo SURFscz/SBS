@@ -496,12 +496,15 @@ def collaboration_invites():
     if duplicate_invitations:
         raise BadRequest(f"Duplicate email invitations: {duplicate_invitations}")
 
+    sender_name = data.get("invitation_sender_name", user.name)
+
     for administrator in administrators:
         invitation = Invitation(hash=generate_token(), message=message, invitee_email=administrator,
                                 collaboration=collaboration, user=user, status="open",
                                 intended_role=intended_role, expiry_date=default_expiry_date(json_dict=data),
                                 membership_expiry_date=membership_expiry_date, created_by=user.uid,
-                                external_identifier=str(uuid.uuid4()), sender_name=user.name)
+                                external_identifier=str(uuid.uuid4()),
+                                sender_name=sender_name if sender_name else user.name)
         db.session.add(invitation)
         invitation.groups.extend(groups)
         service_names = [service.name for service in invitation.collaboration.services]
