@@ -2745,7 +2745,17 @@ const en = {
         main: "Upload",
         docs: "Documentation",
         dragDrop: "Drag and drop CSV file or",
-        click: " click to upload"
+        click: " click to upload",
+        errorWrongExtension: "Only CSV files can be uploaded, not {{name}}",
+        errorFormat: "Error parsing file {{name}}",
+        successFullyParsed: "Successfully parsed CSV<br/> <strong>{{invitees}}</strong> invitees will be invited for <strong>{{collaborations}}</strong> collaborations in <strong>{{groups}}</strong> groups.",
+        errorParsed: "Error in parsing CSV. See the errors below",
+        showDetails: "Show details",
+        hideDetails: "Hide details",
+        schema: "Click the button below to download a sample CVS file. You can also see the CSV schema file for individual column requirements.",
+        download: "Download",
+        showSchema: "Show schema",
+        hideSchema: "Hide schema",
     }
 };
 

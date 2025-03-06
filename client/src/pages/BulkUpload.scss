@@ -10,17 +10,47 @@
         padding-top: 25px;
     }
 
+    .docs, .main {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+
+        button svg {
+            width: 25px;
+            height: auto;
+        }
+
+        .json-schema {
+            padding: 10px;
+            background: $background;
+            border-radius: 8px;
+            border: 1px solid var(--sds--color--gray--300);
+            font-family: "Courier New", serif;
+            margin-bottom: 25px;
+        }
+    }
+
     input[type="file"] {
-        opacity: 0;
+        display: none;
     }
 
-    .sds--file-upload {
-        position: relative;
+    label.sds--file-upload--message {
+        padding-bottom: 5px;
+        display: block;
+        width: 100%;
+        font-size: 15px;
     }
 
-    label {
-        position: absolute;
-        z-index: 3;
+    p.error {
+        margin-top: 15px;
+        color: var(--sds--color--red--400);
     }
 
+    .summary {
+        display: flex;
+        svg {
+            margin-right: 15px;
+            color: var(--sds--color--green--400);
+        }
+    }
 }

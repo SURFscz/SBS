@@ -1,0 +1,74 @@
+{
+	"fields": [
+		{
+			"name": "short_names",
+			"title": "short_names",
+			"constraints": {
+				"required": true,
+				"type": "http://www.w3.org/2001/XMLSchema#string",
+				"pattern": "d+, d+"
+			}
+		},
+		{
+			"name": "intended_role",
+			"title": "intended_role",
+			"constraints": {
+				"required": true,
+				"type": "http://www.w3.org/2001/XMLSchema#string",
+				"pattern": "member|admin"
+			}
+		},
+		{
+			"name": "invitees",
+			"title": "invitees",
+			"constraints": {
+				"required": true,
+				"type": "http://www.w3.org/2001/XMLSchema#string",
+				"pattern": "d+, d+"
+			}
+		},
+		{
+			"name": "groups",
+			"title": "groups",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#string",
+				"pattern": "d+, d+"
+			}
+		},
+		{
+			"name": "invitation_expiry_date",
+			"title": "invitation_expiry_date",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#string",
+				"pattern": "YYYY-MM-dd"
+			}
+		},
+		{
+			"name": "membership_expiry_date",
+			"title": "membership_expiry_date",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#string",
+				"pattern": "YYYY-MM-dd"
+			}
+		},
+		{
+			"name": "message",
+			"title": "message",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#string"
+			}
+		},
+		{
+			"name": "sender_name",
+			"title": "sender_name",
+			"constraints": {
+				"required": false,
+				"type": "http://www.w3.org/2001/XMLSchema#string"
+			}
+		}
+	]
+}
