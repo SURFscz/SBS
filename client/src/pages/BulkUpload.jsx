@@ -149,12 +149,10 @@ class BulkUpload extends React.Component {
                     </div>
                     {errorWrongExtension &&
                         <p className="error">{I18n.t("bulkUpload.errorWrongExtension", {name: fileName})}</p>}
-                    {errorFormat &&
-                        <p className="error">{I18n.t("bulkUpload.errorFormat", {name: fileName})}</p>}
 
                     {(!isEmpty(data) || !isEmpty(errors)) && this.csvSummary(data, errorFormat)}
 
-                    {!isEmpty(data) && <a href="/" onClick={e => {
+                    {(!isEmpty(data) || !isEmpty(errors)) && <a href="/" onClick={e => {
                         stopEvent(e);
                         this.setState({showDetails: !showDetails});
                     }}>

@@ -48,9 +48,13 @@
 
     .summary {
         display: flex;
+        color: var(--sds--color--green--400);
         svg {
             margin-right: 15px;
-            color: var(--sds--color--green--400);
+        }
+
+        &.errors {
+            color: var(--sds--color--red--400);
         }
     }
 }
