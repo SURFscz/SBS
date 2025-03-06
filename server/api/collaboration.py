@@ -694,7 +694,7 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True, sav
     invalid_emails = [email for email in administrators if not bool(email_re.match(email))]
     if invalid_emails:
         raise BadRequest(f"Invalid emails {invalid_emails}")
-    message = data.get("message", None)
+    message = data.get("message", organisation.invitation_message)
     tags = data.get("tags", [])
 
     valid_uri_attributes(data, ["accepted_user_policy", "website_url"])
@@ -709,10 +709,11 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True, sav
 
     administrators = list(filter(lambda admin: admin != user.email, administrators))
     service_names = [service.name for service in collaboration.services]
+    sender_name = organisation.invitation_sender_name if organisation.invitation_sender_name else user.name
     for administrator in administrators:
         invitation = Invitation(hash=generate_token(), message=message, invitee_email=administrator,
                                 collaboration_id=collaboration.id, user=user, intended_role="admin",
-                                external_identifier=str(uuid.uuid4()), sender_name=user.name,
+                                external_identifier=str(uuid.uuid4()), sender_name=sender_name,
                                 expiry_date=default_expiry_date(), status="open", created_by=user.uid)
         invitation = db.session.merge(invitation)
         mail_collaboration_invitation({
