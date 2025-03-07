@@ -137,6 +137,20 @@ export const statusCustomSort = (o1, o2, reverse) => {
     return reverse ? comparison * -1 : comparison;
 };
 
+export const unitArraySort = (a1, a2, reverse) => {
+    const val1 = a1.units.map(unit => unit.name.toLowerCase()).sort().join("");
+    const val2 = a2.units.map(unit => unit.name.toLowerCase()).sort().join("");
+    const comparison = val1.localeCompare(val2)
+    return reverse ? comparison * -1 : comparison;
+}
+
+export const tagArraySort = (a1, a2, reverse) => {
+    const val1 = a1.tags.map(tag => tag.tag_value.toLowerCase()).sort().join("");
+    const val2 = a2.tags.map(tag => tag.tag_value.toLowerCase()).sort().join("");
+    const comparison = val1.localeCompare(val2)
+    return reverse ? comparison * -1 : comparison;
+}
+
 export const userColumnsCustomSort = (o1, o2, reverse) => {
     let comparison;
     if (o1.invite && !o2.invite) {
@@ -149,7 +163,6 @@ export const userColumnsCustomSort = (o1, o2, reverse) => {
         comparison = (o1.user || {name: ""}).name.localeCompare((o2.user || {name: ""}).name);
     }
     return reverse ? comparison * -1 : comparison;
-
 }
 
 export const expiryDateCustomSort = (o1, o2, reverse) => {

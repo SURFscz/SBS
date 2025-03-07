@@ -2,7 +2,7 @@ import React from "react";
 import {ReactComponent as TreeSwing} from "../../images/tree_swing.svg";
 
 import "./Collaborations.scss";
-import {isEmpty, stopEvent} from "../../utils/Utils";
+import {isEmpty, stopEvent, tagArraySort, unitArraySort} from "../../utils/Utils";
 import I18n from "../../locale/I18n";
 import Entities from "./Entities";
 import Button from "../Button";
@@ -298,6 +298,7 @@ export default class Collaborations extends React.PureComponent {
                 key: "units",
                 class: "units",
                 header: I18n.t("units.column"),
+                customSort: unitArraySort,
                 mapper: collaboration => <div className="unit-container">
                     {collaboration.units
                         .sort((u1, u2) => u1.name.localeCompare(u2.name))
@@ -309,6 +310,7 @@ export default class Collaborations extends React.PureComponent {
                 key: organisation ? "tagValues" : "organisation__name",
                 class: serviceKey,
                 header: organisation ? I18n.t("collaboration.tags") : I18n.t("models.serviceCollaborations.organisationName"),
+                customSort: tagArraySort,
                 mapper: collaboration => organisation ? collaboration.tags
                     .sort((t1, t2) => t1.tag_value.localeCompare(t2.tag_value))
                     .map((tag, index) => <span key={index}
