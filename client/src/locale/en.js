@@ -2761,7 +2761,7 @@ const en = {
         errors: {
             TooFewFields: "The row above has missing values for required fields: {{fields}}",
             Duplicate: "The row above has contains a duplicate entry for user {{invitee}} and collaboration {{shortName}}",
-            unknown: "Invalid CSV row"
+            Unknown: "Invalid CSV row"
         }
     }
 };
