@@ -91,7 +91,7 @@ class BulkUpload extends React.Component {
 
         const hasErrors = !isEmpty(errors);
         const allErrors = data.length === errors.length || nbrInvitees === 0;
-    
+
         return (
             <>
                 <div className={`summary ${allErrors ? "errors" : ""}`}>
@@ -147,8 +147,9 @@ class BulkUpload extends React.Component {
         return (
             <div key="main" name="main" label={I18n.t("bulkUpload.main")}>
                 <div className="mod-bulk-upload main">
-                    <div
-                        className="sds--file-upload">
+                    <div className="sds--file-upload"
+                         onDrop={this.handleDrop}
+                         onDragOver={this.handleDragOver}>
                         <input id="fileUpload_csv"
                                type="file"
                                ref={ref => {
@@ -161,8 +162,6 @@ class BulkUpload extends React.Component {
                                onChange={this.internalOnChange}/>
 
                         <label htmlFor="fileUpload_csv"
-                               onDrop={this.handleDrop}
-                               onDragOver={this.handleDragOver}
                                className="sds--file-upload--message">
                             <span>{I18n.t("bulkUpload.dragDrop")}</span>
                             <a href="/" onClick={this.openFileDialog}>{I18n.t("bulkUpload.click")}</a>

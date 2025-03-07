@@ -378,7 +378,7 @@ def invitations_resend_bulk():
 @json_endpoint
 def invitations_bulk_upload():
     data = current_request.get_json()
-    results = []
+    results = {"errors": [], "invitations": []}
     current_user = db.session.get(User, current_user_id())
     for index, invitation in enumerate(data):
         try:
@@ -393,46 +393,50 @@ def invitations_bulk_upload():
                 if not has_org_manager_unit_access(current_user.id, collaboration, True):
                     raise Forbidden(f"User {current_user.name} has no access to collaboration {collaboration.name}")
 
-            invitees = invitation.get("invitees")
-            duplicate_invitations = [i.invitee_email for i in invitations_by_email(collaboration.id, invitees)]
-            if duplicate_invitations:
-                raise BadRequest(f"Duplicate email invitations: {duplicate_invitations} "
-                                 f"in collaboration {collaboration.name}")
+                invitees = invitation.get("invitees")
+                duplicate_invitations = [i.invitee_email for i in invitations_by_email(collaboration.id, invitees)]
+                # We drop the duplicate ones
+                invitees = [invitee for invitee in invitees if invitee not in duplicate_invitations]
 
-            expiry_date = parse_date(data.get("invitation_expiry_date"), default_expiry_date())
-            membership_expiry_date = parse_date(data.get("membership_expiry_date"))
+                expiry_date = parse_date(data.get("invitation_expiry_date"), default_expiry_date())
+                membership_expiry_date = parse_date(data.get("membership_expiry_date"))
 
-            message = data.get("message")
-            intended_role = data.get("intended_role", "member")
-            intended_role = "member" if intended_role not in ["admin", "member"] else intended_role
+                message = data.get("message", collaboration.organisation.invitation_message)
+                intended_role = data.get("intended_role", "member")
+                intended_role = "member" if intended_role not in ["admin", "member"] else intended_role
 
-            group_identifiers = data.get("groups", [])
-            groups = Group.query \
-                .filter(Group.collaboration_id == collaboration.id) \
-                .filter(Group.identifier.in_(group_identifiers)) \
-                .all()
-            service_names = [service.name for service in collaboration.services]
-            sender_name = data.get("sender_name", current_user.name)
-            for email in invitees:
-                invitation = Invitation(hash=generate_token(), message=message, invitee_email=email,
-                                        sender_name=sender_name, collaboration_id=collaboration.id, user=current_user,
-                                        intended_role=intended_role, expiry_date=expiry_date,
-                                        membership_expiry_date=membership_expiry_date, created_by=current_user.uid,
-                                        external_identifier=str(uuid.uuid4()), status="open")
-                invitation.groups.extend(groups)
-                db.session.add(invitation)
-                mail_collaboration_invitation({
-                    "salutation": "Dear",
-                    "invitation": invitation,
-                    "base_url": current_app.app_config.base_url,
-                    "wiki_link": current_app.app_config.wiki_link,
-                    "recipient": email
-                }, collaboration, [email], service_names)
+                group_identifiers = data.get("groups", [])
+                groups = Group.query \
+                    .filter(Group.collaboration_id == collaboration.id) \
+                    .filter(Group.identifier.in_(group_identifiers)) \
+                    .all()
+                service_names = [service.name for service in collaboration.services]
+                sender_name = data.get("sender_name", collaboration.organisation.invitation_sender_name)
 
-            emit_socket(f"collaboration_{collaboration.id}")
+                for email in invitees:
+                    invitation = Invitation(hash=generate_token(), message=message, invitee_email=email,
+                                            sender_name=sender_name or current_user.name,
+                                            collaboration_id=collaboration.id, user=current_user,
+                                            intended_role=intended_role, expiry_date=expiry_date,
+                                            membership_expiry_date=membership_expiry_date, created_by=current_user.uid,
+                                            external_identifier=str(uuid.uuid4()), status="open")
+                    invitation.groups.extend(groups)
+                    db.session.add(invitation)
+                    mail_collaboration_invitation({
+                        "salutation": "Dear",
+                        "invitation": invitation,
+                        "base_url": current_app.app_config.base_url,
+                        "wiki_link": current_app.app_config.wiki_link,
+                        "recipient": email
+                    }, collaboration, [email], service_names)
+                    results["invitations"].append({"row": index,
+                                                   "email": email,
+                                                   "collaboration": collaboration.short_name})
+
+                emit_socket(f"collaboration_{collaboration.id}")
 
         except HTTPException as e:
-            results.append({index: e.description})
+            results["errors"].append({"row": index, "message": e.description})
 
     return results, 201
 

@@ -7,10 +7,12 @@ import {dateColumns, requiredColumns} from "../utils/CSVParser";
 
 export default function TabularData({headers = [], data = [], errors = [], showRequiredInfo = true}) {
 
-    const errorTranslation = (row, errorCode) => {
-        const hasErrorTranslation = I18n.translations[I18n.locale].bulkUpload.errors[errorCode];
-        return I18n.t(`bulkUpload.errors.${hasErrorTranslation ? errorCode : "unknown"}`, {
-            fields: requiredColumns.filter(field => isEmpty(row[field])).join(", ")
+    const errorTranslation = (row, error) => {
+        const hasErrorTranslation = I18n.translations[I18n.locale].bulkUpload.errors[error.code];
+        return I18n.t(`bulkUpload.errors.${hasErrorTranslation ? error.code : "Unknown"}`, {
+            fields: requiredColumns.filter(field => isEmpty(row[field])).join(", "),
+            invitee: error.invitee,
+            shortName: error.shortName
         });
     }
 
@@ -54,7 +56,7 @@ export default function TabularData({headers = [], data = [], errors = [], showR
                     {errors.some(error => error.row === index) &&
                         <tr>
                             <td className="error" colSpan={headers.length}>
-                                {errorTranslation(row, errors.find(error => error.row === index).code)}
+                                {errorTranslation(row, errors.find(error => error.row === index))}
                             </td>
                         </tr>}
                 </Fragment>)}

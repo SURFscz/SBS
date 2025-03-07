@@ -2,7 +2,9 @@ import Papa from "papaparse";
 import {isEmpty} from "./Utils";
 
 const multiValueColumns = ["short_names", "invitees", "groups"];
+
 export const requiredColumns = ["short_names", "invitees"];
+
 export const dateColumns = ["invitation_expiry_date", "membership_expiry_date"];
 
 const parseDate = val => {
@@ -58,10 +60,30 @@ export const parseBulkInvitation = csv => {
         if (requiredColumns.some(requiredColumn => isEmpty(row[requiredColumn])) &&
             !result.errors.some(err => err.row === index)) {
             result.errors.push({
-                "code": "TooFewFields",
-                "row": index
+                code: "TooFewFields",
+                row: index
             });
         }
     });
+    const collaborationInvitees = new Set();
+    data.forEach((row, index) => {
+        (row.invitees || []).forEach(invitee => {
+            (row.short_names || []).forEach(shortName => {
+                const key = `${invitee}_${shortName}`;
+                if (collaborationInvitees.has(key) &&
+                    !result.errors.some(err => err.row === index)) {
+                    result.errors.push({
+                        code: "Duplicate",
+                        row: index,
+                        invitee: invitee,
+                        shortName: shortName
+                    });
+                } else {
+                    collaborationInvitees.add(key);
+                }
+            })
+        })
+    });
+
     return {data: data, errors: result.errors}
 };

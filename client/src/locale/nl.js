@@ -2760,7 +2760,8 @@ const nl = {
         proceed: "Upload & send invitations",
         errors: {
             TooFewFields: "The row above has missing values for required fields: {{fields}}",
-            unknown: "Invalid CSV row"
+            Duplicate: "The row above has contains a duplicate entry for user {{user}} and collaboration {{collaboration}}",
+            Unknown: "Invalid CSV row"
         }
     }
 };
