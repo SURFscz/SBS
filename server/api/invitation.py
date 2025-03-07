@@ -9,13 +9,13 @@ from sqlalchemy import or_, func
 from sqlalchemy.exc import DatabaseError
 from sqlalchemy.orm import joinedload, selectinload
 from sqlalchemy.orm import load_only
-from werkzeug.exceptions import Conflict, Forbidden, BadRequest
+from werkzeug.exceptions import Conflict, Forbidden, BadRequest, HTTPException
 
 from server.api.base import json_endpoint, query_param, emit_socket
 from server.api.service_aups import add_user_aups
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call, \
-    confirm_api_key_unit_access
+    confirm_api_key_unit_access, has_org_manager_unit_access
 from server.db.activity import update_last_activity_date
 from server.db.defaults import default_expiry_date, STATUS_OPEN, STATUS_EXPIRED
 from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, JoinRequest, Group, \
@@ -109,6 +109,17 @@ def add_organisation_aups(collaboration: Collaboration, user: User):
         organisation_aup = OrganisationAup(aup_url=organisation.accepted_user_policy, user=user,
                                            organisation=organisation)
         db.session.add(organisation_aup)
+
+
+def _validate_bulk_invitation(invitation):
+    for required_attribute in ["short_names", "invitees"]:
+        attr = invitation.get(required_attribute)
+        if not attr or not isinstance(attr, list):
+            raise BadRequest(f"{required_attribute} is not valid: {attr}")
+    invitees = invitation.get("invitees")
+    valid_invitees = list(filter(lambda recipient: bool(email_re.match(recipient)), invitees))
+    if not valid_invitees:
+        raise BadRequest(f"No valid email in invitees: {invitees}")
 
 
 @invitations_api.route("/find_by_hash", methods=["GET"], strict_slashes=False)
@@ -361,6 +372,69 @@ def invitations_resend_bulk():
     for invitation in data:
         do_resend(invitation["id"])
     return None, 201
+
+
+@invitations_api.route("/bulk_upload", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def invitations_bulk_upload():
+    data = current_request.get_json()
+    results = []
+    current_user = db.session.get(User, current_user_id())
+    for index, invitation in enumerate(data):
+        try:
+            _validate_bulk_invitation(invitation)
+
+            co_short_names = data.get("short_names")
+            collaborations = Collaboration.query.filter(Collaboration.short_name.in_(co_short_names))
+            if not collaborations:
+                raise BadRequest(f"No collaborations found with short_names {co_short_names}")
+
+            for collaboration in collaborations:
+                if not has_org_manager_unit_access(current_user.id, collaboration, True):
+                    raise Forbidden(f"User {current_user.name} has no access to collaboration {collaboration.name}")
+
+            invitees = invitation.get("invitees")
+            duplicate_invitations = [i.invitee_email for i in invitations_by_email(collaboration.id, invitees)]
+            if duplicate_invitations:
+                raise BadRequest(f"Duplicate email invitations: {duplicate_invitations} "
+                                 f"in collaboration {collaboration.name}")
+
+            expiry_date = parse_date(data.get("invitation_expiry_date"), default_expiry_date())
+            membership_expiry_date = parse_date(data.get("membership_expiry_date"))
+
+            message = data.get("message")
+            intended_role = data.get("intended_role", "member")
+            intended_role = "member" if intended_role not in ["admin", "member"] else intended_role
+
+            group_identifiers = data.get("groups", [])
+            groups = Group.query \
+                .filter(Group.collaboration_id == collaboration.id) \
+                .filter(Group.identifier.in_(group_identifiers)) \
+                .all()
+            service_names = [service.name for service in collaboration.services]
+            sender_name = data.get("sender_name", current_user.name)
+            for email in invitees:
+                invitation = Invitation(hash=generate_token(), message=message, invitee_email=email,
+                                        sender_name=sender_name, collaboration_id=collaboration.id, user=current_user,
+                                        intended_role=intended_role, expiry_date=expiry_date,
+                                        membership_expiry_date=membership_expiry_date, created_by=current_user.uid,
+                                        external_identifier=str(uuid.uuid4()), status="open")
+                invitation.groups.extend(groups)
+                db.session.add(invitation)
+                mail_collaboration_invitation({
+                    "salutation": "Dear",
+                    "invitation": invitation,
+                    "base_url": current_app.app_config.base_url,
+                    "wiki_link": current_app.app_config.wiki_link,
+                    "recipient": email
+                }, collaboration, [email], service_names)
+
+            emit_socket(f"collaboration_{collaboration.id}")
+
+        except HTTPException as e:
+            results.append({index: e.description})
+
+    return results, 201
 
 
 @invitations_api.route("/<invitation_id>", methods=["DELETE"], strict_slashes=False)

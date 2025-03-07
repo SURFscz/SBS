@@ -41,14 +41,19 @@
         font-size: 15px;
     }
 
-    p.error {
-        margin-top: 15px;
-        color: var(--sds--color--red--400);
+    p.info {
+        font-weight: 600;
+
+        &.error {
+            color: var(--sds--color--red--400);
+            font-weight: normal;
+        }
     }
 
     .summary {
         display: flex;
         color: var(--sds--color--green--400);
+
         svg {
             margin-right: 15px;
         }
@@ -56,5 +61,9 @@
         &.errors {
             color: var(--sds--color--red--400);
         }
+    }
+
+    .actions {
+
     }
 }

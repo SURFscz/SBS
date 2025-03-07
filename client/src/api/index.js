@@ -674,6 +674,9 @@ export function invitationExists(emails, collaborationId) {
     return postPutJson("/api/invitations/exists_email", body, "POST");
 }
 
+export function invitationBulkUpload(data) {
+    return postPutJson("/api/invitations/bulk_upload", data, "PUT");
+}
 
 //Organisation Memberships
 export function deleteOrganisationMembership(organisationId, userId, showErrorDialog = true) {

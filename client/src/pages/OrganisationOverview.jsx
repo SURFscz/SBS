@@ -208,7 +208,8 @@ class OrganisationOverview extends React.Component {
                 organisation
             } = this.state;
             this.setState({loading: true});
-            organisation.units = organisation.units.filter(unit => !isEmpty(unit.name));
+            organisation.units = organisation.units.filter(unit => !isEmpty(unit.name.trim()));
+            organisation.tags = organisation.tags.filter(tag => !isEmpty(tag.tag_value.trim()));
             updateOrganisation(organisation)
                 .then(() => {
                     //If labels have changed this must be updated in the collaborations tab #tester-proof

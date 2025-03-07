@@ -452,7 +452,7 @@ class App extends React.Component {
                                            refreshUser={this.refreshUserMemberships}
                                            {...props}/>}/>
 
-                            <Route path="/bulk-upload"
+                            <Route path="/bulk-upload/:tab?"
                                    render={props =>
                                        <ProtectedRoute
                                            currentUser={currentUser}

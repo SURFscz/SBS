@@ -1,0 +1,58 @@
+@import "../stylesheets/vars.scss";
+
+.tabular-data {
+    margin-bottom: 25px;
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+    }
+
+    th, td {
+        border: 1px solid #d4d4d4;
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f3f3f3;
+        font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    tr:hover {
+        background-color: #e6f7ff;
+    }
+
+    td.error {
+        color: white;
+        background-color: var(--sds--color--red--400);
+
+        &:hover {
+            background-color: var(--sds--color--red--500);
+        }
+    }
+
+    input {
+        border: none;
+        width: 100%;
+        padding: 4px;
+        font-size: 14px;
+        background: transparent;
+    }
+
+    input:focus {
+        outline: 2px solid #4a90e2;
+        background-color: #fff;
+    }
+
+    p.info {
+        margin-top: 8px;
+        font-size: 14px;
+    }
+}
