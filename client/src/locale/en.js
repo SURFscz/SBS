@@ -2750,7 +2750,7 @@ const en = {
         errorFormat: "Error parsing file {{name}}",
         successFullyParsed: "Successfully parsed {{fileName}}<br/> <strong>{{invitees}}</strong> invitees will be invited for <strong>{{collaborations}}</strong> collaborations in <strong>{{groups}}</strong> groups.",
         errorParsed: "Error in parsing {{fileName}}. See the details below",
-        errorRows: "However there are some rows that will be excluded, because of missing required fields. See details below.",
+        errorRows: "However there are some rows that will be excluded, because of invalid data. See details below.",
         showDetails: "Show details",
         hideDetails: "Hide details",
         schema: "Click the button below to download a sample CVS file.",
