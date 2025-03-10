@@ -19,14 +19,47 @@
     th {
         background-color: #f3f3f3;
         font-weight: bold;
+
+        &.short_names {
+            width: 12%;
+        }
+
+        &.intended_role {
+            width: 12%;
+        }
+
+        &.invitees {
+            width: 10%;
+        }
+
+        &.groups {
+            width: 10%;
+        }
+
+        &.invitation_expiry_date {
+            width: 17%;
+        }
+
+        &.membership_expiry_date {
+            width: 17%;
+        }
+
+        &.message {
+            width: 10%;
+        }
+
+        &.sender_name {
+            width: 15%;
+        }
+
     }
 
     tr:nth-child(even) {
         background-color: #f9f9f9;
     }
 
-    tr:hover {
-        background-color: #e6f7ff;
+    tr.error-row td {
+        color: var(--sds--color--red--400);
     }
 
     td.error {

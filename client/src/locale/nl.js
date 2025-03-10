@@ -2762,6 +2762,16 @@ const nl = {
             TooFewFields: "The row above has missing values for required fields: {{fields}}",
             Duplicate: "The row above has contains a duplicate entry for user {{user}} and collaboration {{collaboration}}",
             Unknown: "Invalid CSV row"
+        },
+        tooltips: {
+            short_names: "The required comma separated and quoted short names of the collaborations for the invitation",
+            intended_role: "The optional intended role of the invitees. Two options: either member or admin, if omitted then defaults to member",
+            invitees: "Email adresses of the invitees of the invitation. If multiple then comma separated and double quoted",
+            groups: "The optional comma separated identifiers of the collaboration groups for the invitation",
+            invitation_expiry_date: "The optional expiry date of the invitation. Defaults to 30 days if not specified",
+            membership_expiry_date: "The optional expiry date of the membership. Defaults to None if not specified",
+            message: "The optional personal message to be included in the invitation. Defaults to None if not specified",
+            sender_name: "The optional name of the sender to be included in the invitation. Defaults to name of the current user if not specified"
         }
     }
 };

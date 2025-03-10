@@ -4,6 +4,7 @@ import I18n from "../locale/I18n";
 import DOMPurify from "dompurify";
 import {isEmpty} from "../utils/Utils";
 import {dateColumns, requiredColumns} from "../utils/CSVParser";
+import {Tooltip} from "@surfnet/sds";
 
 export default function TabularData({headers = [], data = [], errors = [], showRequiredInfo = true}) {
 
@@ -40,14 +41,16 @@ export default function TabularData({headers = [], data = [], errors = [], showR
                 <thead>
                 <tr>
                     {headers.map((header, index) =>
-                        <th key={index}
-                            dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(displayHeader(header))}}/>
+                        <th key={index} className={header}>
+                            <span dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(displayHeader(header))}}/>
+                            {showRequiredInfo && <Tooltip tip={I18n.t(`bulkUpload.tooltips.${header}`)}/> }
+                        </th>
                     )}
                 </tr>
                 </thead>
                 <tbody>
                 {data.map((row, index) => <Fragment key={index}>
-                    <tr>
+                    <tr className={`${errors.some(error => error.row === index) ? "error-row" : ""}`}>
                         {headers.map((header, innerIndex) =>
                             <td key={innerIndex}
                                 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(displayValue(header, row[header]))}}/>

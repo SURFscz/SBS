@@ -201,7 +201,7 @@ class BulkUpload extends React.Component {
         setTimeout(() => {
             URL.revokeObjectURL(link.href);
             link.parentNode.removeChild(link);
-        }, 5);
+        }, 25);
     }
 
 

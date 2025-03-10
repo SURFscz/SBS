@@ -119,7 +119,7 @@ def _validate_bulk_invitation(invitation):
     invitees = invitation.get("invitees")
     valid_invitees = list(filter(lambda recipient: bool(email_re.match(recipient)), invitees))
     if not valid_invitees:
-        raise BadRequest(f"No valid email in invitees: {invitees}")
+        raise BadRequest(f"Invalid email in invitees: {invitees}")
 
 
 @invitations_api.route("/find_by_hash", methods=["GET"], strict_slashes=False)
@@ -384,12 +384,13 @@ def invitations_bulk_upload():
         try:
             _validate_bulk_invitation(invitation)
 
-            co_short_names = data.get("short_names")
-            collaborations = Collaboration.query.filter(Collaboration.short_name.in_(co_short_names))
-            if not collaborations:
-                raise BadRequest(f"No collaborations found with short_names {co_short_names}")
+            co_short_names = invitation.get("short_names")
 
-            for collaboration in collaborations:
+            for short_name in co_short_names:
+                collaboration = Collaboration.query.filter(Collaboration.short_name == short_name).first()
+                if not collaboration:
+                    raise BadRequest(f"No collaborations found with short_names {co_short_names}")
+
                 if not has_org_manager_unit_access(current_user.id, collaboration, True):
                     raise Forbidden(f"User {current_user.name} has no access to collaboration {collaboration.name}")
 
@@ -398,20 +399,20 @@ def invitations_bulk_upload():
                 # We drop the duplicate ones
                 invitees = [invitee for invitee in invitees if invitee not in duplicate_invitations]
 
-                expiry_date = parse_date(data.get("invitation_expiry_date"), default_expiry_date())
-                membership_expiry_date = parse_date(data.get("membership_expiry_date"))
+                expiry_date = parse_date(invitation.get("invitation_expiry_date"), default_expiry_date())
+                membership_expiry_date = parse_date(invitation.get("membership_expiry_date"))
 
-                message = data.get("message", collaboration.organisation.invitation_message)
-                intended_role = data.get("intended_role", "member")
+                message = invitation.get("message", collaboration.organisation.invitation_message)
+                intended_role = invitation.get("intended_role", "member")
                 intended_role = "member" if intended_role not in ["admin", "member"] else intended_role
 
-                group_identifiers = data.get("groups", [])
+                group_identifiers = invitation.get("groups", [])
                 groups = Group.query \
                     .filter(Group.collaboration_id == collaboration.id) \
                     .filter(Group.identifier.in_(group_identifiers)) \
                     .all()
                 service_names = [service.name for service in collaboration.services]
-                sender_name = data.get("sender_name", collaboration.organisation.invitation_sender_name)
+                sender_name = invitation.get("sender_name", collaboration.organisation.invitation_sender_name)
 
                 for email in invitees:
                     invitation = Invitation(hash=generate_token(), message=message, invitee_email=email,
