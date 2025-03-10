@@ -2767,8 +2767,8 @@ const en = {
             TooFewFields: "The row above has missing values for required fields: {{fields}}",
             Duplicate: "The row above has contains a duplicate entry for user {{invitee}} and collaboration {{shortName}}",
             Unknown: "Invalid CSV row",
-            ServerError: "The server reported an error: {{message}}",
-            ServerWarning: "The server reported an warning: {{message}}"
+            ServerError: "The server reported an error for the row above: {{message}}",
+            ServerWarning: "The server reported a warning for the row above: {{message}}"
         },
         tooltips: {
             short_names: "The required comma separated and quoted short names of the collaborations for the invitation",

@@ -421,6 +421,12 @@ def invitations_bulk_upload():
                     .filter(Group.collaboration_id == collaboration.id) \
                     .filter(Group.identifier.in_(group_identifiers)) \
                     .all()
+
+                if len(group_identifiers) != len(groups):
+                    existing_identifiers = [g.identifier for g in groups]
+                    missing_groups = [gr_id for gr_id in group_identifiers if gr_id not in existing_identifiers]
+                    raise BadRequest(f"No groups found with identifier {', '.join(missing_groups)}")
+
                 service_names = [service.name for service in collaboration.services]
                 sender_name = invitation.get("sender_name", collaboration.organisation.invitation_sender_name)
 

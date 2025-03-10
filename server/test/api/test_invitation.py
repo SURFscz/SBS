@@ -433,3 +433,16 @@ class TestInvitation(AbstractTest):
         self.assertEqual(0, len(res["invitations"]))
         self.assertEqual(1, len(res["errors"]))
         self.assertEqual(0, res["errors"][0]["row"])
+
+    def test_invitations_bulk_upload_wrong_group_identifiers(self):
+        self.login("urn:harry")
+        res = self.put("/api/invitations/bulk_upload",
+                       body=[{"short_names": ["ai_computing"],
+                              "invitees": ["test@example.com"],
+                              "groups": ["nope"]}],
+                       with_basic_auth=False)
+        self.assertEqual(0, len(res["invitations"]))
+        self.assertEqual(1, len(res["errors"]))
+
+        error = res["errors"][0]
+        self.assertEqual("ServerError", error["code"])

@@ -2767,8 +2767,8 @@ const nl = {
             TooFewFields: "De bovenstaande rij mist waarden voor verplichte velden: {{fields}}",
             Duplicate: "De bovenstaande rij bevat een dubbele invoer voor gebruiker {{invitee}} en samenwerking {{shortName}}",
             Unknown: "Ongeldige CSV-rij",
-            ServerError: "De server heeft een fout gemeld: {{message}}",
-            ServerWarning: "De server heeft een waarschuwing gemeld: {{message}}"
+            ServerError: "De server heeft een fout gemeld voor bovenstaande rij: {{message}}",
+            ServerWarning: "De server heeft een waarschuwing gemeld voor bovenstaande rij: {{message}}"
         },
         tooltips: {
             short_names: "De verplichte, komma-gescheiden en tussen aanhalingstekens geplaatste korte namen van de samenwerkingen voor de uitnodiging",
