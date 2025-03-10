@@ -2758,7 +2758,7 @@ const en = {
         hideDetails: "Hide details",
         showResults: "Show results",
         hideResults: "Hide results",
-        schema: "Click the button below to download a sample CVS file.",
+        schema: "Click the button below to download a sample CSV file.",
         download: "Download",
         exampleInfo: "Example CSV data",
         requiredInfo: "indicates a required value",

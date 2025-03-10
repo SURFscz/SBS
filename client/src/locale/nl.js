@@ -2758,7 +2758,7 @@ const nl = {
         hideDetails: "Verberg details",
         showResults: "Toon resultaten",
         hideResults: "Verberg resultaten",
-        schema: "Klik op de onderstaande knop om een voorbeeld-CSV-bestand te downloaden.",
+        schema: "Klik op de onderstaande knop om een voorbeeld CSV-bestand te downloaden.",
         download: "Downloaden",
         exampleInfo: "Voorbeeld CSV-gegevens",
         requiredInfo: "geeft een verplichte waarde aan",
