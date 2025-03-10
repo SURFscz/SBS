@@ -2749,7 +2749,7 @@ const en = {
         errorWrongExtension: "Only CSV files can be uploaded, not {{name}}",
         errorFormat: "Error parsing file {{name}}",
         successFullyParsed: "Successfully parsed {{fileName}}<br/> <strong>{{invitees}}</strong> invitees will be invited for <strong>{{collaborations}}</strong> collaborations in <strong>{{groups}}</strong> groups.",
-        successFullyUploaded: "Successfully uploaded <strong>{{nbrInvitations}}</strong> invitations.",
+        successFullyUploaded: "Successfully send <strong>{{nbrInvitations}}</strong> invitations.",
         errorParsed: "Error in parsing {{fileName}}. See the details below.",
         errorUpload: "Error in uploading. See the results below.",
         errorRows: "However there are some rows that will be excluded, because of invalid data. See details below.",

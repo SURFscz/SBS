@@ -2749,7 +2749,7 @@ const nl = {
         errorWrongExtension: "Alleen CSV-bestanden kunnen worden geüpload, niet {{name}}",
         errorFormat: "Fout bij het verwerken van bestand {{name}}",
         successFullyParsed: "Succesvol verwerkt {{fileName}}<br/> <strong>{{invitees}}</strong> genodigden worden uitgenodigd voor <strong>{{collaborations}}</strong> samenwerkingen in <strong>{{groups}}</strong> groepen.",
-        successFullyUploaded: "Succesvol <strong>{{nbrInvitations}}</strong> uitnodigingen geüpload.",
+        successFullyUploaded: "Succesvol <strong>{{nbrInvitations}}</strong> uitnodigingen verzonden.",
         errorParsed: "Fout bij het verwerken van {{fileName}}. Zie de details hieronder.",
         errorUpload: "Fout bij het uploaden. Zie de resultaten hieronder.",
         errorRows: "Er zijn echter enkele rijen die worden uitgesloten vanwege ongeldige gegevens. Zie details hieronder.",
