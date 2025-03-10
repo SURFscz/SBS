@@ -381,11 +381,11 @@ def invitations_bulk_upload():
     data = current_request.get_json()
     results = {"errors": [], "invitations": []}
     current_user = db.session.get(User, current_user_id())
-    for index, invitation in enumerate(data):
+    for index, json_invitation in enumerate(data):
         try:
-            _validate_bulk_invitation(invitation)
+            _validate_bulk_invitation(json_invitation)
 
-            co_short_names = invitation.get("short_names")
+            co_short_names = json_invitation.get("short_names")
 
             for short_name in co_short_names:
                 collaboration = Collaboration.query.filter(Collaboration.short_name == short_name).first()
@@ -395,7 +395,7 @@ def invitations_bulk_upload():
                 if not has_org_manager_unit_access(current_user.id, collaboration, True):
                     raise Forbidden(f"User {current_user.name} has no access to collaboration {collaboration.name}")
 
-                invitees = invitation.get("invitees")
+                invitees = json_invitation.get("invitees")
                 duplicate_invitations = [i.invitee_email for i in invitations_by_email(collaboration.id, invitees)]
                 # We drop the duplicate ones
                 if duplicate_invitations:
@@ -405,18 +405,18 @@ def invitations_bulk_upload():
                                               "code": "ServerWarning"})
                 invitees = [invitee for invitee in invitees if invitee not in duplicate_invitations]
 
-                expiry_date = parse_date(invitation.get("invitation_expiry_date"),
+                expiry_date = parse_date(json_invitation.get("invitation_expiry_date"),
                                          default_expiry_date(),
                                          False)
-                membership_expiry_date = parse_date(invitation.get("membership_expiry_date"),
+                membership_expiry_date = parse_date(json_invitation.get("membership_expiry_date"),
                                                     None,
                                                     False)
 
-                message = invitation.get("message", collaboration.organisation.invitation_message)
-                intended_role = invitation.get("intended_role", "member")
+                message = json_invitation.get("message", collaboration.organisation.invitation_message)
+                intended_role = json_invitation.get("intended_role", "member")
                 intended_role = "member" if intended_role not in ["admin", "member"] else intended_role
 
-                group_identifiers = invitation.get("groups", [])
+                group_identifiers = json_invitation.get("groups", [])
                 groups = Group.query \
                     .filter(Group.collaboration_id == collaboration.id) \
                     .filter(Group.identifier.in_(group_identifiers)) \
@@ -428,7 +428,7 @@ def invitations_bulk_upload():
                     raise BadRequest(f"No groups found with identifier {', '.join(missing_groups)}")
 
                 service_names = [service.name for service in collaboration.services]
-                sender_name = invitation.get("sender_name", collaboration.organisation.invitation_sender_name)
+                sender_name = json_invitation.get("sender_name", collaboration.organisation.invitation_sender_name)
 
                 for email in invitees:
                     invitation = Invitation(hash=generate_token(), message=message, invitee_email=email,
