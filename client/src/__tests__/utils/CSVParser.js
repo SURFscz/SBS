@@ -56,3 +56,12 @@ cumulusgrp,admin,rdoe@uniharderwijk.nl,301ee8e6-b5d1-40b5-a27e-47611f803371,1743
     expect(results.data.length).toEqual(2);
     expect(results.errors.length).toEqual(1);
 });
+
+test("parseWithDefaults", () => {
+    const csv = "ai_computing,,\"rdoe5@uniharderwijk.nl,rdoe4@uniharderwijk.nl\",,,,,";
+    const results = parseBulkInvitation(csv);
+    expect(results.data.length).toEqual(1);
+    expect(results.errors.length).toEqual(0);
+});
+
+

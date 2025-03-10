@@ -61,8 +61,9 @@ def do_resend(invitation_id):
     }, invitation.collaboration, [invitation.invitee_email], service_names)
 
 
-def parse_date(val, default_date=None):
-    return datetime.datetime.fromtimestamp(val / 1e3, tz=datetime.timezone.utc) if val and (
+def parse_date(val, default_date, external_api_usage):
+    divider = 1e3 if external_api_usage else 1
+    return datetime.datetime.fromtimestamp(val / divider, tz=datetime.timezone.utc) if val and (
             isinstance(val, float) or isinstance(val, int)) else default_date
 
 
@@ -211,8 +212,8 @@ def collaboration_invites_api():
     intended_role = data.get("intended_role", "member")
     intended_role = "member" if intended_role not in ["admin", "member"] else intended_role
 
-    expiry_date = parse_date(data.get("invitation_expiry_date"), default_expiry_date())
-    membership_expiry_date = parse_date(data.get("membership_expiry_date"))
+    expiry_date = parse_date(data.get("invitation_expiry_date"), default_expiry_date(), True)
+    membership_expiry_date = parse_date(data.get("membership_expiry_date"), None, True)
     invites_data = data["invites"]
     if not isinstance(invites_data, list):
         raise BadRequest(f"Invites must be an array, not {invites_data}")
@@ -389,7 +390,7 @@ def invitations_bulk_upload():
             for short_name in co_short_names:
                 collaboration = Collaboration.query.filter(Collaboration.short_name == short_name).first()
                 if not collaboration:
-                    raise BadRequest(f"No collaborations found with short_names {co_short_names}")
+                    raise BadRequest(f"No collaborations found with short_names {', '.join(co_short_names)}")
 
                 if not has_org_manager_unit_access(current_user.id, collaboration, True):
                     raise Forbidden(f"User {current_user.name} has no access to collaboration {collaboration.name}")
@@ -397,10 +398,19 @@ def invitations_bulk_upload():
                 invitees = invitation.get("invitees")
                 duplicate_invitations = [i.invitee_email for i in invitations_by_email(collaboration.id, invitees)]
                 # We drop the duplicate ones
+                if duplicate_invitations:
+                    results["errors"].append({"row": index,
+                                              "message": f"Removed existing outstanding invitations: "
+                                                         f"{', '.join(duplicate_invitations)}",
+                                              "code": "ServerWarning"})
                 invitees = [invitee for invitee in invitees if invitee not in duplicate_invitations]
 
-                expiry_date = parse_date(invitation.get("invitation_expiry_date"), default_expiry_date())
-                membership_expiry_date = parse_date(invitation.get("membership_expiry_date"))
+                expiry_date = parse_date(invitation.get("invitation_expiry_date"),
+                                         default_expiry_date(),
+                                         False)
+                membership_expiry_date = parse_date(invitation.get("membership_expiry_date"),
+                                                    None,
+                                                    False)
 
                 message = invitation.get("message", collaboration.organisation.invitation_message)
                 intended_role = invitation.get("intended_role", "member")
@@ -437,7 +447,7 @@ def invitations_bulk_upload():
                 emit_socket(f"collaboration_{collaboration.id}")
 
         except HTTPException as e:
-            results["errors"].append({"row": index, "message": e.description})
+            results["errors"].append({"row": index, "message": e.description, "code": "ServerError"})
 
     return results, 201
 

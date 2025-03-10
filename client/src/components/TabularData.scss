@@ -58,6 +58,10 @@
         background-color: #f9f9f9;
     }
 
+    tr.results:not(.error-row) td {
+        color: var(--sds--color--green--400);
+    }
+
     tr.error-row td {
         color: var(--sds--color--red--400);
     }

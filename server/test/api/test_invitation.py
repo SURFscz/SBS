@@ -396,6 +396,21 @@ class TestInvitation(AbstractTest):
         self.assertEqual(co_ai_computing_short_name, invitation["collaboration"])
         self.assertEqual("test@example.com", invitation["email"])
 
+    def test_invitations_bulk_upload_removed_existing_emails(self):
+        self.login("urn:harry")
+        res = self.put("/api/invitations/bulk_upload",
+                       body=[{"short_names": ["ai_computing"],
+                              "invitees": ["test@example.com", "curious@ex.org"]}],
+                       with_basic_auth=False)
+        self.assertEqual(1, len(res["invitations"]))
+        invitation = res["invitations"][0]
+        self.assertEqual(co_ai_computing_short_name, invitation["collaboration"])
+        self.assertEqual("test@example.com", invitation["email"])
+
+        self.assertEqual(1, len(res["errors"]))
+        error = res["errors"][0]
+        self.assertEqual("ServerWarning", error["code"])
+
     def test_invitations_bulk_upload_wrong_email(self):
         self.login("urn:harry")
         res = self.put("/api/invitations/bulk_upload",
