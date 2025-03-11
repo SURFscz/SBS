@@ -11,7 +11,8 @@ export default function TabularData({
                                         data = [],
                                         errors = [],
                                         showRequiredInfo = true,
-                                        isResultView = false
+                                        isResultView = false,
+                                        allEmails=[]
                                     }) {
 
     const errorTranslation = (row, error) => {
@@ -37,6 +38,14 @@ export default function TabularData({
 
     const displayValue = (header, value) => {
         if (Array.isArray(value)) {
+            if (header === "invitees" && isResultView) {
+                return (
+                    <div className="invitees-container">
+                    {value.map((val, index) => <span key={index}
+                                                      className={allEmails.includes(val) ? "": "strike-through"}>{val}</span>)}
+                </div> );
+
+            }
             return value.join(", ");
         }
         if (dateColumns.includes(header) && !isEmpty(value)) {
@@ -73,8 +82,7 @@ export default function TabularData({
                         <tr className={trClassName(error)}>
                             <td>{index + 1}</td>
                             {headers.map((header, innerIndex) =>
-                                <td key={innerIndex}
-                                    dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(displayValue(header, row[header]))}}/>
+                                <td key={innerIndex}>{displayValue(header, row[header])}</td>
                             )}
                         </tr>
                         {error &&

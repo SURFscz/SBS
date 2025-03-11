@@ -31,7 +31,8 @@ class BulkUpload extends React.Component {
             tabs: [],
             showDetails: false,
             showResults: false,
-            results: null
+            results: null,
+            allEmails: []
         }
     }
 
@@ -87,14 +88,9 @@ class BulkUpload extends React.Component {
         const filteredData = data.filter((_, index) => !errors.some(error => error.row === index));
         this.setState({data: filteredData, loading: true});
         invitationBulkUpload(filteredData).then(r => {
-            //Check for removed emails
-            // const allEmails = new Set(r.invitations.map(invitation => invitation.email));
-            // const {data} = this.state;
-            // const newData = data.map(row => ({
-            //     ...row,
-            //     invitees: row.invitees.map(invitee => (allEmails.has(invitee) ? "+ " : "- ") + invitee)
-            // }));
-            this.setState({results: r, loading: false, showResults: !isEmpty(r.errors)})
+            // Check for removed emails
+            const allEmails = new Set(r.invitations.map(invitation => invitation.email));
+            this.setState({results: r, loading: false, allEmails: [...allEmails], showResults: !isEmpty(r.errors)})
         });
     }
 
@@ -185,7 +181,7 @@ class BulkUpload extends React.Component {
         e.preventDefault();
     };
 
-    getMainTab = (data, errorWrongExtension, fileName, showDetails, errors, results, showResults) => {
+    getMainTab = (data, errorWrongExtension, fileName, showDetails, errors, results, showResults, allEmails) => {
         const hasResults = !isEmpty(results);
         return (
             <div key="main" name="main" label={I18n.t("bulkUpload.main")}>
@@ -239,6 +235,7 @@ class BulkUpload extends React.Component {
                                                      data={data}
                                                      isResultView={true}
                                                      errors={results.errors}
+                                                     allEmails={allEmails}
                                                      showRequiredInfo={false}/>}
                     </>}
                 </div>
@@ -291,13 +288,13 @@ class BulkUpload extends React.Component {
 
     render() {
         const {
-            loading, tab, data, errorWrongExtension, fileName, showDetails, errors, results, showResults
+            loading, tab, data, errorWrongExtension, fileName, showDetails, errors, results, showResults, allEmails
         } = this.state;
         if (loading) {
             return <SpinnerField/>
         }
         const tabs = [
-            this.getMainTab(data, errorWrongExtension, fileName, showDetails, errors, results, showResults),
+            this.getMainTab(data, errorWrongExtension, fileName, showDetails, errors, results, showResults, allEmails),
             this.getDocsTab()
         ]
         return (

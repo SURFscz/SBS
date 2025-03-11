@@ -101,4 +101,14 @@
         margin-top: 8px;
         font-size: 14px;
     }
+
+    div.invitees-container {
+        display: flex;
+        flex-direction: column;
+
+        span.strike-through {
+            text-decoration: line-through;
+            color: var(--sds--color--orange--500);
+        }
+    }
 }
