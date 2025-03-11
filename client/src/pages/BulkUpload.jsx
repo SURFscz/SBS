@@ -88,13 +88,13 @@ class BulkUpload extends React.Component {
         this.setState({data: filteredData, loading: true});
         invitationBulkUpload(filteredData).then(r => {
             //Check for removed emails
-            const allEmails = new Set(r.invitations.map(invitation => invitation.email));
-            const {data} = this.state;
-            const newData = data.map(row => ({
-                ...row,
-                invitees: row.invitees.filter(invitee => allEmails.has(invitee))
-            }));
-            this.setState({results: r, data: newData, loading: false, showResults: !isEmpty(r.errors)})
+            // const allEmails = new Set(r.invitations.map(invitation => invitation.email));
+            // const {data} = this.state;
+            // const newData = data.map(row => ({
+            //     ...row,
+            //     invitees: row.invitees.map(invitee => (allEmails.has(invitee) ? "+ " : "- ") + invitee)
+            // }));
+            this.setState({results: r, loading: false, showResults: !isEmpty(r.errors)})
         });
     }
 
@@ -272,7 +272,6 @@ class BulkUpload extends React.Component {
                     <div>
                         <Button onClick={() => this.downloadSample()}
                                 small={true}
-                                icon={<CloudIcon/>}
                                 txt={I18n.t("bulkUpload.download")}
                         />
                     </div>

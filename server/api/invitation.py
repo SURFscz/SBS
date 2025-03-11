@@ -400,7 +400,7 @@ def invitations_bulk_upload():
                 # We drop the duplicate ones
                 if duplicate_invitations:
                     results["errors"].append({"row": index,
-                                              "message": f"Removed existing outstanding invitations: "
+                                              "message": f"Not sent existing outstanding invitations: "
                                                          f"{', '.join(duplicate_invitations)}",
                                               "code": "ServerWarning"})
                 invitees = [invitee for invitee in invitees if invitee not in duplicate_invitations]

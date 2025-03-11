@@ -24,6 +24,10 @@ export default function TabularData({
         });
     }
 
+    const errorClassName = error => {
+        return (error.code || "").indexOf("Warning") > -1 ? "warning" : "error";
+    }
+
     const displayHeader = header => {
         if (requiredColumns.includes(header)) {
             return header + "<sup class='required'>*</sup>";
@@ -42,10 +46,9 @@ export default function TabularData({
         return value || "";
     }
 
-    const trClassName = (row, index) => {
+    const trClassName = error => {
         const resultPart = isResultView ? "results" : "";
-        const errorPart = errors
-            .some(error => error.row === index && ((error.message || "").indexOf("existing") === -1 || isEmpty(row.invitees))) ? "error-row" : "";
+        const errorPart = error ? (error.code || "").indexOf("Warning") > -1 ? "warning-row" : "error-row" : "";
         return `${errorPart} ${resultPart}`
     }
 
@@ -54,6 +57,7 @@ export default function TabularData({
             <table>
                 <thead>
                 <tr>
+                    <th className="index"></th>
                     {headers.map((header, index) =>
                         <th key={index} className={header}>
                             <span dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(displayHeader(header))}}/>
@@ -63,20 +67,25 @@ export default function TabularData({
                 </tr>
                 </thead>
                 <tbody>
-                {data.map((row, index) => <Fragment key={index}>
-                    <tr className={trClassName(row, index)}>
-                        {headers.map((header, innerIndex) =>
-                            <td key={innerIndex}
-                                dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(displayValue(header, row[header]))}}/>
-                        )}
-                    </tr>
-                    {errors.some(error => error.row === index) &&
-                        <tr>
-                            <td className="error" colSpan={headers.length}>
-                                {errorTranslation(row, errors.find(error => error.row === index))}
-                            </td>
-                        </tr>}
-                </Fragment>)}
+                {data.map((row, index) => {
+                    const error = errors.find(error => error.row === index);
+                    return <Fragment key={index}>
+                        <tr className={trClassName(error)}>
+                            <td>{index + 1}</td>
+                            {headers.map((header, innerIndex) =>
+                                <td key={innerIndex}
+                                    dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(displayValue(header, row[header]))}}/>
+                            )}
+                        </tr>
+                        {error &&
+                            <tr>
+                                <td className={errorClassName(error)}
+                                    colSpan={headers.length + 1}>
+                                    {errorTranslation(row, error)}
+                                </td>
+                            </tr>}
+                    </Fragment>
+                })}
                 </tbody>
             </table>
             {showRequiredInfo &&

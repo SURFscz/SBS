@@ -21,7 +21,7 @@
         font-weight: bold;
 
         &.short_names {
-            width: 12%;
+            width: 11%;
         }
 
         &.intended_role {
@@ -29,7 +29,7 @@
         }
 
         &.invitees {
-            width: 10%;
+            width: 9%;
         }
 
         &.groups {
@@ -37,19 +37,19 @@
         }
 
         &.invitation_expiry_date {
-            width: 17%;
+            width: 18%;
         }
 
         &.membership_expiry_date {
-            width: 17%;
+            width: 18%;
         }
 
         &.message {
-            width: 10%;
+            width: 9%;
         }
 
         &.sender_name {
-            width: 15%;
+            width: 12%;
         }
 
     }
@@ -59,7 +59,7 @@
     }
 
     tr.results:not(.error-row) td {
-        color: var(--sds--color--green--400);
+        color: var(--sds--color--green--500);
     }
 
     tr.error-row td {
@@ -72,6 +72,15 @@
 
         &:hover {
             background-color: var(--sds--color--red--500);
+        }
+    }
+
+    td.warning {
+        color: black;
+        background-color: var(--sds--color--orange--300);
+
+        &:hover {
+            background-color: var(--sds--color--orange--400);
         }
     }
 
