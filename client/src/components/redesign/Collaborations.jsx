@@ -400,7 +400,7 @@ export default class Collaborations extends React.PureComponent {
                                     question={confirmationQuestion}/>
                 <Entities entities={filteredCollaborations}
                           modelName={mayCreateCollaborations ? modelName : mayRequestCollaboration ? "memberCollaborations" : modelName}
-                          searchAttributes={["name"]}
+                          searchAttributes={["name", "identifier", "short_name"]}
                           defaultSort="name"
                           inputFocus={true}
                           title={`${I18n.t("home.tabs.collaborations")} (${collaborations.length})`}

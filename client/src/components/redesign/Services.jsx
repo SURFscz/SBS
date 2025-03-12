@@ -76,7 +76,7 @@ class Services extends React.Component {
         return (
             <Entities entities={services}
                       modelName="services"
-                      searchAttributes={["name", "entity_id"]}
+                      searchAttributes={["name", "entity_id", "abbreviation"]}
                       defaultSort="name"
                       columns={columns}
                       inputFocus={true}

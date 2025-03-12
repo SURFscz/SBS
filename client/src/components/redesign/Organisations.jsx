@@ -111,7 +111,7 @@ class Organisations extends React.Component {
         return (
             <Entities entities={organisations}
                       modelName="organisations"
-                      searchAttributes={["name", "schacHomes"]}
+                      searchAttributes={["name", "schacHomes", "short_name", "identifier"]}
                       defaultSort="name"
                       inputFocus={true}
                       columns={columns}
