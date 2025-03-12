@@ -69,12 +69,16 @@ class CollaborationRequest extends React.Component {
                 collaborationRequest.units.forEach(unit => {
                     unit.label = unit.name;
                     unit.value = unit.id;
-                })
+                });
+
                 this.setState({
                     collaborationRequest: collaborationRequest,
                     originalRequestedName: collaborationRequest.name,
                     allUnits: allUnits,
                     loading: false
+                }, () => {
+                    this.validateCollaborationShortName({target: {value: collaborationRequest.short_name}});
+                    this.validateCollaborationName({target: {value: collaborationRequest.name}});
                 });
                 AppStore.update(s => {
                     s.breadcrumb.paths = [
