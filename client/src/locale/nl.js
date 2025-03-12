@@ -2700,36 +2700,36 @@ const nl = {
         details: "Organisatiedetails",
         toc: {
             about: "Over de organisatie",
-            units: "Eenheden",
+            units: "Units",
             labels: "Labels",
             messaging: "Berichten",
-            settings: "Instellingen"
+            settings: "Configuratie"
         },
         headers: {
             about: "Over de organisatie",
-            units: "Beheer eenheden",
+            units: "Beheer units",
             labels: "Beheer labels",
             messaging: "Berichtinstellingen",
-            settings: "Organisatie-instellingen"
+            settings: "Organisatieconfiguratie"
         },
         units: {
-            info: "Maak eenheden om afdelingen of projecten binnen je organisatie te organiseren. Managers kunnen worden toegewezen aan specifieke eenheden om hun activiteiten te beheren.",
+            info: "Maak units om afdelingen of projecten binnen je organisatie te organiseren. Managers kunnen worden toegewezen aan specifieke eenheden om hun activiteiten te beheren.",
         },
         labels: {
             info: "Maak labels om algemene eigenschappen voor samenwerkingen binnen je organisatie te definiëren. Labels worden gedeeld met de gekoppelde applicaties en helpen bij het beheren en organiseren van je leden.",
             name: "Labelnaam",
             defaultFor: "Standaard voor",
-            defaultForPlaceholder: "Alle samenwerkingen binnen alle eenheden"
+            defaultForPlaceholder: "Alle samenwerkingen in alle units"
         },
         messaging: {
             newCoMessage: "Bericht voor nieuwe samenwerkingen",
             newCoMessageInfo: "Dit bericht wordt getoond aan gebruikers van je organisatie wanneer ze een samenwerking aanvragen of aanmaken.",
             defaultInviteMessage: "Standaardbericht voor uitnodigingen",
-            defaultInviteMessagePlaceholder: "Sluit je bij ons aan in deze nieuwe samenwerking",
+            defaultInviteMessagePlaceholder: "Word lid van deze nieuwe samenwerking",
             defaultInviteMessageInfo: "Wanneer ingevuld, wordt dit bericht gebruikt in alle nieuwe uitnodigingen voor de samenwerkingen van deze organisatie.",
-            defaultSenderName: "Standaard afzendernaam voor uitnodigingen",
-            defaultSenderNamePlaceholder: "Organisatieafdeling of informatiemail",
-            defaultSenderNameInfo: "Wanneer ingevuld, wordt deze naam gebruikt als afzender in alle nieuwe uitnodigingen voor de samenwerkingen van deze organisatie.",
+            defaultSenderName: "Standaard afzender voor uitnodigingen",
+            defaultSenderNamePlaceholder: "Organisatieafdeling van het informatie-e-mailadres",
+            defaultSenderNameInfo: "Wanneer ingevuld, wordt deze naam gebruikt als afzender van alle nieuwe uitnodigingen voor de samenwerkingen van deze organisatie.",
         },
         permissions: "Rechten"
     },
@@ -2741,14 +2741,14 @@ const nl = {
     },
     bulkUpload: {
         title: "Upload je uitnodigingen",
-        breadcrumb: "bulk-upload",
+        breadcrumb: "massa-upload",
         main: "Uploaden",
         docs: "Documentatie",
         dragDrop: "Sleep een CSV-bestand hierheen of",
-        click: " klik hier om te uploaden",
+        click: " uploadt",
         errorWrongExtension: "Alleen CSV-bestanden kunnen worden geüpload, niet {{name}}",
         errorFormat: "Fout bij het verwerken van bestand {{name}}",
-        successFullyParsed: "Succesvol verwerkt {{fileName}}<br/> <strong>{{invitees}}</strong> genodigden worden uitgenodigd voor <strong>{{collaborations}}</strong> samenwerkingen in <strong>{{groups}}</strong> groepen.",
+        successFullyParsed: "Bestand {{fileName}} succesvol verwerkt<br/> <strong>{{invitees}}</strong> genodigden worden uitgenodigd voor <strong>{{collaborations}}</strong> samenwerkingen in <strong>{{groups}}</strong> groepen.",
         successFullyUploaded: "Succesvol <strong>{{nbrInvitations}}</strong> uitnodigingen verzonden.",
         errorParsed: "Fout bij het verwerken van {{fileName}}. Zie de details hieronder.",
         errorUpload: "Fout bij het uploaden. Zie de resultaten hieronder.",
@@ -2758,15 +2758,15 @@ const nl = {
         hideDetails: "Verberg details",
         showResults: "Toon resultaten",
         hideResults: "Verberg resultaten",
-        schema: "Klik op de onderstaande knop om een voorbeeld CSV-bestand te downloaden.",
+        schema: "Gebruik onderstaande knop voor een voorbeeld CSV-bestand.",
         download: "Downloaden",
         exampleInfo: "Voorbeeld CSV-gegevens",
         requiredInfo: "geeft een verplichte waarde aan",
         proceed: "Uploaden & uitnodigingen verzenden",
         errors: {
-            TooFewFields: "De bovenstaande rij mist waarden voor verplichte velden: {{fields}}",
+            TooFewFields: "In de bovenstaande rij onbreken waarden voor verplichte velden: {{fields}}",
             Duplicate: "De bovenstaande rij bevat een dubbele invoer voor gebruiker {{invitee}} en samenwerking {{shortName}}",
-            Unknown: "Ongeldige CSV-rij",
+            Unknown: "Ongeldige gegevens in rij",
             ServerError: "De server heeft een fout gemeld voor bovenstaande rij: {{message}}",
             ServerWarning: "De server heeft een waarschuwing gemeld voor bovenstaande rij: {{message}}"
         },
