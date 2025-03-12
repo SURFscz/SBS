@@ -957,9 +957,9 @@ const nl = {
         backToServices: "Terug naar applicaties",
         name: "Naam",
         namePlaceHolder: "De unieke naam van de applicatie",
-        entity_id: "Entity ID",
-        entity_idPlaceHolder: "De unieke entity ID van de applicatie",
-        entity_idTooltip: "De Entity ID is bij SAML (Entity ID) en OIDC (client_id) het unieke kenmerk van je applicatie voor de identity proxy. Het wordt ook gebruikt bij provisioning via LDAP.",
+        entity_id: "Applicatie ID",
+        entity_idPlaceHolder: "De unieke applicatie ID van de applicatie",
+        entity_idTooltip: "De applicatie ID is bij SAML (Entity ID) en OIDC (client_id) het unieke kenmerk van je applicatie voor de identity proxy. Het wordt ook gebruikt bij provisioning via LDAP.",
         abbreviation: "Korte naam",
         abbreviationPlaceHolder: "De korte naam van de applicatie",
         abbreviationTooltip: "De korte naam van een applicatie wordt gebruikt als prefix voor groepen aangemaakt door de applicatiegroepen van deze applicatie.<br/><br/>" +
@@ -1387,7 +1387,7 @@ const nl = {
         },
         service: {
             name: "Naam",
-            entity_id: "Entity ID",
+            entity_id: "Applicatie ID",
             abbreviation: "Korte naam",
             description: "Omschrijving",
             actions: "",
@@ -1582,7 +1582,7 @@ const nl = {
             open: "",
             actions: "",
             name: "Naam",
-            entity_id: "Entity ID",
+            entity_id: "Applicatie ID",
             abbreviation: "Korte naam",
             description: "Omschrijving"
         },
@@ -1621,7 +1621,7 @@ const nl = {
             open: "",
             actions: "",
             name: "Naam",
-            entity_id: "Entity ID",
+            entity_id: "Applicatie ID",
             description: "Omschrijving"
         },
         serviceDeleteConfirmation: "Weet je zeker dat je deze applicatie wil verwijderen uit organisatie {{organisation}}",
@@ -1708,7 +1708,7 @@ const nl = {
         service: {
             actions: "",
             name: "Naam",
-            entity_id: "Entity ID",
+            entity_id: "Applicatie ID",
             description: "Omschrijving"
         },
         member: {
@@ -2352,9 +2352,9 @@ const nl = {
         info5: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i> omdat de samenwerking(en) waarvan je lid bent niet actief zijn.</p><p>Neem contact op met de beheerders van jouw samenwerking(en) voor toegang tot deze applicatie.</p>",
         info6: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. Je lidmaatschap van de samenwerking(en) waar je momenteel lid van bent zijn verlopen.</p><p>Neem contact op met de beheerders van jouw samenwerking(en) voor toegang tot deze applicatie.</p>",
         ticket: "Als je wil, kun je contact opnemen met SRAM support " +
-            "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a> voor hulp.",
+            "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Applicatie ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a> voor hulp.",
         subject: "Geen toegang tot applicatie {{name}}",
-        entityId: "Entity ID",
+        entityId: "Applicatie ID",
         issuerId: "Issuer ID",
         userId: "User ID",
         timestamp: "Timestamp"
@@ -2672,7 +2672,7 @@ const nl = {
         supportSubTitle: "Zorg ervoor dat je onderstaande informatie vermeldt.",
         supportBullets: {
             solutions: "Als je de bovenstaande oplossingen al hebt geprobeerd, of denkt dat je al toegang zou moeten hebben, kan je contact opnemen met SRAM-ondersteuning voor hulp via " +
-                "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a>."
+                "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Applicatie ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a>."
         }
     },
     collaborationsOverview: {
