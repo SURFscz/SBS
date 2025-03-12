@@ -60,7 +60,7 @@
         "ws": "^8.17.1"
     },
     "scripts": {
-        "start": "DANGEROUSLY_DISABLE_HOST_CHECK=true GENERATE_SOURCEMAP=false react-scripts start",
+        "start": "DANGEROUSLY_DISABLE_HOST_CHECK=true GENERATE_SOURCEMAP=false SBS_SERVER=localhost:8080 react-scripts start",
         "build": "DANGEROUSLY_DISABLE_HOST_CHECK=true GENERATE_SOURCEMAP=true react-scripts build",
         "test": "DANGEROUSLY_DISABLE_HOST_CHECK=true GENERATE_SOURCEMAP=false react-scripts test --transformIgnorePatterns 'node_modules/(?!i18n-js)/'",
         "analyze": "source-map-explorer build/static/js/main.*.js "
