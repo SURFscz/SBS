@@ -1936,10 +1936,10 @@
   resolved "https://registry.yarnpkg.com/@socket.io/component-emitter/-/component-emitter-3.1.2.tgz#821f8442f4175d8f0467b9daf26e3a18e2d02af2"
   integrity sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA==
 
-"@surfnet/sds@^0.0.127":
-  version "0.0.127"
-  resolved "https://registry.yarnpkg.com/@surfnet/sds/-/sds-0.0.127.tgz#90c600768e75896d80136b50fbb540fe18f833dd"
-  integrity sha512-SY08iJOhcghlUV2iGDjfch+s+rFlHg3gSQ5pj/uZQfATRawXDkELjxTxnL37FAjnixJhTdoXhBu3uJVmBx/CMg==
+"@surfnet/sds@^0.0.128":
+  version "0.0.128"
+  resolved "https://registry.yarnpkg.com/@surfnet/sds/-/sds-0.0.128.tgz#8036196a86824a6617624e1ee24bec05319f095c"
+  integrity sha512-st4NvvwJ3zUD8aBBivpUGl958zh8BxOw2+fvyB3wmzxeQQoJOgaXbmE03f25yKxGmTK+wdUELH6G3uf+HljXIg==
 
 "@surma/rollup-plugin-off-main-thread@^2.2.3":
   version "2.2.3"
@@ -8487,10 +8487,10 @@ react-copy-to-clipboard@^5.0.1:
     copy-to-clipboard "^3.3.1"
     prop-types "^15.8.1"
 
-react-datepicker@^8.1.0:
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-8.1.0.tgz#1ae3133280e33a85af6a19f022d12072c5bedd3d"
-  integrity sha512-11gIOrBGK1MOvl4+wxGv4YxTqXf+uoRPtKstYhb/P1cBdRdOP1sL26VE31apmDnvw8wSYfJe9AWwWbKqmM9tzw==
+react-datepicker@^8.2.0:
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-8.2.0.tgz#7dfe1fe92c4c2498491094e23141c6c32c99a55f"
+  integrity sha512-zmUSOKxLrdYA6+etDU8N/w3vC9BZ4qRQ9azvp1seFgW4kk7QZJLB9aB7PJcw/EYWOK/1X7un9rUMXWPlcuZ4dw==
   dependencies:
     "@floating-ui/react" "^0.27.3"
     clsx "^2.1.1"
@@ -8679,10 +8679,10 @@ react-scripts@^5.0.1:
   optionalDependencies:
     fsevents "^2.3.2"
 
-react-select@^5.10.0:
-  version "5.10.0"
-  resolved "https://registry.yarnpkg.com/react-select/-/react-select-5.10.0.tgz#9b5f4544cfecdfc744184b87651468ee0fb6e172"
-  integrity sha512-k96gw+i6N3ExgDwPIg0lUPmexl1ygPe6u5BdQFNBhkpbwroIgCNXdubtIzHfThYXYYTubwOBafoMnn7ruEP1xA==
+react-select@^5.10.1:
+  version "5.10.1"
+  resolved "https://registry.yarnpkg.com/react-select/-/react-select-5.10.1.tgz#e858dd98358ccd864b65d53ab0fb682cd5e96b89"
+  integrity sha512-roPEZUL4aRZDx6DcsD+ZNreVl+fM8VsKn0Wtex1v4IazH60ILp5xhdlp464IsEAlJdXeD+BhDAFsBVMfvLQueA==
   dependencies:
     "@babel/runtime" "^7.12.0"
     "@emotion/cache" "^11.4.0"

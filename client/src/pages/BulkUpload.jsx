@@ -14,6 +14,7 @@ import exampleCVS from '!!raw-loader!../schemas/bulk-import-example.csv';
 import Button from "../components/Button";
 import DOMPurify from "dompurify";
 import TabularData from "../components/TabularData";
+import {invitationBulkUpload} from "../api";
 
 class BulkUpload extends React.Component {
 
@@ -28,7 +29,10 @@ class BulkUpload extends React.Component {
             data: [],
             fileName: null,
             tabs: [],
-            showDetails: false
+            showDetails: false,
+            showResults: false,
+            results: null,
+            allEmails: []
         }
     }
 
@@ -60,6 +64,7 @@ class BulkUpload extends React.Component {
                         showDetails: results.errors.length > 0,
                         errorWrongExtension: false,
                         fileName: file.name,
+                        results: null
                     });
                 };
                 reader.readAsText(file);
@@ -81,7 +86,40 @@ class BulkUpload extends React.Component {
     proceed = () => {
         const {data, errors} = this.state;
         const filteredData = data.filter((_, index) => !errors.some(error => error.row === index));
-        alert(`Scusi, that part is not done yet. Data to upload ${JSON.stringify(filteredData)}`)
+        this.setState({data: filteredData, loading: true});
+        invitationBulkUpload(filteredData).then(r => {
+            // Check for removed emails
+            const allEmails = new Set(r.invitations.map(invitation => invitation.email));
+            this.setState({results: r, loading: false, allEmails: [...allEmails], showResults: !isEmpty(r.errors)})
+        });
+    }
+
+    resultsSummary = results => {
+        const nbrInvitations = results.invitations.length;
+
+        const hasErrors = !isEmpty(results.errors);
+        const allErrors = nbrInvitations === 0;
+
+        return (
+            <>
+                <div className={`summary ${allErrors ? "errors" : ""}`}>
+                    {allErrors ? <AlertIcon/> : <SuccessIcon/>}
+                    {allErrors && <p className="error info" dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(I18n.t("bulkUpload.errorUpload"))
+                    }}/>}
+                    {!allErrors && <p dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(I18n.t("bulkUpload.successFullyUploaded", {
+                            nbrInvitations: nbrInvitations
+                        }))
+                    }}/>}
+                </div>
+                {(hasErrors && !allErrors) &&
+                    <div className="summary errors">
+                        <AlertIcon/>
+                        <p>{I18n.t("bulkUpload.errorUploadDetails")}</p>
+                    </div>}
+            </>
+        );
     }
 
     csvSummary = (data, errors, fileName) => {
@@ -143,7 +181,8 @@ class BulkUpload extends React.Component {
         e.preventDefault();
     };
 
-    getMainTab = (data, errorWrongExtension, fileName, showDetails, errors) => {
+    getMainTab = (data, errorWrongExtension, fileName, showDetails, errors, results, showResults, allEmails) => {
+        const hasResults = !isEmpty(results);
         return (
             <div key="main" name="main" label={I18n.t("bulkUpload.main")}>
                 <div className="mod-bulk-upload main">
@@ -167,9 +206,11 @@ class BulkUpload extends React.Component {
                             <a href="/" onClick={this.openFileDialog}>{I18n.t("bulkUpload.click")}</a>
                         </label>
                     </div>
+
                     {errorWrongExtension &&
                         <p className="error info">{I18n.t("bulkUpload.errorWrongExtension", {name: fileName})}</p>}
-                    {(!errorWrongExtension && !isEmpty(fileName)) && <>
+
+                    {(!errorWrongExtension && !isEmpty(fileName) && !hasResults) && <>
                         {this.csvSummary(data, errors, fileName)}
                         <a href="/" onClick={e => {
                             stopEvent(e);
@@ -180,6 +221,21 @@ class BulkUpload extends React.Component {
                         {showDetails && <TabularData headers={headers.split(",")}
                                                      data={data}
                                                      errors={errors}
+                                                     showRequiredInfo={false}/>}
+                    </>}
+                    {hasResults && <>
+                        {this.resultsSummary(results)}
+                        <a href="/" onClick={e => {
+                            stopEvent(e);
+                            this.setState({showResults: !showResults});
+                        }}>
+                            {I18n.t(`bulkUpload.${showResults ? "hideResults" : "showResults"}`)}
+                        </a>
+                        {showResults && <TabularData headers={headers.split(",")}
+                                                     data={data}
+                                                     isResultView={true}
+                                                     errors={results.errors}
+                                                     allEmails={allEmails}
                                                      showRequiredInfo={false}/>}
                     </>}
                 </div>
@@ -213,7 +269,6 @@ class BulkUpload extends React.Component {
                     <div>
                         <Button onClick={() => this.downloadSample()}
                                 small={true}
-                                icon={<CloudIcon/>}
                                 txt={I18n.t("bulkUpload.download")}
                         />
                     </div>
@@ -233,13 +288,13 @@ class BulkUpload extends React.Component {
 
     render() {
         const {
-            loading, tab, data, errorWrongExtension, fileName, showDetails, errors
+            loading, tab, data, errorWrongExtension, fileName, showDetails, errors, results, showResults, allEmails
         } = this.state;
         if (loading) {
             return <SpinnerField/>
         }
         const tabs = [
-            this.getMainTab(data, errorWrongExtension, fileName, showDetails, errors),
+            this.getMainTab(data, errorWrongExtension, fileName, showDetails, errors, results, showResults, allEmails),
             this.getDocsTab()
         ]
         return (

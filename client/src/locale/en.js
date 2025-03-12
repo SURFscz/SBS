@@ -2749,11 +2749,16 @@ const en = {
         errorWrongExtension: "Only CSV files can be uploaded, not {{name}}",
         errorFormat: "Error parsing file {{name}}",
         successFullyParsed: "Successfully parsed {{fileName}}<br/> <strong>{{invitees}}</strong> invitees will be invited for <strong>{{collaborations}}</strong> collaborations in <strong>{{groups}}</strong> groups.",
-        errorParsed: "Error in parsing {{fileName}}. See the details below",
+        successFullyUploaded: "Successfully sent <strong>{{nbrInvitations}}</strong> invitations.",
+        errorParsed: "Error in parsing {{fileName}}. See the details below.",
+        errorUpload: "Error in uploading. See the results below.",
         errorRows: "However there are some rows that will be excluded, because of invalid data. See details below.",
+        errorUploadDetails: "However there are errors returned from the server. See results below.",
         showDetails: "Show details",
         hideDetails: "Hide details",
-        schema: "Click the button below to download a sample CVS file.",
+        showResults: "Show results",
+        hideResults: "Hide results",
+        schema: "Click the button below to download a sample CSV file.",
         download: "Download",
         exampleInfo: "Example CSV data",
         requiredInfo: "indicates a required value",
@@ -2761,7 +2766,9 @@ const en = {
         errors: {
             TooFewFields: "The row above has missing values for required fields: {{fields}}",
             Duplicate: "The row above has contains a duplicate entry for user {{invitee}} and collaboration {{shortName}}",
-            Unknown: "Invalid CSV row"
+            Unknown: "Invalid CSV row",
+            ServerError: "The server reported an error for the row above: {{message}}",
+            ServerWarning: "The server reported a warning for the row above: {{message}}"
         },
         tooltips: {
             short_names: "The required comma separated and quoted short names of the collaborations for the invitation",
