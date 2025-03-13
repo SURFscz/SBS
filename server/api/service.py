@@ -33,7 +33,7 @@ ALWAYS = "ALWAYS"
 service_api = Blueprint("service_api", __name__, url_prefix="/api/services")
 
 base_service_query = """
-    SELECT s.id, s.name, s.uuid4 ,
+    SELECT s.id, s.name, s.uuid4, s.entity_id, s.abbreviation,
     (SELECT COUNT(scr.id) FROM service_connection_requests scr WHERE scr.service_id = s.id
     AND scr.status = 'open' AND scr.pending_organisation_approval = 0) AS req_count,
     (SELECT COUNT(sc.id) FROM services_collaborations sc WHERE sc.service_id = s.id) AS c_count
@@ -42,9 +42,10 @@ base_service_query = """
 
 
 def _result_set_to_services(result_set):
-    return [{"id": row[0], "name": row[1], "logo": f"{logo_url('services', row[2])}",
-             "connection_requests_count": row[3],
-             "collaborations_count": row[4]} for row in result_set]
+    return [{"id": row[0], "name": row[1],  "logo": f"{logo_url('services', row[2])}",
+             "entity_id": row[3], "abbreviation": row[4],
+             "connection_requests_count": row[5],
+             "collaborations_count": row[6]} for row in result_set]
 
 
 def _is_org_member():

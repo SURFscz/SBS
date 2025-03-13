@@ -40,7 +40,7 @@ from server.tools import dt_now
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
 
 base_collaboration_query = """
-    SELECT c.id, c.name, c.uuid4, c.expiry_date, c.last_activity_date,
+    SELECT c.id, c.name, c.short_name, c.identifier, c.uuid4, c.expiry_date, c.last_activity_date,
     (SELECT GROUP_CONCAT(DISTINCT u.name) FROM units u
     INNER JOIN collaboration_units cou ON cou.unit_id = u.id
     WHERE cou.collaboration_id = c.id) AS names,
@@ -52,12 +52,13 @@ base_collaboration_query = """
 
 
 def _result_set_to_collaborations(result_set):
-    return [{"id": row[0], "name": row[1], "logo": f"{logo_url('collaborations', row[2])}",
-             "expiry_date": row[3], "last_activity_date": row[4],
-             "units": [{"name": v} for v in row[5].split(",")] if row[5] else [],
-             "tags": [{"tag_value": v} for v in row[6].split(",")] if row[6] else [],
-             "collaboration_memberships_count": row[7],
-             "organisation": {"name": row[8]}} for row in result_set]
+    return [{"id": row[0], "name": row[1], "short_name": row[2], "identifier": row[3],
+             "logo": f"{logo_url('collaborations', row[4])}",
+             "expiry_date": row[5], "last_activity_date": row[6],
+             "units": [{"name": v} for v in row[7].split(",")] if row[7] else [],
+             "tags": [{"tag_value": v} for v in row[8].split(",")] if row[8] else [],
+             "collaboration_memberships_count": row[9],
+             "organisation": {"name": row[10]}} for row in result_set]
 
 
 def _del_non_disclosure_info(collaboration, json_collaboration):
