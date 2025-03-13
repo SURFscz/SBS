@@ -2719,7 +2719,7 @@ const en = {
             info: "Create labels to define overall properties for collaborations within your organisation. Labels are shared with the connected applications, helping you manage and organize your members.",
             name: "Label name",
             defaultFor: "Default for",
-            defaultForPlaceholder: "All co's within all units"
+            defaultForPlaceholder: "All collaborations in all units"
         },
         messaging: {
             newCoMessage: "Message for new collaborations",
