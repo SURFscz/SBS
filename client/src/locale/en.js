@@ -12,7 +12,7 @@ const en = {
             createCollaboration: "Create collaboration",
             requestCollaboration: "Request collaboration",
             requestService: "Register application",
-            bulkUpload: "Invitation bulk-upload",
+            bulkUpload: "Invitation bulk upload",
             help: "Help",
             profile: "Profile",
             logout: "Logout",
@@ -2741,7 +2741,7 @@ const en = {
     },
     bulkUpload: {
         title: "Upload your invitations",
-        breadcrumb: "bulk-upload",
+        breadcrumb: "Bulk upload",
         main: "Upload",
         docs: "Documentation",
         dragDrop: "Drag and drop a CSV file or",

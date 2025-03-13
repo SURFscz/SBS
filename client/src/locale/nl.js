@@ -2741,7 +2741,7 @@ const nl = {
     },
     bulkUpload: {
         title: "Upload je uitnodigingen",
-        breadcrumb: "massa-upload",
+        breadcrumb: "Bulk-upload",
         main: "Uploaden",
         docs: "Documentatie",
         dragDrop: "Sleep een CSV-bestand hierheen of",
