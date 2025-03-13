@@ -5,6 +5,7 @@ from unittest import mock
 
 import sqlalchemy
 
+from server.db.audit_mixin import AuditLog
 from server.db.db import db
 from server.db.defaults import STATUS_OPEN
 from server.db.domain import Invitation, CollaborationMembership, User, Collaboration, Organisation, ServiceAup, \
@@ -291,6 +292,10 @@ class TestInvitation(AbstractTest):
                        headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                        with_basic_auth=False)
         self.assertEqual("accepted", res["status"])
+
+        # Check audit log
+        audit_logs = AuditLog.query.filter(AuditLog.user_type == unihard_name).all()
+        self.assertTrue(len(audit_logs) > 0)
 
     def test_external_invitation_invalid_group(self):
         res = self.put("/api/invitations/v1/collaboration_invites",

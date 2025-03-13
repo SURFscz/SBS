@@ -131,8 +131,8 @@ class AuditMixin(JsonSerializableBase):
                 user_id = getattr(target, "user_id")
             if not user_id:
                 user_id = current_user_id() if session and "user" in session and "id" in session["user"] else None
-            if not user_id and request_context.get("external_api_organisation"):
-                user_type = request_context.get('external_api_organisation').name
+            if not user_id and request_context.get("external_api_organisation_name"):
+                user_type = request_context.get("external_api_organisation_name")
             if not user_id and not user_type:
                 user_type = "System"
             audit = AuditLog(
