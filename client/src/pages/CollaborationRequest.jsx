@@ -74,11 +74,18 @@ class CollaborationRequest extends React.Component {
                 this.setState({
                     collaborationRequest: collaborationRequest,
                     originalRequestedName: collaborationRequest.name,
-                    allUnits: allUnits,
-                    loading: false
+                    allUnits: allUnits
                 }, () => {
-                    this.validateCollaborationShortName({target: {value: collaborationRequest.short_name}});
-                    this.validateCollaborationName({target: {value: collaborationRequest.name}});
+                    Promise.all([
+                        collaborationNameExists(collaborationRequest.name, collaborationRequest.organisation_id),
+                        collaborationShortNameExists(sanitizeShortName(collaborationRequest.short_name), collaborationRequest.organisation_id)
+                    ]).then(res => {
+                        this.setState({
+                            initial: false,
+                            loading: false,
+                            alreadyExists: {...this.state.alreadyExists, name: res[0], short_name: res[1]}
+                        });
+                    })
                 });
                 AppStore.update(s => {
                     s.breadcrumb.paths = [
