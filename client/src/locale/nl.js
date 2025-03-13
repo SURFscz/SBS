@@ -2763,6 +2763,7 @@ const nl = {
         exampleInfo: "Voorbeeld CSV-gegevens",
         requiredInfo: "geeft een verplichte waarde aan",
         proceed: "Uploaden & uitnodigingen verzenden",
+        loading: "Verwerken {{count}} uitnodigingen. Tijd voor ☕️...",
         errors: {
             TooFewFields: "In de bovenstaande rij onbreken waarden voor verplichte velden: {{fields}}",
             Duplicate: "De bovenstaande rij bevat een dubbele invoer voor gebruiker {{invitee}} en samenwerking {{shortName}}",

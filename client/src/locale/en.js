@@ -2763,6 +2763,7 @@ const en = {
         exampleInfo: "Example CSV data",
         requiredInfo: "indicates a required value",
         proceed: "Upload & send invitations",
+        loading: "Processing {{count}} invitations. Time for ☕️...",
         errors: {
             TooFewFields: "The row above has missing values for required fields: {{fields}}",
             Duplicate: "The row above has contains a duplicate entry for user {{invitee}} and collaboration {{shortName}}",

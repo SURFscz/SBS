@@ -5,7 +5,6 @@ import {AppStore} from "../stores/AppStore";
 import {ReactComponent as CloudIcon} from "../icons/cloud-upload.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import Tabs from "../components/Tabs";
-import SpinnerField from "../components/redesign/SpinnerField";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import {headers, parseBulkInvitation} from "../utils/CSVParser";
 import {ReactComponent as SuccessIcon} from "@surfnet/sds/icons/functional-icons/success.svg";
@@ -15,6 +14,7 @@ import Button from "../components/Button";
 import DOMPurify from "dompurify";
 import TabularData from "../components/TabularData";
 import {invitationBulkUpload} from "../api";
+import SpinnerMarathonField from "../components/redesign/SpinnerMarathonField";
 
 class BulkUpload extends React.Component {
 
@@ -290,9 +290,12 @@ class BulkUpload extends React.Component {
         const {
             loading, tab, data, errorWrongExtension, fileName, showDetails, errors, results, showResults, allEmails
         } = this.state;
+
         if (loading) {
-            return <SpinnerField/>
+            const nbrInvitees = this.countElements(data, errors, "invitees");
+            return <SpinnerMarathonField message={I18n.t("bulkUpload.loading", {count: nbrInvitees})}/>
         }
+
         const tabs = [
             this.getMainTab(data, errorWrongExtension, fileName, showDetails, errors, results, showResults, allEmails),
             this.getDocsTab()
