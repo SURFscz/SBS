@@ -1,6 +1,6 @@
 import os
 
-from flask import session, current_app
+from flask import current_app, session, g as request_context
 from sqlalchemy import MetaData
 from sqlalchemy import event, inspect
 from sqlalchemy.orm import class_mapper
@@ -44,6 +44,7 @@ class AuditLog(JsonSerializableBase, db.Model):
     __tablename__ = "audit_logs"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     user_id = db.Column("user_id", db.Integer())
+    user_type = db.Column("user_type", db.String(length=255), nullable=True)
     subject_id = db.Column("subject_id", db.Integer())
     target_type = db.Column("target_type", db.String(length=100), nullable=False)
     target_id = db.Column("target_id", db.Integer())
@@ -56,9 +57,10 @@ class AuditLog(JsonSerializableBase, db.Model):
     created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
-    def __init__(self, current_user_id, subject_id, target_type, target_id, target_name, parent_id, parent_name, action,
-                 state_before, state_after):
+    def __init__(self, current_user_id, user_type, subject_id, target_type, target_id, target_name, parent_id,
+                 parent_name, action, state_before, state_after):
         self.user_id = current_user_id
+        self.user_type = user_type
         self.subject_id = subject_id
         self.target_type = target_type
         self.target_id = target_id
@@ -124,12 +126,18 @@ class AuditMixin(JsonSerializableBase):
         if not os.environ.get("SEEDING"):
             from server.auth.security import current_user_id
             user_id = None
+            user_type = None
             if hasattr(target, "user_id"):
                 user_id = getattr(target, "user_id")
             if not user_id:
                 user_id = current_user_id() if session and "user" in session and "id" in session["user"] else None
+            if not user_id and request_context.get("external_api_organisation"):
+                user_type = request_context.get('external_api_organisation').name
+            if not user_id and not user_type:
+                user_type = "System"
             audit = AuditLog(
                 user_id,
+                user_type,
                 subject_id,
                 target.__tablename__,
                 target.id,

@@ -1,4 +1,3 @@
-
 from server.cron.orphan_users import delete_orphan_users
 from server.db.audit_mixin import AuditLog, ACTION_CREATE
 from server.db.db import db
@@ -12,7 +11,8 @@ class TestOrphanUsers(AbstractTest):
     def test_schedule(self):
         # insert some activity to test the assertion as audit logs are emptied before the test
         jane = self.find_entity_by_name(User, user_jane_name)
-        audit_log = AuditLog(jane.id, jane.id, "collaboration_memberships", None, None, None, None, ACTION_CREATE, None,
+        audit_log = AuditLog(jane.id, None, jane.id, "collaboration_memberships", None,
+                             None, None, None, ACTION_CREATE, None,
                              None)
         db.session.merge(audit_log)
         db.session.commit()
