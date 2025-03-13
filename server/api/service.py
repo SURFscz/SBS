@@ -42,7 +42,7 @@ base_service_query = """
 
 
 def _result_set_to_services(result_set):
-    return [{"id": row[0], "name": row[1],  "logo": f"{logo_url('services', row[2])}",
+    return [{"id": row[0], "name": row[1], "logo": f"{logo_url('services', row[2])}",
              "entity_id": row[3], "abbreviation": row[4],
              "connection_requests_count": row[5],
              "collaborations_count": row[6]} for row in result_set]
