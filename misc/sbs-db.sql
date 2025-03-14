@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision c66a3d65d328 (head)
+-- Dump of empty SBS database, alembic revision b070687330e8 (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('c66a3d65d328');
+INSERT INTO `alembic_version` VALUES ('b070687330e8');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_key_units`;
@@ -82,6 +82,7 @@ CREATE TABLE `audit_logs` (
   `parent_name` varchar(100) DEFAULT NULL,
   `parent_id` int(11) DEFAULT NULL,
   `target_name` varchar(255) DEFAULT NULL,
+  `user_type` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
