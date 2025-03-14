@@ -123,7 +123,7 @@ class Service extends React.Component {
         }
         if (!isServiceRequest && !user.admin) {
             this.props.history.push("/404");
-        } else if (isServiceRequest && match && match.params && match.params.service_request_id) {
+        } else if (isServiceRequestDetails) {
             serviceRequestById(match.params.service_request_id)
                 .then(res => {
                     this.setState({
@@ -131,10 +131,24 @@ class Service extends React.Component {
                         service: res,
                         serviceRequest: res,
                         isNew: false,
-                        loading: false,
                         isServiceRequestDetails: isServiceRequestDetails,
                         redirect_urls: commaSeparatedArrayToSelectValues(res.redirect_urls),
                         grants: commaSeparatedArrayToSelectValues(res.grants)
+                    }, () => {
+                        if (res.status === "open") {
+                            Promise.all([
+                                serviceAbbreviationExists(sanitizeShortName(res.abbreviation), null),
+                                serviceNameExists(res.name, null)
+                            ]).then(res => {
+                                this.setState({
+                                    initial: false,
+                                    loading: false,
+                                    alreadyExists: {...this.state.alreadyExists, abbreviation: res[0], name: res[1]}
+                                });
+                            })
+                        } else {
+                            this.setState({loading: false});
+                        }
                     });
                     if (isServiceRequestDetails && (res.saml_metadata_url || res.saml_metadata)) {
                         parseSAMLMetaData(res.saml_metadata, res.saml_metadata_url)
@@ -178,23 +192,32 @@ class Service extends React.Component {
         }
     }
 
-    validateServiceName = e => serviceNameExists(e.target.value, null).then(json => {
-        this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
-        if (!json && !isEmpty(e.target.value) && isEmpty(this.state.abbreviation)) {
-            this.generateShortName(e.target.value);
-        }
-    });
+    validateServiceName = e => {
+        const name = e.target.value.trim();
+        serviceNameExists(name, null).then(json => {
+            this.setState({name: name, alreadyExists: {...this.state.alreadyExists, name: json}});
+            if (!json && !isEmpty(name) && isEmpty(this.state.abbreviation)) {
+                this.generateShortName(name);
+            }
+        });
+    }
 
-    validateServiceEntityId = e => serviceEntityIdExists(e.target.value, null).then(json => {
-        this.setState({alreadyExists: {...this.state.alreadyExists, entity_id: json}});
-    });
+    validateServiceEntityId = e => {
+        const entityId = e.target.value.trim();
+        serviceEntityIdExists(entityId, null).then(json => {
+            this.setState({entity_id: entityId, alreadyExists: {...this.state.alreadyExists, entity_id: json}});
+        });
+    }
 
-    validateServiceAbbreviation = e => serviceAbbreviationExists(sanitizeShortName(e.target.value), null).then(json => {
-        this.setState({alreadyExists: {...this.state.alreadyExists, abbreviation: json}});
-    });
+    validateServiceAbbreviation = e => {
+        const shortName = sanitizeShortName(e.target.value.trim());
+        serviceAbbreviationExists(shortName, null).then(json => {
+            this.setState({abbreviation: shortName, alreadyExists: {...this.state.alreadyExists, abbreviation: json}});
+        });
+    }
 
     validateEmail = name => e => {
-        const email = e.target.value;
+        const email = e.target.value.trim();
         const {invalidInputs} = this.state;
         const inValid = !isEmpty(email) && !(validEmailRegExp.test(email) || validUrlRegExp.test(email));
         this.setState({invalidInputs: {...invalidInputs, [name]: inValid}});

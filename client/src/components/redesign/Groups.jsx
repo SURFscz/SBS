@@ -202,8 +202,9 @@ class Groups extends React.Component {
         const {createNewGroup} = this.state;
         const {collaboration} = this.props;
         const selectedGroup = this.getSelectedGroup();
-        groupNameExists(e.target.value, collaboration.id, createNewGroup ? null : selectedGroup.name).then(json => {
-            this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
+        const name = e.target.value.trim();
+        groupNameExists(name, collaboration.id, createNewGroup ? null : selectedGroup.name).then(json => {
+            this.setState({name: name, alreadyExists: {...this.state.alreadyExists, name: json}});
         });
     };
 

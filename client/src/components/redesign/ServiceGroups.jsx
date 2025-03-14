@@ -149,8 +149,9 @@ class ServiceGroups extends React.Component {
         const {createNewGroup} = this.state;
         const {service} = this.props;
         const selectedGroup = this.getSelectedGroup();
-        serviceGroupNameExists(e.target.value, service.id, createNewGroup ? null : selectedGroup.name).then(json => {
-            this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
+        const name = e.target.value.trim();
+        serviceGroupNameExists(name, service.id, createNewGroup ? null : selectedGroup.name).then(json => {
+            this.setState({name: name, alreadyExists: {...this.state.alreadyExists, name: json}});
         });
     };
 
