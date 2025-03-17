@@ -555,11 +555,11 @@ const nl = {
         },
         joinRequests: {
             backToJoinRequests: "Terug naar alle aanvragen",
-            title: "Aanvraag om lid te worden",
+            title: "Aanvragen lid te worden",
             searchPlaceHolder: "Zoek aanvragen...",
             noEntities: "Geen aanvragen gevonden",
             edit: "Accepteer / keur af",
-            details: "Aanvraag gemaakt door {{name}} op {{date}}"
+            details: "Aangevraagd door {{name}} op {{date}}"
         },
         memberJoinRequests: {
             title: "Mijn aanvragen voor samenwerkingen",
@@ -699,7 +699,7 @@ const nl = {
     registration: {
         joinRequest: "Vraag lidmaatschap voor {{name}}",
         explanation: "Schrijf je motivatie om lid te worden van samenwerking <strong>{{name}}</strong>.",
-        title: "Aanvraag tot lidmaatschap van {{name}}",
+        title: "Aanvragen lidmaatschap van {{name}}",
         alreadyMember: "Je bent reeds lid van {{name}}",
         motivation: "Je reden om lid te worden van {{name}}?",
         motivationPlaceholder: "Omschrijf de reden om lid te worden zodat een beheerder je aanvraag kan honoreren.",
@@ -1045,7 +1045,7 @@ const nl = {
         alreadyExists: "Een applicatie met {{attribute}} {{value}} bestaat al.",
         required: "De applicatie heeft een {{attribute}} nodig.",
         deleteConfirmation: "Weet je zeker dat je applicatie {{name}} wil verwijderen? Dit kan niet teruggedraaid worden.",
-        requestDeleteConfirmation: "Weet je zeker dat je een aanvraag wilt indienen om deze applicatie {{name}} te verwijderen? Alls de aanvraag wordt gehonoreerd dan kan dit niet meer teruggedraaid worden.",
+        requestDeleteConfirmation: "Weet je zeker dat je een aanvraag wil indienen om deze applicatie {{name}} te verwijderen? Als de aanvraag wordt gehonoreerd dan kan dit niet meer teruggedraaid worden.",
         deleteWarning: "Je kan geen aanvraag indienen om deze applicatie te verwijderen. Ontkoppel eerst de samenwerkingen op de 'Gekoppelde samenwerkingen' tab.",
         add: "Opslaan",
         request: "Registreer",
@@ -1057,7 +1057,7 @@ const nl = {
             createdServiceRequest: "Bedankt voor de applicatieregistratie van {{name}}. We bekijken je aanvraag en van ons laten horen binnen een werkdag.<br/><br/>Het SURF Research Access Management support team",
             updated: "Applicatie {{name}} is bijgewerkt.",
             deleted: "Applicatie {{name}} is verwijderd.",
-            requestDeleted: "Aanvraag om applicatie {{name}} te verwijderen is verzonden",
+            requestDeleted: "Verwijderen van applicatie {{name}} aangevraagd",
             tokenAdded: "Nieuw token voor applicatie {{name}} is aangemaakt",
             tokenUpdated: "Token van applicatie {{name}} is bijgewerkt",
             tokenDeleted: "Token van applicatie {{name}} is verwijderd",
@@ -1157,7 +1157,7 @@ const nl = {
         commentsTooltip: "Je opmerkingen aan de beheerders die je applicatie-aanvraag behandelen",
         comments: "Optionele opmerkingen",
         commentsPlaceholder: "Opmerkingen",
-        commentsHeader: "Opmerkingen over dit aanvraag",
+        commentsHeader: "Opmerkingen over deze aanvraag",
         commentsAttribute: "motivatie",
         connectionSettings: {
             connectQuestion: "1. Wie mag inloggen op de applicatie?",
@@ -1280,7 +1280,7 @@ const nl = {
         schacHomeOrganisationTooltip: "De domeinnamen waarmee gebruikers van deze organisatie inloggen. Deze gebruikers kunnen samenwerkingen aanmaken of aanvragen bij je organisatie.",
         collaborationCreationAllowed: "Gebruikers kunnen zonder goedkeuring een samenwerking aanmaken",
         collaborationCreationAllowedTooltip: "Sta toe dat gebruikers van de organisatie samenwerkingen aanmaken zonder goedkeuring van de organisatiebeheerder of -manager",
-        serviceConnectionRequiresApproval: "Aanvraag voor applicatie koppeling moet worden goedgekeurd door de organisatiebeheerder of -manager",
+        serviceConnectionRequiresApproval: "Het koppelen van deze applicatie moet worden goedgekeurd door een organisatiebeheerder of -manager",
         serviceConnectionRequiresApprovalTooltip: "Indien geselecteerd, dan moet een aanvraag voor een applicatie koppeling eerst worden goedgekeurd door de organisatie beheerder",
         accepted_user_policyPlaceholder: "De acceptable use policy (AUP) van de organisatie.",
         accepted_user_policyTooltip: "Gebruikers van buiten de organsatie moeten deze AUP accepteren wanneer ze voor het eerste lid worden van een samenwerking van deze organisatie.",
@@ -1429,7 +1429,7 @@ const nl = {
     joinRequest: {
         title: "Aanvraag van {{requester}} om lid te worden van samenwerking {{collaboration}}",
         message: "Onderbouwing",
-        messageTooltip: "De onderbouwing van {{name}} voor dit aanvraag",
+        messageTooltip: "De onderbouwing van {{name}} voor deze aanvraag",
         collaborationName: "Samenwerking",
         userName: "Gebruiker",
         decline: "Afwijzen",
@@ -1447,7 +1447,7 @@ const nl = {
             declined: "Aanvraag voor lidmaatschap van samenwerking {{name}} is afgewezen.",
             accepted: "Aanvraag voor lidmaatschap van samenwerking {{name}} is goedgekeurd.",
             deleted: "Aanvraag voor lidmaatschap van samenwerking {{name}} is verwijderd.",
-            notFound: "Dit aanvraag voor lidmaatschap is reeds goedgekeurd of afgewezen.",
+            notFound: "Deze aanvraag voor lidmaatschap is reeds goedgekeurd of afgewezen.",
             alreadyMember: "Je bent al lid van de samenwerking {{name}} en kan daarom deze uitnodiging niet accepteren."
         }
     },
@@ -1600,8 +1600,8 @@ const nl = {
         serviceConnectionRequestResend: "De aanvraag om applicatie {{service}} te koppelen met samenwerking {{collaboration}} is opnieuw verstuurd.",
         serviceRestrictedInfo: "Deze samenwerking is beperkt in de applicaties. Alleen de platformbeheerder kan applicaties configureren die door deze samenwerking worden gebruikt.",
         serviceDeleteConfirmation: "Weet je zeker dat je deze applicatie uit de samenwerking {{collaboration}} wil verwijderen?",
-        serviceConnectionRequestDeleteConfirmation: "Weet je zeker dat je dit koppelaanvraag wil verwijderen?",
-        serviceConnectionRequestResendConfirmation: "Weet je zeker dat je dit koppelaanvraag opnieuw wil versturen?",
+        serviceConnectionRequestDeleteConfirmation: "Weet je zeker dat je deze koppelaanvraag wil verwijderen?",
+        serviceConnectionRequestResendConfirmation: "Weet je zeker dat je deze koppelaanvraag opnieuw wil versturen?",
     },
     organisationServices: {
         title: "Applicaties voor organisatie {{name}}",
@@ -1785,8 +1785,8 @@ const nl = {
         requester: "Aanvrager",
         approved: "Goedgekeurd",
         rejectionReason: "Reden voor afwijzing",
-        denyConfirmation: "Weet je zeker dat je dit aanvraag wil afkeuren?",
-        deleteConfirmation: "Weet je zeker dat je dit aanvraag wil verwijderen?",
+        denyConfirmation: "Weet je zeker dat je deze aanvraag wil afkeuren?",
+        deleteConfirmation: "Weet je zeker dat je deze aanvraag wil verwijderen?",
         approve: "Goedkeuren",
         deny: "Afkeuren",
         status: "Status",
@@ -1806,21 +1806,21 @@ const nl = {
         title: "Applicatie koppelaanvraag",
         subTitle: "Aanvraag van {{requester}} om toegang voor samenwerking {{collaboration}} voor applicatie {{service}} toe te staan",
         message: " Motivatie",
-        messageTooltip: "De motivatie van {{name}} voor dit aanvraag",
+        messageTooltip: "De motivatie van {{name}} voor deze aanvraag",
         service: "Applicatie",
         collaboration: "Samenwerking",
         requester: "Aanvrager",
         decline: "Afwijzen",
         accept: "Accepteren",
         retract: "Intrekken",
-        approveConfirmation: "Weet je zeker dat je dit aanvraag wil goedkeuren?",
-        declineConfirmation: "Weet je zeker dat je dit aanvraag wil afwijzen?",
-        deleteConfirmation: "Weet je zeker dat je dit aanvraag wil verwijderen?",
+        approveConfirmation: "Weet je zeker dat je deze aanvraag wil goedkeuren?",
+        declineConfirmation: "Weet je zeker dat je deze aanvraag wil afwijzen?",
+        deleteConfirmation: "Weet je zeker dat je deze aanvraag wil verwijderen?",
         flash: {
             declined: "Applicatiekoppelaanvraag voor {{name}} is afgewezen",
             accepted: "Applicatiekoppelaanvraag voor {{name}} is geaccepteerd",
             deleted: "Applicatiekoppelaanvraag voor {{name}} is verwijderd",
-            notFound: "Dit aanvraag is reeds geaccepteerd/afgewezen."
+            notFound: "Deze aanvraag is reeds geaccepteerd/afgewezen."
         }
     },
     autocomplete: {
@@ -2611,10 +2611,10 @@ const nl = {
         visit: "bezoek de website"
     },
     myRequests: {
-        requestType: "Aanvraag type",
+        requestType: "Aanvraagtype",
         types: {
             joinRequest: "Lidmaatschapsaanvraag",
-            collaborationRequest: "Nieuw samenwerkingsaanvraag",
+            collaborationRequest: "Nieuwe samenwerkingsaanvraag",
             serviceRequest: "Applicatieregistratie",
             serviceConnectionRequest: "Applicatiekoppelaanvraag"
         },
@@ -2678,7 +2678,7 @@ const nl = {
     collaborationsOverview: {
         welcome: "Welkom {{name}}",
         select: "Selecteer je samenwerking",
-        request: "Aanvraag nieuwe samenwerking",
+        request: "Nieuwe samenwerking aanvragen",
         create: "Nieuwe samenwerking aanmaken",
         viewRequests: "bekijk aanvragen",
         open: "Open"
