@@ -953,6 +953,10 @@ export function dbDemoSeed() {
     return fetchJson("/api/system/demo_seed");
 }
 
+export function dbStressSeed() {
+    return fetchJson("/api/system/stress_seed");
+}
+
 export function clearAuditLogs() {
     return fetchDelete("/api/system/clear-audit-logs");
 }

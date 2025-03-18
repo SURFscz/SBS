@@ -13,3 +13,4 @@ freezegun==1.5.1
 coverage==7.6.12
 mock==5.2.0
 pipdeptree==2.25.0
+Faker==37.0.0
