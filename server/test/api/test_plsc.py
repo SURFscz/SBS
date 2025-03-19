@@ -95,19 +95,3 @@ class TestPlsc(AbstractTest):
         self.assertListEqual(["Research", "Support"], sorted(org_harderwijk["units"]))
         co_ai_computing = [co for co in org_harderwijk["collaborations"] if co["name"] == co_ai_computing_name][0]
         self.assertListEqual(["Support"], co_ai_computing["units"])
-
-    def test_ip_ranges_fetch(self):
-        res = self.get("/api/plsc/ip_ranges")
-        self.assertTrue("service_ipranges" in res)
-        self.assertEqual(3, len(res["service_ipranges"]))
-        self.assertTrue("82.217.86.55/24" in res["service_ipranges"])
-        self.assertTrue("2001:1c02:2b2f:be00:1cf0:fd5a:a548:1a16/128" in res["service_ipranges"])
-        self.assertTrue("2001:1c02:2b2f:be01:1cf0:fd5a:a548:1a16/128" in res["service_ipranges"])
-
-    def test_ip_ranges_api_auth(self):
-        res = self.get("/api/plsc/ip_ranges", headers=AUTH_HEADER_READ, with_basic_auth=False,
-                       response_status_code=403)
-        self.assertTrue(res['error'] is True)
-
-        res = self.get("/api/plsc/ip_ranges", headers=AUTH_HEADER_IPADDRESS, with_basic_auth=False)
-        self.assertEqual(3, len(res["service_ipranges"]))

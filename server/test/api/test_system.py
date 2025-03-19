@@ -21,7 +21,7 @@ class TestSystem(AbstractTest):
 
     def test_db_stats(self):
         res = self.get("/api/system/db_stats")
-        self.assertEqual(46, len(res))
+        self.assertEqual(45, len(res))
         # convert list to proper dict:
         stats = {r["name"]: r["count"] for r in res}
         self.assertEqual(len(res), len(stats.keys()))
