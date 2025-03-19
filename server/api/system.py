@@ -183,6 +183,7 @@ def run_demo_seed():
 
     return {}, 201
 
+
 @system_api.route("/stress_seed", strict_slashes=False, methods=["GET"])
 @json_endpoint
 def run_stress_seed():
@@ -199,6 +200,7 @@ def run_stress_seed():
         del os.environ["SEEDING"]
 
     return {}, 201
+
 
 @system_api.route("/scheduled_jobs", strict_slashes=False, methods=["GET"])
 @json_endpoint
