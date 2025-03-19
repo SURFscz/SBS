@@ -50,9 +50,10 @@ def sync_external_service(app, service: Service):
                 service.export_successful = True
                 logger.debug(f"Saved service {service.name} to {url}")
             else:
-                logger.error(f"Error in manage API {service_json}")
-                service.export_successful = False
-        except RequestException:
+                service.export_successful = "No data is changed" in service_json.get("validations", "")
+                if not service.export_successful:
+                    logger.error(f"Error in manage API {service_json}")
+        except RequestException as e:
             logger.error("Error in manage API", exc_info=1)
             service.export_successful = False
 
