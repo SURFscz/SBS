@@ -72,7 +72,6 @@ class TestService(AbstractTest):
     def test_find_by_id_api_call(self):
         service = self.find_entity_by_name(Service, service_scheduler_name)
         service = self.get(f"api/services/{service.id}")
-        self.assertEqual(0, len(service["ip_networks"]))
         self.assertFalse("logo" in service)
 
     def test_find_by_entity_id(self):
@@ -97,9 +96,7 @@ class TestService(AbstractTest):
                 "token_validity_days": "",
                 "privacy_policy": "https://privacy.com",
                 "administrators": ["the@ex.org"],
-                "abbreviation": "12qw$%OOOKaaaaaaaaaaaaaaaaaaaaaaaaaa",
-                "ip_networks": [{"network_value": "2001:1c02:2b2f:be00:1cf0:fd5a:a548:1a16/128"},
-                                {"network_value": "82.217.86.55/24"}]
+                "abbreviation": "12qw$%OOOKaaaaaaaaaaaaaaaaaaaaaaaaaa"
             })
             self.assertTrue(
                 "John Doe invited you to become an admin for application new_application" in outbox[0].html)
@@ -107,8 +104,6 @@ class TestService(AbstractTest):
             self.assertIsNotNone(service["id"])
             self.assertEqual("new_application", service["name"])
             self.assertEqual("qwoookaaaaaaaaaa", service["abbreviation"])
-            self.assertEqual(2, len(service["ip_networks"]))
-            self.assertEqual("2001:1c02:2b2f:be00:1cf0:fd5a:a548:1a16/128", service["ip_networks"][0]["network_value"])
 
     def test_service_new_invalid_logo(self):
         self.login()
@@ -163,13 +158,11 @@ class TestService(AbstractTest):
     def test_service_update(self):
         service = self._find_by_name(service_cloud_name)
         service["name"] = "changed"
-        service["ip_networks"] = [{"network_value": "82.217.86.55/24"}]
         service["ldap_enabled"] = False
 
         self.login("urn:john")
         service = self.put("/api/services", body=service, with_basic_auth=False)
         self.assertEqual("changed", service["name"])
-        self.assertEqual(1, len(service["ip_networks"]))
         rows = db.session.execute(text(f"SELECT ldap_password FROM services where id = {service['id']}"))
         row = next(rows)
         self.assertIsNone(row[0])
@@ -177,7 +170,6 @@ class TestService(AbstractTest):
     def test_service_update_manager_disallowed(self):
         service = self._find_by_name(service_cloud_name)
         service["name"] = "changed"
-        service["ip_networks"] = [{"network_value": "82.217.86.55/24"}]
         service["ldap_enabled"] = False
 
         self.login("urn:betty")  # service manager

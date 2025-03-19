@@ -14,7 +14,7 @@ from server.db.domain import (User, Organisation, OrganisationMembership, Servic
                               CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey,
                               CollaborationRequest, ServiceConnectionRequest, SuspendNotification, Aup,
                               SchacHomeOrganisation, SshKey, ServiceGroup, ServiceInvitation, ServiceMembership,
-                              ServiceAup, UserToken, Tag, PamSSOSession, IpNetwork, ServiceToken,
+                              ServiceAup, UserToken, Tag, PamSSOSession, ServiceToken,
                               ServiceRequest, Unit)
 from server.tools import dt_now, dt_today
 
@@ -577,13 +577,6 @@ def seed(db, app_config, skip_seed=False):
                      service_membership_ssh, service_membership_wireless, service_membership_scheduler,
                      service_membership_demosp, service_membership_demorp, service_membership_monitor,
                      service_membership_empty)
-
-    service_iprange_cloud_v4 = IpNetwork(network_value="82.217.86.55/24", service=cloud)
-    service_iprange_cloud_v6 = IpNetwork(network_value="2001:1c02:2b2f:be00:1cf0:fd5a:a548:1a16/128", service=cloud)
-    service_iprange_wiki_v4 = IpNetwork(network_value="82.217.86.55/24", service=wiki)
-    service_iprange_wiki_v6 = IpNetwork(network_value="2001:1c02:2b2f:be01:1cf0:fd5a:a548:1a16/128", service=wiki)
-    persist_instance(db, service_iprange_cloud_v4, service_iprange_cloud_v6, service_iprange_wiki_v4,
-                     service_iprange_wiki_v6)
 
     uuc.services.append(uuc_scheduler)
     uuc.services.append(wiki)

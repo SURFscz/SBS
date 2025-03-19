@@ -894,12 +894,6 @@ export function auditLogsActivity(limit, tableNames, query) {
     return fetchJson(`/api/audit_logs/activity?${queryString}`);
 }
 
-//IP-networks
-export function ipNetworks(address, id) {
-    const ipQueryParam = id ? `&id=${id}` : "";
-    return fetchJson(`/api/ipaddress/info?address=${address}${ipQueryParam}`, {}, {}, false);
-}
-
 //System
 export function suspendUsers() {
     return postPutJson("/api/system/suspend_users", {}, "PUT");

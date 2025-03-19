@@ -7,7 +7,6 @@ import {
     denyServiceRequest,
     generateOidcClientSecret,
     hintServiceShortName,
-    ipNetworks,
     parseSAMLMetaData,
     serviceAbbreviationExists,
     serviceEntityIdExists,
@@ -25,10 +24,8 @@ import {setFlash} from "../utils/Flash";
 import {commaSeparatedArrayToSelectValues, isEmpty, joinSelectValuesArray, stopEvent} from "../utils/Utils";
 import {sanitizeShortName, validEmailRegExp, validRedirectUrlRegExp, validUrlRegExp} from "../validations/regExps";
 import CheckBox from "../components/CheckBox";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {Chip, Tooltip} from "@surfnet/sds";
+import {Chip} from "@surfnet/sds";
 import UnitHeader from "../components/redesign/UnitHeader";
-import {ReactComponent as TrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 import {AppStore} from "../stores/AppStore";
 import CroppedImageField from "../components/redesign/CroppedImageField";
 import SpinnerField from "../components/redesign/SpinnerField";
@@ -76,7 +73,6 @@ class Service extends React.Component {
         support_email: "",
         security_email: "",
         motivation: "",
-        ip_networks: [],
         administrators: [],
         message: "",
         required: ["name", "entity_id", "abbreviation", "logo", "security_email"],
@@ -249,41 +245,6 @@ class Service extends React.Component {
         }
     };
 
-    validateIpAddress = index => e => {
-        const currentIpNetwork = this.state.ip_networks[index];
-        const address = e.target.value;
-        if (!isEmpty(address)) {
-            ipNetworks(address, currentIpNetwork.id)
-                .then(res => {
-                    const {ip_networks} = this.state;
-                    ip_networks.splice(index, 1, res);
-                    const updatedIpNetworks = [...ip_networks];
-                    this.setState({ip_networks: updatedIpNetworks});
-                });
-        }
-    }
-
-    saveIpAddress = index => e => {
-        const {ip_networks} = this.state;
-        const network = ip_networks[index];
-        network.network_value = e.target.value;
-        ip_networks.splice(index, 1, network)
-        const updatedIpNetworks = [...ip_networks];
-        this.setState({ip_networks: updatedIpNetworks});
-    }
-
-    addIpAddress = () => {
-        const {ip_networks} = this.state;
-        ip_networks.push({network_value: ""});
-        this.setState({ip_networks: [...ip_networks]});
-    }
-
-    deleteIpAddress = index => {
-        const {ip_networks} = this.state;
-        ip_networks.splice(index, 1);
-        this.setState({ip_networks: [...ip_networks]});
-    }
-
     redirectUrlsChanged = selectedOptions => {
         if (selectedOptions === null) {
             this.setState({redirect_urls: [], invalidRedirectUrls: null, invalidRedirectUrlHttpNonLocalHost: false});
@@ -412,7 +373,6 @@ class Service extends React.Component {
             invalidInputs,
             contact_email,
             hasAdministrators,
-            ip_networks,
             connection_type,
             redirect_urls,
             grants, parsedSAMLMetaData
@@ -421,14 +381,13 @@ class Service extends React.Component {
         const {user, isServiceRequest} = this.props;
         const isAdmin = user.admin;
         const contactEmailRequired = (isAdmin && !hasAdministrators && isEmpty(contact_email)) || (isEmpty(contact_email) && isServiceRequest);
-        const invalidIpNetworks = !isAdmin && ip_networks.some(ipNetwork => ipNetwork.error || (ipNetwork.version === 6 && !ipNetwork.global));
         let validConnectionTypeAttributes = true;
         if (connection_type === "openIDConnect" && (isEmpty(redirect_urls) || isEmpty(grants))) {
             validConnectionTypeAttributes = false;
         } else if ((connection_type === "saml2URL" || connection_type === "saml2File") && isEmpty(parsedSAMLMetaData)) {
             validConnectionTypeAttributes = false;
         }
-        return !inValid && !contactEmailRequired && !invalidIpNetworks && validConnectionTypeAttributes;
+        return !inValid && !contactEmailRequired && validConnectionTypeAttributes;
     };
 
     submit = () => {
@@ -443,24 +402,11 @@ class Service extends React.Component {
     doSubmit = () => {
         if (this.isValid()) {
             this.setState({loading: true});
-            const {name, ip_networks, redirect_urls, grants} = this.state;
+            const {name, redirect_urls, grants} = this.state;
             const {isServiceRequest} = this.props;
-            const strippedIpNetworks = ip_networks
-                .filter(network => network.network_value && network.network_value.trim())
-                .map(network => ({network_value: network.network_value, id: network.id}));
-            // Prevent deletion / re-creation of existing IP Network
-            strippedIpNetworks.forEach(network => {
-                if (isEmpty(network.id)) {
-                    delete network.id;
-                } else {
-                    network.id = parseInt(network.id, 10)
-                }
-            });
             const joinedRedirectUrls = joinSelectValuesArray(redirect_urls);
             const joinedGrants = joinSelectValuesArray(grants);
-            this.setState({
-                ip_networks: strippedIpNetworks, redirect_urls: joinedRedirectUrls, grants: joinedGrants
-            }, () => {
+            this.setState({ redirect_urls: joinedRedirectUrls, grants: joinedGrants }, () => {
                 if (isServiceRequest) {
                     createServiceRequest(this.state)
                         .then(res => this.afterUpdate(name, res, isServiceRequest))
@@ -506,42 +452,6 @@ class Service extends React.Component {
         }
     };
 
-    renderIpNetworks = (ip_networks, isAdmin, isServiceAdmin) => {
-        return (<div className="ip-networks">
-            <label className="title" htmlFor={I18n.t("service.network")}>{I18n.t("service.network")}
-                <Tooltip tip={I18n.t("service.networkTooltip")}/>
-                {(isAdmin || isServiceAdmin) &&
-                    <span className="add-network" onClick={() => this.addIpAddress()}><FontAwesomeIcon
-                        icon="plus"/></span>}
-            </label>
-            {ip_networks.map((network, i) => <div className="network-container" key={i}>
-                <div className="network">
-                    <InputField value={network.network_value}
-                                onChange={this.saveIpAddress(i)}
-                                onBlur={this.validateIpAddress(i)}
-                                placeholder={I18n.t("service.networkPlaceholder")}
-                                error={network.error || network.syntax || (network.higher && !network.global && network.version === 6)}
-
-                                onEnter={e => {
-                                    this.validateIpAddress(i);
-                                    e.target.blur()
-                                }}
-                    />
-                    {(isAdmin || isServiceAdmin) && <span className="trash" onClick={() => this.deleteIpAddress(i)}>
-                            <TrashIcon/>
-                        </span>}
-                </div>
-                {(network.error && !network.syntax && !network.reserved) &&
-                    <ErrorIndicator msg={I18n.t("service.networkError", network)}/>}
-                {network.syntax && <ErrorIndicator msg={I18n.t("service.networkSyntaxError")}/>}
-                {network.reserved && <ErrorIndicator msg={I18n.t("service.networkReservedError", network)}/>}
-                {network.higher && <span className="network-info">{I18n.t("service.networkInfo", network)}</span>}
-                {(network.higher && network.version === 6 && !network.global) &&
-                    <ErrorIndicator msg={I18n.t("service.networkNotGlobal")}/>}
-            </div>)}
-        </div>);
-    }
-
     onChangeConnectionType = value => {
         this.setState({connection_type: value});
         const {manage_enabled} = this.props.config;
@@ -572,7 +482,7 @@ class Service extends React.Component {
                         automatic_connection_allowed, access_allowed_for_all, non_member_users_access_allowed,
                         contact_email, support_email, security_email, invalidInputs, contactEmailRequired,
                         accepted_user_policy, uri_info, privacy_policy, service, disabledSubmit, allow_restricted_orgs,
-                        token_enabled, pam_web_sso_enabled, token_validity_days, config, ip_networks, administrators,
+                        token_enabled, pam_web_sso_enabled, token_validity_days, config, administrators,
                         message, logo, isServiceAdmin, providing_organisation, connection_type, redirect_urls,
                         grants, is_public_client, saml_metadata_url, samlMetaDataFile, comments, isServiceRequestDetails,
                         disableEverything, ldap_identifier, parsedSAMLMetaData, parsedSAMLMetaDataError, parsedSAMLMetaDataURLError,
@@ -968,8 +878,6 @@ class Service extends React.Component {
             {!isServiceRequest && <div className="ldap">
                 <h2 className="section-separator first">{I18n.t("service.ldap.section")}</h2>
 
-                {this.renderIpNetworks(ip_networks, !isServiceRequest, isServiceAdmin)}
-
                 <InputField value={config.ldap_url}
                             name={I18n.t("service.ldap.url")}
                             toolTip={I18n.t("service.ldap.urlTooltip")}
@@ -1136,7 +1044,6 @@ class Service extends React.Component {
             token_enabled,
             pam_web_sso_enabled,
             token_validity_days,
-            ip_networks,
             administrators,
             message,
             isServiceAdmin,
@@ -1191,7 +1098,7 @@ class Service extends React.Component {
                     uri, automatic_connection_allowed, access_allowed_for_all, non_member_users_access_allowed, contact_email,
                     support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, uri_info,
                     privacy_policy, service, disabledSubmit, allow_restricted_orgs, token_enabled, pam_web_sso_enabled,
-                    token_validity_days, config, ip_networks, administrators, message, logo, isServiceAdmin, providing_organisation,
+                    token_validity_days, config, administrators, message, logo, isServiceAdmin, providing_organisation,
                     connection_type, redirect_urls, grants, is_public_client, saml_metadata_url, samlMetaDataFile, comments,
                     isServiceRequestDetails, disableEverything, ldap_identifier, parsedSAMLMetaData, parsedSAMLMetaDataError,
                     parsedSAMLMetaDataURLError, oidc_client_secret, invalidRedirectUrls, invalidRedirectUrlHttpNonLocalHost)}

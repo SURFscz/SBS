@@ -602,7 +602,6 @@ class Service(Base, db.Model, LogoMixin, SecretMixin):
         db.relationship("Organisation",
                         secondary=automatic_connection_allowed_organisations_services_association,
                         lazy="select")
-    ip_networks = db.relationship("IpNetwork", cascade="all, delete-orphan", passive_deletes=True)
     service_connection_requests = db.relationship("ServiceConnectionRequest", back_populates="service",
                                                   cascade="all, delete-orphan", passive_deletes=True)
     service_groups = db.relationship("ServiceGroup", back_populates="service", cascade="all, delete-orphan",
@@ -890,19 +889,6 @@ class ServiceConnectionRequest(Base, db.Model):
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
-
-
-class IpNetwork(Base, db.Model):
-    __tablename__ = "ip_networks"
-    metadata = metadata
-    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
-    network_value = db.Column("network_value", db.Text(), nullable=False)
-    service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
-    service = db.relationship("Service", back_populates="ip_networks")
-    created_by = db.Column("created_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
-                           nullable=False)
-    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
 
 
 class SchacHomeOrganisation(Base, db.Model):

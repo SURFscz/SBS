@@ -4,7 +4,6 @@ import {
     createServiceToken,
     deleteService,
     deleteServiceToken,
-    ipNetworks,
     parseSAMLMetaData,
     requestDeleteService,
     resetLdapPassword,
@@ -42,7 +41,6 @@ import {
     validRedirectUrlRegExp,
     validUrlRegExp
 } from "../validations/regExps";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Tooltip} from "@surfnet/sds";
 import DOMPurify from "dompurify";
 import {ReactComponent as ChevronLeft} from "../icons/chevron-left.svg";
@@ -69,7 +67,7 @@ class ServiceOverview extends React.Component {
             .map(val => ({value: val, label: I18n.t(`service.grants.${val}`)}));
 
         this.state = {
-            service: {ip_networks: []},
+            service: {},
             required: ["name", "entity_id", "abbreviation", "logo", "security_email"],
             alreadyExists: {},
             invalidInputs: {},
@@ -90,7 +88,6 @@ class ServiceOverview extends React.Component {
             tokenType: null,
             description: "",
             hashedToken: null,
-            validatingNetwork: false,
             initial: true,
             sweepSuccess: null,
             sweepResults: null,
@@ -123,7 +120,6 @@ class ServiceOverview extends React.Component {
         service.redirect_urls = commaSeparatedArrayToSelectValues(service.redirect_urls);
         service.grants = commaSeparatedArrayToSelectValues(service.grants);
         this.validateService(service, () => {
-            service.ip_networks = service.ip_networks.filter(ipNetwork => !isEmpty(ipNetwork.network_value));
             this.setState({
                 service: {...service},
                 hasAdministrators: service.service_memberships.length > 0,
@@ -133,7 +129,7 @@ class ServiceOverview extends React.Component {
                 originalSCIMConfiguration: {scim_bearer_token: service.scim_bearer_token, scim_url: service.scim_url},
                 loading: false
             }, () => {
-                const {ip_networks, saml_enabled, saml_metadata, saml_metadata_url} = this.state.service;
+                const {saml_enabled, saml_metadata, saml_metadata_url} = this.state.service;
                 if (user.admin && !showServiceAdminView) {
                     allCRMOrganisations().then(organisations => this.setState({
                         crmOrganisations: organisations.map(org => ({
@@ -141,15 +137,6 @@ class ServiceOverview extends React.Component {
                             value: org.id
                         }))
                     }))
-                }
-                if (isEmpty(ip_networks)) {
-                    this.addIpAddress();
-                } else {
-                    Promise.all(ip_networks.map(n => ipNetworks(n.network_value, n.id)))
-                        .then(res => {
-                            const currentService = this.state.service;
-                            this.setState({"service": {...currentService, "ip_networks": res}});
-                        });
                 }
                 if (saml_enabled && (!isEmpty(saml_metadata) || !isEmpty(saml_metadata_url))) {
                     parseSAMLMetaData(saml_metadata, saml_metadata_url)
@@ -441,41 +428,6 @@ class ServiceOverview extends React.Component {
         }
     };
 
-    validateIpAddress = index => e => {
-        this.setState({validatingNetwork: true});
-        const currentIpNetwork = this.state.service.ip_networks[index];
-        const address = e.target.value;
-        if (!isEmpty(address)) {
-            ipNetworks(address, currentIpNetwork.id)
-                .then(res => {
-                    this.setState({validatingNetwork: false});
-                    const {ip_networks} = this.state.service;
-                    ip_networks.splice(index, 1, res);
-                    this.setState({...this.state.service, ip_networks: [...ip_networks]});
-                }).catch(() => this.setState({validatingNetwork: false}));
-        }
-    }
-
-    saveIpAddress = index => e => {
-        const {ip_networks} = this.state.service;
-        const network = ip_networks[index];
-        network.network_value = e.target.value;
-        ip_networks.splice(index, 1, network)
-        this.setState({...this.state.service, ip_networks: [...ip_networks]});
-    }
-
-    addIpAddress = () => {
-        const {ip_networks} = this.state.service;
-        ip_networks.push({network_value: ""});
-        this.setState({...this.state.service, ip_networks: [...ip_networks]});
-    }
-
-    deleteIpAddress = index => {
-        const {ip_networks} = this.state.service;
-        ip_networks.splice(index, 1);
-        this.setState({...this.state.service, ip_networks: [...ip_networks]});
-    }
-
     onFileUpload = e => {
         const files = e.target.files;
         if (!isEmpty(files)) {
@@ -570,25 +522,23 @@ class ServiceOverview extends React.Component {
             invalidInputs,
             hasAdministrators,
             service,
-            validatingNetwork,
             initial,
             invalidRedirectUrls
         } = this.state;
         const {manage_enabled} = this.props.config;
         const {
-            contact_email, ip_networks, scim_enabled, scim_url, saml_enabled, saml_metadata, saml_metadata_url,
+            contact_email, scim_enabled, scim_url, saml_enabled, saml_metadata, saml_metadata_url,
             oidc_enabled, redirect_urls, grants, providing_organisation
         } = service;
         const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(service[attr])) || Object.keys(invalidInputs).some(key => invalidInputs[key]);
         const contactEmailRequired = !hasAdministrators && isEmpty(contact_email);
-        const invalidIpNetworks = ip_networks.some(ipNetwork => ipNetwork.error || (ipNetwork.version === 6 && !ipNetwork.global));
         const scimInvalid = scim_enabled && !initial && isEmpty(scim_url);
         const oidcValid = !manage_enabled || !oidc_enabled ||
             (!isEmpty(redirect_urls) && isEmpty(invalidRedirectUrls) && !isEmpty(grants) && !isEmpty(providing_organisation));
         const samlValid = !manage_enabled || !saml_enabled ||
             (!isEmpty(saml_metadata) || !isEmpty(saml_metadata_url));
 
-        const valid = !inValid && !contactEmailRequired && !invalidIpNetworks && !validatingNetwork && !scimInvalid &&
+        const valid = !inValid && !contactEmailRequired && !scimInvalid &&
             oidcValid && samlValid;
         return valid;
     };
@@ -660,11 +610,10 @@ class ServiceOverview extends React.Component {
     isValidTab = tab => {
         const {alreadyExists, invalidInputs, hasAdministrators, service, initial, invalidRedirectUrls} = this.state;
         const {
-            contact_email, ip_networks, redirect_urls, saml_metadata, saml_metadata_url, providing_organisation,
+            contact_email, redirect_urls, saml_metadata, saml_metadata_url, providing_organisation,
             oidc_enabled, saml_enabled, grants
         } = service;
         const contactEmailRequired = !hasAdministrators && isEmpty(contact_email);
-        const invalidIpNetworks = ip_networks.some(ipNetwork => ipNetwork.error || (ipNetwork.version === 6 && !ipNetwork.global));
 
         switch (tab) {
             case "general":
@@ -678,7 +627,7 @@ class ServiceOverview extends React.Component {
             case "SCIMClient":
                 return true;
             case "ldap":
-                return !invalidIpNetworks;
+                return true;
             case "tokens":
                 return true;
             case "pamWebLogin":
@@ -745,23 +694,11 @@ class ServiceOverview extends React.Component {
                     });
                 } else {
                     this.setState({loading: true});
-                    const {name, ip_networks, redirect_urls, grants} = service;
-                    const strippedIpNetworks = ip_networks
-                        .filter(network => network.network_value && network.network_value.trim())
-                        .map(network => ({network_value: network.network_value, id: network.id}));
-                    // Prevent deletion / re-creation of existing IP Network
-                    strippedIpNetworks.forEach(network => {
-                        if (isEmpty(network.id)) {
-                            delete network.id;
-                        } else {
-                            network.id = parseInt(network.id, 10)
-                        }
-                    });
+                    const {name, redirect_urls, grants} = service;
                     ["entity_id"].forEach(attr => service[attr] = service[attr] ? service[attr].trim() : null)
                     this.setState({
                         service: {
                             ...service,
-                            ip_networks: strippedIpNetworks,
                             sweep_scim_daily_rate: service.sweep_scim_daily_rate ? service.sweep_scim_daily_rate.value : 0,
                             redirect_urls: joinSelectValuesArray(redirect_urls),
                             grants: joinSelectValuesArray(grants)
@@ -1253,42 +1190,6 @@ class ServiceOverview extends React.Component {
                                 copyClipBoard={true}
                                 disabled={true}/>
                     <div className="ip-networks">
-                        <label className="title" htmlFor={I18n.t("service.network")}>{I18n.t("service.network")}
-                            <Tooltip tip={I18n.t("service.networkTooltip")}/>
-                            {(isAdmin || isServiceAdmin) &&
-                                <span className="add-network" onClick={() => this.addIpAddress()}><FontAwesomeIcon
-                                    icon="plus"/></span>}
-                        </label>
-                        {service.ip_networks.map((network, i) => <div className="network-container" key={i}>
-                            <div className="network">
-                                <InputField value={network.network_value}
-                                            onChange={this.saveIpAddress(i)}
-                                            onBlur={this.validateIpAddress(i)}
-                                            placeholder={I18n.t("service.networkPlaceholder")}
-                                            error={network.error || network.syntax || (network.higher && !network.global && network.version === 6)}
-                                            disabled={!isAdmin && !isServiceAdmin}
-                                            onEnter={e => {
-                                                this.validateIpAddress(i);
-                                                e.target.blur()
-                                            }}
-                                            required={true}
-                                />
-                                {(isAdmin || isServiceAdmin) &&
-                                    <span className="trash" onClick={() => this.deleteIpAddress(i)}>
-                                    <ThrashIcon/>
-                            </span>}
-                            </div>
-                            {(network.error && !network.syntax && !network.reserved) &&
-                                <ErrorIndicator msg={I18n.t("service.networkError", network)}/>}
-                            {network.syntax && <ErrorIndicator msg={I18n.t("service.networkSyntaxError")}/>}
-                            {network.reserved &&
-                                <ErrorIndicator msg={I18n.t("service.networkReservedError", network)}/>}
-                            {network.higher &&
-                                <span className="network-info">{I18n.t("service.networkInfo", network)}</span>}
-                            {(network.higher && network.version === 6 && !network.global) &&
-                                <ErrorIndicator msg={I18n.t("service.networkNotGlobal")}/>}
-
-                        </div>)}
                         {(ldap_enabled) &&
                             <div className="add-token-link">
                                 <span>{I18n.t("service.ldap.preTitle")}
@@ -1806,31 +1707,31 @@ class ServiceOverview extends React.Component {
         const isAdmin = user.admin;
         return (
             <div className="service-overview">
-            <ConfirmationDialog isOpen={confirmationDialogOpen}
-                                cancel={cancelDialogAction}
-                                cancelButtonLabel={cancelButtonLabel}
-                                isWarning={warning}
-                                largeWidth={!isEmpty(tokenValue) || scimTokenChange}
-                                confirmationTxt={confirmationTxt}
-                                disabledConfirm={scimTokenChange && isEmpty(scimBearerToken)}
-                                confirmationHeader={confirmationHeader}
-                                confirm={confirmationDialogAction}
-                                question={confirmationDialogQuestion}>
-                {ldapPassword && this.renderLdapPassword(ldapPassword)}
-                {oidcClientSecret && this.renderOidcClientSecret(oidcClientSecret)}
-                {!isEmpty(sweepSuccess) && this.renderScimResults(service, sweepSuccess, sweepResults)}
-                {scimTokenChange && this.renderScimTokenChange(scimBearerToken)}
-            </ConfirmationDialog>
+                <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                    cancel={cancelDialogAction}
+                                    cancelButtonLabel={cancelButtonLabel}
+                                    isWarning={warning}
+                                    largeWidth={!isEmpty(tokenValue) || scimTokenChange}
+                                    confirmationTxt={confirmationTxt}
+                                    disabledConfirm={scimTokenChange && isEmpty(scimBearerToken)}
+                                    confirmationHeader={confirmationHeader}
+                                    confirm={confirmationDialogAction}
+                                    question={confirmationDialogQuestion}>
+                    {ldapPassword && this.renderLdapPassword(ldapPassword)}
+                    {oidcClientSecret && this.renderOidcClientSecret(oidcClientSecret)}
+                    {!isEmpty(sweepSuccess) && this.renderScimResults(service, sweepSuccess, sweepResults)}
+                    {scimTokenChange && this.renderScimTokenChange(scimBearerToken)}
+                </ConfirmationDialog>
 
-            {this.sidebar(currentTab, config.manage_enabled, isAdmin)}
-            <div className={`service ${createNewServiceToken ? "no-grid" : ""}`}>
-                <h2 className="section-separator">{I18n.t(`serviceDetails.toc.${currentTab}`)}</h2>
-                {this.renderCurrentTab(config, currentTab, service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit,
-                    invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken, initial, crmOrganisations)}
-                {this.renderButtons(isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView,
-                    createNewServiceToken, service, invalidInputs)}
-            </div>
-        </div>);
+                {this.sidebar(currentTab, config.manage_enabled, isAdmin)}
+                <div className={`service ${createNewServiceToken ? "no-grid" : ""}`}>
+                    <h2 className="section-separator">{I18n.t(`serviceDetails.toc.${currentTab}`)}</h2>
+                    {this.renderCurrentTab(config, currentTab, service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit,
+                        invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken, initial, crmOrganisations)}
+                    {this.renderButtons(isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView,
+                        createNewServiceToken, service, invalidInputs)}
+                </div>
+            </div>);
     }
 
 }

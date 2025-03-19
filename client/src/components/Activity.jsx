@@ -66,8 +66,7 @@ export default class Activity extends React.PureComponent {
             "organisations",
             "api_keys",
             "service_groups",
-            "ssh_keys",
-            "ip_networks"];
+            "ssh_keys"];
         if (isService) {
             includePropertiesTargets.push("services");
         } else {

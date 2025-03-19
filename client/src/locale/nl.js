@@ -731,16 +731,8 @@ const nl = {
         organisations: "Organisaties",
         sbs: "Applicatie",
         collaborations: "Samenwerkingen",
-        network: "IP-ranges",
         addSSHKey: "Upload een SSH-sleutel",
         addSSHKeyManually: "Voeg handmatig een SSH-sleutel toe",
-        networkTooltip: "Configureer je IP-bereiken voor deze applicatie. Je kunt IPv4 en IPv6 network ranges toevoegen. " +
-            "Bijvoorbeeld: <ul>" +
-            "<li>Enkelvoudig IPv4-adres 198.51.100.12 waar een /32 is aangenomen</li>" +
-            "<li>IPv4-bereik 198.51.100.0/24. Maximaal toegestane omvang subnet voor IPv4 is een /24</li>" +
-            "<li>IPv6-bereik 2001:db8:f00f:bab::/64. Maximaal toegestane omvang subnet voor IPv6 is een /64</li>" +
-            "</ul> ",
-        networkExplanation: "Informeer de applicatieaanbieders vanaf welke IP-adressen je hun applicatie gebruikt. De applicatieaanbieders kunnen je IP-adressen toegang geven als ze dit ondersteunen.",
         deleteHeader: "Verwijder je profiel",
         deleteDisclaimer: "Als je je profiel verwijdert, worden ook al je lidmaatschappen en beheerrollen verwijderd. Dit kan niet ongedaan worden gemaakt."
     },
@@ -982,19 +974,6 @@ const nl = {
         accepted_user_policy: "Acceptable use policy URL",
         accepted_user_policyPlaceholder: "De acceptable use policy (AUP) van de applicatie",
         accepted_user_policyTooltip: "Een acceptable use policy (AUP) is een document waarin staat wat een gebruiker wel en niet mag/hoort te doen en waarmee de gebruiker akkoord moet gaan om toegang te krijgen tot een applicatie of systeem.",
-        network: "ACL IP-ranges",
-        networkTooltip: "De IP-reeksen die deze applicatie gebruikt om de LDAP-server van het platform te bereiken. Zowel IPv4- als IPv6-bereiken zijn toegestaan. " +
-            "Bijvoorbeeld: <ul>" +
-            "<li>Enkelvoudig IPv4-adres 198.51.100.12 waarbij een /32 wordt aangenomen</li>" +
-            "<li>IPv4-bereik 198.51.100.0/24. Maximaal toegestane omvang subnet voor IPv4 is een /24</li>" +
-            "<li>IPv6-bereik 2001:db8:f00f:bab::/64. Maximaal toegestane omvang subnet voor IPv6 is een /64</li>" +
-            "</ul> ",
-        networkPlaceholder: "IPv4-of IPv6-adres met optioneel subnet",
-        networkError: "Die {{prefix}} subnetomvang is niet toegestaan. Maximaal toegestane prefix voor IPv{{version}} is {{max}}",
-        networkSyntaxError: "Dit is geen geldig IPv4- of IPv6-adres",
-        networkReservedError: "Dit is een gereserveerd IPv{{version}}-adres",
-        networkNotGlobal: "Alleen globale unicast-adressen kunnen worden ingevoerd",
-        networkInfo: "Laagste IP: {{lower}}, hoogste IP: {{higher}}, # adressen: {{num_addresses}}, versie: IPv{{version}}",
         automaticConnectionAllowed: "Samenwerkingen mogen koppelen zonder jouw toestemming",
         automaticConnectionAllowedTooltip: "Indien ingeschakeld mag een samenwerking deze applicatie koppelen zonder toestemming van de applicatieeigenaar (jou). Er wordt dan geen koppelaanvraag ter goedkeuring voorgelegd.",
         automaticConnectionAllowedOrganisations: "Vertrouwde / je eigen organisaties",
@@ -1886,7 +1865,6 @@ const nl = {
             "services_collaborations": "Applicatie",
             "service_requests": "Applicatieregistratie",
             "users": "Gebruiker",
-            "ip_networks": "IP-netwerk",
             "suspend_notifications": "Loginnotificatie",
             "schac_home_organisations": "Schac home organisations",
             "user_names_history": "Username history",

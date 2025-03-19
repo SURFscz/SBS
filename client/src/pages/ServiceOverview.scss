@@ -95,7 +95,7 @@ section.dialog-content {
             flex-direction: column;
         }
 
-        .input-field, .radio-button-container, .actions, div.checkbox, .select-field, .ip-networks, span.error,
+        .input-field, .radio-button-container, .actions, div.checkbox, .select-field, span.error,
         div.email-invitations, div.compliance, div.ldap, div.contacts, div.tokens, div.actions-container {
             grid-column-start: first;
         }
@@ -138,71 +138,6 @@ section.dialog-content {
 
         div.ip-networks {
             margin-top: 15px;
-
-            label.title {
-                display: flex;
-                align-items: center;
-                margin: 12px 0 6px 0;
-                min-width: 210px;
-                color: black;
-                position: relative;
-                font-weight: bold;
-            }
-
-            span.tool-tip-section {
-                font-size: 14px;
-                color: $lighter-grey;
-                cursor: pointer;
-                padding: 0 4px;
-
-                &:hover {
-                    color: darken($light-blue, 20%);
-                }
-            }
-
-            span.add-network {
-                color: $blue;
-                cursor: pointer;
-                padding: 0 4px;
-                font-size: 22px;
-                display: inline-block;
-                margin-left: auto;
-                margin-right: 10px;
-
-                &:hover {
-                    color: darken($blue, 10%);
-                }
-            }
-
-            .network-container {
-                margin-top: 15px;
-            }
-
-            .network {
-                position: relative;
-
-                span.trash {
-                    position: absolute;
-                    right: 10px;
-                    top: 14px;
-                    cursor: pointer;
-                    padding: 0 4px;
-                    font-size: 22px;
-                    display: inline-block;
-                    margin-left: 25px;
-
-                    &:hover {
-                        color: var(--sds--color--red--400);
-                    }
-                }
-            }
-
-            span.network-info {
-                font-style: italic;
-                font-size: 14px;
-                display: inline-block;
-                margin-top: 2px;
-            }
         }
 
         .required-marker {

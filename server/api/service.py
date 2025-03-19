@@ -7,7 +7,6 @@ from sqlalchemy.orm import load_only, selectinload
 from werkzeug.exceptions import Forbidden, BadRequest
 
 from server.api.base import json_endpoint, query_param, emit_socket
-from server.api.ipaddress import validate_ip_networks
 from server.api.service_invitation import service_invitations_by_email
 from server.auth.secrets import generate_token, generate_password_with_hash
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
@@ -291,15 +290,12 @@ def service_by_id(service_id):
             .options(selectinload(Service.service_invitations).selectinload(ServiceInvitation.user)) \
             .options(selectinload(Service.allowed_organisations)) \
             .options(selectinload(Service.automatic_connection_allowed_organisations)) \
-            .options(selectinload(Service.ip_networks)) \
             .options(selectinload(Service.service_tokens)) \
             .options(selectinload(Service.service_groups))
         service = query.filter(Service.id == service_id).one()
     else:
         service = query.filter(Service.id == service_id).one()
     if api_call:
-        query = query \
-            .options(selectinload(Service.ip_networks))
         service = query.filter(Service.id == service_id).one()
         res = jsonify(service).json
         del res["logo"]
@@ -380,7 +376,6 @@ def save_service():
     confirm_write_access()
     data = current_request.get_json()
 
-    validate_ip_networks(data)
     valid_uri_attributes(data, URI_ATTRIBUTES)
     _token_validity_days(data)
 
@@ -393,7 +388,7 @@ def save_service():
     administrators = data.get("administrators", [])
     message = data.get("message", None)
     data["connection_setting"] = "NO_ONE_ALLOWED"
-    res = save(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
+    res = save(Service, custom_json=data, allow_child_cascades=False)
     service = res[0]
 
     sync_external_service(current_app, service)
@@ -415,7 +410,6 @@ def save_service():
         }, service, [administrator])
 
     mail_platform_admins(service)
-    service.ip_networks
     return res
 
 
@@ -574,7 +568,6 @@ def update_service():
     service_id = data["id"]
     confirm_service_admin(service_id)
 
-    validate_ip_networks(data)
     valid_uri_attributes(data, URI_ATTRIBUTES)
     _token_validity_days(data)
     cleanse_short_name(data, "abbreviation")
@@ -613,7 +606,7 @@ def update_service():
         data["sweep_remove_orphans"] = False
         data["sweep_scim_daily_rate"] = None
 
-    res = update(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
+    res = update(Service, custom_json=data, allow_child_cascades=False)
     service = res[0]
 
     sync_external_service(current_app, service)
@@ -621,8 +614,6 @@ def update_service():
     if scim_url_changed and scim_enabled:
         service.scim_bearer_token = plain_bearer_token
         encrypt_scim_bearer_token(service)
-
-    service.ip_networks
 
     emit_socket(f"service_{service_id}")
 
