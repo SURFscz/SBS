@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision b070687330e8 (head)
+-- Dump of empty SBS database, alembic revision 9ec140457920 (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('b070687330e8');
+INSERT INTO `alembic_version` VALUES ('9ec140457920');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_key_units`;
@@ -435,27 +435,6 @@ CREATE TABLE `invitations` (
 LOCK TABLES `invitations` WRITE;
 /*!40000 ALTER TABLE `invitations` DISABLE KEYS */;
 /*!40000 ALTER TABLE `invitations` ENABLE KEYS */;
-UNLOCK TABLES;
-DROP TABLE IF EXISTS `ip_networks`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `ip_networks` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `network_value` text NOT NULL,
-  `service_id` int(11) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `created_by` varchar(255) NOT NULL,
-  `updated_by` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `service_id` (`service_id`),
-  CONSTRAINT `ip_networks_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-LOCK TABLES `ip_networks` WRITE;
-/*!40000 ALTER TABLE `ip_networks` DISABLE KEYS */;
-/*!40000 ALTER TABLE `ip_networks` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `join_requests`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
