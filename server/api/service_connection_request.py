@@ -3,12 +3,13 @@ from sqlalchemy.orm import contains_eager, load_only
 from werkzeug.exceptions import BadRequest, Forbidden
 
 from server.api.base import json_endpoint, emit_socket
-from server.db.defaults import STATUS_DENIED, STATUS_APPROVED, STATUS_OPEN
 from server.api.collaborations_services import connect_service_collaboration
 from server.auth.secrets import generate_token
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_write_access, \
-    is_application_admin, is_organisation_admin, is_service_admin_or_manager, confirm_service_manager
+    is_application_admin, is_organisation_admin, is_service_admin_or_manager, confirm_service_manager, \
+    has_org_manager_unit_access
 from server.db.activity import update_last_activity_date
+from server.db.defaults import STATUS_DENIED, STATUS_APPROVED, STATUS_OPEN
 from server.db.domain import ServiceConnectionRequest, Service, Collaboration, db, User
 from server.db.models import delete
 from server.mail import mail_service_connection_request, mail_accepted_declined_service_connection_request
@@ -20,14 +21,14 @@ service_connection_request_api = Blueprint("service_connection_request_api", __n
 def _service_connection_request_pending_organisation_approval(service_connection_request: ServiceConnectionRequest):
     service = service_connection_request.service
     collaboration = service_connection_request.collaboration
-    organisation = collaboration.organisation
+    user_id = current_user_id()
 
-    if not (is_organisation_admin(organisation.id) or is_application_admin()):
+    if not has_org_manager_unit_access(user_id, collaboration, org_manager_allowed=True):
         raise Forbidden(f"Not allowed to approve / decline service_connection_request for service {service.entity_id}")
 
     service_connection_request.pending_organisation_approval = False
     db.session.merge(service_connection_request)
-    user = db.session.get(User, current_user_id())
+    user = db.session.get(User, user_id)
     _do_send_mail(collaboration, service, service_connection_request, user, False)
 
     emit_socket(f"service_{service.id}", include_current_user_id=True)
@@ -62,8 +63,9 @@ def _do_send_mail(collaboration, service, service_connection_request, user, pend
 
 def _do_service_connection_request(approved):
     json_data = current_request.get_json()
-    id = int(json_data.get("id"))
-    service_connection_request = ServiceConnectionRequest.query.filter(ServiceConnectionRequest.id == id).one()
+    service_connection_request_id = int(json_data.get("id"))
+    service_connection_request = ServiceConnectionRequest.query \
+        .filter(ServiceConnectionRequest.id == service_connection_request_id).one()
 
     pending_on_org = service_connection_request.pending_organisation_approval
     service = service_connection_request.service

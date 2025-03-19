@@ -1281,7 +1281,7 @@ const nl = {
         collaborationCreationAllowed: "Gebruikers kunnen zonder goedkeuring een samenwerking aanmaken",
         collaborationCreationAllowedTooltip: "Sta toe dat gebruikers van de organisatie samenwerkingen aanmaken zonder goedkeuring van de organisatiebeheerder of -manager",
         serviceConnectionRequiresApproval: "Het koppelen van deze applicatie moet worden goedgekeurd door een organisatiebeheerder of -manager",
-        serviceConnectionRequiresApprovalTooltip: "Indien geselecteerd, dan moet een aanvraag voor een applicatie koppeling eerst worden goedgekeurd door de organisatie beheerder",
+        serviceConnectionRequiresApprovalTooltip: "Indien geselecteerd, dan moet een aanvraag voor een applicatie koppeling eerst worden goedgekeurd door de organisatie beheerder of -manager",
         accepted_user_policyPlaceholder: "De acceptable use policy (AUP) van de organisatie.",
         accepted_user_policyTooltip: "Gebruikers van buiten de organsatie moeten deze AUP accepteren wanneer ze voor het eerste lid worden van een samenwerking van deze organisatie.",
         crmId: "Organisatie (CRM ID)",

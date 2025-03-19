@@ -117,9 +117,18 @@ class TestServiceConnectionRequest(AbstractTest):
             .filter(ServiceConnectionRequest.hash == service_connection_request_ssh_hash).one().id
         # CO admin not allowed to approve
         self.login("urn:sarah")
-        self.put("/api/service_connection_requests/approve/",
+        self.put("/api/service_connection_requests/approve",
                  body={"id": request_id},
                  response_status_code=403)
+
+    def test_approve_service_connection_request_allowed_for_org_manager(self):
+        request_id = ServiceConnectionRequest.query \
+            .filter(ServiceConnectionRequest.hash == service_connection_request_ssh_hash).one().id
+        # ORG manager allowed to approve
+        self.login("urn:paul")
+        self.put("/api/service_connection_requests/approve",
+                 body={"id": request_id},
+                 response_status_code=201)
 
     def test_approve_service_connection_request_pending_org(self):
         service = self.find_entity_by_name(Service, service_ssh_name)
