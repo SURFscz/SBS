@@ -29,6 +29,10 @@ def proxy_authz_edu_teams():
     return do_authz_proxy(True)
 
 
+# TODO move to a separate file and don't worry for too much duplicate code. there are too many subtle differences
+# Also the client flow and code can NOT be equal for the two flows. Need to differentiate for that based on query params
+# See https://github.com/OpenConext/OpenConext-engineblock/issues/1804
+
 # Endpoint for EB
 @user_saml_api.route("/proxy_authz_eb", methods=["POST"], strict_slashes=False)
 @json_endpoint
