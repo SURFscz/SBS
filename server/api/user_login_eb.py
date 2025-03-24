@@ -1,60 +1,73 @@
+import uuid
 from urllib.parse import urlencode
 
-from flask import Blueprint, current_app, request as current_request
+from flask import Blueprint, current_app, request as current_request, redirect, session
+from werkzeug.exceptions import Forbidden
 
 from server import tools
-from server.api.base import json_endpoint, send_error_mail
+from server.api.base import json_endpoint, send_error_mail, query_param
 from server.api.service_aups import has_agreed_with
-from server.auth.mfa import user_requires_sram_mfa
+from server.auth.mfa import user_requires_sram_mfa, store_user_in_session
 from server.auth.service_access import has_user_access_to_service, collaboration_memberships_for_service
 from server.auth.user_claims import user_memberships, co_tags
 from server.auth.user_codes import UserCode
 from server.db.db import db
 from server.db.defaults import PROXY_AUTHZ
-from server.db.domain import User, Service
+from server.db.domain import User, Service, UserNonce
 from server.db.models import log_user_login
 from server.logger.context_logger import ctx_logger
 
-user_saml_api = Blueprint("user_saml_api", __name__, url_prefix="/api/users")
+user_login_eb = Blueprint("user_login_eb", __name__, url_prefix="/api/users")
 
 
-# Endpoint for eduTEAMS
-@user_saml_api.route("/proxy_authz", methods=["POST"], strict_slashes=False)
+# Endpoint for EB
+@user_login_eb.route("/authz_eb", methods=["POST"], strict_slashes=False)
 @json_endpoint
-def proxy_authz_edu_teams():
+def proxy_authz_eb():
+    authorization_header = current_request.headers.get("Authorization")
+    eb_api_token = current_app.app_config.engine_block.api_token
+    if eb_api_token != authorization_header:
+        raise Forbidden("Invalid authorization_header")
+
     json_dict = current_request.get_json()
     uid = json_dict["user_id"]
     service_entity_id = json_dict["service_id"].lower()
     issuer_id = json_dict["issuer_id"]
+    continue_url = json_dict["continue_url"]
+
+    logger = ctx_logger("user_login_eb")
+    logger.debug(f"authz_eb called with {json_dict}")
+
     # Client URL for direct error message in case of unauthorized and interrupt endpoint to decide what to do
     client_base_url = current_app.app_config.base_url
-    # Redirect from eduTeams needs to land on GUI, but redirect from EB needs to land on server
-    interrupt_url = f"{client_base_url}/interrupt"
-    logger = ctx_logger("user_api")
-    logger.debug(f"proxy_authz called with {json_dict}")
+    base_server_url = current_app.app_config.base_server_url
+
+    # Redirect from EB needs to land on server
+    interrupt_url = f"{base_server_url}/api/users/interrupt"
+
     # user who log in to SBS itself can continue here; their attributes are checked in user.py/resume_session()
     if service_entity_id == current_app.app_config.oidc.sram_service_entity_id.lower():
         logger.debug(f"Return authorized to start SBS login flow, service_entity_id={service_entity_id}")
-        return {"status": {"result": "authorized"}}, 200
+        return {"msg": "authorized"}, 200
 
     parameters = {"service_name": service_entity_id, "entity_id": service_entity_id, "issuer_id": issuer_id,
                   "user_id": uid}
+
     service = Service.query.filter(Service.entity_id == service_entity_id).first()
     # Unknown service returns unauthorized
     if not service:
-        msg = f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id} " \
+        msg = f"Returning interrupt for user {uid} and service_entity_id {service_entity_id} " \
               f"as the service is unknown"
         logger.error(msg)
         send_error_mail(tb=msg)
         parameters["error_status"] = UserCode.SERVICE_UNKNOWN.value
+        # This is a dead-end, no point in sending back a nonce
         return {
-            "status": {
-                "result": "unauthorized",
-                "redirect_url": f"{client_base_url}/service-denied?{urlencode(parameters)}",
-                "error_status": UserCode.SERVICE_UNKNOWN.value,
-                "info": UserCode.SERVICE_UNKNOWN.name
-            }
+            "msg": "interrupt",
+            "interrupt_url": f"{client_base_url}/service-denied?{urlencode(parameters)}",
+            "message": UserCode.SERVICE_UNKNOWN
         }, 200
+
     # Add the uuid4 and name of the service, which is used in some interrupt flows
     parameters["service_id"] = service.uuid4
     parameters["service_name"] = service.name
@@ -62,26 +75,30 @@ def proxy_authz_edu_teams():
     user = User.query.filter(User.uid == uid).first()
     if not user:
         free_rider = service.non_member_users_access_allowed
-        user_code = UserCode.NEW_FREE_RIDE_USER if free_rider else UserCode.USER_UNKNOWN
-        parameters["error_status"] = user_code.value
+        if free_rider:
+            return {
+                "msg": "authorized",
+                "attributes": {}
+            }, 200
+        parameters["error_status"] = UserCode.USER_UNKNOWN.value
         return {
-            "status": {
-                "result": "interrupt",
-                "redirect_url": f"{interrupt_url}?{urlencode(parameters)}",
-                "error_status": user_code.value,
-                "info": user_code.name
-            }
+            "msg": "interrupt",
+            "interrupt_url": f"{interrupt_url}?{urlencode(parameters)}",
+            "message": UserCode.USER_UNKNOWN.name
         }, 200
+    # Create a UserNonce with the continue_url to look up the user in the interrupt endpoint called by EB
+    nonce = str(uuid.uuid4())
+    user_nonce = UserNonce(user=user, nonce=nonce, continue_url=continue_url)
+    db.session.merge(user_nonce)
+    db.session.commit()
 
     if user.suspended:
         parameters["error_status"] = UserCode.USER_IS_SUSPENDED.value
         return {
-            "status": {
-                "result": "interrupt",
-                "redirect_url": f"{interrupt_url}?{urlencode(parameters)}",
-                "error_status": UserCode.USER_IS_SUSPENDED.value,
-                "info": UserCode.USER_IS_SUSPENDED.name
-            }
+            "msg": "interrupt",
+            "nonce": nonce,
+            "interrupt_url": f"{interrupt_url}?{urlencode(parameters)}",
+            "message": UserCode.USER_IS_SUSPENDED.name
         }, 200
 
     # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
@@ -91,12 +108,10 @@ def proxy_authz_edu_teams():
         new_parameters = {**parameters,
                           "error_status": UserCode.SECOND_FA_REQUIRED.value}
         return {
-            "status": {
-                "result": "interrupt",
-                "redirect_url": f"{interrupt_url}?{urlencode(new_parameters)}",
-                "error_status": UserCode.SECOND_FA_REQUIRED.value,
-                "info": UserCode.SECOND_FA_REQUIRED.name
-            }
+            "msg": "interrupt",
+            "nonce": nonce,
+            "interrupt_url": f"{interrupt_url}?{urlencode(new_parameters)}",
+            "message": UserCode.SECOND_FA_REQUIRED.name
         }, 200
 
     # if none of CO's are not active, then this is the same as none of the CO's are not connected to the Service
@@ -105,12 +120,10 @@ def proxy_authz_edu_teams():
                      "because the service is not connected to any active CO's")
         parameters["error_status"] = UserCode.SERVICE_NOT_CONNECTED.value
         return {
-            "status": {
-                "result": "unauthorized",
-                "redirect_url": f"{client_base_url}/service-denied?{urlencode(parameters)}",
-                "error_status": UserCode.SERVICE_NOT_CONNECTED.value,
-                "info": UserCode.SERVICE_NOT_CONNECTED.name
-            }
+            "msg": "unauthorized",
+            "nonce": nonce,
+            "interrupt_url": f"{client_base_url}/service-denied?{urlencode(parameters)}",
+            "message": UserCode.SERVICE_NOT_CONNECTED.name
         }, 200
 
     if not has_agreed_with(user, service):
@@ -118,24 +131,21 @@ def proxy_authz_edu_teams():
                      f"Service AUP")
         parameters["error_status"] = UserCode.SERVICE_AUP_NOT_AGREED.value
         return {
-            "status": {
-                "result": "interrupt",
-                "redirect_url": f"{interrupt_url}?{urlencode(parameters)}",
-                "error_status": UserCode.SERVICE_AUP_NOT_AGREED.value,
-                "info": UserCode.SERVICE_AUP_NOT_AGREED.name
-            }
+            "msg": "interrupt",
+            "nonce": nonce,
+            "interrupt_url": f"{interrupt_url}?{urlencode(parameters)}",
+            "message": UserCode.SERVICE_AUP_NOT_AGREED.name
         }, 200
+
     if not user.has_agreed_with_aup():
         logger.debug(f"Returning interrupt for user {uid} and service_entity_id {service_entity_id} to accept"
                      f"SRAM general AUP")
         parameters["error_status"] = UserCode.AUP_NOT_AGREED.value
         return {
-            "status": {
-                "result": "interrupt",
-                "redirect_url": f"{interrupt_url}?{urlencode(parameters)}",
-                "error_status": UserCode.AUP_NOT_AGREED.value,
-                "info": UserCode.AUP_NOT_AGREED.name
-            }
+            "msg": "interrupt",
+            "nonce": nonce,
+            "interrupt_url": f"{interrupt_url}?{urlencode(parameters)}",
+            "message": UserCode.AUP_NOT_AGREED.name
         }, 200
     # All is well, we collect all memberships and return authorized
     user.successful_login()
@@ -152,13 +162,32 @@ def proxy_authz_edu_teams():
     log_user_login(PROXY_AUTHZ, True, user, uid, service, service_entity_id, "AUTHORIZED")
 
     return {
-        "status": {
-            "result": "authorized",
-        },
+        "msg": "authorized",
         "attributes": {
             "eduPersonEntitlement": list(all_attributes),
-            "eduPersonPrincipalName": [f"{user.username}@{current_app.app_config.eppn_scope.strip()}"],
-            "uid": [user.username],
-            "sshkey": [ssh_key.ssh_value for ssh_key in user.ssh_keys]
+            "voPersonID": user.uid,
+            "sshPublicKey": [ssh_key.ssh_value for ssh_key in user.ssh_keys]
         }
     }, 200
+
+
+@user_login_eb.route("/interrupt", methods=["GET"], strict_slashes=False)
+def interrupt():
+    nonce = query_param("nonce")
+    user_nonce = UserNonce.query.filter(UserNonce.nonce == nonce).one()
+    user = user_nonce.user
+    # Put the user in the session if there is none or a different user, and pass control back to the GUI
+    user_from_session = session.get("user", {})
+    if user_from_session.get("guest", True) or not user.id == user_from_session.get("id"):
+        user_accepted_aup = user.has_agreed_with_aup()
+        store_user_in_session(user, False, user_accepted_aup)
+    continue_url = user_nonce.continue_url
+    # The original destination is returned from both 2mfa endpoint and agree_aup endpoint
+    session["original_destination"] = continue_url
+    client_base_url = current_app.app_config.base_url
+    error_status = query_param("error_status")
+    # Now delete the user_nonce
+    db.session.delete(user_nonce)
+    db.session.commit()
+
+    return redirect(f"{client_base_url}/interrupt?error_status={error_status}&continue_url={continue_url}")

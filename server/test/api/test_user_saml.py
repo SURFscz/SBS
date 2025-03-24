@@ -1,19 +1,12 @@
-import base64
 import datetime
-
-import requests
-import responses
-from lxml import etree
-from signxml import XMLSigner
 
 from server.auth.user_codes import UserCode
 from server.db.db import db
 from server.db.domain import Collaboration, Service, User, UserLogin
-from server.test.abstract_test import AbstractTest, BASIC_AUTH_HEADER
+from server.test.abstract_test import AbstractTest
 from server.test.seed import (user_john_name, service_network_entity_id, service_mail_entity_id,
-                              co_ai_computing_name, user_sarah_name, service_mail_name, unihard_short_name,
-                              service_wireless_entity_id, service_cloud_entity_id)
-from server.tools import dt_now, read_file
+                              co_ai_computing_name, user_sarah_name, service_mail_name, unihard_short_name)
+from server.tools import dt_now
 
 
 class TestUserSaml(AbstractTest):
@@ -309,84 +302,3 @@ class TestUserSaml(AbstractTest):
         status = res["status"]
         self.assertEqual(UserCode.AUP_NOT_AGREED.value, status["error_status"])
         self.assertEqual("interrupt", status["result"])
-
-    def test_proxy_authz_eb_free_rider_service(self):
-        res = self.post("/api/users/proxy_authz_eb",
-                        response_status_code=200,
-                        body={"user_id": "urn:unknown",
-                              "service_id": service_wireless_entity_id,
-                              "issuer_id": "issuer.com",
-                              "uid": "sarah"})
-        status = res["status"]
-        self.assertEqual("authorized", status["result"])
-        self.assertEqual(0, len(res["attributes"]))
-
-    def test_proxy_authz_eb_unknown_user(self):
-        res = self.post("/api/users/proxy_authz_eb",
-                        response_status_code=200,
-                        body={"user_id": "urn:unknown",
-                              "service_id": service_cloud_entity_id,
-                              "issuer_id": "issuer.com",
-                              "uid": "sarah"})
-        status = res["status"]
-        self.assertEqual(UserCode.USER_UNKNOWN.value, status["error_status"])
-        self.assertEqual("unauthorized", status["result"])
-
-    def test_proxy_authz_eb_interrupt(self):
-        res = self.post("/api/users/proxy_authz_eb", response_status_code=200,
-                        body={"user_id": "urn:sarah",
-                              "service_id": service_mail_entity_id,
-                              "issuer_id": "nope"})
-        self.assertEqual(res["status"]["result"], "interrupt")
-        self.assertTrue(res["status"]["redirect_url"].startswith("http://localhost:8080/api/users/interrupt"))
-
-    def test_interrupt_eb(self):
-        data_to_sign = "<User user_id='urn:sarah'/>"
-        cert = self.app.app_config.engine_block.public_key
-        private_key = read_file("test/data/privkey.pem")
-        root = etree.fromstring(data_to_sign)
-        signed_root = XMLSigner().sign(root, key=private_key, cert=cert)
-        signed_root_str = etree.tostring(signed_root)
-        b64encoded_signed_root = base64.b64encode(signed_root_str)
-        with requests.Session():
-            res = self.client.post(f"/api/users/interrupt?error_status={UserCode.SECOND_FA_REQUIRED.value}",
-                                   headers=BASIC_AUTH_HEADER,
-                                   data={"signed_user": b64encoded_signed_root.decode(),
-                                         "continue_url": "https://eb.com"},
-                                   content_type="application/x-www-form-urlencoded")
-            self.assertEqual("http://localhost:3000/interrupt?error_status101=&continue_url=https://eb.com",
-                             res.location)
-            # Now verify that a call to me returns the correct user, e.g. sarah
-            user = self.client.get("/api/users/me", ).json
-            self.assertFalse(user.get("admin"))
-            self.assertFalse(user.get("guest"))
-            self.assertFalse(user.get("second_factor_auth"))
-            self.assertFalse(user.get("second_factor_confirmed"))
-            self.assertEqual("urn:sarah", user.get("uid"))
-            self.assertEqual("sarah@uni-franeker.nl", user.get("email"))
-
-    @responses.activate
-    def test_interrupt_eb_cert_url(self):
-        public_key = self.app.app_config.engine_block.public_key
-        try:
-            self.app.app_config.engine_block.public_key = None
-            data_to_sign = "<User user_id='urn:sarah'/>"
-            private_key = read_file("test/data/privkey.pem")
-            root = etree.fromstring(data_to_sign)
-            signed_root = XMLSigner().sign(root, key=private_key, cert=public_key)
-            signed_root_str = etree.tostring(signed_root)
-            b64encoded_signed_root = base64.b64encode(signed_root_str)
-            url = self.app.app_config.engine_block.public_key_url
-            responses.add(responses.GET, url, body=public_key, status=200, content_type="application/x-pem-file")
-            with requests.Session():
-                self.client.post(f"/api/users/interrupt?error_status={UserCode.SECOND_FA_REQUIRED.value}",
-                                 headers={},
-                                 data={"signed_user": b64encoded_signed_root.decode(),
-                                       "continue_url": "https://eb.com"},
-                                 content_type="application/x-www-form-urlencoded")
-                # Now verify that a call to me returns the correct user, e.g. sarah
-                user = self.client.get("/api/users/me", ).json
-                self.assertFalse(user.get("second_factor_confirmed"))
-                self.assertEqual("urn:sarah", user.get("uid"))
-        finally:
-            self.app.app_config.engine_block.public_key = public_key

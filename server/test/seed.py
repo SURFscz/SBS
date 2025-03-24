@@ -15,7 +15,7 @@ from server.db.domain import (User, Organisation, OrganisationMembership, Servic
                               CollaborationRequest, ServiceConnectionRequest, SuspendNotification, Aup,
                               SchacHomeOrganisation, SshKey, ServiceGroup, ServiceInvitation, ServiceMembership,
                               ServiceAup, UserToken, Tag, PamSSOSession, ServiceToken,
-                              ServiceRequest, Unit)
+                              ServiceRequest, Unit, UserNonce)
 from server.tools import dt_now, dt_today
 
 # users
@@ -133,6 +133,8 @@ service_wiki_token = generate_token()
 # pam
 pam_session_id = str(uuid.uuid4())
 pam_invalid_service_session_id = str(uuid.uuid4())
+
+sarah_nonce = str(uuid.uuid4())
 
 image_cache = {}
 
@@ -816,5 +818,8 @@ def seed(db, app_config, skip_seed=False):
                                          redirect_urls="https://redirect.org, https://redirect.alternative.org",
                                          requester=sarah)
     persist_instance(db, service_request_gpt)
+
+    sarah_user_nonce = UserNonce(user=sarah, continue_url="https://engine.surf.nl", nonce=sarah_nonce)
+    persist_instance(db, sarah_user_nonce)
 
     db.session.commit()

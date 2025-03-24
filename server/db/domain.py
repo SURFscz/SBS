@@ -1037,7 +1037,19 @@ class OrganisationAup(Base, db.Model):
     aup_url = db.Column("aup_url", db.String(length=255), nullable=False)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User", back_populates="organisation_aups")
-    organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"))
+    organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id", ondelete="CASCADE"))
     organisation = db.relationship("Organisation", back_populates="organisation_aups")
     agreed_at = db.Column("agreed_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                           nullable=False)
+
+
+class UserNonce(Base, db.Model):
+    __tablename__ = "user_nonces"
+    metadata = metadata
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    nonce = db.Column("nonce", db.String(length=255), nullable=False)
+    continue_url = db.Column("continue_url", db.String(length=512), nullable=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user = db.relationship("User")
+    created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
