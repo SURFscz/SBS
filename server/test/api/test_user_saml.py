@@ -274,10 +274,11 @@ class TestUserSaml(AbstractTest):
                   with_basic_auth=False)
 
     def test_proxy_authz_mfa_no_attr(self):
-        res = self.post("/api/users/proxy_authz", response_status_code=500,
+        res = self.post("/api/users/proxy_authz", response_status_code=400,
                         body={"user_id": "urn:sarah",
                               "service_id": service_mail_entity_id})
         self.assertTrue(res["error"])
+        self.assertEqual("Missing key 'issuer_id'", res["message"])
 
     def test_proxy_authz_expired_collaboration(self):
         self.expire_collaborations(user_sarah_name)
