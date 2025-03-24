@@ -7,6 +7,7 @@ from sqlalchemy import text
 
 from server.auth.secrets import secure_hash, generate_token, encrypt_secret
 from server.auth.tokens import _service_context
+from server.auth.user_codes import UserCode
 from server.db.audit_mixin import metadata
 from server.db.defaults import (default_expiry_date, SERVICE_TOKEN_INTROSPECTION, SERVICE_TOKEN_SCIM, SERVICE_TOKEN_PAM,
                                 STATUS_OPEN)
@@ -819,7 +820,8 @@ def seed(db, app_config, skip_seed=False):
                                          requester=sarah)
     persist_instance(db, service_request_gpt)
 
-    sarah_user_nonce = UserNonce(user=sarah, continue_url="https://engine.surf.nl", nonce=sarah_nonce)
+    sarah_user_nonce = UserNonce(user=sarah, continue_url="https://engine.surf.nl", nonce=sarah_nonce,
+                                 service=cloud, error_status=UserCode.SERVICE_AUP_NOT_AGREED.value)
     persist_instance(db, sarah_user_nonce)
 
     db.session.commit()

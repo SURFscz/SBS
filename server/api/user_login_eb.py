@@ -1,5 +1,5 @@
+import urllib.parse
 import uuid
-from urllib.parse import urlencode
 
 from flask import Blueprint, current_app, request as current_request, redirect, session
 from werkzeug.exceptions import Forbidden
@@ -38,137 +38,116 @@ def proxy_authz_eb():
     logger = ctx_logger("user_login_eb")
     logger.debug(f"authz_eb called with {json_dict}")
 
-    # Client URL for direct error message in case of unauthorized and interrupt endpoint to decide what to do
-    client_base_url = current_app.app_config.base_url
-    base_server_url = current_app.app_config.base_server_url
-
-    # Redirect from EB needs to land on server
-    interrupt_url = f"{base_server_url}/api/users/interrupt"
-
     # user who log in to SBS itself can continue here; their attributes are checked in user.py/resume_session()
     if service_entity_id == current_app.app_config.oidc.sram_service_entity_id.lower():
         logger.debug(f"Return authorized to start SBS login flow, service_entity_id={service_entity_id}")
         return {"msg": "authorized"}, 200
 
-    parameters = {"service_name": service_entity_id, "entity_id": service_entity_id, "issuer_id": issuer_id,
-                  "user_id": uid}
-
     service = Service.query.filter(Service.entity_id == service_entity_id).first()
+    user = User.query.filter(User.uid == uid).first()
+
+    nonce = str(uuid.uuid4())
+    user_nonce = UserNonce(user=user, service=service, nonce=nonce, continue_url=continue_url, issuer_id=issuer_id,
+                           requested_service_entity_id=service_entity_id)
     # Unknown service returns unauthorized
     if not service:
         msg = f"Returning interrupt for user {uid} and service_entity_id {service_entity_id} " \
               f"as the service is unknown"
         logger.error(msg)
         send_error_mail(tb=msg)
-        parameters["error_status"] = UserCode.SERVICE_UNKNOWN.value
-        # This is a dead-end, no point in sending back a nonce
-        return {
+        user_nonce.error_status = UserCode.SERVICE_UNKNOWN.value
+        results = {
             "msg": "interrupt",
-            "interrupt_url": f"{client_base_url}/service-denied?{urlencode(parameters)}",
+            "nonce": nonce,
             "message": UserCode.SERVICE_UNKNOWN
-        }, 200
-
-    # Add the uuid4 and name of the service, which is used in some interrupt flows
-    parameters["service_id"] = service.uuid4
-    parameters["service_name"] = service.name
-
-    user = User.query.filter(User.uid == uid).first()
-    if not user:
+        }
+    elif not user:
         free_rider = service.non_member_users_access_allowed
         if free_rider:
             return {
                 "msg": "authorized",
                 "attributes": {}
             }, 200
-        parameters["error_status"] = UserCode.USER_UNKNOWN.value
-        return {
-            "msg": "interrupt",
-            "interrupt_url": f"{interrupt_url}?{urlencode(parameters)}",
-            "message": UserCode.USER_UNKNOWN.name
-        }, 200
-    # Create a UserNonce with the continue_url to look up the user in the interrupt endpoint called by EB
-    nonce = str(uuid.uuid4())
-    user_nonce = UserNonce(user=user, nonce=nonce, continue_url=continue_url)
-    db.session.merge(user_nonce)
-    db.session.commit()
-
-    if user.suspended:
-        parameters["error_status"] = UserCode.USER_IS_SUSPENDED.value
-        return {
+        else:
+            user_nonce.error_status = UserCode.USER_UNKNOWN.value
+            results = {
+                "msg": "interrupt",
+                "nonce": nonce,
+                "message": UserCode.USER_UNKNOWN.name
+            }
+    elif user.suspended:
+        user_nonce.error_status = UserCode.USER_IS_SUSPENDED.value
+        results = {
             "msg": "interrupt",
             "nonce": nonce,
-            "interrupt_url": f"{interrupt_url}?{urlencode(parameters)}",
             "message": UserCode.USER_IS_SUSPENDED.name
-        }, 200
-
+        }
     # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
     # also skip if user has already recently performed MFA
-    if user_requires_sram_mfa(user, issuer_id):
+    elif user_requires_sram_mfa(user, issuer_id):
         logger.debug(f"Returning interrupt for user {uid} from issuer {issuer_id} to perform 2fa")
-        new_parameters = {**parameters,
-                          "error_status": UserCode.SECOND_FA_REQUIRED.value}
-        return {
+        user_nonce.error_status = UserCode.SECOND_FA_REQUIRED.value
+        results = {
             "msg": "interrupt",
             "nonce": nonce,
-            "interrupt_url": f"{interrupt_url}?{urlencode(new_parameters)}",
             "message": UserCode.SECOND_FA_REQUIRED.name
-        }, 200
+        }
 
     # if none of CO's are not active, then this is the same as none of the CO's are not connected to the Service
-    if not has_user_access_to_service(service, user):
+    elif not has_user_access_to_service(service, user):
         logger.debug(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id} "
                      "because the service is not connected to any active CO's")
-        parameters["error_status"] = UserCode.SERVICE_NOT_CONNECTED.value
-        return {
+        user_nonce.error_status = UserCode.SERVICE_NOT_CONNECTED.value
+        results = {
             "msg": "unauthorized",
             "nonce": nonce,
-            "interrupt_url": f"{client_base_url}/service-denied?{urlencode(parameters)}",
             "message": UserCode.SERVICE_NOT_CONNECTED.name
-        }, 200
-
-    if not has_agreed_with(user, service):
+        }
+    elif not has_agreed_with(user, service):
         logger.debug(f"Returning interrupt for user {uid} and service_entity_id {service_entity_id} to accept "
                      f"Service AUP")
-        parameters["error_status"] = UserCode.SERVICE_AUP_NOT_AGREED.value
-        return {
+        user_nonce.error_status = UserCode.SERVICE_AUP_NOT_AGREED.value
+        results = {
             "msg": "interrupt",
             "nonce": nonce,
-            "interrupt_url": f"{interrupt_url}?{urlencode(parameters)}",
             "message": UserCode.SERVICE_AUP_NOT_AGREED.name
-        }, 200
-
-    if not user.has_agreed_with_aup():
+        }
+    elif not user.has_agreed_with_aup():
         logger.debug(f"Returning interrupt for user {uid} and service_entity_id {service_entity_id} to accept"
                      f"SRAM general AUP")
-        parameters["error_status"] = UserCode.AUP_NOT_AGREED.value
-        return {
+        user_nonce.error_status = UserCode.AUP_NOT_AGREED.value
+        results = {
             "msg": "interrupt",
             "nonce": nonce,
-            "interrupt_url": f"{interrupt_url}?{urlencode(parameters)}",
             "message": UserCode.AUP_NOT_AGREED.name
-        }, 200
-    # All is well, we collect all memberships and return authorized
-    user.successful_login()
-    user = db.session.merge(user)
-    memberships = collaboration_memberships_for_service(service, user)
-    connected_collaborations = [cm.collaboration for cm in memberships]
-    for coll in connected_collaborations:
-        coll.last_activity_date = tools.dt_now()
-        db.session.merge(coll)
-    all_memberships = user_memberships(user, connected_collaborations)
-    all_tags = co_tags(connected_collaborations)
-    all_attributes = all_memberships.union(all_tags)
-
-    log_user_login(PROXY_AUTHZ, True, user, uid, service, service_entity_id, "AUTHORIZED")
-
-    return {
-        "msg": "authorized",
-        "attributes": {
-            "eduPersonEntitlement": list(all_attributes),
-            "voPersonID": user.uid,
-            "sshPublicKey": [ssh_key.ssh_value for ssh_key in user.ssh_keys]
         }
-    }, 200
+    else:
+        # All is well, we collect all memberships and return authorized
+        user.successful_login()
+        user = db.session.merge(user)
+        memberships = collaboration_memberships_for_service(service, user)
+        connected_collaborations = [cm.collaboration for cm in memberships]
+        for coll in connected_collaborations:
+            coll.last_activity_date = tools.dt_now()
+            db.session.merge(coll)
+        all_memberships = user_memberships(user, connected_collaborations)
+        all_tags = co_tags(connected_collaborations)
+        all_attributes = all_memberships.union(all_tags)
+
+        log_user_login(PROXY_AUTHZ, True, user, uid, service, service_entity_id, "AUTHORIZED")
+
+        return {
+            "msg": "authorized",
+            "attributes": {
+                "eduPersonEntitlement": list(all_attributes),
+                "voPersonID": user.uid,
+                "sshPublicKey": [ssh_key.ssh_value for ssh_key in user.ssh_keys]
+            }
+        }, 200
+    # Once we got here, we need to store the UserNonce
+    db.session.merge(user_nonce)
+    db.session.commit()
+    return results, 200
 
 
 @user_login_eb.route("/interrupt", methods=["GET"], strict_slashes=False)
@@ -176,18 +155,30 @@ def interrupt():
     nonce = query_param("nonce")
     user_nonce = UserNonce.query.filter(UserNonce.nonce == nonce).one()
     user = user_nonce.user
-    # Put the user in the session if there is none or a different user, and pass control back to the GUI
-    user_from_session = session.get("user", {})
-    if user_from_session.get("guest", True) or not user.id == user_from_session.get("id"):
-        user_accepted_aup = user.has_agreed_with_aup()
-        store_user_in_session(user, False, user_accepted_aup)
+    if user:
+        # Put the user in the session if there is none or a different user, and pass control back to the GUI
+        user_from_session = session.get("user", {})
+        if user_from_session.get("guest", True) or not user.id == user_from_session.get("id"):
+            user_accepted_aup = user.has_agreed_with_aup()
+            store_user_in_session(user, False, user_accepted_aup)
     continue_url = user_nonce.continue_url
     # The original destination is returned from both 2mfa endpoint and agree_aup endpoint
     session["original_destination"] = continue_url
-    client_base_url = current_app.app_config.base_url
-    error_status = query_param("error_status")
+    service = user_nonce.service
+    # Add the parameters, which are used in some interrupt flows
+    parameters = {
+        "service_name": service.name if service else user_nonce.requested_service_entity_id,
+        "service_id": service.uuid4 if service else None,
+        "continue_url": user_nonce.continue_url,
+        "entity_id": service.entity_id if service else user_nonce.requested_service_entity_id,
+        "issuer_id": user_nonce.issuer_id,
+        "user_id": user.uid if user else None,
+        "error_status": user_nonce.error_status
+    }
     # Now delete the user_nonce
     db.session.delete(user_nonce)
     db.session.commit()
 
-    return redirect(f"{client_base_url}/interrupt?error_status={error_status}&continue_url={continue_url}")
+    client_base_url = current_app.app_config.base_url
+    args = urllib.parse.urlencode(parameters)
+    return redirect(f"{client_base_url}/interrupt?{args}")
