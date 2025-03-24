@@ -57,7 +57,7 @@ class TestUserLoginEB(AbstractTest):
                               "service_id": service_mail_entity_id,
                               "issuer_id": "nope"})
         self.assertEqual(res["msg"], "interrupt")
-        self.assertTrue(res["interrupt_url"].startswith("http://localhost:8080/api/users/interrupt"))
+        self.assertEqual(res["message"], UserCode.SECOND_FA_REQUIRED.name)
 
     def test_interrupt_eb(self):
         user_nonce = UserNonce.query.filter(UserNonce.nonce == sarah_nonce).one()
@@ -66,8 +66,14 @@ class TestUserLoginEB(AbstractTest):
                                   query_string={"nonce": user_nonce.nonce,
                                                 "error_status": UserCode.SECOND_FA_REQUIRED.value})
 
-            self.assertEqual(f"http://localhost:3000/interrupt?error_status=101"
-                             f"&continue_url={user_nonce.continue_url}",
+            self.assertEqual(f"http://localhost:3000/interrupt?"
+                             f"service_name=Cloud&"
+                             f"service_id={user_nonce.service.uuid4}&"
+                             f"continue_url=https%3A%2F%2Fengine.surf.nl&"
+                             f"entity_id=https%3A%2F%2Fcloud&"
+                             f"issuer_id=None&"
+                             f"user_id=urn%3Asarah&"
+                             f"error_status=100",
                              res.location)
 
             # Now verify that a call to me returns the correct user, e.g. sarah
