@@ -4,8 +4,14 @@ from random import choice, randint, sample
 
 from faker import Faker
 
-from server.db.domain import (User, Organisation, Service, Collaboration,
-                              CollaborationMembership, Group)
+from server.db.domain import (User,
+                              Organisation,
+                              Collaboration,
+                              Service,
+                              OrganisationMembership,
+                              CollaborationMembership,
+                              ServiceMembership,
+                              Group)
 from server.tools import dt_now
 from .seed import persist_instance, clean_db, read_image
 
@@ -106,6 +112,30 @@ def stress_seed(db, app_config):
     print(f"Created {len(orgs)} organisations")
     db.session.commit()
 
+    print("Creating organisation memberships...")
+    org_memberships = []
+
+    for org in orgs:
+        # Add 3-15 random members to each organisation
+        num_org_members = randint(3, 15)
+        org_members = sample(users, min(num_org_members, len(users)))
+
+        for user in org_members:
+            # 1/3 chance to be admin, 2/3 chance to be manager
+            role = "admin" if randint(1, 3) == 1 else "manager"
+            membership = OrganisationMembership(
+                role=role,
+                user=user,
+                organisation=org,
+                created_by="urn:admin",
+                updated_by="urn:admin"
+            )
+            org_memberships.append(membership)
+
+    persist_instance(db, *org_memberships)
+    print(f"Created {len(org_memberships)} organisation memberships")
+    db.session.commit()
+
     # Create services
     print(f"Creating {num_services} services...")
     services = []
@@ -136,6 +166,30 @@ def stress_seed(db, app_config):
 
     persist_instance(db, *services)
     print(f"Created {len(services)} services")
+    db.session.commit()
+
+    print("Creating service memberships...")
+    service_memberships = []
+
+    for service in services:
+        # Add 2-10 random members to each service
+        num_service_members = randint(2, 10)
+        service_members = sample(users, min(num_service_members, len(users)))
+
+        for user in service_members:
+            # 1/3 chance to be admin, 2/3 chance to be manager
+            role = "admin" if randint(1, 3) == 1 else "manager"
+            membership = ServiceMembership(
+                role=role,
+                user=user,
+                service=service,
+                created_by="urn:admin",
+                updated_by="urn:admin"
+            )
+            service_memberships.append(membership)
+
+    persist_instance(db, *service_memberships)
+    print(f"Created {len(service_memberships)} service memberships")
     db.session.commit()
 
     # Create collaborations in batches to avoid memory issues
@@ -213,7 +267,7 @@ def stress_seed(db, app_config):
             groups = []
             for i in range(groups_per_batch):
                 collab = choice(collaborations)
-                name = f"Group {batch + i}: {fake.word()}"
+                name = f"{fake.word()}"
                 short_name = f"group_{batch + i}"
 
                 # Get admin memberships for this collaboration
