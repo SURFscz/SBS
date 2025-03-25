@@ -217,14 +217,19 @@ def json_endpoint(f):
             elif isinstance(e, DatabaseError):
                 e = BadRequest("Database error")
                 skip_email = True
-            response = jsonify(message=e.description if isinstance(e, HTTPException) else str(e),
-                               error=True)
+            if isinstance(e, HTTPException):
+                message = e.description
+            elif isinstance(e, KeyError):
+                message = f"Missing key {e}"
+            else:
+                message = str(e)
+            response = jsonify(message=message, error=True)
             response.status_code = 500
             if isinstance(e, NoResultFound):
                 response.status_code = 404
             elif isinstance(e, HTTPException):
                 response.status_code = e.code
-            elif isinstance(e, ValidationError) or isinstance(e, BadRequest) or isinstance(e, APIBadRequest):
+            elif isinstance(e, (ValidationError, BadRequest, APIBadRequest, KeyError)):
                 response.status_code = 400
             _add_custom_header(response)
             db.session.rollback()

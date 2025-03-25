@@ -7,6 +7,7 @@ from sqlalchemy import text
 
 from server.auth.secrets import secure_hash, generate_token, encrypt_secret
 from server.auth.tokens import _service_context
+from server.auth.user_codes import UserCode
 from server.db.audit_mixin import metadata
 from server.db.defaults import (default_expiry_date, SERVICE_TOKEN_INTROSPECTION, SERVICE_TOKEN_SCIM, SERVICE_TOKEN_PAM,
                                 STATUS_OPEN)
@@ -14,8 +15,8 @@ from server.db.domain import (User, Organisation, OrganisationMembership, Servic
                               CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey,
                               CollaborationRequest, ServiceConnectionRequest, SuspendNotification, Aup,
                               SchacHomeOrganisation, SshKey, ServiceGroup, ServiceInvitation, ServiceMembership,
-                              ServiceAup, UserToken, Tag, PamSSOSession, IpNetwork, ServiceToken,
-                              ServiceRequest, Unit)
+                              ServiceAup, UserToken, Tag, PamSSOSession, ServiceToken,
+                              ServiceRequest, Unit, UserNonce)
 from server.tools import dt_now, dt_today
 
 # users
@@ -133,6 +134,8 @@ service_wiki_token = generate_token()
 # pam
 pam_session_id = str(uuid.uuid4())
 pam_invalid_service_session_id = str(uuid.uuid4())
+
+sarah_nonce = str(uuid.uuid4())
 
 image_cache = {}
 
@@ -578,13 +581,6 @@ def seed(db, app_config, skip_seed=False):
                      service_membership_demosp, service_membership_demorp, service_membership_monitor,
                      service_membership_empty)
 
-    service_iprange_cloud_v4 = IpNetwork(network_value="82.217.86.55/24", service=cloud)
-    service_iprange_cloud_v6 = IpNetwork(network_value="2001:1c02:2b2f:be00:1cf0:fd5a:a548:1a16/128", service=cloud)
-    service_iprange_wiki_v4 = IpNetwork(network_value="82.217.86.55/24", service=wiki)
-    service_iprange_wiki_v6 = IpNetwork(network_value="2001:1c02:2b2f:be01:1cf0:fd5a:a548:1a16/128", service=wiki)
-    persist_instance(db, service_iprange_cloud_v4, service_iprange_cloud_v6, service_iprange_wiki_v4,
-                     service_iprange_wiki_v6)
-
     uuc.services.append(uuc_scheduler)
     uuc.services.append(wiki)
 
@@ -823,5 +819,9 @@ def seed(db, app_config, skip_seed=False):
                                          redirect_urls="https://redirect.org, https://redirect.alternative.org",
                                          requester=sarah)
     persist_instance(db, service_request_gpt)
+
+    sarah_user_nonce = UserNonce(user=sarah, continue_url="https://engine.surf.nl", nonce=sarah_nonce,
+                                 service=cloud, error_status=UserCode.SERVICE_AUP_NOT_AGREED.value)
+    persist_instance(db, sarah_user_nonce)
 
     db.session.commit()

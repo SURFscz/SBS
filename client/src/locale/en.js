@@ -731,16 +731,8 @@ const en = {
         organisations: "Organisations",
         sbs: "Application",
         collaborations: "Collaborations",
-        network: "IP ranges",
         addSSHKey: "Upload new SSH key",
         addSSHKeyManually: "Add SSH key manually",
-        networkTooltip: "Configure your IP ranges for this application. You can add IPv4 and IPv6 network ranges. " +
-            "For example: <ul>" +
-            "<li>Single IPv4 address 198.51.100.12 where a /32 is implied</li>" +
-            "<li>IPv4 range 198.51.100.0/24. Maximal allowed subnet size for IPv4 is a /24</li>" +
-            "<li>IPv6 range 2001:db8:f00f:bab::/128. Maximal allowed subnet size for IPv6 is a /64</li>" +
-            "</ul> ",
-        networkExplanation: "Inform the application providers from which IP addresses you will be accessing their applications. The application providers may allow access to your IP addresses if they support this.",
         deleteHeader: "Delete your profile",
         deleteDisclaimer: "Deleting your profile will also remove all your memberships and admin roles. This cannot be reverted."
     },
@@ -982,19 +974,6 @@ const en = {
         accepted_user_policy: "Acceptable use policy",
         accepted_user_policyPlaceholder: "The acceptable use policy (AUP) of the application",
         accepted_user_policyTooltip: "An acceptable use policy (AUP) is a document stipulating constraints and practices that a user must agree to for access to an application or system.",
-        network: "LDAP ACL IP ranges",
-        networkTooltip: "The IP ranges this application uses to connect to the platform LDAP application. You can add IPv4 and IPv6 network ranges. " +
-            "For example: <ul>" +
-            "<li>Single IPv4 address 198.51.100.12 where a /32 is implied</li>" +
-            "<li>IPv4 range 198.51.100.0/24. Maximal allowed subnet size for IPv4 is a /24</li>" +
-            "<li>IPv6 range 2001:db8:f00f:bab::/128. Maximal allowed subnet size for IPv6 is a /64</li>" +
-            "</ul> ",
-        networkPlaceholder: "IPv4 or IPv6 address with an optional subnet size",
-        networkError: "Subnet size {{prefix}} is not allowed. Max prefix allowed for IPv{{version}} is {{max}}",
-        networkSyntaxError: "This is not a valid IPv4 or IPv6 address.",
-        networkReservedError: "This is a reserved IPv{{version}} address",
-        networkNotGlobal: "Only global unicast addresses can be entered",
-        networkInfo: "Lower bound IP: {{lower}}, higher bound IP: {{higher}}, # addresses: {{num_addresses}}, version: IPv{{version}}",
         automaticConnectionAllowed: "Collaborations can connect without your approval",
         automaticConnectionAllowedTooltip: "If enabled, a collaboration admin can connect to your application straightaway. No connection request is offered for approval to the application admin (you).",
         automaticConnectionAllowedOrganisations: "Trusted or owned organisations",
@@ -1281,7 +1260,7 @@ const en = {
         collaborationCreationAllowed: "Users can create collaborations straightaway",
         collaborationCreationAllowedTooltip: "Allows users from your organisation to create a collaboration without requiring approval from an organisation admin or manager",
         serviceConnectionRequiresApproval: "Application connection request must be approved by the Organisation admin or manager",
-        serviceConnectionRequiresApprovalTooltip: "If checked then application connection requests must first be approved by an Organisation admin",
+        serviceConnectionRequiresApprovalTooltip: "If checked then application connection requests must first be approved by an organisation admin or manager",
         accepted_user_policyPlaceholder: "The acceptable use policy (AUP) of the organisation",
         accepted_user_policyTooltip: "Users outside your organisation must accept this AUP before joining one of this organisation's collaboration for the first time.",
         crmId: "Organisation (CRM ID)",
@@ -1886,7 +1865,6 @@ const en = {
             "services_collaborations": "Collaboration application",
             "service_requests": "Application registration requests",
             "users": "User",
-            "ip_networks": "IP network",
             "suspend_notifications": "Suspend notifications",
             "schac_home_organisations": "Schac home organisations",
             "user_names_history": "Username history",

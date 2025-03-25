@@ -112,3 +112,17 @@ class TestApi(AbstractTest):
             self.assertIsNone(response_code)
         finally:
             self.app.app_config.manage.enabled = True
+
+    @responses.activate
+    def test_save_oidc_service_manage_no_changes(self):
+        service = self.find_entity_by_name(Service, service_storage_name)
+        self.login("urn:john")
+        with responses.RequestsMock(assert_all_requests_are_fired=True) as res_mock:
+            manage_base_url = self.app.app_config.manage.base_url
+            url = f"{manage_base_url}/manage/api/internal/metadata"
+            res_mock.add(responses.POST, url, json={"validations": "No data is changed"}, status=400)
+            updated_service = sync_external_service(self.app, service)
+
+            self.assertIsNone(updated_service.export_external_version)
+            self.assertTrue(updated_service.export_successful)
+            self.assertIsNotNone(updated_service.exported_at)

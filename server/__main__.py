@@ -36,7 +36,6 @@ from server.api.group import group_api
 from server.api.group_members import group_members_api
 from server.api.image import image_api
 from server.api.invitation import invitations_api
-from server.api.ipaddress import ipaddress_api
 from server.api.join_request import join_request_api
 from server.api.mfa import mfa_api
 from server.api.mock_scim import scim_mock_api
@@ -61,6 +60,7 @@ from server.api.token import token_api
 from server.api.unit import unit_api
 from server.api.user import user_api
 from server.api.user_login import user_login_api
+from server.api.user_login_eb import user_login_eb
 from server.api.user_saml import user_saml_api
 from server.api.user_token import user_token_api
 from server.cron.schedule import start_scheduling
@@ -74,6 +74,8 @@ from server.tools import read_file
 from server.cli import register_commands
 
 def _init_logging(log_to_stdout: bool):
+    # https://github.com/python-pillow/Pillow/issues/5096
+    logging.getLogger("PIL.PngImagePlugin").setLevel(logging.CRITICAL + 1)
     if log_to_stdout:
         logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
     else:
@@ -128,10 +130,10 @@ blueprints = [
     base_api, service_api, user_api, user_saml_api, mfa_api, collaboration_api, organisation_api, join_request_api,
     organisation_invitations_api, invitations_api, organisation_membership_api, collaboration_membership_api,
     collaborations_services_api, group_api, group_members_api, api_key_api, aup_api, collaboration_request_api,
-    service_connection_request_api, audit_log_api, ipaddress_api, system_api, organisations_services_api, mock_user_api,
+    service_connection_request_api, audit_log_api, system_api, organisations_services_api, mock_user_api,
     plsc_api, image_api, service_group_api, service_invitations_api, service_membership_api, service_aups_api,
     user_token_api, token_api, tag_api, swagger_specs, pam_websso_api, user_login_api, service_token_api, scim_api,
-    service_request_api, unit_api
+    service_request_api, unit_api, user_login_eb
 ]
 
 for api_blueprint in blueprints:

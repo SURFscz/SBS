@@ -259,25 +259,4 @@ stress_test:
   num_groups: 300
 
 engine_block:
-  # Either one is required, if specified both then the public_key is used
-  public_key_url: http://localhost:8099/idp/certificate
-  public_key: |
-    -----BEGIN CERTIFICATE-----
-    MIIC/zCCAeegAwIBAgIUSeIpDb3Txu37YHhbbUVHiA3s/q4wDQYJKoZIhvcNAQEL
-    BQAwDzENMAsGA1UEAwwEdGVzdDAeFw0yNDExMTQxMTI0MTRaFw0yNDExMTUxMTI0
-    MTRaMA8xDTALBgNVBAMMBHRlc3QwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEK
-    AoIBAQC+xQwIGEqM1ykFmsFszMzVMUSGyG/xJEst6O07qcgqTQf91bPPuTrx5DIa
-    813Ox04gy006iD8zA6LLh607WfhGlOxT+6dx45DrF6UEeHiR5Dq/JTj9B+lF5sHf
-    j8ZBt1iRrJgtmjrb4BrhdUkyHypkeTauzBeGKteJVAL1cNNO9HmtBhn+8hdSHRWB
-    7p8lRu74t6vDl2vg7++WYjd73nmkCxt6J66HVdKxaZkj2phfz5Nm07I9MQIxlAKC
-    Az9MjN+A/hnGG/t8Lk7IIjn58Uou1O0lBstOWTt2r5jm4cL/BgPvK+2lqJa3qo3h
-    8hDOu/HgRXu04UukQuJY+OpqA8gBAgMBAAGjUzBRMB0GA1UdDgQWBBTwzTAZAkK2
-    5NJmfizds6RkKRf9aDAfBgNVHSMEGDAWgBTwzTAZAkK25NJmfizds6RkKRf9aDAP
-    BgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQAxa0ekqBaKnz1tVR/7
-    estk6MYBZzblMHA8T9HO2ae6ocayRgo85su0cO6vmkjZHEfHFNQmsxzoMMtLg0jV
-    RSQqd3Vy9sxzEMQajGKOij6ggzIsQfVKwIntJnRuEjlSn9ua/IdNIBEpgVHGWLu0
-    1LCoYbqCQumN+zZeIdFQwkgPg2Ibxh4PDgwyV1ju2pRJ47VTyKnZUvpdedq5nUET
-    SVX4pUj3jbPsSD8C0FIA4TbGRHoaptHwpN6cRpyF4dgGZ55wsrM08dvzBOzcnaPE
-    u6SUkXIDBGuZzFo2OAVXNN3GnS+iLrZ1cb+Kn2h96UWyR/EGpJVsODr5c3rR8vqK
-    iAhB
-    -----END CERTIFICATE-----
+  api_token: secret

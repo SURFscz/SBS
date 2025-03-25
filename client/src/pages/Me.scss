@@ -124,11 +124,6 @@ div.user-profile-tab-container {
             font-weight: bold;
         }
 
-        .network-explanation {
-            max-width: 580px;
-            display: inline-block;
-        }
-
         .ssh-keys-container {
             label.title {
                 display: flex;
@@ -182,78 +177,6 @@ div.user-profile-tab-container {
 
             a {
                 margin: auto 0 auto 20px;
-            }
-        }
-
-        div.ip-networks {
-            margin: 25px 0;
-
-            label.title {
-                display: flex;
-                align-items: center;
-                margin: 12px 0 6px 0;
-                min-width: 210px;
-                color: black;
-                position: relative;
-                font-weight: bold;
-            }
-
-            span.tool-tip-section {
-                font-size: 14px;
-                color: $lighter-grey;
-                cursor: pointer;
-                padding: 0 4px;
-
-                &:hover {
-                    color: darken($light-blue, 20%);
-                }
-            }
-
-            span.add-network {
-                color: $blue;
-                cursor: pointer;
-                padding: 0 4px;
-                font-size: 22px;
-                display: inline-block;
-                margin-left: auto;
-                margin-right: 10px;
-
-                &:hover {
-                    color: darken($blue, 10%);
-                }
-            }
-
-            .network-container {
-                margin: 0 0 15px 0;
-            }
-
-            .network {
-                display: flex;
-                width: 100%;
-                align-items: center;
-
-                .input-field {
-                    width: 100%;
-                }
-
-                span.trash {
-                    margin: 15px 0 0 16px;
-                    max-height: 44px;
-                    text-align: center;
-                    border: 1px solid var(--sds--color--red--400);
-                    border-radius: 4px;
-                    padding: 8px 14px;
-                    color: var(--sds--color--red--400);
-                    cursor: pointer;
-                    display: inline-block;
-                }
-            }
-
-            span.network-info {
-                font-style: italic;
-                font-size: 14px;
-                display: inline-block;
-                margin-top: 2px;
             }
         }
 

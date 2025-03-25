@@ -100,7 +100,7 @@ export function authorizationUrl(state) {
 }
 
 export function me(config) {
-    if (config.local && 1 == 1) {
+    if (config.local && 1 != 1) {
         let sub = "urn:service_admin";
         sub = "urn:john";
        // sub = "urn:paul";
@@ -892,12 +892,6 @@ export function auditLogsActivity(limit, tableNames, query) {
         .filter(key => params[key])
         .map(key => `${key}=${encodeURIComponent(params[key])}`).join("&");
     return fetchJson(`/api/audit_logs/activity?${queryString}`);
-}
-
-//IP-networks
-export function ipNetworks(address, id) {
-    const ipQueryParam = id ? `&id=${id}` : "";
-    return fetchJson(`/api/ipaddress/info?address=${address}${ipQueryParam}`, {}, {}, false);
 }
 
 //System
