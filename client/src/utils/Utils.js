@@ -205,3 +205,7 @@ export const commaSeparatedArrayToSelectValues = str => {
     })) : str;
 }
 
+export const scrollToBottom = () => {
+    setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth"}), 425);
+}
+

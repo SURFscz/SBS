@@ -100,7 +100,7 @@ export function authorizationUrl(state) {
 }
 
 export function me(config) {
-    if (config.local && 1 != 1) {
+    if (config.local && 1 == 1) {
         let sub = "urn:service_admin";
         sub = "urn:john";
        // sub = "urn:paul";
@@ -126,15 +126,14 @@ export function me(config) {
 }
 
 // Mock
-export function ebInterruptData(userUid) {
-    return fetchJson(`/api/mock/interrupt_data?user_uid=${userUid}`)
+export function startEBInterruptFlow() {
+    return fetchJson("/api/mock/interrupt_data")
 }
 
-// Mock
 export function ebStopInterruptFlow() {
     return fetchDelete("/api/mock/stop_interrupt_flow")
 }
-
+// User
 export function refreshUser() {
     return fetchJson("/api/users/refresh");
 }
@@ -245,6 +244,14 @@ export function serviceAbbreviationExists(abbreviation, existingService = null) 
 
 export function serviceById(id) {
     return fetchJson(`/api/services/${id}`, {}, {}, false);
+}
+
+export function serviceExportOverview() {
+    return fetchJson("/api/services/export-overview");
+}
+
+export function serviceSyncExternal(serviceId) {
+    return fetchJson(`/api/services/sync_external_service?service_id=${serviceId}`);
 }
 
 export function serviceLdapIdentifier() {
@@ -975,9 +982,14 @@ export function plscSync() {
     return fetchJson("/api/plsc/syncing");
 }
 
-export function proxyAuthzEngineBlock(userUid, serviceEntityId, idpEntityId) {
-    const body = {user_id: userUid.trim(), service_id: serviceEntityId.trim(), issuer_id: idpEntityId.trim()};
-    return postPutJson("/api/users/proxy_authz_eb", body, "post", false);
+export function proxyAuthzEngineBlock(userUid, serviceEntityId, idpEntityId, continueUrl) {
+    const body = {
+        user_id: userUid.trim(),
+        service_id: serviceEntityId.trim(),
+        issuer_id: idpEntityId.trim(),
+        continue_url: continueUrl.trim()
+    };
+    return postPutJson("/api/users/authz_eb", body, "post", false, {"Authorization": "secret"});
 }
 
 export function proxyAuthzEduTeams(userUid, serviceEntityId, idpEntityId) {

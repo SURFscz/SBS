@@ -178,6 +178,12 @@ def application_base_url():
     return base_url[:-1] if base_url.endswith("/") else base_url
 
 
+def server_base_url():
+    cfg = current_app.app_config
+    base_server_url = cfg.base_server_url
+    return base_server_url[:-1] if base_server_url.endswith("/") else base_server_url
+
+
 def _remote_address():
     forwarded = current_request.headers.get("X-Forwarded-For", None)
     return forwarded if forwarded else current_request.remote_addr
@@ -282,6 +288,7 @@ def config():
     threshold_for_warning = cfq.collaboration_inactivity_days_threshold - cfq.inactivity_warning_mail_days_threshold
     return {"local": current_app.config["LOCAL"],
             "base_url": application_base_url(),
+            "base_server_url": server_base_url(),
             "socket_url": cfg.socket_url,
             "api_keys_enabled": cfg.feature.api_keys_enabled,
             "feedback_enabled": cfg.feature.feedback_enabled,

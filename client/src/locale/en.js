@@ -124,7 +124,8 @@ const en = {
             scim: "SCIM",
             stats: "Stats",
             pam: "PAM",
-            proxy: "Proxy"
+            proxy: "Proxy",
+            sync: "Sync"
         }
     },
     forms: {
@@ -2103,6 +2104,7 @@ const en = {
             userUid: "User UID",
             serviceEntityId: "Service entity ID",
             useSRAMServiceEntityId: "Use SRAM service entity ID",
+            continueUrl: "Continue URL",
             mimic: "Choose integration backend",
             mimicTooltip: "The integration backend is either eduTeams or EB.<br><br> The main difference is that EB will POST " +
                 "to the server <code>interrupt</code> endpoint and implicitely login the user. <br><br>EduTeams will redirect to the " +
@@ -2118,6 +2120,15 @@ const en = {
             stopped: "Interrupt flow is stopped. Refresh will make you platform admin again.",
             results: "Results",
             errors: "Errors",
+        },
+        sync: {
+            enabled: "enabled",
+            disabled: "diabled",
+            info: "The sync with {{manageUrl}} is {{state}}",
+            overview: "The services below are configured to sync with Manage, but have not been synced ever",
+            progress: "Progress...",
+            start: "Start syncing",
+            results: "Results",
         }
     },
     access: {

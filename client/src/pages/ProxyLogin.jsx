@@ -2,10 +2,10 @@ import React, {useState} from "react";
 import "./ProxyLogin.scss";
 import {Loader} from "@surfnet/sds";
 import I18n from "../locale/I18n";
-import {ebInterruptData, proxyAuthzEduTeams, proxyAuthzEngineBlock} from "../api";
+import {startEBInterruptFlow, proxyAuthzEduTeams, proxyAuthzEngineBlock} from "../api";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
-import {isEmpty} from "../utils/Utils";
+import {isEmpty, scrollToBottom} from "../utils/Utils";
 import CheckBox from "../components/CheckBox";
 import SelectField from "../components/SelectField";
 
@@ -18,7 +18,8 @@ export default function ProxyLogin({config}) {
 
     const [userUid, setUserUid] = useState("");
     const [serviceEntityId, setServiceEntityId] = useState("");
-    const [idpEntityId, setIdpEntityId] = useState("");
+    const [idpEntityId, setIdpEntityId] = useState("https://mock.idp");
+    const [continueUrl, setContinueUrl] = useState("http://localhost:3000/404");
     const [useSRAMServiceEntityId, setUseSRAMServiceEntityId] = useState(false);
     const [integrationBackend, setIntegrationBackend] = useState(integrationBackendOptions[0]);
     const [proxyAuthzResult, setProxyAuthzResult] = useState(null);
@@ -28,16 +29,18 @@ export default function ProxyLogin({config}) {
     const doProxyAuthz = () => {
         setLoading(true);
         const promise = integrationBackend.value === I18n.t("system.proxy.engineBlock") ? proxyAuthzEngineBlock : proxyAuthzEduTeams;
-        promise(userUid, serviceEntityId, idpEntityId)
+        promise(userUid, serviceEntityId, idpEntityId, continueUrl)
             .then(res => {
                 setProxyAuthzResult(res);
                 setLoading(false);
+                scrollToBottom();
             })
             .catch(e => {
                 setLoading(false);
                 if (e.response && e.response.json) {
                     e.response.json().then(errorJson => {
                         setProxyAuthzError(errorJson);
+                        scrollToBottom();
                     });
                 }
             })
@@ -45,20 +48,12 @@ export default function ProxyLogin({config}) {
 
     const doRedirect = () => {
         setLoading(true);
-        //First get the signed XML that we need to post
-        ebInterruptData(userUid).then(res => {
-            const form = document.createElement("form");
-            form.method = "POST";
-            form.action = proxyAuthzResult.status.redirect_url;
-            Object.entries(res).forEach(field => {
-                const hiddenField = document.createElement("input");
-                hiddenField.type = "hidden";
-                hiddenField.name = field[0];
-                hiddenField.value = field[1];
-                form.appendChild(hiddenField);
-            });
-            document.body.appendChild(form);
-            form.submit();
+        startEBInterruptFlow().then(() => {
+            const isEBFlow = integrationBackend.value === I18n.t("system.proxy.engineBlock")
+            const url = isEBFlow ?  `${config.base_server_url}/api/users/interrupt?nonce=${proxyAuthzResult.nonce}`:
+                proxyAuthzResult.status.redirect_url;
+            debugger; // eslint-disable-line no-debugger
+            window.location.href = url;
         });
     }
 
@@ -116,6 +111,11 @@ export default function ProxyLogin({config}) {
                             name={I18n.t("system.proxy.idpEntityId")}
                             required={true}/>
 
+                <InputField value={continueUrl}
+                            onChange={e => setContinueUrl(e.target.value)}
+                            name={I18n.t("system.proxy.continueUrl")}
+                            required={true}/>
+
                 <div className="actions">
                     <Button txt={I18n.t("system.proxy.reset")}
                             onClick={resetForm}
@@ -125,7 +125,8 @@ export default function ProxyLogin({config}) {
                     <Button txt={I18n.t("system.proxy.start")}
                             onClick={doProxyAuthz}
                             small={true}
-                            disabled={isEmpty(userUid) || isEmpty(serviceEntityId) || isEmpty(idpEntityId)}
+                            disabled={isEmpty(userUid) || isEmpty(serviceEntityId) || isEmpty(idpEntityId) ||
+                                isEmpty(continueUrl)}
                     />
                 </div>
 

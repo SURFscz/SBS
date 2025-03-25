@@ -50,7 +50,7 @@ def login_user():
 
 @mock_user_api.route("/interrupt_data", methods=["GET"], strict_slashes=False)
 @json_endpoint
-def eb_interrupt_data():
+def eb_start_interrupt_flow():
     if not os.environ.get("ALLOW_MOCK_USER_API", None):
         raise Forbidden()
     confirm_write_access()

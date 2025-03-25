@@ -139,9 +139,10 @@ def proxy_authz_eb():
         return {
             "msg": "authorized",
             "attributes": {
-                "eduPersonEntitlement": list(all_attributes),
-                "voPersonID": user.uid,
-                "sshPublicKey": [ssh_key.ssh_value for ssh_key in user.ssh_keys]
+                "urn:mace:dir:attribute-def:eduPersonEntitlement": list(all_attributes),
+                "urn:oid:1.3.6.1.4.1.25178.4.1.6": [user.uid],  # voPersonID
+                "urn:oid:1.3.6.1.4.1.24552.500.1.1.1.13": [ssh_key.ssh_value for ssh_key in user.ssh_keys]
+                # sshPublicKey
             }
         }, 200
     # Once we got here, we need to store the UserNonce

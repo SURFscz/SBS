@@ -1,0 +1,15 @@
+@import "../stylesheets/vars.scss";
+
+.mod-sync-container {
+    .form {
+        display: flex;
+        flex-direction: column;
+        max-width: 50%;
+    }
+
+    button.sds--btn {
+        margin-top: 40px;
+        max-width: 160px;
+    }
+
+}

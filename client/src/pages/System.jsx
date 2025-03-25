@@ -62,6 +62,7 @@ import ClipBoardCopy from "../components/redesign/ClipBoardCopy";
 import Stats from "./Stats";
 import PAM from "./PAM";
 import ProxyLogin from "./ProxyLogin";
+import SyncApplications from "./SyncApplications";
 
 const options = [25, 50, 100, 150, 200, 250, 500].map(nbr => ({value: nbr, label: nbr}));
 
@@ -424,13 +425,27 @@ class System extends React.Component {
     }
 
     getProxyTab = () => {
-        return (<div key="proxy" name="proxy" label={I18n.t("home.tabs.proxy")}>
-            <div className="mod-system">
-                <section className={"info-block-container"}>
-                    <ProxyLogin {...this.props}/>
-                </section>
+        return (
+            <div key="proxy" name="proxy" label={I18n.t("home.tabs.proxy")}>
+                <div className="mod-system">
+                    <section className={"info-block-container"}>
+                        <ProxyLogin {...this.props}/>
+                    </section>
+                </div>
             </div>
-        </div>)
+        );
+    }
+
+    getSyncApplicationsTab = () => {
+        return (
+            <div key="sync" name="sync" label={I18n.t("home.tabs.sync")}>
+                <div className="mod-system">
+                    <section className={"info-block-container"}>
+                        <SyncApplications {...this.props}/>
+                    </section>
+                </div>
+            </div>
+        );
     }
 
     activateUser = user => {
@@ -952,9 +967,9 @@ class System extends React.Component {
                 <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("system.runDbStressSeedInfo"))}}/>
                 <div className="actions">
                     {isEmpty(stressSeedResult) && <Button txt={I18n.t("system.runDbSeed")}
-                                                        onClick={() => this.doDbStressSeed(true)}/>}
+                                                          onClick={() => this.doDbStressSeed(true)}/>}
                     {!isEmpty(stressSeedResult) && <Button txt={I18n.t("system.reload")}
-                                                         onClick={this.reload} cancelButton={true}/>}
+                                                           onClick={this.reload} cancelButton={true}/>}
                 </div>
             </div>
         );
@@ -1479,7 +1494,8 @@ class System extends React.Component {
             this.getScimTab(),
             this.getStatsTab(),
             this.getPamTab(),
-            this.getProxyTab()
+            this.getProxyTab(),
+            this.getSyncApplicationsTab()
         ]
 
         return (

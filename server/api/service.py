@@ -2,6 +2,7 @@ import urllib.parse
 import uuid
 
 from flask import Blueprint, request as current_request, g as request_context, jsonify, current_app
+from sqlalchemy import or_
 from sqlalchemy import text, func
 from sqlalchemy.orm import load_only, selectinload
 from werkzeug.exceptions import Forbidden, BadRequest
@@ -694,3 +695,23 @@ def reset_scim_bearer_token(service_id):
     service.scim_url = data.get("scim_url", service.scim_url)
     encrypt_scim_bearer_token(service)
     return {}, 201
+
+
+@service_api.route("/export-overview", strict_slashes=False)
+@json_endpoint
+def export_overview():
+    confirm_write_access()
+    return Service.query.options(load_only(Service.id, Service.name)) \
+        .filter(or_(Service.oidc_enabled == True, Service.saml_enabled == True)) \
+        .filter(Service.export_external_identifier == None) \
+        .all(), 200  # noqa: E712, E711
+
+
+@service_api.route("/sync_external_service", strict_slashes=False)
+@json_endpoint
+def do_sync_external_service():
+    confirm_write_access()
+    service_id = query_param("service_id")
+    service = Service.query.filter(Service.id == service_id).one()
+    sync_external_service(current_app, service)
+    return {"export_successful": service.export_successful}, 200

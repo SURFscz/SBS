@@ -1,5 +1,7 @@
 import time
+import uuid
 
+import responses
 from flask import session
 from sqlalchemy import text
 
@@ -743,3 +745,28 @@ class TestService(AbstractTest):
                  body={"access_allowed_for_crm_organisation": True},
                  with_basic_auth=False,
                  response_status_code=400)
+
+    def test_find_export_overview(self):
+        self.login("urn:john")
+        services = self.get("/api/services/export-overview", response_status_code=200, with_basic_auth=False)
+        self.assertListEqual(sorted(["Cloud", "Storage"]), sorted([s["name"] for s in services]))
+
+
+    @responses.activate
+    def test_sync_external_service(self):
+        service = self.find_entity_by_name(Service, service_storage_name)
+        with responses.RequestsMock(assert_all_requests_are_fired=True) as res_mock:
+            manage_base_url = self.app.app_config.manage.base_url
+            url = f"{manage_base_url}/manage/api/internal/metadata"
+            external_identifier = str(uuid.uuid4())
+            res_mock.add(responses.POST, url, json={"id": external_identifier, "version": 0}, status=200)
+
+            res = self.get("/api/services/sync_external_service", query_data={"service_id": service.id},
+                           response_status_code=200)
+            self.assertTrue(res["export_successful"])
+
+            updated_service = self.find_entity_by_name(Service, service_storage_name)
+            self.assertEqual(external_identifier, updated_service.export_external_identifier)
+            self.assertEqual(0, updated_service.export_external_version)
+            self.assertTrue(updated_service.export_successful)
+            self.assertIsNotNone(updated_service.exported_at)
