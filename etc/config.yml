@@ -254,3 +254,10 @@ rate_limit_totp_guesses_per_30_seconds: 10
 excluded_user_accounts:
 - uid: "urn:paul"
 - uid: "urn:peter"
+
+stress_test:
+  num_users: 1000
+  num_orgs: 50
+  num_collaborations: 200
+  num_services: 30
+  num_groups: 300

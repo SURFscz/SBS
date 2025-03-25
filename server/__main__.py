@@ -71,7 +71,7 @@ from server.logger.traceback_info_filter import TracebackInfoFilter
 from server.swagger.conf import init_swagger, swagger_specs
 from server.templates import invitation_role
 from server.tools import read_file
-
+from server.cli import register_commands
 
 def _init_logging(log_to_stdout: bool):
     # https://github.com/python-pillow/Pillow/issues/5096
@@ -203,6 +203,9 @@ def perform_db_migration(_):
 
 
 obtain_lock(app, "db_migration", perform_db_migration, lambda: None)
+
+# Register CLI commands
+register_commands(app)
 
 from server.auth.user_claims import generate_unique_username  # noqa: E402
 from server.db.domain import User  # noqa: E402

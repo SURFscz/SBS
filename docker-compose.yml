@@ -68,13 +68,3 @@ services:
       - "data:/var/lib/mysql:Z"
       - "${PWD}/etc/init.sql:/docker-entrypoint-initdb.d/init.sql:ro"
 
-  beaver:
-    image: "docker.io/dbeaver/cloudbeaver:latest"
-    restart: "always"
-    links:
-      - "db"
-    ports:
-      - "8978:8978"
-    volumes:
-      - "cloudbeaver:/opt/cloudbeaver/workspace"
-

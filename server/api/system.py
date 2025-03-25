@@ -184,6 +184,24 @@ def run_demo_seed():
     return {}, 201
 
 
+@system_api.route("/stress_seed", strict_slashes=False, methods=["GET"])
+@json_endpoint
+def run_stress_seed():
+    confirm_write_access()
+
+    check_seed_allowed("stress-seed")
+    try:
+        os.environ["SEEDING"] = "1"
+
+        from server.test.stress_seed import stress_seed
+        stress_seed(db, current_app.app_config)
+        session.clear()
+    finally:
+        del os.environ["SEEDING"]
+
+    return {}, 201
+
+
 @system_api.route("/scheduled_jobs", strict_slashes=False, methods=["GET"])
 @json_endpoint
 def scheduled_jobs():
