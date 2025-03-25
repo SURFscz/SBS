@@ -1,5 +1,7 @@
 import datetime
 import uuid
+import logging
+
 from random import choice, randint, sample
 
 from faker import Faker
@@ -16,13 +18,16 @@ from server.tools import dt_now
 from .seed import persist_instance, clean_db, read_image
 
 fake = Faker()
+logger = logging.getLogger()
 
 
-def stress_seed(db, app_config):
+def stress_seed(db, app_config, progress_callback=None):
     """
     Populate the database with a large number of entities for stress testing.
     The number of entities is controlled by parameters in config.yml.
     """
+    logger.debug("Running stress seed...")
+
     clean_db(db)
 
     # Get stress test parameters from config
@@ -31,10 +36,12 @@ def stress_seed(db, app_config):
     num_orgs = stress_config.get('num_orgs', 50)
     num_collaborations = stress_config.get('num_collaborations', 200)
     num_services = stress_config.get('num_services', 30)
-    num_groups = stress_config.get('num_groups', 300)
+    num_groups = stress_config.get('num_groups', 5)
 
-    print(f"Starting stress seed with: {num_users} users, {num_orgs} orgs, {num_services} services, "
-          f"{num_collaborations} collaborations, {num_groups} groups")
+    logger.debug(
+        f"Starting stress seed with: {num_users} users, {num_orgs} orgs, {num_services} services, "
+        f"{num_collaborations} collaborations, {num_groups} groups"
+    )
 
     # Create some seed users for admin purposes
     admin = User(uid="urn:john", name="The Boss", email="boss@example.org", username="admin",
@@ -58,7 +65,7 @@ def stress_seed(db, app_config):
     ]
 
     # Create users
-    print(f"Creating {num_users} users...")
+    logger.debug(f"Creating {num_users} users...")
     users = [admin]  # Start with admin user
     for i in range(num_users):
         name = fake.name()
@@ -76,7 +83,7 @@ def stress_seed(db, app_config):
         )
         users.append(user)
         if i % 100 == 0 and i > 0:
-            print(f"Created {i} users...")
+            logger.debug(f"Created {i} users...")
             persist_instance(db, *users[i - 100:i])
             db.session.commit()
 
@@ -85,14 +92,18 @@ def stress_seed(db, app_config):
         persist_instance(db, *users[-(len(users) % 100):])
         db.session.commit()
 
-    print(f"Created {len(users)} users")
+    # After creating users:
+    if progress_callback:
+        progress_callback("users", len(users))
+
+    logger.debug(f"Created {len(users)} users")
 
     # Create organisations
-    print(f"Creating {num_orgs} organisations...")
+    logger.debug(f"Creating {num_orgs} organisations...")
     orgs = []
     for i in range(num_orgs):
         name = fake.company()
-        short_name = name.lower().replace(' ', '_')[:10] + str(i)
+        short_name = short_name = f"org_{i}"
         org = Organisation(
             name=name,
             short_name=short_name,
@@ -104,15 +115,18 @@ def stress_seed(db, app_config):
             category=choice(["Research", "University", "UMC", "Overig"]),
             accepted_user_policy=f"https://{short_name}.example.org/aup"
         )
-        print(f"-- Creating organisation {name} with short_name {short_name}")
+        logger.debug(f"-- Creating organisation {name} with short_name {short_name}")
 
         orgs.append(org)
 
     persist_instance(db, *orgs)
-    print(f"Created {len(orgs)} organisations")
+    logger.debug(f"Created {len(orgs)} organisations")
     db.session.commit()
 
-    print("Creating organisation memberships...")
+    if progress_callback:
+        progress_callback("organizations", len(orgs))
+
+    logger.debug("Creating organisation memberships...")
     org_memberships = []
 
     for org in orgs:
@@ -133,16 +147,19 @@ def stress_seed(db, app_config):
             org_memberships.append(membership)
 
     persist_instance(db, *org_memberships)
-    print(f"Created {len(org_memberships)} organisation memberships")
+    logger.debug(f"Created {len(org_memberships)} organisation memberships")
     db.session.commit()
 
+    if progress_callback:
+        progress_callback("organisation_memberships", len(org_memberships))
+
     # Create services
-    print(f"Creating {num_services} services...")
+    logger.debug(f"Creating {num_services} services...")
     services = []
     for i in range(num_services):
         name = fake.bs()
         entity_id = f"https://{name.lower().replace(' ', '-')}-{i}"
-        print(f"-- Creating service {name} with entity_id {entity_id}")
+        logger.debug(f"-- Creating service {name} with entity_id {entity_id}")
         service = Service(
             entity_id=entity_id,
             name=name,
@@ -159,16 +176,21 @@ def stress_seed(db, app_config):
             created_by="urn:admin",
             updated_by="urn:admin"
         )
-        print(f"-- Creating service {name} with entity_id {entity_id}"
-              f" and {len(service.allowed_organisations)} allowed organisations")
+        logger.debug(
+            f"-- Creating service {name} with entity_id {entity_id}"
+            f" and {len(service.allowed_organisations)} allowed organisations"
+        )
 
         services.append(service)
 
     persist_instance(db, *services)
-    print(f"Created {len(services)} services")
+    logger.debug(f"Created {len(services)} services")
     db.session.commit()
 
-    print("Creating service memberships...")
+    if progress_callback:
+        progress_callback("services", len(services))
+
+    logger.debug("Creating service memberships...")
     service_memberships = []
 
     for service in services:
@@ -189,19 +211,24 @@ def stress_seed(db, app_config):
             service_memberships.append(membership)
 
     persist_instance(db, *service_memberships)
-    print(f"Created {len(service_memberships)} service memberships")
+    logger.debug(f"Created {len(service_memberships)} service memberships")
     db.session.commit()
 
+    if progress_callback:
+        progress_callback("service_memberships", len(service_memberships))
+
     # Create collaborations in batches to avoid memory issues
-    print(f"Creating {num_collaborations} collaborations...")
+    logger.debug(f"Creating {num_collaborations} collaborations...")
     batch_size = 50
-    for batch in range(0, num_collaborations, batch_size):
+    created_collaborations = 0
+
+    for batch in range(0, num_collaborations, min(batch_size, num_collaborations)):
         end = min(batch + batch_size, num_collaborations)
-        print(f"Creating collaborations {batch} to {end}...")
+        logger.debug(f"Creating collaborations {batch} to {end}...")
 
         collaborations = []
         for i in range(batch, end):
-            name = f"Collaboration {i}: {fake.catch_phrase()}"
+            name = f"{fake.catch_phrase()}"
             short_name = f"collab_{i}"
             org = choice(orgs)
             collaboration = Collaboration(
@@ -220,16 +247,20 @@ def stress_seed(db, app_config):
                 created_by="urn:admin",
                 updated_by="urn:admin"
             )
-            print(f"-- Creating collaboration {name} with short_name {short_name}"
-                  f" for organisation {org.name}"
-                  f" with {len(collaboration.services)} services"
-                  f" and {len(collaboration.groups)} groups")
+            logger.debug(
+                f"-- Creating collaboration {name} with short_name {short_name}"
+                f" for organisation {org.name}"
+                f" with {len(collaboration.services)} services"
+                f" and {len(collaboration.groups)} groups"
+            )
 
             collaborations.append(collaboration)
 
         persist_instance(db, *collaborations)
-        print(f"Created {len(collaborations)} collaborations")
+        logger.debug(f"Created {len(collaborations)} collaborations")
         db.session.commit()
+
+        created_collaborations += len(collaborations)
 
         # Create collaboration memberships
         for collab in collaborations:
@@ -259,16 +290,17 @@ def stress_seed(db, app_config):
                 )
                 collab_memberships.append(member)
 
-            print("Persisting Collaboration Memberships...")
+            logger.debug("Persisting Collaboration Memberships...")
             persist_instance(db, *collab_memberships)
 
-            # Create groups for this batch
-            groups_per_batch = int(num_groups * batch_size / num_collaborations)
+            if progress_callback:
+                progress_callback(f"meberships for collaboration: {collab.global_urn}", len(collab_memberships))
+
+            # Create groups for this collaboration
             groups = []
-            for i in range(groups_per_batch):
-                collab = choice(collaborations)
+            for i in range(randint(0, num_groups)):
                 name = f"{fake.word()}"
-                short_name = f"group_{batch + i}"
+                short_name = f"group_{i}"
 
                 # Get admin memberships for this collaboration
                 admin_members = [m for m in collab_memberships if m.collaboration == collab and m.role == "admin"]
@@ -288,16 +320,23 @@ def stress_seed(db, app_config):
                         updated_by="urn:admin"
 
                     )
-                    print(f"-- Creating group {name} with short_name {short_name}"
-                          f" for collaboration {collab.name}"
-                          f" with {len(group.collaboration_memberships)} members")
+                    logger.debug(
+                        f"-- Creating group {name} with short_name {short_name}"
+                        f" for collaboration {collab.name}"
+                        f" with {len(group.collaboration_memberships)} members"
+                    )
 
                     groups.append(group)
 
-            print("Persisting Collaboration Memberships...")
             persist_instance(db, *groups)
-            print(f"Created {len(groups)} groups for this batch")
+            logger.debug(f"Created {len(groups)} groups for this batch")
+
+            if progress_callback:
+                progress_callback(f"groups for collaboration: {collab.global_urn}", len(groups))
 
             db.session.commit()
 
-    print("Stress seed completed successfully")
+        if progress_callback:
+            progress_callback("collaboration", created_collaborations)
+
+    logger.debug("Stress seed completed successfully")
