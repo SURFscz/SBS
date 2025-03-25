@@ -203,6 +203,12 @@ source .venv/bin/activate
 cd server
 CONFIG='config/test_config.yml' FLASK_APP='__main__.py' flask shell
 ```
+To run the stress-seed for performance testing:
+```bash
+source .venv/bin/activate
+cd server
+CONFIG='config/test_config.yml' FLASK_APP='__main__.py' flask stress-seed --help
+```
 
 ### [PyCharm](#pycharm)
 
