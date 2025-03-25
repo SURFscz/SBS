@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision 9ec140457920 (head)
+-- Dump of empty SBS database, alembic revision 86aa25bc5279 (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('9ec140457920');
+INSERT INTO `alembic_version` VALUES ('86aa25bc5279');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_key_units`;
@@ -1132,6 +1132,32 @@ CREATE TABLE `user_names_history` (
 LOCK TABLES `user_names_history` WRITE;
 /*!40000 ALTER TABLE `user_names_history` DISABLE KEYS */;
 /*!40000 ALTER TABLE `user_names_history` ENABLE KEYS */;
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `user_nonces`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_nonces` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nonce` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `issuer_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `requested_service_entity_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `continue_url` varchar(512) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `error_status` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `service_id` int(11) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_nonces_unique_nonce` (`nonce`),
+  KEY `user_id` (`user_id`),
+  KEY `service_id` (`service_id`),
+  CONSTRAINT `user_nonces_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `user_nonces_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+LOCK TABLES `user_nonces` WRITE;
+/*!40000 ALTER TABLE `user_nonces` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user_nonces` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `user_tokens`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
