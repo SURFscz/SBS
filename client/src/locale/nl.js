@@ -112,7 +112,7 @@ const nl = {
             welcome: "Welkom",
             cron: "Cron",
             seed: "Seed",
-            database: "Database",
+            database: "DB",
             activity: "Activiteit",
             validation: "Acties",
             plsc: "LDAP",
@@ -2126,9 +2126,10 @@ const nl = {
             disabled: "diabled",
             info: "The sync with manage ({{manageUrl}}) is {{state}}",
             overview: "The services below are configured to sync with Manage, but have not been synced ever",
-            progress: "Progress...",
             start: "Start syncing",
-            results: "Results"
+            reload: "Reload",
+            results: "All syncs were successful🥳🎉🍾",
+            faultyResults: "Not all syncs were successful. Check the SBS logs for details."
         }
     },
     access: {

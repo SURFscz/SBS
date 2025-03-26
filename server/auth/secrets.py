@@ -38,7 +38,7 @@ def generate_random_password():
     return password
 
 
-def generate_password_with_hash(password=generate_random_password(), rounds=12):
+def generate_password_with_hash(password=generate_random_password(), rounds=5):
     hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt(rounds))
     return hashed.decode("utf-8"), password
 

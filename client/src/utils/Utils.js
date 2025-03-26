@@ -209,3 +209,7 @@ export const scrollToBottom = () => {
     setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth"}), 425);
 }
 
+export const serial = (tasks, fn) => {
+    return tasks.reduce((promise, task, index) => promise.then(() => fn(task, index)), Promise.resolve(null))
+}
+

@@ -711,7 +711,8 @@ def export_overview():
 @json_endpoint
 def do_sync_external_service():
     confirm_write_access()
-    service_id = query_param("service_id")
+    service_id = int(query_param("service_id"))
     service = Service.query.filter(Service.id == service_id).one()
+    service_name = service.name
     sync_external_service(current_app, service)
-    return {"export_successful": service.export_successful}, 200
+    return {"id": service_id, "name": service_name, "export_successful": service.export_successful}, 200

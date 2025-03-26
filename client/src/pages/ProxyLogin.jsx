@@ -19,7 +19,7 @@ export default function ProxyLogin({config}) {
     const [userUid, setUserUid] = useState("");
     const [serviceEntityId, setServiceEntityId] = useState("");
     const [idpEntityId, setIdpEntityId] = useState("https://mock.idp");
-    const [continueUrl, setContinueUrl] = useState("http://localhost:3000/404");
+    const [continueUrl, setContinueUrl] = useState("https://www.surf.nl");
     const [useSRAMServiceEntityId, setUseSRAMServiceEntityId] = useState(false);
     const [integrationBackend, setIntegrationBackend] = useState(integrationBackendOptions[0]);
     const [proxyAuthzResult, setProxyAuthzResult] = useState(null);

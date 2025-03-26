@@ -413,7 +413,7 @@ def seed(db, app_config, skip_seed=False):
                       scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock",
                       token_enabled=False, token_validity_days=0,
                       redirect_urls="https://redirect.com/url1,https://redirect.com/url2",
-                      saml_metadata=None, saml_metadata_url=None, oidc_client_secret="secret",
+                      saml_metadata=None, saml_metadata_url=None, oidc_client_secret="1234567890_secret",
                       providing_organisation="SURFconext", grants="authorization_code, refresh_token",
                       is_public_client=True, saml_enabled=False, oidc_enabled=True)
     wiki = Service(entity_id=service_wiki_entity_id, name=service_wiki_name, description="No more wiki's please",

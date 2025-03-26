@@ -12,7 +12,7 @@ from server.auth.service_access import has_user_access_to_service, collaboration
 from server.auth.user_claims import user_memberships, co_tags
 from server.auth.user_codes import UserCode
 from server.db.db import db
-from server.db.defaults import PROXY_AUTHZ
+from server.db.defaults import PROXY_AUTHZ_EB
 from server.db.domain import User, Service, UserNonce
 from server.db.models import log_user_login
 from server.logger.context_logger import ctx_logger
@@ -49,7 +49,7 @@ def proxy_authz_eb():
     nonce = str(uuid.uuid4())
     user_nonce = UserNonce(user=user, service=service, nonce=nonce, continue_url=continue_url, issuer_id=issuer_id,
                            requested_service_entity_id=service_entity_id)
-    # Unknown service returns unauthorized
+    # Unknown service is dead end, but we return interrupt
     if not service:
         msg = f"Returning interrupt for user {uid} and service_entity_id {service_entity_id} " \
               f"as the service is unknown"
@@ -64,9 +64,14 @@ def proxy_authz_eb():
     elif not user:
         free_rider = service.non_member_users_access_allowed
         if free_rider:
+            user = User(uid=uid, external_id=str(uuid.uuid4()), created_by="system", updated_by="system")
+            db.session.merge(user)
+            db.session.commit()
             return {
                 "msg": "authorized",
-                "attributes": {}
+                "attributes": {
+                    "urn:oid:1.3.6.1.4.1.25178.4.1.6": [user.uid],  # voPersonID
+                }
             }, 200
         else:
             user_nonce.error_status = UserCode.USER_UNKNOWN.value
@@ -135,7 +140,7 @@ def proxy_authz_eb():
         all_tags = co_tags(connected_collaborations)
         all_attributes = all_memberships.union(all_tags)
 
-        log_user_login(PROXY_AUTHZ, True, user, uid, service, service_entity_id, "AUTHORIZED")
+        log_user_login(PROXY_AUTHZ_EB, True, user, uid, service, service_entity_id, "AUTHORIZED")
 
         return {
             "msg": "authorized",

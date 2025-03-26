@@ -31,6 +31,7 @@ service_token_options = {"token_enabled": SERVICE_TOKEN_INTROSPECTION,
 SBS_LOGIN = "sbs_login"
 PROXY_AUTHZ = "proxy_authz"
 PROXY_AUTHZ_SBS = "proxy_authz_sbs"
+PROXY_AUTHZ_EB = "proxy_authz_eb"
 PAM_WEB_LOGIN = "pam_web_login"
 USER_TOKEN_INTROSPECT = "user_token_introspect"
 
