@@ -22,10 +22,11 @@ export function doRedirectToProxyLocation() {
 }
 
 export function redirectToProxyLocation(location, history, config) {
-    if (isValidContinueURL(config, continueUrl)) {
+    if (isValidContinueURL(config, location)) {
         localStorage.removeItem(CONTINUE_URL);
         window.location.href = location;
     } else {
+        const url = new URL(location);
         history.push(url.pathname + url.search);
     }
 }
