@@ -751,7 +751,6 @@ class TestService(AbstractTest):
         services = self.get("/api/services/export-overview", response_status_code=200, with_basic_auth=False)
         self.assertListEqual(sorted(["Cloud", "Storage"]), sorted([s["name"] for s in services]))
 
-
     @responses.activate
     def test_sync_external_service(self):
         service = self.find_entity_by_name(Service, service_storage_name)

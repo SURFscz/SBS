@@ -41,7 +41,7 @@ def proxy_authz_eb():
     # user who log in to SBS itself can continue here; their attributes are checked in user.py/resume_session()
     if service_entity_id == current_app.app_config.oidc.sram_service_entity_id.lower():
         logger.debug(f"Return authorized to start SBS login flow, service_entity_id={service_entity_id}")
-        return {"msg": "authorized"}, 200
+        return {"msg": "authorized", "attributes": []}, 200
 
     service = Service.query.filter(Service.entity_id == service_entity_id).first()
     user = User.query.filter(User.uid == uid).first()
@@ -59,7 +59,7 @@ def proxy_authz_eb():
         results = {
             "msg": "interrupt",
             "nonce": nonce,
-            "message": UserCode.SERVICE_UNKNOWN
+            "message": UserCode.SERVICE_UNKNOWN.name
         }
     elif not user:
         free_rider = service.non_member_users_access_allowed
@@ -82,6 +82,17 @@ def proxy_authz_eb():
             "nonce": nonce,
             "message": UserCode.USER_IS_SUSPENDED.name
         }
+    # if none of CO's are not active, then this is the same as none of the CO's are not connected to the Service
+    elif not has_user_access_to_service(service, user):
+        logger.debug(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id} "
+                     "because the service is not connected to any active CO's")
+        user_nonce.error_status = UserCode.SERVICE_NOT_CONNECTED.value
+        results = {
+            "msg": "interrupt",
+            "nonce": nonce,
+            "message": UserCode.SERVICE_NOT_CONNECTED.name
+        }
+
     # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
     # also skip if user has already recently performed MFA
     elif user_requires_sram_mfa(user, issuer_id):
@@ -93,16 +104,6 @@ def proxy_authz_eb():
             "message": UserCode.SECOND_FA_REQUIRED.name
         }
 
-    # if none of CO's are not active, then this is the same as none of the CO's are not connected to the Service
-    elif not has_user_access_to_service(service, user):
-        logger.debug(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id} "
-                     "because the service is not connected to any active CO's")
-        user_nonce.error_status = UserCode.SERVICE_NOT_CONNECTED.value
-        results = {
-            "msg": "unauthorized",
-            "nonce": nonce,
-            "message": UserCode.SERVICE_NOT_CONNECTED.name
-        }
     elif not has_agreed_with(user, service):
         logger.debug(f"Returning interrupt for user {uid} and service_entity_id {service_entity_id} to accept "
                      f"Service AUP")
@@ -141,8 +142,7 @@ def proxy_authz_eb():
             "attributes": {
                 "urn:mace:dir:attribute-def:eduPersonEntitlement": list(all_attributes),
                 "urn:oid:1.3.6.1.4.1.25178.4.1.6": [user.uid],  # voPersonID
-                "urn:oid:1.3.6.1.4.1.24552.500.1.1.1.13": [ssh_key.ssh_value for ssh_key in user.ssh_keys]
-                # sshPublicKey
+                "urn:oid:1.3.6.1.4.1.24552.500.1.1.1.13": [k.ssh_value for k in user.ssh_keys]  # sshPublicKey
             }
         }, 200
     # Once we got here, we need to store the UserNonce
