@@ -1,8 +1,15 @@
 const CONTINUE_URL = "continue_url";
 
+const isValidContinueURL = (config, continueUrl) => {
+    const continueUrlEduTeamsTrusted = config.continue_eduteams_redirect_uri;
+    const continueUrlEBTrusted = config.continue_eb_redirect_uri;
+    return continueUrl && (continueUrl.toLowerCase().startsWith(continueUrlEduTeamsTrusted.toLowerCase()) ||
+        new RegExp(continueUrlEBTrusted, "i").test(continueUrl));
+}
+
+
 export function saveContinueURL(config, continueUrl) {
-    const continueUrlTrusted = config.continue_eduteams_redirect_uri;
-    if (!continueUrl || !continueUrl.toLowerCase().startsWith(continueUrlTrusted.toLowerCase())) {
+    if (!isValidContinueURL(config, continueUrl)) {
         throw new Error(`Invalid continue url: '${continueUrl}'`)
     }
     localStorage.setItem(CONTINUE_URL, continueUrl);
@@ -15,9 +22,7 @@ export function doRedirectToProxyLocation() {
 }
 
 export function redirectToProxyLocation(location, history, config) {
-    const url = new URL(location);
-    const urlTrusted = config.continue_eduteams_redirect_uri;
-    if (location.toLowerCase().startsWith(urlTrusted.toLowerCase())) {
+    if (isValidContinueURL(config, continueUrl)) {
         localStorage.removeItem(CONTINUE_URL);
         window.location.href = location;
     } else {

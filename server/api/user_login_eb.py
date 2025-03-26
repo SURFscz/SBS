@@ -185,6 +185,9 @@ def interrupt():
     db.session.delete(user_nonce)
     db.session.commit()
 
+    # TODO: check if this a dead-end. Either no user, no service or no connection. Dead ends do not go the interrupt,
+    # which is a protected resource and enforces login, mfa, aup, service_aup. We don't want this if it is a dead-end
+
     client_base_url = current_app.app_config.base_url
     args = urllib.parse.urlencode(parameters)
     return redirect(f"{client_base_url}/interrupt?{args}")
