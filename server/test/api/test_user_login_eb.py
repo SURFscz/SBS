@@ -43,7 +43,8 @@ class TestUserLoginEB(AbstractTest):
                               "issuer_id": "issuer.com"})
         msg = res["msg"]
         self.assertEqual("authorized", msg)
-        self.assertEqual(0, len(res["attributes"]))
+        self.assertEqual(1, len(res["attributes"]))
+        self.assertEqual("urn:unknown", res["attributes"]["urn:oid:1.3.6.1.4.1.25178.4.1.6"][0])
 
     def test_authz_eb_user_suspended(self):
         self.mark_user_suspended(user_sarah_name)
