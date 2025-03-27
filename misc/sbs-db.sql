@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision 86aa25bc5279 (head)
+-- Dump of empty SBS database, alembic revision 13e3d85c1c5b (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('86aa25bc5279');
+INSERT INTO `alembic_version` VALUES ('13e3d85c1c5b');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_key_units`;
@@ -1146,6 +1146,7 @@ CREATE TABLE `user_nonces` (
   `user_id` int(11) DEFAULT NULL,
   `service_id` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `requested_user_id` varchar(512) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_nonces_unique_nonce` (`nonce`),
   KEY `user_id` (`user_id`),
