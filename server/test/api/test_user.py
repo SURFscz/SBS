@@ -265,6 +265,13 @@ class TestUser(AbstractTest):
         self.assertEqual("support@storage.net", res["support_email"])
         self.assertTrue(res["service_connection_allowed"])
 
+    def test_service_info_no_user(self):
+        res = self.get("/api/users/service_info",
+                       query_data={"uid": "nope", "entity_id": "nope"},
+                       with_basic_auth=False)
+        self.assertEqual(1, len(res))
+        self.assertFalse(res["service_connection_allowed"])
+
     def test_service_info_override_access_allowed_all_connections(self):
         res = self.get("/api/users/service_info",
                        query_data={"uid": "urn:roger",

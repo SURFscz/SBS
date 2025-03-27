@@ -1,3 +1,5 @@
+import uuid
+import urllib.parse
 import requests
 
 from server.auth.user_codes import UserCode
@@ -45,21 +47,6 @@ class TestUserLoginEB(AbstractTest):
         self.assertEqual("authorized", msg)
         self.assertEqual(1, len(res["attributes"]))
         self.assertEqual("urn:unknown", res["attributes"]["urn:oid:1.3.6.1.4.1.25178.4.1.6"][0])
-
-    def test_authz_eb_user_suspended(self):
-        self.mark_user_suspended(user_sarah_name)
-        res = self.post("/api/users/authz_eb",
-                        headers={"Authorization": self.app.app_config.engine_block.api_token,
-                                 "Content-Type": "application/json"},
-                        response_status_code=200,
-                        body={"user_id": "urn:sarah",
-                              "continue_url": "https://engine.surf.nl",
-                              "service_id": service_cloud_entity_id,
-                              "issuer_id": "issuer.com"})
-        self.assertEqual("interrupt", res["msg"])
-        self.assertEqual(UserCode.USER_IS_SUSPENDED.name, res["message"])
-        user_nonce = UserNonce.query.filter(UserNonce.nonce == res["nonce"]).one()
-        self.assertEqual(user_nonce.error_status, UserCode.USER_IS_SUSPENDED.value)
 
     def test_authz_eb_user_not_connected(self):
         res = self.post("/api/users/authz_eb",
@@ -170,17 +157,19 @@ class TestUserLoginEB(AbstractTest):
         user_nonce = UserNonce.query.filter(UserNonce.nonce == sarah_nonce).one()
         with requests.Session():
             res = self.client.get("/api/users/interrupt",
-                                  query_string={"nonce": user_nonce.nonce,
-                                                "error_status": UserCode.SECOND_FA_REQUIRED.value})
+                                  query_string={"nonce": user_nonce.nonce})
+            parameters = {
+                "service_name": "Cloud",
+                "service_id": user_nonce.service.uuid4,
+                "continue_url": user_nonce.continue_url,
+                "entity_id": service_cloud_entity_id,
+                "issuer_id": None,
+                "user_id": user_nonce.user.uid,
+                "error_status": user_nonce.error_status
+            }
+            args = urllib.parse.urlencode(parameters)
 
-            self.assertEqual(f"http://localhost:3000/interrupt?"
-                             f"service_name=Cloud&"
-                             f"service_id={user_nonce.service.uuid4}&"
-                             f"continue_url=https%3A%2F%2Fengine.surf.nl&"
-                             f"entity_id=https%3A%2F%2Fcloud&"
-                             f"issuer_id=None&"
-                             f"user_id=urn%3Asarah&"
-                             f"error_status=100",
+            self.assertEqual(f"http://localhost:3000/interrupt?{args}",
                              res.location)
 
             # Now verify that a call to me returns the correct user, e.g. sarah
@@ -191,3 +180,31 @@ class TestUserLoginEB(AbstractTest):
             self.assertFalse(user.get("second_factor_confirmed"))
             self.assertEqual("urn:sarah", user.get("uid"))
             self.assertEqual("sarah@uni-franeker.nl", user.get("email"))
+
+    def test_interrupt_eb_dead_end(self):
+        user_nonce = UserNonce(continue_url="https://engine.surf.nl", nonce=str(uuid.uuid4()),
+                               error_status=UserCode.SERVICE_UNKNOWN.value, issuer_id="https://eb",
+                               requested_service_entity_id="https://cloud", requested_user_id="urn:nope")
+        self.save_entity(user_nonce)
+        with requests.Session():
+            res = self.client.get("/api/users/interrupt",
+                                  query_string={"nonce": user_nonce.nonce})
+            parameters = {
+                "service_name": user_nonce.requested_service_entity_id,
+                "service_id": None,
+                "continue_url": user_nonce.continue_url,
+                "entity_id": user_nonce.requested_service_entity_id,
+                "issuer_id": user_nonce.issuer_id,
+                "user_id": user_nonce.requested_user_id,
+                "error_status": user_nonce.error_status
+            }
+            args = urllib.parse.urlencode(parameters)
+
+            self.assertEqual(f"http://localhost:3000/service-denied?{args}",
+                             res.location)
+
+            # Now verify that a call to me returns the none user
+            user = self.client.get("/api/users/me", ).json
+            self.assertFalse(user.get("admin"))
+            self.assertTrue(user.get("guest"))
+            self.assertIsNotNone(user.get("uid"))

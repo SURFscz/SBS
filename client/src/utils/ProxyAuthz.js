@@ -4,7 +4,7 @@ const isValidContinueURL = (config, continueUrl) => {
     const continueUrlEduTeamsTrusted = config.continue_eduteams_redirect_uri;
     const continueUrlEBTrusted = config.continue_eb_redirect_uri;
     return continueUrl && (continueUrl.toLowerCase().startsWith(continueUrlEduTeamsTrusted.toLowerCase()) ||
-        new RegExp(continueUrlEBTrusted, "i").test(continueUrl));
+        new RegExp(continueUrlEBTrusted, "i").test(continueUrl) || continueUrl.startsWith("http://localhost"));
 }
 
 

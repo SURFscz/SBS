@@ -48,7 +48,7 @@ def proxy_authz_eb():
 
     nonce = str(uuid.uuid4())
     user_nonce = UserNonce(user=user, service=service, nonce=nonce, continue_url=continue_url, issuer_id=issuer_id,
-                           requested_service_entity_id=service_entity_id)
+                           requested_service_entity_id=service_entity_id, requested_user_id=uid)
     # Unknown service is dead end, but we return interrupt
     if not service:
         msg = f"Returning interrupt for user {uid} and service_entity_id {service_entity_id} " \
@@ -80,13 +80,6 @@ def proxy_authz_eb():
                 "nonce": nonce,
                 "message": UserCode.USER_UNKNOWN.name
             }
-    elif user.suspended:
-        user_nonce.error_status = UserCode.USER_IS_SUSPENDED.value
-        results = {
-            "msg": "interrupt",
-            "nonce": nonce,
-            "message": UserCode.USER_IS_SUSPENDED.name
-        }
     # if none of CO's are not active, then this is the same as none of the CO's are not connected to the Service
     elif not has_user_access_to_service(service, user):
         logger.debug(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id} "
@@ -172,22 +165,22 @@ def interrupt():
     session["original_destination"] = continue_url
     service = user_nonce.service
     # Add the parameters, which are used in some interrupt flows
+    error_status = user_nonce.error_status
     parameters = {
         "service_name": service.name if service else user_nonce.requested_service_entity_id,
         "service_id": service.uuid4 if service else None,
         "continue_url": user_nonce.continue_url,
         "entity_id": service.entity_id if service else user_nonce.requested_service_entity_id,
         "issuer_id": user_nonce.issuer_id,
-        "user_id": user.uid if user else None,
-        "error_status": user_nonce.error_status
+        "user_id": user.uid if user else user_nonce.requested_user_id,
+        "error_status": error_status
     }
     # Now delete the user_nonce
     db.session.delete(user_nonce)
     db.session.commit()
 
-    # TODO: check if this a dead-end. Either no user, no service or no connection. Dead ends do not go the interrupt,
-    # which is a protected resource and enforces login, mfa, aup, service_aup. We don't want this if it is a dead-end
-
     client_base_url = current_app.app_config.base_url
     args = urllib.parse.urlencode(parameters)
-    return redirect(f"{client_base_url}/interrupt?{args}")
+    # Dead-end errors do not go the interrupt, which is a protected resource and enforces login, mfa, aup, service_aup.
+    path = "service-denied" if UserCode.dead_end(error_status) else "interrupt"
+    return redirect(f"{client_base_url}/{path}?{args}")

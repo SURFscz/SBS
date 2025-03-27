@@ -1051,6 +1051,7 @@ class UserNonce(Base, db.Model):
     error_status = db.Column("error_status", db.Integer(), nullable=False)
     issuer_id = db.Column("issuer_id", db.String(length=255), nullable=True)
     requested_service_entity_id = db.Column("requested_service_entity_id", db.String(length=255), nullable=True)
+    requested_user_id = db.Column("requested_user_id", db.String(length=512), nullable=True)
     continue_url = db.Column("continue_url", db.String(length=512), nullable=True)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     user = db.relationship("User")

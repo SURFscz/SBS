@@ -15,13 +15,10 @@ def summary():
     confirm_write_access()
     with db.engine.connect() as conn:
         rs = conn.execute(text("SELECT login_type, COUNT(*), SUM(succeeded=1), SUM(succeeded=0) "
-                                "FROM user_logins GROUP BY login_type"))
+                               "FROM user_logins GROUP BY login_type"))
         res = [{"login_type": row[0], "count": row[1], "succeeded": int(row[2]), "failed": int(row[3])} for row in rs]
 
-    def add_missing_login_type(login_type):
+    for login_type in [SBS_LOGIN, PROXY_AUTHZ, PROXY_AUTHZ_SBS, PAM_WEB_LOGIN, USER_TOKEN_INTROSPECT]:
         if not [r for r in res if r["login_type"] == login_type]:
             res.append({"login_type": login_type, "count": 0, "succeeded": 0, "failed": 0})
-
-    for login_type in [SBS_LOGIN, PROXY_AUTHZ, PROXY_AUTHZ_SBS, PAM_WEB_LOGIN, USER_TOKEN_INTROSPECT]:
-        add_missing_login_type(login_type)
     return res, 200

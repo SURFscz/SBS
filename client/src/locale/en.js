@@ -2568,7 +2568,7 @@ const en = {
             "Unfortunately, this authentication from SURFsecureID has just failed.</br></br>" +
             "Please copy & paste the following information and contact SRAM support at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for help.",
         defaultCode: "urn:oasis:names:tc:SAML:2.0:status:Responder",
-        defaultMessage: ""
+        defaultMessage: "",
     },
     gallery: {
         upload: "Upload your own image",

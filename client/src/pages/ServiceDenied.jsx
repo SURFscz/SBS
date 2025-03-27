@@ -5,7 +5,6 @@ import {ReactComponent as LogonPrevIcon} from "../icons/service-denied-2.svg";
 import {ReactComponent as HappyIcon} from "../icons/landing/happy.svg";
 import {ReactComponent as ErrorInfoIcon} from "../icons/service-denied-3.svg";
 import I18n from "../locale/I18n";
-import escape from "lodash.escape";
 import DOMPurify from "dompurify";
 import {capitalize, isEmpty} from "../utils/Utils";
 import {serviceInfo} from "../api";
@@ -30,11 +29,11 @@ export default function ServiceDenied(props) {
     useEffect(() => {
         const urlSearchParams = new URLSearchParams(window.location.search);
         const entity_id = urlSearchParams.get("entity_id");
-        setServiceName(escape(urlSearchParams.get("service_name")));
+        setServiceName(urlSearchParams.get("service_name"));
         const user_id = urlSearchParams.get("user_id");
-        setUserId(escape(user_id));
-        setEntityId(escape(entity_id));
-        setIssuerId(escape(urlSearchParams.get("issuer_id")));
+        setUserId(user_id);
+        setEntityId(entity_id);
+        setIssuerId(urlSearchParams.get("issuer_id"));
         setStatus(urlSearchParams.get("error_status"));
         serviceInfo(entity_id, user_id)
             .then(res => {
@@ -94,8 +93,8 @@ export default function ServiceDenied(props) {
     };
 
     const gainingAccessBlock = () => {
-        const mayCreateOrRequest = !isEmpty(organisations) &&  serviceConnectionAllowed;
-        const mayCreate = organisations.some(org => org.co_creation) &&  serviceConnectionAllowed;
+        const mayCreateOrRequest = !isEmpty(organisations) && serviceConnectionAllowed;
+        const mayCreate = !isEmpty(organisations) && organisations.some(org => org.co_creation) && serviceConnectionAllowed;
         return (
             <div className="service-denied-info">
                 <HappyIcon/>

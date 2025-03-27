@@ -100,10 +100,10 @@ export function authorizationUrl(state) {
 }
 
 export function me(config) {
-    if (config.local && 1 == 1) {
+    if (config.local && 1 != 1) {
         let sub = "urn:service_admin";
         sub = "urn:john";
-       // sub = "urn:paul";
+        // sub = "urn:sarah";
         const second_factor_confirmed = true;
         const rate_limited = false;
         // const second_factor_confirmed = false;

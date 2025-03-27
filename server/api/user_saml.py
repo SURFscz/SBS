@@ -28,7 +28,7 @@ def proxy_authz_edu_teams():
     issuer_id = json_dict["issuer_id"]
     # Client URL for direct error message in case of unauthorized and interrupt endpoint to decide what to do
     client_base_url = current_app.app_config.base_url
-    # Redirect from eduTeams needs to land on GUI, but redirect from EB needs to land on server
+    # Redirect from eduTeams needs to land on GUI
     interrupt_url = f"{client_base_url}/interrupt"
     logger = ctx_logger("user_api")
     logger.debug(f"proxy_authz called with {json_dict}")
