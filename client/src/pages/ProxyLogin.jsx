@@ -12,8 +12,8 @@ import SelectField from "../components/SelectField";
 export default function ProxyLogin({config}) {
 
     const integrationBackendOptions = [
-        I18n.t("system.proxy.eduTeams"),
-        I18n.t("system.proxy.engineBlock")
+        I18n.t("system.proxy.engineBlock"),
+        I18n.t("system.proxy.eduTeams")
     ].map(backend => ({label: backend, value: backend}));
 
     const [userUid, setUserUid] = useState("");
@@ -50,7 +50,7 @@ export default function ProxyLogin({config}) {
         setLoading(true);
         startEBInterruptFlow().then(() => {
             const isEBFlow = integrationBackend.value === I18n.t("system.proxy.engineBlock")
-            const url = isEBFlow ?  `${config.base_server_url}/api/users/interrupt?nonce=${proxyAuthzResult.nonce}`:
+            const url = isEBFlow ? `${config.base_server_url}/api/users/interrupt?nonce=${proxyAuthzResult.nonce}` :
                 proxyAuthzResult.status.redirect_url;
             debugger; // eslint-disable-line no-debugger
             window.location.href = url;

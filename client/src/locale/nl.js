@@ -2129,7 +2129,7 @@ const nl = {
             start: "Start syncing",
             reload: "Reload",
             results: "All syncs were successful🥳🎉🍾",
-            faultyResults: "Not all syncs were successful. Check the SBS logs for details."
+            faultyResults: "The syncs marked in red were not successful. Check the SBS logs for details."
         }
     },
     access: {

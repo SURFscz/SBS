@@ -32,10 +32,12 @@
         white-space: nowrap;
 
         &.green {
-            color: var(--sds--color--green--500);
+            background-color: var(--sds--color--green--500);
+            color: white;
         }
         &.red {
-            color: var(--sds--color--red--500);
+            background-color: var(--sds--color--red--500);
+            color: white;
         }
     }
 
