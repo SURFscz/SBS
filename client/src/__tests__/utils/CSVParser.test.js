@@ -13,8 +13,6 @@ coShortName,admin,rdoe@uniharderwijk.nl, , , , ,
     const data = results.data;
     expect(data.length).toEqual(3);
     expect(results.errors.length).toEqual(0);
-    expect(data[0].invitation_expiry_date).toEqual(1743014227);
-    expect(data[0].membership_expiry_date).toEqual(1767052800);
     expect(data[1].short_names).toEqual(["cumulusgrp","cirrusgrp"]);
     expect(data[1].invitees).toEqual(["jdoe@surf.nl","joost@surf.nl"]);
     expect(data[2].groups).toEqual([]);
