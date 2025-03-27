@@ -1406,7 +1406,8 @@ endpoints = [
         "name": "user_api.service_info",
         "method": "GET",
         "path": "/api/users/service_info",
-        "query_data": {"uid": "nope", "entity_id": "nope"}
+        "query_data": {"uid": "nope", "entity_id": "nope"},
+        "status_code": 200
     },
     {
         "name": "user_api.suspended",
