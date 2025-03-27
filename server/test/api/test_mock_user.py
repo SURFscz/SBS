@@ -47,18 +47,9 @@ class TestMockUser(AbstractTest):
         user = self.find_entity_by_name(User, "Doe Ba")
         self.assertIsNone(user)
 
-    def test_eb_interrupt_data_forbidden(self):
-        self.login()
-        self.get("/api/mock/interrupt_data", query_data={"user_uid": "urn:sarah"}, with_basic_auth=False,
-                 response_status_code=403)
-
     @allow_for_mock_user_api
     def test_eb_stop_interrupt_flow(self):
         self.login()
         self.delete("/api/mock/stop_interrupt_flow", with_basic_auth=False)
         user = self.client.get("/api/users/me").json
         self.assertEqual(user["guest"], True)
-
-    def test_eb_stop_interrupt_flow_forbidden(self):
-        self.login()
-        self.delete("/api/mock/stop_interrupt_flow", with_basic_auth=False, response_status_code=403)

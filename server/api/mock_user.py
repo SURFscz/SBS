@@ -6,6 +6,7 @@ from flask import request as current_request, session
 from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint
+from server.api.system import check_seed_allowed
 from server.auth.secrets import generate_token
 from server.auth.security import is_admin_user, CSRF_TOKEN, confirm_write_access
 from server.auth.user_claims import add_user_claims
@@ -51,8 +52,7 @@ def login_user():
 @mock_user_api.route("/interrupt_data", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def eb_start_interrupt_flow():
-    if not os.environ.get("ALLOW_MOCK_USER_API", None):
-        raise Forbidden()
+    check_seed_allowed("eb_start_interrupt_flow")
     confirm_write_access()
     session["eb_interrupt_flow"] = True
     return {}, 200
@@ -61,7 +61,6 @@ def eb_start_interrupt_flow():
 @mock_user_api.route("stop_interrupt_flow", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def eb_stop_interrupt_flow():
-    if not os.environ.get("ALLOW_MOCK_USER_API", None):
-        raise Forbidden()
+    check_seed_allowed("eb_stop_interrupt_flow")
     session.clear()
     return {}, 204
