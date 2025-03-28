@@ -168,7 +168,6 @@ class Service extends React.Component {
                     });
                 });
         } else {
-            this.addIpAddress();
             this.setState({loading: false});
             if (!isServiceRequest) {
                 serviceLdapIdentifier().then(res => this.setState({ldap_identifier: res.ldap_identifier}))
