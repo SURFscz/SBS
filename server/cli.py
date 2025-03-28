@@ -2,8 +2,6 @@
 
 import click
 from flask.cli import with_appcontext
-from server.test.stress_seed import stress_seed
-from server.db.db import db
 
 
 def register_commands(app):
@@ -32,6 +30,8 @@ def register_commands(app):
     @with_appcontext
     def run_stress_seed(users, orgs, collab, services, groups):
         """Run stress seed with specified parameters"""
+        from server.db import db
+        from server.test.stress_seed import stress_seed
 
         config = {
             "num_users": users,
@@ -41,14 +41,42 @@ def register_commands(app):
             "num_groups": groups,
         }
 
+        # Update app_config with the stress test settings
+        app.app_config.stress_test = config
+
         click.echo("Starting stress seed...")
+        try:
+            click.echo(f"config: {config}")
+            stress_seed(db.session, app.app_config)
+            click.echo("Stress seed completed successfully!")
+        except Exception as e:
+            click.echo(f"Error during stress seed: {str(e)}")
 
-        app_config.stress_test = config
+    @app.cli.command("seed")
+    @click.option("--skip", is_flag=True, help="Skip seeding of test data")
+    @with_appcontext
+    def db_seed_command(skip):
+        """Seed the database with test data"""
+        from server.db import db
+        from server.test.seed import seed
 
-        # callback for CLI progress
-        def cli_progress(step_name, count):
-            click.echo(f"Processed {count} {step_name}")
+        click.echo("Running standard seed...")
+        try:
+            seed(db.session, app.app_config, skip)
+            click.echo("Database has been seeded!")
+        except Exception as e:
+            click.echo(f"Error during seed: {str(e)}")
 
-        stress_seed(db, app_config, cli_progress)
+    @app.cli.command("demo-seed")
+    @with_appcontext
+    def demo_seed_command():
+        """Seed the database with demo data for showcases"""
+        from server.db import db
+        from server.test.demo_seed import demo_seed
 
-        click.echo("Database has been seeded!")
+        click.echo("Running demo seed...")
+        try:
+            demo_seed(db.session, app.app_config)
+            click.echo("Demo data seeded successfully!")
+        except Exception as e:
+            click.echo(f"Error during demo seed: {str(e)}")
