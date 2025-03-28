@@ -262,6 +262,7 @@ def service_info():
 
     res = {}
     user = User.query.filter(User.uid == uid).first()
+    organisations = []
     if user:
         res["user_name"] = user.name
         res["user_email"] = user.email
