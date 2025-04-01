@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision 13e3d85c1c5b (head)
+-- Dump of empty SBS database, alembic revision 5099c8ca2268 (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('13e3d85c1c5b');
+INSERT INTO `alembic_version` VALUES ('5099c8ca2268');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_key_units`;
@@ -1219,10 +1219,13 @@ CREATE TABLE `users` (
   `pam_last_login_date` datetime DEFAULT NULL,
   `external_id` varchar(255) NOT NULL,
   `rate_limited` tinyint(1) DEFAULT '0',
+  `collab_person_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_unique_uid` (`uid`),
   UNIQUE KEY `users_unique_external_id` (`external_id`),
   UNIQUE KEY `users_username` (`username`),
+  UNIQUE KEY `users_unique_collab_person_id` (`collab_person_id`),
+  KEY `users_eduperson_principal_name` (`eduperson_principal_name`),
   FULLTEXT KEY `ft_users_search` (`name`,`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
