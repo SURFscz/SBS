@@ -108,7 +108,15 @@ def proxy_authz_eb():
             "nonce": nonce,
             "message": UserCode.SERVICE_NOT_CONNECTED.name
         }
-
+    elif not has_agreed_with(user, service):
+        logger.debug(f"Returning interrupt for user {user.uid} and service_entity_id {service_entity_id} to accept "
+                     f"Service AUP")
+        user_nonce.error_status = UserCode.SERVICE_AUP_NOT_AGREED.value
+        results = {
+            "msg": "interrupt",
+            "nonce": nonce,
+            "message": UserCode.SERVICE_AUP_NOT_AGREED.name
+        }
     # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
     # also skip if user has already recently performed MFA
     elif user_requires_sram_mfa(user, issuer_id):
@@ -118,16 +126,6 @@ def proxy_authz_eb():
             "msg": "interrupt",
             "nonce": nonce,
             "message": UserCode.SECOND_FA_REQUIRED.name
-        }
-
-    elif not has_agreed_with(user, service):
-        logger.debug(f"Returning interrupt for user {user.uid} and service_entity_id {service_entity_id} to accept "
-                     f"Service AUP")
-        user_nonce.error_status = UserCode.SERVICE_AUP_NOT_AGREED.value
-        results = {
-            "msg": "interrupt",
-            "nonce": nonce,
-            "message": UserCode.SERVICE_AUP_NOT_AGREED.name
         }
     elif not user.has_agreed_with_aup():
         logger.debug(f"Returning interrupt for user {user.uid} and service_entity_id {service_entity_id} to accept"
@@ -177,7 +175,8 @@ def interrupt():
         user_from_session = session.get("user", {})
         if user_from_session.get("guest", True) or not user.id == user_from_session.get("id"):
             user_accepted_aup = user.has_agreed_with_aup()
-            store_user_in_session(user, False, user_accepted_aup)
+            second_factor_confirmed = not user_requires_sram_mfa(user, user_nonce.issuer_id)
+            store_user_in_session(user, second_factor_confirmed, user_accepted_aup)
     continue_url = user_nonce.continue_url
     # The original destination is returned from both 2mfa endpoint and agree_aup endpoint
     session["original_destination"] = continue_url

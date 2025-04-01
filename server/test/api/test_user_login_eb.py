@@ -97,6 +97,7 @@ class TestUserLoginEB(AbstractTest):
         self.assertEqual("interrupt", res["msg"])
 
     def test_authz_eb_interrupt(self):
+        self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
         res = self.post("/api/users/authz_eb", response_status_code=200,
                         headers={"Authorization": self.app.app_config.engine_block.api_token,
                                  "Content-Type": "application/json"},

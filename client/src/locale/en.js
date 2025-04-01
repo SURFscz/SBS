@@ -2102,6 +2102,9 @@ const en = {
         },
         proxy: {
             userUid: "User UID",
+            userUidEB: "User Home Organisation UID",
+            userSchacHome: "User Schac Home",
+            userEppn: "User EPPN",
             serviceEntityId: "Service entity ID",
             useSRAMServiceEntityId: "Use SRAM service entity ID",
             continueUrl: "Continue URL",

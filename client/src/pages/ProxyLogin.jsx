@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import "./ProxyLogin.scss";
 import {Loader} from "@surfnet/sds";
 import I18n from "../locale/I18n";
-import {startEBInterruptFlow, proxyAuthzEduTeams, proxyAuthzEngineBlock} from "../api";
+import {proxyAuthzEduTeams, proxyAuthzEngineBlock, startEBInterruptFlow} from "../api";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
 import {isEmpty, scrollToBottom} from "../utils/Utils";
@@ -17,6 +17,8 @@ export default function ProxyLogin({config}) {
     ].map(backend => ({label: backend, value: backend}));
 
     const [userUid, setUserUid] = useState("");
+    const [userSchacHome, setSchacHome] = useState("");
+    const [userEppn, setUserEppn] = useState("");
     const [serviceEntityId, setServiceEntityId] = useState("");
     const [idpEntityId, setIdpEntityId] = useState("https://mock.idp");
     const [continueUrl, setContinueUrl] = useState("http://localhost:3000/mock-eb");
@@ -28,8 +30,10 @@ export default function ProxyLogin({config}) {
 
     const doProxyAuthz = () => {
         setLoading(true);
-        const promise = integrationBackend.value === I18n.t("system.proxy.engineBlock") ? proxyAuthzEngineBlock : proxyAuthzEduTeams;
-        promise(userUid, serviceEntityId, idpEntityId, continueUrl)
+        const promise = integrationBackend.value !== I18n.t("system.proxy.engineBlock") ?
+            proxyAuthzEduTeams(userUid, serviceEntityId, idpEntityId, continueUrl)
+            : proxyAuthzEngineBlock(userUid, userSchacHome, userEppn, serviceEntityId, idpEntityId, continueUrl);
+        promise
             .then(res => {
                 setProxyAuthzResult(res);
                 setLoading(false);
@@ -52,13 +56,14 @@ export default function ProxyLogin({config}) {
             const isEBFlow = integrationBackend.value === I18n.t("system.proxy.engineBlock")
             const url = isEBFlow ? `${config.base_server_url}/api/users/interrupt?nonce=${proxyAuthzResult.nonce}` :
                 proxyAuthzResult.status.redirect_url;
-            debugger; // eslint-disable-line no-debugger
             window.location.href = url;
         });
     }
 
     const resetForm = () => {
         setUserUid("");
+        setSchacHome("");
+        setUserEppn("");
         setServiceEntityId("");
         setIdpEntityId("");
         setProxyAuthzResult(null);
@@ -77,13 +82,25 @@ export default function ProxyLogin({config}) {
         }
     }
 
+    const isEBTeamsFlow = integrationBackend.value === I18n.t("system.proxy.engineBlock");
+
     return (
         <div className={"mod-proxy-container"}>
             <div className="form">
                 <InputField value={userUid}
                             onChange={e => setUserUid(e.target.value)}
-                            name={I18n.t("system.proxy.userUid")}
+                            name={I18n.t(`system.proxy.userUid${isEBTeamsFlow ? "EB" : ""}`)}
                             required={true}/>
+
+                {isEBTeamsFlow && <InputField value={userSchacHome}
+                                              onChange={e => setSchacHome(e.target.value)}
+                                              name={I18n.t("system.proxy.userSchacHome")}
+                                              required={true}/>}
+
+                {isEBTeamsFlow && <InputField value={userEppn}
+                                              onChange={e => setUserEppn(e.target.value)}
+                                              name={I18n.t("system.proxy.userEppn")}
+                                              required={true}/>}
 
                 <InputField value={serviceEntityId}
                             onChange={e => {
@@ -126,7 +143,7 @@ export default function ProxyLogin({config}) {
                             onClick={doProxyAuthz}
                             small={true}
                             disabled={isEmpty(userUid) || isEmpty(serviceEntityId) || isEmpty(idpEntityId) ||
-                                isEmpty(continueUrl)}
+                                isEmpty(continueUrl) || isEmpty(userSchacHome)}
                     />
                 </div>
 

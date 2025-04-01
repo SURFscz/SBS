@@ -22,7 +22,7 @@ def login_user():
     if not os.environ.get("ALLOW_MOCK_USER_API", None):
         raise Forbidden()
     if session.get("eb_interrupt_flow", False):
-        return None, 201
+        return {"created": False}, 201
     data = current_request.get_json()
     sub = data["sub"]  # oidc sub maps to sbs uid - see user_claims
     user = User.query.filter(User.uid == sub).first() or User(created_by="system", updated_by="system",
@@ -46,7 +46,7 @@ def login_user():
     session["user"] = {**session_data, **res}
     if CSRF_TOKEN not in session:
         session[CSRF_TOKEN] = generate_token()
-    return None, 201
+    return {"created": True}, 201
 
 
 @mock_user_api.route("/interrupt_data", methods=["GET"], strict_slashes=False)
