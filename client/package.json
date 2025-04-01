@@ -17,7 +17,7 @@
         "immer": "^10.1.1",
         "isomorphic-dompurify": "^2.22.0",
         "js-cookie": "^3.0.1",
-        "jsondiffpatch": "^0.5.0",
+        "jsondiffpatch": "^0.7.2",
         "lodash.clonedeep": "^4.5.0",
         "lodash.debounce": "^4.0.8",
         "lodash.escape": "^4.0.1",
