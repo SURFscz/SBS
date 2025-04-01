@@ -152,16 +152,6 @@ class App extends React.Component {
                     }
                 }));
         }).catch(() => this.handleBackendDown());
-        this.aprilFools();
-    }
-
-    aprilFools = () => {
-        const date = new Date();
-        if (date.getMonth() === 3 && date.getDate() === 1) {
-            const styleTag = document.createElement("style");
-            document.head.appendChild(styleTag);
-            styleTag.sheet.insertRule("body, h1, h2, h3, h4, h5, ::-webkit-input-placeholder, .sds--branding--textual { font-family: 'Comic Sans', 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, Courier !important; }", 0);
-        }
     }
 
     componentWillUnmount() {
