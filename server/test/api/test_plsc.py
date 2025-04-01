@@ -30,7 +30,7 @@ class TestPlsc(AbstractTest):
         users = res["users"]
         suspended_user_names = sorted([user["name"] for user in users if user["status"] == "suspended"])
         self.assertListEqual([user_sarah_name, "user_deletion_warning", "user_gets_deleted"], suspended_user_names)
-        self.assertEqual(15, len([user["name"] for user in users if user["status"] == "active"]))
+        self.assertEqual(16, len([user["name"] for user in users if user["status"] == "active"]))
 
     def test_sram_inactive_days(self):
         sarah = self.find_entity_by_name(User, user_sarah_name)
@@ -49,7 +49,7 @@ class TestPlsc(AbstractTest):
         res_image = self.client.get(logo.replace("http://localhost:8080", ""))
         self.assertIsNotNone(res_image.data)
         users_ = res["users"]
-        self.assertEqual(18, len(users_))
+        self.assertEqual(19, len(users_))
         sarah = next(u for u in users_ if u["name"] == user_sarah_name)
         self.assertEqual("sarah@uni-franeker.nl", sarah["email"])
         self.assertEqual("sarah", sarah["username"])

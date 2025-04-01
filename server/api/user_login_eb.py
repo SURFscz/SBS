@@ -2,6 +2,7 @@ import urllib.parse
 import uuid
 
 from flask import Blueprint, current_app, request as current_request, redirect, session
+from sqlalchemy import or_
 from werkzeug.exceptions import Forbidden
 
 from server import tools
@@ -30,7 +31,9 @@ def proxy_authz_eb():
         raise Forbidden("Invalid authorization_header")
 
     json_dict = current_request.get_json()
-    uid = json_dict["user_id"]
+    uid_idp = json_dict["uid"]
+    schac_home = json_dict["schac_home"]
+    eppn = json_dict.get("eppn")
     service_entity_id = json_dict["service_id"].lower()
     issuer_id = json_dict["issuer_id"]
     continue_url = json_dict["continue_url"]
@@ -44,14 +47,28 @@ def proxy_authz_eb():
         return {"msg": "authorized", "attributes": []}, 200
 
     service = Service.query.filter(Service.entity_id == service_entity_id).first()
-    user = User.query.filter(User.uid == uid).first()
+
+    collab_person_id = f"urn:collab:person:{schac_home}:{uid_idp}"
+    conditions = [
+        User.collab_person_id == collab_person_id,
+        User.uid == collab_person_id
+    ]
+    if eppn:
+        conditions.append(User.eduperson_principal_name == eppn)
+    user = User.query.filter(or_(*conditions)).first()
+    # Logic for unknown users is after the service check, but we want to add the collab_person_id if it is missing
+    if user and not user.collab_person_id:
+        user.collab_person_id = collab_person_id
+        db.session.merge(user)
+        db.session.commit()
 
     nonce = str(uuid.uuid4())
     user_nonce = UserNonce(user=user, service=service, nonce=nonce, continue_url=continue_url, issuer_id=issuer_id,
-                           requested_service_entity_id=service_entity_id, requested_user_id=uid)
+                           requested_service_entity_id=service_entity_id,
+                           requested_user_id=user.uid if user else collab_person_id)
     # Unknown service is dead end, but we return interrupt
     if not service:
-        msg = f"Returning interrupt for user {uid} and service_entity_id {service_entity_id} " \
+        msg = f"Returning interrupt for user {collab_person_id} and service_entity_id {service_entity_id} " \
               f"as the service is unknown"
         logger.error(msg)
         send_error_mail(tb=msg)
@@ -64,7 +81,8 @@ def proxy_authz_eb():
     elif not user:
         free_rider = service.non_member_users_access_allowed
         if free_rider:
-            user = User(uid=uid, external_id=str(uuid.uuid4()), created_by="system", updated_by="system")
+            user = User(uid=collab_person_id, collab_person_id=collab_person_id, external_id=str(uuid.uuid4()),
+                        created_by="system", updated_by="system")
             db.session.merge(user)
             db.session.commit()
             return {
@@ -82,7 +100,7 @@ def proxy_authz_eb():
             }
     # if none of CO's are not active, then this is the same as none of the CO's are not connected to the Service
     elif not has_user_access_to_service(service, user):
-        logger.debug(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id} "
+        logger.debug(f"Returning unauthorized for user {user.uid} and service_entity_id {service_entity_id} "
                      "because the service is not connected to any active CO's")
         user_nonce.error_status = UserCode.SERVICE_NOT_CONNECTED.value
         results = {
@@ -94,7 +112,7 @@ def proxy_authz_eb():
     # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
     # also skip if user has already recently performed MFA
     elif user_requires_sram_mfa(user, issuer_id):
-        logger.debug(f"Returning interrupt for user {uid} from issuer {issuer_id} to perform 2fa")
+        logger.debug(f"Returning interrupt for user {user.uid} from issuer {issuer_id} to perform 2fa")
         user_nonce.error_status = UserCode.SECOND_FA_REQUIRED.value
         results = {
             "msg": "interrupt",
@@ -103,7 +121,7 @@ def proxy_authz_eb():
         }
 
     elif not has_agreed_with(user, service):
-        logger.debug(f"Returning interrupt for user {uid} and service_entity_id {service_entity_id} to accept "
+        logger.debug(f"Returning interrupt for user {user.uid} and service_entity_id {service_entity_id} to accept "
                      f"Service AUP")
         user_nonce.error_status = UserCode.SERVICE_AUP_NOT_AGREED.value
         results = {
@@ -112,7 +130,7 @@ def proxy_authz_eb():
             "message": UserCode.SERVICE_AUP_NOT_AGREED.name
         }
     elif not user.has_agreed_with_aup():
-        logger.debug(f"Returning interrupt for user {uid} and service_entity_id {service_entity_id} to accept"
+        logger.debug(f"Returning interrupt for user {user.uid} and service_entity_id {service_entity_id} to accept"
                      f"SRAM general AUP")
         user_nonce.error_status = UserCode.AUP_NOT_AGREED.value
         results = {
@@ -133,7 +151,7 @@ def proxy_authz_eb():
         all_tags = co_tags(connected_collaborations)
         all_attributes = all_memberships.union(all_tags)
 
-        log_user_login(PROXY_AUTHZ_EB, True, user, uid, service, service_entity_id, "AUTHORIZED")
+        log_user_login(PROXY_AUTHZ_EB, True, user, user.uid, service, service_entity_id, "AUTHORIZED")
 
         return {
             "msg": "authorized",

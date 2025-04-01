@@ -18,6 +18,7 @@ from server.tools import dt_now
 
 claim_attribute_mapping_value = [
     {"sub": "uid"},
+    {"sub": "collab_person_id"},
     {"name": "name"},
     {"given_name": "given_name"},
     {"family_name": "family_name"},
@@ -25,7 +26,9 @@ claim_attribute_mapping_value = [
     {"voperson_external_affiliation": "scoped_affiliation"},
     {"eduperson_scoped_affiliation": "affiliation"},
     {"eduperson_entitlement": "entitlement"},
-    {"voperson_external_id": "eduperson_principal_name"}
+    {"voperson_external_id": "eduperson_principal_name"},
+    # EB / OIDC-NG claim
+    {"eduperson_affiliation": "affiliation"},
 ]
 
 

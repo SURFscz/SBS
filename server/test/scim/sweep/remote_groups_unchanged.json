@@ -33,7 +33,13 @@
                     "$ref": "http://localhost:3000/api/scim/v2/Users/bbd8123c-b0f9-4e3d-b3ff-288aa1c1edd6@sram.surf.nl",
                     "display": "betty",
                     "value": "BA0DF4D5-E57E-46CA-A997-BEF2D0D0A174"
+                },
+                {
+                    "$ref": "http://localhost:3000/api/scim/v2/Users/43b26575-b243-42ef-a7ac-6033d51372fe@sram.surf.nl",
+                    "display": "Ebbe Doe",
+                    "value": "D1D64FD9-7A8F-41E5-A6F1-78BF54BD7954"
                 }
+
             ],
             "meta": {
                 "created": "2022-12-14T16:41:01",
