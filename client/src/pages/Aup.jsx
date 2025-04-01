@@ -9,6 +9,7 @@ import {login} from "../utils/Login";
 import SpinnerField from "../components/redesign/SpinnerField";
 import DOMPurify from "dompurify";
 import {redirectToProxyLocation} from "../utils/ProxyAuthz";
+import {dictToQueryParams} from "../utils/QueryParameters";
 
 class Aup extends React.Component {
 
@@ -30,7 +31,14 @@ class Aup extends React.Component {
 
     agreeWith = config => agreeAup().then(res => {
         this.props.refreshUser(() => {
-            redirectToProxyLocation(res.location, this.props.history, config);
+            const item = window.sessionStorage.getItem("interrupt");
+            if (item) {
+                const interruptDict = JSON.parse(item);
+                const params = dictToQueryParams(interruptDict);
+                this.props.history.push(`/interrupt?${params}`);
+            } else {
+                redirectToProxyLocation(res.location, this.props.history, config);
+            }
         });
     });
 

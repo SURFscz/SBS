@@ -133,6 +133,7 @@ export function startEBInterruptFlow() {
 export function ebStopInterruptFlow() {
     return fetchDelete("/api/mock/stop_interrupt_flow")
 }
+
 // User
 export function refreshUser() {
     return fetchJson("/api/users/refresh");
@@ -982,9 +983,11 @@ export function plscSync() {
     return fetchJson("/api/plsc/syncing");
 }
 
-export function proxyAuthzEngineBlock(userUid, serviceEntityId, idpEntityId, continueUrl) {
+export function proxyAuthzEngineBlock(userUid, userSchacHome, userEppn, serviceEntityId, idpEntityId, continueUrl) {
     const body = {
-        user_id: userUid.trim(),
+        uid: userUid.trim(),
+        schac_home: userSchacHome,
+        eppn: userEppn,
         service_id: serviceEntityId.trim(),
         issuer_id: idpEntityId.trim(),
         continue_url: continueUrl.trim()
@@ -992,8 +995,12 @@ export function proxyAuthzEngineBlock(userUid, serviceEntityId, idpEntityId, con
     return postPutJson("/api/users/authz_eb", body, "post", false, {"Authorization": "secret"});
 }
 
-export function proxyAuthzEduTeams(userUid, serviceEntityId, idpEntityId) {
-    const body = {user_id: userUid.trim(), service_id: serviceEntityId.trim(), issuer_id: idpEntityId.trim()};
+export function proxyAuthzEduTeams(userUid, userSchacHome, userEppn, serviceEntityId, idpEntityId) {
+    const body = {
+        user_id: userUid.trim(),
+        service_id: serviceEntityId.trim(),
+        issuer_id: idpEntityId.trim()
+    };
     return postPutJson("/api/users/proxy_authz", body, "post", false);
 }
 
