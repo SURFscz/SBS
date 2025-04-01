@@ -61,7 +61,7 @@ class TestGroup(AbstractTest):
         self._do_test_save_group(False, 0, 0)
 
     def test_save_group_auto_provision_members(self):
-        self._do_test_save_group(True, 1, 5)
+        self._do_test_save_group(True, 1, 6)
 
     def _do_test_save_group(self, auto_provision_members, invitations_count, members_count):
         self.login("urn:john")
@@ -84,9 +84,9 @@ class TestGroup(AbstractTest):
         self._do_test_update_group(False, 0, 2)
 
     def test_update_group_auto_provision_members(self):
-        self._do_test_update_group(True, 1, 5)
+        self._do_test_update_group(True, 1, 6)
         # Idempotency
-        self._do_test_update_group(True, 1, 5)
+        self._do_test_update_group(True, 1, 6)
 
     def _do_test_update_group(self, auto_provision_members, invitations_count, members_count):
         self.login("urn:john")
@@ -217,7 +217,7 @@ class TestGroup(AbstractTest):
         self.assertIsNotNone(res["identifier"])
         self.assertEqual("qwerty", res["short_name"])
         group = self.find_entity_by_name(Group, name)
-        self.assertEqual(5, len(group.collaboration_memberships))
+        self.assertEqual(6, len(group.collaboration_memberships))
 
     def test_create_group_not_allowed_api(self):
         collaboration = self.find_entity_by_name(Collaboration, co_research_name)
@@ -251,7 +251,7 @@ class TestGroup(AbstractTest):
         self.assertEqual(res["auto_provision_members"], True)
 
         group = Group.query.filter(Group.identifier == group_ai_researchers_identifier).first()
-        self.assertEqual(5, len(group.collaboration_memberships))
+        self.assertEqual(6, len(group.collaboration_memberships))
         self.assertEqual(group.name, "a different name")
         self.assertEqual(group.description, "a different description")
         self.assertEqual(group.auto_provision_members, True)

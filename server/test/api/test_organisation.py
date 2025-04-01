@@ -488,7 +488,7 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(1, len(collaboration["units"]))
         self.assertEqual(collaboration["units"][0], api_key.units[0].name)
         users = [cm.get("user") for cm in collaboration.get("collaboration_memberships")]
-        self.assertEqual(5, len(users))
+        self.assertEqual(6, len(users))
         for user in users:
             self.assertFalse("mfa_reset_token" in user)
             self.assertTrue(isinstance(user.get("second_factor_auth"), bool))

@@ -75,7 +75,7 @@ class TestSweep(AbstractTest):
 
             sync_results = perform_sweep(service)
             self.assertEqual(1, len(sync_results["users"]["deleted"]))
-            self.assertEqual(1, len(sync_results["users"]["created"]))
+            self.assertEqual(2, len(sync_results["users"]["created"]))
             self.assertEqual(1, len(sync_results["users"]["updated"]))
             self.assertEqual(1, len(sync_results["groups"]["deleted"]))
             self.assertEqual(1, len(sync_results["groups"]["created"]))
@@ -105,7 +105,7 @@ class TestSweep(AbstractTest):
                          status=204)
 
             sync_results = perform_sweep(service)
-            self.assertEqual(5, len(sync_results["users"]["deleted"]))
+            self.assertEqual(6, len(sync_results["users"]["deleted"]))
             self.assertEqual(0, len(sync_results["users"]["created"]))
             self.assertEqual(0, len(sync_results["users"]["updated"]))
             self.assertEqual(3, len(sync_results["groups"]["deleted"]))

@@ -142,7 +142,7 @@ image_cache = {}
 
 def read_image(file_name, directory="images", transform=True):
     file = f"{os.path.dirname(os.path.realpath(__file__))}/{directory}/{file_name}"
-    global image_cache
+    global image_cache  # noqa: F824
     if file in image_cache:
         return image_cache.get(file)
     with open(file, "rb") as f:
@@ -191,7 +191,11 @@ def seed(db, app_config, skip_seed=False):
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org", username="mdoe",
                 schac_home_organisation=f"student.{schac_home_organisation_example}",
                 external_id="bb3d4bd4-2848-4cf3-b30b-fd84186c0c52",
+                collab_person_id="urn:collab:person:example.com:mary",
                 last_login_date=yesterday)
+    eb_provisioned = User(uid="urn:collab:person:mujina.com:ebbe", name="Ebbe Doe", email="ebbe@example.org",
+                          username="ebbedoe", schac_home_organisation="mujina.com",
+                          external_id="43b26575-b243-42ef-a7ac-6033d51372fe", last_login_date=yesterday)
     admin = User(uid="urn:admin", name=user_boss_name, email="boss@example.org", username="admin",
                  external_id="e906cf88-cdb3-480d-8bb3-ce53bdcda4e7",
                  last_login_date=yesterday)
@@ -258,7 +262,7 @@ def seed(db, app_config, skip_seed=False):
 
     persist_instance(db, john, mary, peter, admin, roger, harry, james, sarah, betty, jane,
                      user_suspend_warning, user_gets_suspended, user_deletion_warning, user_gets_deleted,
-                     paul, hannibal, service_admin, extra_admin)
+                     paul, hannibal, service_admin, extra_admin, eb_provisioned)
 
     # old suspension warning, should not affect new suspension warnings
     warning_date_old = retention_today - datetime.timedelta(retention.allowed_inactive_period_days + 1)
@@ -669,7 +673,8 @@ def seed(db, app_config, skip_seed=False):
     admin_ai_computing = CollaborationMembership(role="admin", user=admin, collaboration=ai_computing)
     jane_ai_computing = CollaborationMembership(role="member", user=jane, collaboration=ai_computing)
     sarah_ai_computing = CollaborationMembership(role="member", user=sarah, collaboration=ai_computing)
-
+    eb_provisioned_ai_computing = CollaborationMembership(role="member", user=eb_provisioned,
+                                                          collaboration=ai_computing)
     betty_uuc_teachers = CollaborationMembership(role="member", user=betty, collaboration=uuc_teachers)
     admin_uuc_teachers = CollaborationMembership(role="admin", user=extra_admin, collaboration=uuc_teachers)
     betty_uuc_ai_computing = CollaborationMembership(role="member", user=betty, collaboration=ai_computing)
@@ -693,9 +698,8 @@ def seed(db, app_config, skip_seed=False):
                                                              collaboration=ai_disabled_join_request)
 
     persist_instance(db, john_ai_computing, admin_ai_computing, roger_ufra_research, peter_ufra_research,
-                     sarah_ufra_research,
-                     jane_ai_computing, sarah_ai_computing, user_two_suspend_ufra_research, betty_uuc_teachers,
-                     betty_uuc_ai_computing,
+                     sarah_ufra_research, jane_ai_computing, sarah_ai_computing, user_two_suspend_ufra_research,
+                     betty_uuc_teachers, betty_uuc_ai_computing, eb_provisioned_ai_computing,
                      paul_monitoring_co_1, betty_monitoring_co_1, betty_monitoring_co_2, harry_monitoring_co_2,
                      paul_ai_disabled_join_request, harry_ai_disabled_join_request,
                      admin_uuc_teachers, admin_monitoring_co_1, admin_monitoring_co_2)

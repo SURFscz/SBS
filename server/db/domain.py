@@ -25,6 +25,7 @@ class User(Base, db.Model):
     uid = db.Column("uid", db.String(length=512), nullable=False)
     external_id = db.Column("external_id", db.String(length=255), nullable=False)
     name = db.Column("name", db.String(length=255), nullable=True)
+    collab_person_id = db.Column("collab_person_id", db.String(length=255), nullable=True)
     username = db.Column("username", db.String(length=255), nullable=True)
     nick_name = db.Column("nick_name", db.String(length=255), nullable=True)
     edu_members = db.Column("edu_members", db.Text(), nullable=True)

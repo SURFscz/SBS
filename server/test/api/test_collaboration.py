@@ -508,7 +508,7 @@ class TestCollaboration(AbstractTest):
         collaboration = self.get(f"/api/collaborations/lite/{collaboration_id}")
 
         memberships = collaboration["collaboration_memberships"]
-        self.assertEqual(5, len(memberships))
+        self.assertEqual(6, len(memberships))
         user = memberships[0]["user"]
         self.assertTrue("email" in user)
 
@@ -915,7 +915,7 @@ class TestCollaboration(AbstractTest):
                        with_basic_auth=False)
         self.assertIsNotNone(res["groups"][0]["collaboration_memberships"][0]["user"]["email"])
         users = [cm.get("user") for cm in res.get("collaboration_memberships")]
-        self.assertEqual(5, len(users))
+        self.assertEqual(6, len(users))
         for user in users:
             self.assertFalse("mfa_reset_token" in user)
             self.assertTrue(isinstance(user.get("second_factor_auth"), bool))
