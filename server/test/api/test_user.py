@@ -487,10 +487,10 @@ class TestUser(AbstractTest):
         self.assertEqual("james@example.org", res[0]["email"])
 
         res = self.get("/api/users/query", query_data={"q": "@EX"})
-        self.assertEqual(12, len(res))
+        self.assertEqual(13, len(res))
 
         res = self.get("/api/users/query", query_data={"q": "@"})
-        self.assertEqual(18, len(res))
+        self.assertEqual(19, len(res))
 
         res = self.get("/api/users/query", query_data={"q": "dtrh.io"})
         self.assertEqual(1, len(res))
