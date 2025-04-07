@@ -145,3 +145,4 @@ server/cron/idp_metadata.json
 sql_snippets
 privkey.json
 performance
+pipdeptree.txt
