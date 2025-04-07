@@ -12,6 +12,8 @@ from werkzeug.exceptions import SecurityError
 
 SYSTEM_RANDOM = SystemRandom()
 
+LDAP_CHARACTERS = string.ascii_letters + string.digits + "@%=+_-"
+
 MIN_SECRET_LENGTH = 43
 
 
@@ -33,8 +35,7 @@ def hash_secret_key(data, attr_name="hashed_secret"):
 
 def generate_random_password():
     start = SYSTEM_RANDOM.choice(string.ascii_letters)
-    ldap_characters = string.ascii_letters + string.digits + "@%=+_-"
-    password = start + "".join(SYSTEM_RANDOM.sample(population=ldap_characters, k=31))
+    password = start + "".join(SYSTEM_RANDOM.sample(population=LDAP_CHARACTERS, k=31))
     return password
 
 
