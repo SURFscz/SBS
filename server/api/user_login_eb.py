@@ -83,7 +83,8 @@ def _do_proxy_authz_eb():
             return {
                 "msg": "authorized",
                 "attributes": {
-                    "urn:oid:1.3.6.1.4.1.25178.4.1.6": [user.uid],  # voPersonID
+                    "urn:mace:dir:attribute-def:uid": [user.uid],  # voPersonID
+                    "urn:mace:dir:attribute-def:eduPersonPrincipalName": [user.uid],  # eduPersonPrincipalName
                 }
             }, 200
         else:
@@ -149,8 +150,9 @@ def _do_proxy_authz_eb():
         return {
             "msg": "authorized",
             "attributes": {
-                "urn:mace:dir:attribute-def:eduPersonEntitlement": list(all_attributes),
-                "urn:oid:1.3.6.1.4.1.25178.4.1.6": [user.uid],  # voPersonID
+                "urn:mace:dir:attribute-def:eduPersonEntitlement": list(all_attributes),  # eduPersonEntitlement
+                "urn:mace:dir:attribute-def:uid": [user.uid],  # voPersonID
+                "urn:mace:dir:attribute-def:eduPersonPrincipalName": [user.uid],  # eduPersonPrincipalName
                 "urn:oid:1.3.6.1.4.1.24552.500.1.1.1.13": [k.ssh_value for k in user.ssh_keys]  # sshPublicKey
             }
         }, 200
