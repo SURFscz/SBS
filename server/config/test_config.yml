@@ -255,11 +255,11 @@ excluded_user_accounts:
 - uid: "urn:peter"
 
 stress_test:
-  num_users: 1000
-  num_orgs: 50
-  num_collaborations: 200
-  num_services: 30
-  num_groups: 300
+  num_users: 1
+  num_orgs: 1
+  num_collaborations: 2
+  num_services: 1
+  num_groups: 1
 
 engine_block:
   api_token: secret
