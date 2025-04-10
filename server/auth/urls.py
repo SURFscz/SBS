@@ -12,6 +12,7 @@ noauth_listing = [
     "/api/users/acs",
     "/api/users/authorization",
     "/api/users/authz_eb",
+    "/api/users/attributes_eb",
     "/api/users/interrupt",
     "/api/users/me",
     "/api/users/resume-session",

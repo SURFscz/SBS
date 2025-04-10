@@ -21,18 +21,14 @@ from server.logger.context_logger import ctx_logger
 user_login_eb = Blueprint("user_login_eb", __name__, url_prefix="/api/users")
 
 
-# Endpoint for EB
-@user_login_eb.route("/authz_eb", methods=["POST"], strict_slashes=False)
-@json_endpoint
-def proxy_authz_eb():
+def _do_proxy_authz_eb():
     authorization_header = current_request.headers.get("Authorization")
     eb_api_token = current_app.app_config.engine_block.api_token
     if eb_api_token != authorization_header:
         raise Forbidden("Invalid authorization_header")
 
     json_dict = current_request.get_json()
-    uid_idp = json_dict["uid"]
-    schac_home = json_dict["schac_home"]
+    collab_person_id = json_dict["user_id"]
     eppn = json_dict.get("eppn")
     service_entity_id = json_dict["service_id"].lower()
     issuer_id = json_dict["issuer_id"]
@@ -48,7 +44,6 @@ def proxy_authz_eb():
 
     service = Service.query.filter(Service.entity_id == service_entity_id).first()
 
-    collab_person_id = f"urn:collab:person:{schac_home}:{uid_idp}"
     conditions = [
         User.collab_person_id == collab_person_id,
         User.uid == collab_person_id
@@ -163,6 +158,20 @@ def proxy_authz_eb():
     db.session.merge(user_nonce)
     db.session.commit()
     return results, 200
+
+
+# Endpoint for EB for initial authentication
+@user_login_eb.route("/authz_eb", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def proxy_authz_eb():
+    return _do_proxy_authz_eb()
+
+
+# Endpoint for EB for attributes
+@user_login_eb.route("/attributes_eb", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def proxy_attributes_eb():
+    return _do_proxy_authz_eb()
 
 
 @user_login_eb.route("/interrupt", methods=["GET"], strict_slashes=False)
