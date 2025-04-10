@@ -1,8 +1,6 @@
 import itertools
 import json
 import os
-import subprocess
-import tempfile
 import unicodedata
 import urllib.parse
 import uuid
@@ -30,6 +28,7 @@ from server.db.models import log_user_login
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error, mail_account_deletion
 from server.scim.events import broadcast_user_deleted, broadcast_user_changed
+from server.ssh.converter import convert_to_open_ssh
 from server.tools import dt_now
 
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
@@ -524,24 +523,28 @@ def update_user():
     user = db.session.get(User, user_id)
     user_json = current_request.get_json()
 
-    ssh_keys_json = [ssh_key for ssh_key in user_json["ssh_keys"] if
-                     ssh_key["ssh_value"]] if "ssh_keys" in user_json else []
+    ssh_keys_json = [ssh_key for ssh_key in user_json.get("ssh_keys", []) if ssh_key.get("ssh_value")]
     for ssh_key in ssh_keys_json:
         ssh_value = ssh_key["ssh_value"]
         if ssh_value and (ssh_value.startswith("---- BEGIN SSH2 PUBLIC KEY ----")
                           or ssh_value.startswith("-----BEGIN PUBLIC KEY-----")  # noQA:W503
                           or ssh_value.startswith("-----BEGIN RSA PUBLIC KEY-----")):  # noQA:W503
-            with tempfile.NamedTemporaryFile() as f:
-                f.write(ssh_value.encode())
-                f.flush()
-                options = ["ssh-keygen", "-i", "-f", f.name]
-                if ssh_value.startswith("-----BEGIN PUBLIC KEY-----"):
-                    options.append("-mPKCS8")
-                if ssh_value.startswith("-----BEGIN RSA PUBLIC KEY-----"):
-                    options.append("-mPEM")
-                res = subprocess.run(options, stdout=subprocess.PIPE)
-                if res.returncode == 0:
-                    ssh_key["ssh_value"] = res.stdout.decode()
+            ssh_key["ssh_value"] = convert_to_open_ssh(ssh_value)
+            # with tempfile.NamedTemporaryFile() as f:
+            #     f.write(ssh_value.encode())
+            #     f.flush()
+            #     options = ["ssh-keygen", "-i", "-f", f.name]
+            #     if ssh_value.startswith("-----BEGIN PUBLIC KEY-----"):
+            #         options.append("-mPKCS8")
+            #     if ssh_value.startswith("-----BEGIN RSA PUBLIC KEY-----"):
+            #         options.append("-mPEM")
+            #     res = subprocess.run(options, stdout=subprocess.PIPE)
+            #     if res.returncode == 0:
+            #         ssh_key["ssh_value"] = res.stdout.decode()
+            #     else:
+            #         logger = ctx_logger("profile")
+            #         logger.warn(f"error return code {res.returncode} for converting ssh."
+            #                     f"stderr: {res.stderr}, stdout {res.stdout}")
 
     ssh_key_ids = [ssh_key["id"] for ssh_key in ssh_keys_json if "id" in ssh_key]
     for ssh_key in user.ssh_keys:

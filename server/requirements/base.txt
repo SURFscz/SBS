@@ -33,5 +33,4 @@ bcrypt==4.3.0
 gunicorn==23.0.0
 puremagic==1.28
 click==8.1.8
-
-git+https://github.com/SURFscz/flasgger@surf/main#egg=flasgger
+git+https://github.com/SURFscz/sshkey-tools.git
