@@ -46,8 +46,8 @@ class TestUserLoginEB(AbstractTest):
                               "issuer_id": "issuer.com"})
         msg = res["msg"]
         self.assertEqual("authorized", msg)
-        self.assertEqual(1, len(res["attributes"]))
-        self.assertEqual("urn:collab:person:unknown", res["attributes"]["urn:oid:1.3.6.1.4.1.25178.4.1.6"][0])
+        self.assertEqual(2, len(res["attributes"]))
+        self.assertEqual("urn:collab:person:unknown", res["attributes"]["urn:mace:dir:attribute-def:uid"][0])
 
     def test_authz_eb_user_not_connected(self):
         res = self.post("/api/users/authz_eb",
@@ -147,7 +147,7 @@ class TestUserLoginEB(AbstractTest):
                                  "Content-Type": "application/json"},
                         body=body)
         self.assertEqual("authorized", res["msg"])
-        self.assertEqual(3, len(res["attributes"]))
+        self.assertEqual(4, len(res["attributes"]))
         # Idempotency check
         res = self.post("/api/users/attributes_eb", response_status_code=200,
                         headers={"Authorization": self.app.app_config.engine_block.api_token,
