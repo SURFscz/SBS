@@ -1,5 +1,6 @@
-import uuid
 import urllib.parse
+import uuid
+
 import requests
 
 from server.auth.user_codes import UserCode
@@ -18,8 +19,7 @@ class TestUserLoginEB(AbstractTest):
                         headers={"Authorization": self.app.app_config.engine_block.api_token,
                                  "Content-Type": "application/json"},
                         response_status_code=400,
-                        body={"uid": "urn:unknown",
-                              "schac_home": "nope",
+                        body={"user_id": "urn:unknown",
                               "service_id": service_wireless_entity_id,
                               "issuer_id": "issuer.com"})
         message = res["message"]
@@ -30,8 +30,7 @@ class TestUserLoginEB(AbstractTest):
                         headers={"Authorization": "nope",
                                  "Content-Type": "application/json"},
                         response_status_code=403,
-                        body={"uid": "unknown",
-                              "schac_home": "unknown",
+                        body={"user_id": "unknown",
                               "service_id": service_wireless_entity_id,
                               "issuer_id": "issuer.com"})
         self.assertTrue("Forbidden" in res["message"])
@@ -41,24 +40,21 @@ class TestUserLoginEB(AbstractTest):
                         headers={"Authorization": self.app.app_config.engine_block.api_token,
                                  "Content-Type": "application/json"},
                         response_status_code=200,
-                        body={"uid": "unknown",
-                              "schac_home": "unknown",
+                        body={"user_id": "urn:collab:person:unknown",
                               "continue_url": "https://engine.surf.nl",
                               "service_id": service_wireless_entity_id,
                               "issuer_id": "issuer.com"})
         msg = res["msg"]
         self.assertEqual("authorized", msg)
         self.assertEqual(1, len(res["attributes"]))
-        self.assertEqual("urn:collab:person:unknown:unknown", res["attributes"]["urn:oid:1.3.6.1.4.1.25178.4.1.6"][0])
+        self.assertEqual("urn:collab:person:unknown", res["attributes"]["urn:oid:1.3.6.1.4.1.25178.4.1.6"][0])
 
     def test_authz_eb_user_not_connected(self):
         res = self.post("/api/users/authz_eb",
                         headers={"Authorization": self.app.app_config.engine_block.api_token,
                                  "Content-Type": "application/json"},
                         response_status_code=200,
-                        body={"uid": "mary",
-                              "schac_home": "example.com",
-                              "user_id": "urn:mary",
+                        body={"user_id": "urn:collab:person:example.com:mary",
                               "continue_url": "https://engine.surf.nl",
                               "service_id": service_cloud_entity_id,
                               "issuer_id": "issuer.com"})
@@ -72,8 +68,7 @@ class TestUserLoginEB(AbstractTest):
                         headers={"Authorization": self.app.app_config.engine_block.api_token,
                                  "Content-Type": "application/json"},
                         response_status_code=200,
-                        body={"uid": "urn:sarah",
-                              "schac_home": "example.com",
+                        body={"user_id": "urn:collab:person:example.com:sarah",
                               "eppn": "sarah@woods.io",
                               "continue_url": "https://engine.surf.nl",
                               "service_id": "nope",
@@ -88,8 +83,7 @@ class TestUserLoginEB(AbstractTest):
                         headers={"Authorization": self.app.app_config.engine_block.api_token,
                                  "Content-Type": "application/json"},
                         response_status_code=200,
-                        body={"uid": "unknown",
-                              "schac_home": "unknown",
+                        body={"user_id": "unknown",
                               "continue_url": "https://engine.surf.nl",
                               "service_id": service_cloud_entity_id,
                               "issuer_id": "issuer.com"})
@@ -101,8 +95,7 @@ class TestUserLoginEB(AbstractTest):
         res = self.post("/api/users/authz_eb", response_status_code=200,
                         headers={"Authorization": self.app.app_config.engine_block.api_token,
                                  "Content-Type": "application/json"},
-                        body={"uid": "urn:sarah",
-                              "schac_home": "example.com",
+                        body={"user_id": "urn:collab:person:example.com:sarah",
                               "eppn": "sarah@woods.io",
                               "continue_url": "https://engine.surf.nl",
                               "service_id": service_mail_entity_id,
@@ -119,8 +112,7 @@ class TestUserLoginEB(AbstractTest):
         res = self.post("/api/users/authz_eb", response_status_code=200,
                         headers={"Authorization": self.app.app_config.engine_block.api_token,
                                  "Content-Type": "application/json"},
-                        body={"uid": "urn:sarah",
-                              "schac_home": "example.com",
+                        body={"user_id": "urn:collab:person:example.com:sarah",
                               "eppn": "sarah@woods.io",
                               "continue_url": "https://engine.surf.nl",
                               "service_id": service_mail_entity_id,
@@ -134,8 +126,7 @@ class TestUserLoginEB(AbstractTest):
         res = self.post("/api/users/authz_eb", response_status_code=200,
                         headers={"Authorization": self.app.app_config.engine_block.api_token,
                                  "Content-Type": "application/json"},
-                        body={"uid": "urn:sarah",
-                              "schac_home": "example.com",
+                        body={"user_id": "urn:collab:person:example.com:sarah",
                               "eppn": "sarah@woods.io",
                               "continue_url": "https://engine.surf.nl",
                               "service_id": service_mail_entity_id,
@@ -145,25 +136,31 @@ class TestUserLoginEB(AbstractTest):
 
     def test_authz_eb_authorized(self):
         self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
+        body = {"user_id": "urn:collab:person:example.com:sarah",
+                "eppn": "sarah@woods.io",
+                "continue_url": "https://engine.surf.nl",
+                "service_id": service_mail_entity_id,
+                "issuer_id": "https://idp.test"}
+
         res = self.post("/api/users/authz_eb", response_status_code=200,
                         headers={"Authorization": self.app.app_config.engine_block.api_token,
                                  "Content-Type": "application/json"},
-                        body={"uid": "urn:sarah",
-                              "schac_home": "example.com",
-                              "eppn": "sarah@woods.io",
-                              "continue_url": "https://engine.surf.nl",
-                              "service_id": service_mail_entity_id,
-                              "issuer_id": "https://idp.test"})
+                        body=body)
         self.assertEqual("authorized", res["msg"])
         self.assertEqual(3, len(res["attributes"]))
+        # Idempotency check
+        res = self.post("/api/users/attributes_eb", response_status_code=200,
+                        headers={"Authorization": self.app.app_config.engine_block.api_token,
+                                 "Content-Type": "application/json"},
+                        body=body)
+        self.assertEqual("authorized", res["msg"])
 
     def test_authz_eb_sbs_login(self):
         res = self.post("/api/users/authz_eb",
                         headers={"Authorization": self.app.app_config.engine_block.api_token,
                                  "Content-Type": "application/json"},
                         response_status_code=200,
-                        body={"uid": "urn:unknown",
-                              "schac_home": "unknown.com",
+                        body={"user_id": "urn:unknown",
                               "continue_url": "https://engine.surf.nl",
                               "service_id": "sram",
                               "issuer_id": "issuer.com"})
