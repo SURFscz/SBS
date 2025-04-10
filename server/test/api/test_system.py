@@ -37,6 +37,9 @@ class TestSystem(AbstractTest):
     def test_db_demo_seed(self):
         self.get("/api/system/demo_seed", response_status_code=201)
 
+    def test_db_stress_seed(self):
+        self.get("/api/system/stress_seed", response_status_code=201)
+
     def test_db_demo_seed_forbidden(self):
         self.app.app_config.feature.seed_allowed = 0
         self.get("/api/system/demo_seed", response_status_code=400)
