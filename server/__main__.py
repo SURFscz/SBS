@@ -72,6 +72,8 @@ from server.swagger.conf import init_swagger, swagger_specs
 from server.templates import invitation_role
 from server.tools import read_file
 from server.cli import register_commands
+from server.scim.schema_template import init_scim_schemas
+
 
 def _init_logging(log_to_stdout: bool):
     # https://github.com/python-pillow/Pillow/issues/5096
@@ -184,6 +186,7 @@ init_executor(app, blocking=False)
 app.app_config = config
 app.app_config["profile"] = profile
 
+init_scim_schemas(app)
 init_swagger(app)
 
 Migrate(app, db)

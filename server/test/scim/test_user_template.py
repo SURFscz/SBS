@@ -4,6 +4,7 @@ from unittest import TestCase
 
 from server.db.domain import User
 from server.scim.user_template import find_user_by_id_template
+from server.scim.schema_template import SCIM_SCHEMA_SRAM_USER
 from server.tools import dt_now
 
 
@@ -19,4 +20,4 @@ class TestUserTemplate(TestCase):
 
         self.assertEqual(result["displayName"], user.name)
         self.assertEqual(result["name"]["familyName"], "")
-        self.assertEqual(days, result["urn:mace:surf.nl:sram:scim:extension:User"]["sramInactiveDays"])
+        self.assertEqual(days, result[SCIM_SCHEMA_SRAM_USER]["sramInactiveDays"])

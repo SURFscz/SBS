@@ -9,7 +9,6 @@ from server.db.domain import Service, Group, User, Collaboration
 from server.scim import EXTERNAL_ID_POST_FIX, SCIM_GROUPS, SCIM_USERS
 from server.scim.group_template import create_group_template, update_group_template, scim_member_object
 from server.scim.repo import all_scim_groups_by_service, all_scim_users_by_service
-from server.scim.schema_template import SCIM_SCHEMA_SRAM_USER, SCIM_SCHEMA_SRAM_GROUP
 from server.scim.scim import scim_headers, validate_response
 from server.scim.user_template import create_user_template, replace_none_values, update_user_template, \
     inactive_days
@@ -35,6 +34,8 @@ def _compare_with_none_equals_empty(attr_remote, attr_sram):
 
 
 def _user_changed(user: User, remote_user: dict):
+    from server.scim.schema_template import get_scim_schema_sram_user
+
     remote_user = _replace_empty_string_values(remote_user)
     if _compare_with_none_equals_empty(remote_user.get("userName"), user.username):
         return True
@@ -52,27 +53,29 @@ def _user_changed(user: User, remote_user: dict):
     remote_ssh_keys = sorted([c.get("value") for c in remote_user.get("x509Certificates", [])])
     if remote_ssh_keys != ssh_keys:
         return True
-    if SCIM_SCHEMA_SRAM_USER in remote_user:
-        edu_person_scoped_affiliation = remote_user[SCIM_SCHEMA_SRAM_USER].get("eduPersonScopedAffiliation")
+    if get_scim_schema_sram_user() in remote_user:
+        edu_person_scoped_affiliation = remote_user[get_scim_schema_sram_user()].get("eduPersonScopedAffiliation")
         if _compare_with_none_equals_empty(edu_person_scoped_affiliation, user.affiliation):
             return True
-        if _compare_with_none_equals_empty(remote_user[SCIM_SCHEMA_SRAM_USER].get("eduPersonUniqueId"), user.uid):
+        if _compare_with_none_equals_empty(remote_user[get_scim_schema_sram_user()].get("eduPersonUniqueId"), user.uid):
             return True
-        vo_person_external_affiliation = remote_user[SCIM_SCHEMA_SRAM_USER].get("voPersonExternalAffiliation")
+        vo_person_external_affiliation = remote_user[get_scim_schema_sram_user()].get("voPersonExternalAffiliation")
         if _compare_with_none_equals_empty(vo_person_external_affiliation, user.scoped_affiliation):
             return True
-        vo_person_external_id = remote_user[SCIM_SCHEMA_SRAM_USER].get("voPersonExternalId")
+        vo_person_external_id = remote_user[get_scim_schema_sram_user()].get("voPersonExternalId")
         if _compare_with_none_equals_empty(vo_person_external_id, user.eduperson_principal_name):
             return True
-        sramInactiveDays = remote_user[SCIM_SCHEMA_SRAM_USER].get("sramInactiveDays")
+        sramInactiveDays = remote_user[get_scim_schema_sram_user()].get("sramInactiveDays")
         if _compare_with_none_equals_empty(sramInactiveDays, inactive_days(user.last_login_date)):
             return True
     return False
 
 
 def _group_changed(group: Union[Group, Collaboration], remote_group: dict, remote_scim_users: List[dict]):
+    from server.scim.schema_template import get_scim_schema_sram_group
+
     def link_is_different(name: str, value: str):
-        for link in remote_group[SCIM_SCHEMA_SRAM_GROUP].get("links", []):
+        for link in remote_group[get_scim_schema_sram_group()].get("links", []):
             if link.get('name', '') != name:
                 continue
             if link.get('value', '') != value:
@@ -92,10 +95,10 @@ def _group_changed(group: Union[Group, Collaboration], remote_group: dict, remot
             remote_members.append(remote_user["externalId"].replace(EXTERNAL_ID_POST_FIX, ""))
     if sram_members != sorted(remote_members):
         return True
-    if SCIM_SCHEMA_SRAM_GROUP in remote_group:
-        if _compare_with_none_equals_empty(remote_group[SCIM_SCHEMA_SRAM_GROUP].get("description"), group.description):
+    if get_scim_schema_sram_group() in remote_group:
+        if _compare_with_none_equals_empty(remote_group[get_scim_schema_sram_group()].get("description"), group.description):
             return True
-        if _compare_with_none_equals_empty(remote_group[SCIM_SCHEMA_SRAM_GROUP].get("urn"), group.global_urn):
+        if _compare_with_none_equals_empty(remote_group[get_scim_schema_sram_group()].get("urn"), group.global_urn):
             return True
 
         if isinstance(group, Collaboration):
@@ -103,11 +106,11 @@ def _group_changed(group: Union[Group, Collaboration], remote_group: dict, remot
                 return True
             if link_is_different('logo', group.logo):
                 return True
-        elif remote_group[SCIM_SCHEMA_SRAM_GROUP].get("links", []) != []:
+        elif remote_group[get_scim_schema_sram_group()].get("links", []) != []:
             return True
 
         labels = [t.tag_value for t in group.tags] if hasattr(group, "tags") else []
-        if sorted(remote_group[SCIM_SCHEMA_SRAM_GROUP].get("labels", [])) != sorted(labels):
+        if sorted(remote_group[get_scim_schema_sram_group()].get("labels", [])) != sorted(labels):
             return True
     return False
 

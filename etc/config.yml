@@ -40,6 +40,7 @@ oidc:
   #Note that the paths for these  uri's is hardcoded and only domain and port differ per environment
   redirect_uri: ${BASE_URL}/api/users/resume-session
   continue_eduteams_redirect_uri: ${AUDIENCE}/continue
+  continue_eb_redirect_uri: https://engine.(.*)surfconext.nl
   second_factor_authentication_required: True
   totp_token_name: "SRAM local"
   # The client_id of SBS. Most likely to equal the oidc.client_id
@@ -213,6 +214,8 @@ scim_sweep:
   enabled: True
   # How often do we check if scim sweeps are needed per service
   cron_minutes_expression: "*/15"
+
+scim_schema_sram: "urn:mace:surf.nl:sram:scim:extension"
 
 ldap:
   url: "${LDAP_URL}"
