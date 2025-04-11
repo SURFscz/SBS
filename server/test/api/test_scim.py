@@ -10,15 +10,20 @@ from server.db.db import db
 from server.db.domain import User, Collaboration, Group, Service
 from server.scim import EXTERNAL_ID_POST_FIX
 from server.scim.resource_type_template import resource_type_template
-from server.scim.schema_template import schemas_template, SCIM_SCHEMA_SRAM_USER
 from server.scim.user_template import version_value
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_network_token, user_jane_name, co_ai_computing_name, group_ai_researchers, \
     service_network_name, service_wiki_token, service_wiki_name
 from server.tools import read_file
+from server.scim.schema_template import schemas_template
 
 
 class TestScim(AbstractTest):
+
+    def setUp(self):
+        from server.scim.schema_template import get_scim_schema_sram_user
+        self.SCIM_SCHEMA_SRAM_USER = get_scim_schema_sram_user()
+        super(TestScim, self).setUp()
 
     def test_users(self):
         res = self.get("/api/scim/v2/Users", headers={"Authorization": f"bearer {service_network_token}"},
@@ -96,7 +101,7 @@ class TestScim(AbstractTest):
             self.get(f"/api/scim/v2{resource['meta']['location']}", response_status_code=200)
 
     def test_users_filter(self):
-        query = urllib.parse.quote(f"{SCIM_SCHEMA_SRAM_USER}.eduPersonUniqueId eq \"urn:john\"")
+        query = urllib.parse.quote(f"{self.SCIM_SCHEMA_SRAM_USER}.eduPersonUniqueId eq \"urn:john\"")
         res = self.get("/api/scim/v2/Users",
                        query_data={"filter": query},
                        headers={"Authorization": f"bearer {service_network_token}"},
@@ -104,7 +109,7 @@ class TestScim(AbstractTest):
         self.assertEqual(1, len(res["Resources"]))
 
     def test_users_filter_single_quote(self):
-        query = urllib.parse.quote(f"{SCIM_SCHEMA_SRAM_USER}.eduPersonUniqueId eq 'urn:john'")
+        query = urllib.parse.quote(f"{self.SCIM_SCHEMA_SRAM_USER}.eduPersonUniqueId eq 'urn:john'")
         res = self.get("/api/scim/v2/Users",
                        query_data={"filter": query},
                        headers={"Authorization": f"bearer {service_network_token}"},
@@ -112,7 +117,7 @@ class TestScim(AbstractTest):
         self.assertEqual(1, len(res["Resources"]))
 
     def test_users_filter_not_implemented(self):
-        query = urllib.parse.quote(f"{SCIM_SCHEMA_SRAM_USER}.voPersonExternalId eq 'urn:john'")
+        query = urllib.parse.quote(f"{self.SCIM_SCHEMA_SRAM_USER}.voPersonExternalId eq 'urn:john'")
         self.get("/api/scim/v2/Users",
                  query_data={"filter": query},
                  headers={"Authorization": f"bearer {service_network_token}"},

@@ -4,13 +4,14 @@ from unittest import TestCase
 
 from server.db.domain import User
 from server.scim.user_template import find_user_by_id_template
-from server.scim.schema_template import SCIM_SCHEMA_SRAM_USER
 from server.tools import dt_now
 
 
 class TestUserTemplate(TestCase):
 
     def test_find_user_by_id_template(self):
+        from server.scim.schema_template import get_scim_schema_sram_user
+
         now = dt_now()
         days = 365 * 2
         last_login_date = now - datetime.timedelta(days=(days), weeks=3)
@@ -20,4 +21,4 @@ class TestUserTemplate(TestCase):
 
         self.assertEqual(result["displayName"], user.name)
         self.assertEqual(result["name"]["familyName"], "")
-        self.assertEqual(days, result[SCIM_SCHEMA_SRAM_USER]["sramInactiveDays"])
+        self.assertEqual(days, result[get_scim_schema_sram_user()]["sramInactiveDays"])
