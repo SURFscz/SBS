@@ -100,7 +100,7 @@ def service_users():
     # note: we only support "eq" here.
     if filter_param:
         query = urllib.parse.unquote(filter_param)
-        if not query.lower().startswith(f"{get_scim_schema_sram_user()()}.eduPersonUniqueId".lower()):
+        if not query.lower().startswith(f"{get_scim_schema_sram_user()}.eduPersonUniqueId".lower()):
             raise NotImplementedError(f"Not supported filter {query}")
         uid = re.search(r"(?:'|\")(.*)(?:'|\")", query).group(1)
         users = User.query.filter(func.lower(User.uid) == func.lower(uid)).all()
