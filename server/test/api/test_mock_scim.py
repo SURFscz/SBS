@@ -13,7 +13,7 @@ class TestMockScim(AbstractTest):
 
     def setUp(self):
         from server.scim.schema_template import get_scim_schema_sram_group
-        
+
         self.SCIM_SCHEMA_SRAM_GROUP = get_scim_schema_sram_group()
         super(TestMockScim, self).setUp()
 
