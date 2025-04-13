@@ -30,3 +30,8 @@ class TestSSHConverter(TestCase):
         ssh2_pub = self.read_file("ssh2.pub")
         open_ssh = convert_to_open_ssh(ssh2_pub)
         self.assertTrue(open_ssh.startswith("ssh-rsa AA"))
+
+    def test_convert_to_open_ssh_rfc_4716(self):
+        ssh2_pub = self.read_file("rfc_4716.pub")
+        open_ssh = convert_to_open_ssh(ssh2_pub)
+        self.assertTrue(open_ssh.startswith("ssh-rsa AA"))
