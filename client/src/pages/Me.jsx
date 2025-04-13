@@ -256,6 +256,9 @@ class Me extends React.Component {
                                             {ssh_key.ssh_value}
                                             {ssh_key.fileTypeError &&
                                                 <ErrorIndicator msg={I18n.t("user.sshKeyError")} decode={false}/>}
+                                            {this.showConvertSSHKey(ssh_key.ssh_value) &&
+                                                <p className="ssh-convert"
+                                                      dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.sshConvertInfo"))}}/>}
                                         </td>}
                                         {ssh_key.manual && <td className="attribute-value">
                                             <InputField displayLabel={false}
