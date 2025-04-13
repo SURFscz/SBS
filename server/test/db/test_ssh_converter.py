@@ -17,6 +17,10 @@ class TestSSHConverter(TestCase):
         open_ssh = convert_to_open_ssh(ssh2_pub)
         self.assertTrue(open_ssh.startswith("ssh-rsa AA"))
 
+    def test_convert_to_open_ssh_nope(self):
+        open_ssh = convert_to_open_ssh("nope")
+        self.assertTrue(open_ssh.startswith("nope"))
+
     def test_convert_to_open_ssh_pkcs8(self):
         ssh2_pub = self.read_file("pkcs8.pub")
         open_ssh = convert_to_open_ssh(ssh2_pub)
