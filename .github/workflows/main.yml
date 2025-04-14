@@ -193,7 +193,9 @@ jobs:
           name: "sbs-build"
           path: "/tmp/sbs.tar.xz"
 
-# see https://docs.docker.com/build/ci/github-actions/multi-platform/
+  # a little but of magic below: we build arm64 and amd64 images on separate native hosts
+  # the images are uplaoded by digests and then in a separate task we combine them into a manifest list
+  # see https://docs.docker.com/build/ci/github-actions/multi-platform/
   Docker_build:
     name: Build images
     if: >
@@ -254,12 +256,13 @@ jobs:
           mkdir -p "${{ runner.temp }}/digests/${{ matrix.image }}/"
           digest="${{ steps.build.outputs.digest }}"
           touch "${{ runner.temp }}/digests/${{ matrix.image }}/${digest#sha256:}"
+          find "${{ runner.temp }}/digests/${{ matrix.image }}"
 
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
-          name: digests-${{ matrix.image }}-${{ matrix.arch }}
-          path: ${{ runner.temp }}/digests/*
+          name: "digests-${{ matrix.image }}-${{ matrix.arch }}"
+          path: "${{ runner.temp }}/digests/**/*"
           if-no-files-found: error
           retention-days: 1
 
