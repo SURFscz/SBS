@@ -37,7 +37,7 @@
         "react-mde": "^11.0.0",
         "react-router-dom": "^5.2.0",
         "react-select": "^5.10.1",
-        "react-tooltip": "^5.28.0",
+        "react-tooltip": "^5.28.1",
         "recharts": "^2.15.2",
         "scroll-into-view": "^1.15.0",
         "serialize-javascript": "^6.0.2",
