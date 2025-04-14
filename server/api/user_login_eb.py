@@ -1,9 +1,9 @@
 import urllib.parse
 import uuid
 
-from flask import Blueprint, current_app, request as current_request, redirect, session
+from flask import Blueprint, current_app, request as current_request, redirect, session, jsonify
 from sqlalchemy import or_
-from werkzeug.exceptions import Forbidden
+from werkzeug.exceptions import Forbidden, NotFound
 
 from server import tools
 from server.api.base import json_endpoint, send_error_mail, query_param
@@ -180,10 +180,18 @@ def confirm_authorization():
 @json_endpoint
 def proxy_attributes_eb():
     confirm_authorization()
-
     json_dict = current_request.get_json()
+
+    logger = ctx_logger("user_login_eb")
+    logger.debug(f"attributes_eb called with {json_dict}")
+
     nonce = json_dict["nonce"]
-    user_nonce = UserNonce.query.filter(UserNonce.nonce == nonce).one()
+    user_nonce = UserNonce.query.filter(UserNonce.nonce == nonce).first()
+    if user_nonce is None:
+        raise NotFound(f"No user_nonce found for none {nonce}")
+
+    logger.debug(f"attributes_eb user_nonce {jsonify(user_nonce)}")
+
     service = user_nonce.service
     user = user_nonce.user
     attributes = user_attributes(service, user)

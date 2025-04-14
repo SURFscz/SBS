@@ -225,3 +225,11 @@ class TestUserLoginEB(AbstractTest):
             self.assertFalse(user.get("admin"))
             self.assertTrue(user.get("guest"))
             self.assertIsNotNone(user.get("uid"))
+
+    def test_authz_eb_nonce_not_found(self):
+        res = self.post("/api/users/attributes_eb",
+                        response_status_code=404,
+                        headers={"Authorization": self.app.app_config.engine_block.api_token,
+                                 "Content-Type": "application/json"},
+                        body={"nonce": "nope"})
+        self.assertTrue("No user_nonce found for none nope" in res["message"])
