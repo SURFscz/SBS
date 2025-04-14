@@ -2102,7 +2102,7 @@ const en = {
         },
         proxy: {
             userUid: "User UID",
-            userUidEB: "User Home Organisation UID",
+            userUidEB: "User URN (collab person ID",
             userSchacHome: "User Schac Home",
             userEppn: "User EPPN",
             serviceEntityId: "Service entity ID",
@@ -2126,7 +2126,7 @@ const en = {
         },
         sync: {
             enabled: "enabled",
-            disabled: "diabled",
+            disabled: "disabled",
             info: "The sync with {{manageUrl}} is {{state}}",
             overview: "The services below are configured to sync with Manage, but have not been synced ever",
             start: "Start syncing",

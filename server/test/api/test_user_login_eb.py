@@ -134,6 +134,14 @@ class TestUserLoginEB(AbstractTest):
         self.assertEqual("interrupt", res["msg"])
         self.assertEqual(res["message"], UserCode.AUP_NOT_AGREED.name)
 
+        # Now call attributes and ensure the aup is added
+        self.add_aup_to_user("urn:sarah")
+        res = self.post("/api/users/attributes_eb", response_status_code=200,
+                        headers={"Authorization": self.app.app_config.engine_block.api_token,
+                                 "Content-Type": "application/json"},
+                        body={"nonce": res["nonce"]})
+        self.assertEqual("authorized", res["msg"])
+
     def test_authz_eb_authorized(self):
         self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
         body = {"user_id": "urn:collab:person:example.com:sarah",
@@ -148,12 +156,6 @@ class TestUserLoginEB(AbstractTest):
                         body=body)
         self.assertEqual("authorized", res["msg"])
         self.assertEqual(4, len(res["attributes"]))
-        # Idempotency check
-        res = self.post("/api/users/attributes_eb", response_status_code=200,
-                        headers={"Authorization": self.app.app_config.engine_block.api_token,
-                                 "Content-Type": "application/json"},
-                        body=body)
-        self.assertEqual("authorized", res["msg"])
 
     def test_authz_eb_sbs_login(self):
         res = self.post("/api/users/authz_eb",

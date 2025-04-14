@@ -16,8 +16,7 @@ export default function ProxyLogin({config}) {
         I18n.t("system.proxy.eduTeams")
     ].map(backend => ({label: backend, value: backend}));
 
-    const [userUid, setUserUid] = useState("");
-    const [userSchacHome, setSchacHome] = useState("");
+    const [userUrn, setUserUrn] = useState("");
     const [userEppn, setUserEppn] = useState("");
     const [serviceEntityId, setServiceEntityId] = useState("");
     const [idpEntityId, setIdpEntityId] = useState("https://mock.idp");
@@ -31,8 +30,8 @@ export default function ProxyLogin({config}) {
     const doProxyAuthz = () => {
         setLoading(true);
         const promise = integrationBackend.value !== I18n.t("system.proxy.engineBlock") ?
-            proxyAuthzEduTeams(userUid, serviceEntityId, idpEntityId, continueUrl)
-            : proxyAuthzEngineBlock(userUid, userSchacHome, userEppn, serviceEntityId, idpEntityId, continueUrl);
+            proxyAuthzEduTeams(userUrn, serviceEntityId, idpEntityId, continueUrl)
+            : proxyAuthzEngineBlock(userUrn, userEppn, serviceEntityId, idpEntityId, continueUrl);
         promise
             .then(res => {
                 setProxyAuthzResult(res);
@@ -61,8 +60,7 @@ export default function ProxyLogin({config}) {
     }
 
     const resetForm = () => {
-        setUserUid("");
-        setSchacHome("");
+        setUserUrn("");
         setUserEppn("");
         setServiceEntityId("");
         setIdpEntityId("");
@@ -87,15 +85,10 @@ export default function ProxyLogin({config}) {
     return (
         <div className={"mod-proxy-container"}>
             <div className="form">
-                <InputField value={userUid}
-                            onChange={e => setUserUid(e.target.value)}
+                <InputField value={userUrn}
+                            onChange={e => setUserUrn(e.target.value)}
                             name={I18n.t(`system.proxy.userUid${isEBTeamsFlow ? "EB" : ""}`)}
                             required={true}/>
-
-                {isEBTeamsFlow && <InputField value={userSchacHome}
-                                              onChange={e => setSchacHome(e.target.value)}
-                                              name={I18n.t("system.proxy.userSchacHome")}
-                                              required={true}/>}
 
                 {isEBTeamsFlow && <InputField value={userEppn}
                                               onChange={e => setUserEppn(e.target.value)}
@@ -142,8 +135,8 @@ export default function ProxyLogin({config}) {
                     <Button txt={I18n.t("system.proxy.start")}
                             onClick={doProxyAuthz}
                             small={true}
-                            disabled={isEmpty(userUid) || isEmpty(serviceEntityId) || isEmpty(idpEntityId) ||
-                                isEmpty(continueUrl) || isEmpty(userSchacHome)}
+                            disabled={isEmpty(userUrn) || isEmpty(serviceEntityId) || isEmpty(idpEntityId) ||
+                                isEmpty(continueUrl)}
                     />
                 </div>
 

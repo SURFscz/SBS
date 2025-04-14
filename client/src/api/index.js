@@ -983,10 +983,9 @@ export function plscSync() {
     return fetchJson("/api/plsc/syncing");
 }
 
-export function proxyAuthzEngineBlock(userUid, userSchacHome, userEppn, serviceEntityId, idpEntityId, continueUrl) {
+export function proxyAuthzEngineBlock(userUrn, userEppn, serviceEntityId, idpEntityId, continueUrl) {
     const body = {
-        uid: userUid.trim(),
-        schac_home: userSchacHome,
+        user_id: userUrn.trim(),
         eppn: userEppn,
         service_id: serviceEntityId.trim(),
         issuer_id: idpEntityId.trim(),
