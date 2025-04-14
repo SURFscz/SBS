@@ -15,10 +15,7 @@ on:
   workflow_dispatch:
 
 env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME_SBS: surfscz/sram-sbs
-  IMAGE_NAME_SERVER: surfscz/sram-sbs-server
-  IMAGE_NAME_CLIENT: surfscz/sram-sbs-client
+  REGISTRY: ghcr.io/surfscz
 
 jobs:
   Server_tests:
@@ -246,7 +243,7 @@ jobs:
           context: "."
           file: "Dockerfile.${{ matrix.image }}"
           platforms: "linux/${{ matrix.arch }}"
-          tags: ${{ steps.meta-sbs.outputs.tags }}
+          tags: "${{ env.REGISTRY }}/${{ matrix.image }}"
           labels: ${{ steps.meta-sbs.outputs.labels }}
           outputs: "type=image,push-by-digest=true,name-canonical=true,push=true"
           cache-from: "type=gha"
