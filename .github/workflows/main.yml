@@ -263,7 +263,7 @@ jobs:
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
-          name: "digests-${{ matrix.image }}-${{ matrix.arch }}"
+          name: "digests__${{ matrix.image }}__${{ matrix.arch }}"
           path: "${{ runner.temp }}/digests/**/*"
           if-no-files-found: error
           retention-days: 1
@@ -296,8 +296,8 @@ jobs:
       - name: Download digests
         uses: actions/download-artifact@v4
         with:
-          path: ${{ runner.temp }}/digests
-          pattern: digests-*
+          path: "${{ runner.temp }}/digests"
+          pattern: "digests__*"
           merge-multiple: true
 
       - name: Log in to the Container registry
@@ -322,18 +322,24 @@ jobs:
       - name: Create manifest list and push
         working-directory: "${{ runner.temp }}/digests/${{ matrix.image }}"
         run: |
-          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+          DIGESTS=$( printf '${{ env.REGISTRY }}/${{ matrix.image }}@sha256:%s ' * )
+          TAGS=$( jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON" )
+
+          echo "Creating docker manifest list for ${{ matrix.image }}"
+          echo "Digests: $DIGESTS"
+          echo "Tags: $TAGS"
+
+          docker buildx imagetools create ${TAGS} ${DIGESTS}
 
       - name: Inspect image
         run: |
-          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+          docker buildx imagetools inspect ${{ env.REGISTRY }}/${{ matrix.image}}:${{ steps.meta.outputs.version }}
 
       # Setup tmate session
       - name: Setup tmate session
         #env:
         #  ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG}}
-        #if: ${{ failure() && env.ACTIONS_STEP_DEBUG == 'true' }}
+        if: ${{ failure() }} # && env.ACTIONS_STEP_DEBUG == 'true' }}
         uses: mxschmitt/action-tmate@v3
         with:
           limit-access-to-actor: true
