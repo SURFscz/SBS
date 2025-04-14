@@ -291,9 +291,9 @@ jobs:
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+          registry: "ghcr.io"
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download amd64 image
         uses: "ishworkh/container-image-artifact-download@v2.0.0"
@@ -319,11 +319,11 @@ jobs:
       - name: Push SBS image
         uses: docker/build-push-action@v5
         with:
-        context: "."
-        file: "Dockerfile.sbs"
-        push: true
-        tags: "${{ needs.Docker_build.outputs.image }}"
-        load: false
+          context: "."
+          file: "Dockerfile.sbs"
+          push: true
+          tags: "${{ needs.Docker_build.outputs.image }}"
+          load: false
 
 
 
