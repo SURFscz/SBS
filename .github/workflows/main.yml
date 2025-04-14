@@ -280,7 +280,7 @@ jobs:
 #        timeout-minutes: 60
 
   Docker_image:
-    name: Combine and push container images
+    name: Merge images
     if: >
       github.actor!='dependabot[bot]' &&
       github.event_name!='pull_request' &&
@@ -347,7 +347,6 @@ jobs:
 
 
 
-
   Create_release:
     name: Create release
     if: >
@@ -364,13 +363,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Log in to the Container registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Fetch build
         id: fetch_artifact
