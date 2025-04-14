@@ -233,7 +233,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: "${{ env.REGISTRY }}/${{ matrix.image }}"
-          flavor: "suffix=-${{ matrix.arch }}"
+          #flavor: "suffix=-${{ matrix.arch }}"
 
       - name: Fetch build
         uses: actions/download-artifact@v4
@@ -246,9 +246,6 @@ jobs:
           context: "."
           file: "Dockerfile.${{ matrix.image }}"
           platforms: "linux/${{ matrix.arch }}"
-          pull: true
-          push: true
-          load: true
           tags: ${{ steps.meta-sbs.outputs.tags }}
           labels: ${{ steps.meta-sbs.outputs.labels }}
           outputs: "type=image,push-by-digest=true,name-canonical=true,push=true"
