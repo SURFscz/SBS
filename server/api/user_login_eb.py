@@ -1,3 +1,4 @@
+import logging
 import urllib.parse
 import uuid
 
@@ -16,7 +17,6 @@ from server.db.db import db
 from server.db.defaults import PROXY_AUTHZ_EB
 from server.db.domain import User, Service, UserNonce
 from server.db.models import log_user_login
-from server.logger.context_logger import ctx_logger
 
 user_login_eb = Blueprint("user_login_eb", __name__, url_prefix="/api/users")
 
@@ -60,7 +60,7 @@ def proxy_authz_eb():
     issuer_id = json_dict["issuer_id"]
     continue_url = json_dict["continue_url"]
 
-    logger = ctx_logger("user_login_eb")
+    logger = logging.getLogger("user_login_eb")
     logger.debug(f"authz_eb called with {json_dict}")
 
     # user who log in to SBS itself can continue here; their attributes are checked in user.py/resume_session()
@@ -185,25 +185,34 @@ def proxy_attributes_eb():
     confirm_authorization()
     json_dict = current_request.get_json()
 
-    logger = ctx_logger("user_login_eb")
+    logger = logging.getLogger("user_login_eb")
     logger.debug(f"attributes_eb called with {json_dict}")
 
     nonce = json_dict["nonce"]
     user_nonce = UserNonce.query.filter(UserNonce.nonce == nonce).first()
     if user_nonce is None:
-        raise NotFound(f"No user_nonce found for none {nonce}")
+        raise NotFound(f"No user_nonce found for nonce {nonce}")
 
-    logger.debug(f"attributes_eb user_nonce {jsonify(user_nonce)}")
+    logger.debug(f"attributes_eb user_nonce {jsonify(user_nonce).json}")
 
     service = user_nonce.service
     user = user_nonce.user
     attributes = user_attributes(service, user)
+
+    # Now delete the user_nonce
+    # db.session.delete(user_nonce)
+    # db.session.commit()
+
     return attributes, 200
 
 
 @user_login_eb.route("/interrupt", methods=["GET"], strict_slashes=False)
 def interrupt():
     nonce = query_param("nonce")
+
+    logger = logging.getLogger("user_login_eb")
+    logger.debug(f"interrupt called with {nonce}")
+
     user_nonce = UserNonce.query.filter(UserNonce.nonce == nonce).one()
     user = user_nonce.user
     if user:
@@ -228,9 +237,6 @@ def interrupt():
         "user_id": user.uid if user else user_nonce.requested_user_id,
         "error_status": error_status
     }
-    # Now delete the user_nonce
-    db.session.delete(user_nonce)
-    db.session.commit()
 
     client_base_url = current_app.app_config.base_url
     args = urllib.parse.urlencode(parameters)
