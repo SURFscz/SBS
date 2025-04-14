@@ -8,5 +8,3 @@ administrator {{ administrator }} of the organisation {{ organisation.name }}.
 
 
 {% endblock %}
-
-

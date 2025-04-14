@@ -15,4 +15,3 @@ export function logout(e) {
     stopEvent(e);
     logoutUser().then(() => window.location.href = "/landing?logout=true")
 }
-

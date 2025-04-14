@@ -103,7 +103,7 @@ export function me(config) {
     if (config.local && 1 == 1) {
         let sub = "urn:service_admin";
         sub = "urn:john";
-       // sub = "urn:paul";
+        // sub = "urn:sarah";
         const second_factor_confirmed = true;
         const rate_limited = false;
         // const second_factor_confirmed = false;
@@ -126,15 +126,15 @@ export function me(config) {
 }
 
 // Mock
-export function ebInterruptData(userUid) {
-    return fetchJson(`/api/mock/interrupt_data?user_uid=${userUid}`)
+export function startEBInterruptFlow() {
+    return fetchJson("/api/mock/interrupt_data")
 }
 
-// Mock
 export function ebStopInterruptFlow() {
     return fetchDelete("/api/mock/stop_interrupt_flow")
 }
 
+// User
 export function refreshUser() {
     return fetchJson("/api/users/refresh");
 }
@@ -245,6 +245,14 @@ export function serviceAbbreviationExists(abbreviation, existingService = null) 
 
 export function serviceById(id) {
     return fetchJson(`/api/services/${id}`, {}, {}, false);
+}
+
+export function serviceExportOverview() {
+    return fetchJson("/api/services/export-overview");
+}
+
+export function serviceSyncExternal(serviceId) {
+    return fetchJson(`/api/services/sync_external_service?service_id=${serviceId}`);
 }
 
 export function serviceLdapIdentifier() {
@@ -674,6 +682,9 @@ export function invitationExists(emails, collaborationId) {
     return postPutJson("/api/invitations/exists_email", body, "POST");
 }
 
+export function invitationBulkUpload(data) {
+    return postPutJson("/api/invitations/bulk_upload", data, "PUT");
+}
 
 //Organisation Memberships
 export function deleteOrganisationMembership(organisationId, userId, showErrorDialog = true) {
@@ -891,12 +902,6 @@ export function auditLogsActivity(limit, tableNames, query) {
     return fetchJson(`/api/audit_logs/activity?${queryString}`);
 }
 
-//IP-networks
-export function ipNetworks(address, id) {
-    const ipQueryParam = id ? `&id=${id}` : "";
-    return fetchJson(`/api/ipaddress/info?address=${address}${ipQueryParam}`, {}, {}, false);
-}
-
 //System
 export function suspendUsers() {
     return postPutJson("/api/system/suspend_users", {}, "PUT");
@@ -950,6 +955,10 @@ export function dbDemoSeed() {
     return fetchJson("/api/system/demo_seed");
 }
 
+export function dbStressSeed() {
+    return fetchJson("/api/system/stress_seed");
+}
+
 export function clearAuditLogs() {
     return fetchDelete("/api/system/clear-audit-logs");
 }
@@ -974,13 +983,23 @@ export function plscSync() {
     return fetchJson("/api/plsc/syncing");
 }
 
-export function proxyAuthzEngineBlock(userUid, serviceEntityId, idpEntityId) {
-    const body = {user_id: userUid.trim(), service_id: serviceEntityId.trim(), issuer_id: idpEntityId.trim()};
-    return postPutJson("/api/users/proxy_authz_eb", body, "post", false);
+export function proxyAuthzEngineBlock(userUrn, userEppn, serviceEntityId, idpEntityId, continueUrl) {
+    const body = {
+        user_id: userUrn.trim(),
+        eppn: userEppn,
+        service_id: serviceEntityId.trim(),
+        issuer_id: idpEntityId.trim(),
+        continue_url: continueUrl.trim()
+    };
+    return postPutJson("/api/users/authz_eb", body, "post", false, {"Authorization": "secret"});
 }
 
-export function proxyAuthzEduTeams(userUid, serviceEntityId, idpEntityId) {
-    const body = {user_id: userUid.trim(), service_id: serviceEntityId.trim(), issuer_id: idpEntityId.trim()};
+export function proxyAuthzEduTeams(userUid, userSchacHome, userEppn, serviceEntityId, idpEntityId) {
+    const body = {
+        user_id: userUid.trim(),
+        service_id: serviceEntityId.trim(),
+        issuer_id: idpEntityId.trim()
+    };
     return postPutJson("/api/users/proxy_authz", body, "post", false);
 }
 
@@ -1172,4 +1191,3 @@ export function sweep(service) {
 export function allStats() {
     return fetchJson("/api/system/statistics")
 }
-

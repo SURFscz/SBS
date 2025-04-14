@@ -15,19 +15,22 @@ redis:
 
 socket_url: "127.0.0.1:8080/"
 
+logging:
+  log_to_stdout: True
+
 api_users:
-  - name: "sysadmin"
-    password: "secret"
-    scopes: [ "read", "write", "system", "ipaddress", "stats" ]
-  - name: "sysread"
-    password: "secret"
-    scopes: [ read ]
-  - name: "research_cloud"
-    password: "secret"
-    scopes: [ "restricted_co" ]
-  - name: "ipaddress"
-    password: "secret"
-    scopes: [ "ipaddress" ]
+- name: "sysadmin"
+  password: "secret"
+  scopes: [ "read", "write", "system", "ipaddress", "stats" ]
+- name: "sysread"
+  password: "secret"
+  scopes: [ read ]
+- name: "research_cloud"
+  password: "secret"
+  scopes: [ "restricted_co" ]
+- name: "ipaddress"
+  password: "secret"
+  scopes: [ "ipaddress" ]
 
 oidc:
   client_id: sram
@@ -40,26 +43,26 @@ oidc:
   #Note that the paths for these  uri's is hardcoded and only domain and port differ per environment
   redirect_uri: http://localhost:8080/api/users/resume-session
   continue_eduteams_redirect_uri: https://proxy.acc.sram.eduteams.org/continue
+  continue_eb_redirect_uri: https://engine.(.*)surfconext.nl
   second_factor_authentication_required: True
   totp_token_name: "SRAM local"
   # The client_id of SBS. Most likely to equal the oidc.client_id
   sram_service_entity_id: sram
 
-
   scopes:
-    - profile
-    - eduperson_scoped_affiliation
-    - voperson_external_affiliation
-    - email
-    - ssh_public_key
-    - eduperson_orcid
-    - uid
-    - voperson_external_id
-    - eduperson_entitlement
-    - eduperon_assurance
-    - openid
-    - eduperson_principal_name
-    - voperson_id
+  - profile
+  - eduperson_scoped_affiliation
+  - voperson_external_affiliation
+  - email
+  - ssh_public_key
+  - eduperson_orcid
+  - uid
+  - voperson_external_id
+  - eduperson_entitlement
+  - eduperon_assurance
+  - openid
+  - eduperson_principal_name
+  - voperson_id
 
 base_scope: "test.sbs.local"
 entitlement_group_namespace: "urn:example:sbs"
@@ -102,15 +105,15 @@ base_server_url: http://localhost:8080
 wiki_link: https://edu.nl/vw3jx
 
 admin_users:
-  - uid: "urn:john"
-  - uid: "urn:rocky"
-  - uid: "urn:mike"
-  - uid: "6f5e346b55f6b732930591ab88859773ef48e3ba@acc.sram.eduteams.org"
+- uid: "urn:john"
+- uid: "urn:rocky"
+- uid: "urn:mike"
+- uid: "6f5e346b55f6b732930591ab88859773ef48e3ba@acc.sram.eduteams.org"
 
 organisation_categories:
-  - "Research"
-  - "University"
-  - "Medical"
+- "Research"
+- "University"
+- "Medical"
 
 feature:
   seed_allowed: True
@@ -231,16 +234,16 @@ mfa_fallback_enabled: true
 # Lower case schachome organisations / entity ID's allowed skipping MFA;
 # MFA is supposed to be handled at the IdP for these entities
 mfa_idp_allowed:
-  - entity_id: "https://idp.test"
-    schac_home:
-      - "idp.test"
-      - "idp2.test"
-  - entity_id: "https://erroridp.example.edu"
-    schac_home:
-      - "erroridp.example.edu"
-  - schac_home:
-      - "only_sho"
-  - entity_id: "https://only_entityid"
+- entity_id: "https://idp.test"
+  schac_home:
+  - "idp.test"
+  - "idp2.test"
+- entity_id: "https://erroridp.example.edu"
+  schac_home:
+  - "erroridp.example.edu"
+- schac_home:
+  - "only_sho"
+- entity_id: "https://only_entityid"
 
 pam_web_sso:
   session_timeout_seconds: 300
@@ -249,29 +252,15 @@ rate_limit_totp_guesses_per_30_seconds: 10
 
 # The uid's of user that will never be suspended or deleted
 excluded_user_accounts:
-  - uid: "urn:paul"
-  - uid: "urn:peter"
+- uid: "urn:paul"
+- uid: "urn:peter"
+
+stress_test:
+  num_users: 1
+  num_orgs: 1
+  num_collaborations: 2
+  num_services: 1
+  num_groups: 1
 
 engine_block:
-  # Either one is required, if specified both then the public_key is used
-  public_key_url: http://localhost:8099/idp/certificate
-  public_key: |
-    -----BEGIN CERTIFICATE-----
-    MIIC/zCCAeegAwIBAgIUSeIpDb3Txu37YHhbbUVHiA3s/q4wDQYJKoZIhvcNAQEL
-    BQAwDzENMAsGA1UEAwwEdGVzdDAeFw0yNDExMTQxMTI0MTRaFw0yNDExMTUxMTI0
-    MTRaMA8xDTALBgNVBAMMBHRlc3QwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEK
-    AoIBAQC+xQwIGEqM1ykFmsFszMzVMUSGyG/xJEst6O07qcgqTQf91bPPuTrx5DIa
-    813Ox04gy006iD8zA6LLh607WfhGlOxT+6dx45DrF6UEeHiR5Dq/JTj9B+lF5sHf
-    j8ZBt1iRrJgtmjrb4BrhdUkyHypkeTauzBeGKteJVAL1cNNO9HmtBhn+8hdSHRWB
-    7p8lRu74t6vDl2vg7++WYjd73nmkCxt6J66HVdKxaZkj2phfz5Nm07I9MQIxlAKC
-    Az9MjN+A/hnGG/t8Lk7IIjn58Uou1O0lBstOWTt2r5jm4cL/BgPvK+2lqJa3qo3h
-    8hDOu/HgRXu04UukQuJY+OpqA8gBAgMBAAGjUzBRMB0GA1UdDgQWBBTwzTAZAkK2
-    5NJmfizds6RkKRf9aDAfBgNVHSMEGDAWgBTwzTAZAkK25NJmfizds6RkKRf9aDAP
-    BgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQAxa0ekqBaKnz1tVR/7
-    estk6MYBZzblMHA8T9HO2ae6ocayRgo85su0cO6vmkjZHEfHFNQmsxzoMMtLg0jV
-    RSQqd3Vy9sxzEMQajGKOij6ggzIsQfVKwIntJnRuEjlSn9ua/IdNIBEpgVHGWLu0
-    1LCoYbqCQumN+zZeIdFQwkgPg2Ibxh4PDgwyV1ju2pRJ47VTyKnZUvpdedq5nUET
-    SVX4pUj3jbPsSD8C0FIA4TbGRHoaptHwpN6cRpyF4dgGZ55wsrM08dvzBOzcnaPE
-    u6SUkXIDBGuZzFo2OAVXNN3GnS+iLrZ1cb+Kn2h96UWyR/EGpJVsODr5c3rR8vqK
-    iAhB
-    -----END CERTIFICATE-----
+  api_token: secret

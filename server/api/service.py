@@ -2,12 +2,12 @@ import urllib.parse
 import uuid
 
 from flask import Blueprint, request as current_request, g as request_context, jsonify, current_app
+from sqlalchemy import or_
 from sqlalchemy import text, func
 from sqlalchemy.orm import load_only, selectinload
 from werkzeug.exceptions import Forbidden, BadRequest
 
 from server.api.base import json_endpoint, query_param, emit_socket
-from server.api.ipaddress import validate_ip_networks
 from server.api.service_invitation import service_invitations_by_email
 from server.auth.secrets import generate_token, generate_password_with_hash
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
@@ -33,7 +33,7 @@ ALWAYS = "ALWAYS"
 service_api = Blueprint("service_api", __name__, url_prefix="/api/services")
 
 base_service_query = """
-    SELECT s.id, s.name, s.uuid4 ,
+    SELECT s.id, s.name, s.uuid4, s.entity_id, s.abbreviation,
     (SELECT COUNT(scr.id) FROM service_connection_requests scr WHERE scr.service_id = s.id
     AND scr.status = 'open' AND scr.pending_organisation_approval = 0) AS req_count,
     (SELECT COUNT(sc.id) FROM services_collaborations sc WHERE sc.service_id = s.id) AS c_count
@@ -43,8 +43,9 @@ base_service_query = """
 
 def _result_set_to_services(result_set):
     return [{"id": row[0], "name": row[1], "logo": f"{logo_url('services', row[2])}",
-             "connection_requests_count": row[3],
-             "collaborations_count": row[4]} for row in result_set]
+             "entity_id": row[3], "abbreviation": row[4],
+             "connection_requests_count": row[5],
+             "collaborations_count": row[6]} for row in result_set]
 
 
 def _is_org_member():
@@ -290,15 +291,12 @@ def service_by_id(service_id):
             .options(selectinload(Service.service_invitations).selectinload(ServiceInvitation.user)) \
             .options(selectinload(Service.allowed_organisations)) \
             .options(selectinload(Service.automatic_connection_allowed_organisations)) \
-            .options(selectinload(Service.ip_networks)) \
             .options(selectinload(Service.service_tokens)) \
             .options(selectinload(Service.service_groups))
         service = query.filter(Service.id == service_id).one()
     else:
         service = query.filter(Service.id == service_id).one()
     if api_call:
-        query = query \
-            .options(selectinload(Service.ip_networks))
         service = query.filter(Service.id == service_id).one()
         res = jsonify(service).json
         del res["logo"]
@@ -379,7 +377,6 @@ def save_service():
     confirm_write_access()
     data = current_request.get_json()
 
-    validate_ip_networks(data)
     valid_uri_attributes(data, URI_ATTRIBUTES)
     _token_validity_days(data)
 
@@ -392,7 +389,7 @@ def save_service():
     administrators = data.get("administrators", [])
     message = data.get("message", None)
     data["connection_setting"] = "NO_ONE_ALLOWED"
-    res = save(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
+    res = save(Service, custom_json=data, allow_child_cascades=False)
     service = res[0]
 
     sync_external_service(current_app, service)
@@ -414,7 +411,6 @@ def save_service():
         }, service, [administrator])
 
     mail_platform_admins(service)
-    service.ip_networks
     return res
 
 
@@ -573,7 +569,6 @@ def update_service():
     service_id = data["id"]
     confirm_service_admin(service_id)
 
-    validate_ip_networks(data)
     valid_uri_attributes(data, URI_ATTRIBUTES)
     _token_validity_days(data)
     cleanse_short_name(data, "abbreviation")
@@ -612,7 +607,7 @@ def update_service():
         data["sweep_remove_orphans"] = False
         data["sweep_scim_daily_rate"] = None
 
-    res = update(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
+    res = update(Service, custom_json=data, allow_child_cascades=False)
     service = res[0]
 
     sync_external_service(current_app, service)
@@ -620,8 +615,6 @@ def update_service():
     if scim_url_changed and scim_enabled:
         service.scim_bearer_token = plain_bearer_token
         encrypt_scim_bearer_token(service)
-
-    service.ip_networks
 
     emit_socket(f"service_{service_id}")
 
@@ -702,3 +695,24 @@ def reset_scim_bearer_token(service_id):
     service.scim_url = data.get("scim_url", service.scim_url)
     encrypt_scim_bearer_token(service)
     return {}, 201
+
+
+@service_api.route("/export-overview", strict_slashes=False)
+@json_endpoint
+def export_overview():
+    confirm_write_access()
+    return Service.query.options(load_only(Service.id, Service.name)) \
+        .filter(or_(Service.oidc_enabled == True, Service.saml_enabled == True)) \
+        .filter(Service.export_external_identifier == None) \
+        .all(), 200  # noqa: E712, E711
+
+
+@service_api.route("/sync_external_service", strict_slashes=False)
+@json_endpoint
+def do_sync_external_service():
+    confirm_write_access()
+    service_id = int(query_param("service_id"))
+    service = Service.query.filter(Service.id == service_id).one()
+    service_name = service.name
+    sync_external_service(current_app, service)
+    return {"id": service_id, "name": service_name, "export_successful": service.export_successful}, 200

@@ -66,8 +66,7 @@ export default class Activity extends React.PureComponent {
             "organisations",
             "api_keys",
             "service_groups",
-            "ssh_keys",
-            "ip_networks"];
+            "ssh_keys"];
         if (isService) {
             includePropertiesTargets.push("services");
         } else {
@@ -136,8 +135,9 @@ export default class Activity extends React.PureComponent {
         return auditLogRecords.map(auditLog => this.convertReference(auditLogs, auditLog));
     };
 
-    userLabel = user => {
-        return !user ? "Unknown" : `${user.email} (${user.username})`
+    userLabel = log => {
+        const user = log.user;
+        return user ? `${user.email} (${user.username})` : (log.user_type || "Unknown");
     }
 
     renderAuditLogs = (auditLogs, selected, page) => {
@@ -165,7 +165,7 @@ export default class Activity extends React.PureComponent {
                             }
                             className={`${selected && log.id === selected.id ? "selected" : ""}`}>
                             <td>{pseudoIso(log.created_at)}</td>
-                            <td>{this.userLabel(log.user)}</td>
+                            <td>{this.userLabel(log)}</td>
                             <td>{this.getSummaryTitle(log)}</td>
                         </tr>)}
                     </tbody>

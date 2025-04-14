@@ -100,6 +100,15 @@ class TestUserClaims(AbstractTest):
         add_user_claims({"voperson_external_id": []}, "urn:johny", user)
         self.assertIsNone(user.schac_home_organisation)
 
+    def test_urn_collab(self):
+        user = User()
+        sub = "urn:collab:person:example.com:admin"
+        eppn = "admin@example.com"
+        add_user_claims({"sub": sub, "eduperson_principal_name": eppn}, "urn:johny", user)
+        self.assertEqual(sub, user.collab_person_id)
+        self.assertEqual(sub, user.uid)
+        self.assertEqual(eppn, user.eduperson_principal_name)
+
     def test_user_memberships(self):
         user = self.find_entity_by_name(User, user_jane_name)
         connected_collaborations = [cm.collaboration for cm in user.collaboration_memberships]

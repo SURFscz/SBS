@@ -147,4 +147,3 @@ export function getUserRequests(user) {
     }
     return requests;
 }
-

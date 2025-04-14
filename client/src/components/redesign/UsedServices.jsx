@@ -129,22 +129,21 @@ class UsedServices extends React.Component {
         const {collaboration} = this.props;
         if (service.usedService && !service.connectionRequest &&
             collaboration.organisation.services.some(s => s.id === service.id)) {
-            service.status = "";
-        } else if (service.connectionRequest) {
-            service.status = I18n.t("models.serviceConnectionRequests.details",
+            return "";
+        }
+        if (service.connectionRequest) {
+            return I18n.t("models.serviceConnectionRequests.details",
                 {
                     date: moment(service.created_at * 1000).format("LL"),
                     name: service.requester.name || service.requester.uid,
                     collaborationName: collaboration.name
                 })
-        } else if (service.usedService) {
-            service.status = service.connectionRequest ? I18n.t("models.services.awaitingApproval") : " "
-        } else {
-            const allowedToConnect = this.serviceAllowedToConnect(service, collaboration);
-            service.status = allowedToConnect ? I18n.t("models.services.automaticConnectionAllowed") : " ";
         }
-        return service.status;
-
+        if (service.usedService) {
+            return service.connectionRequest ? I18n.t("models.services.awaitingApproval") : " "
+        }
+        const allowedToConnect = this.serviceAllowedToConnect(service, collaboration);
+        return allowedToConnect ? I18n.t("models.services.automaticConnectionAllowed") : " ";
     }
 
     unlinkService = (service, collaboration) => {

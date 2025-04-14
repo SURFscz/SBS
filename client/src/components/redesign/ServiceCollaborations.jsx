@@ -278,4 +278,3 @@ export default class ServiceCollaborations extends React.PureComponent {
     }
 
 }
-

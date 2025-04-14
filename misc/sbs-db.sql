@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision c66a3d65d328 (head)
+-- Dump of empty SBS database, alembic revision 5099c8ca2268 (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('c66a3d65d328');
+INSERT INTO `alembic_version` VALUES ('5099c8ca2268');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_key_units`;
@@ -82,6 +82,7 @@ CREATE TABLE `audit_logs` (
   `parent_name` varchar(100) DEFAULT NULL,
   `parent_id` int(11) DEFAULT NULL,
   `target_name` varchar(255) DEFAULT NULL,
+  `user_type` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -434,27 +435,6 @@ CREATE TABLE `invitations` (
 LOCK TABLES `invitations` WRITE;
 /*!40000 ALTER TABLE `invitations` DISABLE KEYS */;
 /*!40000 ALTER TABLE `invitations` ENABLE KEYS */;
-UNLOCK TABLES;
-DROP TABLE IF EXISTS `ip_networks`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `ip_networks` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `network_value` text NOT NULL,
-  `service_id` int(11) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `created_by` varchar(255) NOT NULL,
-  `updated_by` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `service_id` (`service_id`),
-  CONSTRAINT `ip_networks_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-LOCK TABLES `ip_networks` WRITE;
-/*!40000 ALTER TABLE `ip_networks` DISABLE KEYS */;
-/*!40000 ALTER TABLE `ip_networks` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `join_requests`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1153,6 +1133,33 @@ LOCK TABLES `user_names_history` WRITE;
 /*!40000 ALTER TABLE `user_names_history` DISABLE KEYS */;
 /*!40000 ALTER TABLE `user_names_history` ENABLE KEYS */;
 UNLOCK TABLES;
+DROP TABLE IF EXISTS `user_nonces`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_nonces` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nonce` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `issuer_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `requested_service_entity_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `continue_url` varchar(512) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `error_status` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `service_id` int(11) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `requested_user_id` varchar(512) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_nonces_unique_nonce` (`nonce`),
+  KEY `user_id` (`user_id`),
+  KEY `service_id` (`service_id`),
+  CONSTRAINT `user_nonces_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `user_nonces_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+LOCK TABLES `user_nonces` WRITE;
+/*!40000 ALTER TABLE `user_nonces` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user_nonces` ENABLE KEYS */;
+UNLOCK TABLES;
 DROP TABLE IF EXISTS `user_tokens`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -1212,10 +1219,13 @@ CREATE TABLE `users` (
   `pam_last_login_date` datetime DEFAULT NULL,
   `external_id` varchar(255) NOT NULL,
   `rate_limited` tinyint(1) DEFAULT '0',
+  `collab_person_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_unique_uid` (`uid`),
   UNIQUE KEY `users_unique_external_id` (`external_id`),
   UNIQUE KEY `users_username` (`username`),
+  UNIQUE KEY `users_unique_collab_person_id` (`collab_person_id`),
+  KEY `users_eduperson_principal_name` (`eduperson_principal_name`),
   FULLTEXT KEY `ft_users_search` (`name`,`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1233,4 +1243,3 @@ UNLOCK TABLES;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-

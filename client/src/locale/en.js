@@ -12,6 +12,7 @@ const en = {
             createCollaboration: "Create collaboration",
             requestCollaboration: "Request collaboration",
             requestService: "Register application",
+            bulkUpload: "Invitation bulk upload",
             help: "Help",
             profile: "Profile",
             logout: "Logout",
@@ -111,7 +112,7 @@ const en = {
             welcome: "Welcome",
             cron: "Cron",
             seed: "Seed",
-            database: "Database",
+            database: "DB",
             activity: "Activity",
             validation: "Actions",
             plsc: "LDAP",
@@ -123,7 +124,8 @@ const en = {
             scim: "SCIM",
             stats: "Stats",
             pam: "PAM",
-            proxy: "Proxy"
+            proxy: "Proxy",
+            sync: "Sync"
         }
     },
     forms: {
@@ -730,16 +732,8 @@ const en = {
         organisations: "Organisations",
         sbs: "Application",
         collaborations: "Collaborations",
-        network: "IP ranges",
         addSSHKey: "Upload new SSH key",
         addSSHKeyManually: "Add SSH key manually",
-        networkTooltip: "Configure your IP ranges for this application. You can add IPv4 and IPv6 network ranges. " +
-            "For example: <ul>" +
-            "<li>Single IPv4 address 198.51.100.12 where a /32 is implied</li>" +
-            "<li>IPv4 range 198.51.100.0/24. Maximal allowed subnet size for IPv4 is a /24</li>" +
-            "<li>IPv6 range 2001:db8:f00f:bab::/128. Maximal allowed subnet size for IPv6 is a /64</li>" +
-            "</ul> ",
-        networkExplanation: "Inform the application providers from which IP addresses you will be accessing their applications. The application providers may allow access to your IP addresses if they support this.",
         deleteHeader: "Delete your profile",
         deleteDisclaimer: "Deleting your profile will also remove all your memberships and admin roles. This cannot be reverted."
     },
@@ -956,9 +950,9 @@ const en = {
         backToServices: "Back to applications",
         name: "Name",
         namePlaceHolder: "The unique name of the application",
-        entity_id: "Entity ID",
-        entity_idPlaceHolder: "The unique entity ID of the application",
-        entity_idTooltip: "The Entity ID is used as the unique identitfier with SAML (Entity ID) or OIDC (client_id) and uniquely identifies your application at the identity proxy. It is also used for provisioning with LDAP.",
+        entity_id: "Application ID",
+        entity_idPlaceHolder: "The unique application ID of the application",
+        entity_idTooltip: "The application ID is used as the unique identitfier with SAML (Entity ID) or OIDC (client_id) and uniquely identifies your application at the identity proxy. It is also used for provisioning with LDAP.",
         abbreviation: "Short name",
         abbreviationPlaceHolder: "The short name of this application",
         abbreviationTooltip: "The short name of the application is used as a prefix for groups provisioned by this application's application groups.<br/><br/>" +
@@ -981,19 +975,6 @@ const en = {
         accepted_user_policy: "Acceptable use policy",
         accepted_user_policyPlaceholder: "The acceptable use policy (AUP) of the application",
         accepted_user_policyTooltip: "An acceptable use policy (AUP) is a document stipulating constraints and practices that a user must agree to for access to an application or system.",
-        network: "LDAP ACL IP ranges",
-        networkTooltip: "The IP ranges this application uses to connect to the platform LDAP application. You can add IPv4 and IPv6 network ranges. " +
-            "For example: <ul>" +
-            "<li>Single IPv4 address 198.51.100.12 where a /32 is implied</li>" +
-            "<li>IPv4 range 198.51.100.0/24. Maximal allowed subnet size for IPv4 is a /24</li>" +
-            "<li>IPv6 range 2001:db8:f00f:bab::/128. Maximal allowed subnet size for IPv6 is a /64</li>" +
-            "</ul> ",
-        networkPlaceholder: "IPv4 or IPv6 address with an optional subnet size",
-        networkError: "Subnet size {{prefix}} is not allowed. Max prefix allowed for IPv{{version}} is {{max}}",
-        networkSyntaxError: "This is not a valid IPv4 or IPv6 address.",
-        networkReservedError: "This is a reserved IPv{{version}} address",
-        networkNotGlobal: "Only global unicast addresses can be entered",
-        networkInfo: "Lower bound IP: {{lower}}, higher bound IP: {{higher}}, # addresses: {{num_addresses}}, version: IPv{{version}}",
         automaticConnectionAllowed: "Collaborations can connect without your approval",
         automaticConnectionAllowedTooltip: "If enabled, a collaboration admin can connect to your application straightaway. No connection request is offered for approval to the application admin (you).",
         automaticConnectionAllowedOrganisations: "Trusted or owned organisations",
@@ -1280,7 +1261,7 @@ const en = {
         collaborationCreationAllowed: "Users can create collaborations straightaway",
         collaborationCreationAllowedTooltip: "Allows users from your organisation to create a collaboration without requiring approval from an organisation admin or manager",
         serviceConnectionRequiresApproval: "Application connection request must be approved by the Organisation admin or manager",
-        serviceConnectionRequiresApprovalTooltip: "If checked then application connection requests must first be approved by an Organisation admin",
+        serviceConnectionRequiresApprovalTooltip: "If checked then application connection requests must first be approved by an organisation admin or manager",
         accepted_user_policyPlaceholder: "The acceptable use policy (AUP) of the organisation",
         accepted_user_policyTooltip: "Users outside your organisation must accept this AUP before joining one of this organisation's collaboration for the first time.",
         crmId: "Organisation (CRM ID)",
@@ -1386,7 +1367,7 @@ const en = {
         },
         service: {
             name: "Name",
-            entity_id: "Entity ID",
+            entity_id: "Application ID",
             abbreviation: "Short name",
             description: "Description",
             actions: "",
@@ -1581,7 +1562,7 @@ const en = {
             open: "",
             actions: "",
             name: "Name",
-            entity_id: "Entity ID",
+            entity_id: "Application ID",
             abbreviation: "Short name",
             description: "Description"
         },
@@ -1620,7 +1601,7 @@ const en = {
             open: "",
             actions: "",
             name: "Name",
-            entity_id: "Entity ID",
+            entity_id: "Application ID",
             description: "Description"
         },
         serviceDeleteConfirmation: "Are you sure you want to remove this application from organisation {{organisation}}",
@@ -1707,7 +1688,7 @@ const en = {
         service: {
             actions: "",
             name: "Name",
-            entity_id: "Entity ID",
+            entity_id: "Application ID",
             description: "Description"
         },
         member: {
@@ -1885,7 +1866,6 @@ const en = {
             "services_collaborations": "Collaboration application",
             "service_requests": "Application registration requests",
             "users": "User",
-            "ip_networks": "IP network",
             "suspend_notifications": "Suspend notifications",
             "schac_home_organisations": "Schac home organisations",
             "user_names_history": "Username history",
@@ -2023,6 +2003,7 @@ const en = {
         runDbSeedConfirmation: "Are you absolutely sure? This will delete all current data",
         runDbSeedInfo: "Delete all data and insert the <strong>TEST</strong> seed",
         runDbDemoSeedInfo: "Delete all data and insert the <strong>TEST+DEMO</strong> seed",
+        runDbStressSeedInfo: "Delete all data and insert the <strong>Anonymous Volume</strong> seed",
         runDbSeed: "Run",
         runClearAuditLogsConfirmation: "Are you absolutely sure you want to delete all entries from the audit logs?",
         cleanSlate: "Delete everything",
@@ -2121,8 +2102,12 @@ const en = {
         },
         proxy: {
             userUid: "User UID",
+            userUidEB: "User URN (collab person ID",
+            userSchacHome: "User Schac Home",
+            userEppn: "User EPPN",
             serviceEntityId: "Service entity ID",
             useSRAMServiceEntityId: "Use SRAM service entity ID",
+            continueUrl: "Continue URL",
             mimic: "Choose integration backend",
             mimicTooltip: "The integration backend is either eduTeams or EB.<br><br> The main difference is that EB will POST " +
                 "to the server <code>interrupt</code> endpoint and implicitely login the user. <br><br>EduTeams will redirect to the " +
@@ -2138,6 +2123,16 @@ const en = {
             stopped: "Interrupt flow is stopped. Refresh will make you platform admin again.",
             results: "Results",
             errors: "Errors",
+        },
+        sync: {
+            enabled: "enabled",
+            disabled: "disabled",
+            info: "The sync with {{manageUrl}} is {{state}}",
+            overview: "The services below are configured to sync with Manage, but have not been synced ever",
+            start: "Start syncing",
+            reload: "Reload",
+            results: "All syncs were successful🥳🎉🍾",
+            faultyResults: "The syncs marked in red were not successful. Check the SBS logs for details."
         }
     },
     access: {
@@ -2351,9 +2346,9 @@ const en = {
         info5: "<p>You are logged into SURF Research Access Management, but you don't have access to <i>{{name}}</i>. The collaboration that is connected to application <i>{{name}}</i> is inactive.</p><p>Contact your admins to enable access to this application.</p>",
         info6: "<p>You are logged into SURF Research Access Management, but you don't have access to <i>{{name}}</i>. Your collaboration membership which grants you access to <i>{{name}}</i> is expired.</p><p>Contact your admins to enable access to this application.</p>",
         ticket: "If the problem reoccurs, please contact SRAM support at " +
-            "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a> for help.",
+            "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Application ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a> for help.",
         subject: "No access to application {{name}}",
-        entityId: "Entity ID",
+        entityId: "Application ID",
         issuerId: "Issuer ID",
         userId: "User ID",
         timestamp: "Timestamp"
@@ -2576,7 +2571,7 @@ const en = {
             "Unfortunately, this authentication from SURFsecureID has just failed.</br></br>" +
             "Please copy & paste the following information and contact SRAM support at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for help.",
         defaultCode: "urn:oasis:names:tc:SAML:2.0:status:Responder",
-        defaultMessage: ""
+        defaultMessage: "",
     },
     gallery: {
         upload: "Upload your own image",
@@ -2671,7 +2666,7 @@ const en = {
         supportSubTitle: "Make sure to include the information below.",
         supportBullets: {
             solutions: "If you have tried the solutions above, or think you should have access already, you can contact SRAM support at " +
-                "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a> for help."
+                "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Application ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a> for help."
         }
     },
     collaborationsOverview: {
@@ -2718,13 +2713,13 @@ const en = {
             info: "Create labels to define overall properties for collaborations within your organisation. Labels are shared with the connected applications, helping you manage and organize your members.",
             name: "Label name",
             defaultFor: "Default for",
-            defaultForPlaceholder: "All co's within all units"
+            defaultForPlaceholder: "All collaborations in all units"
         },
         messaging: {
             newCoMessage: "Message for new collaborations",
             newCoMessageInfo: "This message is shown to users from your organisation when they request or create a collaboration",
             defaultInviteMessage: "Default message for invites",
-            defaultInviteMessagePlaceholder: "Please join us, at this new CO",
+            defaultInviteMessagePlaceholder: "Please join us, at this new collaboration",
             defaultInviteMessageInfo: "When filled this message is used in all new invitations for the collaborations of this organisation",
             defaultSenderName: "Default sender name for invites",
             defaultSenderNamePlaceholder: "Organisational department of info mail",
@@ -2737,6 +2732,49 @@ const en = {
         add: "+ Add label",
         confirmation: "Are you sure you want to remove label {{name}}?",
         duplicated: "There is already an label named {{name}} for this organisation"
+    },
+    bulkUpload: {
+        title: "Upload your invitations",
+        breadcrumb: "Bulk upload",
+        main: "Upload",
+        docs: "Documentation",
+        dragDrop: "Drag and drop a CSV file or",
+        click: " upload",
+        errorWrongExtension: "Only CSV files can be uploaded, not {{name}}",
+        errorFormat: "Error parsing file {{name}}",
+        successFullyParsed: "Successfully parsed {{fileName}}<br/> <strong>{{invitees}}</strong> invitees will be invited for <strong>{{collaborations}}</strong> collaborations in <strong>{{groups}}</strong> groups.",
+        successFullyUploaded: "Successfully sent <strong>{{nbrInvitations}}</strong> invitations.",
+        errorParsed: "Error in parsing {{fileName}}. See the details below.",
+        errorUpload: "Error in uploading. See the results below.",
+        errorRows: "However there are some rows that will be excluded, because of invalid data. See details below.",
+        errorUploadDetails: "However there are errors returned from the server. See results below.",
+        showDetails: "Show details",
+        hideDetails: "Hide details",
+        showResults: "Show results",
+        hideResults: "Hide results",
+        schema: "Use the button below for a sample CSV file.",
+        download: "Download",
+        exampleInfo: "Example CSV data",
+        requiredInfo: "indicates a required value",
+        proceed: "Upload & send invitations",
+        loading: "Processing {{count}} invitations. Time for ☕️...",
+        errors: {
+            TooFewFields: "The row above has missing values for required fields: {{fields}}",
+            Duplicate: "The row above has contains a duplicate entry for user {{invitee}} and collaboration {{shortName}}",
+            Unknown: "Invalid data in row",
+            ServerError: "The server reported an error for the row above: {{message}}",
+            ServerWarning: "The server reported a warning for the row above: {{message}}"
+        },
+        tooltips: {
+            short_names: "The required comma separated and quoted short names of the collaborations for the invitation",
+            intended_role: "The optional intended role of the invitees. Two options: either member or admin, if omitted then defaults to member",
+            invitees: "Email adresses of the invitees of the invitation. If multiple then comma separated and double quoted",
+            groups: "The optional comma separated identifiers of the collaboration groups for the invitation",
+            invitation_expiry_date: "The optional expiry date of the invitation. Defaults to 30 days if not specified",
+            membership_expiry_date: "The optional expiry date of the membership. Defaults to None if not specified",
+            message: "The optional personal message to be included in the invitation. Defaults to None if not specified",
+            sender_name: "The optional name of the sender to be included in the invitation. Defaults to name of the current user if not specified"
+        }
     }
 };
 

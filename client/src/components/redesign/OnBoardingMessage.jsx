@@ -19,4 +19,3 @@ export default function OnBoardingMessage({organisation}) {
             </div>
         </div>)
 }
-

@@ -1,8 +1,6 @@
 import itertools
 import json
 import os
-import subprocess
-import tempfile
 import unicodedata
 import urllib.parse
 import uuid
@@ -12,7 +10,7 @@ from flask import Blueprint, current_app, redirect, make_response
 from flask import request as current_request, session, jsonify
 from sqlalchemy import text, or_, bindparam, String
 from sqlalchemy.orm import selectinload
-from werkzeug.exceptions import Forbidden, Unauthorized
+from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint, query_param, organisation_by_user_schac_home
 from server.api.base import replace_full_text_search_boolean_mode_chars
@@ -27,6 +25,7 @@ from server.db.domain import User, OrganisationMembership, CollaborationMembersh
     UserNameHistory, SshKey, ServiceMembership, ServiceAup, ServiceRequest, ServiceConnectionRequest, Service, \
     SchacHomeOrganisation
 from server.db.models import log_user_login
+from server.db.ssh_converter import convert_to_open_ssh
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error, mail_account_deletion
 from server.scim.events import broadcast_user_deleted, broadcast_user_changed
@@ -262,13 +261,13 @@ def service_info():
 
     res = {}
     user = User.query.filter(User.uid == uid).first()
-    if not user:
-        raise Unauthorized("Invalid user")
-    res["user_name"] = user.name
-    res["user_email"] = user.email
-    res["schac_home_organisation"] = user.schac_home_organisation
-    organisations = SchacHomeOrganisation.organisations_by_user_schac_home(user)
-    res["organisations"] = [{"co_creation": o.collaboration_creation_allowed} for o in organisations]
+    organisations = []
+    if user:
+        res["user_name"] = user.name
+        res["user_email"] = user.email
+        res["schac_home_organisation"] = user.schac_home_organisation
+        organisations = SchacHomeOrganisation.organisations_by_user_schac_home(user)
+        res["organisations"] = [{"co_creation": o.collaboration_creation_allowed} for o in organisations]
     service = Service.query.filter(Service.entity_id == entity_id).first()
     res["service_connection_allowed"] = False
     if service and service.support_email_unauthorized_users:
@@ -528,20 +527,8 @@ def update_user():
                      ssh_key["ssh_value"]] if "ssh_keys" in user_json else []
     for ssh_key in ssh_keys_json:
         ssh_value = ssh_key["ssh_value"]
-        if ssh_value and (ssh_value.startswith("---- BEGIN SSH2 PUBLIC KEY ----")
-                          or ssh_value.startswith("-----BEGIN PUBLIC KEY-----")  # noQA:W503
-                          or ssh_value.startswith("-----BEGIN RSA PUBLIC KEY-----")):  # noQA:W503
-            with tempfile.NamedTemporaryFile() as f:
-                f.write(ssh_value.encode())
-                f.flush()
-                options = ["ssh-keygen", "-i", "-f", f.name]
-                if ssh_value.startswith("-----BEGIN PUBLIC KEY-----"):
-                    options.append("-mPKCS8")
-                if ssh_value.startswith("-----BEGIN RSA PUBLIC KEY-----"):
-                    options.append("-mPEM")
-                res = subprocess.run(options, stdout=subprocess.PIPE)
-                if res.returncode == 0:
-                    ssh_key["ssh_value"] = res.stdout.decode()
+        if ssh_value:
+            ssh_key["ssh_value"] = convert_to_open_ssh(ssh_value)
 
     ssh_key_ids = [ssh_key["id"] for ssh_key in ssh_keys_json if "id" in ssh_key]
     for ssh_key in user.ssh_keys:

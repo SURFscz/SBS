@@ -82,15 +82,23 @@ class OrganisationOverview extends React.Component {
 
     existingOrganisationAttribute = attr => this.props.organisation[attr];
 
-    validateOrganisationName = e =>
-        organisationNameExists(e.target.value, this.existingOrganisationAttribute("name")).then(json => {
-            this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
+    validateOrganisationName = e => {
+        const name = e.target.value.trim();
+        organisationNameExists(name, this.existingOrganisationAttribute("name")).then(json => {
+            this.setState({
+                organisation: {...this.state.organisation, name: name},
+                alreadyExists: {...this.state.alreadyExists, name: json}
+            });
         });
+    }
 
-    validateOrganisationShortName = e =>
-        organisationShortNameExists(sanitizeShortName(e.target.value), this.existingOrganisationAttribute("short_name")).then(json => {
+    validateOrganisationShortName = e => {
+        const shortName = sanitizeShortName(e.target.value);
+        organisationShortNameExists(shortName, this.existingOrganisationAttribute("short_name")).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
         });
+    }
+
 
     removeValue = value => e => {
         stopEvent(e);
@@ -208,7 +216,8 @@ class OrganisationOverview extends React.Component {
                 organisation
             } = this.state;
             this.setState({loading: true});
-            organisation.units = organisation.units.filter(unit => !isEmpty(unit.name));
+            organisation.units = organisation.units.filter(unit => !isEmpty(unit.name.trim()));
+            organisation.tags = organisation.tags.filter(tag => !isEmpty(tag.tag_value.trim()));
             updateOrganisation(organisation)
                 .then(() => {
                     //If labels have changed this must be updated in the collaborations tab #tester-proof

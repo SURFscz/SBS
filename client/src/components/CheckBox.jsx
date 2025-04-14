@@ -36,5 +36,3 @@ CheckBox.propTypes = {
     tooltip: PropTypes.string,
     className: PropTypes.string,
 };
-
-

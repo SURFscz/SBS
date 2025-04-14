@@ -10,7 +10,6 @@ import Tabs from "../components/Tabs";
 import {auditLogsMe} from "../api";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Activity from "../components/Activity";
-import {filterAuditLogs} from "../utils/AuditLog";
 import {Loader} from "@surfnet/sds";
 
 class Profile extends React.Component {
@@ -43,16 +42,6 @@ class Profile extends React.Component {
             });
         });
     };
-
-    onChangeQuery = e => {
-        const query = e.target.value;
-        const {auditLogs} = this.state;
-        const filteredAuditLogs = filterAuditLogs(auditLogs, query);
-        this.setState({
-            filteredAuditLogs: filteredAuditLogs,
-            query: query
-        });
-    }
 
     getHistoryTab = (filteredAuditLogs, query, loadingAuditLogs) => {
         const {user} = this.props;

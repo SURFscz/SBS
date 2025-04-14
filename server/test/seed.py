@@ -7,6 +7,7 @@ from sqlalchemy import text
 
 from server.auth.secrets import secure_hash, generate_token, encrypt_secret
 from server.auth.tokens import _service_context
+from server.auth.user_codes import UserCode
 from server.db.audit_mixin import metadata
 from server.db.defaults import (default_expiry_date, SERVICE_TOKEN_INTROSPECTION, SERVICE_TOKEN_SCIM, SERVICE_TOKEN_PAM,
                                 STATUS_OPEN)
@@ -14,8 +15,8 @@ from server.db.domain import (User, Organisation, OrganisationMembership, Servic
                               CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey,
                               CollaborationRequest, ServiceConnectionRequest, SuspendNotification, Aup,
                               SchacHomeOrganisation, SshKey, ServiceGroup, ServiceInvitation, ServiceMembership,
-                              ServiceAup, UserToken, Tag, PamSSOSession, IpNetwork, ServiceToken,
-                              ServiceRequest, Unit)
+                              ServiceAup, UserToken, Tag, PamSSOSession, ServiceToken,
+                              ServiceRequest, Unit, UserNonce)
 from server.tools import dt_now, dt_today
 
 # users
@@ -134,12 +135,14 @@ service_wiki_token = generate_token()
 pam_session_id = str(uuid.uuid4())
 pam_invalid_service_session_id = str(uuid.uuid4())
 
+sarah_nonce = str(uuid.uuid4())
+
 image_cache = {}
 
 
 def read_image(file_name, directory="images", transform=True):
     file = f"{os.path.dirname(os.path.realpath(__file__))}/{directory}/{file_name}"
-    global image_cache
+    global image_cache  # noqa: F824
     if file in image_cache:
         return image_cache.get(file)
     with open(file, "rb") as f:
@@ -188,7 +191,11 @@ def seed(db, app_config, skip_seed=False):
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org", username="mdoe",
                 schac_home_organisation=f"student.{schac_home_organisation_example}",
                 external_id="bb3d4bd4-2848-4cf3-b30b-fd84186c0c52",
+                collab_person_id="urn:collab:person:example.com:mary",
                 last_login_date=yesterday)
+    eb_provisioned = User(uid="urn:collab:person:mujina.com:ebbe", name="Ebbe Doe", email="ebbe@example.org",
+                          username="ebbedoe", schac_home_organisation="mujina.com",
+                          external_id="43b26575-b243-42ef-a7ac-6033d51372fe", last_login_date=yesterday)
     admin = User(uid="urn:admin", name=user_boss_name, email="boss@example.org", username="admin",
                  external_id="e906cf88-cdb3-480d-8bb3-ce53bdcda4e7",
                  last_login_date=yesterday)
@@ -255,7 +262,7 @@ def seed(db, app_config, skip_seed=False):
 
     persist_instance(db, john, mary, peter, admin, roger, harry, james, sarah, betty, jane,
                      user_suspend_warning, user_gets_suspended, user_deletion_warning, user_gets_deleted,
-                     paul, hannibal, service_admin, extra_admin)
+                     paul, hannibal, service_admin, extra_admin, eb_provisioned)
 
     # old suspension warning, should not affect new suspension warnings
     warning_date_old = retention_today - datetime.timedelta(retention.allowed_inactive_period_days + 1)
@@ -410,7 +417,7 @@ def seed(db, app_config, skip_seed=False):
                       scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock",
                       token_enabled=False, token_validity_days=0,
                       redirect_urls="https://redirect.com/url1,https://redirect.com/url2",
-                      saml_metadata=None, saml_metadata_url=None, oidc_client_secret="secret",
+                      saml_metadata=None, saml_metadata_url=None, oidc_client_secret="1234567890_secret",
                       providing_organisation="SURFconext", grants="authorization_code, refresh_token",
                       is_public_client=True, saml_enabled=False, oidc_enabled=True)
     wiki = Service(entity_id=service_wiki_entity_id, name=service_wiki_name, description="No more wiki's please",
@@ -578,13 +585,6 @@ def seed(db, app_config, skip_seed=False):
                      service_membership_demosp, service_membership_demorp, service_membership_monitor,
                      service_membership_empty)
 
-    service_iprange_cloud_v4 = IpNetwork(network_value="82.217.86.55/24", service=cloud)
-    service_iprange_cloud_v6 = IpNetwork(network_value="2001:1c02:2b2f:be00:1cf0:fd5a:a548:1a16/128", service=cloud)
-    service_iprange_wiki_v4 = IpNetwork(network_value="82.217.86.55/24", service=wiki)
-    service_iprange_wiki_v6 = IpNetwork(network_value="2001:1c02:2b2f:be01:1cf0:fd5a:a548:1a16/128", service=wiki)
-    persist_instance(db, service_iprange_cloud_v4, service_iprange_cloud_v6, service_iprange_wiki_v4,
-                     service_iprange_wiki_v6)
-
     uuc.services.append(uuc_scheduler)
     uuc.services.append(wiki)
 
@@ -673,7 +673,8 @@ def seed(db, app_config, skip_seed=False):
     admin_ai_computing = CollaborationMembership(role="admin", user=admin, collaboration=ai_computing)
     jane_ai_computing = CollaborationMembership(role="member", user=jane, collaboration=ai_computing)
     sarah_ai_computing = CollaborationMembership(role="member", user=sarah, collaboration=ai_computing)
-
+    eb_provisioned_ai_computing = CollaborationMembership(role="member", user=eb_provisioned,
+                                                          collaboration=ai_computing)
     betty_uuc_teachers = CollaborationMembership(role="member", user=betty, collaboration=uuc_teachers)
     admin_uuc_teachers = CollaborationMembership(role="admin", user=extra_admin, collaboration=uuc_teachers)
     betty_uuc_ai_computing = CollaborationMembership(role="member", user=betty, collaboration=ai_computing)
@@ -697,9 +698,8 @@ def seed(db, app_config, skip_seed=False):
                                                              collaboration=ai_disabled_join_request)
 
     persist_instance(db, john_ai_computing, admin_ai_computing, roger_ufra_research, peter_ufra_research,
-                     sarah_ufra_research,
-                     jane_ai_computing, sarah_ai_computing, user_two_suspend_ufra_research, betty_uuc_teachers,
-                     betty_uuc_ai_computing,
+                     sarah_ufra_research, jane_ai_computing, sarah_ai_computing, user_two_suspend_ufra_research,
+                     betty_uuc_teachers, betty_uuc_ai_computing, eb_provisioned_ai_computing,
                      paul_monitoring_co_1, betty_monitoring_co_1, betty_monitoring_co_2, harry_monitoring_co_2,
                      paul_ai_disabled_join_request, harry_ai_disabled_join_request,
                      admin_uuc_teachers, admin_monitoring_co_1, admin_monitoring_co_2)
@@ -823,5 +823,9 @@ def seed(db, app_config, skip_seed=False):
                                          redirect_urls="https://redirect.org, https://redirect.alternative.org",
                                          requester=sarah)
     persist_instance(db, service_request_gpt)
+
+    sarah_user_nonce = UserNonce(user=sarah, continue_url="https://engine.surf.nl", nonce=sarah_nonce,
+                                 service=cloud, error_status=UserCode.SERVICE_AUP_NOT_AGREED.value)
+    persist_instance(db, sarah_user_nonce)
 
     db.session.commit()

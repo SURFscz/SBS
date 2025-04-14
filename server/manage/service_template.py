@@ -60,7 +60,7 @@ def create_service_template(service: Service):
                 "coin:privacy:privacy_policy_url": service.privacy_policy,
                 "coin:signature_method": "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
                 "connection_type": "oidc_rp" if service.oidc_enabled else "saml_sp",
-                "grants": service.grants.split(",") if service.grants else [],
+                "grants": [grant.strip() for grant in service.grants.split(",")] if service.grants else [],
                 "isPublicClient": service.is_public_client,
                 "logo:0:url": service.logo,
                 "logo:0:width": 480,
@@ -69,7 +69,7 @@ def create_service_template(service: Service):
                 "name:en": service.name,
                 "description:en": service.description,
                 "OrganizationName:en": service.providing_organisation,
-                "redirectUrls": service.redirect_urls.split(",") if service.redirect_urls else [],
+                "redirectUrls": [u.strip() for u in service.redirect_urls.split(",")] if service.redirect_urls else [],
                 "accessTokenValidity": 3600,
                 "secret": service.oidc_client_secret_db_value(),
                 "url:nl": service.uri_info

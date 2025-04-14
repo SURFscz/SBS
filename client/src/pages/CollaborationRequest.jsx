@@ -69,12 +69,23 @@ class CollaborationRequest extends React.Component {
                 collaborationRequest.units.forEach(unit => {
                     unit.label = unit.name;
                     unit.value = unit.id;
-                })
+                });
+
                 this.setState({
                     collaborationRequest: collaborationRequest,
                     originalRequestedName: collaborationRequest.name,
-                    allUnits: allUnits,
-                    loading: false
+                    allUnits: allUnits
+                }, () => {
+                    Promise.all([
+                        collaborationNameExists(collaborationRequest.name, collaborationRequest.organisation_id),
+                        collaborationShortNameExists(sanitizeShortName(collaborationRequest.short_name), collaborationRequest.organisation_id)
+                    ]).then(res => {
+                        this.setState({
+                            initial: false,
+                            loading: false,
+                            alreadyExists: {...this.state.alreadyExists, name: res[0], short_name: res[1]}
+                        });
+                    })
                 });
                 AppStore.update(s => {
                     s.breadcrumb.paths = [

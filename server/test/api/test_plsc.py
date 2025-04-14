@@ -30,7 +30,7 @@ class TestPlsc(AbstractTest):
         users = res["users"]
         suspended_user_names = sorted([user["name"] for user in users if user["status"] == "suspended"])
         self.assertListEqual([user_sarah_name, "user_deletion_warning", "user_gets_deleted"], suspended_user_names)
-        self.assertEqual(15, len([user["name"] for user in users if user["status"] == "active"]))
+        self.assertEqual(16, len([user["name"] for user in users if user["status"] == "active"]))
 
     def test_sram_inactive_days(self):
         sarah = self.find_entity_by_name(User, user_sarah_name)
@@ -49,7 +49,7 @@ class TestPlsc(AbstractTest):
         res_image = self.client.get(logo.replace("http://localhost:8080", ""))
         self.assertIsNotNone(res_image.data)
         users_ = res["users"]
-        self.assertEqual(18, len(users_))
+        self.assertEqual(19, len(users_))
         sarah = next(u for u in users_ if u["name"] == user_sarah_name)
         self.assertEqual("sarah@uni-franeker.nl", sarah["email"])
         self.assertEqual("sarah", sarah["username"])
@@ -95,19 +95,3 @@ class TestPlsc(AbstractTest):
         self.assertListEqual(["Research", "Support"], sorted(org_harderwijk["units"]))
         co_ai_computing = [co for co in org_harderwijk["collaborations"] if co["name"] == co_ai_computing_name][0]
         self.assertListEqual(["Support"], co_ai_computing["units"])
-
-    def test_ip_ranges_fetch(self):
-        res = self.get("/api/plsc/ip_ranges")
-        self.assertTrue("service_ipranges" in res)
-        self.assertEqual(3, len(res["service_ipranges"]))
-        self.assertTrue("82.217.86.55/24" in res["service_ipranges"])
-        self.assertTrue("2001:1c02:2b2f:be00:1cf0:fd5a:a548:1a16/128" in res["service_ipranges"])
-        self.assertTrue("2001:1c02:2b2f:be01:1cf0:fd5a:a548:1a16/128" in res["service_ipranges"])
-
-    def test_ip_ranges_api_auth(self):
-        res = self.get("/api/plsc/ip_ranges", headers=AUTH_HEADER_READ, with_basic_auth=False,
-                       response_status_code=403)
-        self.assertTrue(res['error'] is True)
-
-        res = self.get("/api/plsc/ip_ranges", headers=AUTH_HEADER_IPADDRESS, with_basic_auth=False)
-        self.assertEqual(3, len(res["service_ipranges"]))

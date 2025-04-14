@@ -75,4 +75,3 @@ export default function FeedbackDialog({isOpen = false, close, initialMessage = 
     );
 
 }
-

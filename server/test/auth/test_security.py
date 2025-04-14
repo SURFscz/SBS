@@ -5,7 +5,7 @@ from server.auth.security import is_admin_user, is_application_admin, confirm_al
     confirm_write_access, \
     confirm_collaboration_admin, confirm_collaboration_member, confirm_organisation_admin, current_user_name, \
     is_current_user_organisation_admin_or_manager, has_org_manager_unit_access, confirm_api_key_unit_access, \
-    confirm_organisation_api_collaboration
+    confirm_organisation_api_collaboration, confirm_scope_access
 from server.db.domain import CollaborationMembership, Collaboration, User, OrganisationMembership, Organisation, ApiKey, \
     Unit
 from server.test.abstract_test import AbstractTest
@@ -174,3 +174,11 @@ class TestSecurity(AbstractTest):
                 confirm_organisation_api_collaboration(None, collaboration)
 
             self.assertRaises(NotFound, assert_not_found)
+
+    def test_confirm_scope_access(self):
+        with self.app.app_context():
+            def assert_forbidden():
+                request_context.is_authorized_api_call = True
+                confirm_scope_access(override_func=None, scope=None)
+
+            self.assertRaises(Forbidden, assert_forbidden)

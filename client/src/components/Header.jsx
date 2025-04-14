@@ -4,9 +4,9 @@ import {Logo, LogoColor, LogoType} from "@surfnet/sds";
 import {UserMenu} from "./redesign/UserMenu";
 import {stopEvent} from "../utils/Utils";
 import FeedbackDialog from "./Feedback";
-import {Link} from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
 
-export default class Header extends React.PureComponent {
+class Header extends React.PureComponent {
 
     constructor(props, context) {
         super(props, context);
@@ -32,10 +32,13 @@ export default class Header extends React.PureComponent {
                                   provideFeedback={e => {
                                       stopEvent(e);
                                       this.setState({showFeedBack: true})
-                                  }}/>
+                                  }}
+                        />
                     }
                 </div>
             </div>
         );
     }
 }
+
+export default withRouter(Header);

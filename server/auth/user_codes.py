@@ -11,3 +11,9 @@ class UserCode(Enum):
     AUP_NOT_AGREED = 99
     SERVICE_AUP_NOT_AGREED = 100
     SECOND_FA_REQUIRED = 101
+
+    @staticmethod
+    def dead_end(user_code_value: int):
+        return user_code_value in [UserCode.USER_UNKNOWN.value,
+                                   UserCode.SERVICE_UNKNOWN.value,
+                                   UserCode.SERVICE_NOT_CONNECTED.value]

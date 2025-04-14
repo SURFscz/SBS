@@ -10,6 +10,3 @@ User {{ current_user.name }} has provided the following feedback for {{ environm
 Follow-up questions can be send to {{ current_user.email }}
 
 {% endblock %}
-
-
-

@@ -14,6 +14,7 @@ import {Toaster, ToasterType} from "@surfnet/sds";
 import FeedbackDialog from "../components/Feedback";
 import {ReactComponent as ResetTokenIcon} from "../icons/reset-token.svg";
 import {redirectToProxyLocation} from "../utils/ProxyAuthz";
+import {dictToQueryParams} from "../utils/QueryParameters";
 
 const TOTP_ATTRIBUTE_NAME = "totp";
 const NEW_TOTP_ATTRIBUTE_NAME = "newTotp";
@@ -235,7 +236,14 @@ class SecondFactorAuthentication extends React.Component {
         } else {
             verify2fa(totp.join("")).then(r => {
                 this.props.refreshUser(() => {
-                    redirectToProxyLocation(r.location, this.props.history, config);
+                    const item = window.sessionStorage.getItem("interrupt");
+                    if (item) {
+                        const interruptDict = JSON.parse(item);
+                        const params = dictToQueryParams(interruptDict);
+                        this.props.history.push(`/interrupt?${params}`);
+                    } else {
+                        redirectToProxyLocation(r.location, this.props.history, config);
+                    }
                 });
             }).catch(e => {
                 if (e.response && e.response.status === 429) {

@@ -14,10 +14,13 @@ services:
     build: "client"
     container_name: "sbs-client"
     restart: "no"
+    environment:
+      LOG_LEVEL: "debug"
+      SBS_SERVER: "server:8080"
     links:
       - "server"
     ports:
-      - "3000:3000"
+      - "8080:8080"
     volumes:
       - "${PWD}/client:/opt/app/client"
 
@@ -28,8 +31,8 @@ services:
     links:
       - "db"
       - "redis"
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
     volumes:
       - "${PWD}/etc/config.yml:/etc/config.yml"
       - "${PWD}/server:/opt/server"
@@ -41,7 +44,7 @@ services:
       DATABASE_URI: "mysql+mysqldb://sbs:sbs@db/sbs?charset=utf8mb4"
       REDIS_URI: "redis://redis:6379/"
       BASE_URL: "http://localhost:8080"
-      SOCKET_URL: "0.0.0.0:8080/"
+      SOCKET_URL: "ws://localhost:8080"
       SECRET: "${SECRET:-geheim}"
       CLIENT_ID: "${CLIENT_ID:-foo}"
       CLIENT_SECRET: "${CLIENT_SECRET:-echtgeheim}"
@@ -64,14 +67,3 @@ services:
     volumes:
       - "data:/var/lib/mysql:Z"
       - "${PWD}/etc/init.sql:/docker-entrypoint-initdb.d/init.sql:ro"
-
-  beaver:
-    image: "docker.io/dbeaver/cloudbeaver:latest"
-    restart: "always"
-    links:
-      - db
-    ports:
-      - "8978:8978"
-    volumes:
-      - "cloudbeaver:/opt/cloudbeaver/workspace"
-

@@ -11,7 +11,7 @@
                 {% for cr in collaboration_requests %}
                         {{ cr.name }}: {{ base_url }}/organisations/{{ cr.organisation_id }}/collaboration_requests
                 {% endfor %}
-            
+
         {% endif %}
 
         {% if join_requests|length -%}

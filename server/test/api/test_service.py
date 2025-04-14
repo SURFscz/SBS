@@ -1,5 +1,7 @@
 import time
+import uuid
 
+import responses
 from flask import session
 from sqlalchemy import text
 
@@ -72,7 +74,6 @@ class TestService(AbstractTest):
     def test_find_by_id_api_call(self):
         service = self.find_entity_by_name(Service, service_scheduler_name)
         service = self.get(f"api/services/{service.id}")
-        self.assertEqual(0, len(service["ip_networks"]))
         self.assertFalse("logo" in service)
 
     def test_find_by_entity_id(self):
@@ -97,9 +98,7 @@ class TestService(AbstractTest):
                 "token_validity_days": "",
                 "privacy_policy": "https://privacy.com",
                 "administrators": ["the@ex.org"],
-                "abbreviation": "12qw$%OOOKaaaaaaaaaaaaaaaaaaaaaaaaaa",
-                "ip_networks": [{"network_value": "2001:1c02:2b2f:be00:1cf0:fd5a:a548:1a16/128"},
-                                {"network_value": "82.217.86.55/24"}]
+                "abbreviation": "12qw$%OOOKaaaaaaaaaaaaaaaaaaaaaaaaaa"
             })
             self.assertTrue(
                 "John Doe invited you to become an admin for application new_application" in outbox[0].html)
@@ -107,8 +106,6 @@ class TestService(AbstractTest):
             self.assertIsNotNone(service["id"])
             self.assertEqual("new_application", service["name"])
             self.assertEqual("qwoookaaaaaaaaaa", service["abbreviation"])
-            self.assertEqual(2, len(service["ip_networks"]))
-            self.assertEqual("2001:1c02:2b2f:be00:1cf0:fd5a:a548:1a16/128", service["ip_networks"][0]["network_value"])
 
     def test_service_new_invalid_logo(self):
         self.login()
@@ -163,13 +160,11 @@ class TestService(AbstractTest):
     def test_service_update(self):
         service = self._find_by_name(service_cloud_name)
         service["name"] = "changed"
-        service["ip_networks"] = [{"network_value": "82.217.86.55/24"}]
         service["ldap_enabled"] = False
 
         self.login("urn:john")
         service = self.put("/api/services", body=service, with_basic_auth=False)
         self.assertEqual("changed", service["name"])
-        self.assertEqual(1, len(service["ip_networks"]))
         rows = db.session.execute(text(f"SELECT ldap_password FROM services where id = {service['id']}"))
         row = next(rows)
         self.assertIsNone(row[0])
@@ -177,7 +172,6 @@ class TestService(AbstractTest):
     def test_service_update_manager_disallowed(self):
         service = self._find_by_name(service_cloud_name)
         service["name"] = "changed"
-        service["ip_networks"] = [{"network_value": "82.217.86.55/24"}]
         service["ldap_enabled"] = False
 
         self.login("urn:betty")  # service manager
@@ -594,7 +588,7 @@ class TestService(AbstractTest):
             with conn.begin():
                 rs = conn.execute(text(f"SELECT ldap_password FROM services WHERE id = {service['id']}"))
         ldap_password = str(next(rs, (0,))[0])
-        self.assertTrue(ldap_password.startswith("$2b$12$"))
+        self.assertTrue(ldap_password.startswith("$2b$"))
         service = self._find_by_name()
         self.assertIsNone(service.get("ldap_password"))
 
@@ -751,3 +745,27 @@ class TestService(AbstractTest):
                  body={"access_allowed_for_crm_organisation": True},
                  with_basic_auth=False,
                  response_status_code=400)
+
+    def test_find_export_overview(self):
+        self.login("urn:john")
+        services = self.get("/api/services/export-overview", response_status_code=200, with_basic_auth=False)
+        self.assertListEqual(sorted(["Cloud", "Storage"]), sorted([s["name"] for s in services]))
+
+    @responses.activate
+    def test_sync_external_service(self):
+        service = self.find_entity_by_name(Service, service_storage_name)
+        with responses.RequestsMock(assert_all_requests_are_fired=True) as res_mock:
+            manage_base_url = self.app.app_config.manage.base_url
+            url = f"{manage_base_url}/manage/api/internal/metadata"
+            external_identifier = str(uuid.uuid4())
+            res_mock.add(responses.POST, url, json={"id": external_identifier, "version": 0}, status=200)
+
+            res = self.get("/api/services/sync_external_service", query_data={"service_id": service.id},
+                           response_status_code=200)
+            self.assertTrue(res["export_successful"])
+
+            updated_service = self.find_entity_by_name(Service, service_storage_name)
+            self.assertEqual(external_identifier, updated_service.export_external_identifier)
+            self.assertEqual(0, updated_service.export_external_version)
+            self.assertTrue(updated_service.export_successful)
+            self.assertIsNotNone(updated_service.exported_at)

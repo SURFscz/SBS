@@ -1,0 +1,15 @@
+.sds--loading-container.marathon {
+    margin-top: 75px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+
+    .sds--loading {
+        position: relative;
+        top: 0;
+        left: 0;
+        margin-bottom: 10px;
+    }
+
+}

@@ -31,4 +31,3 @@ Decline this invitation:
 Need help? Please contact {{ invitation.user.email }} with any questions about this invitation.
 
 {% endblock %}
- 

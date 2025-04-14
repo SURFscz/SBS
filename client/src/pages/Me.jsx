@@ -92,7 +92,8 @@ class Me extends React.Component {
     doSubmit = () => {
         if (this.isValid()) {
             this.setState({loading: true});
-            updateUser(this.state).then(() => {
+            const {ssh_keys} = this.state;
+            updateUser({ssh_keys: ssh_keys}).then(() => {
                 this.props.refreshUser();
                 this.gotoHome();
                 setFlash(I18n.t("user.flash.updated"));
@@ -256,9 +257,8 @@ class Me extends React.Component {
                                             {ssh_key.fileTypeError &&
                                                 <ErrorIndicator msg={I18n.t("user.sshKeyError")} decode={false}/>}
                                             {this.showConvertSSHKey(ssh_key.ssh_value) &&
-                                                <span className="ssh-convert"
+                                                <p className="ssh-convert"
                                                       dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.sshConvertInfo"))}}/>}
-
                                         </td>}
                                         {ssh_key.manual && <td className="attribute-value">
                                             <InputField displayLabel={false}
@@ -272,7 +272,7 @@ class Me extends React.Component {
                                             {ssh_key.fileTypeError &&
                                                 <ErrorIndicator msg={I18n.t("user.sshKeyError")} decode={false}/>}
                                             {this.showConvertSSHKey(ssh_key.ssh_value) &&
-                                                <span className="ssh-convert"
+                                                <p className="ssh-convert"
                                                       dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("user.sshConvertInfo"))}}/>}
 
                                         </td>}

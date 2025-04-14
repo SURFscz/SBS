@@ -5,6 +5,7 @@ from unittest import mock
 
 import sqlalchemy
 
+from server.db.audit_mixin import AuditLog
 from server.db.db import db
 from server.db.defaults import STATUS_OPEN
 from server.db.domain import Invitation, CollaborationMembership, User, Collaboration, Organisation, ServiceAup, \
@@ -292,6 +293,10 @@ class TestInvitation(AbstractTest):
                        with_basic_auth=False)
         self.assertEqual("accepted", res["status"])
 
+        # Check audit log
+        audit_logs = AuditLog.query.filter(AuditLog.user_type == unihard_name).all()
+        self.assertTrue(len(audit_logs) > 0)
+
     def test_external_invitation_invalid_group(self):
         res = self.put("/api/invitations/v1/collaboration_invites",
                        body={
@@ -381,3 +386,68 @@ class TestInvitation(AbstractTest):
             diff = expiry_date - datetime.datetime.now()
             self.assertTrue(diff.days >= 14)
             self.assertTrue("Reminder: you have been invited by" in outbox[0].html)
+
+    def test_invitations_bulk_upload(self):
+        self.login("urn:harry")
+        res = self.put("/api/invitations/bulk_upload",
+                       body=[{"short_names": ["uuc_teachers_short_name"], "invitees": ["test@test.com"]},
+                             {"short_names": ["ai_computing"], "invitees": ["test@example.com"]},
+                             {"short_names": ["nope"], "invitees": ["test@example.com"]}],
+                       with_basic_auth=False)
+        self.assertEqual(1, len(res["invitations"]))
+        self.assertEqual(2, len(res["errors"]))
+
+        invitation = res["invitations"][0]
+        self.assertEqual(co_ai_computing_short_name, invitation["collaboration"])
+        self.assertEqual("test@example.com", invitation["email"])
+
+    def test_invitations_bulk_upload_removed_existing_emails(self):
+        self.login("urn:harry")
+        res = self.put("/api/invitations/bulk_upload",
+                       body=[{"short_names": ["ai_computing"],
+                              "invitees": ["test@example.com", "curious@ex.org"]}],
+                       with_basic_auth=False)
+        self.assertEqual(1, len(res["invitations"]))
+        invitation = res["invitations"][0]
+        self.assertEqual(co_ai_computing_short_name, invitation["collaboration"])
+        self.assertEqual("test@example.com", invitation["email"])
+
+        self.assertEqual(1, len(res["errors"]))
+        error = res["errors"][0]
+        self.assertEqual("ServerWarning", error["code"])
+
+    def test_invitations_bulk_upload_wrong_email(self):
+        self.login("urn:harry")
+        res = self.put("/api/invitations/bulk_upload",
+                       body=[{
+                           "short_names": ["uuc_teachers_short_name"],
+                           "invitees": ["nope"]
+                       }],
+                       with_basic_auth=False)
+        self.assertEqual(0, len(res["invitations"]))
+        self.assertEqual(1, len(res["errors"]))
+        self.assertEqual(0, res["errors"][0]["row"])
+
+    def test_invitations_bulk_upload_missing_invitees(self):
+        self.login("urn:harry")
+        res = self.put("/api/invitations/bulk_upload",
+                       body=[{
+                           "invitees": ["test@test.com", "test@example.com"]
+                       }],
+                       with_basic_auth=False)
+        self.assertEqual(0, len(res["invitations"]))
+        self.assertEqual(1, len(res["errors"]))
+        self.assertEqual(0, res["errors"][0]["row"])
+
+    def test_invitations_bulk_upload_wrong_group_identifiers(self):
+        self.login("urn:harry")
+        res = self.put("/api/invitations/bulk_upload",
+                       body=[{"short_names": ["ai_computing"],
+                              "invitees": ["test@example.com"],
+                              "groups": ["nope"]}],
+                       with_basic_auth=False)
+        self.assertEqual(0, len(res["invitations"]))
+        self.assertEqual(1, len(res["errors"]))
+
+        error = res["errors"][0]
+        self.assertEqual("ServerError", error["code"])

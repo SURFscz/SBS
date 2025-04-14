@@ -24,4 +24,3 @@ export default function InstituteColumn({entity, currentUser, greyed=true, organ
         </div>
     );
 }
-

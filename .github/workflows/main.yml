@@ -416,7 +416,7 @@ jobs:
       - name: Dump latest database schema
         run: |
           echo "-- Dump of empty SBS database, alembic revision $alembic_current" > misc/sbs-db.sql
-          mysqldump -h 127.0.0.1 -u sbs --password=sbs --skip-comments sbs >> misc/sbs-db.sql
+          mysqldump -h 127.0.0.1 -u sbs --password=sbs --skip-comments sbs | gsed -Ei '${/^$/d;}' >> misc/sbs-db.sql
 
       - name: Create Pull Request
         uses: "peter-evans/create-pull-request@v6"

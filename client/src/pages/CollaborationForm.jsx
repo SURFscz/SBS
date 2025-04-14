@@ -229,18 +229,26 @@ class CollaborationForm extends React.Component {
         this.setState({invalidInputs: {...invalidInputs, [name]: !valid}});
     };
 
-    validateCollaborationName = e =>
-        collaborationNameExists(e.target.value, this.state.organisation.value, this.existingCollaborationName("name"))
+    validateCollaborationName = e => {
+        const name = e.target.value.trim();
+        return collaborationNameExists(name, this.state.organisation.value, this.existingCollaborationName("name"))
             .then(json => {
-                this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
-                if (!json && !isEmpty(e.target.value) && isEmpty(this.state.short_name)) {
-                    this.generateShortName(e.target.value);
+                this.setState({name: name, alreadyExists: {...this.state.alreadyExists, name: json}});
+                if (!json && !isEmpty(name) && isEmpty(this.state.short_name)) {
+                    this.generateShortName(name);
                 }
             });
+    };
 
-    validateCollaborationShortName = e =>
-        collaborationShortNameExists(sanitizeShortName(e.target.value), this.state.organisation.value, this.existingCollaborationName("short_name"))
-            .then(json => this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}}));
+    validateCollaborationShortName = e => {
+        const shortName = sanitizeShortName(e.target.value.trim());
+        collaborationShortNameExists(shortName, this.state.organisation.value, this.existingCollaborationName("short_name"))
+            .then(json => this.setState({
+                short_name: shortName,
+                alreadyExists: {...this.state.alreadyExists, short_name: json}
+            }));
+    }
+
 
     generateShortName = name => {
         const {isNew, short_name, shortNameEdited} = this.state;

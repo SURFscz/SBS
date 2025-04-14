@@ -1,10 +1,10 @@
 {
-    "itemsPerPage": 5,
+    "itemsPerPage": 10,
     "schemas": [
         "urn:ietf:params:scim:api:messages:2.0:ListResponse"
     ],
     "startIndex": 0,
-    "totalResults": 5,
+    "totalResults": 6,
     "Resources": [
         {
             "active": true,
@@ -152,6 +152,34 @@
                 "urn:scim:schemas:core:1.0"
             ],
             "userName": "betty",
+            "x509Certificates": []
+        },
+        {
+            "active": true,
+            "displayName": "Ebbe Doe",
+            "emails": [
+                {
+                    "primary": true,
+                    "value": "ebbe@example.org"
+                }
+            ],
+            "externalId": "43b26575-b243-42ef-a7ac-6033d51372fe@sram.surf.nl",
+            "id": "D1D64FD9-7A8F-41E5-A6F1-78BF54BD7954",
+            "meta": {
+                "created": "2022-12-14T16:41:01",
+                "lastModified": "2022-12-14T16:41:01",
+                "location": "/Users/D1D64FD9-7A8F-41E5-A6F1-78BF54BD7954",
+                "resourceType": "User",
+                "version": "cb293160f7268629c54ae5d8f44d347a0d87b9f0fe8e2b0b918f92375fbfa79a"
+            },
+            "name": {
+                "familyName": "",
+                "givenName": ""
+            },
+            "schemas": [
+                "urn:scim:schemas:core:1.0"
+            ],
+            "userName": "ebbedoe",
             "x509Certificates": []
         }
     ]

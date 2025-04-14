@@ -137,6 +137,32 @@ export const statusCustomSort = (o1, o2, reverse) => {
     return reverse ? comparison * -1 : comparison;
 };
 
+const stringArraySort = (val1, val2, reverse) => {
+    let comparison;
+    if (val1 === val2) {
+        comparison = 0;
+    } else if (val1 === "") {
+        comparison = 1;
+    } else if (val2 === "") {
+        comparison = -1;
+    } else {
+        comparison = val1.localeCompare(val2);
+    }
+    return reverse ? comparison * -1 : comparison;
+}
+
+export const unitArraySort = (a1, a2, reverse) => {
+    const val1 = (a1.units || []).map(unit => unit.name.toLowerCase()).sort().join("");
+    const val2 = (a2.units || []).map(unit => unit.name.toLowerCase()).sort().join("");
+    return stringArraySort(val1, val2, reverse);
+}
+
+export const tagArraySort = (a1, a2, reverse) => {
+    const val1 = (a1.tags || []).map(tag => tag.tag_value.toLowerCase()).sort().join("");
+    const val2 = (a2.tags || []).map(tag => tag.tag_value.toLowerCase()).sort().join("");
+    return stringArraySort(val1, val2, reverse);
+}
+
 export const userColumnsCustomSort = (o1, o2, reverse) => {
     let comparison;
     if (o1.invite && !o2.invite) {
@@ -149,7 +175,6 @@ export const userColumnsCustomSort = (o1, o2, reverse) => {
         comparison = (o1.user || {name: ""}).name.localeCompare((o2.user || {name: ""}).name);
     }
     return reverse ? comparison * -1 : comparison;
-
 }
 
 export const expiryDateCustomSort = (o1, o2, reverse) => {
@@ -174,6 +199,16 @@ export const joinSelectValuesArray = arr => {
 }
 
 export const commaSeparatedArrayToSelectValues = str => {
-    return isEmpty(str) ? [] : Array.isArray(str) ? str : str.split ? str.split(",").map(s => ({value: s.trim(), label: s.trim()})) : str;
+    return isEmpty(str) ? [] : Array.isArray(str) ? str : str.split ? str.split(",").map(s => ({
+        value: s.trim(),
+        label: s.trim()
+    })) : str;
 }
 
+export const scrollToBottom = () => {
+    setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth"}), 425);
+}
+
+export const serial = (tasks, fn) => {
+    return tasks.reduce((promise, task, index) => promise.then(() => fn(task, index)), Promise.resolve(null))
+}

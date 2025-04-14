@@ -8,6 +8,3 @@ Bad news. An error occurred in {{ environment }} at {{ date }}:
 {{ tb }}
 
 {% endblock %}
-
-
-

@@ -56,6 +56,8 @@ def auth_filter(app_config):
             hashed_secret = get_authorization_header(True, ignore_missing_auth_header=True)
             api_key = ApiKey.query.filter(ApiKey.hashed_secret == hashed_secret).first()
             request_context.external_api_organisation = api_key.organisation if api_key else None
+            # Too prevent sqlalchemy.orm.exc.DetachedInstanceError
+            request_context.external_api_organisation_name = api_key.organisation.name if api_key else None
             request_context.external_api_key = api_key
             return
 
@@ -94,6 +96,8 @@ def auth_filter(app_config):
         if not api_key:
             raise Unauthorized(description="Invalid API key")
         request_context.external_api_organisation = api_key.organisation
+        # Too prevent sqlalchemy.orm.exc.DetachedInstanceError
+        request_context.external_api_organisation_name = api_key.organisation.name
         request_context.external_api_key = api_key
         logger = logging.getLogger("external_api")
         logger.info(f"Authorized API call for organisation {api_key.organisation.name} with key {api_key.description}")
@@ -174,6 +178,12 @@ def application_base_url():
     return base_url[:-1] if base_url.endswith("/") else base_url
 
 
+def server_base_url():
+    cfg = current_app.app_config
+    base_server_url = cfg.base_server_url
+    return base_server_url[:-1] if base_server_url.endswith("/") else base_server_url
+
+
 def _remote_address():
     forwarded = current_request.headers.get("X-Forwarded-For", None)
     return forwarded if forwarded else current_request.remote_addr
@@ -213,14 +223,19 @@ def json_endpoint(f):
             elif isinstance(e, DatabaseError):
                 e = BadRequest("Database error")
                 skip_email = True
-            response = jsonify(message=e.description if isinstance(e, HTTPException) else str(e),
-                               error=True)
+            if isinstance(e, HTTPException):
+                message = e.description
+            elif isinstance(e, KeyError):
+                message = f"Missing key {e}"
+            else:
+                message = str(e)
+            response = jsonify(message=message, error=True)
             response.status_code = 500
             if isinstance(e, NoResultFound):
                 response.status_code = 404
             elif isinstance(e, HTTPException):
                 response.status_code = e.code
-            elif isinstance(e, ValidationError) or isinstance(e, BadRequest) or isinstance(e, APIBadRequest):
+            elif isinstance(e, (ValidationError, BadRequest, APIBadRequest, KeyError)):
                 response.status_code = 400
             _add_custom_header(response)
             db.session.rollback()
@@ -273,6 +288,7 @@ def config():
     threshold_for_warning = cfq.collaboration_inactivity_days_threshold - cfq.inactivity_warning_mail_days_threshold
     return {"local": current_app.config["LOCAL"],
             "base_url": application_base_url(),
+            "base_server_url": server_base_url(),
             "socket_url": cfg.socket_url,
             "api_keys_enabled": cfg.feature.api_keys_enabled,
             "feedback_enabled": cfg.feature.feedback_enabled,
@@ -283,6 +299,7 @@ def config():
             "ldap_url": cfg.ldap.url,
             "ldap_bind_account": cfg.ldap.bind_account,
             "continue_eduteams_redirect_uri": cfg.oidc.continue_eduteams_redirect_uri,
+            "continue_eb_redirect_uri": cfg.oidc.continue_eb_redirect_uri,
             "introspect_endpoint": f"{cfg.base_server_url}/api/tokens/introspect",
             "past_dates_allowed": cfg.feature.past_dates_allowed,
             "mock_scim_enabled": cfg.feature.mock_scim_enabled,

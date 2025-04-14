@@ -7,7 +7,7 @@ import {clearFlash} from "../../utils/Flash";
 import {UserInfo} from "@surfnet/sds";
 import {AppStore} from "../../stores/AppStore";
 import {stopEvent} from "../../utils/Utils";
-import {isUserServiceAdmin} from "../../utils/UserRole";
+import {isUserAllowed, isUserServiceAdmin, ROLES} from "../../utils/UserRole";
 
 
 export const UserMenu = ({currentUser, config, provideFeedback}) => {
@@ -28,6 +28,7 @@ export const UserMenu = ({currentUser, config, provideFeedback}) => {
 
     const renderMenu = (adminLinks, provideFeedback) => {
         const userServiceAdmin = isUserServiceAdmin(currentUser);
+        const showBulkUpload = isUserAllowed(ROLES.ORG_MANAGER, currentUser);
         return (
             <>
                 <ul>
@@ -42,6 +43,12 @@ export const UserMenu = ({currentUser, config, provideFeedback}) => {
                             {I18n.t("header.links.requestService")}
                         </Link>
                     </li>}
+                    {showBulkUpload && <li>
+                        <Link onClick={toggleUserMenu} to={`/bulk-upload`}>
+                            {I18n.t("header.links.bulkUpload")}
+                        </Link>
+                    </li>}
+
                 </ul>
                 <ul>
                     {config.feedback_enabled && <li>

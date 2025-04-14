@@ -12,6 +12,7 @@ const nl = {
             createCollaboration: "Nieuwe samenwerking",
             requestCollaboration: "Samenwerking aanvragen",
             requestService: "Applicatie registreren",
+            bulkUpload: "Uitnodiging bulk-upload",
             help: "Help",
             profile: "Profiel",
             logout: "Uitloggen",
@@ -111,7 +112,7 @@ const nl = {
             welcome: "Welkom",
             cron: "Cron",
             seed: "Seed",
-            database: "Database",
+            database: "DB",
             activity: "Activiteit",
             validation: "Acties",
             plsc: "LDAP",
@@ -123,7 +124,8 @@ const nl = {
             scim: "SCIM",
             stats: "Stats",
             pam: "PAM",
-            proxy: "Proxy"
+            proxy: "Proxy",
+            sync: "Sync"
         }
     },
     forms: {
@@ -554,11 +556,11 @@ const nl = {
         },
         joinRequests: {
             backToJoinRequests: "Terug naar alle aanvragen",
-            title: "Aanvraag om lid te worden",
+            title: "Aanvragen lid te worden",
             searchPlaceHolder: "Zoek aanvragen...",
             noEntities: "Geen aanvragen gevonden",
             edit: "Accepteer / keur af",
-            details: "Aanvraag gemaakt door {{name}} op {{date}}"
+            details: "Aangevraagd door {{name}} op {{date}}"
         },
         memberJoinRequests: {
             title: "Mijn aanvragen voor samenwerkingen",
@@ -698,7 +700,7 @@ const nl = {
     registration: {
         joinRequest: "Vraag lidmaatschap voor {{name}}",
         explanation: "Schrijf je motivatie om lid te worden van samenwerking <strong>{{name}}</strong>.",
-        title: "Aanvraag tot lidmaatschap van {{name}}",
+        title: "Aanvragen lidmaatschap van {{name}}",
         alreadyMember: "Je bent reeds lid van {{name}}",
         motivation: "Je reden om lid te worden van {{name}}?",
         motivationPlaceholder: "Omschrijf de reden om lid te worden zodat een beheerder je aanvraag kan honoreren.",
@@ -730,16 +732,8 @@ const nl = {
         organisations: "Organisaties",
         sbs: "Applicatie",
         collaborations: "Samenwerkingen",
-        network: "IP-ranges",
         addSSHKey: "Upload een SSH-sleutel",
         addSSHKeyManually: "Voeg handmatig een SSH-sleutel toe",
-        networkTooltip: "Configureer je IP-bereiken voor deze applicatie. Je kunt IPv4 en IPv6 network ranges toevoegen. " +
-            "Bijvoorbeeld: <ul>" +
-            "<li>Enkelvoudig IPv4-adres 198.51.100.12 waar een /32 is aangenomen</li>" +
-            "<li>IPv4-bereik 198.51.100.0/24. Maximaal toegestane omvang subnet voor IPv4 is een /24</li>" +
-            "<li>IPv6-bereik 2001:db8:f00f:bab::/64. Maximaal toegestane omvang subnet voor IPv6 is een /64</li>" +
-            "</ul> ",
-        networkExplanation: "Informeer de applicatieaanbieders vanaf welke IP-adressen je hun applicatie gebruikt. De applicatieaanbieders kunnen je IP-adressen toegang geven als ze dit ondersteunen.",
         deleteHeader: "Verwijder je profiel",
         deleteDisclaimer: "Als je je profiel verwijdert, worden ook al je lidmaatschappen en beheerrollen verwijderd. Dit kan niet ongedaan worden gemaakt."
     },
@@ -956,9 +950,9 @@ const nl = {
         backToServices: "Terug naar applicaties",
         name: "Naam",
         namePlaceHolder: "De unieke naam van de applicatie",
-        entity_id: "Entity ID",
-        entity_idPlaceHolder: "De unieke entity ID van de applicatie",
-        entity_idTooltip: "De Entity ID is bij SAML (Entity ID) en OIDC (client_id) het unieke kenmerk van je applicatie voor de identity proxy. Het wordt ook gebruikt bij provisioning via LDAP.",
+        entity_id: "Applicatie ID",
+        entity_idPlaceHolder: "De unieke applicatie ID van de applicatie",
+        entity_idTooltip: "De applicatie ID is bij SAML (Entity ID) en OIDC (client_id) het unieke kenmerk van je applicatie voor de identity proxy. Het wordt ook gebruikt bij provisioning via LDAP.",
         abbreviation: "Korte naam",
         abbreviationPlaceHolder: "De korte naam van de applicatie",
         abbreviationTooltip: "De korte naam van een applicatie wordt gebruikt als prefix voor groepen aangemaakt door de applicatiegroepen van deze applicatie.<br/><br/>" +
@@ -981,19 +975,6 @@ const nl = {
         accepted_user_policy: "Acceptable use policy URL",
         accepted_user_policyPlaceholder: "De acceptable use policy (AUP) van de applicatie",
         accepted_user_policyTooltip: "Een acceptable use policy (AUP) is een document waarin staat wat een gebruiker wel en niet mag/hoort te doen en waarmee de gebruiker akkoord moet gaan om toegang te krijgen tot een applicatie of systeem.",
-        network: "ACL IP-ranges",
-        networkTooltip: "De IP-reeksen die deze applicatie gebruikt om de LDAP-server van het platform te bereiken. Zowel IPv4- als IPv6-bereiken zijn toegestaan. " +
-            "Bijvoorbeeld: <ul>" +
-            "<li>Enkelvoudig IPv4-adres 198.51.100.12 waarbij een /32 wordt aangenomen</li>" +
-            "<li>IPv4-bereik 198.51.100.0/24. Maximaal toegestane omvang subnet voor IPv4 is een /24</li>" +
-            "<li>IPv6-bereik 2001:db8:f00f:bab::/64. Maximaal toegestane omvang subnet voor IPv6 is een /64</li>" +
-            "</ul> ",
-        networkPlaceholder: "IPv4-of IPv6-adres met optioneel subnet",
-        networkError: "Die {{prefix}} subnetomvang is niet toegestaan. Maximaal toegestane prefix voor IPv{{version}} is {{max}}",
-        networkSyntaxError: "Dit is geen geldig IPv4- of IPv6-adres",
-        networkReservedError: "Dit is een gereserveerd IPv{{version}}-adres",
-        networkNotGlobal: "Alleen globale unicast-adressen kunnen worden ingevoerd",
-        networkInfo: "Laagste IP: {{lower}}, hoogste IP: {{higher}}, # adressen: {{num_addresses}}, versie: IPv{{version}}",
         automaticConnectionAllowed: "Samenwerkingen mogen koppelen zonder jouw toestemming",
         automaticConnectionAllowedTooltip: "Indien ingeschakeld mag een samenwerking deze applicatie koppelen zonder toestemming van de applicatieeigenaar (jou). Er wordt dan geen koppelaanvraag ter goedkeuring voorgelegd.",
         automaticConnectionAllowedOrganisations: "Vertrouwde / je eigen organisaties",
@@ -1044,7 +1025,7 @@ const nl = {
         alreadyExists: "Een applicatie met {{attribute}} {{value}} bestaat al.",
         required: "De applicatie heeft een {{attribute}} nodig.",
         deleteConfirmation: "Weet je zeker dat je applicatie {{name}} wil verwijderen? Dit kan niet teruggedraaid worden.",
-        requestDeleteConfirmation: "Weet je zeker dat je een aanvraag wilt indienen om deze applicatie {{name}} te verwijderen? Alls de aanvraag wordt gehonoreerd dan kan dit niet meer teruggedraaid worden.",
+        requestDeleteConfirmation: "Weet je zeker dat je een aanvraag wil indienen om deze applicatie {{name}} te verwijderen? Als de aanvraag wordt gehonoreerd dan kan dit niet meer teruggedraaid worden.",
         deleteWarning: "Je kan geen aanvraag indienen om deze applicatie te verwijderen. Ontkoppel eerst de samenwerkingen op de 'Gekoppelde samenwerkingen' tab.",
         add: "Opslaan",
         request: "Registreer",
@@ -1056,7 +1037,7 @@ const nl = {
             createdServiceRequest: "Bedankt voor de applicatieregistratie van {{name}}. We bekijken je aanvraag en van ons laten horen binnen een werkdag.<br/><br/>Het SURF Research Access Management support team",
             updated: "Applicatie {{name}} is bijgewerkt.",
             deleted: "Applicatie {{name}} is verwijderd.",
-            requestDeleted: "Aanvraag om applicatie {{name}} te verwijderen is verzonden",
+            requestDeleted: "Verwijderen van applicatie {{name}} aangevraagd",
             tokenAdded: "Nieuw token voor applicatie {{name}} is aangemaakt",
             tokenUpdated: "Token van applicatie {{name}} is bijgewerkt",
             tokenDeleted: "Token van applicatie {{name}} is verwijderd",
@@ -1156,7 +1137,7 @@ const nl = {
         commentsTooltip: "Je opmerkingen aan de beheerders die je applicatie-aanvraag behandelen",
         comments: "Optionele opmerkingen",
         commentsPlaceholder: "Opmerkingen",
-        commentsHeader: "Opmerkingen over dit aanvraag",
+        commentsHeader: "Opmerkingen over deze aanvraag",
         commentsAttribute: "motivatie",
         connectionSettings: {
             connectQuestion: "1. Wie mag inloggen op de applicatie?",
@@ -1279,8 +1260,8 @@ const nl = {
         schacHomeOrganisationTooltip: "De domeinnamen waarmee gebruikers van deze organisatie inloggen. Deze gebruikers kunnen samenwerkingen aanmaken of aanvragen bij je organisatie.",
         collaborationCreationAllowed: "Gebruikers kunnen zonder goedkeuring een samenwerking aanmaken",
         collaborationCreationAllowedTooltip: "Sta toe dat gebruikers van de organisatie samenwerkingen aanmaken zonder goedkeuring van de organisatiebeheerder of -manager",
-        serviceConnectionRequiresApproval: "Aanvraag voor applicatie koppeling moet worden goedgekeurd door de organisatiebeheerder of -manager",
-        serviceConnectionRequiresApprovalTooltip: "Indien geselecteerd, dan moet een aanvraag voor een applicatie koppeling eerst worden goedgekeurd door de organisatie beheerder",
+        serviceConnectionRequiresApproval: "Het koppelen van deze applicatie moet worden goedgekeurd door een organisatiebeheerder of -manager",
+        serviceConnectionRequiresApprovalTooltip: "Indien geselecteerd, dan moet een aanvraag voor een applicatie koppeling eerst worden goedgekeurd door de organisatie beheerder of -manager",
         accepted_user_policyPlaceholder: "De acceptable use policy (AUP) van de organisatie.",
         accepted_user_policyTooltip: "Gebruikers van buiten de organsatie moeten deze AUP accepteren wanneer ze voor het eerste lid worden van een samenwerking van deze organisatie.",
         crmId: "Organisatie (CRM ID)",
@@ -1386,7 +1367,7 @@ const nl = {
         },
         service: {
             name: "Naam",
-            entity_id: "Entity ID",
+            entity_id: "Applicatie ID",
             abbreviation: "Korte naam",
             description: "Omschrijving",
             actions: "",
@@ -1428,7 +1409,7 @@ const nl = {
     joinRequest: {
         title: "Aanvraag van {{requester}} om lid te worden van samenwerking {{collaboration}}",
         message: "Onderbouwing",
-        messageTooltip: "De onderbouwing van {{name}} voor dit aanvraag",
+        messageTooltip: "De onderbouwing van {{name}} voor deze aanvraag",
         collaborationName: "Samenwerking",
         userName: "Gebruiker",
         decline: "Afwijzen",
@@ -1446,7 +1427,7 @@ const nl = {
             declined: "Aanvraag voor lidmaatschap van samenwerking {{name}} is afgewezen.",
             accepted: "Aanvraag voor lidmaatschap van samenwerking {{name}} is goedgekeurd.",
             deleted: "Aanvraag voor lidmaatschap van samenwerking {{name}} is verwijderd.",
-            notFound: "Dit aanvraag voor lidmaatschap is reeds goedgekeurd of afgewezen.",
+            notFound: "Deze aanvraag voor lidmaatschap is reeds goedgekeurd of afgewezen.",
             alreadyMember: "Je bent al lid van de samenwerking {{name}} en kan daarom deze uitnodiging niet accepteren."
         }
     },
@@ -1581,7 +1562,7 @@ const nl = {
             open: "",
             actions: "",
             name: "Naam",
-            entity_id: "Entity ID",
+            entity_id: "Applicatie ID",
             abbreviation: "Korte naam",
             description: "Omschrijving"
         },
@@ -1599,8 +1580,8 @@ const nl = {
         serviceConnectionRequestResend: "De aanvraag om applicatie {{service}} te koppelen met samenwerking {{collaboration}} is opnieuw verstuurd.",
         serviceRestrictedInfo: "Deze samenwerking is beperkt in de applicaties. Alleen de platformbeheerder kan applicaties configureren die door deze samenwerking worden gebruikt.",
         serviceDeleteConfirmation: "Weet je zeker dat je deze applicatie uit de samenwerking {{collaboration}} wil verwijderen?",
-        serviceConnectionRequestDeleteConfirmation: "Weet je zeker dat je dit koppelaanvraag wil verwijderen?",
-        serviceConnectionRequestResendConfirmation: "Weet je zeker dat je dit koppelaanvraag opnieuw wil versturen?",
+        serviceConnectionRequestDeleteConfirmation: "Weet je zeker dat je deze koppelaanvraag wil verwijderen?",
+        serviceConnectionRequestResendConfirmation: "Weet je zeker dat je deze koppelaanvraag opnieuw wil versturen?",
     },
     organisationServices: {
         title: "Applicaties voor organisatie {{name}}",
@@ -1620,7 +1601,7 @@ const nl = {
             open: "",
             actions: "",
             name: "Naam",
-            entity_id: "Entity ID",
+            entity_id: "Applicatie ID",
             description: "Omschrijving"
         },
         serviceDeleteConfirmation: "Weet je zeker dat je deze applicatie wil verwijderen uit organisatie {{organisation}}",
@@ -1707,7 +1688,7 @@ const nl = {
         service: {
             actions: "",
             name: "Naam",
-            entity_id: "Entity ID",
+            entity_id: "Applicatie ID",
             description: "Omschrijving"
         },
         member: {
@@ -1784,8 +1765,8 @@ const nl = {
         requester: "Aanvrager",
         approved: "Goedgekeurd",
         rejectionReason: "Reden voor afwijzing",
-        denyConfirmation: "Weet je zeker dat je dit aanvraag wil afkeuren?",
-        deleteConfirmation: "Weet je zeker dat je dit aanvraag wil verwijderen?",
+        denyConfirmation: "Weet je zeker dat je deze aanvraag wil afkeuren?",
+        deleteConfirmation: "Weet je zeker dat je deze aanvraag wil verwijderen?",
         approve: "Goedkeuren",
         deny: "Afkeuren",
         status: "Status",
@@ -1805,21 +1786,21 @@ const nl = {
         title: "Applicatie koppelaanvraag",
         subTitle: "Aanvraag van {{requester}} om toegang voor samenwerking {{collaboration}} voor applicatie {{service}} toe te staan",
         message: " Motivatie",
-        messageTooltip: "De motivatie van {{name}} voor dit aanvraag",
+        messageTooltip: "De motivatie van {{name}} voor deze aanvraag",
         service: "Applicatie",
         collaboration: "Samenwerking",
         requester: "Aanvrager",
         decline: "Afwijzen",
         accept: "Accepteren",
         retract: "Intrekken",
-        approveConfirmation: "Weet je zeker dat je dit aanvraag wil goedkeuren?",
-        declineConfirmation: "Weet je zeker dat je dit aanvraag wil afwijzen?",
-        deleteConfirmation: "Weet je zeker dat je dit aanvraag wil verwijderen?",
+        approveConfirmation: "Weet je zeker dat je deze aanvraag wil goedkeuren?",
+        declineConfirmation: "Weet je zeker dat je deze aanvraag wil afwijzen?",
+        deleteConfirmation: "Weet je zeker dat je deze aanvraag wil verwijderen?",
         flash: {
             declined: "Applicatiekoppelaanvraag voor {{name}} is afgewezen",
             accepted: "Applicatiekoppelaanvraag voor {{name}} is geaccepteerd",
             deleted: "Applicatiekoppelaanvraag voor {{name}} is verwijderd",
-            notFound: "Dit aanvraag is reeds geaccepteerd/afgewezen."
+            notFound: "Deze aanvraag is reeds geaccepteerd/afgewezen."
         }
     },
     autocomplete: {
@@ -1885,7 +1866,6 @@ const nl = {
             "services_collaborations": "Applicatie",
             "service_requests": "Applicatieregistratie",
             "users": "Gebruiker",
-            "ip_networks": "IP-netwerk",
             "suspend_notifications": "Loginnotificatie",
             "schac_home_organisations": "Schac home organisations",
             "user_names_history": "Username history",
@@ -2023,6 +2003,7 @@ const nl = {
         runDbSeedConfirmation: "Weet je het zeker? Hiermee worden alle huidige gegevens verwijderd",
         runDbSeedInfo: "Verwijder alle gegevens en voeg de <strong>TEST</strong> gegevens toe",
         runDbDemoSeedInfo: "Verwijder alle gegevens en voeg de <strong>TEST+DEMO</strong> gegevens toe",
+        runDbStressSeedInfo: "Verwijder alle gegevens en voeg de <strong>Anonieme Data</strong> gegevens toe",
         runDbSeed: "Voer uit",
         runClearAuditLogsConfirmation: "Weet je zeker dat je alle gegevens uit de audit-logs wil verwijderen?",
         cleanSlate: "Verwijder alles",
@@ -2121,8 +2102,12 @@ const nl = {
         },
         proxy: {
             userUid: "User UID",
+            userUidEB: "User URN (collab person ID",
+            userSchacHome: "User Schac Home",
+            userEppn: "User EPPN",
             serviceEntityId: "Service entity ID",
             useSRAMServiceEntityId: "Use SRAM service entity ID",
+            continueUrl: "Continue URL",
             mimic: "Choose integration backend",
             mimicTooltip: "The integration backend is either eduTeams or EB.<br><br> The main difference is that EB will POST " +
                 "to the server <code>interrupt</code> endpoint and implicitely login the user. <br><br>EduTeams will redirect to the " +
@@ -2138,6 +2123,16 @@ const nl = {
             stopped: "Interrupt flow is stopped. Refresh will make you platform admin again.",
             results: "Results",
             errors: "Errors",
+        },
+        sync: {
+            enabled: "enabled",
+            disabled: "diabled",
+            info: "The sync with manage ({{manageUrl}}) is {{state}}",
+            overview: "The services below are configured to sync with Manage, but have not been synced ever",
+            start: "Start syncing",
+            reload: "Reload",
+            results: "All syncs were successful🥳🎉🍾",
+            faultyResults: "The syncs marked in red were not successful. Check the SBS logs for details."
         }
     },
     access: {
@@ -2351,9 +2346,9 @@ const nl = {
         info5: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i> omdat de samenwerking(en) waarvan je lid bent niet actief zijn.</p><p>Neem contact op met de beheerders van jouw samenwerking(en) voor toegang tot deze applicatie.</p>",
         info6: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. Je lidmaatschap van de samenwerking(en) waar je momenteel lid van bent zijn verlopen.</p><p>Neem contact op met de beheerders van jouw samenwerking(en) voor toegang tot deze applicatie.</p>",
         ticket: "Als je wil, kun je contact opnemen met SRAM support " +
-            "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a> voor hulp.",
+            "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Applicatie ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a> voor hulp.",
         subject: "Geen toegang tot applicatie {{name}}",
-        entityId: "Entity ID",
+        entityId: "Applicatie ID",
         issuerId: "Issuer ID",
         userId: "User ID",
         timestamp: "Timestamp"
@@ -2610,10 +2605,10 @@ const nl = {
         visit: "bezoek de website"
     },
     myRequests: {
-        requestType: "Aanvraag type",
+        requestType: "Aanvraagtype",
         types: {
             joinRequest: "Lidmaatschapsaanvraag",
-            collaborationRequest: "Nieuw samenwerkingsaanvraag",
+            collaborationRequest: "Nieuwe samenwerkingsaanvraag",
             serviceRequest: "Applicatieregistratie",
             serviceConnectionRequest: "Applicatiekoppelaanvraag"
         },
@@ -2671,13 +2666,13 @@ const nl = {
         supportSubTitle: "Zorg ervoor dat je onderstaande informatie vermeldt.",
         supportBullets: {
             solutions: "Als je de bovenstaande oplossingen al hebt geprobeerd, of denkt dat je al toegang zou moeten hebben, kan je contact opnemen met SRAM-ondersteuning voor hulp via " +
-                "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Entity ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a>."
+                "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Applicatie ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a>."
         }
     },
     collaborationsOverview: {
         welcome: "Welkom {{name}}",
         select: "Selecteer je samenwerking",
-        request: "Aanvraag nieuwe samenwerking",
+        request: "Nieuwe samenwerking aanvragen",
         create: "Nieuwe samenwerking aanmaken",
         viewRequests: "bekijk aanvragen",
         open: "Open"
@@ -2696,47 +2691,90 @@ const nl = {
         inviteWithEmailInfo: "Verstuur een uitnodiging naar éém of meerder e-mailadressen. Met de link in de e-mail kan een gebruiker direct lid worden.",
     },
     organisationDetails: {
-        details: "Organisation details",
+        details: "Organisatiedetails",
         toc: {
-            about: "About the organisation",
+            about: "Over de organisatie",
             units: "Units",
             labels: "Labels",
-            messaging: "Messaging",
-            settings: "Settings"
+            messaging: "Berichten",
+            settings: "Configuratie"
         },
         headers: {
-            about: "About the organisation",
-            units: "Manage units",
-            labels: "Manage labels",
-            messaging: "Messaging settingss",
-            settings: "Organisation settings"
+            about: "Over de organisatie",
+            units: "Beheer units",
+            labels: "Beheer labels",
+            messaging: "Berichtinstellingen",
+            settings: "Organisatieconfiguratie"
         },
         units: {
-            info: "Create units to organize departments or projects within your organization. Managers can be assigned to specific units to oversee their activities.",
+            info: "Maak units om afdelingen of projecten binnen je organisatie te organiseren. Managers kunnen worden toegewezen aan specifieke eenheden om hun activiteiten te beheren.",
         },
         labels: {
-            info: "Create labels to define overall properties for collaborations within your organisation. Labels are shared with the connected applications, helping you manage and organize your members.",
-            name: "Label name",
-            defaultFor: "Default for",
-            defaultForPlaceholder: "All co's within all units"
+            info: "Maak labels om algemene eigenschappen voor samenwerkingen binnen je organisatie te definiëren. Labels worden gedeeld met de gekoppelde applicaties en helpen bij het beheren en organiseren van je leden.",
+            name: "Labelnaam",
+            defaultFor: "Standaard voor",
+            defaultForPlaceholder: "Alle samenwerkingen in alle units"
         },
         messaging: {
-            newCoMessage: "Message for new collaborations",
-            newCoMessageInfo: "This message is shown to users from your organisation when they request or create a collaboration",
-            defaultInviteMessage: "Default message for invites",
-            defaultInviteMessagePlaceholder: "Please join us, at this new CO",
-            defaultInviteMessageInfo: "When filled this message is used in all new invitations for the collaborations of this organisation",
-            defaultSenderName: "Default sender name for invites",
-            defaultSenderNamePlaceholder: "Organisational department of info mail",
-            defaultSenderNameInfo: "When filled this name is used as the sender in all new invitations for the collaborations of this organisation",
+            newCoMessage: "Bericht voor nieuwe samenwerkingen",
+            newCoMessageInfo: "Dit bericht wordt getoond aan gebruikers van je organisatie wanneer ze een samenwerking aanvragen of aanmaken.",
+            defaultInviteMessage: "Standaardbericht voor uitnodigingen",
+            defaultInviteMessagePlaceholder: "Word lid van deze nieuwe samenwerking",
+            defaultInviteMessageInfo: "Wanneer ingevuld, wordt dit bericht gebruikt in alle nieuwe uitnodigingen voor de samenwerkingen van deze organisatie.",
+            defaultSenderName: "Standaard afzender voor uitnodigingen",
+            defaultSenderNamePlaceholder: "Organisatieafdeling van het informatie-e-mailadres",
+            defaultSenderNameInfo: "Wanneer ingevuld, wordt deze naam gebruikt als afzender van alle nieuwe uitnodigingen voor de samenwerkingen van deze organisatie.",
         },
-        permissions: "Permissions"
+        permissions: "Rechten"
     },
     tags: {
-        label: "Label name",
-        add: "+ Add label",
-        confirmation: "Are you sure you want to remove label {{name}}?",
-        duplicated: "There is already an label named {{name}} for this organisation"
+        label: "Labelnaam",
+        add: "+ Label toevoegen",
+        confirmation: "Weet je zeker dat je het label {{name}} wilt verwijderen?",
+        duplicated: "Er bestaat al een label genaamd {{name}} voor deze organisatie"
+    },
+    bulkUpload: {
+        title: "Upload je uitnodigingen",
+        breadcrumb: "Bulk-upload",
+        main: "Uploaden",
+        docs: "Documentatie",
+        dragDrop: "Sleep een CSV-bestand hierheen of",
+        click: " uploadt",
+        errorWrongExtension: "Alleen CSV-bestanden kunnen worden geüpload, niet {{name}}",
+        errorFormat: "Fout bij het verwerken van bestand {{name}}",
+        successFullyParsed: "Bestand {{fileName}} succesvol verwerkt<br/> <strong>{{invitees}}</strong> genodigden worden uitgenodigd voor <strong>{{collaborations}}</strong> samenwerkingen in <strong>{{groups}}</strong> groepen.",
+        successFullyUploaded: "Succesvol <strong>{{nbrInvitations}}</strong> uitnodigingen verzonden.",
+        errorParsed: "Fout bij het verwerken van {{fileName}}. Zie de details hieronder.",
+        errorUpload: "Fout bij het uploaden. Zie de resultaten hieronder.",
+        errorRows: "Er zijn echter enkele rijen die worden uitgesloten vanwege ongeldige gegevens. Zie details hieronder.",
+        errorUploadDetails: "Er zijn echter fouten teruggestuurd door de server. Zie resultaten hieronder.",
+        showDetails: "Toon details",
+        hideDetails: "Verberg details",
+        showResults: "Toon resultaten",
+        hideResults: "Verberg resultaten",
+        schema: "Gebruik onderstaande knop voor een voorbeeld CSV-bestand.",
+        download: "Downloaden",
+        exampleInfo: "Voorbeeld CSV-gegevens",
+        requiredInfo: "geeft een verplichte waarde aan",
+        proceed: "Uploaden & uitnodigingen verzenden",
+        loading: "Verwerken {{count}} uitnodigingen. Tijd voor ☕️...",
+        errors: {
+            TooFewFields: "In de bovenstaande rij onbreken waarden voor verplichte velden: {{fields}}",
+            Duplicate: "De bovenstaande rij bevat een dubbele invoer voor gebruiker {{invitee}} en samenwerking {{shortName}}",
+            Unknown: "Ongeldige gegevens in rij",
+            ServerError: "De server heeft een fout gemeld voor bovenstaande rij: {{message}}",
+            ServerWarning: "De server heeft een waarschuwing gemeld voor bovenstaande rij: {{message}}"
+        },
+        tooltips: {
+            short_names: "De verplichte, komma-gescheiden en tussen aanhalingstekens geplaatste korte namen van de samenwerkingen voor de uitnodiging",
+            intended_role: "De optionele beoogde rol van de genodigden. Twee opties: lid of beheerder. Indien weggelaten, wordt standaard lid geselecteerd.",
+            invitees: "E-mailadressen van de genodigden voor de uitnodiging. Indien meerdere, dan komma-gescheiden en tussen dubbele aanhalingstekens.",
+            groups: "De optionele, komma-gescheiden identificatoren van de samenwerkingsgroepen voor de uitnodiging",
+            invitation_expiry_date: "De optionele vervaldatum van de uitnodiging. Standaard 30 dagen indien niet opgegeven",
+            membership_expiry_date: "De optionele vervaldatum van het lidmaatschap. Standaard geen indien niet opgegeven",
+            message: "De optionele persoonlijke boodschap die in de uitnodiging wordt opgenomen. Standaard geen indien niet opgegeven",
+            sender_name: "De optionele naam van de afzender die in de uitnodiging wordt opgenomen. Standaard de naam van de huidige gebruiker indien niet opgegeven"
+        }
     }
 };
 

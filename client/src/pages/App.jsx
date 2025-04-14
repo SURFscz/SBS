@@ -59,6 +59,7 @@ import MyRequests from "../components/redesign/MyRequests";
 import Delay from "./Delay";
 import Interrupt from "./Interrupt";
 import MockEB from "./MockEB";
+import BulkUpload from "./BulkUpload";
 
 addIcons();
 
@@ -151,16 +152,6 @@ class App extends React.Component {
                     }
                 }));
         }).catch(() => this.handleBackendDown());
-        this.aprilFools();
-    }
-
-    aprilFools = () => {
-        const date = new Date();
-        if (date.getMonth() === 3 && date.getDate() === 1) {
-            const styleTag = document.createElement("style");
-            document.head.appendChild(styleTag);
-            styleTag.sheet.insertRule("body, h1, h2, h3, h4, h5, ::-webkit-input-placeholder, .sds--branding--textual { font-family: 'Comic Sans', 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, Courier !important; }", 0);
-        }
     }
 
     componentWillUnmount() {
@@ -443,12 +434,21 @@ class App extends React.Component {
                                                                         impersonator={impersonator} {...props}/>}/>}
 
                             <Route path="/profile"
-                                   render={props => <ProtectedRoute
-                                       currentUser={currentUser}
-                                       Component={Profile}
-                                       config={config}
-                                       refreshUser={this.refreshUserMemberships}
-                                       {...props}/>}/>
+                                   render={props =>
+                                       <ProtectedRoute
+                                           currentUser={currentUser}
+                                           Component={Profile}
+                                           config={config}
+                                           refreshUser={this.refreshUserMemberships}
+                                           {...props}/>}/>
+
+                            <Route path="/bulk-upload/:tab?"
+                                   render={props =>
+                                       <ProtectedRoute
+                                           currentUser={currentUser}
+                                           Component={BulkUpload}
+                                           config={config}
+                                           {...props}/>}/>
 
                             {isUserAllowed(ROLES.ORG_MANAGER, currentUser) &&
                                 <Route exact path="/users/:id/:tab?/:org_id?"

@@ -496,4 +496,3 @@ export default class CroppedImageDialog extends React.PureComponent {
     }
 
 }
-

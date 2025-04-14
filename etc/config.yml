@@ -16,18 +16,18 @@ redis:
 socket_url: "${SOCKET_URL}"
 
 api_users:
-  - name: "sysadmin"
-    password: "secret"
-    scopes: ["read", "write", "system", "ipaddress"]
-  - name: "sysread"
-    password: "secret"
-    scopes: [read]
-  - name: "research_cloud"
-    password: "secret"
-    scopes: ["restricted_co"]
-  - name: "ipaddress"
-    password: "secret"
-    scopes: ["ipaddress"]
+- name: "sysadmin"
+  password: "secret"
+  scopes: [ "read", "write", "system", "ipaddress" ]
+- name: "sysread"
+  password: "secret"
+  scopes: [ read ]
+- name: "research_cloud"
+  password: "secret"
+  scopes: [ "restricted_co" ]
+- name: "ipaddress"
+  password: "secret"
+  scopes: [ "ipaddress" ]
 
 oidc:
   client_id: ${CLIENT_ID}
@@ -45,21 +45,20 @@ oidc:
   # The client_id of SBS. Most likely to equal the oidc.client_id
   sram_service_entity_id: ${BASE_URL}
 
-
   scopes:
-    - profile
-    - eduperson_scoped_affiliation
-    - voperson_external_affiliation
-    - email
-    - ssh_public_key
-    - eduperson_orcid
-    - uid
-    - voperson_external_id
-    - eduperson_entitlement
-    - eduperon_assurance
-    - openid
-    - eduperson_principal_name
-    - voperson_id
+  - profile
+  - eduperson_scoped_affiliation
+  - voperson_external_affiliation
+  - email
+  - ssh_public_key
+  - eduperson_orcid
+  - uid
+  - voperson_external_id
+  - eduperson_entitlement
+  - eduperon_assurance
+  - openid
+  - eduperson_principal_name
+  - voperson_id
 
 base_scope: "test.sbs.local"
 entitlement_group_namespace: "urn:example:sbs"
@@ -83,7 +82,7 @@ mail:
   account_deletion_notifications_enabled: True
   send_exceptions: False
   send_js_exceptions: False
-  send_exceptions_recipients: ["sram-support@surf.nl"]
+  send_exceptions_recipients: [ "sram-support@surf.nl" ]
   environment: local
 
 manage:
@@ -102,15 +101,15 @@ base_server_url: ${BASE_URL}
 wiki_link: https://edu.nl/vw3jx
 
 admin_users:
-  - uid: "urn:john"
-  - uid: "urn:rocky"
-  - uid: "urn:mike"
-  - uid: "${ADMIN}"
+- uid: "urn:john"
+- uid: "urn:rocky"
+- uid: "urn:mike"
+- uid: "${ADMIN}"
 
 organisation_categories:
-  - "Research"
-  - "University"
-  - "Medical"
+- "Research"
+- "University"
+- "Medical"
 
 feature:
   seed_allowed: True
@@ -229,20 +228,20 @@ mfa_fallback_enabled: true
 # Lower case schachome organisations / entity ID's allowed skipping MFA;
 # MFA is supposed to be handled at the IdP for these entities
 mfa_idp_allowed:
-  - schac_home: "idp.test"
-    entity_id: "https://idp.test"
-  - schac_home: "erroridp.example.edu"
-    entity_id: "https://erroridp.example.edu"
-  - schac_home: "only_sho"
-  - entity_id: "https://only_entityid"
+- schac_home: "idp.test"
+  entity_id: "https://idp.test"
+- schac_home: "erroridp.example.edu"
+  entity_id: "https://erroridp.example.edu"
+- schac_home: "only_sho"
+- entity_id: "https://only_entityid"
 
 # Lower case schachome organisations / entity ID's where SURFSecure ID is used for step-up
 # If this feature is no longer needed, just replace the value with an empty list []
 ssid_identity_providers:
-  - schac_home: "ssid.org"
-    entity_id: "https://ssid.org"
-  - schac_home: "erroridp.example.edu"
-    entity_id: "https://erroridp.example.edu"
+- schac_home: "ssid.org"
+  entity_id: "https://ssid.org"
+- schac_home: "erroridp.example.edu"
+  entity_id: "https://erroridp.example.edu"
 
 ssid_config_folder: saml_test
 
@@ -253,5 +252,12 @@ rate_limit_totp_guesses_per_30_seconds: 10
 
 # The uid's of user that will never be suspended or deleted
 excluded_user_accounts:
-  - uid: "urn:paul"
-  - uid: "urn:peter"
+- uid: "urn:paul"
+- uid: "urn:peter"
+
+stress_test:
+  num_users: 1000
+  num_orgs: 50
+  num_collaborations: 200
+  num_services: 30
+  num_groups: 300

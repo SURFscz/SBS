@@ -467,11 +467,6 @@ endpoints = [
         "path": "/api/invitations/resend_bulk"
     },
     {
-        "name": "ipaddress_api.info",
-        "method": "GET",
-        "path": "/api/ipaddress/info"
-    },
-    {
         "name": "join_request_api.already_member",
         "method": "POST",
         "path": "/api/join_requests/already-member"
@@ -740,11 +735,6 @@ endpoints = [
         "method": "GET",
         "path": "/pam-weblogin/status/success/<session_id>",
         "status_code": 200
-    },
-    {
-        "name": "plsc_api.ip_ranges",
-        "method": "GET",
-        "path": "/api/plsc/ip_ranges"
     },
     {
         "name": "plsc_api.sync",
@@ -1416,7 +1406,8 @@ endpoints = [
         "name": "user_api.service_info",
         "method": "GET",
         "path": "/api/users/service_info",
-        "query_data": {"uid": "nope", "entity_id": "nope"}
+        "query_data": {"uid": "nope", "entity_id": "nope"},
+        "status_code": 200
     },
     {
         "name": "user_api.suspended",

@@ -1,0 +1,76 @@
+@import "../stylesheets/vars.scss";
+@import "../stylesheets/forms";
+
+.mod-bulk-upload-container {
+
+    .mod-bulk-upload {
+        max-width: $medium;
+        margin: 0 auto;
+        width: 100%;
+        padding-top: 25px;
+    }
+
+    .docs, .main {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+
+        button svg {
+            width: 25px;
+            height: auto;
+        }
+
+        .json-schema {
+            padding: 10px;
+            background: $background;
+            border-radius: 8px;
+            border: 1px solid var(--sds--color--gray--300);
+            font-family: "Courier New", serif;
+            margin-bottom: 25px;
+        }
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    .sds--file-upload {
+        &:hover {
+            background-color: $lightest-grey;
+        }
+    }
+
+    label.sds--file-upload--message {
+        padding-bottom: 5px;
+        display: block;
+        width: 100%;
+        font-size: 15px;
+
+    }
+
+    p.info {
+        font-weight: 600;
+
+        &.error {
+            color: var(--sds--color--red--400);
+            font-weight: normal;
+        }
+    }
+
+    .summary {
+        display: flex;
+        color: var(--sds--color--green--400);
+
+        svg {
+            margin-right: 15px;
+        }
+
+        &.errors {
+            color: var(--sds--color--red--400);
+        }
+    }
+
+    .actions {
+
+    }
+}
