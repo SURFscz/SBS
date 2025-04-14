@@ -4,9 +4,26 @@ SCIM_SCHEMA_CORE = "urn:ietf:params:scim:schemas:core:2.0"
 SCIM_SCHEMA_CORE_USER = f"{SCIM_SCHEMA_CORE}:User"
 SCIM_SCHEMA_CORE_GROUP = f"{SCIM_SCHEMA_CORE}:Group"
 
-SCIM_SCHEMA_SRAM = "urn:mace:surf.nl:sram:scim:extension"
-SCIM_SCHEMA_SRAM_USER = f"{SCIM_SCHEMA_SRAM}:User"
-SCIM_SCHEMA_SRAM_GROUP = f"{SCIM_SCHEMA_SRAM}:Group"
+# Default values that are safe to use during import
+SCIM_SCHEMA_SRAM = "urn:example:sram:scim:schemas:1.0"  # Default
+
+
+def init_scim_schemas(urn):
+    """Initialize SCIM SRAM schemas with urn"""
+    global SCIM_SCHEMA_SRAM
+    SCIM_SCHEMA_SRAM = urn
+
+
+def get_scim_schema_sram():
+    return SCIM_SCHEMA_SRAM
+
+
+def get_scim_schema_sram_user():
+    return f"{get_scim_schema_sram()}:User"
+
+
+def get_scim_schema_sram_group():
+    return f"{get_scim_schema_sram()}:Group"
 
 
 def _schema(id, attributes):
@@ -147,7 +164,7 @@ def schema_core_user_template():
 
 
 def schema_sram_user_template():
-    return _schema(SCIM_SCHEMA_SRAM_USER, [
+    return _schema(get_scim_schema_sram_user(), [
         {
             "name": "eduPersonScopedAffiliation",
             "type": "string",
@@ -259,7 +276,7 @@ def schema_core_group_template():
 
 
 def schema_sram_group_template():
-    return _schema(SCIM_SCHEMA_SRAM_GROUP, [
+    return _schema(get_scim_schema_sram_group(), [
         {
             "name": "description",
             "type": "string",

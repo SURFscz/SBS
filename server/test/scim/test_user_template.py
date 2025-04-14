@@ -10,6 +10,8 @@ from server.tools import dt_now
 class TestUserTemplate(TestCase):
 
     def test_find_user_by_id_template(self):
+        from server.scim.schema_template import get_scim_schema_sram_user
+
         now = dt_now()
         days = 365 * 2
         last_login_date = now - datetime.timedelta(days=(days), weeks=3)
@@ -19,4 +21,4 @@ class TestUserTemplate(TestCase):
 
         self.assertEqual(result["displayName"], user.name)
         self.assertEqual(result["name"]["familyName"], "")
-        self.assertEqual(days, result["urn:mace:surf.nl:sram:scim:extension:User"]["sramInactiveDays"])
+        self.assertEqual(days, result[get_scim_schema_sram_user()]["sramInactiveDays"])

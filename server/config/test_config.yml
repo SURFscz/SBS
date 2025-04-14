@@ -221,6 +221,8 @@ scim_sweep:
   # How often do we check if scim sweeps are needed per service
   cron_minutes_expression: "*/15"
 
+scim_schema_sram: "urn:mace:surf.nl:sram:scim:extension"
+
 ldap:
   url: "ldap://ldap.example.com/dc=example,dc=com"
   bind_account: "cn=admin,dc=entity_id,dc=services,dc=sram-tst,dc=surf,dc=nl"
