@@ -45,7 +45,6 @@ from server.api.organisation_membership import organisation_membership_api
 from server.api.organisations_services import organisations_services_api
 from server.api.pam_websso import pam_websso_api
 from server.api.plsc import plsc_api
-from server.api.scim import scim_api
 from server.api.service import service_api
 from server.api.service_aups import service_aups_api
 from server.api.service_connection_request import service_connection_request_api
@@ -107,6 +106,12 @@ def _init_logging(log_to_stdout: bool):
 config_file_location = os.environ.get("CONFIG", "config/config.yml")
 config = munchify(yaml.load(read_file(config_file_location), Loader=yaml.FullLoader))
 config.base_url = config.base_url[:-1] if config.base_url.endswith("/") else config.base_url
+
+if hasattr(config, 'scim_schema_sram'):
+    init_scim_schemas(config.scim_schema_sram)
+
+# Do only import the SCIM enndpoints after scim schema is initialized !
+from server.api.scim import scim_api
 
 test = os.environ.get("TESTING")
 profile = os.environ.get("PROFILE")
@@ -186,7 +191,6 @@ init_executor(app, blocking=False)
 app.app_config = config
 app.app_config["profile"] = profile
 
-init_scim_schemas(app)
 init_swagger(app)
 
 Migrate(app, db)

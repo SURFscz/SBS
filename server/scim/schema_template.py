@@ -6,17 +6,12 @@ SCIM_SCHEMA_CORE_GROUP = f"{SCIM_SCHEMA_CORE}:Group"
 
 # Default values that are safe to use during import
 SCIM_SCHEMA_SRAM = "urn:example:sram:scim:schemas:1.0"  # Default
-SCIM_SCHEMA_SRAM_USER = f"{SCIM_SCHEMA_SRAM}:User"
-SCIM_SCHEMA_SRAM_GROUP = f"{SCIM_SCHEMA_SRAM}:Group"
 
 
-def init_scim_schemas(app):
-    """Initialize SCIM schemas from app config"""
-    global SCIM_SCHEMA_SRAM, SCIM_SCHEMA_SRAM_USER, SCIM_SCHEMA_SRAM_GROUP
-    if hasattr(app.app_config, 'scim_schema_sram'):
-        SCIM_SCHEMA_SRAM = app.app_config.scim_schema_sram
-        SCIM_SCHEMA_SRAM_USER = f"{SCIM_SCHEMA_SRAM}:User"
-        SCIM_SCHEMA_SRAM_GROUP = f"{SCIM_SCHEMA_SRAM}:Group"
+def init_scim_schemas(urn):
+    """Initialize SCIM SRAM schemas with urn"""
+    global SCIM_SCHEMA_SRAM
+    SCIM_SCHEMA_SRAM = urn
 
 
 def get_scim_schema_sram():
@@ -24,11 +19,11 @@ def get_scim_schema_sram():
 
 
 def get_scim_schema_sram_user():
-    return SCIM_SCHEMA_SRAM_USER
+    return f"{get_scim_schema_sram()}:User"
 
 
 def get_scim_schema_sram_group():
-    return SCIM_SCHEMA_SRAM_GROUP
+    return f"{get_scim_schema_sram()}:Group"
 
 
 def _schema(id, attributes):
