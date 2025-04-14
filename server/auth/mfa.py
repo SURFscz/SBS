@@ -102,7 +102,7 @@ def has_valid_mfa(user):
     valid_mfa_sso = last_login_date and (dt_now() - last_login_date < login_sso_cutoff)
 
     logger = ctx_logger("user_api")
-    logger.debug(f"has_valid_mfa: {valid_mfa_sso} (user={user}, last_login={last_login_date}")
+    logger.debug(f"has_valid_mfa: {valid_mfa_sso} (user={user.uid}, last_login={last_login_date}")
 
     return valid_mfa_sso
 

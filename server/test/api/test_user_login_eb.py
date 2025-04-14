@@ -234,4 +234,4 @@ class TestUserLoginEB(AbstractTest):
                         headers={"Authorization": self.app.app_config.engine_block.api_token,
                                  "Content-Type": "application/json"},
                         body={"nonce": "nope"})
-        self.assertTrue("No user_nonce found for none nope" in res["message"])
+        self.assertTrue("No user_nonce found for nonce nope" in res["message"])

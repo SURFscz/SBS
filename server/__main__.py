@@ -77,7 +77,8 @@ from server.scim.schema_template import init_scim_schemas
 def _init_logging(log_to_stdout: bool):
     # https://github.com/python-pillow/Pillow/issues/5096
     logging.getLogger("PIL.PngImagePlugin").setLevel(logging.CRITICAL + 1)
-    if log_to_stdout:
+    # TODO remove this
+    if log_to_stdout or 1==1:
         logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
     else:
         formatter = logging.Formatter("SBS: %(asctime)s %(name)s %(levelname)s %(message)s")
