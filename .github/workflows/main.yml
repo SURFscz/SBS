@@ -233,13 +233,6 @@ jobs:
         with:
           name: "sbs-build"
 
-      - name: "Extract metadata (tags, labels) for ${{matrix.image}} image"
-        id: meta-sbs
-        uses: docker/metadata-action@v5
-        with:
-          images: "${{ matrix.image }}"
-          flavor: "suffix=-${{ matrix.arch }}"
-
       - name: Build arch-specific Docker image
         uses: docker/build-push-action@v5
         with:
@@ -248,8 +241,6 @@ jobs:
           pull: true
           push: false
           load: true
-          tags: ${{ steps.meta-sbs.outputs.tags }}
-          labels: ${{ steps.meta-sbs.outputs.labels }}
           platforms: "linux/${{ matrix.arch }}"
           cache-from: "type=gha"
           cache-to: "type=gha,mode=max"
@@ -302,6 +293,14 @@ jobs:
         uses: "ishworkh/container-image-artifact-download@v2.0.0"
         with:
           image: "image_${{ matrix.image }}_arm64"
+
+      - name: "Extract metadata (tags, labels) for ${{matrix.image}} image"
+        id: meta-sbs
+        uses: docker/metadata-action@v5
+        with:
+          images: "${{ matrix.image }}"
+          flavor: "suffix=-${{ matrix.arch }}"
+
 
       # Setup tmate session
       - name: Setup tmate session
