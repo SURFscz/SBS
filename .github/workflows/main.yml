@@ -197,8 +197,8 @@ jobs:
           path: "/tmp/sbs.tar.xz"
 
 
-  Docker_image:
-    name: Create image
+  Docker_build:
+    name: Build images
     if: >
       github.actor!='dependabot[bot]' &&
       github.event_name!='pull_request' &&
@@ -241,7 +241,7 @@ jobs:
           images: "${{ matrix.image }}"
           flavor: "suffix=-${{ matrix.arch }}"
 
-      - name: Build and push Docker SBS image
+      - name: Build arch-specific Docker image
         uses: docker/build-push-action@v5
         with:
           context: "."
@@ -259,6 +259,7 @@ jobs:
         uses: "ishworkh/container-image-artifact-upload@v2.0.0"
         with:
           image: "${{ steps.meta-sbs.outputs.tags }}"
+          artifact_name: "image_${{ matrix.image }}_${{ matrix.arch }}"
 
       # Setup tmate session
 #      - name: Setup tmate session
@@ -269,6 +270,59 @@ jobs:
 #        with:
 #          limit-access-to-actor: true
 #        timeout-minutes: 60
+
+  Docker_image:
+    name: Combine and push container images
+    if: >
+      github.actor!='dependabot[bot]' &&
+      github.event_name!='pull_request' &&
+      ( github.ref_type=='tag' || github.ref_type=='branch' )
+    matrix:
+      image: [ 'sbs', 'sbs-server', 'sbs-client' ]
+    needs:
+      - "Docker_build"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download amd64 image
+        uses: "ishworkh/container-image-artifact-download@v2.0.0"
+        with:
+          image: "image_${{ matrix.image }}_amd64"
+
+      - name: Download arm64 image
+        uses: "ishworkh/container-image-artifact-download@v2.0.0"
+        with:
+          image: "image_${{ matrix.image }}_arm64"
+
+      # Setup tmate session
+      - name: Setup tmate session
+        #env:
+        #  ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG}}
+        #if: ${{ failure() && env.ACTIONS_STEP_DEBUG == 'true' }}
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
+        timeout-minutes: 60
+
+
+      - name: Push SBS image
+        uses: docker/build-push-action@v5
+        with:
+        context: "."
+        file: "Dockerfile.sbs"
+        push: true
+        tags: "${{ needs.Docker_build.outputs.image }}"
+        load: false
+
+
 
   Create_release:
     name: Create release
