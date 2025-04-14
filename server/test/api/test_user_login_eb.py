@@ -102,6 +102,8 @@ class TestUserLoginEB(AbstractTest):
                               "issuer_id": "nope"})
         self.assertEqual(res["msg"], "interrupt")
         self.assertEqual(res["message"], UserCode.SECOND_FA_REQUIRED.name)
+        user_nonce = UserNonce.query.filter(UserNonce.nonce == res["nonce"]).one()
+        self.assertEqual("urn:sarah", user_nonce.user.uid)
 
     def test_authz_eb_service_aup(self):
         user = self.find_entity_by_name(User, user_sarah_name)
