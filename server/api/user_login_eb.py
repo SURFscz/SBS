@@ -166,7 +166,7 @@ def proxy_authz_eb():
     user_nonce = db.session.merge(user_nonce)
     db.session.commit()
 
-    logger.debug(f"Returning results {jsonify(results)} for user_nonce {user_nonce.id}")
+    logger.debug(f"Returning results {jsonify(results).json} for user_nonce {user_nonce.nonce}")
 
     return results, 200
 
@@ -213,7 +213,10 @@ def interrupt():
     logger = logging.getLogger("user_login_eb")
     logger.debug(f"interrupt called with {nonce}")
 
-    user_nonce = UserNonce.query.filter(UserNonce.nonce == nonce).one()
+    user_nonce = UserNonce.query.filter(UserNonce.nonce == nonce).first()
+    if user_nonce is None:
+        raise NotFound(f"No user_nonce found for nonce {nonce}")
+
     user = user_nonce.user
     if user:
         # Put the user in the session if there is none or a different user, and pass control back to the GUI
