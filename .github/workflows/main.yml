@@ -233,7 +233,6 @@ jobs:
         with:
           name: "sbs-build"
 
-      # The SBS (apache) image
       - name: "Extract metadata (tags, labels) for ${{matrix.image}} image"
         id: meta-sbs
         uses: docker/metadata-action@v5
@@ -259,7 +258,6 @@ jobs:
         uses: "ishworkh/container-image-artifact-upload@v2.0.0"
         with:
           image: "${{ steps.meta-sbs.outputs.tags }}"
-          artifact_name: "image_${{ matrix.image }}_${{ matrix.arch }}"
 
       # Setup tmate session
 #      - name: Setup tmate session
