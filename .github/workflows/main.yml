@@ -207,7 +207,7 @@ jobs:
       - "Client_build"
 
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         arch: [ 'amd64', 'arm64' ]
         image: [ 'sbs', 'sbs-server', 'sbs-client' ]
@@ -277,10 +277,13 @@ jobs:
       github.actor!='dependabot[bot]' &&
       github.event_name!='pull_request' &&
       ( github.ref_type=='tag' || github.ref_type=='branch' )
-    matrix:
-      image: [ 'sbs', 'sbs-server', 'sbs-client' ]
     needs:
       - "Docker_build"
+    strategy:
+      fail-fast: true
+      matrix:
+        image: [ 'sbs', 'sbs-server', 'sbs-client' ]
+    runs-on: "ubuntu-24.04"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
