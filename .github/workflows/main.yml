@@ -9,7 +9,7 @@ on:
   release:
     tags:
       - 'v*'
-    types: [published]
+    types: [ published ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -149,8 +149,6 @@ jobs:
           curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.22.19
           export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
           yarn -v
-#          nvm install "16.10.0"
-#          nvm use "16.10.0"
         env:
           VNM_DIR: ~/.nvm
 
@@ -268,16 +266,15 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-
       # Setup tmate session
-#      - name: Setup tmate session
-#        env:
-#          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG}}
-#        if: ${{ failure() && env.ACTIONS_STEP_DEBUG == 'true' }}
-#        uses: mxschmitt/action-tmate@v3
-#        with:
-#          limit-access-to-actor: true
-#        timeout-minutes: 60
+      - name: Setup tmate session
+        env:
+          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG}}
+        if: ${{ failure() && env.ACTIONS_STEP_DEBUG == 'true' }}
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
+        timeout-minutes: 60
 
   Docker_image:
     name: Merge images
@@ -337,14 +334,13 @@ jobs:
 
       # Setup tmate session
       - name: Setup tmate session
-        #env:
-        #  ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG}}
-        if: ${{ failure() }} # && env.ACTIONS_STEP_DEBUG == 'true' }}
+        env:
+          ACTIONS_STEP_DEBUG: ${{ secrets.ACTIONS_STEP_DEBUG}}
+        if: ${{ failure()  &&  env.ACTIONS_STEP_DEBUG == 'true' }}
         uses: mxschmitt/action-tmate@v3
         with:
           limit-access-to-actor: true
         timeout-minutes: 60
-
 
 
   Create_release:
