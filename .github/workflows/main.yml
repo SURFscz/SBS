@@ -241,6 +241,7 @@ jobs:
           pull: true
           push: false
           load: true
+          tags: "${{ matrix.image }}-${{ matrix.arch }}"
           platforms: "linux/${{ matrix.arch }}"
           cache-from: "type=gha"
           cache-to: "type=gha,mode=max"
