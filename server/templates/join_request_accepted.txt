@@ -11,5 +11,3 @@ Login to view the collaboration:
 {{ base_url }}/collaborations/{{ join_request.collaboration.id }}
 
 {% endblock %}
-
-

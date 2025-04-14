@@ -37,4 +37,3 @@ export default class EmptyCollaborations extends React.PureComponent {
     }
 
 }
-

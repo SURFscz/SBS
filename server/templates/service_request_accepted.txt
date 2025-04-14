@@ -11,5 +11,3 @@ Login to view the application:
 {{ base_url }}/services/{{ service.id }}
 
 {% endblock %}
-
-

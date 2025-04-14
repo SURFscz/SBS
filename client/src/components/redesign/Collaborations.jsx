@@ -419,4 +419,3 @@ export default class Collaborations extends React.PureComponent {
     }
 
 }
-

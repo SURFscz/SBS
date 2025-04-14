@@ -34,4 +34,3 @@ export function ProtectedRoute({currentUser, Component, ...res}) {
         return null;
     }
 }
-

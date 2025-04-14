@@ -8,5 +8,3 @@ administrator of the SRAM platform.
 
 
 {% endblock %}
-
-

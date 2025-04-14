@@ -130,4 +130,3 @@ export default class CollaborationRequests extends React.PureComponent {
     }
 
 }
-

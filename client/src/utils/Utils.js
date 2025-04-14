@@ -212,4 +212,3 @@ export const scrollToBottom = () => {
 export const serial = (tasks, fn) => {
     return tasks.reduce((promise, task, index) => promise.then(() => fn(task, index)), Promise.resolve(null))
 }
-

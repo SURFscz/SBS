@@ -14,5 +14,3 @@ This email is automatically sent and can be suppressed by changing the orphan_us
 of the configuration for environment {{ environment }}
 
 {% endblock %}
-
-

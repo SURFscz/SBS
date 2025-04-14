@@ -68,4 +68,3 @@ test("displayLastActivityDate", () => {
     res = displayLastActivityDate(todayEpoch - (relativeHour * 24 * 50));
     expect(res).toEqual("Afgelopen maand");
 });
-

@@ -66,4 +66,3 @@ OrganisationOnBoarding.propTypes = {
     tooltip: PropTypes.string,
     title: PropTypes.string,
 };
-

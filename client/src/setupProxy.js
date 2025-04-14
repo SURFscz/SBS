@@ -6,7 +6,7 @@ module.exports = function (app) {
     const logLevel = process.env.SBS_LOG_LEVEL || 'info';
 
     console.log("Proxy backend:", backend);
-    
+
     app.use(
         createProxyMiddleware({
             pathFilter: ['^/ws'],

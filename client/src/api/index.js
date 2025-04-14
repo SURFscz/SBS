@@ -1191,4 +1191,3 @@ export function sweep(service) {
 export function allStats() {
     return fetchJson("/api/system/statistics")
 }
-

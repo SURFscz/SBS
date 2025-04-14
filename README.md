@@ -12,7 +12,7 @@ SURF Research Access Management (SRAM) Platform
 -   Redis v6.x
 -   Yarn 1.x
 -   node 20+
--   libxmlsec1 (pre-1.3.0 see https://github.com/xmlsec/python-xmlsec/issues/254 and see 
+-   libxmlsec1 (pre-1.3.0 see https://github.com/xmlsec/python-xmlsec/issues/254 and see
     https://github.com/xmlsec/python-xmlsec/issues/254#issuecomment-1511135314 for a workaround)
 
 ### [Getting started](#getting-started)
@@ -141,10 +141,10 @@ open htmlcov/index.html
 ```
 
 Within PyCharm you must mark the `SBS/server/test` directory as Test sources root in order to execute `conftest.py`
-before tests are run. See: 
+before tests are run. See:
 https://intellij-support.jetbrains.com/hc/en-us/community/posts/12897247432338-PyCharm-unable-to-find-fixtures-in-conftest-py
 
-If you are getting errors in Pycharm when debugging, then have a look at: 
+If you are getting errors in Pycharm when debugging, then have a look at:
 https://youtrack.jetbrains.com/issue/PY-51495/PyCharm-debug-fails-upon-import-asyncio
 
 To run all JavaScript tests:
@@ -162,8 +162,8 @@ CI=true yarn test
 ```
 
 With the environment variable `CONFIG=config/test_config.yml` the test database is used. After you ran one or all of the
-tests the database is left with the test data seed. If you want to skip the login process when developing local then add 
-the following to your environment: 
+tests the database is left with the test data seed. If you want to skip the login process when developing local then add
+the following to your environment:
 ```bash
 OPEN_MAIL_IN_BROWSER=1;PROFILE=local;CONFIG=config/test_config.yml;ALLOW_MOCK_USER_API=1
 ```
@@ -191,7 +191,7 @@ To list the dependency tree use the following commands:
 source .venv/bin/activate
 cd server
 pipdeptree > pipdeptree.txt
-cat pipdeptree.txt 
+cat pipdeptree.txt
 ```
 
 ### [flask](#flask)
@@ -244,8 +244,8 @@ pip install mysqlclient --no-cache-dir
 
 ### [docker](#docker)
 
-For localhost deployment you can make use of **docker**. You can take existing **docker-compose.yml** as your starting 
-point. The docker-compose file makes use of environment variables that you can adjust via a local **.env** file. To 
+For localhost deployment you can make use of **docker**. You can take existing **docker-compose.yml** as your starting
+point. The docker-compose file makes use of environment variables that you can adjust via a local **.env** file. To
 create your own **.env** file, copy the provided **.env.example** file:
 
 ```bash

@@ -11,4 +11,3 @@ export function aupData(user, collaboration) {
         .every(service => isEmpty(service.accepted_user_policy) || (user.service_aups || []).some(serviceAup => serviceAup.service_id === service.id));
     return {organisation, services, hasServices, requiresOrganisationAup, allServiceAupsAgreedOn};
 }
-

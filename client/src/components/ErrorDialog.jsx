@@ -30,4 +30,3 @@ export default function ErrorDialog({isOpen = false, close}) {
     );
 
 }
-

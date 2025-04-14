@@ -10,5 +10,3 @@ Login to view the collaboration:
 {{ base_url }}/collaborations/{{ collaboration.id }}
 
 {% endblock %}
-
-

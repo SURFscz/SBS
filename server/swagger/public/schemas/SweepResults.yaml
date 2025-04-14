@@ -35,4 +35,3 @@ properties:
           type: array
           items:
             $ref: "/swagger/schemas/ScimGroup.yaml"
-

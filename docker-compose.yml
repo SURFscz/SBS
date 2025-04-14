@@ -67,4 +67,3 @@ services:
     volumes:
       - "data:/var/lib/mysql:Z"
       - "${PWD}/etc/init.sql:/docker-entrypoint-initdb.d/init.sql:ro"
-

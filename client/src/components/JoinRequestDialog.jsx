@@ -138,4 +138,3 @@ export default class JoinRequestDialog extends React.Component {
     }
 
 }
-

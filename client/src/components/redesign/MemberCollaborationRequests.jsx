@@ -157,4 +157,3 @@ export default class MemberCollaborationRequests extends React.PureComponent {
     }
 
 }
-

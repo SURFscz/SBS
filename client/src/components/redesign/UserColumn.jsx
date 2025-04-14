@@ -37,4 +37,3 @@ export default function UserColumn({entity, currentUser, gotoInvitation, hideEma
         </div>
     );
 }
-
