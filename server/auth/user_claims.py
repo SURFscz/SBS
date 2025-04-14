@@ -29,6 +29,7 @@ claim_attribute_mapping_value = [
     {"voperson_external_id": "eduperson_principal_name"},
     # EB / OIDC-NG claim
     {"eduperson_affiliation": "affiliation"},
+    {"eduperson_principal_name": "eduperson_principal_name"},
 ]
 
 
