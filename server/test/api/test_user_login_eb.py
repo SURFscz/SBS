@@ -106,7 +106,7 @@ class TestUserLoginEB(AbstractTest):
         user_nonce = UserNonce.query.filter(UserNonce.nonce == nonce).one()
         self.assertEqual("urn:sarah", user_nonce.user.uid)
 
-        # Check that user can't bypass the service AUP validation
+        # Check that user can't bypass the MFA enforcement
         error_res = self.post("/api/users/attributes_eb", response_status_code=403,
                               headers={"Authorization": self.app.app_config.engine_block.api_token,
                                        "Content-Type": "application/json"},
@@ -129,7 +129,7 @@ class TestUserLoginEB(AbstractTest):
                               "issuer_id": "https://idp.test"})
         self.assertEqual("interrupt", res["msg"])
         self.assertEqual(res["message"], UserCode.SERVICE_AUP_NOT_AGREED.name)
-        # Check that user can't bypass the service AUP validation
+        # Check that user can't bypass the service AUP enforcement
         nonce = res["nonce"]
         error_res = self.post("/api/users/attributes_eb", response_status_code=403,
                               headers={"Authorization": self.app.app_config.engine_block.api_token,
@@ -151,7 +151,7 @@ class TestUserLoginEB(AbstractTest):
         self.assertEqual("interrupt", res["msg"])
         self.assertEqual(res["message"], UserCode.AUP_NOT_AGREED.name)
 
-        # Check that user can't bypass the service AUP validation
+        # Check that user can't bypass the AUP enforcement
         nonce = res["nonce"]
         error_res = self.post("/api/users/attributes_eb", response_status_code=403,
                               headers={"Authorization": self.app.app_config.engine_block.api_token,
