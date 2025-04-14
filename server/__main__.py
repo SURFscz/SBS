@@ -110,7 +110,7 @@ config.base_url = config.base_url[:-1] if config.base_url.endswith("/") else con
 if hasattr(config, 'scim_schema_sram'):
     init_scim_schemas(config.scim_schema_sram)
 
-# Do only import the SCIM enndpoints after scim schema is initialized !
+# Do only import the SCIM endpoints after scim schema is initialized !
 from server.api.scim import scim_api
 
 test = os.environ.get("TESTING")
