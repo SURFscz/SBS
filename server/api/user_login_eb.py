@@ -21,11 +21,37 @@ from server.logger.context_logger import ctx_logger
 user_login_eb = Blueprint("user_login_eb", __name__, url_prefix="/api/users")
 
 
-def _do_proxy_authz_eb():
-    authorization_header = current_request.headers.get("Authorization")
-    eb_api_token = current_app.app_config.engine_block.api_token
-    if eb_api_token != authorization_header:
-        raise Forbidden("Invalid authorization_header")
+def user_attributes(service: Service, user: User):
+    # All is well, we collect all memberships and return authorized
+    user.successful_login()
+    user = db.session.merge(user)
+    memberships = collaboration_memberships_for_service(service, user)
+    connected_collaborations = [cm.collaboration for cm in memberships]
+    for coll in connected_collaborations:
+        coll.last_activity_date = tools.dt_now()
+        db.session.merge(coll)
+    all_memberships = user_memberships(user, connected_collaborations)
+    all_tags = co_tags(connected_collaborations)
+    all_attributes = all_memberships.union(all_tags)
+
+    log_user_login(PROXY_AUTHZ_EB, True, user, user.uid, service, service.entity_id, "AUTHORIZED")
+
+    return {
+        "msg": "authorized",
+        "attributes": {
+            "urn:mace:dir:attribute-def:eduPersonEntitlement": list(all_attributes),  # eduPersonEntitlement
+            "urn:mace:dir:attribute-def:uid": [user.uid],  # voPersonID
+            "urn:mace:dir:attribute-def:eduPersonPrincipalName": [user.uid],  # eduPersonPrincipalName
+            "urn:oid:1.3.6.1.4.1.24552.500.1.1.1.13": [k.ssh_value for k in user.ssh_keys]  # sshPublicKey
+        }
+    }
+
+
+# Endpoint for EB for initial authentication
+@user_login_eb.route("/authz_eb", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def proxy_authz_eb():
+    confirm_authorization()
 
     json_dict = current_request.get_json()
     collab_person_id = json_dict["user_id"]
@@ -133,47 +159,35 @@ def _do_proxy_authz_eb():
             "message": UserCode.AUP_NOT_AGREED.name
         }
     else:
-        # All is well, we collect all memberships and return authorized
-        user.successful_login()
-        user = db.session.merge(user)
-        memberships = collaboration_memberships_for_service(service, user)
-        connected_collaborations = [cm.collaboration for cm in memberships]
-        for coll in connected_collaborations:
-            coll.last_activity_date = tools.dt_now()
-            db.session.merge(coll)
-        all_memberships = user_memberships(user, connected_collaborations)
-        all_tags = co_tags(connected_collaborations)
-        all_attributes = all_memberships.union(all_tags)
+        attributes = user_attributes(service, user)
+        return attributes, 200
 
-        log_user_login(PROXY_AUTHZ_EB, True, user, user.uid, service, service_entity_id, "AUTHORIZED")
-
-        return {
-            "msg": "authorized",
-            "attributes": {
-                "urn:mace:dir:attribute-def:eduPersonEntitlement": list(all_attributes),  # eduPersonEntitlement
-                "urn:mace:dir:attribute-def:uid": [user.uid],  # voPersonID
-                "urn:mace:dir:attribute-def:eduPersonPrincipalName": [user.uid],  # eduPersonPrincipalName
-                "urn:oid:1.3.6.1.4.1.24552.500.1.1.1.13": [k.ssh_value for k in user.ssh_keys]  # sshPublicKey
-            }
-        }, 200
     # Once we got here, we need to store the UserNonce
     db.session.merge(user_nonce)
     db.session.commit()
     return results, 200
 
 
-# Endpoint for EB for initial authentication
-@user_login_eb.route("/authz_eb", methods=["POST"], strict_slashes=False)
-@json_endpoint
-def proxy_authz_eb():
-    return _do_proxy_authz_eb()
+def confirm_authorization():
+    authorization_header = current_request.headers.get("Authorization")
+    eb_api_token = current_app.app_config.engine_block.api_token
+    if eb_api_token != authorization_header:
+        raise Forbidden("Invalid authorization_header")
 
 
 # Endpoint for EB for attributes
 @user_login_eb.route("/attributes_eb", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def proxy_attributes_eb():
-    return _do_proxy_authz_eb()
+    confirm_authorization()
+
+    json_dict = current_request.get_json()
+    nonce = json_dict["nonce"]
+    user_nonce = UserNonce.query.filter(UserNonce.nonce == nonce).one()
+    service = user_nonce.service
+    user = user_nonce.user
+    attributes = user_attributes(service, user)
+    return attributes, 200
 
 
 @user_login_eb.route("/interrupt", methods=["GET"], strict_slashes=False)

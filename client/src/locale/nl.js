@@ -2102,7 +2102,7 @@ const nl = {
         },
         proxy: {
             userUid: "User UID",
-            userUidEB: "User Home Organisation UID",
+            userUidEB: "User URN (collab person ID",
             userSchacHome: "User Schac Home",
             userEppn: "User EPPN",
             serviceEntityId: "Service entity ID",

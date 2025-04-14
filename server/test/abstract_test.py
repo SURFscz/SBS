@@ -206,6 +206,13 @@ class AbstractTest(TestCase):
         db.session.commit()
 
     @staticmethod
+    def add_aup_to_user(user_uid):
+        user = User.query.filter(User.uid == user_uid).one()
+        aup = Aup(au_version="1", user=user)
+        db.session.merge(aup)
+        db.session.commit()
+
+    @staticmethod
     def remove_aup_from_user(user_uid):
         user = User.query.filter(User.uid == user_uid).one()
         Aup.query.filter(Aup.user_id == user.id).delete()
