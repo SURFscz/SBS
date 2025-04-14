@@ -102,8 +102,16 @@ class TestUserLoginEB(AbstractTest):
                               "issuer_id": "nope"})
         self.assertEqual(res["msg"], "interrupt")
         self.assertEqual(res["message"], UserCode.SECOND_FA_REQUIRED.name)
-        user_nonce = UserNonce.query.filter(UserNonce.nonce == res["nonce"]).one()
+        nonce = res["nonce"]
+        user_nonce = UserNonce.query.filter(UserNonce.nonce == nonce).one()
         self.assertEqual("urn:sarah", user_nonce.user.uid)
+
+        # Check that user can't bypass the service AUP validation
+        error_res = self.post("/api/users/attributes_eb", response_status_code=403,
+                              headers={"Authorization": self.app.app_config.engine_block.api_token,
+                                       "Content-Type": "application/json"},
+                              body={"nonce": nonce})
+        self.assertTrue("user_requires_sram_mfa(user, nope): True" in error_res["message"])
 
     def test_authz_eb_service_aup(self):
         user = self.find_entity_by_name(User, user_sarah_name)
@@ -121,6 +129,13 @@ class TestUserLoginEB(AbstractTest):
                               "issuer_id": "https://idp.test"})
         self.assertEqual("interrupt", res["msg"])
         self.assertEqual(res["message"], UserCode.SERVICE_AUP_NOT_AGREED.name)
+        # Check that user can't bypass the service AUP validation
+        nonce = res["nonce"]
+        error_res = self.post("/api/users/attributes_eb", response_status_code=403,
+                              headers={"Authorization": self.app.app_config.engine_block.api_token,
+                                       "Content-Type": "application/json"},
+                              body={"nonce": nonce})
+        self.assertTrue("has_agreed_with(user, Mail Services): False" in error_res["message"])
 
     def test_authz_eb_sbs_aup(self):
         self.remove_aup_from_user("urn:sarah")
@@ -136,13 +151,25 @@ class TestUserLoginEB(AbstractTest):
         self.assertEqual("interrupt", res["msg"])
         self.assertEqual(res["message"], UserCode.AUP_NOT_AGREED.name)
 
+        # Check that user can't bypass the service AUP validation
+        nonce = res["nonce"]
+        error_res = self.post("/api/users/attributes_eb", response_status_code=403,
+                              headers={"Authorization": self.app.app_config.engine_block.api_token,
+                                       "Content-Type": "application/json"},
+                              body={"nonce": nonce})
+        self.assertTrue("has_agreed_with_aup: False" in error_res["message"])
+
         # Now call attributes and ensure the aup is added
         self.add_aup_to_user("urn:sarah")
+        nonce = res["nonce"]
         res = self.post("/api/users/attributes_eb", response_status_code=200,
                         headers={"Authorization": self.app.app_config.engine_block.api_token,
                                  "Content-Type": "application/json"},
-                        body={"nonce": res["nonce"]})
+                        body={"nonce": nonce})
         self.assertEqual("authorized", res["msg"])
+        user_nonce = UserNonce.query.filter(UserNonce.nonce == nonce).first()
+        # UserNonce must be deleted after attributes are called
+        self.assertIsNone(user_nonce)
 
     def test_authz_eb_authorized(self):
         self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)

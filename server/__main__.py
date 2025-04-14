@@ -76,8 +76,7 @@ from server.cli import register_commands
 def _init_logging(log_to_stdout: bool):
     # https://github.com/python-pillow/Pillow/issues/5096
     logging.getLogger("PIL.PngImagePlugin").setLevel(logging.CRITICAL + 1)
-    # TODO remove this
-    if log_to_stdout or 1==1:
+    if log_to_stdout:
         logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
     else:
         formatter = logging.Formatter("SBS: %(asctime)s %(name)s %(levelname)s %(message)s")
@@ -111,8 +110,8 @@ test = os.environ.get("TESTING")
 profile = os.environ.get("PROFILE")
 
 is_local = profile is not None and "local" in profile
-is_stdout_log = profile is not None and "log_to_stdout" in profile
 is_test = test is not None and bool(int(test))
+is_stdout_log = config.logging.log_to_stdout
 
 _init_logging(is_test or is_local or is_stdout_log)
 

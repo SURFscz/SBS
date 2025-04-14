@@ -15,6 +15,9 @@ redis:
 
 socket_url: "127.0.0.1:8080/"
 
+logging:
+  log_to_stdout: True
+
 api_users:
 - name: "sysadmin"
   password: "secret"

@@ -197,11 +197,19 @@ def proxy_attributes_eb():
 
     service = user_nonce.service
     user = user_nonce.user
+    issuer_id = user_nonce.issuer_id
+    # Check AUP_NOT_AGREED, SERVICE_AUP_NOT_AGREED and SECOND_FA_REQUIRED to ensure User has not bypassed those
+    if not user.has_agreed_with_aup() or not has_agreed_with(user, service) or user_requires_sram_mfa(user, issuer_id):
+        raise Forbidden(f"User {user.uid} is not allowed for attributes. "
+                        f"has_agreed_with_aup: {user.has_agreed_with_aup()}, "
+                        f"has_agreed_with(user, {service.name}): {has_agreed_with(user, service)}, "
+                        f"user_requires_sram_mfa(user, {issuer_id}): {user_requires_sram_mfa(user, issuer_id)}")
+
     attributes = user_attributes(service, user)
 
     # Now delete the user_nonce
-    # db.session.delete(user_nonce)
-    # db.session.commit()
+    db.session.delete(user_nonce)
+    db.session.commit()
 
     return attributes, 200
 
