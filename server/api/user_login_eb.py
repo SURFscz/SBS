@@ -163,8 +163,11 @@ def proxy_authz_eb():
         return attributes, 200
 
     # Once we got here, we need to store the UserNonce
-    db.session.merge(user_nonce)
+    user_nonce = db.session.merge(user_nonce)
     db.session.commit()
+
+    logger.debug(f"Returning results {jsonify(results)} for user_nonce {user_nonce.id}")
+
     return results, 200
 
 
