@@ -196,7 +196,7 @@ jobs:
           name: "sbs-build"
           path: "/tmp/sbs.tar.xz"
 
-
+# see https://docs.docker.com/build/ci/github-actions/multi-platform/
   Docker_build:
     name: Build images
     if: >
@@ -218,15 +218,22 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Fix docker setup
-        run: |
-          cat /etc/docker/daemon.json || true
-          echo '{"features": { "containerd-snapshotter": true }}' | sudo tee  /etc/docker/daemon.json
-          sudo systemctl restart docker
-          docker info -f '{{ .DriverStatus }}'
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: "ghcr.io"
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: "Extract metadata (tags, labels) for ${{matrix.image}} image"
+        id: meta-sbs
+        uses: docker/metadata-action@v5
+        with:
+          images: "${{ matrix.image }}"
+          flavor: "suffix=-${{ matrix.arch }}"
 
       - name: Fetch build
         uses: actions/download-artifact@v4
@@ -234,22 +241,34 @@ jobs:
           name: "sbs-build"
 
       - name: Build arch-specific Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: "."
           file: "Dockerfile.${{ matrix.image }}"
-          pull: true
-          push: false
-          load: true
-          tags: "${{ matrix.image }}-${{ matrix.arch }}"
           platforms: "linux/${{ matrix.arch }}"
+          pull: true
+          push: true
+          load: true
+          tags: ${{ steps.meta-sbs.outputs.tags }}
+          labels: ${{ steps.meta-sbs.outputs.labels }}
+          outputs: "type=image,push-by-digest=true,name-canonical=true,push=true"
           cache-from: "type=gha"
           cache-to: "type=gha,mode=max"
 
-      - name: Upload SBS image
-        uses: "ishworkh/container-image-artifact-upload@v2.0.0"
+      - name: Export digest
+        run: |
+          mkdir -p ${{ runner.temp }}/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "${{ runner.temp }}/digests/${digest#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
         with:
-          image: "${{ matrix.image }}-${{ matrix.arch }}"
+          name: digests-${{ matrix.image }}-${{ matrix.arch }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
 
       # Setup tmate session
 #      - name: Setup tmate session
@@ -278,13 +297,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Log in to the Container registry
-        uses: docker/login-action@v3
-        with:
-          registry: "ghcr.io"
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Download amd64 image
         uses: "ishworkh/container-image-artifact-download@v2.0.0"
         with:
@@ -295,12 +307,6 @@ jobs:
         with:
           image: "${{ matrix.image }}-arm64"
 
-      - name: "Extract metadata (tags, labels) for ${{matrix.image}} image"
-        id: meta-sbs
-        uses: docker/metadata-action@v5
-        with:
-          images: "${{ matrix.image }}"
-          flavor: "suffix=-${{ matrix.arch }}"
 
 
       # Setup tmate session
