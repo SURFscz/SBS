@@ -288,12 +288,12 @@ jobs:
       - name: Download amd64 image
         uses: "ishworkh/container-image-artifact-download@v2.0.0"
         with:
-          image: "image_${{ matrix.image }}_amd64"
+          image: "${{ matrix.image }}-amd64"
 
       - name: Download arm64 image
         uses: "ishworkh/container-image-artifact-download@v2.0.0"
         with:
-          image: "image_${{ matrix.image }}_arm64"
+          image: "${{ matrix.image }}-arm64"
 
       - name: "Extract metadata (tags, labels) for ${{matrix.image}} image"
         id: meta-sbs
