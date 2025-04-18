@@ -994,6 +994,12 @@ export function proxyAuthzEngineBlock(userUrn, userEppn, serviceEntityId, idpEnt
     return postPutJson("/api/users/authz_eb", body, "post", false, {"Authorization": "secret"});
 }
 
+export function engineBlockAttributes(nonce) {
+    const body = {nonce: nonce};
+    return postPutJson("/api/users/attributes_eb", body, "post", false, {"Authorization": "secret"});
+}
+
+
 export function proxyAuthzEduTeams(userUid, userSchacHome, userEppn, serviceEntityId, idpEntityId) {
     const body = {
         user_id: userUid.trim(),

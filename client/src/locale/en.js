@@ -2120,6 +2120,7 @@ const en = {
             redirect: "Redirect",
             hi: "Hi there, this is the mock EB",
             stop: "Stop EB interrupt flow",
+            ebAttributes: "EB Attributes",
             stopped: "Interrupt flow is stopped. Refresh will make you platform admin again.",
             results: "Results",
             errors: "Errors",
