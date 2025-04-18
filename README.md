@@ -66,6 +66,7 @@ mail:
 First install all dependencies with:
 
 ```bash
+nvm use
 yarn install
 ```
 
