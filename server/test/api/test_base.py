@@ -1,7 +1,6 @@
 import json
 import os
 from pathlib import Path
-
 from unittest import mock
 
 import MySQLdb
@@ -95,6 +94,7 @@ class TestBase(AbstractTest):
         self.assertEqual(self.app.app_config.base_url, res["base_url"])
         self.assertEqual(False, res["local"])
         self.assertTrue(len(res["organisation_categories"]) > 0)
+        self.assertEqual("http://localhost:9002", res["manage_base_url"])
 
     def test_info(self):
         git_info = self.client.get("/info").json["git"]

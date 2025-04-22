@@ -91,7 +91,7 @@ mail:
 
 manage:
   enabled: True
-  base_url: "http://localhost:9002"
+  base_url: "http://localhost:9002/"
   user: "sram"
   password: "secret"
   verify_peer: False
