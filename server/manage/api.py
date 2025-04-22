@@ -12,7 +12,7 @@ from server.tools import dt_now
 
 def _parse_manage_config(manage_conf):
     base_url = manage_conf.base_url[:-1] if manage_conf.base_url.endswith("/") else manage_conf.base_url
-    return base_url, HTTPBasicAuth(manage_conf.user, manage_conf.password)
+    return base_url, HTTPBasicAuth(manage_conf.user, manage_conf.password), manage_conf.verify_peer
 
 
 def service_applies_for_external_sync(service: Service):
@@ -29,7 +29,7 @@ def sync_external_service(app, service: Service):
     if not app.app_config.manage.enabled or not service_applies_for_external_sync(service):
         return None
     with app.app_context():
-        manage_base_url, manage_basic_auth = _parse_manage_config(app.app_config.manage)
+        manage_base_url, manage_basic_auth, verify_peer = _parse_manage_config(app.app_config.manage)
 
         service_template = create_service_template(service)
         request_method = requests.put if service.export_external_identifier else requests.post
@@ -41,6 +41,7 @@ def sync_external_service(app, service: Service):
                                  json=service_template,
                                  headers={"Accept": "application/json", "Content-Type": "application/json"},
                                  auth=manage_basic_auth,
+                                 verify=verify_peer,
                                  timeout=10)
             service_json = res.json()
             if str(res.status_code).startswith("2"):
@@ -66,11 +67,11 @@ def delete_external_service(app, service_export_external_identifier: str):
     if not app.app_config.manage.enabled or not service_export_external_identifier:
         return None
     with app.app_context():
-        manage_base_url, manage_basic_auth = _parse_manage_config(app.app_config.manage)
+        manage_base_url, manage_basic_auth, verify_peer = _parse_manage_config(app.app_config.manage)
         url = f"{manage_base_url}/manage/api/internal/metadata/sram/{service_export_external_identifier}"
         logger = logging.getLogger("manage")
         try:
-            res = requests.delete(url, auth=manage_basic_auth, timeout=10)
+            res = requests.delete(url, auth=manage_basic_auth, timeout=10, verify=verify_peer)
             if str(res.status_code).startswith("2"):
                 logger.debug(f"Deleted service {service_export_external_identifier} to {url}")
             else:
