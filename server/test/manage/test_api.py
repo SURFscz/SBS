@@ -11,11 +11,15 @@ from server.tools import read_file
 
 class TestApi(AbstractTest):
 
+    def _resolve_manage_base_url(self):
+        manage_base_url = self.app.app_config.manage.base_url
+        return manage_base_url[:-1] if manage_base_url.endswith("/") else manage_base_url
+
     @responses.activate
     def test_save_oidc_service_happy_flow(self):
         service = self.find_entity_by_name(Service, service_storage_name)
         with responses.RequestsMock(assert_all_requests_are_fired=True) as res_mock:
-            manage_base_url = self.app.app_config.manage.base_url
+            manage_base_url = self._resolve_manage_base_url()
             url = f"{manage_base_url}/manage/api/internal/metadata"
             external_identifier = str(uuid.uuid4())
             res_mock.add(responses.POST, url, json={"id": external_identifier, "version": 0}, status=200)
@@ -31,7 +35,7 @@ class TestApi(AbstractTest):
         service = self.find_entity_by_name(Service, service_storage_name)
         self.login("urn:john")
         with responses.RequestsMock(assert_all_requests_are_fired=True) as res_mock:
-            manage_base_url = self.app.app_config.manage.base_url
+            manage_base_url = self._resolve_manage_base_url()
             url = f"{manage_base_url}/manage/api/internal/metadata"
             res_mock.add(responses.POST, url, json={"error": "BadRequest"}, status=400)
             updated_service = sync_external_service(self.app, service)
@@ -56,7 +60,7 @@ class TestApi(AbstractTest):
         with responses.RequestsMock(assert_all_requests_are_fired=True) as res_mock:
             res_mock.add(responses.GET, service.saml_metadata_url, body=xml, status=200, content_type="text/xml")
 
-            manage_base_url = self.app.app_config.manage.base_url
+            manage_base_url = self._resolve_manage_base_url()
             url = f"{manage_base_url}/manage/api/internal/metadata"
             external_identifier = str(uuid.uuid4())
             #  This will result in a PUT
@@ -84,7 +88,7 @@ class TestApi(AbstractTest):
     @responses.activate
     def test_delete_saml_service(self):
         with responses.RequestsMock(assert_all_requests_are_fired=True) as res_mock:
-            manage_base_url = self.app.app_config.manage.base_url
+            manage_base_url = self._resolve_manage_base_url()
             external_identifier = str(uuid.uuid4())
             url = f"{manage_base_url}/manage/api/internal/metadata/sram/{external_identifier}"
             res_mock.add(responses.DELETE, url, json={}, status=201)
@@ -94,7 +98,7 @@ class TestApi(AbstractTest):
     @responses.activate
     def test_delete_saml_service_404(self):
         with responses.RequestsMock(assert_all_requests_are_fired=True) as res_mock:
-            manage_base_url = self.app.app_config.manage.base_url
+            manage_base_url = self._resolve_manage_base_url()
             external_identifier = str(uuid.uuid4())
             url = f"{manage_base_url}/manage/api/internal/metadata/sram/{external_identifier}"
             res_mock.add(responses.DELETE, url, json={"message": "NotFound"}, status=404)
@@ -118,7 +122,7 @@ class TestApi(AbstractTest):
         service = self.find_entity_by_name(Service, service_storage_name)
         self.login("urn:john")
         with responses.RequestsMock(assert_all_requests_are_fired=True) as res_mock:
-            manage_base_url = self.app.app_config.manage.base_url
+            manage_base_url = self._resolve_manage_base_url()
             url = f"{manage_base_url}/manage/api/internal/metadata"
             res_mock.add(responses.POST, url, json={"validations": "No data is changed"}, status=400)
             updated_service = sync_external_service(self.app, service)

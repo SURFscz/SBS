@@ -756,6 +756,7 @@ class TestService(AbstractTest):
         service = self.find_entity_by_name(Service, service_storage_name)
         with responses.RequestsMock(assert_all_requests_are_fired=True) as res_mock:
             manage_base_url = self.app.app_config.manage.base_url
+            manage_base_url = manage_base_url[:-1] if manage_base_url.endswith("/") else manage_base_url
             url = f"{manage_base_url}/manage/api/internal/metadata"
             external_identifier = str(uuid.uuid4())
             res_mock.add(responses.POST, url, json={"id": external_identifier, "version": 0}, status=200)
