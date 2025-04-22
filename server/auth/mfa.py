@@ -31,8 +31,9 @@ def _get_algorithm(jwk):
 
 
 def _refresh_public_keys():
-    jwks_endpoint = current_app.app_config.oidc.jwks_endpoint
-    jwks = requests.get(jwks_endpoint).json()
+    oidc_config = current_app.app_config.oidc
+    jwks_endpoint = oidc_config.jwks_endpoint
+    jwks = requests.get(jwks_endpoint, verify=oidc_config.verify_peer).json()
 
     global public_keys
     public_keys = {jwk["kid"]: _get_algorithm(jwk).from_jwk(json.dumps(jwk)) for jwk in jwks["keys"]}
