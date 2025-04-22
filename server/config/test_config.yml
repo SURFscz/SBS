@@ -36,6 +36,7 @@ oidc:
   client_id: sram
   client_secret: secret
   audience: https://proxy.acc.sram.eduteams.org
+  verify_peer: True
   authorization_endpoint: http://localhost:9001/authorize
   token_endpoint: http://localhost:9001/token
   userinfo_endpoint: http://localhost:9001/userinfo

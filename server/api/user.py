@@ -311,7 +311,8 @@ def resume_session():
         "Accept": "application/json, application/json;charset=UTF-8"
     }
     response = requests.post(oidc_config.token_endpoint, data=urllib.parse.urlencode(payload),
-                             headers=headers, auth=(oidc_config.client_id, oidc_config.client_secret))
+                             verify=oidc_config.verify_peer, headers=headers,
+                             auth=(oidc_config.client_id, oidc_config.client_secret))
     if response.status_code != 200:
         return _redirect_with_error(logger, f"Server error: Token endpoint error (http {response.status_code}")
 
@@ -323,7 +324,7 @@ def resume_session():
         "Authorization": f"Bearer {access_token}"
     }
 
-    response = requests.get(oidc_config.userinfo_endpoint, headers=headers)
+    response = requests.get(oidc_config.userinfo_endpoint, headers=headers, verify=oidc_config.verify_peer)
     if response.status_code != 200:
         return _redirect_with_error(logger, f"Server error: User info endpoint error (http {response.status_code}")
 
