@@ -451,6 +451,9 @@ def me():
 
         user = {**jsonify(user_from_db).json, **user_from_session, **csrf_token}
 
+        # Corner case where it is possible that the AUP has changed during the session of this user
+        user["user_accepted_aup"] = user_from_db.has_agreed_with_aup()
+
         _add_reference_data(user, user_from_db)
         db.session.merge(user_from_db)
         return user, 200
