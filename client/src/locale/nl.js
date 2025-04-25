@@ -2708,7 +2708,7 @@ const nl = {
             settings: "Organisatieconfiguratie"
         },
         units: {
-            info: "Maak units om afdelingen of projecten binnen je organisatie te organiseren. Managers kunnen worden toegewezen aan specifieke eenheden om hun activiteiten te beheren.",
+            info: "Maak units om afdelingen of projecten binnen je organisatie te organiseren. Managers kunnen worden toegewezen aan specifieke units om hun activiteiten te beheren.",
         },
         labels: {
             info: "Maak labels om algemene eigenschappen voor samenwerkingen binnen je organisatie te definiëren. Labels worden gedeeld met de gekoppelde applicaties en helpen bij het beheren en organiseren van je leden.",
