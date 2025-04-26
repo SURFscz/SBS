@@ -1876,7 +1876,8 @@ const nl = {
             "service_invitations": "Applicatieuitnodiging",
             "service_memberships": "Applicatielidmaatschap",
             "tags": "Label",
-            "service_tokens": "Applicatietokens (allemaal)"
+            "service_tokens": "Applicatietokens (allemaal)",
+            "user_nonces": "User nonces"
         }
     },
     serviceRequest: {

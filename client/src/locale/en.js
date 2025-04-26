@@ -1876,7 +1876,8 @@ const en = {
             "service_invitations": "Application invitation",
             "service_memberships": "Application membership",
             "tags": "Label",
-            "service_tokens": "Application tokens (any)"
+            "service_tokens": "Application tokens (any)",
+            "user_nonces": "User nonces"
         }
     },
     serviceRequest: {
