@@ -9,7 +9,6 @@ import "./OrganisationDetail.scss";
 import I18n from "../locale/I18n";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import Tabs from "../components/Tabs";
-import {ReactComponent as LeaveIcon} from "../icons/safety-exit-door-left.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import OrganisationAdmins from "../components/redesign/OrganisationAdmins";
 import {AppStore} from "../stores/AppStore";
@@ -117,7 +116,6 @@ class OrganisationDetail extends React.Component {
                             {path: "/", value: I18n.t("breadcrumb.home")},
                             {value: I18n.t("breadcrumb.organisation", {name: json.name})}
                         ];
-                        s.actions = this.getHeaderActions(user, json, adminOfOrganisation)
                         s.objectRole = actionMenuUserRole(user, json, null, null, true)
                     });
                     const firstTime = getParameterByName("first", window.location.search) === "true";
@@ -311,22 +309,17 @@ class OrganisationDetail extends React.Component {
         });
     };
 
-    getHeaderActions = (user, organisation, adminOfOrganisation) => {
+    getActions = (user, organisation, adminOfOrganisation) => {
         const actions = [];
         const isMember = organisation.organisation_memberships.find(m => m.user.id === user.id);
         const lastAdmin = adminOfOrganisation && organisation.organisation_memberships.filter(m => m.role === "admin").length < 2;
         if (isMember && (!lastAdmin || isMember.role !== "admin")) {
             actions.push({
-                svg: LeaveIcon,
+                buttonType: ButtonType.Secondary,
                 name: I18n.t("models.organisations.leave"),
                 perform: this.deleteMe
             });
         }
-        return actions;
-    }
-
-    getActions = (user, organisation) => {
-        const actions = [];
         if (!user.admin) {
             const queryParam = `name=${encodeURIComponent(organisation.name)}&back=${encodeURIComponent(window.location.pathname)}`;
             actions.push({
@@ -377,7 +370,7 @@ class OrganisationDetail extends React.Component {
                             breadcrumbName={I18n.t("breadcrumb.organisation", {name: organisation.name})}
                             firstTime={user.admin ? this.onBoarding : undefined}
                             name={organisation.name}
-                            actions={this.getActions(user, organisation)}>
+                            actions={this.getActions(user, organisation, adminOfOrganisation)}>
                     {organisation.accepted_user_policy &&
                         <a target="_blank" rel="noopener noreferrer" href={organisation.accepted_user_policy}>
                             {I18n.t("aup.title")}
