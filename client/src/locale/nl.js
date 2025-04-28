@@ -2026,6 +2026,11 @@ const nl = {
             titleZeroState: "Er zijn geen gebruikers die een aanvraag hebben gedaan.",
             reset: "Reset"
         },
+        rateLimitedUsers: {
+            title: "The following users are rate-limited.",
+            titleZeroState: "There are no users who are rate-limited.",
+            reset: "Re-activate"
+        },
         userlogins: {
             loginType: "Type",
             total: "Logins",
@@ -2301,7 +2306,7 @@ const nl = {
             resetRequest: "Reset je verificatiecode",
             resetToken: "Gebruik een resetcode",
             rateLimited: "Inloggen geblokkeerd",
-            rateLimitedInfo: "Je hebt de TOTP-verificatie te vaak geprobeerd en daarom is je TOTP uitgeschakeld. Gebruik een resetcode om je TOTP te resetten. Neem contact op sram-support@surf.nl voor een resetcode als je deze niet ontvangen hebt of vraag een nieuwe resetcode aan.",
+            rateLimitedInfo: "Je account is geblokkeerd. Neem contact op met <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> om activatie te verzoeken.",
             rateLimitedResetRequest: "Reset je verificatiecode",
             rateLimitedResetToken: "Gebruik een resetcode",
         },

@@ -2026,6 +2026,11 @@ const en = {
             titleZeroState: "There are no users who have requested a TOTP reset.",
             reset: "Reset"
         },
+        rateLimitedUsers: {
+            title: "The following users are rate-limited.",
+            titleZeroState: "There are no users who are rate-limited.",
+            reset: "Re-activate"
+        },
         userlogins: {
             loginType: "Type",
             total: "Logins",
@@ -2301,7 +2306,7 @@ const en = {
             resetRequest: "Reset your verfication code",
             resetToken: "Use a reset code",
             rateLimited: "Verification code blocked",
-            rateLimitedInfo: "You have entered an invalid verification code too often, so it has been blocked. Please request a reset code so you can log in again.",
+            rateLimitedInfo: "Your account has been blocked. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> to request activation.",
             rateLimitedResetRequest: "Request a reset code",
             rateLimitedResetToken: "Use a reset code",
         },

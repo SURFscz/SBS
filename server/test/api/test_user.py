@@ -73,6 +73,18 @@ class TestUser(AbstractTest):
         users = self.get("/api/users/suspended", with_basic_auth=False)
         self.assertEqual(2, len(users))
 
+    def test_rate_limited(self):
+        self.login("urn:john")
+        users = self.get("/api/users/rate_limited", with_basic_auth=False)
+        self.assertEqual(1, len(users))
+
+    def test_reset_rate_limited(self):
+        hannibal = User.query.filter(User.uid == "urn:hannibal").one()
+        self.login("urn:john")
+        self.put("/api/users/reset_rate_limited", body={"user_id": hannibal.id}, with_basic_auth=False)
+        users = self.get("/api/users/rate_limited", with_basic_auth=False)
+        self.assertEqual(0, len(users))
+
     def test_reset_totp_requested(self):
         self.login("urn:john")
         users = self.get("/api/users/reset_totp_requested", with_basic_auth=False)

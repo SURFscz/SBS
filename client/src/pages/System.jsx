@@ -18,6 +18,8 @@ import {
     expireCollaborationMemberships,
     expireCollaborations,
     getResetTOTPRequestedUsers,
+    getRateLimitedUsers,
+    resetRateLimitedUser,
     getSuspendedUsers,
     health,
     invitationExpirations,
@@ -117,6 +119,7 @@ class System extends React.Component {
             compositionData: {},
             currentlySuspendedUsers: [],
             resetTOTPRequestedUsers: [],
+            rateLimitedUsers: []
         }
     }
 
@@ -461,9 +464,18 @@ class System extends React.Component {
             getResetTOTPRequestedUsers().then(res => this.setState({resetTOTPRequestedUsers: res, busy: false}))
         })
     }
-    getSuspendedUsersTab = (currentlySuspendedUsers, resetTOTPRequestedUsers) => {
+
+    doResetRateLimitUser = user => {
+        this.setState({busy: true});
+        resetRateLimitedUser(user.id).then(() => {
+            getRateLimitedUsers().then(res => this.setState({rateLimitedUsers: res, busy: false}))
+        })
+    }
+
+    getSuspendedUsersTab = (currentlySuspendedUsers, resetTOTPRequestedUsers, rateLimitedUsers) => {
         const zeroState = currentlySuspendedUsers.length === 0;
-        return (<div key="suspended-users"
+        return (
+            <div key="suspended-users"
                      name="suspended-users"
                      label={I18n.t("home.tabs.suspendedUsers")}>
             <div className="mod-system  sds--table">
@@ -512,6 +524,31 @@ class System extends React.Component {
                                 <td>
                                     {<Button txt={I18n.t("system.resetTOTPRequestedUsers.reset")}
                                              onClick={() => this.resetUser(user)}/>}
+                                </td>
+                            </tr>)}
+                            </tbody>
+                        </table>}
+                </section>
+                <section className={"info-block-container"}>
+                    <p className={"title"}>{I18n.t(`system.rateLimitedUsers.${rateLimitedUsers.length === 0 ? "titleZeroState" : "title"}`)}</p>
+                    {rateLimitedUsers.length !== 0 &&
+                        <table className={"suspended-users"}>
+                            <thead>
+                            <tr>
+                                <th className={"name"}>{I18n.t("system.suspendedUsers.name")}</th>
+                                <th className={"email"}>{I18n.t("system.suspendedUsers.email")}</th>
+                                <th className={"lastLogin"}>{I18n.t("system.suspendedUsers.lastLogin")}</th>
+                                <th className={"actions"}></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {rateLimitedUsers.map(user => <tr key={user.id}>
+                                <td>{user.name}</td>
+                                <td>{user.email}</td>
+                                <td>{user.last_login_date ? dateFromEpoch(user.last_login_date) : "-"}</td>
+                                <td>
+                                    {<Button txt={I18n.t("system.rateLimitedUsers.reset")}
+                                             onClick={() => this.doResetRateLimitUser(user)}/>}
                                 </td>
                             </tr>)}
                             </tbody>
@@ -1418,10 +1455,11 @@ class System extends React.Component {
         } else if (name === "composition") {
             composition().then(res => this.setState({compositionData: res, busy: false}));
         } else if (name === "suspended-users") {
-            Promise.all([getSuspendedUsers(), getResetTOTPRequestedUsers()])
+            Promise.all([getSuspendedUsers(), getResetTOTPRequestedUsers(), getRateLimitedUsers()])
                 .then(res => this.setState({
                     currentlySuspendedUsers: res[0],
                     resetTOTPRequestedUsers: res[1],
+                    rateLimitedUsers: res[2],
                     busy: false
                 }));
         } else if (name === "userlogins") {
@@ -1468,6 +1506,7 @@ class System extends React.Component {
             plscData,
             compositionData,
             currentlySuspendedUsers,
+            rateLimitedUsers,
             resetTOTPRequestedUsers,
             userLoginStats,
             deletedUsers,
@@ -1489,7 +1528,7 @@ class System extends React.Component {
             this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables, serverQuery),
             this.getPlscTab(plscData, plscView),
             config.seed_allowed ? this.getCompositionTab(compositionData) : null,
-            this.getSuspendedUsersTab(currentlySuspendedUsers, resetTOTPRequestedUsers),
+            this.getSuspendedUsersTab(currentlySuspendedUsers, resetTOTPRequestedUsers, rateLimitedUsers),
             this.getUserLoginTab(userLoginStats),
             this.getScimTab(),
             this.getStatsTab(),

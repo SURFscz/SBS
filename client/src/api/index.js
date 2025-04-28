@@ -100,11 +100,11 @@ export function authorizationUrl(state) {
 }
 
 export function me(config) {
-    if (config.local && 1 == 1) {
+    if (config.local && 1 != 1) {
         let sub = "urn:service_admin";
         sub = "urn:john";
-        // sub = "urn:sarah";
-        const second_factor_confirmed = true;
+        // sub = "urn:hannibal ";
+        const second_factor_confirmed = false;
         const rate_limited = false;
         // const second_factor_confirmed = false;
         // sub = "urn:unknown";
@@ -909,6 +909,14 @@ export function suspendUsers() {
 
 export function getSuspendedUsers() {
     return fetchJson("/api/users/suspended");
+}
+
+export function getRateLimitedUsers() {
+    return fetchJson("/api/users/rate_limited");
+}
+
+export function resetRateLimitedUser(userId) {
+    return postPutJson("/api/users/reset_rate_limited", {user_id: userId}, "PUT");
 }
 
 export function getResetTOTPRequestedUsers() {

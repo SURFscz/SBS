@@ -246,7 +246,8 @@ def interrupt():
         "entity_id": service.entity_id if service else user_nonce.requested_service_entity_id,
         "issuer_id": user_nonce.issuer_id,
         "user_id": user.uid if user else user_nonce.requested_user_id,
-        "error_status": error_status
+        "error_status": error_status,
+        "eb_toggle": True
     }
 
     client_base_url = current_app.app_config.base_url

@@ -490,6 +490,27 @@ def suspended():
     return User.query.filter(User.suspended.is_(True)).all(), 200
 
 
+@user_api.route("/rate_limited", strict_slashes=False)
+@json_endpoint
+def rate_limited():
+    confirm_write_access()
+    return User.query.filter(User.rate_limited.is_(True)).all(), 200
+
+
+@user_api.route("/reset_rate_limited", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def reset_rate_limited():
+    body = current_request.get_json()
+    confirm_write_access()
+
+    user = db.session.get(User, int(body["user_id"]))
+    user.second_factor_auth = None
+    user.mfa_reset_token = None
+    user.rate_limited = False
+    db.session.merge(user)
+    return {}, 201
+
+
 @user_api.route("/reset_totp_requested", strict_slashes=False)
 @json_endpoint
 def reset_totp_requested():
@@ -510,7 +531,7 @@ def activate():
 
     user = db.session.get(User, int(body["user_id"]))
     user.successful_login()
-    user = db.session.merge(user)
+    db.session.merge(user)
     return {}, 201
 
 
