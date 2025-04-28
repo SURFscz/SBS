@@ -15,6 +15,15 @@
                 {% for cr in collaboration_requests %}
                     <li>
                         <a href="{{ base_url }}/organisations/{{ cr.organisation_id }}/collaboration_requests">{{ cr.name }} requested by {{ cr.requester.email }}</a>
+                        {% if cr.units and cr.units|length -%}
+                            <br/>
+                            <span>Units:</span>
+                            <ul>
+                            {% for unit in cr.units %}
+                                <li>{{ unit.name }}</li>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>
