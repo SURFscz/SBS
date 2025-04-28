@@ -2692,10 +2692,10 @@ const nl = {
     collaborationInvitations: {
         inviteWithLink: "Uitnodigen met link",
         inviteWithLinkToggle: "Of nodig gebruikers uit met een link",
-        inviteWithLinkInfo: "Deel de link waarmee lidmaatschap aangevraagdkan worden. Je kunt deze aanvragen goed- of afkeuren.",
+        inviteWithLinkInfo: "Deel de link waarmee lidmaatschap aangevraagd kan worden. Je kunt deze aanvragen goed- of afkeuren.",
         inviteWithLinkCopy: "Kopiëer koppeling",
         inviteWithEmail: "Uitnodigen via e-mail",
-        inviteWithEmailInfo: "Verstuur een uitnodiging naar éém of meerder e-mailadressen. Met de link in de e-mail kan een gebruiker direct lid worden.",
+        inviteWithEmailInfo: "Verstuur een uitnodiging naar één of meerdere e-mailadressen. Met de link in de e-mail kan een gebruiker direct lid worden.",
     },
     organisationDetails: {
         details: "Organisatiedetails",
