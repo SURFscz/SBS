@@ -30,6 +30,13 @@ def membership_allowed(membership: OrganisationMembership, co_units) -> bool:
     return bool([identifier for identifier in manager_unit_identifiers if identifier in co_units])
 
 
+def membership_preferred_for_email(membership: OrganisationMembership, co_units) -> bool:
+    if membership.role == "admin" or not membership.units:
+        return False
+    manager_unit_identifiers = [unit.id for unit in membership.units]
+    return bool([identifier for identifier in manager_unit_identifiers if identifier in co_units])
+
+
 def current_member_unit_allowed(organisation_id, units):
     user_id = current_user_id()
     membership = OrganisationMembership.query \
@@ -76,7 +83,12 @@ def request_collaboration():
     co_units = [int(unit["id"]) for unit in data.get("units", [])]
 
     allowed_members = [m for m in organisation.organisation_memberships if membership_allowed(m, co_units)]
-    recipients = [member.user.email for member in allowed_members]
+    recipients = []
+    # We only send mails to the unit managers
+    if co_units:
+        recipients = [m.user.email for m in allowed_members if membership_preferred_for_email(m, co_units)]
+    if not co_units or not recipients:
+        recipients = [m.user.email for m in allowed_members]
 
     emit_socket(f"organisation_{organisation.id}", include_current_user_id=True)
 

@@ -1,8 +1,8 @@
 from server.db.db import db
-from server.db.domain import Organisation, CollaborationRequest, CollaborationMembership, Collaboration
+from server.db.domain import Organisation, CollaborationRequest, CollaborationMembership, Collaboration, Unit
 from server.test.abstract_test import AbstractTest
 from server.test.seed import schac_home_organisation_example, unifra_name, collaboration_request_name, unihard_name, \
-    schac_home_organisation_unihar
+    schac_home_organisation_unihar, unihard_unit_research_name, unifra_unit_cloud_name
 
 
 class TestCollaborationRequest(AbstractTest):
@@ -17,10 +17,14 @@ class TestCollaborationRequest(AbstractTest):
     def test_request_collaboration(self):
         organisation = self.find_entity_by_name(Organisation, unifra_name)
         self.login("urn:roger", schac_home_organisation_example)
+
+        unit = self.find_entity_by_name(Unit, unifra_unit_cloud_name)
+
         data = {
             "name": "New Collaboration",
             "short_name": "new_collaboration_short",
-            "organisation_id": organisation.id
+            "organisation_id": organisation.id,
+            "units": [{"id": unit.id, "name": unit.name}]
         }
         with self.app.mail.record_messages() as outbox:
             res = self.post("/api/collaboration_requests", body=data, with_basic_auth=False)
@@ -28,6 +32,7 @@ class TestCollaborationRequest(AbstractTest):
             self.assertEqual("urn:roger", collaboration_request.requester.uid)
             mail_msg = outbox[0]
             self.assertEqual("Request for new collaboration New Collaboration (local)", mail_msg.subject)
+            self.assertEqual(["jane@ucc.org", "paul@ucc.org"], sorted(mail_msg.to))
 
     def test_request_collaboration_collaboration_creation_allowed(self):
         self.login("urn:roger", schac_home_organisation_unihar)
@@ -170,6 +175,27 @@ class TestCollaborationRequest(AbstractTest):
             mail_msg = outbox[0]
             # harry is not a recipient because he has a unit
             self.assertEqual(["john@example.org", "mary@example.org"], sorted(mail_msg.to))
+
+    def test_request_collaboration_unit_manager(self):
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
+        organisation.collaboration_creation_allowed = False
+        self.save_entity(organisation)
+
+        unit = self.find_entity_by_name(Unit, unihard_unit_research_name)
+
+        self.login("urn:james", schac_home_organisation_unihar)
+        data = {
+            "name": "New Collaboration",
+            "short_name": "new_collaboration_short",
+            "message": "pretty please",
+            "organisation_id": organisation.id,
+            "units": [{"id": unit.id, "name": unit.name}]
+        }
+        with self.app.mail.record_messages() as outbox:
+            self.post("/api/collaboration_requests", body=data, with_basic_auth=False)
+            mail_msg = outbox[0]
+            # harry is not a recipient because he has a unit
+            self.assertEqual(["paul@ucc.org"], sorted(mail_msg.to))
 
     def test_collaboration_request_approve_not_allowed(self):
         collaboration_request = self.find_entity_by_name(CollaborationRequest, collaboration_request_name)

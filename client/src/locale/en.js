@@ -1777,7 +1777,7 @@ const en = {
             approved: "Approved"
         },
         flash: {
-            approved: "Collaboration {{name}} has been created and the collaboration Request has been deleted",
+            approved: "Collaboration {{name}} has been created and the collaboration Request has been approved",
             denied: "Collaboration Request for {{name}} has been declined",
             deleted: "Collaboration Request for {{name}} has been deleted",
         }

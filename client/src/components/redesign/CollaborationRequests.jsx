@@ -91,6 +91,17 @@ export default class CollaborationRequests extends React.PureComponent {
                                  onClick={this.openCollaborationRequest(cr)}>{cr.name}</a>
             },
             {
+                key: "units",
+                class: "units",
+                header: I18n.t("units.column"),
+                mapper: cr => <div className="unit-container">
+                    {(cr.units || [])
+                        .sort((u1, u2) => u1.name.localeCompare(u2.name))
+                        .map((unit, index) => <span key={index} className="chip-container">
+                        {unit.name}</span>)}
+                </div>
+            },
+            {
                 key: "status",
                 header: I18n.t("collaborationRequest.status"),
                 mapper: cr => <Chip type={chipTypeForStatus(cr)}
@@ -121,7 +132,7 @@ export default class CollaborationRequests extends React.PureComponent {
                       columns={columns}
                       showNew={false}
                       customNoEntities={" "}
-                      title={numberOfRequests === 0 ? I18n.t("models.collaboration_requests.noEntities"):
+                      title={numberOfRequests === 0 ? I18n.t("models.collaboration_requests.noEntities") :
                           `${I18n.t("models.collaboration_requests.title")} (${numberOfRequests})`}
                       filters={this.filter(filterOptions, filterValue)}
                       loading={false}

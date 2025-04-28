@@ -1777,7 +1777,7 @@ const nl = {
             approved: "Goedgekeurd"
         },
         flash: {
-            approved: "Samenwerking {{name}} is aangemaakt en de aanvraag daartoe is verwijderd",
+            approved: "Samenwerking {{name}} is aangemaakt en de aanvraag daartoe is goedgekeurd",
             denied: "De aanvraag om samenwerking {{name}} aan te maken is afgewezen",
             deleted: "Aanvraag voor samenwerking {{name}} is verwijderd",
         }
