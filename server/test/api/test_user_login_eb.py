@@ -45,9 +45,10 @@ class TestUserLoginEB(AbstractTest):
                               "service_id": service_wireless_entity_id,
                               "issuer_id": "issuer.com"})
         msg = res["msg"]
-        self.assertEqual("authorized", msg)
-        self.assertEqual(2, len(res["attributes"]))
-        self.assertEqual("urn:collab:person:unknown", res["attributes"]["urn:mace:dir:attribute-def:uid"][0])
+        self.assertEqual("interrupt", msg)
+        self.assertEqual(UserCode.NEW_FREE_RIDE_USER.name, res["message"])
+        user_nonce = UserNonce.query.filter(UserNonce.nonce == res["nonce"]).one()
+        self.assertEqual(user_nonce.error_status, UserCode.NEW_FREE_RIDE_USER.value)
 
     def test_authz_eb_user_not_connected(self):
         res = self.post("/api/users/authz_eb",
@@ -205,6 +206,7 @@ class TestUserLoginEB(AbstractTest):
             res = self.client.get("/api/users/interrupt",
                                   query_string={"nonce": user_nonce.nonce})
             parameters = {
+                "dummy": "value",
                 "service_name": "Cloud",
                 "service_id": user_nonce.service.uuid4,
                 "continue_url": user_nonce.continue_url,
@@ -236,6 +238,7 @@ class TestUserLoginEB(AbstractTest):
             res = self.client.get("/api/users/interrupt",
                                   query_string={"nonce": user_nonce.nonce})
             parameters = {
+                "dummy": "value",
                 "service_name": user_nonce.requested_service_entity_id,
                 "service_id": None,
                 "continue_url": user_nonce.continue_url,
