@@ -100,7 +100,7 @@ export function authorizationUrl(state) {
 }
 
 export function me(config) {
-    if (config.local && 1 == 2) {
+    if (config.local && 1 == 1) {
         let sub = "urn:service_admin";
         sub = "urn:john";
         // sub = "urn:sarah";

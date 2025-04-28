@@ -35,7 +35,7 @@
         display: flex;
         flex-direction: column;
         gap: 25px;
-        margin: 20px 0;
+        margin: 20px 0 40px 0;
 
         a {
             display: flex;
@@ -46,7 +46,8 @@
         }
 
         button {
-            max-width: 140px;
+            max-width: 180px;
+            margin-left: 20px;
         }
 
         span.divider {

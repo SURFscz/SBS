@@ -12,8 +12,6 @@ import {isEmpty, splitListSemantically, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {validEmailRegExp} from "../validations/regExps";
-import {ReactComponent as ChevronRight} from "../icons/chevron-right.svg";
-import {ReactComponent as ChevronLeft} from "../icons/chevron-left.svg";
 import "./NewInvitation.scss"
 import DateField from "../components/DateField";
 import {collaborationRoles} from "../forms/constants";
@@ -56,8 +54,7 @@ class NewInvitation extends React.Component {
             loading: true,
             isAdminView: false,
             existingInvitations: [],
-            validating: false,
-            showInviteByLink: false
+            validating: false
         };
     }
 
@@ -187,11 +184,6 @@ class NewInvitation extends React.Component {
         return membershipExpiryDate;
     }
 
-    toggleShowInviteByLink = e => {
-        stopEvent(e);
-        this.setState({showInviteByLink: !this.state.showInviteByLink});
-    }
-
     setInvitationExpiryDate = e => {
         const {membership_expiry_date} = this.state;
         this.setState({expiry_date: e}, () => {
@@ -211,24 +203,9 @@ class NewInvitation extends React.Component {
     }
 
     invitationForm = (initial, administrators, intended_role, message, invitation_sender_name, expiry_date,
-                      disabledSubmit, groups, selectedGroup, membership_expiry_date, existingInvitations,
-                      showInviteByLink, collaboration) => {
+                      disabledSubmit, groups, selectedGroup, membership_expiry_date, existingInvitations) => {
         return (
             <div className="new-collaboration-invitation">
-                {!collaboration.disable_join_requests && <div className="link-invitation-container">
-                    <a href="/"
-                       onClick={this.toggleShowInviteByLink}>{I18n.t("collaborationInvitations.inviteWithLinkToggle")}
-                        {showInviteByLink ? <ChevronLeft/> : <ChevronRight/>}
-                    </a>
-                    {showInviteByLink && <>
-                        <p>{I18n.t("collaborationInvitations.inviteWithLinkInfo")}</p>
-                        <CopyToClipboard
-                            text={`${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`}>
-                            <Button txt={I18n.t("collaborationInvitations.inviteWithLinkCopy")}/>
-                        </CopyToClipboard>
-                        <span className="divider"/>
-                    </>}
-                </div>}
                 <p>{I18n.t("collaborationInvitations.inviteWithEmailInfo")}</p>
                 <div className="invitation-form">
                     <EmailField addEmails={this.addEmails}
@@ -326,8 +303,7 @@ class NewInvitation extends React.Component {
             groups,
             selectedGroup,
             loading,
-            existingInvitations,
-            showInviteByLink
+            existingInvitations
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -341,10 +317,18 @@ class NewInvitation extends React.Component {
                                 confirm={confirmationDialogAction}
                                 leavePage={leavePage}/>
             <div className="mod-new-collaboration-invitation">
+                <h2>{I18n.t("collaborationInvitations.inviteWithLink")}</h2>
+                {!collaboration.disable_join_requests &&
+                    <div className="link-invitation-container">
+                        <p>{I18n.t("collaborationInvitations.inviteWithLinkInfo")}</p>
+                        <CopyToClipboard
+                            text={`${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`}>
+                            <Button txt={I18n.t("collaborationInvitations.inviteWithLinkCopy")}/>
+                        </CopyToClipboard>
+                    </div>}
                 <h2>{I18n.t("collaborationInvitations.inviteWithEmail")}</h2>
                 {this.invitationForm(initial, administrators, intended_role, message, invitation_sender_name,
-                    expiry_date, disabledSubmit, groups, selectedGroup, membership_expiry_date, existingInvitations,
-                    showInviteByLink, collaboration)}
+                    expiry_date, disabledSubmit, groups, selectedGroup, membership_expiry_date, existingInvitations)}
                 {this.renderActions(disabledSubmit)}
             </div>
         </>);
