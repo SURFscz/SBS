@@ -1295,6 +1295,7 @@ class System extends React.Component {
                                     <div key={i} className={"open-requests"}>
                                         <span>{I18n.t("system.openRequests.collaboration_name")}: {cr.name}</span>
                                         <span>{I18n.t("system.openRequests.requester")}: {cr.requester}</span>
+                                        <span>{I18n.t("units.column")}: {cr.units}</span>
                                     </div>
                                 )}</td>
                             </tr>
