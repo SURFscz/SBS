@@ -59,7 +59,7 @@ class TestMfa(AbstractTest):
 
         mary = User.query.filter(User.uid == "urn:mary").first()
         self.assertTrue(mary.rate_limited)
-        self.assertIsNotNone(mary.mfa_reset_token)
+        self.assertIsNone(mary.mfa_reset_token)
         self.assertIsNone(mary.second_factor_auth)
 
         # Need to log in again to set up session
@@ -76,6 +76,9 @@ class TestMfa(AbstractTest):
         self.assertEqual("john@example.org", res[0]["email"])
 
     def test_token_reset_request_rate_limit(self):
+        user = self.find_entity_by_name(User, "Mary Doe")
+        redis = current_app.redis_client
+        redis.set(str(user.id), "")
         self.login("urn:mary")
         for i in range(10):
             self.post("/api/mfa/token_reset_request", body={"email": "john@example.org", "message": "test"},

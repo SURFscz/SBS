@@ -213,7 +213,8 @@ class TestUserLoginEB(AbstractTest):
                 "entity_id": service_cloud_entity_id,
                 "issuer_id": None,
                 "user_id": user_nonce.user.uid,
-                "error_status": user_nonce.error_status
+                "error_status": user_nonce.error_status,
+                "eb_toggle": True
             }
             args = urllib.parse.urlencode(parameters)
 
@@ -245,7 +246,8 @@ class TestUserLoginEB(AbstractTest):
                 "entity_id": user_nonce.requested_service_entity_id,
                 "issuer_id": user_nonce.issuer_id,
                 "user_id": user_nonce.requested_user_id,
-                "error_status": user_nonce.error_status
+                "error_status": user_nonce.error_status,
+                "eb_toggle": True
             }
             args = urllib.parse.urlencode(parameters)
 
