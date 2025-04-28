@@ -315,7 +315,7 @@ class OrganisationDetail extends React.Component {
         const lastAdmin = adminOfOrganisation && organisation.organisation_memberships.filter(m => m.role === "admin").length < 2;
         if (isMember && (!lastAdmin || isMember.role !== "admin")) {
             actions.push({
-                buttonType: ButtonType.Secondary,
+                buttonType: ButtonType.DestructiveSecondary,
                 name: I18n.t("models.organisations.leave"),
                 perform: this.deleteMe
             });
