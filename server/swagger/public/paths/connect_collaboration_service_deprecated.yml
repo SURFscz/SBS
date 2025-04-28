@@ -1,5 +1,6 @@
-summary: "Disconnect service from collaboration."
-description: "Disconnect a service from an existing collaboration."
+summary: "Deprecated. Connect service to collaboration."
+description: "Connect a service to an existing collaboration. This endpoint is deprecated, 
+              use the same endpoint with the <co_identifier> in the path."
 
 tags:
   - "Organisation"
@@ -21,26 +22,18 @@ parameters:
     schema:
       type: string
       example: Bearer Am4Hp7GBO2lMseskWHRmEtE3DWD-VxZZ3qwMkNPv6qZ8
-  - name: co_identifier
-    in: path
-    description: Unique identifier of the collaboration
-    required: true
-    schema:
-      type: string
-      format: uuid
-      example: 301ee8e6-b5d1-40b5-a27e-47611f803371
   - name: service
     in: body
-    description: The service identifier
+    description: The service and collaboration identifiers
     required: true
     schema:
-      $ref: '/swagger/schemas/CollaborationDisconnectServiceRequest.yaml'
+      $ref: '/swagger/schemas/CollaborationConnectServiceRequestDeprecated.yaml'
 
 responses:
   201:
     description: Conection status
     schema:
-      $ref: '/swagger/schemas/CollaborationDisconnectServiceResponse.yaml'
+      $ref: '/swagger/schemas/CollaborationConnectServiceResponse.yaml'
   401:
     schema:
       $ref: '/swagger/components/responses/Unauthorized.yaml'
