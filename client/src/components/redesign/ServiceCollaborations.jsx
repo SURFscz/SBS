@@ -5,7 +5,7 @@ import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "../../locale/I18n";
 import Entities from "./Entities";
 import Button from "../Button";
-import {collaborationAdmins, deleteCollaborationServices} from "../../api";
+import {collaborationAdmins, collaborationsByService, deleteCollaborationServices} from "../../api";
 import SpinnerField from "./SpinnerField";
 import Logo from "./Logo";
 import CheckBox from "../CheckBox";
@@ -29,21 +29,30 @@ export default class ServiceCollaborations extends React.PureComponent {
             confirmationDialogAction: () => true,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationQuestion: "",
-            loading: false
+            loading: true
         }
     }
 
     componentDidMount = () => {
-        const {collaborations, user, service} = this.props;
-        this.addRoleInformation(user, collaborations);
-        collaborationAdmins(service).then(res => this.setState({
-                collaborationAdminEmails: res
-            })
-        );
+        const {user, service} = this.props;
+        collaborationsByService(service.id).then(collaborations => {
+            this.addRoleInformation(user, collaborations);
+            this.setState({
+                collaborations: collaborations,
+                selectedCollaborations: {},
+                loading: false
+            });
+            //We can do this later, as it is derived functionality
+            collaborationAdmins(service).then(res => this.setState({
+                    collaborationAdminEmails: res
+                })
+            );
+        })
     }
 
     removeCollaboration = (showConfirmation, entityId) => {
-        const {collaborations, service} = this.props;
+        const {service} = this.props;
+        const {collaborations} = this.state;
         const name = (collaborations.find(coll => coll.id === entityId) || {}).name;
         if (showConfirmation) {
             this.setState({
@@ -59,12 +68,12 @@ export default class ServiceCollaborations extends React.PureComponent {
                 .map(e => parseInt(e[0], 10));
             const promises = collaborationIdentifiers.map(id => deleteCollaborationServices(id, service.id));
 
-            Promise.all(promises).then(() => this.props.refresh(() => {
-                this.setState({confirmationDialogOpen: false});
-                this.componentDidMount();
-                setFlash(I18n.t("models.serviceCollaborations.flash.removed"));
-            }));
-
+            Promise.all(promises)
+                .then(() => {
+                    this.setState({confirmationDialogOpen: false, loading: true});
+                    this.componentDidMount();
+                    setFlash(I18n.t("models.serviceCollaborations.flash.removed"));
+                });
         }
     }
 
@@ -81,7 +90,7 @@ export default class ServiceCollaborations extends React.PureComponent {
         collaborations.forEach(co => {
             const membership = (user.collaboration_memberships || []).find(m => m.collaboration_id === co.id);
             co.role = membership ? membership.role : null;
-            co.derived_short_name = `${co.organisation.short_name}:${co.short_name}`
+            co.derived_short_name = `${co.organisation_short_name}:${co.short_name}`
         });
     }
 
@@ -170,7 +179,8 @@ export default class ServiceCollaborations extends React.PureComponent {
             return <SpinnerField/>;
         }
 
-        const {collaborations, user, modelName, service, goToOrganisationsTab} = this.props;
+        const {user, modelName, service, goToOrganisationsTab} = this.props;
+        const {collaborations} = this.state;
         const serviceKey = " services";
         const columns = [
             {
@@ -207,10 +217,10 @@ export default class ServiceCollaborations extends React.PureComponent {
                 }
             },
             {
-                key: "organisation__name",
+                key: "organisation_name",
                 class: serviceKey,
                 header: I18n.t("models.serviceCollaborations.organisationName"),
-                mapper: collaboration => collaboration.organisation.name
+                mapper: collaboration => collaboration.organisation_name
             },
             {
                 key: "derived_short_name",

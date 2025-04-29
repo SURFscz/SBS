@@ -286,7 +286,6 @@ def service_by_id(service_id):
     add_admin_info = not api_call and (is_application_admin() or is_service_admin_or_manager(service_id))
     if add_admin_info:
         query = query \
-            .options(selectinload(Service.collaborations).selectinload(Collaboration.organisation)) \
             .options(selectinload(Service.service_memberships).selectinload(ServiceMembership.user)) \
             .options(selectinload(Service.service_invitations).selectinload(ServiceInvitation.user)) \
             .options(selectinload(Service.allowed_organisations)) \
@@ -304,6 +303,10 @@ def service_by_id(service_id):
 
     res = jsonify(service).json
     res["has_scim_bearer_token"] = service.scim_bearer_token_db_value() is not None
+    if add_admin_info:
+        with db.engine.connect() as conn:
+            sql = text(f"SELECT COUNT(*) FROM services_collaborations WHERE service_id = {service_id}")
+            res["collaboration_count"] = next(conn.execute(sql))[0]
     return res, 200
 
 

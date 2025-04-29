@@ -431,6 +431,10 @@ export function myCollaborationsOptimized() {
     return fetchJson(`/api/collaborations/mine_optimized`);
 }
 
+export function collaborationsByService(serviceId) {
+    return fetchJson(`/api/collaborations/by_service_optimized/${serviceId}`);
+}
+
 export function allCollaborations() {
     return fetchJson(`/api/collaborations/all`);
 }

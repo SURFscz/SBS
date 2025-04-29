@@ -333,6 +333,28 @@ def collaboration_all_optimized():
         return _result_set_to_collaborations(result_set), 200
 
 
+@collaboration_api.route("/by_service_optimized/<service_id>", strict_slashes=False)
+@json_endpoint
+def by_service_optimized(service_id):
+    confirm_service_manager(service_id)
+    values = {"service_id": service_id}
+    sql = text("""
+    SELECT c.id, c.name, c.short_name, c.uuid4, org.name, org.short_name
+            FROM collaborations c
+            INNER JOIN organisations org ON c.organisation_id = org.id
+            INNER JOIN services_collaborations sc ON sc.collaboration_id = c.id
+            WHERE sc.service_id = :service_id
+        """)
+    with db.engine.connect() as conn:
+        result_set = conn.execute(sql, values)
+        return [{"id": row[0],
+                 "name": row[1],
+                 "short_name": row[2],
+                 "logo": f"{logo_url('collaborations', row[3])}",
+                 "organisation_name": row[4],
+                 "organisation_short_name": row[5]} for row in result_set], 200
+
+
 @collaboration_api.route("/mine_optimized", strict_slashes=False)
 @json_endpoint
 def collaboration_mine_optimized():

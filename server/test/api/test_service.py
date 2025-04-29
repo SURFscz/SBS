@@ -70,6 +70,7 @@ class TestService(AbstractTest):
         self.login("urn:service_admin")
         service_details = self.get(f"api/services/{service.id}", response_status_code=200, with_basic_auth=False)
         self.assertTrue(service_details["has_scim_bearer_token"])
+        self.assertEqual(2, service_details["collaboration_count"])
 
     def test_find_by_id_api_call(self):
         service = self.find_entity_by_name(Service, service_scheduler_name)
