@@ -965,8 +965,9 @@ class TestCollaboration(AbstractTest):
     def test_collaboration_admins(self):
         self.login("urn:service_admin")
         service = self.find_entity_by_name(Service, service_storage_name)
+        collaboration_id = self.find_entity_by_name(Collaboration, co_research_name).id
         res = self.get(f"/api/collaborations/admins/{service.id}")
-        self.assertDictEqual({f"{co_research_name}": ["sarah@uni-franeker.nl"]}, res)
+        self.assertDictEqual({f"{collaboration_id}": ["sarah@uni-franeker.nl"]}, res)
 
     def test_delete_membership_api(self):
         self.assertIsNotNone(self.find_collaboration_membership(co_ai_computing_uuid, 'urn:jane'))

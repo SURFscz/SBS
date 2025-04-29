@@ -43,10 +43,9 @@ export default class ServiceCollaborations extends React.PureComponent {
                 loading: false
             });
             //We can do this later, as it is derived functionality
-            collaborationAdmins(service).then(res => this.setState({
-                    collaborationAdminEmails: res
-                })
-            );
+            collaborationAdmins(service).then(res => {
+                this.setState({collaborationAdminEmails: res});
+            })
         })
     }
 
@@ -106,10 +105,10 @@ export default class ServiceCollaborations extends React.PureComponent {
         if (!anySelected) {
             return null;
         }
-        const names = collaborations.filter(coll => selectedCollaborations[coll.id]).map(coll => coll.name);
+        const identifiers = collaborations.filter(coll => selectedCollaborations[coll.id]).map(coll => coll.id);
         const adminEmails = Object.keys(collaborationAdminEmails)
-            .filter(name => names.includes(name))
-            .map(name => collaborationAdminEmails[name]);
+            .filter(identifier => identifiers.includes(parseInt(identifier, 10)))
+            .map(identifier => collaborationAdminEmails[identifier]);
         const hrefValue = encodeURI(adminEmails.join(","));
         return (
             <div className="admin-actions">

@@ -32,7 +32,7 @@ from server.db.domain import Collaboration, CollaborationMembership, JoinRequest
     Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag, ServiceGroup, ServiceMembership, Unit
 from server.db.image import transform_image
 from server.db.logo_mixin import logo_url
-from server.db.models import update, save, delete, unique_model_objects
+from server.db.models import update, save, delete
 from server.mail import mail_collaboration_invitation
 from server.scim.events import broadcast_collaboration_changed, broadcast_collaboration_deleted
 from server.tools import dt_now
@@ -139,8 +139,26 @@ def _unit_from_name(unit_name: str, organisation_id: int):
 @json_endpoint
 def collaboration_admins(service_id):
     confirm_service_manager(service_id)
-    service = db.session.get(Service, service_id)
-    return {c.name: c.admin_emails() for c in unique_model_objects(service.collaborations)}, 200
+
+    values = {"service_id": service_id}
+    sql = text("""
+        SELECT u.email, c.id FROM users u
+        INNER JOIN collaboration_memberships cm ON cm.user_id = u.id
+        INNER JOIN collaborations c ON c.id = cm.collaboration_id
+        INNER JOIN services_collaborations sc ON sc.collaboration_id = c.id
+        WHERE sc.service_id = :service_id AND cm.role = 'admin'
+        """)
+    with db.engine.connect() as conn:
+        result = {}
+        result_set = conn.execute(sql, values)
+        for row in result_set:
+            email = row[0]
+            collaboration_id = row[1]
+            if collaboration_id in result:
+                result[collaboration_id].append(email)
+            else:
+                result[collaboration_id] = [email]
+        return result, 200
 
 
 @collaboration_api.route("/id_by_identifier", strict_slashes=False)
