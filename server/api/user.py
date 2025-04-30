@@ -323,7 +323,6 @@ def resume_session():
         "Accept": "application/json, application/json;charset=UTF-8",
         "Authorization": f"Bearer {access_token}"
     }
-
     response = requests.get(oidc_config.userinfo_endpoint, headers=headers, verify=oidc_config.verify_peer)
     if response.status_code != 200:
         return _redirect_with_error(logger, f"Server error: User info endpoint error (http {response.status_code}")
@@ -364,11 +363,9 @@ def resume_session():
     if idp_performed_mfa:
         logger.debug(f"user {uid}: idp_mfa={idp_performed_mfa} (ACR = '{id_token.get('acr')}')")
 
-    audiences = id_token.get("aud")
-    # Strictly speaking this is not necessary, as this is checked during decoding, but better be safe
-    audience = audiences[0] if isinstance(audiences, list) else audiences
+    # We don't have the entity_id of the authenticating IdP and the issuer is always the proxy, so don't use issuer_id
     mfa_is_required = user_requires_sram_mfa(user,
-                                             issuer_id=audience,
+                                             issuer_id=None,
                                              override_mfa_required=idp_performed_mfa)
     logger.debug(f"SBS login for user {uid} MFA check is required: {mfa_is_required}")
 
