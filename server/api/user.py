@@ -363,9 +363,8 @@ def resume_session():
     if idp_performed_mfa:
         logger.debug(f"user {uid}: idp_mfa={idp_performed_mfa} (ACR = '{id_token.get('acr')}')")
 
-    # We don't have the entity_id of the authenticating IdP and the issuer is always the proxy, so don't use issuer_id
     mfa_is_required = user_requires_sram_mfa(user,
-                                             issuer_id=None,
+                                             issuer_id=id_token.get("iss"),
                                              override_mfa_required=idp_performed_mfa)
     logger.debug(f"SBS login for user {uid} MFA check is required: {mfa_is_required}")
 
