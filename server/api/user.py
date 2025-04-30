@@ -338,6 +338,8 @@ def resume_session():
     encoded_id_token = token_json["id_token"]
     id_token = decode_jwt_token(encoded_id_token)
 
+    logger.info(f"Received id_token {id_token} from {oidc_config.token_endpoint}")
+
     if not user:
         # Ensure we don't provision users who have not all the mandatory attributes
         if not valid_user_attributes(user_info_json):
