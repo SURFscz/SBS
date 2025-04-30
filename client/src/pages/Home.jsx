@@ -144,27 +144,30 @@ class Home extends React.Component {
         return tab;
     }
 
-    getOrganisationsTab = () =>
-        <div key="organisations" name="organisations" label={I18n.t("home.tabs.organisations")}
-        >
-            <Organisations {...this.props}/>
-        </div>
+    getOrganisationsTab = () => {
+        return (
+            <div key="organisations" name="organisations" label={I18n.t("home.tabs.organisations")}>
+                <Organisations {...this.props}/>
+            </div>
+        )
+    }
+
 
     getPlatformAdminsTab = () => {
-        return (<div key="platformAdmins" name="platformAdmins"
-                     label={I18n.t("home.tabs.platformAdmins")}
-        >
-            <PlatformAdmins {...this.props}/>
-        </div>)
+        return (
+            <div key="platformAdmins" name="platformAdmins"
+                 label={I18n.t("home.tabs.platformAdmins")}>
+                <PlatformAdmins {...this.props}/>
+            </div>)
     }
 
     getUsersTab = () => {
-        return (<div key="users" name="users"
-                     label={I18n.t("home.tabs.users")}
-        >
-            <Users {...this.props}
-                   adminSearch={true}/>
-        </div>)
+        return (
+            <div key="users" name="users"
+                 label={I18n.t("home.tabs.users")}>
+                <Users {...this.props}
+                       adminSearch={true}/>
+            </div>)
     }
 
     getServicesTab = () => {
