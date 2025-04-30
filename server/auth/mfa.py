@@ -111,7 +111,7 @@ def has_valid_mfa(user):
 def mfa_idp_allowed(user: User, entity_id: str = None):
     identity_providers = current_app.app_config.mfa_idp_allowed
     entity_id_allowed = entity_id and [
-        idp for idp in identity_providers if "entity_id" in idp and idp.entity_id == entity_id.lower()
+        idp for idp in identity_providers if "entity_id" in idp and idp.entity_id.lower() == entity_id.lower()
     ]
 
     def schac_match(configured_schac_homes: list[str], user_schac_home: str) -> bool:
