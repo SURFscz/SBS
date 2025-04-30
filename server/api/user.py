@@ -365,8 +365,10 @@ def resume_session():
     if idp_performed_mfa:
         logger.debug(f"user {uid}: idp_mfa={idp_performed_mfa} (ACR = '{id_token.get('acr')}')")
 
+    issuer = id_token.get("iss")
+    # See https://github.com/SURFscz/SBS/issues/1899. We should pass None for the issuer and rely on the schac_home
     mfa_is_required = user_requires_sram_mfa(user,
-                                             issuer_id=id_token.get("iss"),
+                                             issuer_id=issuer,
                                              override_mfa_required=idp_performed_mfa)
     logger.debug(f"SBS login for user {uid} MFA check is required: {mfa_is_required}")
 

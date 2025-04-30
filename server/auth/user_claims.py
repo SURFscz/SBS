@@ -93,11 +93,16 @@ def add_user_claims(user_info_json, uid, user):
             mail_error(mail_conf.environment, uid, mail_conf.send_exceptions_recipients, msg)
 
 
+# Because we migrate to EB, we must ignore the EB attributes
+# See https://github.com/SURFscz/SBS/issues/1900
+ignore_cleared_attributes = ["scoped_affiliation", "affiliation", "eduperson_principal_name", "schac_home_organisation"]
+
+
 def add_user_info_attr(attr, cleared_attributes, key, user, user_info_json):
     val = user_info_json.get(key)
     if isinstance(val, list):
         val = ", ".join(val) if val else None
-    if (key not in user_info_json or val == "") and getattr(user, attr):
+    if (key not in user_info_json or val == "") and getattr(user, attr) and key not in ignore_cleared_attributes:
         cleared_attributes.append(attr)
     if val or (val is None and key in user_info_json and attr not in ["uid", "name", "email"]):
         setattr(user, attr, val)
