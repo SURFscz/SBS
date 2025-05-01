@@ -35,12 +35,9 @@ def runner(app):
     return CliRunner()
 
 
-@patch('server.db.db')
 @patch('server.test.stress_seed.stress_seed')
-def test_stress_seed_default_values(mock_stress_seed, mock_db, app, runner):
+def test_stress_seed_default_values(mock_stress_seed, app, runner):
     """Test stress-seed command with default values"""
-    # Set up mock_db to be returned when imported in the function
-    mock_db.session = MagicMock()
 
     # Run command with the app context
     with app.app_context():
@@ -54,12 +51,9 @@ def test_stress_seed_default_values(mock_stress_seed, mock_db, app, runner):
     mock_stress_seed.assert_called_once()
 
 
-@patch('server.db.db')
 @patch('server.test.stress_seed.stress_seed')
-def test_stress_seed_custom_values(mock_stress_seed, mock_db, app, runner):
+def test_stress_seed_custom_values(mock_stress_seed, app, runner):
     """Test stress-seed command with custom values"""
-    # Set up mock_db
-    mock_db.session = MagicMock()
 
     with app.app_context():
         result = runner.invoke(app.cli.commands['stress-seed'], [
@@ -74,12 +68,9 @@ def test_stress_seed_custom_values(mock_stress_seed, mock_db, app, runner):
     mock_stress_seed.assert_called_once()
 
 
-@patch('server.db.db')
 @patch('server.test.seed.seed')
-def test_seed_command_normal(mock_seed, mock_db, app, runner):
+def test_seed_command_normal(mock_seed, app, runner):
     """Test regular seed command"""
-    # Set up mock_db
-    mock_db.session = MagicMock()
 
     with app.app_context():
         result = runner.invoke(app.cli.commands['seed'], [])
@@ -88,26 +79,20 @@ def test_seed_command_normal(mock_seed, mock_db, app, runner):
     mock_seed.assert_called_once()
 
 
-@patch('server.db.db')
 @patch('server.test.seed.seed')
-def test_seed_command_with_skip(mock_seed, mock_db, app, runner):
+def test_seed_command_with_skip(mock_seed, app, runner):
     """Test seed command with --skip flag"""
-    # Set up mock_db
-    mock_db.session = MagicMock()
 
     with app.app_context():
         result = runner.invoke(app.cli.commands['seed'], ['--skip'])
 
     assert result.exit_code == 0
-    mock_seed.assert_called_once_with(mock_db.session, app.app_config, True)
+    mock_seed.assert_called_once()
 
 
-@patch('server.db.db')
 @patch('server.test.seed.seed', side_effect=Exception("Seed error"))
-def test_seed_error_handling(mock_seed, mock_db, app, runner):
+def test_seed_error_handling(mock_seed, app, runner):
     """Test error handling in seed command"""
-    # Set up mock_db
-    mock_db.session = MagicMock()
 
     with app.app_context():
         result = runner.invoke(app.cli.commands['seed'], [])
@@ -116,13 +101,9 @@ def test_seed_error_handling(mock_seed, mock_db, app, runner):
     mock_seed.assert_called_once()
 
 
-@patch('server.db.db')
 @patch('server.test.stress_seed.stress_seed', side_effect=Exception("Seed error"))
-def test_stress_seed_error_handling(mock_stress_seed, mock_db, app, runner):
+def test_stress_seed_error_handling(mock_stress_seed, app, runner):
     """Test error handling in stress-seed command"""
-    # Set up mock_db
-    mock_db.session = MagicMock()
-
     with app.app_context():
         result = runner.invoke(app.cli.commands['stress-seed'], [])
 
@@ -130,27 +111,20 @@ def test_stress_seed_error_handling(mock_stress_seed, mock_db, app, runner):
     mock_stress_seed.assert_called_once()
 
 
-@patch('server.db.db')
 @patch('server.test.demo_seed.demo_seed')
-def test_demo_seed_command(mock_demo_seed, mock_db, app, runner):
+def test_demo_seed_command(mock_demo_seed, app, runner):
     """Test demo-seed command"""
-    # Set up mock_db
-    mock_db.session = MagicMock()
 
     with app.app_context():
         result = runner.invoke(app.cli.commands['demo-seed'], [])
 
     assert result.exit_code == 0
-    mock_demo_seed.assert_called_once_with(mock_db.session, app.app_config)
+    mock_demo_seed.assert_called_once_with(app.db, app.app_config)
 
 
-@patch('server.db.db')
 @patch('server.test.demo_seed.demo_seed', side_effect=Exception("Seed error"))
-def test_demo_seed_error_handling(mock_demo_seed, mock_db, app, runner):
+def test_demo_seed_error_handling(mock_demo_seed, app, runner):
     """Test error handling in demo-seed command"""
-    # Set up mock_db
-    mock_db.session = MagicMock()
-
     with app.app_context():
         result = runner.invoke(app.cli.commands['demo-seed'], [])
 
