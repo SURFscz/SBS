@@ -30,7 +30,6 @@ def register_commands(app):
     @with_appcontext
     def run_stress_seed(users, orgs, collab, services, groups):
         """Run stress seed with specified parameters"""
-        from server.db import db
         from server.test.stress_seed import stress_seed
 
         config = {
@@ -47,7 +46,7 @@ def register_commands(app):
         click.echo("Starting stress seed...")
         try:
             click.echo(f"config: {config}")
-            stress_seed(db.session, app.app_config)
+            stress_seed(app.db, app.app_config)
             click.echo("Stress seed completed successfully!")
         except Exception as e:
             click.echo(f"Error during stress seed: {str(e)}")
@@ -57,12 +56,11 @@ def register_commands(app):
     @with_appcontext
     def db_seed_command(skip):
         """Seed the database with test data"""
-        from server.db import db
         from server.test.seed import seed
 
         click.echo("Running standard seed...")
         try:
-            seed(db.session, app.app_config, skip)
+            seed(app.db, app.app_config, skip)
             click.echo("Database has been seeded!")
         except Exception as e:
             click.echo(f"Error during seed: {str(e)}")
@@ -71,12 +69,11 @@ def register_commands(app):
     @with_appcontext
     def demo_seed_command():
         """Seed the database with demo data for showcases"""
-        from server.db import db
         from server.test.demo_seed import demo_seed
 
         click.echo("Running demo seed...")
         try:
-            demo_seed(db.session, app.app_config)
+            demo_seed(app.db, app.app_config)
             click.echo("Demo data seeded successfully!")
         except Exception as e:
             click.echo(f"Error during demo seed: {str(e)}")
