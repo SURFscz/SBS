@@ -176,8 +176,8 @@ class TestUserClaims(AbstractTest):
                 self.assertEqual(1, len(outbox))
                 mail_msg = outbox[0]
                 self.assertListEqual(["sram-support@surf.nl"], mail_msg.to)
-                self.assertTrue("scoped_affiliation" in mail_msg.html)
-                self.assertTrue("email" in mail_msg.html)
+                for name in ["name", "email", "uid"]:
+                    self.assertTrue(name in mail_msg.html)
 
         finally:
             os.environ["TESTING"] = "1"
