@@ -64,6 +64,7 @@ def create_service_template(service: Service):
                 "coin:privacy:privacy_policy": bool(service.privacy_policy),
                 "coin:privacy:privacy_policy_url": service.privacy_policy,
                 "coin:signature_method": "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
+                "coin:collab_enabled": True,
                 "connection_type": "oidc_rp" if service.oidc_enabled else "saml_sp",
                 "grants": [grant.strip() for grant in service.grants.split(",")] if service.grants else [],
                 "isPublicClient": service.is_public_client,
