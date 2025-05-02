@@ -26,7 +26,7 @@ def arp_attributes():
                           "in the platform (user needs to accept invitation, approve membership, etc)"
         }],
         "urn:mace:dir:attribute-def:eduPersonEntitlement": [{
-            "value": "urn:mace:surf.nl:sram:sbs:allow-create-co",
+            "value": "*",
             "source": "idp",
             "motivation": "This entitlement is used to convey which institutional users are allowed to create COs in "
                           "SRAM without prior institutional approval."
