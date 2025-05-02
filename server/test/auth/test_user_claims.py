@@ -53,7 +53,6 @@ class TestUserClaims(AbstractTest):
                   "subject_id": "foobar6@example.com", "uids": ["foobar6"]}
         add_user_claims(claims, "urn:johny", user)
         self.assertEqual("imdb.org", user.schac_home_organisation)
-        self.assertEqual("student", user.affiliation)
         self.assertEqual("student@example.org", user.scoped_affiliation)
         self.assertEqual("foobar6@example.org", user.eduperson_principal_name)
 

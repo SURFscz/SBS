@@ -28,7 +28,6 @@ claim_attribute_mapping_value = [
     {"eduperson_entitlement": "entitlement"},
     {"voperson_external_id": "eduperson_principal_name"},
     # EB / OIDC-NG claim
-    {"eduperson_affiliation": "affiliation"},
     {"eduperson_principal_name": "eduperson_principal_name"},
     {"schac_home_organization": "schac_home_organisation"}
 ]
@@ -62,9 +61,10 @@ def add_user_claims(user_info_json, uid, user):
     cleared_attributes = []
     for claim in claim_attribute_mapping_value:
         for key, attr in claim.items():
-            add_user_info_attr(attr, cleared_attributes, key, user, user_info_json)
+            add_user_info_attr(key, attr, cleared_attributes, user, user_info_json)
+    # The implies EB is the attribute provider as IdP Proxy
     if not user_info_json.get("voperson_external_affiliation"):
-        add_user_info_attr("scoped_affiliation", cleared_attributes, "eduperson_scoped_affiliation", user,
+        add_user_info_attr("eduperson_scoped_affiliation", "scoped_affiliation", cleared_attributes, user,
                            user_info_json)
     if not user.name:
         name = " ".join(list(filter(lambda x: x, [user.given_name, user.family_name]))).strip()
@@ -98,7 +98,7 @@ def add_user_claims(user_info_json, uid, user):
 ignore_cleared_attributes = ["scoped_affiliation", "affiliation", "eduperson_principal_name", "schac_home_organisation"]
 
 
-def add_user_info_attr(attr, cleared_attributes, key, user, user_info_json):
+def add_user_info_attr(key, attr, cleared_attributes, user, user_info_json):
     val = user_info_json.get(key)
     if isinstance(val, list):
         val = ", ".join(val) if val else None
