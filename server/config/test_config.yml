@@ -235,7 +235,8 @@ mfa_sso_time_in_minutes: 10
 # whether to require TOTP for users from IdPs that do not match mfa_idp_allowed
 mfa_fallback_enabled: true
 
-# Lower case schachome organisations / entity ID's allowed skipping MFA;
+# Lower case entity ID's and schac_home of IdP's allowed skipping MFA.
+# Note that for a login directly into SRAM only schac_home can be used as the entity_idp of the IdP is unknown
 # MFA is supposed to be handled at the IdP for these entities
 mfa_idp_allowed:
 - entity_id: "https://idp.test"
