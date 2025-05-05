@@ -11,7 +11,6 @@ import {
     clearAuditLogs,
     composition,
     dbDemoSeed,
-    dbStressSeed,
     dbSeed,
     dbStats,
     deleteOrphanUsers,

@@ -47,7 +47,7 @@ def stress_seed(db, app_config):
     num_services = stress_config.get('num_services', 30)
     num_groups = stress_config.get('num_groups', 5)
     probability = stress_config.get('probability', 0.5)
-              
+
     logger.debug(
         f"Starting stress seed with: {num_users} users, {num_orgs} orgs, {num_services} services, "
         f"{num_collaborations} collaborations, {num_groups} groups"
