@@ -1,9 +1,9 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SURF collaboration join request declined{% endblock %}
+{% block title %}SURF collaboration join request denied{% endblock %}
 {% block content %}
 
 {{ salutation }},
-Your request to create collaboration {{ collaboration.name }} has been declined by the
+Your request to create collaboration {{ collaboration.name }} has been denied by the
 administrator {{ administrator }} of the organisation {{ organisation.name }}.
 
 

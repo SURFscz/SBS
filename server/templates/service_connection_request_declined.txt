@@ -1,10 +1,10 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SURF new application connection request declined{% endblock %}
+{% block title %}SURF new application connection request denied{% endblock %}
 {% block content %}
 
 {{ salutation }},
 Your request to have access to application {{ service.name }} for collaboration {{ collaboration.name }}
-has been declined by the contact person {{ contact }} of the application.
+has been denied by the contact person {{ contact }} of the application.
 
 Login to view the collaboration:
 {{ base_url }}/collaborations/{{ collaboration.id }}

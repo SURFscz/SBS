@@ -1,13 +1,13 @@
 {% extends "mail_layout.html" %}
-{% block title %}SURF new application connection request declined{% endblock %}
+{% block title %}SURF new application connection request denied{% endblock %}
 {% block content %}
 
 <div class="mail-head" style="background-color: #f5f5f5;padding: 30px 0 20px 60px;">
     <p class="title" style="font-weight: 600;font-size: 38px;line-height: 38px; margin: 0;">
-        Declined connection application request
+        Denied connection application request
     </p>
     <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
-        Your connection application request for application {{ service.name }} is declined.</p>
+        Your connection application request for application {{ service.name }} is denied.</p>
     <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
         Click the button below to view {{ collaboration.name }}.</p>
     <a class="button" href="{{ base_url }}/collaborations/{{ collaboration.id }}"
@@ -16,7 +16,7 @@
 <div class="mail-end" style="padding: 30px 0 0 60px;">
     <p>Your request to have access to application {{ service.name }} for collaboration
         <a href="{{ base_url }}/collaborations/{{ collaboration.id }}" style="color:#0088CC;">
-            {{ collaboration.name }}</a> has been declined by the
+            {{ collaboration.name }}</a> has been denied by the
         contact person <a href="mailto:{{ contact }}">{{ contact }}</a> of the application.</p>
 
     </p>

@@ -271,7 +271,7 @@ def mail_service_invitation(context, service, recipients, reminder=False, previe
 def mail_accepted_declined_join_request(context, join_request, accepted, recipients, preview=False):
     if not preview:
         _store_mail(context["user"], ACCEPTED_JOIN_REQUEST_MAIL if accepted else DENIED_JOIN_REQUEST_MAIL, recipients)
-    part = "accepted" if accepted else "declined"
+    part = "accepted" if accepted else "denied"
     admins = [m.user for m in join_request.collaboration.collaboration_memberships if m.role == "admin"]
     return _do_send_mail(
         subject=f"Join request for collaboration {join_request.collaboration.name} has been {part}",
@@ -289,7 +289,7 @@ def mail_accepted_declined_collaboration_request(context, collaboration_name, or
         _store_mail(context["user"],
                     ACCEPTED_COLLABORATION_REQUEST_MAIL if accepted else DENIED_COLLABORATION_REQUEST_MAIL,
                     recipients)
-    part = "accepted" if accepted else "declined"
+    part = "accepted" if accepted else "denied"
     return _do_send_mail(
         subject=f"Collaboration request for collaboration {collaboration_name} has been {part}",
         recipients=recipients,
@@ -304,7 +304,7 @@ def mail_accepted_declined_service_request(context, service_request_name, accept
     _store_mail(context["user"],
                 ACCEPTED_SERVICE_REQUEST_MAIL if accepted else DENIED_SERVICE_REQUEST_MAIL,
                 recipients)
-    part = "accepted" if accepted else "declined"
+    part = "accepted" if accepted else "denied"
     return _do_send_mail(
         subject=f"Service request for service {service_request_name} has been {part}",
         recipients=recipients,
@@ -332,7 +332,7 @@ def mail_accepted_declined_service_connection_request(context, service_name, col
         _store_mail(context["user"],
                     ACCEPTED_SERVICE_CONNECTTION_REQUEST_MAIL if accepted else DENIED_SERVICE_CONNECTTION_REQUEST_MAIL,
                     recipients)
-    part = "accepted" if accepted else "declined"
+    part = "accepted" if accepted else "denied"
     return _do_send_mail(
         subject=f"Service {service_name} connection request for collaboration {collaboration_name} has been {part}",
         recipients=recipients,

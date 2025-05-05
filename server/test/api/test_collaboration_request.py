@@ -134,7 +134,7 @@ class TestCollaborationRequest(AbstractTest):
                      with_basic_auth=False)
 
             mail_msg = outbox[0]
-            self.assertEqual("Collaboration request for collaboration New Collaboration has been declined (local)",
+            self.assertEqual("Collaboration request for collaboration New Collaboration has been denied (local)",
                              mail_msg.subject)
             self.assertTrue(reason in mail_msg.html)
 

@@ -1,9 +1,9 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SURF application join request declined{% endblock %}
+{% block title %}SURF application join request denied{% endblock %}
 {% block content %}
 
 {{ salutation }},
-Your request to create application {{ service.name }} has been declined by the
+Your request to create application {{ service.name }} has been denied by the
 administrator of the SRAM platform.
 
 
