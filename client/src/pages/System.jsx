@@ -156,7 +156,6 @@ class System extends React.Component {
             sweepResults: null,
             seedResult: null,
             demoSeedResult: null,
-            stressSeedResult: null,
             query: "",
             auditLogs: {audit_logs: []},
             filteredAuditLogs: {audit_logs: []},
@@ -558,7 +557,7 @@ class System extends React.Component {
         </div>)
     }
 
-    getSeedTab = (seedResult, demoSeedResult, stressSeedResult) => {
+    getSeedTab = (seedResult, demoSeedResult) => {
         return (<div key="seed" name="seed" label={I18n.t("home.tabs.seed")}>
             <div className="mod-system">
                 <section className={"info-block-container"}>
@@ -568,10 +567,6 @@ class System extends React.Component {
                 <section className={"info-block-container"}>
                     {this.renderDbDemoSeed()}
                     <p className="result">{demoSeedResult}</p>
-                </section>
-                <section className={"info-block-container"}>
-                    {this.renderDbStressSeed()}
-                    <p className="result">{stressSeedResult}</p>
                 </section>
             </div>
         </div>)
@@ -728,24 +723,6 @@ class System extends React.Component {
                     busy: false,
                     demoSeedResult: I18n.t("system.seedResult", {
                         seed: "Demo",
-                        ms: new Date().getMilliseconds() - d.getMilliseconds()
-                    })
-                }, () => window.location.reload());
-            });
-        }
-    }
-
-    doDbStressSeed = showConfirmation => {
-        if (showConfirmation) {
-            this.confirm(() => this.doDbStressSeed(false), I18n.t("system.runDbSeedConfirmation"));
-        } else {
-            this.setState({confirmationDialogOpen: false, busy: true,});
-            const d = new Date();
-            dbStressSeed().then(() => {
-                this.setState({
-                    busy: false,
-                    stressSeedResult: I18n.t("system.seedResult", {
-                        seed: "Stress",
                         ms: new Date().getMilliseconds() - d.getMilliseconds()
                     })
                 }, () => window.location.reload());
@@ -992,21 +969,6 @@ class System extends React.Component {
                                                         onClick={() => this.doDbDemoSeed(true)}/>}
                     {!isEmpty(demoSeedResult) && <Button txt={I18n.t("system.reload")}
                                                          onClick={this.reload} cancelButton={true}/>}
-                </div>
-            </div>
-        );
-    }
-
-    renderDbStressSeed = () => {
-        const {stressSeedResult} = this.state;
-        return (
-            <div className="info-block">
-                <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("system.runDbStressSeedInfo"))}}/>
-                <div className="actions">
-                    {isEmpty(stressSeedResult) && <Button txt={I18n.t("system.runDbSeed")}
-                                                          onClick={() => this.doDbStressSeed(true)}/>}
-                    {!isEmpty(stressSeedResult) && <Button txt={I18n.t("system.reload")}
-                                                           onClick={this.reload} cancelButton={true}/>}
                 </div>
             </div>
         );

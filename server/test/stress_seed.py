@@ -26,6 +26,15 @@ def stress_seed(db, app_config):
     Populate the database with a large number of entities for stress testing.
     The number of entities is controlled by parameters in config.yml.
     """
+
+    def batch(db, items, batch_size=50):
+        """
+        Persist items in batches to avoid memory issues.
+        """
+        for i in range(0, len(items), batch_size):
+            persist_instance(db, *items[i:i + batch_size])
+            db.session.commit()
+
     logger.debug("Running stress seed...")
 
     clean_db(db)
@@ -37,7 +46,8 @@ def stress_seed(db, app_config):
     num_collaborations = stress_config.get('num_collaborations', 200)
     num_services = stress_config.get('num_services', 30)
     num_groups = stress_config.get('num_groups', 5)
-
+    probability = stress_config.get('probability', 0.5)
+              
     logger.debug(
         f"Starting stress seed with: {num_users} users, {num_orgs} orgs, {num_services} services, "
         f"{num_collaborations} collaborations, {num_groups} groups"
@@ -82,16 +92,8 @@ def stress_seed(db, app_config):
             updated_by="urn:admin"
         )
         users.append(user)
-        if i % 100 == 0 and i > 0:
-            logger.debug(f"Created {i} users...")
-            persist_instance(db, *users[i - 100:i])
-            db.session.commit()
 
-    # Ensure any remaining users are persisted
-    if len(users) % 100 != 0:
-        persist_instance(db, *users[-(len(users) % 100):])
-        db.session.commit()
-
+    batch(db, users, 100)
     logger.info(f"Created {len(users)} users")
 
     # Create organisations
@@ -115,9 +117,8 @@ def stress_seed(db, app_config):
 
         orgs.append(org)
 
-    persist_instance(db, *orgs)
+    batch(db, orgs, 20)
     logger.info(f"Created {len(orgs)} organisations")
-    db.session.commit()
 
     logger.debug("Creating organisation memberships...")
     org_memberships = []
@@ -139,9 +140,8 @@ def stress_seed(db, app_config):
             )
             org_memberships.append(membership)
 
-    persist_instance(db, *org_memberships)
+    batch(db, org_memberships, 50)
     logger.info(f"Created {len(org_memberships)} organisation memberships")
-    db.session.commit()
 
     # Create services
     logger.debug(f"Creating {num_services} services...")
@@ -173,9 +173,8 @@ def stress_seed(db, app_config):
 
         services.append(service)
 
-    persist_instance(db, *services)
+    batch(db, services, 50)
     logger.info(f"Created {len(services)} services")
-    db.session.commit()
 
     logger.debug("Creating service memberships...")
     service_memberships = []
@@ -197,125 +196,110 @@ def stress_seed(db, app_config):
             )
             service_memberships.append(membership)
 
-    persist_instance(db, *service_memberships)
+    batch(db, service_memberships, 50)
     logger.info(f"Created {len(service_memberships)} service memberships")
-    db.session.commit()
 
     # Create collaborations in batches to avoid memory issues
     logger.debug(f"Creating {num_collaborations} collaborations...")
-    batch_size = 50
-    created_collaborations = 0
 
-    for batch in range(0, num_collaborations, min(batch_size, num_collaborations)):
-        end = min(batch + batch_size, num_collaborations)
-        logger.debug(f"Creating collaborations {batch} to {end}...")
+    collaborations = []
 
-        collaborations = []
-        for i in range(batch, end):
-            name = f"{fake.catch_phrase()}"
-            short_name = f"collab_{i}"
-            org = choice(orgs)
-            collaboration = Collaboration(
-                name=name,
-                short_name=short_name,
-                global_urn=f"{org.short_name}:{short_name}",
-                identifier=str(uuid.uuid4()),
-                description=fake.paragraph(),
-                logo=choice(images),
-                organisation=org,
-                services=sample(services, min(randint(0, 5), len(services))),
-                website_url=fake.url(),
-                accepted_user_policy=f"https://policy.example.org/collab_{i}",
-                disclose_email_information=choice([True, False]),
-                disclose_member_information=choice([True, False]),
-                created_by="urn:admin",
-                updated_by="urn:admin"
-            )
-            logger.debug(
-                f"-- Creating collaboration {name} with short_name {short_name}"
-                f" for organisation {org.name}"
-                f" with {len(collaboration.services)} services"
-                f" and {len(collaboration.groups)} groups"
-            )
+    for i in range(num_collaborations):
+        name = f"{fake.catch_phrase()}"
+        short_name = f"collab_{i}"
+        org = choice(orgs)
+        collaboration = Collaboration(
+            name=name,
+            short_name=short_name,
+            global_urn=f"{org.short_name}:{short_name}",
+            identifier=str(uuid.uuid4()),
+            description=fake.paragraph(),
+            logo=choice(images),
+            organisation=org,
+            services=sample(services, int(len(services) * probability)),
+            website_url=fake.url(),
+            accepted_user_policy=f"https://policy.example.org/collab_{i}",
+            disclose_email_information=choice([True, False]),
+            disclose_member_information=choice([True, False]),
+            created_by="urn:admin",
+            updated_by="urn:admin"
+        )
+        logger.debug(
+            f"-- Creating collaboration {name} with short_name {short_name}"
+            f" for organisation {org.name}"
+            f" with {len(collaboration.services)} services"
+        )
 
-            collaborations.append(collaboration)
+        collaborations.append(collaboration)
 
-        persist_instance(db, *collaborations)
-        logger.debug(f"Created {len(collaborations)} collaborations")
-        db.session.commit()
+    batch(db, collaborations, 50)
+    logger.info(f"Created {len(collaborations)} collaborations")
 
-        created_collaborations += len(collaborations)
+    # Create collaboration memberships
+    for collab in collaborations:
+        collab_memberships = []
+        # Add random members to each collaboration
+        members = sample(users, int(len(users) * probability))
 
-        # Create collaboration memberships
-        for collab in collaborations:
-            collab_memberships = []
-            # Add 5-50 random members to each collaboration
-            num_members = min(randint(5, 50), len(users))
-            members = sample(users, num_members)
+        # Make one user an admin
+        admin_membership = CollaborationMembership(
+            role="admin",
+            user=members[0],
+            collaboration=collab,
+            created_by="urn:admin",
+            updated_by="urn:admin"
+        )
+        collab_memberships.append(admin_membership)
 
-            # Make one user an admin
-            admin_membership = CollaborationMembership(
-                role="admin",
-                user=members[0],
+        # Make the rest regular members
+        for user in members[1:]:
+            member = CollaborationMembership(
+                role="member",
+                user=user,
                 collaboration=collab,
                 created_by="urn:admin",
                 updated_by="urn:admin"
             )
-            collab_memberships.append(admin_membership)
+            collab_memberships.append(member)
 
-            # Make the rest regular members
-            for user in members[1:]:
-                member = CollaborationMembership(
-                    role="member",
-                    user=user,
+        batch(db, collab_memberships, 50)
+        logger.info(f"meberships for collaboration: {collab.global_urn}: {len(collab_memberships)}")
+
+        # Create groups for this collaboration
+        groups = []
+        for i in range(randint(0, num_groups)):
+            name = f"{fake.word()}"
+            short_name = f"group_{i}"
+
+            # Get admin memberships for this collaboration
+            admin_members = [m for m in collab_memberships if m.collaboration == collab and m.role == "admin"]
+
+            if admin_members:
+                group = Group(
+                    name=name,
+                    short_name=short_name,
+                    global_urn=f"{collab.organisation.short_name}:{collab.short_name}:{short_name}",
+                    identifier=str(uuid.uuid4()),
+                    auto_provision_members=choice([True, False]),
+                    description=fake.sentence(),
                     collaboration=collab,
+                    collaboration_memberships=sample(
+                        collab_memberships,
+                        min(randint(1, 10), len(collab_memberships))
+                    ),
                     created_by="urn:admin",
                     updated_by="urn:admin"
+
                 )
-                collab_memberships.append(member)
+                logger.debug(
+                    f"-- Creating group {name} with short_name {short_name}"
+                    f" for collaboration {collab.name}"
+                    f" with {len(group.collaboration_memberships)} members"
+                )
 
-            logger.debug("Persisting Collaboration Memberships...")
-            persist_instance(db, *collab_memberships)
+                groups.append(group)
 
-            logger.info(f"meberships for collaboration: {collab.global_urn}: {len(collab_memberships)}")
-
-            # Create groups for this collaboration
-            groups = []
-            for i in range(randint(0, num_groups)):
-                name = f"{fake.word()}"
-                short_name = f"group_{i}"
-
-                # Get admin memberships for this collaboration
-                admin_members = [m for m in collab_memberships if m.collaboration == collab and m.role == "admin"]
-
-                if admin_members:
-                    group = Group(
-                        name=name,
-                        short_name=short_name,
-                        global_urn=f"{collab.organisation.short_name}:{collab.short_name}:{short_name}",
-                        identifier=str(uuid.uuid4()),
-                        auto_provision_members=choice([True, False]),
-                        description=fake.sentence(),
-                        collaboration=collab,
-                        collaboration_memberships=sample(collab_memberships,
-                                                         min(randint(1, 10), len(collab_memberships))),
-                        created_by="urn:admin",
-                        updated_by="urn:admin"
-
-                    )
-                    logger.debug(
-                        f"-- Creating group {name} with short_name {short_name}"
-                        f" for collaboration {collab.name}"
-                        f" with {len(group.collaboration_memberships)} members"
-                    )
-
-                    groups.append(group)
-
-            persist_instance(db, *groups)
-            logger.info(f"Created {len(groups)} groups for this batch")
-
-            db.session.commit()
-
-        logger.info(f"Created: {created_collaborations} collaboration")
+        batch(db, groups, 50)
+        logger.info(f"Created {len(groups)} groups for collaboration {collab.global_urn}")
 
     logger.debug("Stress seed completed successfully")
