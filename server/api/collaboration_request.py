@@ -94,7 +94,7 @@ def request_collaboration():
 
     if auto_create or auto_aff:
         collaboration = do_save_collaboration(data, organisation, user, current_user_admin=True)[0]
-        context = {"salutation": f"Dear {organisation.name} organisation admin,",
+        context = {"salutation": f"Dear {organisation.name} organisation admin",
                    "base_url": current_app.app_config.base_url,
                    "collaboration": collaboration,
                    "message": message,
@@ -115,7 +115,7 @@ def request_collaboration():
                    allowed_child_collections=["units"])
         collaboration_request = res[0]
 
-        context = {"salutation": f"Dear {organisation.name} organisation admin,",
+        context = {"salutation": f"Dear {organisation.name} organisation admin",
                    "base_url": current_app.app_config.base_url,
                    "collaboration_request": collaboration_request,
                    "user": user}
