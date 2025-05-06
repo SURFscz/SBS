@@ -7,28 +7,33 @@ from flask.cli import with_appcontext
 def register_commands(app):
     """Register Flask CLI commands"""
 
-    app_config = app.app_config
-
-    stress_config = getattr(app_config, 'stress_test', {})
-    num_users = stress_config.get('num_users', 1000)
-    num_orgs = stress_config.get('num_orgs', 50)
-    num_collaborations = stress_config.get('num_collaborations', 200)
-    num_services = stress_config.get('num_services', 30)
-    num_groups = stress_config.get('num_groups', 5)
-
     @app.cli.command("stress-seed")
-    @click.option("--users", default=num_users,
+    @click.option("-u", "--users", default=1000,
                   help="Number of users to create")
-    @click.option("--orgs", default=num_orgs,
+    @click.option("-o", "--orgs", default=50,
                   help="Number of organizations to create")
-    @click.option("--collab", default=num_collaborations,
+    @click.option("-c", "--collab", default=200,
                   help="Number of collaborations to create")
-    @click.option("--services", default=num_services,
+    @click.option("-s", "--services", default=30,
                   help="Number of services to create")
-    @click.option("--groups", default=num_groups,
+    @click.option("-g", "--groups", default=5,
                   help="Number of groups to create")
+    @click.option(
+        "-p", "--probability",
+        default=0.5,
+        type=float,
+        help="""
+            Probability of users being member of a collaboration
+            and services being connected to a collaboration
+        """,
+        show_default=True,
+        callback=lambda ctx, param, value: (
+            value if 0.0 <= value <= 1.0 else
+            click.BadParameter("Probability must be between 0.0 and 1.0")
+        )
+    )
     @with_appcontext
-    def run_stress_seed(users, orgs, collab, services, groups):
+    def run_stress_seed(users, orgs, collab, services, groups, probability):
         """Run stress seed with specified parameters"""
         from server.test.stress_seed import stress_seed
 
@@ -38,6 +43,7 @@ def register_commands(app):
             "num_collaborations": collab,
             "num_services": services,
             "num_groups": groups,
+            "probability": probability,
         }
 
         # Update app_config with the stress test settings

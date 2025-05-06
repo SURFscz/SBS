@@ -61,7 +61,8 @@ def test_stress_seed_custom_values(mock_stress_seed, app, runner):
             '--orgs', '30',
             '--collab', '100',
             '--services', '20',
-            '--groups', '50'
+            '--groups', '50',
+            '-p', '0.8'
         ])
 
     assert result.exit_code == 0
