@@ -1,32 +1,24 @@
 # First build SRAM SBS image
-FROM ghcr.io/openconext/openconext-basecontainers/python3:latest
+FROM ghcr.io/openconext/openconext-basecontainers/python3:latest AS sram-sbs-server
 
-# Set the default workdir
-WORKDIR /opt
-
-# set default C compiler
-ENV CC=clang
+# Copy init script
+COPY --chmod=0755 misc/container-init-pre.sh  /container-init/sbs_prepare.sh
+COPY --chmod=0755 misc/container-init-post.sh /container-init-post/sbs_migrations.sh
 
 # Install SBS
-COPY sbs.tar.xz /opt/sbs.tar.xz
+COPY sbs.tar.xz /sbs.tar.xz
 
 # Untar sbs
-RUN tar -Jxf sbs.tar.xz
+RUN tar -xJ -C /opt -f /sbs.tar.xz
 
 # Create venv dir
-#RUN virtualenv /opt/sbs
-
-RUN pip install -r /opt/sbs/server/requirements/test.txt
-
-# Copy entrypoint
-COPY misc/entrypoint.sh /entrypoint.sh
-RUN chmod 755 /entrypoint.sh
+RUN pip cache dir
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install -r /opt/sbs/server/requirements/test.txt
 
 # Set the default workdir
 WORKDIR /opt/sbs
 
 EXPOSE 8080
 
-ENTRYPOINT ["/entrypoint.sh"]
-#CMD ["bash"]
 CMD ["/usr/local/bin/gunicorn --worker-class eventlet --workers 8 --bind 0.0.0.0:8080 server.__main__:app"]

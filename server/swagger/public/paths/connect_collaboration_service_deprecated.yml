@@ -1,5 +1,5 @@
 summary: "Deprecated. Connect service to collaboration."
-description: "Connect a service to an existing collaboration. This endpoint is deprecated, 
+description: "Connect a service to an existing collaboration. This endpoint is deprecated,
               use the same endpoint with the <co_identifier> in the path."
 
 tags:

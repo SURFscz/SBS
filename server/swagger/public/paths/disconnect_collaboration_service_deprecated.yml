@@ -1,5 +1,5 @@
 summary: "Deprecated. Disconnect service from collaboration."
-description: "Disconnect a service from an existing collaboration. This endpoint is deprecated, 
+description: "Disconnect a service from an existing collaboration. This endpoint is deprecated,
               use the same endpoint with the <co_identifier> in the path."
 
 tags:
