@@ -24,6 +24,38 @@ class TestUserClaims(AbstractTest):
         add_user_claims({"voperson_external_id": "teacher@UNIVERSITY"}, "urn:johny", user)
         self.assertEqual("university", user.schac_home_organisation)
 
+    def test_add_user_claims_schac_home_organization(self):
+        user = User()
+        claims = {"voperson_external_id": "teacher@UNIVERSITY",
+                  "schac_home_organization": "hdm.org"}
+        add_user_claims(claims, "urn:johny", user)
+        self.assertEqual("hdm.org", user.schac_home_organisation)
+
+    def test_add_user_claims_empty_schac_home_organization(self):
+        user = User()
+        claims = {"voperson_external_id": "teacher@UNIVERSITY",
+                  "schac_home_organization": ""}
+        add_user_claims(claims, "urn:johny", user)
+        self.assertEqual("university", user.schac_home_organisation)
+
+    def test_scoped_scoped_affiliation(self):
+        user = User()
+        claims = {"edumember_is_member_of": ["urn:collab:org:dev.openconext.local"],
+                  "eduperson_principal_name": "foobar6@example.org",
+                  "eduperson_affiliation": ["student"],
+                  "eduperson_scoped_affiliation": ["student@example.org"],
+                  "email": "foobar6@example.com",
+                  "email_verified": True, "family_name": "Doe", "given_name": "Foobar6", "name": "Foobar6 Doe",
+                  "nickname": "Foobar6 Doe",
+                  "preferred_username": "Foobar6 Doe",
+                  "schac_home_organization": "imdb.org",
+                  "sub": "urn:collab:person:example.org:foobar6",
+                  "subject_id": "foobar6@example.com", "uids": ["foobar6"]}
+        add_user_claims(claims, "urn:johny", user)
+        self.assertEqual("imdb.org", user.schac_home_organisation)
+        self.assertEqual("student@example.org", user.scoped_affiliation)
+        self.assertEqual("foobar6@example.org", user.eduperson_principal_name)
+
     def test_add_user_claims_affiliation_list(self):
         user = User()
         add_user_claims({"voperson_external_id": ["teacher@sub.UNI.org"]}, "urn:johny", user)
@@ -75,7 +107,7 @@ class TestUserClaims(AbstractTest):
         self.assertEqual("jdoe", user.username)
 
     def test_generate_unique_username(self):
-        # we don't want this in the normal seed
+        # we don"t want this in the normal seed
         for username in ["jdoe", "jdoe2", "cdoemanchi", "cdoemanchi2", "cdoemanchi3", "u", "u2"]:
             db.session.merge(User(uid=str(uuid.uuid4()), username=username, created_by="test", updated_by="test",
                                   name="name", external_id=str(uuid.uuid4())))
@@ -92,7 +124,7 @@ class TestUserClaims(AbstractTest):
     def test_eppn_generate_unique_username(self):
         user = User(eduperson_principal_name="sarah-lee")
         username = generate_unique_username(user)
-        # We don't use the eduperson_principal_name anymore
+        # We don"t use the eduperson_principal_name anymore
         self.assertEqual("u", username)
 
     def test_bugfix_empty_user_claims_affiliation_list(self):
@@ -143,8 +175,8 @@ class TestUserClaims(AbstractTest):
                 self.assertEqual(1, len(outbox))
                 mail_msg = outbox[0]
                 self.assertListEqual(["sram-support@surf.nl"], mail_msg.to)
-                self.assertTrue("scoped_affiliation" in mail_msg.html)
-                self.assertTrue("email" in mail_msg.html)
+                for name in ["name", "email", "uid"]:
+                    self.assertTrue(name in mail_msg.html)
 
         finally:
             os.environ["TESTING"] = "1"

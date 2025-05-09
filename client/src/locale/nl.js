@@ -1777,7 +1777,7 @@ const nl = {
             approved: "Goedgekeurd"
         },
         flash: {
-            approved: "Samenwerking {{name}} is aangemaakt en de aanvraag daartoe is verwijderd",
+            approved: "Samenwerking {{name}} is aangemaakt en de aanvraag daartoe is goedgekeurd",
             denied: "De aanvraag om samenwerking {{name}} aan te maken is afgewezen",
             deleted: "Aanvraag voor samenwerking {{name}} is verwijderd",
         }
@@ -1876,7 +1876,8 @@ const nl = {
             "service_invitations": "Applicatieuitnodiging",
             "service_memberships": "Applicatielidmaatschap",
             "tags": "Label",
-            "service_tokens": "Applicatietokens (allemaal)"
+            "service_tokens": "Applicatietokens (allemaal)",
+            "user_nonces": "User nonces"
         }
     },
     serviceRequest: {
@@ -2003,7 +2004,6 @@ const nl = {
         runDbSeedConfirmation: "Weet je het zeker? Hiermee worden alle huidige gegevens verwijderd",
         runDbSeedInfo: "Verwijder alle gegevens en voeg de <strong>TEST</strong> gegevens toe",
         runDbDemoSeedInfo: "Verwijder alle gegevens en voeg de <strong>TEST+DEMO</strong> gegevens toe",
-        runDbStressSeedInfo: "Verwijder alle gegevens en voeg de <strong>Anonieme Data</strong> gegevens toe",
         runDbSeed: "Voer uit",
         runClearAuditLogsConfirmation: "Weet je zeker dat je alle gegevens uit de audit-logs wil verwijderen?",
         cleanSlate: "Verwijder alles",
@@ -2024,6 +2024,11 @@ const nl = {
             title: "De onderstaande gebruikers hebben een aanvraag gedaan om hun TOTP te resetten.",
             titleZeroState: "Er zijn geen gebruikers die een aanvraag hebben gedaan.",
             reset: "Reset"
+        },
+        rateLimitedUsers: {
+            title: "The following users are rate-limited.",
+            titleZeroState: "There are no users who are rate-limited.",
+            reset: "Re-activate"
         },
         userlogins: {
             loginType: "Type",
@@ -2120,6 +2125,7 @@ const nl = {
             redirect: "Redirect",
             hi: "Hi there, this is the mock EB",
             stop: "Stop EB interrupt flow",
+            ebAttributes: "EB Attributes",
             stopped: "Interrupt flow is stopped. Refresh will make you platform admin again.",
             results: "Results",
             errors: "Errors",
@@ -2299,7 +2305,7 @@ const nl = {
             resetRequest: "Reset je verificatiecode",
             resetToken: "Gebruik een resetcode",
             rateLimited: "Inloggen geblokkeerd",
-            rateLimitedInfo: "Je hebt de TOTP-verificatie te vaak geprobeerd en daarom is je TOTP uitgeschakeld. Gebruik een resetcode om je TOTP te resetten. Neem contact op sram-support@surf.nl voor een resetcode als je deze niet ontvangen hebt of vraag een nieuwe resetcode aan.",
+            rateLimitedInfo: "Je account is geblokkeerd. Neem contact op met <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> om activatie te verzoeken.",
             rateLimitedResetRequest: "Reset je verificatiecode",
             rateLimitedResetToken: "Gebruik een resetcode",
         },
@@ -2685,10 +2691,10 @@ const nl = {
     collaborationInvitations: {
         inviteWithLink: "Uitnodigen met link",
         inviteWithLinkToggle: "Of nodig gebruikers uit met een link",
-        inviteWithLinkInfo: "Deel de link waarmee lidmaatschap aangevraagdkan worden. Je kunt deze aanvragen goed- of afkeuren.",
+        inviteWithLinkInfo: "Deel de link waarmee lidmaatschap aangevraagd kan worden. Je kunt deze aanvragen goed- of afkeuren.",
         inviteWithLinkCopy: "Kopiëer koppeling",
         inviteWithEmail: "Uitnodigen via e-mail",
-        inviteWithEmailInfo: "Verstuur een uitnodiging naar éém of meerder e-mailadressen. Met de link in de e-mail kan een gebruiker direct lid worden.",
+        inviteWithEmailInfo: "Verstuur een uitnodiging naar één of meerdere e-mailadressen. Met de link in de e-mail kan een gebruiker direct lid worden.",
     },
     organisationDetails: {
         details: "Organisatiedetails",
@@ -2707,7 +2713,7 @@ const nl = {
             settings: "Organisatieconfiguratie"
         },
         units: {
-            info: "Maak units om afdelingen of projecten binnen je organisatie te organiseren. Managers kunnen worden toegewezen aan specifieke eenheden om hun activiteiten te beheren.",
+            info: "Maak units om afdelingen of projecten binnen je organisatie te organiseren. Managers kunnen worden toegewezen aan specifieke units om hun activiteiten te beheren.",
         },
         labels: {
             info: "Maak labels om algemene eigenschappen voor samenwerkingen binnen je organisatie te definiëren. Labels worden gedeeld met de gekoppelde applicaties en helpen bij het beheren en organiseren van je leden.",

@@ -22,4 +22,6 @@ class DynamicExtendedJSONProvider(DefaultJSONProvider):
             return o.__json__()
         if isinstance(o, date):
             return int(time.mktime(o.timetuple()))
+        if isinstance(o, set):
+            return [*o]
         return super(DynamicExtendedJSONProvider, self).default(o)

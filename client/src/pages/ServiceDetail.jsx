@@ -19,7 +19,7 @@ import {AppStore} from "../stores/AppStore";
 import {ReactComponent as ConnectedIcon} from "../icons/groups.svg";
 import ServiceOrganisations from "../components/redesign/ServiceOrganisations";
 import SpinnerField from "../components/redesign/SpinnerField";
-import {capitalize, isEmpty, stopEvent} from "../utils/Utils";
+import {capitalize, stopEvent} from "../utils/Utils";
 import {actionMenuUserRole, isUserServiceAdmin, isUserServiceManager} from "../utils/UserRole";
 import ServiceConnectionRequests from "../components/redesign/ServiceConnectionRequests";
 import ServiceGroups from "../components/redesign/ServiceGroups";
@@ -268,16 +268,14 @@ class ServiceDetail extends React.Component {
     }
 
     getCollaborationsTab = (service, userServiceAdmin, showServiceAdminView) => {
-        const collaborations = service.collaborations || [];
         return (
             <div key="collaborations" name="collaborations"
-                 label={I18n.t("home.tabs.serviceCollaborations", {count: collaborations.length})}>
+                 label={I18n.t("home.tabs.serviceCollaborations")}>
                 <ServiceCollaborations
                     service={service}
                     showServiceAdminView={showServiceAdminView}
                     userServiceAdmin={userServiceAdmin}
                     goToOrganisationsTab={() => this.tabChanged("organisations")}
-                    collaborations={collaborations}
                     refresh={this.refresh}
                     modelName={"serviceCollaborations"}
                     {...this.props} />
@@ -399,8 +397,8 @@ class ServiceDetail extends React.Component {
     }
 
     getCollaborationHeaderInfo = service => {
-        const collaborations = service.collaborations || [];
-        const notConnected = isEmpty(collaborations);
+        const collaborationCount = service.collaboration_count || 0;
+        const notConnected = collaborationCount === 0;
         if (notConnected) {
             return (
                 <span
@@ -410,8 +408,8 @@ class ServiceDetail extends React.Component {
         return (
             <span dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(
-                    I18n.t(`servicePageHeaders.${collaborations.length === 1 ? "connectedToSingle" : "connectedToMultiple"}`,
-                        {count: collaborations.length})
+                    I18n.t(`servicePageHeaders.${collaborationCount === 1 ? "connectedToSingle" : "connectedToMultiple"}`,
+                        {count: collaborationCount})
                 )
             }}/>
         );

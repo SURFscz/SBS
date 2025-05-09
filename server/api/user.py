@@ -311,7 +311,8 @@ def resume_session():
         "Accept": "application/json, application/json;charset=UTF-8"
     }
     response = requests.post(oidc_config.token_endpoint, data=urllib.parse.urlencode(payload),
-                             headers=headers, auth=(oidc_config.client_id, oidc_config.client_secret))
+                             verify=oidc_config.verify_peer, headers=headers,
+                             auth=(oidc_config.client_id, oidc_config.client_secret))
     if response.status_code != 200:
         return _redirect_with_error(logger, f"Server error: Token endpoint error (http {response.status_code}")
 
@@ -322,8 +323,7 @@ def resume_session():
         "Accept": "application/json, application/json;charset=UTF-8",
         "Authorization": f"Bearer {access_token}"
     }
-
-    response = requests.get(oidc_config.userinfo_endpoint, headers=headers)
+    response = requests.get(oidc_config.userinfo_endpoint, headers=headers, verify=oidc_config.verify_peer)
     if response.status_code != 200:
         return _redirect_with_error(logger, f"Server error: User info endpoint error (http {response.status_code}")
 
@@ -337,6 +337,8 @@ def resume_session():
 
     encoded_id_token = token_json["id_token"]
     id_token = decode_jwt_token(encoded_id_token)
+
+    logger.info(f"Received id_token {id_token} from {oidc_config.token_endpoint}")
 
     if not user:
         # Ensure we don't provision users who have not all the mandatory attributes
@@ -363,8 +365,9 @@ def resume_session():
     if idp_performed_mfa:
         logger.debug(f"user {uid}: idp_mfa={idp_performed_mfa} (ACR = '{id_token.get('acr')}')")
 
+    # See https://github.com/SURFscz/SBS/issues/1899. We don't know the issuer / originator IdP
     mfa_is_required = user_requires_sram_mfa(user,
-                                             issuer_id=id_token.get("iss"),
+                                             issuer_id=None,
                                              override_mfa_required=idp_performed_mfa)
     logger.debug(f"SBS login for user {uid} MFA check is required: {mfa_is_required}")
 
@@ -450,6 +453,9 @@ def me():
 
         user = {**jsonify(user_from_db).json, **user_from_session, **csrf_token}
 
+        # Corner case where it is possible that the AUP has changed during the session of this user
+        user["user_accepted_aup"] = user_from_db.has_agreed_with_aup()
+
         _add_reference_data(user, user_from_db)
         db.session.merge(user_from_db)
         return user, 200
@@ -486,6 +492,27 @@ def suspended():
     return User.query.filter(User.suspended.is_(True)).all(), 200
 
 
+@user_api.route("/rate_limited", strict_slashes=False)
+@json_endpoint
+def rate_limited():
+    confirm_write_access()
+    return User.query.filter(User.rate_limited.is_(True)).all(), 200
+
+
+@user_api.route("/reset_rate_limited", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def reset_rate_limited():
+    body = current_request.get_json()
+    confirm_write_access()
+
+    user = db.session.get(User, int(body["user_id"]))
+    user.second_factor_auth = None
+    user.mfa_reset_token = None
+    user.rate_limited = False
+    db.session.merge(user)
+    return {}, 201
+
+
 @user_api.route("/reset_totp_requested", strict_slashes=False)
 @json_endpoint
 def reset_totp_requested():
@@ -506,7 +533,7 @@ def activate():
 
     user = db.session.get(User, int(body["user_id"]))
     user.successful_login()
-    user = db.session.merge(user)
+    db.session.merge(user)
     return {}, 201
 
 

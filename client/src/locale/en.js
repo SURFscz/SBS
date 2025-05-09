@@ -524,7 +524,7 @@ const en = {
         deleted_collaboration_requests: {
             title: "Deleted requests for collaborations",
             searchPlaceHolder: "Search for requests...",
-            noEntities: "No outdated declined / approved requests for collaborations",
+            noEntities: "No outdated denied / approved requests for collaborations",
         },
         invitation: {
             welcome: "Welcome to SURF Research Access Management. Here access to research applications for research collaborations is managed.",
@@ -559,7 +559,7 @@ const en = {
             title: "Join Request",
             searchPlaceHolder: "Search for requests...",
             noEntities: "No join requests were found",
-            edit: "Approve / decline",
+            edit: "Approve / deny",
             details: "Join request made by {{name}} on {{date}}"
         },
         memberJoinRequests: {
@@ -578,14 +578,14 @@ const en = {
         deletedJoinRequests: {
             title: "Deleted collaboration join requests",
             searchPlaceHolder: "Search for requests...",
-            noEntities: "No outdated approved / declined join requests",
+            noEntities: "No outdated approved / denied join requests",
         },
         serviceConnectionRequests: {
             backToServiceConnectionRequests: "Back to all connection requests",
             title: "Connection requests",
             searchPlaceHolder: "Search for connection requests...",
             noEntities: "No application connection requests were found",
-            edit: "Approve / decline",
+            edit: "Approve / deny",
             details: "Application connection request made by {{name}} on {{date}} for collaboration {{collaborationName}}",
             detailsWithService: "Application connection request made by {{name}} on {{date}} for collaboration {{collaborationName}} and application {{serviceName}}",
             requester: "Requester",
@@ -1412,11 +1412,11 @@ const en = {
         messageTooltip: "The motivation from {{name}} for this join request",
         collaborationName: "Collaboration",
         userName: "User",
-        decline: "Decline",
+        decline: "Deny",
         accept: "Accept",
-        declineConfirmation: "Are you sure you want to decline this join request?",
+        declineConfirmation: "Are you sure you want to deny this join request?",
         deleteConfirmation: "Are you sure you want to delete this join request?",
-        rejectionReason: "Please enter the reason to decline this join request",
+        rejectionReason: "Please enter the reason to deny this join request",
         rejectionReasonLabel: "Reason for declination",
         rejectionReasonNote: "Note that the reason is included in the email to the requester",
         why: "Why do you want to join this collaboration?",
@@ -1424,10 +1424,10 @@ const en = {
         projectMember: "I am a member of this project",
         other: "Other, please explain",
         flash: {
-            declined: "Join request for collaboration {{name}} was declined.",
+            declined: "Join request for collaboration {{name}} was denied.",
             accepted: "Join request for collaboration {{name}} was accepted.",
             deleted: "Join request for collaboration {{name}} was deleted.",
-            notFound: "This join request has already been accepted / declined.",
+            notFound: "This join request has already been accepted / denied.",
             alreadyMember: "You are already a member of collaboration {{name}} and can therefore not accept this invitation"
         }
     },
@@ -1459,14 +1459,14 @@ const en = {
         expired: "This invitation expired on {{expiry_date}} and cannot be accepted anymore.",
         expiredAdmin: "This invitation expired on {{expiry_date}}. Resend the invitation to reset the expiration date to 14 days.",
         flash: {
-            inviteDeclined: "Invitation for organisation {{name}} was declined.",
+            inviteDeclined: "Invitation for organisation {{name}} was denied.",
             inviteDeleted: "Invitation for organisation {{name}} was deleted.",
             inviteResend: "Invitation for organisation {{name}} was resent.",
             invitesResend: "Invitations for organisation {{name}} were resent.",
             inviteAccepted: "Invitation for organisation {{name}} was accepted.",
             created: "Invitions for organisation {{name}} are created.",
             alreadyMember: "The invitation could not be accepted because you are already a member of this organisation.",
-            notFound: "Invitation has already been accepted / declined. If you think there is a problem check with your admin (or with support at sram-support@surf.nl)."
+            notFound: "Invitation has already been accepted / denied. If you think there is a problem check with your admin (or with support at sram-support@surf.nl)."
         },
     },
     apiKeys: {
@@ -1523,7 +1523,7 @@ const en = {
         delete: "Delete",
         resend: "Resend",
         invite: "Invite",
-        declineInvitation: "Are you sure you want to decline this invitation?",
+        declineInvitation: "Are you sure you want to deny this invitation?",
         deleteInvitation: "Are you sure you want to delete this invitation?",
         resendInvitation: "Are you sure you want to resend this invitation?",
         expired: "This invitation expired on {{expiry_date}} and cannot be accepted anymore.",
@@ -1533,7 +1533,7 @@ const en = {
         membershipExpiryDate: "Membership valid until",
         membershipExpiryDateTooltip: "The expiration date of the membership, after which the user cannot log in to applications connected to this collaboration.",
         flash: {
-            inviteDeclined: "Invitation for collaboration {{name}} was declined.",
+            inviteDeclined: "Invitation for collaboration {{name}} was denied.",
             inviteAccepted: "Invitation for collaboration {{name}} was accepted.",
             inviteDeleted: "Invitation for collaboration {{name}} was deleted.",
             inviteResend: "Invitation for collaboration {{name}} was resent.",
@@ -1574,7 +1574,7 @@ const en = {
             created_at: "Created",
             message: "Message"
         },
-        actionsTooltip: "Delete the application connection request. The request can henceforth not be approved or declined anymore.",
+        actionsTooltip: "Delete the application connection request. The request can henceforth not be approved or denied anymore.",
         serviceConnectionRequests: "Application connection Requests",
         serviceConnectionRequestDeleted: "Deleted request to connect application {{service}} to collaboration {{collaboration}}.",
         serviceConnectionRequestResend: "Resent request to connect application {{service}} to collaboration {{collaboration}}.",
@@ -1759,26 +1759,26 @@ const en = {
         title: {
             open: "{{requester}} has requested to create a new collaboration '{{name}}'.",
             approved: "{{requester}} collaboration request was approved.",
-            denied: "{{requester}} collaboration request was declined."
+            denied: "{{requester}} collaboration request was denied."
         },
         request: "Request {{id}}",
         requester: "Requester",
         approved: "Approved",
-        rejectionReason: "Declined reason",
-        denyConfirmation: "Are you sure you want to decline this collaboration request?",
+        rejectionReason: "Denied reason",
+        denyConfirmation: "Are you sure you want to deny this collaboration request?",
         deleteConfirmation: "Are you sure you want to delete this collaboration request?",
         approve: "Approve",
-        deny: "Decline",
+        deny: "Deny",
         status: "Status",
         statuses: {
             all: "All ({{nbr}})",
             open: "Open",
-            denied: "Declined",
+            denied: "Denied",
             approved: "Approved"
         },
         flash: {
-            approved: "Collaboration {{name}} has been created and the collaboration Request has been deleted",
-            denied: "Collaboration Request for {{name}} has been declined",
+            approved: "Collaboration {{name}} has been created and the collaboration Request has been approved",
+            denied: "Collaboration Request for {{name}} has been denied",
             deleted: "Collaboration Request for {{name}} has been deleted",
         }
     },
@@ -1790,17 +1790,17 @@ const en = {
         service: "Application",
         collaboration: "Collaboration",
         requester: "Requester",
-        decline: "Decline",
+        decline: "Deny",
         accept: "Accept",
         retract: "Retract",
         approveConfirmation: "Are you sure you want to approve this request?",
-        declineConfirmation: "Are you sure you want to decline this request?",
+        declineConfirmation: "Are you sure you want to deny this request?",
         deleteConfirmation: "Are you sure you want to delete this request?",
         flash: {
-            declined: "Application connection request for application {{name}} was declined",
+            declined: "Application connection request for application {{name}} was denied",
             accepted: "Application connection request for application {{name}} was accepted",
             deleted: "Application connection request for application {{name}} was deleted",
-            notFound: "This request has already been accepted / declined."
+            notFound: "This request has already been accepted / denied."
         }
     },
     autocomplete: {
@@ -1822,7 +1822,7 @@ const en = {
             "2": "Updated",
             "3": "Deleted",
             approved: "Approved",
-            denied: "Declined"
+            denied: "Denied"
         },
         overview: "{{action}} {{collection}}{{name}}",
         none: "No history to display",
@@ -1876,35 +1876,36 @@ const en = {
             "service_invitations": "Application invitation",
             "service_memberships": "Application membership",
             "tags": "Label",
-            "service_tokens": "Application tokens (any)"
+            "service_tokens": "Application tokens (any)",
+            "user_nonces": "User nonces"
         }
     },
     serviceRequest: {
         title: {
             open: "{{requester}} has requested to register the application '{{name}}'.",
             approved: "{{requester}} application registration was approved.",
-            denied: "{{requester}} application registration was declined."
+            denied: "{{requester}} application registration was denied."
         },
         request: "Request {{id}}",
         requester: "Requester",
         approved: "Approved",
-        rejectionReason: "Declined reason",
-        denyConfirmation: "Are you sure you want to decline this application registration?",
+        rejectionReason: "Denied reason",
+        denyConfirmation: "Are you sure you want to deny this application registration?",
         deleteConfirmation: "Are you sure you want to delete this application registration?",
         approve: "Approve",
-        deny: "Decline",
+        deny: "Deny",
         metaData: "The SAML metadata",
         showMetaData: "Show the SAML metadata",
         status: "Status",
         statuses: {
             all: "All ({{nbr}})",
             open: "Open",
-            denied: "Declined",
+            denied: "Denied",
             approved: "Approved"
         },
         flash: {
             approved: "Application {{name}} has been created",
-            denied: "Application registration request for {{name}} has been declined",
+            denied: "Application registration request for {{name}} has been denied",
             deleted: "Application registration request for {{name}} has been deleted",
         }
     },
@@ -1974,7 +1975,7 @@ const en = {
         runOutdatedRequestsInfo: "Run the cron job to report all open outdated join requests and new collaboration requests for the configured threshold",
         runOpenRequestsInfo: "Run the weekly cron job to report all open requests for CO, Org and Application admins",
         runOutdatedRequests: "Run",
-        runCleanedRequestsInfo: "Run the cron job to delete all outdated approved / declined join requests and collaboration requests for the configured threshold",
+        runCleanedRequestsInfo: "Run the cron job to delete all outdated approved / denied join requests and collaboration requests for the configured threshold",
         runCleanedRequests: "Delete",
         runSweepResults: "Run the cron job to sweep all SCIM enabled applications",
         runSweep: "Run",
@@ -2003,7 +2004,6 @@ const en = {
         runDbSeedConfirmation: "Are you absolutely sure? This will delete all current data",
         runDbSeedInfo: "Delete all data and insert the <strong>TEST</strong> seed",
         runDbDemoSeedInfo: "Delete all data and insert the <strong>TEST+DEMO</strong> seed",
-        runDbStressSeedInfo: "Delete all data and insert the <strong>Anonymous Volume</strong> seed",
         runDbSeed: "Run",
         runClearAuditLogsConfirmation: "Are you absolutely sure you want to delete all entries from the audit logs?",
         cleanSlate: "Delete everything",
@@ -2024,6 +2024,11 @@ const en = {
             title: "The following users have requested a reset of their TOTP.",
             titleZeroState: "There are no users who have requested a TOTP reset.",
             reset: "Reset"
+        },
+        rateLimitedUsers: {
+            title: "The following users are rate-limited.",
+            titleZeroState: "There are no users who are rate-limited.",
+            reset: "Re-activate"
         },
         userlogins: {
             loginType: "Type",
@@ -2120,6 +2125,7 @@ const en = {
             redirect: "Redirect",
             hi: "Hi there, this is the mock EB",
             stop: "Stop EB interrupt flow",
+            ebAttributes: "EB Attributes",
             stopped: "Interrupt flow is stopped. Refresh will make you platform admin again.",
             results: "Results",
             errors: "Errors",
@@ -2299,7 +2305,7 @@ const en = {
             resetRequest: "Reset your verfication code",
             resetToken: "Use a reset code",
             rateLimited: "Verification code blocked",
-            rateLimitedInfo: "You have entered an invalid verification code too often, so it has been blocked. Please request a reset code so you can log in again.",
+            rateLimitedInfo: "Your account has been blocked. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> to request activation.",
             rateLimitedResetRequest: "Request a reset code",
             rateLimitedResetToken: "Use a reset code",
         },
@@ -2465,7 +2471,7 @@ const en = {
         successInfo: "You can close this window.",
         timeOut: "Your session has expired",
         timeOutInfo: " Please go back to the application you were trying to log in to and try again.",
-        denied: "Permission declined",
+        denied: "Permission denied",
         deniedInfo: "Unfortunately, you don't have access to this application.",
         contact: "Please contact <a href='mailto:{{support}}'>{{support}}</a> to arrange access to this application."
     },
@@ -2688,7 +2694,7 @@ const en = {
         inviteWithLinkInfo: "Share the link with which membership can be requested. You can approve or reject these requests.",
         inviteWithLinkCopy: "Copy link",
         inviteWithEmail: "Invite with email",
-        inviteWithEmailInfo: "Send an invitation to one or more emails. Users can become a member directly with the link in the email.",
+        inviteWithEmailInfo: "Send an invitation to one or more email addresses. With the link in the email, the recipients can directly become a member.",
     },
     organisationDetails: {
         details: "Organisation details",

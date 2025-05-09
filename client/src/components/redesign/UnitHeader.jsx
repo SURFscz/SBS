@@ -96,7 +96,8 @@ class UnitHeader extends React.Component {
                             <Button key={index}
                                     onClick={() => !action.disabled && action.perform()}
                                     txt={action.name}
-                                    cancelButton={action.buttonType === ButtonType.Secondary}/>)
+                                    warningButton={action.buttonType === ButtonType.DestructiveSecondary}
+                                    cancelButton={action.buttonType === ButtonType.Secondary && action.buttonType !== ButtonType.DestructiveSecondary}/>)
                         }
                         {showChevronAction &&
                             <div tabIndex={1}

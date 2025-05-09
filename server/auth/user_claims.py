@@ -28,8 +28,8 @@ claim_attribute_mapping_value = [
     {"eduperson_entitlement": "entitlement"},
     {"voperson_external_id": "eduperson_principal_name"},
     # EB / OIDC-NG claim
-    {"eduperson_affiliation": "affiliation"},
     {"eduperson_principal_name": "eduperson_principal_name"},
+    {"schac_home_organization": "schac_home_organisation"}
 ]
 
 
@@ -61,25 +61,26 @@ def add_user_claims(user_info_json, uid, user):
     cleared_attributes = []
     for claim in claim_attribute_mapping_value:
         for key, attr in claim.items():
-            val = user_info_json.get(key)
-            if isinstance(val, list):
-                val = ", ".join(val) if val else None
-            if (key not in user_info_json or val == "") and getattr(user, attr):
-                cleared_attributes.append(attr)
-            if val or (val is None and key in user_info_json and attr not in ["uid", "name", "email"]):
-                setattr(user, attr, val)
+            add_user_info_attr(key, attr, cleared_attributes, user, user_info_json)
+    # The implies EB is the attribute provider as IdP Proxy
+    if not user_info_json.get("voperson_external_affiliation"):
+        add_user_info_attr("eduperson_scoped_affiliation", "scoped_affiliation", cleared_attributes, user,
+                           user_info_json)
     if not user.name:
         name = " ".join(list(filter(lambda x: x, [user.given_name, user.family_name]))).strip()
         user.name = name if name else uid
-    for attr in ["voperson_external_id", "voperson_external_affiliation"]:
-        if attr in user_info_json and user_info_json[attr]:
-            attr_value = user_info_json[attr]
-            val = attr_value[0] if isinstance(attr_value, list) else attr_value
-            if "@" in val:
-                schac_home = re.split("@", val)[-1]
-                if schac_home:
-                    user.schac_home_organisation = schac_home.lower()
-                    break
+
+    # SURFConext provides us with the schac_home_organization, eduTeams not
+    if not user_info_json.get("schac_home_organization"):
+        for attr in ["voperson_external_id", "voperson_external_affiliation"]:
+            if attr in user_info_json and user_info_json[attr]:
+                attr_value = user_info_json[attr]
+                val = attr_value[0] if isinstance(attr_value, list) else attr_value
+                if "@" in val:
+                    schac_home = re.split("@", val)[-1]
+                    if schac_home:
+                        user.schac_home_organisation = schac_home.lower()
+                        break
     if not user.username:
         user.username = generate_unique_username(user)
     if not user.external_id:
@@ -90,6 +91,21 @@ def add_user_claims(user_info_json, uid, user):
         mail_conf = current_app.app_config.mail
         if not os.environ.get("TESTING"):
             mail_error(mail_conf.environment, uid, mail_conf.send_exceptions_recipients, msg)
+
+
+# Because we migrate to EB, we must ignore the EB attributes
+# See https://github.com/SURFscz/SBS/issues/1900
+ignore_cleared_attributes = ["scoped_affiliation", "affiliation", "eduperson_principal_name", "schac_home_organisation"]
+
+
+def add_user_info_attr(key, attr, cleared_attributes, user, user_info_json):
+    val = user_info_json.get(key)
+    if isinstance(val, list):
+        val = ", ".join(val) if val else None
+    if (key not in user_info_json or val == "") and getattr(user, attr) and attr not in ignore_cleared_attributes:
+        cleared_attributes.append(attr)
+    if val or (val is None and key in user_info_json and attr not in ["uid", "name", "email"]):
+        setattr(user, attr, val)
 
 
 # return all active (non-expired/suspended) collaboration from the list

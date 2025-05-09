@@ -15,6 +15,9 @@ redis:
 
 socket_url: "${SOCKET_URL}"
 
+logging:
+  log_to_stdout: True
+
 api_users:
 - name: "sysadmin"
   password: "secret"
@@ -33,6 +36,7 @@ oidc:
   client_id: ${CLIENT_ID}
   client_secret: ${CLIENT_SECRET}
   audience: ${AUDIENCE}
+  verify_peer: True
   authorization_endpoint: ${AUDIENCE}/saml2sp/OIDC/authorization
   token_endpoint: ${AUDIENCE}/OIDC/token
   userinfo_endpoint: ${AUDIENCE}/OIDC/userinfo
@@ -40,6 +44,7 @@ oidc:
   #Note that the paths for these  uri's is hardcoded and only domain and port differ per environment
   redirect_uri: ${BASE_URL}/api/users/resume-session
   continue_eduteams_redirect_uri: ${AUDIENCE}/continue
+  continue_eb_redirect_uri: https://engine.(.*)surfconext.nl
   second_factor_authentication_required: True
   totp_token_name: "SRAM local"
   # The client_id of SBS. Most likely to equal the oidc.client_id
@@ -90,6 +95,7 @@ manage:
   base_url: ""
   user: ""
   password: ""
+  verify_peer: False
 
 aup:
   version: 1
@@ -133,6 +139,8 @@ retention:
 metadata:
   idp_url: https://metadata.surfconext.nl/idps-metadata.xml
   parse_at_startup: False
+  scope_override:
+    test.nl: "Koninklijke Nederlandse Test"
 
 service_bus:
   enabled: False
@@ -140,6 +148,8 @@ service_bus:
   client_id: "sbs"
   user: "sbs"
   password: "changethispassword"
+  scope_override:
+    test.nl: "Koninklijke Nederlandse Test"
 
 # note: all cron hours below are in UTC
 platform_admin_notifications:
@@ -196,6 +206,15 @@ invitation_reminders:
   # How long before expiration of an invitation do we remind the user?
   invitation_reminders_threshold: 5
 
+invitation_expirations:
+  # Do we daily check for invitations that are expired / accepted and are eligible for deletion ?
+  enabled: True
+  cron_hour_of_day: 10
+  # How long after expiration of an invitation do we delete the invitation?
+  nbr_days_remove_expired_invitations: 10
+  # How long after expiration of an API created invitation do we delete the invitation?
+  nbr_days_remove_api_expired_invitations: 30
+
 orphan_users:
   # Do we daily check for users that are orphans?
   enabled: True
@@ -214,6 +233,8 @@ scim_sweep:
   # How often do we check if scim sweeps are needed per service
   cron_minutes_expression: "*/15"
 
+scim_schema_sram: "urn:mace:surf.nl:sram:scim:extension"
+
 ldap:
   url: "${LDAP_URL}"
   bind_account: "${LDAP_BIND}"
@@ -228,22 +249,16 @@ mfa_fallback_enabled: true
 # Lower case schachome organisations / entity ID's allowed skipping MFA;
 # MFA is supposed to be handled at the IdP for these entities
 mfa_idp_allowed:
-- schac_home: "idp.test"
-  entity_id: "https://idp.test"
-- schac_home: "erroridp.example.edu"
-  entity_id: "https://erroridp.example.edu"
-- schac_home: "only_sho"
+- entity_id: "https://idp.test"
+  schac_home:
+  - "idp.test"
+  - "idp2.test"
+- entity_id: "https://erroridp.example.edu"
+  schac_home:
+  - "erroridp.example.edu"
+- schac_home:
+  - "only_sho"
 - entity_id: "https://only_entityid"
-
-# Lower case schachome organisations / entity ID's where SURFSecure ID is used for step-up
-# If this feature is no longer needed, just replace the value with an empty list []
-ssid_identity_providers:
-- schac_home: "ssid.org"
-  entity_id: "https://ssid.org"
-- schac_home: "erroridp.example.edu"
-  entity_id: "https://erroridp.example.edu"
-
-ssid_config_folder: saml_test
 
 pam_web_sso:
   session_timeout_seconds: 300
@@ -261,3 +276,6 @@ stress_test:
   num_collaborations: 200
   num_services: 30
   num_groups: 300
+
+engine_block:
+  api_token: secret

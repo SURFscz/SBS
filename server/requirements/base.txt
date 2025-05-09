@@ -2,7 +2,7 @@ APScheduler==3.11.0
 mysqlclient==2.2.7
 PyYAML==6.0.2
 SQLAlchemy==2.0.40
-cryptography==44.0.2
+cryptography==44.0.3
 eventlet==0.39.1
 flask-jsonschema-validator==0.0.4
 flask-mailman==1.1.1
@@ -16,9 +16,9 @@ pytz==2025.2
 requests==2.32.3
 urllib3==2.4.0
 websockets==15.0.1
-redis==5.2.1
+redis==6.0.0
 pyotp==2.9.0
-qrcode==8.1
+qrcode==8.2
 Pillow==11.2.1
 PyJWT==2.10.1
 Authlib==1.5.2
@@ -31,7 +31,7 @@ Flask-Cors==5.0.1
 dnspython==2.7.0
 bcrypt==4.3.0
 gunicorn==23.0.0
-puremagic==1.28
+puremagic==1.29
 click==8.1.8
 paramiko==3.5.1
 git+https://github.com/SURFscz/flasgger@surf/main#egg=flasgger

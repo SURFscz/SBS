@@ -521,14 +521,13 @@ class OrganisationForm extends React.Component {
                                   readOnly={isEmpty(schac_home_organisations)}
                         />
 
-                        {(user.admin || service_connection_requires_approval) &&
-                            <CheckBox name={"service_connection_requires_approval"}
-                                      value={service_connection_requires_approval}
-                                      tooltip={I18n.t("organisation.serviceConnectionRequiresApprovalTooltip")}
-                                      onChange={() => this.setState({service_connection_requires_approval: !service_connection_requires_approval})}
-                                      info={I18n.t("organisation.serviceConnectionRequiresApproval")}
-                                      readOnly={!user.admin}
-                            />}
+                        <CheckBox name={"service_connection_requires_approval"}
+                                  value={service_connection_requires_approval}
+                                  tooltip={I18n.t("organisation.serviceConnectionRequiresApprovalTooltip")}
+                                  onChange={() => this.setState({service_connection_requires_approval: !service_connection_requires_approval})}
+                                  info={I18n.t("organisation.serviceConnectionRequiresApproval")}
+                                  readOnly={!user.admin}
+                        />
 
 
                         <OrganisationOnBoarding

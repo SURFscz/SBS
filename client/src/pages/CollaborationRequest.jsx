@@ -303,7 +303,7 @@ class CollaborationRequest extends React.Component {
                                     placeholder={I18n.t("collaboration.namePlaceHolder")}
                                     onBlur={this.validateCollaborationName}
                                     name={I18n.t("collaboration.name")}/>
-                        {alreadyExists.name && <ErrorIndicator msg={I18n.t("collaboration.alreadyExists", {
+                        {(alreadyExists.name && isOpen) && <ErrorIndicator msg={I18n.t("collaboration.alreadyExists", {
                             attribute: I18n.t("collaboration.name").toLowerCase(),
                             value: collaborationRequest.name,
                             organisation: collaborationRequest.organisation.name
@@ -329,11 +329,12 @@ class CollaborationRequest extends React.Component {
                                     error={alreadyExists.short_name || (!initial && isEmpty(collaborationRequest.short_name))}
                                     toolTip={I18n.t("collaboration.shortNameTooltip")}
                                     name={I18n.t("collaboration.shortName")}/>
-                        {alreadyExists.short_name && <ErrorIndicator msg={I18n.t("collaboration.alreadyExists", {
-                            attribute: I18n.t("collaboration.shortName").toLowerCase(),
-                            value: collaborationRequest.short_name,
-                            organisation: collaborationRequest.organisation.name
-                        })}/>}
+                        {(alreadyExists.short_name && isOpen) &&
+                            <ErrorIndicator msg={I18n.t("collaboration.alreadyExists", {
+                                attribute: I18n.t("collaboration.shortName").toLowerCase(),
+                                value: collaborationRequest.short_name,
+                                organisation: collaborationRequest.organisation.name
+                            })}/>}
                         {(!initial && isEmpty(collaborationRequest.short_name)) &&
                             <ErrorIndicator msg={I18n.t("collaboration.required", {
                                 attribute: I18n.t("collaboration.shortName").toLowerCase()

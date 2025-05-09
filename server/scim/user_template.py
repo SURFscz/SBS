@@ -4,12 +4,16 @@ from typing import List, Union
 
 from server.db.domain import User, Group, Collaboration
 from server.scim import EXTERNAL_ID_POST_FIX
-from server.scim.schema_template import \
-    SCIM_SCHEMA_CORE_USER, SCIM_SCHEMA_SRAM_USER, SCIM_API_MESSAGES
+from server.scim.schema_template import SCIM_SCHEMA_CORE_USER, SCIM_API_MESSAGES
 from server.tools import dt_now, inactivity
+
+import logging
+logger = logging.getLogger("scim")
 
 
 def replace_none_values(d: dict):
+    import json
+    logging.error(json.dumps(d, indent=4))
     for k, v in d.items():
         if isinstance(v, dict):
             replace_none_values(v)
@@ -40,10 +44,12 @@ def inactive_days(date_at):
 
 
 def create_user_template(user: User):
+    from server.scim.schema_template import get_scim_schema_sram_user
+
     return replace_none_values({
         "schemas": [
             SCIM_SCHEMA_CORE_USER,
-            SCIM_SCHEMA_SRAM_USER
+            get_scim_schema_sram_user()
         ],
         "externalId": f"{user.external_id}{EXTERNAL_ID_POST_FIX}",
         "userName": user.username,
@@ -56,7 +62,7 @@ def create_user_template(user: User):
         "emails": [{"value": user.email, "primary": True}],
         "x509Certificates": [{"value": base64.b64encode(ssh_key.ssh_value.encode()).decode()} for ssh_key in
                              user.ssh_keys],
-        SCIM_SCHEMA_SRAM_USER: {
+        get_scim_schema_sram_user(): {
             "eduPersonScopedAffiliation": user.affiliation,
             "eduPersonUniqueId": user.uid,
             "voPersonExternalAffiliation": user.scoped_affiliation,

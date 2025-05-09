@@ -103,7 +103,7 @@ export function me(config) {
     if (config.local && 1 == 1) {
         let sub = "urn:service_admin";
         sub = "urn:john";
-        // sub = "urn:sarah";
+        // sub = "urn:hannibal ";
         const second_factor_confirmed = true;
         const rate_limited = false;
         // const second_factor_confirmed = false;
@@ -429,6 +429,10 @@ export function collaborationLiteById(id) {
 
 export function myCollaborationsOptimized() {
     return fetchJson(`/api/collaborations/mine_optimized`);
+}
+
+export function collaborationsByService(serviceId) {
+    return fetchJson(`/api/collaborations/by_service_optimized/${serviceId}`);
 }
 
 export function allCollaborations() {
@@ -911,6 +915,14 @@ export function getSuspendedUsers() {
     return fetchJson("/api/users/suspended");
 }
 
+export function getRateLimitedUsers() {
+    return fetchJson("/api/users/rate_limited");
+}
+
+export function resetRateLimitedUser(userId) {
+    return postPutJson("/api/users/reset_rate_limited", {user_id: userId}, "PUT");
+}
+
 export function getResetTOTPRequestedUsers() {
     return fetchJson("/api/users/reset_totp_requested");
 }
@@ -955,10 +967,6 @@ export function dbDemoSeed() {
     return fetchJson("/api/system/demo_seed");
 }
 
-export function dbStressSeed() {
-    return fetchJson("/api/system/stress_seed");
-}
-
 export function clearAuditLogs() {
     return fetchDelete("/api/system/clear-audit-logs");
 }
@@ -993,6 +1001,12 @@ export function proxyAuthzEngineBlock(userUrn, userEppn, serviceEntityId, idpEnt
     };
     return postPutJson("/api/users/authz_eb", body, "post", false, {"Authorization": "secret"});
 }
+
+export function engineBlockAttributes(nonce) {
+    const body = {nonce: nonce};
+    return postPutJson("/api/users/attributes_eb", body, "post", false, {"Authorization": "secret"});
+}
+
 
 export function proxyAuthzEduTeams(userUid, userSchacHome, userEppn, serviceEntityId, idpEntityId) {
     const body = {

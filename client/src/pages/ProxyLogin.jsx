@@ -29,12 +29,14 @@ export default function ProxyLogin({config}) {
 
     const doProxyAuthz = () => {
         setLoading(true);
-        const promise = integrationBackend.value !== I18n.t("system.proxy.engineBlock") ?
+        const isEBFlow = integrationBackend.value !== I18n.t("system.proxy.engineBlock");
+        const promise = isEBFlow ?
             proxyAuthzEduTeams(userUrn, serviceEntityId, idpEntityId, continueUrl)
             : proxyAuthzEngineBlock(userUrn, userEppn, serviceEntityId, idpEntityId, continueUrl);
         promise
             .then(res => {
                 setProxyAuthzResult(res);
+                localStorage.setItem("nonce", res.nonce);
                 setLoading(false);
                 scrollToBottom();
             })

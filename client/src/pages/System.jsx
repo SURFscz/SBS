@@ -11,13 +11,14 @@ import {
     clearAuditLogs,
     composition,
     dbDemoSeed,
-    dbStressSeed,
     dbSeed,
     dbStats,
     deleteOrphanUsers,
     expireCollaborationMemberships,
     expireCollaborations,
     getResetTOTPRequestedUsers,
+    getRateLimitedUsers,
+    resetRateLimitedUser,
     getSuspendedUsers,
     health,
     invitationExpirations,
@@ -117,6 +118,7 @@ class System extends React.Component {
             compositionData: {},
             currentlySuspendedUsers: [],
             resetTOTPRequestedUsers: [],
+            rateLimitedUsers: []
         }
     }
 
@@ -153,7 +155,6 @@ class System extends React.Component {
             sweepResults: null,
             seedResult: null,
             demoSeedResult: null,
-            stressSeedResult: null,
             query: "",
             auditLogs: {audit_logs: []},
             filteredAuditLogs: {audit_logs: []},
@@ -461,9 +462,18 @@ class System extends React.Component {
             getResetTOTPRequestedUsers().then(res => this.setState({resetTOTPRequestedUsers: res, busy: false}))
         })
     }
-    getSuspendedUsersTab = (currentlySuspendedUsers, resetTOTPRequestedUsers) => {
+
+    doResetRateLimitUser = user => {
+        this.setState({busy: true});
+        resetRateLimitedUser(user.id).then(() => {
+            getRateLimitedUsers().then(res => this.setState({rateLimitedUsers: res, busy: false}))
+        })
+    }
+
+    getSuspendedUsersTab = (currentlySuspendedUsers, resetTOTPRequestedUsers, rateLimitedUsers) => {
         const zeroState = currentlySuspendedUsers.length === 0;
-        return (<div key="suspended-users"
+        return (
+            <div key="suspended-users"
                      name="suspended-users"
                      label={I18n.t("home.tabs.suspendedUsers")}>
             <div className="mod-system  sds--table">
@@ -517,11 +527,36 @@ class System extends React.Component {
                             </tbody>
                         </table>}
                 </section>
+                <section className={"info-block-container"}>
+                    <p className={"title"}>{I18n.t(`system.rateLimitedUsers.${rateLimitedUsers.length === 0 ? "titleZeroState" : "title"}`)}</p>
+                    {rateLimitedUsers.length !== 0 &&
+                        <table className={"suspended-users"}>
+                            <thead>
+                            <tr>
+                                <th className={"name"}>{I18n.t("system.suspendedUsers.name")}</th>
+                                <th className={"email"}>{I18n.t("system.suspendedUsers.email")}</th>
+                                <th className={"lastLogin"}>{I18n.t("system.suspendedUsers.lastLogin")}</th>
+                                <th className={"actions"}></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {rateLimitedUsers.map(user => <tr key={user.id}>
+                                <td>{user.name}</td>
+                                <td>{user.email}</td>
+                                <td>{user.last_login_date ? dateFromEpoch(user.last_login_date) : "-"}</td>
+                                <td>
+                                    {<Button txt={I18n.t("system.rateLimitedUsers.reset")}
+                                             onClick={() => this.doResetRateLimitUser(user)}/>}
+                                </td>
+                            </tr>)}
+                            </tbody>
+                        </table>}
+                </section>
             </div>
         </div>)
     }
 
-    getSeedTab = (seedResult, demoSeedResult, stressSeedResult) => {
+    getSeedTab = (seedResult, demoSeedResult) => {
         return (<div key="seed" name="seed" label={I18n.t("home.tabs.seed")}>
             <div className="mod-system">
                 <section className={"info-block-container"}>
@@ -531,10 +566,6 @@ class System extends React.Component {
                 <section className={"info-block-container"}>
                     {this.renderDbDemoSeed()}
                     <p className="result">{demoSeedResult}</p>
-                </section>
-                <section className={"info-block-container"}>
-                    {this.renderDbStressSeed()}
-                    <p className="result">{stressSeedResult}</p>
                 </section>
             </div>
         </div>)
@@ -691,24 +722,6 @@ class System extends React.Component {
                     busy: false,
                     demoSeedResult: I18n.t("system.seedResult", {
                         seed: "Demo",
-                        ms: new Date().getMilliseconds() - d.getMilliseconds()
-                    })
-                }, () => window.location.reload());
-            });
-        }
-    }
-
-    doDbStressSeed = showConfirmation => {
-        if (showConfirmation) {
-            this.confirm(() => this.doDbStressSeed(false), I18n.t("system.runDbSeedConfirmation"));
-        } else {
-            this.setState({confirmationDialogOpen: false, busy: true,});
-            const d = new Date();
-            dbStressSeed().then(() => {
-                this.setState({
-                    busy: false,
-                    stressSeedResult: I18n.t("system.seedResult", {
-                        seed: "Stress",
                         ms: new Date().getMilliseconds() - d.getMilliseconds()
                     })
                 }, () => window.location.reload());
@@ -955,21 +968,6 @@ class System extends React.Component {
                                                         onClick={() => this.doDbDemoSeed(true)}/>}
                     {!isEmpty(demoSeedResult) && <Button txt={I18n.t("system.reload")}
                                                          onClick={this.reload} cancelButton={true}/>}
-                </div>
-            </div>
-        );
-    }
-
-    renderDbStressSeed = () => {
-        const {stressSeedResult} = this.state;
-        return (
-            <div className="info-block">
-                <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("system.runDbStressSeedInfo"))}}/>
-                <div className="actions">
-                    {isEmpty(stressSeedResult) && <Button txt={I18n.t("system.runDbSeed")}
-                                                          onClick={() => this.doDbStressSeed(true)}/>}
-                    {!isEmpty(stressSeedResult) && <Button txt={I18n.t("system.reload")}
-                                                           onClick={this.reload} cancelButton={true}/>}
                 </div>
             </div>
         );
@@ -1258,6 +1256,7 @@ class System extends React.Component {
                                     <div key={i} className={"open-requests"}>
                                         <span>{I18n.t("system.openRequests.collaboration_name")}: {cr.name}</span>
                                         <span>{I18n.t("system.openRequests.requester")}: {cr.requester}</span>
+                                        <span>{I18n.t("units.column")}: {cr.units}</span>
                                     </div>
                                 )}</td>
                             </tr>
@@ -1418,10 +1417,11 @@ class System extends React.Component {
         } else if (name === "composition") {
             composition().then(res => this.setState({compositionData: res, busy: false}));
         } else if (name === "suspended-users") {
-            Promise.all([getSuspendedUsers(), getResetTOTPRequestedUsers()])
+            Promise.all([getSuspendedUsers(), getResetTOTPRequestedUsers(), getRateLimitedUsers()])
                 .then(res => this.setState({
                     currentlySuspendedUsers: res[0],
                     resetTOTPRequestedUsers: res[1],
+                    rateLimitedUsers: res[2],
                     busy: false
                 }));
         } else if (name === "userlogins") {
@@ -1468,6 +1468,7 @@ class System extends React.Component {
             plscData,
             compositionData,
             currentlySuspendedUsers,
+            rateLimitedUsers,
             resetTOTPRequestedUsers,
             userLoginStats,
             deletedUsers,
@@ -1489,7 +1490,7 @@ class System extends React.Component {
             this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables, serverQuery),
             this.getPlscTab(plscData, plscView),
             config.seed_allowed ? this.getCompositionTab(compositionData) : null,
-            this.getSuspendedUsersTab(currentlySuspendedUsers, resetTOTPRequestedUsers),
+            this.getSuspendedUsersTab(currentlySuspendedUsers, resetTOTPRequestedUsers, rateLimitedUsers),
             this.getUserLoginTab(userLoginStats),
             this.getScimTab(),
             this.getStatsTab(),

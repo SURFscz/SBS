@@ -2,8 +2,8 @@ from server.api.base import application_base_url
 from server.api.mock_scim import HTTP_CALLS_KEY, DATABASE_KEY
 from server.db.domain import User, Collaboration, Service
 from server.scim import EXTERNAL_ID_POST_FIX
+from server.scim.schema_template import get_scim_schema_sram_group
 from server.scim.group_template import create_group_template, scim_member_object, update_group_template
-from server.scim.schema_template import SCIM_SCHEMA_SRAM_GROUP
 from server.scim.user_template import create_user_template
 from server.test.abstract_test import AbstractTest
 from server.test.seed import user_sarah_name, co_ai_computing_name, service_cloud_name
@@ -84,7 +84,7 @@ class TestMockScim(AbstractTest):
                        headers=headers,
                        with_basic_auth=False)
         collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
-        self.assertEqual(collaboration.global_urn, res[SCIM_SCHEMA_SRAM_GROUP]["urn"])
+        self.assertEqual(collaboration.global_urn, res[get_scim_schema_sram_group()]["urn"])
         self.assertEqual(scim_id_user, res["members"][0]["value"])
 
         # Find the group by externalId

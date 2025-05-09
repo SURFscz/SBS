@@ -32,7 +32,7 @@ from server.db.domain import Collaboration, CollaborationMembership, JoinRequest
     Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag, ServiceGroup, ServiceMembership, Unit
 from server.db.image import transform_image
 from server.db.logo_mixin import logo_url
-from server.db.models import update, save, delete, unique_model_objects
+from server.db.models import update, save, delete
 from server.mail import mail_collaboration_invitation
 from server.scim.events import broadcast_collaboration_changed, broadcast_collaboration_deleted
 from server.tools import dt_now
@@ -40,7 +40,7 @@ from server.tools import dt_now
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
 
 base_collaboration_query = """
-    SELECT c.id, c.name, c.short_name, c.identifier, c.uuid4, c.expiry_date, c.last_activity_date,
+    SELECT c.id, c.name, c.short_name, c.identifier, c.uuid4, c.expiry_date, c.last_activity_date, c.status,
     (SELECT GROUP_CONCAT(DISTINCT u.name) FROM units u
     INNER JOIN collaboration_units cou ON cou.unit_id = u.id
     WHERE cou.collaboration_id = c.id) AS names,
@@ -54,11 +54,11 @@ base_collaboration_query = """
 def _result_set_to_collaborations(result_set):
     return [{"id": row[0], "name": row[1], "short_name": row[2], "identifier": row[3],
              "logo": f"{logo_url('collaborations', row[4])}",
-             "expiry_date": row[5], "last_activity_date": row[6],
-             "units": [{"name": v} for v in row[7].split(",")] if row[7] else [],
-             "tags": [{"tag_value": v} for v in row[8].split(",")] if row[8] else [],
-             "collaboration_memberships_count": row[9],
-             "organisation": {"name": row[10]}} for row in result_set]
+             "expiry_date": row[5], "last_activity_date": row[6], "status": row[7],
+             "units": [{"name": v} for v in row[8].split(",")] if row[8] else [],
+             "tags": [{"tag_value": v} for v in row[9].split(",")] if row[9] else [],
+             "collaboration_memberships_count": row[10],
+             "organisation": {"name": row[11]}} for row in result_set]
 
 
 def _del_non_disclosure_info(collaboration, json_collaboration):
@@ -139,8 +139,26 @@ def _unit_from_name(unit_name: str, organisation_id: int):
 @json_endpoint
 def collaboration_admins(service_id):
     confirm_service_manager(service_id)
-    service = db.session.get(Service, service_id)
-    return {c.name: c.admin_emails() for c in unique_model_objects(service.collaborations)}, 200
+
+    values = {"service_id": service_id}
+    sql = text("""
+        SELECT u.email, c.id FROM users u
+        INNER JOIN collaboration_memberships cm ON cm.user_id = u.id
+        INNER JOIN collaborations c ON c.id = cm.collaboration_id
+        INNER JOIN services_collaborations sc ON sc.collaboration_id = c.id
+        WHERE sc.service_id = :service_id AND cm.role = 'admin'
+        """)
+    with db.engine.connect() as conn:
+        result = {}
+        result_set = conn.execute(sql, values)
+        for row in result_set:
+            email = row[0]
+            collaboration_id = row[1]
+            if collaboration_id in result:
+                result[collaboration_id].append(email)
+            else:
+                result[collaboration_id] = [email]
+        return result, 200
 
 
 @collaboration_api.route("/id_by_identifier", strict_slashes=False)
@@ -331,6 +349,28 @@ def collaboration_all_optimized():
     with db.engine.connect() as conn:
         result_set = conn.execute(sql)
         return _result_set_to_collaborations(result_set), 200
+
+
+@collaboration_api.route("/by_service_optimized/<service_id>", strict_slashes=False)
+@json_endpoint
+def by_service_optimized(service_id):
+    confirm_service_manager(service_id)
+    values = {"service_id": service_id}
+    sql = text("""
+    SELECT c.id, c.name, c.short_name, c.uuid4, org.name, org.short_name
+            FROM collaborations c
+            INNER JOIN organisations org ON c.organisation_id = org.id
+            INNER JOIN services_collaborations sc ON sc.collaboration_id = c.id
+            WHERE sc.service_id = :service_id
+        """)
+    with db.engine.connect() as conn:
+        result_set = conn.execute(sql, values)
+        return [{"id": row[0],
+                 "name": row[1],
+                 "short_name": row[2],
+                 "logo": f"{logo_url('collaborations', row[3])}",
+                 "organisation_name": row[4],
+                 "organisation_short_name": row[5]} for row in result_set], 200
 
 
 @collaboration_api.route("/mine_optimized", strict_slashes=False)

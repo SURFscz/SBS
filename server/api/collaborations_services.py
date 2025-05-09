@@ -56,43 +56,15 @@ def connect_service_collaboration(service_id, collaboration_id, force=False):
     return 1
 
 
-@collaborations_services_api.route("/", methods=["PUT"], strict_slashes=False)
-@json_schema_validator.validate("models", "collaborations_services")
-@json_endpoint
-def add_collaborations_services():
-    data = current_request.get_json()
-    collaboration_id = int(data["collaboration_id"])
-
-    confirm_collaboration_admin(collaboration_id)
-
-    service_id = int(data["service_id"])
-
-    count = connect_service_collaboration(service_id, collaboration_id)
-    res = {'collaboration_id': collaboration_id, 'service_id': service_id}
-
-    update_last_activity_date(collaboration_id)
-
-    return (res, 201) if count > 0 else (None, 404)
-
-
-@collaborations_services_api.route("/v1/connect_collaboration_service", methods=["PUT"], strict_slashes=False)
-@swag_from("../swagger/public/paths/connect_collaboration_service.yml")
-@json_endpoint
-def connect_collaboration_service_api():
-    confirm_external_api_call()
-    organisation = request_context.external_api_organisation
-
-    data = current_request.get_json()
-    coll_short_name = data["short_name"]
-
-    collaborations = list(filter(lambda coll: coll.short_name == coll_short_name, organisation.collaborations))
+def _do_connect_collaboration_service_api(organisation, co_identifier, collaborations):
     if not collaborations:
-        raise Forbidden(f"Collaboration {coll_short_name} is not part of organisation {organisation.name}")
+        raise Forbidden(f"Collaboration {co_identifier} is not part of organisation {organisation.name}")
 
     collaboration = collaborations[0]
     api_key = request_context.get("external_api_key")
     confirm_api_key_unit_access(api_key, collaboration)
 
+    data = current_request.get_json()
     service_entity_id = data["service_entity_id"]
     service = Service.query.filter(Service.entity_id == service_entity_id).one()
 
@@ -120,25 +92,16 @@ def connect_collaboration_service_api():
             "service": {"entity_id": service.entity_id}}, 201
 
 
-@collaborations_services_api.route("/v1/disconnect_collaboration_service", methods=["PUT"], strict_slashes=False)
-@swag_from("../swagger/public/paths/disconnect_collaboration_service.yml")
-@json_endpoint
-def disconnect_collaboration_service_api():
-    confirm_external_api_call()
-    organisation = request_context.external_api_organisation
-
-    data = current_request.get_json()
-    coll_short_name = data["short_name"]
-
-    collaborations = list(filter(lambda coll: coll.short_name == coll_short_name, organisation.collaborations))
+def _do_disconnect_collaboration_service_api(organisation, co_identifier, collaborations):
     if not collaborations:
-        raise Forbidden(f"Collaboration {coll_short_name} is not part of organisation {organisation.name}")
+        raise Forbidden(f"Collaboration {co_identifier} is not part of organisation {organisation.name}")
 
     collaboration = collaborations[0]
     api_key = request_context.get("external_api_key")
     confirm_api_key_unit_access(api_key, collaboration)
 
     collaboration_id = collaboration.id
+    data = current_request.get_json()
     service_entity_id = data["service_entity_id"]
     service = Service.query.filter(Service.entity_id == service_entity_id).one()
     if service in collaboration.services:
@@ -167,6 +130,78 @@ def disconnect_collaboration_service_api():
                 "short_name": collaboration_short_name
             },
             "service": {"entity_id": service_entity_id}}, 201
+
+
+@collaborations_services_api.route("/", methods=["PUT"], strict_slashes=False)
+@json_schema_validator.validate("models", "collaborations_services")
+@json_endpoint
+def add_collaborations_services():
+    data = current_request.get_json()
+    collaboration_id = int(data["collaboration_id"])
+
+    confirm_collaboration_admin(collaboration_id)
+
+    service_id = int(data["service_id"])
+
+    count = connect_service_collaboration(service_id, collaboration_id)
+    res = {'collaboration_id': collaboration_id, 'service_id': service_id}
+
+    update_last_activity_date(collaboration_id)
+
+    return (res, 201) if count > 0 else (None, 404)
+
+
+@collaborations_services_api.route("/v1/connect_collaboration_service", methods=["PUT"], strict_slashes=False)
+@swag_from("../swagger/public/paths/connect_collaboration_service_deprecated.yml")
+@json_endpoint
+def connect_collaboration_service_api_deprecated():
+    confirm_external_api_call()
+
+    data = current_request.get_json()
+    coll_short_name = data["short_name"]
+
+    organisation = request_context.external_api_organisation
+    collaborations = list(filter(lambda coll: coll.short_name == coll_short_name, organisation.collaborations))
+    return _do_connect_collaboration_service_api(organisation, coll_short_name, collaborations)
+
+
+@collaborations_services_api.route("/v1/connect_collaboration_service/<co_identifier>", methods=["PUT"],
+                                   strict_slashes=False)
+@swag_from("../swagger/public/paths/connect_collaboration_service.yml")
+@json_endpoint
+def connect_collaboration_service_api(co_identifier):
+    confirm_external_api_call()
+
+    organisation = request_context.external_api_organisation
+    collaborations = list(filter(lambda coll: coll.identifier == co_identifier, organisation.collaborations))
+    return _do_connect_collaboration_service_api(organisation, co_identifier, collaborations)
+
+
+@collaborations_services_api.route("/v1/disconnect_collaboration_service/<co_identifier>", methods=["PUT"],
+                                   strict_slashes=False)
+@swag_from("../swagger/public/paths/disconnect_collaboration_service.yml")
+@json_endpoint
+def disconnect_collaboration_service_api(co_identifier):
+    confirm_external_api_call()
+    organisation = request_context.external_api_organisation
+
+    collaborations = list(filter(lambda coll: coll.identifier == co_identifier, organisation.collaborations))
+
+    return _do_disconnect_collaboration_service_api(organisation, co_identifier, collaborations)
+
+
+@collaborations_services_api.route("/v1/disconnect_collaboration_service", methods=["PUT"], strict_slashes=False)
+@swag_from("../swagger/public/paths/disconnect_collaboration_service_deprecated.yml")
+@json_endpoint
+def disconnect_collaboration_service_api_deprecated():
+    confirm_external_api_call()
+    organisation = request_context.external_api_organisation
+
+    data = current_request.get_json()
+    coll_short_name = data["short_name"]
+    collaborations = list(filter(lambda coll: coll.short_name == coll_short_name, organisation.collaborations))
+
+    return _do_disconnect_collaboration_service_api(organisation, coll_short_name, collaborations)
 
 
 @collaborations_services_api.route("/<int:collaboration_id>/<int:service_id>", methods=["DELETE"], strict_slashes=False)

@@ -1,23 +1,23 @@
 {% extends "mail_layout.html" %}
-{% block title %}SURF collaboration join request declined{% endblock %}
+{% block title %}SURF collaboration join request denied{% endblock %}
 {% block content %}
 
 <div class="mail-head" style="background-color: #f5f5f5;padding: 30px 0 20px 60px;">
     <p class="title" style="font-weight: 600;font-size: 38px;line-height: 38px; margin: 0;">
-        Denied join request
+        Denied collaboration request
     </p>
     <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
-        Your join request for collaboration {{ join_request.collaboration.name }} is denied.</p>
+        Your request for collaboration {{ collaboration.name }} is denied.</p>
 </div>
 <div class="mail-end" style="padding: 30px 0 0 60px;">
     <p>{{ salutation }},</p>
-    <p>Your request to join collaboration {{ join_request.collaboration.name }} has
-        been declined by the administrator {{administrator}} of the collaboration {{ join_request.collaboration.name }}.
-    </p>
+    <p>Your request to create collaboration {{ collaboration.name }} has
+        been denied by the administrator {{ administrator }} of the
+        organisation {{ organisation.name }}.</p>
     <p>The reason for the denial by {{ administrator }} is:</p>
     <p style="padding: 15px;border:solid 1px black">{{ rejection_reason }}</p>
     {% if admins|length > 0 %}
-    <p>Please contact the collaboration administrators for more information, or if you do not agree with this decision:</p>
+    <p>Please contact the organisation administrators for more information, or if you do not agree with this decision:</p>
     <ul style="background-color: #f5f5f5;margin: 0;">
         {% for admin in admins %}
         <li>
@@ -25,8 +25,6 @@
         </li>
         {% endfor %}
     {% endif %}
-</ul>
-
 </div>
 
 {% endblock %}

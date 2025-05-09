@@ -67,28 +67,28 @@ table.collaborations, table.memberCollaborations {
             }
 
             &.name {
-                width: 24%;
+                width: 20%;
                 padding-left: 15px;
 
                 &.no-units, &.no-labels {
-                    width: 35%;
+                    width: 33%;
                 }
 
                 &.no-units.no-labels {
-                    width: 46%;
+                    width: 44%;
                 }
             }
 
             &.organisation__name {
-                width: 22%;
+                width: 20%;
             }
 
             &.units {
-                width: 22%;
+                width: 20%;
             }
 
             &.tagValues {
-                width: 22%;
+                width: 20%;
             }
 
             &.expiry_date {
@@ -101,10 +101,10 @@ table.collaborations, table.memberCollaborations {
             }
 
             &.last_activity_date {
-                width: 12%;
+                width: 18%;
 
                 &.no-units, &.no-labels {
-                    width: 23%;
+                    width: 29%;
                 }
 
             }
@@ -114,7 +114,7 @@ table.collaborations, table.memberCollaborations {
             }
 
             &.collaboration_memberships_count {
-                width: 8%;
+                width: 10%;
                 text-align: center;
             }
 

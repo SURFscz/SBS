@@ -36,6 +36,7 @@ oidc:
   client_id: sram
   client_secret: secret
   audience: https://proxy.acc.sram.eduteams.org
+  verify_peer: True
   authorization_endpoint: http://localhost:9001/authorize
   token_endpoint: http://localhost:9001/token
   userinfo_endpoint: http://localhost:9001/userinfo
@@ -91,9 +92,10 @@ mail:
 
 manage:
   enabled: True
-  base_url: "http://localhost:9002"
+  base_url: "http://localhost:9002/"
   user: "sram"
   password: "secret"
+  verify_peer: False
 
 aup:
   version: 1
@@ -221,6 +223,8 @@ scim_sweep:
   # How often do we check if scim sweeps are needed per service
   cron_minutes_expression: "*/15"
 
+scim_schema_sram: "urn:mace:surf.nl:sram:scim:extension"
+
 ldap:
   url: "ldap://ldap.example.com/dc=example,dc=com"
   bind_account: "cn=admin,dc=entity_id,dc=services,dc=sram-tst,dc=surf,dc=nl"
@@ -231,7 +235,8 @@ mfa_sso_time_in_minutes: 10
 # whether to require TOTP for users from IdPs that do not match mfa_idp_allowed
 mfa_fallback_enabled: true
 
-# Lower case schachome organisations / entity ID's allowed skipping MFA;
+# Lower case entity ID's and schac_home of IdP's allowed skipping MFA.
+# Note that for a login directly into SRAM only schac_home can be used as the entity_idp of the IdP is unknown
 # MFA is supposed to be handled at the IdP for these entities
 mfa_idp_allowed:
 - entity_id: "https://idp.test"

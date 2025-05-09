@@ -17,7 +17,7 @@ from server.test.seed import (co_ai_computing_uuid, co_ai_computing_name, co_res
                               service_group_wiki_name1,
                               service_storage_name, unifra_secret, unifra_name, unihard_short_name,
                               unifra_unit_cloud_name, unifra_unit_infra_name, unihard_secret_unit_support,
-                              unihard_unit_support_name)
+                              unihard_unit_support_name, service_monitor_name)
 from server.test.seed import unihard_name
 from server.tools import dt_now
 
@@ -325,6 +325,12 @@ class TestCollaboration(AbstractTest):
     def test_collaboration_all_optimized(self):
         collaborations = self.get("/api/collaborations/all_optimized")
         self.assertEqual(6, len(collaborations))
+
+    def test_by_service_optimized(self):
+        service = self.find_entity_by_name(Service, service_monitor_name)
+        self.login("urn:service_admin")
+        collaborations = self.get(f"/api/collaborations/by_service_optimized/{service.id}")
+        self.assertEqual(2, len(collaborations))
 
     def test_collaboration_mine_optimized(self):
         self.login("urn:peter")
@@ -959,8 +965,9 @@ class TestCollaboration(AbstractTest):
     def test_collaboration_admins(self):
         self.login("urn:service_admin")
         service = self.find_entity_by_name(Service, service_storage_name)
+        collaboration_id = self.find_entity_by_name(Collaboration, co_research_name).id
         res = self.get(f"/api/collaborations/admins/{service.id}")
-        self.assertDictEqual({f"{co_research_name}": ["sarah@uni-franeker.nl"]}, res)
+        self.assertDictEqual({f"{collaboration_id}": ["sarah@uni-franeker.nl"]}, res)
 
     def test_delete_membership_api(self):
         self.assertIsNotNone(self.find_collaboration_membership(co_ai_computing_uuid, 'urn:jane'))

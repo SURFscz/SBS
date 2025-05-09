@@ -121,7 +121,7 @@ class TestJoinRequest(AbstractTest):
             self.assertEqual(1, len(outbox))
             mail_msg = outbox[0]
             self.assertListEqual(["peter@example.org"], mail_msg.to)
-            self.assertTrue("declined" in mail_msg.html)
+            self.assertTrue("denied" in mail_msg.html)
             self.assertTrue(rejection_reason in mail_msg.html)
 
             join_request = db.session.get(JoinRequest, join_request_id)

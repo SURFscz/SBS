@@ -104,7 +104,7 @@ def request_service():
 
     emit_socket("service_requests", include_current_user_id=True)
 
-    context = {"salutation": "Dear platform admin,",
+    context = {"salutation": "Dear platform admin",
                "base_url": current_app.app_config.base_url,
                "service_request": service_request,
                "requester_email": user.email,

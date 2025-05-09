@@ -321,7 +321,6 @@ class CollaborationDetail extends React.Component {
                     path: "/?redirect=false",
                     value: I18n.t("breadcrumb.home")
                 }, {value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})}];
-            s.actions = this.getHeaderActions(user, config, collaboration);
             s.objectRole = actionMenuUserRole(user, collaboration.organisation, collaboration, null, true);
         });
     }
@@ -679,18 +678,6 @@ class CollaborationDetail extends React.Component {
         }
     }
 
-    getHeaderActions = (user, config, collaboration) => {
-        const actions = [];
-        const isMember = collaboration.collaboration_memberships.some(m => m.user_id === user.id);
-        if (isMember) {
-            actions.push({
-                name: I18n.t("models.collaboration.leave"),
-                perform: this.deleteMe
-            });
-        }
-        return actions;
-    }
-
     getActions = (user, config, collaboration, allowedToEdit, showMemberView, adminOfCollaboration) => {
         const historyIsShownInChevron = this.showHistory(user, collaboration);
         const actions = [];
@@ -702,6 +689,15 @@ class CollaborationDetail extends React.Component {
                 }
             });
         }
+        const isMember = collaboration.collaboration_memberships.some(m => m.user_id === user.id);
+        if (isMember) {
+            actions.push({
+                buttonType: ButtonType.DestructiveSecondary,
+                name: I18n.t("models.collaboration.leave"),
+                perform: this.deleteMe
+            });
+        }
+
         if (adminOfCollaboration) {
             actions.push({
                 buttonType: ButtonType.Secondary,
@@ -717,7 +713,6 @@ class CollaborationDetail extends React.Component {
                 perform: () => this.props.history.push(`/audit-logs/collaborations/${collaboration.id}?${queryParam}`)
             });
         }
-        const isMember = collaboration.collaboration_memberships.some(m => m.user_id === user.id);
         if (!isMember && adminOfCollaboration && showMemberView) {
             actions.push({
                 buttonType: ButtonType.Chevron, name: I18n.t("collaborationDetail.addMe"),

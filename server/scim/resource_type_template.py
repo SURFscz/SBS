@@ -1,7 +1,6 @@
 from server.scim.schema_template import \
     SCIM_API_MESSAGES, SCIM_SCHEMA_CORE, \
-    SCIM_SCHEMA_CORE_USER, SCIM_SCHEMA_CORE_GROUP, \
-    SCIM_SCHEMA_SRAM_USER, SCIM_SCHEMA_SRAM_GROUP
+    SCIM_SCHEMA_CORE_USER, SCIM_SCHEMA_CORE_GROUP
 
 
 def _resource_type(name, schema):
@@ -22,18 +21,22 @@ def _resource_type(name, schema):
 
 
 def resource_type_user_template():
+    from server.scim.schema_template import get_scim_schema_sram_user
+
     return _resource_type("User", SCIM_SCHEMA_CORE_USER) | {
         "schemaExtensions": [{
-            "schema": SCIM_SCHEMA_SRAM_USER,
+            "schema": get_scim_schema_sram_user(),
             "required": True
         }]
     }
 
 
 def resource_type_group_template():
+    from server.scim.schema_template import get_scim_schema_sram_group
+
     return _resource_type("Group", SCIM_SCHEMA_CORE_GROUP) | {
         "schemaExtensions": [{
-            "schema": SCIM_SCHEMA_SRAM_GROUP,
+            "schema": get_scim_schema_sram_group(),
             "required": True
         }]
     }

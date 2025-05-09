@@ -25,6 +25,11 @@ def _add_contacts(service: Service, service_template):
         contact_index += 1
 
 
+# Quick fix, story created https://github.com/SURFscz/SBS/issues/1903
+def _providing_organisation(service):
+    return service.providing_organisation if service.providing_organisation else "SURFconext"
+
+
 allowed_bool_false_fields = ["version"]
 
 
@@ -59,6 +64,7 @@ def create_service_template(service: Service):
                 "coin:privacy:privacy_policy": bool(service.privacy_policy),
                 "coin:privacy:privacy_policy_url": service.privacy_policy,
                 "coin:signature_method": "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
+                "coin:collab_enabled": True,
                 "connection_type": "oidc_rp" if service.oidc_enabled else "saml_sp",
                 "grants": [grant.strip() for grant in service.grants.split(",")] if service.grants else [],
                 "isPublicClient": service.is_public_client,
@@ -68,7 +74,7 @@ def create_service_template(service: Service):
                 "NameIDFormat": "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent",
                 "name:en": service.name,
                 "description:en": service.description,
-                "OrganizationName:en": service.providing_organisation,
+                "OrganizationName:en": _providing_organisation(service),
                 "redirectUrls": [u.strip() for u in service.redirect_urls.split(",")] if service.redirect_urls else [],
                 "accessTokenValidity": 3600,
                 "secret": service.oidc_client_secret_db_value(),

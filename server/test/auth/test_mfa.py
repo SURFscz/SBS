@@ -1,6 +1,8 @@
+import uuid
+
 from jwt import algorithms
 
-from server.auth.mfa import _get_algorithm, eligible_users_to_reset_token, mfa_idp_allowed
+from server.auth.mfa import _get_algorithm, eligible_users_to_reset_token, mfa_idp_allowed, user_requires_sram_mfa
 from server.db.db import db
 from server.db.domain import User
 from server.test.abstract_test import AbstractTest
@@ -65,3 +67,9 @@ class TestMFA(AbstractTest):
         self.assertTrue(mfa_idp_allowed(User(schac_home_organisation="nope"), entity_id="HTTPS://IDP.TEST"))
 
         self.assertFalse(mfa_idp_allowed(User(schac_home_organisation="nope"), entity_id="nope"))
+
+    def test_user_requires_sram_mfa(self):
+        user = User(schac_home_organisation="idp.test", second_factor_auth="secret", uid="uid.nope",
+                    external_id=uuid.uuid4(), created_by="system", updated_by="system")
+        self.assertFalse(user_requires_sram_mfa(user))
+        self.assertIsNone(user.second_factor_auth)

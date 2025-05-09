@@ -741,19 +741,20 @@ class ServiceOverview extends React.Component {
         return null;
     }
 
-    sidebar = (currentTab, isManageEnabled, isAdmin) => {
-        return (<div className={"side-bar"}>
-            {/*<h3>{I18n.t("serviceDetails.details")}</h3>*/}
-            <ul>
-                {toc.filter(tab => isAdmin || tab !== "Export")
-                    .filter(tab => isManageEnabled || (tab !== "OIDC" && tab !== "SAML"))
-                    .map(item => <li key={item} className={`${item === currentTab ? "active" : ""}`}>
-                        <a href={`/${item}`}
-                           className={`${item === currentTab ? "active" : ""} ${this.isValidTab(item) ? "" : "error"}`}
-                           onClick={this.changeTab(item)}>{I18n.t(`serviceDetails.toc.${item}`)}</a>
-                    </li>)}
-            </ul>
-        </div>);
+    sidebar = (currentTab, isManageEnabled, showServiceAdminView) => {
+        return (
+            <div className={"side-bar"}>
+                <ul>
+                    {toc.filter(tab => !showServiceAdminView || tab !== "Export")
+                        .filter(tab => isManageEnabled || (tab !== "OIDC" && tab !== "SAML"))
+                        .map(item => <li key={item} className={`${item === currentTab ? "active" : ""}`}>
+                            <a href={`/${item}`}
+                               className={`${item === currentTab ? "active" : ""} ${this.isValidTab(item) ? "" : "error"}`}
+                               onClick={this.changeTab(item)}>{I18n.t(`serviceDetails.toc.${item}`)}</a>
+                        </li>)}
+                </ul>
+            </div>
+        );
     }
 
     changeServiceProperty = (name, checkedBox = false, alreadyExists = this.state.alreadyExists, invalidInputs = this.state.invalidInputs) => e => {
@@ -820,24 +821,25 @@ class ServiceOverview extends React.Component {
                      service, invalidInputs) => {
         const invalidTabsMsg = this.getInvalidTabs();
         return <>
-            {!createNewServiceToken && <div className={"actions-container"}>
-                {invalidTabsMsg && <span className={"error"}>{invalidTabsMsg}</span>}
-                <section className="actions">
-                    {(currentTab === "general") &&
-                        <Button warningButton={true}
-                                disabled={!isAdmin && !isServiceAdmin}
-                                onClick={this.delete}/>}
-                    {currentTab === "SCIMServer" &&
-                        <Tooltip tip={I18n.t("service.sweep.testTooltip")} children={
-                            <Button txt={I18n.t("service.sweep.test")}
-                                    disabled={!service.scim_enabled || (!isAdmin && !isServiceAdmin) || isEmpty(service.scim_url) || invalidInputs.scim_url}
-                                    onClick={() => this.doSweep(service)}/>
-                        }/>}
-                    <Button disabled={disabledSubmit || (!isAdmin && !isServiceAdmin)}
-                            txt={I18n.t("service.update")}
-                            onClick={this.submit}/>
-                </section>
-            </div>}
+            {!createNewServiceToken &&
+                <div className={"actions-container"}>
+                    {invalidTabsMsg && <span className={"error"}>{invalidTabsMsg}</span>}
+                    <section className="actions">
+                        {(currentTab === "general") &&
+                            <Button warningButton={true}
+                                    disabled={!isAdmin && !isServiceAdmin}
+                                    onClick={this.delete}/>}
+                        {currentTab === "SCIMServer" &&
+                            <Tooltip tip={I18n.t("service.sweep.testTooltip")} children={
+                                <Button txt={I18n.t("service.sweep.test")}
+                                        disabled={!service.scim_enabled || (!isAdmin && !isServiceAdmin) || isEmpty(service.scim_url) || invalidInputs.scim_url}
+                                        onClick={() => this.doSweep(service)}/>
+                            }/>}
+                        <Button disabled={disabledSubmit || (!isAdmin && !isServiceAdmin)}
+                                txt={I18n.t("service.update")}
+                                onClick={this.submit}/>
+                    </section>
+                </div>}
         </>
     }
 
@@ -1705,6 +1707,7 @@ class ServiceOverview extends React.Component {
         const disabledSubmit = !this.isValid();
         const {user, config, showServiceAdminView} = this.props;
         const isAdmin = user.admin;
+        const presentTab = (showServiceAdminView && currentTab === "Export") ? "general" : currentTab;
         return (
             <div className="service-overview">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -1723,12 +1726,12 @@ class ServiceOverview extends React.Component {
                     {scimTokenChange && this.renderScimTokenChange(scimBearerToken)}
                 </ConfirmationDialog>
 
-                {this.sidebar(currentTab, config.manage_enabled, isAdmin)}
+                {this.sidebar(presentTab, config.manage_enabled, showServiceAdminView)}
                 <div className={`service ${createNewServiceToken ? "no-grid" : ""}`}>
-                    <h2 className="section-separator">{I18n.t(`serviceDetails.toc.${currentTab}`)}</h2>
-                    {this.renderCurrentTab(config, currentTab, service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit,
+                    <h2 className="section-separator">{I18n.t(`serviceDetails.toc.${presentTab}`)}</h2>
+                    {this.renderCurrentTab(config, presentTab, service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit,
                         invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken, initial, crmOrganisations)}
-                    {this.renderButtons(isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView,
+                    {this.renderButtons(isAdmin, isServiceAdmin, disabledSubmit, presentTab, showServiceAdminView,
                         createNewServiceToken, service, invalidInputs)}
                 </div>
             </div>);

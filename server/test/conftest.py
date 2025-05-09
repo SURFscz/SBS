@@ -12,6 +12,7 @@ from munch import munchify
 
 from server.db.db import db_migrations
 from server.tools import read_file
+from server.scim.schema_template import init_scim_schemas
 
 
 def pytest_sessionstart():
@@ -43,3 +44,6 @@ def use_random_db(request, worker_id):
 
     os.environ['SBS_DB_URI_OVERRIDE'] = database_uri
     db_migrations(database_uri)
+
+    if hasattr(config, 'scim_schema_sram'):
+        init_scim_schemas(config.scim_schema_sram)

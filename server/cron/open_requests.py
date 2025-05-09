@@ -19,12 +19,19 @@ def _result_container():
     }
 
 
+def _units_of_collaboration_request(collaboration_request: CollaborationRequest):
+    if collaboration_request.units:
+        return ", ".join([u.name for u in collaboration_request.units])
+    return "-"
+
+
 def _recipients_to_json(recipients: dict):
     recipients_json = {}
 
     def open_request_summary(collection_name, requests):
         if collection_name == "collaboration_requests":
-            return [{"name": cr.name, "requester": cr.requester.email} for cr in requests]
+            return [{"name": cr.name, "requester": cr.requester.email, "units": _units_of_collaboration_request(cr)} for
+                    cr in requests]
         if collection_name == "join_requests":
             return [{"name": jr.collaboration.name, "requester": jr.user.email} for jr in requests]
         if collection_name == "service_connection_requests":
@@ -72,8 +79,9 @@ def _do_open_requests(app):
         for jr in join_requests:
             co_admins = [member for member in jr.collaboration.collaboration_memberships if member.role == "admin"]
             for co_admin in co_admins:
-                logger.info(f"Sending mail about open join request {jr.user.email} for CO {jr.collaboration.global_urn} "
-                            f"to {co_admin.user.email}")
+                logger.info(
+                    f"Sending mail about open join request {jr.user.email} for CO {jr.collaboration.global_urn} "
+                    f"to {co_admin.user.email}")
                 _add_open_request_to_recipient(co_admin.user, recipients, "join_requests", jr)
 
         service_connection_requests = ServiceConnectionRequest.query \
@@ -83,8 +91,9 @@ def _do_open_requests(app):
         for scr in service_connection_requests:
             service_admins = [member for member in scr.service.service_memberships if member.role == "admin"]
             for sa in service_admins:
-                logger.info(f"Sending mail about open service connection request for service {scr.service.abbreviation} "
-                            f"and CO {scr.collaboration.global_urn} for Service approval to {sa.user.email}")
+                logger.info(
+                    f"Sending mail about open service connection request for service {scr.service.abbreviation} "
+                    f"and CO {scr.collaboration.global_urn} for Service approval to {sa.user.email}")
                 _add_open_request_to_recipient(sa.user, recipients, "service_connection_requests", scr)
 
         service_connection_requests = ServiceConnectionRequest.query \
@@ -94,8 +103,9 @@ def _do_open_requests(app):
         for scr in service_connection_requests:
             org_admins = [m for m in scr.collaboration.organisation.organisation_memberships if m.role == "admin"]
             for admin in org_admins:
-                logger.info(f"Sending mail about open service connection request for service {scr.service.abbreviation} "
-                            f"and CO {scr.collaboration.global_urn} for Org approval to {admin.user.email}")
+                logger.info(
+                    f"Sending mail about open service connection request for service {scr.service.abbreviation} "
+                    f"and CO {scr.collaboration.global_urn} for Org approval to {admin.user.email}")
                 _add_open_request_to_recipient(admin.user, recipients, "service_connection_requests", scr)
 
         config = app.app_config

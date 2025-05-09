@@ -24,7 +24,7 @@ def _service_connection_request_pending_organisation_approval(service_connection
     user_id = current_user_id()
 
     if not has_org_manager_unit_access(user_id, collaboration, org_manager_allowed=True):
-        raise Forbidden(f"Not allowed to approve / decline service_connection_request for service {service.entity_id}")
+        raise Forbidden(f"Not allowed to approve / deny service_connection_request for service {service.entity_id}")
 
     service_connection_request.pending_organisation_approval = False
     db.session.merge(service_connection_request)
@@ -78,7 +78,7 @@ def _do_service_connection_request(approved):
     collaboration = service_connection_request.collaboration
 
     if not (is_service_admin_or_manager(service.id) or has_org_manager_unit_access(current_user_id(), collaboration)):
-        raise Forbidden(f"Not allowed to approve / decline service_connection_request for service {service.entity_id}")
+        raise Forbidden(f"Not allowed to approve / deny service_connection_request for service {service.entity_id}")
 
     if approved:
         service_connection_request.status = STATUS_APPROVED

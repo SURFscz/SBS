@@ -34,11 +34,11 @@ class TestCollaborationsServices(AbstractTest):
 
     def test_delete_collaborations_services(self):
         self.login("urn:john")
-        service_mail = self._find_service_by_name(service_mail_name)
-        self.assertTrue(len(service_mail["collaborations"]) > 0)
+        service_mail = self.find_entity_by_name(Service, service_mail_name)
+        self.assertTrue(len(service_mail.collaborations) > 0)
 
-        collaboration_id = service_mail["collaborations"][0]["id"]
-        service_id = service_mail["id"]
+        collaboration_id = service_mail.collaborations[0].id
+        service_id = service_mail.id
         response = self.client.delete(f"api/collaborations_services/{collaboration_id}/{service_id}",
                                       headers=BASIC_AUTH_HEADER,
                                       content_type="application/json")
@@ -210,6 +210,24 @@ class TestCollaborationsServices(AbstractTest):
         self.assertEqual(2, len(collaboration["services"]))
 
         service_cloud = self.find_entity_by_name(Service, service_cloud_name)
+        url = f"/api/collaborations_services/v1/connect_collaboration_service/{collaboration['identifier']}"
+        res = self.client.put(url,
+                              headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
+                              data=json.dumps({
+                                  "service_entity_id": service_cloud.entity_id
+                              }), content_type="application/json")
+        self.assertEqual("connected", res.json["status"])
+
+        collaboration = self.get(f"/api/collaborations/{collaboration_id}")
+        self.assertEqual(3, len(collaboration["services"]))
+
+    # org api
+    def test_connect_collaboration_service_deprecated(self):
+        collaboration_id = self.find_entity_by_name(Collaboration, co_ai_computing_name).id
+        collaboration = self.get(f"/api/collaborations/{collaboration_id}")
+        self.assertEqual(2, len(collaboration["services"]))
+
+        service_cloud = self.find_entity_by_name(Service, service_cloud_name)
         res = self.client.put("/api/collaborations_services/v1/connect_collaboration_service",
                               headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                               data=json.dumps({
@@ -231,10 +249,10 @@ class TestCollaborationsServices(AbstractTest):
         service_cloud = self.find_entity_by_name(Service, service_cloud_name)
         self.put("/api/collaborations_services/v1/connect_collaboration_service",
                  with_basic_auth=False,
-                 body=json.dumps({
+                 body={
                      "short_name": short_name,
                      "service_entity_id": service_cloud.entity_id
-                 }),
+                 },
                  response_status_code=403)
 
     # org api
@@ -254,8 +272,16 @@ class TestCollaborationsServices(AbstractTest):
 
     # org api
     def test_connect_collaboration_service_collaboration_no_external_api_call(self):
-        res = self.put("/api/collaborations_services/v1/connect_collaboration_service", response_status_code=403)
-        self.assertTrue("Not a valid external API call" in res["message"])
+        collaboration = self.find_entity_by_name(Collaboration, co_research_name)
+        service_cloud = self.find_entity_by_name(Service, service_cloud_name)
+
+        res = self.client.put("/api/collaborations_services/v1/connect_collaboration_service",
+                              headers={"Authorization": "Bearer nope"},
+                              data=json.dumps({
+                                  "short_name": collaboration.short_name,
+                                  "service_entity_id": service_cloud.entity_id
+                              }), content_type="application/json")
+        self.assertEqual(res.status_code, 401)
 
     # org api
     def test_connect_collaboration_service_no_automatic_connection(self):
@@ -301,6 +327,25 @@ class TestCollaborationsServices(AbstractTest):
 
     # Org API
     def test_disconnect_collaborations_service(self):
+        collaboration = self.find_entity_by_name(Collaboration, co_research_name)
+        service = self.find_entity_by_name(Service, service_cloud_name)
+
+        self.assertTrue(service in collaboration.services)
+        url = f"/api/collaborations_services/v1/disconnect_collaboration_service/{collaboration.identifier}"
+        res = self.client.put(url,
+                              headers={"Authorization": f"Bearer {unifra_secret}"},
+                              data=json.dumps({
+                                  "service_entity_id": service.entity_id
+                              }), content_type="application/json")
+        self.assertEqual("disconnected", res.json["status"])
+        # Reload
+        collaboration = self.find_entity_by_name(Collaboration, co_research_name)
+        service = self.find_entity_by_name(Service, service_cloud_name)
+
+        self.assertFalse(service in collaboration.services)
+
+    # Org API
+    def test_disconnect_collaborations_service_deprecated(self):
         collaboration = self.find_entity_by_name(Collaboration, co_research_name)
         service = self.find_entity_by_name(Service, service_cloud_name)
 

@@ -31,8 +31,9 @@ def _get_algorithm(jwk):
 
 
 def _refresh_public_keys():
-    jwks_endpoint = current_app.app_config.oidc.jwks_endpoint
-    jwks = requests.get(jwks_endpoint).json()
+    oidc_config = current_app.app_config.oidc
+    jwks_endpoint = oidc_config.jwks_endpoint
+    jwks = requests.get(jwks_endpoint, verify=oidc_config.verify_peer).json()
 
     global public_keys
     public_keys = {jwk["kid"]: _get_algorithm(jwk).from_jwk(json.dumps(jwk)) for jwk in jwks["keys"]}
@@ -110,7 +111,7 @@ def has_valid_mfa(user):
 def mfa_idp_allowed(user: User, entity_id: str = None):
     identity_providers = current_app.app_config.mfa_idp_allowed
     entity_id_allowed = entity_id and [
-        idp for idp in identity_providers if "entity_id" in idp and idp.entity_id == entity_id.lower()
+        idp for idp in identity_providers if "entity_id" in idp and idp.entity_id.lower() == entity_id.lower()
     ]
 
     def schac_match(configured_schac_homes: list[str], user_schac_home: str) -> bool:
@@ -136,7 +137,13 @@ def mfa_idp_allowed(user: User, entity_id: str = None):
 
 def user_requires_sram_mfa(user: User, issuer_id: str = None, override_mfa_required=False):
     # If the IdP already performed MFA proven by the ACR value
-    idp_mfa_allowed = not override_mfa_required and mfa_idp_allowed(user, issuer_id)
+    idp_allowed_mfa_by_config = mfa_idp_allowed(user, issuer_id)
+    # For Users who used to need TOTP-MFA, but who have moved to institutional MFA, we remove the TOTP secret
+    if idp_allowed_mfa_by_config and user.second_factor_auth:
+        user.second_factor_auth = None
+        db.session.merge(user)
+        db.session.commit()
+    idp_mfa_allowed = not override_mfa_required and idp_allowed_mfa_by_config
     fallback_required = current_app.app_config.mfa_fallback_enabled
     mfa_required = not override_mfa_required and fallback_required and not has_valid_mfa(user) and not idp_mfa_allowed
     return mfa_required

@@ -6,15 +6,12 @@ import {isEmpty, stopEvent, tagArraySort, unitArraySort} from "../../utils/Utils
 import I18n from "../../locale/I18n";
 import Entities from "./Entities";
 import Button from "../Button";
-import {allCollaborationsOptimized, collaborationAdmins, myCollaborationsOptimized} from "../../api";
+import {allCollaborationsOptimized, myCollaborationsOptimized} from "../../api";
 import SpinnerField from "./SpinnerField";
 import {chipType, isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
-import CheckBox from "../CheckBox";
 import {Chip, ChipType, Tooltip} from "@surfnet/sds";
 import ConfirmationDialog from "../ConfirmationDialog";
-
-import {ReactComponent as InformationCircle} from "@surfnet/sds/icons/functional-icons/info.svg";
 import {clearFlash} from "../../utils/Flash";
 import Select from "react-select";
 import {displayExpiryDate, displayLastActivityDate} from "../../utils/Date";
@@ -34,7 +31,6 @@ export default class Collaborations extends React.PureComponent {
             filterValue: {},
             unitFilterOptions: [],
             unitFilterValue: {},
-            collaborationAdminEmails: {},
             confirmationDialogOpen: false,
             confirmationTxt: I18n.t("confirmationDialog.confirm"),
             confirmationDialogAction: () => true,
@@ -45,39 +41,35 @@ export default class Collaborations extends React.PureComponent {
     }
 
     componentDidMount = () => {
-        const {collaborations, user, service, organisation} = this.props;
-        const promises = [collaborationAdmins(service)];
+        const {collaborations, user, organisation} = this.props;
         if (collaborations === undefined) {
-            Promise.all(promises.concat([user.admin ? allCollaborationsOptimized() : myCollaborationsOptimized()])).then(res => {
-                const allFilterOptions = this.allLabelFilterOptions(res[1]);
-                const allUnitFilterOptions = this.allUnitFilterOptions(res[1]);
-                this.addRoleInformation(user, res[1]);
-                this.setState({
-                    standalone: true,
-                    collaborationAdminEmails: res[0],
-                    collaborations: res[1],
-                    filterOptions: allFilterOptions,
-                    filterValue: allFilterOptions[0],
-                    unitFilterOptions: allUnitFilterOptions,
-                    unitFilterValue: allUnitFilterOptions[0],
-                    loading: false
-                });
+            (user.admin ? allCollaborationsOptimized() : myCollaborationsOptimized())
+                .then(res => {
+                    const allFilterOptions = this.allLabelFilterOptions(res);
+                    const allUnitFilterOptions = this.allUnitFilterOptions(res);
+                    this.addRoleInformation(user, res);
+                    this.setState({
+                        standalone: true,
+                        collaborations: res,
+                        filterOptions: allFilterOptions,
+                        filterValue: allFilterOptions[0],
+                        unitFilterOptions: allUnitFilterOptions,
+                        unitFilterValue: allUnitFilterOptions[0],
+                        loading: false
+                    });
 
-            })
+                })
         } else {
             const allFilterOptions = this.allLabelFilterOptions(collaborations);
             const allUnitFilterOptions = this.allUnitFilterOptions(collaborations, organisation);
             this.addRoleInformation(user, collaborations);
             this.addLabelInformation(collaborations);
-            Promise.all(promises).then(res => {
-                this.setState({
-                    collaborationAdminEmails: res[0],
-                    filterOptions: allFilterOptions,
-                    filterValue: allFilterOptions[0],
-                    unitFilterOptions: allUnitFilterOptions,
-                    unitFilterValue: allUnitFilterOptions[0],
-                    loading: false
-                })
+            this.setState({
+                filterOptions: allFilterOptions,
+                filterValue: allFilterOptions[0],
+                unitFilterOptions: allUnitFilterOptions,
+                unitFilterValue: allUnitFilterOptions[0],
+                loading: false
             })
         }
     }
@@ -215,12 +207,10 @@ export default class Collaborations extends React.PureComponent {
         const {
             loading,
             standalone,
-            selectedCollaborations,
             filterOptions,
             filterValue,
             unitFilterOptions,
             unitFilterValue,
-            collaborationAdminEmails,
             confirmationDialogOpen,
             cancelDialogAction,
             confirmationDialogAction,
@@ -231,7 +221,7 @@ export default class Collaborations extends React.PureComponent {
             return <SpinnerField/>;
         }
         const {collaborations} = standalone ? this.state : this.props;
-        const {modelName = "collaborations", organisation} = this.props;
+        const {organisation} = this.props;
 
         const {user} = this.props;
         const isOrgManager = isUserAllowed(ROLES.ORG_MANAGER, user);
@@ -243,40 +233,11 @@ export default class Collaborations extends React.PureComponent {
         const organisationQueryParam = organisation ? `?organisationId=${organisation.id}` : "";
         const newLabel = I18n.t(`models.${mayCreateCollaborations ? "collaborations" : "memberCollaborations"}.new`);
 
-        if (isEmpty(collaborations) && !loading && modelName === "collaborations") {
+        if (isEmpty(collaborations) && !loading) {
             return this.noCollaborations(organisation, newLabel, `/new-collaboration${organisationQueryParam}`, mayCreateCollaborations);
         }
 
         const columns = [];
-        const serviceModule = modelName === "serviceCollaborations";
-        const serviceKey = serviceModule ? " services" : "";
-        if (serviceModule) {
-            let i = 0;
-            columns.push({
-                nonSortable: true,
-                key: "check",
-                header: <CheckBox value={false}
-                                  name={"allSelected"}
-                                  hide={true}
-                                  onChange={() => false}/>,
-
-                mapper: entity => {
-                    if (entity.fromCollaboration) {
-                        return (
-                            <div className="check">
-                                <CheckBox name={"" + ++i}
-                                          onChange={this.onCheck(entity)}
-                                          value={(selectedCollaborations[entity.id]) || false}/>
-                            </div>)
-                    } else {
-                        return (
-                            <Tooltip standalone={true} children={<InformationCircle/>}
-                                     tip={I18n.t("models.serviceCollaborations.organisationWarningTooltip")}/>
-                        )
-                    }
-                }
-            });
-        }
         const displayUnitColumn = !organisation || unitFilterOptions.length > 1;
         const displayLabelColumn = !organisation || filterOptions.length > 1;
         columns.push(
@@ -288,7 +249,7 @@ export default class Collaborations extends React.PureComponent {
             },
             {
                 key: "name",
-                class: `${serviceKey} ${displayLabelColumn ? "" : "no-labels"} ${displayUnitColumn ? "" : "no-units"}`,
+                class: `${displayLabelColumn ? "" : "no-labels"} ${displayUnitColumn ? "" : "no-units"}`,
                 header: I18n.t("models.collaborations.name"),
                 mapper: collaboration => <a href={`/collaborations/${collaboration.id}`}
                                             className={"neutral-appearance"}
@@ -308,7 +269,7 @@ export default class Collaborations extends React.PureComponent {
             } : null,
             displayLabelColumn ? {
                 key: organisation ? "tagValues" : "organisation__name",
-                class: serviceKey,
+                class: "",
                 header: organisation ? I18n.t("collaboration.tags") : I18n.t("models.serviceCollaborations.organisationName"),
                 customSort: tagArraySort,
                 mapper: collaboration => organisation ? collaboration.tags
@@ -318,7 +279,7 @@ export default class Collaborations extends React.PureComponent {
             } : null,
             {
                 key: "role",
-                class: serviceKey,
+                class: "",
                 header: I18n.t("profile.yourRole"),
                 mapper: collaboration => {
                     if (collaboration.role) {
@@ -330,7 +291,7 @@ export default class Collaborations extends React.PureComponent {
             },
             {
                 key: "expiry_date",
-                class: `expiry_date ${serviceKey} ${displayLabelColumn ? "" : "no-labels"} ${displayUnitColumn ? "" : "no-units"}`,
+                class: `expiry_date ${displayLabelColumn ? "" : "no-labels"} ${displayUnitColumn ? "" : "no-units"}`,
                 header: I18n.t("collaboration.expiryDate"),
                 mapper: collaboration => {
                     if (collaboration.expiry_date) {
@@ -360,7 +321,7 @@ export default class Collaborations extends React.PureComponent {
             },
             {
                 key: "last_activity_date",
-                class: `last_activity_date ${serviceKey} ${displayLabelColumn ? "" : "no-labels"} ${displayUnitColumn ? "" : "no-units"}`,
+                class: `last_activity_date ${displayLabelColumn ? "" : "no-labels"} ${displayUnitColumn ? "" : "no-units"}`,
                 header: I18n.t("collaboration.lastActivityDate"),
                 mapper: collaboration => {
                     const today = new Date().getTime();
@@ -399,7 +360,7 @@ export default class Collaborations extends React.PureComponent {
                                     confirmationTxt={confirmationTxt}
                                     question={confirmationQuestion}/>
                 <Entities entities={filteredCollaborations}
-                          modelName={mayCreateCollaborations ? modelName : mayRequestCollaboration ? "memberCollaborations" : modelName}
+                          modelName={mayCreateCollaborations ? "collaborations" : mayRequestCollaboration ? "memberCollaborations" : "collaborations"}
                           searchAttributes={["name", "identifier", "short_name"]}
                           defaultSort="name"
                           inputFocus={true}
@@ -410,7 +371,6 @@ export default class Collaborations extends React.PureComponent {
                           newLabel={newLabel}
                           filters={this.filters(organisation, filterOptions, filterValue, unitFilterOptions, unitFilterValue)}
                           actionHeader={"collaboration-services"}
-                          actions={serviceModule ? this.actionButtons(selectedCollaborations, collaborationAdminEmails, collaborations) : null}
                           showNew={mayCreateCollaborations || mayRequestCollaboration}
                           newEntityPath={`/new-collaboration${organisationQueryParam}`}
                           loading={loading}

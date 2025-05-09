@@ -215,7 +215,7 @@ class TestServiceConnectionRequest(AbstractTest):
 
             mail_msg = outbox[0]
             self.assertEqual(f"Service {service_ssh_name} connection request for collaboration "
-                             f"{co_research_name} has been declined (local)", mail_msg.subject)
+                             f"{co_research_name} has been denied (local)", mail_msg.subject)
 
     def test_all_service_request_connections_by_service(self):
         storage_id = self.find_entity_by_name(Service, service_storage_name).id

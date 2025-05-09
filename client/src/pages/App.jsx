@@ -506,6 +506,7 @@ class App extends React.Component {
 
                             <Route path="/mock-eb"
                                    render={props => <MockEB {...props}/>}/>
+
                             <Route render={props => <NotFound config={config} currentUser={currentUser} {...props}/>}/>
                         </Switch>}
                     <Footer/>

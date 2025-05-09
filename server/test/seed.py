@@ -225,7 +225,7 @@ def seed(db, app_config, skip_seed=False):
                 last_login_date=yesterday, eduperson_principal_name="paul@dtrh.io")
     hannibal = User(uid="urn:hannibal", name=None, email="hannibal@example.org", username="hlector",
                     schac_home_organisation="example.org", external_id="9527f225-d8d1-4410-8c2e-ed2548db908d",
-                    last_login_date=yesterday)
+                    last_login_date=yesterday, rate_limited=True)
     service_admin = User(uid="urn:service_admin", name="Service Admin", email="service_admin@ucc.org",
                          username="service_admin", schac_home_organisation="service.admin.com",
                          external_id="c5ed5e18-b6aa-48f2-8849-a68a8cfe39a8", last_login_date=yesterday)

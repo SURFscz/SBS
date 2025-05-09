@@ -104,15 +104,14 @@ def proxy_authz_eb():
         if free_rider:
             user = User(uid=collab_person_id, collab_person_id=collab_person_id, external_id=str(uuid.uuid4()),
                         created_by="system", updated_by="system")
-            db.session.merge(user)
-            db.session.commit()
-            return {
-                "msg": "authorized",
-                "attributes": {
-                    "urn:mace:dir:attribute-def:uid": [user.uid],  # voPersonID
-                    "urn:mace:dir:attribute-def:eduPersonPrincipalName": [user.uid],  # eduPersonPrincipalName
-                }
-            }, 200
+            user = db.session.merge(user)
+            user_nonce.user = user
+            user_nonce.error_status = UserCode.NEW_FREE_RIDE_USER.value
+            results = {
+                "msg": "interrupt",
+                "nonce": nonce,
+                "message": UserCode.NEW_FREE_RIDE_USER.name
+            }
         else:
             user_nonce.error_status = UserCode.USER_UNKNOWN.value
             results = {
@@ -240,13 +239,15 @@ def interrupt():
     # Add the parameters, which are used in some interrupt flows
     error_status = user_nonce.error_status
     parameters = {
+        "dummy": "value",
         "service_name": service.name if service else user_nonce.requested_service_entity_id,
         "service_id": service.uuid4 if service else None,
         "continue_url": user_nonce.continue_url,
         "entity_id": service.entity_id if service else user_nonce.requested_service_entity_id,
         "issuer_id": user_nonce.issuer_id,
         "user_id": user.uid if user else user_nonce.requested_user_id,
-        "error_status": error_status
+        "error_status": error_status,
+        "eb_toggle": True
     }
 
     client_base_url = current_app.app_config.base_url
