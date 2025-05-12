@@ -42,7 +42,7 @@ def user_attributes(service: Service, user: User):
             "urn:mace:dir:attribute-def:eduPersonEntitlement": list(all_attributes),  # eduPersonEntitlement
             "urn:mace:dir:attribute-def:uid": [user.uid],  # voPersonID
             "urn:mace:dir:attribute-def:eduPersonPrincipalName": [user.uid],  # eduPersonPrincipalName
-            "urn:oid:1.3.6.1.4.1.24552.500.1.1.1.13": [k.ssh_value for k in user.ssh_keys]  # sshPublicKey
+            "urn:mace:surf.nl:attribute-def:ssh-key": [k.ssh_value for k in user.ssh_keys]  # sshPublicKey
         }
     }
 

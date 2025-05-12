@@ -73,5 +73,10 @@ def arp_attributes():
             "source": "idp",
             "motivation": "The schacHomeOrganization attribute is necessary to be able to handle 2-factor "
                           "authentication using SURFsecureID"
+        }],
+        "urn:mace:surf.nl:attribute-def:ssh-key": [{
+            "value": "*",
+            "source": "idp",
+            "motivation": "The SSHKey is necessary to enable passwordless login on SRAM enabled servers"
         }]
     }
