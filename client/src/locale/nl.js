@@ -483,7 +483,7 @@ const nl = {
             discloseNoMemberInformation: "Deze samenwerking deelt geen ledeninformatie",
             discloseNoMemberInformationJoinRequest: "Alleen zichtbaar voor leden",
             newCollaborationRequest: "Aanvragen samenwerking",
-            leave: "Lidmaatschap opzeggen",
+            leave: "Verlaat samenwerking",
             labels: "Labels",
         },
         apiKeys: {
