@@ -545,6 +545,7 @@ class TestCollaboration(AbstractTest):
         response = self.client.post("/api/collaborations/v1",
                                     headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                                     data=json.dumps({
+                                        "name": "new_collaboration",
                                         "description": "new_collaboration",
                                         "accepted_user_policy": "https://aup.org",
                                         "administrators": ["the@ex.org", "that@ex.org"],
@@ -560,7 +561,7 @@ class TestCollaboration(AbstractTest):
                                     content_type="application/json")
         self.assertEqual(201, response.status_code)
         collaboration_json = response.json
-        self.assertEqual(2, len(collaboration_json["tags"]))
+        self.assertEqual(4, len(collaboration_json["tags"]))
         self.assertEqual(1, len(collaboration_json["units"]))
 
         collaboration = self.find_entity_by_name(Collaboration, "new_collaboration")
