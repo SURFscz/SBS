@@ -107,6 +107,7 @@ def _reconcile_tags(collaboration: Collaboration, tags, is_external_api=False, i
             # The units of the organisation tags must match if present
             if add_tag and (not tag.units or set(tag.units) & set(collaboration.units)):
                 tag.collaborations.append(collaboration)
+                tags.append(tag.tag_value)
 
     return tags
 
@@ -714,9 +715,9 @@ def save_collaboration_api():
     collaboration_json = jsonify(collaboration).json
     collaboration_json["units"] = [unit.name for unit in collaboration.units]
 
-    if tags:
-        tags = _reconcile_tags(collaboration, tags, is_external_api=True)
-        collaboration_json["tags"] = tags
+    # We must always _reconcile_tags, otherwise the default tags are not added
+    tags = _reconcile_tags(collaboration, tags if tags else [], is_external_api=True)
+    collaboration_json["tags"] = tags
     return collaboration_json, 201
 
 

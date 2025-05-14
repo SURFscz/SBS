@@ -17,7 +17,7 @@ from server.test.seed import (co_ai_computing_uuid, co_ai_computing_name, co_res
                               service_group_wiki_name1,
                               service_storage_name, unifra_secret, unifra_name, unihard_short_name,
                               unifra_unit_cloud_name, unifra_unit_infra_name, unihard_secret_unit_support,
-                              unihard_unit_support_name, service_monitor_name)
+                              unihard_unit_support_name, service_monitor_name, unihard_secret)
 from server.test.seed import unihard_name
 from server.tools import dt_now
 
@@ -545,7 +545,6 @@ class TestCollaboration(AbstractTest):
         response = self.client.post("/api/collaborations/v1",
                                     headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
                                     data=json.dumps({
-                                        "name": "new_collaboration",
                                         "description": "new_collaboration",
                                         "accepted_user_policy": "https://aup.org",
                                         "administrators": ["the@ex.org", "that@ex.org"],
@@ -1123,3 +1122,21 @@ class TestCollaboration(AbstractTest):
                  body=[],
                  response_status_code=403,
                  with_basic_auth=False)
+
+    def test_api_call_default_tags(self):
+        response = self.client.post("/api/collaborations/v1",
+                                    headers={"Authorization": f"Bearer {unihard_secret}"},
+                                    data=json.dumps({
+                                        "name": "Brand New CO",
+                                        "description": "new_collaboration",
+                                        "accepted_user_policy": "https://aup.org",
+                                        "administrators": ["the@ex.org"],
+                                        "short_name": "new_short_name",
+                                        "disable_join_requests": True,
+                                        "disclose_member_information": True,
+                                        "disclose_email_information": True,
+                                    }),
+                                    content_type="application/json")
+        self.assertEqual(201, response.status_code)
+        collaboration_json = response.json
+        self.assertListEqual(["tag_uuc"], collaboration_json["tags"])
