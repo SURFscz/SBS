@@ -21,4 +21,6 @@ class CustomAdapter(logging.LoggerAdapter):
 
 
 def ctx_logger(name=None):
-    return CustomAdapter(logging.getLogger(name))
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.DEBUG)  # Ensure the logger captures debug messages
+    return CustomAdapter(logger)
