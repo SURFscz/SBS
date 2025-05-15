@@ -52,7 +52,7 @@
         "http-proxy-middleware": "^3.0.5",
         "raw-loader": "^4.0.2",
         "react-scripts": "^5.0.1",
-        "sass": "^1.87.0"
+        "sass": "^1.88.0"
     },
     "resolutions": {
         "minimatch": "^9.0.4",
