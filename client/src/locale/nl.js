@@ -970,7 +970,7 @@ const nl = {
         infoUriPlaceholder: "De URL met informatie over deze applicatie",
         infoUriTooltip: "URL van een website met informatie over deze applicatie",
         privacy_policy: "Privacyverklaring",
-        privacy_policyPlaceholder: "De URL van het privacyverklaring van deze applicatie",
+        privacy_policyPlaceholder: "De URL van de privacyverklaring van deze applicatie",
         privacy_policyTooltip: "De wet vereist een privacyverklaring voor alle websites en apps die persoonlijke informatie van gebruikers verzamelen of gebruiken.",
         accepted_user_policy: "Acceptable use policy URL",
         accepted_user_policyPlaceholder: "De acceptable use policy (AUP) van de applicatie",
@@ -1724,7 +1724,7 @@ const nl = {
         },
         service: {
             title: "Bekijk de informatie om verder te gaan",
-            info: "Je staat op het punt om in te loggen op <strong>{{name}}</strong>. Voordat je verder kunt gaan, moet je het beleid voor acceptabel gebruik (AUP) en het privacyverklaring van de applicatie lezen. Bevestig hieronder of je ze accepteert.",
+            info: "Je staat op het punt om in te loggen op <strong>{{name}}</strong>. Voordat je verder kunt gaan, moet je het beleid voor acceptabel gebruik (AUP) en de privacyverklaring van de applicatie lezen. Bevestig hieronder of je ze accepteert.",
             noPrivacyPolicy: "Geen privacyverklaring verstrekt",
             noAup: "Geen AUP verstrekt",
             noContact: "Geen contact verstrekt",
@@ -2181,7 +2181,7 @@ const nl = {
         toggleRole: "Wissel van rol",
         infoMember: "Houd er rekening mee dat wanneer je lid wordt van deze samenwerking, je persoonlijke gegevens gedeeld kunnen worden met de volgende applicaties. Neem even de tijd om de door de applicatie opgegeven beleidsdocumenten door te nemen.",
         infoAdmin: "Houd er rekening mee dat wanneer je beheerder wordt van deze samenwerking, je persoonlijke gegevens gedeeld kunnen worden met de volgende applicaties. Neem even de tijd om de door de applicatie opgegeven beleidsdocumenten door te nemen.",
-        infoJoinRequest: " Voordat je kunt aanvragen lid te worden van deze samenwerking moet je de acceptable use policy (AUP) en het privacyverklaring van de applicatie lezen. Geef hieronder aan of je deze accepteert.",
+        infoJoinRequest: " Voordat je kunt aanvragen lid te worden van deze samenwerking moet je de acceptable use policy (AUP) en de privacyverklaring van de applicatie lezen. Geef hieronder aan of je deze accepteert.",
         purpose: "Doel van deze samenwerking",
         noServices: "Nog geen applicaties gekoppeld.",
         proceed: "Ga door naar {{name}}"
