@@ -1724,7 +1724,7 @@ const nl = {
         },
         service: {
             title: "Bekijk de informatie om verder te gaan",
-            info: "Je staat op het punt om in te loggen op <strong>{{name}}</strong>. Voordat je verder kunt gaan, moet je het beleid voor acceptabel gebruik (AUP) en de privacyverklaring van de applicatie lezen. Bevestig hieronder of je ze accepteert.",
+            info: "Je staat op het punt om in te loggen op <strong>{{name}}</strong>. Voordat je verder kunt gaan, moet je het beleid voor acceptabel gebruik (AUP) accepteren en dat hieronder bevestigen.",
             noPrivacyPolicy: "Geen privacyverklaring verstrekt",
             noAup: "Geen AUP verstrekt",
             noContact: "Geen contact verstrekt",

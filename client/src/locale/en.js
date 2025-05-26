@@ -1724,7 +1724,7 @@ const en = {
         },
         service: {
             title: "Review the information in order to continue",
-            info: "You are about to log in to <strong>{{name}}</strong>. Before you can continue you must review the acceptable use policy (AUP) and privacy policy of the application. Confirm below whether you accept them.",
+            info: "You are about to log in to <strong>{{name}}</strong>. Before you can continue you must review the acceptable use policy (AUP) of the application and accept it below.",
             noPrivacyPolicy: "No privacy policy provided",
             noAup: "No AUP provided",
             noContact: "No contact provided",
