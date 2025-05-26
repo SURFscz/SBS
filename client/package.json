@@ -23,7 +23,7 @@
         "lodash.escape": "^4.0.1",
         "moment": "^2.30.1",
         "moment-timezone": "^0.5.48",
-        "papaparse": "^5.5.2",
+        "papaparse": "^5.5.3",
         "prop-types": "^15.6.2",
         "pullstate": "^1.23.0",
         "react": "^18.3.1",
