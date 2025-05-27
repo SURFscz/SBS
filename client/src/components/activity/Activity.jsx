@@ -13,7 +13,7 @@ import CheckBox from "../CheckBox";
 
 const pageCount = 50;
 const ignoreInDiff = ["created_by", "updated_by", "created_at", "updated_at", "last_activity_date"];
-const epochAttributes = ["agreed_at", "sent_at", "last_accessed_date", "last_login_date", "expiry_date"]
+const epochAttributes = ["agreed_at", "sent_at", "last_accessed_date", "last_login_date", "expiry_date"];
 const collectionMapping = {
     organisation_id: "organisations", collaboration_id: "collaborations", user_id: "users"
 };
@@ -46,7 +46,7 @@ export default class Activity extends React.PureComponent {
                     return !(Object.keys(stateAfter).length === 1 && stateAfter.last_activity_date);
                 }
                 return true;
-            })
+            });
         }
         const includeMembersTargets = [
             "collaboration_memberships",
@@ -76,7 +76,7 @@ export default class Activity extends React.PureComponent {
             if (log.target_type) {
                 if (log.target_type === "services" && log.parent_name === "collaborations") {
                     log.isConnection = isService;
-                    log.isService = !isService
+                    log.isService = !isService;
                 } else {
                     log.isService = includeServicesTargets.includes(log.target_type);
                     log.isMember = includeMembersTargets.includes(log.target_type);
