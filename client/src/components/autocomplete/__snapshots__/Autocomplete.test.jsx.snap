@@ -1,9 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`AutoComplete matches snapshot 1`] = `
-<DocumentFragment>
-  <section
-    class="autocomplete"
-  />
-</DocumentFragment>
-`;
