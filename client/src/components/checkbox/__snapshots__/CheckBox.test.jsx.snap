@@ -6,9 +6,12 @@ exports[`CheckBox matches snapshot 1`] = `
     class="sds--checkbox-container sds--tooltip-parent checkbox "
   >
     <input
+      id="CheckBox"
       type="checkbox"
     />
-    <label>
+    <label
+      for="CheckBox"
+    >
       <span
         class="sds--checkbox--visual"
       >

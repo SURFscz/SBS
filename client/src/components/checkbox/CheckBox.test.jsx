@@ -9,7 +9,7 @@ jest.mock("../../locale/I18n", () => ({
 describe("CheckBox", () => {
   it("matches snapshot", () => {
     const { asFragment } = render(
-      <CheckBox checked={false} onChange={jest.fn()} label="Accept terms" />
+      <CheckBox name={"CheckBox"} value={false} checked={false} onChange={jest.fn()} label="Accept terms" />
     );
     expect(asFragment()).toMatchSnapshot();
   });
