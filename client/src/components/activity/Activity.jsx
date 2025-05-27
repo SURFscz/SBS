@@ -1,15 +1,15 @@
 import React from "react";
-import I18n from "../locale/I18n";
+import I18n from "../../locale/I18n";
 import "./Activity.scss";
 import {DiffPatcher} from "jsondiffpatch";
 import "jsondiffpatch/dist/formatters-styles/html.css";
-import {escapeDeep, isEmpty} from "../utils/Utils";
-import {pseudoIso} from "../utils/Date";
+import {escapeDeep, isEmpty} from "../../utils/Utils";
+import {pseudoIso} from "../../utils/Date";
 import {Pagination} from "@surfnet/sds";
-import Button from "./Button";
-import {filterAuditLogs} from "../utils/AuditLog";
+import Button from "../Button";
+import {filterAuditLogs} from "../../utils/AuditLog";
 import {ReactComponent as SearchIcon} from "@surfnet/sds/icons/functional-icons/search.svg";
-import CheckBox from "./CheckBox";
+import CheckBox from "../CheckBox";
 
 const pageCount = 50;
 const ignoreInDiff = ["created_by", "updated_by", "created_at", "updated_at", "last_activity_date"];

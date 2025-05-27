@@ -9,7 +9,7 @@ import Me from "./Me";
 import Tabs from "../components/Tabs";
 import {auditLogsMe} from "../api";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import Activity from "../components/Activity";
+import Activity from "../components/activity/Activity";
 import {Loader} from "@surfnet/sds";
 
 class Profile extends React.Component {

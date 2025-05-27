@@ -20,7 +20,7 @@ import {ReactComponent as PersonIcon} from "../icons/personal_info.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import SpinnerField from "../components/redesign/SpinnerField";
 import Tabs from "../components/Tabs";
-import Activity from "../components/Activity";
+import Activity from "../components/activity/Activity";
 import UserDetailSshDialog from "./UserDetailSshDialog";
 import {Link} from "react-router-dom";
 import Button from "../components/Button";

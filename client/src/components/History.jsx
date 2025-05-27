@@ -7,7 +7,7 @@ import {AppStore} from "../stores/AppStore";
 import {getParameterByName} from "../utils/QueryParameters";
 import UnitHeader from "./redesign/UnitHeader";
 import SpinnerField from "./redesign/SpinnerField";
-import Activity from "./Activity";
+import Activity from "./activity/Activity";
 
 export default class History extends React.PureComponent {
 

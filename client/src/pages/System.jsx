@@ -44,7 +44,7 @@ import SpinnerField from "../components/redesign/SpinnerField";
 import {AppStore} from "../stores/AppStore";
 import Tabs from "../components/Tabs";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import Activity from "../components/Activity";
+import Activity from "../components/activity/Activity";
 import Select from "react-select";
 import MemberJoinRequests from "../components/redesign/MemberJoinRequests";
 import MemberCollaborationRequests from "../components/redesign/MemberCollaborationRequests";
