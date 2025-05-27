@@ -3,6 +3,7 @@
 exports[`Button matches snapshot 1`] = `
 <DocumentFragment>
   <button
+    centralize="true"
     txt="Click me"
     type="primary"
   >

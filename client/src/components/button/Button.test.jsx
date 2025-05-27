@@ -22,7 +22,7 @@ jest.mock("../../utils/Utils", () => ({
 describe("Button", () => {
   it("matches snapshot", () => {
     const { asFragment } = render(
-      <Button onClick={jest.fn()} txt="Click me" />
+      <Button onClick={jest.fn()} centralize={"true"} txt="Click me" />
     );
     expect(asFragment()).toMatchSnapshot();
   });
