@@ -6,10 +6,10 @@ import "jsondiffpatch/dist/formatters-styles/html.css";
 import {escapeDeep, isEmpty} from "../../utils/Utils";
 import {pseudoIso} from "../../utils/Date";
 import {Pagination} from "@surfnet/sds";
-import Button from "../Button";
+import Button from "../button/Button";
 import {filterAuditLogs} from "../../utils/AuditLog";
 import {ReactComponent as SearchIcon} from "@surfnet/sds/icons/functional-icons/search.svg";
-import CheckBox from "../CheckBox";
+import CheckBox from "../checkbox/CheckBox";
 
 const pageCount = 50;
 const ignoreInDiff = ["created_by", "updated_by", "created_at", "updated_at", "last_activity_date"];

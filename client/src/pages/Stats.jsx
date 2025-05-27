@@ -1,6 +1,6 @@
 import React, {PureComponent, useEffect, useState} from "react";
 import "./Stats.scss";
-import "../components/redesign/SpinnerField.scss";
+import "../components/_redesign/SpinnerField.scss";
 import {addMissingDateEntries, transformToRechartsData} from "../utils/Stats";
 import {Loader} from "@surfnet/sds";
 import I18n from "../locale/I18n";

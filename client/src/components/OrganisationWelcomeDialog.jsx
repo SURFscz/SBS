@@ -1,10 +1,10 @@
 import React, {useState} from "react";
 import I18n from "../locale/I18n";
 import "./WelcomeDialog.scss";
-import OrganisationEn from "./welcome/OrganisationEn";
-import OrganisationNl from "./welcome/OrganisationNl";
+import OrganisationEn from "./_welcome/OrganisationEn";
+import OrganisationNl from "./_welcome/OrganisationNl";
 import {ROLES} from "../utils/UserRole";
-import ToggleSwitch from "./redesign/ToggleSwitch";
+import ToggleSwitch from "./_redesign/ToggleSwitch";
 import {AlertType, Modal} from "@surfnet/sds";
 
 export default function OrganisationWelcomeDialog({

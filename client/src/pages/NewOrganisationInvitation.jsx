@@ -11,7 +11,7 @@ import {
 } from "../api";
 import I18n from "../locale/I18n";
 import InputField from "../components/InputField";
-import Button from "../components/Button";
+import Button from "../components/button/Button";
 import {isEmpty, splitListSemantically, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
@@ -21,11 +21,11 @@ import DateField from "../components/DateField";
 import {getParameterByName} from "../utils/QueryParameters";
 import SelectField from "../components/SelectField";
 import {organisationRoles} from "../forms/constants";
-import UnitHeader from "../components/redesign/UnitHeader";
+import UnitHeader from "../components/_redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
-import SpinnerField from "../components/redesign/SpinnerField";
+import SpinnerField from "../components/_redesign/SpinnerField";
 import EmailField from "../components/EmailField";
-import ErrorIndicator from "../components/redesign/ErrorIndicator";
+import ErrorIndicator from "../components/_redesign/ErrorIndicator";
 import {InvitationsUnits} from "../components/InvitationsUnits";
 
 class NewOrganisationInvitation extends React.Component {

@@ -2,13 +2,13 @@ import React from "react";
 import {allMockScimServices, clearMockScimStatistics, mockScimStatistics, sweep} from "../api";
 import "./Scim.scss";
 import I18n from "../locale/I18n";
-import SpinnerField from "../components/redesign/SpinnerField";
+import SpinnerField from "../components/_redesign/SpinnerField";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import InputField from "../components/InputField";
 import {isEmpty, stopEvent} from "../utils/Utils";
-import Button from "../components/Button";
-import Logo from "../components/redesign/Logo";
-import Entities from "../components/redesign/Entities";
+import Button from "../components/button/Button";
+import Logo from "../components/_redesign/Logo";
+import Entities from "../components/_redesign/Entities";
 import ReactJson from "react-json-view";
 
 class Scim extends React.Component {

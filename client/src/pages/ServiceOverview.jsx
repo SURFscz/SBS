@@ -23,8 +23,8 @@ import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/
 import {ReactComponent as CheckIcon} from "@surfnet/sds/icons/functional-icons/success.svg";
 import InputField from "../components/InputField";
 import "./ServiceOverview.scss";
-import "../components/redesign/ApiKeys.scss";
-import Button from "../components/Button";
+import "../components/_redesign/ApiKeys.scss";
+import Button from "../components/button/Button";
 import {setFlash} from "../utils/Flash";
 import {
     commaSeparatedArrayToSelectValues,
@@ -44,12 +44,12 @@ import {
 import {Tooltip} from "@surfnet/sds";
 import DOMPurify from "dompurify";
 import {ReactComponent as ChevronLeft} from "../icons/chevron-left.svg";
-import Entities from "../components/redesign/Entities";
+import Entities from "../components/_redesign/Entities";
 import ConfirmationDialog from "../components/ConfirmationDialog";
-import ErrorIndicator from "../components/redesign/ErrorIndicator";
-import CroppedImageField from "../components/redesign/CroppedImageField";
-import SpinnerField from "../components/redesign/SpinnerField";
-import CheckBox from "../components/CheckBox";
+import ErrorIndicator from "../components/_redesign/ErrorIndicator";
+import CroppedImageField from "../components/_redesign/CroppedImageField";
+import SpinnerField from "../components/_redesign/SpinnerField";
+import CheckBox from "../components/checkbox/CheckBox";
 import SelectField from "../components/SelectField";
 import {dateFromEpoch} from "../utils/Date";
 import {isUserServiceAdmin} from "../utils/UserRole";

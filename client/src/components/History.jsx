@@ -5,8 +5,8 @@ import "jsondiffpatch/dist/formatters-styles/html.css";
 import {auditLogsInfo, auditLogsMe} from "../api";
 import {AppStore} from "../stores/AppStore";
 import {getParameterByName} from "../utils/QueryParameters";
-import UnitHeader from "./redesign/UnitHeader";
-import SpinnerField from "./redesign/SpinnerField";
+import UnitHeader from "./_redesign/UnitHeader";
+import SpinnerField from "./_redesign/SpinnerField";
 import Activity from "./activity/Activity";
 
 export default class History extends React.PureComponent {

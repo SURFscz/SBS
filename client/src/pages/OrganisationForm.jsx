@@ -12,23 +12,23 @@ import {
 import I18n from "../locale/I18n";
 import InputField from "../components/InputField";
 import "./OrganisationForm.scss";
-import Button from "../components/Button";
+import Button from "../components/button/Button";
 import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {sanitizeShortName, validSchacHomeRegExp, validUrlRegExp} from "../validations/regExps";
 import {AppStore} from "../stores/AppStore";
-import UnitHeader from "../components/redesign/UnitHeader";
-import CroppedImageField from "../components/redesign/CroppedImageField";
+import UnitHeader from "../components/_redesign/UnitHeader";
+import CroppedImageField from "../components/_redesign/CroppedImageField";
 import SelectField from "../components/SelectField";
-import SpinnerField from "../components/redesign/SpinnerField";
+import SpinnerField from "../components/_redesign/SpinnerField";
 
 import OrganisationOnBoarding from "../components/OrganisationOnBoarding";
-import ErrorIndicator from "../components/redesign/ErrorIndicator";
+import ErrorIndicator from "../components/_redesign/ErrorIndicator";
 import CreatableField from "../components/CreatableField";
 import EmailField from "../components/EmailField";
-import CheckBox from "../components/CheckBox";
+import CheckBox from "../components/checkbox/CheckBox";
 import {OrganisationUnits} from "../components/OrganisationUnits";
 
 

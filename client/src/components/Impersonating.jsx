@@ -3,7 +3,7 @@ import {Tooltip} from "@surfnet/sds";
 import I18n from "../locale/I18n";
 import React from "react";
 import {globalUserRole} from "../utils/UserRole";
-import Button from "./Button";
+import Button from "./button/Button";
 import {emitter} from "../utils/Events";
 import {setFlash} from "../utils/Flash";
 import "./Impersonating.scss";

@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import "./InvitationUnits.scss";
 import I18n from "../locale/I18n";
-import RadioButtonGroup from "./redesign/RadioButtonGroup";
-import CheckBox from "./CheckBox";
+import RadioButtonGroup from "./_redesign/RadioButtonGroup";
+import CheckBox from "./checkbox/CheckBox";
 import {isEmpty} from "../utils/Utils";
 
 export const InvitationsUnits = ({allUnits, selectedUnits, setUnits, unitOptionCallback}) => {

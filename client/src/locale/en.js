@@ -1152,7 +1152,7 @@ const en = {
             everyOneText: "No membership required",
             whichInstitutionsQuestion: "2. Collaborations from which organisations may connect?",
             allInstitutions: "All organisations",
-            allCOWelcome: "All collaborations are welcome",
+            allCOWelcome: "All collaborations are _welcome",
             onlySome: "Only some",
             specificInstitutions: "I'll choose which organisations below",
             directlyConnectQuestion: "3. Can a collaboration connect straight away?",

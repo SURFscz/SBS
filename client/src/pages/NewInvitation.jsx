@@ -7,7 +7,7 @@ import {collaborationById, collaborationInvitations, invitationExists} from "../
 import I18n from "../locale/I18n";
 import InputField from "../components/InputField";
 import {CopyToClipboard} from "react-copy-to-clipboard";
-import Button from "../components/Button";
+import Button from "../components/button/Button";
 import {isEmpty, splitListSemantically, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
@@ -18,11 +18,11 @@ import {collaborationRoles} from "../forms/constants";
 import SelectField from "../components/SelectField";
 import {getParameterByName} from "../utils/QueryParameters";
 import {AppStore} from "../stores/AppStore";
-import UnitHeader from "../components/redesign/UnitHeader";
-import SpinnerField from "../components/redesign/SpinnerField";
+import UnitHeader from "../components/_redesign/UnitHeader";
+import SpinnerField from "../components/_redesign/SpinnerField";
 import {isUserAllowed, ROLES} from "../utils/UserRole";
 import EmailField from "../components/EmailField";
-import ErrorIndicator from "../components/redesign/ErrorIndicator";
+import ErrorIndicator from "../components/_redesign/ErrorIndicator";
 
 class NewInvitation extends React.Component {
 

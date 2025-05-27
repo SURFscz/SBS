@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Tooltip} from "@surfnet/sds";
 import "./InputField.scss";
 import {isEmpty} from "../utils/Utils";
-import ClipBoardCopy from "./redesign/ClipBoardCopy";
+import ClipBoardCopy from "./_redesign/ClipBoardCopy";
 import {validUrlRegExp} from "../validations/regExps";
 
 export default function InputField({

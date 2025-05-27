@@ -1,7 +1,7 @@
 import React from "react";
 
 import "./CollaborationCard.scss";
-import Logo from "./redesign/Logo";
+import Logo from "./_redesign/Logo";
 import {Button, Chip, ChipType} from "@surfnet/sds";
 import I18n from "../locale/I18n";
 

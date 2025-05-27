@@ -4,7 +4,7 @@ import "./Profile.scss";
 import {AppStore} from "../stores/AppStore";
 import {ReactComponent as PersonIcon} from "../icons/single-neutral-check.svg";
 
-import UnitHeader from "../components/redesign/UnitHeader";
+import UnitHeader from "../components/_redesign/UnitHeader";
 import Me from "./Me";
 import Tabs from "../components/Tabs";
 import {auditLogsMe} from "../api";

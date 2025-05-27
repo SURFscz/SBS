@@ -1,0 +1,90 @@
+@import "../../stylesheets/vars";
+
+section.autocomplete {
+    width: 100%;
+    position: absolute;
+    z-index: 3;
+    top: 66px;
+    border-bottom-right-radius: $br;
+    border-bottom-left-radius: $br;
+    padding-left: 20px;
+    background-color: white;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
+    margin-bottom: 25px;
+
+    div.no-results {
+        padding: 10px 15px;
+        font-style: italic;
+    }
+
+    em.results-limited {
+        margin: 5px 10px;
+        display: inline-block;
+        color: $primary-orange;
+    }
+
+    table.result {
+        width: 100%;
+        word-break: break-all;
+
+        thead {
+            th {
+                padding: 10px 0;
+                border-bottom: 1px solid $background;
+            }
+        }
+
+        tbody {
+            tr {
+                padding: 10px 0;
+                cursor: pointer;
+
+                &:not(:first-child) {
+                    border-top: 1px solid $background;
+                }
+
+                &.active, &:hover {
+                    background-color: $background;
+                }
+
+                td {
+                    padding: 10px 0;
+                    vertical-align: top;
+
+                    &.link {
+                        text-align: left;
+                        width: 35px;
+
+                        i.fa-external-link {
+                            font-size: 16px;
+                        }
+
+                        a, a:visited {
+                            text-decoration: none;
+                            color: $blue;
+                        }
+                    }
+
+                }
+
+                span {
+                    &.matched {
+                        font-weight: bold;
+                        text-decoration: underline;
+                    }
+
+                    &.compound {
+                        display: block;
+
+                    }
+
+                    &.inner-compound {
+                        display: inline-block;
+                        margin-right: 15px;
+                    }
+                }
+            }
+
+        }
+    }
+}

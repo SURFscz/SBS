@@ -5,17 +5,17 @@ import {ReactComponent as Logo} from "../icons/ram.svg";
 import {AppStore} from "../stores/AppStore";
 import {getUserRequests, isUserServiceAdmin, rawGlobalUserRole, ROLES} from "../utils/UserRole";
 import Tabs from "../components/Tabs";
-import Organisations from "../components/redesign/Organisations";
-import UnitHeader from "../components/redesign/UnitHeader";
-import PlatformAdmins from "../components/redesign/PlatformAdmins";
-import Services from "../components/redesign/Services";
-import SpinnerField from "../components/redesign/SpinnerField";
-import Collaborations from "../components/redesign/Collaborations";
+import Organisations from "../components/_redesign/Organisations";
+import UnitHeader from "../components/_redesign/UnitHeader";
+import PlatformAdmins from "../components/_redesign/PlatformAdmins";
+import Services from "../components/_redesign/Services";
+import SpinnerField from "../components/_redesign/SpinnerField";
+import Collaborations from "../components/_redesign/Collaborations";
 import {isEmpty} from "../utils/Utils";
-import Users from "../components/redesign/Users";
-import ServiceRequests from "../components/redesign/ServiceRequests";
-import EmptyCollaborations from "../components/redesign/EmptyCollaborations";
-import MyRequests from "../components/redesign/MyRequests";
+import Users from "../components/_redesign/Users";
+import ServiceRequests from "../components/_redesign/ServiceRequests";
+import EmptyCollaborations from "../components/_redesign/EmptyCollaborations";
+import MyRequests from "../components/_redesign/MyRequests";
 
 class Home extends React.Component {
 
@@ -113,7 +113,7 @@ class Home extends React.Component {
                 tab = tabSuggestion;
             }
             if (tabs.length === 0 || (tabs.length === 1 && tab === "my_requests" && !hasAnyRoles)) {
-                this.props.history.push("/welcome");
+                this.props.history.push("/_welcome");
                 return;
             }
             if ((role === ROLES.COLL_ADMIN || role === ROLES.COLL_MEMBER) && !isUserServiceAdmin(user) && nbrCollaborations < 6) {

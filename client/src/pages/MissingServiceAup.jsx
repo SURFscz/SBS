@@ -2,9 +2,9 @@ import React from "react";
 import {withRouter} from "react-router-dom";
 import I18n from "../locale/I18n";
 import "./MissingServiceAup.scss";
-import Button from "../components/Button";
+import Button from "../components/button/Button";
 import {serviceAupBulkCreate} from "../api";
-import SpinnerField from "../components/redesign/SpinnerField";
+import SpinnerField from "../components/_redesign/SpinnerField";
 import CollaborationAupAcceptance from "../components/CollaborationAupAcceptance";
 import DOMPurify from "dompurify";
 

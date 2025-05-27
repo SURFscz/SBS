@@ -4,7 +4,7 @@ import "./SelectField.scss";
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
 import {Tooltip} from "@surfnet/sds";
-import ClipBoardCopy from "./redesign/ClipBoardCopy";
+import ClipBoardCopy from "./_redesign/ClipBoardCopy";
 import {isEmpty} from "../utils/Utils";
 
 export default function SelectField({

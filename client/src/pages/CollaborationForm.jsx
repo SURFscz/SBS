@@ -16,26 +16,26 @@ import {
 } from "../api";
 import I18n from "../locale/I18n";
 import InputField from "../components/InputField";
-import Button from "../components/Button";
+import Button from "../components/button/Button";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {sanitizeShortName, sanitizeTagName, validEmailRegExp, validUrlRegExp} from "../validations/regExps";
 import SelectField from "../components/SelectField";
 import {getParameterByName} from "../utils/QueryParameters";
-import CheckBox from "../components/CheckBox";
-import UnitHeader from "../components/redesign/UnitHeader";
+import CheckBox from "../components/checkbox/CheckBox";
+import UnitHeader from "../components/_redesign/UnitHeader";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
 import {AppStore} from "../stores/AppStore";
-import SpinnerField from "../components/redesign/SpinnerField";
-import CroppedImageField from "../components/redesign/CroppedImageField";
+import SpinnerField from "../components/_redesign/SpinnerField";
+import CroppedImageField from "../components/_redesign/CroppedImageField";
 import EmailField from "../components/EmailField";
 import {isUserAllowed, ROLES} from "../utils/UserRole";
-import ErrorIndicator from "../components/redesign/ErrorIndicator";
+import ErrorIndicator from "../components/_redesign/ErrorIndicator";
 import DateField from "../components/DateField";
 import moment from "moment";
 import DOMPurify from "dompurify";
-import OnBoardingMessage from "../components/redesign/OnBoardingMessage";
+import OnBoardingMessage from "../components/_redesign/OnBoardingMessage";
 import {CollaborationUnits} from "../components/CollaborationUnits";
 
 class CollaborationForm extends React.Component {

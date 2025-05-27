@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {AlertType, Modal} from "@surfnet/sds";
 import I18n from "../locale/I18n";
 import "./WelcomeDialog.scss";
-import "./welcome/welcome.scss";
+import "./_welcome/welcome.scss";
 import {ROLES} from "../utils/UserRole";
 import CollaborationAupAcceptance from "./CollaborationAupAcceptance";
 import OrganisationAupAcceptance from "./OrganisationAupAcceptance";

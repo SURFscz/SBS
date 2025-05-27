@@ -6,7 +6,7 @@ import InputField from "./InputField";
 import {isEmpty} from "../utils/Utils";
 import {joinRequestForCollaboration} from "../api";
 import {Modal} from "@surfnet/sds";
-import RadioButtonGroup from "./redesign/RadioButtonGroup";
+import RadioButtonGroup from "./_redesign/RadioButtonGroup";
 import DOMPurify from "dompurify";
 import CollaborationAupAcceptance from "./CollaborationAupAcceptance";
 import OrganisationAupAcceptance from "./OrganisationAupAcceptance";

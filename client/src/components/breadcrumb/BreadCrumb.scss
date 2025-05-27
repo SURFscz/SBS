@@ -1,0 +1,56 @@
+@import "../../stylesheets/vars";
+
+.sds--breadcrumb {
+    margin: 0 auto;
+    color: black;
+    background-color: $background;
+    padding-top: 10px;
+
+    @media (max-width: $tablet-max) {
+        padding: 10px 15px 0 15px;
+    }
+
+    ol.sds--breadcrumb--list {
+        min-height: 32px;
+        max-width: $medium;
+        margin: 0 auto 0 auto;
+        position: relative;
+        transition: margin 150ms ease-in-out;
+        display: flex;
+        align-items: center;
+
+    }
+
+    li svg {
+        width: calc(5.47em / 14);
+        height: calc(11.25em / 14);
+    }
+
+    span.last {
+        font-weight: 700;
+    }
+
+    .eye-view {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        margin-left: auto;
+        font-weight: bold;
+
+        @media (max-width: $compact-medium) {
+            display: none;
+        }
+
+        svg {
+            width: 32px;
+            margin-right: 10px;
+        }
+
+        color: $blue;
+
+        svg {
+            fill: $blue;
+        }
+
+    }
+}

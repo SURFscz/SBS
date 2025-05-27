@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import "./SyncApplications.scss";
 import {Loader} from "@surfnet/sds";
 import I18n from "../locale/I18n";
-import Button from "../components/Button";
+import Button from "../components/button/Button";
 import {serviceExportOverview, serviceSyncExternal} from "../api";
 import {isEmpty, scrollToBottom, serial} from "../utils/Utils";
 

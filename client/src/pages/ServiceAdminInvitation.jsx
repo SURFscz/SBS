@@ -2,11 +2,11 @@ import React from "react";
 import {serviceInvitationByHash} from "../api";
 import I18n from "../locale/I18n";
 import "./ServiceAdminInvitation.scss";
-import Button from "../components/Button";
+import Button from "../components/button/Button";
 import moment from "moment";
 import {login} from "../utils/Login";
-import ErrorIndicator from "../components/redesign/ErrorIndicator";
-import SpinnerField from "../components/redesign/SpinnerField";
+import ErrorIndicator from "../components/_redesign/ErrorIndicator";
+import SpinnerField from "../components/_redesign/SpinnerField";
 import DOMPurify from "dompurify";
 import {Toaster, ToasterType} from "@surfnet/sds";
 

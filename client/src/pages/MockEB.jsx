@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import "./MockEB.scss";
 
 import I18n from "../locale/I18n";
-import Button from "../components/Button";
+import Button from "../components/button/Button";
 import {ebStopInterruptFlow, engineBlockAttributes} from "../api";
 import {isEmpty} from "../utils/Utils";
 import JsonFormatter from "react-json-formatter";
