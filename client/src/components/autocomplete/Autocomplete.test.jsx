@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import AutoComplete from "./AutoComplete";
+import AutoComplete from "./Autocomplete";
 
 jest.mock("../../locale/I18n", () => ({
   t: key => key
