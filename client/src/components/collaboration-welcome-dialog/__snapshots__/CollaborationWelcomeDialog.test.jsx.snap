@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CollaborationWelcomeDialog matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    data-testid="modal"
+  >
+    <div>
+      welcomeDialog.title Collab
+    </div>
+    <div>
+      welcomeDialog.roleCollaborationAdmin
+    </div>
+    <div>
+      <section
+        class="welcome-dialog-content"
+      >
+        <section
+          class="responsibilities welcome"
+        >
+          <p>
+            welcomeDialog.infoAdmin
+          </p>
+        </section>
+        <h3>
+          welcomeDialog.purpose
+        </h3>
+        <section
+          class="responsibilities welcome"
+        >
+          <p>
+            A test collaboration
+          </p>
+        </section>
+        <div
+          data-testid="collab-aup-acceptance"
+        >
+          <h4
+            class="aup-services"
+          >
+            models.collaboration.services
+          </h4>
+        </div>
+        <div
+          data-testid="org-aup-acceptance"
+        />
+      </section>
+    </div>
+    <button
+      disabled=""
+    >
+      welcomeDialog.proceed Collab
+    </button>
+  </div>
+</DocumentFragment>
+`;

@@ -6,7 +6,7 @@ import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "../../locale/I18n";
 import Button from "../button/Button";
 import {setFlash} from "../../utils/Flash";
-import ConfirmationDialog from "../ConfirmationDialog";
+import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import Entities from "./Entities";
 import SpinnerField from "./SpinnerField";
 import InputField from "../InputField";

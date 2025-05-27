@@ -4,7 +4,7 @@ import I18n from "../locale/I18n";
 import InputField from "../components/InputField";
 import "./Me.scss";
 import Button from "../components/button/Button";
-import ConfirmationDialog from "../components/ConfirmationDialog";
+import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import {validateSSHKey,} from "../validations/regExps";

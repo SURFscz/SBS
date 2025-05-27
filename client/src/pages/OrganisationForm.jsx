@@ -15,7 +15,7 @@ import "./OrganisationForm.scss";
 import Button from "../components/button/Button";
 import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {isEmpty, stopEvent} from "../utils/Utils";
-import ConfirmationDialog from "../components/ConfirmationDialog";
+import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {sanitizeShortName, validSchacHomeRegExp, validUrlRegExp} from "../validations/regExps";
 import {AppStore} from "../stores/AppStore";

@@ -11,7 +11,7 @@ import SpinnerField from "./SpinnerField";
 import {chipType, isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
 import {Chip, ChipType, Tooltip} from "@surfnet/sds";
-import ConfirmationDialog from "../ConfirmationDialog";
+import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import {clearFlash} from "../../utils/Flash";
 import Select from "react-select";
 import {displayExpiryDate, displayLastActivityDate} from "../../utils/Date";

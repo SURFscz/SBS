@@ -22,7 +22,7 @@ import Select from "react-select";
 import {isInvitationExpired, shortDateFromEpoch} from "../../utils/Date";
 import Button from "../button/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import ConfirmationDialog from "../ConfirmationDialog";
+import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import UserColumn from "./UserColumn";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import SpinnerField from "./SpinnerField";

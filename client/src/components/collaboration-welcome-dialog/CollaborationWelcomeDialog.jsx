@@ -1,12 +1,12 @@
 import React, {useState} from "react";
 import {AlertType, Modal} from "@surfnet/sds";
-import I18n from "../locale/I18n";
-import "./WelcomeDialog.scss";
-import "./_welcome/welcome.scss";
-import {ROLES} from "../utils/UserRole";
-import CollaborationAupAcceptance from "./collaboration-aup-acceptance/CollaborationAupAcceptance";
-import OrganisationAupAcceptance from "./OrganisationAupAcceptance";
-import {aupData} from "../utils/Aups";
+import I18n from "../../locale/I18n";
+import "../WelcomeDialog.scss";
+import "../_welcome/welcome.scss";
+import {ROLES} from "../../utils/UserRole";
+import CollaborationAupAcceptance from "../collaboration-aup-acceptance/CollaborationAupAcceptance";
+import OrganisationAupAcceptance from "../OrganisationAupAcceptance";
+import {aupData} from "../../utils/Aups";
 
 export default function CollaborationWelcomeDialog({
                                                        name,

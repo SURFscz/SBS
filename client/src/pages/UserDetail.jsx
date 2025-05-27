@@ -24,7 +24,7 @@ import Activity from "../components/activity/Activity";
 import UserDetailSshDialog from "./UserDetailSshDialog";
 import {Link} from "react-router-dom";
 import Button from "../components/button/Button";
-import ConfirmationDialog from "../components/ConfirmationDialog";
+import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
 import {isUserAllowed, ROLES} from "../utils/UserRole";
 import {Loader} from "@surfnet/sds";
 

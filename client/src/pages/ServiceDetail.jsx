@@ -26,7 +26,7 @@ import ServiceGroups from "../components/_redesign/ServiceGroups";
 import ServiceAdmins from "../components/_redesign/ServiceAdmins";
 import {setFlash} from "../utils/Flash";
 import ServiceWelcomeDialog from "../components/ServiceWelcomeDialog";
-import ConfirmationDialog from "../components/ConfirmationDialog";
+import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
 import LastAdminWarning from "../components/_redesign/LastAdminWarning";
 import ServiceOverview from "./ServiceOverview";
 import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../utils/SocketIO";

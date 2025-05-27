@@ -39,7 +39,7 @@ import ReactJson from "react-json-view";
 import Button from "../components/button/Button";
 import {isEmpty} from "../utils/Utils";
 import UnitHeader from "../components/_redesign/UnitHeader";
-import ConfirmationDialog from "../components/ConfirmationDialog";
+import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
 import SpinnerField from "../components/_redesign/SpinnerField";
 import {AppStore} from "../stores/AppStore";
 import Tabs from "../components/Tabs";

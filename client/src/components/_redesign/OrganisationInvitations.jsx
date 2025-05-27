@@ -6,7 +6,7 @@ import "./OrganisationInvitations.scss";
 import {isInvitationExpired, shortDateFromEpoch} from "../../utils/Date";
 import {stopEvent} from "../../utils/Utils";
 import Button from "../button/Button";
-import ConfirmationDialog from "../ConfirmationDialog";
+import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import UserColumn from "./UserColumn";
 import InputField from "../InputField";
 import moment from "moment";

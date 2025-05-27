@@ -10,7 +10,7 @@ import SpinnerField from "./SpinnerField";
 import Logo from "./Logo";
 import CheckBox from "../checkbox/CheckBox";
 import {Chip, Tooltip} from "@surfnet/sds";
-import ConfirmationDialog from "../ConfirmationDialog";
+import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import {ReactComponent as EmailIcon} from "../../icons/email_new.svg";
 import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 import {clearFlash, setFlash} from "../../utils/Flash";

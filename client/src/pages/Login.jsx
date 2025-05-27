@@ -5,7 +5,7 @@ import {health} from "../api";
 import HappyLogo from "../icons/landing/happy.svg";
 import Button from "../components/button/Button";
 import {login} from "../utils/Login";
-import ConfirmationDialog from "../components/ConfirmationDialog";
+import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import DOMPurify from "dompurify";
 import LandingInfo from "../components/LandingInfo";

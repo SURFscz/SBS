@@ -8,7 +8,7 @@ import "react-image-crop/dist/ReactCrop.css";
 import Logo from "./Logo";
 import Button from "../button/Button";
 import CroppedImageDialog from "./CroppedImageDialog";
-import ConfirmationDialog from "../ConfirmationDialog";
+import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import ErrorIndicator from "./ErrorIndicator";
 
 export default class CroppedImageField extends React.PureComponent {

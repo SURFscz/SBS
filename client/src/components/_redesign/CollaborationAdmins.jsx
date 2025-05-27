@@ -23,7 +23,7 @@ import {displayMembershipExpiryDate, isInvitationExpired, shortDateFromEpoch} fr
 import {expiryDateCustomSort, isEmpty, stopEvent, userColumnsCustomSort} from "../../utils/Utils";
 import Button from "../button/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import ConfirmationDialog from "../ConfirmationDialog";
+import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import UserColumn from "./UserColumn";
 import {chipType, isUserAllowed, ROLES} from "../../utils/UserRole";
 import SpinnerField from "./SpinnerField";

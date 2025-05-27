@@ -16,7 +16,7 @@ import Button from "../button/Button";
 import {clearFlash, setFlash} from "../../utils/Flash";
 import InputField from "../InputField";
 import SpinnerField from "./SpinnerField";
-import ConfirmationDialog from "../ConfirmationDialog";
+import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import Logo from "./Logo";
 import CheckBox from "../checkbox/CheckBox";
 import moment from "moment";

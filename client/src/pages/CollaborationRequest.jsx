@@ -12,7 +12,7 @@ import I18n from "../locale/I18n";
 import InputField from "../components/InputField";
 import Button from "../components/button/Button";
 import {isEmpty} from "../utils/Utils";
-import ConfirmationDialog from "../components/ConfirmationDialog";
+import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {sanitizeShortName} from "../validations/regExps";
 import {AppStore} from "../stores/AppStore";

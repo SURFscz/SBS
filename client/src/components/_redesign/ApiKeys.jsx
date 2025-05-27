@@ -9,7 +9,7 @@ import Button from "../button/Button";
 import {setFlash} from "../../utils/Flash";
 import Entities from "./Entities";
 import InputField from "../InputField";
-import ConfirmationDialog from "../ConfirmationDialog";
+import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import SpinnerField from "./SpinnerField";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";

@@ -3,7 +3,7 @@ import {allMockScimServices, clearMockScimStatistics, mockScimStatistics, sweep}
 import "./Scim.scss";
 import I18n from "../locale/I18n";
 import SpinnerField from "../components/_redesign/SpinnerField";
-import ConfirmationDialog from "../components/ConfirmationDialog";
+import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
 import InputField from "../components/InputField";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import Button from "../components/button/Button";

@@ -9,7 +9,7 @@ import InputField from "../components/InputField";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import Button from "../components/button/Button";
 import {isEmpty, splitListSemantically, stopEvent} from "../utils/Utils";
-import ConfirmationDialog from "../components/ConfirmationDialog";
+import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {validEmailRegExp} from "../validations/regExps";
 import "./NewInvitation.scss"

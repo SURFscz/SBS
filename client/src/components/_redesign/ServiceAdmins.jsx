@@ -17,7 +17,7 @@ import "./ServiceAdmins.scss";
 import {isInvitationExpired, shortDateFromEpoch} from "../../utils/Date";
 import Button from "../button/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import ConfirmationDialog from "../ConfirmationDialog";
+import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import UserColumn from "./UserColumn";
 import {isUserServiceAdmin} from "../../utils/UserRole";
 import SpinnerField from "./SpinnerField";

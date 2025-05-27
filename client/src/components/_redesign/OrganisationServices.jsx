@@ -11,7 +11,7 @@ import SpinnerField from "./SpinnerField";
 import ToggleSwitch from "./ToggleSwitch";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
-import ConfirmationDialog from "../ConfirmationDialog";
+import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import {Tooltip} from "@surfnet/sds";
 import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
 

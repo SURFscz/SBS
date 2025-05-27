@@ -45,7 +45,7 @@ import {Tooltip} from "@surfnet/sds";
 import DOMPurify from "dompurify";
 import {ReactComponent as ChevronLeft} from "../icons/chevron-left.svg";
 import Entities from "../components/_redesign/Entities";
-import ConfirmationDialog from "../components/ConfirmationDialog";
+import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
 import ErrorIndicator from "../components/_redesign/ErrorIndicator";
 import CroppedImageField from "../components/_redesign/CroppedImageField";
 import SpinnerField from "../components/_redesign/SpinnerField";

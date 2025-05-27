@@ -9,7 +9,7 @@ import {
 import I18n from "../locale/I18n";
 import "./OrganisationOverview.scss";
 import {isEmpty, stopEvent} from "../utils/Utils";
-import ConfirmationDialog from "../components/ConfirmationDialog";
+import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {sanitizeShortName, validSchacHomeRegExp, validUrlRegExp} from "../validations/regExps";
 import SpinnerField from "../components/_redesign/SpinnerField";

@@ -21,7 +21,7 @@ import OrganisationWelcomeDialog from "../components/OrganisationWelcomeDialog";
 import {actionMenuUserRole, isUserAllowed, ROLES} from "../utils/UserRole";
 import {getParameterByName} from "../utils/QueryParameters";
 import {setFlash} from "../utils/Flash";
-import ConfirmationDialog from "../components/ConfirmationDialog";
+import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
 import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../utils/SocketIO";
 import Users from "../components/_redesign/Users";
 import {ButtonType} from "@surfnet/sds";

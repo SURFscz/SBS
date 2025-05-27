@@ -17,7 +17,7 @@ import {ReactComponent as ConnectionAllowedIcon} from "@surfnet/sds/icons/illust
 import {ReactComponent as NoConnectionIcon} from "@surfnet/sds/icons/functional-icons/allowance-no-talking.svg";
 import {clearFlash, setFlash} from "../../utils/Flash";
 import Logo from "./Logo";
-import ConfirmationDialog from "../ConfirmationDialog";
+import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import {BlockSwitchChoice, Chip, SegmentedControl} from "@surfnet/sds";
 import {ALWAYS, DISALLOW, ON_REQUEST, PERMISSION_OPTIONS} from "../../utils/Permissions";
 import SpinnerField from "./SpinnerField";

@@ -1,6 +1,6 @@
 import React from "react";
 import {Modal,} from "@surfnet/sds";
-import I18n from "../locale/I18n";
+import I18n from "../../locale/I18n";
 
 
 export default function ConfirmationDialog({
