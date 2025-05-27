@@ -1,9 +1,9 @@
 import React from "react";
 
 import "./CollaborationCard.scss";
-import Logo from "./_redesign/Logo";
+import Logo from "../_redesign/Logo";
 import {Button, Chip, ChipType} from "@surfnet/sds";
-import I18n from "../locale/I18n";
+import I18n from "../../locale/I18n";
 
 export default function CollaborationCard({
                                               collaboration,

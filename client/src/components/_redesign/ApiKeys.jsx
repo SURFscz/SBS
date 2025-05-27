@@ -16,7 +16,7 @@ import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import DOMPurify from "dompurify";
 import {dateFromEpoch} from "../../utils/Date";
 import ErrorIndicator from "./ErrorIndicator";
-import {CollaborationUnits} from "../CollaborationUnits";
+import {CollaborationUnits} from "../collaborationunits/CollaborationUnits";
 
 class ApiKeys extends React.Component {
 

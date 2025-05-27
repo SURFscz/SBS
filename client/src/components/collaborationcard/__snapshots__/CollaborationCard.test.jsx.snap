@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CollaborationCard matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="sds--content-card"
+  >
+    <div
+      class="sds--content-card--main"
+    >
+      <div
+        class="sds--content-card--visual"
+      >
+        <img
+          data-testid="logo"
+          src="logo.png"
+        />
+      </div>
+      <div
+        class="sds--content-card--textual"
+      >
+        <div
+          class="sds--content-card--text-and-actions"
+        >
+          <div>
+            <p
+              class="org-name"
+            >
+              Test Org
+            </p>
+            <p
+              class="sds--space--bottom--1 coll-name"
+            >
+              Test Collaboration
+            </p>
+          </div>
+          <div
+            class="sds--content-card--actions"
+          >
+            <button
+              class="sds--chips main-400"
+            >
+              <span
+                class="sds--chips--textual sds--text--body--small"
+              >
+                profile.admin
+              </span>
+            </button>
+            <button
+              class="sds--btn sds--btn--primary    "
+              type="button"
+            >
+              <span
+                class="textual"
+              >
+                collaborationsOverview.open
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

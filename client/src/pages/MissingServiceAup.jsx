@@ -5,7 +5,7 @@ import "./MissingServiceAup.scss";
 import Button from "../components/button/Button";
 import {serviceAupBulkCreate} from "../api";
 import SpinnerField from "../components/_redesign/SpinnerField";
-import CollaborationAupAcceptance from "../components/CollaborationAupAcceptance";
+import CollaborationAupAcceptance from "../components/collaboration-aup-acceptance/CollaborationAupAcceptance";
 import DOMPurify from "dompurify";
 
 

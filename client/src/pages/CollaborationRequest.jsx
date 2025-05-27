@@ -21,7 +21,7 @@ import SpinnerField from "../components/_redesign/SpinnerField";
 import ErrorIndicator from "../components/_redesign/ErrorIndicator";
 import {chipTypeForStatus} from "../utils/UserRole";
 import {Chip} from "@surfnet/sds";
-import {CollaborationUnits} from "../components/CollaborationUnits";
+import {CollaborationUnits} from "../components/collaborationunits/CollaborationUnits";
 
 class CollaborationRequest extends React.Component {
 

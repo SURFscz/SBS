@@ -5,7 +5,7 @@ import "./ServiceAup.scss";
 import Button from "../components/button/Button";
 import {serviceAupCreate, serviceByUuid4} from "../api";
 import SpinnerField from "../components/_redesign/SpinnerField";
-import CollaborationAupAcceptance from "../components/CollaborationAupAcceptance";
+import CollaborationAupAcceptance from "../components/collaboration-aup-acceptance/CollaborationAupAcceptance";
 import DOMPurify from "dompurify";
 import {isEmpty} from "../utils/Utils";
 import {doRedirectToProxyLocation} from "../utils/ProxyAuthz";

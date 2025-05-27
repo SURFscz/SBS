@@ -36,7 +36,7 @@ import DateField from "../components/DateField";
 import moment from "moment";
 import DOMPurify from "dompurify";
 import OnBoardingMessage from "../components/_redesign/OnBoardingMessage";
-import {CollaborationUnits} from "../components/CollaborationUnits";
+import {CollaborationUnits} from "../components/collaborationunits/CollaborationUnits";
 
 class CollaborationForm extends React.Component {
 

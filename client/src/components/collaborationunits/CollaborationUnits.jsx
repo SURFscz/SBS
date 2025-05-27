@@ -1,9 +1,9 @@
 import React from "react";
 import "./CollaborationUnits.scss";
-import I18n from "../locale/I18n";
-import SelectField from "./SelectField";
-import {rawGlobalUserRole, ROLES} from "../utils/UserRole";
-import {isEmpty} from "../utils/Utils";
+import I18n from "../../locale/I18n";
+import SelectField from "../SelectField";
+import {rawGlobalUserRole, ROLES} from "../../utils/UserRole";
+import {isEmpty} from "../../utils/Utils";
 
 export const CollaborationUnits = ({
                                        selectedUnits,
@@ -50,6 +50,5 @@ export const CollaborationUnits = ({
                      isMulti={true}
                      placeholder={I18n.t("units.unitsPlaceHolder")}
                      onChange={selectedUnitsChanged}/>
-
     );
 }

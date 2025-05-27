@@ -9,7 +9,7 @@ import {ReactComponent as TreeSwing} from "../images/tree_swing_static.svg";
 import {getUserRequests} from "../utils/UserRole";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import {Button} from "@surfnet/sds";
-import CollaborationCard from "../components/CollaborationCard";
+import CollaborationCard from "../components/collaborationcard/CollaborationCard";
 
 export default function CollaborationsOverview(props) {
     const [loading, setLoading] = useState(true);

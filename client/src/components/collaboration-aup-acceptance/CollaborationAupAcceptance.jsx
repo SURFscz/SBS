@@ -1,10 +1,10 @@
 import React from "react";
-import I18n from "../locale/I18n";
+import I18n from "../../locale/I18n";
 import "./CollaborationAupAcceptance.scss";
-import "./_welcome/welcome.scss";
-import CheckBox from "./checkbox/CheckBox";
-import Logo from "./_redesign/Logo";
-import {isEmpty} from "../utils/Utils";
+import "../_welcome/welcome.scss";
+import CheckBox from "../checkbox/CheckBox";
+import Logo from "../_redesign/Logo";
+import {isEmpty} from "../../utils/Utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 export default function CollaborationAupAcceptance({
