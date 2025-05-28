@@ -4,30 +4,30 @@ import {
     organisationById,
     organisationInvitationAccept,
     organisationInvitationByHash
-} from "../api";
+} from "../../api";
 import "./OrganisationDetail.scss";
-import I18n from "../locale/I18n";
-import {isEmpty, stopEvent} from "../utils/Utils";
-import Tabs from "../components/tabs/Tabs";
-import UnitHeader from "../components/_redesign/UnitHeader";
-import OrganisationAdmins from "../components/_redesign/OrganisationAdmins";
-import {AppStore} from "../stores/AppStore";
-import Collaborations from "../components/_redesign/Collaborations";
-import SpinnerField from "../components/_redesign/SpinnerField";
-import ApiKeys from "../components/_redesign/ApiKeys";
-import OrganisationServices from "../components/_redesign/OrganisationServices";
-import CollaborationRequests from "../components/_redesign/CollaborationRequests";
-import OrganisationWelcomeDialog from "../components/organisation-welcome-dialog/OrganisationWelcomeDialog";
-import {actionMenuUserRole, isUserAllowed, ROLES} from "../utils/UserRole";
-import {getParameterByName} from "../utils/QueryParameters";
-import {setFlash} from "../utils/Flash";
-import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
-import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../utils/SocketIO";
-import Users from "../components/_redesign/Users";
+import I18n from "../../locale/I18n";
+import {isEmpty, stopEvent} from "../../utils/Utils";
+import Tabs from "../../components/tabs/Tabs";
+import UnitHeader from "../../components/_redesign/UnitHeader";
+import OrganisationAdmins from "../../components/_redesign/OrganisationAdmins";
+import {AppStore} from "../../stores/AppStore";
+import Collaborations from "../../components/_redesign/Collaborations";
+import SpinnerField from "../../components/_redesign/SpinnerField";
+import ApiKeys from "../../components/_redesign/ApiKeys";
+import OrganisationServices from "../../components/_redesign/OrganisationServices";
+import CollaborationRequests from "../../components/_redesign/CollaborationRequests";
+import OrganisationWelcomeDialog from "../../components/organisation-welcome-dialog/OrganisationWelcomeDialog";
+import {actionMenuUserRole, isUserAllowed, ROLES} from "../../utils/UserRole";
+import {getParameterByName} from "../../utils/QueryParameters";
+import {setFlash} from "../../utils/Flash";
+import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
+import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
+import Users from "../../components/_redesign/Users";
 import {ButtonType} from "@surfnet/sds";
-import {isInvitationExpired} from "../utils/Date";
-import ServiceConnectionRequests from "../components/_redesign/ServiceConnectionRequests";
-import OrganisationOverview from "./OrganisationOverview";
+import {isInvitationExpired} from "../../utils/Date";
+import ServiceConnectionRequests from "../../components/_redesign/ServiceConnectionRequests";
+import OrganisationOverview from "../OrganisationOverview";
 
 class OrganisationDetail extends React.Component {
 

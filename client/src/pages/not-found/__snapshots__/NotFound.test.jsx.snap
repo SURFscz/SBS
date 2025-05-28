@@ -1,0 +1,109 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NotFound matches snapshot with custom description 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-not-found"
+  >
+    <div
+      class="mod-inner-not-found"
+    >
+      <p
+        class="not-found-msg"
+      >
+        We can't seem to find that page. Sorry for that.
+        <br />
+        <br />
+        Start over on the 
+        <a
+          href="[missing \\"{{base_url}}\\" value]"
+        >
+          homepage
+        </a>
+         or contact us at 
+        <a
+          href="mailto:sram-support@surf.nl"
+        >
+          sram-support@surf.nl
+        </a>
+        .
+      </p>
+      <svg>
+        undraw_page_not_found.svg
+      </svg>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`NotFound matches snapshot with custom title 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-not-found"
+  >
+    <div
+      class="mod-inner-not-found"
+    >
+      <p
+        class="not-found-msg"
+      >
+        We can't seem to find that page. Sorry for that.
+        <br />
+        <br />
+        Start over on the 
+        <a
+          href="[missing \\"{{base_url}}\\" value]"
+        >
+          homepage
+        </a>
+         or contact us at 
+        <a
+          href="mailto:sram-support@surf.nl"
+        >
+          sram-support@surf.nl
+        </a>
+        .
+      </p>
+      <svg>
+        undraw_page_not_found.svg
+      </svg>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`NotFound matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-not-found"
+  >
+    <div
+      class="mod-inner-not-found"
+    >
+      <p
+        class="not-found-msg"
+      >
+        We can't seem to find that page. Sorry for that.
+        <br />
+        <br />
+        Start over on the 
+        <a
+          href="[missing \\"{{base_url}}\\" value]"
+        >
+          homepage
+        </a>
+         or contact us at 
+        <a
+          href="mailto:sram-support@surf.nl"
+        >
+          sram-support@surf.nl
+        </a>
+        .
+      </p>
+      <svg>
+        undraw_page_not_found.svg
+      </svg>
+    </div>
+  </div>
+</DocumentFragment>
+`;

@@ -8,28 +8,28 @@ import {
     organisationSchacHomeOrganisationExists,
     organisationShortNameExists,
     updateOrganisation
-} from "../api";
-import I18n from "../locale/I18n";
-import InputField from "../components/input-field/InputField";
+} from "../../api";
+import I18n from "../../locale/I18n";
+import InputField from "../../components/input-field/InputField";
 import "./OrganisationForm.scss";
-import Button from "../components/button/Button";
-import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
-import {isEmpty, stopEvent} from "../utils/Utils";
-import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
-import {setFlash} from "../utils/Flash";
-import {sanitizeShortName, validSchacHomeRegExp, validUrlRegExp} from "../validations/regExps";
-import {AppStore} from "../stores/AppStore";
-import UnitHeader from "../components/_redesign/UnitHeader";
-import CroppedImageField from "../components/_redesign/CroppedImageField";
-import SelectField from "../components/select-field/SelectField";
-import SpinnerField from "../components/_redesign/SpinnerField";
+import Button from "../../components/button/Button";
+import {ReactComponent as OrganisationsIcon} from "../../icons/organisations.svg";
+import {isEmpty, stopEvent} from "../../utils/Utils";
+import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
+import {setFlash} from "../../utils/Flash";
+import {sanitizeShortName, validSchacHomeRegExp, validUrlRegExp} from "../../validations/regExps";
+import {AppStore} from "../../stores/AppStore";
+import UnitHeader from "../../components/_redesign/UnitHeader";
+import CroppedImageField from "../../components/_redesign/CroppedImageField";
+import SelectField from "../../components/select-field/SelectField";
+import SpinnerField from "../../components/_redesign/SpinnerField";
 
-import OrganisationOnBoarding from "../components/organisation-onboarding/OrganisationOnBoarding";
-import ErrorIndicator from "../components/_redesign/ErrorIndicator";
-import CreatableField from "../components/creatable-field/CreatableField";
-import EmailField from "../components/email-field/EmailField";
-import CheckBox from "../components/checkbox/CheckBox";
-import {OrganisationUnits} from "../components/organisation-units/OrganisationUnits";
+import OrganisationOnBoarding from "../../components/organisation-onboarding/OrganisationOnBoarding";
+import ErrorIndicator from "../../components/_redesign/ErrorIndicator";
+import CreatableField from "../../components/creatable-field/CreatableField";
+import EmailField from "../../components/email-field/EmailField";
+import CheckBox from "../../components/checkbox/CheckBox";
+import {OrganisationUnits} from "../../components/organisation-units/OrganisationUnits";
 
 
 class OrganisationForm extends React.Component {

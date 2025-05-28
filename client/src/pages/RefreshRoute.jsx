@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import "./NotFound.scss";
+import "./not-found/NotFound.scss";
 import SpinnerField from "../components/_redesign/SpinnerField";
 
 export default function RefreshRoute(props) {

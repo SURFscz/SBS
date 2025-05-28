@@ -3,24 +3,24 @@ import moment from "moment";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-import {serviceById, serviceInvitationExists, serviceInvitations} from "../api";
-import I18n from "../locale/I18n";
-import InputField from "../components/input-field/InputField";
-import Button from "../components/button/Button";
-import {isEmpty, splitListSemantically, stopEvent} from "../utils/Utils";
-import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
-import {setFlash} from "../utils/Flash";
-import {validEmailRegExp} from "../validations/regExps";
+import {serviceById, serviceInvitationExists, serviceInvitations} from "../../api";
+import I18n from "../../locale/I18n";
+import InputField from "../../components/input-field/InputField";
+import Button from "../../components/button/Button";
+import {isEmpty, splitListSemantically, stopEvent} from "../../utils/Utils";
+import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
+import {setFlash} from "../../utils/Flash";
+import {validEmailRegExp} from "../../validations/regExps";
 import "./NewServiceInvitation.scss"
-import DateField from "../components/date-field/DateField";
-import {getParameterByName} from "../utils/QueryParameters";
-import SelectField from "../components/select-field/SelectField";
-import UnitHeader from "../components/_redesign/UnitHeader";
-import {AppStore} from "../stores/AppStore";
-import SpinnerField from "../components/_redesign/SpinnerField";
-import EmailField from "../components/email-field/EmailField";
-import ErrorIndicator from "../components/_redesign/ErrorIndicator";
-import {serviceRoles} from "../forms/constants";
+import DateField from "../../components/date-field/DateField";
+import {getParameterByName} from "../../utils/QueryParameters";
+import SelectField from "../../components/select-field/SelectField";
+import UnitHeader from "../../components/_redesign/UnitHeader";
+import {AppStore} from "../../stores/AppStore";
+import SpinnerField from "../../components/_redesign/SpinnerField";
+import EmailField from "../../components/email-field/EmailField";
+import ErrorIndicator from "../../components/_redesign/ErrorIndicator";
+import {serviceRoles} from "../../forms/constants";
 
 class NewServiceInvitation extends React.Component {
 
