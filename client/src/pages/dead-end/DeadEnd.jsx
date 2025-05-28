@@ -1,6 +1,6 @@
 import React from "react";
-import {ReactComponent as NoAccess} from "../lotties/undraw_access_denied.svg";
-import "./ServerError.scss";
+import {ReactComponent as NoAccess} from "../../lotties/undraw_access_denied.svg";
+import "../ServerError.scss";
 
 export default function DeadEnd() {
     return (

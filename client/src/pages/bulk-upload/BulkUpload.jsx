@@ -1,20 +1,20 @@
 import React from "react";
-import I18n from "../locale/I18n";
+import I18n from "../../locale/I18n";
 import "./BulkUpload.scss";
-import {AppStore} from "../stores/AppStore";
-import {ReactComponent as CloudIcon} from "../icons/cloud-upload.svg";
-import UnitHeader from "../components/_redesign/UnitHeader";
-import Tabs from "../components/tabs/Tabs";
-import {isEmpty, stopEvent} from "../utils/Utils";
-import {headers, parseBulkInvitation} from "../utils/CSVParser";
+import {AppStore} from "../../stores/AppStore";
+import {ReactComponent as CloudIcon} from "../../icons/cloud-upload.svg";
+import UnitHeader from "../../components/_redesign/UnitHeader";
+import Tabs from "../../components/tabs/Tabs";
+import {isEmpty, stopEvent} from "../../utils/Utils";
+import {headers, parseBulkInvitation} from "../../utils/CSVParser";
 import {ReactComponent as SuccessIcon} from "@surfnet/sds/icons/functional-icons/success.svg";
 import {ReactComponent as AlertIcon} from "@surfnet/sds/icons/functional-icons/alert-triangle.svg";
-import exampleCVS from '!!raw-loader!../schemas/bulk-import-example.csv';
-import Button from "../components/button/Button";
+import exampleCVS from '!!raw-loader!../../schemas/bulk-import-example.csv';
+import Button from "../../components/button/Button";
 import DOMPurify from "dompurify";
-import TabularData from "../components/tabular-data/TabularData";
-import {invitationBulkUpload} from "../api";
-import SpinnerMarathonField from "../components/_redesign/SpinnerMarathonField";
+import TabularData from "../../components/tabular-data/TabularData";
+import {invitationBulkUpload} from "../../api";
+import SpinnerMarathonField from "../../components/_redesign/SpinnerMarathonField";
 
 class BulkUpload extends React.Component {
 
@@ -203,7 +203,7 @@ class BulkUpload extends React.Component {
                         <label htmlFor="fileUpload_csv"
                                className="sds--file-upload--message">
                             <span>{I18n.t("bulkUpload.dragDrop")}</span>
-                            <a href="/" onClick={this.openFileDialog}>{I18n.t("bulkUpload.click")}</a>
+                            <a href="/client/public" onClick={this.openFileDialog}>{I18n.t("bulkUpload.click")}</a>
                         </label>
                     </div>
 
@@ -212,7 +212,7 @@ class BulkUpload extends React.Component {
 
                     {(!errorWrongExtension && !isEmpty(fileName) && !hasResults) && <>
                         {this.csvSummary(data, errors, fileName)}
-                        <a href="/" onClick={e => {
+                        <a href="/client/public" onClick={e => {
                             stopEvent(e);
                             this.setState({showDetails: !showDetails});
                         }}>
@@ -225,7 +225,7 @@ class BulkUpload extends React.Component {
                     </>}
                     {hasResults && <>
                         {this.resultsSummary(results)}
-                        <a href="/" onClick={e => {
+                        <a href="/client/public" onClick={e => {
                             stopEvent(e);
                             this.setState({showResults: !showResults});
                         }}>

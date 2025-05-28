@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import "./Delay.scss";
-import CountDownDialog from "../components/countdown-dialog/CountDownDialog";
-import Waiting from "../icons/undraw_season_change_f99v.svg";
+import CountDownDialog from "../../components/countdown-dialog/CountDownDialog";
+import Waiting from "../../icons/undraw_season_change_f99v.svg";
 
 const counterTimeOut = 20;
 

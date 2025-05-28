@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from "react";
 
 import "./CollaborationsOverview.scss"
-import SpinnerField from "../components/_redesign/SpinnerField";
-import {allCollaborationsOptimized, myCollaborationsOptimized} from "../api";
-import {AppStore} from "../stores/AppStore";
-import I18n from "../locale/I18n";
-import {ReactComponent as TreeSwing} from "../images/tree_swing_static.svg";
-import {getUserRequests} from "../utils/UserRole";
-import {isEmpty, stopEvent} from "../utils/Utils";
+import SpinnerField from "../../components/_redesign/SpinnerField";
+import {allCollaborationsOptimized, myCollaborationsOptimized} from "../../api";
+import {AppStore} from "../../stores/AppStore";
+import I18n from "../../locale/I18n";
+import {ReactComponent as TreeSwing} from "../../images/tree_swing_static.svg";
+import {getUserRequests} from "../../utils/UserRole";
+import {isEmpty, stopEvent} from "../../utils/Utils";
 import {Button} from "@surfnet/sds";
-import CollaborationCard from "../components/collaborationcard/CollaborationCard";
+import CollaborationCard from "../../components/collaborationcard/CollaborationCard";
 
 export default function CollaborationsOverview(props) {
     const [loading, setLoading] = useState(true);

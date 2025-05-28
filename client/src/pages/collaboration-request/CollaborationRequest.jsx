@@ -7,21 +7,21 @@ import {
     collaborationShortNameExists,
     deleteRequestCollaboration,
     denyRequestCollaboration
-} from "../api";
-import I18n from "../locale/I18n";
-import InputField from "../components/input-field/InputField";
-import Button from "../components/button/Button";
-import {isEmpty} from "../utils/Utils";
-import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
-import {setFlash} from "../utils/Flash";
-import {sanitizeShortName} from "../validations/regExps";
-import {AppStore} from "../stores/AppStore";
-import CroppedImageField from "../components/_redesign/CroppedImageField";
-import SpinnerField from "../components/_redesign/SpinnerField";
-import ErrorIndicator from "../components/_redesign/ErrorIndicator";
-import {chipTypeForStatus} from "../utils/UserRole";
+} from "../../api";
+import I18n from "../../locale/I18n";
+import InputField from "../../components/input-field/InputField";
+import Button from "../../components/button/Button";
+import {isEmpty} from "../../utils/Utils";
+import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
+import {setFlash} from "../../utils/Flash";
+import {sanitizeShortName} from "../../validations/regExps";
+import {AppStore} from "../../stores/AppStore";
+import CroppedImageField from "../../components/_redesign/CroppedImageField";
+import SpinnerField from "../../components/_redesign/SpinnerField";
+import ErrorIndicator from "../../components/_redesign/ErrorIndicator";
+import {chipTypeForStatus} from "../../utils/UserRole";
 import {Chip} from "@surfnet/sds";
-import {CollaborationUnits} from "../components/collaborationunits/CollaborationUnits";
+import {CollaborationUnits} from "../../components/collaborationunits/CollaborationUnits";
 
 class CollaborationRequest extends React.Component {
 

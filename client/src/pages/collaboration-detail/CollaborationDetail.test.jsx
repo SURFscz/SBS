@@ -1,18 +1,19 @@
 import React from "react";
 import {render} from "@testing-library/react";
-import {OrganisationUnits} from "./OrganisationUnits";
+import CollaborationDetail from "./CollaborationDetail";
 
 const mockMatch = {params: {id: "1"}};
-const units = ["unit1", "unit2"];
 
-describe("OrganisationUnits", () => {
+describe("CollaborationDetail", () => {
     it("matches snapshot with default props", () => {
         const {asFragment} = render(
-            <OrganisationUnits
+            <CollaborationDetail
                 match={mockMatch}
-                units={units}
-                setUnits={() => {}}
-                setDuplicated={() => {}}
+                collaboration={{id: "1", name: "Test Collaboration"}}
+                onClose={() => {
+                }}
+                onDelete={() => {
+                }}
             />
         );
         expect(asFragment()).toMatchSnapshot();
@@ -20,13 +21,12 @@ describe("OrganisationUnits", () => {
 
     it("matches snapshot with custom title", () => {
         const {asFragment} = render(
-            <OrganisationUnits
-                title="Custom Title"
+            <CollaborationDetail
                 match={mockMatch}
-                units={units}
-                setUnits={() => {
+                collaboration={{id: "1", name: "Custom Title"}}
+                onClose={() => {
                 }}
-                setDuplicated={() => {
+                onDelete={() => {
                 }}
             />
         );
@@ -35,13 +35,12 @@ describe("OrganisationUnits", () => {
 
     it("matches snapshot with custom description", () => {
         const {asFragment} = render(
-            <OrganisationUnits
-                description="Custom Description"
+            <CollaborationDetail
                 match={mockMatch}
-                units={units}
-                setUnits={() => {
+                collaboration={{id: "1", name: "Custom Description"}}
+                onClose={() => {
                 }}
-                setDuplicated={() => {
+                onDelete={() => {
                 }}
             />
         );

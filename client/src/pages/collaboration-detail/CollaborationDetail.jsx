@@ -14,36 +14,36 @@ import {
     invitationByHash,
     unsuspendCollaboration,
     userTokensOfUser
-} from "../api";
+} from "../../api";
 import "./CollaborationDetail.scss";
-import I18n from "../locale/I18n";
-import {AppStore} from "../stores/AppStore";
-import UnitHeader from "../components/_redesign/UnitHeader";
-import Tabs from "../components/tabs/Tabs";
-import {ReactComponent as MemberIcon} from "../icons/groups.svg";
-import {ReactComponent as TimerIcon} from "../icons/streamline/timer2.svg";
+import I18n from "../../locale/I18n";
+import {AppStore} from "../../stores/AppStore";
+import UnitHeader from "../../components/_redesign/UnitHeader";
+import Tabs from "../../components/tabs/Tabs";
+import {ReactComponent as MemberIcon} from "../../icons/groups.svg";
+import {ReactComponent as TimerIcon} from "../../icons/streamline/timer2.svg";
 import {ReactComponent as MemberStatusIcon} from "@surfnet/sds/icons/functional-icons/id-1.svg";
-import CollaborationAdmins from "../components/_redesign/CollaborationAdmins";
-import SpinnerField from "../components/_redesign/SpinnerField";
-import UsedServices from "../components/_redesign/UsedServices";
-import Groups from "../components/_redesign/Groups";
-import AboutCollaboration from "../components/_redesign/AboutCollaboration";
-import {actionMenuUserRole, isUserAllowed, ROLES} from "../utils/UserRole";
-import {getParameterByName} from "../utils/QueryParameters";
-import CollaborationWelcomeDialog from "../components/collaboration-welcome-dialog/CollaborationWelcomeDialog";
-import JoinRequests from "../components/_redesign/JoinRequests";
-import {clearFlash, setFlash} from "../utils/Flash";
-import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
-import Button from "../components/button/Button";
-import JoinRequestDialog from "../components/join-request-dialog/JoinRequestDialog";
-import LastAdminWarning from "../components/_redesign/LastAdminWarning";
+import CollaborationAdmins from "../../components/_redesign/CollaborationAdmins";
+import SpinnerField from "../../components/_redesign/SpinnerField";
+import UsedServices from "../../components/_redesign/UsedServices";
+import Groups from "../../components/_redesign/Groups";
+import AboutCollaboration from "../../components/_redesign/AboutCollaboration";
+import {actionMenuUserRole, isUserAllowed, ROLES} from "../../utils/UserRole";
+import {getParameterByName} from "../../utils/QueryParameters";
+import CollaborationWelcomeDialog from "../../components/collaboration-welcome-dialog/CollaborationWelcomeDialog";
+import JoinRequests from "../../components/_redesign/JoinRequests";
+import {clearFlash, setFlash} from "../../utils/Flash";
+import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
+import Button from "../../components/button/Button";
+import JoinRequestDialog from "../../components/join-request-dialog/JoinRequestDialog";
+import LastAdminWarning from "../../components/_redesign/LastAdminWarning";
 import moment from "moment";
 import {ButtonType, Tooltip} from "@surfnet/sds";
-import {ErrorOrigins, isEmpty, removeDuplicates, stopEvent} from "../utils/Utils";
-import UserTokens from "../components/_redesign/UserTokens";
-import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../utils/SocketIO";
-import {isUuid4} from "../validations/regExps";
-import {isInvitationExpired} from "../utils/Date";
+import {ErrorOrigins, isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
+import UserTokens from "../../components/_redesign/UserTokens";
+import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
+import {isUuid4} from "../../validations/regExps";
+import {isInvitationExpired} from "../../utils/Date";
 
 class CollaborationDetail extends React.Component {
 

@@ -13,30 +13,30 @@ import {
     requestCollaboration,
     tagsByOrganisation,
     updateCollaboration
-} from "../api";
-import I18n from "../locale/I18n";
-import InputField from "../components/input-field/InputField";
-import Button from "../components/button/Button";
-import {isEmpty, stopEvent} from "../utils/Utils";
-import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
-import {setFlash} from "../utils/Flash";
-import {sanitizeShortName, sanitizeTagName, validEmailRegExp, validUrlRegExp} from "../validations/regExps";
-import SelectField from "../components/select-field/SelectField";
-import {getParameterByName} from "../utils/QueryParameters";
-import CheckBox from "../components/checkbox/CheckBox";
-import UnitHeader from "../components/_redesign/UnitHeader";
-import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
-import {AppStore} from "../stores/AppStore";
-import SpinnerField from "../components/_redesign/SpinnerField";
-import CroppedImageField from "../components/_redesign/CroppedImageField";
-import EmailField from "../components/email-field/EmailField";
-import {isUserAllowed, ROLES} from "../utils/UserRole";
-import ErrorIndicator from "../components/_redesign/ErrorIndicator";
-import DateField from "../components/date-field/DateField";
+} from "../../api";
+import I18n from "../../locale/I18n";
+import InputField from "../../components/input-field/InputField";
+import Button from "../../components/button/Button";
+import {isEmpty, stopEvent} from "../../utils/Utils";
+import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
+import {setFlash} from "../../utils/Flash";
+import {sanitizeShortName, sanitizeTagName, validEmailRegExp, validUrlRegExp} from "../../validations/regExps";
+import SelectField from "../../components/select-field/SelectField";
+import {getParameterByName} from "../../utils/QueryParameters";
+import CheckBox from "../../components/checkbox/CheckBox";
+import UnitHeader from "../../components/_redesign/UnitHeader";
+import {ReactComponent as CollaborationsIcon} from "../../icons/collaborations.svg";
+import {AppStore} from "../../stores/AppStore";
+import SpinnerField from "../../components/_redesign/SpinnerField";
+import CroppedImageField from "../../components/_redesign/CroppedImageField";
+import EmailField from "../../components/email-field/EmailField";
+import {isUserAllowed, ROLES} from "../../utils/UserRole";
+import ErrorIndicator from "../../components/_redesign/ErrorIndicator";
+import DateField from "../../components/date-field/DateField";
 import moment from "moment";
 import DOMPurify from "dompurify";
-import OnBoardingMessage from "../components/_redesign/OnBoardingMessage";
-import {CollaborationUnits} from "../components/collaborationunits/CollaborationUnits";
+import OnBoardingMessage from "../../components/_redesign/OnBoardingMessage";
+import {CollaborationUnits} from "../../components/collaborationunits/CollaborationUnits";
 
 class CollaborationForm extends React.Component {
 

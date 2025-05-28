@@ -1,0 +1,175 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Delay matches snapshot with custom description 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-delay"
+  >
+    <div
+      class="sds--modal sds--backdrop"
+    >
+      <div
+        class="sds--modal--container  count-down-dialog "
+      >
+        <div
+          class="sds--modal--title "
+        >
+          <p
+            class="sds--text--h4"
+          >
+            Access to [missing "{{name}}" value]
+          </p>
+        </div>
+        <div
+          class="sds--modal--content"
+        >
+          <div
+            class="sds--text--rich"
+          >
+            <section
+              class="count-down-content"
+            >
+              <p>
+                To access application [missing "{{name}}" value] you will have to be provisioned. This unfortunately takes some time, grab a cup of ☕️.
+              </p>
+              <p>
+                You will be redirected in 
+                <span
+                  class="counter"
+                >
+                  20
+                </span>
+                 seconds.
+              </p>
+            </section>
+          </div>
+          <div
+            class="sds--modal--actions sds--actions--outer sds--space--top--5"
+          />
+        </div>
+      </div>
+    </div>
+    <img
+      alt="waiting"
+      class="waiting"
+      src="undraw_season_change_f99v.svg"
+    />
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Delay matches snapshot with custom title 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-delay"
+  >
+    <div
+      class="sds--modal sds--backdrop"
+    >
+      <div
+        class="sds--modal--container  count-down-dialog "
+      >
+        <div
+          class="sds--modal--title "
+        >
+          <p
+            class="sds--text--h4"
+          >
+            Access to [missing "{{name}}" value]
+          </p>
+        </div>
+        <div
+          class="sds--modal--content"
+        >
+          <div
+            class="sds--text--rich"
+          >
+            <section
+              class="count-down-content"
+            >
+              <p>
+                To access application [missing "{{name}}" value] you will have to be provisioned. This unfortunately takes some time, grab a cup of ☕️.
+              </p>
+              <p>
+                You will be redirected in 
+                <span
+                  class="counter"
+                >
+                  20
+                </span>
+                 seconds.
+              </p>
+            </section>
+          </div>
+          <div
+            class="sds--modal--actions sds--actions--outer sds--space--top--5"
+          />
+        </div>
+      </div>
+    </div>
+    <img
+      alt="waiting"
+      class="waiting"
+      src="undraw_season_change_f99v.svg"
+    />
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Delay matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-delay"
+  >
+    <div
+      class="sds--modal sds--backdrop"
+    >
+      <div
+        class="sds--modal--container  count-down-dialog "
+      >
+        <div
+          class="sds--modal--title "
+        >
+          <p
+            class="sds--text--h4"
+          >
+            Access to [missing "{{name}}" value]
+          </p>
+        </div>
+        <div
+          class="sds--modal--content"
+        >
+          <div
+            class="sds--text--rich"
+          >
+            <section
+              class="count-down-content"
+            >
+              <p>
+                To access application [missing "{{name}}" value] you will have to be provisioned. This unfortunately takes some time, grab a cup of ☕️.
+              </p>
+              <p>
+                You will be redirected in 
+                <span
+                  class="counter"
+                >
+                  20
+                </span>
+                 seconds.
+              </p>
+            </section>
+          </div>
+          <div
+            class="sds--modal--actions sds--actions--outer sds--space--top--5"
+          />
+        </div>
+      </div>
+    </div>
+    <img
+      alt="waiting"
+      class="waiting"
+      src="undraw_season_change_f99v.svg"
+    />
+  </div>
+</DocumentFragment>
+`;
