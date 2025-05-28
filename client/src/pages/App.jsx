@@ -35,7 +35,7 @@ import CollaborationRequest from "./CollaborationRequest";
 import {clearFlash, setFlash} from "../utils/Flash";
 import System from "./System";
 import {BreadCrumb} from "../components/breadcrumb/BreadCrumb";
-import Impersonating from "../components/Impersonating";
+import Impersonating from "../components/impersonating/Impersonating";
 import History from "../components/history/History";
 import ServiceDetail from "./ServiceDetail";
 import SpinnerField from "../components/_redesign/SpinnerField";

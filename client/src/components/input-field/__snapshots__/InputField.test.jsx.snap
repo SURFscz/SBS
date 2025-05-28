@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InputField matches snapshot with minimal props 1`] = `
+<DocumentFragment>
+  <div
+    class="input-field sds--text-field  "
+  >
+    <label
+      for="Test"
+    >
+      Test
+    </label>
+    <div
+      class="inner-input-field"
+    >
+      <input
+        class="sds--text-field--input sds--text-field--input"
+        maxlength="255"
+        placeholder=""
+        type="text"
+        value="Value"
+      />
+    </div>
+  </div>
+</DocumentFragment>
+`;

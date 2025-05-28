@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MissingServices matches snapshot with custom message 1`] = `
+<DocumentFragment>
+  <div
+    class="missing-services services_undefined"
+  >
+    <span>
+      models.services.missingServices
+    </span>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`MissingServices matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="missing-services services_undefined"
+  >
+    <span>
+      models.services.missingServices
+    </span>
+  </div>
+</DocumentFragment>
+`;

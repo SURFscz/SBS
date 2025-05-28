@@ -4,7 +4,7 @@ import {Loader} from "@surfnet/sds";
 import I18n from "../locale/I18n";
 import {checkPamPin, pamServices, pamStart, pamWebSSOSession, pollPamWebSSO} from "../api";
 import SelectField from "../components/SelectField";
-import InputField from "../components/InputField";
+import InputField from "../components/input-field/InputField";
 import Button from "../components/button/Button";
 import {isEmpty, stopEvent} from "../utils/Utils";
 

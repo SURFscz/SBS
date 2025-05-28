@@ -1,11 +1,11 @@
 import React from "react";
-import I18n from "../locale/I18n";
+import I18n from "../../locale/I18n";
 import Cookies from "js-cookie";
-import {replaceQueryParameter} from "../utils/QueryParameters";
-import {stopEvent} from "../utils/Utils";
+import {replaceQueryParameter} from "../../utils/QueryParameters";
+import {stopEvent} from "../../utils/Utils";
 import moment from "moment-timezone";
 import "./LanguageSelector.scss"
-import {languageSwitched} from "../utils/Date";
+import {languageSwitched} from "../../utils/Date";
 
 export default class LanguageSelector extends React.PureComponent {
 

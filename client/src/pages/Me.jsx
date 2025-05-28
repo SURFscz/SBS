@@ -1,7 +1,7 @@
 import React from "react";
 import {deleteUser, updateUser,} from "../api";
 import I18n from "../locale/I18n";
-import InputField from "../components/InputField";
+import InputField from "../components/input-field/InputField";
 import "./Me.scss";
 import Button from "../components/button/Button";
 import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";

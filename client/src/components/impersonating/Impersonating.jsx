@@ -1,13 +1,13 @@
 import {NavLink, Route} from "react-router-dom";
 import {Tooltip} from "@surfnet/sds";
-import I18n from "../locale/I18n";
+import I18n from "../../locale/I18n";
 import React from "react";
-import {globalUserRole} from "../utils/UserRole";
-import Button from "./button/Button";
-import {emitter} from "../utils/Events";
-import {setFlash} from "../utils/Flash";
+import {globalUserRole} from "../../utils/UserRole";
+import Button from "../button/Button";
+import {emitter} from "../../utils/Events";
+import {setFlash} from "../../utils/Flash";
 import "./Impersonating.scss";
-import {ReactComponent as HandIcon} from "../icons/puppet_new.svg";
+import {ReactComponent as HandIcon} from "../../icons/puppet_new.svg";
 import DOMPurify from "dompurify";
 
 export default function Impersonating({impersonator, currentUser}) {

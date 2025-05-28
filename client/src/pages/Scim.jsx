@@ -4,7 +4,7 @@ import "./Scim.scss";
 import I18n from "../locale/I18n";
 import SpinnerField from "../components/_redesign/SpinnerField";
 import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
-import InputField from "../components/InputField";
+import InputField from "../components/input-field/InputField";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import Button from "../components/button/Button";
 import Logo from "../components/_redesign/Logo";

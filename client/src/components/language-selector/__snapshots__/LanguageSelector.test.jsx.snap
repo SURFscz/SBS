@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LanguageSelector matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <nav
+    aria-label="Language"
+    class="sds--language-switcher sds--text--body--small"
+  >
+    <ul>
+      <li>
+        <a
+          class=""
+          href="locale"
+          title="Kies Nederlands als taal"
+        >
+          NL
+        </a>
+        <span
+          class="sds--language-sds--divider"
+        >
+          |
+        </span>
+      </li>
+      <li>
+        <a
+          class="is-active"
+          href="locale"
+          title="Change language to English"
+        >
+          EN
+        </a>
+      </li>
+    </ul>
+  </nav>
+</DocumentFragment>
+`;

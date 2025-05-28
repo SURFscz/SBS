@@ -23,7 +23,7 @@ import {ReactComponent as UserIcon} from "../../icons/users.svg";
 import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
 import UserColumn from "./UserColumn";
 import Select from "react-select";
-import InputField from "../InputField";
+import InputField from "../input-field/InputField";
 import CheckBox from "../checkbox/CheckBox";
 import moment from "moment";
 import {sanitizeShortName} from "../../validations/regExps";

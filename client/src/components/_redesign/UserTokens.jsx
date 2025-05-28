@@ -15,7 +15,7 @@ import {setFlash} from "../../utils/Flash";
 import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import Entities from "./Entities";
 import SpinnerField from "./SpinnerField";
-import InputField from "../InputField";
+import InputField from "../input-field/InputField";
 import {AppStore} from "../../stores/AppStore";
 import ErrorIndicator from "./ErrorIndicator";
 import {dateFromEpoch, isUserTokenExpired, userTokenExpiryDate} from "../../utils/Date";

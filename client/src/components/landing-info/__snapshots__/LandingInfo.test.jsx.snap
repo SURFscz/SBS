@@ -1,0 +1,158 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LandingInfo matches snapshot with default render 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-login-container bottom"
+  >
+    <div
+      class="mod-login bottom"
+    >
+      <h1>
+        landing.works
+      </h1>
+      <div
+        class="mod-login info reversed"
+      >
+        <div
+          class="header-left info"
+        >
+          <div
+            class="info-title"
+          >
+            <h2>
+              landing.create
+            </h2>
+            <div
+              class="admin-function-container"
+            >
+              <button
+                class="sds--chips main-400"
+              >
+                <span
+                  class="sds--chips--textual sds--text--body--small"
+                >
+                  landing.adminFunction
+                </span>
+              </button>
+            </div>
+          </div>
+          <p>
+            landing.createInfo
+          </p>
+        </div>
+        <div
+          class="header-right info"
+        >
+          <img
+            alt="logo"
+            class="reversed"
+            src="sketch.svg"
+          />
+        </div>
+      </div>
+      <div
+        class="mod-login info "
+      >
+        <div
+          class="header-left info"
+        >
+          <div
+            class="info-title"
+          >
+            <h2>
+              landing.invite
+            </h2>
+            <div
+              class="admin-function-container"
+            >
+              <button
+                class="sds--chips main-400"
+              >
+                <span
+                  class="sds--chips--textual sds--text--body--small"
+                >
+                  landing.adminFunction
+                </span>
+              </button>
+            </div>
+          </div>
+          <p>
+            landing.inviteInfo
+          </p>
+        </div>
+        <div
+          class="header-right info"
+        >
+          <img
+            alt="logo"
+            class=""
+            src="mail.svg"
+          />
+        </div>
+      </div>
+      <div
+        class="mod-login info reversed"
+      >
+        <div
+          class="header-left info"
+        >
+          <div
+            class="info-title"
+          >
+            <h2>
+              landing.join
+            </h2>
+          </div>
+          <p>
+            landing.joinInfo
+          </p>
+        </div>
+        <div
+          class="header-right info"
+        >
+          <img
+            alt="logo"
+            class="reversed"
+            src="screen.svg"
+          />
+        </div>
+      </div>
+      <div
+        class="mod-login info "
+      >
+        <div
+          class="header-left info"
+        >
+          <div
+            class="info-title"
+          >
+            <h2>
+              landing.collaborate
+            </h2>
+          </div>
+          <p>
+            landing.collaborateInfo
+          </p>
+        </div>
+        <div
+          class="header-right info"
+        >
+          <img
+            alt="logo"
+            class=""
+            src="collaborate.svg"
+          />
+        </div>
+      </div>
+      <div
+        class="landing-footer"
+      >
+        <p>
+          landing.footer
+        </p>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

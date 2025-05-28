@@ -35,7 +35,7 @@ import JoinRequests from "../components/_redesign/JoinRequests";
 import {clearFlash, setFlash} from "../utils/Flash";
 import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
 import Button from "../components/button/Button";
-import JoinRequestDialog from "../components/JoinRequestDialog";
+import JoinRequestDialog from "../components/join-request-dialog/JoinRequestDialog";
 import LastAdminWarning from "../components/_redesign/LastAdminWarning";
 import moment from "moment";
 import {ButtonType, Tooltip} from "@surfnet/sds";

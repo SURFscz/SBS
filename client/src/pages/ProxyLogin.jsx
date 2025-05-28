@@ -3,7 +3,7 @@ import "./ProxyLogin.scss";
 import {Loader} from "@surfnet/sds";
 import I18n from "../locale/I18n";
 import {proxyAuthzEduTeams, proxyAuthzEngineBlock, startEBInterruptFlow} from "../api";
-import InputField from "../components/InputField";
+import InputField from "../components/input-field/InputField";
 import Button from "../components/button/Button";
 import {isEmpty, scrollToBottom} from "../utils/Utils";
 import CheckBox from "../components/checkbox/CheckBox";

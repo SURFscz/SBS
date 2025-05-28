@@ -14,7 +14,7 @@ import {isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
 import I18n from "../../locale/I18n";
 import Button from "../button/Button";
 import {clearFlash, setFlash} from "../../utils/Flash";
-import InputField from "../InputField";
+import InputField from "../input-field/InputField";
 import SpinnerField from "./SpinnerField";
 import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import Logo from "./Logo";

@@ -1,5 +1,5 @@
 import React from "react";
-import I18n from "../locale/I18n";
+import I18n from "../../locale/I18n";
 import "./MissingServices.scss";
 import DOMPurify from "dompurify";
 

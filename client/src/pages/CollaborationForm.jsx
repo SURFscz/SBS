@@ -15,7 +15,7 @@ import {
     updateCollaboration
 } from "../api";
 import I18n from "../locale/I18n";
-import InputField from "../components/InputField";
+import InputField from "../components/input-field/InputField";
 import Button from "../components/button/Button";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";

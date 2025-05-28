@@ -8,7 +8,7 @@ import I18n from "../../locale/I18n";
 import Button from "../button/Button";
 import {setFlash} from "../../utils/Flash";
 import Entities from "./Entities";
-import InputField from "../InputField";
+import InputField from "../input-field/InputField";
 import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import SpinnerField from "./SpinnerField";

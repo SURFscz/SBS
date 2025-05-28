@@ -5,7 +5,7 @@ import {get2fa, preUpdate2fa, reset2fa, tokenResetRequest, tokenResetRespondents
 import SpinnerField from "../components/_redesign/SpinnerField";
 import I18n from "../locale/I18n";
 import Button from "../components/button/Button";
-import InputField from "../components/InputField";
+import InputField from "../components/input-field/InputField";
 import {setFlash} from "../utils/Flash";
 import CheckBox from "../components/checkbox/CheckBox";
 import {isEmpty, pseudoGuid, stopEvent} from "../utils/Utils";

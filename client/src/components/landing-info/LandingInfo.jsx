@@ -1,10 +1,10 @@
 import React from "react";
 import DOMPurify from "dompurify";
-import I18n from "../locale/I18n";
-import CreateLogo from "../icons/landing/sketch.svg";
-import InviteLogo from "../icons/landing/mail.svg";
-import JoinLogo from "../icons/landing/screen.svg";
-import CollaborateLogo from "../icons/landing/collaborate.svg";
+import I18n from "../../locale/I18n";
+import CreateLogo from "../../icons/landing/sketch.svg";
+import InviteLogo from "../../icons/landing/mail.svg";
+import JoinLogo from "../../icons/landing/screen.svg";
+import CollaborateLogo from "../../icons/landing/collaborate.svg";
 import "./LandingInfo.scss";
 import {Chip, ChipType} from "@surfnet/sds"
 

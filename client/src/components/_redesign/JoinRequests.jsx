@@ -9,7 +9,7 @@ import {setFlash} from "../../utils/Flash";
 import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import Entities from "./Entities";
 import SpinnerField from "./SpinnerField";
-import InputField from "../InputField";
+import InputField from "../input-field/InputField";
 import {joinRequestAccept, joinRequestDecline, joinRequestDelete} from "../../api";
 import UserColumn from "./UserColumn";
 import moment from "moment";

@@ -18,7 +18,7 @@ import {clearFlash, setFlash} from "../../utils/Flash";
 import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import Entities from "./Entities";
 import SpinnerField from "./SpinnerField";
-import InputField from "../InputField";
+import InputField from "../input-field/InputField";
 import CheckBox from "../checkbox/CheckBox";
 import moment from "moment";
 import {sanitizeShortName} from "../../validations/regExps";

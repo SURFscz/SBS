@@ -7,7 +7,7 @@ import debounce from "lodash.debounce";
 import SelectField from "../components/SelectField";
 import Autocomplete from "../components/autocomplete/Autocomplete";
 import Button from "../components/button/Button";
-import InputField from "../components/InputField";
+import InputField from "../components/input-field/InputField";
 import CheckBox from "../components/checkbox/CheckBox";
 import UnitHeader from "../components/_redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";

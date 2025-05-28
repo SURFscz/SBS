@@ -1,5 +1,5 @@
 import React from "react";
-import "./InputField.scss";
+import "./input-field/InputField.scss";
 import Button from "./button/Button";
 
 export default function UploadButton({

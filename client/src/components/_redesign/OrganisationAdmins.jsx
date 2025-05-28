@@ -32,7 +32,7 @@ import InstituteColumn from "./InstituteColumn";
 import {expiryDateCustomSort, isEmpty, stopEvent, userColumnsCustomSort} from "../../utils/Utils";
 import {emitImpersonation} from "../../utils/Impersonation";
 import SelectField from "../SelectField";
-import {InvitationsUnits} from "../InvitationsUnits";
+import {InvitationsUnits} from "../invitation-units/InvitationsUnits";
 
 const INVITE_IDENTIFIER = "INVITE_IDENTIFIER";
 const MEMBER_IDENTIFIER = "MEMBER_IDENTIFIER";

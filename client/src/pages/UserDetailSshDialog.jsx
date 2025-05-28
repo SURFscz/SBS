@@ -2,7 +2,7 @@ import React from "react";
 import I18n from "../locale/I18n";
 import "./UserDetail.scss";
 import "./UserDetailSshDialog.scss";
-import InputField from "../components/InputField";
+import InputField from "../components/input-field/InputField";
 import {Modal} from "@surfnet/sds";
 
 class UserDetailDialog extends React.Component {

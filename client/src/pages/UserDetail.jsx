@@ -13,7 +13,7 @@ import {AppStore} from "../stores/AppStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import {filterAuditLogs} from "../utils/AuditLog";
-import InputField from "../components/InputField";
+import InputField from "../components/input-field/InputField";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import {ReactComponent as PersonIcon} from "../icons/personal_info.svg";
 

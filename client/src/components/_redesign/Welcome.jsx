@@ -9,7 +9,7 @@ import Button from "../button/Button";
 import {AppStore} from "../../stores/AppStore";
 import {getUserRequests, rawGlobalUserRole, ROLES} from "../../utils/UserRole";
 import DOMPurify from "dompurify";
-import LandingInfo from "../LandingInfo";
+import LandingInfo from "../landing-info/LandingInfo";
 
 class Welcome extends React.Component {
 

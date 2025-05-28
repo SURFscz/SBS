@@ -1,16 +1,16 @@
 import React from "react";
 
-import I18n from "../locale/I18n";
+import I18n from "../../locale/I18n";
 import "./JoinRequestDialog.scss";
-import InputField from "./InputField";
-import {isEmpty} from "../utils/Utils";
-import {joinRequestForCollaboration} from "../api";
+import InputField from "../input-field/InputField";
+import {isEmpty} from "../../utils/Utils";
+import {joinRequestForCollaboration} from "../../api";
 import {Modal} from "@surfnet/sds";
-import RadioButtonGroup from "./_redesign/RadioButtonGroup";
+import RadioButtonGroup from "../_redesign/RadioButtonGroup";
 import DOMPurify from "dompurify";
-import CollaborationAupAcceptance from "./collaboration-aup-acceptance/CollaborationAupAcceptance";
-import OrganisationAupAcceptance from "./OrganisationAupAcceptance";
-import {aupData} from "../utils/Aups";
+import CollaborationAupAcceptance from "../collaboration-aup-acceptance/CollaborationAupAcceptance";
+import OrganisationAupAcceptance from "../OrganisationAupAcceptance";
+import {aupData} from "../../utils/Aups";
 
 export default class JoinRequestDialog extends React.Component {
 

@@ -8,7 +8,7 @@ import {login} from "../utils/Login";
 import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import DOMPurify from "dompurify";
-import LandingInfo from "../components/LandingInfo";
+import LandingInfo from "../components/landing-info/LandingInfo";
 
 class Login extends React.Component {
 

@@ -2,9 +2,9 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Tooltip} from "@surfnet/sds";
 import "./InputField.scss";
-import {isEmpty} from "../utils/Utils";
-import ClipBoardCopy from "./_redesign/ClipBoardCopy";
-import {validUrlRegExp} from "../validations/regExps";
+import {isEmpty} from "../../utils/Utils";
+import ClipBoardCopy from "../_redesign/ClipBoardCopy";
+import {validUrlRegExp} from "../../validations/regExps";
 
 export default function InputField({
                                        onChange,

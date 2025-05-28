@@ -10,7 +10,7 @@ import {
     updateOrganisation
 } from "../api";
 import I18n from "../locale/I18n";
-import InputField from "../components/InputField";
+import InputField from "../components/input-field/InputField";
 import "./OrganisationForm.scss";
 import Button from "../components/button/Button";
 import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";

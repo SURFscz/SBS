@@ -21,7 +21,7 @@ import I18n from "../locale/I18n";
 import {ReactComponent as CriticalIcon} from "@surfnet/sds/icons/functional-icons/alert-circle.svg";
 import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 import {ReactComponent as CheckIcon} from "@surfnet/sds/icons/functional-icons/success.svg";
-import InputField from "../components/InputField";
+import InputField from "../components/input-field/InputField";
 import "./ServiceOverview.scss";
 import "../components/_redesign/ApiKeys.scss";
 import Button from "../components/button/Button";

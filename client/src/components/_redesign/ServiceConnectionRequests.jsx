@@ -10,7 +10,7 @@ import {setFlash} from "../../utils/Flash";
 import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import Entities from "./Entities";
 import SpinnerField from "./SpinnerField";
-import InputField from "../InputField";
+import InputField from "../input-field/InputField";
 import {approveServiceConnectionRequest, deleteServiceConnectionRequest, denyServiceConnectionRequest} from "../../api";
 import moment from "moment";
 import Logo from "./Logo";
