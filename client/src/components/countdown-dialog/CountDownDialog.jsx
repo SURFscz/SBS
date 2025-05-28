@@ -1,5 +1,5 @@
 import React from "react";
-import I18n from "../locale/I18n";
+import I18n from "../../locale/I18n";
 import "./CountDownDialog.scss";
 import {Modal} from "@surfnet/sds";
 import DOMPurify from "dompurify";

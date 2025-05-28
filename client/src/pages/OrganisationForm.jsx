@@ -26,8 +26,8 @@ import SpinnerField from "../components/_redesign/SpinnerField";
 
 import OrganisationOnBoarding from "../components/OrganisationOnBoarding";
 import ErrorIndicator from "../components/_redesign/ErrorIndicator";
-import CreatableField from "../components/CreatableField";
-import EmailField from "../components/EmailField";
+import CreatableField from "../components/creatable-field/CreatableField";
+import EmailField from "../components/email-field/EmailField";
 import CheckBox from "../components/checkbox/CheckBox";
 import {OrganisationUnits} from "../components/OrganisationUnits";
 

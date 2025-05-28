@@ -13,7 +13,7 @@ import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDi
 import {setFlash} from "../utils/Flash";
 import {validEmailRegExp} from "../validations/regExps";
 import "./NewInvitation.scss"
-import DateField from "../components/DateField";
+import DateField from "../components/date-field/DateField";
 import {collaborationRoles} from "../forms/constants";
 import SelectField from "../components/SelectField";
 import {getParameterByName} from "../utils/QueryParameters";
@@ -21,7 +21,7 @@ import {AppStore} from "../stores/AppStore";
 import UnitHeader from "../components/_redesign/UnitHeader";
 import SpinnerField from "../components/_redesign/SpinnerField";
 import {isUserAllowed, ROLES} from "../utils/UserRole";
-import EmailField from "../components/EmailField";
+import EmailField from "../components/email-field/EmailField";
 import ErrorIndicator from "../components/_redesign/ErrorIndicator";
 
 class NewInvitation extends React.Component {

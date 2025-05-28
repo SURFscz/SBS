@@ -8,7 +8,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./DateField.scss"
 import moment from "moment";
-import {stopEvent} from "../utils/Utils";
+import {stopEvent} from "../../utils/Utils";
 
 export default class DateField extends React.Component {
 

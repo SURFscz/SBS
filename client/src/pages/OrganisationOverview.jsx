@@ -19,7 +19,7 @@ import ErrorIndicator from "../components/_redesign/ErrorIndicator";
 import {OrganisationUnits} from "../components/OrganisationUnits";
 import SelectField from "../components/SelectField";
 import CheckBox from "../components/checkbox/CheckBox";
-import CreatableField from "../components/CreatableField";
+import CreatableField from "../components/creatable-field/CreatableField";
 import CroppedImageField from "../components/_redesign/CroppedImageField";
 import {OrganisationTags} from "../components/OrganisationTags";
 import OrganisationOnBoarding from "../components/OrganisationOnBoarding";

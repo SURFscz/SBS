@@ -2,13 +2,13 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Tooltip} from "@surfnet/sds";
 import "./CreatableField.scss";
-import {isEmpty, stopEvent} from "../utils/Utils";
+import {isEmpty, stopEvent} from "../../utils/Utils";
 
 export default function CreatableField({
                                            onChange,
                                            name,
                                            value,
-                                           values,
+                                           values = [],
                                            addValue,
                                            removeValue,
                                            toolTip = null,

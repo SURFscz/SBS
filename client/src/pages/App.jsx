@@ -8,7 +8,7 @@ import ServerError from "../pages/ServerError";
 import {aupLinks, config, me, other, refreshUser, reportError} from "../api";
 import "../locale/en";
 import "../locale/nl";
-import ErrorDialog from "../components/ErrorDialog";
+import ErrorDialog from "../components/error-dialog/ErrorDialog";
 import Welcome from "../components/_redesign/Welcome";
 import Footer from "../components/Footer";
 import Flash from "../components/Flash";

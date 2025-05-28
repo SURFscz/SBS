@@ -30,7 +30,7 @@ import {AppStore} from "../stores/AppStore";
 import CroppedImageField from "../components/_redesign/CroppedImageField";
 import SpinnerField from "../components/_redesign/SpinnerField";
 import ErrorIndicator from "../components/_redesign/ErrorIndicator";
-import EmailField from "../components/EmailField";
+import EmailField from "../components/email-field/EmailField";
 import RadioButtonGroup from "../components/_redesign/RadioButtonGroup";
 import SelectField from "../components/SelectField";
 import UploadButton from "../components/UploadButton";

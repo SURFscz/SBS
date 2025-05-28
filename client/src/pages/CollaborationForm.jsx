@@ -29,10 +29,10 @@ import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg"
 import {AppStore} from "../stores/AppStore";
 import SpinnerField from "../components/_redesign/SpinnerField";
 import CroppedImageField from "../components/_redesign/CroppedImageField";
-import EmailField from "../components/EmailField";
+import EmailField from "../components/email-field/EmailField";
 import {isUserAllowed, ROLES} from "../utils/UserRole";
 import ErrorIndicator from "../components/_redesign/ErrorIndicator";
-import DateField from "../components/DateField";
+import DateField from "../components/date-field/DateField";
 import moment from "moment";
 import DOMPurify from "dompurify";
 import OnBoardingMessage from "../components/_redesign/OnBoardingMessage";

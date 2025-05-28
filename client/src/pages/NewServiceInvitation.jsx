@@ -12,13 +12,13 @@ import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDi
 import {setFlash} from "../utils/Flash";
 import {validEmailRegExp} from "../validations/regExps";
 import "./NewServiceInvitation.scss"
-import DateField from "../components/DateField";
+import DateField from "../components/date-field/DateField";
 import {getParameterByName} from "../utils/QueryParameters";
 import SelectField from "../components/SelectField";
 import UnitHeader from "../components/_redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
 import SpinnerField from "../components/_redesign/SpinnerField";
-import EmailField from "../components/EmailField";
+import EmailField from "../components/email-field/EmailField";
 import ErrorIndicator from "../components/_redesign/ErrorIndicator";
 import {serviceRoles} from "../forms/constants";
 

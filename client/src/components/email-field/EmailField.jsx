@@ -2,9 +2,9 @@ import React, {useEffect, useRef, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Tooltip} from "@surfnet/sds";
 import "./EmailField.scss";
-import {isEmpty, stopEvent} from "../utils/Utils";
-import I18n from "../locale/I18n";
-import {validEmailRegExp} from "../validations/regExps";
+import {isEmpty, stopEvent} from "../../utils/Utils";
+import I18n from "../../locale/I18n";
+import {validEmailRegExp} from "../../validations/regExps";
 
 export default function EmailField({
                                        name,
