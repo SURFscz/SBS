@@ -1,13 +1,13 @@
 import React from "react";
-import {invitationByHash, organisationInvitationByHash} from "../api";
-import I18n from "../locale/I18n";
+import {invitationByHash, organisationInvitationByHash} from "../../api";
+import I18n from "../../locale/I18n";
 import "./UserInvitation.scss";
-import Button from "../components/button/Button";
+import Button from "../../components/button/Button";
 import moment from "moment";
-import {login} from "../utils/Login";
-import ErrorIndicator from "../components/_redesign/ErrorIndicator";
-import SpinnerField from "../components/_redesign/SpinnerField";
-import {ErrorOrigins} from "../utils/Utils";
+import {login} from "../../utils/Login";
+import ErrorIndicator from "../../components/_redesign/ErrorIndicator";
+import SpinnerField from "../../components/_redesign/SpinnerField";
+import {ErrorOrigins} from "../../utils/Utils";
 import DOMPurify from "dompurify";
 import {Toaster, ToasterType} from "@surfnet/sds";
 

@@ -16,23 +16,23 @@ import {
     serviceTokenValue,
     sweep,
     updateService
-} from "../api";
-import I18n from "../locale/I18n";
+} from "../../api";
+import I18n from "../../locale/I18n";
 import {ReactComponent as CriticalIcon} from "@surfnet/sds/icons/functional-icons/alert-circle.svg";
 import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 import {ReactComponent as CheckIcon} from "@surfnet/sds/icons/functional-icons/success.svg";
-import InputField from "../components/input-field/InputField";
+import InputField from "../../components/input-field/InputField";
 import "./ServiceOverview.scss";
-import "../components/_redesign/ApiKeys.scss";
-import Button from "../components/button/Button";
-import {setFlash} from "../utils/Flash";
+import "../../components/_redesign/ApiKeys.scss";
+import Button from "../../components/button/Button";
+import {setFlash} from "../../utils/Flash";
 import {
     commaSeparatedArrayToSelectValues,
     isEmpty,
     joinSelectValuesArray,
     splitListSemantically,
     stopEvent
-} from "../utils/Utils";
+} from "../../utils/Utils";
 import {
     CO_SHORT_NAME,
     sanitizeShortName,
@@ -40,21 +40,21 @@ import {
     validEmailRegExp,
     validRedirectUrlRegExp,
     validUrlRegExp
-} from "../validations/regExps";
+} from "../../validations/regExps";
 import {Tooltip} from "@surfnet/sds";
 import DOMPurify from "dompurify";
-import {ReactComponent as ChevronLeft} from "../icons/chevron-left.svg";
-import Entities from "../components/_redesign/Entities";
-import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
-import ErrorIndicator from "../components/_redesign/ErrorIndicator";
-import CroppedImageField from "../components/_redesign/CroppedImageField";
-import SpinnerField from "../components/_redesign/SpinnerField";
-import CheckBox from "../components/checkbox/CheckBox";
-import SelectField from "../components/select-field/SelectField";
-import {dateFromEpoch} from "../utils/Date";
-import {isUserServiceAdmin} from "../utils/UserRole";
-import {SAMLMetaData} from "../components/saml-metadata/SAMLMetaData";
-import UploadButton from "../components/upload-button/UploadButton";
+import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
+import Entities from "../../components/_redesign/Entities";
+import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
+import ErrorIndicator from "../../components/_redesign/ErrorIndicator";
+import CroppedImageField from "../../components/_redesign/CroppedImageField";
+import SpinnerField from "../../components/_redesign/SpinnerField";
+import CheckBox from "../../components/checkbox/CheckBox";
+import SelectField from "../../components/select-field/SelectField";
+import {dateFromEpoch} from "../../utils/Date";
+import {isUserServiceAdmin} from "../../utils/UserRole";
+import {SAMLMetaData} from "../../components/saml-metadata/SAMLMetaData";
+import UploadButton from "../../components/upload-button/UploadButton";
 
 const toc = ["general", "contacts", "policy", "SCIMServer", "SCIMClient", "ldap", "pamWebLogin", "tokens",
     "OIDC", "SAML", "Export"];

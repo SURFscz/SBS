@@ -1,6 +1,6 @@
 import React from "react";
 import "./System.scss";
-import I18n from "../locale/I18n";
+import I18n from "../../locale/I18n";
 import JsonFormatter from 'react-json-formatter'
 import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 import {
@@ -34,36 +34,36 @@ import {
     sweepAllServices,
     userLoginsSummary,
     validations
-} from "../api";
+} from "../../api";
 import ReactJson from "react-json-view";
-import Button from "../components/button/Button";
-import {isEmpty} from "../utils/Utils";
-import UnitHeader from "../components/_redesign/UnitHeader";
-import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
-import SpinnerField from "../components/_redesign/SpinnerField";
-import {AppStore} from "../stores/AppStore";
-import Tabs from "../components/tabs/Tabs";
+import Button from "../../components/button/Button";
+import {isEmpty} from "../../utils/Utils";
+import UnitHeader from "../../components/_redesign/UnitHeader";
+import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
+import SpinnerField from "../../components/_redesign/SpinnerField";
+import {AppStore} from "../../stores/AppStore";
+import Tabs from "../../components/tabs/Tabs";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import Activity from "../components/activity/Activity";
+import Activity from "../../components/activity/Activity";
 import Select from "react-select";
-import MemberJoinRequests from "../components/_redesign/MemberJoinRequests";
-import MemberCollaborationRequests from "../components/_redesign/MemberCollaborationRequests";
-import {logout} from "../utils/Login";
-import {filterAuditLogs} from "../utils/AuditLog";
-import SelectField from "../components/select-field/SelectField";
+import MemberJoinRequests from "../../components/_redesign/MemberJoinRequests";
+import MemberCollaborationRequests from "../../components/_redesign/MemberCollaborationRequests";
+import {logout} from "../../utils/Login";
+import {filterAuditLogs} from "../../utils/AuditLog";
+import SelectField from "../../components/select-field/SelectField";
 import moment from "moment";
-import OrganisationInvitations from "../components/_redesign/OrganisationInvitations";
-import OrganisationsWithoutAdmin from "../components/_redesign/OrganisationsWithoutAdmin";
-import ServicesWithoutAdmin from "../components/_redesign/ServicesWithoutAdmin";
-import {dateFromEpoch} from "../utils/Date";
+import OrganisationInvitations from "../../components/_redesign/OrganisationInvitations";
+import OrganisationsWithoutAdmin from "../../components/_redesign/OrganisationsWithoutAdmin";
+import ServicesWithoutAdmin from "../../components/_redesign/ServicesWithoutAdmin";
+import {dateFromEpoch} from "../../utils/Date";
 import DOMPurify from "dompurify";
-import Scim from "./scim/Scim";
-import CheckBox from "../components/checkbox/CheckBox";
-import ClipBoardCopy from "../components/_redesign/ClipBoardCopy";
-import Stats from "./Stats";
-import PAM from "./pam/PAM";
-import ProxyLogin from "./proxy-login/ProxyLogin";
-import SyncApplications from "./SyncApplications";
+import Scim from "../scim/Scim";
+import CheckBox from "../../components/checkbox/CheckBox";
+import ClipBoardCopy from "../../components/_redesign/ClipBoardCopy";
+import Stats from "../stats/Stats";
+import PAM from "../pam/PAM";
+import ProxyLogin from "../proxy-login/ProxyLogin";
+import SyncApplications from "../sync-applications/SyncApplications";
 
 const options = [25, 50, 100, 150, 200, 250, 500].map(nbr => ({value: nbr, label: nbr}));
 

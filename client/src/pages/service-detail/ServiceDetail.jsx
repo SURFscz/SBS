@@ -28,7 +28,7 @@ import {setFlash} from "../../utils/Flash";
 import ServiceWelcomeDialog from "../../components/service-welcome-dialog/ServiceWelcomeDialog";
 import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
 import LastAdminWarning from "../../components/_redesign/LastAdminWarning";
-import ServiceOverview from "../ServiceOverview";
+import ServiceOverview from "../service-overview/ServiceOverview";
 import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
 import ServiceCollaborations from "../../components/_redesign/ServiceCollaborations";
 import {ButtonType} from "@surfnet/sds";

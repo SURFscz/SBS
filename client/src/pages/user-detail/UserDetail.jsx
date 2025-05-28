@@ -5,27 +5,27 @@ import {
     deleteOtherUser,
     findUserById,
     organisationNameById, reset2faOther
-} from "../api";
-import I18n from "../locale/I18n";
+} from "../../api";
+import I18n from "../../locale/I18n";
 import "./UserDetail.scss";
 
-import {AppStore} from "../stores/AppStore";
+import {AppStore} from "../../stores/AppStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import moment from "moment";
-import {filterAuditLogs} from "../utils/AuditLog";
-import InputField from "../components/input-field/InputField";
-import {isEmpty, stopEvent} from "../utils/Utils";
-import {ReactComponent as PersonIcon} from "../icons/personal_info.svg";
+import {filterAuditLogs} from "../../utils/AuditLog";
+import InputField from "../../components/input-field/InputField";
+import {isEmpty, stopEvent} from "../../utils/Utils";
+import {ReactComponent as PersonIcon} from "../../icons/personal_info.svg";
 
-import UnitHeader from "../components/_redesign/UnitHeader";
-import SpinnerField from "../components/_redesign/SpinnerField";
-import Tabs from "../components/tabs/Tabs";
-import Activity from "../components/activity/Activity";
-import UserDetailSshDialog from "./UserDetailSshDialog";
+import UnitHeader from "../../components/_redesign/UnitHeader";
+import SpinnerField from "../../components/_redesign/SpinnerField";
+import Tabs from "../../components/tabs/Tabs";
+import Activity from "../../components/activity/Activity";
+import UserDetailSshDialog from "../user-detail-ssh-dialog/UserDetailSshDialog";
 import {Link} from "react-router-dom";
-import Button from "../components/button/Button";
-import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
-import {isUserAllowed, ROLES} from "../utils/UserRole";
+import Button from "../../components/button/Button";
+import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
+import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import {Loader} from "@surfnet/sds";
 
 class UserDetail extends React.Component {

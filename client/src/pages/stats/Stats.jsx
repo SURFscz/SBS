@@ -1,11 +1,11 @@
 import React, {PureComponent, useEffect, useState} from "react";
 import "./Stats.scss";
-import "../components/_redesign/SpinnerField.scss";
-import {addMissingDateEntries, transformToRechartsData} from "../utils/Stats";
+import "../../components/_redesign/SpinnerField.scss";
+import {addMissingDateEntries, transformToRechartsData} from "../../utils/Stats";
 import {Loader} from "@surfnet/sds";
-import I18n from "../locale/I18n";
+import I18n from "../../locale/I18n";
 import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
-import {allStats} from "../api";
+import {allStats} from "../../api";
 
 class CustomizedAxisTick extends PureComponent {
   render() {
