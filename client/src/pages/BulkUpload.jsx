@@ -12,7 +12,7 @@ import {ReactComponent as AlertIcon} from "@surfnet/sds/icons/functional-icons/a
 import exampleCVS from '!!raw-loader!../schemas/bulk-import-example.csv';
 import Button from "../components/button/Button";
 import DOMPurify from "dompurify";
-import TabularData from "../components/TabularData";
+import TabularData from "../components/tabular-data/TabularData";
 import {invitationBulkUpload} from "../api";
 import SpinnerMarathonField from "../components/_redesign/SpinnerMarathonField";
 

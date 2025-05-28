@@ -14,7 +14,7 @@ import moment from "moment";
 import DOMPurify from "dompurify";
 import {ReactComponent as EditIcon} from "@surfnet/sds/icons/functional-icons/edit.svg";
 import {ReactComponent as TrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
-import UploadButton from "../components/UploadButton";
+import UploadButton from "../components/upload-button/UploadButton";
 import {dateFromEpoch} from "../utils/Date";
 
 class Me extends React.Component {

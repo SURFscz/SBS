@@ -1,9 +1,9 @@
 import React, {Fragment} from "react";
 import "./TabularData.scss";
-import I18n from "../locale/I18n";
+import I18n from "../../locale/I18n";
 import DOMPurify from "dompurify";
-import {isEmpty} from "../utils/Utils";
-import {dateColumns, requiredColumns} from "../utils/CSVParser";
+import {isEmpty} from "../../utils/Utils";
+import {dateColumns, requiredColumns} from "../../utils/CSVParser";
 import {Tooltip} from "@surfnet/sds";
 
 export default function TabularData({

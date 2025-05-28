@@ -54,7 +54,7 @@ import SelectField from "../components/select-field/SelectField";
 import {dateFromEpoch} from "../utils/Date";
 import {isUserServiceAdmin} from "../utils/UserRole";
 import {SAMLMetaData} from "../components/saml-metadata/SAMLMetaData";
-import UploadButton from "../components/UploadButton";
+import UploadButton from "../components/upload-button/UploadButton";
 
 const toc = ["general", "contacts", "policy", "SCIMServer", "SCIMClient", "ldap", "pamWebLogin", "tokens",
     "OIDC", "SAML", "Export"];
