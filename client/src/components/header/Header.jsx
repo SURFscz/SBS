@@ -1,9 +1,9 @@
 import React from "react";
 import "./Header.scss";
 import {Logo, LogoColor, LogoType} from "@surfnet/sds";
-import {UserMenu} from "./_redesign/UserMenu";
-import {stopEvent} from "../utils/Utils";
-import FeedbackDialog from "./Feedback";
+import {UserMenu} from "../_redesign/UserMenu";
+import {stopEvent} from "../../utils/Utils";
+import FeedbackDialog from "../feedback/Feedback";
 import {Link, withRouter} from "react-router-dom";
 
 class Header extends React.PureComponent {

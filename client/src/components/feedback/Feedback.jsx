@@ -1,10 +1,10 @@
 import React, {useEffect, useRef, useState} from "react";
 
-import I18n from "../locale/I18n";
+import I18n from "../../locale/I18n";
 import "./Feedback.scss";
-import {isEmpty} from "../utils/Utils";
-import {feedback} from "../api";
-import {setFlash} from "../utils/Flash";
+import {isEmpty} from "../../utils/Utils";
+import {feedback} from "../../api";
+import {setFlash} from "../../utils/Flash";
 import DOMPurify from "dompurify";
 import {AlertType, Modal} from "@surfnet/sds";
 

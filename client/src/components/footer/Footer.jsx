@@ -1,7 +1,7 @@
 import React from "react";
-import I18n from "../locale/I18n";
+import I18n from "../../locale/I18n";
 import "./Footer.scss"
-import LanguageSelector from "./LanguageSelector";
+import LanguageSelector from "../LanguageSelector";
 import {Logo, LogoType} from "@surfnet/sds";
 
 export default function Footer() {

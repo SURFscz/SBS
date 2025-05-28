@@ -1,5 +1,5 @@
 import React from "react";
-import I18n from "../locale/I18n";
+import I18n from "../../locale/I18n";
 import "./Explain.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 

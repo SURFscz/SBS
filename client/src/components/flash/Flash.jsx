@@ -1,7 +1,7 @@
 import React from "react";
-import {emitter} from "../utils/Events";
-import {clearFlash, getFlash} from "../utils/Flash";
-import {isEmpty} from "../utils/Utils";
+import {emitter} from "../../utils/Events";
+import {clearFlash, getFlash} from "../../utils/Flash";
+import {isEmpty} from "../../utils/Utils";
 import "./Flash.scss";
 import {Alert, AlertType, Toaster, ToasterContainer, ToasterType} from "@surfnet/sds";
 

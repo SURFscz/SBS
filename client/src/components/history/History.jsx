@@ -1,13 +1,13 @@
 import React from "react";
-import I18n from "../locale/I18n";
+import I18n from "../../locale/I18n";
 import "./History.scss";
 import "jsondiffpatch/dist/formatters-styles/html.css";
-import {auditLogsInfo, auditLogsMe} from "../api";
-import {AppStore} from "../stores/AppStore";
-import {getParameterByName} from "../utils/QueryParameters";
-import UnitHeader from "./_redesign/UnitHeader";
-import SpinnerField from "./_redesign/SpinnerField";
-import Activity from "./activity/Activity";
+import {auditLogsInfo, auditLogsMe} from "../../api";
+import {AppStore} from "../../stores/AppStore";
+import {getParameterByName} from "../../utils/QueryParameters";
+import UnitHeader from "../_redesign/UnitHeader";
+import SpinnerField from "../_redesign/SpinnerField";
+import Activity from "../activity/Activity";
 
 export default class History extends React.PureComponent {
 
