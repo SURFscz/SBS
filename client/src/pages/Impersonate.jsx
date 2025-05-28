@@ -4,7 +4,7 @@ import {searchCollaborations, searchOrganisations, searchUsers} from "../api";
 import I18n from "../locale/I18n";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import debounce from "lodash.debounce";
-import SelectField from "../components/SelectField";
+import SelectField from "../components/select-field/SelectField";
 import Autocomplete from "../components/autocomplete/Autocomplete";
 import Button from "../components/button/Button";
 import InputField from "../components/input-field/InputField";

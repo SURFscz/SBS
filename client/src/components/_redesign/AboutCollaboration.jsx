@@ -3,7 +3,7 @@ import I18n from "../../locale/I18n";
 import "./AboutCollaboration.scss";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import {CO_SHORT_NAME, SRAM_USERNAME, validUrlRegExp} from "../../validations/regExps";
-import ServiceCard from "../ServiceCard";
+import ServiceCard from "../service-card/ServiceCard";
 
 import {ReactComponent as WebsiteIcon} from "../../icons/network-information.svg";
 import {ReactComponent as EmailActionIcon} from "../../icons/streamline/email-action-unread.svg";

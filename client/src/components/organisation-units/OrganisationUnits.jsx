@@ -1,12 +1,12 @@
 import React, {useRef, useState} from "react";
 import "./OrganisationUnits.scss";
-import {isEmpty, splitListSemantically, stopEvent} from "../utils/Utils";
-import I18n from "../locale/I18n";
-import {unitUsage} from "../api";
-import ConfirmationDialog from "./confirmation-dialog/ConfirmationDialog";
+import {isEmpty, splitListSemantically, stopEvent} from "../../utils/Utils";
+import I18n from "../../locale/I18n";
+import {unitUsage} from "../../api";
+import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import {ReactComponent as TrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
-import ErrorIndicator from "./_redesign/ErrorIndicator";
-import SpinnerField from "./_redesign/SpinnerField";
+import ErrorIndicator from "../_redesign/ErrorIndicator";
+import SpinnerField from "../_redesign/SpinnerField";
 
 export const OrganisationUnits = ({units, setUnits, setDuplicated}) => {
 

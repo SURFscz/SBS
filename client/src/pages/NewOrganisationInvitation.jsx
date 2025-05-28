@@ -19,7 +19,7 @@ import {validEmailRegExp} from "../validations/regExps";
 import "./NewOrganisationInvitation.scss"
 import DateField from "../components/date-field/DateField";
 import {getParameterByName} from "../utils/QueryParameters";
-import SelectField from "../components/SelectField";
+import SelectField from "../components/select-field/SelectField";
 import {organisationRoles} from "../forms/constants";
 import UnitHeader from "../components/_redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";

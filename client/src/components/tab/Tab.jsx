@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-import {ReactComponent as AlertIcon} from "../icons/alert-circle.svg";
+import {ReactComponent as AlertIcon} from "../../icons/alert-circle.svg";
 import "./Tab.scss";
 import {BadgeNumber} from "@surfnet/sds";
 

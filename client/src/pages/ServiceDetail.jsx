@@ -11,7 +11,7 @@ import {
 } from "../api";
 import "./ServiceDetail.scss";
 import I18n from "../locale/I18n";
-import Tabs from "../components/Tabs";
+import Tabs from "../components/tabs/Tabs";
 import {ReactComponent as WebsiteIcon} from "../icons/network-information.svg";
 import {ReactComponent as ShortNameIcon} from "../icons/short-name.svg";
 import UnitHeader from "../components/_redesign/UnitHeader";
@@ -25,7 +25,7 @@ import ServiceConnectionRequests from "../components/_redesign/ServiceConnection
 import ServiceGroups from "../components/_redesign/ServiceGroups";
 import ServiceAdmins from "../components/_redesign/ServiceAdmins";
 import {setFlash} from "../utils/Flash";
-import ServiceWelcomeDialog from "../components/ServiceWelcomeDialog";
+import ServiceWelcomeDialog from "../components/service-welcome-dialog/ServiceWelcomeDialog";
 import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
 import LastAdminWarning from "../components/_redesign/LastAdminWarning";
 import ServiceOverview from "./ServiceOverview";

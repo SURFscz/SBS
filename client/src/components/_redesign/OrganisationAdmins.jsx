@@ -31,7 +31,7 @@ import {Chip, ChipType, Tooltip} from "@surfnet/sds";
 import InstituteColumn from "./InstituteColumn";
 import {expiryDateCustomSort, isEmpty, stopEvent, userColumnsCustomSort} from "../../utils/Utils";
 import {emitImpersonation} from "../../utils/Impersonation";
-import SelectField from "../SelectField";
+import SelectField from "../select-field/SelectField";
 import {InvitationsUnits} from "../invitation-units/InvitationsUnits";
 
 const INVITE_IDENTIFIER = "INVITE_IDENTIFIER";

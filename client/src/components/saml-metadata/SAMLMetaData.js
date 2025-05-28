@@ -1,7 +1,7 @@
 import React from "react";
 import "./SAMLMetaData.scss";
-import I18n from "../locale/I18n";
-import {isEmpty} from "../utils/Utils";
+import I18n from "../../locale/I18n";
+import {isEmpty} from "../../utils/Utils";
 
 export const SAMLMetaData = ({parsedSAMLMetaData}) => {
 

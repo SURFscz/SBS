@@ -7,7 +7,7 @@ import InputField from "../components/input-field/InputField";
 import Button from "../components/button/Button";
 import {isEmpty, scrollToBottom} from "../utils/Utils";
 import CheckBox from "../components/checkbox/CheckBox";
-import SelectField from "../components/SelectField";
+import SelectField from "../components/select-field/SelectField";
 
 export default function ProxyLogin({config}) {
 

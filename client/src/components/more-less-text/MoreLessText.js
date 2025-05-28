@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import "./MoreLessText.scss";
-import I18n from "../locale/I18n";
-import {isEmpty, stopEvent} from "../utils/Utils";
+import I18n from "../../locale/I18n";
+import {isEmpty, stopEvent} from "../../utils/Utils";
 
 export const MoreLessText = ({txt, initialShowMore = true}) => {
 

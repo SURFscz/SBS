@@ -1,7 +1,7 @@
 import React from "react";
 import "./CollaborationUnits.scss";
 import I18n from "../../locale/I18n";
-import SelectField from "../SelectField";
+import SelectField from "../select-field/SelectField";
 import {rawGlobalUserRole, ROLES} from "../../utils/UserRole";
 import {isEmpty} from "../../utils/Utils";
 

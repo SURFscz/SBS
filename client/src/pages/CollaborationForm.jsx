@@ -21,7 +21,7 @@ import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/confirmation-dialog/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {sanitizeShortName, sanitizeTagName, validEmailRegExp, validUrlRegExp} from "../validations/regExps";
-import SelectField from "../components/SelectField";
+import SelectField from "../components/select-field/SelectField";
 import {getParameterByName} from "../utils/QueryParameters";
 import CheckBox from "../components/checkbox/CheckBox";
 import UnitHeader from "../components/_redesign/UnitHeader";

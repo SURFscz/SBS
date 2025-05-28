@@ -32,10 +32,10 @@ import SpinnerField from "../components/_redesign/SpinnerField";
 import ErrorIndicator from "../components/_redesign/ErrorIndicator";
 import EmailField from "../components/email-field/EmailField";
 import RadioButtonGroup from "../components/_redesign/RadioButtonGroup";
-import SelectField from "../components/SelectField";
+import SelectField from "../components/select-field/SelectField";
 import UploadButton from "../components/UploadButton";
 import {chipTypeForStatus} from "../utils/UserRole";
-import {SAMLMetaData} from "../components/SAMLMetaData";
+import {SAMLMetaData} from "../components/saml-metadata/SAMLMetaData";
 
 const connectionTypes = ["openIDConnect", "saml2URL", "saml2File", "none"];
 

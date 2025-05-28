@@ -21,7 +21,7 @@ import {sanitizeShortName, validSchacHomeRegExp, validUrlRegExp} from "../valida
 import {AppStore} from "../stores/AppStore";
 import UnitHeader from "../components/_redesign/UnitHeader";
 import CroppedImageField from "../components/_redesign/CroppedImageField";
-import SelectField from "../components/SelectField";
+import SelectField from "../components/select-field/SelectField";
 import SpinnerField from "../components/_redesign/SpinnerField";
 
 import OrganisationOnBoarding from "../components/organisation-onboarding/OrganisationOnBoarding";
@@ -29,7 +29,7 @@ import ErrorIndicator from "../components/_redesign/ErrorIndicator";
 import CreatableField from "../components/creatable-field/CreatableField";
 import EmailField from "../components/email-field/EmailField";
 import CheckBox from "../components/checkbox/CheckBox";
-import {OrganisationUnits} from "../components/OrganisationUnits";
+import {OrganisationUnits} from "../components/organisation-units/OrganisationUnits";
 
 
 class OrganisationForm extends React.Component {

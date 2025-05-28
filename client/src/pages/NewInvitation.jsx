@@ -15,7 +15,7 @@ import {validEmailRegExp} from "../validations/regExps";
 import "./NewInvitation.scss"
 import DateField from "../components/date-field/DateField";
 import {collaborationRoles} from "../forms/constants";
-import SelectField from "../components/SelectField";
+import SelectField from "../components/select-field/SelectField";
 import {getParameterByName} from "../utils/QueryParameters";
 import {AppStore} from "../stores/AppStore";
 import UnitHeader from "../components/_redesign/UnitHeader";

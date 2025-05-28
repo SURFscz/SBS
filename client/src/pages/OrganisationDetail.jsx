@@ -8,7 +8,7 @@ import {
 import "./OrganisationDetail.scss";
 import I18n from "../locale/I18n";
 import {isEmpty, stopEvent} from "../utils/Utils";
-import Tabs from "../components/Tabs";
+import Tabs from "../components/tabs/Tabs";
 import UnitHeader from "../components/_redesign/UnitHeader";
 import OrganisationAdmins from "../components/_redesign/OrganisationAdmins";
 import {AppStore} from "../stores/AppStore";
@@ -17,7 +17,7 @@ import SpinnerField from "../components/_redesign/SpinnerField";
 import ApiKeys from "../components/_redesign/ApiKeys";
 import OrganisationServices from "../components/_redesign/OrganisationServices";
 import CollaborationRequests from "../components/_redesign/CollaborationRequests";
-import OrganisationWelcomeDialog from "../components/OrganisationWelcomeDialog";
+import OrganisationWelcomeDialog from "../components/organisation-welcome-dialog/OrganisationWelcomeDialog";
 import {actionMenuUserRole, isUserAllowed, ROLES} from "../utils/UserRole";
 import {getParameterByName} from "../utils/QueryParameters";
 import {setFlash} from "../utils/Flash";

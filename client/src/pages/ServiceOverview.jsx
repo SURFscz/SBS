@@ -50,10 +50,10 @@ import ErrorIndicator from "../components/_redesign/ErrorIndicator";
 import CroppedImageField from "../components/_redesign/CroppedImageField";
 import SpinnerField from "../components/_redesign/SpinnerField";
 import CheckBox from "../components/checkbox/CheckBox";
-import SelectField from "../components/SelectField";
+import SelectField from "../components/select-field/SelectField";
 import {dateFromEpoch} from "../utils/Date";
 import {isUserServiceAdmin} from "../utils/UserRole";
-import {SAMLMetaData} from "../components/SAMLMetaData";
+import {SAMLMetaData} from "../components/saml-metadata/SAMLMetaData";
 import UploadButton from "../components/UploadButton";
 
 const toc = ["general", "contacts", "policy", "SCIMServer", "SCIMClient", "ldap", "pamWebLogin", "tokens",

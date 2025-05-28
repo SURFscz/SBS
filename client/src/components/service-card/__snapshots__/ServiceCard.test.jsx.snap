@@ -1,0 +1,155 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ServiceCard matches snapshot with all props 1`] = `
+<DocumentFragment>
+  <div
+    class="sds--content-card "
+  >
+    <div
+      class="sds--content-card--main"
+    >
+      <div
+        class="sds--content-card--visual"
+      >
+        <div>
+          <img
+            alt=""
+            class=""
+            src="data:image/jpeg;base64,fake_logo_for_testing.png"
+          />
+        </div>
+      </div>
+      <div
+        class="sds--content-card--textual"
+      >
+        <div
+          class="sds--content-card--text-and-actions"
+        >
+          <div>
+            <h4
+              class="sds--space--bottom--1"
+            />
+            <p>
+              <span
+                class="more-less-txt description"
+              />
+            </p>
+          </div>
+          <div
+            class="sds--content-card--actions"
+          >
+            <div />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="sds--content-card--bottom"
+    >
+      <nav>
+        <ul>
+          <li>
+            <a
+              class="more-link"
+              href="/policies"
+            >
+              Policies & Support
+              <svg>
+                arrow-down-2.svg
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a
+              class="more-link"
+              href="/groups"
+            >
+              Application groups
+              <svg>
+                arrow-down-2.svg
+              </svg>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`ServiceCard matches snapshot with minimal props 1`] = `
+<DocumentFragment>
+  <div
+    class="sds--content-card "
+  >
+    <div
+      class="sds--content-card--main"
+    >
+      <div
+        class="sds--content-card--visual"
+      >
+        <div>
+          <img
+            alt=""
+            class=""
+            src="data:image/jpeg;base64,fake_logo_for_testing.png"
+          />
+        </div>
+      </div>
+      <div
+        class="sds--content-card--textual"
+      >
+        <div
+          class="sds--content-card--text-and-actions"
+        >
+          <div>
+            <h4
+              class="sds--space--bottom--1"
+            />
+            <p>
+              <span
+                class="more-less-txt description"
+              />
+            </p>
+          </div>
+          <div
+            class="sds--content-card--actions"
+          >
+            <div />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="sds--content-card--bottom"
+    >
+      <nav>
+        <ul>
+          <li>
+            <a
+              class="more-link"
+              href="/policies"
+            >
+              Policies & Support
+              <svg>
+                arrow-down-2.svg
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a
+              class="more-link"
+              href="/groups"
+            >
+              Application groups
+              <svg>
+                arrow-down-2.svg
+              </svg>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</DocumentFragment>
+`;

@@ -8,7 +8,7 @@ import Button from "../button/Button";
 import {ButtonType, Chip, MenuButton} from "@surfnet/sds";
 import {Link} from "react-router-dom";
 import I18n from "../../locale/I18n";
-import {MoreLessText} from "../MoreLessText";
+import {MoreLessText} from "../more-less-text/MoreLessText";
 
 class UnitHeader extends React.Component {
 

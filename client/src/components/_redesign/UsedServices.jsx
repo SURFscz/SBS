@@ -21,7 +21,7 @@ import Logo from "./Logo";
 import CheckBox from "../checkbox/CheckBox";
 import moment from "moment";
 import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
-import ServiceCard from "../ServiceCard";
+import ServiceCard from "../service-card/ServiceCard";
 
 const CONNECTIONS = "connections";
 

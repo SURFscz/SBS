@@ -4,7 +4,7 @@ import I18n from "../locale/I18n";
 import {ReactComponent as Logo} from "../icons/ram.svg";
 import {AppStore} from "../stores/AppStore";
 import {getUserRequests, isUserServiceAdmin, rawGlobalUserRole, ROLES} from "../utils/UserRole";
-import Tabs from "../components/Tabs";
+import Tabs from "../components/tabs/Tabs";
 import Organisations from "../components/_redesign/Organisations";
 import UnitHeader from "../components/_redesign/UnitHeader";
 import PlatformAdmins from "../components/_redesign/PlatformAdmins";

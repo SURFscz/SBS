@@ -4,7 +4,7 @@ import "./BulkUpload.scss";
 import {AppStore} from "../stores/AppStore";
 import {ReactComponent as CloudIcon} from "../icons/cloud-upload.svg";
 import UnitHeader from "../components/_redesign/UnitHeader";
-import Tabs from "../components/Tabs";
+import Tabs from "../components/tabs/Tabs";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import {headers, parseBulkInvitation} from "../utils/CSVParser";
 import {ReactComponent as SuccessIcon} from "@surfnet/sds/icons/functional-icons/success.svg";

@@ -19,7 +19,7 @@ import "./CollaborationDetail.scss";
 import I18n from "../locale/I18n";
 import {AppStore} from "../stores/AppStore";
 import UnitHeader from "../components/_redesign/UnitHeader";
-import Tabs from "../components/Tabs";
+import Tabs from "../components/tabs/Tabs";
 import {ReactComponent as MemberIcon} from "../icons/groups.svg";
 import {ReactComponent as TimerIcon} from "../icons/streamline/timer2.svg";
 import {ReactComponent as MemberStatusIcon} from "@surfnet/sds/icons/functional-icons/id-1.svg";

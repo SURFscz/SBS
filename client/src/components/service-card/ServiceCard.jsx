@@ -1,14 +1,14 @@
 import React, {useState} from "react";
 
 import "./ServiceCard.scss";
-import Logo from "./_redesign/Logo";
+import Logo from "../_redesign/Logo";
 import {Chip, ChipType, Loader} from "@surfnet/sds";
-import {MoreLessText} from "./MoreLessText";
+import {MoreLessText} from "../more-less-text/MoreLessText";
 import {ReactComponent as ArrowDown} from "@surfnet/sds/icons/functional-icons/arrow-down-2.svg";
 import {ReactComponent as ArrowUp} from "@surfnet/sds/icons/functional-icons/arrow-up-2.svg";
-import {isEmpty, stopEvent} from "../utils/Utils";
-import I18n from "../locale/I18n";
-import {serviceGroupsByServiceUuid4} from "../api";
+import {isEmpty, stopEvent} from "../../utils/Utils";
+import I18n from "../../locale/I18n";
+import {serviceGroupsByServiceUuid4} from "../../api";
 
 export default function ServiceCard({
                                         service,
