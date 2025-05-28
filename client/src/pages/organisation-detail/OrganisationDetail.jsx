@@ -27,7 +27,7 @@ import Users from "../../components/_redesign/Users";
 import {ButtonType} from "@surfnet/sds";
 import {isInvitationExpired} from "../../utils/Date";
 import ServiceConnectionRequests from "../../components/_redesign/ServiceConnectionRequests";
-import OrganisationOverview from "../OrganisationOverview";
+import OrganisationOverview from "../organisation-overview/OrganisationOverview";
 
 class OrganisationDetail extends React.Component {
 

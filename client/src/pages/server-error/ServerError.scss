@@ -1,0 +1,29 @@
+@import "../../stylesheets/vars";
+
+.mod-server-error {
+    max-width: $medium;
+    margin: 0 auto;
+    width: 100%;
+
+    .content {
+        margin: 0 auto 25px auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 15px;
+        p {
+            &.status {
+                font-family: "Courier New", serif;
+                margin: 15px 0;
+                font-weight: bold;
+            }
+        }
+        svg {
+            margin-top: 25px;
+            width: 480px;
+            height: auto;
+
+        }
+    }
+}

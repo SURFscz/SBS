@@ -954,7 +954,7 @@ class ServiceOverview extends React.Component {
                             <div className="scim-token-link">
                                 <span>{I18n.t(`service.scim_token.preTitle${service.has_scim_bearer_token ? "" : "NoToken"}`)}
                                     {(isAdmin || isServiceAdmin) &&
-                                        <a href="/scim"
+                                        <a href="/scim/Scim"
                                            onClick={e => {
                                                stopEvent(e);
                                                this.scimTokenChangeAction(true)

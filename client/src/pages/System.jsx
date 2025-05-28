@@ -57,12 +57,12 @@ import OrganisationsWithoutAdmin from "../components/_redesign/OrganisationsWith
 import ServicesWithoutAdmin from "../components/_redesign/ServicesWithoutAdmin";
 import {dateFromEpoch} from "../utils/Date";
 import DOMPurify from "dompurify";
-import Scim from "./Scim";
+import Scim from "./scim/Scim";
 import CheckBox from "../components/checkbox/CheckBox";
 import ClipBoardCopy from "../components/_redesign/ClipBoardCopy";
 import Stats from "./Stats";
-import PAM from "./PAM";
-import ProxyLogin from "./ProxyLogin";
+import PAM from "./pam/PAM";
+import ProxyLogin from "./proxy-login/ProxyLogin";
 import SyncApplications from "./SyncApplications";
 
 const options = [25, 50, 100, 150, 200, 250, 500].map(nbr => ({value: nbr, label: nbr}));
