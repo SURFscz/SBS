@@ -1,0 +1,685 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Login matches snapshot with custom description 1`] = `
+<DocumentFragment>
+  <div
+    class="top-container"
+  >
+    <div
+      class="mod-login-container"
+    >
+      <div
+        class="mod-login"
+      >
+        <div
+          class="header-left"
+        >
+          <h2
+            class="header-title"
+          >
+            Easy and secure access to research applications for research collaborations
+          </h2>
+          <button
+            class="sds--btn sds--btn--primary    "
+            type="button"
+          >
+            <span
+              class="textual"
+            >
+              Log in
+            </span>
+          </button>
+          <p
+            class="sup"
+          >
+            New to SURF Research Access Management? Log in and create a collaboration with your institution.
+          </p>
+        </div>
+        <div
+          class="header-right"
+        >
+          <img
+            alt="logo"
+            class=""
+            src="happy.svg"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      class="mod-login-container bottom"
+    >
+      <div
+        class="mod-login bottom"
+      >
+        <h1>
+          How does it work?
+        </h1>
+        <div
+          class="mod-login info reversed"
+        >
+          <div
+            class="header-left info"
+          >
+            <div
+              class="info-title"
+            >
+              <h2>
+                Create
+              </h2>
+              <div
+                class="admin-function-container"
+              >
+                <button
+                  class="sds--chips main-400"
+                >
+                  <span
+                    class="sds--chips--textual sds--text--body--small"
+                  >
+                    admin function
+                  </span>
+                </button>
+              </div>
+            </div>
+            <p />
+            <p>
+              Administrators create a collaboration page for their community.
+            </p>
+            <p>
+              They then select applications from the catalog to make them available to collaboration members.
+            </p>
+            <p />
+          </div>
+          <div
+            class="header-right info"
+          >
+            <img
+              alt="logo"
+              class="reversed"
+              src="sketch.svg"
+            />
+          </div>
+        </div>
+        <div
+          class="mod-login info "
+        >
+          <div
+            class="header-left info"
+          >
+            <div
+              class="info-title"
+            >
+              <h2>
+                Invite
+              </h2>
+              <div
+                class="admin-function-container"
+              >
+                <button
+                  class="sds--chips main-400"
+                >
+                  <span
+                    class="sds--chips--textual sds--text--body--small"
+                  >
+                    admin function
+                  </span>
+                </button>
+              </div>
+            </div>
+            <p />
+            <p>
+              Administrators invite fellow researchers to their collaboration page.
+            </p>
+            <p>
+              They can also ask other administrators to help manage the collaboration.
+            </p>
+            <p />
+          </div>
+          <div
+            class="header-right info"
+          >
+            <img
+              alt="logo"
+              class=""
+              src="mail.svg"
+            />
+          </div>
+        </div>
+        <div
+          class="mod-login info reversed"
+        >
+          <div
+            class="header-left info"
+          >
+            <div
+              class="info-title"
+            >
+              <h2>
+                Join
+              </h2>
+            </div>
+            <p />
+            <p>
+              Invited researchers join by logging in with their institutional account or eduID.nl.
+            </p>
+            <br />
+            <p />
+          </div>
+          <div
+            class="header-right info"
+          >
+            <img
+              alt="logo"
+              class="reversed"
+              src="screen.svg"
+            />
+          </div>
+        </div>
+        <div
+          class="mod-login info "
+        >
+          <div
+            class="header-left info"
+          >
+            <div
+              class="info-title"
+            >
+              <h2>
+                Collaborate
+              </h2>
+            </div>
+            <p />
+            <p>
+              The secured collaboration page shows its members and gives access to the research applications.
+            </p>
+            <p />
+          </div>
+          <div
+            class="header-right info"
+          >
+            <img
+              alt="logo"
+              class=""
+              src="collaborate.svg"
+            />
+          </div>
+        </div>
+        <div
+          class="landing-footer"
+        >
+          <p />
+          <p>
+            SURF Research Access Management is a service for access management of Dutch led research collaborations.
+          </p>
+          <p>
+            Do you want to know more? Please visit 
+            <a
+              href="https://surf.nl/en/sram"
+            >
+              https://surf.nl/en/sram
+            </a>
+            .
+          </p>
+          <p />
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Login matches snapshot with custom title 1`] = `
+<DocumentFragment>
+  <div
+    class="top-container"
+  >
+    <div
+      class="mod-login-container"
+    >
+      <div
+        class="mod-login"
+      >
+        <div
+          class="header-left"
+        >
+          <h2
+            class="header-title"
+          >
+            Easy and secure access to research applications for research collaborations
+          </h2>
+          <button
+            class="sds--btn sds--btn--primary    "
+            type="button"
+          >
+            <span
+              class="textual"
+            >
+              Log in
+            </span>
+          </button>
+          <p
+            class="sup"
+          >
+            New to SURF Research Access Management? Log in and create a collaboration with your institution.
+          </p>
+        </div>
+        <div
+          class="header-right"
+        >
+          <img
+            alt="logo"
+            class=""
+            src="happy.svg"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      class="mod-login-container bottom"
+    >
+      <div
+        class="mod-login bottom"
+      >
+        <h1>
+          How does it work?
+        </h1>
+        <div
+          class="mod-login info reversed"
+        >
+          <div
+            class="header-left info"
+          >
+            <div
+              class="info-title"
+            >
+              <h2>
+                Create
+              </h2>
+              <div
+                class="admin-function-container"
+              >
+                <button
+                  class="sds--chips main-400"
+                >
+                  <span
+                    class="sds--chips--textual sds--text--body--small"
+                  >
+                    admin function
+                  </span>
+                </button>
+              </div>
+            </div>
+            <p />
+            <p>
+              Administrators create a collaboration page for their community.
+            </p>
+            <p>
+              They then select applications from the catalog to make them available to collaboration members.
+            </p>
+            <p />
+          </div>
+          <div
+            class="header-right info"
+          >
+            <img
+              alt="logo"
+              class="reversed"
+              src="sketch.svg"
+            />
+          </div>
+        </div>
+        <div
+          class="mod-login info "
+        >
+          <div
+            class="header-left info"
+          >
+            <div
+              class="info-title"
+            >
+              <h2>
+                Invite
+              </h2>
+              <div
+                class="admin-function-container"
+              >
+                <button
+                  class="sds--chips main-400"
+                >
+                  <span
+                    class="sds--chips--textual sds--text--body--small"
+                  >
+                    admin function
+                  </span>
+                </button>
+              </div>
+            </div>
+            <p />
+            <p>
+              Administrators invite fellow researchers to their collaboration page.
+            </p>
+            <p>
+              They can also ask other administrators to help manage the collaboration.
+            </p>
+            <p />
+          </div>
+          <div
+            class="header-right info"
+          >
+            <img
+              alt="logo"
+              class=""
+              src="mail.svg"
+            />
+          </div>
+        </div>
+        <div
+          class="mod-login info reversed"
+        >
+          <div
+            class="header-left info"
+          >
+            <div
+              class="info-title"
+            >
+              <h2>
+                Join
+              </h2>
+            </div>
+            <p />
+            <p>
+              Invited researchers join by logging in with their institutional account or eduID.nl.
+            </p>
+            <br />
+            <p />
+          </div>
+          <div
+            class="header-right info"
+          >
+            <img
+              alt="logo"
+              class="reversed"
+              src="screen.svg"
+            />
+          </div>
+        </div>
+        <div
+          class="mod-login info "
+        >
+          <div
+            class="header-left info"
+          >
+            <div
+              class="info-title"
+            >
+              <h2>
+                Collaborate
+              </h2>
+            </div>
+            <p />
+            <p>
+              The secured collaboration page shows its members and gives access to the research applications.
+            </p>
+            <p />
+          </div>
+          <div
+            class="header-right info"
+          >
+            <img
+              alt="logo"
+              class=""
+              src="collaborate.svg"
+            />
+          </div>
+        </div>
+        <div
+          class="landing-footer"
+        >
+          <p />
+          <p>
+            SURF Research Access Management is a service for access management of Dutch led research collaborations.
+          </p>
+          <p>
+            Do you want to know more? Please visit 
+            <a
+              href="https://surf.nl/en/sram"
+            >
+              https://surf.nl/en/sram
+            </a>
+            .
+          </p>
+          <p />
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Login matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="top-container"
+  >
+    <div
+      class="mod-login-container"
+    >
+      <div
+        class="mod-login"
+      >
+        <div
+          class="header-left"
+        >
+          <h2
+            class="header-title"
+          >
+            Easy and secure access to research applications for research collaborations
+          </h2>
+          <button
+            class="sds--btn sds--btn--primary    "
+            type="button"
+          >
+            <span
+              class="textual"
+            >
+              Log in
+            </span>
+          </button>
+          <p
+            class="sup"
+          >
+            New to SURF Research Access Management? Log in and create a collaboration with your institution.
+          </p>
+        </div>
+        <div
+          class="header-right"
+        >
+          <img
+            alt="logo"
+            class=""
+            src="happy.svg"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      class="mod-login-container bottom"
+    >
+      <div
+        class="mod-login bottom"
+      >
+        <h1>
+          How does it work?
+        </h1>
+        <div
+          class="mod-login info reversed"
+        >
+          <div
+            class="header-left info"
+          >
+            <div
+              class="info-title"
+            >
+              <h2>
+                Create
+              </h2>
+              <div
+                class="admin-function-container"
+              >
+                <button
+                  class="sds--chips main-400"
+                >
+                  <span
+                    class="sds--chips--textual sds--text--body--small"
+                  >
+                    admin function
+                  </span>
+                </button>
+              </div>
+            </div>
+            <p />
+            <p>
+              Administrators create a collaboration page for their community.
+            </p>
+            <p>
+              They then select applications from the catalog to make them available to collaboration members.
+            </p>
+            <p />
+          </div>
+          <div
+            class="header-right info"
+          >
+            <img
+              alt="logo"
+              class="reversed"
+              src="sketch.svg"
+            />
+          </div>
+        </div>
+        <div
+          class="mod-login info "
+        >
+          <div
+            class="header-left info"
+          >
+            <div
+              class="info-title"
+            >
+              <h2>
+                Invite
+              </h2>
+              <div
+                class="admin-function-container"
+              >
+                <button
+                  class="sds--chips main-400"
+                >
+                  <span
+                    class="sds--chips--textual sds--text--body--small"
+                  >
+                    admin function
+                  </span>
+                </button>
+              </div>
+            </div>
+            <p />
+            <p>
+              Administrators invite fellow researchers to their collaboration page.
+            </p>
+            <p>
+              They can also ask other administrators to help manage the collaboration.
+            </p>
+            <p />
+          </div>
+          <div
+            class="header-right info"
+          >
+            <img
+              alt="logo"
+              class=""
+              src="mail.svg"
+            />
+          </div>
+        </div>
+        <div
+          class="mod-login info reversed"
+        >
+          <div
+            class="header-left info"
+          >
+            <div
+              class="info-title"
+            >
+              <h2>
+                Join
+              </h2>
+            </div>
+            <p />
+            <p>
+              Invited researchers join by logging in with their institutional account or eduID.nl.
+            </p>
+            <br />
+            <p />
+          </div>
+          <div
+            class="header-right info"
+          >
+            <img
+              alt="logo"
+              class="reversed"
+              src="screen.svg"
+            />
+          </div>
+        </div>
+        <div
+          class="mod-login info "
+        >
+          <div
+            class="header-left info"
+          >
+            <div
+              class="info-title"
+            >
+              <h2>
+                Collaborate
+              </h2>
+            </div>
+            <p />
+            <p>
+              The secured collaboration page shows its members and gives access to the research applications.
+            </p>
+            <p />
+          </div>
+          <div
+            class="header-right info"
+          >
+            <img
+              alt="logo"
+              class=""
+              src="collaborate.svg"
+            />
+          </div>
+        </div>
+        <div
+          class="landing-footer"
+        >
+          <p />
+          <p>
+            SURF Research Access Management is a service for access management of Dutch led research collaborations.
+          </p>
+          <p>
+            Do you want to know more? Please visit 
+            <a
+              href="https://surf.nl/en/sram"
+            >
+              https://surf.nl/en/sram
+            </a>
+            .
+          </p>
+          <p />
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MissingAttributes matches snapshot with custom attributes 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-missing-attributes"
+  >
+    <div
+      class="content"
+    >
+      <p>
+        Something went wrong, we didn't receive all the required login information. Please try logging in again, if possible using a incognito browser window.
+      </p>
+      <div
+        class="image-container"
+      >
+        <img
+          alt="No Access"
+          class="no-access"
+          src="undraw_access_denied_re_awnf.svg"
+        />
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`MissingAttributes matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-missing-attributes"
+  >
+    <div
+      class="content"
+    >
+      <p>
+        Something went wrong, we didn't receive all the required login information. Please try logging in again, if possible using a incognito browser window.
+      </p>
+      <div
+        class="image-container"
+      >
+        <img
+          alt="No Access"
+          class="no-access"
+          src="undraw_access_denied_re_awnf.svg"
+        />
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

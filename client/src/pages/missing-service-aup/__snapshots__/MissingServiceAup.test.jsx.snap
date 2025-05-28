@@ -1,0 +1,115 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MissingServiceAup renders and matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-missing-service-aup"
+  >
+    <h1>
+      Review the information in order to continue
+    </h1>
+    <p
+      class="info"
+    >
+      The application acceptable use policy (AUP) has changed. Please read it and indicate below whether you accept.
+    </p>
+    <div
+      class="collaboration-detail"
+    >
+      <h3>
+        Purpose of 
+        <strong>
+          Collab 1
+        </strong>
+      </h3>
+      <p>
+        Description 1
+      </p>
+    </div>
+    <h3>
+      Information about the application
+    </h3>
+    <div
+      class="mod-aup-services"
+    >
+      <div
+        class="services"
+      >
+        <div
+          class="service-section"
+        >
+          <table>
+            <thead />
+            <tbody>
+              <tr>
+                <td
+                  class="logo"
+                />
+                <td
+                  class="service-detail"
+                >
+                  <div
+                    class="service"
+                  >
+                    <span
+                      class="service-name"
+                    >
+                      Service 1
+                    </span>
+                    <div
+                      class="policies"
+                    >
+                      <div
+                        class="policy"
+                      >
+                        <span
+                          class="no-link"
+                        >
+                          No AUP provided
+                        </span>
+                      </div>
+                      <div
+                        class="policy"
+                      >
+                        <span
+                          class="no-link"
+                        >
+                          No privacy policy provided
+                        </span>
+                      </div>
+                      <div
+                        class="policy contact"
+                      >
+                        <span
+                          class="no-link"
+                        >
+                          No contact provided
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div
+      class="actions"
+    >
+      <button
+        class="sds--btn sds--btn--primary  sds--btn--full  "
+        disabled=""
+        type="button"
+      >
+        <span
+          class="textual"
+        >
+          Onwards
+        </span>
+      </button>
+    </div>
+  </div>
+</DocumentFragment>
+`;

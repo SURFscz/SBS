@@ -5,7 +5,7 @@ import {AppStore} from "../stores/AppStore";
 import {ReactComponent as PersonIcon} from "../icons/single-neutral-check.svg";
 
 import UnitHeader from "../components/_redesign/UnitHeader";
-import Me from "./Me";
+import Me from "./me/Me";
 import Tabs from "../components/tabs/Tabs";
 import {auditLogsMe} from "../api";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
