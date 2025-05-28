@@ -1,12 +1,12 @@
 import React from "react";
-import I18n from "../locale/I18n";
+import I18n from "../../locale/I18n";
 import PropTypes from "prop-types";
 import ReactMde from "react-mde";
 import "./OrganisationOnBoarding.scss";
 import "react-mde/lib/styles/css/react-mde-all.css";
-import {convertToHtml} from "../utils/Markdown";
+import {convertToHtml} from "../../utils/Markdown";
 import {Tooltip} from "@surfnet/sds";
-import {isEmpty} from "../utils/Utils";
+import {isEmpty} from "../../utils/Utils";
 
 export default class OrganisationOnBoarding extends React.Component {
 

@@ -1,6 +1,6 @@
-@import "../stylesheets/vars.scss";
-@import "../stylesheets/input_field.scss";
-@import "../stylesheets/mde_preview.scss";
+@import "../../stylesheets/vars";
+@import "../../stylesheets/input_field";
+@import "../../stylesheets/mde_preview";
 
 div.organisation-onboarding {
   @include input-field;

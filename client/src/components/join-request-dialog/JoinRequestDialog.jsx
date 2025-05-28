@@ -9,7 +9,7 @@ import {Modal} from "@surfnet/sds";
 import RadioButtonGroup from "../_redesign/RadioButtonGroup";
 import DOMPurify from "dompurify";
 import CollaborationAupAcceptance from "../collaboration-aup-acceptance/CollaborationAupAcceptance";
-import OrganisationAupAcceptance from "../OrganisationAupAcceptance";
+import OrganisationAupAcceptance from "../organisation-aup-acceptance/OrganisationAupAcceptance";
 import {aupData} from "../../utils/Aups";
 
 export default class JoinRequestDialog extends React.Component {

@@ -5,7 +5,7 @@ import "../WelcomeDialog.scss";
 import "../_welcome/welcome.scss";
 import {ROLES} from "../../utils/UserRole";
 import CollaborationAupAcceptance from "../collaboration-aup-acceptance/CollaborationAupAcceptance";
-import OrganisationAupAcceptance from "../OrganisationAupAcceptance";
+import OrganisationAupAcceptance from "../organisation-aup-acceptance/OrganisationAupAcceptance";
 import {aupData} from "../../utils/Aups";
 
 export default function CollaborationWelcomeDialog({

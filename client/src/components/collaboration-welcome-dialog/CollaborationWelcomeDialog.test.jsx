@@ -8,7 +8,7 @@ jest.mock("../../locale/I18n", () => ({
 jest.mock("../collaboration-aup-acceptance/CollaborationAupAcceptance", () => props => (
     <div data-testid="collab-aup-acceptance">{props.children}</div>
 ));
-jest.mock("../OrganisationAupAcceptance", () => () => (
+jest.mock("../organisation-aup-acceptance/OrganisationAupAcceptance", () => () => (
     <div data-testid="org-aup-acceptance"/>
 ));
 jest.mock("../../utils/Aups", () => ({

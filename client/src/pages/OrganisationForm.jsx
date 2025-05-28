@@ -24,7 +24,7 @@ import CroppedImageField from "../components/_redesign/CroppedImageField";
 import SelectField from "../components/SelectField";
 import SpinnerField from "../components/_redesign/SpinnerField";
 
-import OrganisationOnBoarding from "../components/OrganisationOnBoarding";
+import OrganisationOnBoarding from "../components/organisation-onboarding/OrganisationOnBoarding";
 import ErrorIndicator from "../components/_redesign/ErrorIndicator";
 import CreatableField from "../components/creatable-field/CreatableField";
 import EmailField from "../components/email-field/EmailField";

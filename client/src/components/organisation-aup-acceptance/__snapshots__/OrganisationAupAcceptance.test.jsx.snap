@@ -1,0 +1,231 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OrganisationAupAcceptance matches snapshot with custom props 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-aup-organisation"
+  >
+    <h4
+      class="aup-services"
+    >
+      Organisation AUP
+    </h4>
+    <p
+      class="aup-info"
+    >
+      You are not a member of organisation 
+      <strong>
+        Test Organisation
+      </strong>
+      . Before you can continue you must review the AUP of this organisation. Confirm below whether you accept it.
+    </p>
+    <p />
+    <div
+      class="organisation-section"
+    >
+      <table>
+        <thead />
+        <tbody>
+          <tr>
+            <td
+              class="logo"
+            />
+            <td
+              class="organisation-detail"
+            >
+              <div
+                class="organisation"
+              >
+                <span
+                  class="organisation-name"
+                >
+                  Test Organisation
+                </span>
+                <div
+                  class="policies"
+                >
+                  <div
+                    class="border-right"
+                  >
+                    <span
+                      class="no-link"
+                    >
+                      No AUP provided
+                    </span>
+                  </div>
+                  <div
+                    class="contact"
+                  >
+                    <a
+                      href="mailto:example@example.com"
+                      rel="noopener noreferrer"
+                    >
+                      <span>
+                        Icon
+                      </span>
+                      <span>
+                        Contact
+                      </span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div
+      class="terms"
+    >
+      <div
+        class="sds--checkbox-container sds--tooltip-parent checkbox "
+      >
+        <input
+          checked=""
+          id="aup-organisation"
+          type="checkbox"
+        />
+        <label
+          for="aup-organisation"
+        >
+          <span
+            class="sds--checkbox--visual"
+          >
+            <svg
+              height="11.9"
+              viewBox="0 0 13.6 11.9"
+              width="13.6"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m11.9.4-7 9.6-3.3-3.2c-.4-.4-1-.4-1.3 0-.4.4-.4 1 0 1.3l3.2 3.2q.6.6 1.5.6c.9 0 1.1-.3 1.4-.8l7.1-9.6c.3-.4.2-1-.2-1.3-.5-.3-1.1-.2-1.4.2"
+              />
+            </svg>
+          </span>
+          <span
+            class="checkbox--text"
+          >
+            I agree to the organisation acceptable use policy
+          </span>
+        </label>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`OrganisationAupAcceptance matches snapshot with default render 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-aup-organisation"
+  >
+    <h4
+      class="aup-services"
+    >
+      Organisation AUP
+    </h4>
+    <p
+      class="aup-info"
+    >
+      You are not a member of organisation 
+      <strong>
+        Test Organisation
+      </strong>
+      . Before you can continue you must review the AUP of this organisation. Confirm below whether you accept it.
+    </p>
+    <p />
+    <div
+      class="organisation-section"
+    >
+      <table>
+        <thead />
+        <tbody>
+          <tr>
+            <td
+              class="logo"
+            />
+            <td
+              class="organisation-detail"
+            >
+              <div
+                class="organisation"
+              >
+                <span
+                  class="organisation-name"
+                >
+                  Test Organisation
+                </span>
+                <div
+                  class="policies"
+                >
+                  <div
+                    class="border-right"
+                  >
+                    <span
+                      class="no-link"
+                    >
+                      No AUP provided
+                    </span>
+                  </div>
+                  <div
+                    class="contact"
+                  >
+                    <a
+                      href="mailto:example@example.com"
+                      rel="noopener noreferrer"
+                    >
+                      <span>
+                        Icon
+                      </span>
+                      <span>
+                        Contact
+                      </span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div
+      class="terms"
+    >
+      <div
+        class="sds--checkbox-container sds--tooltip-parent checkbox "
+      >
+        <input
+          checked=""
+          id="aup-organisation"
+          type="checkbox"
+        />
+        <label
+          for="aup-organisation"
+        >
+          <span
+            class="sds--checkbox--visual"
+          >
+            <svg
+              height="11.9"
+              viewBox="0 0 13.6 11.9"
+              width="13.6"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m11.9.4-7 9.6-3.3-3.2c-.4-.4-1-.4-1.3 0-.4.4-.4 1 0 1.3l3.2 3.2q.6.6 1.5.6c.9 0 1.1-.3 1.4-.8l7.1-9.6c.3-.4.2-1-.2-1.3-.5-.3-1.1-.2-1.4.2"
+              />
+            </svg>
+          </span>
+          <span
+            class="checkbox--text"
+          >
+            I agree to the organisation acceptable use policy
+          </span>
+        </label>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

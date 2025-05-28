@@ -1,0 +1,398 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OrganisationTags matches snapshot with custom tags 1`] = `
+<DocumentFragment>
+  <div
+    class="organisation-tags sds--text-field "
+  >
+    <label>
+      Label name
+    </label>
+    <label>
+      Default for
+    </label>
+    <input
+      class="sds--text-field--input"
+      type="text"
+      value="tag1"
+    />
+    <div
+      class="input-units-inner css-b62m3t-container"
+    >
+      <span
+        class="css-1f43avz-a11yText-A11yText"
+        id="react-select-3-live-region"
+      />
+      <span
+        aria-atomic="false"
+        aria-live="polite"
+        aria-relevant="additions text"
+        class="css-1f43avz-a11yText-A11yText"
+        role="log"
+      />
+      <div
+        class="units-inner__control css-13cymwt-control"
+      >
+        <div
+          class="units-inner__value-container units-inner__value-container--is-multi css-hlgwow"
+        >
+          <div
+            class="units-inner__placeholder css-1jqq78o-placeholder"
+            id="react-select-3-placeholder"
+          >
+            All collaborations in all units
+          </div>
+          <input
+            aria-activedescendant=""
+            aria-autocomplete="list"
+            aria-describedby="react-select-3-placeholder"
+            aria-expanded="false"
+            aria-haspopup="true"
+            aria-readonly="true"
+            class="css-1s80ejz-dummyInput-DummyInput"
+            id="react-select-3-input"
+            inputmode="none"
+            role="combobox"
+            tabindex="0"
+            value=""
+          />
+        </div>
+        <div
+          class="units-inner__indicators css-1wy0on6"
+        >
+          <span
+            class="units-inner__indicator-separator css-1u9des2-indicatorSeparator"
+          />
+          <div
+            aria-hidden="true"
+            class="units-inner__indicator units-inner__dropdown-indicator css-1xc3v61-indicatorContainer"
+          >
+            <svg
+              aria-hidden="true"
+              class="css-tj5bde-Svg"
+              focusable="false"
+              height="20"
+              viewBox="0 0 20 20"
+              width="20"
+            >
+              <path
+                d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="input-field-link input-field-delete"
+    >
+      <a
+        href="#"
+      >
+        <svg>
+          bin.svg
+        </svg>
+      </a>
+    </div>
+    <input
+      class="sds--text-field--input"
+      type="text"
+      value="tag2"
+    />
+    <div
+      class="input-units-inner css-b62m3t-container"
+    >
+      <span
+        class="css-1f43avz-a11yText-A11yText"
+        id="react-select-4-live-region"
+      />
+      <span
+        aria-atomic="false"
+        aria-live="polite"
+        aria-relevant="additions text"
+        class="css-1f43avz-a11yText-A11yText"
+        role="log"
+      />
+      <div
+        class="units-inner__control css-13cymwt-control"
+      >
+        <div
+          class="units-inner__value-container units-inner__value-container--is-multi css-hlgwow"
+        >
+          <div
+            class="units-inner__placeholder css-1jqq78o-placeholder"
+            id="react-select-4-placeholder"
+          >
+            All collaborations in all units
+          </div>
+          <input
+            aria-activedescendant=""
+            aria-autocomplete="list"
+            aria-describedby="react-select-4-placeholder"
+            aria-expanded="false"
+            aria-haspopup="true"
+            aria-readonly="true"
+            class="css-1s80ejz-dummyInput-DummyInput"
+            id="react-select-4-input"
+            inputmode="none"
+            role="combobox"
+            tabindex="0"
+            value=""
+          />
+        </div>
+        <div
+          class="units-inner__indicators css-1wy0on6"
+        >
+          <span
+            class="units-inner__indicator-separator css-1u9des2-indicatorSeparator"
+          />
+          <div
+            aria-hidden="true"
+            class="units-inner__indicator units-inner__dropdown-indicator css-1xc3v61-indicatorContainer"
+          >
+            <svg
+              aria-hidden="true"
+              class="css-tj5bde-Svg"
+              focusable="false"
+              height="20"
+              viewBox="0 0 20 20"
+              width="20"
+            >
+              <path
+                d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="input-field-link input-field-delete"
+    >
+      <a
+        href="#"
+      >
+        <svg>
+          bin.svg
+        </svg>
+      </a>
+    </div>
+    <a
+      class="add-tag"
+      href="#"
+    >
+      + Add label
+    </a>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`OrganisationTags matches snapshot with default render 1`] = `
+<DocumentFragment>
+  <div
+    class="organisation-tags sds--text-field "
+  >
+    <label>
+      Label name
+    </label>
+    <label>
+      Default for
+    </label>
+    <input
+      class="sds--text-field--input"
+      type="text"
+      value="randomTag"
+    />
+    <div
+      class="input-units-inner css-b62m3t-container"
+    >
+      <span
+        class="css-1f43avz-a11yText-A11yText"
+        id="react-select-2-live-region"
+      />
+      <span
+        aria-atomic="false"
+        aria-live="polite"
+        aria-relevant="additions text"
+        class="css-1f43avz-a11yText-A11yText"
+        role="log"
+      />
+      <div
+        class="units-inner__control css-13cymwt-control"
+      >
+        <div
+          class="units-inner__value-container units-inner__value-container--is-multi css-hlgwow"
+        >
+          <div
+            class="units-inner__placeholder css-1jqq78o-placeholder"
+            id="react-select-2-placeholder"
+          >
+            All collaborations in all units
+          </div>
+          <input
+            aria-activedescendant=""
+            aria-autocomplete="list"
+            aria-describedby="react-select-2-placeholder"
+            aria-expanded="false"
+            aria-haspopup="true"
+            aria-readonly="true"
+            class="css-1s80ejz-dummyInput-DummyInput"
+            id="react-select-2-input"
+            inputmode="none"
+            role="combobox"
+            tabindex="0"
+            value=""
+          />
+        </div>
+        <div
+          class="units-inner__indicators css-1wy0on6"
+        >
+          <span
+            class="units-inner__indicator-separator css-1u9des2-indicatorSeparator"
+          />
+          <div
+            aria-hidden="true"
+            class="units-inner__indicator units-inner__dropdown-indicator css-1xc3v61-indicatorContainer"
+          >
+            <svg
+              aria-hidden="true"
+              class="css-tj5bde-Svg"
+              focusable="false"
+              height="20"
+              viewBox="0 0 20 20"
+              width="20"
+            >
+              <path
+                d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="input-field-link input-field-delete"
+    >
+      <a
+        href="#"
+      >
+        <svg>
+          bin.svg
+        </svg>
+      </a>
+    </div>
+    <a
+      class="add-tag"
+      href="#"
+    >
+      + Add label
+    </a>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`OrganisationTags matches snapshot with empty tags 1`] = `
+<DocumentFragment>
+  <div
+    class="organisation-tags sds--text-field "
+  >
+    <label>
+      Label name
+    </label>
+    <label>
+      Default for
+    </label>
+    <input
+      class="sds--text-field--input"
+      type="text"
+      value=""
+    />
+    <div
+      class="input-units-inner units-inner--is-disabled css-3iigni-container"
+    >
+      <span
+        class="css-1f43avz-a11yText-A11yText"
+        id="react-select-5-live-region"
+      />
+      <span
+        aria-atomic="false"
+        aria-live="polite"
+        aria-relevant="additions text"
+        class="css-1f43avz-a11yText-A11yText"
+        role="log"
+      />
+      <div
+        aria-disabled="true"
+        class="units-inner__control units-inner__control--is-disabled css-16xfy0z-control"
+      >
+        <div
+          class="units-inner__value-container units-inner__value-container--is-multi css-hlgwow"
+        >
+          <div
+            class="units-inner__placeholder css-1jqq78o-placeholder"
+            id="react-select-5-placeholder"
+          >
+            All collaborations in all units
+          </div>
+          <input
+            aria-activedescendant=""
+            aria-autocomplete="list"
+            aria-describedby="react-select-5-placeholder"
+            aria-expanded="false"
+            aria-haspopup="true"
+            aria-readonly="true"
+            class="css-1s80ejz-dummyInput-DummyInput"
+            disabled=""
+            id="react-select-5-input"
+            inputmode="none"
+            role="combobox"
+            tabindex="0"
+            value=""
+          />
+        </div>
+        <div
+          class="units-inner__indicators css-1wy0on6"
+        >
+          <span
+            class="units-inner__indicator-separator css-894a34-indicatorSeparator"
+          />
+          <div
+            aria-hidden="true"
+            class="units-inner__indicator units-inner__dropdown-indicator css-1xc3v61-indicatorContainer"
+          >
+            <svg
+              aria-hidden="true"
+              class="css-tj5bde-Svg"
+              focusable="false"
+              height="20"
+              viewBox="0 0 20 20"
+              width="20"
+            >
+              <path
+                d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="input-field-link input-field-delete"
+    >
+      <a
+        href="#"
+      >
+        <svg>
+          bin.svg
+        </svg>
+      </a>
+    </div>
+    <a
+      class="add-tag"
+      href="#"
+    >
+      + Add label
+    </a>
+  </div>
+</DocumentFragment>
+`;

@@ -21,8 +21,8 @@ import SelectField from "../components/SelectField";
 import CheckBox from "../components/checkbox/CheckBox";
 import CreatableField from "../components/creatable-field/CreatableField";
 import CroppedImageField from "../components/_redesign/CroppedImageField";
-import {OrganisationTags} from "../components/OrganisationTags";
-import OrganisationOnBoarding from "../components/OrganisationOnBoarding";
+import {OrganisationTags} from "../components/organisation-tags/OrganisationTags";
+import OrganisationOnBoarding from "../components/organisation-onboarding/OrganisationOnBoarding";
 
 const toc = ["about", "units", "labels", "messaging", "settings"];
 
