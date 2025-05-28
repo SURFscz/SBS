@@ -22,7 +22,7 @@ import UnitHeader from "../../components/_redesign/UnitHeader";
 import SpinnerField from "../../components/_redesign/SpinnerField";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import EmailField from "../../components/email-field/EmailField";
-import ErrorIndicator from "../../components/_redesign/ErrorIndicator";
+import ErrorIndicator from "../../components/_redesign/error-indicator/ErrorIndicator";
 
 class NewInvitation extends React.Component {
 

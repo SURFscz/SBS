@@ -1,6 +1,6 @@
 import React from "react";
 import "./ErrorIndicator.scss";
-import {ReactComponent as CriticalIcon} from "../../icons/critical.svg";
+import {ReactComponent as CriticalIcon} from "../../../icons/critical.svg";
 import DOMPurify from "dompurify";
 
 export default function ErrorIndicator({

@@ -8,7 +8,7 @@ import {ReactComponent as PlatformAdminIcon} from "../../icons/users.svg";
 import "./PlatformAdmins.scss";
 import UserColumn from "./UserColumn";
 import {Tooltip} from "@surfnet/sds";
-import InstituteColumn from "./InstituteColumn";
+import InstituteColumn from "./institute-column/InstituteColumn";
 import {stopEvent} from "../../utils/Utils";
 
 

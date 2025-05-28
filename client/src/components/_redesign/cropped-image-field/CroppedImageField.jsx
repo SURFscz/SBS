@@ -9,7 +9,7 @@ import Logo from "../Logo";
 import Button from "../../button/Button";
 import CroppedImageDialog from "../cropped-image-dialog/CroppedImageDialog";
 import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
-import ErrorIndicator from "../ErrorIndicator";
+import ErrorIndicator from "../error-indicator/ErrorIndicator";
 
 export default class CroppedImageField extends React.PureComponent {
 

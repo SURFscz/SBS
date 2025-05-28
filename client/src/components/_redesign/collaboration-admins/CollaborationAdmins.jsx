@@ -31,7 +31,7 @@ import moment from "moment";
 import {Chip, Tooltip, ChipType} from "@surfnet/sds";
 import LastAdminWarning from "../LastAdminWarning";
 import DateField from "../../date-field/DateField";
-import InstituteColumn from "../InstituteColumn";
+import InstituteColumn from "../institute-column/InstituteColumn";
 import {ReactComponent as ChevronUp} from "../../../icons/chevron-up.svg";
 import {ReactComponent as ChevronDown} from "../../../icons/chevron-down.svg";
 import {emitImpersonation} from "../../../utils/Impersonation";

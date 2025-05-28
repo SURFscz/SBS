@@ -22,7 +22,7 @@ import UserColumn from "./UserColumn";
 import {isUserServiceAdmin} from "../../utils/UserRole";
 import SpinnerField from "./SpinnerField";
 import {Chip, ChipType, Tooltip} from "@surfnet/sds";
-import InstituteColumn from "./InstituteColumn";
+import InstituteColumn from "./institute-column/InstituteColumn";
 import {isEmpty, userColumnsCustomSort} from "../../utils/Utils";
 import {emitImpersonation} from "../../utils/Impersonation";
 import LastAdminWarning from "./LastAdminWarning";

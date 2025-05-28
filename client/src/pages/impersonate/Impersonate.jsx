@@ -13,7 +13,7 @@ import UnitHeader from "../../components/_redesign/UnitHeader";
 import {AppStore} from "../../stores/AppStore";
 import {ReactComponent as HandIcon} from "../../icons/puppet_new.svg";
 import SpinnerField from "../../components/_redesign/SpinnerField";
-import ErrorIndicator from "../../components/_redesign/ErrorIndicator";
+import ErrorIndicator from "../../components/_redesign/error-indicator/ErrorIndicator";
 import {emitImpersonation} from "../../utils/Impersonation";
 
 class Impersonate extends React.Component {

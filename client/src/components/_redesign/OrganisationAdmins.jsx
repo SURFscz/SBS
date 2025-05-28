@@ -28,7 +28,7 @@ import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import SpinnerField from "./SpinnerField";
 import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
 import {Chip, ChipType, Tooltip} from "@surfnet/sds";
-import InstituteColumn from "./InstituteColumn";
+import InstituteColumn from "./institute-column/InstituteColumn";
 import {expiryDateCustomSort, isEmpty, stopEvent, userColumnsCustomSort} from "../../utils/Utils";
 import {emitImpersonation} from "../../utils/Impersonation";
 import SelectField from "../select-field/SelectField";

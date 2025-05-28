@@ -7,34 +7,34 @@ import {
     groupNameExists,
     groupShortNameExists,
     updateGroup
-} from "../../api";
+} from "../../../api";
 import {ReactComponent as PencilIcon} from "@surfnet/sds/icons/functional-icons/edit.svg";
 import {ReactComponent as BinIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
-import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
+import {ReactComponent as ChevronLeft} from "../../../icons/chevron-left.svg";
 import "./Groups.scss";
-import {isEmpty, stopEvent, userColumnsCustomSort} from "../../utils/Utils";
-import I18n from "../../locale/I18n";
-import Button from "../button/Button";
-import {clearFlash, setFlash} from "../../utils/Flash";
-import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
-import Entities from "./entities/Entities";
-import SpinnerField from "./SpinnerField";
-import {ReactComponent as UserIcon} from "../../icons/users.svg";
-import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
-import UserColumn from "./UserColumn";
+import {isEmpty, stopEvent, userColumnsCustomSort} from "../../../utils/Utils";
+import I18n from "../../../locale/I18n";
+import Button from "../../button/Button";
+import {clearFlash, setFlash} from "../../../utils/Flash";
+import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
+import Entities from "../entities/Entities";
+import SpinnerField from "../SpinnerField";
+import {ReactComponent as UserIcon} from "../../../icons/users.svg";
+import {ReactComponent as MembersIcon} from "../../../icons/single-neutral.svg";
+import UserColumn from "../UserColumn";
 import Select from "react-select";
-import InputField from "../input-field/InputField";
-import CheckBox from "../checkbox/CheckBox";
+import InputField from "../../input-field/InputField";
+import CheckBox from "../../checkbox/CheckBox";
 import moment from "moment";
-import {sanitizeShortName} from "../../validations/regExps";
-import {isUserAllowed, ROLES} from "../../utils/UserRole";
-import ClipBoardCopy from "./clipboard-copy/ClipBoardCopy";
-import {AppStore} from "../../stores/AppStore";
-import ErrorIndicator from "./ErrorIndicator";
+import {sanitizeShortName} from "../../../validations/regExps";
+import {isUserAllowed, ROLES} from "../../../utils/UserRole";
+import ClipBoardCopy from "../clipboard-copy/ClipBoardCopy";
+import {AppStore} from "../../../stores/AppStore";
+import ErrorIndicator from "../error-indicator/ErrorIndicator";
 import {Chip, ChipType, IconButton, Tooltip} from "@surfnet/sds";
-import InstituteColumn from "./InstituteColumn";
-import {ReactComponent as ThrashIcon} from "../../icons/trash_new.svg";
-import {ReactComponent as EmailIcon} from "../../icons/email_new.svg";
+import InstituteColumn from "../institute-column/InstituteColumn";
+import {ReactComponent as ThrashIcon} from "../../../icons/trash_new.svg";
+import {ReactComponent as EmailIcon} from "../../../icons/email_new.svg";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 
 

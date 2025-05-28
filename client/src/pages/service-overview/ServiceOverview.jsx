@@ -46,7 +46,7 @@ import DOMPurify from "dompurify";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
 import Entities from "../../components/_redesign/entities/Entities";
 import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
-import ErrorIndicator from "../../components/_redesign/ErrorIndicator";
+import ErrorIndicator from "../../components/_redesign/error-indicator/ErrorIndicator";
 import CroppedImageField from "../../components/_redesign/cropped-image-field/CroppedImageField";
 import SpinnerField from "../../components/_redesign/SpinnerField";
 import CheckBox from "../../components/checkbox/CheckBox";

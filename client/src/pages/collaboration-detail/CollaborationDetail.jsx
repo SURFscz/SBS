@@ -26,7 +26,7 @@ import {ReactComponent as MemberStatusIcon} from "@surfnet/sds/icons/functional-
 import CollaborationAdmins from "../../components/_redesign/collaboration-admins/CollaborationAdmins";
 import SpinnerField from "../../components/_redesign/SpinnerField";
 import UsedServices from "../../components/_redesign/UsedServices";
-import Groups from "../../components/_redesign/Groups";
+import Groups from "../../components/_redesign/groups/Groups";
 import AboutCollaboration from "../../components/_redesign/about-collaboration/AboutCollaboration";
 import {actionMenuUserRole, isUserAllowed, ROLES} from "../../utils/UserRole";
 import {getParameterByName} from "../../utils/QueryParameters";

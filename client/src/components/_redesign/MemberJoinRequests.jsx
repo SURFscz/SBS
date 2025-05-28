@@ -9,7 +9,7 @@ import Select from "react-select";
 import Logo from "./Logo";
 import {dateFromEpoch} from "../../utils/Date";
 import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
-import InstituteColumn from "./InstituteColumn";
+import InstituteColumn from "./institute-column/InstituteColumn";
 import {schacHome} from "../../api";
 import {chipTypeForStatus} from "../../utils/UserRole";
 import {Chip} from "@surfnet/sds";

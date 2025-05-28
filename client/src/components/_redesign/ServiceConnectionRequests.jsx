@@ -14,7 +14,7 @@ import InputField from "../input-field/InputField";
 import {approveServiceConnectionRequest, deleteServiceConnectionRequest, denyServiceConnectionRequest} from "../../api";
 import moment from "moment";
 import Logo from "./Logo";
-import InstituteColumn from "./InstituteColumn";
+import InstituteColumn from "./institute-column/InstituteColumn";
 import UserColumn from "./UserColumn";
 import Select from "react-select";
 import {Chip} from "@surfnet/sds";

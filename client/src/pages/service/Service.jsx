@@ -29,7 +29,7 @@ import UnitHeader from "../../components/_redesign/UnitHeader";
 import {AppStore} from "../../stores/AppStore";
 import CroppedImageField from "../../components/_redesign/cropped-image-field/CroppedImageField";
 import SpinnerField from "../../components/_redesign/SpinnerField";
-import ErrorIndicator from "../../components/_redesign/ErrorIndicator";
+import ErrorIndicator from "../../components/_redesign/error-indicator/ErrorIndicator";
 import EmailField from "../../components/email-field/EmailField";
 import RadioButtonGroup from "../../components/_redesign/RadioButtonGroup";
 import SelectField from "../../components/select-field/SelectField";

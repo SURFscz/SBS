@@ -23,7 +23,7 @@ import CheckBox from "../checkbox/CheckBox";
 import moment from "moment";
 import {sanitizeShortName} from "../../validations/regExps";
 import {AppStore} from "../../stores/AppStore";
-import ErrorIndicator from "./ErrorIndicator";
+import ErrorIndicator from "./error-indicator/ErrorIndicator";
 import {isUserServiceAdmin} from "../../utils/UserRole";
 import {IconButton, Tooltip} from "@surfnet/sds";
 import {CopyToClipboard} from "react-copy-to-clipboard";

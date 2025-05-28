@@ -1,8 +1,8 @@
 import React from "react";
-import I18n from "../../locale/I18n";
+import I18n from "../../../locale/I18n";
 import "./InstituteColumn.scss";
 import {Tooltip} from "@surfnet/sds";
-import {isEmpty} from "../../utils/Utils";
+import {isEmpty} from "../../../utils/Utils";
 
 export default function InstituteColumn({entity, currentUser, greyed=true, organisation=null}) {
     const isMe = !entity.invite && entity.user.id === currentUser.id;

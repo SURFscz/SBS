@@ -25,7 +25,7 @@ import UnitHeader from "../../components/_redesign/UnitHeader";
 import {AppStore} from "../../stores/AppStore";
 import SpinnerField from "../../components/_redesign/SpinnerField";
 import EmailField from "../../components/email-field/EmailField";
-import ErrorIndicator from "../../components/_redesign/ErrorIndicator";
+import ErrorIndicator from "../../components/_redesign/error-indicator/ErrorIndicator";
 import {InvitationsUnits} from "../../components/invitation-units/InvitationsUnits";
 
 class NewOrganisationInvitation extends React.Component {

@@ -15,7 +15,7 @@ import SpinnerField from "../SpinnerField";
 import {isUserAllowed, ROLES} from "../../../utils/UserRole";
 import DOMPurify from "dompurify";
 import {dateFromEpoch} from "../../../utils/Date";
-import ErrorIndicator from "../ErrorIndicator";
+import ErrorIndicator from "../error-indicator/ErrorIndicator";
 import {CollaborationUnits} from "../../collaborationunits/CollaborationUnits";
 
 class ApiKeys extends React.Component {

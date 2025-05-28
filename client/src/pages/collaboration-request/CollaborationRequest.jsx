@@ -18,7 +18,7 @@ import {sanitizeShortName} from "../../validations/regExps";
 import {AppStore} from "../../stores/AppStore";
 import CroppedImageField from "../../components/_redesign/cropped-image-field/CroppedImageField";
 import SpinnerField from "../../components/_redesign/SpinnerField";
-import ErrorIndicator from "../../components/_redesign/ErrorIndicator";
+import ErrorIndicator from "../../components/_redesign/error-indicator/ErrorIndicator";
 import {chipTypeForStatus} from "../../utils/UserRole";
 import {Chip} from "@surfnet/sds";
 import {CollaborationUnits} from "../../components/collaborationunits/CollaborationUnits";

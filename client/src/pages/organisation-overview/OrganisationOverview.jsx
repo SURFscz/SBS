@@ -15,7 +15,7 @@ import {sanitizeShortName, validSchacHomeRegExp, validUrlRegExp} from "../../val
 import SpinnerField from "../../components/_redesign/SpinnerField";
 import Button from "../../components/button/Button";
 import InputField from "../../components/input-field/InputField";
-import ErrorIndicator from "../../components/_redesign/ErrorIndicator";
+import ErrorIndicator from "../../components/_redesign/error-indicator/ErrorIndicator";
 import {OrganisationUnits} from "../../components/organisation-units/OrganisationUnits";
 import SelectField from "../../components/select-field/SelectField";
 import CheckBox from "../../components/checkbox/CheckBox";

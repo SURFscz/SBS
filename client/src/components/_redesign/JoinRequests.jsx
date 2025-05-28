@@ -16,7 +16,7 @@ import moment from "moment";
 import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
 import {Chip, Tooltip} from "@surfnet/sds";
 import Select from "react-select";
-import InstituteColumn from "./InstituteColumn";
+import InstituteColumn from "./institute-column/InstituteColumn";
 import {chipTypeForStatus} from "../../utils/UserRole";
 
 const allValue = "all";

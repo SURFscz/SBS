@@ -10,7 +10,7 @@ import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import UserColumn from "./UserColumn";
 import InputField from "../input-field/InputField";
 import moment from "moment";
-import ErrorIndicator from "./ErrorIndicator";
+import ErrorIndicator from "./error-indicator/ErrorIndicator";
 import Logo from "./Logo";
 import {organisationInvitationDelete, organisationInvitationResend} from "../../api";
 import SpinnerField from "./SpinnerField";

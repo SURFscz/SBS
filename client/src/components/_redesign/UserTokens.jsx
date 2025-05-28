@@ -17,7 +17,7 @@ import Entities from "./entities/Entities";
 import SpinnerField from "./SpinnerField";
 import InputField from "../input-field/InputField";
 import {AppStore} from "../../stores/AppStore";
-import ErrorIndicator from "./ErrorIndicator";
+import ErrorIndicator from "./error-indicator/ErrorIndicator";
 import {dateFromEpoch, isUserTokenExpired, userTokenExpiryDate} from "../../utils/Date";
 import SelectField from "../select-field/SelectField";
 import DOMPurify from "dompurify";

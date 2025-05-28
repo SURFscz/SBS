@@ -8,7 +8,7 @@ import ConfirmationDialog from "../../components/confirmation-dialog/Confirmatio
 import {setFlash} from "../../utils/Flash";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import {validateSSHKey,} from "../../validations/regExps";
-import ErrorIndicator from "../../components/_redesign/ErrorIndicator";
+import ErrorIndicator from "../../components/_redesign/error-indicator/ErrorIndicator";
 import {Tooltip} from "@surfnet/sds";
 import moment from "moment";
 import DOMPurify from "dompurify";

@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Groups matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div>
+    <div
+      class="mod-entities "
+    >
+      <section
+        class="entities-search"
+      >
+        <h2>
+          [missing "models.group.title" translation] (0)
+        </h2>
+        <div
+          class="search-filters group-search-filters"
+        />
+        <div
+          class="search "
+        >
+          <div
+            class="sds--text-field sds--text-field--has-icon"
+          >
+            <div
+              class="sds--text-field--shape"
+            >
+              <div
+                class="sds--text-field--input-and-icon"
+              >
+                <input
+                  class="sds--text-field--input"
+                  placeholder="[missing \\"models.group.searchPlaceHolder\\" translation]"
+                  type="search"
+                  value=""
+                />
+                <span
+                  class="sds--text-field--icon"
+                >
+                  <svg>
+                    search.svg
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="new-button"
+        >
+          <button
+            class="sds--btn sds--btn--primary    "
+            type="button"
+          >
+            <span
+              class="textual"
+            >
+              [missing "models.group.new" translation]
+            </span>
+          </button>
+        </div>
+      </section>
+      <section
+        class="entities-list"
+      />
+      <div />
+    </div>
+  </div>
+</DocumentFragment>
+`;

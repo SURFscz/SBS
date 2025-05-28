@@ -31,7 +31,7 @@ import SpinnerField from "../../components/_redesign/SpinnerField";
 import CroppedImageField from "../../components/_redesign/cropped-image-field/CroppedImageField";
 import EmailField from "../../components/email-field/EmailField";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
-import ErrorIndicator from "../../components/_redesign/ErrorIndicator";
+import ErrorIndicator from "../../components/_redesign/error-indicator/ErrorIndicator";
 import DateField from "../../components/date-field/DateField";
 import moment from "moment";
 import DOMPurify from "dompurify";

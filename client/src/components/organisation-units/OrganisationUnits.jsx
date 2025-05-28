@@ -5,7 +5,7 @@ import I18n from "../../locale/I18n";
 import {unitUsage} from "../../api";
 import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import {ReactComponent as TrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
-import ErrorIndicator from "../_redesign/ErrorIndicator";
+import ErrorIndicator from "../_redesign/error-indicator/ErrorIndicator";
 import SpinnerField from "../_redesign/SpinnerField";
 
 export const OrganisationUnits = ({units, setUnits, setDuplicated}) => {

@@ -6,7 +6,7 @@ import I18n from "../../../locale/I18n";
 import Entities from "../entities/Entities";
 import Logo from "../Logo";
 import Select from "react-select";
-import InstituteColumn from "../InstituteColumn";
+import InstituteColumn from "../institute-column/InstituteColumn";
 import UserColumn from "../UserColumn";
 import {chipTypeForStatus} from "../../../utils/UserRole";
 import {Chip} from "@surfnet/sds";
