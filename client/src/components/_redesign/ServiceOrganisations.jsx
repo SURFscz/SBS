@@ -2,7 +2,7 @@ import React from "react";
 import "./ServiceOrganisations.scss";
 import {isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
 import I18n from "../../locale/I18n";
-import Entities from "./Entities";
+import Entities from "./entities/Entities";
 import {
     disallowOrganisation,
     onRequestOrganisation,

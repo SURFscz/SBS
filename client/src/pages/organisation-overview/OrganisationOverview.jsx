@@ -20,7 +20,7 @@ import {OrganisationUnits} from "../../components/organisation-units/Organisatio
 import SelectField from "../../components/select-field/SelectField";
 import CheckBox from "../../components/checkbox/CheckBox";
 import CreatableField from "../../components/creatable-field/CreatableField";
-import CroppedImageField from "../../components/_redesign/CroppedImageField";
+import CroppedImageField from "../../components/_redesign/cropped-image-field/CroppedImageField";
 import {OrganisationTags} from "../../components/organisation-tags/OrganisationTags";
 import OrganisationOnBoarding from "../../components/organisation-onboarding/OrganisationOnBoarding";
 

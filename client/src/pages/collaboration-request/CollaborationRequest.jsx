@@ -16,7 +16,7 @@ import ConfirmationDialog from "../../components/confirmation-dialog/Confirmatio
 import {setFlash} from "../../utils/Flash";
 import {sanitizeShortName} from "../../validations/regExps";
 import {AppStore} from "../../stores/AppStore";
-import CroppedImageField from "../../components/_redesign/CroppedImageField";
+import CroppedImageField from "../../components/_redesign/cropped-image-field/CroppedImageField";
 import SpinnerField from "../../components/_redesign/SpinnerField";
 import ErrorIndicator from "../../components/_redesign/ErrorIndicator";
 import {chipTypeForStatus} from "../../utils/UserRole";

@@ -27,7 +27,7 @@ import CheckBox from "../../components/checkbox/CheckBox";
 import {Chip} from "@surfnet/sds";
 import UnitHeader from "../../components/_redesign/UnitHeader";
 import {AppStore} from "../../stores/AppStore";
-import CroppedImageField from "../../components/_redesign/CroppedImageField";
+import CroppedImageField from "../../components/_redesign/cropped-image-field/CroppedImageField";
 import SpinnerField from "../../components/_redesign/SpinnerField";
 import ErrorIndicator from "../../components/_redesign/ErrorIndicator";
 import EmailField from "../../components/email-field/EmailField";

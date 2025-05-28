@@ -23,7 +23,7 @@ import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/
 import {ReactComponent as CheckIcon} from "@surfnet/sds/icons/functional-icons/success.svg";
 import InputField from "../../components/input-field/InputField";
 import "./ServiceOverview.scss";
-import "../../components/_redesign/ApiKeys.scss";
+import "../../components/_redesign/api-keys/ApiKeys.scss";
 import Button from "../../components/button/Button";
 import {setFlash} from "../../utils/Flash";
 import {
@@ -44,10 +44,10 @@ import {
 import {Tooltip} from "@surfnet/sds";
 import DOMPurify from "dompurify";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
-import Entities from "../../components/_redesign/Entities";
+import Entities from "../../components/_redesign/entities/Entities";
 import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
 import ErrorIndicator from "../../components/_redesign/ErrorIndicator";
-import CroppedImageField from "../../components/_redesign/CroppedImageField";
+import CroppedImageField from "../../components/_redesign/cropped-image-field/CroppedImageField";
 import SpinnerField from "../../components/_redesign/SpinnerField";
 import CheckBox from "../../components/checkbox/CheckBox";
 import SelectField from "../../components/select-field/SelectField";

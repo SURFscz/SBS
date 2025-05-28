@@ -1,8 +1,8 @@
 import React from "react";
 import "./Organisations.scss";
 import I18n from "../../locale/I18n";
-import "./Entities.scss";
-import Entities from "./Entities";
+import "./entities/Entities.scss";
+import Entities from "./entities/Entities";
 import {platformAdmins} from "../../api";
 import {ReactComponent as PlatformAdminIcon} from "../../icons/users.svg";
 import "./PlatformAdmins.scss";

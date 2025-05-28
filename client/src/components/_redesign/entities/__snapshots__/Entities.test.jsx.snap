@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Entities matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-entities "
+  >
+    <section
+      class="entities-search"
+    >
+      <h2>
+        [missing "models.modelName.title" translation] (0)
+      </h2>
+      <div
+        class="search-filters modelName-search-filters"
+      />
+      <div
+        class="search standalone"
+      />
+    </section>
+    <section
+      class="entities-list"
+    />
+    <div />
+  </div>
+</DocumentFragment>
+`;

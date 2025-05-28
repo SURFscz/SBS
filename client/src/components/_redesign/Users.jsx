@@ -1,9 +1,9 @@
 import React from "react";
 import "./Organisations.scss";
 import I18n from "../../locale/I18n";
-import "./Entities.scss";
+import "./entities/Entities.scss";
 import {Tooltip} from "@surfnet/sds";
-import Entities from "./Entities";
+import Entities from "./entities/Entities";
 import {queryForOrganisationInvites, queryForOrganisationUsers, queryForUsers} from "../../api";
 import {ReactComponent as UserIcon} from "../../icons/single-neutral.svg";
 import {ReactComponent as InviteIcon} from "../../icons/single-neutral-question.svg";

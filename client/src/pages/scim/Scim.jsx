@@ -8,7 +8,7 @@ import InputField from "../../components/input-field/InputField";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import Button from "../../components/button/Button";
 import Logo from "../../components/_redesign/Logo";
-import Entities from "../../components/_redesign/Entities";
+import Entities from "../../components/_redesign/entities/Entities";
 import ReactJson from "react-json-view";
 
 class Scim extends React.Component {

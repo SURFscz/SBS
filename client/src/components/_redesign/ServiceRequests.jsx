@@ -2,7 +2,7 @@ import React from "react";
 
 import "./ServiceRequests.scss";
 import I18n from "../../locale/I18n";
-import Entities from "./Entities";
+import Entities from "./entities/Entities";
 import Logo from "./Logo";
 import Select from "react-select";
 import SpinnerField from "./SpinnerField";

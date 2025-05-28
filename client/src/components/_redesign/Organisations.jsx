@@ -3,7 +3,7 @@ import {allOrganisations, myOrganisations} from "../../api";
 import "./Organisations.scss";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "../../locale/I18n";
-import Entities from "./Entities";
+import Entities from "./entities/Entities";
 import Logo from "./Logo";
 import SpinnerField from "./SpinnerField";
 import {Chip, Tooltip} from "@surfnet/sds";

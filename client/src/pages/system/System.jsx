@@ -59,7 +59,7 @@ import {dateFromEpoch} from "../../utils/Date";
 import DOMPurify from "dompurify";
 import Scim from "../scim/Scim";
 import CheckBox from "../../components/checkbox/CheckBox";
-import ClipBoardCopy from "../../components/_redesign/ClipBoardCopy";
+import ClipBoardCopy from "../../components/_redesign/clipboard-copy/ClipBoardCopy";
 import Stats from "../stats/Stats";
 import PAM from "../pam/PAM";
 import ProxyLogin from "../proxy-login/ProxyLogin";

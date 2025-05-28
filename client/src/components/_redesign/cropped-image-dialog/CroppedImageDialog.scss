@@ -1,0 +1,105 @@
+@import "../../../stylesheets/vars";
+
+.cropped-image-dialog-container {
+    .cropped-image-dialog {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .preview {
+            img {
+                max-width: 480px;
+                max-height: 348px;
+            }
+        }
+
+        .sds--file-upload {
+            margin-top: var(--sds--space--5);
+            width: 100%;
+        }
+
+        input[type="file"] {
+            &::file-selector-button {
+                cursor: pointer;
+                padding: 5px;
+
+                &:hover {
+                    background-color: var(--sds--palette--support-color--100);
+                    color: var(--sds--palette--support-color--500);
+                }
+            }
+        }
+
+        .no-image svg {
+            width: 464px;
+            height: 348px;
+            padding: 75px;
+            border: .0625rem dashed var(--sds--color--gray--300);
+            fill: $lighter-grey;
+        }
+
+        div.checkbox {
+            display: flex;
+            width: 100%;
+            margin: 10px 0 0 15px;
+
+            label {
+                font-weight: normal;
+                font-size: 14px;
+            }
+        }
+
+        .file-upload-label {
+            margin: 15px 0;
+        }
+
+
+    }
+
+    .button-container {
+        position: relative;
+
+        @media (max-width: $compact-medium) {
+            display: flex;
+        }
+
+        button {
+            position: absolute;
+            top: 40px;
+
+            @media (max-width: $compact-medium) {
+                position: initial;
+                margin: 15px auto 0 auto;
+            }
+
+            &.sds--btn--tertiary {
+                span.textual {
+                    font-size: 18px;
+                }
+            }
+
+        }
+    }
+
+    .image-gallery-container {
+
+        .image-gallery {
+            height: 60vh;
+            overflow-y: auto;
+
+            display: grid;
+            grid-template-columns: [first] 1fr [second] 1fr [third] 1fr;
+            column-gap: 15px;
+            row-gap: 15px;
+
+            img {
+                padding: 15px;
+                border: .0625rem dashed var(--sds--color--gray--300);
+
+                &.selected {
+                    border: .14rem dashed var(--sds--color--gray--500);
+                }
+            }
+        }
+    }
+}

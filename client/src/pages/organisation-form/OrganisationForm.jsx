@@ -20,7 +20,7 @@ import {setFlash} from "../../utils/Flash";
 import {sanitizeShortName, validSchacHomeRegExp, validUrlRegExp} from "../../validations/regExps";
 import {AppStore} from "../../stores/AppStore";
 import UnitHeader from "../../components/_redesign/UnitHeader";
-import CroppedImageField from "../../components/_redesign/CroppedImageField";
+import CroppedImageField from "../../components/_redesign/cropped-image-field/CroppedImageField";
 import SelectField from "../../components/select-field/SelectField";
 import SpinnerField from "../../components/_redesign/SpinnerField";
 

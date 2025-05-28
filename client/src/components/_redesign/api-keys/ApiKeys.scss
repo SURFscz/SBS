@@ -1,0 +1,115 @@
+@import "../../../stylesheets/vars";
+@import "../../../stylesheets/forms";
+
+table.apiKeys {
+
+    thead {
+        th {
+            &.secret, &.hashed_token {
+                width: 30%;
+            }
+
+            &.description {
+                width: 40%;
+
+                &.with-units {
+                    width: 30%;
+                }
+            }
+
+            &.units {
+                width: 20%;
+            }
+
+            &.created_at {
+                width: 25%;
+
+                &.with-units {
+                    width: 15%;
+                }
+            }
+
+            &.trash {
+                width: 40px;
+            }
+
+        }
+    }
+
+    tbody {
+        td {
+            &.trash {
+                text-align: right;
+                cursor: pointer;
+
+                &:hover {
+                    color: var(--sds--color--red--400);
+                }
+            }
+        }
+    }
+}
+
+.api-key-container {
+    display: flex;
+    max-width: $medium;
+    width: 100%;
+    margin: 40px auto 25px auto;
+
+    @media (max-width: $compact-medium) {
+        flex-direction: column;
+    }
+
+    a.back-to-api-keys {
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+        color: $blue;
+        text-decoration: underline;
+        margin-right: 60px;
+
+        svg {
+            margin-right: 5px;
+            fill: $blue;
+            height: 22px;
+        }
+    }
+
+    div.new-api-key {
+        width: 60%;
+
+        @media (max-width: $compact-medium) {
+            padding: 15px;
+            width: 100%;
+        }
+
+
+        .header {
+            display: flex;
+            width: 100%;
+
+            div.header-actions {
+                margin-left: auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            button {
+                margin-bottom: 15px;
+            }
+        }
+
+        .description {
+            margin-bottom: 25px;
+        }
+
+        section.copy-to-clipboard {
+            font-size: 16px;
+            color: $dark-grey;
+            cursor: pointer;
+        }
+
+    }
+
+}

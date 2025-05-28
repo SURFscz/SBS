@@ -28,7 +28,7 @@ import UnitHeader from "../../components/_redesign/UnitHeader";
 import {ReactComponent as CollaborationsIcon} from "../../icons/collaborations.svg";
 import {AppStore} from "../../stores/AppStore";
 import SpinnerField from "../../components/_redesign/SpinnerField";
-import CroppedImageField from "../../components/_redesign/CroppedImageField";
+import CroppedImageField from "../../components/_redesign/cropped-image-field/CroppedImageField";
 import EmailField from "../../components/email-field/EmailField";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import ErrorIndicator from "../../components/_redesign/ErrorIndicator";

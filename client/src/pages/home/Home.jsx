@@ -10,11 +10,11 @@ import UnitHeader from "../../components/_redesign/UnitHeader";
 import PlatformAdmins from "../../components/_redesign/PlatformAdmins";
 import Services from "../../components/_redesign/Services";
 import SpinnerField from "../../components/_redesign/SpinnerField";
-import Collaborations from "../../components/_redesign/Collaborations";
+import Collaborations from "../../components/_redesign/collaborations/Collaborations";
 import {isEmpty} from "../../utils/Utils";
 import Users from "../../components/_redesign/Users";
 import ServiceRequests from "../../components/_redesign/ServiceRequests";
-import EmptyCollaborations from "../../components/_redesign/EmptyCollaborations";
+import EmptyCollaborations from "../../components/_redesign/empty-collaborations/EmptyCollaborations";
 import MyRequests from "../../components/_redesign/MyRequests";
 
 class Home extends React.Component {

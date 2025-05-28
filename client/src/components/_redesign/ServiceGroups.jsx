@@ -16,7 +16,7 @@ import I18n from "../../locale/I18n";
 import Button from "../button/Button";
 import {clearFlash, setFlash} from "../../utils/Flash";
 import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
-import Entities from "./Entities";
+import Entities from "./entities/Entities";
 import SpinnerField from "./SpinnerField";
 import InputField from "../input-field/InputField";
 import CheckBox from "../checkbox/CheckBox";
@@ -27,7 +27,7 @@ import ErrorIndicator from "./ErrorIndicator";
 import {isUserServiceAdmin} from "../../utils/UserRole";
 import {IconButton, Tooltip} from "@surfnet/sds";
 import {CopyToClipboard} from "react-copy-to-clipboard";
-import ClipBoardCopy from "./ClipBoardCopy";
+import ClipBoardCopy from "./clipboard-copy/ClipBoardCopy";
 
 class ServiceGroups extends React.Component {
 

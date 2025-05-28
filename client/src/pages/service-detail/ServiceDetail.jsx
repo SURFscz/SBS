@@ -32,7 +32,7 @@ import ServiceOverview from "../service-overview/ServiceOverview";
 import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
 import ServiceCollaborations from "../../components/_redesign/ServiceCollaborations";
 import {ButtonType} from "@surfnet/sds";
-import AboutService from "../../components/_redesign/AboutService";
+import AboutService from "../../components/_redesign/about-service/AboutService";
 import DOMPurify from "dompurify";
 import {isInvitationExpired} from "../../utils/Date";
 

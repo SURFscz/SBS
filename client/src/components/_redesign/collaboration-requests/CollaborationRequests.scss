@@ -1,0 +1,68 @@
+@import "../../../stylesheets/vars";
+
+table.collaboration_requests {
+
+    thead {
+        th {
+            &.name {
+                width: 20%;
+                padding-left: 15px;
+            }
+
+            &.units {
+                width: 17%;
+            }
+
+            &.status {
+                width: 22%;
+                text-align: center;
+            }
+
+            &.requester {
+                width: 25%;
+            }
+
+            &.user__schac_home_organisation {
+                width: 15%;
+            }
+        }
+    }
+
+    tbody {
+        td {
+            &.name {
+                padding-left: 15px;
+            }
+
+            &.status {
+                text-align: center;
+            }
+
+            &.units {
+                .unit-container {
+                    display: flex;
+                    flex-direction: column;
+                }
+            }
+        }
+    }
+}
+
+.mod-entities {
+
+    .collaboration-request-filter {
+        display: flex;
+        @media (max-width: $compact-medium) {
+            flex-direction: column;
+        }
+
+        .collaboration-request-filter-select {
+            width: 290px;
+            @media (max-width: $compact-medium) {
+                margin: 15px 0;
+            }
+
+        }
+    }
+
+}

@@ -1,6 +1,6 @@
 import React from "react";
 import I18n from "../../locale/I18n";
-import Entities from "./Entities";
+import Entities from "./entities/Entities";
 import {ReactComponent as UserIcon} from "../../icons/users.svg";
 import {ReactComponent as InviteIcon} from "../../icons/single-neutral-question.svg";
 import {ReactComponent as HandIcon} from "../../icons/puppet_new.svg";

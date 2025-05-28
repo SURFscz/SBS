@@ -1,0 +1,115 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ApiKeys matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div>
+    <div
+      class="mod-entities "
+    >
+      <section
+        class="entities-search"
+      >
+        <h2>
+          Organisation API tokens (1)
+        </h2>
+        <div
+          class="search-filters apiKeys-search-filters"
+        />
+        <div
+          class="search standalone"
+        >
+          <div
+            class="sds--text-field sds--text-field--has-icon"
+          >
+            <div
+              class="sds--text-field--shape"
+            >
+              <div
+                class="sds--text-field--input-and-icon"
+              >
+                <input
+                  class="sds--text-field--input"
+                  placeholder="Search for organisation API tokens..."
+                  type="search"
+                  value=""
+                />
+                <span
+                  class="sds--text-field--icon"
+                >
+                  <svg>
+                    search.svg
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        class="entities-list"
+      >
+        <div
+          class="sds--table"
+        >
+          <table
+            class="apiKeys"
+          >
+            <thead>
+              <tr>
+                <th
+                  class="secret  sortable "
+                >
+                  Organisation API token
+                </th>
+                <th
+                  class="description  sortable "
+                >
+                  Description
+                  <span
+                    data-testid="icon"
+                  />
+                </th>
+                <th
+                  class="created_at  sortable "
+                >
+                  Created at
+                </th>
+                <th
+                  class="trash   "
+                />
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                class=" "
+              >
+                <td
+                  class="secret sortable "
+                >
+                  One-way hashed secret
+                </td>
+                <td
+                  class="description sortable "
+                >
+                  <span
+                    class="cut-of-lines"
+                  />
+                </td>
+                <td
+                  class="created_at sortable "
+                >
+                  November 8, 55840
+                </td>
+                <td
+                  class="trash  "
+                />
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <div />
+    </div>
+  </div>
+</DocumentFragment>
+`;

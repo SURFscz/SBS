@@ -13,7 +13,7 @@ import I18n from "../../locale/I18n";
 import Button from "../button/Button";
 import {setFlash} from "../../utils/Flash";
 import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
-import Entities from "./Entities";
+import Entities from "./entities/Entities";
 import SpinnerField from "./SpinnerField";
 import InputField from "../input-field/InputField";
 import {AppStore} from "../../stores/AppStore";

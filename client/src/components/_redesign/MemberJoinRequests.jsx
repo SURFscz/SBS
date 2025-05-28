@@ -2,7 +2,7 @@ import React from "react";
 
 import "./MemberJoinRequests.scss";
 import I18n from "../../locale/I18n";
-import Entities from "./Entities";
+import Entities from "./entities/Entities";
 import SpinnerField from "./SpinnerField";
 import UserColumn from "./UserColumn";
 import Select from "react-select";
