@@ -222,6 +222,49 @@ def api_organisation_details():
         json_organisation["collaborations"] = valid_collaborations
         json_organisation["collaborations_count"] = len(valid_collaborations)
 
+    # Additional filtering on unit.name, tag.tag_value and service.abbreviation
+    unit_query_param = query_param("units", False, None)
+    if unit_query_param:
+        unit_queries = [u.lower().strip() for u in unit_query_param.split(",")]
+
+        def valid_co_unit(collaboration_json):
+            co_unit_names = [unit["name"].lower() for unit in collaboration_json.get("units", [])]
+            if not co_unit_names:
+                return False
+            return all(unit_name in co_unit_names for unit_name in unit_queries)
+
+        valid_collaborations = [co for co in json_organisation.get("collaborations", []) if valid_co_unit(co)]
+        json_organisation["collaborations"] = valid_collaborations
+        json_organisation["collaborations_count"] = len(valid_collaborations)
+
+    tag_query_param = query_param("tags", False, None)
+    if tag_query_param:
+        tag_queries = [t.lower().strip() for t in tag_query_param.split(",")]
+
+        def valid_co_tag(collaboration_json):
+            co_tag_values = [tag["tag_value"].lower() for tag in collaboration_json.get("tags", [])]
+            if not co_tag_values:
+                return False
+            return all(tag_value in co_tag_values for tag_value in tag_queries)
+
+        valid_collaborations = [co for co in json_organisation.get("collaborations", []) if valid_co_tag(co)]
+        json_organisation["collaborations"] = valid_collaborations
+        json_organisation["collaborations_count"] = len(valid_collaborations)
+
+    services_query_param = query_param("services", False, None)
+    if services_query_param:
+        service_queries = [s.lower().strip() for s in services_query_param.split(",")]
+
+        def valid_co_service(collaboration_json):
+            co_services = [service["abbreviation"].lower() for service in collaboration_json.get("services", [])]
+            if not co_services:
+                return False
+            return all(service_abb in co_services for service_abb in service_queries)
+
+        valid_collaborations = [co for co in json_organisation.get("collaborations", []) if valid_co_service(co)]
+        json_organisation["collaborations"] = valid_collaborations
+        json_organisation["collaborations_count"] = len(valid_collaborations)
+
     for json_collaboration in json_organisation.get("collaborations", []):
         for group in json_collaboration.get("groups", []):
             group["collaboration_memberships"] = [cm["user_id"] for cm in group.get("collaboration_memberships", [])]

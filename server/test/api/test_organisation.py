@@ -9,7 +9,8 @@ from server.test.seed import (unihard_name, unifra_name, schac_home_organisation
                               schac_home_organisation_example,
                               read_image, user_jane_name, unihard_short_name, unihard_unit_support_name,
                               co_ai_computing_name, unifra_secret, co_research_name,
-                              group_science_name, unihard_secret_unit_support, unihard_hashed_secret_unit_support)
+                              group_science_name, unihard_secret_unit_support, unihard_hashed_secret_unit_support,
+                              unihard_secret)
 
 
 class TestOrganisation(AbstractTest):
@@ -472,6 +473,25 @@ class TestOrganisation(AbstractTest):
         group = [g for g in collaboration["groups"] if g["name"] == group_science_name][0]
         self.assertEqual(1, len(group["collaboration_memberships"]))
         self.assertTrue(isinstance(group["collaboration_memberships"][0], int))
+
+    def test_find_api_filter(self):
+        res = self.get("/api/organisations/v1",
+                       headers={"Authorization": f"Bearer {unihard_secret}"},
+                       query_data={"units": "SUPPORT", "tags": "tag_uuc, TAG_UUC_2", "services": "mail, network"},
+                       with_basic_auth=False)
+        collaborations = res["collaborations"]
+        self.assertEqual(1, len(collaborations))
+        self.assertEqual(1, res["collaborations_count"])
+        self.assertEqual(co_ai_computing_name, collaborations[0]["name"])
+
+    def test_find_api_filter_units_not_existing_unit(self):
+        res = self.get("/api/organisations/v1",
+                       headers={"Authorization": f"Bearer {unihard_secret}"},
+                       query_data={"units": "nope"},
+                       with_basic_auth=False)
+        collaborations = res["collaborations"]
+        self.assertEqual(0, len(collaborations))
+        self.assertEqual(0, res["collaborations_count"])
 
     def test_find_api_unit_access(self):
         res = self.get("/api/organisations/v1",
