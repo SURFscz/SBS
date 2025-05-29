@@ -21,6 +21,27 @@ parameters:
     schema:
       type: string
       example: Bearer Am4Hp7GBO2lMseskWHRmEtE3DWD-VxZZ3qwMkNPv6qZ8
+  - name: units
+    in: query
+    description: Comma separated unit names (case-insensitive)
+    required: false
+    schema:
+      type: string
+      example: research, support
+  - name: tags
+    in: query
+    description: Comma separated tag values (e.g. case-insensitive labels)
+    required: false
+    schema:
+      type: string
+      example: secure, labelA
+  - name: services
+    in: query
+    description: Comma separated service short-names (case-insensitive)
+    required: false
+    schema:
+      type: string
+      example: network, wiki
 
 responses:
   200:
