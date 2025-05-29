@@ -10,7 +10,7 @@
         "@surfnet/sds": "^0.0.137",
         "core-js": "^3.42.0",
         "detect-browser": "^5.3.0",
-        "dompurify": "^3.2.5",
+        "dompurify": "^3.2.6",
         "es6-promise": "^4.2.8",
         "events": "^3.2.0",
         "i18n-js": "^4.5.1",
