@@ -92,6 +92,8 @@ mail:
 
 manage:
   enabled: True
+  # The entity_id of the SRAM RP in Manage for API retrieval
+  sram_rp_entity_id: "sbs.test2.sram.surf.nl"
   base_url: "http://localhost:9002/"
   user: "sram"
   password: "secret"

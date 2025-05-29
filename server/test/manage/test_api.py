@@ -22,11 +22,33 @@ class TestApi(AbstractTest):
             manage_base_url = self._resolve_manage_base_url()
             url = f"{manage_base_url}/manage/api/internal/metadata"
             external_identifier = str(uuid.uuid4())
+            fetch_url = f"{manage_base_url}/manage/api/internal/search/oidc10_rp"
+            res_mock.add(responses.POST, fetch_url, json=[{
+                "data": {"allowedall": False, "allowedEntities": ["https://idp1.com", "https://idp2.com"]}}], status=200)
             res_mock.add(responses.POST, url, json={"id": external_identifier, "version": 0}, status=200)
             updated_service = sync_external_service(self.app, service)
 
             self.assertEqual(external_identifier, updated_service.export_external_identifier)
             self.assertEqual(0, updated_service.export_external_version)
+            self.assertTrue(updated_service.export_successful)
+            self.assertIsNotNone(updated_service.exported_at)
+
+    @responses.activate
+    def test_update_oidc_service_happy_flow(self):
+        service = self.find_entity_by_name(Service, service_storage_name)
+        external_identifier = str(uuid.uuid4())
+        # Mimic existing service in Manage
+        service.export_external_version = 1
+        service.export_external_identifier = external_identifier
+        with responses.RequestsMock(assert_all_requests_are_fired=True) as res_mock:
+            manage_base_url = self._resolve_manage_base_url()
+            url = f"{manage_base_url}/manage/api/internal/metadata"
+            external_identifier = str(uuid.uuid4())
+            res_mock.add(responses.PUT, url, json={"id": external_identifier, "version": 2}, status=200)
+            updated_service = sync_external_service(self.app, service)
+
+            self.assertEqual(external_identifier, updated_service.export_external_identifier)
+            self.assertEqual(2, updated_service.export_external_version)
             self.assertTrue(updated_service.export_successful)
             self.assertIsNotNone(updated_service.exported_at)
 

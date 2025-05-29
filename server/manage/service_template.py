@@ -42,14 +42,16 @@ def _replace_none_values(d: dict):
     return d
 
 
-def create_service_template(service: Service):
+def create_service_template(service: Service, sbs_rp_json: dict):
     assertion_consumer_service = _get_assertion_consumer_url(service)
+    # We need to copy the IdPs that are connected to the main SRAM/SBS instance
+    sbs_rp_data = sbs_rp_json["data"]
 
     service_template = {
         "type": "sram",
         "data": {
-            "allowedall": True,
-            "allowedEntities": [],
+            "allowedall": sbs_rp_data["allowedall"],
+            "allowedEntities": sbs_rp_data["allowedEntities"],
             "arp": {
                 "enabled": True,
                 "attributes": arp_attributes()

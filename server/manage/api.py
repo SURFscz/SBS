@@ -9,6 +9,13 @@ from server.db.domain import Service
 from server.manage.service_template import create_service_template
 from server.tools import dt_now
 
+default_idp_matrix = {
+    "data": {
+        "allowedall": True,
+        "allowedEntities": []
+    }
+}
+
 
 def _parse_manage_config(manage_conf):
     base_url = manage_conf.base_url[:-1] if manage_conf.base_url.endswith("/") else manage_conf.base_url
@@ -29,13 +36,29 @@ def sync_external_service(app, service: Service):
     if not app.app_config.manage.enabled or not service_applies_for_external_sync(service):
         return None
     with app.app_context():
-        manage_base_url, manage_basic_auth, verify_peer = _parse_manage_config(app.app_config.manage)
+        logger = logging.getLogger("manage")
 
-        service_template = create_service_template(service)
+        manage_base_url, manage_basic_auth, verify_peer = _parse_manage_config(app.app_config.manage)
+        # We need the SRAM RP to copy the IdPs that are connected to the main SRAM/SBS instance
+        fetch_url = f"{manage_base_url}/manage/api/internal/search/oidc10_rp"
+        try:
+            entity_id = app.app_config.manage.sram_rp_entity_id
+            res = requests.post(fetch_url,
+                                json={"ALL_ATTRIBUTES": True, "entityid": entity_id},
+                                headers={"Accept": "application/json", "Content-Type": "application/json"},
+                                auth=manage_basic_auth,
+                                verify=verify_peer,
+                                timeout=10)
+            sbs_rp_json_results = res.json()
+            sbs_rp_json = sbs_rp_json_results[0] if sbs_rp_json_results else default_idp_matrix
+        except RequestException:
+            logger.error(f"Error in manage API retrieving {entity_id}", exc_info=1)
+            sbs_rp_json = default_idp_matrix
+
+        service_template = create_service_template(service, sbs_rp_json)
         request_method = requests.put if service.export_external_identifier else requests.post
         url = f"{manage_base_url}/manage/api/internal/metadata"
         service.exported_at = dt_now()
-        logger = logging.getLogger("manage")
         try:
             res = request_method(url,
                                  json=service_template,
