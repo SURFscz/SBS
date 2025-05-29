@@ -1,5 +1,5 @@
 summary: "Get organisation including all collaborations"
-description: "Retrieves an organisation and all collaborations, groups and tags."
+description: "Retrieves an organisation and all collaborations, groups, memberships, units, services and tags."
 
 tags:
   - "Organisation"
