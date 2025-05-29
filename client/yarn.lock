@@ -4262,7 +4262,7 @@ domhandler@^4.0.0, domhandler@^4.2.0, domhandler@^4.3.1:
   dependencies:
     domelementtype "^2.2.0"
 
-dompurify@^3.2.5, dompurify@^3.2.6:
+dompurify@^3.2.6:
   version "3.2.6"
   resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-3.2.6.tgz#ca040a6ad2b88e2a92dc45f38c79f84a714a1cad"
   integrity sha512-/2GogDQlohXPZe6D6NOgQvXLPSYBqIWMnZ8zzOhn09REE4eyAzb+Hed3jhoM9OkuaJ8P6ZGTTVWQKAi8ieIzfQ==
@@ -6106,12 +6106,12 @@ isexe@^2.0.0:
   resolved "https://registry.yarnpkg.com/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
   integrity sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==
 
-isomorphic-dompurify@^2.24.0:
-  version "2.24.0"
-  resolved "https://registry.yarnpkg.com/isomorphic-dompurify/-/isomorphic-dompurify-2.24.0.tgz#967f17d1d2973aa3a1e9830c081a2f34f8b232ba"
-  integrity sha512-SgKoDBCQveodymGMBPpzs9MOTCk4Luq0bTfwoPrUKa7q0FnCLZMtqR25Rnq228zJfMTsX1ZItiJbDtjb2lyv4A==
+isomorphic-dompurify@^2.25.0:
+  version "2.25.0"
+  resolved "https://registry.yarnpkg.com/isomorphic-dompurify/-/isomorphic-dompurify-2.25.0.tgz#063e3ea7399bc1146783a9527be6c10baa25dc15"
+  integrity sha512-bcpJzu9DOjN21qaCVpcoCwUX1ytpvA6EFqCK5RNtPg5+F0Jz9PX50jl6jbEicBNeO87eDDfC7XtPs4zjDClZJg==
   dependencies:
-    dompurify "^3.2.5"
+    dompurify "^3.2.6"
     jsdom "^26.1.0"
 
 istanbul-lib-coverage@^3.0.0, istanbul-lib-coverage@^3.2.0:
@@ -7218,10 +7218,10 @@ mkdirp@^0.5.1, mkdirp@~0.5.1:
   dependencies:
     minimist "^1.2.6"
 
-moment-timezone@^0.5.48:
-  version "0.5.48"
-  resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.48.tgz#111727bb274734a518ae154b5ca589283f058967"
-  integrity sha512-f22b8LV1gbTO2ms2j2z13MuPogNoh5UzxL3nzNAYKGraILnbGc9NEE6dyiiiLv46DGRb8A4kg8UKWLjPthxBHw==
+moment-timezone@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.6.0.tgz#c5a6519171f31a64739ea75d33f5c136c08ff608"
+  integrity sha512-ldA5lRNm3iJCWZcBCab4pnNL3HSZYXVb/3TYr75/1WCTWYuTqYUb5f/S384pncYjJ88lbO8Z4uPDvmoluHJc8Q==
   dependencies:
     moment "^2.29.4"
 
@@ -7568,10 +7568,10 @@ package-json-from-dist@^1.0.0:
   resolved "https://registry.yarnpkg.com/package-json-from-dist/-/package-json-from-dist-1.0.1.tgz#4f1471a010827a86f94cfd9b0727e36d267de505"
   integrity sha512-UEZIS3/by4OC8vL3P2dTXRETpebLI2NiI5vIrjaD/5UtrkFX/tNbwjTSRAGC/+7CAo2pIcBaRgWmcBBHcsaCIw==
 
-papaparse@^5.5.2:
-  version "5.5.2"
-  resolved "https://registry.yarnpkg.com/papaparse/-/papaparse-5.5.2.tgz#fb67cc5a03ba8930cb435dc4641a25d6804bd4d7"
-  integrity sha512-PZXg8UuAc4PcVwLosEEDYjPyfWnTEhOrUfdv+3Bx+NuAb+5NhDmXzg5fHWmdCh1mP5p7JAZfFr3IMQfcntNAdA==
+papaparse@^5.5.3:
+  version "5.5.3"
+  resolved "https://registry.yarnpkg.com/papaparse/-/papaparse-5.5.3.tgz#07f8994dec516c6dab266e952bed68e1de59fa9a"
+  integrity sha512-5QvjGxYVjxO59MGU2lHVYpRWBBtKHnlIAcSe1uNFCkkptUh63NFRj0FJQm7nR67puEruUci/ZkjmEFrjCAyP4A==
 
 param-case@^3.0.4:
   version "3.0.4"
@@ -8482,10 +8482,10 @@ react-copy-to-clipboard@^5.0.1:
     copy-to-clipboard "^3.3.1"
     prop-types "^15.8.1"
 
-react-datepicker@^8.3.0:
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-8.3.0.tgz#21d51294a953755bcc273d411fe10d12918a6f51"
-  integrity sha512-DhfrIJnTPJTUVRtXU7c7zooug40rD6q+Fc8UTCt19dYEotLpDQgTN98MfocY6Rc4S99oOFFEoxyanOM/TKauuw==
+react-datepicker@^8.4.0:
+  version "8.4.0"
+  resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-8.4.0.tgz#8db0beac6282ef72d12494bd49cc5e61362a3a42"
+  integrity sha512-6nPDnj8vektWCIOy9ArS3avus9Ndsyz5XgFCJ7nBxXASSpBdSL6lG9jzNNmViPOAOPh6T5oJyGaXuMirBLECag==
   dependencies:
     "@floating-ui/react" "^0.27.3"
     clsx "^2.1.1"
