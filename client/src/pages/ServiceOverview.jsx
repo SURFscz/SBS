@@ -55,6 +55,7 @@ import {dateFromEpoch} from "../utils/Date";
 import {isUserServiceAdmin} from "../utils/UserRole";
 import {SAMLMetaData} from "../components/SAMLMetaData";
 import UploadButton from "../components/UploadButton";
+import ToggleSwitch from "../components/redesign/ToggleSwitch";
 
 const toc = ["general", "contacts", "policy", "SCIMServer", "SCIMClient", "ldap", "pamWebLogin", "tokens",
     "OIDC", "SAML", "Export"];
@@ -808,6 +809,19 @@ class ServiceOverview extends React.Component {
         }
     }
 
+    toggleGrant = (grantName, toggleValue) => {
+        const {service} = this.state;
+        const {grants} = service;
+        let newGrants = [...grants];
+        debugger; // eslint-disable-line no-debugger
+        if (toggleValue) {
+            newGrants.push(grantName);
+        } else {
+            newGrants = newGrants.filter(grant => grant !== grantName);
+        }
+        this.setState({service: {...service, grants: newGrants}});
+    }
+
     grantsChanged = (selectedOptions, service) => {
         const newGrants = selectedOptions === null ? [] : Array.isArray(selectedOptions) ? [...selectedOptions] : [selectedOptions];
         this.setState({
@@ -1207,7 +1221,7 @@ class ServiceOverview extends React.Component {
             </div>)
     }
 
-    renderOidc = (config, service, isAdmin, isServiceAdmin) => {
+    renderOidc = (config, service, isAdmin, isServiceAdmin, alreadyExists, showServiceAdminView) => {
         const {invalidRedirectUrls, invalidRedirectUrlHttpNonLocalHost} = this.state;
         const {redirect_urls, grants} = this.state.service;
         return (
@@ -1236,16 +1250,44 @@ class ServiceOverview extends React.Component {
                     <p>{I18n.t("service.oidc.oidcDisabledExclusivity")}</p>}
                 {service.oidc_enabled &&
                     <>
-                        <InputField value={service.providing_organisation}
-                                    name={I18n.t("service.providingOrganisation")}
-                                    placeholder={I18n.t("service.providingOrganisationPlaceholder")}
-                                    onChange={this.changeServiceProperty("providing_organisation")}
+                        <InputField value={service.entity_id}
+                                    onChange={this.changeServiceProperty("entity_id", false, {
+                                        ...alreadyExists, entity_id: false
+                                    })}
+                                    placeholder={I18n.t("service.entity_idPlaceHolder")}
+                                    onBlur={this.validateServiceEntityId}
+                                    name={I18n.t("service.entity_id")}
+                                    toolTip={I18n.t("service.entity_idTooltip")}
                                     required={true}
-                        />
-                        {(isEmpty(service.providing_organisation)) &&
+                                    error={alreadyExists.entity_id || isEmpty(service.entity_id)}
+                                    copyClipBoard={true}
+                                    disabled={!isAdmin || showServiceAdminView}/>
+                        {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
+                            attribute: I18n.t("service.entity_id").toLowerCase(), value: service.entity_id
+                        })}/>}
+                        {isEmpty(service.entity_id) && <ErrorIndicator msg={I18n.t("service.required", {
+                            attribute: I18n.t("service.entity_id").toLowerCase()
+                        })}/>}
+
+                        <SelectField value={grants}
+                                     options={this.grantOptions.filter(option => Array.isArray(grants) && !grants.find(grant => grant.value === option.value))}
+                                     onInputChange={val => val}
+                                     isMulti={true}
+                                     name={I18n.t("service.openIDConnectGrants")}
+                                     placeholder={I18n.t("service.openIDConnectGrantsPlaceholder")}
+                                     toolTip={I18n.t("service.openIDConnectGrantsTooltip")}
+                                     required={true}
+                                     error={isEmpty(grants)}
+                                     onChange={selectedOptions => this.grantsChanged(selectedOptions, service)}/>
+                        {isEmpty(grants) &&
                             <ErrorIndicator msg={I18n.t("service.required", {
-                                attribute: I18n.t("service.providingOrganisation").toLowerCase()
+                                attribute: I18n.t("service.openIDConnectGrants").toLowerCase()
                             })}/>}
+
+                        <ToggleSwitch name={I18n.t("service.grants.authorization_code")}
+                                      value={grants.includes("authorization_code")}
+                                      onChange={e => this.toggleGrant("authorization_code", e.target.checked)}
+                                      label={I18n.t("service.grants.authorization_code")}/>
 
                         <SelectField value={redirect_urls}
                                      options={[]}
@@ -1265,21 +1307,6 @@ class ServiceOverview extends React.Component {
                                 msg={I18n.t("forms.invalidInput", {name: `URL: ${invalidRedirectUrls.join(", ")}`})}
                                 subMsg={invalidRedirectUrlHttpNonLocalHost ? I18n.t("forms.invalidRedirectUrl") : null}
                             />}
-
-                        <SelectField value={grants}
-                                     options={this.grantOptions.filter(option => Array.isArray(grants) && !grants.find(grant => grant.value === option.value))}
-                                     onInputChange={val => val}
-                                     isMulti={true}
-                                     name={I18n.t("service.openIDConnectGrants")}
-                                     placeholder={I18n.t("service.openIDConnectGrantsPlaceholder")}
-                                     toolTip={I18n.t("service.openIDConnectGrantsTooltip")}
-                                     required={true}
-                                     error={isEmpty(grants)}
-                                     onChange={selectedOptions => this.grantsChanged(selectedOptions, service)}/>
-                        {isEmpty(grants) &&
-                            <ErrorIndicator msg={I18n.t("service.required", {
-                                attribute: I18n.t("service.openIDConnectGrants").toLowerCase()
-                            })}/>}
 
                         <CheckBox name={"is_public_client"}
                                   value={service.is_public_client}
@@ -1305,7 +1332,7 @@ class ServiceOverview extends React.Component {
             </div>)
     }
 
-    renderSAML = (config, service, isAdmin, isServiceAdmin, invalidInputs) => {
+    renderSAML = (config, service, isAdmin, isServiceAdmin, invalidInputs, alreadyExists, showServiceAdminView) => {
         const {parsedSAMLMetaData, parsedSAMLMetaDataError, parsedSAMLMetaDataURLError} = this.state;
         return (
             <div className="saml">
@@ -1330,6 +1357,25 @@ class ServiceOverview extends React.Component {
                     <div>
                         <div className="meta-data-section">
                             <div>
+                                <InputField value={service.entity_id}
+                                            onChange={this.changeServiceProperty("entity_id", false, {
+                                                ...alreadyExists, entity_id: false
+                                            })}
+                                            placeholder={I18n.t("service.entity_idPlaceHolder")}
+                                            onBlur={this.validateServiceEntityId}
+                                            name={I18n.t("service.entity_id")}
+                                            toolTip={I18n.t("service.entity_idTooltip")}
+                                            required={true}
+                                            error={alreadyExists.entity_id || isEmpty(service.entity_id)}
+                                            copyClipBoard={true}
+                                            disabled={!isAdmin || showServiceAdminView}/>
+                                {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
+                                    attribute: I18n.t("service.entity_id").toLowerCase(), value: service.entity_id
+                                })}/>}
+                                {isEmpty(service.entity_id) && <ErrorIndicator msg={I18n.t("service.required", {
+                                    attribute: I18n.t("service.entity_id").toLowerCase()
+                                })}/>}
+
                                 <InputField value={service.saml_metadata_url}
                                             name={I18n.t("service.samlMetadataURL")}
                                             placeholder={I18n.t("service.samlMetadataPlaceholder")}
@@ -1578,6 +1624,17 @@ class ServiceOverview extends React.Component {
                       tooltip={I18n.t("service.allowRestrictedOrgsTooltip")}
                       onChange={this.changeServiceProperty("allow_restricted_orgs", true)}/>
 
+            <InputField value={service.providing_organisation}
+                        name={I18n.t("service.providingOrganisation")}
+                        placeholder={I18n.t("service.providingOrganisationPlaceholder")}
+                        onChange={this.changeServiceProperty("providing_organisation")}
+                        required={true}
+            />
+            {(isEmpty(service.providing_organisation)) &&
+                <ErrorIndicator msg={I18n.t("service.required", {
+                    attribute: I18n.t("service.providingOrganisation").toLowerCase()
+                })}/>}
+
             <InputField value={service.uri_info}
                         name={I18n.t("service.infoUri")}
                         placeholder={I18n.t("service.infoUriPlaceholder")}
@@ -1607,25 +1664,6 @@ class ServiceOverview extends React.Component {
                         disabled={!isAdmin && !isServiceAdmin}/>
             {invalidInputs.uri &&
                 <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
-
-            <InputField value={service.entity_id}
-                        onChange={this.changeServiceProperty("entity_id", false, {
-                            ...alreadyExists, entity_id: false
-                        })}
-                        placeholder={I18n.t("service.entity_idPlaceHolder")}
-                        onBlur={this.validateServiceEntityId}
-                        name={I18n.t("service.entity_id")}
-                        toolTip={I18n.t("service.entity_idTooltip")}
-                        required={true}
-                        error={alreadyExists.entity_id || isEmpty(service.entity_id)}
-                        copyClipBoard={true}
-                        disabled={!isAdmin || showServiceAdminView}/>
-            {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
-                attribute: I18n.t("service.entity_id").toLowerCase(), value: service.entity_id
-            })}/>}
-            {isEmpty(service.entity_id) && <ErrorIndicator msg={I18n.t("service.required", {
-                attribute: I18n.t("service.entity_id").toLowerCase()
-            })}/>}
 
             {(isAdmin && !showServiceAdminView) &&
                 <SelectField
@@ -1663,9 +1701,9 @@ class ServiceOverview extends React.Component {
             case "pamWebLogin":
                 return this.renderPamWebLogin(service, isAdmin, isServiceAdmin, createNewServiceToken, "pam");
             case "OIDC":
-                return this.renderOidc(config, service, isAdmin, isServiceAdmin);
+                return this.renderOidc(config, service, isAdmin, isServiceAdmin, alreadyExists, showServiceAdminView);
             case "SAML":
-                return this.renderSAML(config, service, isAdmin, isServiceAdmin, invalidInputs);
+                return this.renderSAML(config, service, isAdmin, isServiceAdmin, invalidInputs, alreadyExists, showServiceAdminView);
             case "Export":
                 return this.renderExport(config, service);
             default:
