@@ -1,5 +1,4 @@
 import json
-import os
 import uuid
 
 from munch import munchify
@@ -160,26 +159,6 @@ class TestUserClaims(AbstractTest):
         connected_collaborations = [cm.collaboration for cm in user.collaboration_memberships]
         memberships = user_memberships(user, connected_collaborations)
         self.assertEqual(0, len(memberships))
-
-    def test_cleared_attributes(self):
-        try:
-            os.environ["TESTING"] = ""
-            mail = self.app.mail
-            with mail.record_messages() as outbox:
-                user = User(uid="urn:john", name="jdoe", email="jdoe@example.com", scoped_affiliation="test")
-                add_user_claims({
-                    "voperson_external_id": "eppn",
-                    "eduperson_entitlement": ["e1", "e2"],
-                    "eduperson_scoped_affiliation": []
-                }, "urn:john", user)
-                self.assertEqual(1, len(outbox))
-                mail_msg = outbox[0]
-                self.assertListEqual(["sram-support@surf.nl"], mail_msg.to)
-                for name in ["name", "email", "uid"]:
-                    self.assertTrue(name in mail_msg.html)
-
-        finally:
-            os.environ["TESTING"] = "1"
 
     def test_valid_user_attributes(self):
         attributes = {

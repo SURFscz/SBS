@@ -58,13 +58,12 @@ def generate_unique_username(user: User, max_count=10000):
 
 
 def add_user_claims(user_info_json, uid, user):
-    cleared_attributes = []
     for claim in claim_attribute_mapping_value:
         for key, attr in claim.items():
-            add_user_info_attr(key, attr, cleared_attributes, user, user_info_json)
+            add_user_info_attr(key, attr, user, user_info_json)
     # The implies EB is the attribute provider as IdP Proxy
     if not user_info_json.get("voperson_external_affiliation"):
-        add_user_info_attr("eduperson_scoped_affiliation", "scoped_affiliation", cleared_attributes, user,
+        add_user_info_attr("eduperson_scoped_affiliation", "scoped_affiliation", user,
                            user_info_json)
     if not user.name:
         name = " ".join(list(filter(lambda x: x, [user.given_name, user.family_name]))).strip()
@@ -85,25 +84,12 @@ def add_user_claims(user_info_json, uid, user):
         user.username = generate_unique_username(user)
     if not user.external_id:
         user.external_id = str(uuid.uuid4())
-    if cleared_attributes:
-        msg = f"Previously set attributes {cleared_attributes} for user {uid} is cleared in user_info"
-        ctx_logger("base").exception(msg)
-        mail_conf = current_app.app_config.mail
-        if not os.environ.get("TESTING"):
-            mail_error(mail_conf.environment, uid, mail_conf.send_exceptions_recipients, msg)
 
 
-# Because we migrate to EB, we must ignore the EB attributes
-# See https://github.com/SURFscz/SBS/issues/1900
-ignore_cleared_attributes = ["scoped_affiliation", "affiliation", "eduperson_principal_name", "schac_home_organisation"]
-
-
-def add_user_info_attr(key, attr, cleared_attributes, user, user_info_json):
+def add_user_info_attr(key, attr, user, user_info_json):
     val = user_info_json.get(key)
     if isinstance(val, list):
         val = ", ".join(val) if val else None
-    if (key not in user_info_json or val == "") and getattr(user, attr) and attr not in ignore_cleared_attributes:
-        cleared_attributes.append(attr)
     if val or (val is None and key in user_info_json and attr not in ["uid", "name", "email"]):
         setattr(user, attr, val)
 
