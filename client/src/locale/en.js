@@ -952,7 +952,7 @@ const en = {
         namePlaceHolder: "The unique name of the application",
         entity_id: "Application ID",
         entity_idPlaceHolder: "The unique application ID of the application",
-        entity_idTooltip: "The application ID is used as the unique identitfier with SAML (Entity ID) or OIDC (client_id) and uniquely identifies your application at the identity proxy. It is also used for provisioning with LDAP.",
+        entity_idTooltip: "The application ID is used as the unique identitfier with SAML (Entity ID) or OIDC (client_id) and uniquely identifies your application at the identity proxy.",
         abbreviation: "Short name",
         abbreviationPlaceHolder: "The short name of this application",
         abbreviationTooltip: "The short name of the application is used as a prefix for groups provisioned by this application's application groups.<br/><br/>" +
@@ -1206,7 +1206,8 @@ const en = {
             oidcClient: "OIDC protocol",
             oidcEnabledTooltip: "Allow this application to login with the OIDC protocol",
             oidcDisclaimer: "OIDC protocol is disabled",
-            oidcDisabledExclusivity: "OIDC protocol can not be enabled, because the SAML protocol is active"
+            oidcDisabledExclusivity: "OIDC protocol can not be enabled, because the SAML protocol is active",
+            addRedirectURL: "+ Add redirect URL"
         },
         saml: {
             section: "SAML settings",

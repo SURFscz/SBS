@@ -952,7 +952,7 @@ const nl = {
         namePlaceHolder: "De unieke naam van de applicatie",
         entity_id: "Applicatie ID",
         entity_idPlaceHolder: "De unieke applicatie ID van de applicatie",
-        entity_idTooltip: "De applicatie ID is bij SAML (Entity ID) en OIDC (client_id) het unieke kenmerk van je applicatie voor de identity proxy. Het wordt ook gebruikt bij provisioning via LDAP.",
+        entity_idTooltip: "De applicatie ID is bij SAML (Entity ID) en OIDC (client_id) het unieke kenmerk van je applicatie voor de identity proxy.",
         abbreviation: "Korte naam",
         abbreviationPlaceHolder: "De korte naam van de applicatie",
         abbreviationTooltip: "De korte naam van een applicatie wordt gebruikt als prefix voor groepen aangemaakt door de applicatiegroepen van deze applicatie.<br/><br/>" +
@@ -1206,7 +1206,8 @@ const nl = {
             oidcClient: "OIDC client",
             oidcEnabledTooltip: "Configureer deze applicatie in te loggen met het OIDC protocol",
             oidcDisclaimer: "OIDC protocol is uitgeschakeld",
-            oidcDisabledExclusivity: "OIDC protocol kan niet worden aangezet, omdat het SAML protocol actief is"
+            oidcDisabledExclusivity: "OIDC protocol kan niet worden aangezet, omdat het SAML protocol actief is",
+            addRedirectURL: "+ Redirect URL toevoegen"
         },
         saml: {
             section: "SAML configuratie",

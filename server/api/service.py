@@ -33,12 +33,19 @@ ALWAYS = "ALWAYS"
 service_api = Blueprint("service_api", __name__, url_prefix="/api/services")
 
 base_service_query = """
-    SELECT s.id, s.name, s.uuid4, s.entity_id, s.abbreviation,
-    (SELECT COUNT(scr.id) FROM service_connection_requests scr WHERE scr.service_id = s.id
-    AND scr.status = 'open' AND scr.pending_organisation_approval = 0) AS req_count,
-    (SELECT COUNT(sc.id) FROM services_collaborations sc WHERE sc.service_id = s.id) AS c_count
-    FROM services s
-"""
+                     SELECT s.id,
+                            s.name,
+                            s.uuid4,
+                            s.entity_id,
+                            s.abbreviation,
+                            (SELECT COUNT(scr.id)
+                             FROM service_connection_requests scr
+                             WHERE scr.service_id = s.id
+                               AND scr.status = 'open'
+                               AND scr.pending_organisation_approval = 0)                                    AS req_count,
+                            (SELECT COUNT(sc.id) FROM services_collaborations sc WHERE sc.service_id = s.id) AS c_count
+                     FROM services s \
+                     """
 
 
 def _result_set_to_services(result_set):
@@ -126,15 +133,20 @@ def _do_get_services(restrict_for_current_user=False, include_counts=False):
         return services, 200
 
     query = """
-        select s.id as id,
-            (select count(so.id) from services_organisations so where so.service_id = s.id) as so_count ,
-            ((select count(sc.id) from services_collaborations sc where sc.service_id = s.id) +
-            (select count(c.id) from collaborations c where c.organisation_id in (
-                    select so.organisation_id from services_organisations so where so.service_id = s.id
-                ) and c.id not in (
-                    select sc.collaboration_id from services_collaborations sc where sc.service_id = s.id
-            ))) as c_count from services s
-    """
+            select s.id                                                                                              as id,
+                   (select count(so.id)
+                    from services_organisations so
+                    where so.service_id = s.id)                                                                      as so_count,
+                   ((select count(sc.id) from services_collaborations sc where sc.service_id = s.id) +
+                    (select count(c.id)
+                     from collaborations c
+                     where c.organisation_id in
+                           (select so.organisation_id from services_organisations so where so.service_id = s.id)
+                       and c.id not in (select sc.collaboration_id
+                                        from services_collaborations sc
+                                        where sc.service_id = s.id)))                                                as c_count
+            from services s \
+            """
     if restrict_for_current_user and len(services) > 0:
         query += f" where s.id in ({','.join([str(s.id) for s in services])})"
 
@@ -385,6 +397,7 @@ def save_service():
 
     data["status"] = STATUS_ACTIVE
     cleanse_short_name(data, "abbreviation")
+    data["entity_id"] = data["abbreviation"]
     hashed, _ = generate_password_with_hash()
     data["ldap_password"] = hashed
 

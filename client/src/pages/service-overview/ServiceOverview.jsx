@@ -26,13 +26,7 @@ import "./ServiceOverview.scss";
 import "../../components/_redesign/api-keys/ApiKeys.scss";
 import Button from "../../components/button/Button";
 import {setFlash} from "../../utils/Flash";
-import {
-    commaSeparatedArrayToValues,
-    isEmpty,
-    joinSelectValuesArray,
-    splitListSemantically,
-    stopEvent
-} from "../../utils/Utils";
+import {commaSeparatedArrayToValues, isEmpty, splitListSemantically, stopEvent} from "../../utils/Utils";
 import {
     CO_SHORT_NAME,
     sanitizeShortName,
@@ -63,12 +57,9 @@ class ServiceOverview extends React.Component {
 
     constructor(props, context) {
         super(props, context);
-        this.grantOptions = ["authorization_code", "implicit", "refresh_token", "client_credentials"]
-            .map(val => ({value: val, label: I18n.t(`service.grants.${val}`)}));
-
         this.state = {
             service: {},
-            required: ["name", "entity_id", "abbreviation", "logo", "security_email"],
+            required: ["name", "abbreviation", "logo", "security_email"],
             alreadyExists: {},
             invalidInputs: {},
             confirmationDialogOpen: false,
@@ -97,9 +88,11 @@ class ServiceOverview extends React.Component {
             parsedSAMLMetaData: null,
             parsedSAMLMetaDataError: false,
             parsedSAMLMetaDataURLError: false,
-            invalidRedirectUrls: null,
-            invalidRedirectUrlHttpNonLocalHost: false,
-            crmOrganisations: []
+            invalidRedirectUrls: {},
+            invalidRedirectUrlHttpNonLocalHost: {},
+            crmOrganisations: [],
+            oidcClientSecret: null,
+            oidcClientSecretModal: false
         }
     }
 
@@ -170,9 +163,8 @@ class ServiceOverview extends React.Component {
             }
             invalidInputs[name] = !isEmpty(serviceElement) && !validUrlRegExp.test(serviceElement);
         });
-        const invalidRedirectUrls = isEmpty(service.redirect_urls) ? null : service.redirect_urls
-            .filter(url => !validRedirectUrlRegExp.test(url.value))
-            .map(url => url.value);
+        const invalidRedirectUrls = {};
+        service.redirect_urls.forEach((url,index) => invalidRedirectUrls[index] = !validRedirectUrlRegExp.test(url));
         this.setState({invalidInputs: invalidInputs, invalidRedirectUrls: invalidRedirectUrls}, callback);
     }
 
@@ -257,6 +249,7 @@ class ServiceOverview extends React.Component {
                 sweepSuccess: null,
                 ldapPassword: null,
                 oidcClientSecret: null,
+                oidcClientSecretModal: false,
                 confirmationHeader: I18n.t("confirmationDialog.title"),
                 confirmationDialogQuestion: I18n.t("service.ldap.confirmation", {name: service.name}),
                 confirmationTxt: I18n.t("confirmationDialog.confirm"),
@@ -301,6 +294,7 @@ class ServiceOverview extends React.Component {
                 sweepSuccess: null,
                 ldapPassword: null,
                 oidcClientSecret: null,
+                oidcClientSecretModal: false,
                 confirmationHeader: I18n.t("confirmationDialog.title"),
                 confirmationDialogQuestion: I18n.t("service.oidc.confirmation", {name: service.name}),
                 confirmationTxt: I18n.t("confirmationDialog.confirm"),
@@ -315,6 +309,7 @@ class ServiceOverview extends React.Component {
                     confirmationDialogQuestion: I18n.t("service.oidc.info"),
                     oidcClientSecret: res.oidc_client_secret,
                     scimTokenChange: false,
+                    oidcClientSecretModal: true,
                     sweepSuccess: null,
                     tokenValue: null,
                     loading: false,
@@ -393,9 +388,19 @@ class ServiceOverview extends React.Component {
         this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
     });
 
-    validateServiceEntityId = e => serviceEntityIdExists(e.target.value, this.props.service.entity_id).then(json => {
-        this.setState({alreadyExists: {...this.state.alreadyExists, entity_id: json}});
-    });
+    validateServiceEntityId = (e, protocol) => {
+        let val = e.target.value;
+        if (protocol === "oidc") {
+            val = val.replaceAll(":", "@");
+        }
+        serviceEntityIdExists(val, this.props.service.entity_id).then(json => {
+            this.setState({alreadyExists: {...this.state.alreadyExists, entity_id: json}});
+            if (protocol === "oidc") {
+                const {service} = this.state;
+                this.setState({service: {...service, entity_id: val}});
+            }
+        })
+    };
 
     validateServiceAbbreviation = e => serviceAbbreviationExists(sanitizeShortName(e.target.value), this.props.service.abbreviation).then(json => {
         this.setState({alreadyExists: {...this.state.alreadyExists, abbreviation: json}});
@@ -516,31 +521,7 @@ class ServiceOverview extends React.Component {
     };
 
     isValid = () => {
-        const {
-            required,
-            alreadyExists,
-            invalidInputs,
-            hasAdministrators,
-            service,
-            initial,
-            invalidRedirectUrls
-        } = this.state;
-        const {manage_enabled} = this.props.config;
-        const {
-            contact_email, scim_enabled, scim_url, saml_enabled, saml_metadata, saml_metadata_url,
-            oidc_enabled, redirect_urls, grants, providing_organisation
-        } = service;
-        const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(service[attr])) || Object.keys(invalidInputs).some(key => invalidInputs[key]);
-        const contactEmailRequired = !hasAdministrators && isEmpty(contact_email);
-        const scimInvalid = scim_enabled && !initial && isEmpty(scim_url);
-        const oidcValid = !manage_enabled || !oidc_enabled ||
-            (!isEmpty(redirect_urls) && isEmpty(invalidRedirectUrls) && !isEmpty(grants) && !isEmpty(providing_organisation));
-        const samlValid = !manage_enabled || !saml_enabled ||
-            (!isEmpty(saml_metadata) || !isEmpty(saml_metadata_url));
-
-        const valid = !inValid && !contactEmailRequired && !scimInvalid &&
-            oidcValid && samlValid;
-        return valid;
+        return toc.every(tab => this.isValidTab(tab));
     };
 
     renderSAMLMetaData = parsedSAMLMetaData => {
@@ -611,13 +592,15 @@ class ServiceOverview extends React.Component {
         const {alreadyExists, invalidInputs, hasAdministrators, service, initial, invalidRedirectUrls} = this.state;
         const {
             contact_email, redirect_urls, saml_metadata, saml_metadata_url, providing_organisation,
-            oidc_enabled, saml_enabled, grants
+            oidc_enabled, saml_enabled, grants, entity_id
         } = service;
         const contactEmailRequired = !hasAdministrators && isEmpty(contact_email);
 
         switch (tab) {
             case "general":
-                return !isEmpty(service.name) && !alreadyExists.name && !isEmpty(service.abbreviation) && !alreadyExists.abbreviation && !isEmpty(service.logo) && !invalidInputs.uri && !isEmpty(service.entity_id) && !alreadyExists.entity_id;
+                return !isEmpty(service.name) && !alreadyExists.name && !isEmpty(service.abbreviation)
+                    && !alreadyExists.abbreviation && !isEmpty(service.logo) && !invalidInputs.uri
+                     && !isEmpty(providing_organisation);
             case "contacts":
                 return !isEmpty(service.security_email) && !contactEmailRequired && !invalidInputs.email && !invalidInputs.security_email && !invalidInputs.support_email
             case "policy":
@@ -634,9 +617,10 @@ class ServiceOverview extends React.Component {
                 return true;
             case "OIDC":
                 return !oidc_enabled ||
-                    (!isEmpty(redirect_urls) && isEmpty(invalidRedirectUrls) && !isEmpty(grants) && !isEmpty(providing_organisation));
+                    (!isEmpty(redirect_urls) && Object.keys(invalidRedirectUrls).some(val => val) && !isEmpty(grants)
+                        && !isEmpty(entity_id));
             case "SAML":
-                return !saml_enabled || (!isEmpty(saml_metadata) || !isEmpty(saml_metadata_url));
+                return !saml_enabled || (!isEmpty(saml_metadata) || !isEmpty(saml_metadata_url)) && !isEmpty(entity_id);
             case "Export":
                 return true;
             default:
@@ -694,14 +678,15 @@ class ServiceOverview extends React.Component {
                     });
                 } else {
                     this.setState({loading: true});
-                    const {name, redirect_urls, grants} = service;
-                    ["entity_id"].forEach(attr => service[attr] = service[attr] ? service[attr].trim() : null)
+                    const {name, redirect_urls, grants, entity_id} = service;
+                    service.entity_id = service.oidc_enabled ? entity_id.replaceAll(":", "@").trim() : entity_id.trim();
+                    ["name"].forEach(attr => service[attr] = service[attr] ? service[attr].trim() : null)
                     this.setState({
                         service: {
                             ...service,
                             sweep_scim_daily_rate: service.sweep_scim_daily_rate ? service.sweep_scim_daily_rate.value : 0,
-                            redirect_urls: joinSelectValuesArray(redirect_urls),
-                            grants: joinSelectValuesArray(grants)
+                            redirect_urls: redirect_urls.join(","),
+                            grants: grants.join(",")
                         }
                     }, () => {
                         const updatedService = this.state.service;
@@ -786,26 +771,47 @@ class ServiceOverview extends React.Component {
         });
     };
 
-    redirectUrlsChanged = (selectedOptions, service) => {
-        if (selectedOptions === null) {
-            this.setState({
-                invalidRedirectUrls: null, invalidRedirectUrlHttpNonLocalHost: false,
-                service: {...service, redirect_urls: []}
-            });
-        } else {
-            const validRedirectUrls = selectedOptions
-                .filter(option => validRedirectUrlRegExp.test(option.value));
-            const newRedirectUrls = Array.isArray(validRedirectUrls) ? [...validRedirectUrls] : [validRedirectUrls];
-            const invalidRedirectUrls = selectedOptions
-                .filter(option => !validRedirectUrlRegExp.test(option.value))
-                .map(option => option.value);
+    addRedirectURL = e => {
+        stopEvent(e);
+        const {service} = this.state;
+        const newRedirectUrls = [...service.redirect_urls];
+        newRedirectUrls.push("");
+        this.setState({
+            service: {...service, redirect_urls: newRedirectUrls}
+        });
+    }
 
-            this.setState({
-                invalidRedirectUrls: invalidRedirectUrls,
-                invalidRedirectUrlHttpNonLocalHost: !isEmpty(invalidRedirectUrls) && invalidRedirectUrls[0].startsWith("http://"),
-                service: {...service, redirect_urls: newRedirectUrls}
-            });
-        }
+    removeRedirectURL = (e, index) => {
+        stopEvent(e);
+        const {service} = this.state;
+        const newRedirectUrls = [...service.redirect_urls];
+        newRedirectUrls.splice(index, 1);
+        this.setState({
+            service: {...service, redirect_urls: [...newRedirectUrls]}
+        });
+    }
+
+    redirectUrlChanged = (e, index) => {
+        const {service, invalidRedirectUrls, invalidRedirectUrlHttpNonLocalHost} = this.state;
+        const newRedirectUrls = [...service.redirect_urls];
+        const value = e.target.value;
+        newRedirectUrls[index] = value;
+        this.setState({
+            invalidRedirectUrls: {...invalidRedirectUrls, [index]: false},
+            invalidRedirectUrlHttpNonLocalHost: {...invalidRedirectUrlHttpNonLocalHost, [index]: false},
+            service: {...service, redirect_urls: newRedirectUrls}
+        });
+    }
+
+    validateRedirectUrl = (e, index) => {
+        const {invalidRedirectUrls, invalidRedirectUrlHttpNonLocalHost} = this.state;
+        const value = e.target.value;
+        const nonLocalHost = value.startsWith("http://") && !value.startsWith("http://localhost");
+        const valid = validRedirectUrlRegExp.test(value);
+        this.setState({
+            invalidRedirectUrls: {...invalidRedirectUrls, [index]: !valid},
+            invalidRedirectUrlHttpNonLocalHost: {...invalidRedirectUrlHttpNonLocalHost, [index]: nonLocalHost}
+        });
     }
 
     toggleGrant = (grantName, toggleValue) => {
@@ -1220,7 +1226,7 @@ class ServiceOverview extends React.Component {
             </div>)
     }
 
-    renderOidc = (config, service, isAdmin, isServiceAdmin, alreadyExists, showServiceAdminView) => {
+    renderOidc = (config, service, isAdmin, isServiceAdmin, alreadyExists, showServiceAdminView, oidcClientSecret) => {
         const {invalidRedirectUrls, invalidRedirectUrlHttpNonLocalHost} = this.state;
         const {redirect_urls, grants} = this.state.service;
         return (
@@ -1230,17 +1236,7 @@ class ServiceOverview extends React.Component {
                           tooltip={I18n.t("service.oidc.oidcEnabledTooltip")}
                           info={I18n.t("service.oidc.oidcClient")}
                           readOnly={service.saml_enabled || !isAdmin}
-                          onChange={e => this.setState({
-                              service: {
-                                  ...service,
-                                  oidc_enabled: e.target.checked,
-                                  saml_enabled: e.target.checked ? false : service.saml_enabled,
-                                  grants: e.target.checked ? ["authorization_code"].map(val => ({
-                                      value: val,
-                                      label: I18n.t(`service.grants.${val}`)
-                                  })) : []
-                              }
-                          })}
+                          onChange={e => this.oidcEnabledChanged(service, e)}
                 />
                 {(!service.oidc_enabled && !service.saml_enabled) &&
                     <p>{I18n.t("service.oidc.oidcDisclaimer")}</p>
@@ -1254,7 +1250,7 @@ class ServiceOverview extends React.Component {
                                         ...alreadyExists, entity_id: false
                                     })}
                                     placeholder={I18n.t("service.entity_idPlaceHolder")}
-                                    onBlur={this.validateServiceEntityId}
+                                    onBlur={e => this.validateServiceEntityId(e, "oidc")}
                                     name={I18n.t("service.entity_id")}
                                     toolTip={I18n.t("service.entity_idTooltip")}
                                     required={true}
@@ -1268,46 +1264,37 @@ class ServiceOverview extends React.Component {
                             attribute: I18n.t("service.entity_id").toLowerCase()
                         })}/>}
 
-                        <SelectField value={grants}
-                                     options={this.grantOptions
-                                         .filter(option => Array.isArray(grants) && !grants.find(grant => grant.value === option.value))}
-                                     onInputChange={val => val}
-                                     isMulti={true}
-                                     name={I18n.t("service.openIDConnectGrants")}
-                                     placeholder={I18n.t("service.openIDConnectGrantsPlaceholder")}
-                                     toolTip={I18n.t("service.openIDConnectGrantsTooltip")}
-                                     required={true}
-                                     error={isEmpty(grants)}
-                                     onChange={selectedOptions => this.grantsChanged(selectedOptions, service)}/>
-                        {isEmpty(grants) &&
-                            <ErrorIndicator msg={I18n.t("service.required", {
-                                attribute: I18n.t("service.openIDConnectGrants").toLowerCase()
-                            })}/>}
-
                         <CheckBox name={I18n.t("service.grants.authorization_code")}
                                   value={grants.includes("authorization_code")}
                                   info={I18n.t("service.grants.authorization_code")}
                                   onChange={e => this.toggleGrant("authorization_code", e.target.checked)}
                         />
 
-                        <SelectField value={redirect_urls}
-                                     options={[]}
-                                     creatable={true}
-                                     isMulti={true}
-                                     name={I18n.t("service.openIDConnectRedirects")}
-                                     placeholder={I18n.t("service.openIDConnectRedirectsPlaceholder")}
-                                     toolTip={I18n.t("service.openIDConnectRedirectsTooltip")}
-                                     required={true}
-                                     error={isEmpty(redirect_urls) || !isEmpty(invalidRedirectUrls)}
-                                     onChange={selectedOptions => this.redirectUrlsChanged(selectedOptions, service)}/>
+                        <div className="redirect_urls">
+                            {redirect_urls.map((redirectUrl, index) =>
+                                <div className="redirect_url">
+                                    <InputField key={index}
+                                                value={redirectUrl}
+                                                name={index === 0 ? I18n.t("service.openIDConnectRedirects") : null}
+                                                toolTip={I18n.t("service.openIDConnectRedirectsTooltip")}
+                                                onChange={e => this.redirectUrlChanged(e, index)}
+                                                error={invalidRedirectUrls[index] || invalidRedirectUrlHttpNonLocalHost[index]}
+                                                onBlur={e => this.validateRedirectUrl(e, index)}
+                                                onDelete={index > 0 ? () => alert(index) : null}
+                                    />
+                                    {invalidRedirectUrls[index] &&
+                                        <ErrorIndicator
+                                            msg={I18n.t("forms.invalidInput", {name: `URL: ${redirectUrl}`})}
+                                            subMsg={invalidRedirectUrlHttpNonLocalHost[index]
+                                                ? I18n.t("forms.invalidRedirectUrl") : null}/>}
 
-                        {isEmpty(redirect_urls) && <ErrorIndicator
-                            msg={I18n.t("service.required", {attribute: I18n.t("service.openIDConnectRedirects")})}/>}
-                        {!isEmpty(invalidRedirectUrls) &&
-                            <ErrorIndicator
-                                msg={I18n.t("forms.invalidInput", {name: `URL: ${invalidRedirectUrls.join(", ")}`})}
-                                subMsg={invalidRedirectUrlHttpNonLocalHost ? I18n.t("forms.invalidRedirectUrl") : null}
-                            />}
+                                </div>)}
+                            {isEmpty(redirect_urls.filter(url => !isEmpty(url))) &&
+                                <ErrorIndicator msg={I18n.t("service.required", {attribute: I18n.t("service.openIDConnectRedirects")})}/>}
+                            <div className={"add-redirect-url"}>
+                                <a onClick={this.addRedirectURL}>{I18n.t("service.oidc.addRedirectURL")}</a>
+                            </div>
+                        </div>
 
                         <CheckBox name={"is_public_client"}
                                   value={service.is_public_client}
@@ -1320,17 +1307,48 @@ class ServiceOverview extends React.Component {
                                   tooltip={I18n.t("service.isPublicClientTooltip")}
                                   info={I18n.t("service.isPublicClient")}
                         />
-                        <div className="add-token-link">
-                        <span>{I18n.t("service.oidc.preTitle")}
-                            {(isAdmin || isServiceAdmin) && <a href="/secret"
-                                                               onClick={e => {
-                                                                   stopEvent(e);
-                                                                   this.oidcClientSecretResetAction(true)
-                                                               }}>{I18n.t("service.oidc.title")}</a>}
-                                    </span>
-                        </div>
+                        {(oidcClientSecret && !service.is_public_client) &&
+                            <div className="new-oidc-secret">
+                                <InputField value={oidcClientSecret}
+                                            name={I18n.t("service.oidc.oidcClientSecret")}
+                                            toolTip={I18n.t("service.oidc.oidcClientSecretTooltip")}
+                                            disabled={true}
+                                            copyClipBoard={true}
+                                            extraInfo={I18n.t("service.oidc.oidcClientSecretDisclaimer")}/>
+                            </div>}
+                        {(!oidcClientSecret && !service.is_public_client) &&
+                            <div className="add-token-link">
+                                <span>{I18n.t("service.oidc.preTitle")}
+                                    {(isAdmin || isServiceAdmin) &&
+                                        <a href="/secret"
+                                           onClick={e => {
+                                               stopEvent(e);
+                                               this.oidcClientSecretResetAction(true)
+                                           }}>{I18n.t("service.oidc.title")}</a>}
+                                    ¬                                </span>
+                            </div>}
                     </>}
             </div>)
+    }
+
+    oidcEnabledChanged = (service, e) => {
+        this.setState({
+            service: {
+                ...service,
+                oidc_enabled: e.target.checked,
+                redirect_urls: [""],
+                saml_enabled: e.target.checked ? false : service.saml_enabled,
+                grants: e.target.checked ? ["authorization_code"] : []
+            }
+        });
+        if (e.target.checked) {
+            resetOidcClientSecret(service)
+                .then(res => this.setState({
+                    oidcClientSecret: res.oidc_client_secret
+                }));
+        } else {
+            this.setState({oidcClientSecret: null});
+        }
     }
 
     renderSAML = (config, service, isAdmin, isServiceAdmin, invalidInputs, alreadyExists, showServiceAdminView) => {
@@ -1363,7 +1381,7 @@ class ServiceOverview extends React.Component {
                                                 ...alreadyExists, entity_id: false
                                             })}
                                             placeholder={I18n.t("service.entity_idPlaceHolder")}
-                                            onBlur={this.validateServiceEntityId}
+                                            onBlur={e => this.validateServiceEntityId(e, "saml")}
                                             name={I18n.t("service.entity_id")}
                                             toolTip={I18n.t("service.entity_idTooltip")}
                                             required={true}
@@ -1683,7 +1701,7 @@ class ServiceOverview extends React.Component {
 
     renderCurrentTab = (config, currentTab, service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit,
                         invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken, initial,
-                        crmOrganisations) => {
+                        crmOrganisations, oidcClientSecret) => {
         switch (currentTab) {
             case "general":
                 return this.renderGeneral(config, service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs, showServiceAdminView, crmOrganisations);
@@ -1702,7 +1720,7 @@ class ServiceOverview extends React.Component {
             case "pamWebLogin":
                 return this.renderPamWebLogin(service, isAdmin, isServiceAdmin, createNewServiceToken, "pam");
             case "OIDC":
-                return this.renderOidc(config, service, isAdmin, isServiceAdmin, alreadyExists, showServiceAdminView);
+                return this.renderOidc(config, service, isAdmin, isServiceAdmin, alreadyExists, showServiceAdminView, oidcClientSecret);
             case "SAML":
                 return this.renderSAML(config, service, isAdmin, isServiceAdmin, invalidInputs, alreadyExists, showServiceAdminView);
             case "Export":
@@ -1738,6 +1756,7 @@ class ServiceOverview extends React.Component {
             scimTokenChange,
             scimBearerToken,
             oidcClientSecret,
+            oidcClientSecretModal,
             crmOrganisations
         } = this.state;
         if (loading) {
@@ -1760,7 +1779,7 @@ class ServiceOverview extends React.Component {
                                     confirm={confirmationDialogAction}
                                     question={confirmationDialogQuestion}>
                     {ldapPassword && this.renderLdapPassword(ldapPassword)}
-                    {oidcClientSecret && this.renderOidcClientSecret(oidcClientSecret)}
+                    {(oidcClientSecret && oidcClientSecretModal) && this.renderOidcClientSecret(oidcClientSecret)}
                     {!isEmpty(sweepSuccess) && this.renderScimResults(service, sweepSuccess, sweepResults)}
                     {scimTokenChange && this.renderScimTokenChange(scimBearerToken)}
                 </ConfirmationDialog>
@@ -1769,7 +1788,8 @@ class ServiceOverview extends React.Component {
                 <div className={`service ${createNewServiceToken ? "no-grid" : ""}`}>
                     <h2 className="section-separator">{I18n.t(`serviceDetails.toc.${presentTab}`)}</h2>
                     {this.renderCurrentTab(config, presentTab, service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit,
-                        invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken, initial, crmOrganisations)}
+                        invalidInputs, hasAdministrators, showServiceAdminView, createNewServiceToken, initial, crmOrganisations,
+                        oidcClientSecret)}
                     {this.renderButtons(isAdmin, isServiceAdmin, disabledSubmit, presentTab, showServiceAdminView,
                         createNewServiceToken, service, invalidInputs)}
                 </div>

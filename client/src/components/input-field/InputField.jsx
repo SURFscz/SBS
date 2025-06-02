@@ -5,6 +5,7 @@ import "./InputField.scss";
 import {isEmpty} from "../../utils/Utils";
 import ClipBoardCopy from "../_redesign/clipboard-copy/ClipBoardCopy";
 import {validUrlRegExp} from "../../validations/regExps";
+import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 
 export default function InputField({
                                        onChange,
@@ -35,7 +36,8 @@ export default function InputField({
                                        button = null,
                                        classNamePostFix = null,
                                        extraInfo = null,
-                                       required = false
+                                       required = false,
+                                       onDelete = null
                                    }) {
     placeholder = disabled ? "" : placeholder;
     let className = "sds--text-field--input";
@@ -70,6 +72,7 @@ export default function InputField({
                                    onEnter(e);
                                }
                            }}/>}
+
                 {(multiline && !noInput) &&
                     <textarea disabled={disabled}
                               value={value}
@@ -93,6 +96,12 @@ export default function InputField({
                             <FontAwesomeIcon icon="arrow-right"/>
                         </a>
                     </div>}
+                {onDelete &&
+                    <div className="input-field-delete"
+                         onClick={onDelete}>
+                        <ThrashIcon />
+                    </div>}
+
                 {noInput && <span className="no-input">{value}</span>}
                 {fileUpload && <div className="file-upload-button-container">
                     <section className="file-upload-container">

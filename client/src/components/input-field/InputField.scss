@@ -57,21 +57,6 @@
         }
     }
 
-    span.remove {
-        display: flex;
-        align-items: center;
-
-        em {
-            display: inline-block;
-            margin-right: 10px;
-        }
-
-        svg.fa-trash {
-            margin: 0 5px 0 auto;
-            color: var(--sds--color--red--400);
-        }
-    }
-
     span.extra-info {
         margin-bottom: 6px;
         display: inline-block;
@@ -170,23 +155,12 @@
     }
 
     div.input-field-delete {
-        border: 1px solid var(--sds--color--gray--400);
-        font-size: 20px;
-        color: var(--sds--color--gray--400);
         cursor: pointer;
-
-        &:hover {
-            background-color: var(--sds--color--gray--100);
-        }
-
-
-        a {
-            padding: 12px 12px 0 12px;
-        }
+        margin-left: 10px;
+        display: flex;
 
         svg {
-
-            color: var(--sds--color--gray--400);
+            margin: auto;
             cursor: pointer;
 
             &:hover {

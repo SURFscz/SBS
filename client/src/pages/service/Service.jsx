@@ -75,7 +75,7 @@ class Service extends React.Component {
         motivation: "",
         administrators: [],
         message: "",
-        required: ["name", "entity_id", "abbreviation", "logo", "security_email"],
+        required: ["name", "abbreviation", "logo", "security_email"],
         alreadyExists: {},
         initial: true,
         invalidInputs: {},
@@ -113,7 +113,6 @@ class Service extends React.Component {
         const isServiceRequestDetails = isServiceRequest && match && match.params && match.params.service_request_id;
         if (isServiceRequest) {
             const required = this.state.required
-                .filter(attr => attr !== "entity_id" || isServiceRequestDetails)
                 .concat(["providing_organisation", "connection_type"]);
             this.setState({required: required})
         }
@@ -477,7 +476,7 @@ class Service extends React.Component {
         this.setState({administrators: uniqueEmails});
     };
 
-    serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri,
+    serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, abbreviation, description, uri,
                         automatic_connection_allowed, access_allowed_for_all, non_member_users_access_allowed,
                         contact_email, support_email, security_email, invalidInputs, contactEmailRequired,
                         accepted_user_policy, uri_info, privacy_policy, service, disabledSubmit, allow_restricted_orgs,
@@ -518,29 +517,6 @@ class Service extends React.Component {
                                disabled={disableEverything}
                                initial={initial}
                                secondRow={true}/>
-            {((!isServiceRequest || isServiceRequestDetails) && !disableEverything) && <div className="first-column">
-
-                <InputField value={entity_id}
-                            onChange={e => this.setState({
-                                entity_id: e.target.value,
-                                alreadyExists: {...this.state.alreadyExists, entity_id: false}
-                            })}
-                            placeholder={I18n.t("service.entity_idPlaceHolder")}
-                            onBlur={this.validateServiceEntityId}
-                            name={I18n.t("service.entity_id")}
-                            toolTip={I18n.t("service.entity_idTooltip")}
-                            error={alreadyExists.entity_id || (!initial && isEmpty(entity_id))}
-                            copyClipBoard={true}
-                            required={true}
-                            disabled={isServiceRequest && !isServiceRequestDetails}/>
-                {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
-                    attribute: I18n.t("service.entity_id").toLowerCase(), value: entity_id
-                })}/>}
-                {(!initial && isEmpty(entity_id)) && <ErrorIndicator msg={I18n.t("service.required", {
-                    attribute: I18n.t("service.entity_id").toLowerCase()
-                })}/>}
-
-            </div>}
             <div className="first-column">
 
                 <InputField value={abbreviation}
@@ -1020,7 +996,6 @@ class Service extends React.Component {
             confirmationDialogOpen,
             cancelDialogAction,
             name,
-            entity_id,
             ldap_identifier,
             abbreviation,
             description,
@@ -1093,7 +1068,7 @@ class Service extends React.Component {
                                     question={question}>
                     {declineDialog && this.getDeclineRejectionOptions(rejectionReason)}
                 </ConfirmationDialog>
-                {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description,
+                {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, abbreviation, description,
                     uri, automatic_connection_allowed, access_allowed_for_all, non_member_users_access_allowed, contact_email,
                     support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, uri_info,
                     privacy_policy, service, disabledSubmit, allow_restricted_orgs, token_enabled, pam_web_sso_enabled,

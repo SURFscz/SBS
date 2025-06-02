@@ -73,7 +73,7 @@ section.dialog-content {
                 }
             }
         }
-        }
+    }
 
     .service {
         width: 100%;
@@ -96,8 +96,18 @@ section.dialog-content {
         }
 
         .input-field, .radio-button-container, .actions, div.checkbox, .select-field, span.error,
-        div.email-invitations, div.compliance, div.ldap, div.contacts, div.tokens, div.actions-container {
+        div.email-invitations, div.compliance, div.ldap, div.redirect_urls, div.contacts, div.tokens, div.actions-container {
             grid-column-start: first;
+        }
+
+        .add-redirect-url {
+            margin-top: 10px;
+            a {
+                text-decoration: underline;
+                font-weight: 600;
+                color: black;
+                cursor: pointer;
+            }
         }
 
         label.service-details-tokens {
