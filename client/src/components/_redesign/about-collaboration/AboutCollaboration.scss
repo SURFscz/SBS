@@ -1,0 +1,84 @@
+@import "../../../stylesheets/vars";
+
+div.collaboration-about-mod {
+    padding: 32px 0;
+    max-width: $medium;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    @media (max-width: $tablet-max) {
+        padding: 32px 15px;
+
+        flex-direction: column;
+
+    }
+
+    p.description {
+        margin-bottom: 40px;
+    }
+
+    h2, h3, h4.margin {
+        margin-bottom: 25px;
+    }
+
+    p {
+        white-space: pre-line;
+    }
+
+    div.about {
+        width: 50%;
+        @media (max-width: $tablet-max) {
+            width: 100%;
+        }
+    }
+
+    .sds--content-card {
+        margin-bottom: 25px;
+    }
+
+    .members {
+        width: 40%;
+
+        margin: 0 20px 0 40px;
+
+        .meta-section {
+            &:not(:first-child) {
+                margin-top: 25px;
+            }
+
+            .header {
+                display: flex;
+                align-items: center;
+
+
+                svg {
+                    margin-right: 10px;
+                    width: 24px;
+                    height: auto;
+                }
+
+                &.join-request {
+                    flex-direction: column;
+                }
+
+
+            }
+
+            div.values {
+                padding-left: 35px;
+
+                &.labels {
+                    display: flex;
+                    flex-direction: column;
+                    font-weight: 600;
+                }
+            }
+
+        }
+
+
+    }
+}

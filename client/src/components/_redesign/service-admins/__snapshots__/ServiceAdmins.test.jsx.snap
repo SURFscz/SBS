@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ServiceAdmins matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-entities "
+  >
+    <section
+      class="entities-search"
+    >
+      <h2>
+        Application admins & managers (0)
+      </h2>
+      <div
+        class="search-filters serviceAdmins-search-filters"
+      />
+      <div
+        class="search "
+      >
+        <div
+          class="sds--text-field sds--text-field--has-icon"
+        >
+          <div
+            class="sds--text-field--shape"
+          >
+            <div
+              class="sds--text-field--input-and-icon"
+            >
+              <input
+                class="sds--text-field--input"
+                placeholder="Search for application admins.."
+                type="search"
+                value=""
+              />
+              <span
+                class="sds--text-field--icon"
+              >
+                <svg>
+                  search.svg
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="new-button"
+      >
+        <button
+          class="sds--btn sds--btn--primary    "
+          type="button"
+        >
+          <span
+            class="textual"
+          >
+            Invite admins
+          </span>
+        </button>
+      </div>
+    </section>
+    <section
+      class="entities-list"
+    />
+    <div />
+  </div>
+</DocumentFragment>
+`;

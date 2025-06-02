@@ -1,0 +1,46 @@
+@import "../../stylesheets/vars";
+
+.mod-missing-attributes {
+    max-width: $medium;
+    margin: 0 auto;
+    width: 100%;
+
+    .content {
+        margin: 0 auto 25px auto;
+        max-width: 560px;
+        display: flex;
+        flex-direction: column;
+        padding: 15px;
+    }
+
+    .image-container {
+        display: flex;
+        padding: 20px;
+
+        img {
+            margin: auto;
+            width: 220px;
+            height: auto;
+        }
+    }
+
+    div.ticket {
+        display: flex;
+        flex-direction: column;
+        margin: 15px auto 0 auto;
+
+        p {
+            margin-bottom: 8px;
+        }
+
+        span {
+            font-weight: bold;
+
+            &.value {
+                font-weight: normal;
+                margin-bottom: 10px;
+            }
+        }
+    }
+
+}

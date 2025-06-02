@@ -1,0 +1,27 @@
+@import "../../stylesheets/vars";
+
+.parsed-saml-meta-data {
+    margin: 15px 0;
+    background-color: $hover;
+    border: 1px solid $dark-grey;
+    padding: 6px 12px;
+    border-radius: $br;
+    font-size: 14px;
+    font-family: "Courier New", serif;
+
+    table {
+        td {
+            padding: 5px;
+            vertical-align: top;
+            word-break: break-word;
+
+            &.attribute {
+                width: 25%;
+            }
+
+            &.value {
+                width: 75%;
+            }
+        }
+    }
+}

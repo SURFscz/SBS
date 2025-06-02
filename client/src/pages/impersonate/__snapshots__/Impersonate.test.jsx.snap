@@ -1,0 +1,1084 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Impersonate matches snapshot when impersonating a user 1`] = `
+<DocumentFragment>
+  <div
+    class="unit-header-container"
+  >
+    <div
+      class="unit-header"
+    >
+      <div
+        class="image "
+      >
+        <svg>
+          puppet_new.svg
+        </svg>
+      </div>
+      <div
+        class="obj-name"
+      >
+        <div
+          class="meta-info-container"
+        >
+          <div
+            class="meta-info"
+          >
+            <h1>
+              Who do you want to be?
+            </h1>
+          </div>
+        </div>
+      </div>
+      <div
+        class="action-menu-container"
+      />
+    </div>
+  </div>
+  <div
+    class="mod-impersonate-container"
+  >
+    <div
+      class="mod-impersonate"
+    >
+      <div
+        class="impersonate"
+      >
+        <div
+          class="select-field"
+        >
+          <label
+            for="Organisation"
+          >
+            Organisation
+          </label>
+          <div
+            class="select-field-inner"
+          >
+            <div
+              class="input-select-inner css-b62m3t-container"
+            >
+              <span
+                class="css-1f43avz-a11yText-A11yText"
+                id="react-select-4-live-region"
+              />
+              <span
+                aria-atomic="false"
+                aria-live="polite"
+                aria-relevant="additions text"
+                class="css-1f43avz-a11yText-A11yText"
+                role="log"
+              />
+              <div
+                class="select-inner__control css-13cymwt-control"
+              >
+                <div
+                  class="select-inner__value-container css-hlgwow"
+                >
+                  <div
+                    class="select-inner__placeholder css-1jqq78o-placeholder"
+                    id="react-select-4-placeholder"
+                  >
+                    Search and select an organisation to narrow the search result for users...
+                  </div>
+                  <div
+                    class="select-inner__input-container css-19bb58m"
+                    data-value=""
+                  >
+                    <input
+                      aria-activedescendant=""
+                      aria-autocomplete="list"
+                      aria-describedby="react-select-4-placeholder"
+                      aria-expanded="false"
+                      aria-haspopup="true"
+                      autocapitalize="none"
+                      autocomplete="off"
+                      autocorrect="off"
+                      class="select-inner__input"
+                      id="react-select-4-input"
+                      role="combobox"
+                      spellcheck="false"
+                      style="opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
+                      tabindex="0"
+                      type="text"
+                      value=""
+                    />
+                  </div>
+                </div>
+                <div
+                  class="select-inner__indicators css-1wy0on6"
+                >
+                  <span
+                    class="select-inner__indicator-separator css-1u9des2-indicatorSeparator"
+                  />
+                  <div
+                    aria-hidden="true"
+                    class="select-inner__indicator select-inner__dropdown-indicator css-1xc3v61-indicatorContainer"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="css-tj5bde-Svg"
+                      focusable="false"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      width="20"
+                    >
+                      <path
+                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="sds--checkbox-container sds--tooltip-parent checkbox "
+        >
+          <input
+            id="organisationAdminsOnly"
+            type="checkbox"
+          />
+          <label
+            for="organisationAdminsOnly"
+          >
+            <span
+              class="sds--checkbox--visual"
+            >
+              <svg
+                height="11.9"
+                viewBox="0 0 13.6 11.9"
+                width="13.6"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m11.9.4-7 9.6-3.3-3.2c-.4-.4-1-.4-1.3 0-.4.4-.4 1 0 1.3l3.2 3.2q.6.6 1.5.6c.9 0 1.1-.3 1.4-.8l7.1-9.6c.3-.4.2-1-.2-1.3-.5-.3-1.1-.2-1.4.2"
+                />
+              </svg>
+            </span>
+            <span
+              class="checkbox--text"
+            >
+              Only show the admins of organisations
+            </span>
+          </label>
+        </div>
+        <div
+          class="select-field"
+        >
+          <label
+            for="Collaboration"
+          >
+            Collaboration
+          </label>
+          <div
+            class="select-field-inner"
+          >
+            <div
+              class="input-select-inner css-b62m3t-container"
+            >
+              <span
+                class="css-1f43avz-a11yText-A11yText"
+                id="react-select-5-live-region"
+              />
+              <span
+                aria-atomic="false"
+                aria-live="polite"
+                aria-relevant="additions text"
+                class="css-1f43avz-a11yText-A11yText"
+                role="log"
+              />
+              <div
+                class="select-inner__control css-13cymwt-control"
+              >
+                <div
+                  class="select-inner__value-container css-hlgwow"
+                >
+                  <div
+                    class="select-inner__placeholder css-1jqq78o-placeholder"
+                    id="react-select-5-placeholder"
+                  >
+                    Search and select a collaboration to narrow the search result for users...
+                  </div>
+                  <div
+                    class="select-inner__input-container css-19bb58m"
+                    data-value=""
+                  >
+                    <input
+                      aria-activedescendant=""
+                      aria-autocomplete="list"
+                      aria-describedby="react-select-5-placeholder"
+                      aria-expanded="false"
+                      aria-haspopup="true"
+                      autocapitalize="none"
+                      autocomplete="off"
+                      autocorrect="off"
+                      class="select-inner__input"
+                      id="react-select-5-input"
+                      role="combobox"
+                      spellcheck="false"
+                      style="opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
+                      tabindex="0"
+                      type="text"
+                      value=""
+                    />
+                  </div>
+                </div>
+                <div
+                  class="select-inner__indicators css-1wy0on6"
+                >
+                  <span
+                    class="select-inner__indicator-separator css-1u9des2-indicatorSeparator"
+                  />
+                  <div
+                    aria-hidden="true"
+                    class="select-inner__indicator select-inner__dropdown-indicator css-1xc3v61-indicatorContainer"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="css-tj5bde-Svg"
+                      focusable="false"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      width="20"
+                    >
+                      <path
+                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="sds--checkbox-container sds--tooltip-parent checkbox "
+        >
+          <input
+            id="collaborationAdminsOnly"
+            type="checkbox"
+          />
+          <label
+            for="collaborationAdminsOnly"
+          >
+            <span
+              class="sds--checkbox--visual"
+            >
+              <svg
+                height="11.9"
+                viewBox="0 0 13.6 11.9"
+                width="13.6"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m11.9.4-7 9.6-3.3-3.2c-.4-.4-1-.4-1.3 0-.4.4-.4 1 0 1.3l3.2 3.2q.6.6 1.5.6c.9 0 1.1-.3 1.4-.8l7.1-9.6c.3-.4.2-1-.2-1.3-.5-.3-1.1-.2-1.4.2"
+                />
+              </svg>
+            </span>
+            <span
+              class="checkbox--text"
+            >
+              Only show the admins of collaborations
+            </span>
+          </label>
+        </div>
+        <section
+          class="user-search"
+        >
+          <div
+            class="search"
+            tabindex="-1"
+          >
+            <label
+              class="autocomplete-label"
+              for="user"
+            >
+              User
+            </label>
+            <span
+              class="outer-search"
+            >
+              <input
+                class=""
+                placeholder="Search and select a user to impersonate..."
+                type="text"
+                value=""
+              />
+            </span>
+          </div>
+        </section>
+        <div
+          class="input-field sds--text-field  "
+        >
+          <label
+            for="Impersonation"
+          >
+            Impersonation
+          </label>
+          <div
+            class="inner-input-field"
+          >
+            <input
+              class="sds--text-field--input sds--text-field--input"
+              disabled=""
+              maxlength="255"
+              placeholder=""
+              type="text"
+              value="You are who you are - no impersonation"
+            />
+          </div>
+        </div>
+        <section
+          class="actions"
+        >
+          <button
+            class="sds--btn sds--btn--secondary    "
+            disabled=""
+            type="button"
+          >
+            <span
+              class="textual"
+            >
+              Stop impersonating
+            </span>
+          </button>
+          <button
+            class="sds--btn sds--btn--primary    "
+            type="button"
+          >
+            <span
+              class="textual"
+            >
+              Impersonate
+            </span>
+          </button>
+        </section>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Impersonate matches snapshot when not impersonating a user 1`] = `
+<DocumentFragment>
+  <div
+    class="unit-header-container"
+  >
+    <div
+      class="unit-header"
+    >
+      <div
+        class="image "
+      >
+        <svg>
+          puppet_new.svg
+        </svg>
+      </div>
+      <div
+        class="obj-name"
+      >
+        <div
+          class="meta-info-container"
+        >
+          <div
+            class="meta-info"
+          >
+            <h1>
+              Who do you want to be?
+            </h1>
+          </div>
+        </div>
+      </div>
+      <div
+        class="action-menu-container"
+      />
+    </div>
+  </div>
+  <div
+    class="mod-impersonate-container"
+  >
+    <div
+      class="mod-impersonate"
+    >
+      <div
+        class="impersonate"
+      >
+        <div
+          class="select-field"
+        >
+          <label
+            for="Organisation"
+          >
+            Organisation
+          </label>
+          <div
+            class="select-field-inner"
+          >
+            <div
+              class="input-select-inner css-b62m3t-container"
+            >
+              <span
+                class="css-1f43avz-a11yText-A11yText"
+                id="react-select-6-live-region"
+              />
+              <span
+                aria-atomic="false"
+                aria-live="polite"
+                aria-relevant="additions text"
+                class="css-1f43avz-a11yText-A11yText"
+                role="log"
+              />
+              <div
+                class="select-inner__control css-13cymwt-control"
+              >
+                <div
+                  class="select-inner__value-container css-hlgwow"
+                >
+                  <div
+                    class="select-inner__placeholder css-1jqq78o-placeholder"
+                    id="react-select-6-placeholder"
+                  >
+                    Search and select an organisation to narrow the search result for users...
+                  </div>
+                  <div
+                    class="select-inner__input-container css-19bb58m"
+                    data-value=""
+                  >
+                    <input
+                      aria-activedescendant=""
+                      aria-autocomplete="list"
+                      aria-describedby="react-select-6-placeholder"
+                      aria-expanded="false"
+                      aria-haspopup="true"
+                      autocapitalize="none"
+                      autocomplete="off"
+                      autocorrect="off"
+                      class="select-inner__input"
+                      id="react-select-6-input"
+                      role="combobox"
+                      spellcheck="false"
+                      style="opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
+                      tabindex="0"
+                      type="text"
+                      value=""
+                    />
+                  </div>
+                </div>
+                <div
+                  class="select-inner__indicators css-1wy0on6"
+                >
+                  <span
+                    class="select-inner__indicator-separator css-1u9des2-indicatorSeparator"
+                  />
+                  <div
+                    aria-hidden="true"
+                    class="select-inner__indicator select-inner__dropdown-indicator css-1xc3v61-indicatorContainer"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="css-tj5bde-Svg"
+                      focusable="false"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      width="20"
+                    >
+                      <path
+                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="sds--checkbox-container sds--tooltip-parent checkbox "
+        >
+          <input
+            id="organisationAdminsOnly"
+            type="checkbox"
+          />
+          <label
+            for="organisationAdminsOnly"
+          >
+            <span
+              class="sds--checkbox--visual"
+            >
+              <svg
+                height="11.9"
+                viewBox="0 0 13.6 11.9"
+                width="13.6"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m11.9.4-7 9.6-3.3-3.2c-.4-.4-1-.4-1.3 0-.4.4-.4 1 0 1.3l3.2 3.2q.6.6 1.5.6c.9 0 1.1-.3 1.4-.8l7.1-9.6c.3-.4.2-1-.2-1.3-.5-.3-1.1-.2-1.4.2"
+                />
+              </svg>
+            </span>
+            <span
+              class="checkbox--text"
+            >
+              Only show the admins of organisations
+            </span>
+          </label>
+        </div>
+        <div
+          class="select-field"
+        >
+          <label
+            for="Collaboration"
+          >
+            Collaboration
+          </label>
+          <div
+            class="select-field-inner"
+          >
+            <div
+              class="input-select-inner css-b62m3t-container"
+            >
+              <span
+                class="css-1f43avz-a11yText-A11yText"
+                id="react-select-7-live-region"
+              />
+              <span
+                aria-atomic="false"
+                aria-live="polite"
+                aria-relevant="additions text"
+                class="css-1f43avz-a11yText-A11yText"
+                role="log"
+              />
+              <div
+                class="select-inner__control css-13cymwt-control"
+              >
+                <div
+                  class="select-inner__value-container css-hlgwow"
+                >
+                  <div
+                    class="select-inner__placeholder css-1jqq78o-placeholder"
+                    id="react-select-7-placeholder"
+                  >
+                    Search and select a collaboration to narrow the search result for users...
+                  </div>
+                  <div
+                    class="select-inner__input-container css-19bb58m"
+                    data-value=""
+                  >
+                    <input
+                      aria-activedescendant=""
+                      aria-autocomplete="list"
+                      aria-describedby="react-select-7-placeholder"
+                      aria-expanded="false"
+                      aria-haspopup="true"
+                      autocapitalize="none"
+                      autocomplete="off"
+                      autocorrect="off"
+                      class="select-inner__input"
+                      id="react-select-7-input"
+                      role="combobox"
+                      spellcheck="false"
+                      style="opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
+                      tabindex="0"
+                      type="text"
+                      value=""
+                    />
+                  </div>
+                </div>
+                <div
+                  class="select-inner__indicators css-1wy0on6"
+                >
+                  <span
+                    class="select-inner__indicator-separator css-1u9des2-indicatorSeparator"
+                  />
+                  <div
+                    aria-hidden="true"
+                    class="select-inner__indicator select-inner__dropdown-indicator css-1xc3v61-indicatorContainer"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="css-tj5bde-Svg"
+                      focusable="false"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      width="20"
+                    >
+                      <path
+                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="sds--checkbox-container sds--tooltip-parent checkbox "
+        >
+          <input
+            id="collaborationAdminsOnly"
+            type="checkbox"
+          />
+          <label
+            for="collaborationAdminsOnly"
+          >
+            <span
+              class="sds--checkbox--visual"
+            >
+              <svg
+                height="11.9"
+                viewBox="0 0 13.6 11.9"
+                width="13.6"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m11.9.4-7 9.6-3.3-3.2c-.4-.4-1-.4-1.3 0-.4.4-.4 1 0 1.3l3.2 3.2q.6.6 1.5.6c.9 0 1.1-.3 1.4-.8l7.1-9.6c.3-.4.2-1-.2-1.3-.5-.3-1.1-.2-1.4.2"
+                />
+              </svg>
+            </span>
+            <span
+              class="checkbox--text"
+            >
+              Only show the admins of collaborations
+            </span>
+          </label>
+        </div>
+        <section
+          class="user-search"
+        >
+          <div
+            class="search"
+            tabindex="-1"
+          >
+            <label
+              class="autocomplete-label"
+              for="user"
+            >
+              User
+            </label>
+            <span
+              class="outer-search"
+            >
+              <input
+                class=""
+                placeholder="Search and select a user to impersonate..."
+                type="text"
+                value=""
+              />
+            </span>
+          </div>
+        </section>
+        <div
+          class="input-field sds--text-field  "
+        >
+          <label
+            for="Impersonation"
+          >
+            Impersonation
+          </label>
+          <div
+            class="inner-input-field"
+          >
+            <input
+              class="sds--text-field--input sds--text-field--input"
+              disabled=""
+              maxlength="255"
+              placeholder=""
+              type="text"
+              value="You are who you are - no impersonation"
+            />
+          </div>
+        </div>
+        <section
+          class="actions"
+        >
+          <button
+            class="sds--btn sds--btn--secondary    "
+            disabled=""
+            type="button"
+          >
+            <span
+              class="textual"
+            >
+              Stop impersonating
+            </span>
+          </button>
+          <button
+            class="sds--btn sds--btn--primary    "
+            type="button"
+          >
+            <span
+              class="textual"
+            >
+              Impersonate
+            </span>
+          </button>
+        </section>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Impersonate matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="unit-header-container"
+  >
+    <div
+      class="unit-header"
+    >
+      <div
+        class="image "
+      >
+        <svg>
+          puppet_new.svg
+        </svg>
+      </div>
+      <div
+        class="obj-name"
+      >
+        <div
+          class="meta-info-container"
+        >
+          <div
+            class="meta-info"
+          >
+            <h1>
+              Who do you want to be?
+            </h1>
+          </div>
+        </div>
+      </div>
+      <div
+        class="action-menu-container"
+      />
+    </div>
+  </div>
+  <div
+    class="mod-impersonate-container"
+  >
+    <div
+      class="mod-impersonate"
+    >
+      <div
+        class="impersonate"
+      >
+        <div
+          class="select-field"
+        >
+          <label
+            for="Organisation"
+          >
+            Organisation
+          </label>
+          <div
+            class="select-field-inner"
+          >
+            <div
+              class="input-select-inner css-b62m3t-container"
+            >
+              <span
+                class="css-1f43avz-a11yText-A11yText"
+                id="react-select-2-live-region"
+              />
+              <span
+                aria-atomic="false"
+                aria-live="polite"
+                aria-relevant="additions text"
+                class="css-1f43avz-a11yText-A11yText"
+                role="log"
+              />
+              <div
+                class="select-inner__control css-13cymwt-control"
+              >
+                <div
+                  class="select-inner__value-container css-hlgwow"
+                >
+                  <div
+                    class="select-inner__placeholder css-1jqq78o-placeholder"
+                    id="react-select-2-placeholder"
+                  >
+                    Search and select an organisation to narrow the search result for users...
+                  </div>
+                  <div
+                    class="select-inner__input-container css-19bb58m"
+                    data-value=""
+                  >
+                    <input
+                      aria-activedescendant=""
+                      aria-autocomplete="list"
+                      aria-describedby="react-select-2-placeholder"
+                      aria-expanded="false"
+                      aria-haspopup="true"
+                      autocapitalize="none"
+                      autocomplete="off"
+                      autocorrect="off"
+                      class="select-inner__input"
+                      id="react-select-2-input"
+                      role="combobox"
+                      spellcheck="false"
+                      style="opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
+                      tabindex="0"
+                      type="text"
+                      value=""
+                    />
+                  </div>
+                </div>
+                <div
+                  class="select-inner__indicators css-1wy0on6"
+                >
+                  <span
+                    class="select-inner__indicator-separator css-1u9des2-indicatorSeparator"
+                  />
+                  <div
+                    aria-hidden="true"
+                    class="select-inner__indicator select-inner__dropdown-indicator css-1xc3v61-indicatorContainer"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="css-tj5bde-Svg"
+                      focusable="false"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      width="20"
+                    >
+                      <path
+                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="sds--checkbox-container sds--tooltip-parent checkbox "
+        >
+          <input
+            id="organisationAdminsOnly"
+            type="checkbox"
+          />
+          <label
+            for="organisationAdminsOnly"
+          >
+            <span
+              class="sds--checkbox--visual"
+            >
+              <svg
+                height="11.9"
+                viewBox="0 0 13.6 11.9"
+                width="13.6"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m11.9.4-7 9.6-3.3-3.2c-.4-.4-1-.4-1.3 0-.4.4-.4 1 0 1.3l3.2 3.2q.6.6 1.5.6c.9 0 1.1-.3 1.4-.8l7.1-9.6c.3-.4.2-1-.2-1.3-.5-.3-1.1-.2-1.4.2"
+                />
+              </svg>
+            </span>
+            <span
+              class="checkbox--text"
+            >
+              Only show the admins of organisations
+            </span>
+          </label>
+        </div>
+        <div
+          class="select-field"
+        >
+          <label
+            for="Collaboration"
+          >
+            Collaboration
+          </label>
+          <div
+            class="select-field-inner"
+          >
+            <div
+              class="input-select-inner css-b62m3t-container"
+            >
+              <span
+                class="css-1f43avz-a11yText-A11yText"
+                id="react-select-3-live-region"
+              />
+              <span
+                aria-atomic="false"
+                aria-live="polite"
+                aria-relevant="additions text"
+                class="css-1f43avz-a11yText-A11yText"
+                role="log"
+              />
+              <div
+                class="select-inner__control css-13cymwt-control"
+              >
+                <div
+                  class="select-inner__value-container css-hlgwow"
+                >
+                  <div
+                    class="select-inner__placeholder css-1jqq78o-placeholder"
+                    id="react-select-3-placeholder"
+                  >
+                    Search and select a collaboration to narrow the search result for users...
+                  </div>
+                  <div
+                    class="select-inner__input-container css-19bb58m"
+                    data-value=""
+                  >
+                    <input
+                      aria-activedescendant=""
+                      aria-autocomplete="list"
+                      aria-describedby="react-select-3-placeholder"
+                      aria-expanded="false"
+                      aria-haspopup="true"
+                      autocapitalize="none"
+                      autocomplete="off"
+                      autocorrect="off"
+                      class="select-inner__input"
+                      id="react-select-3-input"
+                      role="combobox"
+                      spellcheck="false"
+                      style="opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
+                      tabindex="0"
+                      type="text"
+                      value=""
+                    />
+                  </div>
+                </div>
+                <div
+                  class="select-inner__indicators css-1wy0on6"
+                >
+                  <span
+                    class="select-inner__indicator-separator css-1u9des2-indicatorSeparator"
+                  />
+                  <div
+                    aria-hidden="true"
+                    class="select-inner__indicator select-inner__dropdown-indicator css-1xc3v61-indicatorContainer"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="css-tj5bde-Svg"
+                      focusable="false"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      width="20"
+                    >
+                      <path
+                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="sds--checkbox-container sds--tooltip-parent checkbox "
+        >
+          <input
+            id="collaborationAdminsOnly"
+            type="checkbox"
+          />
+          <label
+            for="collaborationAdminsOnly"
+          >
+            <span
+              class="sds--checkbox--visual"
+            >
+              <svg
+                height="11.9"
+                viewBox="0 0 13.6 11.9"
+                width="13.6"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m11.9.4-7 9.6-3.3-3.2c-.4-.4-1-.4-1.3 0-.4.4-.4 1 0 1.3l3.2 3.2q.6.6 1.5.6c.9 0 1.1-.3 1.4-.8l7.1-9.6c.3-.4.2-1-.2-1.3-.5-.3-1.1-.2-1.4.2"
+                />
+              </svg>
+            </span>
+            <span
+              class="checkbox--text"
+            >
+              Only show the admins of collaborations
+            </span>
+          </label>
+        </div>
+        <section
+          class="user-search"
+        >
+          <div
+            class="search"
+            tabindex="-1"
+          >
+            <label
+              class="autocomplete-label"
+              for="user"
+            >
+              User
+            </label>
+            <span
+              class="outer-search"
+            >
+              <input
+                class=""
+                placeholder="Search and select a user to impersonate..."
+                type="text"
+                value=""
+              />
+            </span>
+          </div>
+        </section>
+        <div
+          class="input-field sds--text-field  "
+        >
+          <label
+            for="Impersonation"
+          >
+            Impersonation
+          </label>
+          <div
+            class="inner-input-field"
+          >
+            <input
+              class="sds--text-field--input sds--text-field--input"
+              disabled=""
+              maxlength="255"
+              placeholder=""
+              type="text"
+              value="You are who you are - no impersonation"
+            />
+          </div>
+        </div>
+        <section
+          class="actions"
+        >
+          <button
+            class="sds--btn sds--btn--secondary    "
+            disabled=""
+            type="button"
+          >
+            <span
+              class="textual"
+            >
+              Stop impersonating
+            </span>
+          </button>
+          <button
+            class="sds--btn sds--btn--primary    "
+            type="button"
+          >
+            <span
+              class="textual"
+            >
+              Impersonate
+            </span>
+          </button>
+        </section>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

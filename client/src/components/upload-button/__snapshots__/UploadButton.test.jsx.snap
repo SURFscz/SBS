@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UploadButton matches snapshot when disabled 1`] = `
+<DocumentFragment>
+  <div
+    class="file-upload-button-container"
+  >
+    <input
+      accept="text/csv"
+      id="fileUpload_undefined"
+      name="fileUpload_undefined"
+      style="display: none;"
+      type="file"
+    />
+    <button
+      class="sds--btn sds--btn--primary    "
+      type="button"
+    />
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UploadButton matches snapshot with custom label 1`] = `
+<DocumentFragment>
+  <div
+    class="file-upload-button-container"
+  >
+    <input
+      accept="text/csv"
+      id="fileUpload_undefined"
+      name="fileUpload_undefined"
+      style="display: none;"
+      type="file"
+    />
+    <button
+      class="sds--btn sds--btn--primary    "
+      type="button"
+    />
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UploadButton matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="file-upload-button-container"
+  >
+    <input
+      accept="text/csv"
+      id="fileUpload_undefined"
+      name="fileUpload_undefined"
+      style="display: none;"
+      type="file"
+    />
+    <button
+      class="sds--btn sds--btn--primary    "
+      type="button"
+    />
+  </div>
+</DocumentFragment>
+`;

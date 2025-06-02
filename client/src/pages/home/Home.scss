@@ -1,0 +1,29 @@
+@import "../../stylesheets/vars";
+
+.mod-home-container {
+    .unit-header .image {
+
+        svg {
+            g.right-eye {
+                fill: #3e4347;
+            }
+
+            ellipse.right-eye {
+                fill: #fff;
+            }
+        }
+
+        &.wink {
+            transform: skewX(4deg);
+
+            svg {
+                g.right-eye, ellipse.right-eye {
+                    fill: rgb(141, 155, 163);
+                }
+
+            }
+
+        }
+    }
+
+}

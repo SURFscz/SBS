@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DeadEnd matches snapshot with custom description 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-server-error"
+  >
+    <div
+      class="content"
+    >
+      <svg>
+        undraw_access_denied.svg
+      </svg>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`DeadEnd matches snapshot with custom title 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-server-error"
+  >
+    <div
+      class="content"
+    >
+      <svg>
+        undraw_access_denied.svg
+      </svg>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`DeadEnd matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-server-error"
+  >
+    <div
+      class="content"
+    >
+      <svg>
+        undraw_access_denied.svg
+      </svg>
+    </div>
+  </div>
+</DocumentFragment>
+`;

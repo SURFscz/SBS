@@ -1,0 +1,105 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CollaborationAupAcceptance matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-aup-services"
+  >
+    <div>
+      Child content
+    </div>
+    <div
+      class="services"
+    >
+      <div
+        class="service-section"
+      >
+        <table>
+          <thead />
+          <tbody>
+            <tr>
+              <td
+                class="logo"
+              >
+                <img
+                  alt="Service One"
+                  data-testid="logo"
+                  src="logo1.png"
+                />
+              </td>
+              <td
+                class="service-detail"
+              >
+                <div
+                  class="service"
+                >
+                  <span
+                    class="service-name"
+                  >
+                    Service One
+                  </span>
+                  <div
+                    class="policies"
+                  >
+                    <div
+                      class="policy"
+                    >
+                      <a
+                        href="https://aup.example.com"
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        service.accepted_user_policy
+                      </a>
+                    </div>
+                    <div
+                      class="policy"
+                    >
+                      <a
+                        href="https://privacy.example.com"
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        service.privacy_policy
+                      </a>
+                    </div>
+                    <div
+                      class="policy contact"
+                    >
+                      <a
+                        href="mailto:support@example.com"
+                        rel="noopener noreferrer"
+                      >
+                        <span
+                          data-testid="icon"
+                        />
+                        <span>
+                          aup.service.contact
+                        </span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div
+      class="terms"
+    >
+      <p
+        class="aup-info"
+      >
+        aup.service.singleInfo
+      </p>
+      <div
+        data-testid="checkbox"
+      >
+        {"name":"aup","value":false,"info":"aup.service.singleCheck"}
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

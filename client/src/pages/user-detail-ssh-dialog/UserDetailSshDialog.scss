@@ -1,0 +1,18 @@
+@import "../../stylesheets/vars";
+
+.sds--modal--container.ssh-modal {
+    width: 75vw;
+    max-width: 75vw;
+    max-height: 75vh;
+    overflow: initial;
+}
+
+.shh-dialog-inner {
+    .copy-to-clipboard.right {
+        max-height: 40px;
+    }
+    textarea {
+        height: 200px;
+    }
+
+}

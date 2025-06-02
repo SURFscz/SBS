@@ -1,0 +1,129 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Footer matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <footer
+    class="sds--footer sds--footer--single-bar"
+  >
+    <div
+      class="sds--page-container"
+    >
+      <div
+        class="sds--footer--inner"
+      >
+        <nav
+          class="menu sds--text--body--small"
+        >
+          <ul>
+            <li>
+              <a
+                href="https://edu.nl/vw3jx"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <span>
+                  Support
+                </span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://edu.nl/6wb63"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <span>
+                  Terms of Use
+                </span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://edu.nl/fcgbd"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <span>
+                  Privacy policy
+                </span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <nav
+          aria-label="Language"
+          class="sds--language-switcher sds--text--body--small"
+        >
+          <ul>
+            <li>
+              <a
+                class=""
+                href="locale"
+                title="Kies Nederlands als taal"
+              >
+                NL
+              </a>
+              <span
+                class="sds--language-sds--divider"
+              >
+                |
+              </span>
+            </li>
+            <li>
+              <a
+                class="is-active"
+                href="locale"
+                title="Change language to English"
+              >
+                EN
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <div
+          class="sds--branding"
+        >
+          <a
+            href="https://surf.nl"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <div
+              class="sds--logo sds--branding sds--branding--name-bottom "
+            >
+              <span
+                class="sds--branding--visual"
+              >
+                <svg
+                  class="logo-surf"
+                  height="36"
+                  viewBox="0 0 70.9 36"
+                  width="70.9"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    class="shape"
+                    clip-rule="evenodd"
+                    d="M65.5 21.8c3 0 5.4 2.4 5.4 5.4v3.4c0 3-2.4 5.4-5.4 5.4h-8.1c-3 0-5.4-2.4-5.4-5.4v-2.1c0-3.7-3-6.7-6.7-6.7H6.7C3 21.8 0 18.7 0 15V6.7C0 3 3 0 6.7 0h38.5C49 0 52 3 52 6.7V15c0 3.7 3 6.7 6.7 6.7h6.8z"
+                    fill-rule="evenodd"
+                  />
+                  <path
+                    class="text"
+                    clip-rule="evenodd"
+                    d="M43.4 12.5c.7 0 1.1-.4 1.1-1.1s-.3-1.1-1.1-1.1h-2.7v-2H45c.7 0 1.1-.4 1.1-1.1s-.4-1.1-1.1-1.1h-5.4c-.7 0-1.1.4-1.1 1.1v7.6c0 .7.4 1.1 1.1 1.1s1.1-.4 1.1-1.1v-2.4h2.7zM32.2 8.3c.9 0 1.5.4 1.5 1.3s-.7 1.3-1.5 1.3h-1.9V8.3zm1.3 7c.2.5.5.7.9.7.6 0 1.3-.4 1.3-1.1 0-.2 0-.4-.1-.6l-1-2.1q1.5-.75 1.5-2.7c0-2-1.5-3.4-3.6-3.4h-3.2c-.7 0-1.1.4-1.1 1.1v7.6c0 .7.4 1.1 1.1 1.1s1.1-.4 1.1-1.1v-2h2.1zm-10.3-3.9c0 1.5-.9 2.4-2.2 2.4s-2.2-.9-2.2-2.4V7.2c0-.7-.4-1.1-1.1-1.1s-1.1.4-1.1 1.1v4.3c0 2.8 1.9 4.6 4.4 4.6 2.6 0 4.5-1.8 4.5-4.6V7.2c0-.7-.4-1.1-1.1-1.1s-1.1.4-1.1 1.1v4.2zM10.5 14c-.9 0-1.5-.2-1.9-.4-.4-.1-.7-.2-1-.2-.6 0-1 .4-1 1 0 1 2.1 1.6 4 1.6 2.2 0 3.9-1.2 3.9-3 0-1.7-1.1-2.4-2.4-2.8l-1.8-.6C9.4 9.5 9 9.3 9 8.8s.8-.7 1.4-.7c.8 0 1.3.2 1.8.4.3.1.6.2.9.2.6 0 .9-.4.9-1 0-1-1.9-1.6-3.6-1.6C8.3 6 6.7 7.2 6.7 8.9c0 1.4 1 2.3 2.2 2.6l1.6.5c.8.2 1.5.5 1.5 1 .1.6-.8 1-1.5 1"
+                    fill="#fff"
+                    fill-rule="evenodd"
+                  />
+                </svg>
+              </span>
+              <span
+                class="sds--branding--textual"
+              />
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</DocumentFragment>
+`;

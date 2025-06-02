@@ -1,0 +1,164 @@
+@import "../../../stylesheets/vars";
+@import "../../../stylesheets/forms";
+
+.used-services-mod {
+    max-width: $medium;
+    margin: 40px auto 25px auto;
+    width: 100%;
+    display: flex;
+
+
+    @media (max-width: $compact-medium) {
+        flex-direction: column;
+        margin: 40px 15px 25px 15px;
+    }
+
+    div.side-bar {
+        margin-right: 80px;
+        @media (max-width: $tablet-max) {
+            margin-left: 15px;
+        }
+
+        h3 {
+            font-weight: bold;
+            margin-bottom: 20px;
+            white-space: nowrap;
+        }
+
+        ul {
+            list-style: none;
+
+
+            li {
+                margin-bottom: 8px;
+
+                a {
+                    white-space: nowrap;
+
+                    &.active {
+                        font-weight: bold;
+                    }
+
+                }
+            }
+        }
+    }
+
+    .used-service-main {
+        width: 100%;
+    }
+
+    .sds--content-card {
+        margin-bottom: 25px;
+    }
+
+    .no-services {
+        svg {
+            width: 460px;
+            height: auto;
+            margin: 20px 0 0 20px;
+        }
+    }
+
+    a.back-to-services {
+        display: flex;
+        align-items: center;
+        color: $blue;
+        text-decoration: underline;
+
+        svg {
+            margin-right: 5px;
+            fill: $blue;
+            height: 22px;
+        }
+    }
+
+    div.request-connection-service-form {
+        width: 60%;
+        display: flex;
+        flex-direction: column;
+        margin-left: 60px;
+
+        @media (max-width: $compact-medium) {
+            width: 100%
+        }
+
+        h2, h3 {
+            margin-bottom: 20px;
+        }
+
+        img {
+            width: 62px;
+            margin-bottom: 20px;
+        }
+
+        p.no-privacy-policy {
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+        div.checkbox {
+            margin-top: 15px;
+        }
+    }
+
+    .service-confirmation {
+        p.no-privacy-policy {
+            font-weight: 600;
+        }
+
+        .sds--checkbox-container {
+            margin-left: 15px;
+        }
+
+    }
+
+    .service-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 65%;
+        margin-bottom: 25px;
+
+        @media (max-width: $compact-medium) {
+            flex-direction: column;
+            align-items: normal;
+        }
+
+        h2 {
+            @media (max-width: $compact-medium) {
+                margin-bottom: 15px
+            }
+
+        }
+
+        .search {
+            position: relative;
+            display: flex;
+
+            margin-left: auto;
+
+            @media (max-width: $compact-medium) {
+                margin-left: 0;
+            }
+
+            input[type=search] {
+                flex-grow: 2;
+                min-width: 360px;
+
+                @media (max-width: $compact-medium) {
+                    min-width: 0;
+                }
+            }
+
+            .sds--text-field--icon svg {
+                width: calc(15em / 16);
+                height: calc(15em / 16)
+            }
+
+        }
+
+    }
+
+
+}

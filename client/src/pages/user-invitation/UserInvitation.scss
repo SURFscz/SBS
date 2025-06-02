@@ -1,0 +1,70 @@
+@import "../../stylesheets/vars";
+
+.mod-user-invitation {
+    max-width: 570px;
+    margin: 25px auto 40px auto;
+    width: 100%;
+
+    @media (max-width: 680px) {
+        padding: 0 15px;
+    }
+
+    .invitation-container {
+        margin: 0 auto;
+
+        .sds--toaster {
+            max-width: initial;
+            margin: 25px 0;
+        }
+
+        p.info {
+            margin: 25px 0;
+        }
+
+        p.tip {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .expired {
+            display: inline-block;
+            font-size: 18px;
+            margin-top: 15px;
+        }
+
+        .required {
+            color: var(--sds--color--red--400);
+        }
+
+        div.checkbox, label.policy {
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .step-container {
+            button {
+
+                &.sds--btn--primary {
+                    margin-top: 20px;
+                }
+
+            }
+        }
+
+        .step {
+            display: flex;
+            align-content: center;
+            margin-bottom: 25px;
+        }
+
+        .step-actions {
+            padding-top: 5px;
+
+            h1 {
+                margin-bottom: 10px;
+            }
+        }
+
+
+    }
+}

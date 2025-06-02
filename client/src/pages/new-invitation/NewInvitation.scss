@@ -1,0 +1,68 @@
+@import "../../stylesheets/vars";
+@import "../../stylesheets/forms";
+
+.mod-new-collaboration-invitation {
+    max-width: $medium;
+    width: 100%;
+    margin: 0 auto;
+
+    @media (max-width: $tablet-max) {
+        padding: 0 15px;
+    }
+
+    h2 {
+        margin: 15px 0;
+    }
+
+    .new-collaboration-invitation {
+        margin-bottom: 25px;
+
+        .info-msg {
+            color: $dark-grey;
+            display: block;
+            font-size: 14px;
+        }
+
+
+        td.invitation-link {
+            padding: 12px;
+            text-align: center;
+        }
+
+    }
+
+    .link-invitation-container {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        margin: 20px 0 40px 0;
+
+        a {
+            display: flex;
+
+            svg {
+                width: 22px;
+            }
+        }
+
+        button {
+            max-width: 180px;
+            margin-left: 20px;
+        }
+
+        span.divider {
+            padding-top: 10px;
+            border-top: 1px solid $lighter-grey;
+        }
+    }
+
+    .invitation-form {
+        width: 80%;
+
+        @media (max-width: $tablet-max) {
+            width: 100%;
+        }
+
+    }
+
+}

@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OnBoardingMessage renders with currentUserDeleted false 1`] = `
+<DocumentFragment>
+  <div
+    class="on-boarding"
+  >
+    <h2>
+      [missing "_welcome.instructions" translation]
+    </h2>
+    <div
+      class="instructions mde-preview"
+    >
+      <div
+        class="mde-preview-content"
+      >
+        <p />
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`OnBoardingMessage renders with custom localePrefix 1`] = `
+<DocumentFragment>
+  <div
+    class="on-boarding"
+  >
+    <h2>
+      [missing "_welcome.instructions" translation]
+    </h2>
+    <div
+      class="instructions mde-preview"
+    >
+      <div
+        class="mde-preview-content"
+      >
+        <p />
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`OnBoardingMessage renders with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="on-boarding"
+  >
+    <h2>
+      [missing "_welcome.instructions" translation]
+    </h2>
+    <div
+      class="instructions mde-preview"
+    >
+      <div
+        class="mde-preview-content"
+      >
+        <p />
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

@@ -1,0 +1,341 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UserTokens renders with default props 1`] = `
+<DocumentFragment>
+  <div>
+    <div
+      class="mod-entities "
+    >
+      <section
+        class="entities-search"
+      >
+        <h2>
+          Application tokens (1)
+        </h2>
+        <div
+          class="search-filters userTokens-search-filters"
+        />
+        <div
+          class="search "
+        >
+          <div
+            class="sds--text-field sds--text-field--has-icon"
+          >
+            <div
+              class="sds--text-field--shape"
+            >
+              <div
+                class="sds--text-field--input-and-icon"
+              >
+                <input
+                  class="sds--text-field--input"
+                  placeholder="Search for application token..."
+                  type="search"
+                  value=""
+                />
+                <span
+                  class="sds--text-field--icon"
+                >
+                  <svg>
+                    search.svg
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="new-button"
+        >
+          <button
+            class="sds--btn sds--btn--primary    "
+            type="button"
+          >
+            <span
+              class="textual"
+            >
+              Create application token
+            </span>
+          </button>
+        </div>
+      </section>
+      <section
+        class="entities-list"
+      >
+        <div
+          class="sds--table"
+        >
+          <table
+            class="user-tokens"
+          >
+            <thead>
+              <tr>
+                <th
+                  class="name  sortable "
+                >
+                  Name
+                  <span
+                    data-testid="icon"
+                  />
+                </th>
+                <th
+                  class="description  sortable "
+                >
+                  Description
+                </th>
+                <th
+                  class="service__name  sortable "
+                >
+                  Application
+                </th>
+                <th
+                  class="expiry_date   "
+                >
+                  Expiry date
+                </th>
+                <th
+                  class="last_used_date   "
+                >
+                  Last used
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                class="clickable "
+              >
+                <td
+                  class="name sortable "
+                >
+                  <a
+                    class="neutral-appearance"
+                    href="undefined"
+                  />
+                </td>
+                <td
+                  class="description sortable "
+                >
+                  <span
+                    class="cut-of-lines"
+                  />
+                </td>
+                <td
+                  class="service__name sortable "
+                />
+                <td
+                  class="expiry_date  "
+                >
+                  <span
+                    class="expiry_date expired"
+                  >
+                    December 14, 2023
+                  </span>
+                </td>
+                <td
+                  class="last_used_date  "
+                >
+                  <span>
+                    -
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <div />
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`UserTokens renders with tokens 1`] = `
+<DocumentFragment>
+  <div>
+    <div
+      class="mod-entities "
+    >
+      <section
+        class="entities-search"
+      >
+        <h2>
+          Application tokens (2)
+        </h2>
+        <div
+          class="search-filters userTokens-search-filters"
+        />
+        <div
+          class="search "
+        >
+          <div
+            class="sds--text-field sds--text-field--has-icon"
+          >
+            <div
+              class="sds--text-field--shape"
+            >
+              <div
+                class="sds--text-field--input-and-icon"
+              >
+                <input
+                  class="sds--text-field--input"
+                  placeholder="Search for application token..."
+                  type="search"
+                  value=""
+                />
+                <span
+                  class="sds--text-field--icon"
+                >
+                  <svg>
+                    search.svg
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="new-button"
+        >
+          <button
+            class="sds--btn sds--btn--primary    "
+            type="button"
+          >
+            <span
+              class="textual"
+            >
+              Create application token
+            </span>
+          </button>
+        </div>
+      </section>
+      <section
+        class="entities-list"
+      >
+        <div
+          class="sds--table"
+        >
+          <table
+            class="user-tokens"
+          >
+            <thead>
+              <tr>
+                <th
+                  class="name  sortable "
+                >
+                  Name
+                  <span
+                    data-testid="icon"
+                  />
+                </th>
+                <th
+                  class="description  sortable "
+                >
+                  Description
+                </th>
+                <th
+                  class="service__name  sortable "
+                >
+                  Application
+                </th>
+                <th
+                  class="expiry_date   "
+                >
+                  Expiry date
+                </th>
+                <th
+                  class="last_used_date   "
+                >
+                  Last used
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                class="clickable "
+              >
+                <td
+                  class="name sortable "
+                >
+                  <a
+                    class="neutral-appearance"
+                    href="Token 1"
+                  >
+                    Token 1
+                  </a>
+                </td>
+                <td
+                  class="description sortable "
+                >
+                  <span
+                    class="cut-of-lines"
+                  />
+                </td>
+                <td
+                  class="service__name sortable "
+                />
+                <td
+                  class="expiry_date  "
+                >
+                  <span
+                    class="expiry_date expired"
+                  >
+                    December 14, 2023
+                  </span>
+                </td>
+                <td
+                  class="last_used_date  "
+                >
+                  <span>
+                    -
+                  </span>
+                </td>
+              </tr>
+              <tr
+                class="clickable "
+              >
+                <td
+                  class="name sortable "
+                >
+                  <a
+                    class="neutral-appearance"
+                    href="Token 2"
+                  >
+                    Token 2
+                  </a>
+                </td>
+                <td
+                  class="description sortable "
+                >
+                  <span
+                    class="cut-of-lines"
+                  />
+                </td>
+                <td
+                  class="service__name sortable "
+                />
+                <td
+                  class="expiry_date  "
+                >
+                  <span
+                    class="expiry_date expired"
+                  >
+                    December 14, 2023
+                  </span>
+                </td>
+                <td
+                  class="last_used_date  "
+                >
+                  <span>
+                    -
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <div />
+    </div>
+  </div>
+</DocumentFragment>
+`;

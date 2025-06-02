@@ -1,0 +1,74 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UserMenu matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="user-menu"
+    tabindex="1"
+  >
+    <nav
+      class="sds--user-info "
+    >
+      <div
+        class="sds--user-info--textual"
+      >
+        <p
+          class="name"
+        />
+        <p
+          class="role sds--text--body--small"
+        />
+      </div>
+      <button
+        class="sds--user-info--button"
+        type="button"
+      >
+        <svg
+          height="12.4"
+          viewBox="0 0 24 12.4"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M23.2.8 12.5 11.5c-.1.1-.2.1-.2.2-.1 0-.2.1-.3.1s-.2 0-.3-.1c-.1 0-.2-.1-.2-.2L.8.8"
+            fill="none"
+            stroke="#000"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+          />
+        </svg>
+      </button>
+      <div
+        class="sds--user-info--dropdown"
+      >
+        <ul>
+          <li>
+            <a
+              href="/profile"
+            >
+              Profile
+            </a>
+          </li>
+          <li>
+            <a
+              href="/new-service-request"
+            >
+              Register application
+            </a>
+          </li>
+        </ul>
+        <ul>
+          <li>
+            <a
+              href="/logout"
+            >
+              Logout
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+</DocumentFragment>
+`;

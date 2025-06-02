@@ -1,4 +1,4 @@
-"""Logo for redesign
+"""Logo for _redesign
 
 Revision ID: f8653b0d35ee
 Revises: fbc13ad27ecb

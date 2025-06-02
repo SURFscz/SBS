@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AboutCollaboration matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="collaboration-about-mod"
+  >
+    <div
+      class="about"
+    >
+      <p
+        class="description"
+      >
+        This is a test collaboration.
+      </p>
+      <div
+        class="services"
+      >
+        <h4
+          class="margin"
+        >
+          There are no applications connected to your collaboration. 
+        </h4>
+      </div>
+    </div>
+    <div
+      class="members"
+    >
+      <div
+        class="meta-section"
+      >
+        <div
+          class="header"
+        >
+          <svg>
+            short-name.svg
+          </svg>
+          <p>
+            Short name
+          </p>
+        </div>
+        <div
+          class="values"
+        >
+          <span>
+            <strong />
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

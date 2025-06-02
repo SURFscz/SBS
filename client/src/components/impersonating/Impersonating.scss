@@ -1,0 +1,22 @@
+@import "../../stylesheets/vars";
+
+.impersonator {
+    background-color: $yellow;
+    display: flex;
+    align-items: center;
+    padding: 0 2px;
+
+    svg {
+        width: 40px;
+        height: auto;
+        cursor: pointer;
+        margin: 4px 15px 0 15px;
+        fill: #737373;
+        padding: 5px;
+        border-radius: 50%;
+    }
+
+    button {
+        margin: 0 25px 0 auto;
+    }
+}

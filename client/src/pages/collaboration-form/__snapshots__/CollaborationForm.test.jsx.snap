@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CollaborationForm matches snapshot with custom description 1`] = `
+<DocumentFragment>
+  <div
+    class="sds--loading-container "
+  >
+    <div
+      class="sds--loading"
+    >
+      <span
+        class="sds--loading--dot"
+      />
+      <span
+        class="sds--loading--dot"
+      />
+      <span
+        class="sds--loading--dot"
+      />
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`CollaborationForm matches snapshot with custom title 1`] = `
+<DocumentFragment>
+  <div
+    class="sds--loading-container "
+  >
+    <div
+      class="sds--loading"
+    >
+      <span
+        class="sds--loading--dot"
+      />
+      <span
+        class="sds--loading--dot"
+      />
+      <span
+        class="sds--loading--dot"
+      />
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`CollaborationForm matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="sds--loading-container "
+  >
+    <div
+      class="sds--loading"
+    >
+      <span
+        class="sds--loading--dot"
+      />
+      <span
+        class="sds--loading--dot"
+      />
+      <span
+        class="sds--loading--dot"
+      />
+    </div>
+  </div>
+</DocumentFragment>
+`;

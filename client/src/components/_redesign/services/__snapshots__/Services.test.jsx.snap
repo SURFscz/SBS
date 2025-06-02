@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Services renders with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="sds--loading-container "
+  >
+    <div
+      class="sds--loading"
+    >
+      <span
+        class="sds--loading--dot"
+      />
+      <span
+        class="sds--loading--dot"
+      />
+      <span
+        class="sds--loading--dot"
+      />
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Services renders with services 1`] = `
+<DocumentFragment>
+  <div
+    class="sds--loading-container "
+  >
+    <div
+      class="sds--loading"
+    >
+      <span
+        class="sds--loading--dot"
+      />
+      <span
+        class="sds--loading--dot"
+      />
+      <span
+        class="sds--loading--dot"
+      />
+    </div>
+  </div>
+</DocumentFragment>
+`;

@@ -1,0 +1,28 @@
+@import "../../stylesheets/vars";
+
+div.invitation-units {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+
+    .checkbox-unit {
+        padding: 8px 15px 0 15px;
+        border-radius: 6px;
+        background-color: var(--sds--color--gray--100);
+        border: 1px solid var(--sds--color--gray--400);
+
+        &:not(:last-child) {
+            margin-bottom: 15px;
+        }
+
+        &.selected {
+            background-color: var(--sds--color--green--100);
+            border: 1px solid var(--sds--color--green--400);
+
+        }
+
+        label {
+            width: 100%;
+        }
+    }
+}

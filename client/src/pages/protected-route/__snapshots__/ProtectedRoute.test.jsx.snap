@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProtectedRoute matches snapshot with custom title and description 1`] = `<DocumentFragment />`;
+
+exports[`ProtectedRoute matches snapshot with minimal props 1`] = `<DocumentFragment />`;

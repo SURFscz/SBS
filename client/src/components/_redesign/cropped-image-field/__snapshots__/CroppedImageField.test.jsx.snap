@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CroppedImageField matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="cropped-image-field "
+  >
+    <label
+      class="info"
+      for=""
+    >
+      <sup
+        class="required"
+      >
+        *
+      </sup>
+    </label>
+    <section
+      class="file-upload"
+    >
+      <div
+        class="preview"
+      >
+        <img
+          alt=""
+          class="cropped-img"
+          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA..."
+        />
+      </div>
+      <div
+        class="file-upload-actions"
+      >
+        <button
+          class="sds--btn sds--btn--primary  sds--btn--small  "
+          type="button"
+        >
+          <span
+            class="textual"
+          >
+            Change image
+          </span>
+        </button>
+      </div>
+    </section>
+  </div>
+</DocumentFragment>
+`;

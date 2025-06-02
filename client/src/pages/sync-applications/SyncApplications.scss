@@ -1,0 +1,53 @@
+@import "../../stylesheets/vars";
+
+.mod-sync-container {
+    .form {
+        display: flex;
+        flex-direction: column;
+        max-width: 50%;
+    }
+
+    .processing {
+        margin-top: 25px;
+
+        progress {
+            width: 380px;
+        }
+    }
+
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        list-style: none;
+        padding: 0;
+    }
+
+    .grid-item {
+        padding: 10px;
+        background-color: #f8f8f8;
+        border-radius: 5px;
+        word-break: keep-all;
+        white-space: nowrap;
+
+        &.green {
+            background-color: var(--sds--color--green--500);
+            color: white;
+        }
+        &.red {
+            background-color: var(--sds--color--red--500);
+            color: white;
+        }
+    }
+
+    .buttons-container {
+        margin-top: 30px;
+        display: flex;
+        gap: 20px;
+    }
+    button.sds--btn {
+        max-width: 160px;
+    }
+
+}

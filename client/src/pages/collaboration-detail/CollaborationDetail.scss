@@ -1,0 +1,96 @@
+@import "../../stylesheets/vars";
+@import "../../stylesheets/mde_preview";
+
+.unit-info {
+    margin-top: 6px;
+
+    li {
+        display: flex;
+        align-items: center;
+        padding: 3px 0;
+
+        @media (max-width: 340px) {
+            &.collaboration-url {
+                display: none;
+            }
+        }
+
+        svg {
+            margin-right: 18px;
+            width: 18px;
+            height: auto;
+        }
+
+        a {
+            max-width: 500px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            display: inline-block;
+
+            @media (max-width: $compact-medium) {
+                max-width: 280px;
+            }
+
+        }
+
+    }
+
+}
+
+.collaboration-inactive {
+    .org-attributes:last-child {
+        margin-top: 10px;
+    }
+}
+
+.join-request-action {
+    margin-left: auto;
+}
+
+span.contains-copy {
+    display: flex;
+
+    a.copy-link {
+        cursor: pointer;
+        color: black;
+        font-weight: normal;
+        margin-right: 3px;
+        display: inline-block;
+
+        &:hover {
+            color: $medium-blue;
+            text-decoration: none;
+        }
+
+        &.copied {
+            animation: glow .6s;
+            animation-iteration-count: 1;
+
+            @keyframes glow {
+                0% {
+                    text-shadow: none;
+                }
+                35% {
+                    text-shadow: 0 0 1px var(--sds--palette--support-color--100), 0 0 2px var(--sds--palette--support-color--400);
+                }
+                100% {
+                }
+            }
+        }
+    }
+
+}
+
+span.contains-tooltip {
+    svg {
+        color: $lighter-grey;
+        width: 22px;
+        margin-left: 3px;
+        cursor: pointer;
+
+        &:hover {
+            color: darken($light-blue, 20%);
+        }
+    }
+}

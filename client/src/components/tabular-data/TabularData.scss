@@ -1,0 +1,114 @@
+@import "../../stylesheets/vars";
+
+.tabular-data {
+    margin-bottom: 25px;
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+    }
+
+    th, td {
+        border: 1px solid #d4d4d4;
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f3f3f3;
+        font-weight: bold;
+
+        &.short_names {
+            width: 11%;
+        }
+
+        &.intended_role {
+            width: 12%;
+        }
+
+        &.invitees {
+            width: 9%;
+        }
+
+        &.groups {
+            width: 10%;
+        }
+
+        &.invitation_expiry_date {
+            width: 18%;
+        }
+
+        &.membership_expiry_date {
+            width: 18%;
+        }
+
+        &.message {
+            width: 9%;
+        }
+
+        &.sender_name {
+            width: 12%;
+        }
+
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    tr.results:not(.error-row) td {
+        color: var(--sds--color--green--500);
+    }
+
+    tr.error-row td {
+        color: var(--sds--color--red--400);
+    }
+
+    td.error {
+        color: white;
+        background-color: var(--sds--color--red--400);
+
+        &:hover {
+            background-color: var(--sds--color--red--500);
+        }
+    }
+
+    td.warning {
+        color: black;
+        background-color: var(--sds--color--orange--300);
+
+        &:hover {
+            background-color: var(--sds--color--orange--400);
+        }
+    }
+
+    input {
+        border: none;
+        width: 100%;
+        padding: 4px;
+        font-size: 14px;
+        background: transparent;
+    }
+
+    input:focus {
+        outline: 2px solid #4a90e2;
+        background-color: #fff;
+    }
+
+    p.info {
+        margin-top: 8px;
+        font-size: 14px;
+    }
+
+    div.invitees-container {
+        display: flex;
+        flex-direction: column;
+
+        span.strike-through {
+            text-decoration: line-through;
+            color: var(--sds--color--orange--500);
+        }
+    }
+}

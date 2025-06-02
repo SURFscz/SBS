@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ErrorIndicator matches snapshot with custom props 1`] = `
+<DocumentFragment>
+  <span
+    class="error-indication "
+  >
+    <svg>
+      critical.svg
+    </svg>
+    message
+  </span>
+</DocumentFragment>
+`;
+
+exports[`ErrorIndicator matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <span
+    class="error-indication "
+  >
+    <svg>
+      critical.svg
+    </svg>
+    message
+  </span>
+</DocumentFragment>
+`;

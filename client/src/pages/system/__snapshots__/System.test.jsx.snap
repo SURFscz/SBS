@@ -1,0 +1,334 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`System matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-system-container"
+  >
+    <div
+      class="unit-header-container"
+    >
+      <div
+        class="unit-header"
+      >
+        <div
+          class="image "
+        >
+          <span
+            data-testid="icon"
+          />
+        </div>
+        <div
+          class="obj-name"
+        >
+          <div
+            class="meta-info-container"
+          >
+            <div
+              class="meta-info"
+            >
+              <h1>
+                System maintenance
+              </h1>
+            </div>
+          </div>
+        </div>
+        <div
+          class="action-menu-container"
+        />
+      </div>
+    </div>
+    <div
+      class="tabs-container"
+    >
+      <div
+        class="tabs "
+      >
+        <div
+          class=" tab validations active busy"
+        >
+          <button
+            class="tab-label"
+          >
+            Actions
+          </button>
+        </div>
+        <div
+          class=" tab cron busy"
+        >
+          <button
+            class="tab-label"
+          >
+            Cron
+          </button>
+        </div>
+        <div
+          class=" tab seed busy"
+        >
+          <button
+            class="tab-label"
+          >
+            Seed
+          </button>
+        </div>
+        <div
+          class=" tab database busy"
+        >
+          <button
+            class="tab-label"
+          >
+            DB
+          </button>
+        </div>
+        <div
+          class=" tab activity busy"
+        >
+          <button
+            class="tab-label"
+          >
+            Activity
+          </button>
+        </div>
+        <div
+          class=" tab plsc busy"
+        >
+          <button
+            class="tab-label"
+          >
+            LDAP
+          </button>
+        </div>
+        <div
+          class=" tab composition busy"
+        >
+          <button
+            class="tab-label"
+          >
+            Config
+          </button>
+        </div>
+        <div
+          class=" tab suspended-users busy"
+        >
+          <button
+            class="tab-label"
+          >
+            Users
+          </button>
+        </div>
+        <div
+          class=" tab userlogins busy"
+        >
+          <button
+            class="tab-label"
+          >
+            Logins
+          </button>
+        </div>
+        <div
+          class=" tab scim busy"
+        >
+          <button
+            class="tab-label"
+          >
+            SCIM
+          </button>
+        </div>
+        <div
+          class=" tab stats busy"
+        >
+          <button
+            class="tab-label"
+          >
+            Stats
+          </button>
+        </div>
+        <div
+          class=" tab pam busy"
+        >
+          <button
+            class="tab-label"
+          >
+            PAM
+          </button>
+        </div>
+        <div
+          class=" tab proxy busy"
+        >
+          <button
+            class="tab-label"
+          >
+            Proxy
+          </button>
+        </div>
+        <div
+          class=" tab sync busy"
+        >
+          <button
+            class="tab-label"
+          >
+            Sync
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      class="mod-system"
+    >
+      <section
+        class="info-block-container"
+      >
+        <div
+          class="mod-entities "
+        >
+          <section
+            class="entities-search"
+          >
+            <h2>
+              Open organisation invitations (0)
+            </h2>
+            <div
+              class="search-filters orgInvitations-search-filters"
+            />
+            <div
+              class="search standalone"
+            >
+              <div
+                class="sds--text-field sds--text-field--has-icon"
+              >
+                <div
+                  class="sds--text-field--shape"
+                >
+                  <div
+                    class="sds--text-field--input-and-icon"
+                  >
+                    <input
+                      class="sds--text-field--input"
+                      placeholder="Search invitations..."
+                      type="search"
+                      value=""
+                    />
+                    <span
+                      class="sds--text-field--icon"
+                    >
+                      <svg>
+                        search.svg
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section
+            class="entities-list"
+          />
+          <div />
+        </div>
+      </section>
+      <section
+        class="info-block-container"
+      >
+        <div
+          class="mod-entities "
+        >
+          <section
+            class="entities-search"
+          >
+            <h2>
+              Organisations without administrators (0)
+            </h2>
+            <div
+              class="search-filters organisationsWithoutAdmin-search-filters"
+            />
+            <div
+              class="search standalone"
+            >
+              <div
+                class="sds--text-field sds--text-field--has-icon"
+              >
+                <div
+                  class="sds--text-field--shape"
+                >
+                  <div
+                    class="sds--text-field--input-and-icon"
+                  >
+                    <input
+                      class="sds--text-field--input"
+                      placeholder="Search organisations..."
+                      type="search"
+                      value=""
+                    />
+                    <span
+                      class="sds--text-field--icon"
+                    >
+                      <svg>
+                        search.svg
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section
+            class="entities-list"
+          />
+          <div />
+        </div>
+      </section>
+      <section
+        class="info-block-container"
+      >
+        <div
+          class="mod-entities "
+        >
+          <section
+            class="entities-search"
+          >
+            <h2>
+              Applications without administrators (0)
+            </h2>
+            <div
+              class="search-filters servicesWithoutAdmin-search-filters"
+            />
+            <div
+              class="search standalone"
+            >
+              <div
+                class="sds--text-field sds--text-field--has-icon"
+              >
+                <div
+                  class="sds--text-field--shape"
+                >
+                  <div
+                    class="sds--text-field--input-and-icon"
+                  >
+                    <input
+                      class="sds--text-field--input"
+                      placeholder="Search applications..."
+                      type="search"
+                      value=""
+                    />
+                    <span
+                      class="sds--text-field--icon"
+                    >
+                      <svg>
+                        search.svg
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section
+            class="entities-list"
+          />
+          <div />
+        </div>
+      </section>
+    </div>
+  </div>
+</DocumentFragment>
+`;

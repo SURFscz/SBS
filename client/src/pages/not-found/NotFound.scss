@@ -1,0 +1,37 @@
+@import "../../stylesheets/vars";
+
+.mod-not-found {
+
+    max-width: $medium;
+    width: 100%;
+    margin: 40px auto;
+    display: flex;
+    flex-direction: column;
+
+    .mod-inner-not-found {
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+
+        @media (max-width: $compact-medium) {
+            margin: 0 10px;
+        }
+
+    }
+
+    svg {
+        margin: 25px auto;
+        width: 480px;
+        height: auto;
+        @media (max-width: $compact-medium) {
+            width: 90vw;
+        }
+    }
+
+    p.not-found-msg {
+        font-size: 18px;
+        line-height: 22px;
+        margin-bottom: 25px;
+    }
+
+}

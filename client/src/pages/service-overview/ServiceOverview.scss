@@ -1,0 +1,209 @@
+@import "../../stylesheets/vars";
+@import "../../stylesheets/forms";
+
+section.dialog-content {
+    .ldap-password {
+        margin: 5px 25px;
+    }
+}
+
+.sweep-results {
+    p {
+        display: flex;
+        align-items: center;
+
+        svg {
+            width: 32px;
+            height: auto;
+            margin-right: 8px;
+        }
+
+        &.success {
+            svg {
+                color: var(--sds--color--green--400);
+            }
+        }
+
+        &.failure {
+            svg {
+                color: var(--sds--color--red--400);
+            }
+        }
+    }
+}
+
+.service-overview {
+    max-width: $medium;
+    margin: 40px auto 25px auto;
+    width: 100%;
+    display: flex;
+
+    div.side-bar {
+        margin-right: 80px;
+        @media (max-width: $tablet-max) {
+            margin-left: 15px;
+        }
+
+        h3 {
+            font-weight: bold;
+            margin-bottom: 20px;
+            white-space: nowrap;
+        }
+
+        ul {
+            list-style: none;
+
+
+            li {
+                padding: 6px 22px 6px 6px;
+
+                &.active {
+                    background-color: $background;
+                    border-radius: $br;
+                }
+
+                a {
+                    white-space: nowrap;
+                    font-weight: 400;
+                    text-decoration: none;
+
+                    &.error {
+                        color: $error-red;
+                    }
+                }
+            }
+        }
+        }
+
+    .service {
+        width: 100%;
+        display: grid;
+        grid-template-columns: [first] 16fr [second] 4fr;
+        grid-auto-rows: min-content;
+        column-gap: 50px;
+
+        &.no-grid {
+            display: block;
+        }
+
+        @media (max-width: $tablet-max) {
+            padding: 0 15px;
+        }
+
+        @media (max-width: $compact-medium) {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-field, .radio-button-container, .actions, div.checkbox, .select-field, span.error,
+        div.email-invitations, div.compliance, div.ldap, div.contacts, div.tokens, div.actions-container {
+            grid-column-start: first;
+        }
+
+        label.service-details-tokens {
+            font-weight: 600;
+        }
+
+        span.error {
+            display: block;
+            color: $error-red;
+            margin-top: 20px;
+        }
+
+        div.add-token-link {
+            display: flex;
+            padding-top: 15px;
+
+            a {
+                margin-left: auto;
+            }
+        }
+
+        .section-separator {
+            grid-column: 1/-1;
+            padding-bottom: 5px;
+
+            &.first {
+                margin-bottom: 10px;
+
+                &.last {
+                    margin-top: 10px
+                }
+            }
+        }
+
+        div.input-field, div.select-field {
+            margin-top: 15px;
+        }
+
+        div.ip-networks {
+            margin-top: 15px;
+        }
+
+        .required-marker {
+            color: var(--sds--color--red--400);
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        div.checkbox {
+            margin: 20px 0 10px 0;
+        }
+
+        .mod-entities {
+            margin-bottom: 0;
+            @media (max-width: $tablet-max) {
+                padding: 0;
+            }
+        }
+
+        .meta-data-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+    }
+
+    table.serviceTokens {
+
+        thead {
+            th {
+                &.hashed_token {
+                    width: 20%;
+                }
+
+                &.description {
+                    width: 35%;
+                }
+
+                &.token_type {
+                    width: 20%;
+                }
+
+                &.created_at {
+                    width: 20%;
+                }
+
+                &.trash {
+                    width: 40px;
+                }
+
+            }
+        }
+
+        tbody {
+            td {
+                &.trash {
+                    text-align: right;
+                    cursor: pointer;
+
+                    &:hover {
+                        color: var(--sds--color--red--400);
+                    }
+                }
+            }
+        }
+    }
+
+}

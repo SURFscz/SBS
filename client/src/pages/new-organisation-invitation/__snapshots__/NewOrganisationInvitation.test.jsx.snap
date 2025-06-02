@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NewOrganisationInvitation matches snapshot with custom title and description 1`] = `
+<DocumentFragment>
+  <div
+    class="sds--loading-container "
+  >
+    <div
+      class="sds--loading"
+    >
+      <span
+        class="sds--loading--dot"
+      />
+      <span
+        class="sds--loading--dot"
+      />
+      <span
+        class="sds--loading--dot"
+      />
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`NewOrganisationInvitation matches snapshot with minimal props 1`] = `
+<DocumentFragment>
+  <div
+    class="sds--loading-container "
+  >
+    <div
+      class="sds--loading"
+    >
+      <span
+        class="sds--loading--dot"
+      />
+      <span
+        class="sds--loading--dot"
+      />
+      <span
+        class="sds--loading--dot"
+      />
+    </div>
+  </div>
+</DocumentFragment>
+`;

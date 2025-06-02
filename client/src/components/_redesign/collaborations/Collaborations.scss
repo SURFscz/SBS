@@ -1,0 +1,238 @@
+@import "../../../stylesheets/vars";
+
+.no-collaborations {
+    display: flex;
+    flex-direction: column;
+    margin: 80px auto;
+    max-width: 800px;
+    align-items: center;
+
+    p {
+        margin: 25px 0;
+        font-size: large;
+        text-align: center;
+    }
+
+    svg#swinging {
+        max-height: 300px;
+    }
+
+}
+
+.mod-entities {
+
+    .collaboration-label-filter-container {
+        display: flex;
+        gap: 20px;
+    }
+
+    .collaboration-label-filter {
+        display: flex;
+        @media (max-width: $compact-medium) {
+            flex-direction: column;
+        }
+
+        .collaboration-label-filter-select {
+            width: 190px;
+            @media (max-width: $compact-medium) {
+                margin: 15px 0;
+            }
+
+        }
+    }
+
+}
+
+table.collaborations, table.memberCollaborations {
+
+    thead {
+        th {
+            @media (max-width: $compact-medium) {
+                &.role {
+                    display: none;
+                }
+            }
+
+            &.check {
+                width: 30px;
+
+                svg.information-circle {
+                    width: 20px;
+                    height: 20px;
+                }
+            }
+
+            &.action-icons {
+                width: 70px;
+            }
+
+            &.name {
+                width: 20%;
+                padding-left: 15px;
+
+                &.no-units, &.no-labels {
+                    width: 33%;
+                }
+
+                &.no-units.no-labels {
+                    width: 44%;
+                }
+            }
+
+            &.organisation__name {
+                width: 20%;
+            }
+
+            &.units {
+                width: 20%;
+            }
+
+            &.tagValues {
+                width: 20%;
+            }
+
+            &.expiry_date {
+                width: 18%;
+
+                &.no-units, &.no-labels {
+                    width: 29%;
+                }
+
+            }
+
+            &.last_activity_date {
+                width: 18%;
+
+                &.no-units, &.no-labels {
+                    width: 29%;
+                }
+
+            }
+
+            &.fromCollaboration {
+                width: 8%;
+            }
+
+            &.collaboration_memberships_count {
+                width: 10%;
+                text-align: center;
+            }
+
+            &.role {
+                width: 13%;
+                text-align: center;
+            }
+
+            &.invitations_count {
+                width: 8%;
+                text-align: center;
+            }
+
+            &.action_icons {
+                width: 8%;
+                text-align: center;
+            }
+        }
+    }
+
+    tbody {
+        td {
+            @media (max-width: $compact-medium) {
+                &.role {
+                    display: none;
+                }
+            }
+
+            &.check {
+                svg.information-circle {
+                    width: 20px;
+                    height: 20px;
+                }
+            }
+
+            &.name {
+                padding-left: 15px;
+            }
+
+            &.units {
+                .unit-container {
+                    display: flex;
+                    flex-direction: column;
+                }
+            }
+
+            &.collaboration_memberships_count {
+                text-align: center;
+            }
+
+            &.expiry_date, &.last_activity_date {
+                span.warning {
+                    color: var(--sds--palette--main-color--200);
+                    font-weight: bold;
+
+                    &:last-child {
+                        margin-top: 6px;
+                    }
+                }
+
+                span.expired, span.suspended {
+                    color: var(--sds--color--red--400);
+                    display: block;
+                    font-weight: bold;
+                }
+            }
+
+            &.role {
+                text-align: center;
+            }
+
+            &.invitations_count {
+                text-align: center;
+            }
+
+            &.tagValues span {
+                display: block;
+                word-break: keep-all;
+            }
+        }
+    }
+}
+
+table.serviceCollaborations {
+
+    thead {
+        th {
+            @media (max-width: $compact-medium) {
+                &.role {
+                    display: none;
+                }
+            }
+
+            &.check {
+                width: 50px;
+            }
+
+            &.name {
+                width: 20%;
+                padding-left: 15px;
+            }
+
+            &.organisation__name {
+                width: 15%;
+            }
+
+            &.short_name {
+                width: 25%;
+            }
+
+            &.role {
+                width: 15%;
+                text-align: center;
+            }
+
+            &.fromCollaboration {
+                width: 20%;
+            }
+        }
+    }
+}

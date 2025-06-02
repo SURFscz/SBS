@@ -1,0 +1,199 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OrganisationUnits matches snapshot with custom description 1`] = `
+<DocumentFragment>
+  <div
+    class="organisation-units sds--text-field "
+  >
+    <label>
+      Unit name
+    </label>
+    <div
+      class="input-field first"
+    >
+      <div
+        class="inner-input-field"
+      >
+        <input
+          class="sds--text-field--input"
+          type="text"
+          value=""
+        />
+        <div
+          class="input-field-link input-field-delete"
+        >
+          <a
+            href="#"
+          >
+            <svg>
+              bin.svg
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div
+      class="input-field "
+    >
+      <div
+        class="inner-input-field"
+      >
+        <input
+          class="sds--text-field--input"
+          type="text"
+          value=""
+        />
+        <div
+          class="input-field-link input-field-delete"
+        >
+          <a
+            href="#"
+          >
+            <svg>
+              bin.svg
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <a
+      class="add-unit"
+      href="#"
+    >
+      + Add unit
+    </a>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`OrganisationUnits matches snapshot with custom title 1`] = `
+<DocumentFragment>
+  <div
+    class="organisation-units sds--text-field "
+  >
+    <label>
+      Unit name
+    </label>
+    <div
+      class="input-field first"
+    >
+      <div
+        class="inner-input-field"
+      >
+        <input
+          class="sds--text-field--input"
+          type="text"
+          value=""
+        />
+        <div
+          class="input-field-link input-field-delete"
+        >
+          <a
+            href="#"
+          >
+            <svg>
+              bin.svg
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div
+      class="input-field "
+    >
+      <div
+        class="inner-input-field"
+      >
+        <input
+          class="sds--text-field--input"
+          type="text"
+          value=""
+        />
+        <div
+          class="input-field-link input-field-delete"
+        >
+          <a
+            href="#"
+          >
+            <svg>
+              bin.svg
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <a
+      class="add-unit"
+      href="#"
+    >
+      + Add unit
+    </a>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`OrganisationUnits matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="organisation-units sds--text-field "
+  >
+    <label>
+      Unit name
+    </label>
+    <div
+      class="input-field first"
+    >
+      <div
+        class="inner-input-field"
+      >
+        <input
+          class="sds--text-field--input"
+          type="text"
+          value=""
+        />
+        <div
+          class="input-field-link input-field-delete"
+        >
+          <a
+            href="#"
+          >
+            <svg>
+              bin.svg
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div
+      class="input-field "
+    >
+      <div
+        class="inner-input-field"
+      >
+        <input
+          class="sds--text-field--input"
+          type="text"
+          value=""
+        />
+        <div
+          class="input-field-link input-field-delete"
+        >
+          <a
+            href="#"
+          >
+            <svg>
+              bin.svg
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <a
+      class="add-unit"
+      href="#"
+    >
+      + Add unit
+    </a>
+  </div>
+</DocumentFragment>
+`;

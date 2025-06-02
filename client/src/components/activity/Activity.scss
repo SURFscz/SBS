@@ -1,0 +1,170 @@
+@import "../../stylesheets/vars";
+
+.activity-container {
+    max-width: $medium;
+    margin: 25px auto;
+    width: 100%;
+
+    @media (max-width: $tablet-max) {
+        padding: 0 15px;
+    }
+
+    .action-container {
+        display: flex;
+        gap: 5%;
+        margin-bottom: 5px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--sds--color--gray--100);
+
+        @media (max-width: $tablet-max) {
+            flex-direction: column;
+        }
+
+        .filter-options {
+            display: flex;
+            align-items: center;
+            @media (max-width: $tablet-max) {
+                flex-direction: column;
+                align-items: initial;
+            }
+
+            .sds--checkbox-container {
+                margin-right: 20px;
+                @media (max-width: $tablet-max) {
+                    margin-right: 0;
+                }
+            }
+        }
+
+        .search {
+            margin-left: auto;
+            display: flex;
+
+            @media (max-width: $tablet-max) {
+                margin-left: 0;
+                flex-direction: column;
+            }
+
+            input[type=search] {
+                flex-grow: 2;
+                min-width: 360px;
+
+                @media (max-width: $tablet-max) {
+                    margin-top: 15px;
+                }
+            }
+
+            .sds--text-field--icon svg {
+                width: 0.9375em;
+                height: 0.9375em;
+            }
+
+            button {
+                margin-left: 15px;
+
+                @media (max-width: $tablet-max) {
+                    margin-left: 0;
+                    margin-top: 15px;
+                }
+            }
+        }
+    }
+
+    .activity {
+        display: flex;
+
+        @media (max-width: $compact-medium) {
+            flex-direction: column;
+        }
+
+        width: 100%;
+
+        .sds--table {
+            overflow-y: scroll;
+            max-height: 75vh;
+        }
+
+        table.logs {
+
+            th {
+                &.date {
+                    width: 25%
+                }
+
+                &.user {
+                    width: 35%
+                }
+
+                &.action {
+                    width: 40%
+                }
+            }
+
+            tbody tr {
+                &.selected {
+                    background-color: $background;
+                    font-weight: 600;
+                }
+
+                &:not(.selected):hover {
+                    color: $blue;
+                    cursor: pointer;
+                }
+
+            }
+        }
+
+        .details {
+            width: 50%;
+            padding: 0 15px;
+            margin-top: 16px;
+
+            @media (max-width: $compact-medium) {
+                width: 100%;
+            }
+
+        }
+
+        span.parent {
+            font-weight: bold;
+        }
+
+        p.none {
+            font-weight: bold;
+        }
+
+        table.changes {
+            width: 100%;
+
+            th {
+                &.key {
+                    width: 30%;
+                }
+
+                &.old-value {
+                    width: 35%;
+                }
+
+                &.new-value {
+                    width: 35%;
+                }
+            }
+
+            tbody {
+                td {
+                    word-break: break-word;
+                }
+            }
+        }
+
+    }
+
+    .sds--pagination {
+        margin-top: 25px;
+
+        a {
+            font-weight: normal;
+        }
+    }
+
+}

@@ -1,0 +1,121 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MockEB matches snapshot with custom description 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-mock-eb"
+  >
+    <div
+      class="mod-inner-mock-eb"
+    >
+      <p>
+        Hi there, this is the mock EB
+      </p>
+      <div
+        class="actions"
+      >
+        <button
+          class="sds--btn sds--btn--primary  sds--btn--small  "
+          type="button"
+        >
+          <span
+            class="textual"
+          >
+            Stop EB interrupt flow
+          </span>
+        </button>
+        <button
+          class="sds--btn sds--btn--primary  sds--btn--small  "
+          type="button"
+        >
+          <span
+            class="textual"
+          >
+            EB Attributes
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`MockEB matches snapshot with custom title 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-mock-eb"
+  >
+    <div
+      class="mod-inner-mock-eb"
+    >
+      <p>
+        Hi there, this is the mock EB
+      </p>
+      <div
+        class="actions"
+      >
+        <button
+          class="sds--btn sds--btn--primary  sds--btn--small  "
+          type="button"
+        >
+          <span
+            class="textual"
+          >
+            Stop EB interrupt flow
+          </span>
+        </button>
+        <button
+          class="sds--btn sds--btn--primary  sds--btn--small  "
+          type="button"
+        >
+          <span
+            class="textual"
+          >
+            EB Attributes
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`MockEB matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-mock-eb"
+  >
+    <div
+      class="mod-inner-mock-eb"
+    >
+      <p>
+        Hi there, this is the mock EB
+      </p>
+      <div
+        class="actions"
+      >
+        <button
+          class="sds--btn sds--btn--primary  sds--btn--small  "
+          type="button"
+        >
+          <span
+            class="textual"
+          >
+            Stop EB interrupt flow
+          </span>
+        </button>
+        <button
+          class="sds--btn sds--btn--primary  sds--btn--small  "
+          type="button"
+        >
+          <span
+            class="textual"
+          >
+            EB Attributes
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

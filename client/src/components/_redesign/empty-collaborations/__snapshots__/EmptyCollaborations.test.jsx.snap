@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EmptyCollaborations matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="no-collaborations"
+  >
+    <svg>
+      tree_swing.svg
+    </svg>
+    <p>
+      There are no collaborations yet within your organisation. Why don't you create the first one?
+    </p>
+    <button
+      class="sds--btn sds--btn--primary    "
+      type="button"
+    >
+      <span
+        class="textual"
+      >
+        Add collaboration
+      </span>
+    </button>
+  </div>
+</DocumentFragment>
+`;

@@ -1,0 +1,237 @@
+@import "../../../stylesheets/vars";
+@import "../../../stylesheets/forms";
+@import "../../../stylesheets/unit_header";
+
+table.serviceGroups {
+
+    thead {
+        th {
+            &.check {
+                width: 15px;
+            }
+
+
+            &.name {
+                width: 30%;
+                padding-left: 15px;
+            }
+
+            &.short_name {
+                width: 17%;
+            }
+
+            &.description {
+                width: 35%;
+            }
+
+            &.auto_provision_members {
+                width: 15%;
+                text-align: center;
+            }
+
+            &.trash {
+                width: 15px;
+            }
+        }
+    }
+
+    tbody {
+        td {
+            &.name {
+                padding-left: 15px;
+            }
+
+            &.auto_provision_members {
+                text-align: center;
+            }
+
+            &.trash {
+                text-align: right;
+                padding-left: 0;
+            }
+        }
+    }
+}
+
+.service-group-details-container {
+    display: flex;
+    max-width: $medium;
+    width: 100%;
+    margin: 40px auto 25px auto;
+
+    @media (max-width: $compact-medium) {
+        flex-direction: column;
+        padding: 0 15px;
+    }
+
+    a.back-to-groups {
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+        color: $blue;
+        text-decoration: underline;
+        margin-right: 60px;
+
+        svg {
+            margin-right: 5px;
+            fill: $blue;
+            height: 22px;
+        }
+    }
+
+    div.service-group-details {
+        width: 100%;
+
+        .group-details-header {
+            background-color: $background;
+            padding: 15px 25px;
+        }
+
+        .group-meta-data {
+            display: flex;
+            gap: 80px;
+
+            @media (max-width: $compact-medium) {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            div.meta-data-item {
+                display: flex;
+                flex-direction: column;
+                gap: 1px;
+
+                span.item-label {
+                    font-weight: 600;
+                }
+            }
+        }
+
+        .group-urn {
+            padding: 0 2px 0 4px;
+            background-color: var(--sds--color--blue--100);
+            border: 1px solid var(--sds--color--blue--400);
+            border-radius: 4px;
+        }
+
+        section.copy-to-clipboard {
+            border: none;
+            padding: 0 4px 0 0;
+            display: flex;
+
+            svg {
+                width: 24px;
+                height: auto;
+            }
+        }
+
+        span.copy-link {
+            padding-right: 8px;
+            margin-right: 6px;
+            border-right: 1px solid var(--sds--color--blue--400);
+            display: inline-block;
+            color: var(--sds--color--blue--500);
+            cursor: pointer;
+
+            &.copied {
+                animation: twigger .4s;
+                animation-iteration-count: 1;
+
+                @keyframes twigger {
+                    0% {
+                        color: var(--sds--color--blue--400);
+                    }
+                    50% {
+                        color: var(--sds--color--blue--300);
+                    }
+                    100% {
+                        color: var(--sds--color--blue--500);
+                    }
+                }
+            }
+        }
+
+        a.history {
+            margin: 0 20px 0 auto;
+            color: black;
+            text-decoration: underline;
+            font-weight: 600;
+            cursor: pointer;
+
+            @media (max-width: $compact-medium) {
+                margin: 0;
+            }
+
+        }
+
+        .header {
+            display: flex;
+            width: 100%;
+
+            div.header-actions {
+                margin-left: auto;
+                display: flex;
+                gap: 25px;
+                align-items: center;
+            }
+
+            span.history {
+                cursor: pointer;
+
+                svg {
+                    margin-right: 10px;
+                }
+            }
+        }
+
+        .description {
+            margin-bottom: 25px;
+
+            &.no-header-actions {
+                margin-top: 25px;
+            }
+        }
+
+        .group-detail-actions {
+            max-width: 50%;
+            margin-bottom: 20px;
+
+            div.actions__placeholder {
+                color: $blue;
+            }
+        }
+    }
+
+    div.service-group-form {
+
+        width: 60%;
+
+        display: flex;
+        flex-direction: column;
+
+        @media (max-width: $compact-medium) {
+            width: 100%;
+            padding: 15px 15px 0 15px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+
+        div.checkbox {
+            margin-top: 25px;
+        }
+    }
+
+}
+
+.loader-container {
+    margin-top: 40px;
+
+    .sds--loading-container {
+        .sds--loading {
+            position: unset;
+        }
+    }
+}

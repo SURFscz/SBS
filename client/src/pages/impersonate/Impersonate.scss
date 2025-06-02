@@ -1,0 +1,106 @@
+@import "../../stylesheets/vars";
+@import "../../stylesheets/forms";
+
+.mod-impersonate-container {
+    width: 100%;
+    display: flex;
+
+    .mod-impersonate {
+        max-width: $medium;
+        margin: 0 auto;
+        padding: 0;
+        position: relative;
+        width: 100%;
+
+        @media (max-width: $tablet-max) {
+            padding: 0 15px;
+        }
+
+        svg.help {
+            color: $blue;
+            font-size: 16px;
+            cursor: pointer;
+            margin-left: 5px;
+            position: absolute;
+            top: 5px;
+            right: 20%;
+
+            &:hover {
+                color: darken($blue, 10%);
+            }
+        }
+
+        .impersonate {
+            margin-bottom: 25px;
+            padding: 10px 0 30px 0;
+            width: 80%;
+
+            @media (max-width: $tablet-max) {
+                width: 100%;
+            }
+
+            div.input-field, div.select-field {
+                margin-top: 15px;
+            }
+
+            div.checkbox {
+                margin: 8px 0 20px 5px;
+            }
+
+        }
+
+        .user-search {
+            margin: 15px auto;
+            position: relative;
+
+            div.search {
+                display: flex;
+                flex-direction: column;
+                min-height: 48px;
+
+                &:focus {
+                    outline: none;
+                }
+
+                label.autocomplete-label {
+                    display: inline-block;
+                    margin: 12px 0 6px 0;
+                    min-width: 210px;
+                    color: black;
+                    position: relative;
+                    font-weight: bold;
+                }
+
+                span.outer-search {
+                    flex-grow: 2;
+                    width: 100%;
+                    position: relative;
+                }
+
+                section.autocomplete {
+                    top: inherit;
+                }
+
+                input[type=text] {
+                    display: block;
+                    width: 100%;
+                    border: 1px solid $dark-grey;
+                    padding: 6px 12px;
+                    border-radius: $br;
+                    font-size: 16px;
+                    height: 48px;
+
+                    &[disabled] {
+                        background-color: $light-grey;
+                    }
+
+                    &.error {
+                        background-color: $error-red-background;
+                        border: 1px solid $error-red;
+                    }
+
+                }
+            }
+        }
+    }
+}

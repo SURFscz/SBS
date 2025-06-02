@@ -1,0 +1,67 @@
+@import "../../../stylesheets/vars";
+
+table.service_requests{
+
+    thead {
+        th {
+            &.name {
+                width: 18%;
+                padding-left: 15px;
+            }
+
+            &.requester__name {
+                width: 24%;
+            }
+
+            &.description {
+                width: 20%;
+            }
+
+            &.created_at {
+                width: 15%;
+            }
+            &.connection_type {
+                width: 11%;
+            }
+            &.status {
+                width: 14%;
+                text-align: center;
+            }
+        }
+    }
+
+    tbody {
+        td {
+            &.name {
+                padding-left: 15px;
+            }
+
+            &.status {
+                text-align: center;
+            }
+
+            &.open {
+                text-align: right;
+            }
+        }
+    }
+}
+
+.mod-entities {
+
+    .service-request-filter {
+        display: flex;
+        @media (max-width: $compact-medium) {
+            flex-direction: column;
+        }
+
+        .service-request-filter-select {
+            width: 290px;
+            @media (max-width: $compact-medium) {
+                margin: 15px 0;
+            }
+
+        }
+    }
+
+}

@@ -1,0 +1,117 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MetaDataDialog matches snapshot with custom metadata 1`] = `
+<DocumentFragment>
+  <div
+    class="sds--modal sds--backdrop"
+  >
+    <div
+      class="sds--modal--container full metadata-modal"
+    >
+      <div
+        class="sds--modal--title "
+      >
+        <p
+          class="sds--text--h4"
+        >
+          The SAML metadata
+        </p>
+      </div>
+      <div
+        class="sds--modal--content"
+      >
+        <div
+          class="sds--text--rich"
+        >
+          <div
+            class="metadata-dialog-inner"
+          >
+            <div
+              class="input-field sds--text-field  "
+            >
+              <div
+                class="inner-input-field"
+              >
+                <textarea
+                  class="sds--text-field--input sds--text-area large "
+                  cols="10"
+                  disabled=""
+                  placeholder=""
+                />
+                <section
+                  class="copy-to-clipboard right "
+                >
+                  <svg>
+                    duplicate.svg
+                  </svg>
+                </section>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="sds--modal--actions sds--actions--outer sds--space--top--5"
+        />
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`MetaDataDialog matches snapshot with minimal props 1`] = `
+<DocumentFragment>
+  <div
+    class="sds--modal sds--backdrop"
+  >
+    <div
+      class="sds--modal--container full metadata-modal"
+    >
+      <div
+        class="sds--modal--title "
+      >
+        <p
+          class="sds--text--h4"
+        >
+          The SAML metadata
+        </p>
+      </div>
+      <div
+        class="sds--modal--content"
+      >
+        <div
+          class="sds--text--rich"
+        >
+          <div
+            class="metadata-dialog-inner"
+          >
+            <div
+              class="input-field sds--text-field  "
+            >
+              <div
+                class="inner-input-field"
+              >
+                <textarea
+                  class="sds--text-field--input sds--text-area large "
+                  cols="10"
+                  disabled=""
+                  placeholder=""
+                />
+                <section
+                  class="copy-to-clipboard right "
+                >
+                  <svg>
+                    duplicate.svg
+                  </svg>
+                </section>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="sds--modal--actions sds--actions--outer sds--space--top--5"
+        />
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

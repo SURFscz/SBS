@@ -1,0 +1,53 @@
+@import "../../stylesheets/vars";
+@import "../../stylesheets/forms";
+
+.mod-new-organisation-container {
+
+    .mod-new-organisation {
+        max-width: $medium;
+        margin: 0 auto;
+        width: 100%;
+
+        .new-organisation {
+            display: grid;
+            grid-template-columns: [first] 1fr [second] 1fr;
+            column-gap: 50px;
+
+            @media (max-width: $tablet-max) {
+                padding: 0 15px;
+            }
+            @media (max-width: $compact-medium) {
+                display: flex;
+                flex-direction: column;
+            }
+
+
+            .input-field, .select-field, .radio-button-container, .actions {
+                grid-column-start: first;
+            }
+
+            div.input-field, div.select-field, div.email-field, div.organisation-onboarding, div.creatable-field {
+                margin-top: 15px;
+
+                &.first {
+                    margin-top: 0;
+                }
+            }
+
+            div.checkbox {
+                margin: 27px 0 20px 0;
+            }
+
+        }
+
+        .section-separator {
+            grid-column: 1/-1;
+            padding: 25px 0 5px 0;
+
+            &.last {
+                margin-bottom: 10px;
+            }
+        }
+
+    }
+}

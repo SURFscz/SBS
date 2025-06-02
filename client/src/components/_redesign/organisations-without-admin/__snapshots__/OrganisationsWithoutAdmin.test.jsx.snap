@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OrganisationsWithoutAdmin renders with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="mod-entities "
+  >
+    <section
+      class="entities-search"
+    >
+      <h2>
+        Organisations without administrators (0)
+      </h2>
+      <div
+        class="search-filters organisationsWithoutAdmin-search-filters"
+      />
+      <div
+        class="search standalone"
+      >
+        <div
+          class="sds--text-field sds--text-field--has-icon"
+        >
+          <div
+            class="sds--text-field--shape"
+          >
+            <div
+              class="sds--text-field--input-and-icon"
+            >
+              <input
+                class="sds--text-field--input"
+                placeholder="Search organisations..."
+                type="search"
+                value=""
+              />
+              <span
+                class="sds--text-field--icon"
+              >
+                <svg>
+                  search.svg
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section
+      class="entities-list"
+    />
+    <div />
+  </div>
+</DocumentFragment>
+`;

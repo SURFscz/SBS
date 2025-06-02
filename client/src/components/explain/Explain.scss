@@ -1,0 +1,73 @@
+@import "../../stylesheets/vars";
+
+.mod-explain {
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
+    background: white;
+    width: 460px;
+
+    @media (max-width: $compact-medium) {
+        width: 280px;
+    }
+
+    z-index: 5;
+    height: 100%;
+    transition: left 325ms ease-in-out;
+
+    &:focus {
+        outline: none;
+    }
+
+    &.hide {
+        transition: left 250ms ease-in-out;
+        left: -470px;
+    }
+
+    .container {
+        overflow-y: scroll;
+        height: 99%;
+    }
+
+    p {
+        margin-top: 5px;
+    }
+
+    span {
+        &.emphasize {
+            font-style: italic;
+        }
+
+        &.strong {
+            font-weight: bold;
+        }
+    }
+
+    .header {
+        display: flex;
+        background: $light-orange;
+        color: black;
+        font-size: larger;
+        height: 61px;
+        font-weight: 600;
+
+        p {
+            padding: 18px 15px;
+        }
+
+        svg {
+            margin-left: auto;
+            font-size: 36px;
+            padding: 8px;
+            cursor: pointer;
+            fill: white;
+        }
+    }
+
+    .explanation, .example, .details {
+        padding: 15px;
+    }
+
+}

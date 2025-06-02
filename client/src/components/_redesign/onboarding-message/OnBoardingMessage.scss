@@ -1,0 +1,12 @@
+@import "../../../stylesheets/vars";
+@import "../../../stylesheets/mde_preview";
+
+div.instructions {
+  @include mde-preview;
+
+  margin: 10px 0 25px 0;
+  padding: 15px;
+  border-radius: $br;
+  background-color: #fdfdfd;
+  border: 1px solid $lighter-grey;
+}

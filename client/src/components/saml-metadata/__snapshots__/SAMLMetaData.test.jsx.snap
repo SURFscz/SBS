@@ -1,0 +1,187 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SAMLMetaData matches snapshot with custom metadataUrl 1`] = `
+<DocumentFragment>
+  <div
+    class="parsed-saml-meta-data first-column"
+  >
+    <table>
+      <thead />
+      <tbody>
+        <tr>
+          <td
+            class="attribute"
+          >
+            service.samlMetaData.acs_binding
+          </td>
+          <td
+            class="value"
+          >
+            POST
+          </td>
+        </tr>
+        <tr>
+          <td
+            class="attribute"
+          >
+            service.samlMetaData.acs_location
+          </td>
+          <td
+            class="value"
+          >
+            https://example.com/acs
+          </td>
+        </tr>
+        <tr>
+          <td
+            class="attribute"
+          >
+            service.samlMetaData.entity_id
+          </td>
+          <td
+            class="value"
+          >
+            entity123
+          </td>
+        </tr>
+        <tr>
+          <td
+            class="attribute"
+          >
+            service.samlMetaData.organization_name
+          </td>
+          <td
+            class="value"
+          >
+            Example Org
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`SAMLMetaData matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="parsed-saml-meta-data first-column"
+  >
+    <table>
+      <thead />
+      <tbody>
+        <tr>
+          <td
+            class="attribute"
+          >
+            service.samlMetaData.acs_binding
+          </td>
+          <td
+            class="value"
+          >
+            POST
+          </td>
+        </tr>
+        <tr>
+          <td
+            class="attribute"
+          >
+            service.samlMetaData.acs_location
+          </td>
+          <td
+            class="value"
+          >
+            https://example.com/acs
+          </td>
+        </tr>
+        <tr>
+          <td
+            class="attribute"
+          >
+            service.samlMetaData.entity_id
+          </td>
+          <td
+            class="value"
+          >
+            entity123
+          </td>
+        </tr>
+        <tr>
+          <td
+            class="attribute"
+          >
+            service.samlMetaData.organization_name
+          </td>
+          <td
+            class="value"
+          >
+            Example Org
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`SAMLMetaData matches snapshot with no metadataUrl 1`] = `
+<DocumentFragment>
+  <div
+    class="parsed-saml-meta-data first-column"
+  >
+    <table>
+      <thead />
+      <tbody>
+        <tr>
+          <td
+            class="attribute"
+          >
+            service.samlMetaData.acs_binding
+          </td>
+          <td
+            class="value"
+          >
+            POST
+          </td>
+        </tr>
+        <tr>
+          <td
+            class="attribute"
+          >
+            service.samlMetaData.acs_location
+          </td>
+          <td
+            class="value"
+          >
+            https://example.com/acs
+          </td>
+        </tr>
+        <tr>
+          <td
+            class="attribute"
+          >
+            service.samlMetaData.entity_id
+          </td>
+          <td
+            class="value"
+          >
+            entity123
+          </td>
+        </tr>
+        <tr>
+          <td
+            class="attribute"
+          >
+            service.samlMetaData.organization_name
+          </td>
+          <td
+            class="value"
+          >
+            Example Org
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</DocumentFragment>
+`;

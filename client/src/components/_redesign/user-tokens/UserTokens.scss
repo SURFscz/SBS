@@ -1,0 +1,182 @@
+@import "../../../stylesheets/vars";
+@import "../../../stylesheets/forms";
+@import "../../../stylesheets/unit_header";
+
+table.user-tokens {
+
+    thead {
+        th {
+            &.name {
+                width: 20%;
+                padding-left: 15px;
+            }
+
+            &.description {
+                width: 30%;
+            }
+
+            &.service {
+                width: 20%;
+            }
+
+            &.expiry_date {
+                width: 15%;
+            }
+
+            &.last_used_date{
+                width: 15%;
+            }
+
+        }
+    }
+
+    tbody {
+        td {
+            &.name {
+                padding-left: 15px;
+            }
+
+            &.expiry_date {
+                span.expired {
+                    color: var(--sds--color--red--400);
+                    font-weight: bold;
+                }
+            }
+        }
+    }
+}
+
+.user-token-details-container {
+    display: flex;
+    max-width: $medium;
+    width: 100%;
+    margin: 40px auto 25px auto;
+
+    @media (max-width: $compact-medium) {
+        flex-direction: column;
+        padding: 0 15px;
+    }
+
+    a.back-to-user-tokens {
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+        color: $blue;
+        text-decoration: underline;
+        margin-right: 60px;
+
+        svg {
+            margin-right: 5px;
+            fill: $blue;
+            height: 22px;
+        }
+    }
+
+    div.user-token-details {
+        width: 100%;
+
+        .header {
+            display: flex;
+            width: 100%;
+
+            div.header-actions {
+                margin-left: auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            button {
+                margin-bottom: 15px;
+            }
+
+            span.history {
+                cursor: pointer;
+
+                svg {
+                    margin-right: 10px;
+                }
+            }
+        }
+
+        .description {
+            margin-bottom: 25px;
+
+            &.no-header-actions {
+                margin-top: 25px;
+            }
+        }
+
+        .user-token-detail-actions {
+            margin-bottom: 20px;
+            max-width: 50%;
+
+            div.actions__placeholder {
+                color: $blue;
+            }
+        }
+    }
+
+    table.user-tokenMembers {
+        thead {
+            th {
+                &.name {
+                    width: 50%;
+                }
+
+                &.user__schac_home_organisation {
+                    width: 35%;
+                }
+
+                &.trash, &.trash_disabled {
+                    width: 74px;
+                }
+
+            }
+        }
+
+        tbody {
+            td {
+                &.trash {
+                    text-align: right;
+                    color: var(--sds--color--red--400);
+                    cursor: pointer;
+                }
+
+                &.trash_disabled {
+                    text-align: right;
+                    color: $lighter-grey;
+                    cursor: not-allowed;
+                }
+
+            }
+        }
+
+    }
+
+    div.user-token-form {
+
+        width: 60%;
+
+        display: flex;
+        flex-direction: column;
+
+        @media (max-width: $compact-medium) {
+            width: 100%;
+            padding: 15px 15px 0 15px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        p.disclaimer {
+            margin-bottom: 0;
+        }
+
+        div.checkbox {
+            margin-top: 25px;
+        }
+    }
+
+}

@@ -1,0 +1,10 @@
+@import "../../../stylesheets/vars";
+
+.institute-column {
+    display: flex;
+
+    &.greyed {
+        color: $dark-grey;
+    }
+
+}

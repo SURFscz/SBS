@@ -1,0 +1,204 @@
+@import "../../stylesheets/vars";
+@import "../../stylesheets/input_field";
+
+.input-field {
+    @include input-field;
+
+    display: flex;
+    position: relative;
+    flex-direction: column;
+
+    em.file-name {
+        margin-bottom: 3px;
+        color: $blue;
+    }
+
+    textarea {
+        display: block;
+        width: 100%;
+        border: 1px solid $dark-grey;
+        padding: 6px 12px;
+        border-radius: $br;
+        font-size: 16px;
+        height: 48px;
+        color: black;
+
+        &[disabled] {
+            background-color: $hover;
+            cursor: not-allowed;
+            color: black;
+        }
+
+        &.error {
+            background-color: $error-red-background;
+            border: 1px solid $error-red;
+        }
+
+        //&:hover {
+        //    background-color: $blue-hover;
+        //}
+
+        &:focus {
+            outline: none;
+            box-shadow: 3px 3px 3px $blue-hover, -3px -3px 1px $blue-hover;
+        }
+
+    }
+
+    textarea {
+        height: 90px;
+
+        &.large {
+            height: 170px;
+        }
+
+        &.file-upload {
+            height: 240px;
+        }
+    }
+
+    span.remove {
+        display: flex;
+        align-items: center;
+
+        em {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        svg.fa-trash {
+            margin: 0 5px 0 auto;
+            color: var(--sds--color--red--400);
+        }
+    }
+
+    span.extra-info {
+        margin-bottom: 6px;
+        display: inline-block;
+        font-size: 15px;
+    }
+
+    div.inner-input-field {
+        display: flex;
+
+        button.sds--btn {
+            min-width: 120px;
+            margin-left: 10px;
+        }
+    }
+
+    section.file-upload-container {
+        margin-left: 10px;
+        max-height: 44px;
+        text-align: center;
+        border: 1px solid $blue;
+        border-radius: 4px;
+        color: $blue;
+
+        &:hover {
+            background-color: #ddf2fd;
+        }
+
+        label.file-upload {
+            z-index: 5;
+            cursor: pointer;
+            margin: 0;
+            padding: 8px 14px;
+            min-width: auto;
+            color: $blue;
+
+            svg {
+                font-size: 26px;
+
+                &:hover {
+                    color: $hover-blue;
+                }
+
+            }
+        }
+
+    }
+
+    section.on-file-initial-removal {
+        margin: 5px 0 0 10px;
+        max-height: 44px;
+        text-align: center;
+        border: 1px solid var(--sds--color--red--400);
+        border-radius: 4px;
+        padding: 8px 14px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #ffe9e9 !important;
+        }
+
+
+        svg.fa-trash {
+            color: var(--sds--color--red--400);
+        }
+
+    }
+
+    div.input-field-link {
+        margin-left: 10px;
+        display: flex;
+        border-radius: 4px;
+        border: 1px solid $medium-blue;
+        font-size: 20px;
+        color: $medium-blue;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #ddf2fd;
+        }
+
+
+        a {
+            padding: 8px 12px;
+        }
+
+        svg {
+
+            color: $blue;
+            cursor: pointer;
+
+            &:hover {
+                color: $hover-blue;
+            }
+
+        }
+    }
+
+    div.input-field-delete {
+        border: 1px solid var(--sds--color--gray--400);
+        font-size: 20px;
+        color: var(--sds--color--gray--400);
+        cursor: pointer;
+
+        &:hover {
+            background-color: var(--sds--color--gray--100);
+        }
+
+
+        a {
+            padding: 12px 12px 0 12px;
+        }
+
+        svg {
+
+            color: var(--sds--color--gray--400);
+            cursor: pointer;
+
+            &:hover {
+                color: var(--sds--color--red--400);
+            }
+        }
+    }
+
+
+    span.no-input {
+        margin-bottom: 6px;
+        display: block;
+
+    }
+}

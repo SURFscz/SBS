@@ -1,0 +1,29 @@
+@import "../../stylesheets/vars";
+
+.sds--content-card {
+    a.more-link {
+        display: flex;
+
+        svg {
+            width: 16px;
+            height: auto;
+            margin-left: 8px;
+        }
+    }
+
+    p.org-name {
+        color: var(--sds--color--gray--500)
+    }
+    p.coll-name {
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    .sds--content-card--visual {
+        img {
+            width: 90px;
+            height: auto;
+        }
+    }
+
+}

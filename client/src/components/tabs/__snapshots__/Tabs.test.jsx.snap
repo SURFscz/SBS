@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Tabs matches snapshot with custom tabs and active tab 1`] = `
+<DocumentFragment>
+  <div
+    class="tabs-container"
+  >
+    <div
+      class="tabs "
+    >
+      <div
+        class=" tab first tab active"
+      >
+        <button
+          class="tab-label"
+        >
+          first label
+        </button>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Tabs matches snapshot with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="tabs-container"
+  >
+    <div
+      class="tabs "
+    >
+      <div
+        class=" tab first tab active"
+      >
+        <button
+          class="tab-label"
+        >
+          first label
+        </button>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

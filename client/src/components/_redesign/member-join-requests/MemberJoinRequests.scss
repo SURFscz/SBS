@@ -1,0 +1,120 @@
+@import "../../../stylesheets/vars";
+@import "../../../stylesheets/unit_header";
+
+table.memberJoinRequests, table.systemJoinRequests, table.deletedJoinRequests {
+
+    thead {
+        th {
+            &.name {
+                width: 20%;
+                padding-left: 15px;
+            }
+
+            &.user__name {
+                width: 35%;
+            }
+
+            &.user__schac_home_organisation {
+                width: 20%;
+            }
+
+            &.created_at {
+                width: 15%;
+            }
+
+            &.status {
+                width: 15%;
+                text-align: center;
+            }
+
+        }
+    }
+
+    tbody {
+        td {
+            &.name {
+                padding-left: 15px;
+            }
+
+            &.status {
+                text-align: center;
+            }
+        }
+    }
+}
+
+.mod-entities {
+
+    .join-request-filter {
+        display: flex;
+        @media (max-width: $compact-medium) {
+            flex-direction: column;
+        }
+
+        .join-request-filter-select {
+            width: 290px;
+            @media (max-width: $compact-medium) {
+                margin: 15px 0;
+            }
+
+        }
+    }
+
+}
+
+.join-request-details-container {
+    display: flex;
+    max-width: $medium;
+    width: 100%;
+    margin: 40px auto 25px auto;
+
+    @media (max-width: $compact-medium) {
+        flex-direction: column;
+    }
+
+    a.back-to-join-requests {
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+        color: $blue;
+        text-decoration: underline;
+        margin-right: 60px;
+
+
+        svg {
+            margin-right: 5px;
+            fill: $blue;
+            height: 22px;
+        }
+    }
+
+    div.join-request-form {
+        width: 60%;
+        @media (max-width: $compact-medium) {
+            width: 100%;
+            padding: 15px 15px 0 15px;
+        }
+
+        display: flex;
+        flex-direction: column;
+
+        div.checkbox {
+            margin-top: 25px;
+        }
+    }
+
+}
+
+.rejection-reason-container {
+    padding: 15px 25px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+
+    .rejection-reason-disclaimer {
+        font-size: 14px;
+        font-weight: bold;
+        margin-top: 10px;
+        font-style: italic;
+    }
+}

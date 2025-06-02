@@ -1,0 +1,75 @@
+@import "../../stylesheets/vars";
+
+.sds--content-card {
+    a.more-link {
+        display: flex;
+
+        svg {
+            width: 16px;
+            height: auto;
+            margin-left: 8px;
+        }
+    }
+
+    .sds--content-card--visual {
+        img {
+            width: 90px;
+            height: auto;
+        }
+    }
+
+    div.service-metadata {
+        display: flex;
+        gap: 120px;
+
+        @media (max-width: $tablet-max) {
+            flex-direction: column;
+            gap: 0;
+        }
+
+        a {
+            font-weight: 400 !important;
+            display: block;
+
+            &.soft-link {
+                display: inline;
+            }
+        }
+
+        dt {
+            margin-top: 20px;
+            font-weight: 600;
+        }
+
+        dd {
+            &.dd-seperator {
+                margin-top: 25px;
+            }
+        }
+
+        .service-groups {
+            margin: 20px 0;
+            .sds--loading {
+                position: initial;
+                margin-left: 235px;
+            }
+        }
+
+        ul {
+            list-style: initial;
+
+            li {
+                margin-left: 15px;
+
+                span.service-group {
+                    font-weight: 600;
+                }
+            }
+        }
+
+
+        div.support {
+            max-width: 220px;
+        }
+    }
+}

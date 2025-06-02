@@ -1,0 +1,129 @@
+@import "../../stylesheets/vars";
+@import "../../stylesheets/forms";
+
+.mod-collaboration-request-container {
+    width: 100%;
+
+    .collaboration-request-header-container {
+        background-color: $background;
+        padding: 15px;
+        width: 100%;
+    }
+
+    .collaboration-request-header {
+        max-width: $medium;
+        margin: 0 auto;
+        width: 100%;
+        display: flex;
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .header-attributes {
+            display: flex;
+        }
+
+        .header-keys {
+            margin-right: 40px;
+        }
+
+        .header-keys, .header-values {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-values {
+            span.email {
+                margin-bottom: 18px;
+            }
+        }
+
+        span.name {
+            color: black;
+            font-weight: bold;
+
+            &:first-child {
+                margin-bottom: 40px;
+            }
+        }
+
+        span.rejection-reason {
+            margin-top: 15px;
+        }
+
+        .collaboration-request-header-actions {
+            margin-left: auto;
+            @media (max-width: $compact-medium) {
+                margin-left: 5px;
+            }
+
+            .request-header-actions {
+                button.sds--chips {
+                    margin-left: 25px;
+                    max-height: 34px;
+                }
+
+                display: flex;
+                align-items: center;
+
+                @media (max-width: $compact-medium) {
+                    flex-direction: column;
+                }
+
+                button:not(:first-child) {
+                    margin-left: 25px;
+                    @media (max-width: $compact-medium) {
+                        margin-top: 5px;
+                    }
+
+                }
+
+            }
+
+
+        }
+    }
+
+    .mod-collaboration-request {
+        max-width: $medium;
+        width: 100%;
+        margin: 0 auto;
+
+        .collaboration-request {
+
+            display: grid;
+            grid-template-columns: [first] 1fr [second] 1fr;
+            column-gap: 50px;
+
+            @media (max-width: $tablet-max) {
+                padding: 0 15px;
+            }
+
+            @media (max-width: $compact-medium) {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .input-field, .actions, div.checkbox, .select-field, span.error {
+                grid-column-start: first;
+            }
+
+            .section-separator {
+                grid-column: 1/-1;
+                padding: 25px 0 5px 0;
+
+                &.last {
+                    margin-bottom: 10px;
+                }
+            }
+
+            div.input-field, div.select-field {
+                margin-top: 15px;
+            }
+
+        }
+    }
+
+
+}

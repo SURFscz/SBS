@@ -1,0 +1,78 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TabularData matches snapshot with data and columns 1`] = `
+<DocumentFragment>
+  <div
+    class="tabular-data"
+  >
+    <table>
+      <thead>
+        <tr>
+          <th
+            class="index"
+          />
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          class=" "
+        >
+          <td>
+            1
+          </td>
+        </tr>
+        <tr
+          class=" "
+        >
+          <td>
+            2
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p
+      class="info"
+    >
+      <sup
+        class="required"
+      >
+        *
+      </sup>
+      <em>
+        indicates a required value
+      </em>
+    </p>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`TabularData matches snapshot with minimal props 1`] = `
+<DocumentFragment>
+  <div
+    class="tabular-data"
+  >
+    <table>
+      <thead>
+        <tr>
+          <th
+            class="index"
+          />
+        </tr>
+      </thead>
+      <tbody />
+    </table>
+    <p
+      class="info"
+    >
+      <sup
+        class="required"
+      >
+        *
+      </sup>
+      <em>
+        indicates a required value
+      </em>
+    </p>
+  </div>
+</DocumentFragment>
+`;

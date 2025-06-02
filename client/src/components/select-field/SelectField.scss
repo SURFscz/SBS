@@ -1,0 +1,79 @@
+@import "../../stylesheets/vars";
+
+.select-field {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+
+    label {
+        display: inline-block;
+        margin: 12px 0 6px 0;
+        min-width: 210px;
+        color: black;
+        position: relative;
+        font-weight: 600;
+    }
+
+    .select-field-inner {
+        display: flex;
+    }
+
+    .input-select-inner {
+        display: block;
+        width: 100%;
+
+        &.small {
+            width: 240px;
+        }
+
+        border: 1px solid $dark-grey;
+        border-radius: $br;
+        font-size: 16px;
+        height: 48px;
+
+        &.error {
+            border-color:  var(--sds--color--red--400);
+        }
+
+        &.creatable {
+            height: auto;
+            min-height: 48px;
+        }
+
+        .select-inner__control {
+            height: 100%;
+            padding-left: 8px;
+            border: none;
+            border-radius: $br;
+        }
+
+        .select-inner__control--is-focused {
+            outline: none;
+            box-shadow: 3px 3px 3px $blue-hover, -3px -3px 1px $blue-hover;
+            border: 1px solid $dark-grey !important;
+        }
+
+        .select-inner__multi-value {
+            background-color: var(--sds--palette--main-color--100);
+        }
+
+        &[disabled] {
+            background-color: $background;
+            cursor: not-allowed;
+        }
+
+    }
+
+    .select-inner__single-value--is-disabled {
+        color: black;
+    }
+
+    .select-inner--is-disabled {
+        cursor: not-allowed;
+    }
+
+    .select-inner__control--is-disabled {
+        background-color: $background;
+        border-radius: 6px;
+    }
+}

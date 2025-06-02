@@ -1,0 +1,83 @@
+@import "../../stylesheets/vars";
+@import "../../stylesheets/forms";
+
+.mod-new-collaboration-container {
+
+    h2.no-organisations {
+        font-size: 18px;
+        line-height: 22px;
+        padding: 25px 0 5px 0;
+
+    }
+
+    .on-boarding {
+        margin: 25px auto;
+        max-width: $medium;
+        @media (max-width: $tablet-max) {
+            padding: 0 15px;
+        }
+    }
+
+    .new-collaboration {
+        margin: 25px auto 0 auto;
+        max-width: $medium;
+        width: 100%;
+
+        display: grid;
+        grid-template-columns: [first] 1fr [second] 1fr;
+        column-gap: 50px;
+        @media (max-width: $tablet-max) {
+            padding: 0 15px;
+        }
+
+        @media (max-width: $compact-medium) {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-field, .actions, div.checkbox, .select-field, span.error {
+            grid-column-start: first;
+        }
+
+        .section-separator {
+            grid-column: 1/-1;
+            padding: 25px 0 5px 0;
+
+            &.last {
+                margin-bottom: 10px;
+            }
+        }
+
+        div.input-field, div.select-field, div.checkbox, div.email-field {
+            margin-top: 15px;
+        }
+
+        div.cropped-image-container {
+            grid-row-start: 2;
+            grid-column-start: second;
+            grid-row-end: 99;
+
+            .sds--modal--actions.sds--actions--outer {
+                @media (max-width: $compact-medium) {
+                    flex-direction: column;
+                }
+
+            }
+
+            &.large {
+                .sds--modal--container {
+                    min-width: 48rem;
+                    max-width: 48rem;
+
+                    @media (max-width: $compact-medium) {
+                        min-width: 90vw;
+                        max-width: 90vw;
+                    }
+                }
+            }
+
+
+        }
+
+    }
+}
