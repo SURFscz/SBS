@@ -55,7 +55,7 @@ import {getUserRequests, isUserAllowed, ROLES} from "../utils/UserRole";
 import {SUBSCRIPTION_ID_COOKIE_NAME} from "../utils/SocketIO";
 import MissingAttributes from "./missing-attributes/MissingAttributes";
 import CollaborationsOverview from "./collaborations-overview/CollaborationsOverview";
-import MyRequests from "../components/_redesign/MyRequests";
+import MyRequests from "../components/_redesign/my-requests/MyRequests";
 import Delay from "./delay/Delay";
 import Interrupt from "./interrupt/Interrupt";
 import MockEB from "./mock-eb/MockEB";

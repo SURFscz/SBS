@@ -31,7 +31,7 @@ import CroppedImageField from "../../components/_redesign/cropped-image-field/Cr
 import SpinnerField from "../../components/_redesign/SpinnerField";
 import ErrorIndicator from "../../components/_redesign/error-indicator/ErrorIndicator";
 import EmailField from "../../components/email-field/EmailField";
-import RadioButtonGroup from "../../components/_redesign/RadioButtonGroup";
+import RadioButtonGroup from "../../components/_redesign/radio-button-group/RadioButtonGroup";
 import SelectField from "../../components/select-field/SelectField";
 import UploadButton from "../../components/upload-button/UploadButton";
 import {chipTypeForStatus} from "../../utils/UserRole";

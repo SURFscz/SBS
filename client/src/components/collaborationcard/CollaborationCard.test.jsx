@@ -5,7 +5,7 @@ import CollaborationCard from "./CollaborationCard";
 jest.mock("../../locale/I18n", () => ({
     t: key => key
 }));
-jest.mock("../_redesign/Logo", () => props => (
+jest.mock("../_redesign/logo/Logo", () => props => (
     <img data-testid="logo" {...props} />
 ));
 jest.mock("@fortawesome/react-fontawesome", () => ({

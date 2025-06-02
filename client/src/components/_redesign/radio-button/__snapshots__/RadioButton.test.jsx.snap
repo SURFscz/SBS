@@ -1,0 +1,131 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RadioButton renders with checked state 1`] = `
+<DocumentFragment>
+  <div
+    class="sds--radio-options"
+  >
+    <label
+      class="sds--tooltip-parent sds--radio-options-label"
+      for="test-radio"
+    >
+      <span>
+        Test Radio Button Checked
+      </span>
+    </label>
+    <div
+      class="sds--text-field-container row"
+    >
+      <div
+        class="option-0"
+      >
+        <input
+          id="test-radio_No"
+          name="test-radio"
+          type="radio"
+        />
+        <label
+          class="sds--radio-options-label"
+          for="test-radio_No"
+        >
+          <span
+            class="sds--radio--visual"
+          />
+          <span
+            class="sds--radio--text"
+          >
+            No
+          </span>
+        </label>
+      </div>
+      <div
+        class="option-1"
+      >
+        <input
+          id="test-radio_Yes"
+          name="test-radio"
+          type="radio"
+        />
+        <label
+          class="sds--radio-options-label"
+          for="test-radio_Yes"
+        >
+          <span
+            class="sds--radio--visual"
+          />
+          <span
+            class="sds--radio--text"
+          >
+            Yes
+          </span>
+        </label>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`RadioButton renders with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="sds--radio-options"
+  >
+    <label
+      class="sds--tooltip-parent sds--radio-options-label"
+      for="test-radio"
+    >
+      <span>
+        Test Radio Button
+      </span>
+    </label>
+    <div
+      class="sds--text-field-container row"
+    >
+      <div
+        class="option-0"
+      >
+        <input
+          id="test-radio_No"
+          name="test-radio"
+          type="radio"
+        />
+        <label
+          class="sds--radio-options-label"
+          for="test-radio_No"
+        >
+          <span
+            class="sds--radio--visual"
+          />
+          <span
+            class="sds--radio--text"
+          >
+            No
+          </span>
+        </label>
+      </div>
+      <div
+        class="option-1"
+      >
+        <input
+          id="test-radio_Yes"
+          name="test-radio"
+          type="radio"
+        />
+        <label
+          class="sds--radio-options-label"
+          for="test-radio_Yes"
+        >
+          <span
+            class="sds--radio--visual"
+          />
+          <span
+            class="sds--radio--text"
+          >
+            Yes
+          </span>
+        </label>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

@@ -16,7 +16,7 @@ import {
 import {ReactComponent as ConnectionAllowedIcon} from "@surfnet/sds/icons/illustrative-icons/hr.svg";
 import {ReactComponent as NoConnectionIcon} from "@surfnet/sds/icons/functional-icons/allowance-no-talking.svg";
 import {clearFlash, setFlash} from "../../utils/Flash";
-import Logo from "./Logo";
+import Logo from "./logo/Logo";
 import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import {BlockSwitchChoice, Chip, SegmentedControl} from "@surfnet/sds";
 import {ALWAYS, DISALLOW, ON_REQUEST, PERMISSION_OPTIONS} from "../../utils/Permissions";

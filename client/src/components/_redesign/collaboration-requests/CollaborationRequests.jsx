@@ -4,7 +4,7 @@ import "./CollaborationRequests.scss";
 import {stopEvent} from "../../../utils/Utils";
 import I18n from "../../../locale/I18n";
 import Entities from "../entities/Entities";
-import Logo from "../Logo";
+import Logo from "../logo/Logo";
 import Select from "react-select";
 import InstituteColumn from "../institute-column/InstituteColumn";
 import UserColumn from "../UserColumn";

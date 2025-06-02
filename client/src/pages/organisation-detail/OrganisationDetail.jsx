@@ -10,12 +10,12 @@ import I18n from "../../locale/I18n";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import Tabs from "../../components/tabs/Tabs";
 import UnitHeader from "../../components/_redesign/UnitHeader";
-import OrganisationAdmins from "../../components/_redesign/OrganisationAdmins";
+import OrganisationAdmins from "../../components/_redesign/organisation-admins/OrganisationAdmins";
 import {AppStore} from "../../stores/AppStore";
 import Collaborations from "../../components/_redesign/collaborations/Collaborations";
 import SpinnerField from "../../components/_redesign/SpinnerField";
 import ApiKeys from "../../components/_redesign/api-keys/ApiKeys";
-import OrganisationServices from "../../components/_redesign/OrganisationServices";
+import OrganisationServices from "../../components/_redesign/organisation-services/OrganisationServices";
 import CollaborationRequests from "../../components/_redesign/collaboration-requests/CollaborationRequests";
 import OrganisationWelcomeDialog from "../../components/organisation-welcome-dialog/OrganisationWelcomeDialog";
 import {actionMenuUserRole, isUserAllowed, ROLES} from "../../utils/UserRole";
@@ -26,7 +26,7 @@ import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
 import Users from "../../components/_redesign/Users";
 import {ButtonType} from "@surfnet/sds";
 import {isInvitationExpired} from "../../utils/Date";
-import ServiceConnectionRequests from "../../components/_redesign/ServiceConnectionRequests";
+import ServiceConnectionRequests from "../../components/_redesign/service-connection-requests/ServiceConnectionRequests";
 import OrganisationOverview from "../organisation-overview/OrganisationOverview";
 
 class OrganisationDetail extends React.Component {

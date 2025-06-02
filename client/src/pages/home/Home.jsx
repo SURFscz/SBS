@@ -5,9 +5,9 @@ import {ReactComponent as Logo} from "../../icons/ram.svg";
 import {AppStore} from "../../stores/AppStore";
 import {getUserRequests, isUserServiceAdmin, rawGlobalUserRole, ROLES} from "../../utils/UserRole";
 import Tabs from "../../components/tabs/Tabs";
-import Organisations from "../../components/_redesign/Organisations";
+import Organisations from "../../components/_redesign/organisations/Organisations";
 import UnitHeader from "../../components/_redesign/UnitHeader";
-import PlatformAdmins from "../../components/_redesign/PlatformAdmins";
+import PlatformAdmins from "../../components/_redesign/platform-admins/PlatformAdmins";
 import Services from "../../components/_redesign/Services";
 import SpinnerField from "../../components/_redesign/SpinnerField";
 import Collaborations from "../../components/_redesign/collaborations/Collaborations";
@@ -15,7 +15,7 @@ import {isEmpty} from "../../utils/Utils";
 import Users from "../../components/_redesign/Users";
 import ServiceRequests from "../../components/_redesign/ServiceRequests";
 import EmptyCollaborations from "../../components/_redesign/empty-collaborations/EmptyCollaborations";
-import MyRequests from "../../components/_redesign/MyRequests";
+import MyRequests from "../../components/_redesign/my-requests/MyRequests";
 
 class Home extends React.Component {
 

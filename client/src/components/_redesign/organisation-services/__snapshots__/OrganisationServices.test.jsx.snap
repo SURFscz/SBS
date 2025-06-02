@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OrganisationServices renders with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="sds--loading-container "
+  >
+    <div
+      class="sds--loading"
+    >
+      <span
+        class="sds--loading--dot"
+      />
+      <span
+        class="sds--loading--dot"
+      />
+      <span
+        class="sds--loading--dot"
+      />
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`OrganisationServices renders with services 1`] = `
+<DocumentFragment>
+  <div
+    class="sds--loading-container "
+  >
+    <div
+      class="sds--loading"
+    >
+      <span
+        class="sds--loading--dot"
+      />
+      <span
+        class="sds--loading--dot"
+      />
+      <span
+        class="sds--loading--dot"
+      />
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`OrganisationServices renders without user admin privileges 1`] = `
+<DocumentFragment>
+  <div
+    class="sds--loading-container "
+  >
+    <div
+      class="sds--loading"
+    >
+      <span
+        class="sds--loading--dot"
+      />
+      <span
+        class="sds--loading--dot"
+      />
+      <span
+        class="sds--loading--dot"
+      />
+    </div>
+  </div>
+</DocumentFragment>
+`;

@@ -1,5 +1,5 @@
 import React from "react";
-import "../Organisations.scss";
+import "../organisations/Organisations.scss";
 import I18n from "../../../locale/I18n";
 import {ReactComponent as SearchIcon} from "@surfnet/sds/icons/functional-icons/search.svg";
 import Button from "../../button/Button";

@@ -6,7 +6,7 @@ import Button from "../../components/button/Button";
 import {pamWebSSOSession, pollPamWebSSO} from "../../api";
 import SpinnerField from "../../components/_redesign/SpinnerField";
 import {ErrorOrigins} from "../../utils/Utils";
-import Logo from "../../components/_redesign/Logo";
+import Logo from "../../components/_redesign/logo/Logo";
 import {login} from "../../utils/Login";
 import DOMPurify from "dompurify";
 import {CopyToClipboard} from "react-copy-to-clipboard";

@@ -8,7 +8,7 @@ jest.mock("../../locale/I18n", () => ({
 jest.mock("../checkbox/CheckBox", () => props => (
     <div data-testid="checkbox">{JSON.stringify(props)}</div>
 ));
-jest.mock("../_redesign/Logo", () => props => (
+jest.mock("../_redesign/logo/Logo", () => props => (
     <img data-testid="logo" {...props} />
 ));
 jest.mock("../../utils/Utils", () => ({

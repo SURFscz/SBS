@@ -3,7 +3,7 @@ import React from "react";
 import "./ServiceRequests.scss";
 import I18n from "../../locale/I18n";
 import Entities from "./entities/Entities";
-import Logo from "./Logo";
+import Logo from "./logo/Logo";
 import Select from "react-select";
 import SpinnerField from "./SpinnerField";
 import UserColumn from "./UserColumn";

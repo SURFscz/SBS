@@ -1,0 +1,99 @@
+@import "../../../stylesheets/vars";
+@import "../../../stylesheets/select_role";
+
+.mod-entities {
+    table.orgInvitations {
+
+        thead {
+            th {
+                &.organisation_name {
+                    width: 30%;
+                    padding-left: 15px;
+                }
+
+                &.name {
+                    width: 30%;
+                }
+
+                &.role {
+                    width: 20%;
+                }
+
+                &.status {
+                    width: 25%;
+                    text-align: center;
+                }
+
+            }
+        }
+
+        tbody {
+            td {
+                &.status {
+                    text-align: center;
+                }
+
+                &.organisation_name {
+                    padding-left: 15px;
+                }
+
+            }
+        }
+
+    }
+
+}
+
+.organisation-invitation-details-container {
+    display: flex;
+    margin: 40px auto 25px auto;
+    max-width: $medium;
+    width: 100%;
+
+    @media (max-width: $compact-medium) {
+        flex-direction: column;
+    }
+
+
+    a.back-to-org-members {
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+        color: $blue;
+        text-decoration: underline;
+        margin-right: 60px;
+
+        svg {
+            margin-right: 5px;
+            fill: $blue;
+            height: 22px;
+        }
+    }
+
+    div.organisation-invitation-form {
+        width: 60%;
+        @media (max-width: $compact-medium) {
+            width: 100%;
+            padding: 15px;
+        }
+
+        display: flex;
+        flex-direction: column;
+
+        h1 {
+            margin: 1px 0 30px 0;
+        }
+
+        div.checkbox {
+            margin-top: 25px;
+        }
+    }
+
+    .organisation-meta {
+        display: flex;
+
+        div.input-field:last-child {
+            margin-left: auto;
+        }
+    }
+}

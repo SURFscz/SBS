@@ -1,7 +1,7 @@
 import React from "react";
 import "./UnitHeader.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import Logo from "./Logo";
+import Logo from "./logo/Logo";
 import {isEmpty, splitListSemantically, stopEvent} from "../../utils/Utils";
 import PropTypes from "prop-types";
 import Button from "../button/Button";

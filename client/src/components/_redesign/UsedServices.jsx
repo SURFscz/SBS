@@ -17,7 +17,7 @@ import {clearFlash, setFlash} from "../../utils/Flash";
 import InputField from "../input-field/InputField";
 import SpinnerField from "./SpinnerField";
 import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
-import Logo from "./Logo";
+import Logo from "./logo/Logo";
 import CheckBox from "../checkbox/CheckBox";
 import moment from "moment";
 import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";

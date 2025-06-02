@@ -5,7 +5,7 @@ import {ReactComponent as NotFoundIcon} from "../../../icons/image-not-found.svg
 import "./CroppedImageField.scss";
 import {isEmpty} from "../../../utils/Utils";
 import "react-image-crop/dist/ReactCrop.css";
-import Logo from "../Logo";
+import Logo from "../logo/Logo";
 import Button from "../../button/Button";
 import CroppedImageDialog from "../cropped-image-dialog/CroppedImageDialog";
 import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";

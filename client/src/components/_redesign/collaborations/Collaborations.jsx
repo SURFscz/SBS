@@ -9,7 +9,7 @@ import Button from "../../button/Button";
 import {allCollaborationsOptimized, myCollaborationsOptimized} from "../../../api";
 import SpinnerField from "../SpinnerField";
 import {chipType, isUserAllowed, ROLES} from "../../../utils/UserRole";
-import Logo from "../Logo";
+import Logo from "../logo/Logo";
 import {Chip, ChipType, Tooltip} from "@surfnet/sds";
 import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
 import {clearFlash} from "../../../utils/Flash";
