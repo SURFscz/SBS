@@ -1,23 +1,23 @@
 import React from "react";
-import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
+import {ReactComponent as ChevronLeft} from "../../../icons/chevron-left.svg";
 
 import "./JoinRequests.scss";
-import {isEmpty, stopEvent} from "../../utils/Utils";
-import I18n from "../../locale/I18n";
-import Button from "../button/Button";
-import {setFlash} from "../../utils/Flash";
-import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
-import Entities from "./entities/Entities";
-import SpinnerField from "./SpinnerField";
-import InputField from "../input-field/InputField";
-import {joinRequestAccept, joinRequestDecline, joinRequestDelete} from "../../api";
-import UserColumn from "./UserColumn";
+import {isEmpty, stopEvent} from "../../../utils/Utils";
+import I18n from "../../../locale/I18n";
+import Button from "../../button/Button";
+import {setFlash} from "../../../utils/Flash";
+import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
+import Entities from "../entities/Entities";
+import SpinnerField from "../SpinnerField";
+import InputField from "../../input-field/InputField";
+import {joinRequestAccept, joinRequestDecline, joinRequestDelete} from "../../../api";
+import UserColumn from "../UserColumn";
 import moment from "moment";
-import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
+import {ReactComponent as MembersIcon} from "../../../icons/single-neutral.svg";
 import {Chip, Tooltip} from "@surfnet/sds";
 import Select from "react-select";
-import InstituteColumn from "./institute-column/InstituteColumn";
-import {chipTypeForStatus} from "../../utils/UserRole";
+import InstituteColumn from "../institute-column/InstituteColumn";
+import {chipTypeForStatus} from "../../../utils/UserRole";
 
 const allValue = "all";
 

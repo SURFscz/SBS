@@ -29,7 +29,7 @@ import {chipType, isUserAllowed, ROLES} from "../../../utils/UserRole";
 import SpinnerField from "../SpinnerField";
 import moment from "moment";
 import {Chip, Tooltip, ChipType} from "@surfnet/sds";
-import LastAdminWarning from "../LastAdminWarning";
+import LastAdminWarning from "../last-admin-warning/LastAdminWarning";
 import DateField from "../../date-field/DateField";
 import InstituteColumn from "../institute-column/InstituteColumn";
 import {ReactComponent as ChevronUp} from "../../../icons/chevron-up.svg";

@@ -25,7 +25,7 @@ import {Chip, ChipType, Tooltip} from "@surfnet/sds";
 import InstituteColumn from "./institute-column/InstituteColumn";
 import {isEmpty, userColumnsCustomSort} from "../../utils/Utils";
 import {emitImpersonation} from "../../utils/Impersonation";
-import LastAdminWarning from "./LastAdminWarning";
+import LastAdminWarning from "./last-admin-warning/LastAdminWarning";
 import Select from "react-select";
 
 const INVITE_IDENTIFIER = "INVITE_IDENTIFIER";

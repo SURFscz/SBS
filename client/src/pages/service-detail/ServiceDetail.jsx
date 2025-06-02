@@ -27,7 +27,7 @@ import ServiceAdmins from "../../components/_redesign/ServiceAdmins";
 import {setFlash} from "../../utils/Flash";
 import ServiceWelcomeDialog from "../../components/service-welcome-dialog/ServiceWelcomeDialog";
 import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
-import LastAdminWarning from "../../components/_redesign/LastAdminWarning";
+import LastAdminWarning from "../../components/_redesign/last-admin-warning/LastAdminWarning";
 import ServiceOverview from "../service-overview/ServiceOverview";
 import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
 import ServiceCollaborations from "../../components/_redesign/ServiceCollaborations";

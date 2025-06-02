@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LastAdminWarning renders with currentUserDeleted false 1`] = `
+<DocumentFragment>
+  <p
+    class="last-admin-error-indication"
+  >
+    <span>
+      You are leaving this collaboration without admins. After this, management of the collaboration can only be carried out by the admins of organisation Test Organisation
+    </span>
+  </p>
+</DocumentFragment>
+`;
+
+exports[`LastAdminWarning renders with custom localePrefix 1`] = `
+<DocumentFragment>
+  <p
+    class="last-admin-error-indication"
+  >
+    <span>
+      [missing "customLocale.lastAdminWarningUser" translation]
+    </span>
+  </p>
+</DocumentFragment>
+`;
+
+exports[`LastAdminWarning renders with default props 1`] = `
+<DocumentFragment>
+  <p
+    class="last-admin-error-indication"
+  >
+    <span>
+      You are the last admin in this collaboration. After you leave, management of the collaboration can only be carried out by the admins of organisation Test Organisation
+    </span>
+  </p>
+</DocumentFragment>
+`;

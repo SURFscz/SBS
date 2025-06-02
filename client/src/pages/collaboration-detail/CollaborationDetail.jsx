@@ -31,12 +31,12 @@ import AboutCollaboration from "../../components/_redesign/about-collaboration/A
 import {actionMenuUserRole, isUserAllowed, ROLES} from "../../utils/UserRole";
 import {getParameterByName} from "../../utils/QueryParameters";
 import CollaborationWelcomeDialog from "../../components/collaboration-welcome-dialog/CollaborationWelcomeDialog";
-import JoinRequests from "../../components/_redesign/JoinRequests";
+import JoinRequests from "../../components/_redesign/join-requests/JoinRequests";
 import {clearFlash, setFlash} from "../../utils/Flash";
 import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
 import Button from "../../components/button/Button";
 import JoinRequestDialog from "../../components/join-request-dialog/JoinRequestDialog";
-import LastAdminWarning from "../../components/_redesign/LastAdminWarning";
+import LastAdminWarning from "../../components/_redesign/last-admin-warning/LastAdminWarning";
 import moment from "moment";
 import {ButtonType, Tooltip} from "@surfnet/sds";
 import {ErrorOrigins, isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
