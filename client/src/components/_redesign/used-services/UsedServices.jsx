@@ -5,23 +5,23 @@ import {
     deleteCollaborationServices,
     deleteServiceConnectionRequest,
     requestServiceConnection
-} from "../../api";
-import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
+} from "../../../api";
+import {ReactComponent as ChevronLeft} from "../../../icons/chevron-left.svg";
 import {ReactComponent as SearchIcon} from "@surfnet/sds/icons/functional-icons/search.svg";
-import {ReactComponent as NoServicesIcon} from "../../icons/no_services.svg";
+import {ReactComponent as NoServicesIcon} from "../../../icons/no_services.svg";
 import "./UsedServices.scss";
-import {isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
-import I18n from "../../locale/I18n";
-import Button from "../button/Button";
-import {clearFlash, setFlash} from "../../utils/Flash";
-import InputField from "../input-field/InputField";
-import SpinnerField from "./spinner-field/SpinnerField";
-import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
-import Logo from "./logo/Logo";
-import CheckBox from "../checkbox/CheckBox";
+import {isEmpty, removeDuplicates, stopEvent} from "../../../utils/Utils";
+import I18n from "../../../locale/I18n";
+import Button from "../../button/Button";
+import {clearFlash, setFlash} from "../../../utils/Flash";
+import InputField from "../../input-field/InputField";
+import SpinnerField from "../spinner-field/SpinnerField";
+import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
+import Logo from "../logo/Logo";
+import CheckBox from "../../checkbox/CheckBox";
 import moment from "moment";
-import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
-import ServiceCard from "../service-card/ServiceCard";
+import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../../utils/SocketIO";
+import ServiceCard from "../../service-card/ServiceCard";
 
 const CONNECTIONS = "connections";
 

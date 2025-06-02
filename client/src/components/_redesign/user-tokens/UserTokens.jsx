@@ -5,21 +5,21 @@ import {
     reactivateUserToken,
     updateUserToken,
     userTokenGenerateValue
-} from "../../api";
-import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
+} from "../../../api";
+import {ReactComponent as ChevronLeft} from "../../../icons/chevron-left.svg";
 import "./UserTokens.scss";
-import {isEmpty, stopEvent} from "../../utils/Utils";
-import I18n from "../../locale/I18n";
-import Button from "../button/Button";
-import {setFlash} from "../../utils/Flash";
-import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
-import Entities from "./entities/Entities";
-import SpinnerField from "./spinner-field/SpinnerField";
-import InputField from "../input-field/InputField";
-import {AppStore} from "../../stores/AppStore";
-import ErrorIndicator from "./error-indicator/ErrorIndicator";
-import {dateFromEpoch, isUserTokenExpired, userTokenExpiryDate} from "../../utils/Date";
-import SelectField from "../select-field/SelectField";
+import {isEmpty, stopEvent} from "../../../utils/Utils";
+import I18n from "../../../locale/I18n";
+import Button from "../../button/Button";
+import {setFlash} from "../../../utils/Flash";
+import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
+import Entities from "../entities/Entities";
+import SpinnerField from "../spinner-field/SpinnerField";
+import InputField from "../../input-field/InputField";
+import {AppStore} from "../../../stores/AppStore";
+import ErrorIndicator from "../error-indicator/ErrorIndicator";
+import {dateFromEpoch, isUserTokenExpired, userTokenExpiryDate} from "../../../utils/Date";
+import SelectField from "../../select-field/SelectField";
 import DOMPurify from "dompurify";
 
 class UserTokens extends React.Component {

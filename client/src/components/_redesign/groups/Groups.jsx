@@ -21,7 +21,7 @@ import Entities from "../entities/Entities";
 import SpinnerField from "../spinner-field/SpinnerField";
 import {ReactComponent as UserIcon} from "../../../icons/users.svg";
 import {ReactComponent as MembersIcon} from "../../../icons/single-neutral.svg";
-import UserColumn from "../UserColumn";
+import UserColumn from "../user-column/UserColumn";
 import Select from "react-select";
 import InputField from "../../input-field/InputField";
 import CheckBox from "../../checkbox/CheckBox";

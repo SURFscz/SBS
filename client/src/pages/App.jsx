@@ -9,7 +9,7 @@ import {aupLinks, config, me, other, refreshUser, reportError} from "../api";
 import "../locale/en";
 import "../locale/nl";
 import ErrorDialog from "../components/error-dialog/ErrorDialog";
-import Welcome from "../components/_redesign/Welcome";
+import Welcome from "../components/_redesign/welcome/Welcome";
 import Footer from "../components/footer/Footer";
 import Flash from "../components/flash/Flash";
 // eslint-disable-next-line no-unused-vars

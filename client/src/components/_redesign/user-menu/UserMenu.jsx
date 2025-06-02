@@ -1,13 +1,13 @@
-import I18n from "../../locale/I18n";
+import I18n from "../../../locale/I18n";
 import React, {useState} from "react";
 import "./UserMenu.scss";
 import {Link} from "react-router-dom";
-import {logout} from "../../utils/Login";
-import {clearFlash} from "../../utils/Flash";
+import {logout} from "../../../utils/Login";
+import {clearFlash} from "../../../utils/Flash";
 import {UserInfo} from "@surfnet/sds";
-import {AppStore} from "../../stores/AppStore";
-import {stopEvent} from "../../utils/Utils";
-import {isUserAllowed, isUserServiceAdmin, ROLES} from "../../utils/UserRole";
+import {AppStore} from "../../../stores/AppStore";
+import {stopEvent} from "../../../utils/Utils";
+import {isUserAllowed, isUserServiceAdmin, ROLES} from "../../../utils/UserRole";
 
 
 export const UserMenu = ({currentUser, config, provideFeedback}) => {

@@ -7,7 +7,7 @@ import {isInvitationExpired, shortDateFromEpoch} from "../../../utils/Date";
 import {stopEvent} from "../../../utils/Utils";
 import Button from "../../button/Button";
 import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
-import UserColumn from "../UserColumn";
+import UserColumn from "../user-column/UserColumn";
 import InputField from "../../input-field/InputField";
 import moment from "moment";
 import ErrorIndicator from "../error-indicator/ErrorIndicator";

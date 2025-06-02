@@ -23,7 +23,7 @@ import {getParameterByName} from "../../utils/QueryParameters";
 import {setFlash} from "../../utils/Flash";
 import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
 import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
-import Users from "../../components/_redesign/Users";
+import Users from "../../components/_redesign/users/Users";
 import {ButtonType} from "@surfnet/sds";
 import {isInvitationExpired} from "../../utils/Date";
 import ServiceConnectionRequests from "../../components/_redesign/service-connection-requests/ServiceConnectionRequests";

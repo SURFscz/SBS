@@ -24,7 +24,7 @@ import {expiryDateCustomSort, isEmpty, stopEvent, userColumnsCustomSort} from ".
 import Button from "../../button/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
-import UserColumn from "../UserColumn";
+import UserColumn from "../user-column/UserColumn";
 import {chipType, isUserAllowed, ROLES} from "../../../utils/UserRole";
 import SpinnerField from "../spinner-field/SpinnerField";
 import moment from "moment";

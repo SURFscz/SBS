@@ -1,21 +1,21 @@
 import React from "react";
-import "./organisations/Organisations.scss";
-import I18n from "../../locale/I18n";
-import "./entities/Entities.scss";
+import "../organisations/Organisations.scss";
+import I18n from "../../../locale/I18n";
+import "../entities/Entities.scss";
 import {Tooltip} from "@surfnet/sds";
-import Entities from "./entities/Entities";
-import {queryForOrganisationInvites, queryForOrganisationUsers, queryForUsers} from "../../api";
-import {ReactComponent as UserIcon} from "../../icons/single-neutral.svg";
-import {ReactComponent as InviteIcon} from "../../icons/single-neutral-question.svg";
+import Entities from "../entities/Entities";
+import {queryForOrganisationInvites, queryForOrganisationUsers, queryForUsers} from "../../../api";
+import {ReactComponent as UserIcon} from "../../../icons/single-neutral.svg";
+import {ReactComponent as InviteIcon} from "../../../icons/single-neutral-question.svg";
 import "./Users.scss";
-import UserColumn from "./UserColumn";
+import UserColumn from "../user-column/UserColumn";
 
-import {isEmpty, stopEvent} from "../../utils/Utils";
+import {isEmpty, stopEvent} from "../../../utils/Utils";
 import debounce from "lodash.debounce";
-import SpinnerField from "./spinner-field/SpinnerField";
-import InstituteColumn from "./institute-column/InstituteColumn";
-import {ReactComponent as HandIcon} from "../../icons/puppet_new.svg";
-import {emitImpersonation} from "../../utils/Impersonation";
+import SpinnerField from "../spinner-field/SpinnerField";
+import InstituteColumn from "../institute-column/InstituteColumn";
+import {ReactComponent as HandIcon} from "../../../icons/puppet_new.svg";
+import {emitImpersonation} from "../../../utils/Impersonation";
 
 
 class Users extends React.Component {

@@ -12,7 +12,7 @@ import Services from "../../components/_redesign/services/Services";
 import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
 import Collaborations from "../../components/_redesign/collaborations/Collaborations";
 import {isEmpty} from "../../utils/Utils";
-import Users from "../../components/_redesign/Users";
+import Users from "../../components/_redesign/users/Users";
 import ServiceRequests from "../../components/_redesign/service-requests/ServiceRequests";
 import EmptyCollaborations from "../../components/_redesign/empty-collaborations/EmptyCollaborations";
 import MyRequests from "../../components/_redesign/my-requests/MyRequests";

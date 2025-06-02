@@ -6,7 +6,7 @@ import Entities from "../entities/Entities";
 import Logo from "../logo/Logo";
 import Select from "react-select";
 import SpinnerField from "../spinner-field/SpinnerField";
-import UserColumn from "../UserColumn";
+import UserColumn from "../user-column/UserColumn";
 import {dateFromEpoch} from "../../../utils/Date";
 import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../../utils/SocketIO";
 import {chipTypeForStatus} from "../../../utils/UserRole";

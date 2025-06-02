@@ -6,7 +6,7 @@ import Entities from "../entities/Entities";
 import {platformAdmins} from "../../../api";
 import {ReactComponent as PlatformAdminIcon} from "../../../icons/users.svg";
 import "./PlatformAdmins.scss";
-import UserColumn from "../UserColumn";
+import UserColumn from "../user-column/UserColumn";
 import {Tooltip} from "@surfnet/sds";
 import InstituteColumn from "../institute-column/InstituteColumn";
 import {stopEvent} from "../../../utils/Utils";

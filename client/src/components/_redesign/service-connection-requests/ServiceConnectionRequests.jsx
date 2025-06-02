@@ -2,7 +2,7 @@ import React from "react";
 import {ReactComponent as ChevronLeft} from "../../../icons/chevron-left.svg";
 
 import "./ServiceConnectionRequests.scss";
-import "../UserColumn.scss";
+import "../user-column/UserColumn.scss";
 import {isEmpty, stopEvent} from "../../../utils/Utils";
 import I18n from "../../../locale/I18n";
 import Button from "../../button/Button";
@@ -15,7 +15,7 @@ import {approveServiceConnectionRequest, deleteServiceConnectionRequest, denySer
 import moment from "moment";
 import Logo from "../logo/Logo";
 import InstituteColumn from "../institute-column/InstituteColumn";
-import UserColumn from "../UserColumn";
+import UserColumn from "../user-column/UserColumn";
 import Select from "react-select";
 import {Chip} from "@surfnet/sds";
 import {chipTypeForStatus} from "../../../utils/UserRole";

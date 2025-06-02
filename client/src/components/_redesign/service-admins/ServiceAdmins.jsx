@@ -18,7 +18,7 @@ import {isInvitationExpired, shortDateFromEpoch} from "../../../utils/Date";
 import Button from "../../button/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
-import UserColumn from "../UserColumn";
+import UserColumn from "../user-column/UserColumn";
 import {isUserServiceAdmin} from "../../../utils/UserRole";
 import SpinnerField from "../spinner-field/SpinnerField";
 import {Chip, ChipType, Tooltip} from "@surfnet/sds";

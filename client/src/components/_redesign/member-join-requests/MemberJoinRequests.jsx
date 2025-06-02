@@ -4,7 +4,7 @@ import "./MemberJoinRequests.scss";
 import I18n from "../../../locale/I18n";
 import Entities from "../entities/Entities";
 import SpinnerField from "../spinner-field/SpinnerField";
-import UserColumn from "../UserColumn";
+import UserColumn from "../user-column/UserColumn";
 import Select from "react-select";
 import Logo from "../logo/Logo";
 import {dateFromEpoch} from "../../../utils/Date";

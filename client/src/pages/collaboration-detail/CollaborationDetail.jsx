@@ -25,7 +25,7 @@ import {ReactComponent as TimerIcon} from "../../icons/streamline/timer2.svg";
 import {ReactComponent as MemberStatusIcon} from "@surfnet/sds/icons/functional-icons/id-1.svg";
 import CollaborationAdmins from "../../components/_redesign/collaboration-admins/CollaborationAdmins";
 import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
-import UsedServices from "../../components/_redesign/UsedServices";
+import UsedServices from "../../components/_redesign/used-services/UsedServices";
 import Groups from "../../components/_redesign/groups/Groups";
 import AboutCollaboration from "../../components/_redesign/about-collaboration/AboutCollaboration";
 import {actionMenuUserRole, isUserAllowed, ROLES} from "../../utils/UserRole";
@@ -40,7 +40,7 @@ import LastAdminWarning from "../../components/_redesign/last-admin-warning/Last
 import moment from "moment";
 import {ButtonType, Tooltip} from "@surfnet/sds";
 import {ErrorOrigins, isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
-import UserTokens from "../../components/_redesign/UserTokens";
+import UserTokens from "../../components/_redesign/user-tokens/UserTokens";
 import {socket, SUBSCRIPTION_ID_COOKIE_NAME} from "../../utils/SocketIO";
 import {isUuid4} from "../../validations/regExps";
 import {isInvitationExpired} from "../../utils/Date";

@@ -11,7 +11,7 @@ import Entities from "../entities/Entities";
 import SpinnerField from "../spinner-field/SpinnerField";
 import InputField from "../../input-field/InputField";
 import {joinRequestAccept, joinRequestDecline, joinRequestDelete} from "../../../api";
-import UserColumn from "../UserColumn";
+import UserColumn from "../user-column/UserColumn";
 import moment from "moment";
 import {ReactComponent as MembersIcon} from "../../../icons/single-neutral.svg";
 import {Chip, Tooltip} from "@surfnet/sds";

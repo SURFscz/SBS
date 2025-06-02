@@ -1,8 +1,8 @@
 import React from "react";
-import I18n from "../../locale/I18n";
+import I18n from "../../../locale/I18n";
 import "./UserColumn.scss";
 import {ChipType, Chip, Tooltip} from "@surfnet/sds";
-import {dateFromEpoch} from "../../utils/Date";
+import {dateFromEpoch} from "../../../utils/Date";
 
 export default function UserColumn({entity, currentUser, gotoInvitation, hideEmail = false, showMe = true}) {
     if (!entity.invite && !entity.user) {
