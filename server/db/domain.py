@@ -628,6 +628,7 @@ class Service(Base, db.Model, LogoMixin, SecretMixin):
     sweep_scim_daily_rate = db.Column("sweep_scim_daily_rate", db.Integer(), nullable=True, default=0)
     sweep_scim_last_run = db.Column("sweep_scim_last_run", TZDateTime(), nullable=True)
     redirect_urls = db.Column("redirect_urls", db.Text(), nullable=True)
+    acs_locations = db.Column("acs_locations", db.Text(), nullable=True)
     saml_metadata = db.Column("saml_metadata", db.Text(), nullable=True)
     saml_metadata_url = db.Column("saml_metadata_url", db.String(length=255), nullable=True)
     oidc_client_secret = db.Column("oidc_client_secret", db.String(length=255), nullable=True)
