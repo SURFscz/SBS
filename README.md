@@ -268,10 +268,12 @@ Now open your browser at: http://localhost:8080
 
 ## Client snapshot tests
 
-Most of the components and pages in the client have basic snapshot tests (*.test.jsx). Snapshot tests are part of our CI pipeline and are run in the build stage.
+Most of the components and pages in the client have basic snapshot tests (*.test.jsx). Snapshot tests are part of our CI
+pipeline and are run in the build stage.
 
 Whenever a page of component changes, the snapshot test of that page or component is expected to fail.
-If the change was intended, the snapshot should be updated. In order to do that, one should delete the ``__snapshots__`` folder in the component's subfolder and rerun the test:
+If the change was intended, the snapshot should be updated. In order to do that, one should delete the ``__snapshots__`` 
+folder in the component's subfolder and rerun the test:
 
 ```bash
 $ yarn test path/to/YourComponent.test.jsx -u
