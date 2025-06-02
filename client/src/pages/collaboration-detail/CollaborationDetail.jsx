@@ -18,13 +18,13 @@ import {
 import "./CollaborationDetail.scss";
 import I18n from "../../locale/I18n";
 import {AppStore} from "../../stores/AppStore";
-import UnitHeader from "../../components/_redesign/UnitHeader";
+import UnitHeader from "../../components/_redesign/unit-header/UnitHeader";
 import Tabs from "../../components/tabs/Tabs";
 import {ReactComponent as MemberIcon} from "../../icons/groups.svg";
 import {ReactComponent as TimerIcon} from "../../icons/streamline/timer2.svg";
 import {ReactComponent as MemberStatusIcon} from "@surfnet/sds/icons/functional-icons/id-1.svg";
 import CollaborationAdmins from "../../components/_redesign/collaboration-admins/CollaborationAdmins";
-import SpinnerField from "../../components/_redesign/SpinnerField";
+import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
 import UsedServices from "../../components/_redesign/UsedServices";
 import Groups from "../../components/_redesign/groups/Groups";
 import AboutCollaboration from "../../components/_redesign/about-collaboration/AboutCollaboration";

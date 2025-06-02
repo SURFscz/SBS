@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UnitHeader renders with default props 1`] = `
+<DocumentFragment>
+  <div
+    class="unit-header-container"
+  >
+    <div
+      class="unit-header"
+    >
+      <div
+        class="image test-style"
+      />
+      <div
+        class="obj-name"
+      >
+        <div
+          class="meta-info-container"
+        >
+          <div
+            class="meta-info"
+          />
+        </div>
+      </div>
+      <div
+        class="action-menu-container"
+      />
+    </div>
+  </div>
+</DocumentFragment>
+`;

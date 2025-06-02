@@ -15,7 +15,7 @@ import I18n from "../../locale/I18n";
 import Button from "../button/Button";
 import {clearFlash, setFlash} from "../../utils/Flash";
 import InputField from "../input-field/InputField";
-import SpinnerField from "./SpinnerField";
+import SpinnerField from "./spinner-field/SpinnerField";
 import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import Logo from "./logo/Logo";
 import CheckBox from "../checkbox/CheckBox";
@@ -286,7 +286,7 @@ class UsedServices extends React.Component {
         return (
             <div className={"used-services-mod"}>
                 <div>
-                    <a href="/services" className={"back-to-services"}
+                    <a href="/services/Services" className={"back-to-services"}
                        onClick={this.cancelRequestConnectionService}>
                         <ChevronLeft/>{I18n.t("models.services.backToServices")}
                     </a>

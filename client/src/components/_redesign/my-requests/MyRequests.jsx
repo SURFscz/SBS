@@ -5,7 +5,7 @@ import I18n from "../../../locale/I18n";
 import Entities from "../entities/Entities";
 import Logo from "../logo/Logo";
 import Select from "react-select";
-import SpinnerField from "../SpinnerField";
+import SpinnerField from "../spinner-field/SpinnerField";
 import {dateFromEpoch} from "../../../utils/Date";
 import {
     COLLABORATION_REQUEST_TYPE,

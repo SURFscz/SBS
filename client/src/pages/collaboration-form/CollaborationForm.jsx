@@ -24,10 +24,10 @@ import {sanitizeShortName, sanitizeTagName, validEmailRegExp, validUrlRegExp} fr
 import SelectField from "../../components/select-field/SelectField";
 import {getParameterByName} from "../../utils/QueryParameters";
 import CheckBox from "../../components/checkbox/CheckBox";
-import UnitHeader from "../../components/_redesign/UnitHeader";
+import UnitHeader from "../../components/_redesign/unit-header/UnitHeader";
 import {ReactComponent as CollaborationsIcon} from "../../icons/collaborations.svg";
 import {AppStore} from "../../stores/AppStore";
-import SpinnerField from "../../components/_redesign/SpinnerField";
+import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
 import CroppedImageField from "../../components/_redesign/cropped-image-field/CroppedImageField";
 import EmailField from "../../components/email-field/EmailField";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";

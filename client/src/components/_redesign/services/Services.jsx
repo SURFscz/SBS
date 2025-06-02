@@ -1,12 +1,12 @@
 import React from "react";
-import {allServicesOptimized, mineServicesOptimized} from "../../api";
+import {allServicesOptimized, mineServicesOptimized} from "../../../api";
 import "./Services.scss";
-import {stopEvent} from "../../utils/Utils";
-import I18n from "../../locale/I18n";
-import Entities from "./entities/Entities";
-import Logo from "./logo/Logo";
-import SpinnerField from "./SpinnerField";
-import {isUserServiceAdmin} from "../../utils/UserRole";
+import {stopEvent} from "../../../utils/Utils";
+import I18n from "../../../locale/I18n";
+import Entities from "../entities/Entities";
+import Logo from "../logo/Logo";
+import SpinnerField from "../spinner-field/SpinnerField";
+import {isUserServiceAdmin} from "../../../utils/UserRole";
 
 
 class Services extends React.Component {

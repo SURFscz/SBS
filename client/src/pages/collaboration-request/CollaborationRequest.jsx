@@ -17,7 +17,7 @@ import {setFlash} from "../../utils/Flash";
 import {sanitizeShortName} from "../../validations/regExps";
 import {AppStore} from "../../stores/AppStore";
 import CroppedImageField from "../../components/_redesign/cropped-image-field/CroppedImageField";
-import SpinnerField from "../../components/_redesign/SpinnerField";
+import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
 import ErrorIndicator from "../../components/_redesign/error-indicator/ErrorIndicator";
 import {chipTypeForStatus} from "../../utils/UserRole";
 import {Chip} from "@surfnet/sds";

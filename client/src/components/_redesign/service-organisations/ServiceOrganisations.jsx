@@ -1,8 +1,8 @@
 import React from "react";
 import "./ServiceOrganisations.scss";
-import {isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
-import I18n from "../../locale/I18n";
-import Entities from "./entities/Entities";
+import {isEmpty, removeDuplicates, stopEvent} from "../../../utils/Utils";
+import I18n from "../../../locale/I18n";
+import Entities from "../entities/Entities";
 import {
     disallowOrganisation,
     onRequestOrganisation,
@@ -12,16 +12,16 @@ import {
     toggleOverrideAccessAllowedAllConnections,
     toggleReset,
     trustOrganisation
-} from "../../api";
+} from "../../../api";
 import {ReactComponent as ConnectionAllowedIcon} from "@surfnet/sds/icons/illustrative-icons/hr.svg";
 import {ReactComponent as NoConnectionIcon} from "@surfnet/sds/icons/functional-icons/allowance-no-talking.svg";
-import {clearFlash, setFlash} from "../../utils/Flash";
-import Logo from "./logo/Logo";
-import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
+import {clearFlash, setFlash} from "../../../utils/Flash";
+import Logo from "../logo/Logo";
+import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
 import {BlockSwitchChoice, Chip, SegmentedControl} from "@surfnet/sds";
-import {ALWAYS, DISALLOW, ON_REQUEST, PERMISSION_OPTIONS} from "../../utils/Permissions";
-import SpinnerField from "./SpinnerField";
-import {chipType} from "../../utils/UserRole";
+import {ALWAYS, DISALLOW, ON_REQUEST, PERMISSION_OPTIONS} from "../../../utils/Permissions";
+import SpinnerField from "../spinner-field/SpinnerField";
+import {chipType} from "../../../utils/UserRole";
 import {
     ALL_ALLOWED,
     ALL_INSTITUTIONS,
@@ -36,7 +36,7 @@ import {
     SELECTED_INSTITUTION,
     SELECTED_INSTITUTION_AND_ORGANISATION,
     SOME_INSTITUTIONS
-} from "../../utils/ServiceConnectionSettings";
+} from "../../../utils/ServiceConnectionSettings";
 
 
 class ServiceOrganisations extends React.Component {

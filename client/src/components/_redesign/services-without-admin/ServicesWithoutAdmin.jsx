@@ -1,9 +1,9 @@
 import React from "react";
 import "./ServicesWithoutAdmin.scss";
-import {stopEvent} from "../../utils/Utils";
-import I18n from "../../locale/I18n";
-import Entities from "./entities/Entities";
-import Logo from "./logo/Logo";
+import {stopEvent} from "../../../utils/Utils";
+import I18n from "../../../locale/I18n";
+import Entities from "../entities/Entities";
+import Logo from "../logo/Logo";
 
 
 class ServicesWithoutAdmin extends React.Component {

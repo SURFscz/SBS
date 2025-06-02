@@ -25,7 +25,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
 import UserColumn from "../UserColumn";
 import {isUserAllowed, ROLES} from "../../../utils/UserRole";
-import SpinnerField from "../SpinnerField";
+import SpinnerField from "../spinner-field/SpinnerField";
 import {ReactComponent as MembersIcon} from "../../../icons/single-neutral.svg";
 import {Chip, ChipType, Tooltip} from "@surfnet/sds";
 import InstituteColumn from "../institute-column/InstituteColumn";

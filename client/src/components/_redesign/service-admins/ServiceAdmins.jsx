@@ -20,7 +20,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
 import UserColumn from "../UserColumn";
 import {isUserServiceAdmin} from "../../../utils/UserRole";
-import SpinnerField from "../SpinnerField";
+import SpinnerField from "../spinner-field/SpinnerField";
 import {Chip, ChipType, Tooltip} from "@surfnet/sds";
 import InstituteColumn from "../institute-column/InstituteColumn";
 import {isEmpty, userColumnsCustomSort} from "../../../utils/Utils";

@@ -6,7 +6,7 @@ import I18n from "../../../locale/I18n";
 import Entities from "../entities/Entities";
 import Button from "../../button/Button";
 import {collaborationAdmins, collaborationsByService, deleteCollaborationServices} from "../../../api";
-import SpinnerField from "../SpinnerField";
+import SpinnerField from "../spinner-field/SpinnerField";
 import Logo from "../logo/Logo";
 import CheckBox from "../../checkbox/CheckBox";
 import {Chip, Tooltip} from "@surfnet/sds";

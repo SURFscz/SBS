@@ -26,7 +26,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
 import UserColumn from "../UserColumn";
 import {chipType, isUserAllowed, ROLES} from "../../../utils/UserRole";
-import SpinnerField from "../SpinnerField";
+import SpinnerField from "../spinner-field/SpinnerField";
 import moment from "moment";
 import {Chip, Tooltip, ChipType} from "@surfnet/sds";
 import LastAdminWarning from "../last-admin-warning/LastAdminWarning";

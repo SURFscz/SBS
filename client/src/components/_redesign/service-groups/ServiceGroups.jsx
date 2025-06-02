@@ -5,29 +5,29 @@ import {
     serviceGroupNameExists,
     serviceGroupShortNameExists,
     updateServiceGroup
-} from "../../api";
-import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
-import {ReactComponent as ThrashIcon} from "../../icons/trash_new.svg";
+} from "../../../api";
+import {ReactComponent as ChevronLeft} from "../../../icons/chevron-left.svg";
+import {ReactComponent as ThrashIcon} from "../../../icons/trash_new.svg";
 import {ReactComponent as PencilIcon} from "@surfnet/sds/icons/functional-icons/edit.svg";
 import {ReactComponent as BinIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 import "./ServiceGroups.scss";
-import {isEmpty, stopEvent} from "../../utils/Utils";
-import I18n from "../../locale/I18n";
-import Button from "../button/Button";
-import {clearFlash, setFlash} from "../../utils/Flash";
-import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
-import Entities from "./entities/Entities";
-import SpinnerField from "./SpinnerField";
-import InputField from "../input-field/InputField";
-import CheckBox from "../checkbox/CheckBox";
+import {isEmpty, stopEvent} from "../../../utils/Utils";
+import I18n from "../../../locale/I18n";
+import Button from "../../button/Button";
+import {clearFlash, setFlash} from "../../../utils/Flash";
+import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
+import Entities from "../entities/Entities";
+import SpinnerField from "../spinner-field/SpinnerField";
+import InputField from "../../input-field/InputField";
+import CheckBox from "../../checkbox/CheckBox";
 import moment from "moment";
-import {sanitizeShortName} from "../../validations/regExps";
-import {AppStore} from "../../stores/AppStore";
-import ErrorIndicator from "./error-indicator/ErrorIndicator";
-import {isUserServiceAdmin} from "../../utils/UserRole";
+import {sanitizeShortName} from "../../../validations/regExps";
+import {AppStore} from "../../../stores/AppStore";
+import ErrorIndicator from "../error-indicator/ErrorIndicator";
+import {isUserServiceAdmin} from "../../../utils/UserRole";
 import {IconButton, Tooltip} from "@surfnet/sds";
 import {CopyToClipboard} from "react-copy-to-clipboard";
-import ClipBoardCopy from "./clipboard-copy/ClipBoardCopy";
+import ClipBoardCopy from "../clipboard-copy/ClipBoardCopy";
 
 class ServiceGroups extends React.Component {
 

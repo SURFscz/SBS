@@ -6,7 +6,7 @@ import {tagUsage} from "../../api";
 import ConfirmationDialog from "../confirmation-dialog/ConfirmationDialog";
 import {ReactComponent as TrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 import ErrorIndicator from "../_redesign/error-indicator/ErrorIndicator";
-import SpinnerField from "../_redesign/SpinnerField";
+import SpinnerField from "../_redesign/spinner-field/SpinnerField";
 import Select from "react-select";
 
 export const OrganisationTags = ({tags, setTags, setDuplicated, allUnits}) => {

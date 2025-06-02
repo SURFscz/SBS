@@ -4,7 +4,7 @@ import I18n from "../../locale/I18n";
 import "./PamWebSSO.scss";
 import Button from "../../components/button/Button";
 import {pamWebSSOSession, pollPamWebSSO} from "../../api";
-import SpinnerField from "../../components/_redesign/SpinnerField";
+import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
 import {ErrorOrigins} from "../../utils/Utils";
 import Logo from "../../components/_redesign/logo/Logo";
 import {login} from "../../utils/Login";

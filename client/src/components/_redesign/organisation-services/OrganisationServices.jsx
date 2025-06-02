@@ -7,8 +7,8 @@ import I18n from "../../../locale/I18n";
 import Entities from "../entities/Entities";
 
 import {setFlash} from "../../../utils/Flash";
-import SpinnerField from "../SpinnerField";
-import ToggleSwitch from "../ToggleSwitch";
+import SpinnerField from "../spinner-field/SpinnerField";
+import ToggleSwitch from "../toggle-switch/ToggleSwitch";
 import {isUserAllowed, ROLES} from "../../../utils/UserRole";
 import Logo from "../logo/Logo";
 import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";

@@ -1,14 +1,14 @@
 import React from "react";
 import "./UnitHeader.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import Logo from "./logo/Logo";
-import {isEmpty, splitListSemantically, stopEvent} from "../../utils/Utils";
+import Logo from "../logo/Logo";
+import {isEmpty, splitListSemantically, stopEvent} from "../../../utils/Utils";
 import PropTypes from "prop-types";
-import Button from "../button/Button";
+import Button from "../../button/Button";
 import {ButtonType, Chip, MenuButton} from "@surfnet/sds";
 import {Link} from "react-router-dom";
-import I18n from "../../locale/I18n";
-import {MoreLessText} from "../more-less-text/MoreLessText";
+import I18n from "../../../locale/I18n";
+import {MoreLessText} from "../../more-less-text/MoreLessText";
 
 class UnitHeader extends React.Component {
 

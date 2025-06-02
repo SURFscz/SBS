@@ -6,7 +6,7 @@ import Button from "../../components/button/Button";
 import {agreeAup} from "../../api";
 import CheckBox from "../../components/checkbox/CheckBox";
 import {login} from "../../utils/Login";
-import SpinnerField from "../../components/_redesign/SpinnerField";
+import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
 import DOMPurify from "dompurify";
 import {redirectToProxyLocation} from "../../utils/ProxyAuthz";
 import {dictToQueryParams} from "../../utils/QueryParameters";

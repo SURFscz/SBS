@@ -13,7 +13,7 @@ import moment from "moment";
 import ErrorIndicator from "../error-indicator/ErrorIndicator";
 import Logo from "../logo/Logo";
 import {organisationInvitationDelete, organisationInvitationResend} from "../../../api";
-import SpinnerField from "../SpinnerField";
+import SpinnerField from "../spinner-field/SpinnerField";
 import {setFlash} from "../../../utils/Flash";
 import {Chip, ChipType} from "@surfnet/sds";
 

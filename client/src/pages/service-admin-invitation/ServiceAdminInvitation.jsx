@@ -6,7 +6,7 @@ import Button from "../../components/button/Button";
 import moment from "moment";
 import {login} from "../../utils/Login";
 import ErrorIndicator from "../../components/_redesign/error-indicator/ErrorIndicator";
-import SpinnerField from "../../components/_redesign/SpinnerField";
+import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
 import DOMPurify from "dompurify";
 import {Toaster, ToasterType} from "@surfnet/sds";
 

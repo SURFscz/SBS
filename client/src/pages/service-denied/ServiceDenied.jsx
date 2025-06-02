@@ -9,7 +9,7 @@ import DOMPurify from "dompurify";
 import {capitalize, isEmpty} from "../../utils/Utils";
 import {serviceInfo} from "../../api";
 import Button from "../../components/button/Button";
-import SpinnerField from "../../components/_redesign/SpinnerField";
+import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
 
 export default function ServiceDenied(props) {
 

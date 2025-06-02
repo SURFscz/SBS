@@ -7,7 +7,7 @@ import I18n from "../../../locale/I18n";
 import Entities from "../entities/Entities";
 import Button from "../../button/Button";
 import {allCollaborationsOptimized, myCollaborationsOptimized} from "../../../api";
-import SpinnerField from "../SpinnerField";
+import SpinnerField from "../spinner-field/SpinnerField";
 import {chipType, isUserAllowed, ROLES} from "../../../utils/UserRole";
 import Logo from "../logo/Logo";
 import {Chip, ChipType, Tooltip} from "@surfnet/sds";

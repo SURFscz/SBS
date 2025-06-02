@@ -38,7 +38,7 @@ import {BreadCrumb} from "../components/breadcrumb/BreadCrumb";
 import Impersonating from "../components/impersonating/Impersonating";
 import History from "../components/history/History";
 import ServiceDetail from "./service-detail/ServiceDetail";
-import SpinnerField from "../components/_redesign/SpinnerField";
+import SpinnerField from "../components/_redesign/spinner-field/SpinnerField";
 import DeadEnd from "./dead-end/DeadEnd";
 import SecondFactorAuthentication from "./second-factor-authentication/SecondFactorAuthentication";
 import ServiceDenied from "./service-denied/ServiceDenied";

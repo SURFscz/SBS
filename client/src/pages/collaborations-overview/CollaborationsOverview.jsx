@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 
 import "./CollaborationsOverview.scss"
-import SpinnerField from "../../components/_redesign/SpinnerField";
+import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
 import {allCollaborationsOptimized, myCollaborationsOptimized} from "../../api";
 import {AppStore} from "../../stores/AppStore";
 import I18n from "../../locale/I18n";

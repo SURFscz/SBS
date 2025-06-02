@@ -18,7 +18,7 @@ import Button from "../../button/Button";
 import {clearFlash, setFlash} from "../../../utils/Flash";
 import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
 import Entities from "../entities/Entities";
-import SpinnerField from "../SpinnerField";
+import SpinnerField from "../spinner-field/SpinnerField";
 import {ReactComponent as UserIcon} from "../../../icons/users.svg";
 import {ReactComponent as MembersIcon} from "../../../icons/single-neutral.svg";
 import UserColumn from "../UserColumn";

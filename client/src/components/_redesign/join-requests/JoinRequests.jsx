@@ -8,7 +8,7 @@ import Button from "../../button/Button";
 import {setFlash} from "../../../utils/Flash";
 import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
 import Entities from "../entities/Entities";
-import SpinnerField from "../SpinnerField";
+import SpinnerField from "../spinner-field/SpinnerField";
 import InputField from "../../input-field/InputField";
 import {joinRequestAccept, joinRequestDecline, joinRequestDelete} from "../../../api";
 import UserColumn from "../UserColumn";

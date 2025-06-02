@@ -17,8 +17,8 @@ import InputField from "../../components/input-field/InputField";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import {ReactComponent as PersonIcon} from "../../icons/personal_info.svg";
 
-import UnitHeader from "../../components/_redesign/UnitHeader";
-import SpinnerField from "../../components/_redesign/SpinnerField";
+import UnitHeader from "../../components/_redesign/unit-header/UnitHeader";
+import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
 import Tabs from "../../components/tabs/Tabs";
 import Activity from "../../components/activity/Activity";
 import UserDetailSshDialog from "../user-detail-ssh-dialog/UserDetailSshDialog";

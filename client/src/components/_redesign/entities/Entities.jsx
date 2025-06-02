@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
 import {isEmpty, sortObjects, valueForSort} from "../../../utils/Utils";
 import {headerIcon} from "../../../forms/helpers";
 import "./Entities.scss";
-import SpinnerField from "../SpinnerField";
+import SpinnerField from "../spinner-field/SpinnerField";
 import {Pagination} from "@surfnet/sds";
 import {pageCount} from "../../../utils/Pagination";
 

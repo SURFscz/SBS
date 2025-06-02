@@ -11,7 +11,7 @@ import Entities from "../entities/Entities";
 import InputField from "../../input-field/InputField";
 import ConfirmationDialog from "../../confirmation-dialog/ConfirmationDialog";
 import {isEmpty, stopEvent} from "../../../utils/Utils";
-import SpinnerField from "../SpinnerField";
+import SpinnerField from "../spinner-field/SpinnerField";
 import {isUserAllowed, ROLES} from "../../../utils/UserRole";
 import DOMPurify from "dompurify";
 import {dateFromEpoch} from "../../../utils/Date";

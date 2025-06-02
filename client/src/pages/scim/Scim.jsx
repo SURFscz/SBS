@@ -2,7 +2,7 @@ import React from "react";
 import {allMockScimServices, clearMockScimStatistics, mockScimStatistics, sweep} from "../../api";
 import "./Scim.scss";
 import I18n from "../../locale/I18n";
-import SpinnerField from "../../components/_redesign/SpinnerField";
+import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
 import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
 import InputField from "../../components/input-field/InputField";
 import {isEmpty, stopEvent} from "../../utils/Utils";

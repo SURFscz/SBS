@@ -3,7 +3,7 @@ import "./Welcome.scss";
 import I18n from "../../locale/I18n";
 import {identityProviderDisplayName} from "../../api";
 import {capitalize, isEmpty, stopEvent} from "../../utils/Utils";
-import SpinnerField from "./SpinnerField";
+import SpinnerField from "./spinner-field/SpinnerField";
 import "react-mde/lib/styles/css/react-mde-all.css";
 import Button from "../button/Button";
 import {AppStore} from "../../stores/AppStore";
