@@ -27,7 +27,7 @@ import "../components/redesign/ApiKeys.scss";
 import Button from "../components/Button";
 import {setFlash} from "../utils/Flash";
 import {
-    commaSeparatedArrayToSelectValues,
+    commaSeparatedArrayToValues,
     isEmpty,
     joinSelectValuesArray,
     splitListSemantically,
@@ -55,7 +55,6 @@ import {dateFromEpoch} from "../utils/Date";
 import {isUserServiceAdmin} from "../utils/UserRole";
 import {SAMLMetaData} from "../components/SAMLMetaData";
 import UploadButton from "../components/UploadButton";
-import ToggleSwitch from "../components/redesign/ToggleSwitch";
 
 const toc = ["general", "contacts", "policy", "SCIMServer", "SCIMClient", "ldap", "pamWebLogin", "tokens",
     "OIDC", "SAML", "Export"];
@@ -118,8 +117,8 @@ class ServiceOverview extends React.Component {
         if (!toc.includes(tab)) {
             tab = this.state.currentTab;
         }
-        service.redirect_urls = commaSeparatedArrayToSelectValues(service.redirect_urls);
-        service.grants = commaSeparatedArrayToSelectValues(service.grants);
+        service.redirect_urls = commaSeparatedArrayToValues(service.redirect_urls);
+        service.grants = commaSeparatedArrayToValues(service.grants);
         this.validateService(service, () => {
             this.setState({
                 service: {...service},
@@ -1270,7 +1269,8 @@ class ServiceOverview extends React.Component {
                         })}/>}
 
                         <SelectField value={grants}
-                                     options={this.grantOptions.filter(option => Array.isArray(grants) && !grants.find(grant => grant.value === option.value))}
+                                     options={this.grantOptions
+                                         .filter(option => Array.isArray(grants) && !grants.find(grant => grant.value === option.value))}
                                      onInputChange={val => val}
                                      isMulti={true}
                                      name={I18n.t("service.openIDConnectGrants")}
@@ -1284,10 +1284,11 @@ class ServiceOverview extends React.Component {
                                 attribute: I18n.t("service.openIDConnectGrants").toLowerCase()
                             })}/>}
 
-                        <ToggleSwitch name={I18n.t("service.grants.authorization_code")}
-                                      value={grants.includes("authorization_code")}
-                                      onChange={e => this.toggleGrant("authorization_code", e.target.checked)}
-                                      label={I18n.t("service.grants.authorization_code")}/>
+                        <CheckBox name={I18n.t("service.grants.authorization_code")}
+                                  value={grants.includes("authorization_code")}
+                                  info={I18n.t("service.grants.authorization_code")}
+                                  onChange={e => this.toggleGrant("authorization_code", e.target.checked)}
+                        />
 
                         <SelectField value={redirect_urls}
                                      options={[]}

@@ -668,7 +668,7 @@ class Service extends React.Component {
                 </div>}
 
             {(isServiceRequest && connection_type === "openIDConnect" && !isServiceRequestDetails
-                    && config.manage_enabled) &&
+                    && config.manage_enabled && !is_public_client) &&
                 <div className="new-oidc-secret">
                     <InputField value={oidc_client_secret}
                                 name={I18n.t("service.oidc.oidcClientSecret")}

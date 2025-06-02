@@ -205,6 +205,10 @@ export const commaSeparatedArrayToSelectValues = str => {
     })) : str;
 }
 
+export const commaSeparatedArrayToValues = str => {
+    return isEmpty(str) ? [] : Array.isArray(str) ? str : str.split ? str.split(",").map(s => s.trim()) : str;
+}
+
 export const scrollToBottom = () => {
     setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth"}), 425);
 }
