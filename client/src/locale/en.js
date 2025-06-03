@@ -951,6 +951,7 @@ const en = {
         name: "Name",
         namePlaceHolder: "The unique name of the application",
         entity_id: "Application ID",
+        entity_id_oidc: "OIDC Client ID",
         entity_idPlaceHolder: "The unique application ID of the application",
         entity_idTooltip: "The application ID is used as the unique identitfier with SAML (Entity ID) or OIDC (client_id) and uniquely identifies your application at the identity proxy.",
         abbreviation: "Short name",
@@ -1129,7 +1130,24 @@ const en = {
         openIDConnectRedirects: "OpenID Connect redirect URLs",
         openIDConnectRedirectsPlaceholder: "https://application.com/redirect",
         openIDConnectRedirectsTooltip: "The redirect URLs after the user authentication is successfully done. Must be a full match, but you can enter multiple URLs.",
+        samlEntityID: "SAML Entity ID",
+        samlACSLocations: "SAML ACS locations",
+        samlACSLocationsPlaceholder: "https://application.com/redirect",
+        samlACSLocationsTooltip: "The ACS URLs for the SP. Must be a full match, but you can enter multiple URLs.",
         samlMetadata: "SAML metadata",
+        samlMetadataImport: "Import metadata",
+        samlMetadataImportQuestion: "How do you want to import metadata?",
+        metaDataOptions: {
+            url: "Import from metadata URL",
+            file: "Upload a metadata file",
+            paste: "Paste the metadata in textfield",
+            chooseFile: "Choose file",
+            pasteText: "Paste metadata",
+            urlMetaData: "URL metadata",
+            import:"Import",
+            flash: "Successfully imported metadata from {{name}}",
+            error:"There was error in parsing the XML metadata. Please try again with valid data."
+        },
         samlMetadataURL: "SAML metadata URL",
         samlMetadataPlaceholder: "https://metadata",
         samlMetadataUpload: "Upload SAML metadata",
@@ -1170,9 +1188,14 @@ const en = {
             saveBeforeTest: "Update application",
             saveBeforeTestQuestion: "You have made changes to the SCIM configuration. Do you want to save this changes before you test the SCIM endpoint?"
         },
-        openIDConnectGrants: "OpenID Connect grants",
+        openIDConnectGrants: "OIDC grants",
         openIDConnectGrantsPlaceholder: "Choose grant(s)",
         openIDConnectGrantsTooltip: "Grant types are the way to specify how a Relying Party will interact with the OIDC server",
+        pkce: "PKCE",
+        pkceOptions: {
+            optional: "Optional",
+            required: "Required (public client)",
+        },
         isPublicClient: "Public client",
         isPublicClientTooltip: "Public clients are not required to authenticate, but must use the Proof key for Code Exchange (PKCE) authorisation",
         grants: {
@@ -1207,7 +1230,8 @@ const en = {
             oidcEnabledTooltip: "Allow this application to login with the OIDC protocol",
             oidcDisclaimer: "OIDC protocol is disabled",
             oidcDisabledExclusivity: "OIDC protocol can not be enabled, because the SAML protocol is active",
-            addRedirectURL: "+ Add redirect URL"
+            addRedirectURL: "+ Add redirect URL",
+            addACSLocation: "+ Add ACS location"
         },
         saml: {
             section: "SAML settings",

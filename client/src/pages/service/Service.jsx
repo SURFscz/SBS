@@ -196,8 +196,11 @@ class Service extends React.Component {
         });
     }
 
-    validateServiceEntityId = e => {
-        const entityId = e.target.value.trim();
+    validateServiceEntityId = (e, protocol) => {
+        let entityId = e.target.value.trim();
+        if (protocol === "oidc") {
+            entityId = entityId.replaceAll(":","@");
+        }
         serviceEntityIdExists(entityId, null).then(json => {
             this.setState({entity_id: entityId, alreadyExists: {...this.state.alreadyExists, entity_id: json}});
         });
@@ -404,7 +407,7 @@ class Service extends React.Component {
             const {isServiceRequest} = this.props;
             const joinedRedirectUrls = joinSelectValuesArray(redirect_urls);
             const joinedGrants = joinSelectValuesArray(grants);
-            this.setState({ redirect_urls: joinedRedirectUrls, grants: joinedGrants }, () => {
+            this.setState({redirect_urls: joinedRedirectUrls, grants: joinedGrants}, () => {
                 if (isServiceRequest) {
                     createServiceRequest(this.state)
                         .then(res => this.afterUpdate(name, res, isServiceRequest))
@@ -476,7 +479,7 @@ class Service extends React.Component {
         this.setState({administrators: uniqueEmails});
     };
 
-    serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, abbreviation, description, uri,
+    serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, abbreviation,entity_id,description, uri,
                         automatic_connection_allowed, access_allowed_for_all, non_member_users_access_allowed,
                         contact_email, support_email, security_email, invalidInputs, contactEmailRequired,
                         accepted_user_policy, uri_info, privacy_policy, service, disabledSubmit, allow_restricted_orgs,
@@ -600,6 +603,24 @@ class Service extends React.Component {
             </div>}
             {(isServiceRequest && connection_type === "openIDConnect") &&
                 <div className="first-column">
+                    <InputField value={entity_id}
+                                onChange={e => this.setState({
+                                    entity_id: e.target.value,
+                                    alreadyExists: {...this.state.alreadyExists, entity_id: false}
+                                })}
+                                placeholder={I18n.t("service.entity_idPlaceHolder")}
+                                onBlur={e => this.validateServiceEntityId(e, "oidc")}
+                                name={I18n.t("service.entity_id")}
+                                toolTip={I18n.t("service.entity_idTooltip")}
+                                error={alreadyExists.entity_id || (!initial && isEmpty(entity_id))}
+                                required={true}/>
+                    {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
+                        attribute: I18n.t("service.entity_id").toLowerCase(), value: entity_id
+                    })}/>}
+                    {(!initial && isEmpty(entity_id)) && <ErrorIndicator msg={I18n.t("service.required", {
+                        attribute: I18n.t("service.entity_id").toLowerCase()
+                    })}/>}
+
                     <SelectField value={redirect_urls}
                                  options={[]}
                                  creatable={true}
@@ -998,6 +1019,7 @@ class Service extends React.Component {
             name,
             ldap_identifier,
             abbreviation,
+            entity_id,
             description,
             uri,
             uri_info,
@@ -1068,7 +1090,7 @@ class Service extends React.Component {
                                     question={question}>
                     {declineDialog && this.getDeclineRejectionOptions(rejectionReason)}
                 </ConfirmationDialog>
-                {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, abbreviation, description,
+                {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, abbreviation, entity_id, description,
                     uri, automatic_connection_allowed, access_allowed_for_all, non_member_users_access_allowed, contact_email,
                     support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, uri_info,
                     privacy_policy, service, disabledSubmit, allow_restricted_orgs, token_enabled, pam_web_sso_enabled,

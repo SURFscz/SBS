@@ -6,7 +6,6 @@ from server.db.domain import Service
 from server.manage.api import sync_external_service, delete_external_service
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_storage_name, service_cloud_name
-from server.tools import read_file
 
 
 class TestApi(AbstractTest):
@@ -94,10 +93,7 @@ class TestApi(AbstractTest):
     @responses.activate
     def test_update_saml_service(self):
         service = self.find_entity_by_name(Service, service_cloud_name)
-        xml = read_file("test/saml2/sp_meta_data.xml")
         with responses.RequestsMock(assert_all_requests_are_fired=True) as res_mock:
-            res_mock.add(responses.GET, service.saml_metadata_url, body=xml, status=200, content_type="text/xml")
-
             manage_base_url = self._resolve_manage_base_url()
             url = f"{manage_base_url}/manage/api/internal/metadata"
             external_identifier = str(uuid.uuid4())
@@ -109,7 +105,6 @@ class TestApi(AbstractTest):
             self.assertEqual(external_identifier, updated_service.export_external_identifier)
             self.assertEqual(9, updated_service.export_external_version)
             self.assertTrue(updated_service.export_successful)
-            self.assertTrue(updated_service.saml_metadata.startswith("<?xml"))
 
     def test_save_service_not_applies(self):
         res = sync_external_service(self.app, Service())

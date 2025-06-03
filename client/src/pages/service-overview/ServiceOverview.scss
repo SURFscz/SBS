@@ -100,8 +100,9 @@ section.dialog-content {
             grid-column-start: first;
         }
 
-        .add-redirect-url {
+        .add-redirect-url, .add-acs-location {
             margin-top: 10px;
+
             a {
                 text-decoration: underline;
                 font-weight: 600;
@@ -158,6 +159,34 @@ section.dialog-content {
 
         div.checkbox {
             margin: 20px 0 10px 0;
+
+            &.with-label {
+                margin: 0 0 10px 0;
+            }
+        }
+
+        .sds--text-field-container {
+            margin-top: 0;
+        }
+
+        section.pkce {
+            display: flex;
+            align-items: center;
+            margin: 20px 0 0 35px;
+
+            .pkce-label {
+                font-weight: 600;
+            }
+
+            .sds--radio-options {
+                margin: 0 0 0 25px;
+            }
+        }
+
+        span.label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: var(--sds--space--1);
         }
 
         .mod-entities {
@@ -173,6 +202,15 @@ section.dialog-content {
             gap: 20px;
         }
 
+    }
+
+    .meta-data-button-container {
+        display: flex;
+        margin-top: 20px;
+
+        button {
+            margin-left: auto;
+        }
     }
 
     table.serviceTokens {
@@ -214,6 +252,55 @@ section.dialog-content {
                 }
             }
         }
+    }
+
+    .show-import {
+
+        width: 520px;
+        height: 240px;
+
+        span.label {
+            margin: 15px 0 5px 0;
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        .input-field {
+            margin-top: 0;
+        }
+
+        .meta-data-url {
+            display: flex;
+            flex-direction: column;
+
+            .input-field {
+                width: 100%;
+            }
+
+        }
+
+        .meta-data-file {
+            margin-top: 25px;
+            display: flex;
+
+            .file-name-section {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                color: var(--sds--color--gray--400);
+
+                button.sds--btn--delete {
+                    height: 22px;
+
+                }
+            }
+
+            button:not(.sds--btn--delete) {
+                width: 140px;
+                margin-left: auto;
+            }
+        }
+
     }
 
 }

@@ -48,6 +48,9 @@
         <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
                                      Location="https://engine.test.surfconext.nl/authentication/sp/consume-assertion"
                                      index="0"/>
+        <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                     Location="https://engine.test.surfconext.nl/acs-location/1"
+                                     index="1"/>
         <md:AttributeConsumingService index="0">
             <md:ServiceName xml:lang="nl">SURFconext TEST EngineBlock</md:ServiceName>
             <md:ServiceName xml:lang="en">SURFconext TEST EngineBlock</md:ServiceName>

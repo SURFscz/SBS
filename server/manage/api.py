@@ -24,7 +24,7 @@ def _parse_manage_config(manage_conf):
 
 
 def service_applies_for_external_sync(service: Service):
-    if service.saml_enabled and not service.saml_metadata and not service.saml_metadata_url:
+    if service.saml_enabled and not service.acs_locations:
         return False
     if service.oidc_enabled and (not service.grants or not service.redirect_urls):
         return False

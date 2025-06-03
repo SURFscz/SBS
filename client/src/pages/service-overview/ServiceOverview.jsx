@@ -35,7 +35,7 @@ import {
     validRedirectUrlRegExp,
     validUrlRegExp
 } from "../../validations/regExps";
-import {Tooltip} from "@surfnet/sds";
+import {RadioOptions, RadioOptionsOrientation, Tooltip} from "@surfnet/sds";
 import DOMPurify from "dompurify";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
 import Entities from "../../components/_redesign/entities/Entities";
@@ -47,11 +47,16 @@ import CheckBox from "../../components/checkbox/CheckBox";
 import SelectField from "../../components/select-field/SelectField";
 import {dateFromEpoch} from "../../utils/Date";
 import {isUserServiceAdmin} from "../../utils/UserRole";
-import {SAMLMetaData} from "../../components/saml-metadata/SAMLMetaData";
 import UploadButton from "../../components/upload-button/UploadButton";
 
 const toc = ["general", "contacts", "policy", "SCIMServer", "SCIMClient", "ldap", "pamWebLogin", "tokens",
     "OIDC", "SAML", "Export"];
+
+const metaData = {
+    url: "url",
+    file: "file",
+    paste: "paste"
+}
 
 class ServiceOverview extends React.Component {
 
@@ -85,14 +90,16 @@ class ServiceOverview extends React.Component {
             originalSCIMConfiguration: {},
             scimBearerToken: null,
             scimTokenChange: false,
-            parsedSAMLMetaData: null,
             parsedSAMLMetaDataError: false,
-            parsedSAMLMetaDataURLError: false,
             invalidRedirectUrls: {},
             invalidRedirectUrlHttpNonLocalHost: {},
+            invalidACSLocations: {},
             crmOrganisations: [],
             oidcClientSecret: null,
-            oidcClientSecretModal: false
+            oidcClientSecretModal: false,
+            showMetaDataModal: false,
+            metaDataChoice: metaData.url,
+            enableMetaDataParse: false
         }
     }
 
@@ -123,7 +130,6 @@ class ServiceOverview extends React.Component {
                 originalSCIMConfiguration: {scim_bearer_token: service.scim_bearer_token, scim_url: service.scim_url},
                 loading: false
             }, () => {
-                const {saml_enabled, saml_metadata, saml_metadata_url} = this.state.service;
                 if (user.admin && !showServiceAdminView) {
                     allCRMOrganisations().then(organisations => this.setState({
                         crmOrganisations: organisations.map(org => ({
@@ -131,19 +137,6 @@ class ServiceOverview extends React.Component {
                             value: org.id
                         }))
                     }))
-                }
-                if (saml_enabled && (!isEmpty(saml_metadata) || !isEmpty(saml_metadata_url))) {
-                    parseSAMLMetaData(saml_metadata, saml_metadata_url)
-                        .then(metaData => this.setState({
-                            parsedSAMLMetaData: metaData.result,
-                            parsedSAMLMetaDataError: false,
-                            parsedSAMLMetaDataURLError: false
-                        }))
-                        .catch(() => this.setState({
-                            parsedSAMLMetaData: null,
-                            parsedSAMLMetaDataError: !isEmpty(saml_metadata_url),
-                            parsedSAMLMetaDataURLError: !isEmpty(saml_metadata)
-                        }))
                 }
             });
         })
@@ -166,7 +159,13 @@ class ServiceOverview extends React.Component {
         });
         const invalidRedirectUrls = {};
         service.redirect_urls.forEach((url, index) => invalidRedirectUrls[index] = !validRedirectUrlRegExp.test(url));
-        this.setState({invalidInputs: invalidInputs, invalidRedirectUrls: invalidRedirectUrls}, callback);
+        const invalidACSLocations = {};
+        service.acs_locations.forEach((url, index) => invalidACSLocations[index] = !validRedirectUrlRegExp.test(url));
+        this.setState({
+            invalidInputs: invalidInputs,
+            invalidRedirectUrls: invalidRedirectUrls,
+            invalidACSLocations: invalidACSLocations
+        }, callback);
     }
 
     cancelDialogAction = () => {
@@ -418,23 +417,36 @@ class ServiceOverview extends React.Component {
 
     validateURI = (name, acceptPlaceholders = false) => e => {
         const uri = e.target.value;
-        const {invalidInputs, service} = this.state;
+        const {invalidInputs} = this.state;
         const removedPlaceholders = acceptPlaceholders ? uri.toLowerCase().replaceAll(CO_SHORT_NAME, "").replaceAll(SRAM_USERNAME, "") : uri;
         const inValid = !isEmpty(uri) && !validUrlRegExp.test(removedPlaceholders);
         this.setState({invalidInputs: {...invalidInputs, [name]: inValid}});
-        if (name === "saml_metadata_url" && !inValid && !isEmpty(uri)) {
-            parseSAMLMetaData(null, uri)
-                .then(metaData => this.setState({
-                    service: {...service, saml_metadata: metaData.xml},
-                    parsedSAMLMetaData: metaData.result,
-                    parsedSAMLMetaDataURLError: false
-                }))
-                .catch(() => this.setState({
-                    parsedSAMLMetaData: null,
-                    parsedSAMLMetaDataURLError: true
-                }))
+        if (name === "meta_data_url") {
+            this.setState({enableMetaDataParse: !inValid && !isEmpty(uri)});
         }
     };
+
+    doParseMedaData = () => {
+        const {urlMetaData, xmlMetaData, service} = this.state;
+        parseSAMLMetaData(xmlMetaData, urlMetaData)
+            .then(metaData => {
+                this.setState({
+                    service: {
+                        ...service,
+                        entity_id: metaData.entity_id,
+                        acs_locations: metaData.acs_locations.map(acs => acs.location)
+                    },
+                    showMetaDataModal: false,
+                    parsedSAMLMetaDataURLError: false
+                });
+                const name = metaData.organization_name || urlMetaData || "XML";
+                setFlash(I18n.t("service.metaDataOptions.flash", {name: name}));
+            })
+            .catch(() => {
+                this.setState({parsedSAMLMetaDataError: true});
+            })
+
+    }
 
     onFileUpload = e => {
         const files = e.target.files;
@@ -443,16 +455,7 @@ class ServiceOverview extends React.Component {
             const reader = new FileReader();
             reader.onload = () => {
                 const metaData = reader.result.toString();
-                this.setState({service: {...this.state.service, saml_metadata: metaData}});
-                parseSAMLMetaData(metaData, null)
-                    .then(metaData => this.setState({
-                        parsedSAMLMetaData: metaData.result,
-                        parsedSAMLMetaDataError: false
-                    }))
-                    .catch(() => this.setState({
-                        parsedSAMLMetaData: null,
-                        parsedSAMLMetaDataError: true
-                    }))
+                this.setState({xmlMetaData: metaData, fileName: file.name, enableMetaDataParse: true});
             };
             reader.readAsText(file);
         }
@@ -527,10 +530,6 @@ class ServiceOverview extends React.Component {
         return toc.every(tab => this.isValidTab(tab));
     };
 
-    renderSAMLMetaData = parsedSAMLMetaData => {
-        return <SAMLMetaData parsedSAMLMetaData={parsedSAMLMetaData}/>;
-    }
-
     doSweep = (service, override) => {
         const {originalSCIMConfiguration} = this.state;
         if (!override && (originalSCIMConfiguration.scim_url !== service.scim_url || originalSCIMConfiguration.scim_bearer_token !== service.scim_bearer_token)) {
@@ -592,9 +591,17 @@ class ServiceOverview extends React.Component {
     }
 
     isValidTab = tab => {
-        const {alreadyExists, invalidInputs, hasAdministrators, service, initial, invalidRedirectUrls} = this.state;
         const {
-            contact_email, redirect_urls, saml_metadata, saml_metadata_url, providing_organisation,
+            alreadyExists,
+            invalidInputs,
+            hasAdministrators,
+            service,
+            initial,
+            invalidRedirectUrls,
+            invalidACSLocations
+        } = this.state;
+        const {
+            contact_email, redirect_urls, acs_locations, providing_organisation,
             oidc_enabled, saml_enabled, grants, entity_id
         } = service;
         const contactEmailRequired = !hasAdministrators && isEmpty(contact_email);
@@ -620,10 +627,12 @@ class ServiceOverview extends React.Component {
                 return true;
             case "OIDC":
                 return !oidc_enabled ||
-                    (!isEmpty(redirect_urls) && Object.keys(invalidRedirectUrls).some(val => val) && !isEmpty(grants)
+                    (!isEmpty(redirect_urls.filter(url => !isEmpty(url))) && Object.values(invalidRedirectUrls).every(val => !val) && !isEmpty(grants)
                         && !isEmpty(entity_id));
             case "SAML":
-                return !saml_enabled || (!isEmpty(saml_metadata) || !isEmpty(saml_metadata_url)) && !isEmpty(entity_id);
+                return !saml_enabled ||
+                    (!isEmpty(acs_locations.filter(url => !isEmpty(url))) && Object.values(invalidACSLocations).every(val => !val) &&
+                        !isEmpty(entity_id));
             case "Export":
                 return true;
             default:
@@ -687,9 +696,9 @@ class ServiceOverview extends React.Component {
                     const newService = {
                         ...service,
                         sweep_scim_daily_rate: service.sweep_scim_daily_rate ? service.sweep_scim_daily_rate.value : 0,
-                        redirect_urls: isEmpty(redirect_urls) ? null : redirect_urls.join(","),
+                        redirect_urls: isEmpty(redirect_urls) ? null : redirect_urls.filter(url => !isEmpty(url)).join(","),
                         grants: isEmpty(grants) ? null : grants.join(","),
-                        acs_locations: isEmpty(acs_locations) ? null : acs_locations.join(",")
+                        acs_locations: isEmpty(acs_locations) ? null : acs_locations.filter(url => !isEmpty(url)).join(",")
                     };
                     updateService(newService)
                         .then(() => this.afterUpdate(name, "updated", sweepAfterwards))
@@ -791,16 +800,18 @@ class ServiceOverview extends React.Component {
         const {service} = this.state;
         const newRedirectUrls = [...service.redirect_urls];
         newRedirectUrls.splice(index, 1);
+        const newInvalidRedirectUrls = {};
+        newRedirectUrls.forEach((url, index) => newInvalidRedirectUrls[index] = !validRedirectUrlRegExp.test(url));
         this.setState({
-            service: {...service, redirect_urls: [...newRedirectUrls]}
+            service: {...service, redirect_urls: [...newRedirectUrls]},
+            invalidRedirectUrls: newInvalidRedirectUrls
         });
     }
 
     redirectUrlChanged = (e, index) => {
         const {service, invalidRedirectUrls, invalidRedirectUrlHttpNonLocalHost} = this.state;
         const newRedirectUrls = [...service.redirect_urls];
-        const value = e.target.value;
-        newRedirectUrls[index] = value;
+        newRedirectUrls[index] = e.target.value;
         this.setState({
             invalidRedirectUrls: {...invalidRedirectUrls, [index]: false},
             invalidRedirectUrlHttpNonLocalHost: {...invalidRedirectUrlHttpNonLocalHost, [index]: false},
@@ -812,10 +823,52 @@ class ServiceOverview extends React.Component {
         const {invalidRedirectUrls, invalidRedirectUrlHttpNonLocalHost} = this.state;
         const value = e.target.value;
         const nonLocalHost = value.startsWith("http://") && !value.startsWith("http://localhost");
-        const valid = validRedirectUrlRegExp.test(value);
+        const valid = isEmpty(value.trim()) || validRedirectUrlRegExp.test(value);
         this.setState({
             invalidRedirectUrls: {...invalidRedirectUrls, [index]: !valid},
             invalidRedirectUrlHttpNonLocalHost: {...invalidRedirectUrlHttpNonLocalHost, [index]: nonLocalHost}
+        });
+    }
+
+    addACSLocation = e => {
+        stopEvent(e);
+        const {service} = this.state;
+        const newACSLocations = [...service.acs_locations];
+        newACSLocations.push("");
+        this.setState({
+            service: {...service, acs_locations: newACSLocations}
+        });
+    }
+
+    removeACSLocation = (e, index) => {
+        stopEvent(e);
+        const {service} = this.state;
+        const newACSLocations = [...service.acs_locations];
+        newACSLocations.splice(index, 1);
+        const newInvalidACSLocations = {};
+        newACSLocations.forEach((url, index) => newInvalidACSLocations[index] = !validRedirectUrlRegExp.test(url));
+        this.setState({
+            service: {...service, acs_locations: [...newACSLocations]},
+            invalidACSLocations: newInvalidACSLocations
+        });
+    }
+
+    acsLocationChanged = (e, index) => {
+        const {service, invalidACSLocations} = this.state;
+        const newACSLocations = [...service.acs_locations];
+        newACSLocations[index] = e.target.value;
+        this.setState({
+            invalidACSLocations: {...invalidACSLocations, [index]: false},
+            service: {...service, acs_locations: newACSLocations}
+        });
+    }
+
+    validateACSLocation = (e, index) => {
+        const {invalidACSLocations} = this.state;
+        const value = e.target.value;
+        const valid = isEmpty(value.trim()) || validRedirectUrlRegExp.test(value);
+        this.setState({
+            invalidACSLocations: {...invalidACSLocations, [index]: !valid}
         });
     }
 
@@ -1230,6 +1283,93 @@ class ServiceOverview extends React.Component {
             </div>)
     }
 
+    validateMetaDataXML = (value, invalidInputs) => {
+        const parser = new DOMParser();
+        const parsed = parser.parseFromString(value, "application/xml");
+        const parserError = parsed.getElementsByTagName("parsererror");
+
+        const valid = parserError.length === 0;
+        this.setState({
+            enableMetaDataParse: valid,
+            invalidInputs: {...invalidInputs, meta_data_text: !valid}
+        })
+    }
+
+
+    renderMetaDataImport = () => {
+        const {metaDataChoice, urlMetaData, fileName, xmlMetaData, invalidInputs, parsedSAMLMetaDataError} = this.state;
+        return (
+            <div className="show-import">
+                <RadioOptions name={"how"}
+                              value={metaDataChoice}
+                              onChange={e => this.setState({
+                                  metaDataChoice: e.target.id.replace("how_", ""),
+                                  enableMetaDataParse: false,
+                                  urlMetaData: "",
+                                  fileName: null,
+                                  xmlMetaData: ""
+                              })}
+                              isMultiple={true}
+                              labels={Object.values(metaData)}
+                              labelResolver={label => I18n.t(`service.metaDataOptions.${label}`)}
+                              orientation={RadioOptionsOrientation.column}/>
+                {metaDataChoice === metaData.url && <>
+                    <span className="label top">{I18n.t("service.metaDataOptions.urlMetaData")}</span>
+                    <div className="meta-data-url">
+                        <InputField value={urlMetaData}
+                                    onChange={e => this.setState({
+                                        urlMetaData: e.target.value,
+                                        enableMetaDataParse: !isEmpty(e.target.value),
+                                        invalidInputs: {...invalidInputs, meta_data_url: false}
+                                    })}
+                                    error={invalidInputs.meta_data_url}
+                                    onBlur={this.validateURI("meta_data_url")}
+                        />
+                        {invalidInputs.meta_data_url &&
+                            <ErrorIndicator
+                                msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
+
+                    </div>
+                </>}
+                {metaDataChoice === metaData.file && <div className="meta-data-file">
+                    {fileName && <>
+                        <div className="file-name-section">
+                            <span>{fileName}</span>
+                            <Button warningButton={true}
+                                    onClick={() => this.setState({fileName: null})}/>
+                        </div>
+                    </>}
+                    {!fileName && <UploadButton name={"meta-date-file"}
+                                                acceptFileFormat={".xml"}
+                                                txt={I18n.t("service.metaDataOptions.chooseFile")}
+                                                onFileUpload={this.onFileUpload}/>}
+                </div>}
+                {metaDataChoice === metaData.paste && <>
+                    <span className="label top">{I18n.t("service.metaDataOptions.pasteText")}</span>
+                    <div className="meta-data-url">
+                        <InputField value={xmlMetaData}
+                                    multiline={true}
+                                    onChange={e => this.setState({
+                                        xmlMetaData: e.target.value,
+                                        enableMetaDataParse: !isEmpty(e.target.value),
+                                        invalidInputs: {...invalidInputs, meta_data_text: false}
+                                    })}
+                                    error={invalidInputs.meta_data_text}
+                                    onBlur={e => this.validateMetaDataXML(e.target.value, invalidInputs)}
+                        />
+                        {invalidInputs.meta_data_text &&
+                            <ErrorIndicator
+                                msg={I18n.t("forms.invalidInput", {name: I18n.t("service.samlMetadata")})}/>}
+                    </div>
+                </>}
+                {parsedSAMLMetaDataError &&
+                    <ErrorIndicator msg={I18n.t("service.metaDataOptions.error")}/>}
+
+            </div>
+        )
+    }
+
+
     renderOidc = (config, service, isAdmin, isServiceAdmin, alreadyExists, showServiceAdminView, oidcClientSecret,
                   oidcClientSecretModal) => {
         const {invalidRedirectUrls, invalidRedirectUrlHttpNonLocalHost} = this.state;
@@ -1250,34 +1390,55 @@ class ServiceOverview extends React.Component {
                     <p>{I18n.t("service.oidc.oidcDisabledExclusivity")}</p>}
                 {service.oidc_enabled &&
                     <>
-                        <InputField value={service.entity_id}
-                                    onChange={this.changeServiceProperty("entity_id", false, {
-                                        ...alreadyExists, entity_id: false
-                                    })}
-                                    placeholder={I18n.t("service.entity_idPlaceHolder")}
-                                    onBlur={e => this.validateServiceEntityId(e, "oidc")}
-                                    name={I18n.t("service.entity_id")}
-                                    toolTip={I18n.t("service.entity_idTooltip")}
-                                    required={true}
-                                    error={alreadyExists.entity_id || isEmpty(service.entity_id)}
-                                    copyClipBoard={true}
-                                    disabled={!isAdmin || showServiceAdminView}/>
-                        {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
-                            attribute: I18n.t("service.entity_id").toLowerCase(), value: service.entity_id
-                        })}/>}
-                        {isEmpty(service.entity_id) && <ErrorIndicator msg={I18n.t("service.required", {
-                            attribute: I18n.t("service.entity_id").toLowerCase()
-                        })}/>}
-
+                        <div className="input-field">
+                            <span className="label">{I18n.t("service.openIDConnectGrants")}</span>
+                        </div>
                         <CheckBox name={I18n.t("service.grants.authorization_code")}
+                                  className="checkbox with-label"
                                   value={grants.includes("authorization_code")}
                                   info={I18n.t("service.grants.authorization_code")}
-                                  onChange={e => this.toggleGrant("authorization_code", e.target.checked)}
+                                  onChange={e => {
+                                      this.toggleGrant("authorization_code", e.target.checked);
+                                      if (!e.target.checked) {
+                                          setTimeout(() => this.toggleGrant("refresh_token", false), 250);
+                                      }
+                                  }}
                         />
+                        {grants.includes("authorization_code") &&
+                            <section className="pkce">
+                                <span className="pkce-label">{I18n.t("service.pkce")}</span>
+                                <Tooltip tip={I18n.t("service.isPublicClientTooltip")}/>
+                                <RadioOptions name="pkce"
+                                              value={service.is_public_client}
+                                              trueLabel={I18n.t("service.pkceOptions.required")}
+                                              falseLabel={I18n.t("service.pkceOptions.optional")}
+                                              onChange={() => this.setState({
+                                                  service: {
+                                                      ...service,
+                                                      is_public_client: !service.is_public_client
+                                                  }
+                                              })}/>
 
-                        <div className="redirect_urls">
+                            </section>}
+                        {grants.includes("authorization_code") &&
+                            <CheckBox name={I18n.t("service.grants.refresh_token")}
+                                      className="checkbox"
+                                      value={grants.includes("refresh_token")}
+                                      info={I18n.t("service.grants.refresh_token")}
+                                      onChange={e => this.toggleGrant("refresh_token", e.target.checked)}
+                            />}
+                        <CheckBox name={I18n.t("service.grants.device_code")}
+                                  className="checkbox"
+                                  value={grants.includes("device_code")}
+                                  info={I18n.t("service.grants.device_code")}
+                                  onChange={e => this.toggleGrant("device_code", e.target.checked)}
+                        />
+                        {isEmpty(grants.filter(grant => !isEmpty(grant))) &&
+                            <ErrorIndicator
+                                msg={I18n.t("service.required", {attribute: I18n.t("service.openIDConnectGrants")})}/>}
+                        {grants.includes("authorization_code") && <div className="redirect_urls">
                             {Array.isArray(redirect_urls) && redirect_urls.map((redirectUrl, index) =>
-                                <div className="redirect_url">
+                                <div className="redirect_url" key={index}>
                                     <InputField key={index}
                                                 value={redirectUrl}
                                                 name={index === 0 ? I18n.t("service.openIDConnectRedirects") : null}
@@ -1300,20 +1461,27 @@ class ServiceOverview extends React.Component {
                             <div className={"add-redirect-url"}>
                                 <a onClick={this.addRedirectURL}>{I18n.t("service.oidc.addRedirectURL")}</a>
                             </div>
-                        </div>
+                        </div>}
+                        <InputField value={service.entity_id}
+                                    onChange={this.changeServiceProperty("entity_id", false, {
+                                        ...alreadyExists, entity_id: false
+                                    })}
+                                    placeholder={I18n.t("service.entity_idPlaceHolder")}
+                                    onBlur={e => this.validateServiceEntityId(e, "oidc")}
+                                    name={I18n.t("service.entity_id_oidc")}
+                                    toolTip={I18n.t("service.entity_idTooltip")}
+                                    required={true}
+                                    error={alreadyExists.entity_id || isEmpty(service.entity_id)}
+                                    copyClipBoard={true}
+                                    disabled={!isAdmin || showServiceAdminView}/>
+                        {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
+                            attribute: I18n.t("service.entity_id").toLowerCase(), value: service.entity_id
+                        })}/>}
+                        {isEmpty(service.entity_id) && <ErrorIndicator msg={I18n.t("service.required", {
+                            attribute: I18n.t("service.entity_id").toLowerCase()
+                        })}/>}
 
-                        <CheckBox name={"is_public_client"}
-                                  value={service.is_public_client}
-                                  onChange={() => this.setState({
-                                      service: {
-                                          ...service,
-                                          is_public_client: !service.is_public_client
-                                      }
-                                  })}
-                                  tooltip={I18n.t("service.isPublicClientTooltip")}
-                                  info={I18n.t("service.isPublicClient")}
-                        />
-                        {(oidcClientSecret && !service.is_public_client && !oidcClientSecretModal) &&
+                        {(grants.includes("authorization_code") && oidcClientSecret && !service.is_public_client && !oidcClientSecretModal) &&
                             <div className="new-oidc-secret">
                                 <InputField value={oidcClientSecret}
                                             name={I18n.t("service.oidc.oidcClientSecret")}
@@ -1322,7 +1490,7 @@ class ServiceOverview extends React.Component {
                                             copyClipBoard={true}
                                             extraInfo={I18n.t("service.oidc.oidcClientSecretDisclaimer")}/>
                             </div>}
-                        {(!oidcClientSecret && !service.is_public_client) &&
+                        {(grants.includes("authorization_code") && !oidcClientSecret && !service.is_public_client) &&
                             <div className="add-token-link">
                                 <span>{I18n.t("service.oidc.preTitle")}
                                     {(isAdmin || isServiceAdmin) &&
@@ -1357,8 +1525,22 @@ class ServiceOverview extends React.Component {
         }
     }
 
+    samlEnabledChanged = (service, e) => {
+        this.setState({
+            service: {
+                ...service,
+                acs_locations: [""],
+                saml_enabled: e.target.checked,
+                oidc_enabled: e.target.checked ? false : service.oidc_enabled
+            }
+        })
+    }
+
     renderSAML = (config, service, isAdmin, isServiceAdmin, invalidInputs, alreadyExists, showServiceAdminView) => {
-        const {parsedSAMLMetaData, parsedSAMLMetaDataError, parsedSAMLMetaDataURLError} = this.state;
+        const {
+            invalidACSLocations
+        } = this.state;
+        const {acs_locations} = this.state.service;
         return (
             <div className="saml">
                 <CheckBox name={"saml_enabled"}
@@ -1366,13 +1548,7 @@ class ServiceOverview extends React.Component {
                           tooltip={I18n.t("service.saml.samlEnabledTooltip")}
                           info={I18n.t("service.saml.samlClient")}
                           readOnly={service.oidc_enabled || !isAdmin}
-                          onChange={e => this.setState({
-                              service: {
-                                  ...service,
-                                  saml_enabled: e.target.checked,
-                                  oidc_enabled: e.target.checked ? false : service.oidc_enabled
-                              }
-                          })}
+                          onChange={e => this.samlEnabledChanged(service, e)}
                 />
                 {(!service.saml_enabled && !service.oidc_enabled) &&
                     <p>{I18n.t("service.saml.samlDisclaimer")}</p>}
@@ -1388,7 +1564,7 @@ class ServiceOverview extends React.Component {
                                             })}
                                             placeholder={I18n.t("service.entity_idPlaceHolder")}
                                             onBlur={e => this.validateServiceEntityId(e, "saml")}
-                                            name={I18n.t("service.entity_id")}
+                                            name={I18n.t("service.samlEntityID")}
                                             toolTip={I18n.t("service.entity_idTooltip")}
                                             required={true}
                                             error={alreadyExists.entity_id || isEmpty(service.entity_id)}
@@ -1401,34 +1577,38 @@ class ServiceOverview extends React.Component {
                                     attribute: I18n.t("service.entity_id").toLowerCase()
                                 })}/>}
 
-                                <InputField value={service.saml_metadata_url}
-                                            name={I18n.t("service.samlMetadataURL")}
-                                            placeholder={I18n.t("service.samlMetadataPlaceholder")}
-                                            onChange={e => this.setState({
-                                                service: {...service, saml_metadata_url: e.target.value},
-                                                invalidInputs: {...invalidInputs, saml_metadata_url: false},
-                                                parsedSAMLMetaDataURLError: false
-                                            })}
-                                            disabled={!isAdmin && !isServiceAdmin}
-                                            externalLink={true}
-                                            onBlur={this.validateURI("saml_metadata_url")}
-                                />
-                                {invalidInputs["saml_metadata_url"] && <ErrorIndicator
-                                    msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
-                                {(parsedSAMLMetaDataURLError && !invalidInputs["saml_metadata_url"]) && <ErrorIndicator
-                                    msg={I18n.t("forms.invalidInput", {name: I18n.t("service.samlMetadataURL")})}/>}
+                                <div className="acs_locations">
+                                    {Array.isArray(acs_locations) && acs_locations.map((acsLocation, index) =>
+                                        <div className="acs_location" key={index}>
+                                            <InputField key={index}
+                                                        value={acsLocation}
+                                                        name={index === 0 ? I18n.t("service.samlACSLocations") : null}
+                                                        toolTip={I18n.t("service.samlACSLocationsTooltip")}
+                                                        onChange={e => this.acsLocationChanged(e, index)}
+                                                        error={invalidACSLocations[index]}
+                                                        onBlur={e => this.validateACSLocation(e, index)}
+                                                        onDelete={index > 0 ? e => this.removeACSLocation(e, index) : null}
+                                            />
+                                            {invalidACSLocations[index] &&
+                                                <ErrorIndicator
+                                                    msg={I18n.t("forms.invalidInput", {name: `URL: ${acsLocation}`})}
+                                                />}
+
+                                        </div>)}
+                                    {isEmpty(acs_locations.filter(url => !isEmpty(url))) &&
+                                        <ErrorIndicator
+                                            msg={I18n.t("service.required", {attribute: I18n.t("service.samlACSLocations")})}/>}
+                                    <div className={"add-acs-location"}>
+                                        <a onClick={this.addACSLocation}>{I18n.t("service.oidc.addACSLocation")}</a>
+                                    </div>
+                                </div>
+                                <div className="meta-data-button-container">
+                                    <Button txt={I18n.t("service.samlMetadataImport")}
+                                            onClick={() => this.setState({showMetaDataModal: true})}/>
+                                </div>
                             </div>
-                            <UploadButton name={I18n.t("service.samlMetadataUpload")}
-                                          txt={I18n.t("service.samlMetadataUpload")}
-                                          acceptFileFormat={".xml"}
-                                          onFileUpload={this.onFileUpload}/>
+
                         </div>
-                        {parsedSAMLMetaDataError && <ErrorIndicator
-                            msg={I18n.t("forms.invalidInput", {name: I18n.t("service.samlMetadata")})}/>}
-                        {(isEmpty(service.saml_metadata_url) && isEmpty(service.saml_metadata)) &&
-                            <ErrorIndicator msg={I18n.t("service.saml.samlError")}/>}
-                        {!isEmpty(parsedSAMLMetaData) &&
-                            this.renderSAMLMetaData(parsedSAMLMetaData)}
                     </div>}
 
             </div>
@@ -1763,7 +1943,9 @@ class ServiceOverview extends React.Component {
             scimBearerToken,
             oidcClientSecret,
             oidcClientSecretModal,
-            crmOrganisations
+            crmOrganisations,
+            showMetaDataModal,
+            enableMetaDataParse
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -1788,6 +1970,25 @@ class ServiceOverview extends React.Component {
                     {(oidcClientSecret && oidcClientSecretModal) && this.renderOidcClientSecret(oidcClientSecret)}
                     {!isEmpty(sweepSuccess) && this.renderScimResults(service, sweepSuccess, sweepResults)}
                     {scimTokenChange && this.renderScimTokenChange(scimBearerToken)}
+                </ConfirmationDialog>
+                <ConfirmationDialog isOpen={showMetaDataModal}
+                                    cancel={() => this.setState({
+                                        showMetaDataModal: false,
+                                        metaDataChoice: metaData.url,
+                                        urlMetaData: "",
+                                        fileName: null,
+                                        xmlMetaData: "",
+                                        parsedSAMLMetaDataError: false
+                                    })}
+                                    cancelButtonLabel={cancelButtonLabel}
+                                    isWarning={false}
+                                    largeWidth={true}
+                                    confirmationTxt={I18n.t("service.metaDataOptions.import")}
+                                    disabledConfirm={!enableMetaDataParse}
+                                    confirmationHeader={I18n.t("service.samlMetadataImport")}
+                                    confirm={() => this.doParseMedaData()}
+                                    question={I18n.t("service.samlMetadataImportQuestion")}>
+                    {this.renderMetaDataImport()}
                 </ConfirmationDialog>
 
                 {this.sidebar(presentTab, config.manage_enabled, showServiceAdminView)}

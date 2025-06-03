@@ -1,17 +1,22 @@
 from server.db.domain import Service
 from server.manage.arp import arp_attributes
-from server.saml.sp_metadata_parser import parse_metadata_xml, parse_metadata_url
+
+BINDINGS_HTTP_POST = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
 
 
-def _get_assertion_consumer_url(s: Service):
-    assertion_consumer_service = "https://trusted.proxy.acs.location.rules"
+def _add_assertion_consumer_url(s: Service, service_template):
+    meta_data_fields = service_template["data"]["metaDataFields"]
     if s.saml_enabled:
-        metadata = parse_metadata_xml(s.saml_metadata) if s.saml_metadata else parse_metadata_url(s.saml_metadata_url)
-        if not s.saml_metadata:
-            # Should not be required, mainly for corner-cases and tests
-            s.saml_metadata = metadata["xml"]
-        assertion_consumer_service = metadata["result"]["acs_location"]
-    return assertion_consumer_service
+        acs_index = 0
+
+        for acs_location in s.acs_locations:
+            meta_data_fields[f"AssertionConsumerService:{acs_index}:Binding"] = BINDINGS_HTTP_POST
+            meta_data_fields[f"AssertionConsumerService:{acs_index}:Location"] = acs_location
+            acs_index += 1
+    else:
+        acs_location = "https://trusted.proxy.acs.location.rules"
+        meta_data_fields["AssertionConsumerService:0:Binding"] = BINDINGS_HTTP_POST
+        meta_data_fields["AssertionConsumerService:0:Location"] = acs_location
 
 
 def _add_contacts(service: Service, service_template):
@@ -43,7 +48,6 @@ def _replace_none_values(d: dict):
 
 
 def create_service_template(service: Service, sbs_rp_json: dict):
-    assertion_consumer_service = _get_assertion_consumer_url(service)
     # We need to copy the IdPs that are connected to the main SRAM/SBS instance
     sbs_rp_data = sbs_rp_json["data"]
 
@@ -57,11 +61,8 @@ def create_service_template(service: Service, sbs_rp_json: dict):
                 "attributes": arp_attributes()
             },
             "entityid": service.entity_id,
-            "metadataurl": service.saml_metadata_url,
             "state": "prodaccepted",
             "metaDataFields": {
-                "AssertionConsumerService:0:Binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST",
-                "AssertionConsumerService:0:Location": assertion_consumer_service,
                 "coin:application_url": service.uri,
                 "coin:privacy:privacy_policy": bool(service.privacy_policy),
                 "coin:privacy:privacy_policy_url": service.privacy_policy,
@@ -79,7 +80,7 @@ def create_service_template(service: Service, sbs_rp_json: dict):
                 "OrganizationName:en": _providing_organisation(service),
                 "redirectUrls": [u.strip() for u in service.redirect_urls.split(",")] if service.redirect_urls else [],
                 "accessTokenValidity": 3600,
-                "secret": service.oidc_client_secret_db_value(),
+                "secret": service.oidc_client_secret_db_value() if not service.is_public_client else None,
                 "url:nl": service.uri_info
             }
         }
@@ -88,6 +89,7 @@ def create_service_template(service: Service, sbs_rp_json: dict):
         service_template["data"]["metaDataFields"]["refreshTokenValidity"] = 3600
 
     _add_contacts(service, service_template)
+    _add_assertion_consumer_url(service, service_template)
 
     if service.export_external_identifier:
         service_template["id"] = service.export_external_identifier

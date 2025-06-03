@@ -25,7 +25,6 @@ ignore_attributes = [
     "last_used_date",
     "logo",
     "pam_last_login_date",
-    "saml_metadata",
     "sweep_scim_last_run",
     "updated_at",
     "updated_by",

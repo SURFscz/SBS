@@ -15,11 +15,7 @@ class TestCaseApi(TestCase):
         self.assertFalse(service_applies_for_external_sync(service))
 
     def test_service_applies_for_external_sync_saml_ok(self):
-        service = Service(name="Test", saml_enabled=True, saml_metadata="XML")
-        self.assertTrue(service_applies_for_external_sync(service))
-
-    def test_service_applies_for_external_sync_saml_with_url(self):
-        service = Service(name="Test", saml_enabled=True, saml_metadata_url="http://localhost/metadata")
+        service = Service(name="Test", saml_enabled=True, acs_locations="http://acs.location")
         self.assertTrue(service_applies_for_external_sync(service))
 
     def test_service_applies_for_external_sync_oidc_enabled(self):

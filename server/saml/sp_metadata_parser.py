@@ -16,6 +16,7 @@ def parse_metadata_url(metadata_url):
 
 def _do_parse(xml: BytesIO, raw_xml: str):
     result = {}
+    acs_locations = []
     for event, element in ET.iterparse(xml, events=("start", "end")):
         if "}" in element.tag:
             element.tag = element.tag.split("}", 1)[1]
@@ -26,12 +27,15 @@ def _do_parse(xml: BytesIO, raw_xml: str):
         elif event == "start" and element.tag == "AssertionConsumerService":
             stripped_attribs = {k.split("}", 1)[1]: v for k, v in element.attrib.items() if "}" in k}
             attrib_ = {**stripped_attribs, **element.attrib}
-            result["acs_location"] = attrib_.get("Location")
-            result["acs_binding"] = attrib_.get("Binding")
+            acs_locations.append({
+                "location": attrib_.get("Location"),
+                "binding": attrib_.get("Binding")
+            })
 
         elif event == "end" and element.tag == "OrganizationName":
             stripped_attribs = {k.split("}", 1)[1]: v for k, v in element.attrib.items() if "}" in k}
             lang = {**stripped_attribs, **element.attrib}.get("lang")
             if lang == "en":
                 result["organization_name"] = element.text
-    return {"result": result, "xml": raw_xml}
+    result["acs_locations"] = acs_locations
+    return result

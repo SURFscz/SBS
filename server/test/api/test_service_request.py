@@ -11,12 +11,19 @@ from server.test.seed import service_request_gpt_name, service_request_gpt_uuid4
 from server.tools import read_file
 
 expected_metadata_dict = {"entity_id": "https://engine.test.surfconext.nl/authentication/sp/metadata",
-                          "acs_location": "https://engine.test.surfconext.nl/authentication/sp/consume-assertion",
-                          "acs_binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST",
-                          "organization_name": "SURFconext TEST EN"}
+                          "acs_locations": [
+                              {"location": "https://engine.test.surfconext.nl/authentication/sp/consume-assertion",
+                               "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"},
+                              {"location": "https://engine.test.surfconext.nl/acs-location/1",
+                               "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"}
+                          ], "organization_name": "SURFconext TEST EN"}
 
 
 class TestServiceRequest(AbstractTest):
+
+    def _resolve_manage_base_url(self):
+        manage_base_url = self.app.app_config.manage.base_url
+        return manage_base_url[:-1] if manage_base_url.endswith("/") else manage_base_url
 
     def test_service_request_by_id(self):
         service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)
@@ -146,6 +153,7 @@ class TestServiceRequest(AbstractTest):
         new_service = self.find_entity_by_name(Service, body["name"])
         self.assertEqual(36, len(new_service.ldap_identifier))
 
+    @responses.activate
     def test_request_service_approve_oidc_enabled(self):
         self.login("urn:john")
 
@@ -155,13 +163,23 @@ class TestServiceRequest(AbstractTest):
         body = self.get(f"/api/service_requests/{service_request_id}")
         # MySQLdb.IntegrityError: (1048, "Column 'entity_id' cannot be null")
         body["entity_id"] = "http://entity/id"
-        self.put(f"/api/service_requests/approve/{service_request_id}",
-                 body=body, with_basic_auth=False)
+        with responses.RequestsMock(assert_all_requests_are_fired=True) as res_mock:
+            manage_base_url = self._resolve_manage_base_url()
+            fetch_url = f"{manage_base_url}/manage/api/internal/search/oidc10_rp"
+            res_mock.add(responses.POST, fetch_url, json=[{"data": {"allowedall": True, "allowedEntities": []}}],
+                         status=200)
+            url = f"{manage_base_url}/manage/api/internal/metadata"
+            external_identifier = str(uuid.uuid4())
+            #  This will result in a PUT
+            res_mock.add(responses.POST, url, json={"id": external_identifier, "version": 9}, status=200)
+            self.put(f"/api/service_requests/approve/{service_request_id}",
+                     body=body, with_basic_auth=False)
 
-        new_service = self.find_entity_by_name(Service, body["name"])
-        self.assertTrue(new_service.oidc_enabled)
-        self.assertFalse(new_service.saml_enabled)
+            new_service = self.find_entity_by_name(Service, body["name"])
+            self.assertTrue(new_service.oidc_enabled)
+            self.assertFalse(new_service.saml_enabled)
 
+    @responses.activate
     def test_request_service_approve_saml_enabled(self):
         self.login("urn:john")
 
@@ -172,13 +190,23 @@ class TestServiceRequest(AbstractTest):
         # MySQLdb.IntegrityError: (1048, "Column 'entity_id' cannot be null")
         body["entity_id"] = "http://entity/id"
         body["grants"] = None
-        body["saml_metadata_url"] = "https://engine.test.surfconext.nl/authentication/sp/metadata"
-        self.put(f"/api/service_requests/approve/{service_request_id}",
-                 body=body, with_basic_auth=False)
+        body["acs_locations"] = "https://acs.location"
+        with responses.RequestsMock(assert_all_requests_are_fired=True) as res_mock:
+            manage_base_url = self._resolve_manage_base_url()
+            fetch_url = f"{manage_base_url}/manage/api/internal/search/oidc10_rp"
+            res_mock.add(responses.POST, fetch_url, json=[{"data": {"allowedall": True, "allowedEntities": []}}],
+                         status=200)
+            url = f"{manage_base_url}/manage/api/internal/metadata"
+            external_identifier = str(uuid.uuid4())
+            #  This will result in a PUT
+            res_mock.add(responses.POST, url, json={"id": external_identifier, "version": 9}, status=200)
 
-        new_service = self.find_entity_by_name(Service, body["name"])
-        self.assertTrue(new_service.saml_enabled)
-        self.assertFalse(new_service.oidc_enabled)
+            self.put(f"/api/service_requests/approve/{service_request_id}",
+                     body=body, with_basic_auth=False)
+
+            new_service = self.find_entity_by_name(Service, body["name"])
+            self.assertTrue(new_service.saml_enabled)
+            self.assertFalse(new_service.oidc_enabled)
 
     def test_request_service_deny(self):
         service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)
@@ -224,8 +252,7 @@ class TestServiceRequest(AbstractTest):
         xml = read_file("test/saml2/sp_meta_data.xml")
         meta_data = self.post("/api/service_requests/metadata/parse", body={"meta_data_xml": xml},
                               response_status_code=200, with_basic_auth=False)
-        self.assertDictEqual(expected_metadata_dict, meta_data["result"])
-        self.assertTrue(meta_data["xml"].startswith("<?xml"))
+        self.assertDictEqual(expected_metadata_dict, meta_data)
 
     @responses.activate
     def test_parse_metadata_url(self):
@@ -236,8 +263,7 @@ class TestServiceRequest(AbstractTest):
             request_mocks.add(responses.GET, url, body=xml, status=200, content_type="text/xml")
             meta_data = self.post("/api/service_requests/metadata/parse", body={"meta_data_url": url},
                                   response_status_code=200, with_basic_auth=False)
-            self.assertDictEqual(expected_metadata_dict, meta_data["result"])
-            self.assertTrue(meta_data["xml"].startswith("<?xml"))
+            self.assertDictEqual(expected_metadata_dict, meta_data)
 
     def test_metadata_parse_bad_request(self):
         self.login("urn:betty")

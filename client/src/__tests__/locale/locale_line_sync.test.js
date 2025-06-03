@@ -1,6 +1,3 @@
-import React from "react";
-import en from "../../locale/en";
-import nl from "../../locale/nl";
 import fs from 'fs';
 import path from 'path';
 

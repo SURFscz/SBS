@@ -156,7 +156,7 @@ def approve_request(service_request_id):
     if oidc_client_secret and client_data.get("redirect_urls") and client_data.get("grants"):
         client_data["oidc_enabled"] = True
         client_data["oidc_client_secret"] = oidc_client_secret
-    if client_data.get("saml_metadata_url") or client_data.get("saml_metadata"):
+    if client_data.get("acs_locations"):
         client_data["saml_enabled"] = True
 
     res = save(Service, custom_json=client_data)

@@ -1,4 +1,3 @@
-import React from "react";
 import en from "../../locale/en";
 import nl from "../../locale/nl";
 

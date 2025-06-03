@@ -403,8 +403,8 @@ def seed(db, app_config, skip_seed=False):
                     allowed_organisations=[uuc, ufra], abbreviation="cloud",
                     token_enabled=True, token_validity_days=1, security_email="sec@org.nl", scim_client_enabled=True,
                     scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock",
-                    redirect_urls=None, saml_metadata=None, access_allowed_for_crm_organisation=True,
-                    saml_metadata_url="https://engine.test.surfconext.nl/authentication/sp/metadata",
+                    redirect_urls=None, access_allowed_for_crm_organisation=True,
+                    acs_locations="https://acs.location",
                     oidc_client_secret=None, providing_organisation="SURFconext", grants=None, is_public_client=False,
                     saml_enabled=True, oidc_enabled=False, crm_organisation=uuc)
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, ufra],
@@ -417,7 +417,7 @@ def seed(db, app_config, skip_seed=False):
                       scim_enabled=True, scim_url="http://localhost:8080/api/scim_mock",
                       token_enabled=False, token_validity_days=0,
                       redirect_urls="https://redirect.com/url1,https://redirect.com/url2",
-                      saml_metadata=None, saml_metadata_url=None, oidc_client_secret="1234567890_secret",
+                      oidc_client_secret="1234567890_secret",
                       providing_organisation="SURFconext", grants="authorization_code, refresh_token",
                       is_public_client=True, saml_enabled=False, oidc_enabled=True)
     wiki = Service(entity_id=service_wiki_entity_id, name=service_wiki_name, description="No more wiki's please",
