@@ -132,21 +132,14 @@ def _do_get_services(restrict_for_current_user=False, include_counts=False):
     if not include_counts or len(services) == 0:
         return services, 200
 
-    query = """
-            select s.id                                                                                              as id,
-                   (select count(so.id)
-                    from services_organisations so
-                    where so.service_id = s.id)                                                                      as so_count,
-                   ((select count(sc.id) from services_collaborations sc where sc.service_id = s.id) +
-                    (select count(c.id)
-                     from collaborations c
-                     where c.organisation_id in
-                           (select so.organisation_id from services_organisations so where so.service_id = s.id)
-                       and c.id not in (select sc.collaboration_id
-                                        from services_collaborations sc
-                                        where sc.service_id = s.id)))                                                as c_count
-            from services s \
-            """
+    query = ("select s.id as id, "
+             "(select count(so.id) from services_organisations so where so.service_id = s.id) as so_count,"
+             "((select count(sc.id) from services_collaborations sc where sc.service_id = s.id) + "
+             "(select count(c.id) from collaborations c "
+             "where c.organisation_id in "
+             "(select so.organisation_id from services_organisations so where so.service_id = s.id) "
+             "and c.id not in (select sc.collaboration_id from services_collaborations sc where sc.service_id = s.id)))"
+             " as c_count from services s")
     if restrict_for_current_user and len(services) > 0:
         query += f" where s.id in ({','.join([str(s.id) for s in services])})"
 
