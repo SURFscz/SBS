@@ -49,8 +49,8 @@ import {dateFromEpoch} from "../../utils/Date";
 import {isUserServiceAdmin} from "../../utils/UserRole";
 import UploadButton from "../../components/upload-button/UploadButton";
 
-const toc = ["general", "contacts", "policy", "SCIMServer", "SCIMClient", "ldap", "pamWebLogin", "tokens",
-    "OIDC", "SAML", "Export"];
+const toc = ["general", "contacts", "policy", "OIDC", "SAML", "Export", "SCIMServer", "SCIMClient",
+    "ldap", "pamWebLogin", "tokens"];
 
 const metaData = {
     url: "url",
@@ -615,16 +615,6 @@ class ServiceOverview extends React.Component {
                 return !isEmpty(service.security_email) && !contactEmailRequired && !invalidInputs.email && !invalidInputs.security_email && !invalidInputs.support_email
             case "policy":
                 return !invalidInputs.privacy_policy && !invalidInputs.accepted_user_policy;
-            case "SCIMServer":
-                return !invalidInputs.scim_url && !(service.scim_enabled && isEmpty(service.scim_url) && !initial);
-            case "SCIMClient":
-                return true;
-            case "ldap":
-                return true;
-            case "tokens":
-                return true;
-            case "pamWebLogin":
-                return true;
             case "OIDC":
                 return !oidc_enabled ||
                     (!isEmpty(redirect_urls.filter(url => !isEmpty(url))) && Object.values(invalidRedirectUrls).every(val => !val) && !isEmpty(grants)
@@ -634,6 +624,16 @@ class ServiceOverview extends React.Component {
                     (!isEmpty(acs_locations.filter(url => !isEmpty(url))) && Object.values(invalidACSLocations).every(val => !val) &&
                         !isEmpty(entity_id));
             case "Export":
+                return true;
+            case "SCIMServer":
+                return !invalidInputs.scim_url && !(service.scim_enabled && isEmpty(service.scim_url) && !initial);
+            case "SCIMClient":
+                return true;
+            case "ldap":
+                return true;
+            case "tokens":
+                return true;
+            case "pamWebLogin":
                 return true;
             default:
                 throw new Error(`unknown-tab: ${tab}`);
@@ -1895,6 +1895,12 @@ class ServiceOverview extends React.Component {
                 return this.renderContacts(service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs, hasAdministrators);
             case "policy":
                 return this.renderPolicy(service, isAdmin, isServiceAdmin, invalidInputs, alreadyExists);
+            case "OIDC":
+                return this.renderOidc(config, service, isAdmin, isServiceAdmin, alreadyExists, showServiceAdminView, oidcClientSecret, oidcClientSecretModal);
+            case "SAML":
+                return this.renderSAML(config, service, isAdmin, isServiceAdmin, invalidInputs, alreadyExists, showServiceAdminView);
+            case "Export":
+                return this.renderExport(config, service);
             case "SCIMServer":
                 return this.renderSCIMServer(service, isAdmin, isServiceAdmin, showServiceAdminView, alreadyExists, invalidInputs, initial);
             case "SCIMClient":
@@ -1905,12 +1911,6 @@ class ServiceOverview extends React.Component {
                 return this.renderTokens(config, service, isAdmin, isServiceAdmin, createNewServiceToken, "introspection");
             case "pamWebLogin":
                 return this.renderPamWebLogin(service, isAdmin, isServiceAdmin, createNewServiceToken, "pam");
-            case "OIDC":
-                return this.renderOidc(config, service, isAdmin, isServiceAdmin, alreadyExists, showServiceAdminView, oidcClientSecret, oidcClientSecretModal);
-            case "SAML":
-                return this.renderSAML(config, service, isAdmin, isServiceAdmin, invalidInputs, alreadyExists, showServiceAdminView);
-            case "Export":
-                return this.renderExport(config, service);
             default:
                 throw new Error(`unknown-tab: ${currentTab}`);
         }

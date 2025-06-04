@@ -2537,7 +2537,7 @@ const nl = {
             SCIMServer: "SCIM push naar applicatie",
             SCIMClient: "SCIM pull door applicatie",
             OIDC: "OpenID Connect",
-            SAML: "SAML2.0",
+            SAML: "SAML 2.0",
             Export: "Export"
         },
         updateDisabled: "Er zijn velden met ongeldige of ontbrekende waarden in de secties {{invalid}}."

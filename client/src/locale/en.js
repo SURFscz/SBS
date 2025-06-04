@@ -2537,7 +2537,7 @@ const en = {
             SCIMServer: "SCIM push to application",
             SCIMClient: "SCIM pull by application",
             OIDC: "OpenID Connect",
-            SAML: "SAML2.0",
+            SAML: "SAML 2.0",
             Export: "Export"
         },
         updateDisabled: "Some fields have invalid or are missing values in the sections {{invalid}}."
