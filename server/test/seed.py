@@ -105,6 +105,7 @@ service_cloud_name = "Cloud"
 service_wiki_name = "Wiki"
 service_ssh_name = "SSH Service"
 service_scheduler_name = "Scheduler Service"
+service_demo_sp_name = "SRAM Demo SP"
 service_sram_demo_sp = "SRAM Demo RP"
 
 service_group_mail_name = "service_group_mail_name"
@@ -464,7 +465,7 @@ def seed(db, app_config, skip_seed=False):
                             privacy_policy="https://privacy.org", security_email="sec@org.nl", ldap_enabled=False)
 
     demo_sp = Service(entity_id=service_demo_sp_entity_id,
-                      name="SRAM Demo SP", abbreviation="sram_demosp", description="Generic SRAM demo sp",
+                      name=service_demo_sp_name, abbreviation="sram_demosp", description="Generic SRAM demo sp",
                       logo=read_image("test.png"), uri="https://demo-sp.sram.surf.nl/",
                       privacy_policy="https://edu.nl/fcgbd",
                       contact_email="sram-beheer@surf.nl", security_email="sram-beheer@surf.nl",

@@ -12,7 +12,8 @@ from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_network_entity_id, unihard_name, \
     service_network_name, service_scheduler_name, service_wiki_name, service_storage_name, \
     service_cloud_name, service_storage_entity_id, service_ssh_name, unifra_name, unihard_secret, \
-    user_jane_name, user_roger_name, service_sram_demo_sp, umcpekela_name, service_monitor_name, read_image
+    user_jane_name, user_roger_name, service_sram_demo_sp, umcpekela_name, service_monitor_name, read_image, \
+    service_demo_sp_name
 
 
 class TestService(AbstractTest):
@@ -76,6 +77,17 @@ class TestService(AbstractTest):
         service = self.find_entity_by_name(Service, service_scheduler_name)
         service = self.get(f"api/services/{service.id}")
         self.assertFalse("logo" in service)
+
+    def test_find_by_id_defaults(self):
+        service = self.find_entity_by_name(Service, service_demo_sp_name)
+        service.oidc_enabled = True
+        service.saml_enabled = True
+        self.save_entity(service)
+
+        self.login("urn:john")
+        service = self.get(f"api/services/{service.id}", response_status_code=200, with_basic_auth=False)
+        self.assertListEqual([""], service.get("redirect_urls"))
+        self.assertListEqual([""], service.get("acs_locations"))
 
     def test_find_by_entity_id(self):
         res = self.get("api/services/find_by_entity_id", query_data={"entity_id": service_network_entity_id})

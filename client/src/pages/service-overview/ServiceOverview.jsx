@@ -438,7 +438,7 @@ class ServiceOverview extends React.Component {
                     },
                     showMetaDataModal: false,
                     parsedSAMLMetaDataURLError: false
-                });
+                }, () => this.resetMetaDataImport());
                 const name = metaData.organization_name || urlMetaData || "XML";
                 setFlash(I18n.t("service.metaDataOptions.flash", {name: name}));
             })
@@ -1295,6 +1295,17 @@ class ServiceOverview extends React.Component {
         })
     }
 
+    resetMetaDataImport = () => {
+        this.setState({
+            showMetaDataModal: false,
+            metaDataChoice: metaData.url,
+            urlMetaData: "",
+            fileName: null,
+            xmlMetaData: "",
+            parsedSAMLMetaDataError: false,
+            invalidInputs: {...this.state.invalidInputs, meta_data_url: false, meta_data_text: false}
+        })
+    }
 
     renderMetaDataImport = () => {
         const {metaDataChoice, urlMetaData, fileName, xmlMetaData, invalidInputs, parsedSAMLMetaDataError} = this.state;
@@ -1975,14 +1986,7 @@ class ServiceOverview extends React.Component {
                     {scimTokenChange && this.renderScimTokenChange(scimBearerToken)}
                 </ConfirmationDialog>
                 <ConfirmationDialog isOpen={showMetaDataModal}
-                                    cancel={() => this.setState({
-                                        showMetaDataModal: false,
-                                        metaDataChoice: metaData.url,
-                                        urlMetaData: "",
-                                        fileName: null,
-                                        xmlMetaData: "",
-                                        parsedSAMLMetaDataError: false
-                                    })}
+                                    cancel={() => this.resetMetaDataImport()}
                                     cancelButtonLabel={cancelButtonLabel}
                                     isWarning={false}
                                     largeWidth={true}

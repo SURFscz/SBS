@@ -308,6 +308,12 @@ def service_by_id(service_id):
 
     res = jsonify(service).json
     res["has_scim_bearer_token"] = service.scim_bearer_token_db_value() is not None
+    # Sensible defaults for Services synced to Manage
+    if res.get("oidc_enabled") and not res.get("redirect_urls"):
+        res["redirect_urls"] = [""]
+    if res.get("saml_enabled") and not res.get("acs_locations"):
+        res["acs_locations"] = [""]
+
     if add_admin_info:
         with db.engine.connect() as conn:
             sql = text(f"SELECT COUNT(*) FROM services_collaborations WHERE service_id = {service_id}")
