@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision 3d84733af2f1 (head)
+-- Dump of empty SBS database, alembic revision 11ab72ac894c (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('3d84733af2f1');
+INSERT INTO `alembic_version` VALUES ('11ab72ac894c');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_key_units`;
@@ -891,8 +891,6 @@ CREATE TABLE `services` (
   `override_access_allowed_all_connections` tinyint(1) DEFAULT '0',
   `ldap_identifier` varchar(255) NOT NULL,
   `redirect_urls` text,
-  `saml_metadata` text,
-  `saml_metadata_url` varchar(255) DEFAULT NULL,
   `oidc_client_secret` varchar(255) DEFAULT NULL,
   `providing_organisation` varchar(255) DEFAULT NULL,
   `grants` text,
