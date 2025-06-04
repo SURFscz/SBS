@@ -1336,7 +1336,10 @@ class ServiceOverview extends React.Component {
                         <div className="file-name-section">
                             <span>{fileName}</span>
                             <Button warningButton={true}
-                                    onClick={() => this.setState({fileName: null})}/>
+                                    onClick={() => this.setState({
+                                        fileName: null,
+                                        enableMetaDataParse: false
+                                    })}/>
                         </div>
                     </>}
                     {!fileName && <UploadButton name={"meta-date-file"}
