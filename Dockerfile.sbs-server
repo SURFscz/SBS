@@ -21,4 +21,4 @@ WORKDIR /opt/sbs
 
 EXPOSE 8080
 
-CMD ["/usr/local/bin/gunicorn --worker-class eventlet --workers 8 --bind 0.0.0.0:8080 server.__main__:app"]
+CMD ["/usr/local/bin/gunicorn", "--worker-class", "eventlet", "--workers", "8", "--bind", "0.0.0.0:8080", "server.__main__:app"]
