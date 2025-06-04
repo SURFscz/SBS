@@ -314,7 +314,6 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: "${{ env.REGISTRY_PATH }}/${{ matrix.image }}"
-          flavor: "suffix=-${{ matrix.arch }}"
         env:
           DOCKER_METADATA_SET_OUTPUT_ENV: 1
 
