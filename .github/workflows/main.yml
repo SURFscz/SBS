@@ -209,9 +209,9 @@ jobs:
       matrix:
         arch: [ 'amd64', 'arm64' ]
         image: [ 'sbs', 'sbs-server', 'sbs-client' ]
-
+    env:
+      containername: "sram-${{ matrix.image }}"
     runs-on: "ubuntu-24.04${{ matrix.arch == 'arm64' && '-arm' || '' }}"
-
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -226,11 +226,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: "Extract metadata (tags, labels) for ${{matrix.image}} image"
+      - name: "Extract metadata (tags, labels) for ${{ env.containername }} image"
         id: meta-sbs
         uses: docker/metadata-action@v5
         with:
-          images: "${{ env.REGISTRY_PATH }}/${{ matrix.image }}"
+          images: "${{ env.REGISTRY_PATH }}/${{ env.containername }}"
           #flavor: "suffix=-${{ matrix.arch }}"
 
       - name: Fetch build
@@ -245,7 +245,7 @@ jobs:
           context: "."
           file: "Dockerfile.${{ matrix.image }}"
           platforms: "linux/${{ matrix.arch }}"
-          tags: "${{ env.REGISTRY_PATH }}/${{ matrix.image }}"
+          tags: "${{ env.REGISTRY_PATH }}/${{ env.containername }}"
           labels: ${{ steps.meta-sbs.outputs.labels }}
           outputs: "type=image,push-by-digest=true,name-canonical=true,push=true"
           cache-from: "type=gha"
@@ -290,6 +290,8 @@ jobs:
       fail-fast: true
       matrix:
         image: [ 'sbs', 'sbs-server', 'sbs-client' ]
+    env:
+      containername: "sram-${{ matrix.image }}"
     runs-on: "ubuntu-24.04"
     steps:
       - name: Download digests
@@ -309,21 +311,21 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: "Extract metadata (tags, labels) for ${{matrix.image}} image"
+      - name: "Extract metadata (tags, labels) for ${{ env.containername }} image"
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: "${{ env.REGISTRY_PATH }}/${{ matrix.image }}"
+          images: "${{ env.REGISTRY_PATH }}/${{ env.containername }}"
         env:
           DOCKER_METADATA_SET_OUTPUT_ENV: 1
 
       - name: Create manifest list and push
         working-directory: "${{ runner.temp }}/digests/${{ matrix.image }}"
         run: |
-          DIGESTS=$( printf '${{ env.REGISTRY_PATH }}/${{ matrix.image }}@sha256:%s ' * )
+          DIGESTS=$( printf '${{ env.REGISTRY_PATH }}/${{ env.containername }}@sha256:%s ' * )
           TAGS=$( jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON" )
 
-          echo "Creating docker manifest list for ${{ matrix.image }}"
+          echo "Creating docker manifest list for ${{ env.containername }}"
           echo "Digests: $DIGESTS"
           echo "Tags: $TAGS"
 
@@ -331,7 +333,7 @@ jobs:
 
       - name: Inspect image
         run: |
-          docker buildx imagetools inspect ${{ env.REGISTRY_PATH }}/${{ matrix.image}}:${{ steps.meta.outputs.version }}
+          docker buildx imagetools inspect ${{ env.REGISTRY_PATH }}/${{ env.containername }}:${{ steps.meta.outputs.version }}
 
       # Setup tmate session
       - name: Setup tmate session
