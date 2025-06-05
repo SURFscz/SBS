@@ -1135,7 +1135,8 @@ const en = {
         samlACSLocationsPlaceholder: "https://application.com/redirect",
         samlACSLocationsTooltip: "The ACS URLs for the SP. Must be a full match, but you can enter multiple URLs.",
         samlMetadata: "SAML metadata",
-        samlMetadataImport: "Import metadata",
+        samlMetadataImport: "Import SAML metadata",
+        samlMetadataImportInfo: "Click the button below to see the options for importing SAML metadata for this service",
         samlMetadataImportQuestion: "How do you want to import metadata?",
         metaDataOptions: {
             url: "Import from metadata URL",

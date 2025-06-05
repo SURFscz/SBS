@@ -2,21 +2,20 @@ from server.db.domain import Service
 from server.manage.arp import arp_attributes
 
 BINDINGS_HTTP_POST = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
-
+OIDC_ACS_LOCATION = "https://trusted.proxy.acs.location.rules"
 
 def _add_assertion_consumer_url(s: Service, service_template):
     meta_data_fields = service_template["data"]["metaDataFields"]
-    if s.saml_enabled:
+    if s.saml_enabled and s.acs_locations:
         acs_index = 0
 
-        for acs_location in s.acs_locations:
+        for acs_location in s.acs_locations.split(","):
             meta_data_fields[f"AssertionConsumerService:{acs_index}:Binding"] = BINDINGS_HTTP_POST
-            meta_data_fields[f"AssertionConsumerService:{acs_index}:Location"] = acs_location
+            meta_data_fields[f"AssertionConsumerService:{acs_index}:Location"] = acs_location.strip()
             acs_index += 1
     else:
-        acs_location = "https://trusted.proxy.acs.location.rules"
         meta_data_fields["AssertionConsumerService:0:Binding"] = BINDINGS_HTTP_POST
-        meta_data_fields["AssertionConsumerService:0:Location"] = acs_location
+        meta_data_fields["AssertionConsumerService:0:Location"] = OIDC_ACS_LOCATION
 
 
 def _add_contacts(service: Service, service_template):

@@ -1617,6 +1617,7 @@ class ServiceOverview extends React.Component {
                                     </div>
                                 </div>
                                 <div className="meta-data-button-container">
+                                    <p>{I18n.t("service.samlMetadataImportInfo")}</p>
                                     <Button txt={I18n.t("service.samlMetadataImport")}
                                             onClick={() => this.setState({showMetaDataModal: true})}/>
                                 </div>

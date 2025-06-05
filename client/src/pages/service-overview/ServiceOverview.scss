@@ -205,11 +205,12 @@ section.dialog-content {
     }
 
     .meta-data-button-container {
-        display: flex;
-        margin-top: 20px;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid var(--sds--color--gray--200);
 
-        button {
-            margin-left: auto;
+        p {
+            margin-bottom: 20px;
         }
     }
 
