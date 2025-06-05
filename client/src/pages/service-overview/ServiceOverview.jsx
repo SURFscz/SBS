@@ -1394,7 +1394,7 @@ class ServiceOverview extends React.Component {
                           value={service.oidc_enabled || false}
                           tooltip={I18n.t("service.oidc.oidcEnabledTooltip")}
                           info={I18n.t("service.oidc.oidcClient")}
-                          readOnly={service.saml_enabled || !isAdmin}
+                          readOnly={service.saml_enabled || (!isAdmin && !isServiceAdmin)}
                           onChange={e => this.oidcEnabledChanged(service, e)}
                 />
                 {(!service.oidc_enabled && !service.saml_enabled) &&
@@ -1562,7 +1562,7 @@ class ServiceOverview extends React.Component {
                           value={service.saml_enabled || false}
                           tooltip={I18n.t("service.saml.samlEnabledTooltip")}
                           info={I18n.t("service.saml.samlClient")}
-                          readOnly={service.oidc_enabled || !isAdmin}
+                          readOnly={service.oidc_enabled || (!isAdmin && !isServiceAdmin)}
                           onChange={e => this.samlEnabledChanged(service, e)}
                 />
                 {(!service.saml_enabled && !service.oidc_enabled) &&
@@ -1584,7 +1584,7 @@ class ServiceOverview extends React.Component {
                                             required={true}
                                             error={alreadyExists.entity_id || isEmpty(service.entity_id)}
                                             copyClipBoard={true}
-                                            disabled={!isAdmin || showServiceAdminView}/>
+                                            disabled={showServiceAdminView}/>
                                 {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
                                     attribute: I18n.t("service.entity_id").toLowerCase(), value: service.entity_id
                                 })}/>}
