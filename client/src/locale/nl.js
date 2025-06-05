@@ -1136,8 +1136,8 @@ const nl = {
         samlACSLocationsTooltip: "De ACS-URL's voor de SP. Moeten volledig overeenkomen, maar je kan meerdere URL's invoeren.",
         samlMetadata: "SAML metadata",
         samlMetadataImport: "Importeer metadata",
-        samlMetadataImportQuestion: "Hoe wil je de metadata importeren?",
         samlMetadataImportInfo: "Klik op de onderstaande knop om de opties te bekijken voor het importeren van SAML-metagegevens voor deze service",
+        samlMetadataImportQuestion: "Hoe wil je de metadata importeren?",
         metaDataOptions: {
             url: "Import from metadata URL",
             file: "Upload een metadata file",

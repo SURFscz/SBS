@@ -1,9 +1,7 @@
 import uuid
 
 import responses
-from sqlalchemy import text
 
-from server.api.service_request import valid_connection_types
 from server.db.db import db
 from server.db.domain import ServiceRequest, ServiceMembership, Service
 from server.test.abstract_test import AbstractTest
@@ -40,8 +38,7 @@ class TestServiceRequest(AbstractTest):
             "name": "New Service",
             "abbreviation": "new_service_abbreviation",
             "providing_organisation": "cloudy",
-            "privacy_policy": "https://privacy_policy.org",
-            "connection_type": "none"
+            "privacy_policy": "https://privacy_policy.org"
         }
         with self.app.mail.record_messages() as outbox:
             res = self.post("/api/service_requests", body=data, with_basic_auth=False)
@@ -52,56 +49,6 @@ class TestServiceRequest(AbstractTest):
             self.assertIn("no-reply@surf.nl", mail_msg.from_email)
             self.assertIn("sram-support@surf.nl", mail_msg.to)
             self.assertIn("roger@example.org", mail_msg.cc)
-
-    def test_request_service_bad_connection_type(self):
-        self.login("urn:roger", add_default_attributes=False)
-        data = {
-            "name": "New Service",
-            "abbreviation": "new_service_abbreviation",
-            "providing_organisation": "cloudy",
-            "privacy_policy": "https://privacy_policy.org",
-            "connection_type": "nope"
-        }
-        res = self.post("/api/service_requests", body=data, with_basic_auth=False, response_status_code=400)
-        self.assertTrue(res.get("error"))
-        self.assertTrue(str(valid_connection_types) in res.get("message"))
-
-    def test_request_service_with_oidc_client_secret(self):
-        self.login("urn:roger", add_default_attributes=False)
-        res = self.get('/api/service_requests/generate_oidc_client_secret')
-        data = {
-            "name": "New Service",
-            "abbreviation": "new_service_abbreviation",
-            "providing_organisation": "cloudy",
-            "privacy_policy": "https://privacy_policy.org",
-            "connection_type": "openIDConnect",
-            "oidc_client_secret": res.get("value"),
-            "grants": "authorization_code",
-            "redirect_urls": "http://localhost/redirect"
-        }
-        res = self.post("/api/service_requests", body=data, with_basic_auth=False)
-
-        with db.engine.connect() as conn:
-            with conn.begin():
-                rs = conn.execute(text(f"SELECT oidc_client_secret FROM service_requests WHERE id = {res['id']}"))
-        oidc_client_secret = next(rs, (0,))[0]
-        self.assertTrue(oidc_client_secret.startswith("$2b$0"))
-
-    def test_request_service_with_oidc_client_secret_tampering(self):
-        self.login("urn:roger", add_default_attributes=False)
-        data = {
-            "name": "New Service",
-            "abbreviation": "new_service_abbreviation",
-            "providing_organisation": "cloudy",
-            "privacy_policy": "https://privacy_policy.org",
-            "connection_type": "openIDConnect",
-            "oidc_client_secret": str(uuid.uuid4()),
-            "grants": "authorization_code",
-            "redirect_urls": "http://localhost/redirect"
-        }
-        res = self.post("/api/service_requests", body=data, with_basic_auth=False, response_status_code=403)
-        self.assertTrue(res.get("error"))
-        self.assertTrue("Tampering" in res.get("message"))
 
     def test_request_service_approve(self):
         service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)

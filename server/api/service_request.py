@@ -4,11 +4,11 @@ import uuid
 from flask import Blueprint, request as current_request, current_app, session
 from munch import munchify
 from sqlalchemy.orm import contains_eager
-from werkzeug.exceptions import BadRequest, Forbidden
+from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint, emit_socket
 from server.api.service import URI_ATTRIBUTES
-from server.auth.secrets import generate_password_with_hash, generate_random_password
+from server.auth.secrets import generate_random_password
 from server.auth.security import current_user_id, current_user_name, \
     confirm_write_access
 from server.db.defaults import cleanse_short_name, valid_uri_attributes, STATUS_OPEN, STATUS_DENIED, STATUS_APPROVED
@@ -22,8 +22,6 @@ from server.manage.api import sync_external_service
 from server.saml.sp_metadata_parser import parse_metadata_xml, parse_metadata_url
 
 service_request_api = Blueprint("service_request_api", __name__, url_prefix="/api/service_requests")
-
-valid_connection_types = ["openIDConnect", "saml2URL", "saml2File", "none"]
 
 
 @service_request_api.route("/all", methods=["GET"], strict_slashes=False)
@@ -85,19 +83,6 @@ def request_service():
 
     data["status"] = STATUS_OPEN
     cleanse_short_name(data, "abbreviation")
-
-    # Validate connection_type
-    connection_type = data.get("connection_type")
-    if connection_type not in valid_connection_types:
-        raise BadRequest(f"{connection_type} not valid. Valid connection_type: {valid_connection_types}")
-
-    oidc_client_secret_posted = data.get("oidc_client_secret")
-    manage_enabled = current_app.app_config.manage.enabled
-    if manage_enabled and (oidc_client_secret_posted or connection_type == "openIDConnect"):
-        oidc_client_secret = session.get("oidc_client_secret")
-        if oidc_client_secret != oidc_client_secret_posted:
-            raise Forbidden("Tampering with oidc_client_secret token is not allowed")
-        data["oidc_client_secret"] = generate_password_with_hash(password=oidc_client_secret, rounds=5)[0]
 
     res = save(ServiceRequest, custom_json=data, allow_child_cascades=False)
     service_request = res[0]
