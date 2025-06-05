@@ -1524,6 +1524,7 @@ class ServiceOverview extends React.Component {
             service: {
                 ...service,
                 oidc_enabled: e.target.checked,
+                is_public_client: false,
                 redirect_urls: [""],
                 saml_enabled: e.target.checked ? false : service.saml_enabled,
                 grants: e.target.checked ? ["authorization_code"] : []

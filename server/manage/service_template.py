@@ -4,6 +4,7 @@ from server.manage.arp import arp_attributes
 BINDINGS_HTTP_POST = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
 OIDC_ACS_LOCATION = "https://trusted.proxy.acs.location.rules"
 
+
 def _add_assertion_consumer_url(s: Service, service_template):
     meta_data_fields = service_template["data"]["metaDataFields"]
     if s.saml_enabled and s.acs_locations:
@@ -29,9 +30,17 @@ def _add_contacts(service: Service, service_template):
         contact_index += 1
 
 
-# Quick fix, story created https://github.com/SURFscz/SBS/issues/1903
 def _providing_organisation(service):
     return service.providing_organisation if service.providing_organisation else "SURFconext"
+
+
+def _oidc_grants(service):
+    def translate_grant(grant):
+        if grant == "device_code":
+            grant = "urn:ietf:params:oauth:grant-type:device_code"
+        return grant.strip()
+
+    return [translate_grant(g) for g in service.grants.split(",")] if service.grants else []
 
 
 allowed_bool_false_fields = ["version"]
@@ -68,7 +77,7 @@ def create_service_template(service: Service, sbs_rp_json: dict):
                 "coin:signature_method": "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
                 "coin:collab_enabled": True,
                 "connection_type": "oidc_rp" if service.oidc_enabled else "saml_sp",
-                "grants": [grant.strip() for grant in service.grants.split(",")] if service.grants else [],
+                "grants": _oidc_grants(service),
                 "isPublicClient": service.is_public_client,
                 "logo:0:url": service.logo,
                 "logo:0:width": 480,
