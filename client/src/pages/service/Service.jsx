@@ -23,11 +23,11 @@ import {commaSeparatedArrayToSelectValues, isEmpty, joinSelectValuesArray, stopE
 import {sanitizeShortName, validEmailRegExp, validUrlRegExp} from "../../validations/regExps";
 import CheckBox from "../../components/checkbox/CheckBox";
 import {Chip} from "@surfnet/sds";
-import UnitHeader from "../../components/_redesign/unit-header/UnitHeader";
+import UnitHeader from "../../components/redesign/unit-header/UnitHeader";
 import {AppStore} from "../../stores/AppStore";
-import CroppedImageField from "../../components/_redesign/cropped-image-field/CroppedImageField";
-import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
-import ErrorIndicator from "../../components/_redesign/error-indicator/ErrorIndicator";
+import CroppedImageField from "../../components/redesign/cropped-image-field/CroppedImageField";
+import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
+import ErrorIndicator from "../../components/redesign/error-indicator/ErrorIndicator";
 import EmailField from "../../components/email-field/EmailField";
 import {chipTypeForStatus} from "../../utils/UserRole";
 

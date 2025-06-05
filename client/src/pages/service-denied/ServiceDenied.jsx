@@ -9,7 +9,7 @@ import DOMPurify from "dompurify";
 import {capitalize, isEmpty} from "../../utils/Utils";
 import {serviceInfo} from "../../api";
 import Button from "../../components/button/Button";
-import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
+import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
 
 export default function ServiceDenied(props) {
 
@@ -40,7 +40,7 @@ export default function ServiceDenied(props) {
                 setOrganisations(res.organisations);
                 setUserName(res.user_name);
                 setUserEmail(res.user_email)
-                setSchacHomeOrganisation(res.schac_home_organisation || I18n.t("_welcome.unknown"));
+                setSchacHomeOrganisation(res.schac_home_organisation || I18n.t("welcome.unknown"));
                 setSupportEmail(res.support_email);
                 setServiceConnectionAllowed(res.service_connection_allowed);
                 setLoading(false);

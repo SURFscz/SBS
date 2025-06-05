@@ -12,15 +12,15 @@ import {isEmpty, stopEvent} from "../../utils/Utils";
 import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
 import {setFlash} from "../../utils/Flash";
 import {sanitizeShortName, validSchacHomeRegExp, validUrlRegExp} from "../../validations/regExps";
-import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
+import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
 import Button from "../../components/button/Button";
 import InputField from "../../components/input-field/InputField";
-import ErrorIndicator from "../../components/_redesign/error-indicator/ErrorIndicator";
+import ErrorIndicator from "../../components/redesign/error-indicator/ErrorIndicator";
 import {OrganisationUnits} from "../../components/organisation-units/OrganisationUnits";
 import SelectField from "../../components/select-field/SelectField";
 import CheckBox from "../../components/checkbox/CheckBox";
 import CreatableField from "../../components/creatable-field/CreatableField";
-import CroppedImageField from "../../components/_redesign/cropped-image-field/CroppedImageField";
+import CroppedImageField from "../../components/redesign/cropped-image-field/CroppedImageField";
 import {OrganisationTags} from "../../components/organisation-tags/OrganisationTags";
 import OrganisationOnBoarding from "../../components/organisation-onboarding/OrganisationOnBoarding";
 

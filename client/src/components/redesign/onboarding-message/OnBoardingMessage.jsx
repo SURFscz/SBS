@@ -8,7 +8,7 @@ export default function OnBoardingMessage({organisation}) {
     return (
         <div className={"on-boarding"}>
             <h2 dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(I18n.t("_welcome.instructions", {name: organisation.name}))
+                __html: DOMPurify.sanitize(I18n.t("welcome.instructions", {name: organisation.name}))
             }}/>
             <div className="instructions mde-preview">
                 <div className="mde-preview-content">

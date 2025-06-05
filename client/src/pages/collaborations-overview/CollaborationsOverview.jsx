@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 
 import "./CollaborationsOverview.scss"
-import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
+import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
 import {allCollaborationsOptimized, myCollaborationsOptimized} from "../../api";
 import {AppStore} from "../../stores/AppStore";
 import I18n from "../../locale/I18n";
@@ -50,7 +50,7 @@ export default function CollaborationsOverview(props) {
             <div className="tree-swing-container">
                 <TreeSwing/>
             </div>
-            <h2>{I18n.t("collaborationsOverview._welcome", {name: user.name})}</h2>
+            <h2>{I18n.t("collaborationsOverview.welcome", {name: user.name})}</h2>
             <p>{I18n.t("collaborationsOverview.select")}</p>
             <div className="collaborations">
                 {collaborations.map((collaboration, index) =>

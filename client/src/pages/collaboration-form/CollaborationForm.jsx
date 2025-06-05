@@ -24,18 +24,18 @@ import {sanitizeShortName, sanitizeTagName, validEmailRegExp, validUrlRegExp} fr
 import SelectField from "../../components/select-field/SelectField";
 import {getParameterByName} from "../../utils/QueryParameters";
 import CheckBox from "../../components/checkbox/CheckBox";
-import UnitHeader from "../../components/_redesign/unit-header/UnitHeader";
+import UnitHeader from "../../components/redesign/unit-header/UnitHeader";
 import {ReactComponent as CollaborationsIcon} from "../../icons/collaborations.svg";
 import {AppStore} from "../../stores/AppStore";
-import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
-import CroppedImageField from "../../components/_redesign/cropped-image-field/CroppedImageField";
+import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
+import CroppedImageField from "../../components/redesign/cropped-image-field/CroppedImageField";
 import EmailField from "../../components/email-field/EmailField";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
-import ErrorIndicator from "../../components/_redesign/error-indicator/ErrorIndicator";
+import ErrorIndicator from "../../components/redesign/error-indicator/ErrorIndicator";
 import DateField from "../../components/date-field/DateField";
 import moment from "moment";
 import DOMPurify from "dompurify";
-import OnBoardingMessage from "../../components/_redesign/onboarding-message/OnBoardingMessage";
+import OnBoardingMessage from "../../components/redesign/onboarding-message/OnBoardingMessage";
 import {CollaborationUnits} from "../../components/collaborationunits/CollaborationUnits";
 
 class CollaborationForm extends React.Component {
