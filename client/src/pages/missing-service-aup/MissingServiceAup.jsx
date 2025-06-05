@@ -4,7 +4,7 @@ import I18n from "../../locale/I18n";
 import "./MissingServiceAup.scss";
 import Button from "../../components/button/Button";
 import {serviceAupBulkCreate} from "../../api";
-import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
+import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
 import CollaborationAupAcceptance from "../../components/collaboration-aup-acceptance/CollaborationAupAcceptance";
 import DOMPurify from "dompurify";
 

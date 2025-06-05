@@ -2,7 +2,7 @@ import React from "react";
 import {withRouter} from "react-router-dom";
 import "./SecondFactorAuthentication.scss";
 import {get2fa, preUpdate2fa, reset2fa, tokenResetRequest, tokenResetRespondents, update2fa, verify2fa} from "../../api";
-import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
+import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
 import I18n from "../../locale/I18n";
 import Button from "../../components/button/Button";
 import InputField from "../../components/input-field/InputField";

@@ -18,11 +18,11 @@ import {collaborationRoles} from "../../forms/constants";
 import SelectField from "../../components/select-field/SelectField";
 import {getParameterByName} from "../../utils/QueryParameters";
 import {AppStore} from "../../stores/AppStore";
-import UnitHeader from "../../components/_redesign/unit-header/UnitHeader";
-import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
+import UnitHeader from "../../components/redesign/unit-header/UnitHeader";
+import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import EmailField from "../../components/email-field/EmailField";
-import ErrorIndicator from "../../components/_redesign/error-indicator/ErrorIndicator";
+import ErrorIndicator from "../../components/redesign/error-indicator/ErrorIndicator";
 
 class NewInvitation extends React.Component {
 

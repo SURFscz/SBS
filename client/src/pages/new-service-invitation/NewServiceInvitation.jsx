@@ -15,11 +15,11 @@ import "./NewServiceInvitation.scss"
 import DateField from "../../components/date-field/DateField";
 import {getParameterByName} from "../../utils/QueryParameters";
 import SelectField from "../../components/select-field/SelectField";
-import UnitHeader from "../../components/_redesign/unit-header/UnitHeader";
+import UnitHeader from "../../components/redesign/unit-header/UnitHeader";
 import {AppStore} from "../../stores/AppStore";
-import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
+import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
 import EmailField from "../../components/email-field/EmailField";
-import ErrorIndicator from "../../components/_redesign/error-indicator/ErrorIndicator";
+import ErrorIndicator from "../../components/redesign/error-indicator/ErrorIndicator";
 import {serviceRoles} from "../../forms/constants";
 
 class NewServiceInvitation extends React.Component {

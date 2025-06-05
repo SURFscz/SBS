@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import "./InvitationUnits.scss";
 import I18n from "../../locale/I18n";
-import RadioButtonGroup from "../_redesign/radio-button-group/RadioButtonGroup";
+import RadioButtonGroup from "../redesign/radio-button-group/RadioButtonGroup";
 import CheckBox from "../checkbox/CheckBox";
 import {isEmpty} from "../../utils/Utils";
 

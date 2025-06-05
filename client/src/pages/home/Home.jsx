@@ -5,17 +5,17 @@ import {ReactComponent as Logo} from "../../icons/ram.svg";
 import {AppStore} from "../../stores/AppStore";
 import {getUserRequests, isUserServiceAdmin, rawGlobalUserRole, ROLES} from "../../utils/UserRole";
 import Tabs from "../../components/tabs/Tabs";
-import Organisations from "../../components/_redesign/organisations/Organisations";
-import UnitHeader from "../../components/_redesign/unit-header/UnitHeader";
-import PlatformAdmins from "../../components/_redesign/platform-admins/PlatformAdmins";
-import Services from "../../components/_redesign/services/Services";
-import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
-import Collaborations from "../../components/_redesign/collaborations/Collaborations";
+import Organisations from "../../components/redesign/organisations/Organisations";
+import UnitHeader from "../../components/redesign/unit-header/UnitHeader";
+import PlatformAdmins from "../../components/redesign/platform-admins/PlatformAdmins";
+import Services from "../../components/redesign/services/Services";
+import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
+import Collaborations from "../../components/redesign/collaborations/Collaborations";
 import {isEmpty} from "../../utils/Utils";
-import Users from "../../components/_redesign/users/Users";
-import ServiceRequests from "../../components/_redesign/service-requests/ServiceRequests";
-import EmptyCollaborations from "../../components/_redesign/empty-collaborations/EmptyCollaborations";
-import MyRequests from "../../components/_redesign/my-requests/MyRequests";
+import Users from "../../components/redesign/users/Users";
+import ServiceRequests from "../../components/redesign/service-requests/ServiceRequests";
+import EmptyCollaborations from "../../components/redesign/empty-collaborations/EmptyCollaborations";
+import MyRequests from "../../components/redesign/my-requests/MyRequests";
 
 class Home extends React.Component {
 
@@ -113,7 +113,7 @@ class Home extends React.Component {
                 tab = tabSuggestion;
             }
             if (tabs.length === 0 || (tabs.length === 1 && tab === "my_requests" && !hasAnyRoles)) {
-                this.props.history.push("/_welcome");
+                this.props.history.push("/welcome");
                 return;
             }
             if ((role === ROLES.COLL_ADMIN || role === ROLES.COLL_MEMBER) && !isUserServiceAdmin(user) && nbrCollaborations < 6) {

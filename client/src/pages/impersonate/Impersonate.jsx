@@ -9,11 +9,11 @@ import Autocomplete from "../../components/autocomplete/Autocomplete";
 import Button from "../../components/button/Button";
 import InputField from "../../components/input-field/InputField";
 import CheckBox from "../../components/checkbox/CheckBox";
-import UnitHeader from "../../components/_redesign/unit-header/UnitHeader";
+import UnitHeader from "../../components/redesign/unit-header/UnitHeader";
 import {AppStore} from "../../stores/AppStore";
 import {ReactComponent as HandIcon} from "../../icons/puppet_new.svg";
-import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
-import ErrorIndicator from "../../components/_redesign/error-indicator/ErrorIndicator";
+import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
+import ErrorIndicator from "../../components/redesign/error-indicator/ErrorIndicator";
 import {emitImpersonation} from "../../utils/Impersonation";
 
 class Impersonate extends React.Component {

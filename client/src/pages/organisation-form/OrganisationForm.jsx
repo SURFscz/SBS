@@ -19,13 +19,13 @@ import ConfirmationDialog from "../../components/confirmation-dialog/Confirmatio
 import {setFlash} from "../../utils/Flash";
 import {sanitizeShortName, validSchacHomeRegExp, validUrlRegExp} from "../../validations/regExps";
 import {AppStore} from "../../stores/AppStore";
-import UnitHeader from "../../components/_redesign/unit-header/UnitHeader";
-import CroppedImageField from "../../components/_redesign/cropped-image-field/CroppedImageField";
+import UnitHeader from "../../components/redesign/unit-header/UnitHeader";
+import CroppedImageField from "../../components/redesign/cropped-image-field/CroppedImageField";
 import SelectField from "../../components/select-field/SelectField";
-import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
+import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
 
 import OrganisationOnBoarding from "../../components/organisation-onboarding/OrganisationOnBoarding";
-import ErrorIndicator from "../../components/_redesign/error-indicator/ErrorIndicator";
+import ErrorIndicator from "../../components/redesign/error-indicator/ErrorIndicator";
 import CreatableField from "../../components/creatable-field/CreatableField";
 import EmailField from "../../components/email-field/EmailField";
 import CheckBox from "../../components/checkbox/CheckBox";

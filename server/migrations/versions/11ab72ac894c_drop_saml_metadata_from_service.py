@@ -19,7 +19,6 @@ def upgrade():
     conn = op.get_bind()
     conn.execute(text("ALTER TABLE services DROP COLUMN saml_metadata"))
     conn.execute(text("ALTER TABLE services DROP COLUMN saml_metadata_url"))
-    pass
 
 
 def downgrade():

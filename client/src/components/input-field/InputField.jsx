@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Tooltip} from "@surfnet/sds";
 import "./InputField.scss";
 import {isEmpty} from "../../utils/Utils";
-import ClipBoardCopy from "../_redesign/clipboard-copy/ClipBoardCopy";
+import ClipBoardCopy from "../redesign/clipboard-copy/ClipBoardCopy";
 import {validUrlRegExp} from "../../validations/regExps";
 import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/bin.svg";
 

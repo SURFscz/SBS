@@ -6,7 +6,10 @@ exports[`OnBoardingMessage renders with currentUserDeleted false 1`] = `
     class="on-boarding"
   >
     <h2>
-      [missing "_welcome.instructions" translation]
+      Message from 
+      <strong>
+        Test Organisation
+      </strong>
     </h2>
     <div
       class="instructions mde-preview"
@@ -27,7 +30,10 @@ exports[`OnBoardingMessage renders with custom localePrefix 1`] = `
     class="on-boarding"
   >
     <h2>
-      [missing "_welcome.instructions" translation]
+      Message from 
+      <strong>
+        Test Organisation
+      </strong>
     </h2>
     <div
       class="instructions mde-preview"
@@ -48,7 +54,10 @@ exports[`OnBoardingMessage renders with default props 1`] = `
     class="on-boarding"
   >
     <h2>
-      [missing "_welcome.instructions" translation]
+      Message from 
+      <strong>
+        Test Organisation
+      </strong>
     </h2>
     <div
       class="instructions mde-preview"

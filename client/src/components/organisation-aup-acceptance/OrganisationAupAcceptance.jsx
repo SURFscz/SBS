@@ -1,8 +1,8 @@
 import React from "react";
 import I18n from "../../locale/I18n";
 import "./OrganisationAupAcceptance.scss";
-import "../_welcome/welcome.scss";
-import Logo from "../_redesign/logo/Logo";
+import "../welcome/welcome.scss";
+import Logo from "../redesign/logo/Logo";
 import {isEmpty} from "../../utils/Utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import CheckBox from "../checkbox/CheckBox";

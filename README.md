@@ -276,7 +276,7 @@ If the change was intended, the snapshot should be updated. In order to do that,
 folder in the component's subfolder and rerun the test:
 
 ```bash
-$ yarn test path/to/YourComponent.test.jsx -u
+$ yarn test -- path/to/YourComponent.test.jsx -u
 ```
 or
 
