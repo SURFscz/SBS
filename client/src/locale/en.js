@@ -971,7 +971,7 @@ const en = {
         infoUriPlaceholder: "The URL with information about this application",
         infoUriTooltip: "URL of a website with information about the application",
         privacy_policy: "Privacy policy",
-        privacy_policyPlaceholder: "The Private policy URL  of the application",
+        privacy_policyPlaceholder: "The privacy policy URL of the application",
         privacy_policyTooltip: "A privacy policy is a legal requirement for all websites and apps that collect or use personal information from users.",
         accepted_user_policy: "Acceptable use policy",
         accepted_user_policyPlaceholder: "The acceptable use policy (AUP) of the application",
