@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 
 import "./ServiceCard.scss";
-import Logo from "../_redesign/logo/Logo";
+import Logo from "../redesign/logo/Logo";
 import {Chip, ChipType, Loader} from "@surfnet/sds";
 import {MoreLessText} from "../more-less-text/MoreLessText";
 import {ReactComponent as ArrowDown} from "@surfnet/sds/icons/functional-icons/arrow-down-2.svg";

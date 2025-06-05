@@ -17,7 +17,7 @@ class Welcome extends React.Component {
         super(props, context);
         this.state = {
             organisations: [],
-            idpDisplayName: I18n.t("_welcome.unknown"),
+            idpDisplayName: I18n.t("welcome.unknown"),
             loading: true,
             requests: []
         };
@@ -50,7 +50,7 @@ class Welcome extends React.Component {
         const canCreate = organisations.some(org => org.collaboration_creation_allowed_entitlement || org.collaboration_creation_allowed);
         return (
             <div>
-                <h2>{I18n.t("_welcome.creating")}</h2>
+                <h2>{I18n.t("welcome.creating")}</h2>
                 <p dangerouslySetInnerHTML={{
                     __html: DOMPurify.sanitize(I18n.t(`welcome.${canCreate ? "startCreateColl" : "startRequestColl"}`,
                         {name: idpDisplayName}))
@@ -70,8 +70,8 @@ class Welcome extends React.Component {
     unknownOrganisation = (idpDisplayName, requests) => {
         return (
             <div>
-                <h2>{I18n.t("_welcome.creating")}</h2>
-                <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("_welcome.institutionCollNotAllowed", {name: idpDisplayName}))}}/>
+                <h2>{I18n.t("welcome.creating")}</h2>
+                <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcome.institutionCollNotAllowed", {name: idpDisplayName}))}}/>
                 {!isEmpty(requests) && <div className="unknown-organisation">
                     <Button onClick={this.showRequests}
                             txt={capitalize( I18n.t("collaborationsOverview.viewRequests"))}/>
@@ -100,10 +100,10 @@ class Welcome extends React.Component {
             <>
                 <div className="mod-welcome-container">
                     <div className="mod-welcome">
-                        <h1 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("_welcome.title", {name: user.given_name || user.name || I18n.t("_welcome.mysterious")}))}}/>
-                        <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("_welcome.subTitle"))}}/>
-                        <h2>{I18n.t("_welcome.joining")}</h2>
-                        <p>{I18n.t("_welcome.invited")}</p>
+                        <h1 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcome.title", {name: user.given_name || user.name || I18n.t("welcome.mysterious")}))}}/>
+                        <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcome.subTitle"))}}/>
+                        <h2>{I18n.t("welcome.joining")}</h2>
+                        <p>{I18n.t("welcome.invited")}</p>
                         {orphanUser && this.unknownOrganisation(idpDisplayName, requests)}
                         {!orphanUser && this.knownOrganisation(idpDisplayName, organisations, requests)}
 

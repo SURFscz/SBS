@@ -23,7 +23,7 @@ import {ReactComponent as ThrashIcon} from "@surfnet/sds/icons/functional-icons/
 import {ReactComponent as CheckIcon} from "@surfnet/sds/icons/functional-icons/success.svg";
 import InputField from "../../components/input-field/InputField";
 import "./ServiceOverview.scss";
-import "../../components/_redesign/api-keys/ApiKeys.scss";
+import "../../components/redesign/api-keys/ApiKeys.scss";
 import Button from "../../components/button/Button";
 import {setFlash} from "../../utils/Flash";
 import {commaSeparatedArrayToValues, isEmpty, splitListSemantically, stopEvent} from "../../utils/Utils";
@@ -38,11 +38,11 @@ import {
 import {RadioOptions, RadioOptionsOrientation, Tooltip} from "@surfnet/sds";
 import DOMPurify from "dompurify";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
-import Entities from "../../components/_redesign/entities/Entities";
+import Entities from "../../components/redesign/entities/Entities";
 import ConfirmationDialog from "../../components/confirmation-dialog/ConfirmationDialog";
-import ErrorIndicator from "../../components/_redesign/error-indicator/ErrorIndicator";
-import CroppedImageField from "../../components/_redesign/cropped-image-field/CroppedImageField";
-import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
+import ErrorIndicator from "../../components/redesign/error-indicator/ErrorIndicator";
+import CroppedImageField from "../../components/redesign/cropped-image-field/CroppedImageField";
+import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
 import CheckBox from "../../components/checkbox/CheckBox";
 import SelectField from "../../components/select-field/SelectField";
 import {dateFromEpoch} from "../../utils/Date";

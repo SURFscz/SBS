@@ -23,11 +23,11 @@ import {commaSeparatedArrayToSelectValues, isEmpty, joinSelectValuesArray, stopE
 import {sanitizeShortName, validEmailRegExp, validUrlRegExp} from "../../validations/regExps";
 import CheckBox from "../../components/checkbox/CheckBox";
 import {Chip} from "@surfnet/sds";
-import UnitHeader from "../../components/_redesign/unit-header/UnitHeader";
+import UnitHeader from "../../components/redesign/unit-header/UnitHeader";
 import {AppStore} from "../../stores/AppStore";
-import CroppedImageField from "../../components/_redesign/cropped-image-field/CroppedImageField";
-import SpinnerField from "../../components/_redesign/spinner-field/SpinnerField";
-import ErrorIndicator from "../../components/_redesign/error-indicator/ErrorIndicator";
+import CroppedImageField from "../../components/redesign/cropped-image-field/CroppedImageField";
+import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
+import ErrorIndicator from "../../components/redesign/error-indicator/ErrorIndicator";
 import EmailField from "../../components/email-field/EmailField";
 import {chipTypeForStatus} from "../../utils/UserRole";
 
@@ -355,8 +355,7 @@ class Service extends React.Component {
                         accepted_user_policy, uri_info, privacy_policy, service, disabledSubmit, allow_restricted_orgs,
                         token_enabled, pam_web_sso_enabled, token_validity_days, config, administrators,
                         message, logo, isServiceAdmin, providing_organisation, comments, isServiceRequestDetails,
-                        disableEverything, ldap_identifier) => {
-        const ldapBindAccount = config.ldap_bind_account;
+                        disableEverything) => {
         const {isServiceRequest} = this.props;
         return (<div className="service">
 
@@ -602,63 +601,6 @@ class Service extends React.Component {
                     <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: I18n.t("forms.attributes.uri")})}/>}
             </div>
 
-            {!isServiceRequest && <div className="ldap">
-                <h2 className="section-separator first">{I18n.t("service.ldap.section")}</h2>
-
-                <InputField value={config.ldap_url}
-                            name={I18n.t("service.ldap.url")}
-                            toolTip={I18n.t("service.ldap.urlTooltip")}
-                            copyClipBoard={true}
-                            disabled={true}/>
-                <InputField value={ldapBindAccount.replace("entity_id", ldap_identifier)}
-                            name={I18n.t("service.ldap.username")}
-                            toolTip={I18n.t("service.ldap.usernameTooltip")}
-                            copyClipBoard={true}
-                            disabled={true}/>
-                <InputField
-                    value={ldapBindAccount.substring(ldapBindAccount.indexOf(",") + 1).replace("entity_id", ldap_identifier)}
-                    name={I18n.t("service.ldap.basedn")}
-                    toolTip={I18n.t("service.ldap.basednTooltip")}
-                    copyClipBoard={true}
-                    disabled={true}/>
-            </div>}
-
-            {!isServiceRequest && <div className="tokens">
-                <h2 className="section-separator first">{I18n.t("userTokens.tokens")}</h2>
-
-
-                <CheckBox name={"token_enabled"}
-                          value={token_enabled}
-                          tooltip={I18n.t("userTokens.tokenEnabledTooltip")}
-                          info={I18n.t("userTokens.tokenEnabled")}
-                          readOnly={isServiceRequest}
-                          onChange={() => this.setState({
-                              token_enabled: !token_enabled, token_validity_days: token_enabled ? "" : 1
-                          })}
-                />
-
-                <InputField value={token_validity_days}
-                            name={I18n.t("userTokens.tokenValidityDays")}
-                            maxLength={3}
-                            tooltip={I18n.t("userTokens.tokenValidityDaysTooltip")}
-                            onChange={e => this.setState({token_validity_days: e.target.value.replace(/\D/, '')})}
-                            disabled={!token_enabled}
-                />
-
-                <CheckBox name={"pam_web_sso_enabled"}
-                          value={pam_web_sso_enabled}
-                          onChange={() => this.setState({pam_web_sso_enabled: !pam_web_sso_enabled})}
-                          tooltip={I18n.t("userTokens.pamWebSSOEnabledTooltip")}
-                          info={I18n.t("userTokens.pamWebSSOEnabled")}
-                />
-
-                <InputField value={config.introspect_endpoint}
-                            name={I18n.t("userTokens.introspectionEndpoint")}
-                            copyClipBoard={true}
-                            disabled={true}
-                />
-
-            </div>}
             {!isServiceRequest && <div className="email-invitations">
                 <h2 className="section-separator first last">{I18n.t("service.invitations")}</h2>
 
@@ -748,7 +690,6 @@ class Service extends React.Component {
             confirmationDialogOpen,
             cancelDialogAction,
             name,
-            ldap_identifier,
             abbreviation,
             entity_id,
             description,
@@ -814,7 +755,7 @@ class Service extends React.Component {
                     support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, uri_info,
                     privacy_policy, service, disabledSubmit, allow_restricted_orgs, token_enabled, pam_web_sso_enabled,
                     token_validity_days, config, administrators, message, logo, isServiceAdmin, providing_organisation,
-                    comments, isServiceRequestDetails, disableEverything, ldap_identifier)}
+                    comments, isServiceRequestDetails, disableEverything)}
             </div>
         </>);
     }

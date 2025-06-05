@@ -402,10 +402,6 @@ export function parseSAMLMetaData(metaDataXML, metaDataURL) {
     return postPutJson("/api/service_requests/metadata/parse", body, "post", false);
 }
 
-export function generateOidcClientSecret() {
-    return fetchJson("/api/service_requests/generate_oidc_client_secret");
-}
-
 //Collaborations
 export function collaborationByIdentifier(identifier) {
     return fetchJson(`/api/collaborations/find_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);

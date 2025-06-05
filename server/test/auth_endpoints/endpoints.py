@@ -1152,11 +1152,6 @@ endpoints = [
         "path": "/api/service_requests/deny/<service_request_id>"
     },
     {
-        "name": "service_request_api.generate_oidc_client_secret",
-        "method": "GET",
-        "path": "/api/service_requests/generate_oidc_client_secret"
-    },
-    {
         "name": "service_request_api.metadata_parse",
         "method": "POST",
         "path": "/api/service_requests/metadata/parse"

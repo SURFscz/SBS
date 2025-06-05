@@ -3,7 +3,7 @@ import I18n from "../../locale/I18n";
 import "./BulkUpload.scss";
 import {AppStore} from "../../stores/AppStore";
 import {ReactComponent as CloudIcon} from "../../icons/cloud-upload.svg";
-import UnitHeader from "../../components/_redesign/unit-header/UnitHeader";
+import UnitHeader from "../../components/redesign/unit-header/UnitHeader";
 import Tabs from "../../components/tabs/Tabs";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import {headers, parseBulkInvitation} from "../../utils/CSVParser";
@@ -14,7 +14,7 @@ import Button from "../../components/button/Button";
 import DOMPurify from "dompurify";
 import TabularData from "../../components/tabular-data/TabularData";
 import {invitationBulkUpload} from "../../api";
-import SpinnerMarathonField from "../../components/_redesign/spinner-marathon-field/SpinnerMarathonField";
+import SpinnerMarathonField from "../../components/redesign/spinner-marathon-field/SpinnerMarathonField";
 
 class BulkUpload extends React.Component {
 
