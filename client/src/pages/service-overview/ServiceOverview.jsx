@@ -740,11 +740,11 @@ class ServiceOverview extends React.Component {
         return null;
     }
 
-    sidebar = (currentTab, isManageEnabled, showServiceAdminView) => {
+    sidebar = (currentTab, isManageEnabled, showServiceAdminView, isAdmin) => {
         return (
             <div className={"side-bar"}>
                 <ul>
-                    {toc.filter(tab => !showServiceAdminView || tab !== "Export")
+                    {toc.filter(tab => (!showServiceAdminView && isAdmin) || tab !== "Export")
                         .filter(tab => isManageEnabled || (tab !== "OIDC" && tab !== "SAML"))
                         .map(item => <li key={item} className={`${item === currentTab ? "active" : ""}`}>
                             <a href={`/${item}`}
@@ -1486,8 +1486,7 @@ class ServiceOverview extends React.Component {
                                     toolTip={I18n.t("service.entity_idTooltip")}
                                     required={true}
                                     error={alreadyExists.entity_id || isEmpty(service.entity_id)}
-                                    copyClipBoard={true}
-                                    disabled={!isAdmin || showServiceAdminView}/>
+                                    copyClipBoard={true}/>
                         {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
                             attribute: I18n.t("service.entity_id").toLowerCase(), value: service.entity_id
                         })}/>}
@@ -1551,7 +1550,7 @@ class ServiceOverview extends React.Component {
         })
     }
 
-    renderSAML = (config, service, isAdmin, isServiceAdmin, invalidInputs, alreadyExists, showServiceAdminView) => {
+    renderSAML = (config, service, isAdmin, isServiceAdmin, invalidInputs, alreadyExists) => {
         const {
             invalidACSLocations
         } = this.state;
@@ -1584,7 +1583,7 @@ class ServiceOverview extends React.Component {
                                             required={true}
                                             error={alreadyExists.entity_id || isEmpty(service.entity_id)}
                                             copyClipBoard={true}
-                                            disabled={showServiceAdminView}/>
+                                            disabled={!isAdmin && !isServiceAdmin}/>
                                 {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
                                     attribute: I18n.t("service.entity_id").toLowerCase(), value: service.entity_id
                                 })}/>}
@@ -1601,8 +1600,9 @@ class ServiceOverview extends React.Component {
                                                         toolTip={I18n.t("service.samlACSLocationsTooltip")}
                                                         onChange={e => this.acsLocationChanged(e, index)}
                                                         error={invalidACSLocations[index]}
+                                                        disabled={!isAdmin && !isServiceAdmin}
                                                         onBlur={e => this.validateACSLocation(e, index)}
-                                                        onDelete={index > 0 ? e => this.removeACSLocation(e, index) : null}
+                                                        onDelete={(index > 0 && (isAdmin || isServiceAdmin)) ? e => this.removeACSLocation(e, index) : null}
                                             />
                                             {invalidACSLocations[index] &&
                                                 <ErrorIndicator
@@ -1613,15 +1613,17 @@ class ServiceOverview extends React.Component {
                                     {isEmpty(acs_locations.filter(url => !isEmpty(url))) &&
                                         <ErrorIndicator
                                             msg={I18n.t("service.required", {attribute: I18n.t("service.samlACSLocations")})}/>}
-                                    <div className={"add-acs-location"}>
-                                        <a onClick={this.addACSLocation}>{I18n.t("service.oidc.addACSLocation")}</a>
-                                    </div>
+                                    {(isAdmin || isServiceAdmin) &&
+                                        <div className={"add-acs-location"}>
+                                            <a onClick={this.addACSLocation}>{I18n.t("service.oidc.addACSLocation")}</a>
+                                        </div>}
                                 </div>
-                                <div className="meta-data-button-container">
-                                    <p>{I18n.t("service.samlMetadataImportInfo")}</p>
-                                    <Button txt={I18n.t("service.samlMetadataImport")}
-                                            onClick={() => this.setState({showMetaDataModal: true})}/>
-                                </div>
+                                {(isAdmin || isServiceAdmin) &&
+                                    <div className="meta-data-button-container">
+                                        <p>{I18n.t("service.samlMetadataImportInfo")}</p>
+                                        <Button txt={I18n.t("service.samlMetadataImport")}
+                                                onClick={() => this.setState({showMetaDataModal: true})}/>
+                                    </div>}
                             </div>
 
                         </div>
@@ -1850,6 +1852,7 @@ class ServiceOverview extends React.Component {
                         placeholder={I18n.t("service.providingOrganisationPlaceholder")}
                         onChange={this.changeServiceProperty("providing_organisation")}
                         required={true}
+                        disabled={!isAdmin && !isServiceAdmin}
             />
             {(isEmpty(service.providing_organisation)) &&
                 <ErrorIndicator msg={I18n.t("service.required", {
@@ -1914,7 +1917,7 @@ class ServiceOverview extends React.Component {
             case "OIDC":
                 return this.renderOidc(config, service, isAdmin, isServiceAdmin, alreadyExists, showServiceAdminView, oidcClientSecret, oidcClientSecretModal);
             case "SAML":
-                return this.renderSAML(config, service, isAdmin, isServiceAdmin, invalidInputs, alreadyExists, showServiceAdminView);
+                return this.renderSAML(config, service, isAdmin, isServiceAdmin, invalidInputs, alreadyExists);
             case "Export":
                 return this.renderExport(config, service);
             case "SCIMServer":
@@ -2000,7 +2003,7 @@ class ServiceOverview extends React.Component {
                     {this.renderMetaDataImport()}
                 </ConfirmationDialog>
 
-                {this.sidebar(presentTab, config.manage_enabled, showServiceAdminView)}
+                {this.sidebar(presentTab, config.manage_enabled, showServiceAdminView, isAdmin)}
                 <div className={`service ${createNewServiceToken ? "no-grid" : ""}`}>
                     <h2 className="section-separator">{I18n.t(`serviceDetails.toc.${presentTab}`)}</h2>
                     {this.renderCurrentTab(config, presentTab, service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit,
