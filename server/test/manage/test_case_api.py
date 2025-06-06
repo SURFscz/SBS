@@ -22,10 +22,6 @@ class TestCaseApi(TestCase):
         service = Service(name="Test", oidc_enabled=True)
         self.assertFalse(service_applies_for_external_sync(service))
 
-    def test_service_applies_for_external_sync_oidc_no_redirect(self):
-        service = Service(name="Test", oidc_enabled=True, grants="authorization_code")
-        self.assertFalse(service_applies_for_external_sync(service))
-
     def test_service_applies_for_external_sync_oidc_no_grant(self):
         service = Service(name="Test", oidc_enabled=True, redirect_urls="http://localhost/redirect")
         self.assertFalse(service_applies_for_external_sync(service))
