@@ -158,9 +158,11 @@ class ServiceOverview extends React.Component {
             invalidInputs[name] = !isEmpty(serviceElement) && !validUrlRegExp.test(serviceElement);
         });
         const invalidRedirectUrls = {};
-        service.redirect_urls.forEach((url, index) => invalidRedirectUrls[index] = !validRedirectUrlRegExp.test(url));
+        service.redirect_urls
+            .forEach((url, index) => invalidRedirectUrls[index] = !validRedirectUrlRegExp.test(url) && !isEmpty(url));
         const invalidACSLocations = {};
-        service.acs_locations.forEach((url, index) => invalidACSLocations[index] = !validRedirectUrlRegExp.test(url));
+        service.acs_locations
+            .forEach((url, index) => invalidACSLocations[index] = !validRedirectUrlRegExp.test(url) && !isEmpty(url));
         this.setState({
             invalidInputs: invalidInputs,
             invalidRedirectUrls: invalidRedirectUrls,
@@ -616,9 +618,14 @@ class ServiceOverview extends React.Component {
             case "policy":
                 return !invalidInputs.privacy_policy && !invalidInputs.accepted_user_policy;
             case "OIDC":
+                if (oidc_enabled && grants && !grants.includes("authorization_code")) {
+                 // debugger; // eslint-disable-line no-debugger
+                 }
+
                 return !oidc_enabled ||
-                    (!isEmpty(redirect_urls.filter(url => !isEmpty(url))) && Object.values(invalidRedirectUrls).every(val => !val) && !isEmpty(grants)
-                        && !isEmpty(entity_id));
+                    (!isEmpty(redirect_urls.filter(url => !isEmpty(url))) || !grants.includes("authorization_code"))
+                        && Object.values(invalidRedirectUrls).every(val => !val) && !isEmpty(grants)
+                        && !isEmpty(entity_id);
             case "SAML":
                 return !saml_enabled ||
                     (!isEmpty(acs_locations.filter(url => !isEmpty(url))) && Object.values(invalidACSLocations).every(val => !val) &&
@@ -1413,7 +1420,7 @@ class ServiceOverview extends React.Component {
                                   info={I18n.t("service.grants.authorization_code")}
                                   onChange={e => {
                                       this.toggleGrant("authorization_code", e.target.checked);
-                                      if (!e.target.checked) {
+                                      if (!e.target.checked && !grants.includes("device_code")) {
                                           setTimeout(() => this.toggleGrant("refresh_token", false), 250);
                                       }
                                   }}
@@ -1434,7 +1441,7 @@ class ServiceOverview extends React.Component {
                                               })}/>
 
                             </section>}
-                        {grants.includes("authorization_code") &&
+                        {(grants.includes("authorization_code") || grants.includes("device_code")) &&
                             <CheckBox name={I18n.t("service.grants.refresh_token")}
                                       className="checkbox"
                                       value={grants.includes("refresh_token")}
@@ -1445,7 +1452,12 @@ class ServiceOverview extends React.Component {
                                   className="checkbox"
                                   value={grants.includes("device_code")}
                                   info={I18n.t("service.grants.device_code")}
-                                  onChange={e => this.toggleGrant("device_code", e.target.checked)}
+                                  onChange={e => {
+                                      this.toggleGrant("device_code", e.target.checked);
+                                      if (!e.target.checked && !grants.includes("authorization_code")) {
+                                          setTimeout(() => this.toggleGrant("refresh_token", false), 250);
+                                      }
+                                  }}
                         />
                         {isEmpty(grants.filter(grant => !isEmpty(grant))) &&
                             <ErrorIndicator
@@ -1512,7 +1524,7 @@ class ServiceOverview extends React.Component {
                                                stopEvent(e);
                                                this.oidcClientSecretResetAction(true)
                                            }}>{I18n.t("service.oidc.title")}</a>}
-                                    ¬                                </span>
+                                </span>
                             </div>}
                     </>}
             </div>)
