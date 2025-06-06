@@ -104,7 +104,7 @@ export function me(config) {
         let sub = "urn:service_admin";
         sub = "urn:john";
         // sub = "urn:hannibal ";
-        const second_factor_confirmed = true;
+        const second_factor_confirmed = false;
         const rate_limited = false;
         // const second_factor_confirmed = false;
         // sub = "urn:unknown";
