@@ -590,7 +590,7 @@ def update_service():
     service = Service.query.filter(Service.id == service_id).one()
 
     if not is_application_admin():
-        forbidden = ["allow_restricted_orgs", "non_member_users_access_allowed", "entity_id", "abbreviation"]
+        forbidden = ["allow_restricted_orgs", "non_member_users_access_allowed", "abbreviation"]
         for attr in [fb for fb in forbidden if fb in data]:
             data[attr] = getattr(service, attr)
 

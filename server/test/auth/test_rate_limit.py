@@ -1,4 +1,4 @@
-from abstract_test import AbstractTest
+from server.test.abstract_test import AbstractTest
 from server.auth.rate_limit import rate_limit_reached
 from server.db.domain import User
 
