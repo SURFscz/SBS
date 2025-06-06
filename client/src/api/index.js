@@ -263,10 +263,6 @@ export function serviceByUuid4(uuid4) {
     return fetchJson(`/api/services/find_by_uuid4?uuid4=${encodeURIComponent(uuid4)}`, {}, {}, false);
 }
 
-export function serviceByEntityId(entityid) {
-    return fetchJson(`/api/services/find_by_entity_id?entity_id=${encodeURIComponent(entityid)}`, {}, {}, false);
-}
-
 export function allServices(includeCounts) {
     const query = includeCounts ? "?include_counts=true" : "";
     return fetchJson(`/api/services/all${query}`, {}, {}, false);
@@ -279,11 +275,6 @@ export function allServicesOptimized() {
 export function mineServicesOptimized() {
     return fetchJson("/api/services/mine_optimized");
 }
-
-export function mineServices() {
-    return fetchJson("/api/services/mine");
-}
-
 
 export function createService(service) {
     return postPutJson("/api/services", service, "post", false);
