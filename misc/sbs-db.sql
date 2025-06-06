@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision 11ab72ac894c (head)
+-- Dump of empty SBS database, alembic revision 11307232e8e0 (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('11ab72ac894c');
+INSERT INTO `alembic_version` VALUES ('11307232e8e0');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_key_units`;
@@ -800,9 +800,6 @@ CREATE TABLE `service_requests` (
   `security_email` varchar(255) DEFAULT NULL,
   `privacy_policy` varchar(255) DEFAULT NULL,
   `accepted_user_policy` varchar(255) DEFAULT NULL,
-  `connection_type` varchar(255) DEFAULT NULL,
-  `redirect_urls` text,
-  `saml_metadata` text,
   `saml_metadata_url` varchar(255) DEFAULT NULL,
   `comments` text,
   `requester_id` int(11) NOT NULL,
@@ -810,9 +807,6 @@ CREATE TABLE `service_requests` (
   `status` varchar(255) DEFAULT NULL,
   `uuid4` varchar(255) NOT NULL,
   `rejection_reason` text,
-  `grants` text,
-  `is_public_client` tinyint(1) DEFAULT '0',
-  `oidc_client_secret` varchar(255) DEFAULT NULL,
   `entity_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `service_requests_uuid4` (`uuid4`),
