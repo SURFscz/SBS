@@ -1,5 +1,5 @@
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from flask import current_app, session
 from werkzeug.exceptions import TooManyRequests
@@ -36,6 +36,7 @@ def rate_limit_reached(user: User):
     value = redis.get(key)
     rate_limit_info = json.loads(value) if value else {"date": dt_now().isoformat(), "count": 0}
     first_guess = datetime.fromisoformat(rate_limit_info["date"])
+    first_guess.replace(tzinfo=timezone.utc)
     seconds_ago = dt_now() - timedelta(hours=0, minutes=0, seconds=30)
     count = rate_limit_info["count"]
     rate_limit = current_app.app_config.rate_limit_totp_guesses_per_30_seconds
