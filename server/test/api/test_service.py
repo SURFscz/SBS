@@ -11,7 +11,7 @@ from server.db.domain import Service, Organisation, ServiceInvitation, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_network_entity_id, unihard_name, \
     service_network_name, service_scheduler_name, service_wiki_name, service_storage_name, \
-    service_cloud_name, service_storage_entity_id, service_ssh_name, unifra_name, unihard_secret, \
+    service_cloud_name, service_ssh_name, unifra_name, unihard_secret, \
     user_jane_name, user_roger_name, service_sram_demo_sp, umcpekela_name, service_monitor_name, read_image, \
     service_demo_sp_name
 
@@ -191,7 +191,7 @@ class TestService(AbstractTest):
         self.put("/api/services", body=service, with_basic_auth=False, response_status_code=403)
 
     def test_service_update_disallowed(self):
-        disallowed_fields = ["allow_restricted_orgs", "non_member_users_access_allowed", "entity_id", "abbreviation"]
+        disallowed_fields = ["allow_restricted_orgs", "non_member_users_access_allowed", "abbreviation"]
         immutable_fields = ["sweep_scim_last_run", "ldap_password", "scim_bearer_token", "oidc_client_secret"]
 
         service = self._find_by_name(service_cloud_name)
@@ -405,7 +405,7 @@ class TestService(AbstractTest):
 
         self.assertEqual(True, service.allow_restricted_orgs)
         self.assertEqual(False, service.non_member_users_access_allowed)
-        self.assertEqual(service_storage_entity_id, service.entity_id)
+        self.assertEqual("https://changed", service.entity_id)
         self.assertEqual("storage", service.abbreviation)
 
     def test_service_delete(self):
