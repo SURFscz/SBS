@@ -32,6 +32,6 @@ dnspython==2.7.0
 bcrypt==4.3.0
 gunicorn==23.0.0
 puremagic==1.29
-click==8.1.8
+click==8.2.1
 paramiko==3.5.1
 git+https://github.com/SURFscz/flasgger@surf/main#egg=flasgger
