@@ -14,7 +14,7 @@ munch==4.0.0
 python2-secrets==1.0.5
 pytz==2025.2
 requests==2.32.4
-urllib3==2.4.0
+urllib3==2.5.0
 websockets==15.0.1
 redis==6.2.0
 pyotp==2.9.0
