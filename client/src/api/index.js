@@ -347,6 +347,10 @@ export function resetOidcClientSecret(service) {
     return fetchJson(`/api/services/reset_oidc_client_secret/${service.id}`);
 }
 
+export function generateOidcClientID() {
+    return fetchJson(`/api/services/generate_oidc_client_id`);
+}
+
 export function resetScimBearerToken(service, scim_bearer_token) {
     const body = {
         scim_bearer_token: scim_bearer_token,
