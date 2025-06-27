@@ -2742,7 +2742,7 @@ const nl = {
             info: "Maak units om afdelingen of projecten binnen je organisatie te organiseren. Managers kunnen worden toegewezen aan specifieke units om hun activiteiten te beheren.",
         },
         labels: {
-            info: "Gebruik labels om algemene eigenschappen voor samenwerkingen binnen je organisatie te definiëren. Labels worden gedeeld met de gekoppelde applicaties en helpen bij het beheren en organiseren van je leden.",
+            info: "Gebruik labels om algemene eigenschappen voor samenwerkingen binnen je organisatie te definiëren. Labels worden gedeeld met gekoppelde applicaties.",
             name: "Labelnaam",
             defaultFor: "Standaard voor",
             defaultForPlaceholder: "Alle samenwerkingen in alle units"
