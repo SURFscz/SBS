@@ -3,6 +3,7 @@ import logging
 import time
 
 from flask import jsonify
+from sqlalchemy import or_
 
 from server.cron.shared import obtain_lock
 from server.db.audit_mixin import AuditLog
@@ -32,7 +33,7 @@ def _do_orphan_users(app):
         excluded_user_accounts = [user.uid for user in app.app_config.excluded_user_accounts]
 
         audit_log_subquery = ~AuditLog.query \
-            .filter(AuditLog.user_id == User.id) \
+            .filter(or_(AuditLog.user_id == User.id, AuditLog.subject_id == User.id))\
             .filter(AuditLog.target_type.not_in(["aups", "users"])) \
             .exists()
         users = User.query.filter(audit_log_subquery) \
