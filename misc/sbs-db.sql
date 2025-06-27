@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision 11307232e8e0 (head)
+-- Dump of empty SBS database, alembic revision 46fd9d8d4716 (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('11307232e8e0');
+INSERT INTO `alembic_version` VALUES ('46fd9d8d4716');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_key_units`;
@@ -630,6 +630,24 @@ CREATE TABLE `pam_sso_sessions` (
 LOCK TABLES `pam_sso_sessions` WRITE;
 /*!40000 ALTER TABLE `pam_sso_sessions` DISABLE KEYS */;
 /*!40000 ALTER TABLE `pam_sso_sessions` ENABLE KEYS */;
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `rate_limits_infos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `rate_limits_infos` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `last_accessed_date` datetime NOT NULL,
+  `count` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `rate_limits_infos_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+LOCK TABLES `rate_limits_infos` WRITE;
+/*!40000 ALTER TABLE `rate_limits_infos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `rate_limits_infos` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `schac_home_organisations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
