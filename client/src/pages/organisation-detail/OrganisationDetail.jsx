@@ -37,7 +37,7 @@ class OrganisationDetail extends React.Component {
             invitation: null,
             organisation: {},
             loading: true,
-            tab: "overview",
+            tab: "collaborations",
             tabs: [],
             firstTime: false,
             confirmationDialogOpen: false,
