@@ -37,7 +37,7 @@ class OrganisationDetail extends React.Component {
             invitation: null,
             organisation: {},
             loading: true,
-            tab: "overview",
+            tab: "collaborations",
             tabs: [],
             firstTime: false,
             confirmationDialogOpen: false,
@@ -147,13 +147,13 @@ class OrganisationDetail extends React.Component {
         const tabs = isInvite ? [
             this.getCollaborationsTab(organisation),
         ] : [
-            isAdmin ? this.getOrganisationOverviewTab(organisation) : null,
             this.getCollaborationsTab(organisation),
             this.getCollaborationRequestsTab(organisation),
             this.getOrganisationAdminsTab(organisation, user),
             this.getServiceConnectionRequestsTab(organisation),
             config.api_keys_enabled ? this.getAPIKeysTab(organisation, user) : null,
-            this.getUsersTab(organisation)
+            this.getUsersTab(organisation),
+            isAdmin ? this.getOrganisationOverviewTab(organisation) : null
         ];
         return tabs.filter(tab => tab !== null);
     }
@@ -205,6 +205,7 @@ class OrganisationDetail extends React.Component {
         );
 
     }
+
     getCollaborationsTab = organisation => {
         return (<div key="collaborations" name="collaborations"
                      label={I18n.t("home.tabs.orgCollaborations", {count: (organisation.collaborations || []).length})}>
