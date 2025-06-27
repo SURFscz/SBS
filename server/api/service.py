@@ -688,6 +688,12 @@ def reset_ldap_password(service_id):
     return {"ldap_password": password}, 200
 
 
+@service_api.route("/generate_oidc_client_id", strict_slashes=False)
+@json_endpoint
+def generate_oidc_client_id():
+    return {"oidc_client_id": f"SURFACCESS-{uuid.uuid4()}"}, 200
+
+
 @service_api.route("/reset_oidc_client_secret/<service_id>", strict_slashes=False)
 @json_endpoint
 def reset_oidc_client_secret(service_id):

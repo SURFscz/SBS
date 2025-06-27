@@ -3,7 +3,7 @@ import {
     allCRMOrganisations,
     createServiceToken,
     deleteService,
-    deleteServiceToken,
+    deleteServiceToken, generateOidcClientID,
     parseSAMLMetaData,
     requestDeleteService,
     resetLdapPassword,
@@ -392,18 +392,11 @@ class ServiceOverview extends React.Component {
         this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
     });
 
-    validateServiceEntityId = (e, protocol) => {
+    validateServiceEntityId = e => {
         let val = e.target.value;
-        if (protocol === "oidc") {
-            val = val.replaceAll(":", "@");
-        }
         serviceEntityIdExists(val, this.props.service.entity_id).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, entity_id: json}});
-            if (protocol === "oidc") {
-                const {service} = this.state;
-                this.setState({service: {...service, entity_id: val}});
-            }
-        })
+        });
     };
 
     validateServiceAbbreviation = e => serviceAbbreviationExists(sanitizeShortName(e.target.value), this.props.service.abbreviation).then(json => {
@@ -618,14 +611,10 @@ class ServiceOverview extends React.Component {
             case "policy":
                 return !invalidInputs.privacy_policy && !invalidInputs.accepted_user_policy;
             case "OIDC":
-                if (oidc_enabled && grants && !grants.includes("authorization_code")) {
-                 // debugger; // eslint-disable-line no-debugger
-                 }
-
                 return !oidc_enabled ||
                     (!isEmpty(redirect_urls.filter(url => !isEmpty(url))) || !grants.includes("authorization_code"))
-                        && Object.values(invalidRedirectUrls).every(val => !val) && !isEmpty(grants)
-                        && !isEmpty(entity_id);
+                    && Object.values(invalidRedirectUrls).every(val => !val) && !isEmpty(grants)
+                    && !isEmpty(entity_id);
             case "SAML":
                 return !saml_enabled ||
                     (!isEmpty(acs_locations.filter(url => !isEmpty(url))) && Object.values(invalidACSLocations).every(val => !val) &&
@@ -1489,11 +1478,7 @@ class ServiceOverview extends React.Component {
                             </div>
                         </div>}
                         <InputField value={service.entity_id}
-                                    onChange={this.changeServiceProperty("entity_id", false, {
-                                        ...alreadyExists, entity_id: false
-                                    })}
-                                    placeholder={I18n.t("service.entity_idPlaceHolder")}
-                                    onBlur={e => this.validateServiceEntityId(e, "oidc")}
+                                    disabled={true}
                                     name={I18n.t("service.entity_id_oidc")}
                                     toolTip={I18n.t("service.entity_idTooltip")}
                                     required={true}
@@ -1540,15 +1525,24 @@ class ServiceOverview extends React.Component {
                 saml_enabled: e.target.checked ? false : service.saml_enabled,
                 grants: e.target.checked ? ["authorization_code"] : []
             }
+        }, () => {
+            const {service: updatedService} = this.state;
+            if (e.target.checked) {
+                Promise.all([resetOidcClientSecret(updatedService), generateOidcClientID()])
+                    .then(res =>
+                        this.setState({
+                            oidcClientSecret: res[0].oidc_client_secret,
+                            service: {...updatedService, entity_id: res[1].oidc_client_id}
+                        }));
+            } else {
+                const {entity_id} = updatedService;
+                const newState = {oidcClientSecret: null}
+                if (!isEmpty(entity_id) && entity_id.startsWith("SURFACCESS")) {
+                    newState.service = {...updatedService, entity_id: null}
+                }
+                this.setState(newState);
+            }
         });
-        if (e.target.checked) {
-            resetOidcClientSecret(service)
-                .then(res => this.setState({
-                    oidcClientSecret: res.oidc_client_secret
-                }));
-        } else {
-            this.setState({oidcClientSecret: null});
-        }
     }
 
     samlEnabledChanged = (service, e) => {
@@ -1589,7 +1583,7 @@ class ServiceOverview extends React.Component {
                                                 ...alreadyExists, entity_id: false
                                             })}
                                             placeholder={I18n.t("service.entity_idPlaceHolder")}
-                                            onBlur={e => this.validateServiceEntityId(e, "saml")}
+                                            onBlur={e => this.validateServiceEntityId(e)}
                                             name={I18n.t("service.samlEntityID")}
                                             toolTip={I18n.t("service.entity_idTooltip")}
                                             required={true}

@@ -605,6 +605,10 @@ class TestService(AbstractTest):
         service = self._find_by_name()
         self.assertIsNone(service.get("ldap_password"))
 
+    def test_generate_oidc_client_id(self):
+        res = self.get(f"/api/services/generate_oidc_client_id")
+        self.assertTrue(res["oidc_client_id"].startswith("SURFACCESS-"))
+
     def test_reset_oidc_client_secret(self):
         service_id = self.find_entity_by_name(Service, service_storage_name).id
         res = self.get(f"/api/services/reset_oidc_client_secret/{service_id}")
