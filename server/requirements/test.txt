@@ -10,7 +10,7 @@ pytest-xdist==3.7.0
 responses==0.25.7
 alembic==1.16.2
 freezegun==1.5.2
-coverage==7.8.2
+coverage==7.9.1
 mock==5.2.0
 Faker==37.3.0
 pipdeptree==2.26.1
