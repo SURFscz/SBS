@@ -2742,7 +2742,7 @@ const en = {
             info: "Create units to organize departments or projects within your organization. Managers can be assigned to specific units to oversee their activities.",
         },
         labels: {
-            info: "Use labels to define overall properties for collaborations within your organisation. Labels are shared with the connected applications, helping you manage and organize your members.",
+            info: "Use labels to define overall properties for collaborations within your organisation. Labels are shared with the connected applications.",
             name: "Label name",
             defaultFor: "Default for",
             defaultForPlaceholder: "All collaborations in all units"
