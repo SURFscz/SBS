@@ -1052,3 +1052,13 @@ class UserNonce(Base, db.Model):
     service = db.relationship("Service")
     created_at = db.Column("created_at", TZDateTime(), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
+
+
+class RateLimitInfo(Base, db.Model):
+    __tablename__ = "rate_limits_infos"
+    metadata = metadata
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    user = db.relationship("User")
+    last_accessed_date = db.Column("last_accessed_date", TZDateTime(), nullable=False)
+    count = db.Column("count", db.Integer(), nullable=False)

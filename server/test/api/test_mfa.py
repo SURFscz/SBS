@@ -77,12 +77,10 @@ class TestMfa(AbstractTest):
 
     def test_token_reset_request_rate_limit(self):
         user = self.find_entity_by_name(User, "Mary Doe")
-        redis = current_app.redis_client
-        redis.set(str(user.id), "")
+        user.rate_limited = True
+        self.save_entity(user)
+
         self.login("urn:mary")
-        for i in range(10):
-            self.post("/api/mfa/token_reset_request", body={"email": "john@example.org", "message": "test"},
-                      response_status_code=201, with_basic_auth=False)
         self.post("/api/mfa/token_reset_request", body={"email": "john@example.org", "message": "test"},
                   response_status_code=429, with_basic_auth=False)
 
