@@ -112,7 +112,7 @@ jobs:
       - name: Run tests with coverage
         run: |
           cd ./server
-          coverage run -m pytest test --cov-report xml --cov=server --numprocesses=4
+          coverage run -m pytest test --cov-report xml --cov=server  --junitxml=junit.xml -o junit_family=legacy --numprocesses=4
         timeout-minutes: 20
 
       - name: Upload coverage to Codecov
@@ -120,6 +120,12 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
         if: success()
+
+      - name: Upload test results to Codecov
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+        if: ${{ !cancelled() }}
 
 
   Client_build:
