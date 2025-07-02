@@ -376,15 +376,21 @@ class SecondFactorAuthentication extends React.Component {
     renderEnterResetCode = (resetCode, resetCodeError, busy) => {
         const submitDisabled = resetCode.length === 0 || busy;
         return (
-            <div>
-                <section className="register-header">
-                    <h1>{I18n.t("mfa.reset.title")}</h1>
-                    <p dangerouslySetInnerHTML={{
-                        __html: DOMPurify.sanitize(`${I18n.t("mfa.reset.info1")}`)
-                    }}/>
-                </section>
-                <div className="step-actions center">
-                    <div className="input-field-container-large">
+            <div className="request-reset-container">
+                <h1>{I18n.t("mfa.reset.title")}</h1>
+                <div className="request-reset">
+                    <div className="left">
+                        <ResetTokenIcon/>
+                        <h3>{I18n.t("mfa.lost.how")}</h3>
+                        <ul>
+                            {["1", "2", "3", "4", "5"].map(i =>
+                                <li dangerouslySetInnerHTML={{
+                                    __html: DOMPurify.sanitize(I18n.t(`mfa.lost.info${i}`))
+                                }}/>
+                            )}
+                        </ul>
+                    </div>
+                    <div className="right">
                         <InputField value={resetCode}
                                     onEnter={this.submitResetCode}
                                     placeholder={I18n.t("mfa.reset.resetCodePlaceholder")}
