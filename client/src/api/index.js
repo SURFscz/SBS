@@ -198,7 +198,7 @@ export function queryForUsers(q) {
 
 //MFA
 export function get2fa() {
-    return fetchJson("/api/mfa/get2fa");
+    return fetchJson("/api/mfa/get2fa", {}, {}, false);
 }
 
 export function verify2fa(totp) {

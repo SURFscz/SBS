@@ -54,7 +54,8 @@ class SecondFactorAuthentication extends React.Component {
         if (user.rate_limited && !resetSuccessful) {
             this.setState({rate_limited: true, loading: false});
         } else if (!user.second_factor_auth || update) {
-            get2fa().then(res => {
+            get2fa()
+                .then(res => {
                 this.setState({
                     qrCode: res.qr_code_base64,
                     idp_name: res.idp_name || I18n.t("mfa.register.unknownIdp"),
@@ -62,6 +63,8 @@ class SecondFactorAuthentication extends React.Component {
                     loading: false,
                     resetSuccessful: false,
                 }, this.focusCode);
+            }).catch(() => {
+                this.props.history.push("/login");
             });
         } else {
             this.setState({
