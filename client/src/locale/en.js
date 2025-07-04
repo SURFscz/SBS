@@ -2323,11 +2323,11 @@ const en = {
         },
         verify: {
             title: "Verify your identity",
-            info1: "Enter the code from your authenticator app for <strong>SURF Research Access Management</strong>.",
+            info1: "Enter the code from your authenticator app for SURF Research Access Management.",
             explanation: "Two-factor authentication",
             signIn: "Verify",
             problems: "Problems verifying?",
-            invalid: "Invalid verification code",
+            invalid: "Invalid code",
             resetRequest: "Request a reset",
             resetToken: "Use a reset code",
             rateLimited: "Verification blocked",

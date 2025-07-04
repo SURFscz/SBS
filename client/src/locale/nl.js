@@ -2323,7 +2323,7 @@ const nl = {
         },
         verify: {
             title: "Verifieer je identiteit",
-            info1: "Vul de code uit je authenticator-app voor <strong>SURF Research Access Management</strong> in.",
+            info1: "Vul de code uit je authenticator-app voor SURF Research Access Management in.",
             explanation: "Tweestapsverificatie",
             signIn: "Verifieer",
             problems: "Problemen met verifiëren?",
