@@ -14,7 +14,7 @@ security:
   - Organisation: [ 'Authorization' ]
 
 parameters:
-  - name:
+  - name: Authorization
     in: header
     description: Bearer API key
     required: true
