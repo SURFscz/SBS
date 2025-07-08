@@ -11,11 +11,7 @@
         padding: 0 15px;
     }
 
-    &.verify {
-        max-width: 570px;
-    }
-
-    &.reset-request {
+    &.verify, &.reset-request {
         max-width: 920px;
     }
 
@@ -32,7 +28,7 @@
         }
     }
 
-    .authenticator-problems {
+    .authenticator-problems, .request-reset {
         padding: $medium-padding 0;
         display: flex;
         gap: 60px;
