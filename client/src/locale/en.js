@@ -2284,30 +2284,30 @@ const en = {
     },
     mfa: {
         register: {
-            title: "Two factor authentication required",
+            title: "Set up verification",
             titleUpdate: "Add two factor authentication device",
             info1: "SURF Research Access Management now requires two-factor authentication. This means you have to set up an extra check to verify it's you.<br/><br/>" +
                 "Did you already use a second factor to sign in at {{name}}? Please ",
             info11: " so we can fix that.",
             contactUs: "contact us",
-            info2: "To setup two factor authentication, take the following steps:",
+            info2: "Verification is required. Set it up in your authenticator app.",
             step: "Stap {{nbr}}",
-            getApp: "1. Add SURF Research Access Management to your authenticator app",
+            getApp: "Scan the code with your authenticator app",
             unknownIdp: "your institution",
             unknownFeedbackIdp: "my institution",
-            getAppUpdate: "2. Add SURF Research Access Management to your authenticator app",
+            getAppUpdate: "Scan the code with your authenticator app",
             new: "new ",
-            getAppInfo: "Open or install the Google (<a href=\"https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en&gl=US\" target=\"_blank\">Android</a> of <a href=\"https://apps.apple.com/us/app/google-authenticator/id388497605\" target=\"_blank\">iOS</a>) of Microsoft (<a href=\"https://play.google.com/store/apps/details?id=com.azure.authenticator&hl=en&gl=US\" target=\"_blank\">Android</a> of <a href=\"https://apps.apple.com/us/app/microsoft-authenticator/id983156458\" target=\"_blank\">iOS</a>) Authenticator app on your {{new}}mobile device",
-            addSRAM: "Tap the '+' icon in the app",
+            getAppInfo: "Open or install the Google (<a href=\"https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en&gl=US\" target=\"_blank\">Android</a> of <a href=\"https://apps.apple.com/us/app/google-authenticator/id388497605\" target=\"_blank\">iPhone</a>) of Microsoft (<a href=\"https://play.google.com/store/apps/details?id=com.azure.authenticator&hl=en&gl=US\" target=\"_blank\">Android</a> of <a href=\"https://apps.apple.com/us/app/microsoft-authenticator/id983156458\" target=\"_blank\">iPhone</a>) Authenticator app on your {{new}}mobile device",
+            addSRAM: "Tap the '+' or QR icon in the app",
             scan: "Scan the QR code using your devices's camera",
             scanInfo: "Open the authenticator app and:",
             showSecret: "Show the shared secret",
-            verificationCode: "2. Enter verification code",
-            verificationCodeUpdate: "3. Enter verification code",
+            verificationCode: "Enter the code",
+            verificationCodeUpdate: "Enter the code",
             verificationCodeInfo: "Enter the verification code you see in the app",
             verify: "Verify and activate",
             next: "Next",
-            feedback: "I had to setup two factor authentication with SURF Research Access Management, but I already used two factor authentication to sign in with {{name}}.\n\n" +
+            feedback: "I had to set up two factor authentication with SURF Research Access Management, but I already used two factor authentication to sign in with {{name}}.\n\n" +
                 "Thanks for your feedback! Feel free to add anything else."
         },
         update: {
@@ -2322,17 +2322,17 @@ const en = {
             preValidatedFlash: "Correct!"
         },
         verify: {
-            title: "Enter your verification code",
-            info1: "Enter the verificatie code from your authenticator app for <strong>SURF Research Access Management</strong> to verify your identity.",
+            title: "Verify your identity",
+            info1: "Enter the code from your authenticator app for <strong>SURF Research Access Management</strong>.",
             explanation: "Two-factor authentication",
             signIn: "Verify",
-            problems: "Can't log in?",
-            invalid: "Invalid verification code",
-            resetRequest: "Reset your verfication code",
+            problems: "Problems verifying?",
+            invalid: "This code is invalid",
+            resetRequest: "Request a reset",
             resetToken: "Use a reset code",
-            rateLimited: "Verification code blocked",
-            rateLimitedInfo: "Your account has been blocked. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> to request activation.",
-            rateLimitedResetRequest: "Request a reset code",
+            rateLimited: "Verification blocked",
+            rateLimitedInfo: "Your account has been blocked. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for reactivation.",
+            rateLimitedResetRequest: "Request a reset",
             rateLimitedResetToken: "Use a reset code",
         },
         profile: {
@@ -2341,28 +2341,28 @@ const en = {
             tooltip: "Two-Factor Authentication (2FA) adds an additional layer of security to your profile. It requires an additional login credential –beyond just your username and password– to gain access, and getting that second credential requires access to your mobile authenticator app.",
             handledByIdp: "Two-factor authentication is handled by {{name}}.",
             institution: "your institution",
-            handledBySRAM: "Two-factor authentication with authenticator app for mobile phone is configured.",
+            handledBySRAM: "Two-factor authentication is handled by an authenticator app on a phone (TOTP).",
             edit: "Edit"
         },
         lost: {
-            title: "Request a reset code",
+            title: "Request a reset",
             how: "How this works",
-            info1: "Ask an admin for a reset code",
-            info2: "<strong>The admin will receive an email</strong> with your request",
+            info1: "Request a reset from an admin",
+            info2: "The admin will <strong>receive an email</strong> with your request",
             info3: "They will confirm you are you",
             info4: "Then you will receive a <strong>reset code</strong>",
-            info5: "With the reset code you can configure your verification code again",
-            select: "Who do you want to ask for a reset code?",
+            info5: "Use the reset code to set up verification in your <strong>authenticator app</strong>",
+            select: "Your request will be sent to:",
             organisationNamePlatformAdmin: "",
-            displayNamePlatformAdmin: "SRAM support",
+            displayNamePlatformAdmin: "SURF support",
             respondent: "Your request will be sent to:",
-            message: "Message to the admin(s)",
-            sendMail: "Request a reset code",
-            flash: "Your request for a reset code has been sent"
+            message: "Message to the admin",
+            sendMail: "Request a reset",
+            flash: "Your request for a reset has been sent"
         },
         reset: {
-            title: "Reset your verification code",
-            info1: "Enter your received reset code",
+            title: "Request a reset",
+            info1: "Enter the reset code you received ",
             submit: "Reset",
             resetCodePlaceholder: "Reset code",
             invalid: "Invalid reset code",
@@ -2377,7 +2377,7 @@ const en = {
         info4: "<p>You are logged into SURF Research Access Management, but none of the collaborations you are member of grant you access to <i>{{name}}</i>.</p><p>Contact your admins to enable access to this application.</p>",
         info5: "<p>You are logged into SURF Research Access Management, but you don't have access to <i>{{name}}</i>. The collaboration that is connected to application <i>{{name}}</i> is inactive.</p><p>Contact your admins to enable access to this application.</p>",
         info6: "<p>You are logged into SURF Research Access Management, but you don't have access to <i>{{name}}</i>. Your collaboration membership which grants you access to <i>{{name}}</i> is expired.</p><p>Contact your admins to enable access to this application.</p>",
-        ticket: "If the problem reoccurs, please contact SRAM support at " +
+        ticket: "If the problem reoccurs, please contact " +
             "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Application ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a> for help.",
         subject: "No access to application {{name}}",
         entityId: "Application ID",
@@ -2601,7 +2601,7 @@ const en = {
             "Start over on the <a href='/'>homepage</a> or contact us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>.",
         ssid_failed: "SURF Research Access Management requires two-factor authentication, an extra check to verify it's you.</br>" +
             "Unfortunately, this authentication from SURFsecureID has just failed.</br></br>" +
-            "Please copy & paste the following information and contact SRAM support at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for help.",
+            "Please copy & paste the following information and contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for help.",
         defaultCode: "urn:oasis:names:tc:SAML:2.0:status:Responder",
         defaultMessage: "",
     },
@@ -2697,7 +2697,7 @@ const en = {
         supportTitle: "Get support",
         supportSubTitle: "Make sure to include the information below.",
         supportBullets: {
-            solutions: "If you have tried the solutions above, or think you should have access already, you can contact SRAM support at " +
+            solutions: "If you have tried the solutions above, or think you should have access already, you can contact " +
                 "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Application ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a> for help."
         }
     },
