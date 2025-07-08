@@ -2362,7 +2362,7 @@ const nl = {
         },
         reset: {
             title: "Reset aanvragen",
-            info1: "Voer de ontvangen resetcode in",
+            info1: "Voer de resetcode die je ontvangen hebt in",
             submit: "Reset",
             resetCodePlaceholder: "Resetcode",
             invalid: "Ongeldige resetcode",

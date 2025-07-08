@@ -391,6 +391,7 @@ class SecondFactorAuthentication extends React.Component {
                         </ul>
                     </div>
                     <div className="right">
+                        <h3>{I18n.t("mfa.reset.info1")}</h3>
                         <InputField value={resetCode}
                                     onEnter={this.submitResetCode}
                                     placeholder={I18n.t("mfa.reset.resetCodePlaceholder")}

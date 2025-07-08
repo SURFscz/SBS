@@ -2362,7 +2362,7 @@ const en = {
         },
         reset: {
             title: "Request a reset",
-            info1: "Enter your received reset code",
+            info1: "Enter the reset code you received ",
             submit: "Reset",
             resetCodePlaceholder: "Reset code",
             invalid: "Invalid reset code",
