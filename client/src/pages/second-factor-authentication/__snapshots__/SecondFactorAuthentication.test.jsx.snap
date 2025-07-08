@@ -10,7 +10,7 @@ exports[`SecondFactorAuthentication matches snapshot with default props 1`] = `
         class="register-header"
       >
         <h1>
-          Verification code blocked
+          Verification blocked
         </h1>
         <p>
           Your account has been blocked. Please contact 
@@ -19,7 +19,7 @@ exports[`SecondFactorAuthentication matches snapshot with default props 1`] = `
           >
             sram-support@surf.nl
           </a>
-           to request activation.
+           for reactivation.
         </p>
       </section>
     </div>
