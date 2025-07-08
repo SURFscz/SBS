@@ -2377,7 +2377,7 @@ const nl = {
         info4: "<p>Je bent ingelogd via SURF Research Access Management, maar geen van de samenwerking(en) waar je lid van bent geven toegang tot <i>{{name}}</i>.</p><p>Neem contact op met de beheerders voor toegang tot deze applicatie.</p>",
         info5: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i> omdat de samenwerking(en) waarvan je lid bent niet actief zijn.</p><p>Neem contact op met de beheerders van jouw samenwerking(en) voor toegang tot deze applicatie.</p>",
         info6: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. Je lidmaatschap van de samenwerking(en) waar je momenteel lid van bent zijn verlopen.</p><p>Neem contact op met de beheerders van jouw samenwerking(en) voor toegang tot deze applicatie.</p>",
-        ticket: "Als je wil, kun je contact opnemen met SURF support " +
+        ticket: "Als je wil, kun je contact opnemen met " +
             "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Applicatie ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a> voor hulp.",
         subject: "Geen toegang tot applicatie {{name}}",
         entityId: "Applicatie ID",
@@ -2601,7 +2601,7 @@ const nl = {
             "Probeer opnieuw vanaf de <a href='/'>thuispagina</a> of neem contact met ons op via <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>.",
         ssid_failed: "SURF Research Access Management vereist twee-factor-authenticatie, een extra controle dat jij het bent.</br>" +
             "Helaas is deze authenticatie door SURFsecureID zojuist mislukt.</br></br>" +
-            "Kopieer en plak de volgende informatie en neem contact op met SURF support op <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> voor hulp.",
+            "Kopieer en plak de volgende informatie en neem contact op met <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> voor hulp.",
         defaultCode: "urn:oasis:names:tc:SAML:2.0:status:Responder",
         defaultMessage: ""
     },

@@ -2377,7 +2377,7 @@ const en = {
         info4: "<p>You are logged into SURF Research Access Management, but none of the collaborations you are member of grant you access to <i>{{name}}</i>.</p><p>Contact your admins to enable access to this application.</p>",
         info5: "<p>You are logged into SURF Research Access Management, but you don't have access to <i>{{name}}</i>. The collaboration that is connected to application <i>{{name}}</i> is inactive.</p><p>Contact your admins to enable access to this application.</p>",
         info6: "<p>You are logged into SURF Research Access Management, but you don't have access to <i>{{name}}</i>. Your collaboration membership which grants you access to <i>{{name}}</i> is expired.</p><p>Contact your admins to enable access to this application.</p>",
-        ticket: "If the problem reoccurs, please contact SURF support at " +
+        ticket: "If the problem reoccurs, please contact " +
             "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Application ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a> for help.",
         subject: "No access to application {{name}}",
         entityId: "Application ID",
@@ -2601,7 +2601,7 @@ const en = {
             "Start over on the <a href='/'>homepage</a> or contact us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>.",
         ssid_failed: "SURF Research Access Management requires two-factor authentication, an extra check to verify it's you.</br>" +
             "Unfortunately, this authentication from SURFsecureID has just failed.</br></br>" +
-            "Please copy & paste the following information and contact SURF support at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for help.",
+            "Please copy & paste the following information and contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for help.",
         defaultCode: "urn:oasis:names:tc:SAML:2.0:status:Responder",
         defaultMessage: "",
     },
@@ -2697,7 +2697,7 @@ const en = {
         supportTitle: "Get support",
         supportSubTitle: "Make sure to include the information below.",
         supportBullets: {
-            solutions: "If you have tried the solutions above, or think you should have access already, you can contact SURF support at " +
+            solutions: "If you have tried the solutions above, or think you should have access already, you can contact " +
                 "<a href='mailto:sram-support@surf.nl?subject={{subject}}&body=Application ID: {{entityId}}%0D%0AIssuer ID: {{issuerId}}%0D%0AUser ID: {{userId}}%0D%0ATimestamp: {{timestamp}}'>sram-support@surf.nl</a> for help."
         }
     },
