@@ -2323,7 +2323,7 @@ const nl = {
         },
         verify: {
             title: "Verifieer je identiteit",
-            info1: "Vul de code uit je authenticator-app voor SURF Research Access Management in.",
+            info1: "Vul de code uit je authenticator-app voor <strong>SURF Research Access Management</strong> in.",
             explanation: "Tweestapsverificatie",
             signIn: "Verifieer",
             problems: "Problemen met verifiëren?",
@@ -2362,7 +2362,7 @@ const nl = {
         },
         reset: {
             title: "Reset aanvragen",
-            info1: "Voer de resetcode die je ontvangen hebt in",
+            info1: "Voer de ontvangen resetcode in",
             submit: "Reset",
             resetCodePlaceholder: "Resetcode",
             invalid: "Ongeldige resetcode",

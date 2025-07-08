@@ -2323,7 +2323,7 @@ const en = {
         },
         verify: {
             title: "Verify your identity",
-            info1: "Enter the code from your authenticator app for SURF Research Access Management.",
+            info1: "Enter the code from your authenticator app for <strong>SURF Research Access Management</strong>.",
             explanation: "Two-factor authentication",
             signIn: "Verify",
             problems: "Problems verifying?",
