@@ -199,7 +199,7 @@ jobs:
           path: "/tmp/sbs.tar.xz"
 
   # a little but of magic below: we build arm64 and amd64 images on separate native hosts
-  # the images are uplaoded by digests and then in a separate task we combine them into a manifest list
+  # the images are uploaded by digests and then in a separate task we combine them into a manifest list
   # see https://docs.docker.com/build/ci/github-actions/multi-platform/
   Docker_build:
     name: Build images
