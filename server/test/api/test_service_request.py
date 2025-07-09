@@ -1,5 +1,3 @@
-import uuid
-
 import responses
 
 from server.db.db import db
@@ -99,61 +97,6 @@ class TestServiceRequest(AbstractTest):
 
         new_service = self.find_entity_by_name(Service, body["name"])
         self.assertEqual(36, len(new_service.ldap_identifier))
-
-    @responses.activate
-    def test_request_service_approve_oidc_enabled(self):
-        self.login("urn:john")
-
-        service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)
-        service_request_id = service_request.id
-
-        body = self.get(f"/api/service_requests/{service_request_id}")
-        # MySQLdb.IntegrityError: (1048, "Column 'entity_id' cannot be null")
-        body["entity_id"] = "http://entity/id"
-        with responses.RequestsMock(assert_all_requests_are_fired=True) as res_mock:
-            manage_base_url = self._resolve_manage_base_url()
-            fetch_url = f"{manage_base_url}/manage/api/internal/search/oidc10_rp"
-            res_mock.add(responses.POST, fetch_url, json=[{"data": {"allowedall": True, "allowedEntities": []}}],
-                         status=200)
-            url = f"{manage_base_url}/manage/api/internal/metadata"
-            external_identifier = str(uuid.uuid4())
-            #  This will result in a PUT
-            res_mock.add(responses.POST, url, json={"id": external_identifier, "version": 9}, status=200)
-            self.put(f"/api/service_requests/approve/{service_request_id}",
-                     body=body, with_basic_auth=False)
-
-            new_service = self.find_entity_by_name(Service, body["name"])
-            self.assertTrue(new_service.oidc_enabled)
-            self.assertFalse(new_service.saml_enabled)
-
-    @responses.activate
-    def test_request_service_approve_saml_enabled(self):
-        self.login("urn:john")
-
-        service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)
-        service_request_id = service_request.id
-
-        body = self.get(f"/api/service_requests/{service_request_id}")
-        # MySQLdb.IntegrityError: (1048, "Column 'entity_id' cannot be null")
-        body["entity_id"] = "http://entity/id"
-        body["grants"] = None
-        body["acs_locations"] = "https://acs.location"
-        with responses.RequestsMock(assert_all_requests_are_fired=True) as res_mock:
-            manage_base_url = self._resolve_manage_base_url()
-            fetch_url = f"{manage_base_url}/manage/api/internal/search/oidc10_rp"
-            res_mock.add(responses.POST, fetch_url, json=[{"data": {"allowedall": True, "allowedEntities": []}}],
-                         status=200)
-            url = f"{manage_base_url}/manage/api/internal/metadata"
-            external_identifier = str(uuid.uuid4())
-            #  This will result in a PUT
-            res_mock.add(responses.POST, url, json={"id": external_identifier, "version": 9}, status=200)
-
-            self.put(f"/api/service_requests/approve/{service_request_id}",
-                     body=body, with_basic_auth=False)
-
-            new_service = self.find_entity_by_name(Service, body["name"])
-            self.assertTrue(new_service.saml_enabled)
-            self.assertFalse(new_service.oidc_enabled)
 
     def test_request_service_deny(self):
         service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)

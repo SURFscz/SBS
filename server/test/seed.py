@@ -818,11 +818,7 @@ def seed(db, app_config, skip_seed=False):
                                          contact_email="contact@gpt.org", support_email="support@gpt.org",
                                          security_email="security@gpt.org", privacy_policy="https://privacy_policy.org",
                                          accepted_user_policy="https://accepted_user_policy.org",
-                                         status="open", comments="Please", connection_type="openIDConnect",
-                                         grants="authorization_code",
-                                         oidc_client_secret="$2b$05$Ofi/IiatNIIoE2jYRNIkXO1v1e4U3GbisDkbOPiA.YO5GcFZPqdmS",
-                                         redirect_urls="https://redirect.org, https://redirect.alternative.org",
-                                         requester=sarah)
+                                         status="open", comments="Please", requester=sarah)
     persist_instance(db, service_request_gpt)
 
     sarah_user_nonce = UserNonce(user=sarah, continue_url="https://engine.surf.nl", nonce=sarah_nonce,
