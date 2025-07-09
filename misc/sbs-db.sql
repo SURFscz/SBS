@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision 46fd9d8d4716 (head)
+-- Dump of empty SBS database, alembic revision 5099c8ca2268 (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('46fd9d8d4716');
+INSERT INTO `alembic_version` VALUES ('5099c8ca2268');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_key_units`;
@@ -631,24 +631,6 @@ LOCK TABLES `pam_sso_sessions` WRITE;
 /*!40000 ALTER TABLE `pam_sso_sessions` DISABLE KEYS */;
 /*!40000 ALTER TABLE `pam_sso_sessions` ENABLE KEYS */;
 UNLOCK TABLES;
-DROP TABLE IF EXISTS `rate_limits_infos`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `rate_limits_infos` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `last_accessed_date` datetime NOT NULL,
-  `count` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `rate_limits_infos_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-LOCK TABLES `rate_limits_infos` WRITE;
-/*!40000 ALTER TABLE `rate_limits_infos` DISABLE KEYS */;
-/*!40000 ALTER TABLE `rate_limits_infos` ENABLE KEYS */;
-UNLOCK TABLES;
 DROP TABLE IF EXISTS `schac_home_organisations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -818,6 +800,9 @@ CREATE TABLE `service_requests` (
   `security_email` varchar(255) DEFAULT NULL,
   `privacy_policy` varchar(255) DEFAULT NULL,
   `accepted_user_policy` varchar(255) DEFAULT NULL,
+  `connection_type` varchar(255) DEFAULT NULL,
+  `redirect_urls` text,
+  `saml_metadata` text,
   `saml_metadata_url` varchar(255) DEFAULT NULL,
   `comments` text,
   `requester_id` int(11) NOT NULL,
@@ -825,6 +810,9 @@ CREATE TABLE `service_requests` (
   `status` varchar(255) DEFAULT NULL,
   `uuid4` varchar(255) NOT NULL,
   `rejection_reason` text,
+  `grants` text,
+  `is_public_client` tinyint(1) DEFAULT '0',
+  `oidc_client_secret` varchar(255) DEFAULT NULL,
   `entity_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `service_requests_uuid4` (`uuid4`),
@@ -903,6 +891,8 @@ CREATE TABLE `services` (
   `override_access_allowed_all_connections` tinyint(1) DEFAULT '0',
   `ldap_identifier` varchar(255) NOT NULL,
   `redirect_urls` text,
+  `saml_metadata` text,
+  `saml_metadata_url` varchar(255) DEFAULT NULL,
   `oidc_client_secret` varchar(255) DEFAULT NULL,
   `providing_organisation` varchar(255) DEFAULT NULL,
   `grants` text,
@@ -916,7 +906,6 @@ CREATE TABLE `services` (
   `crm_organisation_id` int(11) DEFAULT NULL,
   `support_email_unauthorized_users` tinyint(1) DEFAULT '0',
   `access_allowed_for_crm_organisation` tinyint(1) DEFAULT '0',
-  `acs_locations` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `services_unique_entity_id` (`entity_id`),
   UNIQUE KEY `services_uuid4` (`uuid4`),
