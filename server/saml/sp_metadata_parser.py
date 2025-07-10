@@ -38,4 +38,5 @@ def _do_parse(xml: BytesIO, raw_xml: str):
             if lang == "en":
                 result["organization_name"] = element.text
     result["acs_locations"] = acs_locations
+    result["xml"] = raw_xml
     return result

@@ -232,9 +232,13 @@ class Service extends React.Component {
         if (name === "saml_metadata_url") {
             parseSAMLMetaData(null, uri)
                 .then(metaData => this.setState({
-                    parsedSAMLMetaData: metaData.result,
+                    parsedSAMLMetaData: {
+                        ...metaData,
+                        acs_binding: metaData.acs_locations[0].binding,
+                        acs_location: metaData.acs_locations[0].location
+                    },
                     saml_metadata: metaData.xml,
-                    entity_id: metaData.result.entity_id,
+                    entity_id: metaData.entity_id,
                     parsedSAMLMetaDataURLError: false
                 }))
                 .catch(() => this.setState({

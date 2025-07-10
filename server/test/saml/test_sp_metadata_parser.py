@@ -18,7 +18,9 @@ class TestSPMetaDataParser(TestCase):
     def test_parse_metadata(self):
         xml = read_file("test/saml2/sp_meta_data.xml")
         meta_data = parse_metadata_xml(xml)
-        self.assertDictEqual(meta_data, expected_dict)
+        received_xml = meta_data.pop("xml")
+        self.assertEqual(received_xml, xml)
+        self.assertDictEqual(expected_dict, meta_data)
 
     @responses.activate
     def test_parse_metadata_url(self):
@@ -26,4 +28,6 @@ class TestSPMetaDataParser(TestCase):
         url = "http://localhost:8099/sp/metadata"
         responses.add(responses.GET, url, body=xml, status=200, content_type="text/xml")
         meta_data = parse_metadata_url(url)
-        self.assertDictEqual(meta_data, expected_dict)
+        received_xml = meta_data.pop("xml")
+        self.assertEqual(received_xml, xml)
+        self.assertDictEqual(expected_dict, meta_data)

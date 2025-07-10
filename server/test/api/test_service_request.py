@@ -252,6 +252,8 @@ class TestServiceRequest(AbstractTest):
         xml = read_file("test/saml2/sp_meta_data.xml")
         meta_data = self.post("/api/service_requests/metadata/parse", body={"meta_data_xml": xml},
                               response_status_code=200, with_basic_auth=False)
+        received_xml = meta_data.pop("xml")
+        self.assertEqual(received_xml, xml)
         self.assertDictEqual(expected_metadata_dict, meta_data)
 
     @responses.activate
@@ -263,6 +265,8 @@ class TestServiceRequest(AbstractTest):
             request_mocks.add(responses.GET, url, body=xml, status=200, content_type="text/xml")
             meta_data = self.post("/api/service_requests/metadata/parse", body={"meta_data_url": url},
                                   response_status_code=200, with_basic_auth=False)
+            received_xml = meta_data.pop("xml")
+            self.assertEqual(received_xml, xml)
             self.assertDictEqual(expected_metadata_dict, meta_data)
 
     def test_metadata_parse_bad_request(self):
