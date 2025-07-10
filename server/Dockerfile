@@ -9,7 +9,7 @@ RUN pip install --no-cache-dir -r server/requirements/test.txt
 
 EXPOSE 8080
 
-ENV CONFIG=config/_config.yml
+ENV CONFIG=config/config.yml
 
 # DEFAULTS SUBSTITUTES...
 ENV DATABASE_URI=mysql+mysqldb://sbs:sbs@127.0.0.1/sbs_test?charset=utf8mb4

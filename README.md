@@ -230,7 +230,7 @@ PYTHONUNBUFFERED=1
 When you encounter the following error after upgrading mySQL
 
 ```
-E   ImportError: dlopen(/Users/okkeharsta/projects/SBS/.venv/lib/python3.9/site-packages/MySQLdb/_mysql.cpython-39-darwin.so, 0x0002): Library not loaded: /usr/local/opt/mysql/lib/libmysqlclient.23.dylib
+E   ImportError: dlopen(/Users/okkeharsta/projects/SBS/.venv/lib/python3.9/site-packages/MySQLdb/mysql.cpython-39-darwin.so, 0x0002): Library not loaded: /usr/local/opt/mysql/lib/libmysqlclient.23.dylib
 ```
 
 then re-install the `mysqlclient` library with force
@@ -272,7 +272,7 @@ Most of the components and pages in the client have basic snapshot tests (*.test
 pipeline and are run in the build stage.
 
 Whenever a page of component changes, the snapshot test of that page or component is expected to fail.
-If the change was intended, the snapshot should be updated. In order to do that, one should delete the ``__snapshots__`` 
+If the change was intended, the snapshot should be updated. In order to do that, one should delete the ``__snapshots__``
 folder in the component's subfolder and rerun the test:
 
 ```bash

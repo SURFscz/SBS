@@ -65,7 +65,7 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/_build/
+docs/build/
 
 # PyBuilder
 target/
@@ -135,7 +135,7 @@ venvbackup/
 server/requirements/pipdeptree
 .venv310/
 .venv_old/
-server/config/_config.yml
+server/config/config.yml
 server/pipdeptree.txt
 sample_json/
 LIBXML2.md
