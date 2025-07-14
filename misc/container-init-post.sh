@@ -11,7 +11,7 @@ if [ "$_RUN_MIGRATIONS" -eq 1 ] || [ "$_MIGRATIONS_ONLY" -eq 1 ]
 then
     echo "Running migrations"
     cd /opt/sbs/server
-    /usr/local/bin/alembic --config /opt/sbs/server/config/alembic.ini upgrade head
+    /usr/local/bin/alembic --config /opt/sbs/server/migrations/alembic.ini upgrade head
 
     if [ "$_MIGRATIONS_ONLY" -eq 1 ]
     then
