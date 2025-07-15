@@ -1430,13 +1430,6 @@ class ServiceOverview extends React.Component {
                                               })}/>
 
                             </section>}
-                        {(grants.includes("authorization_code") || grants.includes("device_code")) &&
-                            <CheckBox name={I18n.t("service.grants.refresh_token")}
-                                      className="checkbox"
-                                      value={grants.includes("refresh_token")}
-                                      info={I18n.t("service.grants.refresh_token")}
-                                      onChange={e => this.toggleGrant("refresh_token", e.target.checked)}
-                            />}
                         <CheckBox name={I18n.t("service.grants.device_code")}
                                   className="checkbox"
                                   value={grants.includes("device_code")}
@@ -1448,6 +1441,15 @@ class ServiceOverview extends React.Component {
                                       }
                                   }}
                         />
+
+                        {(grants.includes("authorization_code") || grants.includes("device_code")) &&
+                            <CheckBox name={I18n.t("service.grants.refresh_token")}
+                                      className="checkbox"
+                                      value={grants.includes("refresh_token")}
+                                      info={I18n.t("service.grants.refresh_token")}
+                                      onChange={e => this.toggleGrant("refresh_token", e.target.checked)}
+                            />}
+
                         {isEmpty(grants.filter(grant => !isEmpty(grant))) &&
                             <ErrorIndicator
                                 msg={I18n.t("service.required", {attribute: I18n.t("service.openIDConnectGrants")})}/>}
