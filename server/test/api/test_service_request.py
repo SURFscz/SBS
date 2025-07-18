@@ -1,9 +1,5 @@
-import uuid
-
 import responses
-from sqlalchemy import text
 
-from server.api.service_request import valid_connection_types
 from server.db.db import db
 from server.db.domain import ServiceRequest, ServiceMembership, Service
 from server.test.abstract_test import AbstractTest
@@ -40,8 +36,7 @@ class TestServiceRequest(AbstractTest):
             "name": "New Service",
             "abbreviation": "new_service_abbreviation",
             "providing_organisation": "cloudy",
-            "privacy_policy": "https://privacy_policy.org",
-            "connection_type": "none"
+            "privacy_policy": "https://privacy_policy.org"
         }
         with self.app.mail.record_messages() as outbox:
             res = self.post("/api/service_requests", body=data, with_basic_auth=False)
@@ -52,56 +47,6 @@ class TestServiceRequest(AbstractTest):
             self.assertIn("no-reply@surf.nl", mail_msg.from_email)
             self.assertIn("sram-support@surf.nl", mail_msg.to)
             self.assertIn("roger@example.org", mail_msg.cc)
-
-    def test_request_service_bad_connection_type(self):
-        self.login("urn:roger", add_default_attributes=False)
-        data = {
-            "name": "New Service",
-            "abbreviation": "new_service_abbreviation",
-            "providing_organisation": "cloudy",
-            "privacy_policy": "https://privacy_policy.org",
-            "connection_type": "nope"
-        }
-        res = self.post("/api/service_requests", body=data, with_basic_auth=False, response_status_code=400)
-        self.assertTrue(res.get("error"))
-        self.assertTrue(str(valid_connection_types) in res.get("message"))
-
-    def test_request_service_with_oidc_client_secret(self):
-        self.login("urn:roger", add_default_attributes=False)
-        res = self.get('/api/service_requests/generate_oidc_client_secret')
-        data = {
-            "name": "New Service",
-            "abbreviation": "new_service_abbreviation",
-            "providing_organisation": "cloudy",
-            "privacy_policy": "https://privacy_policy.org",
-            "connection_type": "openIDConnect",
-            "oidc_client_secret": res.get("value"),
-            "grants": "authorization_code",
-            "redirect_urls": "http://localhost/redirect"
-        }
-        res = self.post("/api/service_requests", body=data, with_basic_auth=False)
-
-        with db.engine.connect() as conn:
-            with conn.begin():
-                rs = conn.execute(text(f"SELECT oidc_client_secret FROM service_requests WHERE id = {res['id']}"))
-        oidc_client_secret = next(rs, (0,))[0]
-        self.assertTrue(oidc_client_secret.startswith("$2b$0"))
-
-    def test_request_service_with_oidc_client_secret_tampering(self):
-        self.login("urn:roger", add_default_attributes=False)
-        data = {
-            "name": "New Service",
-            "abbreviation": "new_service_abbreviation",
-            "providing_organisation": "cloudy",
-            "privacy_policy": "https://privacy_policy.org",
-            "connection_type": "openIDConnect",
-            "oidc_client_secret": str(uuid.uuid4()),
-            "grants": "authorization_code",
-            "redirect_urls": "http://localhost/redirect"
-        }
-        res = self.post("/api/service_requests", body=data, with_basic_auth=False, response_status_code=403)
-        self.assertTrue(res.get("error"))
-        self.assertTrue("Tampering" in res.get("message"))
 
     def test_request_service_approve(self):
         service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)
@@ -152,61 +97,6 @@ class TestServiceRequest(AbstractTest):
 
         new_service = self.find_entity_by_name(Service, body["name"])
         self.assertEqual(36, len(new_service.ldap_identifier))
-
-    @responses.activate
-    def test_request_service_approve_oidc_enabled(self):
-        self.login("urn:john")
-
-        service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)
-        service_request_id = service_request.id
-
-        body = self.get(f"/api/service_requests/{service_request_id}")
-        # MySQLdb.IntegrityError: (1048, "Column 'entity_id' cannot be null")
-        body["entity_id"] = "http://entity/id"
-        with responses.RequestsMock(assert_all_requests_are_fired=True) as res_mock:
-            manage_base_url = self._resolve_manage_base_url()
-            fetch_url = f"{manage_base_url}/manage/api/internal/search/oidc10_rp"
-            res_mock.add(responses.POST, fetch_url, json=[{"data": {"allowedall": True, "allowedEntities": []}}],
-                         status=200)
-            url = f"{manage_base_url}/manage/api/internal/metadata"
-            external_identifier = str(uuid.uuid4())
-            #  This will result in a PUT
-            res_mock.add(responses.POST, url, json={"id": external_identifier, "version": 9}, status=200)
-            self.put(f"/api/service_requests/approve/{service_request_id}",
-                     body=body, with_basic_auth=False)
-
-            new_service = self.find_entity_by_name(Service, body["name"])
-            self.assertTrue(new_service.oidc_enabled)
-            self.assertFalse(new_service.saml_enabled)
-
-    @responses.activate
-    def test_request_service_approve_saml_enabled(self):
-        self.login("urn:john")
-
-        service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)
-        service_request_id = service_request.id
-
-        body = self.get(f"/api/service_requests/{service_request_id}")
-        # MySQLdb.IntegrityError: (1048, "Column 'entity_id' cannot be null")
-        body["entity_id"] = "http://entity/id"
-        body["grants"] = None
-        body["acs_locations"] = "https://acs.location"
-        with responses.RequestsMock(assert_all_requests_are_fired=True) as res_mock:
-            manage_base_url = self._resolve_manage_base_url()
-            fetch_url = f"{manage_base_url}/manage/api/internal/search/oidc10_rp"
-            res_mock.add(responses.POST, fetch_url, json=[{"data": {"allowedall": True, "allowedEntities": []}}],
-                         status=200)
-            url = f"{manage_base_url}/manage/api/internal/metadata"
-            external_identifier = str(uuid.uuid4())
-            #  This will result in a PUT
-            res_mock.add(responses.POST, url, json={"id": external_identifier, "version": 9}, status=200)
-
-            self.put(f"/api/service_requests/approve/{service_request_id}",
-                     body=body, with_basic_auth=False)
-
-            new_service = self.find_entity_by_name(Service, body["name"])
-            self.assertTrue(new_service.saml_enabled)
-            self.assertFalse(new_service.oidc_enabled)
 
     def test_request_service_deny(self):
         service_request = self.find_entity_by_name(ServiceRequest, service_request_gpt_name)

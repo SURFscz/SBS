@@ -1,14 +1,13 @@
 import re
 import uuid
 
-from flask import Blueprint, request as current_request, current_app, session
+from flask import Blueprint, request as current_request, current_app
 from munch import munchify
 from sqlalchemy.orm import contains_eager
-from werkzeug.exceptions import BadRequest, Forbidden
+from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint, emit_socket
 from server.api.service import URI_ATTRIBUTES
-from server.auth.secrets import generate_password_with_hash, generate_random_password
 from server.auth.security import current_user_id, current_user_name, \
     confirm_write_access
 from server.db.defaults import cleanse_short_name, valid_uri_attributes, STATUS_OPEN, STATUS_DENIED, STATUS_APPROVED
@@ -23,8 +22,6 @@ from server.saml.sp_metadata_parser import parse_metadata_xml, parse_metadata_ur
 
 service_request_api = Blueprint("service_request_api", __name__, url_prefix="/api/service_requests")
 
-valid_connection_types = ["openIDConnect", "saml2URL", "saml2File", "none"]
-
 
 @service_request_api.route("/all", methods=["GET"], strict_slashes=False)
 @json_endpoint
@@ -35,15 +32,6 @@ def service_request_all():
         .options(contains_eager(ServiceRequest.requester)) \
         .all()
     return res, 200
-
-
-@service_request_api.route("/generate_oidc_client_secret", strict_slashes=False)
-@json_endpoint
-def generate_oidc_client_secret():
-    # The secret is checked with every login, and therefore we use only 5 rounds combined with a strong password
-    oidc_client_secret = generate_random_password()
-    session["oidc_client_secret"] = oidc_client_secret
-    return {"value": oidc_client_secret}, 200
 
 
 @service_request_api.route("/metadata/parse", methods=["POST"], strict_slashes=False)
@@ -85,19 +73,6 @@ def request_service():
 
     data["status"] = STATUS_OPEN
     cleanse_short_name(data, "abbreviation")
-
-    # Validate connection_type
-    connection_type = data.get("connection_type")
-    if connection_type not in valid_connection_types:
-        raise BadRequest(f"{connection_type} not valid. Valid connection_type: {valid_connection_types}")
-
-    oidc_client_secret_posted = data.get("oidc_client_secret")
-    manage_enabled = current_app.app_config.manage.enabled
-    if manage_enabled and (oidc_client_secret_posted or connection_type == "openIDConnect"):
-        oidc_client_secret = session.get("oidc_client_secret")
-        if oidc_client_secret != oidc_client_secret_posted:
-            raise Forbidden("Tampering with oidc_client_secret token is not allowed")
-        data["oidc_client_secret"] = generate_password_with_hash(password=oidc_client_secret, rounds=5)[0]
 
     res = save(ServiceRequest, custom_json=data, allow_child_cascades=False)
     service_request = res[0]
@@ -148,16 +123,6 @@ def approve_request(service_request_id):
     client_data["connection_setting"] = "NO_ONE_ALLOWED"
     if "id" in client_data:
         del client_data["id"]
-
-    # Need to bypass the SecretMixin
-    oidc_client_secret = service_request.oidc_client_secret_db_value()
-
-    # If a ServiceRequest is approved then we want sensible values for the *_enabled fields
-    if oidc_client_secret and client_data.get("redirect_urls") and client_data.get("grants"):
-        client_data["oidc_enabled"] = True
-        client_data["oidc_client_secret"] = oidc_client_secret
-    if client_data.get("acs_locations"):
-        client_data["saml_enabled"] = True
 
     res = save(Service, custom_json=client_data)
     service = res[0]
