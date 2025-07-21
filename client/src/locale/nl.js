@@ -815,7 +815,7 @@ const nl = {
         support_emailPlaceholder: "Het e-mailadres of de website van de helpdesk voor deze samenwerking",
         supportShort: "Support",
         currentUserAdmin: "Maak mijzelf beheerder van deze samenwerking",
-        currentUserAdminTooltip: "Indien aangevinkt wordt je toegevoegd als beheerder van de samenwerking",
+        currentUserAdminTooltip: "Indien aangevinkt word je toegevoegd als beheerder van de samenwerking",
         message: "Optioneel bericht",
         invitationSenderName: "Optioneel naam uitnodiger",
         messagePlaceholder: "Persoonlijk bericht aan de beheerders",
@@ -2683,7 +2683,7 @@ const nl = {
         },
         gainingAccessTitle: "Toegang krijgen",
         gainingAccessBullets: {
-            pointed: "Als iemand je hebt gewezen op <strong>{{serviceName}}</strong>, vraag diegene dan om hulp.",
+            pointed: "Als iemand je heeft gewezen op <strong>{{serviceName}}</strong>, vraag diegene dan om hulp.",
             request: "Je kan een samenwerking {{action}} via <strong>{{schacHome}}</strong> en de applicatie koppelen.",
             contact: "Je kan {{contact}} opnemen met de applicatie admin, zij kunnen je helpen."
         },
