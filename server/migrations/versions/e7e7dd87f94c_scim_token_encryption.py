@@ -33,7 +33,9 @@ def encrypt_secret(encryption_key: str, plain_secret: str, context: dict) -> str
 
 
 def upgrade():
-    config_file_location = os.environ.get("CONFIG", "config/config.yml")
+    rel_config_file_location = os.environ.get("CONFIG", "config/config.yml")
+    script_dir = os.path.dirname(__file__)
+    config_file_location = os.path.join(script_dir, "..", "..", rel_config_file_location)
     file = f"{config_file_location}"
     with open(file) as f:
         config = munchify(yaml.load(f.read(), Loader=yaml.FullLoader))
