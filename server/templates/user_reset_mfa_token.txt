@@ -15,6 +15,7 @@ request it from their organisation managers or admins.
 {% if message is defined and message != None and message|length %}
 {{ user.name }} added the following message to their request:
 {{ message }}
+{% endif %}
 
 Please deliver this reset code to the user at {{ user.email }} and inform them
 it can be entered on their next login attempt.
