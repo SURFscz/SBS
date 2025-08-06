@@ -2,16 +2,33 @@
 {% block title %}SURF 2fa token reset{% endblock %}
 {% block content %}
 
-Second-factor authentication reset token.
+Hi,
+User {{ user.name }} has requested a reset of verification with their authenticator app (TOTP),
+because they are unable to log in to SURF Research Access Management.
+A user can request any of their collaboration admins for the reset. If there aren't any, they can
+request it from their organisation managers or admins.
 
-User {{ user.name }} has reported being unable to login anymore because they lost
-access to the authenticator app.
-
-The token below can be used to reset the second-factor authentication for {{ user.name }}.
+{{ user.name }} can use the reset code below to set up verification in their authenticator app again.
 
         {{ user.mfa_reset_token }}
 
-Please deliver this token to {{ user.email }} and inform the user that the token can
-be entered on their next login attempt.</p>
+{% if message is defined and message != None and message|length %}
+{{ user.name }} added the following message to their request:
+{{ message }}
+
+Please deliver this reset code to the user at {{ user.email }} and inform them
+it can be entered on their next login attempt.
+
+Suggestion for a message to the user:
+---
+Hi {{ user.name }},
+
+You have requested a reset of your authenticator app to log in to SURF Research Access Management.
+Please log in at {{ base_url }}/login and use the reset code below.
+
+        {{ user.mfa_reset_token }}
+
+Kind regards,
+---
 
 {% endblock %}
