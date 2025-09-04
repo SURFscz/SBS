@@ -174,7 +174,7 @@ export default class CroppedImageDialog extends React.PureComponent {
         const files = e.target.files;
         if (files && files[0]) {
             const file = files[0];
-            if (file.size > 2 * 1024 * 1000) {
+            if (file.size > 60 * 1000) {
                 this.setState({error: I18n.t("forms.imageToLarge")});
             } else {
                 const reader = new FileReader();
