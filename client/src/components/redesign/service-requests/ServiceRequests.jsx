@@ -140,7 +140,7 @@ export default class ServiceRequests extends React.PureComponent {
             {
                 key: "connection_type",
                 header: I18n.t("models.service_requests.protocol"),
-                mapper: entity => I18n.t(`service.protocolsShort.${entity.connection_type}`)
+                mapper: entity => I18n.t(`service.protocolsShort.${entity.connection_type || "none"}`)
             },
             {
                 key: "status",
