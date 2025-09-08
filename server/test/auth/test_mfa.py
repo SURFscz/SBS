@@ -30,8 +30,8 @@ class TestMFA(AbstractTest):
         user = User.query.filter(User.uid == "urn:john").one()
         res = eligible_users_to_reset_token(user)
         self.assertEqual(1, len(res))
-        self.assertEqual("mary@example.org", res[0]["email"])
-        self.assertEqual(unihard_name, res[0]["unit"])
+        emails = ["boss@example.org"]
+        self.assertListEqual(emails, sorted([u["email"] for u in res]))
 
     def test_eligible_users_to_reset_token_coll_members(self):
         user = User.query.filter(User.uid == "urn:roger").one()
@@ -57,6 +57,18 @@ class TestMFA(AbstractTest):
         self.assertEqual(4, len(res))
         for user in res:
             self.assertEqual(unihard_name, user["unit"])
+
+    def test_eligible_users_to_reset_token_unit_managers(self):
+        user = User.query.filter(User.uid == "urn:betty").one()
+        for co_membership in user.collaboration_memberships:
+            for m in co_membership.collaboration.collaboration_memberships:
+                m.role = "member"
+                self.save_entity(m)
+
+        user = User.query.filter(User.uid == "urn:betty").one()
+        res = eligible_users_to_reset_token(user)
+        emails = sorted(['harry@example.org', 'paul@ucc.org'])
+        self.assertListEqual(emails, sorted([u["email"] for u in res]))
 
     def test_mfa_idp_allowed(self):
         self.assertTrue(mfa_idp_allowed(User(schac_home_organisation="idp.test"), entity_id=None))
