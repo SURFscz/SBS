@@ -6,11 +6,11 @@ flask-webtest==0.1.6
 hbmqtt2==0.9.7
 pytest==8.4.1
 pytest-cov==6.2.1
-pytest-xdist==3.7.0
+pytest-xdist==3.8.0
 responses==0.25.7
-alembic==1.16.2
+alembic==1.16.4
 freezegun==1.5.5
-coverage==7.9.1
+coverage==7.10.5
 mock==5.2.0
-Faker==37.4.0
-pipdeptree==2.26.1
+Faker==37.5.3
+pipdeptree==2.28.0

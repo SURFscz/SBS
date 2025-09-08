@@ -103,7 +103,7 @@ def has_valid_mfa(user):
     valid_mfa_sso = last_login_date and (dt_now() - last_login_date < login_sso_cutoff)
 
     logger = ctx_logger("user_api")
-    logger.debug(f"has_valid_mfa: {valid_mfa_sso} (user={user.uid}, last_login={last_login_date}")
+    logger.debug(f"valid_mfa_sso: {valid_mfa_sso} (user={user.uid}, last_login={last_login_date}")
 
     return valid_mfa_sso
 
@@ -140,6 +140,11 @@ def user_requires_sram_mfa(user: User, issuer_id: str = None, override_mfa_requi
     idp_allowed_mfa_by_config = mfa_idp_allowed(user, issuer_id)
     # For Users who used to need TOTP-MFA, but who have moved to institutional MFA, we remove the TOTP secret
     if idp_allowed_mfa_by_config and user.second_factor_auth:
+        logger = ctx_logger("user_api")
+        logger.debug(f"user_requires_sram_mfa: removing TOTP token because users logs in with MFA IdP ("
+                     f"user={user.uid}, "
+                     f"entity_id={issuer_id}, schac_home={user.schac_home_organisation})")
+
         user.second_factor_auth = None
         db.session.merge(user)
         db.session.commit()
