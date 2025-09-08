@@ -61,7 +61,13 @@ class NewServiceInvitation extends React.Component {
         if (params.service_id) {
             serviceById(params.service_id)
                 .then(json => {
-                    this.setState({service: json, loading: false});
+                    const {user} = this.props;
+                    const isManager = !user.admin && user.service_memberships.some(m => m.service_id === json.id && m.role === "manager");
+                    if (isManager) {
+                        this.intendedRolesOptions = this.intendedRolesOptions.filter(role => role.value === "manager");
+                    }
+                    const intended_role = isManager ? "manager" : "admin";
+                    this.setState({service: json, intended_role: intended_role, loading: false});
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},

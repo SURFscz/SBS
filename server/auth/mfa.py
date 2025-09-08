@@ -66,22 +66,35 @@ def decode_jwt_token(token):
 
 def eligible_users_to_reset_token(user):
     user_information = []
-    for org_membership in user.organisation_memberships:
-        for membership in org_membership.organisation.organisation_memberships:
+    # First we try to find collaboration admins
+    for coll_membership in user.collaboration_memberships:
+        for membership in coll_membership.collaboration.collaboration_memberships:
             if membership.role == "admin" and membership.user != user:
-                user_information.append({"user": membership.user, "unit": membership.organisation.name})
+                user_information.append({"user": membership.user, "unit": membership.collaboration.name})
     if not user_information:
-        for coll_membership in user.collaboration_memberships:
-            for membership in coll_membership.collaboration.collaboration_memberships:
+        # Then we try to find organization managers
+        collaborations_with_units = [m.collaboration for m in user.collaboration_memberships if m.collaboration.units]
+        if collaborations_with_units:
+            for co in collaborations_with_units:
+                for m in co.organisation.organisation_memberships:
+                    member_units = [u.id for u in m.units]
+                    if m.role == "manager" and (not m.units or all(u for u in co.units if u.id in member_units)):
+                        user_information.append({"user": m.user, "unit": m.organisation.name})
+    if not user_information:
+        # Then we try to find organization admin
+        for org_membership in user.organisation_memberships:
+            for membership in org_membership.organisation.organisation_memberships:
                 if membership.role == "admin" and membership.user != user:
-                    user_information.append({"user": membership.user, "unit": membership.collaboration.name})
+                    user_information.append({"user": membership.user, "unit": membership.organisation.name})
     if not user_information:
+        # Then we try to find organization members
         for membership in user.collaboration_memberships:
             for mb in membership.collaboration.organisation.organisation_memberships:
                 if mb.user != user:
                     user_information.append({"user": mb.user, "unit": mb.organisation.name})
 
     if not user_information and user.schac_home_organisation:
+        # Then we try to find organization members of the same schac_home
         organisations = SchacHomeOrganisation.organisations_by_user_schac_home(user)
         if organisations:
             org = db.session.get(Organisation, organisations[0].id)
@@ -90,11 +103,12 @@ def eligible_users_to_reset_token(user):
                     user_information.append({"user": membership.user, "unit": membership.organisation.name})
 
     user_info = [{"name": u["user"].name, "email": u["user"].email, "unit": u["unit"]} for u in user_information]
+    # Final fallback is the configured mail
     if not user_info:
         # Empty strings will be translated client side
         user_info.append({"name": "", "email": current_app.app_config.mail.info_email, "unit": ""})
-
-    return user_info
+    unique_user_info = list({d["email"]: d for d in user_info}.values())
+    return unique_user_info
 
 
 def has_valid_mfa(user):

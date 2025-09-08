@@ -1484,6 +1484,7 @@ const nl = {
         resendInvitations: "Weet je zeker dat je alle geselecteerde uitnodigingen opnieuw wil versturen?",
         expired: "Deze uitnodiging is verlopen op {{expiry_date}} en kan niet meer geaccepteerd worden.",
         expiredAdmin: "Deze uitnodiging is verlopen op {{expiry_date}}. Verstuur deze opnieuw om de verloopdatum 14 dagen vooruit te zetten.",
+        requiredUserUnit: "Je moet minimaal één unit kiezen",
         flash: {
             inviteDeclined: "Uitnodiging voor organisatie {{name}} is afgewezen.",
             inviteDeleted: "Uitnodiging voor organisatie {{name}} is verwijderd.",

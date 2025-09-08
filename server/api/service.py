@@ -12,7 +12,7 @@ from server.api.service_invitation import service_invitations_by_email
 from server.auth.secrets import generate_token, generate_password_with_hash
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
     is_organisation_admin_or_manager, is_application_admin, confirm_service_admin, \
-    confirm_external_api_call, is_service_admin_or_manager
+    confirm_external_api_call, is_service_admin_or_manager, confirm_service_manager
 from server.auth.tokens import encrypt_scim_bearer_token, decrypt_scim_bearer_token
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, cleanse_short_name, default_expiry_date, valid_uri_attributes, \
@@ -529,13 +529,17 @@ def toggle_access_property(service_id):
 def service_invites():
     data = current_request.get_json()
     service_id = data["service_id"]
-    confirm_service_admin(service_id)
 
     administrators = data.get("administrators", [])
     message = data.get("message", None)
     intended_role = data.get("intended_role", "manager")
     if intended_role not in ["admin", "manager"]:
         raise BadRequest("Invalid intended role")
+
+    if intended_role == "admin":
+        confirm_service_admin(service_id)
+    else:
+        confirm_service_manager(service_id)
 
     service = db.session.get(Service, service_id)
     user = db.session.get(User, current_user_id())

@@ -49,7 +49,9 @@ class NewOrganisationInvitation extends React.Component {
             fileInputKey: new Date().getMilliseconds(),
             intended_role: "manager",
             message: "",
+            isManager: false,
             units: [],
+            userUnits: [],
             expiry_date: moment().add(16, "days").toDate(),
             initial: true,
             confirmationDialogOpen: false,
@@ -71,11 +73,21 @@ class NewOrganisationInvitation extends React.Component {
             organisationById(params.organisation_id)
                 .then(json => {
                     const {user} = this.props;
-                    const isAdmin = isUserAllowed(ROLES.ORG_MANAGER, user, params.organisation_id, null);
-                    if (!isAdmin) {
-                        this.intendedRolesOptions = this.intendedRolesOptions.filter(option => option.value !== "admin")
+                    const isManager = !isUserAllowed(ROLES.ORG_ADMIN, user, params.organisation_id, null);
+                    let userUnits = [];
+                    if (isManager) {
+                        this.intendedRolesOptions = this.intendedRolesOptions.filter(option => option.value !== "admin");
+                        if (!isEmpty(json.units)) {
+                            userUnits = user.organisation_memberships.find(om => om.organisation_id === json.id).units;
+                        }
                     }
-                    this.setState({organisation: json, loading: false});
+                    this.setState({
+                        organisation: json,
+                        loading: false,
+                        isManager: isManager,
+                        units: userUnits,
+                        userUnits: userUnits
+                    });
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
@@ -97,8 +109,9 @@ class NewOrganisationInvitation extends React.Component {
     };
 
     isValid = () => {
-        const {administrators, fileEmails, validating, existingInvitations} = this.state;
-        return (!isEmpty(administrators) || !isEmpty(fileEmails)) && !validating && isEmpty(existingInvitations);
+        const {administrators, fileEmails, validating, existingInvitations, isManager, userUnits, units} = this.state;
+        const  inValidUnits = isManager && !isEmpty(userUnits) && isEmpty(units);
+        return (!isEmpty(administrators) || !isEmpty(fileEmails)) && !validating && isEmpty(existingInvitations) && !inValidUnits;
     };
 
     doSubmit = () => {
@@ -176,61 +189,59 @@ class NewOrganisationInvitation extends React.Component {
         }
     };
 
-    preview = disabledSubmit => (
-        <div>
-            <div className={"preview-mail"} dangerouslySetInnerHTML={{__html: this.state.htmlPreview}}/>
-            {this.renderActions(disabledSubmit)}
-        </div>
-    );
-
-
     invitationForm = (organisation, message, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, expiry_date,
-                      disabledSubmit, intended_role, units, existingInvitations) =>
-        <div className={"invitation-form"}>
-            <EmailField addEmails={this.addEmails}
-                        removeMail={this.removeMail}
-                        name={I18n.t("invitation.invitees")}
-                        error={!initial && isEmpty(administrators)}
-                        emails={administrators}
-                        autoFocus={true}/>
+                      disabledSubmit, intended_role, units, existingInvitations, isManager, userUnits) => {
+        return (
+            <div className={"invitation-form"}>
+                <EmailField addEmails={this.addEmails}
+                            removeMail={this.removeMail}
+                            name={I18n.t("invitation.invitees")}
+                            error={!initial && isEmpty(administrators)}
+                            emails={administrators}
+                            autoFocus={true}/>
 
-            {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) && <ErrorIndicator
-                msg={I18n.t("organisationInvitation.requiredAdministrator")}/>}
+                {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) && <ErrorIndicator
+                    msg={I18n.t("organisationInvitation.requiredAdministrator")}/>}
 
-            {!isEmpty(existingInvitations) && <ErrorIndicator
-                msg={I18n.t(`invitation.${existingInvitations.length === 1 ? "existingInvitation" : "existingInvitations"}`,
-                    {emails: splitListSemantically(existingInvitations, I18n.t("service.compliancySeparator"))})}/>}
+                {!isEmpty(existingInvitations) && <ErrorIndicator
+                    msg={I18n.t(`invitation.${existingInvitations.length === 1 ? "existingInvitation" : "existingInvitations"}`,
+                        {emails: splitListSemantically(existingInvitations, I18n.t("service.compliancySeparator"))})}/>}
 
-            <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
-                         options={this.intendedRolesOptions}
-                         small={true}
-                         name={I18n.t("invitation.intendedRoleOrganisation")}
-                         toolTip={I18n.t("invitation.intendedRoleTooltipOrganisation")}
-                         placeholder={I18n.t("collaboration.selectRole")}
-                         onChange={selectedOption => this.setState({intended_role: selectedOption ? selectedOption.value : null})}/>
+                <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
+                             options={this.intendedRolesOptions}
+                             small={true}
+                             name={I18n.t("invitation.intendedRoleOrganisation")}
+                             toolTip={I18n.t("invitation.intendedRoleTooltipOrganisation")}
+                             placeholder={I18n.t("collaboration.selectRole")}
+                             onChange={selectedOption => this.setState({intended_role: selectedOption ? selectedOption.value : null})}/>
 
-            {(!isEmpty(organisation.units) && intended_role === "manager") &&
-                <InvitationsUnits allUnits={organisation.units}
-                                  selectedUnits={units}
-                                  setUnits={newUnits => this.setState({units: newUnits})}/>}
+                {(!isEmpty(organisation.units) && intended_role === "manager") &&
+                    <InvitationsUnits allUnits={(isManager && !isEmpty(userUnits)) ? userUnits : organisation.units}
+                                      selectedUnits={units}
+                                      isManager={isManager}
+                                      userUnits={userUnits}
+                                      setUnits={newUnits => this.setState({units: newUnits})}/>}
+                  {(!initial && isManager && !isEmpty(userUnits) && isEmpty(units)) && <ErrorIndicator
+                    msg={I18n.t("organisationInvitation.requiredUserUnit")}/>}
 
-            <InputField value={message} onChange={e => this.setState({message: e.target.value})}
-                        placeholder={I18n.t("organisation.messagePlaceholder")}
-                        name={I18n.t("organisation.message")}
-                        toolTip={I18n.t("organisation.messageTooltip")}
-                        large={true}
-                        multiline={true}/>
+                <InputField value={message} onChange={e => this.setState({message: e.target.value})}
+                            placeholder={I18n.t("organisation.messagePlaceholder")}
+                            name={I18n.t("organisation.message")}
+                            toolTip={I18n.t("organisation.messageTooltip")}
+                            large={true}
+                            multiline={true}/>
 
-            <DateField value={expiry_date}
-                       onChange={e => this.setState({expiry_date: e})}
-                       pastDatesAllowed={this.props.config.past_dates_allowed}
-                       maxDate={moment().add(31, "day").toDate()}
-                       name={I18n.t("organisationInvitation.expiryDate")}
-                       toolTip={I18n.t("organisationInvitation.expiryDateTooltip")}/>
+                <DateField value={expiry_date}
+                           onChange={e => this.setState({expiry_date: e})}
+                           pastDatesAllowed={this.props.config.past_dates_allowed}
+                           maxDate={moment().add(31, "day").toDate()}
+                           name={I18n.t("organisationInvitation.expiryDate")}
+                           toolTip={I18n.t("organisationInvitation.expiryDateTooltip")}/>
 
-            {this.renderActions(disabledSubmit)}
-        </div>;
-
+                {this.renderActions(disabledSubmit)}
+            </div>
+        );
+    }
     renderActions = disabledSubmit => (
         <section className="actions">
             <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
@@ -243,7 +254,8 @@ class NewOrganisationInvitation extends React.Component {
         const {
             initial, administrators, expiry_date, organisation,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, fileName,
-            fileTypeError, fileEmails, fileInputKey, intended_role, loading, units, existingInvitations
+            fileTypeError, fileEmails, fileInputKey, intended_role, loading, units, existingInvitations, isManager,
+            userUnits
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -261,7 +273,7 @@ class NewOrganisationInvitation extends React.Component {
                     <h2>{I18n.t("tabs.invitation_form")}</h2>
                     <div className="new-organisation-invitation">
                         {this.invitationForm(organisation, message, fileInputKey, fileName, fileTypeError, fileEmails, initial,
-                            administrators, expiry_date, disabledSubmit, intended_role, units, existingInvitations)}
+                            administrators, expiry_date, disabledSubmit, intended_role, units, existingInvitations, isManager, userUnits)}
                     </div>
                 </div>
             </>);

@@ -5,7 +5,7 @@ import RadioButtonGroup from "../redesign/radio-button-group/RadioButtonGroup";
 import CheckBox from "../checkbox/CheckBox";
 import {isEmpty} from "../../utils/Utils";
 
-export const InvitationsUnits = ({allUnits, selectedUnits, setUnits, unitOptionCallback}) => {
+export const InvitationsUnits = ({allUnits, selectedUnits, setUnits, unitOptionCallback, isManager, userUnits}) => {
 
     const [unitOption, setUnitOption] = useState(isEmpty(selectedUnits) ? "all" : "specify");
 
@@ -32,7 +32,7 @@ export const InvitationsUnits = ({allUnits, selectedUnits, setUnits, unitOptionC
                 <RadioButtonGroup name={"unit"}
                                   label={I18n.t("units.invitationLabel")}
                                   value={unitOption}
-                                  values={["all", "specify"]}
+                                  values={(isManager && !isEmpty(userUnits)) ? ["specify"] : ["all", "specify"]}
                                   onChange={changeUnitOption}
                                   tooltip={I18n.t("units.invitationTooltip")}
                                   labelResolver={label => I18n.t(`units.${label}`)}/>
