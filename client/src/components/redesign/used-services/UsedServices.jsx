@@ -10,7 +10,7 @@ import {ReactComponent as ChevronLeft} from "../../../icons/chevron-left.svg";
 import {ReactComponent as SearchIcon} from "@surfnet/sds/icons/functional-icons/search.svg";
 import {ReactComponent as NoServicesIcon} from "../../../icons/no_services.svg";
 import "./UsedServices.scss";
-import {isEmpty, removeDuplicates, stopEvent} from "../../../utils/Utils";
+import {isEmpty, stopEvent} from "../../../utils/Utils";
 import I18n from "../../../locale/I18n";
 import Button from "../../button/Button";
 import {clearFlash, setFlash} from "../../../utils/Flash";
@@ -68,7 +68,6 @@ class UsedServices extends React.Component {
                     .filter(r => r.status === "open")
                     .map(r => r.service);
                 const servicesInUse = collaboration.services
-                    .concat(collaboration.organisation.services)
                     .concat(requestedServices)
                     .map(e => e.id);
                 const filteredServices = services
@@ -485,8 +484,7 @@ class UsedServices extends React.Component {
             return this.renderRequestConnectionService(requestConnectionService, message, confirmedAupConnectionRequest);
         }
         const {collaboration, user} = this.props;
-        let usedServices = collaboration.services.concat(collaboration.organisation.services);
-        usedServices = removeDuplicates(usedServices, "id");
+        let usedServices = collaboration.services;
         const serviceConnectionRequests = collaboration.service_connection_requests.filter(r => r.status === "open");
         serviceConnectionRequests.forEach(req => {
             req.connectionRequest = true;
