@@ -1,4 +1,4 @@
--- Dump of empty SBS database, alembic revision 46fd9d8d4716 (head)
+-- Dump of empty SBS database, alembic revision e19c3fd08074 (head)
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('46fd9d8d4716');
+INSERT INTO `alembic_version` VALUES ('e19c3fd08074');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `api_key_units`;
@@ -826,6 +826,12 @@ CREATE TABLE `service_requests` (
   `uuid4` varchar(255) NOT NULL,
   `rejection_reason` text,
   `entity_id` varchar(255) DEFAULT NULL,
+  `connection_type` varchar(255) DEFAULT NULL,
+  `redirect_urls` text,
+  `saml_metadata` text,
+  `grants` text,
+  `is_public_client` tinyint(1) NOT NULL DEFAULT '0',
+  `oidc_client_secret` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `service_requests_uuid4` (`uuid4`),
   KEY `requester_id` (`requester_id`),
