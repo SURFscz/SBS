@@ -170,6 +170,22 @@ class TestService(AbstractTest):
                        response_status_code=400)
         self.assertIn("Invalid intended role", res["message"])
 
+    def test_service_invites_manager(self):
+        # Betty is service manager of cloud
+        self.login("urn:betty")
+        service_id = self.find_entity_by_name(Service, service_cloud_name).id
+        self.put("/api/services/invites",
+                 body={"service_id": service_id, "administrators": ["opta@apta.org"], "intended_role": "manager"},
+                 response_status_code=201)
+
+    def test_service_invites_manager_not_allowed_to_invite_admin(self):
+        # Betty is service manager of cloud
+        self.login("urn:betty")
+        service_id = self.find_entity_by_name(Service, service_cloud_name).id
+        self.put("/api/services/invites",
+                 body={"service_id": service_id, "administrators": ["opta@apta.org"], "intended_role": "admin"},
+                 response_status_code=403)
+
     def test_service_update(self):
         service = self._find_by_name(service_cloud_name)
         service["name"] = "changed"

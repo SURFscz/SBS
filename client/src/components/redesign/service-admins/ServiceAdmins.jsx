@@ -70,7 +70,9 @@ class ServiceAdmins extends React.Component {
     }
 
     componentDidMount = () => {
-        const {service} = this.props;
+        const {service, user} = this.props;
+        const isManager = !user.admin && user.service_memberships
+            .some(m => m.service_id === service.id && m.role === "manager");
         const admins = service.service_memberships || [];
         const invites = service.service_invitations || [];
         const entities = admins.concat(invites);
@@ -78,7 +80,7 @@ class ServiceAdmins extends React.Component {
             acc[this.getIdentifier(entity)] = {selected: false, ref: entity, invite: !isEmpty(entity.intended_role)};
             return acc;
         }, {})
-        this.setState({selectedMembers, loading: false, confirmationDialogOpen: false});
+        this.setState({selectedMembers, loading: false, isManager: isManager, confirmationDialogOpen: false});
     }
 
     getIdentifier = entity => {
@@ -370,7 +372,7 @@ class ServiceAdmins extends React.Component {
         const {
             selectedMembers, confirmationDialogOpen, cancelDialogAction, isWarning,
             confirmationDialogAction, confirmationQuestion, loading, confirmationTxt, lastAdminWarning,
-            lastAdminWarningUser
+            lastAdminWarningUser, isManager
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -474,7 +476,7 @@ class ServiceAdmins extends React.Component {
                           columns={columns}
                           loading={false}
                           onHover={true}
-                          showNew={isAdmin}
+                          showNew={isAdmin || isManager}
                           actions={(isAdmin && entities.length > 0) ? this.actionButtons(selectedMembers) : null}
                           newEntityPath={`/new-service-invite/${service.id}`}
                           {...this.props}/>

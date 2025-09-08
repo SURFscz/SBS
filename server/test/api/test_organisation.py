@@ -404,6 +404,29 @@ class TestOrganisation(AbstractTest):
                        response_status_code=400)
         self.assertTrue(email in res["message"])
 
+    def test_organisation_manager_invitation_empty_units(self):
+        self.login("urn:paul")
+        organisation_id = self.find_entity_by_name(Organisation, unihard_name).id
+        email = "ko@ta.org"
+        res = self.put("/api/organisations/invites",
+                       body={"organisation_id": organisation_id, "administrators": [email],
+                             "intended_role": "manager"},
+                       response_status_code=400)
+        self.assertTrue("At least one Unit is required" in res["message"])
+
+    def test_organisation_manager_invitation_not_allowed_units(self):
+        self.login("urn:paul")
+        organisation = self.find_entity_by_name(Organisation, unihard_name)
+        organisation_id = organisation.id
+        units = [{"name": unit.name, "id": unit.id} for unit in organisation.units]
+        res = self.put("/api/organisations/invites",
+                       body={"organisation_id": organisation_id,
+                             "administrators": ["ko@ta.org"],
+                             "units": units,
+                             "intended_role": "manager"},
+                       response_status_code=400)
+        self.assertTrue("not allowed" in res["message"])
+
     def test_organisation_save_with_invites(self):
         pre_count = OrganisationInvitation.query.count()
         self.login("urn:john")

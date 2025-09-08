@@ -11,6 +11,7 @@ from werkzeug.exceptions import BadRequest
 
 from server.api.base import emit_socket, organisation_by_user_schac_home
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
+from server.api.exceptions import APIBadRequest
 from server.api.organisation_invitation import organisation_invitations_by_email
 from server.api.unit import validate_units
 from server.auth.secrets import generate_token
@@ -406,15 +407,31 @@ def organisation_invites():
     intended_role = data.get("intended_role")
     intended_role = "manager" if intended_role not in ["admin", "manager"] else intended_role
 
-    if intended_role == "admin":
-        confirm_organisation_admin(organisation_id)
-
-    message = data.get("message", None)
-
     organisation = db.session.get(Organisation, organisation_id)
     user = db.session.get(User, current_user_id())
 
     valid_units = validate_units(data, organisation)
+
+    if intended_role == "admin":
+        confirm_organisation_admin(organisation_id)
+    elif not is_application_admin():
+        # First check if the current user is an organisation manager and has units scoped in the membership
+        memberships = organisation.organisation_memberships
+        membership = [m for m in memberships if m.user_id == user.id and m.organisation_id == organisation_id][0]
+        if membership.role == "manager" and membership.units:
+            # One unit is required, otherwise the membership will have no units, applying more rights than allowed
+            if not valid_units:
+                raise APIBadRequest(f"At least one Unit is required for user {user.email} "
+                                    f"with units {[u.name for u in membership.units]}"
+                                    f"for organisation '{organisation.name}'.")
+            # All off the units of the invitation must be accessible for the user
+            invalid_units = [u for u in valid_units if not [mu for mu in membership.units if mu.id == u.id]]
+            if invalid_units:
+                raise APIBadRequest(f"Units {[u.name for u in invalid_units]} are not allowed for user {user.email} "
+                                    f"with units {[u.name for u in membership.units]}"
+                                    f"for organisation '{organisation.name}'.")
+
+    message = data.get("message", None)
 
     duplicate_invitations = [i.invitee_email for i in
                              organisation_invitations_by_email(administrators, organisation_id)]

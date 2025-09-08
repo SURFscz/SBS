@@ -1484,6 +1484,7 @@ const en = {
         resendInvitations: "Are you sure you want to resend all selected invitation?",
         expired: "This invitation expired on {{expiry_date}} and cannot be accepted anymore.",
         expiredAdmin: "This invitation expired on {{expiry_date}}. Resend the invitation to reset the expiration date to 14 days.",
+        requiredUserUnit: "You need to select minimal one unit",
         flash: {
             inviteDeclined: "Invitation for organisation {{name}} was denied.",
             inviteDeleted: "Invitation for organisation {{name}} was deleted.",
