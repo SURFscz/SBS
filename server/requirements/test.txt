@@ -9,7 +9,7 @@ pytest-cov==6.2.1
 pytest-xdist==3.8.0
 responses==0.25.7
 alembic==1.16.4
-freezegun==1.5.2
+freezegun==1.5.5
 coverage==7.10.5
 mock==5.2.0
 Faker==37.5.3
