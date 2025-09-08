@@ -334,7 +334,7 @@ exports[`Impersonate matches snapshot when impersonating a user 1`] = `
           class="actions"
         >
           <button
-            class="sds--btn sds--btn--secondary    "
+            class="sds--btn sds--btn--secondary     "
             disabled=""
             type="button"
           >
@@ -345,7 +345,7 @@ exports[`Impersonate matches snapshot when impersonating a user 1`] = `
             </span>
           </button>
           <button
-            class="sds--btn sds--btn--primary    "
+            class="sds--btn sds--btn--primary     "
             type="button"
           >
             <span
@@ -695,7 +695,7 @@ exports[`Impersonate matches snapshot when not impersonating a user 1`] = `
           class="actions"
         >
           <button
-            class="sds--btn sds--btn--secondary    "
+            class="sds--btn sds--btn--secondary     "
             disabled=""
             type="button"
           >
@@ -706,7 +706,7 @@ exports[`Impersonate matches snapshot when not impersonating a user 1`] = `
             </span>
           </button>
           <button
-            class="sds--btn sds--btn--primary    "
+            class="sds--btn sds--btn--primary     "
             type="button"
           >
             <span
@@ -1056,7 +1056,7 @@ exports[`Impersonate matches snapshot with default props 1`] = `
           class="actions"
         >
           <button
-            class="sds--btn sds--btn--secondary    "
+            class="sds--btn sds--btn--secondary     "
             disabled=""
             type="button"
           >
@@ -1067,7 +1067,7 @@ exports[`Impersonate matches snapshot with default props 1`] = `
             </span>
           </button>
           <button
-            class="sds--btn sds--btn--primary    "
+            class="sds--btn sds--btn--primary     "
             type="button"
           >
             <span

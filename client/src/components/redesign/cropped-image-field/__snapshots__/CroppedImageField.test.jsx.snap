@@ -31,7 +31,7 @@ exports[`CroppedImageField matches snapshot with default props 1`] = `
         class="file-upload-actions"
       >
         <button
-          class="sds--btn sds--btn--primary  sds--btn--small  "
+          class="sds--btn sds--btn--primary  sds--btn--small   "
           type="button"
         >
           <span

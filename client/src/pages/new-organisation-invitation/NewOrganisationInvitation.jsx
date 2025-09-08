@@ -27,6 +27,7 @@ import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
 import EmailField from "../../components/email-field/EmailField";
 import ErrorIndicator from "../../components/redesign/error-indicator/ErrorIndicator";
 import {InvitationsUnits} from "../../components/invitation-units/InvitationsUnits";
+import {isUserAllowed, ROLES} from "../../utils/UserRole";
 
 class NewOrganisationInvitation extends React.Component {
 
@@ -34,10 +35,11 @@ class NewOrganisationInvitation extends React.Component {
         super(props, context);
         const email = getParameterByName("email", window.location.search);
         const administrators = !isEmpty(email) && validEmailRegExp.test(email.trim()) ? [email.trim()] : [];
-        this.intendedRolesOptions = organisationRoles.map(role => ({
-            value: role,
-            label: I18n.t(`organisation.organisationRoles.${role}`)
-        }));
+        this.intendedRolesOptions = organisationRoles
+            .map(role => ({
+                value: role,
+                label: I18n.t(`organisation.organisationRoles.${role}`)
+            }));
         this.state = {
             organisation: undefined,
             administrators: administrators,
@@ -68,6 +70,11 @@ class NewOrganisationInvitation extends React.Component {
         if (params.organisation_id) {
             organisationById(params.organisation_id)
                 .then(json => {
+                    const {user} = this.props;
+                    const isAdmin = isUserAllowed(ROLES.ORG_MANAGER, user, params.organisation_id, null);
+                    if (!isAdmin) {
+                        this.intendedRolesOptions = this.intendedRolesOptions.filter(option => option.value !== "admin")
+                    }
                     this.setState({organisation: json, loading: false});
                     AppStore.update(s => {
                         s.breadcrumb.paths = [

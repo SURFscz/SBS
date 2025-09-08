@@ -99,7 +99,7 @@ exports[`MissingServiceAup renders and matches snapshot 1`] = `
       class="actions"
     >
       <button
-        class="sds--btn sds--btn--primary  sds--btn--full  "
+        class="sds--btn sds--btn--primary  sds--btn--full   "
         disabled=""
         type="button"
       >

@@ -20,7 +20,7 @@ exports[`Login matches snapshot with custom description 1`] = `
             Easy and secure access to research applications for research collaborations
           </h2>
           <button
-            class="sds--btn sds--btn--primary    "
+            class="sds--btn sds--btn--primary     "
             type="button"
           >
             <span
@@ -248,7 +248,7 @@ exports[`Login matches snapshot with custom title 1`] = `
             Easy and secure access to research applications for research collaborations
           </h2>
           <button
-            class="sds--btn sds--btn--primary    "
+            class="sds--btn sds--btn--primary     "
             type="button"
           >
             <span
@@ -476,7 +476,7 @@ exports[`Login matches snapshot with default props 1`] = `
             Easy and secure access to research applications for research collaborations
           </h2>
           <button
-            class="sds--btn sds--btn--primary    "
+            class="sds--btn sds--btn--primary     "
             type="button"
           >
             <span

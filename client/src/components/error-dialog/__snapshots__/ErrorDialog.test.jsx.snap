@@ -90,7 +90,7 @@ exports[`ErrorDialog matches snapshot when open 1`] = `
           class="sds--modal--actions sds--actions--outer sds--space--top--5"
         >
           <button
-            class="sds--btn sds--btn--primary    "
+            class="sds--btn sds--btn--primary     "
             type="button"
           >
             <span

@@ -400,11 +400,14 @@ def organisation_invites():
     data = current_request.get_json()
     organisation_id = data["organisation_id"]
 
-    confirm_organisation_admin(organisation_id)
+    confirm_organisation_admin_or_manager(organisation_id)
 
     administrators = data.get("administrators", [])
     intended_role = data.get("intended_role")
     intended_role = "manager" if intended_role not in ["admin", "manager"] else intended_role
+
+    if intended_role == "admin":
+        confirm_organisation_admin(organisation_id)
 
     message = data.get("message", None)
 

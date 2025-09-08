@@ -492,6 +492,7 @@ class OrganisationAdmins extends React.Component {
         invites.forEach(invite => invite.invite = true);
 
         const isAdmin = isUserAllowed(ROLES.ORG_ADMIN, currentUser, organisation.id, null);
+        const isManager = isUserAllowed(ROLES.ORG_MANAGER, currentUser, organisation.id, null);
         const nbrOfAdmins = organisation.organisation_memberships.filter(m => m.role === "admin").length;
         const oneAdminLeft = nbrOfAdmins < 2;
         const selectedAdmins = Object.values(selectedMembers).filter(entry => entry.selected && entry.ref.role === "admin").length;
@@ -615,7 +616,7 @@ class OrganisationAdmins extends React.Component {
                           }}
                           loading={false}
                           onHover={true}
-                          showNew={isAdmin}
+                          showNew={isManager}
                           actions={(isAdmin && entities.length > 0) ? this.actionButtons(selectedMembers) : null}
                           newEntityPath={`/new-organisation-invite/${organisation.id}`}
                           {...this.props}/>

@@ -48,7 +48,7 @@ exports[`UserTokens renders with default props 1`] = `
           class="new-button"
         >
           <button
-            class="sds--btn sds--btn--primary    "
+            class="sds--btn sds--btn--primary     "
             type="button"
           >
             <span
@@ -197,7 +197,7 @@ exports[`UserTokens renders with tokens 1`] = `
           class="new-button"
         >
           <button
-            class="sds--btn sds--btn--primary    "
+            class="sds--btn sds--btn--primary     "
             type="button"
           >
             <span

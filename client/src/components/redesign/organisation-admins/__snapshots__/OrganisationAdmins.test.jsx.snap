@@ -47,7 +47,7 @@ exports[`OrganisationAdmins renders with currentUserDeleted false 1`] = `
         class="new-button"
       >
         <button
-          class="sds--btn sds--btn--primary    "
+          class="sds--btn sds--btn--primary     "
           type="button"
         >
           <span
@@ -113,7 +113,7 @@ exports[`OrganisationAdmins renders with custom localePrefix 1`] = `
         class="new-button"
       >
         <button
-          class="sds--btn sds--btn--primary    "
+          class="sds--btn sds--btn--primary     "
           type="button"
         >
           <span
@@ -179,7 +179,7 @@ exports[`OrganisationAdmins renders with default props 1`] = `
         class="new-button"
       >
         <button
-          class="sds--btn sds--btn--primary    "
+          class="sds--btn sds--btn--primary     "
           type="button"
         >
           <span

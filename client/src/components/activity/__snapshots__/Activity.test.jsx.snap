@@ -137,7 +137,7 @@ exports[`Activity matches snapshot 1`] = `
           </div>
         </div>
         <button
-          class="sds--btn sds--btn--primary    "
+          class="sds--btn sds--btn--primary     "
           type="button"
         >
           <span

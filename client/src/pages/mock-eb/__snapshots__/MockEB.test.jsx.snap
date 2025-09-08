@@ -15,7 +15,7 @@ exports[`MockEB matches snapshot with custom description 1`] = `
         class="actions"
       >
         <button
-          class="sds--btn sds--btn--primary  sds--btn--small  "
+          class="sds--btn sds--btn--primary  sds--btn--small   "
           type="button"
         >
           <span
@@ -25,7 +25,7 @@ exports[`MockEB matches snapshot with custom description 1`] = `
           </span>
         </button>
         <button
-          class="sds--btn sds--btn--primary  sds--btn--small  "
+          class="sds--btn sds--btn--primary  sds--btn--small   "
           type="button"
         >
           <span
@@ -55,7 +55,7 @@ exports[`MockEB matches snapshot with custom title 1`] = `
         class="actions"
       >
         <button
-          class="sds--btn sds--btn--primary  sds--btn--small  "
+          class="sds--btn sds--btn--primary  sds--btn--small   "
           type="button"
         >
           <span
@@ -65,7 +65,7 @@ exports[`MockEB matches snapshot with custom title 1`] = `
           </span>
         </button>
         <button
-          class="sds--btn sds--btn--primary  sds--btn--small  "
+          class="sds--btn sds--btn--primary  sds--btn--small   "
           type="button"
         >
           <span
@@ -95,7 +95,7 @@ exports[`MockEB matches snapshot with default props 1`] = `
         class="actions"
       >
         <button
-          class="sds--btn sds--btn--primary  sds--btn--small  "
+          class="sds--btn sds--btn--primary  sds--btn--small   "
           type="button"
         >
           <span
@@ -105,7 +105,7 @@ exports[`MockEB matches snapshot with default props 1`] = `
           </span>
         </button>
         <button
-          class="sds--btn sds--btn--primary  sds--btn--small  "
+          class="sds--btn sds--btn--primary  sds--btn--small   "
           type="button"
         >
           <span

@@ -148,7 +148,7 @@ exports[`CollaborationAdmins matches snapshot with default props 1`] = `
         class="new-button"
       >
         <button
-          class="sds--btn sds--btn--primary    "
+          class="sds--btn sds--btn--primary     "
           type="button"
         >
           <span
