@@ -6,7 +6,7 @@ flask-webtest==0.1.6
 hbmqtt2==0.9.7
 pytest==8.4.1
 pytest-cov==6.2.1
-pytest-xdist==3.7.0
+pytest-xdist==3.8.0
 responses==0.25.7
 alembic==1.16.4
 freezegun==1.5.2
