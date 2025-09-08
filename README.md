@@ -272,7 +272,7 @@ Most of the components and pages in the client have basic snapshot tests (*.test
 pipeline and are run in the build stage.
 
 Whenever a page of component changes, the snapshot test of that page or component is expected to fail.
-If the change was intended, the snapshot should be updated. In order to do that, one should delete the ``__snapshots__`` 
+If the change was intended, the snapshot should be updated. In order to do that, one should delete the `__snapshots__` 
 folder in the component's subfolder and rerun the test:
 
 ```bash
