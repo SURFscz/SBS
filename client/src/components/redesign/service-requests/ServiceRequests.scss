@@ -5,23 +5,26 @@ table.service_requests{
     thead {
         th {
             &.name {
-                width: 20%;
+                width: 18%;
                 padding-left: 15px;
             }
 
             &.requester__name {
-                width: 25%;
-            }
-
-            &.description {
                 width: 24%;
             }
 
+            &.description {
+                width: 20%;
+            }
+
             &.created_at {
-                width: 17%;
+                width: 15%;
+            }
+            &.connection_type {
+                width: 11%;
             }
             &.status {
-                width: 16%;
+                width: 14%;
                 text-align: center;
             }
         }
