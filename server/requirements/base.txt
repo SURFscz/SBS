@@ -16,7 +16,7 @@ pytz==2025.2
 requests==2.32.4
 urllib3==2.5.0
 websockets==15.0.1
-redis==6.2.0
+redis==6.4.0
 pyotp==2.9.0
 qrcode==8.2
 Pillow==11.3.0
