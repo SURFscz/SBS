@@ -1,10 +1,9 @@
 import React from "react";
 import {
     addCollaborationServices,
-    allServices,
     deleteCollaborationServices,
     deleteServiceConnectionRequest,
-    requestServiceConnection
+    requestServiceConnection, usedServices
 } from "../../../api";
 import {ReactComponent as ChevronLeft} from "../../../icons/chevron-left.svg";
 import {ReactComponent as SearchIcon} from "@surfnet/sds/icons/functional-icons/search.svg";
@@ -61,7 +60,7 @@ class UsedServices extends React.Component {
     componentDidMount = () => {
         const {collaboration} = this.props;
         const urlSearchParams = new URLSearchParams(window.location.search);
-        allServices()
+        usedServices()
             .then(json => {
                 const services = json;
                 const requestedServices = collaboration.service_connection_requests

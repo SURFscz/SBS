@@ -269,6 +269,10 @@ export function allServices(includeCounts) {
     return fetchJson(`/api/services/all${query}`, {}, {}, false);
 }
 
+export function usedServices() {
+    return fetchJson("/api/services/used_services", {}, {}, false);
+}
+
 export function allServicesOptimized() {
     return fetchJson("/api/services/all_optimized", {}, {}, false);
 }

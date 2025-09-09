@@ -1,6 +1,6 @@
 import urllib.parse
 import uuid
-
+from collections import defaultdict
 from flask import Blueprint, request as current_request, g as request_context, jsonify, current_app
 from sqlalchemy import or_
 from sqlalchemy import text, func
@@ -46,6 +46,45 @@ base_service_query = """
                             (SELECT COUNT(sc.id) FROM services_collaborations sc WHERE sc.service_id = s.id) AS c_count
                      FROM services s \
                      """
+
+used_service_query = """
+                     SELECT s.id,
+                            s.name,
+                            s.access_allowed_for_all,
+                            s.uuid4,
+                            s.entity_id,
+                            s.abbreviation,
+                            s.override_access_allowed_all_connections,
+                            s.allow_restricted_orgs,
+                            s.created_at,
+                            s.automatic_connection_allowed,
+                            s.description,
+                            s.contact_email,
+                            s.privacy_policy,
+                            s.support_email,
+                            s.accepted_user_policy,
+                            s.uri_info,
+                            s.uri,
+                            s.token_enabled,
+                            (SELECT o.name
+                             FROM organisations o
+                             WHERE s.crm_organisation_id IS NOT NULL
+                               AND o.id = s.crm_organisation_id) AS organisation_name
+                     FROM services s \
+                     """
+used_service_query_allowed_organisations = """
+                                           SELECT service_id, organisation_id
+                                           FROM organisations_services \
+                                           """
+used_service_query_automatic_connection_allowed_organisations = """
+                                                                SELECT service_id, organisation_id
+                                                                FROM automatic_connection_allowed_organisations_services \
+                                                                """
+used_service_query_service_memberships = """
+                                         SELECT sm.service_id, u.email
+                                         FROM users u
+                                                  INNER JOIN service_memberships sm on sm.user_id = u.id \
+                                         """
 
 
 def _result_set_to_services(result_set):
@@ -335,6 +374,36 @@ def all_optimized_services():
     with db.engine.connect() as conn:
         result_set = conn.execute(sql)
         return _result_set_to_services(result_set), 200
+
+
+@service_api.route("/used_services", strict_slashes=False)
+@json_endpoint
+def used_services():
+    with db.engine.connect() as conn:
+        result_set = conn.execute(text(used_service_query_allowed_organisations))
+        allowed_orgs = defaultdict(list)
+        for service_id, organisation_id in result_set:
+            allowed_orgs[service_id].append(organisation_id)
+
+        result_set = conn.execute(text(used_service_query_automatic_connection_allowed_organisations))
+        auto_orgs = defaultdict(list)
+        for service_id, organisation_id in result_set:
+            auto_orgs[service_id].append(organisation_id)
+
+        result_set = conn.execute(text(used_service_query_service_memberships))
+        memberships = defaultdict(list)
+        for service_id, email in result_set:
+            memberships[service_id].append(email)
+
+        result_set = conn.execute(text(used_service_query))
+        rows = [dict(row) for row in result_set.mappings().all()]
+        for row in rows:
+            row["logo"] = f"{logo_url('services', row['uuid4'])}"
+            service_id = row["id"]
+            row["allowed_organisations"] = [{"id": id} for id in allowed_orgs.get(service_id, [])]
+            row["automatic_connection_allowed_organisations"] = [{"id": id} for id in auto_orgs.get(service_id, [])]
+            row["service_memberships"] = [{"user": {"email": email}} for email in memberships.get(service_id, [])]
+        return rows, 200
 
 
 @service_api.route("/mine_optimized", strict_slashes=False)

@@ -15,7 +15,6 @@ import {AppStore} from "../../stores/AppStore";
 import Collaborations from "../../components/redesign/collaborations/Collaborations";
 import SpinnerField from "../../components/redesign/spinner-field/SpinnerField";
 import ApiKeys from "../../components/redesign/api-keys/ApiKeys";
-import OrganisationServices from "../../components/redesign/organisation-services/OrganisationServices";
 import CollaborationRequests from "../../components/redesign/collaboration-requests/CollaborationRequests";
 import OrganisationWelcomeDialog from "../../components/organisation-welcome-dialog/OrganisationWelcomeDialog";
 import {actionMenuUserRole, isUserAllowed, ROLES} from "../../utils/UserRole";
@@ -176,14 +175,6 @@ class OrganisationDetail extends React.Component {
             <OrganisationAdmins {...this.props} organisation={organisation}
                                 refresh={callback => this.componentDidMount(callback)}/>
         </div>)
-    }
-
-    getServicesTab = organisation => {
-        return (<div key="services" name="services"
-                     label={I18n.t("home.tabs.orgServices", {count: organisation.services.length})}>
-            <OrganisationServices {...this.props} organisation={organisation}
-                                  refresh={callback => this.componentDidMount(callback)}/>
-        </div>);
     }
 
     getAPIKeysTab = (organisation, user) => {

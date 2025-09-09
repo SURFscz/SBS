@@ -498,6 +498,16 @@ class TestService(AbstractTest):
         self.assertTrue("connection_requests_count" in mail)
         self.assertTrue(mail["logo"].startswith("http://"))
 
+    def test_used_services(self):
+        self.login("urn:betty")
+        services = self.get("/api/services/used_services", with_basic_auth=False)
+        self.assertTrue(len(services) > 0)
+        mail = [s for s in services if s["name"] == service_mail_name][0]
+        self.assertTrue("allowed_organisations" in mail)
+        self.assertTrue("automatic_connection_allowed_organisations" in mail)
+        self.assertTrue("service_memberships" in mail)
+        self.assertTrue(mail["logo"].startswith("http://"))
+
     def test_services_mine_optimized(self):
         self.login("urn:service_admin")
         services = self.get("/api/services/mine_optimized", with_basic_auth=False)
