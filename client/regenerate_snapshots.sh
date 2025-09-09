@@ -6,7 +6,6 @@ nvm use
 
 echo "🔍 Finding and deleting all __snapshots__ directories..."
 
-# Find and delete all __snapshots__ directories
 find . -type d -name "__snapshots__" -exec rm -rf {} +
 
 echo "✅ Deleted all __snapshots__ directories."
