@@ -33,7 +33,9 @@ def _do_suspend_collaboration(app):
         threshold_for_warning = cfq.collaboration_inactivity_days_threshold - cfq.inactivity_warning_mail_days_threshold
         notification_start_date = now - datetime.timedelta(days=threshold_for_warning)
         notification_end_date = now - datetime.timedelta(days=threshold_for_warning - 1)
+        # Collaborations with an expiry_date are excluded as they are dealt with in collaboration_expiration.py
         collaborations_warned = Collaboration.query \
+            .filter(Collaboration.expiry_date.is_(None)) \
             .filter(Collaboration.last_activity_date > notification_start_date) \
             .filter(Collaboration.last_activity_date < notification_end_date).all()  # noqa: E712
 
@@ -44,6 +46,7 @@ def _do_suspend_collaboration(app):
         threshold_for_deletion = cfq.collaboration_inactivity_days_threshold + cfq.collaboration_deletion_days_threshold
         deletion_date = now - datetime.timedelta(days=threshold_for_deletion)
         collaborations_deleted = Collaboration.query \
+            .filter(Collaboration.expiry_date.is_(None)) \
             .filter(Collaboration.status == STATUS_SUSPENDED) \
             .filter(Collaboration.last_activity_date < deletion_date).all()  # noqa: E712
         for coll in collaborations_deleted:
@@ -52,6 +55,7 @@ def _do_suspend_collaboration(app):
 
         suspension_end_date = now - datetime.timedelta(days=cfq.collaboration_inactivity_days_threshold - 1)
         collaborations_suspended = Collaboration.query \
+            .filter(Collaboration.expiry_date.is_(None)) \
             .filter(Collaboration.status == STATUS_ACTIVE) \
             .filter(Collaboration.last_activity_date < suspension_end_date).all()  # noqa: E712
         for coll in collaborations_suspended:
