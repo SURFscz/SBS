@@ -267,3 +267,8 @@ class TestUserLoginEB(AbstractTest):
                                  "Content-Type": "application/json"},
                         body={"nonce": "nope"})
         self.assertTrue("No user_nonce found for nonce nope" in res["message"])
+
+    def test_interrupt_nonce_not_found(self):
+        res = self.client.get("/api/users/interrupt",
+                              query_string={"nonce": "bogus"})
+        self.assertEquals(404, res.status_code)

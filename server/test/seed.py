@@ -419,7 +419,7 @@ def seed(db, app_config, skip_seed=False):
                       token_enabled=False, token_validity_days=0,
                       redirect_urls="https://redirect.com/url1,https://redirect.com/url2",
                       oidc_client_secret="1234567890_secret",
-                      providing_organisation="SURFconext", grants="authorization_code, refresh_token",
+                      providing_organisation="SURFconext", grants="authorization_code, refresh_token, device_code",
                       is_public_client=True, saml_enabled=False, oidc_enabled=True)
     wiki = Service(entity_id=service_wiki_entity_id, name=service_wiki_name, description="No more wiki's please",
                    uri="https://servicedesk.surf.nl/wiki/",
