@@ -271,4 +271,4 @@ class TestUserLoginEB(AbstractTest):
     def test_interrupt_nonce_not_found(self):
         res = self.client.get("/api/users/interrupt",
                               query_string={"nonce": "bogus"})
-        self.assertEquals(404, res.status_code)
+        self.assertEqual(404, res.status_code)
