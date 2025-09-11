@@ -9,12 +9,13 @@ from server.db.audit_mixin import AuditLog
 from server.db.db import db
 from server.db.defaults import STATUS_OPEN
 from server.db.domain import Invitation, CollaborationMembership, User, Collaboration, Organisation, ServiceAup, \
-    JoinRequest
+    JoinRequest, Group
 from server.test.abstract_test import AbstractTest
 from server.test.seed import invitation_hash_no_way, co_ai_computing_name, invitation_hash_curious, \
     invitation_hash_ufra, \
     co_research_name, unihard_name, co_ai_computing_short_name, co_ai_computing_join_request_peter_hash, \
-    co_ai_computing_uuid, group_ai_researchers_short_name, group_ai_dev_identifier, unihard_secret_unit_support
+    co_ai_computing_uuid, group_ai_researchers_short_name, group_ai_dev_identifier, unihard_secret_unit_support, \
+    group_ai_researchers, user_john_name
 from server.tools import dt_now
 
 
@@ -286,7 +287,7 @@ class TestInvitation(AbstractTest):
         self.login("urn:james")
         self.put("/api/invitations/accept", body={"hash": invitation.hash}, with_basic_auth=False)
 
-        # To avoid Instance <ApiKey> is not bound to a Session and the extenal API is stateless
+        # To avoid Instance <ApiKey> is not bound to a Session and the external API is stateless
         self.logout()
         res = self.get(f"/api/invitations/v1/{invitation_id}",
                        headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
@@ -451,3 +452,34 @@ class TestInvitation(AbstractTest):
 
         error = res["errors"][0]
         self.assertEqual("ServerError", error["code"])
+
+    def test_update_external_invitation(self):
+        collaboration = self.find_entity_by_name(Collaboration, co_ai_computing_name)
+        group = self.find_entity_by_name(Group, group_ai_researchers)
+        user = self.find_entity_by_name(User, user_john_name)
+        external_identifier = str(uuid.uuid4())
+        invitation = Invitation(invitee_email="jdoe@ex.org", sender_name="XYZ", hash="hash",
+                                collaboration_id=collaboration.id, user=user, intended_role="member",
+                                created_by="system", external_identifier=external_identifier, status="open")
+        invitation.groups = [group]
+        self.save_entity(invitation)
+
+        res = self.patch(f"/api/invitations/v1/update/{external_identifier}",
+                         {"intended_role": "admin",
+                          "groups": [group_ai_dev_identifier]},
+                         headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
+                         response_status_code=201,
+                         with_basic_auth=False)
+        self.assertEqual("admin", res["intended_role"])
+        self.assertEqual("open", res["status"])
+        self.assertEqual(1, len(res["groups"]))
+        self.assertEqual(group_ai_dev_identifier, res["groups"][0]["identifier"])
+
+        # Re-fetch invitation and assert data is saved
+        res = self.get(f"/api/invitations/v1/{external_identifier}",
+                       headers={"Authorization": f"Bearer {unihard_secret_unit_support}"},
+                       with_basic_auth=False)
+        self.assertEqual("admin", res["intended_role"])
+        self.assertEqual("open", res["status"])
+        self.assertEqual(1, len(res["groups"]))
+        self.assertEqual(group_ai_dev_identifier, res["groups"][0]["identifier"])

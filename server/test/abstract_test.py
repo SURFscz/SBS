@@ -149,6 +149,9 @@ class AbstractTest(TestCase):
     def put(self, url, body={}, headers={}, response_status_code=201, with_basic_auth=True):
         return self._do_call(body, self.client.put, headers, response_status_code, url, with_basic_auth)
 
+    def patch(self, url, body={}, headers={}, response_status_code=201, with_basic_auth=True):
+        return self._do_call(body, self.client.patch, headers, response_status_code, url, with_basic_auth)
+
     def _do_call(self, body, call, headers, response_status_code, url, with_basic_auth):
         with requests.Session():
             response = call(url, headers={**BASIC_AUTH_HEADER, **headers} if with_basic_auth else headers,

@@ -123,6 +123,20 @@ def _validate_bulk_invitation(invitation):
         raise BadRequest(f"Invalid email in invitees: {invitees}")
 
 
+def _find_invitation_groups(collaboration, data):
+    group_identifiers = data.get("groups", [])
+    groups = []
+    for group_identifier in group_identifiers:
+        group = Group.query \
+            .filter(Group.collaboration_id == collaboration.id) \
+            .filter(or_(Group.short_name == group_identifier, Group.identifier == group_identifier)) \
+            .first()
+        if not group:
+            raise BadRequest(f"Invalid group identifier: {group_identifier}")
+        groups.append(group)
+    return groups
+
+
 @invitations_api.route("/find_by_hash", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def invitations_by_hash():
@@ -228,16 +242,7 @@ def collaboration_invites_api():
 
     invites_results = []
 
-    group_ids = data.get("groups", [])
-    groups = []
-    for group_identifier in group_ids:
-        group = Group.query \
-            .filter(Group.collaboration_id == collaboration.id) \
-            .filter(or_(Group.short_name == group_identifier, Group.identifier == group_identifier)) \
-            .first()
-        if not group:
-            raise BadRequest(f"Invalid group identifier: {group_identifier}")
-        groups.append(group)
+    groups = _find_invitation_groups(collaboration, data)
     service_names = [service.name for service in collaboration.services]
     sender_name = data.get("sender_name", organisation.name)
     for email in invites:
@@ -558,3 +563,29 @@ def get_open_invitations(co_identifier):
         .filter(Invitation.status == STATUS_OPEN) \
         .all()
     return [invitation_to_dict(invitation, True) for invitation in invitations], 200
+
+
+@invitations_api.route("/v1/update/<external_identifier>", methods=["PATCH"], strict_slashes=False)
+@swag_from("../swagger/public/paths/update_invitation_by_identifier.yml")
+@json_endpoint
+def update_external_invitation(external_identifier):
+    invitation = Invitation.query.filter(Invitation.external_identifier == external_identifier).one()
+
+    api_key = request_context.get("external_api_key")
+    confirm_api_key_unit_access(api_key, invitation.collaboration)
+
+    data = current_request.get_json()
+    intended_role = data.get("intended_role", "member")
+    intended_role = "member" if intended_role not in ["admin", "member"] else intended_role
+    invitation.intended_role = intended_role
+    collaboration = invitation.collaboration
+
+    groups = _find_invitation_groups(collaboration, data)
+
+    invitation.groups.clear()
+    invitation.groups.extend(groups)
+    db.session.merge(invitation)
+
+    emit_socket(f"collaboration_{collaboration.id}")
+
+    return invitation_to_dict(invitation, include_expiry_date=True), 201

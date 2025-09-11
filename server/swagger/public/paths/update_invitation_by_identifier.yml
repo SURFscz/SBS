@@ -1,0 +1,52 @@
+summary: "Update existing invitation."
+description: "Update invitation for a collaboration."
+
+tags:
+  - "Organisation"
+
+consumes:
+  - "application/json"
+
+produces:
+  - "application/json"
+
+security:
+  - Organisation: [ 'Authorization' ]
+
+parameters:
+  - name: Authorization
+    in: header
+    description: Bearer API key
+    required: true
+    schema:
+      type: string
+      example: Bearer Am4Hp7GBO2lMseskWHRmEtE3DWD-VxZZ3qwMkNPv6qZ8
+  - name: external_identifier
+    in: path
+    description: Unique identifier of the invitation
+    required: true
+    schema:
+      type: string
+      format: uuid
+      example: "301ee8e6-b5d1-40b5-a27e-47611f803371"
+  - name: invitation
+    in: body
+    description: The invitations details
+    required: true
+    schema:
+      $ref: '/swagger/schemas/InvitationPatch.yaml'
+
+responses:
+  200:
+    description: Invitation details
+    schema:
+      $ref: '/swagger/schemas/InvitationDetail.yaml'
+  401:
+    schema:
+      $ref: '/swagger/components/responses/Unauthorized.yaml'
+  403:
+    schema:
+      $ref: '/swagger/components/responses/Forbidden.yaml'
+  404:
+    schema:
+      $ref: '/swagger/components/responses/NotFound.yaml'

@@ -1,0 +1,13 @@
+---
+type: object
+properties:
+  intended_role:
+    type: string
+    description: "The intended role of the inviter in the collaboration"
+    example: "member"
+  groups:
+    type: array
+    description: "All the group identifiers where the user will be a member of after accepting the invitation"
+    items:
+      type: string
+      example: "301ee8e6-b5d1-40b5-a27e-47611f803371"
