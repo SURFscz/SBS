@@ -1903,7 +1903,8 @@ const en = {
             "service_memberships": "Application membership",
             "tags": "Label",
             "service_tokens": "Application tokens (any)",
-            "user_nonces": "User nonces"
+            "user_nonces": "User nonces",
+            "rate_limits_infos": "Rate limit information"
         }
     },
     serviceRequest: {
