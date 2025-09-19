@@ -134,6 +134,7 @@ def _do_apply_user_change(user: User, service: Union[None, Service], deletion: b
         # We need all services that are accessible for this user
         collaborations = [member.collaboration for member in user.collaboration_memberships if member.is_active()]
         scim_services = _all_unique_scim_services_of_collaborations(collaborations)
+
     for service in scim_services:
         response = None
         scim_object = _lookup_scim_object(service, SCIM_USERS, user.external_id)
@@ -150,7 +151,7 @@ def _do_apply_user_change(user: User, service: Union[None, Service], deletion: b
 
 def _all_unique_scim_services_of_collaborations(collaborations):
     organisations = [co.organisation for co in collaborations]
-    all_services = flatten([co.services for co in collaborations]) + flatten([org.services for org in organisations])
+    all_services = flatten([co.services for co in collaborations])
     scim_services = _unique_scim_services(all_services)
     return scim_services
 

@@ -12,7 +12,8 @@ from server.scim.events import broadcast_user_changed, broadcast_user_deleted, b
     broadcast_service_deleted, broadcast_group_deleted
 from server.test.abstract_test import AbstractTest
 from server.test.scim import TEST_SCIM_USERS_ENDPOINT, TEST_SCIM_GROUPS_ENDPOINT
-from server.test.seed import user_sarah_name, co_research_name, group_ai_researchers, unifra_name, service_cloud_name
+from server.test.seed import user_sarah_name, co_research_name, group_ai_researchers, unifra_name, service_cloud_name, \
+    user_peter_name
 from server.tools import read_file
 
 
@@ -34,7 +35,7 @@ class TestEvents(AbstractTest):
 
     @responses.activate
     def test_apply_user_change_create(self):
-        sarah = self.find_entity_by_name(User, user_sarah_name)
+        sarah = self.find_entity_by_name(User, user_peter_name)
         no_user_found = json.loads(read_file("test/scim/no_user_found.json"))
         user_created = json.loads(read_file("test/scim/user_created.json"))
         with responses.RequestsMock(assert_all_requests_are_fired=True) as rsps:
