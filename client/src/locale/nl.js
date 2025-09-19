@@ -1904,7 +1904,8 @@ const nl = {
             "service_memberships": "Applicatielidmaatschap",
             "tags": "Label",
             "service_tokens": "Applicatietokens (allemaal)",
-            "user_nonces": "User nonces"
+            "user_nonces": "User nonces",
+            "rate_limits_infos": "Rate limit informatie"
         }
     },
     serviceRequest: {
